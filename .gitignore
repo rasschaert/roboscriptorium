@@ -1,0 +1,12 @@
+# Books, page images, OCR output and golden pages (copyrighted)
+work/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+dist/
+
+.DS_Store
