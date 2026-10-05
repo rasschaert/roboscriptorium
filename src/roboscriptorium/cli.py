@@ -1,17 +1,16 @@
+from pathlib import Path
+
 import httpx
 import typer
 
+from roboscriptorium import pipeline
+from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollama import OllamaClient
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.config import Settings
 
 app = typer.Typer(no_args_is_help=True, help="Turn books that aren't EPUBs into EPUBs.")
-
-
-@app.callback()
-def _root() -> None:
-    """Keeps typer in multi-command mode while there is only one command."""
 
 
 @app.command()
@@ -45,3 +44,11 @@ def doctor() -> None:
         typer.echo(f"ollaya  {settings.ollaya_url}  UNREACHABLE: {exc}")
 
     raise typer.Exit(0 if ok else 1)
+
+
+@app.command()
+def build(book_dir: Path) -> None:
+    """Build an EPUB from a book directory holding book.toml and the source file."""
+    book = Book.load(book_dir)
+    doc = pipeline.build(book)
+    typer.echo(f"{len(doc.blocks)} paragraphs → {book.epub_path}")

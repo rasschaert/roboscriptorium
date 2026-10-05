@@ -45,9 +45,15 @@ right, then expand.
 
 - Internet Archive scan (Scribe), 76 pages, 325×554 pt, 360 ppi MRC layers
   (JPX background/foreground + JBIG2 mask).
+- Pages: 1 cover · 2–3 scan noise and IA stamp · 4 colophon · 5–71 body (one
+  continuous text, no headings or scene breaks; page 5 is a sunk opening) ·
+  72–75 blank or library barcode · 76 back cover. Page sizes differ per page (crops).
 - Has a **hidden OCR text layer** (GlyphLessFont) of decent quality. Observed
   errors: page number "10" → "Io", missing spaces ("vijfjaar"), missing accents
-  ("scenes" for "scènes"), line-end hyphenation, indented paragraph starts.
+  ("scenes" for "scènes"), line-end hyphenation, indented paragraph starts,
+  specks read as characters ("haar-hadden" for "haar hadden", a stray "»"),
+  a smudge under the text read as "><", misread page numbers ("Io", "Paes").
+  Pages 5–9 have no page number in the text layer.
 - That text layer is one OCR candidate among several, not the truth.
 
 ## Stack and conventions
@@ -59,6 +65,12 @@ right, then expand.
     and `ROBO_DECISION_MODEL`.
   - `clients/ollama.py`, `clients/ollaya.py`: thin httpx clients. All model calls go
     through these.
+  - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
+  - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages.
+  - `reflow.py`: lines → paragraphs (footer removal, indents, de-hyphenation).
+  - `ir.py`: the IR (`Document`, `Paragraph` with `SourceRef`s back to page lines).
+  - `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib).
+  - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`.
 - HTTP: `httpx`. Tests inject `httpx.MockTransport`, so unit tests never need a
   running model server.
 - Lint/format: `ruff` (line length 100). Tests: `pytest`.
@@ -159,12 +171,25 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 - Ollaya at `http://127.0.0.1:11435`.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).
-- Not yet installed: tesseract (+ `nld` data), epubcheck.
+- epubcheck (Homebrew).
+- Not yet installed: tesseract (+ `nld` data).
 
 ## Running, reviewing, evaluating
 
+A book lives in `work/<book>/` with `source.pdf` and a `book.toml`:
+
+```toml
+title = "Wij doden Stella"
+author = "Marlen Haushofer"
+language = "nl"
+cover_page = 1
+body_pages = [5, 71]   # inclusive; Ollaya page classification replaces this later
+```
+
 ```sh
-uv run roboscriptorium doctor     # are Ollama and Ollaya reachable and answering?
+uv run roboscriptorium doctor            # are Ollama and Ollaya reachable and answering?
+uv run roboscriptorium build work/stella # → work/stella/stella.epub
+epubcheck work/stella/stella.epub        # must report 0 errors / 0 warnings
 uv run ruff format . && uv run ruff check . && uv run pytest
 ```
 
@@ -188,3 +213,8 @@ uv run ruff format . && uv run ruff check . && uv run pytest
   9), `laya:multilingual` answered `page_number` at 0.90. Given "12" with only
   position context and two options, it answered `body` at 0.65. laya is shaky on
   layout questions; evaluate `winnow` and richer state once golden pages exist.
+- 2026-10-05: M1 landed. Stella builds from its existing text layer into an
+  EPUB that passes epubcheck (244 paragraphs). Footer = short lines after a
+  wide gap in the bottom fifth. Left margin = lower quartile of nearby line
+  starts (follows skew, works on short pages). A line-end hyphen before a
+  capital is kept.
