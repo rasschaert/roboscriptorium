@@ -1,0 +1,32 @@
+[project]
+name = "roboscriptorium"
+version = "0.1.0"
+description = "Turn books that aren't EPUBs (scanned PDFs first) into clean EPUBs, using local AI."
+readme = "README.md"
+authors = [
+    { name = "Kenny Rasschaert", email = "kenny@kennyrasschaert.be" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "typer>=0.27.2",
+]
+
+[project.scripts]
+roboscriptorium = "roboscriptorium:main"
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

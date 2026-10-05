@@ -14,7 +14,8 @@ starting; keep it true.
 - **No copyrighted material in git.** Books, page images, OCR output and golden
   pages live in `work/` (gitignored). Commit only code, prompts, question sets,
   configs and synthetic test fixtures.
-- **Git:** signed commits straight to `main`; no PRs for now.
+- **Git:** signed commits straight to `main`, pushed whenever convenient; no PRs
+  for now. Run lint and tests before every commit.
 - **This file is the single source of agent instructions.** Claude Code reads
   AGENTS.md natively; don't add a `CLAUDE.md`.
 - **Installs:** Homebrew tools, Python deps and Ollama/Ollaya models may be
@@ -51,8 +52,17 @@ right, then expand.
 
 ## Stack and conventions
 
-- Python, managed with **uv**. Package and CLI are both named `roboscriptorium`.
-- (To be filled in as the skeleton lands: layout, lint/format, test runner.)
+- Python 3.13, managed with **uv**. Package and CLI are both named `roboscriptorium`.
+- Layout: `src/roboscriptorium/` (src layout), tests in `tests/`.
+  - `cli.py`: typer app, the entry point.
+  - `config.py`: `Settings`, overridable via `ROBO_OLLAMA_URL`, `ROBO_OLLAYA_URL`
+    and `ROBO_DECISION_MODEL`.
+  - `clients/ollama.py`, `clients/ollaya.py`: thin httpx clients. All model calls go
+    through these.
+- HTTP: `httpx`. Tests inject `httpx.MockTransport`, so unit tests never need a
+  running model server.
+- Lint/format: `ruff` (line length 100). Tests: `pytest`.
+- Comments describe the code as it is now, briefly; history belongs in commit messages.
 
 ## Architecture
 
@@ -125,6 +135,9 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   type. Confidence is **not** correctness: calibrate thresholds on golden pages
   before trusting them.
 - Load time is ~1.5 s on the first call, then ~50 ms per decision.
+- `noul` answers carry only `noul` (P(true)). `choice` and `score` carry
+  `confidence` and `probabilities`. `OllayaClient.decide` normalises all three
+  into `Answer(type, value, confidence, probabilities)`.
 
 ### Models
 
@@ -150,7 +163,12 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 
 ## Running, reviewing, evaluating
 
-(To be filled in as the CLI, review UI and evaluation harness land.)
+```sh
+uv run roboscriptorium doctor     # are Ollama and Ollaya reachable and answering?
+uv run ruff format . && uv run ruff check . && uv run pytest
+```
+
+(Pipeline, review UI and evaluation commands get added here as they land.)
 
 - Golden pages: ~5–10 hand-corrected pages of the target book in `work/<book>/golden/`
   (gitignored). Quality is measured as CER plus structure metrics against them.
@@ -165,3 +183,8 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 - 2026-10-05: Ollaya smoke test. `laya:multilingual` labelled the bare
   string "Io" (a misread page number) as a heading at 0.93 confidence. Decision
   calls need context, and their thresholds need calibration.
+- 2026-10-05: M0 skeleton landed (uv, typer, httpx, ruff, pytest; `doctor`
+  command). With a context-rich state ("Io", last line, centred, previous page
+  9), `laya:multilingual` answered `page_number` at 0.90. Given "12" with only
+  position context and two options, it answered `body` at 0.65. laya is shaky on
+  layout questions; evaluate `winnow` and richer state once golden pages exist.
