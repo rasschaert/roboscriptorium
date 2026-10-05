@@ -5,6 +5,7 @@ is ambiguous to a decision model, so pass a dict state with context (position on
 the page, neighbouring lines, page type) whenever possible.
 """
 
+import base64
 import json
 from dataclasses import dataclass
 from typing import Any
@@ -61,12 +62,18 @@ class OllayaClient:
         state: str | dict[str, Any],
         questions: dict[str, dict[str, Any]],
         model: str | None = None,
+        image_png: bytes | None = None,
     ) -> dict[str, Answer]:
+        """Answer questions about a state; vision models also take one PNG (at most ~1 MP)."""
         if not isinstance(state, str):
             state = json.dumps(state, ensure_ascii=False)
-        resp = self._http.post(
-            "/api/decide",
-            json={"model": model or self.model, "state": state, "questions": questions},
-        )
+        payload: dict[str, Any] = {
+            "model": model or self.model,
+            "state": state,
+            "questions": questions,
+        }
+        if image_png is not None:
+            payload["images"] = [base64.b64encode(image_png).decode()]
+        resp = self._http.post("/api/decide", json=payload)
         resp.raise_for_status()
         return {name: Answer.from_json(a) for name, a in resp.json()["answers"].items()}

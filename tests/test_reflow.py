@@ -1,5 +1,7 @@
+from roboscriptorium.ir import Heading, Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.reflow import join, reflow
+from roboscriptorium.reflow import join, reflow, tidy
+from roboscriptorium.roles import LineRole
 
 SPACING = 15.0
 HEIGHT = 500.0
@@ -53,3 +55,26 @@ def test_margin_follows_skew():
     paragraphs = reflow([page(5, rows)])
     assert len(paragraphs) == 2
     assert paragraphs[1].text.startswith("inspringing")
+
+
+def test_roles_drop_artefacts_and_keep_blocks_in_page_order():
+    rows = [
+        (10, "20 SENSE AND SENSIBILITY."),
+        (10, "einde van een zin."),
+        (60, "CHAPTER"),
+        (70, "V."),
+        (10, "Begin van het hoofdstuk"),
+        (10, "dat doorloopt."),
+    ]
+    not_body = {0: "running_head", 2: "chapter_heading", 3: "chapter_heading"}
+    roles = {SourceRef(20, i): LineRole(role, 0.9, 0.05) for i, role in not_body.items()}
+    blocks = reflow([page(20, rows)], roles)
+    assert [type(b) for b in blocks] == [Paragraph, Heading, Paragraph]
+    assert blocks[0].text == "einde van een zin."
+    assert blocks[1].text == "CHAPTER V."
+    assert blocks[2].text == "Begin van het hoofdstuk dat doorloopt." and blocks[2].opening
+
+
+def test_tidy_removes_space_before_punctuation_only():
+    assert tidy("Sussex , and ; then !") == "Sussex, and; then!"
+    assert tidy("a — b") == "a — b"

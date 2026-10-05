@@ -9,6 +9,7 @@ class Settings:
     ollama_url: str = "http://127.0.0.1:11434"
     ollaya_url: str = "http://127.0.0.1:11435"
     decision_model: str = "laya:multilingual"
+    role_model: str = "winnow:e4b"
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -17,4 +18,5 @@ class Settings:
             ollama_url=os.environ.get("ROBO_OLLAMA_URL", defaults.ollama_url),
             ollaya_url=os.environ.get("ROBO_OLLAYA_URL", defaults.ollaya_url),
             decision_model=os.environ.get("ROBO_DECISION_MODEL", defaults.decision_model),
+            role_model=os.environ.get("ROBO_ROLE_MODEL", defaults.role_model),
         )

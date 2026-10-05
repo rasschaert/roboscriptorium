@@ -81,3 +81,11 @@ def cached_text_layer(pdf: Path, cache: Path) -> list[PageText]:
 def render_jpeg(pdf: Path, page_number: int, dpi: int = 150) -> bytes:
     with pymupdf.open(pdf) as doc:
         return doc[page_number - 1].get_pixmap(dpi=dpi).tobytes("jpeg")
+
+
+def render_png(pdf: Path, page_number: int, max_pixels: int = 900_000) -> bytes:
+    """Render a page as PNG, scaled to fit within max_pixels."""
+    with pymupdf.open(pdf) as doc:
+        page = doc[page_number - 1]
+        zoom = (max_pixels / (page.rect.width * page.rect.height)) ** 0.5
+        return page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom)).tobytes("png")

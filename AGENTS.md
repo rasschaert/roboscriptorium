@@ -67,7 +67,11 @@ right, then expand.
     through these.
   - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
   - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages.
-  - `reflow.py`: lines → paragraphs (footer removal, indents, de-hyphenation).
+  - `roles.py`: line roles via a decision model. A gate picks the doubtful lines
+    (page edges, short centred lines), features include cross-page repetition,
+    and answers are cached in `stages/decisions.jsonl`.
+  - `reflow.py`: lines → blocks (headings, paragraphs; indents, de-hyphenation,
+    punctuation spacing). Without roles it falls back to a footer heuristic.
   - `ir.py`: the IR (`Document`, `Paragraph` with `SourceRef`s back to page lines).
   - `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib).
   - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`.
@@ -114,6 +118,15 @@ The pipeline runs as stages. Each stage writes resumable, per-page artefacts und
 
 ## AI usage
 
+**How a new decision gets added** (the usual workflow for decision models):
+prototype the question, collect a labelled set (from a golden book, or by
+labelling with a large generative model on Ollama when there is none), refine
+the rubric (option wording plus features the model can't see, such as
+repetition across pages), then measure the decision model against that set.
+**Start with ~10–60 items and scale up only once the results justify it.**
+Enforce in code what is true by definition (a chapter heading appears once)
+rather than hoping the model weighs it.
+
 Two kinds of model, used for different jobs:
 
 - **Ollaya: decision models ("System One").** Answers bounded questions whose
@@ -128,10 +141,13 @@ decision that Ollaya can make.
 
 ### Ollaya
 
-- Desktop app (`Ollaya.app`); serves at `http://127.0.0.1:11435`. No `ollaya` CLI
-  on PATH.
-- **Ask the user to pull Ollaya models** (in the desktop app). There is no CLI and
-  no documented pull endpoint, so don't guess one.
+- Desktop app (`Ollaya.app`) plus the CLI at `/usr/local/bin/ollaya` (it may not be
+  on the agent shell's PATH). Serves at `http://127.0.0.1:11435`.
+- Models: `ollaya list`, `ollaya pull <model>`, `ollaya show <model>`. Use the
+  documented CLI and API only. If they don't cover what's needed, ask the user
+  rather than guessing endpoints.
+- Vision (`decider:*-vision`): one base64 PNG per request in `images` (JPEG is
+  rejected), at most ~1 MP (resized to multiples of 32), at most 10 options.
 - Jev/TypeSafe-compatible: `/v1/systemone`, `/v1/decisions`, `/v1/models`, plus
   the native `POST /api/decide`.
 - Question types: `choice` (probability per declared option), `score` (ordinal
@@ -165,8 +181,12 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 
 | Runtime | Model | Use | Status |
 | --- | --- | --- | --- |
-| Ollaya | `laya:multilingual` | Decisions on Dutch text | available, unevaluated |
-| Ollaya | `laya:en` | Decisions on English text | available, unevaluated |
+| Ollaya | `laya:multilingual` | Decisions on Dutch text | **unfit for line roles** (see log) |
+| Ollaya | `laya:en` | Decisions on English text | **unfit for line roles** (see log) |
+| Ollaya | `winnow:e4b` | **Line roles (in use)** | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
+| Ollaya | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
+| Ollaya | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
+| Ollama | `clef-flash:9b` | Decisions with vision, on GPU, 256K context | pulled, unevaluated. Endpoint `/v1/systemone` on Ollama |
 | Ollama | `gemma4:latest` | Vision OCR / correction candidate | available, unevaluated |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
 
@@ -223,6 +243,10 @@ repo pinned to a commit), the derived chapters in `text/`, and `PROVENANCE.md`.
 uv run roboscriptorium golden derive sense-and-sensibility
 uv run roboscriptorium golden fetch sense-and-sensibility
 uv run roboscriptorium eval work/sense-and-sensibility--tauchnitz-1864
+# quick loop: chapters 1–9 only (~1 min with a cold decision cache)
+uv run roboscriptorium eval work/sense-and-sensibility--tauchnitz-1864 --pages 7-45 --chapters 1-9
+# heuristics only, no models
+uv run roboscriptorium eval work/sense-and-sensibility--tauchnitz-1864 --no-models
 ```
 
 `eval` builds the book, prints the scores and the most frequent differences, and
@@ -266,3 +290,8 @@ appends a line to `work/<book>/eval-history.jsonl`.
   `laya:en` got 196/300 body-vs-other right and called most body lines
   "artifact"; `laya:multilingual` got 150/300 and called nearly everything
   "page_number". Next to try: `winnow:e4b`.
+- 2026-10-05: Line roles with `winnow:e4b` (laya couldn't do them). Tauchnitz
+  chapters 1–9: CER 7.30% → 4.23%, WER 5.18% → 3.48%, paragraph F1 0.592 →
+  0.697, headings 0/9 → 9/9. That combines the roles, a cross-page repetition
+  feature, the "a chapter heading appears once" rule, and closing spaces before
+  punctuation.

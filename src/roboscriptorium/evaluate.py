@@ -6,9 +6,9 @@ Metrics:
 - WER: word edits per reference word, comparing lowercase letters and digits only,
   so it measures reading errors and ignores punctuation.
 - Paragraph F1: whether paragraph breaks fall where the reference has them.
+- Headings: how many chapter headings were found, against the reference count.
 
-Chapter headings are left out of the reference text: until the pipeline marks
-headings, it's the body text that is compared.
+Headings are left out of the text comparison on both sides.
 """
 
 import re
@@ -53,6 +53,8 @@ class Score:
     paragraph_recall: float
     reference_words: int
     output_words: int
+    headings_found: int
+    headings_expected: int
     confusions: list[tuple[str, str, int]] = field(default_factory=list)
 
     @property
@@ -72,7 +74,7 @@ def _words_with_breaks(paragraphs: list[str]) -> tuple[list[str], set[int]]:
 
 def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     ref_words, ref_starts = _words_with_breaks([p for ch in reference for p in ch.paragraphs])
-    out_words, out_starts = _words_with_breaks([b.text for b in doc.blocks])
+    out_words, out_starts = _words_with_breaks([b.text for b in doc.paragraphs])
 
     # Align on words, then count character edits inside the differing stretches.
     char_edits, confusions = 0, Counter()
@@ -89,7 +91,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     ref_chars = sum(len(w) + 1 for w in ref_words)
 
     ref_bare = [w for p in reference for para in p.paragraphs for w in _bare_words(para)]
-    out_bare = [w for b in doc.blocks for w in _bare_words(b.text)]
+    out_bare = [w for b in doc.paragraphs for w in _bare_words(b.text)]
     word_edits = Levenshtein.distance(out_bare, ref_bare)
 
     # A break counts when it starts a word that aligns with a reference break.
@@ -103,5 +105,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         paragraph_recall=hits / len(ref_starts),
         reference_words=len(ref_words),
         output_words=len(out_words),
+        headings_found=len(doc.headings),
+        headings_expected=len(reference),
         confusions=[(got, want, n) for (got, want), n in confusions.most_common(top)],
     )

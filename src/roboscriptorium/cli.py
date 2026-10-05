@@ -88,17 +88,33 @@ def golden_fetch(name: str, scan: str | None = None) -> None:
             typer.echo(f"{s.id}: {exc}")
 
 
+def _range(value: str | None) -> tuple[int, int] | None:
+    if value is None:
+        return None
+    first, _, last = value.partition("-")
+    return int(first), int(last or first)
+
+
 @app.command("eval")
-def evaluate_book(book_dir: Path) -> None:
+def evaluate_book(
+    book_dir: Path,
+    pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
+    chapters: str | None = typer.Option(None, help="Reference chapters to compare, e.g. 1-9"),
+    no_models: bool = typer.Option(False, help="Skip decision models (heuristics only)"),
+) -> None:
     """Build a golden book's scan and score it against the reference text."""
     book = Book.load(book_dir)
     if book.golden is None:
         raise typer.BadParameter(f"{book_dir}/book.toml names no golden book")
-    doc = pipeline.build(book)
-    result = evaluate.score(doc, load_chapters(Golden.load(book.golden).text_dir))
+    doc = pipeline.build(book, pages=_range(pages), use_models=not no_models)
+    reference = load_chapters(Golden.load(book.golden).text_dir)
+    if (span := _range(chapters)) is not None:
+        reference = reference[span[0] - 1 : span[1]]
+    result = evaluate.score(doc, reference)
 
     typer.echo(
         f"CER {result.cer:.2%}   WER {result.wer:.2%}   paragraph F1 {result.paragraph_f1:.3f}"
+        f"   headings {result.headings_found}/{result.headings_expected}"
     )
     typer.echo(
         f"  paragraphs: precision {result.paragraph_precision:.3f}, "
@@ -114,6 +130,9 @@ def evaluate_book(book_dir: Path) -> None:
         "commit": subprocess.run(
             ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
         ).stdout.strip(),
+        "pages": pages,
+        "chapters": chapters,
+        "models": not no_models,
         **{k: v for k, v in asdict(result).items() if k != "confusions"},
     }
     with (book.root / "eval-history.jsonl").open("a") as f:

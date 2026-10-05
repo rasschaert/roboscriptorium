@@ -22,8 +22,25 @@ class Paragraph:
 
 
 @dataclass
+class Heading:
+    text: str
+    sources: list[SourceRef] = field(default_factory=list)
+
+
+Block = Paragraph | Heading
+
+
+@dataclass
 class Document:
     title: str
     author: str
     language: str
-    blocks: list[Paragraph] = field(default_factory=list)
+    blocks: list[Block] = field(default_factory=list)
+
+    @property
+    def paragraphs(self) -> list[Paragraph]:
+        return [b for b in self.blocks if isinstance(b, Paragraph)]
+
+    @property
+    def headings(self) -> list[Heading]:
+        return [b for b in self.blocks if isinstance(b, Heading)]

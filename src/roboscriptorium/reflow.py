@@ -1,16 +1,17 @@
-"""Turn positioned page lines into paragraphs: drop print artefacts, undo
-line-end hyphenation and join paragraphs across page breaks.
+"""Turn positioned page lines into blocks: drop print artefacts, mark chapter
+headings, undo line-end hyphenation and join paragraphs across page breaks.
 
-Heuristic first pass. Each rule here is a candidate for an Ollaya decision once
-golden pages show where it fails.
+Line roles come from a decision model (see roles.py). Without them, a footer
+heuristic drops page numbers and the rest is treated as body text.
 """
 
 import itertools
 import re
 import statistics
 
-from roboscriptorium.ir import Paragraph, SourceRef
+from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText
+from roboscriptorium.roles import LineRole
 
 # A paragraph-opening indent is ~10pt on the target scans; line-start jitter
 # from skew stays under ~3pt.
@@ -27,9 +28,19 @@ FOOTER_ZONE = 0.8
 FOOTER_GAP = 1.5
 FOOTER_MAX_CHARS = 4
 
+# A line the model calls something other than body is still kept as body when
+# P(body) is at least this; losing text is worse than keeping a stray line.
+KEEP_BODY_AT = 0.5
+
 HYPHENS = ("-", "\u00ad", "\u00ac")
 DASHES = ("\u2014", "\u2013")
 _LOWER_START = re.compile(r"^[a-zà-ÿ]")
+# Older OCR layers keep the thin space some printers set before punctuation.
+_SPACE_BEFORE_PUNCTUATION = re.compile(r"\s+([,;:.!?])(?=\s|$)")
+
+
+def tidy(text: str) -> str:
+    return _SPACE_BEFORE_PUNCTUATION.sub(r"\1", text)
 
 
 def footer_start(page: PageText) -> int:
@@ -70,19 +81,54 @@ def join(text: str, nxt: str) -> str:
     return f"{text} {nxt}"
 
 
-def reflow(pages: list[PageText]) -> list[Paragraph]:
-    paragraphs: list[Paragraph] = []
+def _role(roles: dict[SourceRef, LineRole] | None, ref: SourceRef) -> str:
+    if roles is None or (r := roles.get(ref)) is None or r.p_body >= KEEP_BODY_AT:
+        return "body"
+    return r.role
+
+
+def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None) -> list[Block]:
+    blocks: list[Block] = []
+    opening = True
     for page in pages:
-        body = list(enumerate(page.lines[: footer_start(page)]))
-        flags = indented([ln for _, ln in body])
-        for (index, line), starts_paragraph in zip(body, flags, strict=True):
+        lines = page.lines if roles is not None else page.lines[: footer_start(page)]
+        kept = []
+        for index, line in enumerate(lines):
             ref = SourceRef(page.number, index)
-            if not paragraphs:
-                paragraphs.append(Paragraph(line.text, [ref], opening=True))
-            elif starts_paragraph:
-                paragraphs.append(Paragraph(line.text, [ref]))
-            else:
-                current = paragraphs[-1]
-                current.text = join(current.text, line.text)
-                current.sources.append(ref)
-    return paragraphs
+            role = _role(roles, ref)
+            if role == "body":
+                kept.append((ref, line))
+                continue
+            # Indents are measured within each run of body lines.
+            _add_body(blocks, kept, opening)
+            if kept:
+                opening = False
+            kept = []
+            if role == "chapter_heading":
+                previous = blocks[-1] if blocks else None
+                if isinstance(previous, Heading) and previous.sources[-1].page == page.number:
+                    # A heading set over several lines, like "CHAPTER" above "I."
+                    previous.text += f" {line.text}"
+                    previous.sources.append(ref)
+                else:
+                    blocks.append(Heading(line.text, [ref]))
+                opening = True
+        _add_body(blocks, kept, opening)
+        if kept:
+            opening = False
+    for block in blocks:
+        block.text = tidy(block.text)
+    return blocks
+
+
+def _add_body(blocks: list[Block], kept: list[tuple[SourceRef, Line]], opening: bool) -> None:
+    flags = indented([ln for _, ln in kept])
+    for k, ((ref, line), starts_paragraph) in enumerate(zip(kept, flags, strict=True)):
+        current = blocks[-1] if blocks else None
+        if not isinstance(current, Paragraph) or (k == 0 and opening):
+            blocks.append(Paragraph(line.text, [ref], opening=opening and k == 0))
+        elif starts_paragraph:
+            blocks.append(Paragraph(line.text, [ref]))
+        else:
+            current.text = join(current.text, line.text)
+            current.sources.append(ref)
