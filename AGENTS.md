@@ -301,3 +301,5 @@ appends a line to `work/<book>/eval-history.jsonl`.
 - 2026-10-05: `clef-flash:9b` (Ollama) beats winnow on the line-role probe
   (60/60 vs 58/60) and matches decider on page types with better-calibrated
   confidence. It's the next default candidate; see HANDOVER.md.
+- 2026-10-05: Full-book Tauchnitz with winnow roles: CER 8.05% → 4.68%, WER
+  5.18% → 3.34%, paragraph F1 0.589 → 0.667, headings 28/50.

@@ -26,7 +26,15 @@ Milestones M0–M2 are done and M3 is in progress (decision models in the pipeli
 | Heuristics only | 7.30% | 5.18% | 0.592 | 0/9 |
 | + `winnow:e4b` line roles, repetition feature, punctuation spacing | **4.23%** | **3.48%** | **0.697** | **9/9** |
 
-Full book with winnow roles: FULL_BOOK_RESULT
+Full book (pages 7–346, all 50 chapters):
+
+| Step | CER | WER | Paragraph F1 | Headings |
+| --- | --- | --- | --- | --- |
+| Heuristics only (M2 baseline) | 8.05% | 5.18% | 0.589 | 0/50 |
+| winnow roles + the above | **4.68%** | **3.34%** | **0.667** | **28/50** |
+
+Only 28 of 50 headings are found over the full book, against 9/9 on chapters
+1–9. This is the biggest open structural defect; see next steps.
 
 ### Model findings (details in the AGENTS.md model table and decision log)
 
@@ -61,7 +69,12 @@ Full book with winnow roles: FULL_BOOK_RESULT
 6. Remaining known defects, from `eval`'s most frequent differences:
    - Paragraph precision is ~0.59, so there are still false paragraph starts.
      Look at where they come from.
-   - Some headings lose a line: "IV." without "CHAPTER" (p21), and "CHAPTER" without "IX." (p40).
+   - **Headings: only 28/50 over the full book.** Find which chapter pages
+     lose their heading. The real chapter-start pages are listed in
+     `experiments/probe_page_types.py`. Also "IV." without "CHAPTER" (p21),
+     and "CHAPTER" without "IX." (p40).
+   - Frequent differences: stray `"` and `I`/`1` confusions (OCR), and lone
+     dashes ("—", "— I"); the existing text layer splits dashes off.
    - "Digitized by Google" fragments at page bottoms, if any survive.
 7. After that: OCR candidates (a vision LLM via Ollama alongside the text layer),
    then the review UI (M4).
