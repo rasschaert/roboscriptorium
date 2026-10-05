@@ -24,6 +24,8 @@ class Book:
     cover_page: int | None
     # Inclusive, 1-based page range holding the running text.
     body_pages: tuple[int, int]
+    # Name of the golden book under golden/ that this scan is scored against.
+    golden: str | None = None
 
     @classmethod
     def load(cls, root: Path) -> "Book":
@@ -38,6 +40,7 @@ class Book:
             source=root / data.get("source", "source.pdf"),
             cover_page=data.get("cover_page"),
             body_pages=(first, last),
+            golden=data.get("golden"),
         )
 
     @property

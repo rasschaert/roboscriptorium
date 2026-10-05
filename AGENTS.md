@@ -71,6 +71,10 @@ right, then expand.
   - `ir.py`: the IR (`Document`, `Paragraph` with `SourceRef`s back to page lines).
   - `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib).
   - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`.
+  - `golden/`: golden books. `manifest.py` (scans, fetch with sha256 check),
+    `se.py` (derives the faithful reference text from a Standard Ebooks repo),
+    `reference.py` (reads the reference chapters).
+  - `evaluate.py`: CER, WER and paragraph F1 against a golden reference.
 - HTTP: `httpx`. Tests inject `httpx.MockTransport`, so unit tests never need a
   running model server.
 - Lint/format: `ruff` (line length 100). Tests: `pytest`.
@@ -195,8 +199,38 @@ uv run ruff format . && uv run ruff check . && uv run pytest
 
 (Pipeline, review UI and evaluation commands get added here as they land.)
 
-- Golden pages: ~5–10 hand-corrected pages of the target book in `work/<book>/golden/`
-  (gitignored). Quality is measured as CER plus structure metrics against them.
+### Golden books
+
+Public-domain scans paired with a human-checked reference text, which is what
+every change gets measured against. Each lives in `golden/<name>/` **in git**:
+`manifest.toml` (the scans with URL and sha256, page ranges, and the reference
+repo pinned to a commit), the derived chapters in `text/`, and `PROVENANCE.md`.
+
+- The reference text is a **Standard Ebooks** production repo (CC0) with its
+  `[Editorial]` commits undone (`golden derive`), so it is faithful to the
+  scan SE proofread against. Their other fixes, including punctuation matched
+  to that scan, are kept.
+- Scans are never committed. `golden fetch` downloads them into
+  `work/<name>--<scan>/` and writes its `book.toml`. Borrow-only scans have no
+  `url`, so they have to be placed by hand and are then checked by sha256.
+- Only the scan SE used is the same edition as the reference. Other editions
+  differ in spelling, quote style, spaced dashes, "Mrs" vs "Mrs.", and so on,
+  so their scores include edition differences, not just pipeline errors.
+
+```sh
+uv run roboscriptorium golden derive sense-and-sensibility
+uv run roboscriptorium golden fetch sense-and-sensibility
+uv run roboscriptorium eval work/sense-and-sensibility--tauchnitz-1864
+```
+
+`eval` builds the book, prints the scores and the most frequent differences, and
+appends a line to `work/<book>/eval-history.jsonl`.
+
+| Golden book | Scan | Notes |
+| --- | --- | --- |
+| sense-and-sensibility | `tauchnitz-1864` | SE's own scan; matches the reference; old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
+| sense-and-sensibility | `everyman-dent` | Dent, after 1946; yellowed; borrow-only |
+| sense-and-sensibility | `everyman-1992` | Knopf 1992/1997; modern copyrighted introduction; borrow-only |
 
 ## Decision log
 
@@ -218,3 +252,10 @@ uv run ruff format . && uv run ruff check . && uv run pytest
   wide gap in the bottom fifth. Left margin = lower quartile of nearby line
   starts (follows skew, works on short pages). A line-end hyphen before a
   capital is kept.
+- 2026-10-05: Golden books instead of hand-corrected pages of the target book.
+  The reference comes from Standard Ebooks with `[Editorial]` commits undone (458
+  of 469 changes; 11 listed in PROVENANCE.md). A "modernisation pass" (the SE
+  editorial changes as an optional pipeline stage) is a stretch goal.
+- 2026-10-05: M2 baseline, existing text layers only, **no AI in the pipeline yet**:
+  tauchnitz-1864 CER 8.05% / WER 5.18% / paragraph F1 0.589; everyman-dent
+  5.79% / 4.68% / 0.553; everyman-1992 4.16% / 2.63% / 0.379.
