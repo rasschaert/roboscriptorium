@@ -130,6 +130,8 @@ decision that Ollaya can make.
 
 - Desktop app (`Ollaya.app`); serves at `http://127.0.0.1:11435`. No `ollaya` CLI
   on PATH.
+- **Ask the user to pull Ollaya models** (in the desktop app). There is no CLI and
+  no documented pull endpoint, so don't guess one.
 - Jev/TypeSafe-compatible: `/v1/systemone`, `/v1/decisions`, `/v1/models`, plus
   the native `POST /api/decide`.
 - Question types: `choice` (probability per declared option), `score` (ordinal
@@ -259,3 +261,8 @@ appends a line to `work/<book>/eval-history.jsonl`.
 - 2026-10-05: M2 baseline, existing text layers only, **no AI in the pipeline yet**:
   tauchnitz-1864 CER 8.05% / WER 5.18% / paragraph F1 0.589; everyman-dent
   5.79% / 4.68% / 0.553; everyman-1992 4.16% / 2.63% / 0.379.
+- 2026-10-05: laya can't classify line roles. On 300 Tauchnitz lines (auto-labelled
+  against the golden reference) with position and neighbour context:
+  `laya:en` got 196/300 body-vs-other right and called most body lines
+  "artifact"; `laya:multilingual` got 150/300 and called nearly everything
+  "page_number". Next to try: `winnow:e4b`.
