@@ -1,4 +1,5 @@
-"""Client for Ollaya, the local decision-model runtime (Jev-compatible API).
+"""Client for decision models behind a Jev-compatible API: Ollaya's
+`/api/decide`, or Ollama's `/v1/systemone` (e.g. clef-flash).
 
 Use it for questions whose possible answers are known in advance. A bare string
 is ambiguous to a decision model, so pass a dict state with context (position on
@@ -48,9 +49,16 @@ class Answer:
 
 
 class OllayaClient:
-    def __init__(self, base_url: str, model: str, client: httpx.Client | None = None):
+    def __init__(
+        self,
+        base_url: str,
+        model: str,
+        client: httpx.Client | None = None,
+        endpoint: str = "/api/decide",
+    ):
         self.model = model
-        self._http = client or httpx.Client(base_url=base_url, timeout=60)
+        self.endpoint = endpoint
+        self._http = client or httpx.Client(base_url=base_url, timeout=300)
 
     def models(self) -> list[str]:
         resp = self._http.get("/v1/models")
@@ -74,6 +82,6 @@ class OllayaClient:
         }
         if image_png is not None:
             payload["images"] = [base64.b64encode(image_png).decode()]
-        resp = self._http.post("/api/decide", json=payload)
+        resp = self._http.post(self.endpoint, json=payload)
         resp.raise_for_status()
         return {name: Answer.from_json(a) for name, a in resp.json()["answers"].items()}

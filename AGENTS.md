@@ -18,6 +18,8 @@ starting; keep it true.
   for now. Run lint and tests before every commit.
 - **This file is the single source of agent instructions.** Claude Code reads
   AGENTS.md natively; don't add a `CLAUDE.md`.
+- **Read `HANDOVER.md` at the start of a session** for where work stopped, and
+  rewrite it at the end of one.
 - **Installs:** Homebrew tools, Python deps and Ollama/Ollaya models may be
   installed freely. Record each one under [Environment](#environment).
 - **Handholding first.** Prefer flagging uncertain output for human review over
@@ -75,6 +77,7 @@ right, then expand.
   - `ir.py`: the IR (`Document`, `Paragraph` with `SourceRef`s back to page lines).
   - `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib).
   - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`.
+  - `experiments/`: throwaway probes for comparing models (line roles, page types).
   - `golden/`: golden books. `manifest.py` (scans, fetch with sha256 check),
     `se.py` (derives the faithful reference text from a Standard Ebooks repo),
     `reference.py` (reads the reference chapters).
@@ -186,7 +189,7 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | Ollaya | `winnow:e4b` | **Line roles (in use)** | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
 | Ollaya | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
 | Ollaya | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
-| Ollama | `clef-flash:9b` | Decisions with vision, on GPU, 256K context | pulled, unevaluated. Endpoint `/v1/systemone` on Ollama |
+| Ollama | `clef-flash:9b` | Line roles and page types (candidate default) | Line roles: 60/60 at P(body) ≥ 0.5 (its probabilities are softer than winnow's, so don't use 0.9). Pages: 19/23, low confidence where it errs. ~0.8 s/line and ~3.9 s/page, measured under load. Endpoint `/v1/systemone`; raw base64 PNG/JPEG/WebP in `images`; up to 64 questions per call; 64K context. Confidence = how concentrated the probabilities are, not P(correct) |
 | Ollama | `gemma4:latest` | Vision OCR / correction candidate | available, unevaluated |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
 
@@ -295,3 +298,6 @@ appends a line to `work/<book>/eval-history.jsonl`.
   0.697, headings 0/9 → 9/9. That combines the roles, a cross-page repetition
   feature, the "a chapter heading appears once" rule, and closing spaces before
   punctuation.
+- 2026-10-05: `clef-flash:9b` (Ollama) beats winnow on the line-role probe
+  (60/60 vs 58/60) and matches decider on page types with better-calibrated
+  confidence. It's the next default candidate; see HANDOVER.md.
