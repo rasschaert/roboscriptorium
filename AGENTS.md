@@ -15,6 +15,8 @@ starting; keep it true.
   pages live in `work/` (gitignored). Commit only code, prompts, question sets,
   configs and synthetic test fixtures.
 - **Git:** signed commits straight to `main`; no PRs for now.
+- **This file is the single source of agent instructions.** Claude Code reads
+  AGENTS.md natively; don't add a `CLAUDE.md`.
 - **Installs:** Homebrew tools, Python deps and Ollama/Ollaya models may be
   installed freely. Record each one under [Environment](#environment).
 - **Handholding first.** Prefer flagging uncertain output for human review over
