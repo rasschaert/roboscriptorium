@@ -171,6 +171,7 @@ def evaluate_book(
     typer.echo(
         f"CER {result.cer:.2%}   WER {result.wer:.2%}   paragraph F1 {result.paragraph_f1:.3f}"
         f"   headings {result.headings_found}/{result.headings_expected}"
+        f" (+{result.headings_spurious} spurious)"
     )
     typer.echo(
         f"  paragraphs: precision {result.paragraph_precision:.3f}, "

@@ -385,3 +385,11 @@ disagreements by mistake category.
   Dolittle CER 21% → 5.48%, paragraph F1 0.43 → 0.839 (but 27 headings for
   21 chapters: its two-line headings split). Crime unchanged (0.72%).
   The text-layer cache now carries a version and rebuilds when it changes.
+- 2026-10-06: `eval` now matches headings against the reference chapter
+  headings (an order-preserving alignment maximising similarity) and reports
+  spurious ones; it used to count headings only. Correction: the "50/50" above
+  was 49 real headings plus one false one. Repeats across pages now use an edit
+  budget (one edit per 10 letters) instead of a similarity ratio, because
+  "THE FIFTH CHAPTER" and "THE SIXTH CHAPTER" were ≥ 85% similar; a heading
+  repeated on 3+ other pages is a running head (was 5). Headings now: Sense
+  49/50 (+0 spurious), Dolittle 14 → 20/21 (spurious 13 → 5), Crime 4/8 (+1).

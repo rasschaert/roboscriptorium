@@ -90,3 +90,19 @@ def test_word_boxes_of_one_skewed_line_form_one_line():
     ]
     lines = _visual_lines(words)
     assert [ln.text for ln in lines] == ["when our grandfathers were", "little children"]
+
+
+def test_headings_match_in_order_and_split_subtitles_count():
+    from roboscriptorium.evaluate import match_headings
+
+    expected = ["CHAPTER I.", "CHAPTER II.", "THE FIRST CHAPTER PUDDLEBY", "I", "II"]
+    found = ["CHAPTER I.", "Animal Language", "CHAPTER IL", "THE FIRST CHAPTER", "I", "Il"]
+    assert match_headings(found, expected) == 4
+
+
+def test_a_missing_heading_does_not_shift_later_matches():
+    from roboscriptorium.evaluate import match_headings
+
+    expected = ["CHAPTER XXIV.", "CHAPTER XXV.", "CHAPTER XXVI.", "CHAPTER XXVII."]
+    found = ["CHAPTER XXIV.", "CHAPTER XXVI.", "CHAPTER XXVII."]
+    assert match_headings(found, expected) == 3

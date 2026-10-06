@@ -6,7 +6,8 @@ Metrics:
 - WER: word edits per reference word, comparing lowercase letters and digits only,
   so it measures reading errors and ignores punctuation.
 - Paragraph F1: whether paragraph breaks fall where the reference has them.
-- Headings: how many chapter headings were found, against the reference count.
+- Headings: how many reference chapter headings the output has (matched in order,
+  fuzzily), and how many output headings match none.
 
 Headings are left out of the text comparison on both sides.
 """
@@ -16,6 +17,7 @@ import unicodedata
 from collections import Counter
 from dataclasses import dataclass, field
 
+from rapidfuzz import fuzz
 from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.golden.reference import Chapter
@@ -55,6 +57,7 @@ class Score:
     output_words: int
     headings_found: int
     headings_expected: int
+    headings_spurious: int
     confusions: list[tuple[str, str, int]] = field(default_factory=list)
 
     @property
@@ -70,6 +73,39 @@ def _words_with_breaks(paragraphs: list[str]) -> tuple[list[str], set[int]]:
         starts.add(len(words))
         words += normalise(para).split()
     return words, starts
+
+
+def _heading_key(text: str) -> str:
+    return re.sub(r"[^A-Z0-9]", "", normalise(text).upper())
+
+
+def _same_heading(a: str, b: str) -> bool:
+    if a == b:
+        return True
+    short, long = sorted((a, b), key=len)
+    # A heading split from its subtitle still counts ("THE FIRST CHAPTER" for
+    # "THE FIRST CHAPTER PUDDLEBY"), but "I" is not "II".
+    return fuzz.ratio(a, b) >= 85 or (len(short) >= 8 and long.startswith(short))
+
+
+def match_headings(found: list[str], expected: list[str]) -> int:
+    """How many expected headings appear among the found ones.
+
+    An order-preserving alignment that maximises total similarity, so a missing
+    "CHAPTER XXV." doesn't take "CHAPTER XXVI." and shift every later match.
+    """
+    fk = [_heading_key(t) for t in found]
+    ek = [_heading_key(t) for t in expected]
+    # best[i][j]: (similarity, matches) aligning found[:i] with expected[:j]
+    best = [[(0.0, 0)] * (len(ek) + 1) for _ in range(len(fk) + 1)]
+    for i in range(1, len(fk) + 1):
+        for j in range(1, len(ek) + 1):
+            options = [best[i - 1][j], best[i][j - 1]]
+            if _same_heading(fk[i - 1], ek[j - 1]):
+                sim, n = best[i - 1][j - 1]
+                options.append((sim + fuzz.ratio(fk[i - 1], ek[j - 1]) / 100, n + 1))
+            best[i][j] = max(options)
+    return best[-1][-1][1]
 
 
 def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
@@ -89,6 +125,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         char_edits += Levenshtein.distance(got, want) + (op.tag == "insert") + (op.tag == "delete")
         confusions[(got, want)] += 1
     ref_chars = sum(len(w) + 1 for w in ref_words)
+    matched = match_headings([h.text for h in doc.headings], [ch.heading for ch in reference])
 
     ref_bare = [w for p in reference for para in p.paragraphs for w in _bare_words(para)]
     out_bare = [w for b in doc.paragraphs for w in _bare_words(b.text)]
@@ -105,7 +142,8 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         paragraph_recall=hits / len(ref_starts),
         reference_words=len(ref_words),
         output_words=len(out_words),
-        headings_found=len(doc.headings),
+        headings_found=matched,
         headings_expected=len(reference),
+        headings_spurious=len(doc.headings) - matched,
         confusions=[(got, want, n) for (got, want), n in confusions.most_common(top)],
     )

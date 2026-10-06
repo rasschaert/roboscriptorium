@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from rapidfuzz import fuzz
+from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollaya import OllayaClient
@@ -38,12 +38,13 @@ QUESTIONS = {
         ROLES,
     )
 }
-# Lines whose letters match at least this closely (0–100) count as the same text
-# when looking for repeats across pages.
-REPEAT_SIMILARITY = 85
+# Lines whose letters differ by at most one edit per this many letters count as the
+# same text when looking for repeats across pages: enough for OCR noise ("MONEV"),
+# not for headings that share words ("THE FIFTH CHAPTER", "THE SIXTH CHAPTER").
+REPEAT_LETTERS_PER_EDIT = 10
 # A chapter heading appears once. The model gives this count little weight, so a
 # "heading" whose text recurs on at least this many other pages is a running head.
-HEADING_MAX_REPEATS = 5
+HEADING_MAX_REPEATS = 3
 # Lines this close to the top or bottom of the page are asked about.
 EDGE_LINES_TOP = 2
 EDGE_LINES_BOTTOM = 3
@@ -98,8 +99,9 @@ def _numeral(text: str) -> str:
 class Repeats:
     """How often each page-edge line's text recurs at the edge of other pages.
 
-    Letters match fuzzily, to absorb OCR noise in running heads, but a trailing Roman
-    numeral must match exactly: "CHAPTER II." and "CHAPTER III." are different texts.
+    Letters match within a small edit budget, to absorb OCR noise in running heads,
+    but a trailing Roman numeral must match exactly: "CHAPTER II." and "CHAPTER III."
+    are different texts.
     """
 
     def __init__(self, pages: list[PageText]):
@@ -118,7 +120,8 @@ class Repeats:
         pages: set[int] = set()
         for (other, other_numeral), numbers in self._pages.items():
             if other_numeral == numeral and (
-                other == key or fuzz.ratio(key, other) >= REPEAT_SIMILARITY
+                other == key
+                or Levenshtein.distance(key, other) <= max(1, len(key) // REPEAT_LETTERS_PER_EDIT)
             ):
                 pages |= numbers
         return len(pages - {page_number})
