@@ -31,6 +31,10 @@ SAMPLE = [5, 30, 61, 100, 150, 200, 250, 300, 350, 400, 450, 500]
 XHTML = "{http://www.w3.org/1999/xhtml}"
 
 PROMPTS = {
+    # GLM-OCR's documented task prompt.
+    "glm": "Text Recognition:",
+    # DeepSeek-OCR's documented plain-text prompt.
+    "deepseek": "Free OCR.",
     # TranslateGemma's documented prompt, Dutch to Dutch, with the page as the text.
     "translate": (
         "You are a professional Dutch (nl) to Dutch (nl) translator. Your goal is to accurately "
@@ -198,6 +202,8 @@ def ocr(model: str, image: Path, prompt: str) -> str:
     }
     if model in THINKS_BY_DEFAULT:
         payload["think"] = False
+    if model in NEVER_STOPS:
+        return _until_repeat(payload)
     resp = httpx.post("http://127.0.0.1:11434/api/generate", json=payload, timeout=600)
     if resp.is_error:
         raise RuntimeError(f"{model}: HTTP {resp.status_code}: {resp.text[:300]}")
@@ -205,6 +211,29 @@ def ocr(model: str, image: Path, prompt: str) -> str:
 
 
 THINKS_BY_DEFAULT = {"nemotron3:33b"}
+# Models whose Ollama template has no stop token: they read the page, then start over.
+NEVER_STOPS = {"glm-ocr:bf16"}
+REPEAT_PROBE = 40  # characters of the opening that, seen again, mark the restart
+
+
+def _until_repeat(payload: dict) -> str:
+    """Stream a reading and cut it where the opening comes round again."""
+    out = ""
+    payload = {**payload, "stream": True}
+    with httpx.stream(
+        "POST", "http://127.0.0.1:11434/api/generate", json=payload, timeout=600
+    ) as resp:
+        for line in resp.iter_lines():
+            if not line:
+                continue
+            chunk = json.loads(line)
+            out += chunk.get("response", "")
+            head = out.lstrip()[:REPEAT_PROBE]
+            if len(head) == REPEAT_PROBE and (at := out.find(head, out.index(head) + 1)) > 0:
+                return out[:at]
+            if chunk.get("done"):
+                break
+    return out
 
 
 def run(model: str, prompt: str, pages: list[int]) -> None:

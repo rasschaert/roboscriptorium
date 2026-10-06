@@ -99,6 +99,13 @@ right, then expand.
   - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
     `stages/layout.json`; run by `review`. Picture-only pages are also run turned a
     quarter, to find captions printed sideways.
+  - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)
+    against tesseract's reading of each body page, cached in
+    `stages/tesseract.json`. Where a line's readings differ, clef picks from
+    the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence; both agreeing
+    with clef ≥ 0.3 applies the fix to a copy of the pages before reflow,
+    anything else becomes an `ocr-doubt` review region. Suspects are saved to
+    `stages/ocr-check.json`; `eval --no-check-ocr` skips the stage.
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
     text layer lacks, or reads as scraps because it is printed sideways).
   - `initials.py`: guesses the letter of a decorated initial: the letters that
@@ -218,11 +225,14 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | Ollaya | `laya:multilingual` | Decisions on Dutch text | **unfit for line roles** (see log) |
 | Ollaya | `laya:en` | Decisions on English text | **unfit for line roles** (see log) |
 | Ollaya | `winnow:e4b` | Line roles (previous default) | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
+| Ollaya | `winnow:e4b` (as `check_model`) | Second opinion on OCR suspects, from the line's text only | Dolittle pp. 30–49: 74/90 right alone; its disagreeing with clef marks clef's errors (clef right on only 9/13 of those) |
 | Ollaya | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
 | Ollaya | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
 | Ollama | `clef-flash:9b` | **Line roles (in use)**; page types candidate | Line roles: 60/60 at P(body) ≥ 0.5 (its probabilities are softer than winnow's, so don't use 0.9). Pages: 19/23, low confidence where it errs. ~0.8 s/line and ~3.9 s/page, measured under load. Endpoint `/v1/systemone`; raw base64 PNG/JPEG/WebP in `images`; up to 64 questions per call; 64K context. Confidence = how concentrated the probabilities are, not P(correct) |
 | Ollama | `gemma4:latest` | Vision OCR candidate | Teirlinck 12 pages: CER 0.70% (0.63% with the old-spelling prompt) but **modernises** old Dutch: 41 (27) reform spellings per 12 pages (`tusschen→tussen`, `oogenblik→ogenblik`), plus word swaps (`eenvoud→eenvoudig`). ~22 s/page. Never use alone; pair with tesseract |
 | — | tesseract 5.5.3 + `nld` (tessdata_best) | Plain OCR candidate | Teirlinck 12 pages: CER 0.90%, no modernisation; errors are visual (`,`/`.`, mangled ellipses) and dropped short lines. <1 s/page |
+| Ollama | `glm-ocr:bf16` | OCR candidate (0.9B, document OCR) | Teirlinck 12 pages: **CER 0.38%**, best yet, and faithful (1 accent misread, no modernising); reads `....` as `...`. ~15 s/page under load. Its Ollama template has no stop token: it reads the page, then starts over, so the reading is cut where its opening repeats (`probe_ocr.py`, `NEVER_STOPS`). Prompt `Text Recognition:` |
+| Ollama | `deepseek-ocr:3b` | OCR candidate | Teirlinck 12 pages: CER 0.37% but **modernises** 10× (`vóor→vóór`, `éen→één`, `streelend→strelend`) and keeps line-end hyphens. ~9 s/page. Prompt `Free OCR.`; the grounding/markdown prompt loops |
 | Ollama | `translategemma:4b` | Tried as Dutch→Dutch OCR | **Unfit**: with its translation prompt it paraphrases (`hief`→`heeft`, `trillend opwiegelen`→`trilde omhoog`) and modernises, CER 4.9% on one page; any other prompt gives empty output |
 | Ollama | `translategemma:12b` | Tried as Dutch→Dutch OCR | **Unfit**: its translation prompt hallucinates a scene description; with the old-spelling prompt it transcribes at ~1.4% CER (worse than gemma4 and tesseract), modernises 12×, and loops on one page of 12 (Ollama aborts: "token repeat limit reached"). ~14 s/page |
 | Ollama | `translategemma:27b` | Tried as Dutch→Dutch OCR | **Unfit**: old-spelling prompt, Teirlinck 12 pages: CER 0.99% (gemma4 0.63%), word swaps (`eenvoud→eenvoudig`, `onschuld→onschuldig`), 11 accent/spelling changes. Merged with tesseract it stays at 0.99% with 11 wrong words unflagged. ~30 s/page |
@@ -272,7 +282,9 @@ http://127.0.0.1:8765/ next to scan crops. Keys: `1` running text, `2` heading,
 `3` drop (page furniture, noise), `4` a decorated initial (type the letter it shows; tesseract guesses), `5` image, `6` a caption (kept out of the running text, for its picture); edit the text box first to give the
 text as printed; arrows move. A region with a box can be turned (`r`, or the
 ↺/↻ buttons) and read again by tesseract (`o`); the turn is saved with the answer.
-`-` and `+` zoom the crop out (up to about the whole page) and back in. "Rebuild book" applies the answers and rebuilds
+`-` and `+` zoom the crop out (up to about the whole page) and back in.
+A region where two OCR readings differ shows them as buttons (`a` the text
+layer's, `b`, `c`, … the others) that put that reading in the text box. "Rebuild book" applies the answers and rebuilds
 the EPUB. Flags come from the model's decisions before answers, so the list
 stays put while you work.
 
@@ -574,3 +586,12 @@ disagreements by mistake category.
   Applying only when clef and winnow agree and clef ≥ 0.3: 62 applied, 1
   wrong, 28 left for review. Agreement isn't proof: the wrong unanimous cases
   are the opening-quote blind spot every model shares.
+- 2026-10-06: OCR check stage in the pipeline (`ocrcheck.py`, tesseract as the
+  second reading). Dolittle: CER 4.60% → 2.16%, WER 2.02% → 1.84%, paragraph
+  P/R 0.808/0.942 → 0.815/0.951; 624 suspects: 376 fixed, 105 kept, 143 for
+  review (~0.7 per page).
+- 2026-10-06: Two document-OCR models on the Teirlinck bench: `glm-ocr`
+  CER 0.38% with no modernising (best so far, against gemma4 0.63% and
+  tesseract 0.90%); `deepseek-ocr:3b` 0.37% but modernises old accents and
+  spelling. glm-ocr is the candidate to replace tesseract as the OCR check's
+  second reading.
