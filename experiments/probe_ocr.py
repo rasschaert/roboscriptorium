@@ -197,7 +197,8 @@ def ocr(model: str, image: Path, prompt: str) -> str:
         "options": {"temperature": 0, "num_ctx": 8192},
     }
     resp = httpx.post("http://127.0.0.1:11434/api/generate", json=payload, timeout=600)
-    resp.raise_for_status()
+    if resp.is_error:
+        raise RuntimeError(f"{model}: HTTP {resp.status_code}: {resp.text[:300]}")
     return resp.json()["response"]
 
 
@@ -211,7 +212,13 @@ def run(model: str, prompt: str, pages: list[int]) -> None:
         cached = out_dir / f"{n:04d}.txt"
         t0 = time.time()
         if not cached.exists():
-            cached.write_text(ocr(model, ROOT / "images" / f"p{n:04d}.png", prompt))
+            try:
+                text = ocr(model, ROOT / "images" / f"p{n:04d}.png", prompt)
+            except RuntimeError as exc:
+                # A model stuck in a loop gets no output for that page.
+                print(f"  p{n}: {exc}", flush=True)
+                text = ""
+            cached.write_text(text)
         dt = time.time() - t0
         got = normalise_ocr(cached.read_text())
         edits = Levenshtein.distance(got, ref)

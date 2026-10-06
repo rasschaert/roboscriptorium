@@ -41,8 +41,9 @@ M0–M2 done; M3 (better OCR and decisions) in progress; an early piece of M4
 | `gemma4:latest`, old-spelling prompt | 0.63% | 27 |
 | merge gemma4 + tesseract | **0.54%** | flags 89, 56 of them real errors, ~no silent wrong words |
 | `translategemma:4b` | 4.9% (1 page) | paraphrases; unfit |
+| `translategemma:12b`, old-spelling prompt | ~1.4% on 11 pages; loops on p5 | 12; unfit |
 
-Pending when downloaded: `translategemma:12b`, `:27b`, Nemotron 3 Nano Omni
+Pending when downloaded: `translategemma:27b`, Nemotron 3 Nano Omni
 (33B), `llava:34b`. Run them with
 `uv run python experiments/probe_ocr.py run <model> oldspelling`, then
 `merge <model>@oldspelling tesseract@plain`.
