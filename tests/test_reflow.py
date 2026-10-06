@@ -174,3 +174,18 @@ def test_ragged_right_text_has_no_paragraphs_by_line_length():
     rows = [("Een regel.", 200), ("Nog een regel", 150), ("Derde regel.", 230), ("Vierde", 120)]
     lines = [Line(t, 10, 20 + i * SPACING, x1, 30 + i * SPACING) for i, (t, x1) in enumerate(rows)]
     assert len(reflow([PageText(5, 280, HEIGHT, lines)])) == 1
+
+
+def test_a_closing_double_quote_read_as_single_is_mended():
+    from roboscriptorium.reflow import close_quotes
+
+    assert close_quotes("\"One evening when the Doctor was asleep in his chair'") == (
+        '"One evening when the Doctor was asleep in his chair"'
+    )
+    assert close_quotes("\"You never talked that way to me before.' said he") == (
+        '"You never talked that way to me before." said he'
+    )
+    # A quote within a quote, apostrophes, and curly text stay as they are.
+    nested = "\"She said 'never' to me,\" he said. Don't."
+    assert close_quotes(nested) == nested
+    assert close_quotes("“It is,’ she said") == "“It is,’ she said"

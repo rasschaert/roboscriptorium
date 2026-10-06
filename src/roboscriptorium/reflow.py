@@ -165,9 +165,38 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
             opening = False
     for block in blocks:
         block.text = tidy(block.text)
+        if isinstance(block, Paragraph):
+            block.text = close_quotes(block.text)
         if isinstance(block, Heading):
             block.parts = [tidy(p) for p in block.parts]
     return blocks
+
+
+def close_quotes(text: str) -> str:
+    """Mend a closing double quote that an old OCR layer read as a single one.
+
+    Only in straight-quoted text: a `'` that ends a word while a `"` is open and
+    no `'` is, closes the `"` ("asleep in his chair'" → "asleep in his chair\"").
+    """
+    if any(q in text for q in "“”‘’"):
+        return text
+    chars = list(text)
+    double = single = False
+    for i, c in enumerate(chars):
+        before = chars[i - 1] if i else " "
+        after = chars[i + 1] if i + 1 < len(chars) else " "
+        if c == '"':
+            double = not double
+        elif c != "'" or (before.isalnum() and after.isalnum()):
+            continue
+        elif not before.isspace() and (after.isspace() or after in ".,;:!?—-"):
+            if single:
+                single = False
+            elif double:
+                chars[i], double = '"', False
+        elif before.isspace() or before in '"(':
+            single = True
+    return "".join(chars)
 
 
 def _labels(text: str) -> bool:
