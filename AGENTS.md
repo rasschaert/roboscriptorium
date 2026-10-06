@@ -216,6 +216,7 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | Ollama | `translategemma:27b` | Tried as Dutch→Dutch OCR | **Unfit**: old-spelling prompt, Teirlinck 12 pages: CER 0.99% (gemma4 0.63%), word swaps (`eenvoud→eenvoudig`, `onschuld→onschuldig`), 11 accent/spelling changes. Merged with tesseract it stays at 0.99% with 11 wrong words unflagged. ~30 s/page |
 | Ollama | `llava:34b` | Tried as Dutch OCR | **Unfit**: on one Teirlinck page it invents text and loops ("Hij had geen twijfel aan de verdiensten van…" over and over), CER 406%. ~170 s/page |
 | Ollama | `nemotron3:33b` | Tried as Dutch OCR | **Unfit**: thinks by default (107 s and empty output); with `think: false`, 7 s/page but CER 14% on one Teirlinck page: invented words (`dampwalmen→dampwaarneming`) and modernised (`zijne→zijn`) |
+| — | DocLayout-YOLO (DocStructBench, `layout` group) | Page layout regions from the page image | 20 tricky pages, 0.1–0.5 s/page on MPS. Finds figures, captions, drawn initials, titles (Crime's bare "III"), and furniture as `abandon`. Sees printed text the OCR layer lacks (Dolittle p97 subtitle). Misses Boze tongen's spaced part title (`abandon`). Candidate source of extra flags; see `experiments/probe_layout.py` |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
 
 ## Environment
@@ -478,3 +479,8 @@ disagreements by mistake category.
   furniture from real text (running heads score up to 0.4), so furniture is
   recognised by repetition and page numbers instead. A line counts as centred
   for flagging only with equal margins on both sides and under 80% of a line.
+- 2026-10-06: DocLayout-YOLO probe on 20 tricky pages: worth adding as a flag
+  source for pictures, captions, titles without a heading, and text the OCR
+  layer lacks (Dolittle chapter 9's subtitle is printed, not drawn: the layer
+  just skipped it). Not trusted alone: it called Boze tongen's part title
+  furniture.
