@@ -25,6 +25,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollaya import OllayaClient
+from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PageText
 from roboscriptorium.roles import DecisionCache
@@ -108,29 +109,30 @@ def line_readings(
 
     def save() -> None:
         blob = {"version": READING_VERSION, "model": model, "lines": done}
-        cache.write_text(json.dumps(blob, ensure_ascii=False))
+        write_atomic(cache, json.dumps(blob, ensure_ascii=False))
 
-    def read(item: tuple[PageText, int]) -> tuple[str, str]:
-        page, k = item
-        line = page.lines[k]
-        clip = pymupdf.Rect(line.x0, line.y0, line.x1, line.y1) + (
-            -LINE_PAD,
-            -LINE_PAD,
-            LINE_PAD,
-            LINE_PAD,
-        )
-        with pymupdf.open(pdf) as doc:
-            png = doc[page.number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
-        return key(page, k), read_line(png, model, ollama_url)
-
-    with ThreadPoolExecutor(READ_WORKERS) as pool:
-        for n, (k, text) in enumerate(pool.map(read, todo), 1):
-            done[k] = text
-            if n % SAVE_EVERY == 0:
-                save()
-    if todo:
-        save()
+    # PyMuPDF isn't thread-safe: crops are rendered here, a batch at a time, and
+    # only the model calls run in the pool.
+    with pymupdf.open(pdf) as doc, ThreadPoolExecutor(READ_WORKERS) as pool:
+        for start in range(0, len(todo), SAVE_EVERY):
+            batch = todo[start : start + SAVE_EVERY]
+            crops = [_line_crop(doc, page, k) for page, k in batch]
+            texts = pool.map(lambda png: read_line(png, model, ollama_url), crops)
+            for (page, k), text in zip(batch, texts, strict=True):
+                done[key(page, k)] = text
+            save()
     return {ref: done[key(p, k)] for ref, (p, k) in wanted.items()}
+
+
+def _line_crop(doc: pymupdf.Document, page: PageText, k: int) -> bytes:
+    line = page.lines[k]
+    clip = pymupdf.Rect(line.x0, line.y0, line.x1, line.y1) + (
+        -LINE_PAD,
+        -LINE_PAD,
+        LINE_PAD,
+        LINE_PAD,
+    )
+    return doc[page.number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
 
 
 def read_line(png: bytes, model: str, ollama_url: str) -> str:
@@ -358,4 +360,4 @@ def doubts(suspects: list[Suspect]) -> dict[tuple[int, str], list[str]]:
 
 
 def save(suspects: list[Suspect], path: Path) -> None:
-    path.write_text(json.dumps([asdict(s) for s in suspects], ensure_ascii=False, indent=1))
+    write_atomic(path, json.dumps([asdict(s) for s in suspects], ensure_ascii=False, indent=1))

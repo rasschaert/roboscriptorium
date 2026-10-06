@@ -30,6 +30,39 @@ starting; keep it true.
   are cheap. Cache slow stages per book so reruns stay cheap, and run long
   builds in the background.
 
+## Engineering practices
+
+This project's bugs so far came from a handful of habits. Each rule below names
+the mistake it prevents; check a change against them before committing.
+
+- **A stage returns new data; it never edits its input.** Answers once rewrote
+  the text layer in place, and the review, which keyed on that text, then lost
+  them. If a function must change pages, it returns changed copies.
+- **Say which version of the data a consumer gets.** Raw text layer or
+  corrected copy, model roles or answered roles: name it in the type, field or
+  docstring. A key, cache entry or line reference must come from the version it
+  identifies.
+- **Positions aren't identities.** A line index means nothing once lines are
+  inserted or removed. Carry the original identity (`Line.source`) through any
+  stage that changes the list.
+- **Before finishing, find every reader of what you changed.** Grep the
+  consumers of a function, field or file, and check each one still gets what it
+  expects. The bugs live in the seams.
+- **Test the seams.** A new stage or a change in what flows between stages gets
+  a test through `pipeline.run` (see `tests/test_pipeline.py`), not only unit
+  tests of its parts.
+- **A rule that changes the author's text needs its counterexamples tested.**
+  `close_quotes` turned "the animals' language" into a closing quote. Write the
+  cases where the rule must *not* fire before the ones where it must; when the
+  two can't be told apart, flag for review instead of rewriting.
+- **Measure on every golden book, not the one you're fixing.** A line-grouping
+  change that helped Dolittle doubled Sense's CER.
+- **Shared resources are shared deliberately.** PyMuPDF isn't thread-safe: hold
+  `pdf.PDF_LOCK` wherever threads may meet, render on one thread and pool only
+  the model calls.
+- **Caches survive interruption.** Write them whole (`files.write_atomic`), skip
+  a cut-off last line in append-only logs, and version their format.
+
 ## Purpose and scope
 
 An end-to-end tool that turns books that aren't EPUBs into clean EPUB 3 files,

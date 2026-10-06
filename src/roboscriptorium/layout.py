@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pymupdf
 
+from roboscriptorium.files import write_atomic
+
 REPO = "juliozhao/DocLayout-YOLO-DocStructBench"
 WEIGHTS = "doclayout_yolo_docstructbench_imgsz1024.pt"
 IMAGE_SIZE = 1024
@@ -75,7 +77,7 @@ def detect(pdf: Path, numbers: list[int], cache: Path) -> dict[int, list[Region]
             "version": VERSION,
             "pages": {str(n): [asdict(r) for r in rs] for n, rs in sorted(done.items())},
         }
-        cache.write_text(json.dumps(blob, indent=1))
+        write_atomic(cache, json.dumps(blob, indent=1))
     return {n: done[n] for n in numbers}
 
 

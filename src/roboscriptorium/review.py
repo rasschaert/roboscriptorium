@@ -26,7 +26,7 @@ from roboscriptorium import corrections, ocr
 from roboscriptorium import flags as F
 from roboscriptorium.corrections import ACTIONS, Corrections
 from roboscriptorium.disagreements import PIPELINE, SCAN, UNSURE, Disagreement, Verdicts
-from roboscriptorium.pdf import PageText
+from roboscriptorium.pdf import PDF_LOCK, PageText
 
 # Crops show this many lines around the disagreement, at this zoom (PDF points → pixels).
 CROP_CONTEXT_LINES = 1
@@ -88,7 +88,7 @@ class Scan:
         x1 = max(ln.x1 for ln in page.lines) + 6
         target = pymupdf.Rect(x0, page.lines[first].y0 - 2, x1, page.lines[last].y1 + 2)
         clip = pymupdf.Rect(x0, page.lines[lo].y0 - 6, x1, page.lines[hi].y1 + 6)
-        with pymupdf.open(self.pdf) as doc:
+        with PDF_LOCK, pymupdf.open(self.pdf) as doc:
             pdf_page = doc[page_number - 1]
             clip = _widened(clip, out, pdf_page.rect)
             pdf_page.draw_rect(target, color=(0.9, 0.6, 0), fill=(1, 0.85, 0.3), fill_opacity=0.25)
@@ -109,7 +109,7 @@ class Scan:
         """
         x0, y0, x1, y1 = box
         target = pymupdf.Rect(x0 - 2, y0 - 2, x1 + 2, y1 + 2)
-        with pymupdf.open(self.pdf) as doc:
+        with PDF_LOCK, pymupdf.open(self.pdf) as doc:
             pdf_page = doc[page_number - 1]
             if turn in (90, 270):
                 clip = pymupdf.Rect(x0 - 40, y0, x1 + 40, y1) & pdf_page.rect
@@ -136,7 +136,7 @@ class Scan:
         turn: int = 0,
     ) -> str:
         """Tesseract's reading of a region, as a draft for the human."""
-        with pymupdf.open(self.pdf) as doc:
+        with PDF_LOCK, pymupdf.open(self.pdf) as doc:
             zoom = OCR_DPI / 72
             pix = doc[page_number - 1].get_pixmap(
                 matrix=pymupdf.Matrix(zoom, zoom), clip=pymupdf.Rect(*box)
@@ -144,7 +144,7 @@ class Scan:
             return ocr.tesseract(_turned(pix, turn), lang, single_char)
 
     def full_page(self, page_number: int) -> bytes:
-        with pymupdf.open(self.pdf) as doc:
+        with PDF_LOCK, pymupdf.open(self.pdf) as doc:
             return (
                 doc[page_number - 1]
                 .get_pixmap(matrix=pymupdf.Matrix(PAGE_ZOOM, PAGE_ZOOM))
@@ -262,7 +262,7 @@ class RegionReview:
         beside = corrections.lines_beside(page, f.box)
         if not beside or self.guess_letter is None:
             return ""
-        with pymupdf.open(self.scan.pdf) as doc:
+        with PDF_LOCK, pymupdf.open(self.scan.pdf) as doc:
             png = (
                 doc[f.page - 1]
                 .get_pixmap(matrix=pymupdf.Matrix(3, 3), clip=pymupdf.Rect(*f.box))
@@ -276,7 +276,7 @@ class RegionReview:
         return asdict(self.corrections.record(flag, body["action"], body.get("text"), turn))
 
     def rebuild(self) -> dict:
-        with self._lock:
+        with self._lock, PDF_LOCK:
             pages, self.regions, self.applied = self._rebuild()
             self.scan = Scan(self.scan.pdf, pages)
         return self.state()
