@@ -41,28 +41,20 @@ for regions of any book.
 | De aanslag (born-digital PDF) | 0.15% | 0.17% | 0.951 | 26/26 (+0) |
 | Boze tongen (Dutch scan) | 1.36% | 1.15% | 0.749 | 13/18 (+2) |
 
-### Open experiment: turning sideways pages
+### Sideways plates: done
 
-Landscape plates (Dolittle pp. 25, 57, 83, 87, 200) print picture and caption
-turned 90° either way; the text layer reads the caption as scraps. The review
-page now handles a region whose lines are a single column of scraps (p25): it
-reads the region at 90° and 270°, keeps the turn that gives words, and shows
-it upright. Generalising to whole pages was probed and **does not work yet**:
-scoring four turns by tesseract word confidence ties 90° with 180°; scoring by
-dictionary words picks right on 3/6 pages (drawings read as junk words);
-scoring the scrap lines' strip alone also fails where the scraps are spread
-over the drawing (p57, p83, p200). Truth for the six pages: 25→90, 57→90,
-83→270, 87→270, 198→0, 200→90 (clockwise turn that makes text upright).
-Ideas: run the layout model on each turn and keep the turn where it finds a
-`figure_caption`; or OCR only thin strips along each page edge, where these
-captions sit.
+The layout model, run on picture-only pages turned 90° and 270°, finds the
+caption of every landscape plate in Dolittle (pp. 6, 25, 57, 83, 87, 90, 107,
+200; all turn 90°) and nothing on the other books. The review page shows each
+caption as a `rotated` region, read upright by tesseract. Not yet tried in the
+browser on the new pages (only p25 has been seen there).
 
 ## Next steps, in order
 
 1. Let the user continue the Dolittle region review; then rebuild and check
    the EPUB (drop caps, inserted p97 text, heading parts) with epubcheck.
-2. Sideways pages (above), then a figures stage: crop pictures (answered
-   `image`), place them with their captions, decorated initials as optional
+2. A figures stage: crop pictures (answered `image`), turn landscape plates
+   upright, place them with their captions, decorated initials as optional
    artwork.
 3. OCR stage in the pipeline (gemma4 + tesseract merge with flags), first for
    regions the review flags and for Boze tongen's I/l and quote errors

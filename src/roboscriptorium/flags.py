@@ -8,7 +8,9 @@ the same treatment form one region.
 With layout regions from the page image (layout.py), pictures become regions
 too, captions and titles are marked on their lines, and text the text layer
 lacks (a region with no lines in it) becomes a region of its own: a box on the
-page rather than a run of lines.
+page rather than a run of lines. A caption printed sideways (found with the page
+turned, or read by the text layer as a column of scraps) is one region, and the
+rest of its page is left to the picture.
 """
 
 import hashlib
@@ -43,7 +45,7 @@ REASONS = {
     "caption": "a caption (the layout model)",
     "layout-title": "a title to the layout model, but not a heading here",
     "missing-text": "text the layout model sees, but the text layer lacks",
-    "rotated": "text printed sideways (the text layer reads scraps)",
+    "rotated": "text printed sideways",
 }
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
@@ -187,6 +189,8 @@ def _layout(
         if region.label == "figure":
             in_pictures |= set(inside)
             flags.append(_box_flag(page, region, inside, "picture"))
+        elif region.turned:
+            flags.append(_box_flag(page, region, inside, "rotated"))
         elif region.label in ("figure_caption", "title") and inside:
             reason = "caption" if region.label == "figure_caption" else "layout-title"
             for i in inside:
@@ -251,9 +255,15 @@ def find(
     flags: list[Flag] = []
     furniture = _Furniture(R.Repeats(pages), R._page_offset(pages))
     for page in pages:
-        line_reasons, in_pictures, boxes = _layout(page, (layout or {}).get(page.number, []))
-        if sideways(page):
-            flags += [f for f in boxes if "picture" in f.reasons] + [_sideways_flag(page, roles)]
+        regions = (layout or {}).get(page.number, [])
+        line_reasons, in_pictures, boxes = _layout(page, regions)
+        if any(r.turned for r in regions) or sideways(page):
+            if not any(r.turned for r in regions):
+                boxes = [f for f in boxes if "picture" in f.reasons] + [_sideways_flag(page, roles)]
+            flags += [
+                replace(f, treatment=_treatment_of(page, f, roles)) if f.last >= f.first else f
+                for f in boxes
+            ]
             continue
         page_flags: list[Flag] = []
         run: list[tuple[int, str, list[str]]] = []

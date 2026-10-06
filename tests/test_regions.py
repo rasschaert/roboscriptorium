@@ -80,6 +80,36 @@ def test_sideways_caption_becomes_one_region():
     assert found[0].box[1] < 164 and found[0].box[3] > 271
 
 
+def test_turned_caption_is_one_region_and_the_scraps_over_the_picture_are_not_judged():
+    from roboscriptorium.layout import Region
+
+    scraps = ["W", "a", "~", "n", "e", "o", "r"]
+    lines = [
+        Line(s, 20 + 30 * i, 100 + 40 * i, 26 + 30 * i, 109 + 40 * i) for i, s in enumerate(scraps)
+    ]
+    lines.append(Line("an", 280, 200, 290, 210))
+    page = PageText(83, 319, 493, lines)
+    layout = {
+        83: [
+            Region("figure", 0.9, 10, 20, 270, 470),
+            Region("figure_caption", 0.8, 275, 30, 300, 460, turned=True),
+        ]
+    }
+    found = flags.find([page], {}, layout)
+    assert [(f.first, f.last, f.reasons) for f in found] == [
+        (0, 6, ["picture"]),
+        (7, 7, ["rotated"]),
+    ]
+
+
+def test_sideways_regions_are_mapped_back_onto_the_upright_page():
+    from roboscriptorium.layout import _unturn
+
+    # A 100×200 page: a strip down its right edge is a strip along the bottom turned 90°.
+    assert _unturn([10, 80, 190, 100], 90, 100, 200) == (80, 10, 100, 190)
+    assert _unturn([10, 0, 190, 20], 270, 100, 200) == (80, 10, 100, 190)
+
+
 def test_initial_candidates_come_from_the_word_it_begins():
     from roboscriptorium import initials
 

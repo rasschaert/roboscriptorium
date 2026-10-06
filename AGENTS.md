@@ -97,7 +97,8 @@ right, then expand.
     flags pictures, captions, titles that aren't headings, and text the text
     layer lacks (one region per page, as an area rather than lines).
   - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
-    `stages/layout.json`; run by `review`.
+    `stages/layout.json`; run by `review`. Picture-only pages are also run turned a
+    quarter, to find captions printed sideways.
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
     text layer lacks, or reads as scraps because it is printed sideways).
   - `initials.py`: guesses the letter of a decorated initial: the letters that
@@ -226,7 +227,7 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | Ollama | `translategemma:27b` | Tried as Dutch→Dutch OCR | **Unfit**: old-spelling prompt, Teirlinck 12 pages: CER 0.99% (gemma4 0.63%), word swaps (`eenvoud→eenvoudig`, `onschuld→onschuldig`), 11 accent/spelling changes. Merged with tesseract it stays at 0.99% with 11 wrong words unflagged. ~30 s/page |
 | Ollama | `llava:34b` | Tried as Dutch OCR | **Unfit**: on one Teirlinck page it invents text and loops ("Hij had geen twijfel aan de verdiensten van…" over and over), CER 406%. ~170 s/page |
 | Ollama | `nemotron3:33b` | Tried as Dutch OCR | **Unfit**: thinks by default (107 s and empty output); with `think: false`, 7 s/page but CER 14% on one Teirlinck page: invented words (`dampwalmen→dampwaarneming`) and modernised (`zijne→zijn`) |
-| — | DocLayout-YOLO (DocStructBench, `layout` group) | Page layout regions from the page image | 20 tricky pages, 0.1–0.5 s/page on MPS. Finds figures, captions, drawn initials, titles (Crime's bare "III"), and furniture as `abandon`. Sees printed text the OCR layer lacks (Dolittle p97 subtitle). Misses Boze tongen's spaced part title (`abandon`). Candidate source of extra flags; see `experiments/probe_layout.py` |
+| — | DocLayout-YOLO (DocStructBench, `layout` group) | Page layout regions from the page image | 20 tricky pages, 0.1–0.5 s/page on MPS. Finds figures, captions, drawn initials, titles (Crime's bare "III"), and furniture as `abandon`. Sees printed text the OCR layer lacks (Dolittle p97 subtitle). Misses Boze tongen's spaced part title (`abandon`). Run on a page turned a quarter, it finds a landscape plate's caption (8/8 Dolittle plates, no false positives on 4 books) but not which way is up. See `experiments/probe_layout.py`, `probe_orientation.py` |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
 
 ## Environment
@@ -524,3 +525,13 @@ disagreements by mistake category.
   confidence ties 90° with 180°; by dictionary words it is right on 3/6
   (drawings read as junk words); on the scrap lines' strip alone it fails
   where scraps spread over the drawing. Not adopted; see HANDOVER.md.
+- 2026-10-06: Sideways plates found with the layout model. A page with a picture
+  (≥ 0.5) and no text is run again turned 90° and 270°: on a landscape plate the
+  model then finds the caption, and on blank, stamp or title pages nothing
+  (the figure gate removes Crime's bindery stamp and Lady into Fox's half-title).
+  It labels the strip under a figure a caption whichever side is up, so the
+  review page still picks 90° or 270° by reading the caption box with
+  tesseract (tesseract's default mode reads a vertical block on its own, so it
+  only separates 90° from 270°, never upright from sideways). Dolittle: 8/8
+  plates (pp. 6, 25, 57, 83, 87, 90, 107, 200), all turning 90°; the earlier
+  "truth" of 270° for pp. 83 and 87 was wrong.
