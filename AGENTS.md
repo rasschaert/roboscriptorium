@@ -24,6 +24,9 @@ starting; keep it true.
   installed freely. Record each one under [Environment](#environment).
 - **Handholding first.** Prefer flagging uncertain output for human review over
   guessing silently. Automation increases only as measured quality earns it.
+- **Quality over speed.** Pick the more accurate method even when it is several
+  times slower; a book is built once and reread for years. Cache slow stages per
+  book so reruns stay cheap, and run long builds in the background.
 
 ## Purpose and scope
 
@@ -595,3 +598,10 @@ disagreements by mistake category.
   tesseract 0.90%); `deepseek-ocr:3b` 0.37% but modernises old accents and
   spelling. glm-ocr is the candidate to replace tesseract as the OCR check's
   second reading.
+- 2026-10-06: **Quality over speed** (standing rule above). The OCR check's
+  second reading is glm-ocr on each line's crop, not tesseract on the page,
+  though it is ~10× slower (~30 s against ~3 s per page). On Dolittle pp.
+  30–49: 67 suspects instead of 99; the second reading right 93% of the time
+  against 62%; clef right 96% against 88%; with clef and winnow agreeing and
+  clef ≥ 0.3, 47 fixes applied with none wrong and 8 left for review, against
+  62 applied with 1 wrong and 28 for review.
