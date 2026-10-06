@@ -71,14 +71,14 @@ app.add_typer(golden_app, name="golden")
 
 @golden_app.command("derive")
 def golden_derive(name: str, epub: Path | None = None) -> None:
-    """Regenerate golden/<name>/text from its Project Gutenberg transcription."""
+    """Regenerate a golden book's reference text from its Project Gutenberg transcription."""
     golden = Golden.load(name)
     ref = golden.reference
     epub = epub or gutenberg.download(ref.url, Path("work/.cache/gutenberg") / f"{ref.ebook}.epub")
-    chapters = gutenberg.write_reference(epub, ref.ebook, ref.url, ref.chapters, golden.root)
+    chapters = gutenberg.write_reference(epub, ref.ebook, ref.url, ref.chapters, golden.data_root)
     typer.echo(
         f"{len(chapters)} chapters, {sum(len(c.paragraphs) for c in chapters)} paragraphs "
-        f"(see {golden.root / 'PROVENANCE.md'})"
+        f"(see {golden.data_root / 'PROVENANCE.md'})"
     )
 
 
@@ -129,7 +129,7 @@ def _build_golden(
 
 def _verdicts(book: Book) -> Verdicts:
     scan_id = book.root.name.split("--", 1)[-1]
-    return Verdicts(Golden.load(book.golden).root / "verdicts" / f"{scan_id}.jsonl")
+    return Verdicts(Golden.load(book.golden).verdicts_dir / f"{scan_id}.jsonl")
 
 
 @app.command("review")

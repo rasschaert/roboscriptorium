@@ -296,6 +296,7 @@ disagreements by mistake category.
 | Golden book | Scan | Notes |
 | --- | --- | --- |
 | the-nature-of-a-crime | `doubleday-1924` | **The scan Gutenberg #75172 was made from**; 94 body pages, short; Times OCR layer; running heads |
+| lady-into-fox | `chatto-1922` | **Held out: score it to check that changes carry over, never tune on it.** 1922 first edition, same as Gutenberg #10337; one continuous text, no chapters; wood engravings. **EU copyright until 2051**: only the manifest is in git, the reference and verdicts live in `work/golden/lady-into-fox/` (`eu_copyright_until` in the manifest) |
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
 | het-ivoren-aapje (probe only) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py` |
@@ -421,3 +422,10 @@ disagreements by mistake category.
   number (file page minus the book's usual offset) or repeats an earlier
   heading line is a running head. Dolittle headings 20/21 (+5) → 21/21 (+1: the
   book title), CER 4.82% → 4.80%; Sense 49/50 and Crime 8/8 unchanged.
+- 2026-10-06: First held-out golden book, *Lady into Fox* (Chatto & Windus 1922
+  = Gutenberg #10337), never to be tuned on. A golden book under EU copyright
+  sets `eu_copyright_until` and keeps its text and verdicts in `work/golden/`.
+  First score: CER 0.93%, WER 0.33%, paragraph F1 0.841. Most errors: this
+  printing spaces opening quotes (`" What`). *De kleine Johannes* was rejected:
+  the scan is a 1986 Querido edition in modern spelling, Gutenberg #10819 is in
+  the old spelling.

@@ -4,6 +4,9 @@ Each lives in `golden/<name>/` (in git): `manifest.toml`, the reference chapters
 derived from a Project Gutenberg transcription in `text/`, and `PROVENANCE.md`.
 `standard-ebooks/` holds the Standard Ebooks text, kept for later style work. Scans are fetched into
 `work/<name>--<scan id>/`, which is an ordinary book directory.
+
+A book still under copyright in the EU keeps only its manifest in git; its
+reference text, provenance and verdicts live in `work/golden/<name>/`.
 """
 
 import hashlib
@@ -15,6 +18,7 @@ from pathlib import Path
 import httpx
 
 GOLDEN_ROOT = Path("golden")
+PRIVATE_ROOT = Path("work/golden")
 
 
 @dataclass(frozen=True)
@@ -49,14 +53,24 @@ class Golden:
     reference: Gutenberg
     standard_ebooks: StandardEbooks | None
     scans: list[Scan]
+    eu_copyright_until: int | None = None  # last year of EU copyright, if any
 
     @property
     def root(self) -> Path:
         return GOLDEN_ROOT / self.name
 
     @property
+    def data_root(self) -> Path:
+        """Where the reference text and verdicts live: in git only if public domain."""
+        return PRIVATE_ROOT / self.name if self.eu_copyright_until else self.root
+
+    @property
     def text_dir(self) -> Path:
-        return self.root / "text"
+        return self.data_root / "text"
+
+    @property
+    def verdicts_dir(self) -> Path:
+        return self.data_root / "verdicts"
 
     @property
     def se_dir(self) -> Path:
@@ -93,6 +107,7 @@ class Golden:
             Gutenberg(ref["gutenberg"], ref["url"], tuple(ref["chapters"])),
             StandardEbooks(se["repo"], se["commit"]) if se else None,
             scans,
+            data.get("eu_copyright_until"),
         )
 
 

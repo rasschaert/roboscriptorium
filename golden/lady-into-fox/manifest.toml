@@ -1,0 +1,23 @@
+title = "Lady into Fox"
+author = "David Garnett"
+language = "en-GB"
+# Garnett died in 1981. Public domain in the US, so on Gutenberg, but not in the
+# EU: only this manifest is in git.
+eu_copyright_until = 2051
+
+# The reference text: Project Gutenberg's transcription of the 1922 first edition.
+# One continuous text, no chapters.
+[reference]
+gutenberg = 10337
+url = "https://www.gutenberg.org/cache/epub/10337/pg10337-images-3.epub"
+chapters = ["LADY INTO FOX", "LADY INTO FOX"]
+
+# London, Chatto & Windus, 1922, first edition, with R. A. Garnett's wood
+# engravings; a Trent University library copy. Held out: scored to check that
+# changes carry over, never tuned on.
+[[scans]]
+id = "chatto-1922"
+url = "https://archive.org/download/ladyintofox0000garn/ladyintofox0000garn.pdf"
+sha256 = "31cdfa85b77643f9f3e51af1258705daa3d64ce0568b2b38bb040fb0a993b628"
+cover_page = 1
+body_pages = [13, 103]

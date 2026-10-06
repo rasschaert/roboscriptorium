@@ -30,6 +30,7 @@ M0–M2 done; M3 (better OCR and decisions) in progress; an early piece of M4
 | Sense, Tauchnitz, full | clef roles | 3.00% | 1.37% | 0.811 | 49/50 (+0 spurious) |
 | Crime | clef roles | 0.71% | 0.52% | 0.972 | 8/8 (+1: the book title) |
 | Dolittle | clef roles | 4.80% | 2.20% | 0.861 | 21/21 (+1: the book title) |
+| Lady into Fox (**held out**) | clef roles | 0.93% | 0.33% | 0.841 | 0/1 (the title is also the running head) |
 
 The visual-line fix (word boxes grouped by vertical overlap) made most of the
 Sense and Dolittle gains; see the decision log.
