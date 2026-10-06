@@ -556,3 +556,8 @@ disagreements by mistake category.
   spelled out by tesseract (eng) reading the rendered word: what it reads
   between the known letters must be a ligature, majority per glyph. Dutch
   tesseract reads Th as "Ih". De aanslag: 7/7 resolved, CER 0.15% → 0.136%.
+- 2026-10-06: Old OCR layers (Dolittle, Sense) flatten quotes to straight ones
+  and often read a closing ” as `'` ("asleep in his chair'"). In
+  straight-quoted text, a word-final `'` while a `"` is open and no `'` is
+  now closes the `"`. Dolittle CER 4.76% → 4.60%, WER 2.18% → 2.02%; Sense
+  unchanged. Newer layers keep the printed curly quotes.

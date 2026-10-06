@@ -36,7 +36,7 @@ for regions of any book.
 | --- | --- | --- | --- | --- |
 | Sense, Tauchnitz (other edition than the reference) | 2.99% | 1.36% | 0.811 / 0.810 | 50/50 (+0) |
 | Crime | 0.63% | 0.44% | 0.966 / 0.986 | 8/8 (+1: the book title) |
-| Dolittle | 4.76% | 2.18% | 0.800 / 0.941 | 21/21 (+1: the book title) |
+| Dolittle | 4.60% | 2.02% | 0.808 / 0.942 | 21/21 (+1: the book title) |
 | Lady into Fox (**held out**) | 0.93% | 0.33% | 0.811 / 0.874 | 0/1 (title = running head) |
 | De aanslag (born-digital PDF) | 0.14% | 0.14% | 1.000 / 0.907 | 26/26 (+0) |
 | Boze tongen (Dutch scan) | 1.36% | 1.15% | 0.888 / 0.768 | 13/18 (+2) |
