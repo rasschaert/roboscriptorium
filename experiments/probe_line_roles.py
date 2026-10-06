@@ -13,7 +13,7 @@ model = sys.argv[1]
 PER_CLASS = int(sys.argv[2]) if len(sys.argv) > 2 else 30
 d = "work/sense-and-sensibility--tauchnitz-1864/stages/"
 labels = json.load(open(d + "line-labels.json"))
-pages = json.load(open(d + "textlayer.json"))
+pages = json.load(open(d + "textlayer.json"))["pages"]
 random.seed(7)
 body = [k for k, v in labels.items() if v == "body"]
 other = [k for k, v in labels.items() if v == "other"]

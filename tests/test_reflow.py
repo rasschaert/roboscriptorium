@@ -1,5 +1,5 @@
 from roboscriptorium.ir import Heading, Paragraph, SourceRef
-from roboscriptorium.pdf import Line, PageText
+from roboscriptorium.pdf import Line, PageText, _visual_lines
 from roboscriptorium.reflow import join, reflow, tidy
 from roboscriptorium.roles import LineRole
 
@@ -78,3 +78,15 @@ def test_roles_drop_artefacts_and_keep_blocks_in_page_order():
 def test_tidy_removes_space_before_punctuation_only():
     assert tidy("Sussex , and ; then !") == "Sussex, and; then!"
     assert tidy("a — b") == "a — b"
+
+
+def test_word_boxes_of_one_skewed_line_form_one_line():
+    words = [  # one printed line, word boxes differing by up to 5 pt at the top
+        Line("when", 118, 231.7, 150, 246.0),
+        Line("our", 155, 233.4, 175, 245.4),
+        Line("grandfathers", 181, 236.5, 250, 247.8),
+        Line("were", 255, 233.0, 280, 245.7),
+        Line("little children", 105, 250.1, 180, 261.4),  # next line, 16 pt down
+    ]
+    lines = _visual_lines(words)
+    assert [ln.text for ln in lines] == ["when our grandfathers were", "little children"]

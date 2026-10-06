@@ -6,8 +6,12 @@ from pathlib import Path
 
 import pymupdf
 
-# Fragments whose tops differ by less than this (in points) are one visual line.
-SAME_LINE_TOLERANCE = 3.0
+# A fragment belongs to a visual line when it overlaps the line's vertical span by
+# at least this share of its own height. OCR layers box each word separately, and
+# the tops of one line's words differ by several points with ascenders and skew.
+SAME_LINE_OVERLAP = 0.5
+# Bumped whenever line extraction changes, so cached text layers are rebuilt.
+TEXT_LAYER_VERSION = 2
 
 
 @dataclass(frozen=True)
@@ -30,11 +34,15 @@ class PageText:
 def _visual_lines(fragments: list[Line]) -> list[Line]:
     """Merge fragments that share a baseline, ordered top to bottom."""
     merged: list[list[Line]] = []
-    for frag in sorted(fragments, key=lambda f: (f.y0, f.x0)):
-        if merged and abs(frag.y0 - merged[-1][0].y0) < SAME_LINE_TOLERANCE:
-            merged[-1].append(frag)
-        else:
-            merged.append([frag])
+    for frag in sorted(fragments, key=lambda f: ((f.y0 + f.y1) / 2, f.x0)):
+        if merged:
+            top = min(f.y0 for f in merged[-1])
+            bottom = max(f.y1 for f in merged[-1])
+            overlap = min(bottom, frag.y1) - max(top, frag.y0)
+            if overlap >= SAME_LINE_OVERLAP * (frag.y1 - frag.y0):
+                merged[-1].append(frag)
+                continue
+        merged.append([frag])
     lines = []
     for group in merged:
         group.sort(key=lambda f: f.x0)
@@ -69,12 +77,14 @@ def read_text_layer(pdf: Path) -> list[PageText]:
 def cached_text_layer(pdf: Path, cache: Path) -> list[PageText]:
     if cache.exists():
         raw = json.loads(cache.read_text())
-        return [
-            PageText(p["number"], p["width"], p["height"], [Line(**ln) for ln in p["lines"]])
-            for p in raw
-        ]
+        if isinstance(raw, dict) and raw.get("version") == TEXT_LAYER_VERSION:
+            return [
+                PageText(p["number"], p["width"], p["height"], [Line(**ln) for ln in p["lines"]])
+                for p in raw["pages"]
+            ]
     pages = read_text_layer(pdf)
-    cache.write_text(json.dumps([asdict(p) for p in pages], ensure_ascii=False, indent=1))
+    blob = {"version": TEXT_LAYER_VERSION, "pages": [asdict(p) for p in pages]}
+    cache.write_text(json.dumps(blob, ensure_ascii=False, indent=1))
     return pages
 
 

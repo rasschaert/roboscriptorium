@@ -27,10 +27,12 @@ M0–M2 done; M3 (better OCR and decisions) in progress; an early piece of M4
 
 | Book | Setup | CER | WER | Paragraph F1 | Headings |
 | --- | --- | --- | --- | --- | --- |
-| Sense, Tauchnitz, full | clef roles | 4.75% | 3.15% | 0.682 | **50/50** |
-| Sense, Tauchnitz, ch. 1–9 | clef roles | 3.85% | 3.02% | 0.723 | 9/9 |
+| Sense, Tauchnitz, full | clef roles | 3.02% | 1.39% | 0.805 | 49/50 |
 | Crime | clef roles | 0.72% | 0.53% | 0.965 | 5/8 |
-| Dolittle | heuristics | 21% | 18% | 0.43 | 0/21 |
+| Dolittle | clef roles | 5.48% | 2.88% | 0.839 | 27/21 |
+
+The visual-line fix (word boxes grouped by vertical overlap) made most of the
+Sense and Dolittle gains; see the decision log.
 
 ### OCR candidates, Teirlinck, 12 pages
 
@@ -58,8 +60,11 @@ Pending when downloaded: `translategemma:27b`, Nemotron 3 Nano Omni
    run tesseract + a vision LLM, merge as in the probe, carry the flags into
    the IR so the review page can show them. Page images as a book source
    (no PDF) for Teirlinck.
-4. Dolittle: the text layer splits widely justified lines into fragments and
-   drop caps break paragraph detection (`pdf.py` visual lines, `reflow.py`).
+4. Dolittle: two-line chapter headings ("THE FIRST CHAPTER" / "PUDDLEBY")
+   come out as two headings; drop caps lose the initial letter ("NCE upon a
+   time"); plate captions end up in the text.
+   Crime: bare Roman numeral headings ("V", "VI") are called page numbers;
+   clef ignores layout features, so this needs a rule in code.
 5. Paragraph precision on Sense is ~0.6: find where false paragraph starts
    come from.
 6. Page classification stage (vision) to replace hand-entered `body_pages`.

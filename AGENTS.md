@@ -377,3 +377,11 @@ disagreements by mistake category.
   ignored it: Crime headings 5/8 → 3/8, CER 0.72% → 0.82%; reverted. Bare
   Roman numerals ("V", "VI") stay ambiguous to clef (called page numbers at
   ~0.1 confidence). Layout facts like this belong in code, not in the state.
+- 2026-10-06: Visual lines now group word boxes by vertical overlap (≥ half a
+  fragment's height) instead of tops within 3 pt: OCR layers box each word, and
+  one line's tops differ by up to ~5 pt. Sense had 560 fragmented lines,
+  Dolittle 1,450. With clef roles, against Gutenberg: Sense full book CER 4.75%
+  → 3.02%, WER 3.15% → 1.39%, paragraph F1 0.682 → 0.805, headings 49/50;
+  Dolittle CER 21% → 5.48%, paragraph F1 0.43 → 0.839 (but 27 headings for
+  21 chapters: its two-line headings split). Crime unchanged (0.72%).
+  The text-layer cache now carries a version and rebuilds when it changes.
