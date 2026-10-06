@@ -4,110 +4,79 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules and
 decisions; this file only covers the state of play. Replace it at the end of
 each session.
 
-## Paused 2026-10-06, late (machine resting)
+## State on 2026-10-07 (end of day)
 
-All of this is merged into `main` and pushed (51 tests):
+Everything is merged into `main` and pushed. M0–M2 done, M3 (OCR and
+decisions) well along, M4 (review) working, and the first figures in the EPUB.
+Direction, now in AGENTS.md: **build the machine, not the book**: compounded
+models that fail differently, combined by measured reliability, with new models
+benchmarked and plugged in.
 
-- The code review's fixes: answers apply to a copy of the pages (`Line.source`
-  keeps text-layer indices), so answered regions keep their keys and inserted
-  text no longer shifts flags; an end-to-end `pipeline.run` test; safer
-  `close_quotes` (plural possessives); PyMuPDF behind `pdf.PDF_LOCK` and crops
-  rendered on one thread; atomic cache writes; small fixes. Engineering
-  practices in AGENTS.md.
-- OCR check with **two second readings** (glm-ocr per line, tesseract per page)
-  and **clef:27b as judge** (`judge_model`); suspects record each model's pick
-  and the review shows every reading with its voters.
-- Review page: no "show answered" toggle (arrows go through all regions, saving
-  jumps to the next unanswered), a drawing is answered on its own line (letter +
-  `↵`), keys `1`–`5` = text, heading, drop, image, caption.
+### What the pipeline does now
 
-Next, in order (the user asked to run the heavy steps when the laptop is
-plugged in and cool):
-1. Restart the review server for Dolittle; on startup it re-judges all OCR
-   suspects with clef:27b (~600 at ~3 s, about half an hour).
-2. Rescore all golden books with the final OCR check (clef:27b judge, both
-   readings). Dolittle with glm-only was CER 2.23%, with tesseract-only 2.16%.
-   Expect a few hours; run in the background, one book after another.
-3. The user's Dolittle answers: p23's initial is saved as "E"; the drawing
-   shows an O (they meant to fix it). The region count should drop sharply
-   with clef:27b judging (292 with clef-flash judging).
-4. nuextract3: the BF16 build is broken under Ollama 0.40; ask the user to pull
-   the `q6_k` GGUF tag if metadata extraction is wanted (low priority).
-5. Then the figures stage, and the `page.py` refactor + `rule` field on LineRole
-   (code review point 4).
+- **Line roles:** clef-flash:9b plus rules in code; the shared layout analysis
+  lives in `page.py`, and `LineRole.rule` names the rule that overrode the model.
+- **OCR check** (`ocrcheck.py`, scanned books only): two second readings per body
+  line (glm-ocr on the line's crop for letters, tesseract on the page for
+  dashes). Where either differs from the text layer, clef:27b judges the crop and
+  winnow:e4b the sentence. Applied when they agree and clef ≥ 0.3, or, where the
+  versions differ only in punctuation, dashes or spacing, when clef:27b alone is
+  ≥ 0.5. Quote styles count as one version. Everything else goes to review.
+- **Figures** (`figures.py`): the layout model's pictures go into the EPUB at
+  300 dpi, trimmed where a caption overlaps, sideways plates turned upright,
+  captions from the review or read off a sideways plate. Dolittle: 48 pictures,
+  epubcheck clean.
+- **Review page:** each region asks "what is this?" (radio buttons, the
+  pipeline's call preselected) and, for OCR doubts, "which reading matches the
+  scan?" (each reading with the difference marked and the models that picked it).
+  One Save button (`↵`). Tested in a browser just before stopping; not yet used
+  by the user in this form.
 
-## State on 2026-10-06 (end of day)
+### Scores (latest; the rescore was still running at the end of the day)
 
-M0–M2 done; M3 (better OCR and decisions) in progress; M4 (review UI) working
-for regions of any book.
+| Book | CER | WER | Paragraph P / R | Headings | OCR suspects for review |
+| --- | --- | --- | --- | --- | --- |
+| Dolittle | 1.89% (was 2.16%) | 1.92% | 0.818 / 0.953 | 21/21 (+1) | 100 of 657 |
+| Crime | 0.53% (was 0.63%) | 0.32% | 0.966 / 0.986 | 8/8 (+1) | **453 of 928** |
+| Lady into Fox (held out), Boze tongen, De aanslag, Sense | running | | | | |
 
-- **Line roles: `clef-flash:9b`** on Ollama's `/v1/systemone`, plus code rules
-  for what clef can't see (sunk chapter pages, bare numerals, section numbers,
-  running titles, short last lines, subtitles). See the decision log.
-- **Golden books** (references from Gutenberg or a publisher's EPUB; books
-  under EU copyright keep their text in `work/golden/`, only the manifest is in
-  git): Sense, Crime, Dolittle, Lady into Fox (**held out: score, never tune**),
-  De aanslag (born-digital PDF), Boze tongen (Dutch scan, omnibus reference).
-- **Region review** (the main new thing): `uv run roboscriptorium review
-  work/<book>` → http://127.0.0.1:8765/ (use `--port` if taken). Flags headings,
-  doubtful drops and keeps, garbled, centred and set-apart lines, and, from
-  the DocLayout-YOLO layout model, pictures, captions, titles and text the text
-  layer lacks (drafted by tesseract). Keys `1` text, `2` heading, `3` drop,
-  `4` image, `5` caption, `↵` decorated initial (letter guessed from the word it
-  begins), `e` edit. Answers go to `work/<book>/review/regions.jsonl` and apply on rebuild.
-  The user started on Dolittle (a few answers so far).
-- **Golden disagreement review** moved to `roboscriptorium golden review`. The
-  54 Crime disagreements still have no verdicts.
-- **OCR**: every new vision model tried today is unfit (translategemma 4b/12b/27b,
-  llava:34b, nemotron3:33b); gemma4 + tesseract with a merge stays the design
-  (`experiments/probe_ocr.py`). No OCR stage in the pipeline yet.
-
-### Scores (commit after the ligature, paragraph and label changes)
-
-| Book | CER | WER | Paragraph P / R | Headings |
-| --- | --- | --- | --- | --- |
-| Sense, Tauchnitz (other edition than the reference) | 2.99% | 1.36% | 0.811 / 0.810 | 50/50 (+0) |
-| Crime | 0.63% | 0.44% | 0.966 / 0.986 | 8/8 (+1: the book title) |
-| Dolittle | 4.60% | 2.02% | 0.808 / 0.942 | 21/21 (+1: the book title) |
-| Lady into Fox (**held out**) | 0.93% | 0.33% | 0.811 / 0.874 | 0/1 (title = running head) |
-| De aanslag (born-digital PDF) | 0.14% | 0.14% | 1.000 / 0.907 | 26/26 (+0) |
-| Boze tongen (Dutch scan) | 1.36% | 1.15% | 0.888 / 0.768 | 13/18 (+2) |
-
-### Sideways plates: done
-
-The layout model, run on picture-only pages turned 90° and 270°, finds the
-caption of every landscape plate in Dolittle (pp. 6, 25, 57, 83, 87, 90, 107,
-200; all turn 90°) and nothing on the other books. The review page shows each
-caption as a `rotated` region, read upright by tesseract. Answer them with `6` (caption): its text stays out of the running text and is
-stored, with the turn, for the figures stage. If the guessed turn is wrong,
-`r` turns the crop and `o` reads it again.
+The rescore (`eval` over all six books) logs to `work/probes/rescore-2026-10-07.log`;
+read the summary lines at its end. The review server for Dolittle was stopped.
 
 ## Next steps, in order
 
-1. Let the user continue the Dolittle region review; then rebuild and check
-   the EPUB (drop caps, inserted p97 text, heading parts) with epubcheck.
-2. A figures stage: crop pictures (answered `image`), turn landscape plates
-   upright, place them with their captions, decorated initials as optional
-   artwork.
-3. OCR stage in the pipeline (gemma4 + tesseract merge with flags), first for
-   regions the review flags and for Boze tongen's I/l and quote errors
-   (`lets`→`Iets`, `"Wat`→`‘Wat`).
-4. Boze tongen: headings 13/18 (+2), and a region review of it. Paragraph
-   recall is now 0.768; most of what's left is edition differences.
-5. Crime verdicts (`golden review`), when the user has time.
-6. Smaller: specks are only hidden from review; joining them to their line
-   broke Sense (see the decision log). A quote-stroke repair (`'` + speck →
-   `"`) would need a narrower rule.
-7. Page classification stage (vision) to replace hand-entered `body_pages`.
+1. **Read the rescore log** and record the scores in AGENTS.md's decision log.
+2. **Why Crime sends 453 suspects to review.** Its text layer is good (CER 0.5%),
+   so most must be differences that aren't errors (spacing around curly quotes?
+   glm-ocr normalising something?). Look at `work/the-nature-of-a-crime--doubleday-1924/stages/ocr-check.json`.
+3. **Dolittle's WER rose a hair** (1.83% → 1.92%) with the new decision rule:
+   find the wrong automatic fixes.
+4. **Italics probe** (`experiments/probe_italic_pages.py`): page-level "are there
+   italic words?" with truth from Gutenberg's markup (Dolittle has 62 italic
+   phrases on 34 pages). Needs Ollama free; it timed out while clef:27b was busy.
+5. **A `bench` command**: every job's labelled set scored for any model, so new
+   models are measured and plugged in quickly.
+6. **Learned trust**: per-model, per-kind-of-error reliability (Dawid–Skene,
+   calibration) from the golden books and the user's review answers, replacing
+   the hand-set thresholds. The user's observation: winnow caught a speck read as
+   "." after a hyphen ("ani-."), so the text model *does* know some punctuation.
+7. **Metadata stage** with `nuextract3:q6_k` (front pages → `book.toml`, the
+   human confirms).
+8. Smaller: p23's decorated initial is answered "E" but shows an O (the user
+   meant to fix it); 16 of Dolittle's 62 italic phrases couldn't be placed on a
+   page.
 
 ## Working with the user
 
-- Run small probes first (10–60 items), say how long a big run will take,
-  run it in the background.
-- Ask the user to install or pull things when the docs don't cover how.
-- Commits are signed through 1Password. If signing fails because 1Password is
-  locked, stop and ask the user to unlock it.
-- Their internet connection is slow: avoid large downloads.
-- They like to try the review page while work goes on, and report oddities
-  one at a time; each so far became a general fix (drop caps, heading parts,
-  sideways captions).
+- Run small probes first, say how long a big run takes, run it in the
+  background, and keep its output under `work/probes/` (never a scratchpad).
+- Long jobs share Ollama: clef:27b answers one request at a time, so two jobs
+  using it run at half speed each. Run them one after another.
+- The user picks no models: choose from measurements and record why. Ask before
+  adding a runtime or anything they must install or pull.
+- Commits are signed through 1Password; if signing fails, ask for it to be
+  unlocked.
+- Their connection is slow: avoid large downloads. Golden sources are in
+  `work/.cache/` (checked against PROVENANCE.md).
+- They try the review page while work goes on and report what's awkward; each
+  report so far became a general fix.

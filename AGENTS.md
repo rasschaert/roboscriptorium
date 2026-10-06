@@ -351,19 +351,16 @@ uv run ruff format . && uv run ruff check . && uv run pytest
 
 **Reviewing a book.** `uv run roboscriptorium review work/<book>` builds the
 book, flags the regions that aren't plain running text and serves them on
-http://127.0.0.1:8765/ next to scan crops. Keys: `1` running text, `2` heading,
-`3` drop (page furniture, noise), `4` image, `5` a caption (kept out of the
-running text, for its picture); edit the text box first to give the text as
-printed. A drawing that is a decorated initial is answered on its own line:
-its letter (guessed from the word it begins) and `↵`. Arrows move through all
-regions; an answered one shows the answer in green, and saving moves on to
-the next unanswered one. A region with a box can be turned (`r`, or the
-↺/↻ buttons) and read again by tesseract (`o`); the turn is saved with the answer.
-`-` and `+` zoom the crop out (up to about the whole page) and back in.
-A region where OCR readings differ asks which one matches the scan: each
-reading on its own row, the differing part marked, with the models that picked
-it; `a`, `b`, … saves that reading as running text, `e` opens a text box for
-something else. "Rebuild book" applies the answers and rebuilds
+http://127.0.0.1:8765/ next to scan crops. Each region asks what it is (radio buttons: `1` running text,
+`2` heading, `3` drop, `4` image, `5` caption, `6` decorated initial on drawings,
+with its letter guessed from the word it begins), with the pipeline's call
+preselected, and takes the text as printed in a text box. Where OCR readings
+differ it asks which one matches the scan instead: each reading on its own row,
+the differing part marked, with the models that picked it (`a`, `b`, …; `e` for
+something else). One Save button (`↵`; `⌘↵` in the text box) records the answer
+and moves to the next unanswered region; arrows move through all regions. A
+region with a box can be turned (`r`, ↺/↻) and read again by tesseract (`o`);
+`-` and `+` zoom the crop out and back in. "Rebuild book" applies the answers and rebuilds
 the EPUB. Flags come from the model's decisions before answers, so the list
 stays put while you work.
 

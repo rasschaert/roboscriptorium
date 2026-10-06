@@ -30,19 +30,19 @@ label.toggle { color: var(--muted); user-select: none; }
 main { max-width: 980px; margin: 0 auto; padding: 16px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
 .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
-.readings { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 6px 0; color: var(--muted); font-size: 13px; }
 .question { margin: 14px 0 6px; font-weight: 600; }
-.choices { display: flex; flex-direction: column; gap: 6px; margin: 6px 0; }
-.choice { display: flex; align-items: baseline; gap: 10px; text-align: left; width: 100%; padding: 10px 12px; }
-.choice .reading { flex: 1; font: 18px/1.45 Georgia, "Iowan Old Style", serif; }
-.choice .votes { font-size: 12px; color: var(--muted); white-space: nowrap; }
-.choice .muted { color: var(--muted); font-style: italic; }
+.options { display: flex; flex-direction: column; gap: 4px; margin: 4px 0 8px; }
+.option { display: flex; align-items: baseline; gap: 10px; padding: 7px 10px; border: 1px solid var(--line); border-radius: 6px; cursor: pointer; }
+.option.on { border-color: var(--accent); background: var(--accent-bg); }
+.option input { margin: 0; }
+.reading-option .reading { flex: 1; font: 18px/1.45 Georgia, "Iowan Old Style", serif; }
+.option .votes { margin-left: auto; font-size: 12px; color: var(--muted); white-space: nowrap; }
+input.letter { font: 24px Georgia, serif; width: 2.2em; text-align: center; padding: 2px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+.saverow { display: flex; gap: 12px; align-items: center; margin-top: 14px; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; padding: 9px 22px; }
+button.primary:disabled { background: var(--line); border-color: var(--line); color: var(--muted); cursor: not-allowed; }
 mark { background: var(--warn-bg); color: var(--warn); border-radius: 3px; padding: 0 1px; }
 mark.gap { display: inline-block; width: 3px; height: 1em; vertical-align: -0.1em; background: var(--warn); }
-.secondary { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 12px; color: var(--muted); font-size: 13px; }
-.secondary button { padding: 3px 8px; font-size: 13px; }
-.readings .votes { display: block; font: 11px -apple-system, sans-serif; color: var(--muted); }
-.readings button { font: 16px/1.4 Georgia, "Iowan Old Style", serif; text-align: left; white-space: pre-wrap; }
 .turnbar { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
 .turnbar button { padding: 4px 10px; }
 .crop { max-width: 100%; max-height: 75vh; margin: 0 auto; border: 1px solid var(--line); border-radius: 6px; background: #fff; display: block; min-height: 60px; }
@@ -54,13 +54,8 @@ mark.gap { display: inline-block; width: 3px; height: 1em; vertical-align: -0.1e
 textarea { width: 100%; font: 18px/1.45 Georgia, "Iowan Old Style", serif; padding: 8px 10px; margin: 4px 0;
   border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); resize: vertical; }
 textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
-.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 button { font: inherit; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
 button:hover { border-color: var(--accent); }
-button.current { background: var(--accent-bg); border-color: var(--accent); }
-.initial-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 12px 0 4px; font-size: 16px; }
-.initial-row input { font: 24px Georgia, serif; width: 2.2em; text-align: center; padding: 2px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
-button.answered { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
 button:disabled { opacity: .5; cursor: progress; }
 kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; margin-right: 6px; color: var(--muted); }
 .answer { margin-top: 12px; padding: 8px 10px; border-radius: 6px; background: var(--ok-bg); color: var(--ok); }
@@ -81,7 +76,7 @@ a { color: var(--accent); }
 let state = null, queue = [], pos = 0, out = 0;
 const main = document.getElementById("main");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-const KEYS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "caption"};
+const KINDS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "caption", "6": "initial"};
 const CURRENT = {text: "text", heading: "heading", dropped: "drop", missing: "drop"};
 const NOW = {text: "kept as running text", heading: "made a heading", dropped: "left out of the book",
   missing: "has nothing here"};
@@ -118,6 +113,26 @@ function counts() {
   document.getElementById("counts").textContent = `${answered} / ${state.items.length} answered${applied}`;
 }
 
+// The answer being put together for the region on screen: what it is, and its text.
+let draft = null;
+
+function startDraft(r) {
+  const a = r.answer;
+  const doubt = r.readings && r.readings.length > 1;
+  const chosen = a && a.action !== "initial" ? (a.text != null ? a.text : r.text) : null;
+  return {
+    key: r.key,
+    kind: a ? a.action : picture(r) ? "image" : CURRENT[r.treatment] || "text",
+    // For a doubt: the chosen reading's index, -1 for typed text, null for none yet.
+    reading: !doubt ? null : chosen == null ? null : r.readings.findIndex(g => g.text === chosen),
+    text: a && a.text != null && a.action !== "initial" ? a.text : (r.draft || r.text || ""),
+    letter: a && a.action === "initial" ? (a.text || "") : "",
+  };
+}
+
+// Kinds whose answer carries text.
+const WITH_TEXT = new Set(["text", "heading", "caption"]);
+
 function render() {
   counts();
   if (!queue.length) {
@@ -126,13 +141,14 @@ function render() {
   }
   const r = queue[pos];
   const a = r.answer;
-  const text = a && a.text != null ? a.text : (r.draft || r.text || "");
+  if (!draft || draft.key !== r.key) draft = startDraft(r);
   const drawing = picture(r);
-  const doubt = !drawing && r.readings && r.readings.length > 1;
-  // A decorated initial is answered with its letter, on its own line, and only for drawings.
-  const buttons = Object.entries(KEYS).filter(([, action]) => !doubt || action !== "text").map(([k, action]) => {
-    const cls = a && a.action === action ? "answered" : !a && CURRENT[r.treatment] === action ? "current" : "";
-    return `<button data-action="${action}" class="${cls}"><kbd>${k}</kbd>${esc(state.actions[action])}</button>`;
+  const doubt = r.readings && r.readings.length > 1;
+  const kinds = Object.entries(KINDS).filter(([, kind]) => kind !== "initial" || drawing);
+  const kindRows = kinds.map(([k, kind]) => {
+    const note = a && a.action === kind ? "your answer" : !a && CURRENT[r.treatment] === kind && !drawing ? "the pipeline's call" : "";
+    return `<label class="option ${draft.kind === kind ? "on" : ""}"><input type="radio" name="kind" value="${kind}" ${draft.kind === kind ? "checked" : ""}>
+      <kbd>${k}</kbd><span>${esc(state.actions[kind])}</span>${note ? `<span class="votes">${note}</span>` : ""}</label>`;
   }).join("");
   main.innerHTML = `
   <div class="card">
@@ -151,29 +167,24 @@ function render() {
       <button id="reread" title="Read the area again as it is turned now"><kbd>o</kbd>Read again</button>` : ""}
     </div>
     <div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>
-    ${drawing ? `<div class="initial-row ${a && a.action === "initial" ? "answered" : ""}">
-      <label for="letter">A decorated initial, showing the letter</label>
-      <input id="letter" size="2" maxlength="3" value="${a && a.action === "initial" ? esc(a.text || "") : ""}">
-      <button data-action="initial" class="${a && a.action === "initial" ? "answered" : ""}">Save as initial <kbd>↵</kbd></button>
+    <div class="question">What is this?</div>
+    <div class="options">${kindRows}</div>
+    ${draft.kind === "initial" ? `<div class="question">The letter it shows</div>
+      <input id="letter" class="letter" size="2" maxlength="3" value="${esc(draft.letter)}">`
+    : WITH_TEXT.has(draft.kind) ? textBlock(r, doubt) : ""}
+    <div class="saverow">
+      <button id="save" class="primary" ${canSave(r, doubt) ? "" : "disabled"}>Save <kbd>↵</kbd></button>
+      <span class="hint">${saveHint(r, doubt)}</span>
     </div>
-    <div class="now">Or, if it isn't an initial:</div>`
-    : doubt ? doubtBlock(r, a, text)
-    : `<div class="now">The pipeline <b>${NOW[r.treatment]}</b>. ${r.text ? "Its reading of the highlighted lines (edit if the scan says otherwise):" : r.draft ? "Tesseract's draft of the highlighted area; correct it, then save as text:" : "Type the text here if it belongs in the book:"}</div>
-    ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
-    <textarea id="text" rows="${Math.min(16, text.split("\n").length + 1)}">${esc(text)}</textarea>
-    ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}`}
-    ${doubt ? `<div class="secondary">Not running text? ${buttons}</div>` : `<div class="actions">${buttons}</div>`}
-    ${a ? `<div class="answer">Your answer: ${esc(state.actions[a.action])}${a.action === "initial" ? ` “${esc(a.text || "")}”` : a.text != null ? " · with your wording" : ""}. Answer again to change it.</div>` : ""}
-    <div class="hint">${doubt ? "Press the letter of the reading that matches the scan; it is saved as running text." : (a ? "Green: your answer." : "Blue: what the pipeline did now.") + (drawing ? "" : " In the text box, <kbd>⌘↵</kbd> saves as running text, <kbd>Esc</kbd> leaves the box.")}</div>
+    ${a ? `<div class="answer">Your answer: ${esc(state.actions[a.action])}${a.action === "initial" ? ` “${esc(a.text || "")}”` : a.text != null ? " · with your wording" : ""}. Save again to change it.</div>` : ""}
     <div class="nav">
       <span>${pos > 0 ? "<kbd>←</kbd>previous" : "first region"}</span>
       <span>${pos < queue.length - 1 ? "<kbd>→</kbd>next" : "last region"}</span>
     </div>
   </div>`;
-  main.querySelectorAll("button[data-action]").forEach(b => b.onclick = () => decide(b.dataset.action));
-  main.querySelectorAll("button[data-pick]").forEach(b => b.onclick = () => pick(+b.dataset.pick));
-  const other = document.getElementById("other");
-  if (other) other.onclick = showTextBox;
+  main.querySelectorAll("input[name=kind]").forEach(b => b.onchange = () => setKind(b.value));
+  main.querySelectorAll("input[name=reading]").forEach(b => b.onchange = () => setReading(+b.value));
+  document.getElementById("save").onclick = save;
   document.getElementById("zoomOut").onclick = () => zoom(1);
   document.getElementById("zoomIn").onclick = () => zoom(-1);
   if (r.box) {
@@ -181,36 +192,75 @@ function render() {
     document.getElementById("turnRight").onclick = () => turn(90);
     document.getElementById("reread").onclick = reread;
   }
+  const box = textBox();
+  if (box) box.oninput = () => { draft.text = box.value; refreshSave(); };
   const letter = document.getElementById("letter");
-  if (letter && !letter.value) {
-    fetch(`/api/initial?key=${encodeURIComponent(r.key)}`).then(x => x.json())
-      .then(g => { if (!letter.value) letter.value = g.letter; });
+  if (letter) {
+    letter.oninput = () => { draft.letter = letter.value; refreshSave(); };
+    if (!letter.value) {
+      fetch(`/api/initial?key=${encodeURIComponent(r.key)}`).then(x => x.json())
+        .then(g => { if (!letter.value) { letter.value = draft.letter = g.letter; refreshSave(); } });
+    }
   }
+}
+
+// The text part: for a doubt, the readings to choose from; otherwise the text box.
+function textBlock(r, doubt) {
+  const before = r.before ? `<div class="context">${esc(r.before)}</div>` : "";
+  const after = r.after ? `<div class="context">${esc(r.after)}</div>` : "";
+  if (!doubt) {
+    const prompt = r.text ? "As printed (edit if the scan says otherwise):"
+      : r.draft ? "Tesseract's draft of the highlighted area; correct it:" : "Type the text, as printed:";
+    return `<div class="question">${prompt}</div>${before}
+      <textarea id="text" rows="${Math.min(16, draft.text.split("\n").length + 1)}">${esc(draft.text)}</textarea>${after}`;
+  }
+  const rows = r.readings.map((g, k) => {
+    const against = r.readings[k === 0 ? 1 : 0].text;
+    const who = [k === 0 ? "text layer" : "", ...g.votes].filter(Boolean).join(" · ");
+    return `<label class="option reading-option ${draft.reading === k ? "on" : ""}"><input type="radio" name="reading" value="${k}" ${draft.reading === k ? "checked" : ""}>
+      <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${marked(g.text, against)}</span>
+      <span class="votes">${esc(who)}</span></label>`;
+  }).join("");
+  return `<div class="question">Which reading matches the scan?</div>${before}
+    <div class="options">${rows}
+      <label class="option reading-option ${draft.reading === -1 ? "on" : ""}"><input type="radio" name="reading" value="-1" ${draft.reading === -1 ? "checked" : ""}>
+        <kbd>e</kbd><span class="reading muted">Something else…</span></label>
+    </div>
+    ${draft.reading === -1 ? `<textarea id="text" rows="2">${esc(draft.text)}</textarea>` : ""}${after}`;
+}
+
+function canSave(r, doubt) {
+  if (draft.kind === "initial") return draft.letter.trim() !== "";
+  if (WITH_TEXT.has(draft.kind) && doubt) return draft.reading !== null;
+  return true;
+}
+
+function saveHint(r, doubt) {
+  if (draft.kind === "initial" && !draft.letter.trim()) return "Type the letter first.";
+  if (WITH_TEXT.has(draft.kind) && doubt && draft.reading === null) return "Choose the reading that matches the scan.";
+  return "Numbers choose what it is, letters the reading; Enter saves.";
+}
+
+function refreshSave() {
+  const r = queue[pos], doubt = r.readings && r.readings.length > 1;
+  document.getElementById("save").disabled = !canSave(r, doubt);
+  document.querySelector(".saverow .hint").textContent = saveHint(r, doubt);
+}
+
+function setKind(kind) {
+  draft.kind = kind;
+  render();
+  if (kind === "initial") document.getElementById("letter")?.focus();
+}
+
+function setReading(k) {
+  draft.reading = k;
+  render();
+  if (k === -1) textBox()?.focus();
 }
 
 // Keys for the readings; e (something else), o (read again) and r (turn) are taken.
 const READING_KEYS = "abcdfghj";
-
-// Readings that differ: one row each, the differing part marked, saved with one key.
-function doubtBlock(r, a, text) {
-  const chosen = a && a.action === "text" ? (a.text != null ? a.text : r.text) : null;
-  const typed = chosen != null && !r.readings.some(g => g.text === chosen);
-  const rows = r.readings.map((g, k) => {
-    const against = r.readings[k === 0 ? 1 : 0].text;
-    const who = [k === 0 ? "text layer" : "", ...g.votes].filter(Boolean).join(" · ");
-    return `<button class="choice ${chosen === g.text ? "answered" : ""}" data-pick="${k}">
-      <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${marked(g.text, against)}</span>
-      <span class="votes">${esc(who)}</span></button>`;
-  }).join("");
-  return `<div class="question">Which reading matches the scan?</div>
-    ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
-    <div class="choices">${rows}
-      <button class="choice ${typed ? "answered" : ""}" id="other"><kbd>e</kbd>
-        <span class="reading muted">Something else…</span></button>
-    </div>
-    <textarea id="text" rows="2" ${typed ? "" : "hidden"}>${esc(typed ? chosen : text)}</textarea>
-    ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}`;
-}
 
 // The text with the part where it differs from `other` marked.
 function marked(text, other) {
@@ -223,19 +273,6 @@ function marked(text, other) {
     + esc(text.slice(text.length - j));
 }
 
-function pick(k) {
-  const r = queue[pos];
-  if (!r.readings || k < 0 || k >= r.readings.length) return;
-  decide("text", r.readings[k].text);
-}
-
-function showTextBox() {
-  const box = textBox();
-  if (!box) return;
-  box.hidden = false;
-  box.focus();
-}
-
 function cropUrl(r) {
   return r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}&out=${out}`
     : `/crop?page=${r.page}&first=${r.first}&last=${r.last}&out=${out}`;
@@ -246,19 +283,15 @@ const MAX_OUT = 4;
 function zoom(by) {
   const next = Math.max(0, Math.min(MAX_OUT, out + by));
   if (next === out) return;
-  const text = textBox() && textBox().value;
   out = next;
   render();
-  if (textBox()) textBox().value = text;
 }
 
 function turn(by) {
   const r = queue[pos];
   if (!r.box) return;
-  const text = textBox() && textBox().value;
   r.turn = ((r.turn || 0) + by + 360) % 360;
   render();
-  if (textBox()) textBox().value = text;
 }
 
 async function reread() {
@@ -271,22 +304,30 @@ async function reread() {
     if (!resp.ok) throw new Error(await resp.text());
     const text = (await resp.json()).text;
     r.draft = text;
-    if (queue[pos] === r && textBox()) textBox().value = text;
+    if (queue[pos] === r) { draft.text = text; render(); }
   } catch (e) { alert(e); }
-  b.disabled = false; b.innerHTML = "<kbd>o</kbd>Read again";
 }
 
-async function decide(action, given) {
-  const r = queue[pos];
-  const letter = document.getElementById("letter");
-  const text = given != null ? given
-    : action === "initial" ? (letter ? letter.value : "") : textBox() ? textBox().value : "";
-  if (action === "initial" && !text.trim()) { alert("Type the letter the initial shows first."); return; }
-  const body = {key: r.key, action, text, turn: r.turn || 0};
+async function save() {
+  const r = queue[pos], doubt = r.readings && r.readings.length > 1;
+  if (!canSave(r, doubt)) return;
+  let text = r.text;
+  if (draft.kind === "initial") text = draft.letter;
+  else if (WITH_TEXT.has(draft.kind)) {
+    text = doubt && draft.reading >= 0 ? r.readings[draft.reading].text : draft.text;
+  }
+  const body = {key: r.key, action: draft.kind, text, turn: r.turn || 0};
   const resp = await fetch("/api/verdict", {method: "POST", body: JSON.stringify(body)});
   if (!resp.ok) { alert(await resp.text()); return; }
   r.answer = await resp.json();
+  draft = null;
   pos = nextUnanswered(pos);
+  out = 0;
+  render();
+}
+
+function go(to) {
+  pos = Math.max(0, Math.min(queue.length - 1, to));
   out = 0;
   render();
 }
@@ -304,26 +345,28 @@ document.getElementById("rebuild").onclick = async () => {
 };
 
 document.addEventListener("keydown", e => {
-  if (e.target.id === "letter") {
-    if (e.key === "Enter") { e.preventDefault(); decide("initial"); }
-    else if (e.key === "Escape") e.target.blur();
-    return;
-  }
-  if (e.target.tagName === "TEXTAREA") {
+  const typing = e.target.tagName === "TEXTAREA" || e.target.id === "letter";
+  if (typing) {
     if (e.key === "Escape") e.target.blur();
-    else if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); decide("text"); }
+    else if (e.key === "Enter" && (e.target.id === "letter" || e.metaKey || e.ctrlKey)) {
+      e.preventDefault(); save();
+    }
     return;
   }
-  if (KEYS[e.key]) decide(KEYS[e.key]);
-  else if (e.key === "Enter" && document.getElementById("letter")) { e.preventDefault(); decide("initial"); }
-  else if (e.key === "e" && textBox()) { e.preventDefault(); showTextBox(); }
-  else if (e.key.length === 1 && READING_KEYS.includes(e.key)) pick(READING_KEYS.indexOf(e.key));
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const r = queue[pos], doubt = r && r.readings && r.readings.length > 1;
+  if (KINDS[e.key] && (KINDS[e.key] !== "initial" || picture(r))) setKind(KINDS[e.key]);
+  else if (e.key === "Enter") { e.preventDefault(); save(); }
+  else if (e.key === "e" && doubt && WITH_TEXT.has(draft.kind)) { e.preventDefault(); setReading(-1); }
+  else if (e.key === "e" && textBox()) { e.preventDefault(); textBox().focus(); }
+  else if (doubt && WITH_TEXT.has(draft.kind) && e.key.length === 1 && READING_KEYS.includes(e.key)
+    && READING_KEYS.indexOf(e.key) < r.readings.length) setReading(READING_KEYS.indexOf(e.key));
   else if (e.key === "r") turn(90);
   else if (e.key === "o") reread();
   else if (e.key === "-") zoom(1);
   else if (e.key === "+" || e.key === "=") zoom(-1);
-  else if (e.key === "ArrowRight") { pos = Math.min(pos + 1, queue.length - 1); out = 0; render(); }
-  else if (e.key === "ArrowLeft") { pos = Math.max(pos - 1, 0); out = 0; render(); }
+  else if (e.key === "ArrowRight") go(pos + 1);
+  else if (e.key === "ArrowLeft") go(pos - 1);
 });
 load();
 </script>
