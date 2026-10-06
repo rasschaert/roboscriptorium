@@ -45,6 +45,9 @@ TESSERACT_VERSION = 1
 TESSERACT_WORKERS = 6
 # The role model must be at least this sure, and agree with the text model.
 SURE = 0.3
+# Where versions differ only in punctuation, dashes or spacing, the text model can't
+# tell them apart; the vision model decides alone when at least this sure.
+SURE_ALONE = 0.5
 CROP_ZOOM = 4
 CROP_PAD = 4  # points around the suspect words
 # Lines shorter than this are page numbers and scraps, not worth a second reading.
@@ -367,7 +370,11 @@ def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, lis
             piece = ours[g0:g1]
             for a0, a1, b0, b1, _ in mine:
                 piece = piece[: a0 - g0] + other[b0:b1] + piece[a1 - g0 :]
-            if piece != ours[g0:g1] and piece not in versions:
+            # Readings that differ only in quote style are one version.
+            folded = [v.translate(_FOLD) for v in versions]
+            if piece.translate(_FOLD) != ours[g0:g1].translate(_FOLD) and (
+                piece.translate(_FOLD) not in folded
+            ):
                 versions.append(piece)
         if versions:
             out.append((g0, g1, versions))
@@ -379,8 +386,10 @@ def _decide(
 ) -> tuple[str, str | None, dict[str, str]]:
     """\"ours\", \"other\" with the chosen version, or \"review\"; and each model's pick.
 
-    A pick is applied only when both models make it and the vision model is at
-    least somewhat sure; any disagreement goes to a human.
+    A pick is applied when both models make it and the vision model is at least
+    somewhat sure, or, where the versions differ only in punctuation, dashes or
+    spacing (which a text model can't judge), when the vision model alone is sure.
+    Anything else goes to a human.
     """
     versions = [ours[a0:a1], *others]
     letters = "abcdefg"[: len(versions)]
@@ -420,11 +429,20 @@ def _decide(
     )
     pick = lambda value: versions[letters.index(value)] if value in letters else ""  # noqa: E731
     votes = {vision.model: pick(seen["value"]), reader.model: pick(read["value"])}
+    if _typographic(versions) and seen["value"] in letters and seen["confidence"] >= SURE_ALONE:
+        if seen["value"] == "a":
+            return "ours", None, votes
+        return "other", versions[letters.index(seen["value"])], votes
     if seen["value"] == read["value"] and seen["confidence"] >= SURE:
         if seen["value"] == "a":
             return "ours", None, votes
         return "other", versions[letters.index(seen["value"])], votes
     return "review", None, votes
+
+
+def _typographic(versions: list[str]) -> bool:
+    """Whether the versions have the same letters and digits, differing only in the rest."""
+    return len({re.sub(r"[^\w]", "", v) for v in versions}) == 1
 
 
 def _ask(client: OllayaClient, cache: DecisionCache, state: dict, questions: dict, image=None):
