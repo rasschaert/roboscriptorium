@@ -275,7 +275,8 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | — | tesseract 5.5.3 + `nld` (tessdata_best) | Plain OCR candidate | Teirlinck 12 pages: CER 0.90%, no modernisation; errors are visual (`,`/`.`, mangled ellipses) and dropped short lines. <1 s/page |
 | Ollama | `glm-ocr:bf16` | OCR candidate (0.9B, document OCR) | Teirlinck 12 pages: **CER 0.38%**, best yet, and faithful (1 accent misread, no modernising); reads `....` as `...`. ~15 s/page under load. Its Ollama template has no stop token: it reads the page, then starts over, so the reading is cut where its opening repeats (`probe_ocr.py`, `NEVER_STOPS`). Prompt `Text Recognition:` |
 | Ollama | `deepseek-ocr:3b` | OCR candidate | Teirlinck 12 pages: CER 0.37% but **modernises** 10× (`vóor→vóór`, `éen→één`, `streelend→strelend`) and keeps line-end hyphens. ~9 s/page. Prompt `Free OCR.`; the grounding/markdown prompt loops |
-| Ollama | `numind/nuextract3` | Metadata from title page and colophon (JSON template in, filled template out) | **Broken under Ollama 0.40**: gibberish in mixed scripts from both a page image and plain text (`experiments/probe_metadata.py`). A safetensors Qwen3.5 import; retry after an Ollama or model update |
+| Ollama | `numind/nuextract3:q6_k` | **Metadata candidate**: front pages in, a filled JSON template out | Stella, Lady into Fox, Crime: all fields right, 4–10 s per book, given **all** front pages as images and an instruction to ignore stamps and handwriting and to describe this edition (without it: Stella's original publisher, an owner's inscription as author, a library barcode as ISBN). Read Crime's title page, which the text layer lacks, verbatim ("FORD MADOX FORD"). `experiments/probe_metadata.py` |
+| Ollama | `numind/nuextract3` (BF16 safetensors, `latest`) | — | **Broken under Ollama 0.40**: gibberish from images and text alike. Use the GGUF `q6_k` tag |
 | Ollama | `clef:27b` | **OCR-check judge (in use, `judge_model`)** | OCR suspects (Dolittle pp. 30–49, glm-ocr readings): 54/55 right; confident (≥ 0.8) on 46, all right, where clef-flash was confident on 16. ~3.4 s per suspect under load. **Worse at line roles**: Crime CER 0.63% → 0.98%, paragraph precision 0.966 → 0.695 (keeps page numbers, splits paragraphs), so clef-flash keeps that job |
 | Ollama | `translategemma:4b` | Tried as Dutch→Dutch OCR | **Unfit**: with its translation prompt it paraphrases (`hief`→`heeft`, `trillend opwiegelen`→`trilde omhoog`) and modernises, CER 4.9% on one page; any other prompt gives empty output |
 | Ollama | `translategemma:12b` | Tried as Dutch→Dutch OCR | **Unfit**: its translation prompt hallucinates a scene description; with the old-spelling prompt it transcribes at ~1.4% CER (worse than gemma4 and tesseract), modernises 12×, and loops on one page of 12 (Ollama aborts: "token repeat limit reached"). ~14 s/page |
@@ -634,6 +635,11 @@ disagreements by mistake category.
   Applying only when clef and winnow agree and clef ≥ 0.3: 62 applied, 1
   wrong, 28 left for review. Agreement isn't proof: the wrong unanimous cases
   are the opening-quote blind spot every model shares.
+- 2026-10-06: Book metadata from the front pages with `nuextract3:q6_k`
+  (vision, JSON template): right on Stella, Lady into Fox and Crime once it
+  sees every page before the body and is told to ignore library stamps and
+  handwriting and to describe this edition, not the original. The candidate
+  for filling `book.toml` and the EPUB's metadata, with a human confirming.
 - 2026-10-06: Models per job, chosen from measurements (the user leaves the
   choice to the agent): clef-flash for line roles, clef:27b to judge OCR
   suspects, winnow:e4b as the text-only second opinion, glm-ocr and tesseract
