@@ -30,6 +30,8 @@ from roboscriptorium.pdf import PageText
 
 # Crops show this many lines around the disagreement, at this zoom (PDF points → pixels).
 CROP_CONTEXT_LINES = 1
+# Each zoom-out step widens a crop by this much on every side, in PDF points.
+ZOOM_OUT_STEP = 80
 CROP_ZOOM = 2.5
 PAGE_ZOOM = 1.5
 OCR_DPI = 300
@@ -65,6 +67,11 @@ def _turned(pix: pymupdf.Pixmap, turn: int) -> bytes:
     return buf.getvalue()
 
 
+def _widened(clip: pymupdf.Rect, out: int, page: pymupdf.Rect) -> pymupdf.Rect:
+    pad = out * ZOOM_OUT_STEP
+    return pymupdf.Rect(clip.x0 - pad, clip.y0 - pad, clip.x1 + pad, clip.y1 + pad) & page
+
+
 class Scan:
     """Page images and highlighted crops of a book's source PDF."""
 
@@ -73,7 +80,7 @@ class Scan:
         self.pages = {p.number: p for p in pages}
         self._turns: dict[int, int] = {}
 
-    def crop(self, page_number: int, first: int, last: int) -> bytes:
+    def crop(self, page_number: int, first: int, last: int, out: int = 0) -> bytes:
         page = self.pages[page_number]
         lo = max(0, first - CROP_CONTEXT_LINES)
         hi = min(len(page.lines) - 1, last + CROP_CONTEXT_LINES)
@@ -83,16 +90,22 @@ class Scan:
         clip = pymupdf.Rect(x0, page.lines[lo].y0 - 6, x1, page.lines[hi].y1 + 6)
         with pymupdf.open(self.pdf) as doc:
             pdf_page = doc[page_number - 1]
+            clip = _widened(clip, out, pdf_page.rect)
             pdf_page.draw_rect(target, color=(0.9, 0.6, 0), fill=(1, 0.85, 0.3), fill_opacity=0.25)
             pix = pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip)
             return pix.tobytes("png")
 
     def crop_box(
-        self, page_number: int, box: tuple[float, float, float, float], turn: int = 0
+        self,
+        page_number: int,
+        box: tuple[float, float, float, float],
+        turn: int = 0,
+        out: int = 0,
     ) -> bytes:
         """A region the layout model found, with some of the page around it.
 
-        `turn` (degrees clockwise) shows sideways text upright, cropped to the region.
+        `turn` (degrees clockwise) shows sideways text upright, cropped to the region;
+        `out` zoom-out steps show more of the page around it.
         """
         x0, y0, x1, y1 = box
         target = pymupdf.Rect(x0 - 2, y0 - 2, x1 + 2, y1 + 2)
@@ -102,6 +115,7 @@ class Scan:
                 clip = pymupdf.Rect(x0 - 40, y0, x1 + 40, y1) & pdf_page.rect
             else:
                 clip = pymupdf.Rect(0, y0 - 40, pdf_page.rect.width, y1 + 40) & pdf_page.rect
+            clip = _widened(clip, out, pdf_page.rect)
             pdf_page.draw_rect(target, color=(0.9, 0.6, 0), fill=(1, 0.85, 0.3), fill_opacity=0.2)
             pix = pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip)
             return _turned(pix, turn)
@@ -277,7 +291,7 @@ def serve(review: Review | RegionReview, port: int) -> None:
             self.send_header("Content-Type", content_type)
             self.send_header("Content-Length", str(len(body)))
             self.send_header(
-                "Cache-Control", "no-store" if "json" in content_type else "max-age=3600"
+                "Cache-Control", "max-age=3600" if content_type == "image/png" else "no-store"
             )
             self.end_headers()
             self.wfile.write(body)
@@ -295,10 +309,11 @@ def serve(review: Review | RegionReview, port: int) -> None:
                     self._json(review.state())
                 elif url.path == "/crop" and "box" in q:
                     box = tuple(float(v) for v in q["box"].split(","))
-                    turn = int(q.get("turn", 0))
-                    self._send(review.scan.crop_box(int(q["page"]), box, turn), "image/png")
+                    turn, out = int(q.get("turn", 0)), int(q.get("out", 0))
+                    self._send(review.scan.crop_box(int(q["page"]), box, turn, out), "image/png")
                 elif url.path == "/crop":
-                    png = review.scan.crop(int(q["page"]), int(q["first"]), int(q["last"]))
+                    out = int(q.get("out", 0))
+                    png = review.scan.crop(int(q["page"]), int(q["first"]), int(q["last"]), out)
                     self._send(png, "image/png")
                 elif url.path == "/api/initial" and isinstance(review, RegionReview):
                     self._json({"letter": review.guess_initial(q["key"])})
