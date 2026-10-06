@@ -97,6 +97,10 @@ def main() -> None:
     )
     settings = Settings.from_env()
     client = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
+    # Second opinions: another vision model on the crop, and a text model on the sentence.
+    decider = ollaya.OllayaClient(settings.ollaya_url, "decider:2b-vision")
+    winnow = ollaya.OllayaClient(settings.ollaya_url, "winnow:e4b")
+    records = []
 
     tally: Counter = Counter()
     seconds = []
@@ -155,6 +159,25 @@ def main() -> None:
                         {"readings": [ours_part, theirs_part]}, question, image_png=png
                     )["reading"]
                     seconds.append(time.monotonic() - start)
+                    try:
+                        second = decider.decide(
+                            {"readings": [ours_part, theirs_part]}, question, image_png=png
+                        )["reading"]
+                    except Exception as exc:  # noqa: BLE001
+                        print("decider failed:", str(exc)[:120])
+                        second = None
+                    in_context = winnow.decide(
+                        {"a": ours, "b": swapped},
+                        {
+                            "reading": ollaya.choice(
+                                "Two OCR readings of the same line of a printed English novel "
+                                "differ. Which is the correct transcription, as printed?",
+                                {"a": f"“{ours}”", "b": f"“{swapped}”"},
+                            )
+                        },
+                    )["reading"]
+                    if truth:
+                        records.append((truth, answer, second, in_context))
                     sure = answer.confidence >= SURE
                     if truth is None:
                         tally["no truth"] += 1
@@ -172,8 +195,40 @@ def main() -> None:
                         f"clef {answer.value:7} {answer.confidence:.2f} {verdict}"
                     )
     print(dict(tally))
+    summarise(records)
     if seconds:
         print(f"clef: {sum(seconds) / len(seconds):.2f} s per suspect, {len(seconds)} calls")
+
+
+def summarise(records) -> None:
+    """Accuracy of each model, and of clef where a second opinion agrees or disagrees."""
+    n = len(records)
+    for name, k in (("clef", 1), ("decider", 2), ("winnow", 3)):
+        got = [r for r in records if r[k] is not None]
+        print(f"{name}: right {sum(r[k].value == r[0] for r in got)}/{len(got)}")
+    for name, k in (("decider", 2), ("winnow", 3)):
+        agree = [r for r in records if r[k] is not None and r[k].value == r[1].value]
+        differ = [r for r in records if r[k] is not None and r[k].value != r[1].value]
+        print(
+            f"clef with {name} agreeing: {sum(r[1].value == r[0] for r in agree)}/{len(agree)} "
+            f"right; disagreeing: clef {sum(r[1].value == r[0] for r in differ)}, "
+            f"{name} {sum(r[k].value == r[0] for r in differ)} of {len(differ)}"
+        )
+    # Policies: which suspects are applied without a human, and how many of those are wrong.
+    policies = {
+        "clef conf >= 0.5": lambda r: r[1].confidence >= 0.5,
+        "clef and winnow agree": lambda r: r[1].value == r[3].value,
+        "all three agree": lambda r: r[2] is not None and r[1].value == r[2].value == r[3].value,
+        "clef and winnow agree, clef conf >= 0.3": lambda r: (
+            r[1].value == r[3].value and r[1].confidence >= 0.3
+        ),
+    }
+    for name, auto in policies.items():
+        applied = [r for r in records if auto(r)]
+        wrong = sum(r[1].value != r[0] for r in applied)
+        print(
+            f"policy {name}: {len(applied)}/{n} applied, {wrong} wrong; {n - len(applied)} to review"
+        )
 
 
 if __name__ == "__main__":

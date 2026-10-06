@@ -234,7 +234,7 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 ## Environment
 
 - Apple M4 Max, 64 GB RAM, macOS.
-- Ollama 0.35.1 at `http://127.0.0.1:11434`.
+- Ollama 0.40.0 at `http://127.0.0.1:11434` (updated 2026-10-06 from 0.35.1; earlier scores were on 0.35.1).
 - Ollaya at `http://127.0.0.1:11435`.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).
@@ -568,4 +568,9 @@ disagreements by mistake category.
   reference: tesseract right 56, text layer 34, clef 79 (88%). Clef at
   confidence ≥ 0.5: 49/50 right; below 0.5: 30/40. The layer loses em-dashes
   (`up if` for `up—if`) and closing ”; tesseract misreads opening “ as ‘, and
-  clef can't tell those apart. ~0.8 s per suspect.
+  clef can't tell those apart. ~0.8 s per suspect. Second opinions on the
+  same 90: decider:2b-vision (crop) 74 right, winnow:e4b (the line as text, no
+  image) 74; each disagrees with clef 13 times, where clef is right only 9.
+  Applying only when clef and winnow agree and clef ≥ 0.3: 62 applied, 1
+  wrong, 28 left for review. Agreement isn't proof: the wrong unanimous cases
+  are the opening-quote blind spot every model shares.
