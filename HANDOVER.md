@@ -44,8 +44,9 @@ Sense and Dolittle gains; see the decision log.
 | merge gemma4 + tesseract | **0.54%** | flags 89, 56 of them real errors, ~no silent wrong words |
 | `translategemma:4b` | 4.9% (1 page) | paraphrases; unfit |
 | `translategemma:12b`, old-spelling prompt | ~1.4% on 11 pages; loops on p5 | 12; unfit |
+| `translategemma:27b`, old-spelling prompt | 0.99% (merge with tesseract also 0.99%, 11 silent wrong words) | 11; unfit |
 
-Pending when downloaded: `translategemma:27b`, Nemotron 3 Nano Omni
+Pending when downloaded: Nemotron 3 Nano Omni
 (33B), `llava:34b`. Run them with
 `uv run python experiments/probe_ocr.py run <model> oldspelling`, then
 `merge <model>@oldspelling tesseract@plain`.
