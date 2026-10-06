@@ -144,3 +144,12 @@ def test_chapter_label_and_title_are_separate_parts_of_one_heading():
         ["THE FIRST CHAPTER", "PUDDLEBY"],
     ]
     assert found[1].text == "THE FIRST CHAPTER PUDDLEBY"
+
+
+def test_a_private_use_glyph_spells_the_ligature_ocr_reads_in_its_place():
+    from roboscriptorium.pdf import ligature_read
+
+    assert ligature_read("ploe.", "", "plofje.") == "fj"
+    assert ligature_read("ea...", "", "Thea...") == "Th"
+    # Dutch tesseract reads the Th as "Ih": not a ligature, so no vote.
+    assert ligature_read("uis", "", "'Ihuis") is None
