@@ -65,3 +65,10 @@ def test_generate_sends_images_and_returns_text(tmp_path):
 
     client = OllamaClient("http://test", client=_http(handler))
     assert client.generate("gemma4:latest", "OCR this", images=[image]) == "tekst"
+
+
+def test_for_model_routes_clef_to_ollama():
+    clef = ollaya.for_model("clef-flash:9b", "http://ollaya", "http://ollama")
+    winnow = ollaya.for_model("winnow:e4b", "http://ollaya", "http://ollama")
+    assert (str(clef._http.base_url), clef.endpoint) == ("http://ollama", "/v1/systemone")
+    assert (str(winnow._http.base_url), winnow.endpoint) == ("http://ollaya", "/api/decide")

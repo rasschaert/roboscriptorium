@@ -2,9 +2,17 @@ title = "Sense and Sensibility"
 author = "Jane Austen"
 language = "en-GB"
 
-# The reference text: Standard Ebooks' production repo at a pinned commit, with
-# its [Editorial] commits undone so spelling matches the 1864 Tauchnitz scan.
+# The reference text: Project Gutenberg's transcription of the 1811 first
+# edition. None of the scans is that edition, so their scores include edition
+# differences; adjudicated disagreements record what each scan actually prints.
 [reference]
+gutenberg = 161
+url = "https://www.gutenberg.org/cache/epub/161/pg161-images-3.epub"
+chapters = ["CHAPTER I.", "CHAPTER L."]
+
+# Standard Ebooks' production (based on Gutenberg #161, proofread against the
+# Tauchnitz scan), kept for later style work. Not a faithful reference.
+[standard_ebooks]
 repo = "https://github.com/standardebooks/jane-austen_sense-and-sensibility"
 commit = "57e5fa6f5d591465644b4e5b0ed6b5e3eb08602d"
 

@@ -63,8 +63,10 @@ right, then expand.
 - Python 3.13, managed with **uv**. Package and CLI are both named `roboscriptorium`.
 - Layout: `src/roboscriptorium/` (src layout), tests in `tests/`.
   - `cli.py`: typer app, the entry point.
-  - `config.py`: `Settings`, overridable via `ROBO_OLLAMA_URL`, `ROBO_OLLAYA_URL`
-    and `ROBO_DECISION_MODEL`.
+  - `config.py`: `Settings`, overridable via `ROBO_OLLAMA_URL`, `ROBO_OLLAYA_URL`,
+    `ROBO_DECISION_MODEL` and `ROBO_ROLE_MODEL`.
+  - `clients/ollaya.py` also serves Ollama's `/v1/systemone`: `for_model` routes
+    `clef-*` models there and everything else to Ollaya.
   - `clients/ollama.py`, `clients/ollaya.py`: thin httpx clients. All model calls go
     through these.
   - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
@@ -79,12 +81,19 @@ right, then expand.
   - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`.
   - `experiments/`: throwaway probes for comparing models (line roles, page types).
   - `golden/`: golden books. `manifest.py` (scans, fetch with sha256 check),
-    `se.py` (derives the faithful reference text from a Standard Ebooks repo),
+    `gutenberg.py` (derives the reference text from a Project Gutenberg EPUB),
+    `se.py` (derives Standard Ebooks' text, kept for later style work),
     `reference.py` (reads the reference chapters).
   - `evaluate.py`: CER, WER and paragraph F1 against a golden reference.
+  - `disagreements.py`: where output and reference differ, located on the scan;
+    clearly garbled output and whitespace-only differences are auto-resolved.
+    Verdicts (what the scan prints, plus a mistake category) are stored per scan
+    and patched into the reference by `eval`.
+  - `review.py` + `review.html`: the local review page (stdlib HTTP server on
+    127.0.0.1) for giving verdicts next to scan crops.
 - HTTP: `httpx`. Tests inject `httpx.MockTransport`, so unit tests never need a
   running model server.
-- Lint/format: `ruff` (line length 100). Tests: `pytest`.
+- Lint/format: `ruff` (line length 100; `experiments/` excluded). Tests: `pytest`.
 - Comments describe the code as it is now, briefly; history belongs in commit messages.
 
 ## Architecture
@@ -186,10 +195,10 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | --- | --- | --- | --- |
 | Ollaya | `laya:multilingual` | Decisions on Dutch text | **unfit for line roles** (see log) |
 | Ollaya | `laya:en` | Decisions on English text | **unfit for line roles** (see log) |
-| Ollaya | `winnow:e4b` | **Line roles (in use)** | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
+| Ollaya | `winnow:e4b` | Line roles (previous default) | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
 | Ollaya | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
 | Ollaya | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
-| Ollama | `clef-flash:9b` | Line roles and page types (candidate default) | Line roles: 60/60 at P(body) ≥ 0.5 (its probabilities are softer than winnow's, so don't use 0.9). Pages: 19/23, low confidence where it errs. ~0.8 s/line and ~3.9 s/page, measured under load. Endpoint `/v1/systemone`; raw base64 PNG/JPEG/WebP in `images`; up to 64 questions per call; 64K context. Confidence = how concentrated the probabilities are, not P(correct) |
+| Ollama | `clef-flash:9b` | **Line roles (in use)**; page types candidate | Line roles: 60/60 at P(body) ≥ 0.5 (its probabilities are softer than winnow's, so don't use 0.9). Pages: 19/23, low confidence where it errs. ~0.8 s/line and ~3.9 s/page, measured under load. Endpoint `/v1/systemone`; raw base64 PNG/JPEG/WebP in `images`; up to 64 questions per call; 64K context. Confidence = how concentrated the probabilities are, not P(correct) |
 | Ollama | `gemma4:latest` | Vision OCR / correction candidate | available, unevaluated |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
 
@@ -228,19 +237,26 @@ uv run ruff format . && uv run ruff check . && uv run pytest
 
 Public-domain scans paired with a human-checked reference text, which is what
 every change gets measured against. Each lives in `golden/<name>/` **in git**:
-`manifest.toml` (the scans with URL and sha256, page ranges, and the reference
-repo pinned to a commit), the derived chapters in `text/`, and `PROVENANCE.md`.
+`manifest.toml` (the scans with URL and sha256, page ranges, the Gutenberg
+source and chapter range), the derived chapters in `text/` with `PROVENANCE.md`,
+and `standard-ebooks/` (SE's text, see below).
 
-- The reference text is a **Standard Ebooks** production repo (CC0) with its
-  `[Editorial]` commits undone (`golden derive`), so it is faithful to the
-  scan SE proofread against. Their other fixes, including punctuation matched
-  to that scan, are kept.
+- The reference text is a **Project Gutenberg** transcription (`golden derive`),
+  taken as it stands: Gutenberg keeps the printed edition's wording and
+  spelling. Gutenberg rebuilds its EPUBs, so the committed `text/` is the pinned
+  artefact; `PROVENANCE.md` records the EPUB's hash and the transcriber's notes
+  (their own corrections to the print).
+- **Standard Ebooks is not a fidelity reference.** Its texts are modernised and
+  restyled, and undoing its `[Editorial]` commits restores whatever its
+  starting text had, possibly from another edition. `golden derive-se` keeps it
+  in `standard-ebooks/` for later style work; the SE manual of style is at
+  https://standardebooks.org/manual/1.9.1/single-page.
 - Scans are never committed. `golden fetch` downloads them into
   `work/<name>--<scan>/` and writes its `book.toml`. Borrow-only scans have no
   `url`, so they have to be placed by hand and are then checked by sha256.
-- Only the scan SE used is the same edition as the reference. Other editions
-  differ in spelling, quote style, spaced dashes, "Mrs" vs "Mrs.", and so on,
-  so their scores include edition differences, not just pipeline errors.
+- A scan of another edition than the transcription differs in spelling, quote
+  style, spaced dashes, "Mrs" vs "Mrs.", and so on, so its scores include
+  edition differences, not just pipeline errors.
 
 ```sh
 uv run roboscriptorium golden derive sense-and-sensibility
@@ -255,9 +271,26 @@ uv run roboscriptorium eval work/sense-and-sensibility--tauchnitz-1864 --no-mode
 `eval` builds the book, prints the scores and the most frequent differences, and
 appends a line to `work/<book>/eval-history.jsonl`.
 
+**Disagreements and verdicts.** Gutenberg is a transcription, not the scan, so
+where the output disagrees with it a human decides what the scan prints:
+
+```sh
+uv run roboscriptorium review work/the-nature-of-a-crime--doubleday-1924  # → http://127.0.0.1:8765/
+```
+
+Keys: `1` Gutenberg is right (pick the pipeline mistake), `2` the scan prints
+the output (edition difference or transcriber change), `3` type what the scan
+prints, `0` unsure, arrows to move. Verdicts go to
+`golden/<name>/verdicts/<scan>.jsonl` (in git), keyed on the reference words and
+six words of context either side, so they survive pipeline changes. `eval`
+patches them into the reference for that scan and reports the remaining
+disagreements by mistake category.
+
 | Golden book | Scan | Notes |
 | --- | --- | --- |
-| sense-and-sensibility | `tauchnitz-1864` | SE's own scan; matches the reference; old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
+| the-nature-of-a-crime | `doubleday-1924` | **The scan Gutenberg #75172 was made from**; 94 body pages, short; Times OCR layer; running heads |
+| the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
+| sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
 | sense-and-sensibility | `everyman-dent` | Dent, after 1946; yellowed; borrow-only |
 | sense-and-sensibility | `everyman-1992` | Knopf 1992/1997; modern copyrighted introduction; borrow-only |
 
@@ -303,3 +336,19 @@ appends a line to `work/<book>/eval-history.jsonl`.
   confidence. It's the next default candidate; see HANDOVER.md.
 - 2026-10-05: Full-book Tauchnitz with winnow roles: CER 8.05% → 4.68%, WER
   5.18% → 3.34%, paragraph F1 0.589 → 0.667, headings 28/50.
+- 2026-10-06: References switched from Standard Ebooks to Project Gutenberg.
+  Undoing SE's `[Editorial]` commits put back spellings from SE's starting
+  text, Gutenberg #161 of the 1811 edition: the reference said "shewing" where
+  Tauchnitz prints "showing". SE is kept for later style work only. New golden
+  books: *The Nature of a Crime* (Gutenberg made from the same scan) and
+  *Doctor Dolittle* (same printing). Sense now has no same-edition reference.
+- 2026-10-06: `clef-flash:9b` replaces winnow for line roles. Tauchnitz chapters
+  1–9 against the (old) SE reference: CER 4.23% → 3.73%, WER 3.48% → 3.04%,
+  paragraph F1 0.697 → 0.728, headings 9/9.
+- 2026-10-06: Disagreements get human verdicts instead of trusting any
+  transcription blindly: `roboscriptorium review` serves a local page with scan
+  crops. Garbled output (stray symbols, words in neither the reference nor
+  `/usr/share/dict/words`) and whitespace-only differences are auto-resolved.
+  Sense chapters 1–9 still leave ~300 for review (another edition), Crime far
+  fewer (same scan). Full-book Tauchnitz against Gutenberg: heuristics CER 7.23%,
+  winnow 4.98%, clef 4.75% (WER 3.15%, paragraph F1 0.682, headings 28/50).

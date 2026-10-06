@@ -4,7 +4,7 @@ import json
 from dataclasses import asdict
 
 from roboscriptorium.book import Book
-from roboscriptorium.clients.ollaya import OllayaClient
+from roboscriptorium.clients import ollaya
 from roboscriptorium.config import Settings
 from roboscriptorium.epub import write_epub
 from roboscriptorium.ir import Document
@@ -25,7 +25,7 @@ def build(book: Book, pages: tuple[int, int] | None = None, use_models: bool = T
     roles = None
     if use_models:
         settings = Settings.from_env()
-        client = OllayaClient(settings.ollaya_url, settings.role_model)
+        client = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
         roles = classify(body, client, DecisionCache(book.stages / "decisions.jsonl"))
 
     doc = Document(book.title, book.author, book.language, reflow(body, roles))

@@ -29,6 +29,8 @@ dev = [
 
 [tool.ruff]
 line-length = 100
+# Throwaway model probes.
+extend-exclude = ["experiments"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

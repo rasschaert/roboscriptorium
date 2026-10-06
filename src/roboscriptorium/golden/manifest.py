@@ -1,7 +1,8 @@
 """Golden books: public-domain scans paired with a human-checked reference text.
 
-Each lives in `golden/<name>/` (in git): `manifest.toml`, the derived reference
-chapters in `text/`, and `PROVENANCE.md`. Scans are fetched into
+Each lives in `golden/<name>/` (in git): `manifest.toml`, the reference chapters
+derived from a Project Gutenberg transcription in `text/`, and `PROVENANCE.md`.
+`standard-ebooks/` holds the Standard Ebooks text, kept for later style work. Scans are fetched into
 `work/<name>--<scan id>/`, which is an ordinary book directory.
 """
 
@@ -27,13 +28,26 @@ class Scan:
 
 
 @dataclass(frozen=True)
+class Gutenberg:
+    ebook: int
+    url: str
+    chapters: tuple[str, str]  # first lines of the first and last chapter headings
+
+
+@dataclass(frozen=True)
+class StandardEbooks:
+    repo: str
+    commit: str
+
+
+@dataclass(frozen=True)
 class Golden:
     name: str
     title: str
     author: str
     language: str
-    repo: str
-    commit: str
+    reference: Gutenberg
+    standard_ebooks: StandardEbooks | None
     scans: list[Scan]
 
     @property
@@ -43,6 +57,10 @@ class Golden:
     @property
     def text_dir(self) -> Path:
         return self.root / "text"
+
+    @property
+    def se_dir(self) -> Path:
+        return self.root / "standard-ebooks"
 
     def scan(self, scan_id: str) -> Scan:
         return next(s for s in self.scans if s.id == scan_id)
@@ -66,8 +84,15 @@ class Golden:
             for s in data["scans"]
         ]
         ref = data["reference"]
+        se = data.get("standard_ebooks")
         return cls(
-            name, data["title"], data["author"], data["language"], ref["repo"], ref["commit"], scans
+            name,
+            data["title"],
+            data["author"],
+            data["language"],
+            Gutenberg(ref["gutenberg"], ref["url"], tuple(ref["chapters"])),
+            StandardEbooks(se["repo"], se["commit"]) if se else None,
+            scans,
         )
 
 

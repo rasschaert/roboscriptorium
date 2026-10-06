@@ -26,7 +26,13 @@ def load_chapters(text_dir: Path) -> list[Chapter]:
     chapters = []
     for path in sorted(text_dir.glob("chapter-*.xhtml"), key=_number):
         body = ET.parse(path).getroot().find(f"{XHTML}body")
-        heading = body.find(f".//{XHTML}h2")
-        paragraphs = [_text(p) for p in body.iter(f"{XHTML}p")]
-        chapters.append(Chapter(_text(heading) if heading is not None else "", paragraphs))
+        # A chapter title next to the number sits in an <hgroup> as a <p>.
+        group = body.find(f".//{XHTML}hgroup")
+        heading = group if group is not None else body.find(f".//{XHTML}h2")
+        in_heading = set(heading.iter()) if heading is not None else set()
+        paragraphs = [_text(p) for p in body.iter(f"{XHTML}p") if p not in in_heading]
+        title = " ".join(_text(el) for el in heading) if group is not None else None
+        chapters.append(
+            Chapter(title or (_text(heading) if heading is not None else ""), paragraphs)
+        )
     return chapters

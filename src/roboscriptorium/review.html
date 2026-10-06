@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review disagreements</title>
+<style>
+:root {
+  --bg: #f6f5f1; --card: #fff; --ink: #1d1d1b; --muted: #6b6a66; --line: #dddbd3;
+  --ref: #1f6f43; --ref-bg: #e3f2e8; --out: #9a3412; --out-bg: #fcebdc;
+  --accent: #2f5bd3; --done: #1f6f43; --unsure: #a16207;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161614; --card: #22221f; --ink: #ecebe6; --muted: #9b9a94; --line: #3a3a35;
+    --ref: #7dd3a0; --ref-bg: #183326; --out: #fdba74; --out-bg: #3b2414;
+    --accent: #8aa8ff; --done: #7dd3a0; --unsure: #facc15;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+header { position: sticky; top: 0; z-index: 2; background: var(--bg); border-bottom: 1px solid var(--line);
+  padding: 10px 16px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+header h1 { font-size: 16px; margin: 0; }
+.progress { flex: 1; min-width: 160px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.progress div { height: 100%; background: var(--done); }
+.counts { color: var(--muted); font-variant-numeric: tabular-nums; }
+label.toggle { color: var(--muted); user-select: none; }
+main { max-width: 980px; margin: 0 auto; padding: 16px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
+.crop { width: 100%; border: 1px solid var(--line); border-radius: 6px; background: #fff; display: block; min-height: 60px; }
+.context { font-family: Georgia, "Iowan Old Style", serif; font-size: 18px; margin: 16px 0; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.pair div { border-radius: 6px; padding: 8px 10px; font-family: Georgia, serif; font-size: 18px; white-space: pre-wrap; word-break: break-word; }
+.pair small { display: block; font: 12px/1.4 -apple-system, sans-serif; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
+.out { background: var(--out-bg); color: var(--out); }
+.ref { background: var(--ref-bg); color: var(--ref); }
+.empty { opacity: .6; font-style: italic; }
+mark.out, mark.ref { padding: 0 3px; border-radius: 3px; }
+.actions { display: grid; gap: 8px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+button { font: inherit; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.primary { border-color: var(--ref); }
+button.secondary { border-color: var(--out); }
+kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; margin-right: 6px; color: var(--muted); }
+select, input[type=text] { font: inherit; padding: 7px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+input[type=text] { flex: 1; min-width: 200px; }
+.verdict { margin-top: 12px; padding: 8px 10px; border-radius: 6px; background: var(--ref-bg); color: var(--ref); }
+.verdict.unsure { background: transparent; border: 1px dashed var(--unsure); color: var(--unsure); }
+.nav { display: flex; justify-content: space-between; margin-top: 12px; color: var(--muted); font-size: 13px; }
+a { color: var(--accent); }
+@media (max-width: 640px) { .pair { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Disagreements</h1>
+  <div class="progress"><div id="bar"></div></div>
+  <span class="counts" id="counts"></span>
+  <label class="toggle"><input type="checkbox" id="showAuto"> show auto-resolved</label>
+  <label class="toggle"><input type="checkbox" id="showDone"> show reviewed</label>
+</header>
+<main id="main"></main>
+<script>
+let state = null, queue = [], pos = 0;
+const main = document.getElementById("main");
+const esc = s => s.replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+
+async function load() {
+  state = await (await fetch("/api/state")).json();
+  rebuild();
+}
+
+function rebuild(keepKey) {
+  const auto = document.getElementById("showAuto").checked;
+  const done = document.getElementById("showDone").checked;
+  queue = state.items.filter(d => (auto || !d.auto) && (done || !d.verdict));
+  const i = keepKey ? queue.findIndex(d => d.key === keepKey) : -1;
+  pos = i >= 0 ? i : Math.min(pos, Math.max(0, queue.length - 1));
+  render();
+}
+
+function counts() {
+  const manual = state.items.filter(d => !d.auto);
+  const reviewed = manual.filter(d => d.verdict && d.verdict.category !== "unsure").length;
+  const unsure = manual.filter(d => d.verdict && d.verdict.category === "unsure").length;
+  document.getElementById("bar").style.width = (100 * reviewed / Math.max(1, manual.length)) + "%";
+  document.getElementById("counts").textContent =
+    `${reviewed} / ${manual.length} reviewed · ${unsure} unsure · ${state.items.length - manual.length} auto-resolved`;
+}
+
+function options(group, selected) {
+  return Object.entries(group).map(([k, v]) =>
+    `<option value="${k}"${k === selected ? " selected" : ""}>${esc(v)}</option>`).join("");
+}
+
+function render() {
+  counts();
+  if (!queue.length) {
+    main.innerHTML = `<div class="card">Nothing left to review here. Tick the boxes above to revisit reviewed or auto-resolved items.</div>`;
+    return;
+  }
+  const d = queue[pos];
+  const crop = d.page && d.lines ? `/crop?page=${d.page}&first=${d.lines[0]}&last=${d.lines[1]}` : null;
+  const show = s => s ? esc(s) : `<span class="empty">(nothing)</span>`;
+  const v = d.verdict;
+  const verdictText = !v ? "" : v.category === "unsure"
+    ? `<div class="verdict unsure">Marked unsure${v.note ? ": " + esc(v.note) : ""}</div>`
+    : `<div class="verdict">Scan prints: “${esc(v.truth || "")}” · ${esc((state.pipeline[v.category] || state.scan[v.category] || v.category))}${v.note ? " · " + esc(v.note) : ""}</div>`;
+  main.innerHTML = `
+  <div class="card">
+    <div class="meta">
+      <span>${pos + 1} of ${queue.length} in this view${d.auto ? " · auto-resolved as " + esc(state.pipeline[d.auto]) : ""}</span>
+      <span>${d.page ? `page ${d.page}, line ${d.lines ? d.lines[0] + 1 : "?"} · <a href="/page?page=${d.page}" target="_blank">full page</a>` : "no location"}</span>
+    </div>
+    ${crop ? `<img class="crop" src="${crop}" alt="Scan crop">` : ""}
+    <div class="context">…${esc(d.before)} <mark class="out">${show(d.got)}</mark><mark class="ref">${show(d.want)}</mark> ${esc(d.after)}…</div>
+    <div class="pair">
+      <div class="out"><small>Output</small>${show(d.got)}</div>
+      <div class="ref"><small>Gutenberg</small>${show(d.want)}</div>
+    </div>
+    <div class="actions">
+      <div class="row">
+        <button class="primary" data-kind="reference"><kbd>1</kbd>Gutenberg is right</button>
+        <select id="pipelineCat">${options(state.pipeline, d.guess)}</select>
+      </div>
+      <div class="row">
+        <button class="secondary" data-kind="output"><kbd>2</kbd>Scan prints the output</button>
+        <select id="scanCat">${options(state.scan, "edition")}</select>
+      </div>
+      <div class="row">
+        <button data-kind="other"><kbd>3</kbd>Scan prints:</button>
+        <input type="text" id="truth" value="${esc(d.want)}" placeholder="what the scan prints">
+      </div>
+      <div class="row">
+        <button data-kind="unsure"><kbd>0</kbd>Not sure</button>
+        <input type="text" id="note" placeholder="note (optional)" value="${v && v.note ? esc(v.note) : ""}">
+      </div>
+    </div>
+    ${verdictText}
+    <div class="nav"><span><kbd>←</kbd>previous</span><span><kbd>→</kbd>next</span></div>
+  </div>`;
+  main.querySelectorAll("button[data-kind]").forEach(b => b.onclick = () => decide(b.dataset.kind));
+}
+
+async function decide(kind) {
+  const d = queue[pos];
+  const category = kind === "reference" ? document.getElementById("pipelineCat").value
+    : kind === "other" ? document.getElementById("pipelineCat").value
+    : kind === "output" ? document.getElementById("scanCat").value : "unsure";
+  const body = {key: d.key, kind, category,
+    truth: document.getElementById("truth").value, note: document.getElementById("note").value};
+  const resp = await fetch("/api/verdict", {method: "POST", body: JSON.stringify(body)});
+  if (!resp.ok) { alert(await resp.text()); return; }
+  d.verdict = await resp.json();
+  const showDone = document.getElementById("showDone").checked;
+  if (showDone) pos = Math.min(pos + 1, queue.length - 1);
+  rebuild(showDone ? queue[pos].key : null);
+}
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "INPUT" && e.key !== "Enter") return;
+  if (e.target.tagName === "INPUT" && e.key === "Enter") { decide(e.target.id === "truth" ? "other" : "unsure"); return; }
+  const kinds = {"1": "reference", "2": "output", "3": "other", "0": "unsure"};
+  if (kinds[e.key]) {
+    if (e.key === "3") { document.getElementById("truth").focus(); document.getElementById("truth").select(); return; }
+    decide(kinds[e.key]);
+  } else if (e.key === "ArrowRight") { pos = Math.min(pos + 1, queue.length - 1); render(); }
+  else if (e.key === "ArrowLeft") { pos = Math.max(pos - 1, 0); render(); }
+});
+document.getElementById("showAuto").onchange = () => rebuild();
+document.getElementById("showDone").onchange = () => rebuild();
+load();
+</script>
+</body>
+</html>

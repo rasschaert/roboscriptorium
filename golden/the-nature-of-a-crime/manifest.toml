@@ -1,0 +1,26 @@
+title = "The Nature of a Crime"
+author = "Joseph Conrad and Ford Madox Ford"
+language = "en-GB"
+
+# The reference text: Project Gutenberg's transcription, which Distributed
+# Proofreaders produced from this same scan.
+[reference]
+gutenberg = 75172
+url = "https://www.gutenberg.org/cache/epub/75172/pg75172-images-3.epub"
+chapters = ["I", "VIII"]
+
+# Kept for later style work. Not a faithful reference.
+[standard_ebooks]
+repo = "https://github.com/standardebooks/joseph-conrad_ford-madox-ford_the-nature-of-a-crime"
+commit = "67624d8cabcdd47ee31ff6ab65bde95fde17dad5"
+
+# Garden City, Doubleday, Page & Company, 1924, first edition; a Phillips
+# Academy library copy in a plain black binding, so the title page stands in as
+# the cover. The prefaces (pp. 11–21) and the appendix (pp. 119–132) are left
+# out of the body range.
+[[scans]]
+id = "doubleday-1924"
+url = "https://archive.org/download/natureofcrime0000conr/natureofcrime0000conr.pdf"
+sha256 = "82e1ea8a2692ea1a23f313876c01fd32529f0a3e7ee248f74a04e3bde0b972da"
+cover_page = 7
+body_pages = [25, 118]

@@ -9,7 +9,6 @@ import json, sys, time
 from collections import Counter
 from pathlib import Path
 from roboscriptorium.clients import ollaya
-from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.pdf import render_png
 
 model = sys.argv[1]
@@ -36,14 +35,7 @@ Q = {"page": ollaya.choice("This is a scanned page of a printed book. What kind 
     "library_or_scan": "A library card, due-date slip, barcode, ownership stamp or digitisation notice"})}
 SAMPLE = {(TAU, n) for n in (1, 2, 3, 4, 5, 6, 7, 8, 11, 100, 175, 200, 347, 348, 349)} | {(STE, n) for n in (1, 3, 4, 5, 30, 74, 75, 76)}
 gold = {k: v for k, v in gold.items() if k in SAMPLE}
-def make_client(model):
-    """clef-* models run on Ollama's /v1/systemone; everything else on Ollaya."""
-    if model.startswith("clef"):
-        return OllayaClient("http://127.0.0.1:11434", model, endpoint="/v1/systemone")
-    return OllayaClient("http://127.0.0.1:11435", model)
-
-
-client = make_client(model)
+client = ollaya.for_model(model, "http://127.0.0.1:11435", "http://127.0.0.1:11434")
 rows, t0 = [], time.time()
 for (pdf, n), g in gold.items():
     t1 = time.time()

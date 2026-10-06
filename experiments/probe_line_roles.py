@@ -8,7 +8,6 @@ often mislabelled "other" there, so read the listed misses before trusting the t
 
 import json, random, statistics, sys, time
 from roboscriptorium.clients import ollaya
-from roboscriptorium.clients.ollaya import OllayaClient
 
 model = sys.argv[1]
 PER_CLASS = int(sys.argv[2]) if len(sys.argv) > 2 else 30
@@ -43,14 +42,7 @@ Q = {"role": ollaya.choice(
      "page_number": "A page number on its own",
      "chapter_heading": "A chapter or part heading such as 'CHAPTER XII.'",
      "artifact": "Not part of the book's text: a library or digitisation stamp, a printer's signature mark at the bottom of a page, or scanning noise"})}
-def make_client(model):
-    """clef-* models run on Ollama's /v1/systemone; everything else on Ollaya."""
-    if model.startswith("clef"):
-        return OllayaClient("http://127.0.0.1:11434", model, endpoint="/v1/systemone")
-    return OllayaClient("http://127.0.0.1:11435", model)
-
-
-client = make_client(model)
+client = ollaya.for_model(model, "http://127.0.0.1:11435", "http://127.0.0.1:11434")
 rows = []; t0 = time.time()
 for key, gold in sample:
     a = client.decide(state(key), Q)["role"]

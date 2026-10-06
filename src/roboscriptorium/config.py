@@ -9,7 +9,7 @@ class Settings:
     ollama_url: str = "http://127.0.0.1:11434"
     ollaya_url: str = "http://127.0.0.1:11435"
     decision_model: str = "laya:multilingual"
-    role_model: str = "winnow:e4b"
+    role_model: str = "clef-flash:9b"
 
     @classmethod
     def from_env(cls) -> "Settings":

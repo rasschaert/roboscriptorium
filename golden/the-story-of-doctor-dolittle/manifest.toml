@@ -1,0 +1,25 @@
+title = "The Story of Doctor Dolittle"
+author = "Hugh Lofting"
+language = "en-US"
+
+# The reference text: Project Gutenberg's transcription of the tenth printing
+# (it includes Walpole's introduction), the same printing as the scan.
+[reference]
+gutenberg = 501
+url = "https://www.gutenberg.org/cache/epub/501/pg501-images-3.epub"
+chapters = ["THE FIRST CHAPTER", "THE LAST CHAPTER"]
+
+# Kept for later style work. Not a faithful reference.
+[standard_ebooks]
+repo = "https://github.com/standardebooks/hugh-lofting_the-story-of-doctor-dolittle"
+commit = "cf808f8ea32c2cbc8eadf98ad737c168d1fe3aa3"
+
+# New York, Frederick A. Stokes, 1920, tenth printing with Hugh Walpole's
+# introduction (pp. 11–16, not in the reference). Full-page plates and drawn
+# initial capitals; the text layer drops each chapter's initial letter.
+[[scans]]
+id = "stokes-1920"
+url = "https://archive.org/download/storyofdoctordol00loft/storyofdoctordol00loft.pdf"
+sha256 = "f9cd967840877fb5f645c6197ab3704f33730c4c9f92e416c6d75a7b00c0b53d"
+cover_page = 1
+body_pages = [23, 202]

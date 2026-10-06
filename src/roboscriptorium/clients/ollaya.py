@@ -13,6 +13,9 @@ from typing import Any
 
 import httpx
 
+# Decision models with these name prefixes are served by Ollama's /v1/systemone.
+OLLAMA_PREFIXES = ("clef",)
+
 
 def choice(instructions: str, criteria: dict[str, str]) -> dict[str, Any]:
     return {"type": "choice", "instructions": instructions, "criteria": criteria}
@@ -85,3 +88,10 @@ class OllayaClient:
         resp = self._http.post(self.endpoint, json=payload)
         resp.raise_for_status()
         return {name: Answer.from_json(a) for name, a in resp.json()["answers"].items()}
+
+
+def for_model(model: str, ollaya_url: str, ollama_url: str) -> OllayaClient:
+    """A client on whichever runtime serves this decision model."""
+    if model.startswith(OLLAMA_PREFIXES):
+        return OllayaClient(ollama_url, model, endpoint="/v1/systemone")
+    return OllayaClient(ollaya_url, model)

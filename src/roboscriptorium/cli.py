@@ -1,5 +1,6 @@
 import json
 import subprocess
+from collections import Counter
 from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
@@ -7,15 +8,18 @@ from pathlib import Path
 import httpx
 import typer
 
-from roboscriptorium import evaluate, pipeline
+from roboscriptorium import disagreements, evaluate, pipeline, review
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollama import OllamaClient
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.config import Settings
-from roboscriptorium.golden import se
+from roboscriptorium.disagreements import Verdicts
+from roboscriptorium.golden import gutenberg, se
 from roboscriptorium.golden.manifest import Golden, fetch
-from roboscriptorium.golden.reference import load_chapters
+from roboscriptorium.golden.reference import Chapter, load_chapters
+from roboscriptorium.ir import Document
+from roboscriptorium.pdf import cached_text_layer
 
 app = typer.Typer(no_args_is_help=True, help="Turn books that aren't EPUBs into EPUBs.")
 
@@ -66,14 +70,29 @@ app.add_typer(golden_app, name="golden")
 
 
 @golden_app.command("derive")
-def golden_derive(name: str) -> None:
-    """Regenerate golden/<name>/text from the pinned Standard Ebooks commit."""
+def golden_derive(name: str, epub: Path | None = None) -> None:
+    """Regenerate golden/<name>/text from its Project Gutenberg transcription."""
     golden = Golden.load(name)
-    repo = se.checkout(golden.repo, golden.commit, Path("work/.cache/se") / name)
-    report = se.write_reference(repo, golden.repo, golden.commit, golden.root)
+    ref = golden.reference
+    epub = epub or gutenberg.download(ref.url, Path("work/.cache/gutenberg") / f"{ref.ebook}.epub")
+    chapters = gutenberg.write_reference(epub, ref.ebook, ref.url, ref.chapters, golden.root)
+    typer.echo(
+        f"{len(chapters)} chapters, {sum(len(c.paragraphs) for c in chapters)} paragraphs "
+        f"(see {golden.root / 'PROVENANCE.md'})"
+    )
+
+
+@golden_app.command("derive-se")
+def golden_derive_se(name: str) -> None:
+    """Regenerate golden/<name>/standard-ebooks from the pinned Standard Ebooks commit."""
+    golden = Golden.load(name)
+    if (se_ref := golden.standard_ebooks) is None:
+        raise typer.BadParameter(f"{name} has no [standard_ebooks] in its manifest")
+    repo = se.checkout(se_ref.repo, se_ref.commit, Path("work/.cache/se") / name)
+    report = se.write_reference(repo, se_ref.repo, se_ref.commit, golden.se_dir)
     typer.echo(
         f"{len(report.commits)} editorial commits: {report.applied} changes undone, "
-        f"{len(report.unmatched)} unmatched (see {golden.root / 'PROVENANCE.md'})"
+        f"{len(report.unmatched)} unmatched (see {golden.se_dir / 'PROVENANCE.md'})"
     )
 
 
@@ -95,6 +114,47 @@ def _range(value: str | None) -> tuple[int, int] | None:
     return int(first), int(last or first)
 
 
+def _build_golden(
+    book_dir: Path, pages: str | None, chapters: str | None, no_models: bool
+) -> tuple[Book, Document, list[Chapter]]:
+    book = Book.load(book_dir)
+    if book.golden is None:
+        raise typer.BadParameter(f"{book_dir}/book.toml names no golden book")
+    doc = pipeline.build(book, pages=_range(pages), use_models=not no_models)
+    reference = load_chapters(Golden.load(book.golden).text_dir)
+    if (span := _range(chapters)) is not None:
+        reference = reference[span[0] - 1 : span[1]]
+    return book, doc, reference
+
+
+def _verdicts(book: Book) -> Verdicts:
+    scan_id = book.root.name.split("--", 1)[-1]
+    return Verdicts(Golden.load(book.golden).root / "verdicts" / f"{scan_id}.jsonl")
+
+
+@app.command("review")
+def review_book(
+    book_dir: Path,
+    pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
+    chapters: str | None = typer.Option(None, help="Reference chapters to compare, e.g. 1-9"),
+    no_models: bool = typer.Option(False, help="Skip decision models (heuristics only)"),
+    port: int = typer.Option(8765, help="Port on 127.0.0.1"),
+) -> None:
+    """Review where the output disagrees with the reference, next to the scan."""
+    book, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
+    text_layer = cached_text_layer(book.source, book.stages / "textlayer.json")
+    found = disagreements.find(doc, reference, text_layer)
+    verdicts = _verdicts(book)
+    manual = [d for d in found if not d.auto]
+    done = sum(d.key in verdicts.by_key for d in manual)
+    typer.echo(
+        f"{len(found)} disagreements: {len(found) - len(manual)} auto-resolved, "
+        f"{len(manual)} to review ({done} already done)"
+    )
+    typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
+    review.serve(review.Review(book.source, text_layer, found, verdicts), port)
+
+
 @app.command("eval")
 def evaluate_book(
     book_dir: Path,
@@ -103,13 +163,9 @@ def evaluate_book(
     no_models: bool = typer.Option(False, help="Skip decision models (heuristics only)"),
 ) -> None:
     """Build a golden book's scan and score it against the reference text."""
-    book = Book.load(book_dir)
-    if book.golden is None:
-        raise typer.BadParameter(f"{book_dir}/book.toml names no golden book")
-    doc = pipeline.build(book, pages=_range(pages), use_models=not no_models)
-    reference = load_chapters(Golden.load(book.golden).text_dir)
-    if (span := _range(chapters)) is not None:
-        reference = reference[span[0] - 1 : span[1]]
+    book, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
+    verdicts = _verdicts(book)
+    reference, applied = disagreements.patch(reference, verdicts)
     result = evaluate.score(doc, reference)
 
     typer.echo(
@@ -121,6 +177,16 @@ def evaluate_book(
         f"recall {result.paragraph_recall:.3f}; "
         f"words: {result.output_words} out / {result.reference_words} reference"
     )
+    if verdicts.by_key:
+        text_layer = cached_text_layer(book.source, book.stages / "textlayer.json")
+        mistakes = Counter(
+            verdicts.by_key[d.key].category if d.key in verdicts.by_key else d.auto or "unreviewed"
+            for d in disagreements.find(doc, reference, text_layer)
+        )
+        typer.echo(
+            f"  {applied} scan readings patched into the reference; remaining disagreements: "
+            + ", ".join(f"{k} {n}" for k, n in mistakes.most_common())
+        )
     typer.echo("  most frequent differences (output → reference):")
     for got, want, n in result.confusions:
         typer.echo(f"    {n:4}× {got[:40]!r} → {want[:40]!r}")
@@ -133,6 +199,7 @@ def evaluate_book(
         "pages": pages,
         "chapters": chapters,
         "models": not no_models,
+        "verdicts_applied": applied,
         **{k: v for k, v in asdict(result).items() if k != "confusions"},
     }
     with (book.root / "eval-history.jsonl").open("a") as f:
