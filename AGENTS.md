@@ -144,7 +144,9 @@ right, then expand.
     cached in `stages/second-reading.json`. Where a line's readings differ, clef picks from
     the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence; both agreeing
     with clef ≥ 0.3 applies the fix to a copy of the pages before reflow,
-    anything else becomes an `ocr-doubt` review region. Suspects are saved to
+    anything else becomes an `ocr-doubt` review region.
+    The judge is `judge_model` (clef:27b, `ROBO_JUDGE_MODEL`), not the role
+    model. Suspects are saved to
     `stages/ocr-check.json`; `eval --no-check-ocr` skips the stage.
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
     text layer lacks, or reads as scraps because it is printed sideways).

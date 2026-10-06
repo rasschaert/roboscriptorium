@@ -19,7 +19,7 @@ import io
 import json
 import re
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import asdict, dataclass, replace
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
 import httpx
@@ -67,6 +67,8 @@ class Suspect:
     box: tuple[float, float, float, float]
     choice: str  # "ours", "other" (then `chosen` says which), or "review"
     chosen: str | None = None
+    # Each model's pick: a version of the span (`ours` or one of `others`), or "".
+    votes: dict[str, str] = field(default_factory=dict)
 
     @property
     def alternatives(self) -> list[str]:
@@ -315,7 +317,7 @@ def check(
                 others = [r.get(SourceRef(page.number, k), "") for r in readings]
                 for a0, a1, alternatives in merged_differences(ours, [o for o in others if o]):
                     box = _box(page_words, line, ours, a0, a1)
-                    choice, chosen = _decide(
+                    choice, chosen, votes = _decide(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache,
                     )  # fmt: skip
@@ -331,6 +333,7 @@ def check(
                             box,
                             choice,
                             chosen,
+                            votes,
                         )  # fmt: skip
                     )
     return suspects
@@ -373,8 +376,12 @@ def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, lis
 
 def _decide(
     pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache
-) -> tuple[str, str | None]:
-    """ "ours", "other" with the chosen version, or "review"."""
+) -> tuple[str, str | None, dict[str, str]]:
+    """\"ours\", \"other\" with the chosen version, or \"review\"; and each model's pick.
+
+    A pick is applied only when both models make it and the vision model is at
+    least somewhat sure; any disagreement goes to a human.
+    """
     versions = [ours[a0:a1], *others]
     letters = "abcdefg"[: len(versions)]
     seen = _ask(
@@ -411,11 +418,13 @@ def _decide(
             )
         },
     )
+    pick = lambda value: versions[letters.index(value)] if value in letters else ""  # noqa: E731
+    votes = {vision.model: pick(seen["value"]), reader.model: pick(read["value"])}
     if seen["value"] == read["value"] and seen["confidence"] >= SURE:
         if seen["value"] == "a":
-            return "ours", None
-        return "other", versions[letters.index(seen["value"])]
-    return "review", None
+            return "ours", None, votes
+        return "other", versions[letters.index(seen["value"])], votes
+    return "review", None, votes
 
 
 def _ask(client: OllayaClient, cache: DecisionCache, state: dict, questions: dict, image=None):
@@ -454,12 +463,25 @@ def apply(pages: list[PageText], suspects: list[Suspect]) -> list[PageText]:
     return out
 
 
-def doubts(suspects: list[Suspect]) -> dict[tuple[int, str], list[str]]:
-    """Per (page, line text), the other readings of a line a human should choose between."""
-    out: dict[tuple[int, str], list[str]] = {}
+def doubts(suspects: list[Suspect]) -> dict[tuple[int, str], list[tuple[str, list[str]]]]:
+    """Per (page, line text), the readings of a line a human should choose between.
+
+    Each reading is the whole line, the text layer's first, with the models that
+    picked it.
+    """
+    out: dict[tuple[int, str], list[tuple[str, list[str]]]] = {}
     for s in suspects:
-        if s.choice == "review":
-            out.setdefault((s.page, s.original), []).extend(s.alternatives)
+        if s.choice != "review":
+            continue
+        readings = out.setdefault((s.page, s.original), [(s.original, [])])
+        for version in (s.ours, *s.others):
+            line = s.original[: s.start] + version + s.original[s.end :]
+            voters = [model for model, picked in s.votes.items() if picked == version]
+            known = next((r for r in readings if r[0] == line), None)
+            if known is None:
+                readings.append((line, voters))
+            else:
+                known[1].extend(v for v in voters if v not in known[1])
     return out
 
 

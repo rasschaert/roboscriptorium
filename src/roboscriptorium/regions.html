@@ -31,6 +31,7 @@ main { max-width: 980px; margin: 0 auto; padding: 16px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
 .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
 .readings { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 6px 0; color: var(--muted); font-size: 13px; }
+.readings .votes { display: block; font: 11px -apple-system, sans-serif; color: var(--muted); }
 .readings button { font: 16px/1.4 Georgia, "Iowan Old Style", serif; text-align: left; white-space: pre-wrap; }
 .turnbar { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
 .turnbar button { padding: 4px 10px; }
@@ -148,9 +149,8 @@ function render() {
     : `<div class="now">The pipeline <b>${NOW[r.treatment]}</b>. ${r.text ? "Its reading of the highlighted lines (edit if the scan says otherwise):" : r.draft ? "Tesseract's draft of the highlighted area; correct it, then save as text:" : "Type the text here if it belongs in the book:"}</div>
     ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
     <textarea id="text" rows="${Math.min(16, text.split("\n").length + 1)}">${esc(text)}</textarea>
-    ${r.readings && r.readings.length ? `<div class="readings">Readings:
-      <button data-reading="-1"><kbd>a</kbd>${esc(r.text)}</button>
-      ${r.readings.map((t, k) => `<button data-reading="${k}"><kbd>${"bcdfghj"[k] || ""}</kbd>${esc(t)}</button>`).join("")}
+    ${r.readings && r.readings.length ? `<div class="readings">Readings (the first is the scan's text layer):
+      ${r.readings.map((g, k) => `<button data-reading="${k}"><kbd>${READING_KEYS[k] || ""}</kbd>${esc(g.text)}${g.votes.length ? `<span class="votes">${esc(g.votes.join(", "))}</span>` : ""}</button>`).join("")}
       <span class="hint">puts that reading in the box; then save with the button for what it is.</span></div>` : ""}
     ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}`}
     <div class="actions">${buttons}</div>
@@ -177,10 +177,12 @@ function render() {
   }
 }
 
+// Keys for the readings; e (edit), o (read again) and r (turn) are taken.
+const READING_KEYS = "abcdfghj";
 function useReading(k) {
   const r = queue[pos];
-  if (!r.readings || k >= r.readings.length || !textBox()) return;
-  textBox().value = k < 0 ? r.text : r.readings[k];
+  if (!r.readings || k < 0 || k >= r.readings.length || !textBox()) return;
+  textBox().value = r.readings[k].text;
 }
 
 function cropUrl(r) {
@@ -263,8 +265,7 @@ document.addEventListener("keydown", e => {
   if (KEYS[e.key]) decide(KEYS[e.key]);
   else if (e.key === "Enter" && document.getElementById("letter")) { e.preventDefault(); decide("initial"); }
   else if (e.key === "e" && textBox()) { e.preventDefault(); textBox().focus(); }
-  else if (e.key === "a") useReading(-1);
-  else if ("bcdfghj".includes(e.key) && e.key.length === 1) useReading("bcdfghj".indexOf(e.key));
+  else if (e.key.length === 1 && READING_KEYS.includes(e.key)) useReading(READING_KEYS.indexOf(e.key));
   else if (e.key === "r") turn(90);
   else if (e.key === "o") reread();
   else if (e.key === "-") zoom(1);

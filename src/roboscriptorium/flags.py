@@ -75,8 +75,9 @@ class Flag:
     # A layout region on the page, in PDF points; then first..last are the lines in
     # it, or last < first (= where text would be inserted) when it has none.
     box: tuple[float, float, float, float] | None = None
-    # Other readings of the whole region, when a second OCR reading differs from the layer.
-    readings: list[str] = field(default_factory=list)
+    # When OCR readings of a line differ: the region as each reads it, the text
+    # layer's first, each with the models that picked it ({"text", "votes"}).
+    readings: list[dict] = field(default_factory=list)
 
 
 def region_key(page: int, text: str) -> str:
@@ -167,14 +168,20 @@ def _reasons(
     return reasons
 
 
-def _with_readings(page: PageText, flag: Flag, doubts: dict[tuple[int, str], list[str]]) -> Flag:
-    """The region's text with each doubted line read the other way."""
+def _with_readings(
+    page: PageText, flag: Flag, doubts: dict[tuple[int, str], list[tuple[str, list[str]]]]
+) -> Flag:
+    """The region's text as each reading of its doubted lines has it."""
     lines = [page.lines[k].text for k in range(flag.first, flag.last + 1)]
-    readings = [
-        "\n".join([*lines[:k], other, *lines[k + 1 :]])
-        for k, line in enumerate(lines)
-        for other in doubts.get((page.number, line), [])
-    ]
+    readings: list[dict] = []
+    for k, line in enumerate(lines):
+        for other, votes in doubts.get((page.number, line), []):
+            text = "\n".join([*lines[:k], other, *lines[k + 1 :]])
+            known = next((r for r in readings if r["text"] == text), None)
+            if known is None:
+                readings.append({"text": text, "votes": list(votes)})
+            else:
+                known["votes"] += [v for v in votes if v not in known["votes"]]
     return replace(flag, readings=readings) if readings else flag
 
 
@@ -278,7 +285,7 @@ def find(
     pages: list[PageText],
     roles: dict[SourceRef, LineRole],
     layout: dict[int, list[Region]] | None = None,
-    doubts: dict[tuple[int, str], list[str]] | None = None,
+    doubts: dict[tuple[int, str], list[tuple[str, list[str]]]] | None = None,
 ) -> list[Flag]:
     flags: list[Flag] = []
     furniture = _Furniture(R.Repeats(pages), R._page_offset(pages))

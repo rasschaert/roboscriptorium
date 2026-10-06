@@ -29,7 +29,8 @@ def _page() -> PageText:
 def _suspect(choice: str) -> Suspect:
     chosen = "up—if" if choice == "other" else None
     original = "he was so tired up if they come"
-    return Suspect(7, 0, original, 16, 21, "up if", ("up—if",), (0, 0, 1, 1), choice, chosen)
+    votes = {"clef:27b": "up if", "winnow:e4b": "up—if"}
+    return Suspect(7, 0, original, 16, 21, "up if", ("up—if",), (0, 0, 1, 1), choice, chosen, votes)
 
 
 def test_fixes_go_into_a_copy_and_only_onto_unchanged_lines():
@@ -44,8 +45,10 @@ def test_fixes_go_into_a_copy_and_only_onto_unchanged_lines():
 def test_doubted_lines_are_flagged_with_their_other_reading():
     page = _page()
     found = flags.find([page], {}, None, ocrcheck.doubts([_suspect("review")]))
-    assert [(f.first, f.reasons, f.readings) for f in found] == [
-        (0, ["ocr-doubt"], ["he was so tired up—if they come"])
+    assert [(f.first, f.reasons) for f in found] == [(0, ["ocr-doubt"])]
+    assert found[0].readings == [
+        {"text": "he was so tired up if they come", "votes": ["clef:27b"]},
+        {"text": "he was so tired up—if they come", "votes": ["winnow:e4b"]},
     ]
     assert ocrcheck.doubts([_suspect("other")]) == {}
 
