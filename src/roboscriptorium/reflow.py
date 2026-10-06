@@ -11,7 +11,7 @@ import statistics
 
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.roles import LineRole, bare_numeral
+from roboscriptorium.roles import KEEP_BODY_AT, LineRole, bare_numeral
 
 # A paragraph-opening indent is ~10pt on the target scans; line-start jitter
 # from skew stays under ~3pt.
@@ -28,16 +28,13 @@ FOOTER_ZONE = 0.8
 FOOTER_GAP = 1.5
 FOOTER_MAX_CHARS = 4
 
-# A line the model calls something other than body is still kept as body when
-# P(body) is at least this; losing text is worse than keeping a stray line.
-KEEP_BODY_AT = 0.5
-
 HYPHENS = ("-", "\u00ad", "\u00ac")
 DASHES = ("\u2014", "\u2013")
 _LOWER_START = re.compile(r"^[a-zà-ÿ]")
 # Older OCR layers keep the thin space some printers set before punctuation.
 _SPACE_BEFORE_PUNCTUATION = re.compile(r"\s+([,;:.!?])(?=\s|$)")
-# A chapter number on its own line joins the heading above it only after one of these.
+# A chapter number on its own line joins the heading above it only after one of
+# these, and a line containing one starts a new heading.
 NUMBERED_WORDS = {"CHAPTER", "PART", "BOOK", "HOOFDSTUK", "DEEL", "BOEK"}
 
 
@@ -131,7 +128,8 @@ def _continues(previous: Block | None, line: Line, page: int) -> bool:
         # "The Nature of a Crime" above "I" is the book's title, then chapter I.
         words = previous.text.upper().split()
         return bool(words) and words[-1].strip(".") in NUMBERED_WORDS
-    return True
+    # "THE FIRST CHAPTER" under the book's title starts a heading of its own.
+    return not NUMBERED_WORDS & {w.strip(".,") for w in line.text.upper().split()}
 
 
 def _add_body(blocks: list[Block], kept: list[tuple[SourceRef, Line]], opening: bool) -> None:

@@ -412,3 +412,12 @@ disagreements by mistake category.
   only after CHAPTER/PART/BOOK (or the Dutch words), so a book title over "I"
   stays separate. Crime headings 4/8 → 8/8 (+1: the book title), CER 0.72% →
   0.71%, paragraph F1 0.965 → 0.972; Sense and Dolittle unchanged.
+- 2026-10-06: More chapter-opening rules for Dolittle. The first 3 lines of a
+  sunk page always go to the model (a drop cap shortens the median line, so a
+  wide centred heading failed the centring gate). Lines between a chapter heading
+  and the text are its title (clef called "PUDDLEBY" an artifact, dropping it). A
+  heading line containing CHAPTER/PART/BOOK starts a new heading, so the book
+  title above it stays separate. A "heading" that carries the page's printed
+  number (file page minus the book's usual offset) or repeats an earlier
+  heading line is a running head. Dolittle headings 20/21 (+5) → 21/21 (+1: the
+  book title), CER 4.82% → 4.80%; Sense 49/50 and Crime 8/8 unchanged.

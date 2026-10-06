@@ -29,7 +29,7 @@ M0–M2 done; M3 (better OCR and decisions) in progress; an early piece of M4
 | --- | --- | --- | --- | --- | --- |
 | Sense, Tauchnitz, full | clef roles | 3.00% | 1.37% | 0.811 | 49/50 (+0 spurious) |
 | Crime | clef roles | 0.71% | 0.52% | 0.972 | 8/8 (+1: the book title) |
-| Dolittle | clef roles | 4.82% | 2.22% | 0.861 | 20/21 (+5) |
+| Dolittle | clef roles | 4.80% | 2.20% | 0.861 | 21/21 (+1: the book title) |
 
 The visual-line fix (word boxes grouped by vertical overlap) made most of the
 Sense and Dolittle gains; see the decision log.
@@ -62,9 +62,11 @@ Pending when downloaded: Nemotron 3 Nano Omni
    run tesseract + a vision LLM, merge as in the probe, carry the flags into
    the IR so the review page can show them. Page images as a book source
    (no PDF) for Teirlinck.
-4. Dolittle: 5 chapter-title running heads still pass as headings; drop caps
+4. Dolittle: drop caps
    lose the initial letter ("NCE upon a time"); plate captions end up in the
-   text (the reference leaves them out).
+   text (the reference leaves them out). Chapter 9's title is missing from
+   the text layer (probably set in the illustration). Sense chapter XXV's
+   heading ("» CHAPTER XXV.", mid-page) never reaches the model.
 5. Paragraph precision on Sense is ~0.6: find where false paragraph starts
    come from.
 6. Page classification stage (vision) to replace hand-entered `body_pages`.

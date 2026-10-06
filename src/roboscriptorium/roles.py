@@ -45,11 +45,20 @@ REPEAT_LETTERS_PER_EDIT = 10
 # A chapter heading appears once. The model gives this count little weight, so a
 # "heading" whose text recurs on at least this many other pages is a running head.
 HEADING_MAX_REPEATS = 3
+# A line the model calls something other than body is still kept as body when
+# P(body) is at least this; losing text is worse than keeping a stray line.
+KEEP_BODY_AT = 0.5
 # A page whose text starts this much lower (as a share of page height) than most
 # pages' does is sunk: a chapter opening.
 SUNK_PAGE_DROP = 0.08
-# On a sunk page, a bare Roman numeral among its first lines is the chapter heading.
+# The first lines of a sunk page are asked about, and a bare Roman numeral among
+# them is the chapter heading.
 SUNK_HEADING_LINES = 3
+# A subtitle under a chapter heading has at least this many letters ("i" is a speck).
+SUBTITLE_MIN_LETTERS = 4
+# A "heading" that repeats an earlier heading line of at least this many letters is
+# a running head.
+RUNNING_TITLE_MIN_LETTERS = 6
 # Lines where fewer than this share of tokens look like words are asked about too.
 GARBLED_MAX_WORDLIKE = 0.5
 # Lines this close to the top or bottom of the page are asked about.
@@ -99,12 +108,13 @@ def garbled(line: Line) -> bool:
     return wordlike / len(tokens) < GARBLED_MAX_WORDLIKE
 
 
-def candidates(page: PageText) -> list[int]:
+def candidates(page: PageText, sunk: bool = False) -> list[int]:
     n = len(page.lines)
     if n == 0:
         return []
     full, _ = _geometry(page)
-    edge = set(range(min(EDGE_LINES_TOP, n))) | set(range(max(0, n - EDGE_LINES_BOTTOM), n))
+    top = SUNK_HEADING_LINES if sunk else EDGE_LINES_TOP
+    edge = set(range(min(top, n))) | set(range(max(0, n - EDGE_LINES_BOTTOM), n))
     centred = {i for i, ln in enumerate(page.lines) if _centred(ln, page, full)}
     noisy = {i for i, ln in enumerate(page.lines) if garbled(ln)}
     return sorted(edge | centred | noisy)
@@ -136,6 +146,37 @@ def _sunk_pages(pages: list[PageText]) -> set[int]:
     return {
         p.number for p in pages if p.lines and p.lines[0].y0 / p.height > usual + SUNK_PAGE_DROP
     }
+
+
+def _page_number(text: str) -> int | None:
+    """A number printed at the start or end of a line, as in "Puddleby 5"."""
+    words = text.split()
+    for word in (words[0], words[-1]) if words else ():
+        if word.isdigit():
+            return int(word)
+    return None
+
+
+def _page_offset(pages: list[PageText]) -> int | None:
+    """The usual difference between a page's place in the file and its printed number."""
+    offsets = []
+    for page in pages:
+        n = len(page.lines)
+        for i in (*range(min(EDGE_LINES_TOP, n)), *range(max(0, n - EDGE_LINES_BOTTOM), n)):
+            if (number := _page_number(page.lines[i].text)) is not None:
+                offsets.append(page.number - number)
+    return statistics.mode(offsets) if offsets else None
+
+
+def _title_key(text: str) -> str:
+    """Letters and digits of a line without a page number at either end ("Animal Language II")."""
+    words = text.split()
+    while words and re.fullmatch(r"[\dIl]+", words[-1]):
+        words.pop()
+    while words and re.fullmatch(r"\d+", words[0]):
+        words.pop(0)
+    # Digits stay: "CHAPTER XL1I." is not "CHAPTER XLI.".
+    return re.sub(r"[^A-Z0-9]", "", " ".join(words).upper())
 
 
 class Repeats:
@@ -222,8 +263,11 @@ def classify(
     roles = {}
     repeats = Repeats(pages)
     sunk = _sunk_pages(pages)
+    offset = _page_offset(pages)
+    heading_lines: set[str] = set()
     for page in pages:
-        for i in candidates(page):
+        page_roles: dict[int, LineRole] = {}
+        for i in candidates(page, page.number in sunk):
             st = state(page, i, repeats)
             key = DecisionCache.key(client.model, QUESTIONS, st)
             answer = cache.get(key)
@@ -244,5 +288,39 @@ def classify(
             # The model reads a bare "V" as a page number; its place on the page says heading.
             if page.number in sunk and i < SUNK_HEADING_LINES and bare_numeral(page.lines[i].text):
                 role = LineRole("chapter_heading", role.confidence, 0.0)
+            page_roles[i] = role
+        if page.number in sunk:
+            _subtitles(page, page_roles)
+        for i, role in page_roles.items():
+            if role.role == "chapter_heading":
+                text = page.lines[i].text
+                key = _title_key(text)
+                printed = _page_number(text)
+                if (offset is not None and printed == page.number - offset) or (
+                    len(key) >= RUNNING_TITLE_MIN_LETTERS and key in heading_lines
+                ):
+                    role = LineRole("running_head", role.confidence, role.p_body)
             roles[SourceRef(page.number, i)] = role
+        heading_lines |= {
+            _title_key(page.lines[i].text)
+            for i, r in page_roles.items()
+            if r.role == "chapter_heading"
+        }
     return roles
+
+
+def _subtitles(page: PageText, page_roles: dict[int, LineRole]) -> None:
+    """Lines between a chapter heading and the text, on a chapter opening, are its title.
+
+    The model calls a title like "PUDDLEBY" under "THE FIRST CHAPTER" a running head
+    or an artifact, which would drop it from the book.
+    """
+    heading = False
+    for i in range(len(page.lines)):
+        role = page_roles.get(i)
+        if role is None or role.p_body >= KEEP_BODY_AT:
+            return
+        if role.role == "chapter_heading":
+            heading = True
+        elif heading and len(_letters(page.lines[i].text)) >= SUBTITLE_MIN_LETTERS:
+            page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0)

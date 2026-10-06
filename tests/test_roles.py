@@ -1,7 +1,7 @@
 from roboscriptorium.clients.ollaya import Answer
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.roles import DecisionCache, Repeats, bare_numeral, classify
+from roboscriptorium.roles import DecisionCache, Repeats, _title_key, bare_numeral, classify
 
 
 def _page(number: int, top: str) -> PageText:
@@ -61,3 +61,9 @@ def test_bare_numeral_on_a_sunk_page_is_a_heading(tmp_path):
     roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
     assert roles[SourceRef(10, 0)].role == "chapter_heading"
     assert roles[SourceRef(3, 0)].role == "page_number"
+
+
+def test_running_title_keys():
+    assert _title_key("Animal Language II") == _title_key("ANIMAL LANGUAGE")
+    assert _title_key("12 The Story of Doctor Dolittle") == "THESTORYOFDOCTORDOLITTLE"
+    assert _title_key("CHAPTER XL1I.") != _title_key("CHAPTER XLI.")
