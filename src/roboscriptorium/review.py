@@ -78,7 +78,7 @@ class Scan:
     def __init__(self, pdf: Path, pages: list[PageText]):
         self.pdf = pdf
         self.pages = {p.number: p for p in pages}
-        self._turns: dict[int, int] = {}
+        self._turns: dict[tuple, int] = {}
 
     def crop(self, page_number: int, first: int, last: int, out: int = 0) -> bytes:
         page = self.pages[page_number]
@@ -122,10 +122,11 @@ class Scan:
 
     def turn(self, page_number: int, box: tuple[float, float, float, float], lang: str) -> int:
         """Degrees clockwise that make sideways text upright: the quarter turn that reads."""
-        if page_number not in self._turns:
+        key = (page_number, box)
+        if key not in self._turns:
             readings = {t: self.read_box(page_number, box, lang, turn=t) for t in (90, 270)}
-            self._turns[page_number] = max(readings, key=lambda t: _words(readings[t]))
-        return self._turns[page_number]
+            self._turns[key] = max(readings, key=lambda t: _words(readings[t]))
+        return self._turns[key]
 
     def read_box(
         self,
@@ -336,11 +337,13 @@ def serve(review: Review | RegionReview, port: int) -> None:
             if path != "/api/verdict":
                 self._send(b"not found", "text/plain", 404)
                 return
-            body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
             try:
+                body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
                 self._json(review.record(body))
             except (KeyError, StopIteration) as exc:
                 self._json({"error": f"unknown {exc}"}, 400)
+            except (ValueError, TypeError) as exc:
+                self._json({"error": f"bad request: {exc}"}, 400)
 
         def log_message(self, *args) -> None:
             pass

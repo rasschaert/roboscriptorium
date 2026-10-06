@@ -124,6 +124,8 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         want = " ".join(ref_words[op.dest_start : op.dest_end])
         char_edits += Levenshtein.distance(got, want) + (op.tag == "insert") + (op.tag == "delete")
         confusions[(got, want)] += 1
+    if not ref_words:
+        raise ValueError("the reference has no text")
     ref_chars = sum(len(w) + 1 for w in ref_words)
     matched = match_headings([h.text for h in doc.headings], [ch.heading for ch in reference])
 
