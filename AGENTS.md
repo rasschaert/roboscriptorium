@@ -99,7 +99,10 @@ right, then expand.
   - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
     `stages/layout.json`; run by `review`.
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
-    text layer lacks).
+    text layer lacks, or reads as scraps because it is printed sideways).
+  - `initials.py`: guesses the letter of a decorated initial: the letters that
+    make the word beside it a word (book vocabulary plus the system word list),
+    then the role model picks among them from the drawing.
   - `corrections.py`: a human's answers about regions (text, heading, drop,
     image, optionally the text as printed; typed text for a missing region is
     inserted where the region sits, blank lines separating paragraphs), stored in
@@ -506,3 +509,13 @@ disagreements by mistake category.
   drawing ("O" + "NCE"), the lines beside it continue the paragraph, and the
   EPUB sets it as a CSS drop cap (`span.initial`). The artwork itself waits for
   the figures work.
+- 2026-10-06: Initial-letter guesses: tesseract (single character) and gemma4
+  both misread decorated letters (`E`/`J` for an O). Restricting to the letters
+  that complete the word beside the drawing, then asking clef with the crop,
+  got 8/8 Dolittle initials (0.5–2 s each); with no word beside it (a page the
+  text layer lacks) it guesses nothing.
+- 2026-10-06: Sideways text (a landscape plate's caption) shows in the text
+  layer as a column of 1–3 character scraps. Such a page gets one region; the
+  review page reads it turned 90° and 270° and keeps the turn that gives words
+  (tesseract's own orientation detection said 180° on a picture page), shows
+  it upright and drafts its text.

@@ -97,7 +97,7 @@ function render() {
   }
   const r = queue[pos];
   const a = r.answer;
-  const text = a && a.text != null ? a.text : (r.text || r.draft || "");
+  const text = a && a.text != null ? a.text : (r.draft || r.text || "");
   const buttons = Object.entries(KEYS).map(([k, action]) =>
     `<button data-action="${action}" class="${CURRENT[r.treatment] === action ? "current" : ""}"><kbd>${k}</kbd>${esc(state.actions[action])}</button>`).join("");
   main.innerHTML = `
@@ -106,7 +106,7 @@ function render() {
       <span>${pos + 1} of ${queue.length} in this view</span>
       <span>page ${r.page}${r.last >= r.first ? `, line ${r.first + 1}${r.last > r.first ? "–" + (r.last + 1) : ""}` : ""} · <a href="/page?page=${r.page}" target="_blank">full page</a></span>
     </div>
-    <img class="crop" src="${r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}` : `/crop?page=${r.page}&first=${r.first}&last=${r.last}`}" alt="Scan crop">
+    <img class="crop" src="${r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}` : `/crop?page=${r.page}&first=${r.first}&last=${r.last}`}" alt="Scan crop">
     <div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>
     <div class="now">The pipeline <b>${NOW[r.treatment]}</b>. ${r.text ? "Its reading of the highlighted lines (edit if the scan says otherwise):" : r.draft ? "Tesseract's draft of the highlighted area; correct it, then save as text:" : "Type the text here if it belongs in the book:"}</div>
     ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}

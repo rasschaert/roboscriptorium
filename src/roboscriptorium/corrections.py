@@ -83,18 +83,22 @@ class Corrections:
         return c
 
 
-def _set_initial(page: PageText, c: Correction) -> None:
-    """Put a drawn initial's letter back in front of the text beside it ("O" + "NCE")."""
-    x0, y0, x1, y1 = c.box
+def lines_beside(page: PageText, box: tuple[float, float, float, float]) -> list[int]:
+    """The lines a drawn initial stands beside, or else the first line below it."""
+    _, y0, x1, y1 = box
     beside = [
         i for i, ln in enumerate(page.lines) if y0 <= (ln.y0 + ln.y1) / 2 <= y1 and ln.x0 >= x1 - 2
     ]
-    below = [i for i, ln in enumerate(page.lines) if ln.y0 >= y1]
-    target = (beside or below or [None])[0]
-    if target is None:
+    return beside or [i for i, ln in enumerate(page.lines) if ln.y0 >= y1][:1]
+
+
+def _set_initial(page: PageText, c: Correction) -> None:
+    """Put a drawn initial's letter back in front of the text beside it ("O" + "NCE")."""
+    beside = lines_beside(page, c.box)
+    if not beside:
         return
-    line = page.lines[target]
-    page.lines[target] = replace(line, text=c.text.strip() + line.text, initial=True)
+    line = page.lines[beside[0]]
+    page.lines[beside[0]] = replace(line, text=c.text.strip() + line.text, initial=True)
     # The other lines beside the drawing are indented by it, not new paragraphs.
     for i in beside[1:]:
         page.lines[i] = replace(page.lines[i], starts_paragraph=False)

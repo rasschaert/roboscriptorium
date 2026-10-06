@@ -69,3 +69,20 @@ def test_a_drawn_initial_goes_back_in_front_of_its_word(tmp_path):
     assert first.text.startswith("ONCE upon a time there was")
     assert first.initial
     assert _block(first).startswith('<p class="opening"><span class="initial">O</span>NCE')
+
+
+def test_sideways_caption_becomes_one_region():
+    scraps = ["o", "s", "c", ".6", "<u", "(ft", "o", "I-o"]
+    lines = [Line(s, 241, 164 + 14 * i, 245, 173 + 14 * i) for i, s in enumerate(scraps)]
+    page = PageText(25, 319, 493, lines)
+    found = flags.find([page], {})
+    assert [(f.first, f.last, f.reasons) for f in found] == [(0, 7, ["rotated"])]
+    assert found[0].box[1] < 164 and found[0].box[3] > 271
+
+
+def test_initial_candidates_come_from_the_word_it_begins():
+    from roboscriptorium import initials
+
+    vocab = {"once", "nce", "that", "what", "chat"}
+    assert initials.candidates(initials.fragment("NCE upon a time"), vocab) == ["O"]
+    assert initials.candidates(initials.fragment("HAT Winter"), vocab) == ["C", "T", "W"]

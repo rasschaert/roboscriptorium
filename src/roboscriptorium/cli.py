@@ -8,7 +8,7 @@ from pathlib import Path
 import httpx
 import typer
 
-from roboscriptorium import disagreements, evaluate, flags, layout, ocr, pipeline, review
+from roboscriptorium import disagreements, evaluate, flags, initials, layout, ocr, pipeline, review
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollama import OllamaClient
@@ -169,8 +169,17 @@ def review_regions(
     done = sum(f.key in corrections.by_key for f in regions)
     typer.echo(f"{len(regions)} regions to look at ({done} already answered, {applied} applied)")
     typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
+    settings = Settings.from_env()
+    decider = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
+    vocab = initials.vocabulary(body, book.language)
     page = review.RegionReview(
-        book.source, body, regions, corrections, rebuild, ocr.language(book.language)
+        book.source,
+        body,
+        regions,
+        corrections,
+        rebuild,
+        ocr.language(book.language),
+        lambda png, line: initials.guess(decider, vocab, png, line),
     )
     page.applied = applied
     review.serve(page, port)

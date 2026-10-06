@@ -9,6 +9,7 @@
   pipeline mistake), the scan prints the output, something else, or unsure.
 """
 
+import io
 import json
 import re
 import threading
@@ -20,8 +21,8 @@ from urllib.parse import parse_qs, urlparse
 
 import pymupdf
 
+from roboscriptorium import corrections, ocr
 from roboscriptorium import flags as F
-from roboscriptorium import ocr
 from roboscriptorium.corrections import ACTIONS, Corrections
 from roboscriptorium.disagreements import PIPELINE, SCAN, UNSURE, Disagreement, Verdicts
 from roboscriptorium.pdf import PageText
@@ -49,12 +50,27 @@ def guess_category(d: Disagreement) -> str:
     return "ocr"
 
 
+def _words(text: str) -> int:
+    """How many tokens look like ordinary lowercase words: text read the right way up."""
+    return sum(bool(re.fullmatch(r"[A-Za-z][a-z]+[.,;:!?'’”\"]*", t)) for t in text.split())
+
+
+def _turned(pix: pymupdf.Pixmap, turn: int) -> bytes:
+    """PNG bytes of a pixmap turned `turn` degrees clockwise."""
+    if not turn:
+        return pix.tobytes("png")
+    buf = io.BytesIO()
+    pix.pil_image().rotate(-turn, expand=True).save(buf, "PNG")
+    return buf.getvalue()
+
+
 class Scan:
     """Page images and highlighted crops of a book's source PDF."""
 
     def __init__(self, pdf: Path, pages: list[PageText]):
         self.pdf = pdf
         self.pages = {p.number: p for p in pages}
+        self._turns: dict[int, int] = {}
 
     def crop(self, page_number: int, first: int, last: int) -> bytes:
         page = self.pages[page_number]
@@ -70,16 +86,31 @@ class Scan:
             pix = pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip)
             return pix.tobytes("png")
 
-    def crop_box(self, page_number: int, box: tuple[float, float, float, float]) -> bytes:
-        """A region the layout model found, with some of the page around it."""
+    def crop_box(
+        self, page_number: int, box: tuple[float, float, float, float], turn: int = 0
+    ) -> bytes:
+        """A region the layout model found, with some of the page around it.
+
+        `turn` (degrees clockwise) shows sideways text upright, cropped to the region.
+        """
         x0, y0, x1, y1 = box
         target = pymupdf.Rect(x0 - 2, y0 - 2, x1 + 2, y1 + 2)
         with pymupdf.open(self.pdf) as doc:
             pdf_page = doc[page_number - 1]
-            clip = pymupdf.Rect(0, y0 - 40, pdf_page.rect.width, y1 + 40) & pdf_page.rect
+            if turn:
+                clip = pymupdf.Rect(x0 - 40, y0, x1 + 40, y1) & pdf_page.rect
+            else:
+                clip = pymupdf.Rect(0, y0 - 40, pdf_page.rect.width, y1 + 40) & pdf_page.rect
             pdf_page.draw_rect(target, color=(0.9, 0.6, 0), fill=(1, 0.85, 0.3), fill_opacity=0.2)
             pix = pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip)
-            return pix.tobytes("png")
+            return _turned(pix, turn)
+
+    def turn(self, page_number: int, box: tuple[float, float, float, float], lang: str) -> int:
+        """Degrees clockwise that make sideways text upright: the quarter turn that reads."""
+        if page_number not in self._turns:
+            readings = {t: self.read_box(page_number, box, lang, turn=t) for t in (90, 270)}
+            self._turns[page_number] = max(readings, key=lambda t: _words(readings[t]))
+        return self._turns[page_number]
 
     def read_box(
         self,
@@ -87,6 +118,7 @@ class Scan:
         box: tuple[float, float, float, float],
         lang: str,
         single_char: bool = False,
+        turn: int = 0,
     ) -> str:
         """Tesseract's reading of a region, as a draft for the human."""
         with pymupdf.open(self.pdf) as doc:
@@ -94,7 +126,7 @@ class Scan:
             pix = doc[page_number - 1].get_pixmap(
                 matrix=pymupdf.Matrix(zoom, zoom), clip=pymupdf.Rect(*box)
             )
-            return ocr.tesseract(pix.tobytes("png"), lang, single_char)
+            return ocr.tesseract(_turned(pix, turn), lang, single_char)
 
     def full_page(self, page_number: int) -> bytes:
         with pymupdf.open(self.pdf) as doc:
@@ -153,9 +185,11 @@ class RegionReview:
         corrections: Corrections,
         rebuild: Callable[[], tuple[list[PageText], list[F.Flag], int]],
         lang: str,
+        guess_letter: Callable[[bytes, str], str] | None = None,
     ):
         self.scan = Scan(pdf, pages)
         self.lang = lang
+        self.guess_letter = guess_letter
         self._drafts: dict[str, str] = {}
         self.regions = regions
         self.corrections = corrections
@@ -178,23 +212,36 @@ class RegionReview:
                     "after": page.lines[f.last + 1].text if f.last + 1 < len(page.lines) else "",
                     "answer": asdict(c) if c else None,
                     "draft": self._draft(f),
+                    "turn": self._turn(f),
                 }
             )
         return {"items": items, "actions": ACTIONS, "applied": self.applied}
 
+    def _turn(self, f: F.Flag) -> int:
+        return self.scan.turn(f.page, f.box, self.lang) if "rotated" in f.reasons else 0
+
     def _draft(self, f: F.Flag) -> str | None:
-        """Tesseract's reading of text the text layer lacks."""
-        if "missing-text" not in f.reasons or f.box is None:
+        """Tesseract's reading of text the text layer lacks or reads as scraps."""
+        if not {"missing-text", "rotated"} & set(f.reasons) or f.box is None:
             return None
         if f.key not in self._drafts:
-            self._drafts[f.key] = self.scan.read_box(f.page, f.box, self.lang)
+            self._drafts[f.key] = self.scan.read_box(f.page, f.box, self.lang, turn=self._turn(f))
         return self._drafts[f.key]
 
     def guess_initial(self, key: str) -> str:
-        """Tesseract's guess at the letter a drawn initial shows."""
+        """A guess at the letter a drawn initial shows, from the word it begins."""
         f = next(f for f in self.regions if f.key == key)
-        letters = [c for c in self.scan.read_box(f.page, f.box, self.lang, True) if c.isalpha()]
-        return letters[0].upper() if letters else ""
+        page = self.scan.pages[f.page]
+        beside = corrections.lines_beside(page, f.box)
+        if not beside or self.guess_letter is None:
+            return ""
+        with pymupdf.open(self.scan.pdf) as doc:
+            png = (
+                doc[f.page - 1]
+                .get_pixmap(matrix=pymupdf.Matrix(3, 3), clip=pymupdf.Rect(*f.box))
+                .tobytes("png")
+            )
+        return self.guess_letter(png, page.lines[beside[0]].text)
 
     def record(self, body: dict) -> dict:
         flag = next(f for f in self.regions if f.key == body["key"])
@@ -234,7 +281,8 @@ def serve(review: Review | RegionReview, port: int) -> None:
                     self._json(review.state())
                 elif url.path == "/crop" and "box" in q:
                     box = tuple(float(v) for v in q["box"].split(","))
-                    self._send(review.scan.crop_box(int(q["page"]), box), "image/png")
+                    turn = int(q.get("turn", 0))
+                    self._send(review.scan.crop_box(int(q["page"]), box, turn), "image/png")
                 elif url.path == "/crop":
                     png = review.scan.crop(int(q["page"]), int(q["first"]), int(q["last"]))
                     self._send(png, "image/png")

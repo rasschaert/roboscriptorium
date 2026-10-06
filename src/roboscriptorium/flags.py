@@ -43,7 +43,15 @@ REASONS = {
     "caption": "a caption (the layout model)",
     "layout-title": "a title to the layout model, but not a heading here",
     "missing-text": "text the layout model sees, but the text layer lacks",
+    "rotated": "text printed sideways (the text layer reads scraps)",
 }
+# A page's text is sideways when most of its lines are scraps of this many
+# characters or fewer, stacked in one column this narrow (in points).
+SIDEWAYS_MAX_CHARS = 3
+SIDEWAYS_SHARE = 0.8
+SIDEWAYS_COLUMN = 15
+# Room around sideways text, along its column, so the crop holds whole words.
+SIDEWAYS_PAD = 60
 # Layout regions below this confidence are ignored when they hold no text-layer line.
 MISSING_TEXT_CONFIDENCE = 0.5
 
@@ -203,6 +211,31 @@ def _layout(
     return reasons, in_pictures, flags
 
 
+def sideways(page: PageText) -> bool:
+    """Text printed turned (a landscape plate's caption): the layer reads a column of scraps."""
+    lines = page.lines
+    if len(lines) < 4:
+        return False
+    scraps = sum(len(ln.text.replace(" ", "")) <= SIDEWAYS_MAX_CHARS for ln in lines)
+    centres = [(ln.x0 + ln.x1) / 2 for ln in lines]
+    return scraps >= SIDEWAYS_SHARE * len(lines) and max(centres) - min(centres) <= SIDEWAYS_COLUMN
+
+
+def _sideways_flag(page: PageText, roles: dict[SourceRef, LineRole]) -> Flag:
+    lines = page.lines
+    box = (
+        min(ln.x0 for ln in lines) - 4,
+        max(0.0, min(ln.y0 for ln in lines) - SIDEWAYS_PAD),
+        max(ln.x1 for ln in lines) + 4,
+        min(page.height, max(ln.y1 for ln in lines) + SIDEWAYS_PAD),
+    )
+    text = "\n".join(ln.text for ln in lines)
+    flag = Flag(
+        region_key(page.number, text), page.number, 0, len(lines) - 1, text, "", ["rotated"], box
+    )
+    return replace(flag, treatment=_treatment_of(page, flag, roles))
+
+
 def _treatment_of(page: PageText, flag: Flag, roles: dict[SourceRef, LineRole]) -> str:
     kinds = {
         treatment(roles.get(SourceRef(page.number, i))) for i in range(flag.first, flag.last + 1)
@@ -219,6 +252,9 @@ def find(
     furniture = _Furniture(R.Repeats(pages), R._page_offset(pages))
     for page in pages:
         line_reasons, in_pictures, boxes = _layout(page, (layout or {}).get(page.number, []))
+        if sideways(page):
+            flags += [f for f in boxes if "picture" in f.reasons] + [_sideways_flag(page, roles)]
+            continue
         page_flags: list[Flag] = []
         run: list[tuple[int, str, list[str]]] = []
         for i in range(len(page.lines)):
