@@ -199,7 +199,9 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | Ollaya | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
 | Ollaya | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
 | Ollama | `clef-flash:9b` | **Line roles (in use)**; page types candidate | Line roles: 60/60 at P(body) ≥ 0.5 (its probabilities are softer than winnow's, so don't use 0.9). Pages: 19/23, low confidence where it errs. ~0.8 s/line and ~3.9 s/page, measured under load. Endpoint `/v1/systemone`; raw base64 PNG/JPEG/WebP in `images`; up to 64 questions per call; 64K context. Confidence = how concentrated the probabilities are, not P(correct) |
-| Ollama | `gemma4:latest` | Vision OCR / correction candidate | available, unevaluated |
+| Ollama | `gemma4:latest` | Vision OCR candidate | Teirlinck 12 pages: CER 0.70% (0.63% with the old-spelling prompt) but **modernises** old Dutch: 41 (27) reform spellings per 12 pages (`tusschen→tussen`, `oogenblik→ogenblik`), plus word swaps (`eenvoud→eenvoudig`). ~22 s/page. Never use alone; pair with tesseract |
+| — | tesseract 5.5.3 + `nld` (tessdata_best) | Plain OCR candidate | Teirlinck 12 pages: CER 0.90%, no modernisation; errors are visual (`,`/`.`, mangled ellipses) and dropped short lines. <1 s/page |
+| Ollama | `translategemma:4b` | Tried as Dutch→Dutch OCR | **Unfit**: with its translation prompt it paraphrases (`hief`→`heeft`, `trillend opwiegelen`→`trilde omhoog`) and modernises, CER 4.9% on one page; any other prompt gives empty output |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
 
 ## Environment
@@ -210,7 +212,9 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).
 - epubcheck (Homebrew).
-- Not yet installed: tesseract (+ `nld` data).
+- tesseract 5.5.3 (Homebrew, `eng`/`osd` only). The Dutch model is
+  `nld.traineddata` from tessdata_best in `work/tessdata/` (pass
+  `--tessdata-dir work/tessdata`); `tesseract-lang` (~650 MB) is not installed.
 
 ## Running, reviewing, evaluating
 
@@ -291,6 +295,7 @@ disagreements by mistake category.
 | the-nature-of-a-crime | `doubleday-1924` | **The scan Gutenberg #75172 was made from**; 94 body pages, short; Times OCR layer; running heads |
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
+| het-ivoren-aapje (probe only) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py` |
 | sense-and-sensibility | `everyman-dent` | Dent, after 1946; yellowed; borrow-only |
 | sense-and-sensibility | `everyman-1992` | Knopf 1992/1997; modern copyrighted introduction; borrow-only |
 
@@ -352,3 +357,12 @@ disagreements by mistake category.
   Sense chapters 1–9 still leave ~300 for review (another edition), Crime far
   fewer (same scan). Full-book Tauchnitz against Gutenberg: heuristics CER 7.23%,
   winnow 4.98%, clef 4.75% (WER 3.15%, paragraph F1 0.682, headings 28/50).
+- 2026-10-06: OCR candidates on 12 pages of *Het ivoren aapje* (Teirlinck, 1909;
+  Gutenberg #28068 publishes its page images; the transcribers' corrections are
+  reverted to the print via their "Bron:" notes). Vision LLMs modernise old Dutch
+  spelling, even when told not to; tesseract doesn't but misreads punctuation
+  and drops short lines. Merging them (spelling-reform differences take
+  tesseract's form, every other disagreement keeps gemma4's and is flagged)
+  gives CER 0.54% against 0.63% (gemma4) and 0.90% (tesseract), 89 flags (56
+  real errors) and almost no unflagged wrong words. This is the M3 OCR design:
+  several candidates, rules for known biases, flags for the rest.
