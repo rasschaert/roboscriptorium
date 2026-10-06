@@ -170,9 +170,11 @@ def _add_body(blocks: list[Block], kept: list[tuple[SourceRef, Line]], opening: 
     for k, ((ref, line), starts_paragraph) in enumerate(zip(kept, flags, strict=True)):
         current = blocks[-1] if blocks else None
         if not isinstance(current, Paragraph) or (k == 0 and opening):
-            blocks.append(Paragraph(line.text, [ref], opening=opening and k == 0))
-        elif starts_paragraph:
-            blocks.append(Paragraph(line.text, [ref]))
+            blocks.append(
+                Paragraph(line.text, [ref], opening=opening and k == 0, initial=line.initial)
+            )
+        elif starts_paragraph or line.initial:
+            blocks.append(Paragraph(line.text, [ref], initial=line.initial))
         else:
             current.text = join(current.text, line.text)
             current.sources.append(ref)

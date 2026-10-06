@@ -13,6 +13,7 @@ CSS = """\
 body { margin: 0 5%; }
 p { margin: 0; text-indent: 1.5em; text-align: justify; hyphens: auto; }
 p.opening { text-indent: 0; }
+span.initial { float: left; font-size: 3.2em; line-height: 0.85; margin: 0.05em 0.08em 0 0; }
 h2 { text-align: center; margin: 2em 0 1em; font-weight: normal; }
 img.cover { display: block; max-width: 100%; max-height: 100vh; margin: 0 auto; }
 """
@@ -119,9 +120,12 @@ def _nav(doc: Document, sections: list[_Section]) -> str:
 def _block(block: Block) -> str:
     if isinstance(block, Heading):
         return f"<h2>{'<br/>'.join(escape(p) for p in block.parts or [block.text])}</h2>"
-    if block.opening:
-        return f'<p class="opening">{escape(block.text)}</p>'
-    return f"<p>{escape(block.text)}</p>"
+    text = escape(block.text)
+    if block.initial and text:
+        text = f'<span class="initial">{text[0]}</span>{text[1:]}'
+    if block.opening or block.initial:
+        return f'<p class="opening">{text}</p>'
+    return f"<p>{text}</p>"
 
 
 def _section(doc: Document, section: _Section) -> str:

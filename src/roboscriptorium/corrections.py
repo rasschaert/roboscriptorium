@@ -11,7 +11,7 @@ no lines for is inserted as a new line where the region sits.
 import functools
 import json
 import re
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -26,12 +26,14 @@ ACTIONS = {
     "heading": "Heading",
     "drop": "Not part of the book (page furniture, noise)",
     "image": "An image or decoration",
+    "initial": "A decorated initial letter",
 }
 _ROLE = {
     "text": LineRole("body", 1.0, 1.0),
     "heading": LineRole("chapter_heading", 1.0, 0.0),
     "drop": LineRole("artifact", 1.0, 0.0),
     "image": LineRole("artifact", 1.0, 0.0),
+    "initial": LineRole("artifact", 1.0, 0.0),
 }
 
 
@@ -81,6 +83,23 @@ class Corrections:
         return c
 
 
+def _set_initial(page: PageText, c: Correction) -> None:
+    """Put a drawn initial's letter back in front of the text beside it ("O" + "NCE")."""
+    x0, y0, x1, y1 = c.box
+    beside = [
+        i for i, ln in enumerate(page.lines) if y0 <= (ln.y0 + ln.y1) / 2 <= y1 and ln.x0 >= x1 - 2
+    ]
+    below = [i for i, ln in enumerate(page.lines) if ln.y0 >= y1]
+    target = (beside or below or [None])[0]
+    if target is None:
+        return
+    line = page.lines[target]
+    page.lines[target] = replace(line, text=c.text.strip() + line.text, initial=True)
+    # The other lines beside the drawing are indented by it, not new paragraphs.
+    for i in beside[1:]:
+        page.lines[i] = replace(page.lines[i], starts_paragraph=False)
+
+
 def _join_lines(text: str) -> str:
     """One paragraph from typed lines, undoing line-end hyphens as reflow does."""
     lines = [" ".join(ln.split()) for ln in text.splitlines() if ln.strip()]
@@ -106,13 +125,17 @@ def apply(pages: list[PageText], roles: dict[SourceRef, LineRole], corrections: 
     by_number = {p.number: p for p in pages}
     applied = 0
     insertions = []
+    initials = []
     for c in corrections.by_key.values():
         page = by_number.get(c.page)
         if page is None or c.last >= len(page.lines):
             continue
+        if c.action == "initial" and c.box and c.text:
+            initials.append((page, c))
         if c.last < c.first:
             if c.text and c.box and c.action in ("text", "heading"):
                 insertions.append((page, c))
+            if c.text and c.box and c.action in ("text", "heading", "initial"):
                 applied += 1
             continue
         lines = page.lines[c.first : c.last + 1]
@@ -128,6 +151,8 @@ def apply(pages: list[PageText], roles: dict[SourceRef, LineRole], corrections: 
             for i in range(c.first + 1, c.last + 1):
                 roles[SourceRef(c.page, i)] = _ROLE["drop"]
         applied += 1
+    for page, c in initials:
+        _set_initial(page, c)
     # Bottom up, so each insertion leaves the indices above it alone.
     for page, c in sorted(insertions, key=lambda pc: (pc[0].number, -pc[1].first)):
         # A blank line in the human's text separates paragraphs.

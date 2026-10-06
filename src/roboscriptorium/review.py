@@ -81,14 +81,20 @@ class Scan:
             pix = pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip)
             return pix.tobytes("png")
 
-    def read_box(self, page_number: int, box: tuple[float, float, float, float], lang: str) -> str:
+    def read_box(
+        self,
+        page_number: int,
+        box: tuple[float, float, float, float],
+        lang: str,
+        single_char: bool = False,
+    ) -> str:
         """Tesseract's reading of a region, as a draft for the human."""
         with pymupdf.open(self.pdf) as doc:
             zoom = OCR_DPI / 72
             pix = doc[page_number - 1].get_pixmap(
                 matrix=pymupdf.Matrix(zoom, zoom), clip=pymupdf.Rect(*box)
             )
-            return ocr.tesseract(pix.tobytes("png"), lang)
+            return ocr.tesseract(pix.tobytes("png"), lang, single_char)
 
     def full_page(self, page_number: int) -> bytes:
         with pymupdf.open(self.pdf) as doc:
@@ -184,6 +190,12 @@ class RegionReview:
             self._drafts[f.key] = self.scan.read_box(f.page, f.box, self.lang)
         return self._drafts[f.key]
 
+    def guess_initial(self, key: str) -> str:
+        """Tesseract's guess at the letter a drawn initial shows."""
+        f = next(f for f in self.regions if f.key == key)
+        letters = [c for c in self.scan.read_box(f.page, f.box, self.lang, True) if c.isalpha()]
+        return letters[0].upper() if letters else ""
+
     def record(self, body: dict) -> dict:
         flag = next(f for f in self.regions if f.key == body["key"])
         return asdict(self.corrections.record(flag, body["action"], body.get("text")))
@@ -226,13 +238,15 @@ def serve(review: Review | RegionReview, port: int) -> None:
                 elif url.path == "/crop":
                     png = review.scan.crop(int(q["page"]), int(q["first"]), int(q["last"]))
                     self._send(png, "image/png")
+                elif url.path == "/api/initial" and isinstance(review, RegionReview):
+                    self._json({"letter": review.guess_initial(q["key"])})
                 elif url.path == "/favicon.ico":
                     self._send(b"", "image/x-icon", 204)
                 elif url.path == "/page":
                     self._send(review.scan.full_page(int(q["page"])), "image/png")
                 else:
                     self._send(b"not found", "text/plain", 404)
-            except (KeyError, ValueError, IndexError) as exc:
+            except (KeyError, ValueError, IndexError, StopIteration) as exc:
                 self._send(str(exc).encode(), "text/plain", 400)
 
         def do_POST(self) -> None:  # noqa: N802

@@ -23,6 +23,8 @@ class Line:
     y1: float
     # Set on lines a human typed in, whose paragraph breaks are known.
     starts_paragraph: bool | None = None
+    # The line begins with a decorated initial letter (a drop cap) a human supplied.
+    initial: bool = False
 
 
 @dataclass(frozen=True)

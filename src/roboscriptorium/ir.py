@@ -19,6 +19,8 @@ class Paragraph:
     sources: list[SourceRef] = field(default_factory=list)
     # True for the first paragraph of a section, which typesets without indent.
     opening: bool = False
+    # Its first letter is a decorated initial, set as a drop cap.
+    initial: bool = False
 
 
 @dataclass

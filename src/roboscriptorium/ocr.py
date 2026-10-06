@@ -12,8 +12,10 @@ def language(book_language: str) -> str:
     return "nld" if book_language.lower().startswith("nl") else "eng"
 
 
-def tesseract(png: bytes, lang: str) -> str:
+def tesseract(png: bytes, lang: str, single_char: bool = False) -> str:
     cmd = ["tesseract", "-", "-", "-l", lang]
+    if single_char:
+        cmd += ["--psm", "10"]
     if lang in TESSDATA:
         cmd += ["--tessdata-dir", str(TESSDATA[lang])]
     result = subprocess.run(cmd, input=png, capture_output=True, check=True)

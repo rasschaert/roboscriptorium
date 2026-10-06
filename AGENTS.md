@@ -264,7 +264,7 @@ uv run ruff format . && uv run ruff check . && uv run pytest
 **Reviewing a book.** `uv run roboscriptorium review work/<book>` builds the
 book, flags the regions that aren't plain running text and serves them on
 http://127.0.0.1:8765/ next to scan crops. Keys: `1` running text, `2` heading,
-`3` drop (page furniture, noise), `4` image; edit the text box first to give the
+`3` drop (page furniture, noise), `4` image, `5` a decorated initial (type the letter it shows; tesseract guesses); edit the text box first to give the
 text as printed; arrows move. "Rebuild book" applies the answers and rebuilds
 the EPUB. Flags come from the model's decisions before answers, so the list
 stays put while you work.
@@ -501,3 +501,8 @@ disagreements by mistake category.
   reference): CER 1.36%, WER 1.15%, paragraph F1 0.749 (recall 0.655), headings
   13/18 (+2). Most differences: the OCR layer reads ‘ as " and drops closing
   quotes, and reads a capital I as l (`lets`, `leder`, `ledereen`).
+- 2026-10-06: Decorated initials: a reviewer answers a picture region with the
+  letter it shows; the letter goes back in front of the text beside the
+  drawing ("O" + "NCE"), the lines beside it continue the paragraph, and the
+  EPUB sets it as a CSS drop cap (`span.initial`). The artwork itself waits for
+  the figures work.

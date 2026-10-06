@@ -48,3 +48,24 @@ def test_text_typed_for_a_missing_region_is_inserted_with_its_paragraphs(tmp_pat
     texts = [b.text for b in reflow([page], roles)]
     assert any(t.endswith("First paragraph wraps here.") for t in texts)
     assert any(t.startswith("Second one.") for t in texts)
+
+
+def test_a_drawn_initial_goes_back_in_front_of_its_word(tmp_path):
+    from roboscriptorium.epub import _block
+    from roboscriptorium.reflow import reflow
+
+    lines = [
+        Line("NCE upon a time", 110, 80, 350, 92),
+        Line("there was a doctor", 110, 95, 350, 107),
+    ]
+    lines += [Line("body text " * 5, 50, 110 + 15 * i, 350, 122 + 15 * i) for i in range(8)]
+    page = PageText(1, 400, 600, lines)
+    picture = flags.Flag("p1-o", 1, 0, -1, "", "missing", ["picture"], (50, 78, 105, 110))
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(picture, "initial", "O")
+    roles: dict = {}
+    assert corrections.apply([page], roles, answers) == 1
+    first = reflow([page], roles)[0]
+    assert first.text.startswith("ONCE upon a time there was")
+    assert first.initial
+    assert _block(first).startswith('<p class="opening"><span class="initial">O</span>NCE')
