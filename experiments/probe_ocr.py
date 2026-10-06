@@ -196,10 +196,15 @@ def ocr(model: str, image: Path, prompt: str) -> str:
         "stream": False,
         "options": {"temperature": 0, "num_ctx": 8192},
     }
+    if model in THINKS_BY_DEFAULT:
+        payload["think"] = False
     resp = httpx.post("http://127.0.0.1:11434/api/generate", json=payload, timeout=600)
     if resp.is_error:
         raise RuntimeError(f"{model}: HTTP {resp.status_code}: {resp.text[:300]}")
     return resp.json()["response"]
+
+
+THINKS_BY_DEFAULT = {"nemotron3:33b"}
 
 
 def run(model: str, prompt: str, pages: list[int]) -> None:

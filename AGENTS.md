@@ -205,6 +205,7 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | Ollama | `translategemma:12b` | Tried as Dutch→Dutch OCR | **Unfit**: its translation prompt hallucinates a scene description; with the old-spelling prompt it transcribes at ~1.4% CER (worse than gemma4 and tesseract), modernises 12×, and loops on one page of 12 (Ollama aborts: "token repeat limit reached"). ~14 s/page |
 | Ollama | `translategemma:27b` | Tried as Dutch→Dutch OCR | **Unfit**: old-spelling prompt, Teirlinck 12 pages: CER 0.99% (gemma4 0.63%), word swaps (`eenvoud→eenvoudig`, `onschuld→onschuldig`), 11 accent/spelling changes. Merged with tesseract it stays at 0.99% with 11 wrong words unflagged. ~30 s/page |
 | Ollama | `llava:34b` | Tried as Dutch OCR | **Unfit**: on one Teirlinck page it invents text and loops ("Hij had geen twijfel aan de verdiensten van…" over and over), CER 406%. ~170 s/page |
+| Ollama | `nemotron3:33b` | Tried as Dutch OCR | **Unfit**: thinks by default (107 s and empty output); with `think: false`, 7 s/page but CER 14% on one Teirlinck page: invented words (`dampwalmen→dampwaarneming`) and modernised (`zijne→zijn`) |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
 
 ## Environment
@@ -429,3 +430,7 @@ disagreements by mistake category.
   printing spaces opening quotes (`" What`). *De kleine Johannes* was rejected:
   the scan is a 1986 Querido edition in modern spelling, Gutenberg #10819 is in
   the old spelling.
+- 2026-10-06: `nemotron3:33b` as OCR: CER 14% on one Teirlinck page with
+  thinking off (empty output with it on). Of all the vision models tried,
+  only gemma4 is worth pairing with tesseract; the translategemma models, llava
+  and nemotron have been removed from this machine.
