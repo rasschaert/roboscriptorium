@@ -15,7 +15,7 @@ from roboscriptorium import ocr
 # the tops of one line's words differ by several points with ascenders and skew.
 SAME_LINE_OVERLAP = 0.5
 # Bumped whenever line extraction changes, so cached text layers are rebuilt.
-TEXT_LAYER_VERSION = 3
+TEXT_LAYER_VERSION = 4
 # Ligatures a font may put in the Unicode private-use area, where the text layer
 # then holds a code that means nothing outside that font.
 PRIVATE_LIGATURES = {"ff", "fi", "fl", "ffi", "ffl", "fj", "ft", "st", "ct", "Th", "ch", "ck", "tt"}

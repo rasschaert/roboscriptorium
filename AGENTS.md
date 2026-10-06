@@ -538,3 +538,21 @@ disagreements by mistake category.
   only separates 90° from 270°, never upright from sideways). Dolittle: 8/8
   plates (pp. 6, 25, 57, 83, 87, 90, 107, 200), all turning 90°; the earlier
   "truth" of 270° for pp. 83 and 87 was wrong.
+- 2026-10-06: Specks (a quote mark's second stroke read as "1", "7", "5")
+  became one-character lines that the model dropped and the review flagged.
+  Letting a fragment join a line when the overlap covers half of the shorter
+  of the two glued lines together in Sense (CER 2.99% → 5.99%); rejected. Dropped
+  specks are now just not flagged.
+- 2026-10-06: Boze tongen doesn't indent paragraphs. In justified text a line
+  after one that ends a sentence well short of the margin now starts a
+  paragraph (not when it opens lowercase or with punctuation): Boze tongen
+  paragraph recall 0.655 → 0.768, precision 0.875 → 0.888; the others
+  unchanged. Of its remaining missed breaks, ~160 are mid-line in the scan
+  (edition differences) and ~60 follow a full line (undetectable).
+- 2026-10-06: A short line holding CHAPTER/PART/BOOK (or HOOFDSTUK/DEEL/BOEK)
+  always goes to the role model: Sense's "» CHAPTER XXV." was off centre
+  because of a speck. Sense headings 49/50 → 50/50.
+- 2026-10-06: Private-use glyphs (a font's own Th and fj ligatures) are
+  spelled out by tesseract (eng) reading the rendered word: what it reads
+  between the known letters must be a ligature, majority per glyph. Dutch
+  tesseract reads Th as "Ih". De aanslag: 7/7 resolved, CER 0.15% → 0.136%.

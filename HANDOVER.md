@@ -30,16 +30,16 @@ for regions of any book.
   llava:34b, nemotron3:33b); gemma4 + tesseract with a merge stays the design
   (`experiments/probe_ocr.py`). No OCR stage in the pipeline yet.
 
-### Scores
+### Scores (commit after the ligature, paragraph and label changes)
 
-| Book | CER | WER | Paragraph F1 | Headings |
+| Book | CER | WER | Paragraph P / R | Headings |
 | --- | --- | --- | --- | --- |
-| Sense, Tauchnitz (other edition than the reference) | 2.99% | 1.36% | 0.811 | 49/50 (+0) |
-| Crime | 0.63% | 0.44% | 0.976 | 8/8 (+1: the book title) |
-| Dolittle | 4.77% | 2.20% | 0.859 | 21/21 (+1: the book title) |
-| Lady into Fox (**held out**) | 0.93% | 0.33% | 0.841 | 0/1 (title = running head) |
-| De aanslag (born-digital PDF) | 0.15% | 0.17% | 0.951 | 26/26 (+0) |
-| Boze tongen (Dutch scan) | 1.36% | 1.15% | 0.749 | 13/18 (+2) |
+| Sense, Tauchnitz (other edition than the reference) | 2.99% | 1.36% | 0.811 / 0.810 | 50/50 (+0) |
+| Crime | 0.63% | 0.44% | 0.966 / 0.986 | 8/8 (+1: the book title) |
+| Dolittle | 4.76% | 2.18% | 0.800 / 0.941 | 21/21 (+1: the book title) |
+| Lady into Fox (**held out**) | 0.93% | 0.33% | 0.811 / 0.874 | 0/1 (title = running head) |
+| De aanslag (born-digital PDF) | 0.14% | 0.14% | 1.000 / 0.907 | 26/26 (+0) |
+| Boze tongen (Dutch scan) | 1.36% | 1.15% | 0.888 / 0.768 | 13/18 (+2) |
 
 ### Sideways plates: done
 
@@ -60,11 +60,12 @@ stored, with the turn, for the figures stage. If the guessed turn is wrong,
 3. OCR stage in the pipeline (gemma4 + tesseract merge with flags), first for
    regions the review flags and for Boze tongen's I/l and quote errors
    (`lets`→`Iets`, `"Wat`→`‘Wat`).
-4. Boze tongen: paragraph recall 0.655, find why (dialogue, play-script
-   passages, or omnibus differences); a region review of it.
+4. Boze tongen: headings 13/18 (+2), and a region review of it. Paragraph
+   recall is now 0.768; most of what's left is edition differences.
 5. Crime verdicts (`golden review`), when the user has time.
-6. Smaller: De aanslag's private-use glyphs (U+E000 "Th", U+E005 "fj"); Sense
-   chapter XXV's heading ("» CHAPTER XXV." mid-page) never reaches the model.
+6. Smaller: specks are only hidden from review; joining them to their line
+   broke Sense (see the decision log). A quote-stroke repair (`'` + speck →
+   `"`) would need a narrower rule.
 7. Page classification stage (vision) to replace hand-entered `body_pages`.
 
 ## Working with the user
