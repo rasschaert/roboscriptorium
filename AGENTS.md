@@ -519,3 +519,8 @@ disagreements by mistake category.
   review page reads it turned 90° and 270° and keeps the turn that gives words
   (tesseract's own orientation detection said 180° on a picture page), shows
   it upright and drafts its text.
+- 2026-10-06: Whole-page orientation probed on Dolittle's six suspect pages
+  (scraps or garbled text layers): scoring four turns by tesseract word
+  confidence ties 90° with 180°; by dictionary words it is right on 3/6
+  (drawings read as junk words); on the scrap lines' strip alone it fails
+  where scraps spread over the drawing. Not adopted; see HANDOVER.md.
