@@ -62,6 +62,12 @@ the mistake it prevents; check a change against them before committing.
   the model calls.
 - **Caches survive interruption.** Write them whole (`files.write_atomic`), skip
   a cut-off last line in append-only logs, and version their format.
+- **Keep what you'll need again under `work/`, never in a session scratchpad.**
+  A scratchpad disappears with the session: probe outputs, a run's log and
+  the sources a golden reference was derived from were lost that way. Source
+  EPUBs live in `work/.cache/gutenberg/<ebook>.epub` and
+  `work/.cache/publisher/<golden>.epub` (checked against PROVENANCE.md), probe
+  outputs in `work/probes/`.
 
 ## Purpose and scope
 
