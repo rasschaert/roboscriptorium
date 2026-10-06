@@ -111,9 +111,16 @@ right, then expand.
     through these.
   - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
   - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages.
+  - `page.py`: what a page's layout says without a model, shared by roles,
+    flags and reflow: geometry, edge lines, text repeated across pages, sunk
+    pages, printed page numbers, heading labels and numerals, garbled lines.
+    "Centred" has two meanings, named apart: `centred_on_page` (loose, chooses
+    what to ask the model) and `centred_in_text` (strict, for flagging).
   - `roles.py`: line roles via a decision model. A gate picks the doubtful lines
     (page edges, short centred lines), features include cross-page repetition,
-    and answers are cached in `stages/decisions.jsonl`.
+    and answers are cached in `stages/decisions.jsonl`. Rules in code then
+    override the model where layout settles it; `LineRole.rule` names the rule
+    that set a role ("" for the model's own answer).
   - `reflow.py`: lines → blocks (headings, paragraphs; indents, de-hyphenation,
     punctuation spacing). Without roles it falls back to a footer heuristic.
   - `ir.py`: the IR (`Document`, `Paragraph` with `SourceRef`s back to page lines).

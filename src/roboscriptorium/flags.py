@@ -17,6 +17,7 @@ import hashlib
 import statistics
 from dataclasses import dataclass, field, replace
 
+from roboscriptorium import page as P
 from roboscriptorium import roles as R
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.layout import Region
@@ -101,29 +102,19 @@ def _set_apart(page: PageText, i: int) -> bool:
 
 
 def _centred(page: PageText, i: int) -> bool:
-    """Equal margins on both sides: unlike a paragraph's first or last line."""
-    full, left = R._geometry(page)
-    right = statistics.median(ln.x1 for ln in page.lines)
-    line = page.lines[i]
-    inset_left, inset_right = line.x0 - left, right - line.x1
-    balance = CENTRED_BALANCE * full
-    return (
-        line.x1 - line.x0 < R.CENTRED_MAX_WIDTH * full
-        and inset_left >= balance
-        and abs(inset_left - inset_right) < balance
-    )
+    return P.centred_in_text(page, i, CENTRED_BALANCE)
 
 
 @dataclass(frozen=True)
 class _Furniture:
     """What recurs at page edges: running heads and printed page numbers."""
 
-    repeats: R.Repeats
+    repeats: P.Repeats
     offset: int | None
 
     def __call__(self, page: PageText, i: int) -> bool:
         text = page.lines[i].text
-        if R._printed_page_number(text, page, self.offset):
+        if P.printed_page_number(text, page, self.offset):
             return True
         stripped = text.strip()
         if stripped.isdigit() and self.offset is not None:
@@ -144,7 +135,7 @@ def _reasons(
     page: PageText, i: int, role: LineRole | None, furniture: _Furniture, layout: list[str]
 ) -> list[str]:
     n = len(page.lines)
-    edge = i < R.EDGE_LINES_TOP or i >= n - R.EDGE_LINES_BOTTOM
+    edge = i < P.EDGE_LINES_TOP or i >= n - P.EDGE_LINES_BOTTOM
     how = treatment(role)
     reasons = [r for r in layout if not (r == "layout-title" and how == "heading")]
     if how == "heading":
@@ -159,7 +150,7 @@ def _reasons(
     else:
         if role is not None and role.role != "body":
             reasons.append("kept-unsure")
-        if R.garbled(page.lines[i]):
+        if P.garbled(page.lines[i]):
             reasons.append("garbled")
         if _centred(page, i):
             reasons.append("centred")
@@ -288,7 +279,7 @@ def find(
     doubts: dict[tuple[int, str], list[tuple[str, list[str]]]] | None = None,
 ) -> list[Flag]:
     flags: list[Flag] = []
-    furniture = _Furniture(R.Repeats(pages), R._page_offset(pages))
+    furniture = _Furniture(P.Repeats(pages), P.page_offset(pages))
     for page in pages:
         regions = (layout or {}).get(page.number, [])
         line_reasons, in_pictures, boxes = _layout(page, regions)
