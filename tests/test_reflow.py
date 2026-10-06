@@ -185,7 +185,9 @@ def test_a_closing_double_quote_read_as_single_is_mended():
     assert close_quotes("\"You never talked that way to me before.' said he") == (
         '"You never talked that way to me before." said he'
     )
-    # A quote within a quote, apostrophes, and curly text stay as they are.
+    # A plural possessive, a quote within a quote, apostrophes and curly text stay.
+    possessive = '"I know the animals\' language," said the Doctor.'
+    assert close_quotes(possessive) == possessive
     nested = "\"She said 'never' to me,\" he said. Don't."
     assert close_quotes(nested) == nested
     assert close_quotes("“It is,’ she said") == "“It is,’ she said"

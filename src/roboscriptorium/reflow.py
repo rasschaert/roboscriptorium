@@ -176,8 +176,10 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
 def close_quotes(text: str) -> str:
     """Mend a closing double quote that an old OCR layer read as a single one.
 
-    Only in straight-quoted text: a `'` that ends a word while a `"` is open and
-    no `'` is, closes the `"` ("asleep in his chair'" → "asleep in his chair\"").
+    Only in straight-quoted text: a `'` while a `"` is open and no `'` is closes
+    the `"`, when it follows punctuation ("before.' said he") or ends the
+    paragraph ("asleep in his chair'"). After a letter and before more text it may
+    be a plural possessive ("the animals' language"), so it stays.
     """
     if any(q in text for q in "“”‘’"):
         return text
@@ -193,7 +195,7 @@ def close_quotes(text: str) -> str:
         elif not before.isspace() and (after.isspace() or after in ".,;:!?—-"):
             if single:
                 single = False
-            elif double:
+            elif double and (before in ".,;:!?—-" or i == len(chars) - 1):
                 chars[i], double = '"', False
         elif before.isspace() or before in '"(':
             single = True
