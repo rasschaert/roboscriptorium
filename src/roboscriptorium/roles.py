@@ -45,6 +45,11 @@ REPEAT_LETTERS_PER_EDIT = 10
 # A chapter heading appears once. The model gives this count little weight, so a
 # "heading" whose text recurs on at least this many other pages is a running head.
 HEADING_MAX_REPEATS = 3
+# A page whose text starts this much lower (as a share of page height) than most
+# pages' does is sunk: a chapter opening.
+SUNK_PAGE_DROP = 0.08
+# On a sunk page, a bare Roman numeral among its first lines is the chapter heading.
+SUNK_HEADING_LINES = 3
 # Lines where fewer than this share of tokens look like words are asked about too.
 GARBLED_MAX_WORDLIKE = 0.5
 # Lines this close to the top or bottom of the page are asked about.
@@ -113,6 +118,24 @@ def _numeral(text: str) -> str:
     """A trailing Roman numeral, as in "CHAPTER XII.", or ""."""
     words = re.sub(r"[^A-Za-z\s]", " ", text).split()
     return words[-1].upper() if words and re.fullmatch(r"[IVXLC]+", words[-1].upper()) else ""
+
+
+def bare_numeral(text: str) -> str:
+    """The Roman numeral a line consists of ("Ill" read for "III"), or ""."""
+    t = text.strip().rstrip(".")
+    if not re.fullmatch(r"[IVXLC][IVXLCl1]*", t):
+        return ""
+    return t.replace("l", "I").replace("1", "I") if "l" in t or "1" in t else t
+
+
+def _sunk_pages(pages: list[PageText]) -> set[int]:
+    tops = [p.lines[0].y0 / p.height for p in pages if p.lines]
+    if not tops:
+        return set()
+    usual = statistics.median(tops)
+    return {
+        p.number for p in pages if p.lines and p.lines[0].y0 / p.height > usual + SUNK_PAGE_DROP
+    }
 
 
 class Repeats:
@@ -198,6 +221,7 @@ def classify(
 ) -> dict[SourceRef, LineRole]:
     roles = {}
     repeats = Repeats(pages)
+    sunk = _sunk_pages(pages)
     for page in pages:
         for i in candidates(page):
             st = state(page, i, repeats)
@@ -217,5 +241,8 @@ def classify(
                 and st["similar_text_on_other_pages"] >= HEADING_MAX_REPEATS
             ):
                 role = LineRole("running_head", role.confidence, role.p_body)
+            # The model reads a bare "V" as a page number; its place on the page says heading.
+            if page.number in sunk and i < SUNK_HEADING_LINES and bare_numeral(page.lines[i].text):
+                role = LineRole("chapter_heading", role.confidence, 0.0)
             roles[SourceRef(page.number, i)] = role
     return roles

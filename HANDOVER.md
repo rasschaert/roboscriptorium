@@ -28,7 +28,7 @@ M0–M2 done; M3 (better OCR and decisions) in progress; an early piece of M4
 | Book | Setup | CER | WER | Paragraph F1 | Headings |
 | --- | --- | --- | --- | --- | --- |
 | Sense, Tauchnitz, full | clef roles | 3.00% | 1.37% | 0.811 | 49/50 (+0 spurious) |
-| Crime | clef roles | 0.72% | 0.53% | 0.965 | 4/8 (+1) |
+| Crime | clef roles | 0.71% | 0.52% | 0.972 | 8/8 (+1: the book title) |
 | Dolittle | clef roles | 4.82% | 2.22% | 0.861 | 20/21 (+5) |
 
 The visual-line fix (word boxes grouped by vertical overlap) made most of the
@@ -65,8 +65,6 @@ Pending when downloaded: Nemotron 3 Nano Omni
 4. Dolittle: 5 chapter-title running heads still pass as headings; drop caps
    lose the initial letter ("NCE upon a time"); plate captions end up in the
    text (the reference leaves them out).
-   Crime: bare Roman numeral headings ("V", "VI") are called page numbers;
-   clef ignores layout features, so this needs a rule in code.
 5. Paragraph precision on Sense is ~0.6: find where false paragraph starts
    come from.
 6. Page classification stage (vision) to replace hand-entered `body_pages`.

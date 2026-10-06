@@ -11,7 +11,7 @@ import statistics
 
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.roles import LineRole
+from roboscriptorium.roles import LineRole, bare_numeral
 
 # A paragraph-opening indent is ~10pt on the target scans; line-start jitter
 # from skew stays under ~3pt.
@@ -37,6 +37,8 @@ DASHES = ("\u2014", "\u2013")
 _LOWER_START = re.compile(r"^[a-zà-ÿ]")
 # Older OCR layers keep the thin space some printers set before punctuation.
 _SPACE_BEFORE_PUNCTUATION = re.compile(r"\s+([,;:.!?])(?=\s|$)")
+# A chapter number on its own line joins the heading above it only after one of these.
+NUMBERED_WORDS = {"CHAPTER", "PART", "BOOK", "HOOFDSTUK", "DEEL", "BOEK"}
 
 
 def tidy(text: str) -> str:
@@ -106,12 +108,12 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
             kept = []
             if role == "chapter_heading":
                 previous = blocks[-1] if blocks else None
-                if isinstance(previous, Heading) and previous.sources[-1].page == page.number:
+                if _continues(previous, line, page.number):
                     # A heading set over several lines, like "CHAPTER" above "I."
                     previous.text += f" {line.text}"
                     previous.sources.append(ref)
                 else:
-                    blocks.append(Heading(line.text, [ref]))
+                    blocks.append(Heading(bare_numeral(line.text) or line.text, [ref]))
                 opening = True
         _add_body(blocks, kept, opening)
         if kept:
@@ -119,6 +121,17 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
     for block in blocks:
         block.text = tidy(block.text)
     return blocks
+
+
+def _continues(previous: Block | None, line: Line, page: int) -> bool:
+    """Whether a heading line belongs to the heading just before it."""
+    if not isinstance(previous, Heading) or previous.sources[-1].page != page:
+        return False
+    if bare_numeral(line.text):
+        # "The Nature of a Crime" above "I" is the book's title, then chapter I.
+        words = previous.text.upper().split()
+        return bool(words) and words[-1].strip(".") in NUMBERED_WORDS
+    return True
 
 
 def _add_body(blocks: list[Block], kept: list[tuple[SourceRef, Line]], opening: bool) -> None:

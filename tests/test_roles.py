@@ -1,5 +1,7 @@
+from roboscriptorium.clients.ollaya import Answer
+from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.roles import Repeats
+from roboscriptorium.roles import DecisionCache, Repeats, bare_numeral, classify
 
 
 def _page(number: int, top: str) -> PageText:
@@ -35,3 +37,27 @@ def test_garbled_lines_are_candidates():
     assert garbled(Line("r^fl rgeiKh WBpSBjlHpilT rtttnf: f- ''.'.", 0, 0, 1, 1))
     assert not garbled(Line("Then his sister, Sarah Dolittle, came to him", 0, 0, 1, 1))
     assert not garbled(Line('"John, how can you expect sick people—', 0, 0, 1, 1))
+
+
+def test_bare_numerals():
+    assert bare_numeral("VIII") == "VIII"
+    assert bare_numeral("Ill") == "III"
+    assert bare_numeral("IV.") == "IV"
+    assert bare_numeral("I wrote") == ""
+    assert bare_numeral("lll") == ""
+
+
+def test_bare_numeral_on_a_sunk_page_is_a_heading(tmp_path):
+    pages = [_page(n, f"Running head {n}") for n in range(1, 10)]
+    sunk = PageText(10, 400, 600, [Line("V", 190, 150, 210, 162)] + _page(10, "x").lines[1:])
+    pages.append(sunk)
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            return {"role": Answer("choice", "page_number", 0.9, {"page_number": 0.9, "body": 0.1})}
+
+    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
+    assert roles[SourceRef(10, 0)].role == "chapter_heading"
+    assert roles[SourceRef(3, 0)].role == "page_number"

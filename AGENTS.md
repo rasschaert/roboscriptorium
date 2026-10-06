@@ -405,3 +405,10 @@ disagreements by mistake category.
   11 unflagged wrong words). No size of translategemma is worth keeping.
 - 2026-10-06: `llava:34b` as OCR: one Teirlinck page took 170 s and came back
   as invented, looping Dutch (CER 406%); not run on the full sample.
+- 2026-10-06: Bare Roman numeral headings get a rule in code, since clef calls
+  them page numbers: on a sunk page (text starts ≥ 8% of page height lower than
+  on most pages), a bare numeral in the first 3 lines is a chapter heading
+  ("Ill" read for "III" is normalised). A numeral joins the heading line above
+  only after CHAPTER/PART/BOOK (or the Dutch words), so a book title over "I"
+  stays separate. Crime headings 4/8 → 8/8 (+1: the book title), CER 0.72% →
+  0.71%, paragraph F1 0.965 → 0.972; Sense and Dolittle unchanged.

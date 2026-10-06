@@ -106,3 +106,16 @@ def test_a_missing_heading_does_not_shift_later_matches():
     expected = ["CHAPTER XXIV.", "CHAPTER XXV.", "CHAPTER XXVI.", "CHAPTER XXVII."]
     found = ["CHAPTER XXIV.", "CHAPTER XXVI.", "CHAPTER XXVII."]
     assert match_headings(found, expected) == 3
+
+
+def test_numeral_under_a_title_starts_its_own_heading():
+    lines = [
+        Line("The Nature of", 150, 100, 250, 112),
+        Line("a Crime", 170, 115, 230, 127),
+        Line("I", 195, 140, 205, 152),
+    ] + [Line("body text " * 5, 50, 170 + 15 * i, 350, 182 + 15 * i) for i in range(10)]
+    page = PageText(1, 400, 600, lines)
+    heading = LineRole("chapter_heading", 0.9, 0.0)
+    roles = {SourceRef(1, i): heading for i in range(3)}
+    texts = [b.text for b in reflow([page], roles) if isinstance(b, Heading)]
+    assert texts == ["The Nature of a Crime", "I"]
