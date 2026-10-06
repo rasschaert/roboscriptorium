@@ -39,14 +39,15 @@ def read_sideways(png: bytes, lang: str) -> tuple[int, str]:
     return turn, " ".join(readings[turn].split())
 
 
-def tesseract(png: bytes, lang: str, single_char: bool = False, config: str = "") -> str:
-    """Tesseract's text for an image; `config` names another output, such as "tsv"."""
+def tesseract(png: bytes, lang: str, single_char: bool = False, tsv: bool = False) -> str:
+    """Tesseract's text for an image, or with `tsv` its table of words with their boxes."""
     cmd = ["tesseract", "-", "-", "-l", lang]
     if single_char:
         cmd += ["--psm", "10"]
     if lang in TESSDATA:
         cmd += ["--tessdata-dir", str(TESSDATA[lang])]
-    if config:
-        cmd.append(config)
+    if tsv:
+        # A setting, not the "tsv" config file: a --tessdata-dir without configs/ lacks it.
+        cmd += ["-c", "tessedit_create_tsv=1"]
     result = subprocess.run(cmd, input=png, capture_output=True, check=True)
     return result.stdout.decode().strip()

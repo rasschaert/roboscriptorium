@@ -97,12 +97,11 @@ def test_typographic_differences_have_the_same_letters():
     assert not _typographic(["was 3 thing", "was a thing"])
 
 
-def test_a_word_table_without_header_is_read_again(monkeypatch):
+def test_tesseract_text_where_a_word_table_was_asked_for_is_an_error(monkeypatch):
+    import pytest
+
     from roboscriptorium import ocrcheck
 
-    replies = iter(
-        ["Warning: something\n", "level\tleft\ttop\twidth\theight\ttext\n5\t0\t0\t30\t10\tword"]
-    )
-    monkeypatch.setattr(ocrcheck.ocr, "tesseract", lambda png, lang, config="": next(replies))
-    words = ocrcheck._tesseract_page(b"png", "eng")
-    assert [w[0] for w in words] == ["word"]
+    monkeypatch.setattr(ocrcheck.ocr, "tesseract", lambda png, lang, tsv=False: "LICHAAMSTAAL")
+    with pytest.raises(ValueError, match="no word table"):
+        ocrcheck._tesseract_page(b"png", "nld")
