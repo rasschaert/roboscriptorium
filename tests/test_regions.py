@@ -33,3 +33,18 @@ def test_answers_apply_and_go_stale_when_the_text_layer_changes(tmp_path):
     changed = _page()
     changed.lines[5] = Line("G.J. Sorgdrager", 150, 155, 250, 167)
     assert corrections.apply([changed], {}, answers) == 0
+
+
+def test_text_typed_for_a_missing_region_is_inserted_with_its_paragraphs(tmp_path):
+    from roboscriptorium.reflow import reflow
+
+    page = _page()
+    roles: dict = {}
+    region = flags.Flag("p1-x", 1, 3, 2, "", "missing", ["missing-text"], (50, 125, 350, 150))
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(region, "text", "First para-\ngraph wraps here.\n\nSecond one.")
+    assert corrections.apply([page], roles, answers) == 1
+    assert [ln.text for ln in page.lines[3:5]] == ["First paragraph wraps here.", "Second one."]
+    texts = [b.text for b in reflow([page], roles)]
+    assert any(t.endswith("First paragraph wraps here.") for t in texts)
+    assert any(t.startswith("Second one.") for t in texts)

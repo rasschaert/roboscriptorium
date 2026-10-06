@@ -4,14 +4,20 @@ The pipeline is weakest where a page departs from the text block: headings,
 inscriptions and signs set apart, captions, lines the role model dropped or kept
 without being sure, and OCR read from a drawing. Consecutive flagged lines with
 the same treatment form one region.
+
+With layout regions from the page image (layout.py), pictures become regions
+too, captions and titles are marked on their lines, and text the text layer
+lacks (a region with no lines in it) becomes a region of its own: a box on the
+page rather than a run of lines.
 """
 
 import hashlib
 import statistics
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from roboscriptorium import roles as R
 from roboscriptorium.ir import SourceRef
+from roboscriptorium.layout import Region
 from roboscriptorium.pdf import PageText
 from roboscriptorium.roles import KEEP_BODY_AT, LineRole
 
@@ -33,7 +39,13 @@ REASONS = {
     "garbled": "kept as text, but it looks garbled",
     "centred": "centred, unlike running text",
     "set-apart": "set apart by white space",
+    "picture": "a picture (the layout model)",
+    "caption": "a caption (the layout model)",
+    "layout-title": "a title to the layout model, but not a heading here",
+    "missing-text": "text the layout model sees, but the text layer lacks",
 }
+# Layout regions below this confidence are ignored when they hold no text-layer line.
+MISSING_TEXT_CONFIDENCE = 0.5
 
 
 @dataclass(frozen=True)
@@ -43,8 +55,11 @@ class Flag:
     first: int
     last: int
     text: str  # the lines as the text layer reads them, one per line
-    treatment: str  # "text", "heading" or "dropped"
+    treatment: str  # "text", "heading", "dropped", or "missing" (nothing in the book)
     reasons: list[str]
+    # A layout region on the page, in PDF points; then first..last are the lines in
+    # it, or last < first (= where text would be inserted) when it has none.
+    box: tuple[float, float, float, float] | None = None
 
 
 def region_key(page: int, text: str) -> str:
@@ -98,15 +113,17 @@ class _Furniture:
         return self.repeats.other_pages(text, page.number) >= R.HEADING_MAX_REPEATS
 
 
-def _reasons(page: PageText, i: int, role: LineRole | None, furniture: _Furniture) -> list[str]:
+def _reasons(
+    page: PageText, i: int, role: LineRole | None, furniture: _Furniture, layout: list[str]
+) -> list[str]:
     n = len(page.lines)
     edge = i < R.EDGE_LINES_TOP or i >= n - R.EDGE_LINES_BOTTOM
     how = treatment(role)
-    reasons = []
+    reasons = [r for r in layout if not (r == "layout-title" and how == "heading")]
     if how == "heading":
         reasons.append("heading")
     elif how == "dropped":
-        if edge and furniture(page, i):
+        if edge and furniture(page, i) and not reasons:
             return []
         if not edge:
             reasons.append("dropped-mid-page")
@@ -131,21 +148,98 @@ def _region(page: PageText, run: list[tuple[int, str, list[str]]]) -> Flag:
     return Flag(region_key(page.number, text), page.number, first, last, text, run[0][1], reasons)
 
 
-def find(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> list[Flag]:
+def _inside(line, region: Region) -> bool:
+    cx, cy = (line.x0 + line.x1) / 2, (line.y0 + line.y1) / 2
+    return region.x0 <= cx <= region.x1 and region.y0 <= cy <= region.y1
+
+
+def _box_flag(page: PageText, region: Region, inside: list[int], reason: str) -> Flag:
+    box = (region.x0, region.y0, region.x1, region.y1)
+    if inside:
+        first, last = inside[0], inside[-1]
+        text = "\n".join(page.lines[k].text for k in range(first, last + 1))
+        how = "dropped"
+    else:
+        first = sum(1 for ln in page.lines if (ln.y0 + ln.y1) / 2 < region.y0)
+        last, text, how = first - 1, "", "missing"
+    label = f"{region.label} {box[0]:.0f},{box[1]:.0f},{box[2]:.0f},{box[3]:.0f}\n{text}"
+    return Flag(region_key(page.number, label), page.number, first, last, text, how, [reason], box)
+
+
+def _layout(
+    page: PageText, regions: list[Region]
+) -> tuple[dict[int, list[str]], set[int], list[Flag]]:
+    """Reasons per line, the lines inside pictures, and regions of their own."""
+    reasons: dict[int, list[str]] = {}
+    in_pictures: set[int] = set()
+    flags = []
+    missing: list[Region] = []
+    for region in regions:
+        inside = [i for i, ln in enumerate(page.lines) if _inside(ln, region)]
+        if region.label == "figure":
+            in_pictures |= set(inside)
+            flags.append(_box_flag(page, region, inside, "picture"))
+        elif region.label in ("figure_caption", "title") and inside:
+            reason = "caption" if region.label == "figure_caption" else "layout-title"
+            for i in inside:
+                reasons.setdefault(i, []).append(reason)
+        elif (
+            region.label in ("figure_caption", "title", "plain text")
+            and not inside
+            and region.confidence >= MISSING_TEXT_CONFIDENCE
+        ):
+            missing.append(region)
+    if missing:
+        # One region per page: a page the text layer skipped has many text blocks.
+        union = Region(
+            "missing text",
+            min(r.confidence for r in missing),
+            min(r.x0 for r in missing),
+            min(r.y0 for r in missing),
+            max(r.x1 for r in missing),
+            max(r.y1 for r in missing),
+        )
+        flags.append(_box_flag(page, union, [], "missing-text"))
+    return reasons, in_pictures, flags
+
+
+def _treatment_of(page: PageText, flag: Flag, roles: dict[SourceRef, LineRole]) -> str:
+    kinds = {
+        treatment(roles.get(SourceRef(page.number, i))) for i in range(flag.first, flag.last + 1)
+    }
+    return "text" if "text" in kinds else "heading" if "heading" in kinds else "dropped"
+
+
+def find(
+    pages: list[PageText],
+    roles: dict[SourceRef, LineRole],
+    layout: dict[int, list[Region]] | None = None,
+) -> list[Flag]:
     flags: list[Flag] = []
     furniture = _Furniture(R.Repeats(pages), R._page_offset(pages))
     for page in pages:
+        line_reasons, in_pictures, boxes = _layout(page, (layout or {}).get(page.number, []))
+        page_flags: list[Flag] = []
         run: list[tuple[int, str, list[str]]] = []
         for i in range(len(page.lines)):
             role = roles.get(SourceRef(page.number, i))
-            reasons = _reasons(page, i, role, furniture)
+            reasons = (
+                []
+                if i in in_pictures
+                else _reasons(page, i, role, furniture, line_reasons.get(i, []))
+            )
             how = treatment(role)
             if reasons and run and run[-1][0] == i - 1 and run[-1][1] == how:
                 run.append((i, how, reasons))
                 continue
             if run:
-                flags.append(_region(page, run))
+                page_flags.append(_region(page, run))
             run = [(i, how, reasons)] if reasons else []
         if run:
-            flags.append(_region(page, run))
+            page_flags.append(_region(page, run))
+        boxes = [
+            replace(f, treatment=_treatment_of(page, f, roles)) if f.last >= f.first else f
+            for f in boxes
+        ]
+        flags += sorted(page_flags + boxes, key=lambda f: (f.first, f.last))
     return flags

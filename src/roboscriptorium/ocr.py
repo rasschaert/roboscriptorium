@@ -1,0 +1,20 @@
+"""OCR of page regions with tesseract, for drafts a human then corrects."""
+
+import subprocess
+from pathlib import Path
+
+# The Dutch model comes from tessdata_best and lives in work/tessdata; English
+# ships with Homebrew's tesseract.
+TESSDATA = {"nld": Path("work/tessdata")}
+
+
+def language(book_language: str) -> str:
+    return "nld" if book_language.lower().startswith("nl") else "eng"
+
+
+def tesseract(png: bytes, lang: str) -> str:
+    cmd = ["tesseract", "-", "-", "-l", lang]
+    if lang in TESSDATA:
+        cmd += ["--tessdata-dir", str(TESSDATA[lang])]
+    result = subprocess.run(cmd, input=png, capture_output=True, check=True)
+    return result.stdout.decode().strip()

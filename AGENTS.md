@@ -93,9 +93,16 @@ right, then expand.
   - `flags.py`: regions a human should check, i.e. what isn't plain running
     text: headings, lines dropped mid-page or without the model being sure,
     garbled text, centred or set-apart lines. Page furniture (repeated running
-    heads, printed page numbers) isn't flagged.
+    heads, printed page numbers) isn't flagged. With layout regions it also
+    flags pictures, captions, titles that aren't headings, and text the text
+    layer lacks (one region per page, as an area rather than lines).
+  - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
+    `stages/layout.json`; run by `review`.
+  - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
+    text layer lacks).
   - `corrections.py`: a human's answers about regions (text, heading, drop,
-    image, optionally the text as printed), stored in
+    image, optionally the text as printed; typed text for a missing region is
+    inserted where the region sits, blank lines separating paragraphs), stored in
     `work/<book>/review/regions.jsonl` and applied to the line roles on the
     next build.
   - `review.py` + `regions.html` / `review.html`: the local review pages (stdlib
@@ -227,10 +234,10 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).
 - epubcheck (Homebrew).
-- Dependency group `layout` (`uv run --group layout …`): `doclayout-yolo` with
+- Dependency group `layout` (a default group, so plain `uv run` has it): `doclayout-yolo` with
   PyTorch, and the DocLayout-YOLO DocStructBench weights
   (`juliozhao/DocLayout-YOLO-DocStructBench`, `doclayout_yolo_docstructbench_imgsz1024.pt`,
-  in the Hugging Face cache). Being probed for finding regions from page images.
+  in the Hugging Face cache). Used by `review` to flag regions from page images.
 - tesseract 5.5.3 (Homebrew, `eng`/`osd` only). The Dutch model is
   `nld.traineddata` from tessdata_best in `work/tessdata/` (pass
   `--tessdata-dir work/tessdata`); `tesseract-lang` (~650 MB) is not installed.
@@ -484,3 +491,7 @@ disagreements by mistake category.
   layer lacks (Dolittle chapter 9's subtitle is printed, not drawn: the layer
   just skipped it). Not trusted alone: it called Boze tongen's part title
   furniture.
+- 2026-10-06: Layout regions feed the review flags. Dolittle: 131 regions, among
+  them 51 pictures and 24 captions, and one whole page (p97) whose text the OCR
+  layer lacks except its heading; the review page drafts it with tesseract
+  (near perfect, bar the drawn initial) for the human to correct.

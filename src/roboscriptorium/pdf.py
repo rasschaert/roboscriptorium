@@ -21,6 +21,8 @@ class Line:
     y0: float
     x1: float
     y1: float
+    # Set on lines a human typed in, whose paragraph breaks are known.
+    starts_paragraph: bool | None = None
 
 
 @dataclass(frozen=True)

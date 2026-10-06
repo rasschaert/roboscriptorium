@@ -31,6 +31,9 @@ layout = [
     "huggingface-hub>=2.1.1",
 ]
 
+[tool.uv]
+default-groups = ["dev", "layout"]
+
 [tool.ruff]
 line-length = 100
 # Throwaway model probes.

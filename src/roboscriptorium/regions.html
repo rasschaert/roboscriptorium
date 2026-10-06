@@ -65,8 +65,9 @@ let state = null, queue = [], pos = 0;
 const main = document.getElementById("main");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 const KEYS = {"1": "text", "2": "heading", "3": "drop", "4": "image"};
-const CURRENT = {text: "text", heading: "heading", dropped: "drop"};
-const NOW = {text: "kept as running text", heading: "made a heading", dropped: "left out of the book"};
+const CURRENT = {text: "text", heading: "heading", dropped: "drop", missing: "drop"};
+const NOW = {text: "kept as running text", heading: "made a heading", dropped: "left out of the book",
+  missing: "has nothing here"};
 
 async function load() {
   state = await (await fetch("/api/state")).json();
@@ -96,20 +97,20 @@ function render() {
   }
   const r = queue[pos];
   const a = r.answer;
-  const text = a && a.text != null ? a.text : r.text;
+  const text = a && a.text != null ? a.text : (r.text || r.draft || "");
   const buttons = Object.entries(KEYS).map(([k, action]) =>
     `<button data-action="${action}" class="${CURRENT[r.treatment] === action ? "current" : ""}"><kbd>${k}</kbd>${esc(state.actions[action])}</button>`).join("");
   main.innerHTML = `
   <div class="card">
     <div class="meta">
       <span>${pos + 1} of ${queue.length} in this view</span>
-      <span>page ${r.page}, line ${r.first + 1}${r.last > r.first ? "–" + (r.last + 1) : ""} · <a href="/page?page=${r.page}" target="_blank">full page</a></span>
+      <span>page ${r.page}${r.last >= r.first ? `, line ${r.first + 1}${r.last > r.first ? "–" + (r.last + 1) : ""}` : ""} · <a href="/page?page=${r.page}" target="_blank">full page</a></span>
     </div>
-    <img class="crop" src="/crop?page=${r.page}&first=${r.first}&last=${r.last}" alt="Scan crop">
+    <img class="crop" src="${r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}` : `/crop?page=${r.page}&first=${r.first}&last=${r.last}`}" alt="Scan crop">
     <div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>
-    <div class="now">The pipeline <b>${NOW[r.treatment]}</b>. Its reading of the highlighted lines (edit if the scan says otherwise):</div>
+    <div class="now">The pipeline <b>${NOW[r.treatment]}</b>. ${r.text ? "Its reading of the highlighted lines (edit if the scan says otherwise):" : r.draft ? "Tesseract's draft of the highlighted area; correct it, then save as text:" : "Type the text here if it belongs in the book:"}</div>
     ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
-    <textarea id="text" rows="${Math.min(8, r.text.split("\n").length + 1)}">${esc(text)}</textarea>
+    <textarea id="text" rows="${Math.min(16, text.split("\n").length + 1)}">${esc(text)}</textarea>
     ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}
     <div class="actions">${buttons}</div>
     ${a ? `<div class="answer">Answered: ${esc(state.actions[a.action])}${a.text != null ? " · with your wording" : ""}</div>` : ""}

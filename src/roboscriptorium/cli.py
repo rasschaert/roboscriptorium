@@ -8,7 +8,7 @@ from pathlib import Path
 import httpx
 import typer
 
-from roboscriptorium import disagreements, evaluate, flags, pipeline, review
+from roboscriptorium import disagreements, evaluate, flags, layout, ocr, pipeline, review
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollama import OllamaClient
@@ -157,18 +157,21 @@ def review_regions(
 
     def rebuild():
         stages = pipeline.run(book, pages=_range(pages))
-        return (
-            stages.pages,
-            flags.find(stages.pages, stages.model_roles),
-            stages.corrections_applied,
-        )
+        regions = None
+        if layout.available():
+            numbers = [p.number for p in stages.pages]
+            regions = layout.detect(book.source, numbers, book.stages / "layout.json")
+        found = flags.find(stages.pages, stages.model_roles, regions)
+        return stages.pages, found, stages.corrections_applied
 
     body, regions, applied = rebuild()
     corrections = Corrections(book.corrections_path)
     done = sum(f.key in corrections.by_key for f in regions)
     typer.echo(f"{len(regions)} regions to look at ({done} already answered, {applied} applied)")
     typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
-    page = review.RegionReview(book.source, body, regions, corrections, rebuild)
+    page = review.RegionReview(
+        book.source, body, regions, corrections, rebuild, ocr.language(book.language)
+    )
     page.applied = applied
     review.serve(page, port)
 

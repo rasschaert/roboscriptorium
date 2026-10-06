@@ -21,6 +21,7 @@ from urllib.parse import parse_qs, urlparse
 import pymupdf
 
 from roboscriptorium import flags as F
+from roboscriptorium import ocr
 from roboscriptorium.corrections import ACTIONS, Corrections
 from roboscriptorium.disagreements import PIPELINE, SCAN, UNSURE, Disagreement, Verdicts
 from roboscriptorium.pdf import PageText
@@ -29,6 +30,7 @@ from roboscriptorium.pdf import PageText
 CROP_CONTEXT_LINES = 1
 CROP_ZOOM = 2.5
 PAGE_ZOOM = 1.5
+OCR_DPI = 300
 
 
 def guess_category(d: Disagreement) -> str:
@@ -67,6 +69,26 @@ class Scan:
             pdf_page.draw_rect(target, color=(0.9, 0.6, 0), fill=(1, 0.85, 0.3), fill_opacity=0.25)
             pix = pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip)
             return pix.tobytes("png")
+
+    def crop_box(self, page_number: int, box: tuple[float, float, float, float]) -> bytes:
+        """A region the layout model found, with some of the page around it."""
+        x0, y0, x1, y1 = box
+        target = pymupdf.Rect(x0 - 2, y0 - 2, x1 + 2, y1 + 2)
+        with pymupdf.open(self.pdf) as doc:
+            pdf_page = doc[page_number - 1]
+            clip = pymupdf.Rect(0, y0 - 40, pdf_page.rect.width, y1 + 40) & pdf_page.rect
+            pdf_page.draw_rect(target, color=(0.9, 0.6, 0), fill=(1, 0.85, 0.3), fill_opacity=0.2)
+            pix = pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip)
+            return pix.tobytes("png")
+
+    def read_box(self, page_number: int, box: tuple[float, float, float, float], lang: str) -> str:
+        """Tesseract's reading of a region, as a draft for the human."""
+        with pymupdf.open(self.pdf) as doc:
+            zoom = OCR_DPI / 72
+            pix = doc[page_number - 1].get_pixmap(
+                matrix=pymupdf.Matrix(zoom, zoom), clip=pymupdf.Rect(*box)
+            )
+            return ocr.tesseract(pix.tobytes("png"), lang)
 
     def full_page(self, page_number: int) -> bytes:
         with pymupdf.open(self.pdf) as doc:
@@ -124,8 +146,11 @@ class RegionReview:
         regions: list[F.Flag],
         corrections: Corrections,
         rebuild: Callable[[], tuple[list[PageText], list[F.Flag], int]],
+        lang: str,
     ):
         self.scan = Scan(pdf, pages)
+        self.lang = lang
+        self._drafts: dict[str, str] = {}
         self.regions = regions
         self.corrections = corrections
         self._rebuild = rebuild
@@ -141,12 +166,23 @@ class RegionReview:
                 {
                     **asdict(f),
                     "reasons": [F.REASONS[r] for r in f.reasons],
-                    "before": page.lines[f.first - 1].text if f.first else "",
+                    "before": page.lines[f.first - 1].text
+                    if 0 < f.first <= len(page.lines)
+                    else "",
                     "after": page.lines[f.last + 1].text if f.last + 1 < len(page.lines) else "",
                     "answer": asdict(c) if c else None,
+                    "draft": self._draft(f),
                 }
             )
         return {"items": items, "actions": ACTIONS, "applied": self.applied}
+
+    def _draft(self, f: F.Flag) -> str | None:
+        """Tesseract's reading of text the text layer lacks."""
+        if "missing-text" not in f.reasons or f.box is None:
+            return None
+        if f.key not in self._drafts:
+            self._drafts[f.key] = self.scan.read_box(f.page, f.box, self.lang)
+        return self._drafts[f.key]
 
     def record(self, body: dict) -> dict:
         flag = next(f for f in self.regions if f.key == body["key"])
@@ -184,6 +220,9 @@ def serve(review: Review | RegionReview, port: int) -> None:
                     self._send(page, "text/html; charset=utf-8")
                 elif url.path == "/api/state":
                     self._json(review.state())
+                elif url.path == "/crop" and "box" in q:
+                    box = tuple(float(v) for v in q["box"].split(","))
+                    self._send(review.scan.crop_box(int(q["page"]), box), "image/png")
                 elif url.path == "/crop":
                     png = review.scan.crop(int(q["page"]), int(q["first"]), int(q["last"]))
                     self._send(png, "image/png")

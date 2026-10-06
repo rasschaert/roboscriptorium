@@ -79,7 +79,10 @@ def indented(lines: list[Line]) -> list[bool]:
         window = lines[max(0, i - MARGIN_WINDOW) : i + MARGIN_WINDOW + 1]
         starts = sorted(ln.x0 for ln in window)
         margin = starts[len(starts) // 4]
-        flags.append(line.x0 - margin > INDENT_MIN)
+        if line.starts_paragraph is not None:
+            flags.append(line.starts_paragraph)
+        else:
+            flags.append(line.x0 - margin > INDENT_MIN)
     return flags
 
 
