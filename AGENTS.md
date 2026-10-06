@@ -70,6 +70,14 @@ automated as far as possible. The goal: an edition as careful as Standard
 Ebooks' (weeks of scanning, OCR, proofreading and typesetting by people), in
 hours, with a human only answering the questions the machine can't.
 
+**Build the machine, not the book.** A general harness of compounded models,
+not rules tuned to one book: several readings and judges that fail
+differently, combined by voting and by each model's measured reliability per
+kind of error, with the human's answers as labels that improve the weights.
+Every job keeps a labelled set, so a newly released model is benchmarked and,
+where it wins, plugged in. The target book comes out right because the machine
+does.
+
 - **Order of attack:** scanned PDF → born-digital PDF → other formats
   (MOBI/AZW3, DOCX, HTML, …).
 - **Content order:** prose/fiction first; footnotes, figures, tables, verse later.
