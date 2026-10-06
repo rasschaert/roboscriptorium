@@ -89,24 +89,37 @@ def _letters(text: str) -> str:
     return re.sub(r"[^A-Z]", "", text.upper())
 
 
+def _numeral(text: str) -> str:
+    """A trailing Roman numeral, as in "CHAPTER XII.", or ""."""
+    words = re.sub(r"[^A-Za-z\s]", " ", text).split()
+    return words[-1].upper() if words and re.fullmatch(r"[IVXLC]+", words[-1].upper()) else ""
+
+
 class Repeats:
-    """How often each page-edge line's text recurs at the edge of other pages."""
+    """How often each page-edge line's text recurs at the edge of other pages.
+
+    Letters match fuzzily, to absorb OCR noise in running heads, but a trailing Roman
+    numeral must match exactly: "CHAPTER II." and "CHAPTER III." are different texts.
+    """
 
     def __init__(self, pages: list[PageText]):
-        self._pages: dict[str, set[int]] = defaultdict(set)
+        self._pages: dict[tuple[str, str], set[int]] = defaultdict(set)
         for page in pages:
             n = len(page.lines)
             for i in (*range(min(EDGE_LINES_TOP, n)), *range(max(0, n - EDGE_LINES_BOTTOM), n)):
-                if key := _letters(page.lines[i].text):
-                    self._pages[key].add(page.number)
+                text = page.lines[i].text
+                if key := _letters(text):
+                    self._pages[(key, _numeral(text))].add(page.number)
 
     def other_pages(self, text: str, page_number: int) -> int:
-        key = _letters(text)
+        key, numeral = _letters(text), _numeral(text)
         if len(key) < 4:
             return 0
         pages: set[int] = set()
-        for other, numbers in self._pages.items():
-            if other == key or fuzz.ratio(key, other) >= REPEAT_SIMILARITY:
+        for (other, other_numeral), numbers in self._pages.items():
+            if other_numeral == numeral and (
+                other == key or fuzz.ratio(key, other) >= REPEAT_SIMILARITY
+            ):
                 pages |= numbers
         return len(pages - {page_number})
 

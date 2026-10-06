@@ -366,3 +366,8 @@ disagreements by mistake category.
   gives CER 0.54% against 0.63% (gemma4) and 0.90% (tesseract), 89 flags (56
   real errors) and almost no unflagged wrong words. This is the M3 OCR design:
   several candidates, rules for known biases, flags for the rest.
+- 2026-10-06: Full-book headings 28/50 → 50/50. The repetition feature matched
+  "CHAPTER II." and "CHAPTER III." as the same text (letters ≥ 85% similar),
+  so over 50 chapters every heading looked like a running head and was
+  demoted. A trailing Roman numeral must now match exactly. Crime with clef
+  roles: CER 0.72%, WER 0.53%, paragraph F1 0.965, headings 5/8.
