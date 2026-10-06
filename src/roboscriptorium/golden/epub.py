@@ -3,8 +3,9 @@
 For books with no Gutenberg transcription: a retail EPUB of the same printing, or
 an omnibus holding the scanned book as one part. The manifest names the content
 files to read, in order. Headings are `h1`–`h6`, or paragraphs whose class
-starts with one of the manifest's heading prefixes; consecutive headings form one
-("Eerste episode 1945" above "1"). Empty paragraphs (blank lines) are left out.
+starts with one of the manifest's heading prefixes; each heading starts a chapter,
+even when no text follows it ("Eerste episode 1945" above "1"). Empty paragraphs
+(blank lines) are left out.
 """
 
 import hashlib
@@ -35,6 +36,18 @@ def _parse(raw: bytes) -> ET.Element:
     return ET.fromstring(re.sub(r"&(\w+);", numeric, raw.decode("utf-8")))
 
 
+def _text(el: ET.Element):
+    """An element's text, with a space where a `<br/>` breaks the line."""
+    if el.tag == f"{XHTML}br":
+        yield " "
+    if el.text:
+        yield el.text
+    for child in el:
+        yield from _text(child)
+        if child.tail:
+            yield child.tail
+
+
 def _member(z: zipfile.ZipFile, name: str) -> str:
     matches = [n for n in z.namelist() if n == name or n.endswith("/" + name)]
     if len(matches) != 1:
@@ -57,15 +70,11 @@ def read(epub: Path, files: list[str], heading_prefixes: tuple[str, ...] = ()) -
             for el in body.iter():
                 if el.tag not in HEADING_TAGS and el.tag != f"{XHTML}p":
                     continue
-                text = _clean(" ".join(el.itertext()).replace(" ", " "))
+                text = _clean("".join(_text(el)).replace("\u00a0", " "))
                 if not text:
                     continue
                 if _is_heading(el, heading_prefixes):
-                    last = sections[-1] if sections else None
-                    if last is not None and not last.paragraphs:
-                        last.full_heading += f" {text}"
-                    else:
-                        sections.append(Section(text, text))
+                    sections.append(Section(text, text))
                 elif sections:
                     sections[-1].paragraphs.append(text)
     return sections

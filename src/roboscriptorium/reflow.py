@@ -38,8 +38,21 @@ _SPACE_BEFORE_PUNCTUATION = re.compile(r"\s+([,;:.!?])(?=\s|$)")
 NUMBERED_WORDS = {"CHAPTER", "PART", "BOOK", "HOOFDSTUK", "DEEL", "BOEK"}
 
 
+# Typesetting ligatures ("ﬁ", "ﬀ") are glyphs, not letters.
+_LIGATURES = str.maketrans(
+    {
+        "\ufb00": "ff",
+        "\ufb01": "fi",
+        "\ufb02": "fl",
+        "\ufb03": "ffi",
+        "\ufb04": "ffl",
+        "\ufb06": "st",
+    }
+)
+
+
 def tidy(text: str) -> str:
-    return _SPACE_BEFORE_PUNCTUATION.sub(r"\1", text)
+    return _SPACE_BEFORE_PUNCTUATION.sub(r"\1", text.translate(_LIGATURES))
 
 
 def footer_start(page: PageText) -> int:
@@ -73,10 +86,15 @@ def indented(lines: list[Line]) -> list[bool]:
 def join(text: str, nxt: str) -> str:
     """Append the next line, undoing hyphenation where the word continues."""
     if text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha():
-        # A capital after the break means a real hyphen, as in "Noord-Holland".
-        return text[:-1] + nxt if _LOWER_START.match(nxt) else text + nxt
+        # A real hyphen: a capital after the break ("Noord-Holland"), or a compound
+        # that has hyphens elsewhere ("Mens-erger-je-niet", "glas-in-lood").
+        last, first = text.split()[-1][:-1], nxt.split()[0] if nxt.split() else ""
+        if not _LOWER_START.match(nxt) or "-" in last or "-" in first:
+            return text + nxt
+        return text[:-1] + nxt
     if text.endswith(DASHES):
-        return text + nxt
+        # A spaced dash ("ziet – hoe") keeps its spaces; a closed one ("alles—en") doesn't.
+        return f"{text} {nxt}" if text[:-1].endswith(" ") else text + nxt
     return f"{text} {nxt}"
 
 

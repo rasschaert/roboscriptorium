@@ -67,3 +67,18 @@ def test_running_title_keys():
     assert _title_key("Animal Language II") == _title_key("ANIMAL LANGUAGE")
     assert _title_key("12 The Story of Doctor Dolittle") == "THESTORYOFDOCTORDOLITTLE"
     assert _title_key("CHAPTER XL1I.") != _title_key("CHAPTER XLI.")
+
+
+def test_short_last_line_of_a_sentence_is_body(tmp_path):
+    page = _page(1, "Running head")
+    page.lines.append(Line("weten.", 50, 260, 90, 272))
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            return {"role": Answer("choice", "artifact", 0.6, {"artifact": 0.6, "body": 0.3})}
+
+    roles = classify([page], Client(), DecisionCache(tmp_path / "decisions.jsonl"))
+    assert roles[SourceRef(1, len(page.lines) - 1)].role == "body"
+    assert roles[SourceRef(1, 0)].role == "artifact"

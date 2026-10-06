@@ -27,10 +27,12 @@ M0–M2 done; M3 (better OCR and decisions) in progress; an early piece of M4
 
 | Book | Setup | CER | WER | Paragraph F1 | Headings |
 | --- | --- | --- | --- | --- | --- |
-| Sense, Tauchnitz, full | clef roles | 3.00% | 1.37% | 0.811 | 49/50 (+0 spurious) |
-| Crime | clef roles | 0.71% | 0.52% | 0.972 | 8/8 (+1: the book title) |
-| Dolittle | clef roles | 4.80% | 2.20% | 0.861 | 21/21 (+1: the book title) |
+| Sense, Tauchnitz, full | clef roles | 2.99% | 1.36% | 0.811 | 49/50 (+0 spurious) |
+| Crime | clef roles | 0.63% | 0.44% | 0.976 | 8/8 (+1: the book title) |
+| Dolittle | clef roles | 4.77% | 2.20% | 0.859 | 21/21 (+1: the book title) |
 | Lady into Fox (**held out**) | clef roles | 0.93% | 0.33% | 0.841 | 0/1 (the title is also the running head) |
+| De aanslag (born-digital PDF) | clef roles | 0.15% | 0.17% | 0.951 | 26/26 (+0) |
+| Boze tongen (Dutch scan) | clef roles | first run in progress | | | |
 
 The visual-line fix (word boxes grouped by vertical overlap) made most of the
 Sense and Dolittle gains; see the decision log.

@@ -9,7 +9,7 @@ import hashlib
 import json
 import re
 import statistics
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -54,8 +54,16 @@ SUNK_PAGE_DROP = 0.08
 # The first lines of a sunk page are asked about, and a bare Roman numeral among
 # them is the chapter heading.
 SUNK_HEADING_LINES = 3
-# A subtitle under a chapter heading has at least this many letters ("i" is a speck).
-SUBTITLE_MIN_LETTERS = 4
+# A subtitle under a chapter heading has at least this many letters or digits ("i"
+# is a speck, "12" a page number, "1945" a subtitle).
+SUBTITLE_MIN_CHARS = 4
+# A page offset counts only when this many pages, and this share of the numbers
+# found at page edges, agree on it.
+PAGE_OFFSET_MIN_PAGES = 3
+PAGE_OFFSET_MIN_SHARE = 0.25
+# A bare number opening a page is a section number unless it is within this much
+# of the page's printed number (allowing for OCR misreading a digit).
+PAGE_NUMBER_SLACK = 10
 # A "heading" that repeats an earlier heading line of at least this many letters is
 # a running head.
 RUNNING_TITLE_MIN_LETTERS = 6
@@ -165,7 +173,46 @@ def _page_offset(pages: list[PageText]) -> int | None:
         for i in (*range(min(EDGE_LINES_TOP, n)), *range(max(0, n - EDGE_LINES_BOTTOM), n)):
             if (number := _page_number(page.lines[i].text)) is not None:
                 offsets.append(page.number - number)
-    return statistics.mode(offsets) if offsets else None
+    if not offsets:
+        return None
+    offset, count = Counter(offsets).most_common(1)[0]
+    return (
+        offset
+        if count >= max(PAGE_OFFSET_MIN_PAGES, PAGE_OFFSET_MIN_SHARE * len(offsets))
+        else None
+    )
+
+
+def _printed_page_number(text: str, page: PageText, offset: int | None) -> bool:
+    return offset is not None and _page_number(text) == page.number - offset
+
+
+def _section_number(
+    page: PageText, i: int, offset: int | None, page_roles: dict[int, "LineRole"]
+) -> bool:
+    """A bare number opening the page, above body text, that isn't its printed page number."""
+    text = page.lines[i].text.strip()
+    if i != 0 or not text.isdigit() or not _is_body(page_roles.get(i + 1)):
+        return False
+    return offset is None or abs(int(text) - (page.number - offset)) > PAGE_NUMBER_SLACK
+
+
+_OPEN_END = re.compile(r"[a-zà-ÿ,\-\u00ad\u00ac]$")
+_LOWER_START = re.compile(r"^[‘’'\"“]*[a-zà-ÿ]{2,}\b")
+
+
+def _finishes_sentence(page: PageText, i: int, page_roles: dict[int, "LineRole"]) -> bool:
+    """A lowercase line under a body line that stops mid-sentence: "kijken." ends it."""
+    if i == 0 or not _is_body(page_roles.get(i - 1)) or garbled(page.lines[i]):
+        return False
+    return bool(
+        _OPEN_END.search(page.lines[i - 1].text.rstrip())
+        and _LOWER_START.match(page.lines[i].text.strip())
+    )
+
+
+def _is_body(role: "LineRole | None") -> bool:
+    return role is None or role.p_body >= KEEP_BODY_AT
 
 
 def _title_key(text: str) -> str:
@@ -289,28 +336,30 @@ def classify(
             if page.number in sunk and i < SUNK_HEADING_LINES and bare_numeral(page.lines[i].text):
                 role = LineRole("chapter_heading", role.confidence, 0.0)
             page_roles[i] = role
-        if page.number in sunk:
-            _subtitles(page, page_roles)
         for i, role in page_roles.items():
+            text = page.lines[i].text
             if role.role == "chapter_heading":
-                text = page.lines[i].text
                 key = _title_key(text)
-                printed = _page_number(text)
-                if (offset is not None and printed == page.number - offset) or (
+                if _printed_page_number(text, page, offset) or (
                     len(key) >= RUNNING_TITLE_MIN_LETTERS and key in heading_lines
                 ):
-                    role = LineRole("running_head", role.confidence, role.p_body)
-            roles[SourceRef(page.number, i)] = role
+                    page_roles[i] = LineRole("running_head", role.confidence, role.p_body)
+            elif _section_number(page, i, offset, page_roles):
+                page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0)
+            elif not _is_body(role) and _finishes_sentence(page, i, page_roles):
+                page_roles[i] = LineRole("body", role.confidence, 1.0)
+        _subtitles(page, page_roles, offset)
         heading_lines |= {
             _title_key(page.lines[i].text)
             for i, r in page_roles.items()
             if r.role == "chapter_heading"
         }
+        roles.update({SourceRef(page.number, i): r for i, r in page_roles.items()})
     return roles
 
 
-def _subtitles(page: PageText, page_roles: dict[int, LineRole]) -> None:
-    """Lines between a chapter heading and the text, on a chapter opening, are its title.
+def _subtitles(page: PageText, page_roles: dict[int, LineRole], offset: int | None) -> None:
+    """Lines between a chapter heading and the text are its title.
 
     The model calls a title like "PUDDLEBY" under "THE FIRST CHAPTER" a running head
     or an artifact, which would drop it from the book.
@@ -318,9 +367,13 @@ def _subtitles(page: PageText, page_roles: dict[int, LineRole]) -> None:
     heading = False
     for i in range(len(page.lines)):
         role = page_roles.get(i)
-        if role is None or role.p_body >= KEEP_BODY_AT:
+        if _is_body(role):
             return
         if role.role == "chapter_heading":
             heading = True
-        elif heading and len(_letters(page.lines[i].text)) >= SUBTITLE_MIN_LETTERS:
+        elif (
+            heading
+            and len(re.sub(r"[^A-Za-z0-9]", "", page.lines[i].text)) >= SUBTITLE_MIN_CHARS
+            and not _printed_page_number(page.lines[i].text, page, offset)
+        ):
             page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0)

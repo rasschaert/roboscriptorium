@@ -22,6 +22,9 @@ def test_join_undoes_hyphenation_only_before_lowercase():
     assert join("af-", "stormde") == "afstormde"
     assert join("Noord-", "Holland") == "Noord-Holland"
     assert join("alles—", "en het") == "alles—en het"
+    assert join("ziet –", "hoe") == "ziet – hoe"
+    assert join("Mens-", "erger-je-niet") == "Mens-erger-je-niet"
+    assert join("glas-in-", "loodruitjes") == "glas-in-loodruitjes"
     assert join("de", "kerk") == "de kerk"
 
 
@@ -119,3 +122,7 @@ def test_numeral_under_a_title_starts_its_own_heading():
     roles = {SourceRef(1, i): heading for i in range(3)}
     texts = [b.text for b in reflow([page], roles) if isinstance(b, Heading)]
     assert texts == ["The Nature of a Crime", "I"]
+
+
+def test_tidy_spells_out_ligatures():
+    assert tidy("koﬃe op de ﬁets bij Graaﬀ") == "koffie op de fiets bij Graaff"

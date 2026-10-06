@@ -436,3 +436,18 @@ disagreements by mistake category.
 - 2026-10-06: `nemotron3:33b` as OCR: CER 14% on one Teirlinck page with
   thinking off (empty output with it on). Of all the vision models tried,
   only gemma4 is worth pairing with tesseract.
+- 2026-10-06: First born-digital PDF, *De aanslag* (calibre's PDF of the retail
+  EPUB): CER 0.64% → 0.15%, headings 6/22 → 26/26. Ligatures (ﬁ, ﬀ, ﬃ) are
+  spelled out. A bare number opening a page, above body text and not near the
+  printed page number, is a section number; a page offset needs ≥ 3 pages and a
+  quarter of the edge numbers to agree (one "1945" had set it to −1936). Lines
+  under a heading that survives the running-head checks are its subtitle on
+  any page. A lowercase line under a body line that stops mid-sentence is body
+  (clef dropped short last lines like "kijken."). A line-end hyphen stays in a
+  compound that has hyphens elsewhere ("Mens-erger-je-niet"); a spaced dash
+  keeps its spaces. Reference fixes: spans join without spaces ("nsb-leider"),
+  and every EPUB heading is its own chapter. Crime 0.71% → 0.63%, Dolittle
+  4.80% → 4.77%, Sense 3.00% → 2.99%; held-out Lady into Fox unchanged (0.93%).
+  Still lost on De aanslag: inscriptions and signs set apart in the text,
+  which clef calls artifacts; these need flags for review, not more rules.
+  The font's private-use glyphs (U+E000 "Th", U+E005 "fj") come out as junk.
