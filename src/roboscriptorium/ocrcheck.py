@@ -1,9 +1,9 @@
 """Check a scan's OCR text layer against a second reading, line by line.
 
-Tesseract reads each body page. Where its reading of a line differs from the
-text layer's (widened to whole words), the role model picks a reading from the
-crop of the scan, and a text model picks the version of the line that reads
-right. When both pick the same reading and the role model is at least somewhat
+An OCR model (glm-ocr) reads the crop of each body line. Where its reading
+differs from the text layer's (widened to whole words), the role model picks a
+reading from the crop of the scan, and a text model picks the version of the
+line that reads right. When both pick the same reading and the role model is at least somewhat
 sure, it is applied; any other suspect is left to a human.
 
 Fixes go into a copy of the pages, matched on the text layer's line text, so
@@ -11,18 +11,18 @@ the line texts the review keys its answers on stay as they are. Born-digital
 PDFs, whose text is exact, aren't checked.
 """
 
-import csv
-import io
+import base64
+import hashlib
 import json
 import re
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 
+import httpx
 import pymupdf
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium import ocr
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.ir import SourceRef
@@ -30,8 +30,12 @@ from roboscriptorium.pdf import PageText
 from roboscriptorium.roles import DecisionCache
 
 DPI = 300
-TESSERACT_VERSION = 1
-TESSERACT_WORKERS = 6
+READING_VERSION = 1
+READ_WORKERS = 4
+LINE_PAD = 3  # points around a line's crop for the OCR model
+MAX_LINE_TOKENS = 120
+# Readings are written to the cache every so many lines, so a long run keeps its progress.
+SAVE_EVERY = 200
 # The role model must be at least this sure, and agree with the text model.
 SURE = 0.3
 CROP_ZOOM = 4
@@ -75,50 +79,82 @@ def scanned(pdf: Path, sample: int = 10) -> bool:
     return invisible > visible
 
 
-def tesseract_words(
-    pdf: Path, numbers: list[int], lang: str, cache: Path
-) -> dict[int, list[tuple[str, float, float, float, float]]]:
-    """Tesseract's words with their boxes in points, per page, cached."""
-    done: dict[int, list] = {}
+def line_readings(
+    pdf: Path,
+    pages: list[PageText],
+    checked: set[SourceRef],
+    model: str,
+    ollama_url: str,
+    cache: Path,
+) -> dict[SourceRef, str]:
+    """The OCR model's reading of each checked line's crop, cached on the line's text."""
+    done: dict[str, str] = {}
     if cache.exists():
         raw = json.loads(cache.read_text())
-        if raw.get("version") == TESSERACT_VERSION and raw.get("lang") == lang:
-            done = {int(n): [tuple(w) for w in ws] for n, ws in raw["pages"].items()}
-    todo = [n for n in numbers if n not in done]
-    if todo:
-        with ThreadPoolExecutor(TESSERACT_WORKERS) as pool:
-            read = pool.map(lambda n: _read(pdf, n, lang), todo)
-            for n, words in zip(todo, read, strict=True):
-                done[n] = words
-        blob = {"version": TESSERACT_VERSION, "lang": lang, "pages": done}
+        if raw.get("version") == READING_VERSION and raw.get("model") == model:
+            done = raw["lines"]
+
+    def key(page: PageText, k: int) -> str:
+        text = page.lines[k].text
+        return f"{page.number}:{k}:{hashlib.sha1(text.encode()).hexdigest()[:10]}"
+
+    wanted = {
+        SourceRef(p.number, k): (p, k)
+        for p in pages
+        for k, line in enumerate(p.lines)
+        if SourceRef(p.number, k) in checked and len(line.text) >= MIN_LINE_CHARS
+    }
+    todo = [(p, k) for p, k in wanted.values() if key(p, k) not in done]
+
+    def save() -> None:
+        blob = {"version": READING_VERSION, "model": model, "lines": done}
         cache.write_text(json.dumps(blob, ensure_ascii=False))
-    return {n: done[n] for n in numbers}
+
+    def read(item: tuple[PageText, int]) -> tuple[str, str]:
+        page, k = item
+        line = page.lines[k]
+        clip = pymupdf.Rect(line.x0, line.y0, line.x1, line.y1) + (
+            -LINE_PAD,
+            -LINE_PAD,
+            LINE_PAD,
+            LINE_PAD,
+        )
+        with pymupdf.open(pdf) as doc:
+            png = doc[page.number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
+        return key(page, k), read_line(png, model, ollama_url)
+
+    with ThreadPoolExecutor(READ_WORKERS) as pool:
+        for n, (k, text) in enumerate(pool.map(read, todo), 1):
+            done[k] = text
+            if n % SAVE_EVERY == 0:
+                save()
+    if todo:
+        save()
+    return {ref: done[key(p, k)] for ref, (p, k) in wanted.items()}
 
 
-def _read(pdf: Path, number: int, lang: str) -> list[tuple[str, float, float, float, float]]:
-    with pymupdf.open(pdf) as doc:
-        png = doc[number - 1].get_pixmap(dpi=DPI).tobytes("png")
-    out = ocr.tesseract(png, lang, config="tsv")
-    scale = 72 / DPI
-    words = []
-    for row in csv.DictReader(io.StringIO(out), delimiter="\t", quoting=csv.QUOTE_NONE):
-        text = (row.get("text") or "").strip()
-        if row["level"] == "5" and text:
-            x, y, w, h = (int(row[k]) * scale for k in ("left", "top", "width", "height"))
-            words.append((text, x, y, x + w, y + h))
-    return words
+def read_line(png: bytes, model: str, ollama_url: str) -> str:
+    """The OCR model's reading of one printed line.
 
-
-def _by_line(page: PageText, words) -> list[list[tuple[str, float, float, float, float]]]:
-    """Words per line: the line band (widened a little) that holds the word's centre."""
-    out = [[] for _ in page.lines]
-    for w in words:
-        cx, cy = (w[1] + w[3]) / 2, (w[2] + w[4]) / 2
-        for k, ln in enumerate(page.lines):
-            if ln.x0 - 3 <= cx <= ln.x1 + 3 and ln.y0 - 2 <= cy <= ln.y1 + 2:
-                out[k].append(w)
+    glm-ocr's Ollama template has no stop token, so after the line it starts over;
+    the reading ends at its first line break. It sometimes writes a printed em
+    dash as the CJK character 一, which looks the same.
+    """
+    payload = {
+        "model": model,
+        "prompt": "Text Recognition:",
+        "images": [base64.b64encode(png).decode()],
+        "options": {"num_predict": MAX_LINE_TOKENS},
+    }
+    out = ""
+    with httpx.stream("POST", f"{ollama_url}/api/generate", json=payload, timeout=300) as resp:
+        resp.raise_for_status()
+        for chunk in resp.iter_lines():
+            if chunk:
+                out += json.loads(chunk).get("response", "")
+            if "\n" in out.strip():
                 break
-    return [sorted(ws, key=lambda w: w[1]) for ws in out]
+    return out.strip().split("\n")[0].strip().replace("一", "—")
 
 
 def _word_span(text: str, start: int, end: int) -> tuple[int, int]:
@@ -133,7 +169,7 @@ def differences(ours: str, theirs: str) -> list[tuple[int, int, int, int]]:
     """Where two readings of a line differ, widened to whole words, as spans of each.
 
     Curly and straight quotes count as the same. A difference only in opening
-    quote marks isn't one: tesseract reads a printed “ as ‘, and no model can
+    quote marks isn't one: OCR models read a printed “ as ‘, and no model can
     tell them apart in a crop.
     """
     spans = []
@@ -190,27 +226,21 @@ def _inside(w, line) -> bool:
 def check(
     pdf: Path,
     pages: list[PageText],
-    checked: set[SourceRef],
+    readings: dict[SourceRef, str],
     lang: str,
     vision: OllayaClient,
     reader: OllayaClient,
     cache: DecisionCache,
-    tesseract_cache: Path,
 ) -> list[Suspect]:
-    """Suspects on the `checked` lines of the text layer, each with what to do about it."""
-    readings = tesseract_words(pdf, [p.number for p in pages], lang, tesseract_cache)
+    """Suspects on the lines with a second reading, each with what to do about it."""
     suspects = []
     with pymupdf.open(pdf) as doc:
         for page in pages:
             pdf_page = doc[page.number - 1]
             page_words = pdf_page.get_text("words")
-            for k, (line, theirs_words) in enumerate(
-                zip(page.lines, _by_line(page, readings[page.number]), strict=True)
-            ):
+            for k, line in enumerate(page.lines):
                 ours = line.text
-                theirs = " ".join(w[0] for w in theirs_words)
-                if SourceRef(page.number, k) not in checked or len(ours) < MIN_LINE_CHARS:
-                    continue
+                theirs = readings.get(SourceRef(page.number, k), "")
                 if not theirs:
                     continue
                 for a0, a1, b0, b1 in differences(ours, theirs):

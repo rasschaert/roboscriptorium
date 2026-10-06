@@ -25,13 +25,17 @@ starting; keep it true.
 - **Handholding first.** Prefer flagging uncertain output for human review over
   guessing silently. Automation increases only as measured quality earns it.
 - **Quality over speed.** Pick the more accurate method even when it is several
-  times slower; a book is built once and reread for years. Cache slow stages per
-  book so reruns stay cheap, and run long builds in the background.
+  times slower: a careful edition (scanning, OCR, proofreading, typesetting, as
+  Standard Ebooks does it) takes people weeks, so hours of machine time per book
+  are cheap. Cache slow stages per book so reruns stay cheap, and run long
+  builds in the background.
 
 ## Purpose and scope
 
 An end-to-end tool that turns books that aren't EPUBs into clean EPUB 3 files,
-automated as far as possible.
+automated as far as possible. The goal: an edition as careful as Standard
+Ebooks' (weeks of scanning, OCR, proofreading and typesetting by people), in
+hours, with a human only answering the questions the machine can't.
 
 - **Order of attack:** scanned PDF → born-digital PDF → other formats
   (MOBI/AZW3, DOCX, HTML, …).
@@ -103,8 +107,8 @@ right, then expand.
     `stages/layout.json`; run by `review`. Picture-only pages are also run turned a
     quarter, to find captions printed sideways.
   - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)
-    against tesseract's reading of each body page, cached in
-    `stages/tesseract.json`. Where a line's readings differ, clef picks from
+    against glm-ocr's reading of each body line's crop (`ROBO_OCR_MODEL`),
+    cached in `stages/second-reading.json`. Where a line's readings differ, clef picks from
     the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence; both agreeing
     with clef ≥ 0.3 applies the fix to a copy of the pages before reflow,
     anything else becomes an `ocr-doubt` review region. Suspects are saved to

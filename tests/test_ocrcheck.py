@@ -48,3 +48,16 @@ def test_doubted_lines_are_flagged_with_their_other_reading():
         (0, ["ocr-doubt"], ["he was so tired up—if they come"])
     ]
     assert ocrcheck.doubts([_suspect("theirs")]) == {}
+
+
+def test_a_line_reading_stops_at_the_restart_and_spells_em_dashes(monkeypatch):
+    import httpx
+
+    chunks = ['{"response": "course一of the"}', '{"response": " day\\ncourse"}']
+
+    def transport(request):
+        return httpx.Response(200, content="\n".join(chunks).encode())
+
+    client = httpx.Client(transport=httpx.MockTransport(transport))
+    monkeypatch.setattr(httpx, "stream", client.stream)
+    assert ocrcheck.read_line(b"png", "glm-ocr:bf16", "http://x") == "course—of the day"

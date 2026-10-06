@@ -8,6 +8,7 @@ suspect is the reading whose version of the line is closer to the line's
 best-matching stretch of the golden reference.
 
     uv run python experiments/probe_ocr_check.py work/the-story-of-doctor-dolittle--stokes-1920 30-49
+    ... 30-49 glm   # glm-ocr reads each line's crop instead of tesseract reading the page
 """
 
 import csv
@@ -34,6 +35,32 @@ DPI = 300
 CROP_ZOOM = 4
 CROP_PAD = 4  # points around the suspect words
 SURE = 0.8
+
+
+def glm_line(page: pymupdf.Page, band: pymupdf.Rect) -> str:
+    """glm-ocr's reading of one line's crop, cut where it starts over (no stop token)."""
+    import base64
+    import json
+
+    import httpx
+
+    png = page.get_pixmap(dpi=DPI, clip=band + (-3, -3, 3, 3)).tobytes("png")
+    payload = {
+        "model": "glm-ocr:bf16",
+        "prompt": "Text Recognition:",
+        "images": [base64.b64encode(png).decode()],
+        "options": {"num_predict": 120},
+    }
+    out = ""
+    with httpx.stream(
+        "POST", "http://127.0.0.1:11434/api/generate", json=payload, timeout=120
+    ) as resp:
+        for line in resp.iter_lines():
+            if line:
+                out += json.loads(line).get("response", "")
+            if "\n" in out.strip():
+                break
+    return out.strip().split("\n")[0].strip()
 
 
 def tesseract_words(page: pymupdf.Page) -> list[tuple[str, pymupdf.Rect]]:
@@ -111,12 +138,17 @@ def main() -> None:
             bands = [pymupdf.Rect(ln.x0, ln.y0, ln.x1, ln.y1) for ln in layer[n].lines]
             ours_words = [(w[4], pymupdf.Rect(w[:4])) for w in page.get_text("words")]
             lines = by_line(bands, ours_words)
-            theirs_by_line = by_line(bands, tesseract_words(page))
-            for words, tess in zip(lines, theirs_by_line, strict=True):
+            glm = len(sys.argv) > 3 and sys.argv[3] == "glm"
+            theirs_by_line = [[] for _ in bands] if glm else by_line(bands, tesseract_words(page))
+            for band, words, tess in zip(bands, lines, theirs_by_line, strict=True):
                 if not words:
                     continue
                 ours = " ".join(t for t, _ in words)
-                theirs = " ".join(t for t, _ in tess)
+                theirs = (
+                    glm_line(page, band)
+                    if glm and len(ours) >= 12
+                    else " ".join(t for t, _ in tess)
+                )
                 tally["lines"] += 1
                 if len(ours) < 12 or not theirs:
                     continue
