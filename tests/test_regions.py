@@ -26,13 +26,20 @@ def test_answers_apply_and_go_stale_when_the_text_layer_changes(tmp_path):
     answers = Corrections(tmp_path / "regions.jsonl")
     answers.record(region, "text", "G.J. Sorgdrager * 13.6.1919")
 
-    assert corrections.apply([page], roles, Corrections(tmp_path / "regions.jsonl")) == 1
-    assert roles[SourceRef(1, 5)].role == "body"
-    assert page.lines[5].text == "G.J. Sorgdrager * 13.6.1919"
+    fixed, fixed_roles, applied = corrections.apply(
+        [page], roles, Corrections(tmp_path / "regions.jsonl")
+    )
+    assert applied == 1
+    assert fixed_roles[SourceRef(1, 5)].role == "body"
+    assert fixed[0].lines[5].text == "G.J. Sorgdrager * 13.6.1919"
+    # The text layer itself is left as it was: the review keys its answers on it.
+    assert page.lines[5].text == "G.J. Sorgdrager * 1919"
+    assert roles[SourceRef(1, 5)].role == "artifact"
+    assert [f.key for f in flags.find([page], roles)] == [region.key]
 
     changed = _page()
     changed.lines[5] = Line("G.J. Sorgdrager", 150, 155, 250, 167)
-    assert corrections.apply([changed], {}, answers) == 0
+    assert corrections.apply([changed], {}, answers)[2] == 0
 
 
 def test_text_typed_for_a_missing_region_is_inserted_with_its_paragraphs(tmp_path):
@@ -43,11 +50,17 @@ def test_text_typed_for_a_missing_region_is_inserted_with_its_paragraphs(tmp_pat
     region = flags.Flag("p1-x", 1, 3, 2, "", "missing", ["missing-text"], (50, 125, 350, 150))
     answers = Corrections(tmp_path / "regions.jsonl")
     answers.record(region, "text", "First para-\ngraph wraps here.\n\nSecond one.")
-    assert corrections.apply([page], roles, answers) == 1
-    assert [ln.text for ln in page.lines[3:5]] == ["First paragraph wraps here.", "Second one."]
-    texts = [b.text for b in reflow([page], roles)]
+    fixed, fixed_roles, applied = corrections.apply([page], roles, answers)
+    assert applied == 1
+    assert [ln.text for ln in fixed[0].lines[3:5]] == ["First paragraph wraps here.", "Second one."]
+    # Lines below the insertion keep pointing at their text-layer lines.
+    assert [ln.source for ln in fixed[0].lines[2:7]] == [2, 3, 3, 3, 4]
+    blocks = reflow(fixed, fixed_roles)
+    texts = [b.text for b in blocks]
     assert any(t.endswith("First paragraph wraps here.") for t in texts)
     assert any(t.startswith("Second one.") for t in texts)
+    assert max(s.line for b in blocks for s in b.sources) == len(page.lines) - 1
+    assert len(page.lines) == 10
 
 
 def test_a_drawn_initial_goes_back_in_front_of_its_word(tmp_path):
@@ -63,9 +76,9 @@ def test_a_drawn_initial_goes_back_in_front_of_its_word(tmp_path):
     picture = flags.Flag("p1-o", 1, 0, -1, "", "missing", ["picture"], (50, 78, 105, 110))
     answers = Corrections(tmp_path / "regions.jsonl")
     answers.record(picture, "initial", "O")
-    roles: dict = {}
-    assert corrections.apply([page], roles, answers) == 1
-    first = reflow([page], roles)[0]
+    fixed, fixed_roles, applied = corrections.apply([page], {}, answers)
+    assert applied == 1
+    first = reflow(fixed, fixed_roles)[0]
     assert first.text.startswith("ONCE upon a time there was")
     assert first.initial
     assert _block(first).startswith('<p class="opening"><span class="initial">O</span>NCE')
@@ -127,8 +140,9 @@ def test_a_caption_stays_out_of_the_text_and_keeps_its_turn(tmp_path):
 
     reread = Corrections(tmp_path / "regions.jsonl")
     assert reread.by_key["p1-c"].turn == 270
-    assert corrections.apply([page], roles, reread) == 1
-    assert len(page.lines) == 10
+    fixed, _, applied = corrections.apply([page], roles, reread)
+    assert applied == 1
+    assert len(fixed[0].lines) == 10
 
 
 def test_a_dropped_speck_is_not_flagged():

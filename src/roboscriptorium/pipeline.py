@@ -18,11 +18,17 @@ from roboscriptorium.roles import DecisionCache, LineRole, classify
 
 @dataclass
 class Stages:
-    """What a build decided, for review: the body pages, line roles and document."""
+    """What a build decided, for review: the body pages, line roles and document.
+
+    `pages` and `model_roles` are the text layer as read and the model's roles for
+    it; the review and its answer keys use those. `corrected` and `roles` have a
+    human's answers applied (lines typed in, text replaced) and feed the book.
+    """
 
     pages: list[PageText]
-    roles: dict[SourceRef, LineRole] | None
-    model_roles: dict[SourceRef, LineRole] | None  # before a human's corrections
+    model_roles: dict[SourceRef, LineRole] | None
+    corrected: list[PageText]
+    roles: dict[SourceRef, LineRole] | None  # keyed on line positions in `corrected`
     doc: Document
     corrections_applied: int
     suspects: list[ocrcheck.Suspect]  # where a second OCR reading differs
@@ -43,20 +49,20 @@ def run(
     ]
 
     roles = model_roles = None
+    corrected = body
     applied = 0
     suspects: list[ocrcheck.Suspect] = []
     if use_models:
         settings = Settings.from_env()
         client = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
         cache = DecisionCache(book.stages / "decisions.jsonl")
-        roles = classify(body, client, cache)
-        model_roles = dict(roles)
+        model_roles = classify(body, client, cache)
         if check_ocr and ocrcheck.scanned(book.source):
             kept = {
                 SourceRef(p.number, i)
                 for p in body
                 for i in range(len(p.lines))
-                if treatment(roles.get(SourceRef(p.number, i))) != "dropped"
+                if treatment(model_roles.get(SourceRef(p.number, i))) != "dropped"
             }
             reader = ollaya.for_model(
                 settings.check_model, settings.ollaya_url, settings.ollama_url
@@ -73,9 +79,11 @@ def run(
                 book.source, body, readings, ocr.language(book.language), client, reader, cache
             )
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
-        applied = corrections.apply(body, roles, Corrections(book.corrections_path))
+        corrected, roles, applied = corrections.apply(
+            body, model_roles, Corrections(book.corrections_path)
+        )
 
-    text = ocrcheck.apply(body, suspects)
+    text = ocrcheck.apply(corrected, suspects)
     doc = Document(book.title, book.author, book.language, reflow(text, roles))
     (book.stages / "document.json").write_text(
         json.dumps(asdict(doc), ensure_ascii=False, indent=1)
@@ -83,7 +91,7 @@ def run(
 
     cover = render_jpeg(book.source, book.cover_page) if book.cover_page else None
     write_epub(doc, book.epub_path, cover)
-    return Stages(body, roles, model_roles, doc, applied, suspects)
+    return Stages(body, model_roles, corrected, roles, doc, applied, suspects)
 
 
 def build(

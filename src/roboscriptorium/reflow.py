@@ -136,8 +136,9 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
         lines = page.lines if roles is not None else page.lines[: footer_start(page)]
         kept = []
         for index, line in enumerate(lines):
-            ref = SourceRef(page.number, index)
-            role = _role(roles, ref)
+            role = _role(roles, SourceRef(page.number, index))
+            # The IR points at the text layer's line, also on a corrected copy.
+            ref = SourceRef(page.number, index if line.source is None else line.source)
             if role == "body":
                 kept.append((ref, line))
                 continue

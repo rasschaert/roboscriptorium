@@ -34,6 +34,9 @@ class Line:
     starts_paragraph: bool | None = None
     # The line begins with a decorated initial letter (a drop cap) a human supplied.
     initial: bool = False
+    # On a corrected copy of a page: the line's index in the text layer. A line a
+    # human typed in has the index of the line it was inserted before.
+    source: int | None = None
 
 
 @dataclass(frozen=True)
