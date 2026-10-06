@@ -30,6 +30,8 @@ label.toggle { color: var(--muted); user-select: none; }
 main { max-width: 980px; margin: 0 auto; padding: 16px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
 .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
+.readings { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 6px 0; color: var(--muted); font-size: 13px; }
+.readings button { font: 16px/1.4 Georgia, "Iowan Old Style", serif; text-align: left; white-space: pre-wrap; }
 .turnbar { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
 .turnbar button { padding: 4px 10px; }
 .crop { max-width: 100%; max-height: 75vh; margin: 0 auto; border: 1px solid var(--line); border-radius: 6px; background: #fff; display: block; min-height: 60px; }
@@ -123,6 +125,10 @@ function render() {
     <div class="now">The pipeline <b>${NOW[r.treatment]}</b>. ${r.text ? "Its reading of the highlighted lines (edit if the scan says otherwise):" : r.draft ? "Tesseract's draft of the highlighted area; correct it, then save as text:" : "Type the text here if it belongs in the book:"}</div>
     ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
     <textarea id="text" rows="${Math.min(16, text.split("\n").length + 1)}">${esc(text)}</textarea>
+    ${r.readings && r.readings.length ? `<div class="readings">Readings:
+      <button data-reading="-1"><kbd>a</kbd>${esc(r.text)}</button>
+      ${r.readings.map((t, k) => `<button data-reading="${k}"><kbd>${"bcdfghj"[k] || ""}</kbd>${esc(t)}</button>`).join("")}
+      <span class="hint">puts that reading in the box; then save with the button for what it is.</span></div>` : ""}
     ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}
     <div class="actions">${buttons}</div>
     ${r.box && r.reasons.some(x => x.startsWith("a picture")) ? `<div class="hint">For a decorated initial, the letter it shows: <input id="letter" size="2" maxlength="3" value="${a && a.action === "initial" ? esc(a.text || "") : ""}" style="font: 20px Georgia, serif; width: 3em; text-align: center"> then <kbd>4</kbd>.</div>` : ""}
@@ -131,6 +137,7 @@ function render() {
     <div class="nav"><span><kbd>←</kbd>previous</span><span><kbd>→</kbd>next</span></div>
   </div>`;
   main.querySelectorAll("button[data-action]").forEach(b => b.onclick = () => decide(b.dataset.action));
+  main.querySelectorAll("button[data-reading]").forEach(b => b.onclick = () => useReading(+b.dataset.reading));
   document.getElementById("zoomOut").onclick = () => zoom(1);
   document.getElementById("zoomIn").onclick = () => zoom(-1);
   if (r.box) {
@@ -143,6 +150,12 @@ function render() {
     fetch(`/api/initial?key=${encodeURIComponent(r.key)}`).then(x => x.json())
       .then(g => { if (!letter.value) letter.value = g.letter; });
   }
+}
+
+function useReading(k) {
+  const r = queue[pos];
+  if (!r.readings || k >= r.readings.length) return;
+  document.getElementById("text").value = k < 0 ? r.text : r.readings[k];
 }
 
 function cropUrl(r) {
@@ -224,6 +237,8 @@ document.addEventListener("keydown", e => {
   }
   if (KEYS[e.key]) decide(KEYS[e.key]);
   else if (e.key === "e") { e.preventDefault(); document.getElementById("text").focus(); }
+  else if (e.key === "a") useReading(-1);
+  else if ("bcdfghj".includes(e.key) && e.key.length === 1) useReading("bcdfghj".indexOf(e.key));
   else if (e.key === "r") turn(90);
   else if (e.key === "o") reread();
   else if (e.key === "-") zoom(1);

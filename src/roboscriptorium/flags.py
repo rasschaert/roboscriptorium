@@ -15,7 +15,7 @@ rest of its page is left to the picture.
 
 import hashlib
 import statistics
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 
 from roboscriptorium import roles as R
 from roboscriptorium.ir import SourceRef
@@ -46,6 +46,7 @@ REASONS = {
     "layout-title": "a title to the layout model, but not a heading here",
     "missing-text": "text the layout model sees, but the text layer lacks",
     "rotated": "text printed sideways",
+    "ocr-doubt": "two OCR readings differ, and the models weren't sure which is right",
 }
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
@@ -74,6 +75,8 @@ class Flag:
     # A layout region on the page, in PDF points; then first..last are the lines in
     # it, or last < first (= where text would be inserted) when it has none.
     box: tuple[float, float, float, float] | None = None
+    # Other readings of the whole region, when a second OCR reading differs from the layer.
+    readings: list[str] = field(default_factory=list)
 
 
 def region_key(page: int, text: str) -> str:
@@ -162,6 +165,17 @@ def _reasons(
         if _set_apart(page, i):
             reasons.append("set-apart")
     return reasons
+
+
+def _with_readings(page: PageText, flag: Flag, doubts: dict[tuple[int, str], list[str]]) -> Flag:
+    """The region's text with each doubted line read the other way."""
+    lines = [page.lines[k].text for k in range(flag.first, flag.last + 1)]
+    readings = [
+        "\n".join([*lines[:k], other, *lines[k + 1 :]])
+        for k, line in enumerate(lines)
+        for other in doubts.get((page.number, line), [])
+    ]
+    return replace(flag, readings=readings) if readings else flag
 
 
 def _region(page: PageText, run: list[tuple[int, str, list[str]]]) -> Flag:
@@ -264,12 +278,16 @@ def find(
     pages: list[PageText],
     roles: dict[SourceRef, LineRole],
     layout: dict[int, list[Region]] | None = None,
+    doubts: dict[tuple[int, str], list[str]] | None = None,
 ) -> list[Flag]:
     flags: list[Flag] = []
     furniture = _Furniture(R.Repeats(pages), R._page_offset(pages))
     for page in pages:
         regions = (layout or {}).get(page.number, [])
         line_reasons, in_pictures, boxes = _layout(page, regions)
+        for i, line in enumerate(page.lines):
+            if (page.number, line.text) in (doubts or {}):
+                line_reasons.setdefault(i, []).append("ocr-doubt")
         if any(r.turned for r in regions) or sideways(page):
             if not any(r.turned for r in regions):
                 boxes = [f for f in boxes if "picture" in f.reasons] + [_sideways_flag(page, roles)]
@@ -300,5 +318,6 @@ def find(
             replace(f, treatment=_treatment_of(page, f, roles)) if f.last >= f.first else f
             for f in boxes
         ]
+        page_flags = [_with_readings(page, f, doubts or {}) for f in page_flags]
         flags += sorted(page_flags + boxes, key=lambda f: (f.first, f.last))
     return flags

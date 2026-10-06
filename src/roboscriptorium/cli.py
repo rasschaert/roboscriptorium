@@ -8,7 +8,17 @@ from pathlib import Path
 import httpx
 import typer
 
-from roboscriptorium import disagreements, evaluate, flags, initials, layout, ocr, pipeline, review
+from roboscriptorium import (
+    disagreements,
+    evaluate,
+    flags,
+    initials,
+    layout,
+    ocr,
+    ocrcheck,
+    pipeline,
+    review,
+)
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollama import OllamaClient
@@ -129,12 +139,12 @@ def _range(value: str | None) -> tuple[int, int] | None:
 
 
 def _build_golden(
-    book_dir: Path, pages: str | None, chapters: str | None, no_models: bool
+    book_dir: Path, pages: str | None, chapters: str | None, no_models: bool, check_ocr: bool = True
 ) -> tuple[Book, Document, list[Chapter]]:
     book = Book.load(book_dir)
     if book.golden is None:
         raise typer.BadParameter(f"{book_dir}/book.toml names no golden book")
-    doc = pipeline.build(book, pages=_range(pages), use_models=not no_models)
+    doc = pipeline.build(book, pages=_range(pages), use_models=not no_models, check_ocr=check_ocr)
     reference = load_chapters(Golden.load(book.golden).text_dir)
     if (span := _range(chapters)) is not None:
         reference = reference[span[0] - 1 : span[1]]
@@ -161,7 +171,8 @@ def review_regions(
         if layout.available():
             numbers = [p.number for p in stages.pages]
             regions = layout.detect(book.source, numbers, book.stages / "layout.json")
-        found = flags.find(stages.pages, stages.model_roles, regions)
+        doubts = ocrcheck.doubts(stages.suspects)
+        found = flags.find(stages.pages, stages.model_roles, regions, doubts)
         return stages.pages, found, stages.corrections_applied
 
     body, regions, applied = rebuild()
@@ -214,9 +225,10 @@ def evaluate_book(
     pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
     chapters: str | None = typer.Option(None, help="Reference chapters to compare, e.g. 1-9"),
     no_models: bool = typer.Option(False, help="Skip decision models (heuristics only)"),
+    check_ocr: bool = typer.Option(True, help="Check the OCR layer against a second reading"),
 ) -> None:
     """Build a golden book's scan and score it against the reference text."""
-    book, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
+    book, doc, reference = _build_golden(book_dir, pages, chapters, no_models, check_ocr)
     verdicts = _verdicts(book)
     reference, applied = disagreements.patch(reference, verdicts)
     result = evaluate.score(doc, reference)
@@ -253,6 +265,7 @@ def evaluate_book(
         "pages": pages,
         "chapters": chapters,
         "models": not no_models,
+        "ocr_check": check_ocr and not no_models,
         "verdicts_applied": applied,
         **{k: v for k, v in asdict(result).items() if k != "confusions"},
     }
