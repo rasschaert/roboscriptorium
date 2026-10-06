@@ -4,86 +4,71 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules and
 decisions; this file only covers the state of play. Replace it at the end of
 each session.
 
-## State on 2026-10-05 (end of day)
+## State on 2026-10-06
 
-Milestones M0–M2 are done and M3 is in progress (decision models in the pipeline).
+M0–M2 done; M3 (better OCR and decisions) in progress; an early piece of M4
+(the review page) exists.
 
-- `roboscriptorium build <book>`: PDF text layer → line roles (decision model)
-  → reflow → IR → EPUB 3 with one file per chapter and a TOC. epubcheck clean
-  as of M1. The chapter split hasn't been re-run through epubcheck: **do that first**.
-- `roboscriptorium eval <book> [--pages 7-45 --chapters 1-9] [--no-models]`
-  scores against the golden reference and appends to `work/<book>/eval-history.jsonl`.
-- Golden book: `golden/sense-and-sensibility/` (Standard Ebooks with `[Editorial]`
-  commits undone). Scans in `work/` (gitignored): `tauchnitz-1864` (same edition
-  as the reference), `everyman-dent`, `everyman-1992`. Run `golden fetch` to
-  restore them; the Everymans have to be placed by hand.
-- Stella (`work/stella/`) has no golden text; `build` only.
+- **References are Project Gutenberg transcriptions now**, not Standard Ebooks
+  (see the decision log). Golden books: Sense (Tauchnitz scan, but Gutenberg is
+  the 1811 edition), *The Nature of a Crime* (Gutenberg made from the same
+  scan: the cleanest benchmark), *Doctor Dolittle* (same printing).
+- **Line roles: `clef-flash:9b`** on Ollama's `/v1/systemone` is the default.
+- **Review page**: `uv run roboscriptorium review <book>` → http://127.0.0.1:8765/.
+  The user offered to give verdicts on Crime's 54 open disagreements; none
+  recorded yet. Verdicts land in `golden/<name>/verdicts/<scan>.jsonl` and
+  `eval` patches them into the reference.
+- **OCR probe** on *Het ivoren aapje* (Dutch, 1909, Gutenberg page images;
+  EU-copyrighted, so only in `work/`): `experiments/probe_ocr.py`. Vision LLMs
+  modernise old spelling; tesseract doesn't; merging them with a
+  spelling-reform rule plus flags is best so far.
 
-### Scores, Tauchnitz chapters 1–9 (the quick loop)
+### Scores (all against Gutenberg)
 
-| Step | CER | WER | Paragraph F1 | Headings |
-| --- | --- | --- | --- | --- |
-| Heuristics only | 7.30% | 5.18% | 0.592 | 0/9 |
-| + `winnow:e4b` line roles, repetition feature, punctuation spacing | **4.23%** | **3.48%** | **0.697** | **9/9** |
+| Book | Setup | CER | WER | Paragraph F1 | Headings |
+| --- | --- | --- | --- | --- | --- |
+| Sense, Tauchnitz, full | clef roles | 4.75% | 3.15% | 0.682 | **50/50** |
+| Sense, Tauchnitz, ch. 1–9 | clef roles | 3.85% | 3.02% | 0.723 | 9/9 |
+| Crime | clef roles | 0.72% | 0.53% | 0.965 | 5/8 |
+| Dolittle | heuristics | 21% | 18% | 0.43 | 0/21 |
 
-Full book (pages 7–346, all 50 chapters):
+### OCR candidates, Teirlinck, 12 pages
 
-| Step | CER | WER | Paragraph F1 | Headings |
-| --- | --- | --- | --- | --- |
-| Heuristics only (M2 baseline) | 8.05% | 5.18% | 0.589 | 0/50 |
-| winnow roles + the above | **4.68%** | **3.34%** | **0.667** | **28/50** |
+| Reader | CER | Modernised |
+| --- | --- | --- |
+| tesseract (`nld`, tessdata_best) | 0.90% | 1 |
+| `gemma4:latest`, transcribe prompt | 0.70% | 41 |
+| `gemma4:latest`, old-spelling prompt | 0.63% | 27 |
+| merge gemma4 + tesseract | **0.54%** | flags 89, 56 of them real errors, ~no silent wrong words |
+| `translategemma:4b` | 4.9% (1 page) | paraphrases; unfit |
 
-Only 28 of 50 headings are found over the full book, against 9/9 on chapters
-1–9. This is the biggest open structural defect; see next steps.
-
-### Model findings (details in the AGENTS.md model table and decision log)
-
-- `laya:*`: unusable for layout questions.
-- `winnow:e4b` (Ollaya): good at body vs other, but reads "2 SENSE AND
-  SENSIBILITY" (page number first) as a chapter heading, and ignores numeric
-  features. The code demotes "headings" that repeat on 5+ pages.
-- **`clef-flash:9b` (Ollama, GPU, `/v1/systemone`) looks best**:
-  - Line roles: 60/60 at P(body) ≥ 0.5, including the signature mark "Sense and 15"
-    that winnow misses.
-  - Page types: 19/23 (the same as `decider:2b-vision`), but with better-calibrated
-    confidence. Stella p5 (an opening with no heading) comes out as body at only
-    0.53, against decider's confident 0.95.
-  - Timings so far (~0.8 s/line, ~3.9 s/page) were measured while another model
-    run competed for the machine, so re-time it alone.
-- Use `experiments/probe_line_roles.py` and `experiments/probe_page_types.py`
-  to compare models. `clef-*` names route to Ollama automatically.
+Pending when downloaded: `translategemma:12b`, `:27b`, Nemotron 3 Nano Omni
+(33B), `llava:34b`. Run them with
+`uv run python experiments/probe_ocr.py run <model> oldspelling`, then
+`merge <model>@oldspelling tesseract@plain`.
 
 ## Next steps, in order
 
-1. Run epubcheck on a fresh Tauchnitz build (chapter split).
-2. Try clef-flash for line roles: add a runtime/endpoint setting for the role
-   model (e.g. `ROBO_ROLE_MODEL=clef-flash:9b` plus an Ollama endpoint),
-   with the role threshold `KEEP_BODY_AT` at 0.5. Compare on chapters 1–9
-   against the table above. Clef's state changes the cache key, so the first
-   run is cold (~2–3 min).
-3. If clef wins, make it the default and record that in AGENTS.md.
-4. Try one call per page: clef takes up to 64 questions per request. Check its
-   accuracy on a few pages first.
-5. Page classification stage (vision): replace the hand-entered `body_pages`
-   and `cover_page` in `book.toml`. Low-confidence pages get flagged for review.
-6. Remaining known defects, from `eval`'s most frequent differences:
-   - Paragraph precision is ~0.59, so there are still false paragraph starts.
-     Look at where they come from.
-   - **Headings: only 28/50 over the full book.** Find which chapter pages
-     lose their heading. The real chapter-start pages are listed in
-     `experiments/probe_page_types.py`. Also "IV." without "CHAPTER" (p21),
-     and "CHAPTER" without "IX." (p40).
-   - Frequent differences: stray `"` and `I`/`1` confusions (OCR), and lone
-     dashes ("—", "— I"); the existing text layer splits dashes off.
-   - "Digitized by Google" fragments at page bottoms, if any survive.
-7. After that: OCR candidates (a vision LLM via Ollama alongside the text layer),
-   then the review UI (M4).
+1. When the user has given Crime verdicts: rerun `eval` on Crime and look at
+   the mistakes by category; they decide what to fix first. Expected: `;`/`:`
+   confusion, line-end hyphens in compounds (`To-morrow`), lost accents.
+2. Probe the pending OCR models (above).
+3. An OCR stage in the pipeline: render page images (or take them as given),
+   run tesseract + a vision LLM, merge as in the probe, carry the flags into
+   the IR so the review page can show them. Page images as a book source
+   (no PDF) for Teirlinck.
+4. Dolittle: the text layer splits widely justified lines into fragments and
+   drop caps break paragraph detection (`pdf.py` visual lines, `reflow.py`).
+5. Paragraph precision on Sense is ~0.6: find where false paragraph starts
+   come from.
+6. Page classification stage (vision) to replace hand-entered `body_pages`.
 
 ## Working with the user
 
-- Run small probes first (10–60 items), state how long a big run will take
-  before starting it, and run it in the background.
-- Ask the user to install or pull things when the docs don't cover how. Don't
-  guess APIs.
+- Run small probes first (10–60 items), say how long a big run will take,
+  run it in the background.
+- Ask the user to install or pull things when the docs don't cover how.
 - Commits are signed through 1Password. If signing fails because 1Password is
   locked, stop and ask the user to unlock it.
+- Their internet connection is slow: avoid large downloads (the Dutch
+  tesseract model was fetched alone instead of `tesseract-lang`).

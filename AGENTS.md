@@ -371,3 +371,8 @@ disagreements by mistake category.
   so over 50 chapters every heading looked like a running head and was
   demoted. A trailing Roman numeral must now match exactly. Crime with clef
   roles: CER 0.72%, WER 0.53%, paragraph F1 0.965, headings 5/8.
+- 2026-10-06: Tried a page-level feature for line roles ("text begins 26% down
+  this page; most pages begin at 8%"), since chapter pages open sunk. clef
+  ignored it: Crime headings 5/8 → 3/8, CER 0.72% → 0.82%; reverted. Bare
+  Roman numerals ("V", "VI") stay ambiguous to clef (called page numbers at
+  ~0.1 confidence). Layout facts like this belong in code, not in the state.
