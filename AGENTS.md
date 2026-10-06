@@ -432,5 +432,4 @@ disagreements by mistake category.
   the old spelling.
 - 2026-10-06: `nemotron3:33b` as OCR: CER 14% on one Teirlinck page with
   thinking off (empty output with it on). Of all the vision models tried,
-  only gemma4 is worth pairing with tesseract; the translategemma models, llava
-  and nemotron have been removed from this machine.
+  only gemma4 is worth pairing with tesseract.
