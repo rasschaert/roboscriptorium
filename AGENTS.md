@@ -204,6 +204,7 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | Ollama | `translategemma:4b` | Tried as Dutch→Dutch OCR | **Unfit**: with its translation prompt it paraphrases (`hief`→`heeft`, `trillend opwiegelen`→`trilde omhoog`) and modernises, CER 4.9% on one page; any other prompt gives empty output |
 | Ollama | `translategemma:12b` | Tried as Dutch→Dutch OCR | **Unfit**: its translation prompt hallucinates a scene description; with the old-spelling prompt it transcribes at ~1.4% CER (worse than gemma4 and tesseract), modernises 12×, and loops on one page of 12 (Ollama aborts: "token repeat limit reached"). ~14 s/page |
 | Ollama | `translategemma:27b` | Tried as Dutch→Dutch OCR | **Unfit**: old-spelling prompt, Teirlinck 12 pages: CER 0.99% (gemma4 0.63%), word swaps (`eenvoud→eenvoudig`, `onschuld→onschuldig`), 11 accent/spelling changes. Merged with tesseract it stays at 0.99% with 11 wrong words unflagged. ~30 s/page |
+| Ollama | `llava:34b` | Tried as Dutch OCR | **Unfit**: on one Teirlinck page it invents text and loops ("Hij had geen twijfel aan de verdiensten van…" over and over), CER 406%. ~170 s/page |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
 
 ## Environment
@@ -402,3 +403,5 @@ disagreements by mistake category.
 - 2026-10-06: `translategemma:27b` as OCR: CER 0.99% on the 12 Teirlinck pages,
   worse than gemma4 (0.63%), and the merge with tesseract gains nothing (0.99%,
   11 unflagged wrong words). No size of translategemma is worth keeping.
+- 2026-10-06: `llava:34b` as OCR: one Teirlinck page took 170 s and came back
+  as invented, looping Dutch (CER 406%); not run on the full sample.

@@ -45,9 +45,10 @@ Sense and Dolittle gains; see the decision log.
 | `translategemma:4b` | 4.9% (1 page) | paraphrases; unfit |
 | `translategemma:12b`, old-spelling prompt | ~1.4% on 11 pages; loops on p5 | 12; unfit |
 | `translategemma:27b`, old-spelling prompt | 0.99% (merge with tesseract also 0.99%, 11 silent wrong words) | 11; unfit |
+| `llava:34b` | 406% (1 page): invents text and loops, 170 s/page | unfit |
 
 Pending when downloaded: Nemotron 3 Nano Omni
-(33B), `llava:34b`. Run them with
+(33B). Run them with
 `uv run python experiments/probe_ocr.py run <model> oldspelling`, then
 `merge <model>@oldspelling tesseract@plain`.
 
