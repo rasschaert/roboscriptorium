@@ -123,7 +123,14 @@ right, then expand.
     that set a role ("" for the model's own answer).
   - `reflow.py`: lines → blocks (headings, paragraphs; indents, de-hyphenation,
     punctuation spacing). Without roles it falls back to a footer heuristic.
-  - `ir.py`: the IR (`Document`, `Paragraph` with `SourceRef`s back to page lines).
+  - `ir.py`: the IR (`Document`; `Paragraph` and `Heading` with `SourceRef`s back
+    to page lines; `Figure` with its image file, page box and caption).
+  - `figures.py`: the pictures in the book. The layout model's figures on body
+    pages (≥ 0.5) unless a human answered them as something else; trimmed
+    where a caption overlaps; sideways plates turned upright (the human's turn,
+    else the quarter turn in which the caption reads); captions from the
+    human, else a sideways caption's reading. Each goes after the last block
+    that starts above it; JPEG at 300 dpi, at most 1600 px.
   - `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib).
   - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`.
   - `experiments/`: throwaway probes for comparing models (line roles, page types).
@@ -669,3 +676,9 @@ disagreements by mistake category.
   against 62%; clef right 96% against 88%; with clef and winnow agreeing and
   clef ≥ 0.3, 47 fixes applied with none wrong and 8 left for review, against
   62 applied with 1 wrong and 28 for review.
+- 2026-10-07: Figures stage. Dolittle: 48 pictures in 2.5 s, all 7 sideways
+  plates turned upright, their captions read (6 of 7 verbatim, `Tord` for
+  `Lord`) and trimmed out of the picture, the decorated initials answered as
+  such left out. Shared page analysis moved from roles.py to page.py, with
+  identical roles, reflow and flags on all six golden books; `LineRole.rule`
+  names the rule that overrode the model.

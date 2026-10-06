@@ -53,11 +53,6 @@ def guess_category(d: Disagreement) -> str:
     return "ocr"
 
 
-def _words(text: str) -> int:
-    """How many tokens look like ordinary lowercase words: text read the right way up."""
-    return sum(bool(re.fullmatch(r"[A-Za-z][a-z]+[.,;:!?'’”\"]*", t)) for t in text.split())
-
-
 def _turned(pix: pymupdf.Pixmap, turn: int) -> bytes:
     """PNG bytes of a pixmap turned `turn` degrees clockwise."""
     if not turn:
@@ -125,7 +120,7 @@ class Scan:
         key = (page_number, box)
         if key not in self._turns:
             readings = {t: self.read_box(page_number, box, lang, turn=t) for t in (90, 270)}
-            self._turns[key] = max(readings, key=lambda t: _words(readings[t]))
+            self._turns[key] = max(readings, key=lambda t: ocr.words(readings[t]))
         return self._turns[key]
 
     def read_box(

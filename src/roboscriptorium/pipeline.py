@@ -3,7 +3,9 @@
 import json
 from dataclasses import asdict, dataclass
 
-from roboscriptorium import corrections, ocr, ocrcheck
+import pymupdf
+
+from roboscriptorium import corrections, figures, layout, ocr, ocrcheck
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.config import Settings
@@ -90,12 +92,21 @@ def run(
 
     text = ocrcheck.apply(corrected, suspects)
     doc = Document(book.title, book.author, book.language, reflow(text, roles))
+    images = {}
+    if layout.available():
+        regions = layout.detect(book.source, [p.number for p in body], book.stages / "layout.json")
+        with pymupdf.open(book.source) as pdf:
+            pictures = figures.select(
+                pdf, body, regions, Corrections(book.corrections_path), ocr.language(book.language)
+            )
+            images = {p.name: figures.render(pdf, p) for p in pictures}
+        doc.blocks = figures.place(doc.blocks, pictures, body)
     (book.stages / "document.json").write_text(
         json.dumps(asdict(doc), ensure_ascii=False, indent=1)
     )
 
     cover = render_jpeg(book.source, book.cover_page) if book.cover_page else None
-    write_epub(doc, book.epub_path, cover)
+    write_epub(doc, book.epub_path, cover, images)
     return Stages(body, model_roles, corrected, roles, doc, applied, suspects)
 
 

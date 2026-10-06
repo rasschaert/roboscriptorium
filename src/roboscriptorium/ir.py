@@ -32,7 +32,17 @@ class Heading:
     parts: list[str] = field(default_factory=list)
 
 
-Block = Paragraph | Heading
+@dataclass
+class Figure:
+    """A picture cut from the scan, upright, with its caption."""
+
+    image: str  # file name of the JPEG among the book's figures
+    page: int
+    box: tuple[float, float, float, float]  # where it sits on the page, in PDF points
+    caption: str = ""
+
+
+Block = Paragraph | Heading | Figure
 
 
 @dataclass
@@ -49,3 +59,7 @@ class Document:
     @property
     def headings(self) -> list[Heading]:
         return [b for b in self.blocks if isinstance(b, Heading)]
+
+    @property
+    def figures(self) -> list[Figure]:
+        return [b for b in self.blocks if isinstance(b, Figure)]

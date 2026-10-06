@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 from html import escape
 from pathlib import Path
 
-from roboscriptorium.ir import Block, Document, Heading
+from roboscriptorium.ir import Block, Document, Figure, Heading
 
 CSS = """\
 body { margin: 0 5%; }
@@ -16,6 +16,9 @@ p.opening { text-indent: 0; }
 span.initial { float: left; font-size: 3.2em; line-height: 0.85; margin: 0.05em 0.08em 0 0; }
 h2 { text-align: center; margin: 2em 0 1em; font-weight: normal; }
 img.cover { display: block; max-width: 100%; max-height: 100vh; margin: 0 auto; }
+figure { margin: 1.5em 0; text-align: center; page-break-inside: avoid; break-inside: avoid; }
+figure img { max-width: 100%; max-height: 85vh; }
+figcaption { font-style: italic; margin-top: 0.5em; }
 """
 
 CONTAINER = """\
@@ -66,7 +69,7 @@ def _sections(doc: Document) -> list[_Section]:
     return sections
 
 
-def _opf(doc: Document, sections: list[_Section], has_cover: bool) -> str:
+def _opf(doc: Document, sections: list[_Section], has_cover: bool, images: list[str]) -> str:
     modified = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
     cover_items = (
         '    <item id="cover-image" href="cover.jpg" media-type="image/jpeg" '
@@ -81,6 +84,10 @@ def _opf(doc: Document, sections: list[_Section], has_cover: bool) -> str:
         for i, s in enumerate(sections)
     )
     text_spine = "".join(f'    <itemref idref="s{i}"/>\n' for i in range(len(sections)))
+    image_items = "".join(
+        f'    <item id="img{i}" href="images/{name}" media-type="image/jpeg"/>\n'
+        for i, name in enumerate(images)
+    )
     return f"""\
 <?xml version="1.0" encoding="UTF-8"?>
 <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="book-id" \
@@ -95,7 +102,7 @@ xml:lang="{doc.language}">
   <manifest>
     <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
     <item id="style" href="style.css" media-type="text/css"/>
-{text_items}{cover_items}  </manifest>
+{text_items}{image_items}{cover_items}  </manifest>
   <spine>
 {cover_spine}{text_spine}  </spine>
 </package>
@@ -118,6 +125,14 @@ def _nav(doc: Document, sections: list[_Section]) -> str:
 
 
 def _block(block: Block) -> str:
+    if isinstance(block, Figure):
+        alt = escape(block.caption or "Illustration", quote=True)
+        caption = (
+            f"<figcaption>{escape(block.caption, quote=False)}</figcaption>"
+            if block.caption
+            else ""
+        )
+        return f'<figure><img src="images/{block.image}" alt="{alt}"/>{caption}</figure>'
     if isinstance(block, Heading):
         return f"<h2>{'<br/>'.join(escape(p) for p in block.parts or [block.text])}</h2>"
     text = escape(block.text)
@@ -135,19 +150,28 @@ def _section(doc: Document, section: _Section) -> str:
     )
 
 
-def write_epub(doc: Document, out: Path, cover_jpeg: bytes | None = None) -> None:
+def write_epub(
+    doc: Document,
+    out: Path,
+    cover_jpeg: bytes | None = None,
+    images: dict[str, bytes] | None = None,
+) -> None:
+    """`images` holds the JPEG of each figure in the document, by its file name."""
+    images = images or {}
     sections = _sections(doc)
     with zipfile.ZipFile(out, "w") as z:
         # The mimetype entry must come first and be stored uncompressed.
         z.writestr("mimetype", "application/epub+zip", compress_type=zipfile.ZIP_STORED)
         deflate = zipfile.ZIP_DEFLATED
-        opf = _opf(doc, sections, cover_jpeg is not None)
+        opf = _opf(doc, sections, cover_jpeg is not None, sorted(images))
         z.writestr("META-INF/container.xml", CONTAINER, compress_type=deflate)
         z.writestr("OEBPS/content.opf", opf, compress_type=deflate)
         z.writestr("OEBPS/nav.xhtml", _nav(doc, sections), compress_type=deflate)
         z.writestr("OEBPS/style.css", CSS, compress_type=deflate)
         for section in sections:
             z.writestr(f"OEBPS/{section.file}", _section(doc, section), compress_type=deflate)
+        for name, jpeg in sorted(images.items()):
+            z.writestr(f"OEBPS/images/{name}", jpeg)
         if cover_jpeg is not None:
             z.writestr("OEBPS/cover.jpg", cover_jpeg)
             cover = f'<img class="cover" src="cover.jpg" alt="{escape(doc.title)}"/>'
