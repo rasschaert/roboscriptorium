@@ -40,8 +40,12 @@ benchmarked and plugged in.
 | Crime | 0.53% (was 0.63%) | 0.32% | 0.966 / 0.986 | 8/8 (+1) | **453 of 928** |
 | Lady into Fox (held out), Boze tongen, De aanslag, Sense | running | | | | |
 
-The rescore (`eval` over all six books) logs to `work/probes/rescore-2026-10-07.log`;
-read the summary lines at its end. The review server for Dolittle was stopped.
+The rescore crashed on Lady into Fox: under load tesseract once returned its word
+table without a header (not reproducible one page at a time; the parser now
+reads such a page again). Dolittle's and Crime's scores above come from
+`work/probes/rescore-2026-10-07.log`; Lady into Fox, Boze tongen, De aanslag and
+Sense were restarted into `work/probes/rescore-2026-10-07b.log`; read the
+summary lines at its end. The review server for Dolittle was stopped.
 
 ## Next steps, in order
 

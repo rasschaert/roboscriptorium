@@ -176,10 +176,17 @@ def tesseract_words(
 
 
 def _tesseract_page(png: bytes, lang: str) -> list[tuple[str, float, float, float, float]]:
-    out = ocr.tesseract(png, lang, config="tsv")
+    # Under heavy load tesseract has once returned a table without its header; read again.
+    for _ in range(2):
+        out = ocr.tesseract(png, lang, config="tsv")
+        rows = csv.DictReader(io.StringIO(out), delimiter="\t", quoting=csv.QUOTE_NONE)
+        if not out or "level" in (rows.fieldnames or []):
+            break
+    else:
+        raise ValueError(f"tesseract gave no word table: {out[:200]!r}")
     scale = 72 / DPI
     words = []
-    for row in csv.DictReader(io.StringIO(out), delimiter="\t", quoting=csv.QUOTE_NONE):
+    for row in rows:
         text = (row.get("text") or "").strip()
         if row["level"] == "5" and text:
             x, y, w, h = (int(row[k]) * scale for k in ("left", "top", "width", "height"))

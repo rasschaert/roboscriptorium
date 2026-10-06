@@ -95,3 +95,14 @@ def test_typographic_differences_have_the_same_letters():
     assert _typographic(["year at", "year-at", "year—at"])
     assert not _typographic(["Tolly", "‘Polly"])
     assert not _typographic(["was 3 thing", "was a thing"])
+
+
+def test_a_word_table_without_header_is_read_again(monkeypatch):
+    from roboscriptorium import ocrcheck
+
+    replies = iter(
+        ["Warning: something\n", "level\tleft\ttop\twidth\theight\ttext\n5\t0\t0\t30\t10\tword"]
+    )
+    monkeypatch.setattr(ocrcheck.ocr, "tesseract", lambda png, lang, config="": next(replies))
+    words = ocrcheck._tesseract_page(b"png", "eng")
+    assert [w[0] for w in words] == ["word"]
