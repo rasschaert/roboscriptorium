@@ -118,7 +118,7 @@ def _nav(doc: Document, sections: list[_Section]) -> str:
 
 def _block(block: Block) -> str:
     if isinstance(block, Heading):
-        return f"<h2>{escape(block.text)}</h2>"
+        return f"<h2>{'<br/>'.join(escape(p) for p in block.parts or [block.text])}</h2>"
     if block.opening:
         return f'<p class="opening">{escape(block.text)}</p>'
     return f"<p>{escape(block.text)}</p>"

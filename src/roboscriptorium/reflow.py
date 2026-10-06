@@ -130,15 +130,27 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
                     # A heading set over several lines, like "CHAPTER" above "I."
                     previous.text += f" {line.text}"
                     previous.sources.append(ref)
+                    if _labels(previous.parts[-1]) and not bare_numeral(line.text):
+                        previous.parts.append(line.text)
+                    else:
+                        previous.parts[-1] += f" {line.text}"
                 else:
-                    blocks.append(Heading(bare_numeral(line.text) or line.text, [ref]))
+                    text = bare_numeral(line.text) or line.text
+                    blocks.append(Heading(text, [ref], [text]))
                 opening = True
         _add_body(blocks, kept, opening)
         if kept:
             opening = False
     for block in blocks:
         block.text = tidy(block.text)
+        if isinstance(block, Heading):
+            block.parts = [tidy(p) for p in block.parts]
     return blocks
+
+
+def _labels(text: str) -> bool:
+    """Whether a heading line is a label like "THE FIRST CHAPTER" or "CHAPTER XII."."""
+    return bool(NUMBERED_WORDS & {w.strip(".,") for w in text.upper().split()})
 
 
 def _continues(previous: Block | None, line: Line, page: int) -> bool:
@@ -150,7 +162,7 @@ def _continues(previous: Block | None, line: Line, page: int) -> bool:
         words = previous.text.upper().split()
         return bool(words) and words[-1].strip(".") in NUMBERED_WORDS
     # "THE FIRST CHAPTER" under the book's title starts a heading of its own.
-    return not NUMBERED_WORDS & {w.strip(".,") for w in line.text.upper().split()}
+    return not _labels(line.text)
 
 
 def _add_body(blocks: list[Block], kept: list[tuple[SourceRef, Line]], opening: bool) -> None:

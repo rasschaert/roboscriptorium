@@ -495,3 +495,9 @@ disagreements by mistake category.
   them 51 pictures and 24 captions, and one whole page (p97) whose text the OCR
   layer lacks except its heading; the review page drafts it with tesseract
   (near perfect, bar the drawn initial) for the human to correct.
+- 2026-10-06: A heading keeps its label and title as separate lines ("THE FIRST
+  CHAPTER" / "PUDDLEBY", written with `<br/>` in the EPUB); a title wrapped over
+  two lines stays one. First score for Boze tongen (Dutch scan, omnibus
+  reference): CER 1.36%, WER 1.15%, paragraph F1 0.749 (recall 0.655), headings
+  13/18 (+2). Most differences: the OCR layer reads ‘ as " and drops closing
+  quotes, and reads a capital I as l (`lets`, `leder`, `ledereen`).

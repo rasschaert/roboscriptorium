@@ -32,7 +32,7 @@ M0–M2 done; M3 (better OCR and decisions) in progress; an early piece of M4
 | Dolittle | clef roles | 4.77% | 2.20% | 0.859 | 21/21 (+1: the book title) |
 | Lady into Fox (**held out**) | clef roles | 0.93% | 0.33% | 0.841 | 0/1 (the title is also the running head) |
 | De aanslag (born-digital PDF) | clef roles | 0.15% | 0.17% | 0.951 | 26/26 (+0) |
-| Boze tongen (Dutch scan) | clef roles | first run in progress | | | |
+| Boze tongen (Dutch scan) | clef roles | 1.36% | 1.15% | 0.749 | 13/18 (+2) |
 
 The visual-line fix (word boxes grouped by vertical overlap) made most of the
 Sense and Dolittle gains; see the decision log.

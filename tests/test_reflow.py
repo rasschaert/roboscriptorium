@@ -126,3 +126,21 @@ def test_numeral_under_a_title_starts_its_own_heading():
 
 def test_tidy_spells_out_ligatures():
     assert tidy("koﬃe op de ﬁets bij Graaﬀ") == "koffie op de fiets bij Graaff"
+
+
+def test_chapter_label_and_title_are_separate_parts_of_one_heading():
+    lines = [
+        Line("THE STORY OF", 120, 100, 280, 112),
+        Line("DOCTOR DOLITTLE", 110, 115, 290, 127),
+        Line("THE FIRST CHAPTER", 110, 140, 290, 152),
+        Line("PUDDLEBY", 160, 160, 240, 172),
+    ] + [Line("body text " * 5, 50, 190 + 15 * i, 350, 202 + 15 * i) for i in range(10)]
+    page = PageText(1, 400, 600, lines)
+    heading = LineRole("chapter_heading", 0.9, 0.0)
+    roles = {SourceRef(1, i): heading for i in range(4)}
+    found = [b for b in reflow([page], roles) if isinstance(b, Heading)]
+    assert [h.parts for h in found] == [
+        ["THE STORY OF DOCTOR DOLITTLE"],
+        ["THE FIRST CHAPTER", "PUDDLEBY"],
+    ]
+    assert found[1].text == "THE FIRST CHAPTER PUDDLEBY"

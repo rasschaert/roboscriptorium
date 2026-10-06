@@ -25,6 +25,9 @@ class Paragraph:
 class Heading:
     text: str
     sources: list[SourceRef] = field(default_factory=list)
+    # The heading's lines as set: a label and a title ("THE FIRST CHAPTER",
+    # "PUDDLEBY") are two; a title wrapped over two lines is one.
+    parts: list[str] = field(default_factory=list)
 
 
 Block = Paragraph | Heading
