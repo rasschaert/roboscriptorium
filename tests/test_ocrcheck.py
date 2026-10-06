@@ -79,3 +79,19 @@ def test_differences_from_several_readings_merge_into_one_span_per_place():
     ]
     # A reading that agrees with the text layer adds no version.
     assert merged_differences(ours, [ours, glm]) == merged_differences(ours, [glm])
+
+
+def test_quote_style_alone_doesnt_make_another_version():
+    from roboscriptorium.ocrcheck import merged_differences
+
+    ours = "said fee-fee?' in"
+    found = merged_differences(ours, ['said fee-fee?" in', "said fee-fee?” in"])
+    assert [versions for _, _, versions in found] == [['fee-fee?"']]
+
+
+def test_typographic_differences_have_the_same_letters():
+    from roboscriptorium.ocrcheck import _typographic
+
+    assert _typographic(["year at", "year-at", "year—at"])
+    assert not _typographic(["Tolly", "‘Polly"])
+    assert not _typographic(["was 3 thing", "was a thing"])

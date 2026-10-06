@@ -10,8 +10,9 @@ import re
 import statistics
 
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
+from roboscriptorium.page import NUMBERED_WORDS, bare_numeral
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.roles import KEEP_BODY_AT, NUMBERED_WORDS, LineRole, bare_numeral
+from roboscriptorium.roles import KEEP_BODY_AT, LineRole
 
 # A paragraph-opening indent is ~10pt on the target scans; line-start jitter
 # from skew stays under ~3pt.

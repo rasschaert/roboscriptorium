@@ -16,7 +16,8 @@ from huggingface_hub import hf_hub_download
 
 from roboscriptorium import ocr
 from roboscriptorium.layout import IMAGE_SIZE, REPO, WEIGHTS
-from roboscriptorium.review import OCR_DPI, _turned, _words
+from roboscriptorium.ocr import words as _words
+from roboscriptorium.review import OCR_DPI, _turned
 
 TEXTY = {"figure_caption", "title", "plain text"}
 

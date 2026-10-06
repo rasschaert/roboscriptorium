@@ -76,6 +76,14 @@ automated as far as possible. The goal: an edition as careful as Standard
 Ebooks' (weeks of scanning, OCR, proofreading and typesetting by people), in
 hours, with a human only answering the questions the machine can't.
 
+**Build the machine, not the book.** A general harness of compounded models,
+not rules tuned to one book: several readings and judges that fail
+differently, combined by voting and by each model's measured reliability per
+kind of error, with the human's answers as labels that improve the weights.
+Every job keeps a labelled set, so a newly released model is benchmarked and,
+where it wins, plugged in. The target book comes out right because the machine
+does.
+
 - **Order of attack:** scanned PDF → born-digital PDF → other formats
   (MOBI/AZW3, DOCX, HTML, …).
 - **Content order:** prose/fiction first; footnotes, figures, tables, verse later.
@@ -117,12 +125,26 @@ right, then expand.
     through these.
   - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
   - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages.
+  - `page.py`: what a page's layout says without a model, shared by roles,
+    flags and reflow: geometry, edge lines, text repeated across pages, sunk
+    pages, printed page numbers, heading labels and numerals, garbled lines.
+    "Centred" has two meanings, named apart: `centred_on_page` (loose, chooses
+    what to ask the model) and `centred_in_text` (strict, for flagging).
   - `roles.py`: line roles via a decision model. A gate picks the doubtful lines
     (page edges, short centred lines), features include cross-page repetition,
-    and answers are cached in `stages/decisions.jsonl`.
+    and answers are cached in `stages/decisions.jsonl`. Rules in code then
+    override the model where layout settles it; `LineRole.rule` names the rule
+    that set a role ("" for the model's own answer).
   - `reflow.py`: lines → blocks (headings, paragraphs; indents, de-hyphenation,
     punctuation spacing). Without roles it falls back to a footer heuristic.
-  - `ir.py`: the IR (`Document`, `Paragraph` with `SourceRef`s back to page lines).
+  - `ir.py`: the IR (`Document`; `Paragraph` and `Heading` with `SourceRef`s back
+    to page lines; `Figure` with its image file, page box and caption).
+  - `figures.py`: the pictures in the book. The layout model's figures on body
+    pages (≥ 0.5) unless a human answered them as something else; trimmed
+    where a caption overlaps; sideways plates turned upright (the human's turn,
+    else the quarter turn in which the caption reads); captions from the
+    human, else a sideways caption's reading. Each goes after the last block
+    that starts above it; JPEG at 300 dpi, at most 1600 px.
   - `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib).
   - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`.
   - `experiments/`: throwaway probes for comparing models (line roles, page types).
@@ -668,3 +690,9 @@ disagreements by mistake category.
   against 62%; clef right 96% against 88%; with clef and winnow agreeing and
   clef ≥ 0.3, 47 fixes applied with none wrong and 8 left for review, against
   62 applied with 1 wrong and 28 for review.
+- 2026-10-07: Figures stage. Dolittle: 48 pictures in 2.5 s, all 7 sideways
+  plates turned upright, their captions read (6 of 7 verbatim, `Tord` for
+  `Lord`) and trimmed out of the picture, the decorated initials answered as
+  such left out. Shared page analysis moved from roles.py to page.py, with
+  identical roles, reflow and flags on all six golden books; `LineRole.rule`
+  names the rule that overrode the model.

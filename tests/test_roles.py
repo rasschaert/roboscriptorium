@@ -1,7 +1,8 @@
 from roboscriptorium.clients.ollaya import Answer
 from roboscriptorium.ir import SourceRef
+from roboscriptorium.page import Repeats, bare_numeral, title_key
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.roles import DecisionCache, Repeats, _title_key, bare_numeral, classify
+from roboscriptorium.roles import DecisionCache, classify
 
 
 def _page(number: int, top: str) -> PageText:
@@ -32,7 +33,7 @@ def test_ordinal_headings_are_not_repeats_of_each_other():
 
 
 def test_garbled_lines_are_candidates():
-    from roboscriptorium.roles import garbled
+    from roboscriptorium.page import garbled
 
     assert garbled(Line("r^fl rgeiKh WBpSBjlHpilT rtttnf: f- ''.'.", 0, 0, 1, 1))
     assert not garbled(Line("Then his sister, Sarah Dolittle, came to him", 0, 0, 1, 1))
@@ -61,12 +62,15 @@ def test_bare_numeral_on_a_sunk_page_is_a_heading(tmp_path):
     roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
     assert roles[SourceRef(10, 0)].role == "chapter_heading"
     assert roles[SourceRef(3, 0)].role == "page_number"
+    # A role a rule set says which rule; the model's own answer has none.
+    assert roles[SourceRef(10, 0)].rule == "sunk-numeral"
+    assert roles[SourceRef(3, 0)].rule == ""
 
 
 def test_running_title_keys():
-    assert _title_key("Animal Language II") == _title_key("ANIMAL LANGUAGE")
-    assert _title_key("12 The Story of Doctor Dolittle") == "THESTORYOFDOCTORDOLITTLE"
-    assert _title_key("CHAPTER XL1I.") != _title_key("CHAPTER XLI.")
+    assert title_key("Animal Language II") == title_key("ANIMAL LANGUAGE")
+    assert title_key("12 The Story of Doctor Dolittle") == "THESTORYOFDOCTORDOLITTLE"
+    assert title_key("CHAPTER XL1I.") != title_key("CHAPTER XLI.")
 
 
 def test_short_last_line_of_a_sentence_is_body(tmp_path):
