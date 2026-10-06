@@ -153,3 +153,24 @@ def test_a_private_use_glyph_spells_the_ligature_ocr_reads_in_its_place():
     assert ligature_read("ea...", "", "Thea...") == "Th"
     # Dutch tesseract reads the Th as "Ih": not a ligature, so no vote.
     assert ligature_read("uis", "", "'Ihuis") is None
+
+
+def test_unindented_paragraph_starts_after_a_sentence_short_of_the_margin():
+    rows = [
+        ("Ze zweeg. Wat viel er nog te zeggen over", 250),
+        ("de jaren die voorbij waren gegaan.", 160),
+        ("Hij ging zitten, en las verder in de", 250),
+        ("krant van gisteren, die al geel zag", 250),
+        ("van ouderdom en", 120),
+        (". . . en toen viel hij in slaap op de", 250),
+        ("stoel bij het raam, tot de avond viel", 250),
+    ]
+    lines = [Line(t, 10, 20 + i * SPACING, x1, 30 + i * SPACING) for i, (t, x1) in enumerate(rows)]
+    paragraphs = reflow([PageText(5, 280, HEIGHT, lines)])
+    assert [p.text[:10] for p in paragraphs] == ["Ze zweeg. ", "Hij ging z"]
+
+
+def test_ragged_right_text_has_no_paragraphs_by_line_length():
+    rows = [("Een regel.", 200), ("Nog een regel", 150), ("Derde regel.", 230), ("Vierde", 120)]
+    lines = [Line(t, 10, 20 + i * SPACING, x1, 30 + i * SPACING) for i, (t, x1) in enumerate(rows)]
+    assert len(reflow([PageText(5, 280, HEIGHT, lines)])) == 1

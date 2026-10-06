@@ -116,6 +116,19 @@ def garbled(line: Line) -> bool:
     return wordlike / len(tokens) < GARBLED_MAX_WORDLIKE
 
 
+# Words that label a heading, in capitals: "CHAPTER XII.", "DEEL TWEE". A line
+# holding one always goes to the model; in reflow, a chapter number on its own
+# line joins the heading above it only after one, and a line with one starts a
+# new heading.
+NUMBERED_WORDS = {"CHAPTER", "PART", "BOOK", "HOOFDSTUK", "DEEL", "BOEK"}
+
+
+def _labelled(line: Line, full: float) -> bool:
+    """A short line holding a heading label, wherever it sits ("» CHAPTER XXV.")."""
+    words = {w.strip(".,»«*") for w in line.text.split()}
+    return line.x1 - line.x0 < CENTRED_MAX_WIDTH * full and bool(NUMBERED_WORDS & words)
+
+
 def candidates(page: PageText, sunk: bool = False) -> list[int]:
     n = len(page.lines)
     if n == 0:
@@ -125,7 +138,8 @@ def candidates(page: PageText, sunk: bool = False) -> list[int]:
     edge = set(range(min(top, n))) | set(range(max(0, n - EDGE_LINES_BOTTOM), n))
     centred = {i for i, ln in enumerate(page.lines) if _centred(ln, page, full)}
     noisy = {i for i, ln in enumerate(page.lines) if garbled(ln)}
-    return sorted(edge | centred | noisy)
+    labelled = {i for i, ln in enumerate(page.lines) if _labelled(ln, full)}
+    return sorted(edge | centred | noisy | labelled)
 
 
 def _letters(text: str) -> str:

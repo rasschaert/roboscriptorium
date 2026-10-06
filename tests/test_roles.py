@@ -82,3 +82,13 @@ def test_short_last_line_of_a_sentence_is_body(tmp_path):
     roles = classify([page], Client(), DecisionCache(tmp_path / "decisions.jsonl"))
     assert roles[SourceRef(1, len(page.lines) - 1)].role == "body"
     assert roles[SourceRef(1, 0)].role == "artifact"
+
+
+def test_a_chapter_label_off_centre_is_a_candidate():
+    from roboscriptorium.roles import candidates
+
+    lines = [Line("body text " * 6, 12, 20 + 12 * i, 258, 30 + 12 * i) for i in range(20)]
+    lines[10] = Line("» CHAPTER XXV.", 65, 140, 179, 152)
+    lines[12] = Line("the next chapter of her life", 12, 164, 150, 174)
+    found = candidates(PageText(139, 270, 400, lines))
+    assert 10 in found and 12 not in found

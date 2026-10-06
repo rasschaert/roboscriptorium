@@ -11,7 +11,7 @@ import statistics
 
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.roles import KEEP_BODY_AT, LineRole, bare_numeral
+from roboscriptorium.roles import KEEP_BODY_AT, NUMBERED_WORDS, LineRole, bare_numeral
 
 # A paragraph-opening indent is ~10pt on the target scans; line-start jitter
 # from skew stays under ~3pt.
@@ -20,6 +20,14 @@ INDENT_MIN = 5.0
 # lines either side: it follows skew drift down the page, and stays on the
 # margin even when only two lines are left and one of them is indented.
 MARGIN_WINDOW = 5
+# Where paragraphs aren't indented, a paragraph starts after a line that ends a
+# sentence this far short of the right margin, as a share of the line width.
+# Only in justified text: most lines in the window end within JUSTIFIED_SLACK
+# points of the margin.
+SHORT_LINE = 0.05
+JUSTIFIED_SLACK = 3.0
+JUSTIFIED_SHARE = 0.6
+SENTENCE_END = tuple(".!?:'\"’”)…")
 # The footer (page number, ornaments, specks read as text) starts after a gap
 # wider than this many line spacings, in the bottom fifth of the page, and holds
 # only lines of at most FOOTER_MAX_CHARS characters. Line height stands in for
@@ -33,10 +41,6 @@ DASHES = ("\u2014", "\u2013")
 _LOWER_START = re.compile(r"^[a-zà-ÿ]")
 # Older OCR layers keep the thin space some printers set before punctuation.
 _SPACE_BEFORE_PUNCTUATION = re.compile(r"\s+([,;:.!?])(?=\s|$)")
-# A chapter number on its own line joins the heading above it only after one of
-# these, and a line containing one starts a new heading.
-NUMBERED_WORDS = {"CHAPTER", "PART", "BOOK", "HOOFDSTUK", "DEEL", "BOEK"}
-
 
 # Typesetting ligatures ("ﬁ", "ﬀ") are glyphs, not letters.
 _LIGATURES = str.maketrans(
@@ -73,7 +77,8 @@ def footer_start(page: PageText) -> int:
 
 
 def indented(lines: list[Line]) -> list[bool]:
-    """Whether each line starts right of the local left margin."""
+    """Whether each line starts a paragraph: right of the local left margin, or after
+    a sentence's short last line in justified text."""
     flags = []
     for i, line in enumerate(lines):
         window = lines[max(0, i - MARGIN_WINDOW) : i + MARGIN_WINDOW + 1]
@@ -82,8 +87,25 @@ def indented(lines: list[Line]) -> list[bool]:
         if line.starts_paragraph is not None:
             flags.append(line.starts_paragraph)
         else:
-            flags.append(line.x0 - margin > INDENT_MIN)
+            flags.append(line.x0 - margin > INDENT_MIN or _after_short_line(lines, i, margin))
     return flags
+
+
+def _after_short_line(lines: list[Line], i: int, margin: float) -> bool:
+    if i == 0:
+        return False
+    previous = lines[i - 1]
+    window = lines[max(0, i - MARGIN_WINDOW) : i + MARGIN_WINDOW + 1]
+    ends = sorted(ln.x1 for ln in window)
+    right = ends[3 * len(ends) // 4]
+    justified = sum(right - ln.x1 < JUSTIFIED_SLACK for ln in window)
+    return (
+        justified >= JUSTIFIED_SHARE * len(window)
+        and right - previous.x1 > SHORT_LINE * (right - margin)
+        and previous.text.rstrip().endswith(SENTENCE_END)
+        and not lines[i].text.lstrip()[:1].islower()
+        and not lines[i].text.lstrip().startswith(tuple(".,;:!?"))
+    )
 
 
 def join(text: str, nxt: str) -> str:
