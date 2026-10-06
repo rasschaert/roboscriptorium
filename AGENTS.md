@@ -276,7 +276,7 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 | Ollama | `glm-ocr:bf16` | OCR candidate (0.9B, document OCR) | Teirlinck 12 pages: **CER 0.38%**, best yet, and faithful (1 accent misread, no modernising); reads `....` as `...`. ~15 s/page under load. Its Ollama template has no stop token: it reads the page, then starts over, so the reading is cut where its opening repeats (`probe_ocr.py`, `NEVER_STOPS`). Prompt `Text Recognition:` |
 | Ollama | `deepseek-ocr:3b` | OCR candidate | Teirlinck 12 pages: CER 0.37% but **modernises** 10× (`vóor→vóór`, `éen→één`, `streelend→strelend`) and keeps line-end hyphens. ~9 s/page. Prompt `Free OCR.`; the grounding/markdown prompt loops |
 | Ollama | `numind/nuextract3` | Metadata from title page and colophon (JSON template in, filled template out) | **Broken under Ollama 0.40**: gibberish in mixed scripts from both a page image and plain text (`experiments/probe_metadata.py`). A safetensors Qwen3.5 import; retry after an Ollama or model update |
-| Ollama | `clef:27b` | Line roles / OCR-check judge candidate | OCR suspects (Dolittle pp. 30–49, glm-ocr readings): 54/55 right; confident (≥ 0.8) on 46, all right, where clef-flash was confident on 16. ~3.4 s per suspect under load. Line roles: being measured on Crime |
+| Ollama | `clef:27b` | **OCR-check judge (in use, `judge_model`)** | OCR suspects (Dolittle pp. 30–49, glm-ocr readings): 54/55 right; confident (≥ 0.8) on 46, all right, where clef-flash was confident on 16. ~3.4 s per suspect under load. **Worse at line roles**: Crime CER 0.63% → 0.98%, paragraph precision 0.966 → 0.695 (keeps page numbers, splits paragraphs), so clef-flash keeps that job |
 | Ollama | `translategemma:4b` | Tried as Dutch→Dutch OCR | **Unfit**: with its translation prompt it paraphrases (`hief`→`heeft`, `trillend opwiegelen`→`trilde omhoog`) and modernises, CER 4.9% on one page; any other prompt gives empty output |
 | Ollama | `translategemma:12b` | Tried as Dutch→Dutch OCR | **Unfit**: its translation prompt hallucinates a scene description; with the old-spelling prompt it transcribes at ~1.4% CER (worse than gemma4 and tesseract), modernises 12×, and loops on one page of 12 (Ollama aborts: "token repeat limit reached"). ~14 s/page |
 | Ollama | `translategemma:27b` | Tried as Dutch→Dutch OCR | **Unfit**: old-spelling prompt, Teirlinck 12 pages: CER 0.99% (gemma4 0.63%), word swaps (`eenvoud→eenvoudig`, `onschuld→onschuldig`), 11 accent/spelling changes. Merged with tesseract it stays at 0.99% with 11 wrong words unflagged. ~30 s/page |
@@ -634,6 +634,12 @@ disagreements by mistake category.
   Applying only when clef and winnow agree and clef ≥ 0.3: 62 applied, 1
   wrong, 28 left for review. Agreement isn't proof: the wrong unanimous cases
   are the opening-quote blind spot every model shares.
+- 2026-10-06: Models per job, chosen from measurements (the user leaves the
+  choice to the agent): clef-flash for line roles, clef:27b to judge OCR
+  suspects, winnow:e4b as the text-only second opinion, glm-ocr and tesseract
+  as the second readings (glm-ocr for letters, tesseract for dashes). A bigger
+  model isn't better at everything: clef:27b judges crops far better and line
+  roles worse.
 - 2026-10-06: OCR check stage in the pipeline (`ocrcheck.py`, tesseract as the
   second reading). Dolittle: CER 4.60% → 2.16%, WER 2.02% → 1.84%, paragraph
   P/R 0.808/0.942 → 0.815/0.951; 624 suspects: 376 fixed, 105 kept, 143 for
