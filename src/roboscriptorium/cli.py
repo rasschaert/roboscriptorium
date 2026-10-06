@@ -220,14 +220,31 @@ def review_disagreements(
 
 
 @app.command("eval")
-def evaluate_book(
-    book_dir: Path,
+def evaluate_books(
+    book_dirs: list[Path],
     pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
     chapters: str | None = typer.Option(None, help="Reference chapters to compare, e.g. 1-9"),
     no_models: bool = typer.Option(False, help="Skip decision models (heuristics only)"),
     check_ocr: bool = typer.Option(True, help="Check the OCR layer against a second reading"),
 ) -> None:
-    """Build a golden book's scan and score it against the reference text."""
+    """Build golden books' scans and score each against its reference text, one by one."""
+    summary = []
+    for book_dir in book_dirs:
+        typer.echo(f"== {book_dir.name}")
+        result = _evaluate_book(book_dir, pages, chapters, no_models, check_ocr)
+        summary.append(
+            f"{book_dir.name[:40]:40} CER {result.cer:6.2%}  WER {result.wer:6.2%}  "
+            f"paragraphs P {result.paragraph_precision:.3f} R {result.paragraph_recall:.3f}  "
+            f"headings {result.headings_found}/{result.headings_expected}"
+            f" (+{result.headings_spurious})"
+        )
+    if len(book_dirs) > 1:
+        typer.echo("\n" + "\n".join(summary))
+
+
+def _evaluate_book(
+    book_dir: Path, pages: str | None, chapters: str | None, no_models: bool, check_ocr: bool
+) -> evaluate.Score:
     book, doc, reference = _build_golden(book_dir, pages, chapters, no_models, check_ocr)
     verdicts = _verdicts(book)
     reference, applied = disagreements.patch(reference, verdicts)
@@ -271,3 +288,4 @@ def evaluate_book(
     }
     with (book.root / "eval-history.jsonl").open("a") as f:
         f.write(json.dumps(record) + "\n")
+    return result

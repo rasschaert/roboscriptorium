@@ -401,7 +401,8 @@ uv run roboscriptorium eval work/sense-and-sensibility--tauchnitz-1864 --no-mode
 ```
 
 `eval` builds the book, prints the scores and the most frequent differences, and
-appends a line to `work/<book>/eval-history.jsonl`.
+appends a line to `work/<book>/eval-history.jsonl`. Given several books it scores
+them one after another and ends with a line per book.
 
 **Disagreements and verdicts.** Gutenberg is a transcription, not the scan, so
 where the output disagrees with it a human decides what the scan prints:
