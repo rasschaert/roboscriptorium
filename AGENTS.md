@@ -561,3 +561,11 @@ disagreements by mistake category.
   straight-quoted text, a word-final `'` while a `"` is open and no `'` is
   now closes the `"`. Dolittle CER 4.76% → 4.60%, WER 2.18% → 2.02%; Sense
   unchanged. Newer layers keep the printed curly quotes.
+- 2026-10-06: OCR check probe (`experiments/probe_ocr_check.py`), Dolittle pp.
+  30–49: tesseract reads each page; where its reading of a visual line
+  differs from the text layer's (widened to whole words), clef picks between
+  the two from the crop. 99 suspects (~5/page), 90 with a truth from the
+  reference: tesseract right 56, text layer 34, clef 79 (88%). Clef at
+  confidence ≥ 0.5: 49/50 right; below 0.5: 30/40. The layer loses em-dashes
+  (`up if` for `up—if`) and closing ”; tesseract misreads opening “ as ‘, and
+  clef can't tell those apart. ~0.8 s per suspect.
