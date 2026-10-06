@@ -54,6 +54,10 @@ SIDEWAYS_SHARE = 0.8
 SIDEWAYS_COLUMN = 15
 # Room around sideways text, along its column, so the crop holds whole words.
 SIDEWAYS_PAD = 60
+# A speck: a dropped line of at most this many characters, under this share of
+# the page's usual line height (a stroke of a quote mark, a dot of ink).
+SPECK_MAX_CHARS = 2
+SPECK_HEIGHT = 0.5
 # Layout regions below this confidence are ignored when they hold no text-layer line.
 MISSING_TEXT_CONFIDENCE = 0.5
 
@@ -123,6 +127,15 @@ class _Furniture:
         return self.repeats.other_pages(text, page.number) >= R.HEADING_MAX_REPEATS
 
 
+def _speck(page: PageText, i: int) -> bool:
+    line = page.lines[i]
+    usual = statistics.median(ln.y1 - ln.y0 for ln in page.lines)
+    return (
+        len(line.text.replace(" ", "")) <= SPECK_MAX_CHARS
+        and line.y1 - line.y0 < SPECK_HEIGHT * usual
+    )
+
+
 def _reasons(
     page: PageText, i: int, role: LineRole | None, furniture: _Furniture, layout: list[str]
 ) -> list[str]:
@@ -133,7 +146,7 @@ def _reasons(
     if how == "heading":
         reasons.append("heading")
     elif how == "dropped":
-        if edge and furniture(page, i) and not reasons:
+        if (edge and furniture(page, i) or _speck(page, i)) and not reasons:
             return []
         if not edge:
             reasons.append("dropped-mid-page")

@@ -129,3 +129,10 @@ def test_a_caption_stays_out_of_the_text_and_keeps_its_turn(tmp_path):
     assert reread.by_key["p1-c"].turn == 270
     assert corrections.apply([page], roles, reread) == 1
     assert len(page.lines) == 10
+
+
+def test_a_dropped_speck_is_not_flagged():
+    page = _page()
+    page.lines.insert(3, Line("1", 258, 78, 260, 81))
+    roles = {SourceRef(1, 3): LineRole("artifact", 0.6, 0.2)}
+    assert 3 not in [f.first for f in flags.find([page], roles)]
