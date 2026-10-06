@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Review regions</title>
+<style>
+:root {
+  --bg: #f6f5f1; --card: #fff; --ink: #1d1d1b; --muted: #6b6a66; --line: #dddbd3;
+  --ok: #1f6f43; --ok-bg: #e3f2e8; --warn: #9a3412; --warn-bg: #fcebdc;
+  --accent: #2f5bd3; --accent-bg: #e6ecfb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #161614; --card: #22221f; --ink: #ecebe6; --muted: #9b9a94; --line: #3a3a35;
+    --ok: #7dd3a0; --ok-bg: #183326; --warn: #fdba74; --warn-bg: #3b2414;
+    --accent: #8aa8ff; --accent-bg: #1d2640;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+  font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+header { position: sticky; top: 0; z-index: 2; background: var(--bg); border-bottom: 1px solid var(--line);
+  padding: 10px 16px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+header h1 { font-size: 16px; margin: 0; }
+.progress { flex: 1; min-width: 160px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
+.progress div { height: 100%; background: var(--ok); }
+.counts { color: var(--muted); font-variant-numeric: tabular-nums; }
+label.toggle { color: var(--muted); user-select: none; }
+main { max-width: 980px; margin: 0 auto; padding: 16px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
+.crop { width: 100%; border: 1px solid var(--line); border-radius: 6px; background: #fff; display: block; min-height: 60px; }
+.why { margin: 12px 0 4px; color: var(--muted); font-size: 13px; }
+.why span { display: inline-block; background: var(--warn-bg); color: var(--warn); border-radius: 4px; padding: 0 6px; margin: 0 4px 4px 0; }
+.now { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.now b { color: var(--ink); }
+.context { font-family: Georgia, "Iowan Old Style", serif; font-size: 15px; color: var(--muted); white-space: pre-wrap; }
+textarea { width: 100%; font: 18px/1.45 Georgia, "Iowan Old Style", serif; padding: 8px 10px; margin: 4px 0;
+  border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); resize: vertical; }
+textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+button { font: inherit; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+button:hover { border-color: var(--accent); }
+button.current { background: var(--accent-bg); border-color: var(--accent); }
+button:disabled { opacity: .5; cursor: progress; }
+kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; margin-right: 6px; color: var(--muted); }
+.answer { margin-top: 12px; padding: 8px 10px; border-radius: 6px; background: var(--ok-bg); color: var(--ok); }
+.hint { color: var(--muted); font-size: 13px; margin-top: 10px; }
+.nav { display: flex; justify-content: space-between; margin-top: 12px; color: var(--muted); font-size: 13px; }
+a { color: var(--accent); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Regions to check</h1>
+  <div class="progress"><div id="bar"></div></div>
+  <span class="counts" id="counts"></span>
+  <label class="toggle"><input type="checkbox" id="showDone"> show answered</label>
+  <button id="rebuild" title="Rebuild the EPUB with your answers">Rebuild book</button>
+</header>
+<main id="main"></main>
+<script>
+let state = null, queue = [], pos = 0;
+const main = document.getElementById("main");
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+const KEYS = {"1": "text", "2": "heading", "3": "drop", "4": "image"};
+const CURRENT = {text: "text", heading: "heading", dropped: "drop"};
+const NOW = {text: "kept as running text", heading: "made a heading", dropped: "left out of the book"};
+
+async function load() {
+  state = await (await fetch("/api/state")).json();
+  rebuild();
+}
+
+function rebuild(keepKey) {
+  const done = document.getElementById("showDone").checked;
+  queue = state.items.filter(r => done || !r.answer);
+  const i = keepKey ? queue.findIndex(r => r.key === keepKey) : -1;
+  pos = i >= 0 ? i : Math.min(pos, Math.max(0, queue.length - 1));
+  render();
+}
+
+function counts() {
+  const answered = state.items.filter(r => r.answer).length;
+  document.getElementById("bar").style.width = (100 * answered / Math.max(1, state.items.length)) + "%";
+  const applied = state.applied == null ? "" : ` · ${state.applied} applied in the last build`;
+  document.getElementById("counts").textContent = `${answered} / ${state.items.length} answered${applied}`;
+}
+
+function render() {
+  counts();
+  if (!queue.length) {
+    main.innerHTML = `<div class="card">Nothing left to look at. Tick “show answered” to revisit, or rebuild the book to apply your answers.</div>`;
+    return;
+  }
+  const r = queue[pos];
+  const a = r.answer;
+  const text = a && a.text != null ? a.text : r.text;
+  const buttons = Object.entries(KEYS).map(([k, action]) =>
+    `<button data-action="${action}" class="${CURRENT[r.treatment] === action ? "current" : ""}"><kbd>${k}</kbd>${esc(state.actions[action])}</button>`).join("");
+  main.innerHTML = `
+  <div class="card">
+    <div class="meta">
+      <span>${pos + 1} of ${queue.length} in this view</span>
+      <span>page ${r.page}, line ${r.first + 1}${r.last > r.first ? "–" + (r.last + 1) : ""} · <a href="/page?page=${r.page}" target="_blank">full page</a></span>
+    </div>
+    <img class="crop" src="/crop?page=${r.page}&first=${r.first}&last=${r.last}" alt="Scan crop">
+    <div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>
+    <div class="now">The pipeline <b>${NOW[r.treatment]}</b>. Its reading of the highlighted lines (edit if the scan says otherwise):</div>
+    ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
+    <textarea id="text" rows="${Math.min(8, r.text.split("\n").length + 1)}">${esc(text)}</textarea>
+    ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}
+    <div class="actions">${buttons}</div>
+    ${a ? `<div class="answer">Answered: ${esc(state.actions[a.action])}${a.text != null ? " · with your wording" : ""}</div>` : ""}
+    <div class="hint">The highlighted button is what the pipeline did now. In the text box, <kbd>⌘↵</kbd> saves as running text, <kbd>Esc</kbd> leaves the box.</div>
+    <div class="nav"><span><kbd>←</kbd>previous</span><span><kbd>→</kbd>next</span></div>
+  </div>`;
+  main.querySelectorAll("button[data-action]").forEach(b => b.onclick = () => decide(b.dataset.action));
+}
+
+async function decide(action) {
+  const r = queue[pos];
+  const body = {key: r.key, action, text: document.getElementById("text").value};
+  const resp = await fetch("/api/verdict", {method: "POST", body: JSON.stringify(body)});
+  if (!resp.ok) { alert(await resp.text()); return; }
+  r.answer = await resp.json();
+  const showDone = document.getElementById("showDone").checked;
+  if (showDone) pos = Math.min(pos + 1, queue.length - 1);
+  rebuild(showDone ? queue[pos].key : null);
+}
+
+document.getElementById("rebuild").onclick = async () => {
+  const b = document.getElementById("rebuild");
+  b.disabled = true; b.textContent = "Rebuilding…";
+  try {
+    const resp = await fetch("/api/rebuild", {method: "POST"});
+    if (!resp.ok) throw new Error(await resp.text());
+    state = await resp.json();
+    rebuild();
+  } catch (e) { alert(e); }
+  b.disabled = false; b.textContent = "Rebuild book";
+};
+
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "TEXTAREA") {
+    if (e.key === "Escape") e.target.blur();
+    else if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) { e.preventDefault(); decide("text"); }
+    return;
+  }
+  if (KEYS[e.key]) decide(KEYS[e.key]);
+  else if (e.key === "e") { e.preventDefault(); document.getElementById("text").focus(); }
+  else if (e.key === "ArrowRight") { pos = Math.min(pos + 1, queue.length - 1); render(); }
+  else if (e.key === "ArrowLeft") { pos = Math.max(pos - 1, 0); render(); }
+});
+document.getElementById("showDone").onchange = () => rebuild();
+load();
+</script>
+</body>
+</html>

@@ -1,13 +1,18 @@
-"""A local web page for reviewing disagreements next to the scan.
+"""Local web pages for reviewing a book next to its scan, served on 127.0.0.1.
 
-`roboscriptorium review <book>` serves it on 127.0.0.1. Each disagreement shows
-a crop of the scan, the output and the reference in context, and takes a
-verdict: the reference is right (a pipeline mistake), the scan prints the
-output, something else, or unsure.
+- Regions (`roboscriptorium review <book>`): what the pipeline flagged as not
+  plain running text. Each shows a crop of the scan and takes an answer: running
+  text, heading, drop or image, optionally with the text as printed. Answers
+  apply on the next build, which the page can start.
+- Disagreements (`roboscriptorium golden review <book>`): where a golden book's
+  output and reference differ. Each takes a verdict: the reference is right (a
+  pipeline mistake), the scan prints the output, something else, or unsure.
 """
 
 import json
 import re
+import threading
+from collections.abc import Callable
 from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -15,6 +20,8 @@ from urllib.parse import parse_qs, urlparse
 
 import pymupdf
 
+from roboscriptorium import flags as F
+from roboscriptorium.corrections import ACTIONS, Corrections
 from roboscriptorium.disagreements import PIPELINE, SCAN, UNSURE, Disagreement, Verdicts
 from roboscriptorium.pdf import PageText
 
@@ -40,25 +47,12 @@ def guess_category(d: Disagreement) -> str:
     return "ocr"
 
 
-class Review:
-    def __init__(
-        self, pdf: Path, pages: list[PageText], items: list[Disagreement], verdicts: Verdicts
-    ):
+class Scan:
+    """Page images and highlighted crops of a book's source PDF."""
+
+    def __init__(self, pdf: Path, pages: list[PageText]):
         self.pdf = pdf
         self.pages = {p.number: p for p in pages}
-        self.items = {d.key: d for d in items}
-        self.order = [d.key for d in items]
-        self.verdicts = verdicts
-
-    def state(self) -> dict:
-        items = []
-        for key in self.order:
-            d = self.items[key]
-            v = self.verdicts.by_key.get(key)
-            items.append(
-                {**asdict(d), "guess": guess_category(d), "verdict": asdict(v) if v else None}
-            )
-        return {"items": items, "pipeline": PIPELINE, "scan": SCAN}
 
     def crop(self, page_number: int, first: int, last: int) -> bytes:
         page = self.pages[page_number]
@@ -82,6 +76,28 @@ class Review:
                 .tobytes("png")
             )
 
+
+class Review:
+    html = "review.html"
+
+    def __init__(
+        self, pdf: Path, pages: list[PageText], items: list[Disagreement], verdicts: Verdicts
+    ):
+        self.scan = Scan(pdf, pages)
+        self.items = {d.key: d for d in items}
+        self.order = [d.key for d in items]
+        self.verdicts = verdicts
+
+    def state(self) -> dict:
+        items = []
+        for key in self.order:
+            d = self.items[key]
+            v = self.verdicts.by_key.get(key)
+            items.append(
+                {**asdict(d), "guess": guess_category(d), "verdict": asdict(v) if v else None}
+            )
+        return {"items": items, "pipeline": PIPELINE, "scan": SCAN}
+
     def record(self, body: dict) -> dict:
         d = self.items[body["key"]]
         kind = body["kind"]
@@ -96,8 +112,55 @@ class Review:
         return asdict(self.verdicts.record(d, truth, category, body.get("note", "")))
 
 
-def serve(review: Review, port: int) -> None:
-    page = (Path(__file__).parent / "review.html").read_bytes()
+class RegionReview:
+    """Flagged regions of a book; `rebuild` reruns the pipeline and returns new flags."""
+
+    html = "regions.html"
+
+    def __init__(
+        self,
+        pdf: Path,
+        pages: list[PageText],
+        regions: list[F.Flag],
+        corrections: Corrections,
+        rebuild: Callable[[], tuple[list[PageText], list[F.Flag], int]],
+    ):
+        self.scan = Scan(pdf, pages)
+        self.regions = regions
+        self.corrections = corrections
+        self._rebuild = rebuild
+        self._lock = threading.Lock()
+        self.applied = None
+
+    def state(self) -> dict:
+        items = []
+        for f in self.regions:
+            page = self.scan.pages[f.page]
+            c = self.corrections.by_key.get(f.key)
+            items.append(
+                {
+                    **asdict(f),
+                    "reasons": [F.REASONS[r] for r in f.reasons],
+                    "before": page.lines[f.first - 1].text if f.first else "",
+                    "after": page.lines[f.last + 1].text if f.last + 1 < len(page.lines) else "",
+                    "answer": asdict(c) if c else None,
+                }
+            )
+        return {"items": items, "actions": ACTIONS, "applied": self.applied}
+
+    def record(self, body: dict) -> dict:
+        flag = next(f for f in self.regions if f.key == body["key"])
+        return asdict(self.corrections.record(flag, body["action"], body.get("text")))
+
+    def rebuild(self) -> dict:
+        with self._lock:
+            pages, self.regions, self.applied = self._rebuild()
+            self.scan = Scan(self.scan.pdf, pages)
+        return self.state()
+
+
+def serve(review: Review | RegionReview, port: int) -> None:
+    page = (Path(__file__).parent / review.html).read_bytes()
 
     class Handler(BaseHTTPRequestHandler):
         def _send(self, body: bytes, content_type: str, status: int = 200) -> None:
@@ -122,23 +185,29 @@ def serve(review: Review, port: int) -> None:
                 elif url.path == "/api/state":
                     self._json(review.state())
                 elif url.path == "/crop":
-                    png = review.crop(int(q["page"]), int(q["first"]), int(q["last"]))
+                    png = review.scan.crop(int(q["page"]), int(q["first"]), int(q["last"]))
                     self._send(png, "image/png")
+                elif url.path == "/favicon.ico":
+                    self._send(b"", "image/x-icon", 204)
                 elif url.path == "/page":
-                    self._send(review.full_page(int(q["page"])), "image/png")
+                    self._send(review.scan.full_page(int(q["page"])), "image/png")
                 else:
                     self._send(b"not found", "text/plain", 404)
             except (KeyError, ValueError, IndexError) as exc:
                 self._send(str(exc).encode(), "text/plain", 400)
 
         def do_POST(self) -> None:  # noqa: N802
-            if urlparse(self.path).path != "/api/verdict":
+            path = urlparse(self.path).path
+            if path == "/api/rebuild" and isinstance(review, RegionReview):
+                self._json(review.rebuild())
+                return
+            if path != "/api/verdict":
                 self._send(b"not found", "text/plain", 404)
                 return
             body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
             try:
                 self._json(review.record(body))
-            except KeyError as exc:
+            except (KeyError, StopIteration) as exc:
                 self._json({"error": f"unknown {exc}"}, 400)
 
         def log_message(self, *args) -> None:

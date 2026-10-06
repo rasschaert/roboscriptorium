@@ -6,6 +6,7 @@ Layout of a book directory (always under the gitignored `work/`):
       book.toml       metadata and page ranges
       source.pdf      the input
       stages/         resumable per-stage artefacts
+      review/         a human's answers about flagged regions
       <book>.epub     the output
 """
 
@@ -48,6 +49,10 @@ class Book:
         path = self.root / "stages"
         path.mkdir(exist_ok=True)
         return path
+
+    @property
+    def corrections_path(self) -> Path:
+        return self.root / "review" / "regions.jsonl"
 
     @property
     def epub_path(self) -> Path:

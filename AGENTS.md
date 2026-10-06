@@ -90,8 +90,17 @@ right, then expand.
     clearly garbled output and whitespace-only differences are auto-resolved.
     Verdicts (what the scan prints, plus a mistake category) are stored per scan
     and patched into the reference by `eval`.
-  - `review.py` + `review.html`: the local review page (stdlib HTTP server on
-    127.0.0.1) for giving verdicts next to scan crops.
+  - `flags.py`: regions a human should check, i.e. what isn't plain running
+    text: headings, lines dropped mid-page or without the model being sure,
+    garbled text, centred or set-apart lines. Page furniture (repeated running
+    heads, printed page numbers) isn't flagged.
+  - `corrections.py`: a human's answers about regions (text, heading, drop,
+    image, optionally the text as printed), stored in
+    `work/<book>/review/regions.jsonl` and applied to the line roles on the
+    next build.
+  - `review.py` + `regions.html` / `review.html`: the local review pages (stdlib
+    HTTP server on 127.0.0.1), with scan crops: regions for any book, and
+    disagreements for golden books.
 - HTTP: `httpx`. Tests inject `httpx.MockTransport`, so unit tests never need a
   running model server.
 - Lint/format: `ruff` (line length 100; `experiments/` excluded). Tests: `pytest`.
@@ -217,6 +226,10 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).
 - epubcheck (Homebrew).
+- Dependency group `layout` (`uv run --group layout …`): `doclayout-yolo` with
+  PyTorch, and the DocLayout-YOLO DocStructBench weights
+  (`juliozhao/DocLayout-YOLO-DocStructBench`, `doclayout_yolo_docstructbench_imgsz1024.pt`,
+  in the Hugging Face cache). Being probed for finding regions from page images.
 - tesseract 5.5.3 (Homebrew, `eng`/`osd` only). The Dutch model is
   `nld.traineddata` from tessdata_best in `work/tessdata/` (pass
   `--tessdata-dir work/tessdata`); `tesseract-lang` (~650 MB) is not installed.
@@ -240,7 +253,13 @@ epubcheck work/stella/stella.epub        # must report 0 errors / 0 warnings
 uv run ruff format . && uv run ruff check . && uv run pytest
 ```
 
-(Pipeline, review UI and evaluation commands get added here as they land.)
+**Reviewing a book.** `uv run roboscriptorium review work/<book>` builds the
+book, flags the regions that aren't plain running text and serves them on
+http://127.0.0.1:8765/ next to scan crops. Keys: `1` running text, `2` heading,
+`3` drop (page furniture, noise), `4` image; edit the text box first to give the
+text as printed; arrows move. "Rebuild book" applies the answers and rebuilds
+the EPUB. Flags come from the model's decisions before answers, so the list
+stays put while you work.
 
 ### Golden books
 
@@ -284,7 +303,7 @@ appends a line to `work/<book>/eval-history.jsonl`.
 where the output disagrees with it a human decides what the scan prints:
 
 ```sh
-uv run roboscriptorium review work/the-nature-of-a-crime--doubleday-1924  # → http://127.0.0.1:8765/
+uv run roboscriptorium golden review work/the-nature-of-a-crime--doubleday-1924  # → http://127.0.0.1:8765/
 ```
 
 Keys: `1` Gutenberg is right (pick the pipeline mistake), `2` the scan prints
@@ -451,3 +470,11 @@ disagreements by mistake category.
   Still lost on De aanslag: inscriptions and signs set apart in the text,
   which clef calls artifacts; these need flags for review, not more rules.
   The font's private-use glyphs (U+E000 "Th", U+E005 "fj") come out as junk.
+- 2026-10-06: Region review for any book: `roboscriptorium review` flags what
+  isn't plain running text and takes a human's answer per region, applied on
+  the next build (the golden disagreement page moved to `golden review`).
+  Flags per book: De aanslag 48, Crime 12, Lady into Fox 4, Dolittle 85,
+  Sense 118 (half of them headings). clef's P(body) doesn't separate page
+  furniture from real text (running heads score up to 0.4), so furniture is
+  recognised by repetition and page numbers instead. A line counts as centred
+  for flagging only with equal margins on both sides and under 80% of a line.

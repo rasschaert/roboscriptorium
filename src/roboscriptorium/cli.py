@@ -8,12 +8,13 @@ from pathlib import Path
 import httpx
 import typer
 
-from roboscriptorium import disagreements, evaluate, pipeline, review
+from roboscriptorium import disagreements, evaluate, flags, pipeline, review
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollama import OllamaClient
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.config import Settings
+from roboscriptorium.corrections import Corrections
 from roboscriptorium.disagreements import Verdicts
 from roboscriptorium.golden import epub as publisher_epub
 from roboscriptorium.golden import gutenberg, se
@@ -146,7 +147,34 @@ def _verdicts(book: Book) -> Verdicts:
 
 
 @app.command("review")
-def review_book(
+def review_regions(
+    book_dir: Path,
+    pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
+    port: int = typer.Option(8765, help="Port on 127.0.0.1"),
+) -> None:
+    """Review the regions that aren't plain running text, next to the scan."""
+    book = Book.load(book_dir)
+
+    def rebuild():
+        stages = pipeline.run(book, pages=_range(pages))
+        return (
+            stages.pages,
+            flags.find(stages.pages, stages.model_roles),
+            stages.corrections_applied,
+        )
+
+    body, regions, applied = rebuild()
+    corrections = Corrections(book.corrections_path)
+    done = sum(f.key in corrections.by_key for f in regions)
+    typer.echo(f"{len(regions)} regions to look at ({done} already answered, {applied} applied)")
+    typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
+    page = review.RegionReview(book.source, body, regions, corrections, rebuild)
+    page.applied = applied
+    review.serve(page, port)
+
+
+@golden_app.command("review")
+def review_disagreements(
     book_dir: Path,
     pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
     chapters: str | None = typer.Option(None, help="Reference chapters to compare, e.g. 1-9"),
