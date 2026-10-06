@@ -360,8 +360,10 @@ regions; an answered one shows the answer in green, and saving moves on to
 the next unanswered one. A region with a box can be turned (`r`, or the
 ↺/↻ buttons) and read again by tesseract (`o`); the turn is saved with the answer.
 `-` and `+` zoom the crop out (up to about the whole page) and back in.
-A region where two OCR readings differ shows them as buttons (`a` the text
-layer's, `b`, `c`, … the others) that put that reading in the text box. "Rebuild book" applies the answers and rebuilds
+A region where OCR readings differ asks which one matches the scan: each
+reading on its own row, the differing part marked, with the models that picked
+it; `a`, `b`, … saves that reading as running text, `e` opens a text box for
+something else. "Rebuild book" applies the answers and rebuilds
 the EPUB. Flags come from the model's decisions before answers, so the list
 stays put while you work.
 

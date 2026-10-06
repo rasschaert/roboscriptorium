@@ -31,6 +31,16 @@ main { max-width: 980px; margin: 0 auto; padding: 16px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
 .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
 .readings { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 6px 0; color: var(--muted); font-size: 13px; }
+.question { margin: 14px 0 6px; font-weight: 600; }
+.choices { display: flex; flex-direction: column; gap: 6px; margin: 6px 0; }
+.choice { display: flex; align-items: baseline; gap: 10px; text-align: left; width: 100%; padding: 10px 12px; }
+.choice .reading { flex: 1; font: 18px/1.45 Georgia, "Iowan Old Style", serif; }
+.choice .votes { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.choice .muted { color: var(--muted); font-style: italic; }
+mark { background: var(--warn-bg); color: var(--warn); border-radius: 3px; padding: 0 1px; }
+mark.gap { display: inline-block; width: 3px; height: 1em; vertical-align: -0.1em; background: var(--warn); }
+.secondary { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 12px; color: var(--muted); font-size: 13px; }
+.secondary button { padding: 3px 8px; font-size: 13px; }
 .readings .votes { display: block; font: 11px -apple-system, sans-serif; color: var(--muted); }
 .readings button { font: 16px/1.4 Georgia, "Iowan Old Style", serif; text-align: left; white-space: pre-wrap; }
 .turnbar { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
@@ -118,8 +128,9 @@ function render() {
   const a = r.answer;
   const text = a && a.text != null ? a.text : (r.draft || r.text || "");
   const drawing = picture(r);
+  const doubt = !drawing && r.readings && r.readings.length > 1;
   // A decorated initial is answered with its letter, on its own line, and only for drawings.
-  const buttons = Object.entries(KEYS).map(([k, action]) => {
+  const buttons = Object.entries(KEYS).filter(([, action]) => !doubt || action !== "text").map(([k, action]) => {
     const cls = a && a.action === action ? "answered" : !a && CURRENT[r.treatment] === action ? "current" : "";
     return `<button data-action="${action}" class="${cls}"><kbd>${k}</kbd>${esc(state.actions[action])}</button>`;
   }).join("");
@@ -146,23 +157,23 @@ function render() {
       <button data-action="initial" class="${a && a.action === "initial" ? "answered" : ""}">Save as initial <kbd>↵</kbd></button>
     </div>
     <div class="now">Or, if it isn't an initial:</div>`
+    : doubt ? doubtBlock(r, a, text)
     : `<div class="now">The pipeline <b>${NOW[r.treatment]}</b>. ${r.text ? "Its reading of the highlighted lines (edit if the scan says otherwise):" : r.draft ? "Tesseract's draft of the highlighted area; correct it, then save as text:" : "Type the text here if it belongs in the book:"}</div>
     ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
     <textarea id="text" rows="${Math.min(16, text.split("\n").length + 1)}">${esc(text)}</textarea>
-    ${r.readings && r.readings.length ? `<div class="readings">Readings (the first is the scan's text layer):
-      ${r.readings.map((g, k) => `<button data-reading="${k}"><kbd>${READING_KEYS[k] || ""}</kbd>${esc(g.text)}${g.votes.length ? `<span class="votes">${esc(g.votes.join(", "))}</span>` : ""}</button>`).join("")}
-      <span class="hint">puts that reading in the box; then save with the button for what it is.</span></div>` : ""}
     ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}`}
-    <div class="actions">${buttons}</div>
+    ${doubt ? `<div class="secondary">Not running text? ${buttons}</div>` : `<div class="actions">${buttons}</div>`}
     ${a ? `<div class="answer">Your answer: ${esc(state.actions[a.action])}${a.action === "initial" ? ` “${esc(a.text || "")}”` : a.text != null ? " · with your wording" : ""}. Answer again to change it.</div>` : ""}
-    <div class="hint">${a ? "Green: your answer." : "Blue: what the pipeline did now."}${drawing ? "" : " In the text box, <kbd>⌘↵</kbd> saves as running text, <kbd>Esc</kbd> leaves the box."}</div>
+    <div class="hint">${doubt ? "Press the letter of the reading that matches the scan; it is saved as running text." : (a ? "Green: your answer." : "Blue: what the pipeline did now.") + (drawing ? "" : " In the text box, <kbd>⌘↵</kbd> saves as running text, <kbd>Esc</kbd> leaves the box.")}</div>
     <div class="nav">
       <span>${pos > 0 ? "<kbd>←</kbd>previous" : "first region"}</span>
       <span>${pos < queue.length - 1 ? "<kbd>→</kbd>next" : "last region"}</span>
     </div>
   </div>`;
   main.querySelectorAll("button[data-action]").forEach(b => b.onclick = () => decide(b.dataset.action));
-  main.querySelectorAll("button[data-reading]").forEach(b => b.onclick = () => useReading(+b.dataset.reading));
+  main.querySelectorAll("button[data-pick]").forEach(b => b.onclick = () => pick(+b.dataset.pick));
+  const other = document.getElementById("other");
+  if (other) other.onclick = showTextBox;
   document.getElementById("zoomOut").onclick = () => zoom(1);
   document.getElementById("zoomIn").onclick = () => zoom(-1);
   if (r.box) {
@@ -177,12 +188,52 @@ function render() {
   }
 }
 
-// Keys for the readings; e (edit), o (read again) and r (turn) are taken.
+// Keys for the readings; e (something else), o (read again) and r (turn) are taken.
 const READING_KEYS = "abcdfghj";
-function useReading(k) {
+
+// Readings that differ: one row each, the differing part marked, saved with one key.
+function doubtBlock(r, a, text) {
+  const chosen = a && a.action === "text" ? (a.text != null ? a.text : r.text) : null;
+  const typed = chosen != null && !r.readings.some(g => g.text === chosen);
+  const rows = r.readings.map((g, k) => {
+    const against = r.readings[k === 0 ? 1 : 0].text;
+    const who = [k === 0 ? "text layer" : "", ...g.votes].filter(Boolean).join(" · ");
+    return `<button class="choice ${chosen === g.text ? "answered" : ""}" data-pick="${k}">
+      <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${marked(g.text, against)}</span>
+      <span class="votes">${esc(who)}</span></button>`;
+  }).join("");
+  return `<div class="question">Which reading matches the scan?</div>
+    ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
+    <div class="choices">${rows}
+      <button class="choice ${typed ? "answered" : ""}" id="other"><kbd>e</kbd>
+        <span class="reading muted">Something else…</span></button>
+    </div>
+    <textarea id="text" rows="2" ${typed ? "" : "hidden"}>${esc(typed ? chosen : text)}</textarea>
+    ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}`;
+}
+
+// The text with the part where it differs from `other` marked.
+function marked(text, other) {
+  let i = 0;
+  while (i < text.length && i < other.length && text[i] === other[i]) i++;
+  let j = 0;
+  while (j < text.length - i && j < other.length - i && text[text.length - 1 - j] === other[other.length - 1 - j]) j++;
+  const middle = text.slice(i, text.length - j);
+  return esc(text.slice(0, i)) + (middle ? `<mark>${esc(middle)}</mark>` : `<mark class="gap"></mark>`)
+    + esc(text.slice(text.length - j));
+}
+
+function pick(k) {
   const r = queue[pos];
-  if (!r.readings || k < 0 || k >= r.readings.length || !textBox()) return;
-  textBox().value = r.readings[k].text;
+  if (!r.readings || k < 0 || k >= r.readings.length) return;
+  decide("text", r.readings[k].text);
+}
+
+function showTextBox() {
+  const box = textBox();
+  if (!box) return;
+  box.hidden = false;
+  box.focus();
 }
 
 function cropUrl(r) {
@@ -225,10 +276,11 @@ async function reread() {
   b.disabled = false; b.innerHTML = "<kbd>o</kbd>Read again";
 }
 
-async function decide(action) {
+async function decide(action, given) {
   const r = queue[pos];
   const letter = document.getElementById("letter");
-  const text = action === "initial" ? (letter ? letter.value : "") : textBox() ? textBox().value : "";
+  const text = given != null ? given
+    : action === "initial" ? (letter ? letter.value : "") : textBox() ? textBox().value : "";
   if (action === "initial" && !text.trim()) { alert("Type the letter the initial shows first."); return; }
   const body = {key: r.key, action, text, turn: r.turn || 0};
   const resp = await fetch("/api/verdict", {method: "POST", body: JSON.stringify(body)});
@@ -264,8 +316,8 @@ document.addEventListener("keydown", e => {
   }
   if (KEYS[e.key]) decide(KEYS[e.key]);
   else if (e.key === "Enter" && document.getElementById("letter")) { e.preventDefault(); decide("initial"); }
-  else if (e.key === "e" && textBox()) { e.preventDefault(); textBox().focus(); }
-  else if (e.key.length === 1 && READING_KEYS.includes(e.key)) useReading(READING_KEYS.indexOf(e.key));
+  else if (e.key === "e" && textBox()) { e.preventDefault(); showTextBox(); }
+  else if (e.key.length === 1 && READING_KEYS.includes(e.key)) pick(READING_KEYS.indexOf(e.key));
   else if (e.key === "r") turn(90);
   else if (e.key === "o") reread();
   else if (e.key === "-") zoom(1);
