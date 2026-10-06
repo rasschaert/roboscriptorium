@@ -6,8 +6,7 @@ each session.
 
 ## Paused 2026-10-06, late (machine resting)
 
-Work is on branch **`wip-review-fixes`** (worktree in the session scratchpad),
-**not yet merged into `main`**. It holds, each tested (51 tests):
+All of this is merged into `main` and pushed (51 tests):
 
 - The code review's fixes: answers apply to a copy of the pages (`Line.source`
   keeps text-layer indices), so answered regions keep their keys and inserted
@@ -22,14 +21,16 @@ Work is on branch **`wip-review-fixes`** (worktree in the session scratchpad),
   jumps to the next unanswered), a drawing is answered on its own line (letter +
   `↵`), keys `1`–`5` = text, heading, drop, image, caption.
 
-Next, in order:
-1. Merge `wip-review-fixes` into `main` (AGENTS.md changed on both sides).
+Next, in order (the user asked to run the heavy steps when the laptop is
+plugged in and cool):
+1. Restart the review server for Dolittle; on startup it re-judges all OCR
+   suspects with clef:27b (~600 at ~3 s, about half an hour).
 2. Rescore all golden books with the final OCR check (clef:27b judge, both
    readings). Dolittle with glm-only was CER 2.23%, with tesseract-only 2.16%.
    Expect a few hours; run in the background, one book after another.
 3. The user's Dolittle answers: p23's initial is saved as "E"; the drawing
-   shows an O (they meant to fix it). Restart the review server after the
-   merge; the region count should drop sharply with clef:27b judging.
+   shows an O (they meant to fix it). The region count should drop sharply
+   with clef:27b judging (292 with clef-flash judging).
 4. nuextract3: the BF16 build is broken under Ollama 0.40; ask the user to pull
    the `q6_k` GGUF tag if metadata extraction is wanted (low priority).
 5. Then the figures stage, and the `page.py` refactor + `rule` field on LineRole
