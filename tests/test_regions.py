@@ -116,3 +116,16 @@ def test_initial_candidates_come_from_the_word_it_begins():
     vocab = {"once", "nce", "that", "what", "chat"}
     assert initials.candidates(initials.fragment("NCE upon a time"), vocab) == ["O"]
     assert initials.candidates(initials.fragment("HAT Winter"), vocab) == ["C", "T", "W"]
+
+
+def test_a_caption_stays_out_of_the_text_and_keeps_its_turn(tmp_path):
+    page = _page()
+    roles: dict = {}
+    sideways = flags.Flag("p1-c", 1, 0, -1, "", "missing", ["rotated"], (360, 80, 380, 400))
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(sideways, "caption", "“And the voyage began”", turn=270)
+
+    reread = Corrections(tmp_path / "regions.jsonl")
+    assert reread.by_key["p1-c"].turn == 270
+    assert corrections.apply([page], roles, reread) == 1
+    assert len(page.lines) == 10

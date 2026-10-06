@@ -1,7 +1,10 @@
 """A human's answers about flagged regions, applied on the next build.
 
 Each answer says what a region is: running text, a heading, something to drop
-(page furniture, scan noise), or an image; optionally with the text as printed.
+(page furniture, scan noise), an image, a decorated initial or a caption;
+optionally with the text as printed, and for a region shown on its side the
+turn that makes it upright. A caption stays out of the running text; its text
+waits for its picture.
 Answers live in `work/<book>/review/regions.jsonl`; the latest per region wins.
 They are keyed on the region's page and text layer, so an answer stops applying
 when the text layer under it changes. Text given for a region the text layer has
@@ -27,6 +30,7 @@ ACTIONS = {
     "drop": "Not part of the book (page furniture, noise)",
     "image": "An image or decoration",
     "initial": "A decorated initial letter",
+    "caption": "A caption (kept with its picture)",
 }
 _ROLE = {
     "text": LineRole("body", 1.0, 1.0),
@@ -34,6 +38,7 @@ _ROLE = {
     "drop": LineRole("artifact", 1.0, 0.0),
     "image": LineRole("artifact", 1.0, 0.0),
     "initial": LineRole("artifact", 1.0, 0.0),
+    "caption": LineRole("artifact", 1.0, 0.0),
 }
 
 
@@ -48,6 +53,7 @@ class Correction:
     text: str | None  # the region as printed, when the text layer misreads it
     at: str
     box: tuple[float, float, float, float] | None = None
+    turn: int = 0  # degrees clockwise that make the region upright
 
 
 class Corrections:
@@ -62,9 +68,11 @@ class Corrections:
                 c = Correction(**raw)
                 self.by_key[c.key] = c
 
-    def record(self, flag: Flag, action: str, text: str | None) -> Correction:
+    def record(self, flag: Flag, action: str, text: str | None, turn: int = 0) -> Correction:
         if action not in ACTIONS:
             raise KeyError(action)
+        if turn not in (0, 90, 180, 270):
+            raise KeyError(f"turn {turn}")
         c = Correction(
             flag.key,
             flag.page,
@@ -75,6 +83,7 @@ class Corrections:
             text if text and text != flag.text else None,
             datetime.now(UTC).isoformat(timespec="seconds"),
             flag.box,
+            turn,
         )
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open("a") as f:
@@ -139,7 +148,7 @@ def apply(pages: list[PageText], roles: dict[SourceRef, LineRole], corrections: 
         if c.last < c.first:
             if c.text and c.box and c.action in ("text", "heading"):
                 insertions.append((page, c))
-            if c.text and c.box and c.action in ("text", "heading", "initial"):
+            if c.text and c.box and c.action in ("text", "heading", "initial", "caption"):
                 applied += 1
             continue
         lines = page.lines[c.first : c.last + 1]

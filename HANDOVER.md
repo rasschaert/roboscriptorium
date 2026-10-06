@@ -46,8 +46,9 @@ for regions of any book.
 The layout model, run on picture-only pages turned 90° and 270°, finds the
 caption of every landscape plate in Dolittle (pp. 6, 25, 57, 83, 87, 90, 107,
 200; all turn 90°) and nothing on the other books. The review page shows each
-caption as a `rotated` region, read upright by tesseract. Not yet tried in the
-browser on the new pages (only p25 has been seen there).
+caption as a `rotated` region, read upright by tesseract. Answer them with `6` (caption): its text stays out of the running text and is
+stored, with the turn, for the figures stage. If the guessed turn is wrong,
+`r` turns the crop and `o` reads it again.
 
 ## Next steps, in order
 

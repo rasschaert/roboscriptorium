@@ -2,8 +2,9 @@
 
 - Regions (`roboscriptorium review <book>`): what the pipeline flagged as not
   plain running text. Each shows a crop of the scan and takes an answer: running
-  text, heading, drop or image, optionally with the text as printed. Answers
-  apply on the next build, which the page can start.
+  text, heading, drop, image, initial or caption, optionally with the text as
+  printed. A region with a box can be turned and read again. Answers apply on
+  the next build, which the page can start.
 - Disagreements (`roboscriptorium golden review <book>`): where a golden book's
   output and reference differ. Each takes a verdict: the reference is right (a
   pipeline mistake), the scan prints the output, something else, or unsure.
@@ -97,7 +98,7 @@ class Scan:
         target = pymupdf.Rect(x0 - 2, y0 - 2, x1 + 2, y1 + 2)
         with pymupdf.open(self.pdf) as doc:
             pdf_page = doc[page_number - 1]
-            if turn:
+            if turn in (90, 270):
                 clip = pymupdf.Rect(x0 - 40, y0, x1 + 40, y1) & pdf_page.rect
             else:
                 clip = pymupdf.Rect(0, y0 - 40, pdf_page.rect.width, y1 + 40) & pdf_page.rect
@@ -202,14 +203,18 @@ class RegionReview:
         for f in self.regions:
             page = self.scan.pages[f.page]
             c = self.corrections.by_key.get(f.key)
+            # Around sideways text the neighbouring lines are scraps too.
+            context = "rotated" not in f.reasons
             items.append(
                 {
                     **asdict(f),
                     "reasons": [F.REASONS[r] for r in f.reasons],
                     "before": page.lines[f.first - 1].text
-                    if 0 < f.first <= len(page.lines)
+                    if context and 0 < f.first <= len(page.lines)
                     else "",
-                    "after": page.lines[f.last + 1].text if f.last + 1 < len(page.lines) else "",
+                    "after": page.lines[f.last + 1].text
+                    if context and f.last + 1 < len(page.lines)
+                    else "",
                     "answer": asdict(c) if c else None,
                     "draft": self._draft(f),
                     "turn": self._turn(f),
@@ -218,7 +223,15 @@ class RegionReview:
         return {"items": items, "actions": ACTIONS, "applied": self.applied}
 
     def _turn(self, f: F.Flag) -> int:
+        c = self.corrections.by_key.get(f.key)
+        if c and c.turn:
+            return c.turn
         return self.scan.turn(f.page, f.box, self.lang) if "rotated" in f.reasons else 0
+
+    def read(self, key: str, turn: int) -> str:
+        """Tesseract's reading of a region turned the way the human says is upright."""
+        f = next(f for f in self.regions if f.key == key)
+        return self.scan.read_box(f.page, f.box, self.lang, turn=turn)
 
     def _draft(self, f: F.Flag) -> str | None:
         """Tesseract's reading of text the text layer lacks or reads as scraps."""
@@ -245,7 +258,8 @@ class RegionReview:
 
     def record(self, body: dict) -> dict:
         flag = next(f for f in self.regions if f.key == body["key"])
-        return asdict(self.corrections.record(flag, body["action"], body.get("text")))
+        turn = int(body.get("turn") or 0)
+        return asdict(self.corrections.record(flag, body["action"], body.get("text"), turn))
 
     def rebuild(self) -> dict:
         with self._lock:
@@ -288,6 +302,8 @@ def serve(review: Review | RegionReview, port: int) -> None:
                     self._send(png, "image/png")
                 elif url.path == "/api/initial" and isinstance(review, RegionReview):
                     self._json({"letter": review.guess_initial(q["key"])})
+                elif url.path == "/api/read" and isinstance(review, RegionReview):
+                    self._json({"text": review.read(q["key"], int(q.get("turn", 0)))})
                 elif url.path == "/favicon.ico":
                     self._send(b"", "image/x-icon", 204)
                 elif url.path == "/page":

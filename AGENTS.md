@@ -105,7 +105,8 @@ right, then expand.
     make the word beside it a word (book vocabulary plus the system word list),
     then the role model picks among them from the drawing.
   - `corrections.py`: a human's answers about regions (text, heading, drop,
-    image, optionally the text as printed; typed text for a missing region is
+    image, initial, caption, optionally the text as printed and the turn that
+    makes the region upright; typed text for a missing region is
     inserted where the region sits, blank lines separating paragraphs), stored in
     `work/<book>/review/regions.jsonl` and applied to the line roles on the
     next build.
@@ -268,8 +269,9 @@ uv run ruff format . && uv run ruff check . && uv run pytest
 **Reviewing a book.** `uv run roboscriptorium review work/<book>` builds the
 book, flags the regions that aren't plain running text and serves them on
 http://127.0.0.1:8765/ next to scan crops. Keys: `1` running text, `2` heading,
-`3` drop (page furniture, noise), `4` image, `5` a decorated initial (type the letter it shows; tesseract guesses); edit the text box first to give the
-text as printed; arrows move. "Rebuild book" applies the answers and rebuilds
+`3` drop (page furniture, noise), `4` image, `5` a decorated initial (type the letter it shows; tesseract guesses), `6` a caption (kept out of the running text, for its picture); edit the text box first to give the
+text as printed; arrows move. A region with a box can be turned (`r`, or the
+↺/↻ buttons) and read again by tesseract (`o`); the turn is saved with the answer. "Rebuild book" applies the answers and rebuilds
 the EPUB. Flags come from the model's decisions before answers, so the list
 stays put while you work.
 

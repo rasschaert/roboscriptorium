@@ -10,3 +10,6 @@ __pycache__/
 dist/
 
 .DS_Store
+
+# Browser automation output
+.playwright-mcp/

@@ -30,7 +30,9 @@ label.toggle { color: var(--muted); user-select: none; }
 main { max-width: 980px; margin: 0 auto; padding: 16px; }
 .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
 .meta { display: flex; justify-content: space-between; color: var(--muted); font-size: 13px; margin-bottom: 10px; gap: 8px; flex-wrap: wrap; }
-.crop { width: 100%; border: 1px solid var(--line); border-radius: 6px; background: #fff; display: block; min-height: 60px; }
+.turnbar { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
+.turnbar button { padding: 4px 10px; }
+.crop { max-width: 100%; margin: 0 auto; border: 1px solid var(--line); border-radius: 6px; background: #fff; display: block; min-height: 60px; }
 .why { margin: 12px 0 4px; color: var(--muted); font-size: 13px; }
 .why span { display: inline-block; background: var(--warn-bg); color: var(--warn); border-radius: 4px; padding: 0 6px; margin: 0 4px 4px 0; }
 .now { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
@@ -64,7 +66,7 @@ a { color: var(--accent); }
 let state = null, queue = [], pos = 0;
 const main = document.getElementById("main");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-const KEYS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "initial"};
+const KEYS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "initial", "6": "caption"};
 const CURRENT = {text: "text", heading: "heading", dropped: "drop", missing: "drop"};
 const NOW = {text: "kept as running text", heading: "made a heading", dropped: "left out of the book",
   missing: "has nothing here"};
@@ -106,7 +108,13 @@ function render() {
       <span>${pos + 1} of ${queue.length} in this view</span>
       <span>page ${r.page}${r.last >= r.first ? `, line ${r.first + 1}${r.last > r.first ? "–" + (r.last + 1) : ""}` : ""} · <a href="/page?page=${r.page}" target="_blank">full page</a></span>
     </div>
-    <img class="crop" src="${r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}` : `/crop?page=${r.page}&first=${r.first}&last=${r.last}`}" alt="Scan crop">
+    <img class="crop" id="crop" src="${cropUrl(r)}" alt="Scan crop">
+    ${r.box ? `<div class="turnbar">
+      <button id="turnLeft" title="Turn a quarter anticlockwise">↺</button>
+      <button id="turnRight" title="Turn a quarter clockwise"><kbd>r</kbd>↻</button>
+      <span>turned ${r.turn || 0}°</span>
+      <button id="reread" title="Read the area again as it is turned now"><kbd>o</kbd>Read again</button>
+    </div>` : ""}
     <div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>
     <div class="now">The pipeline <b>${NOW[r.treatment]}</b>. ${r.text ? "Its reading of the highlighted lines (edit if the scan says otherwise):" : r.draft ? "Tesseract's draft of the highlighted area; correct it, then save as text:" : "Type the text here if it belongs in the book:"}</div>
     ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
@@ -119,6 +127,11 @@ function render() {
     <div class="nav"><span><kbd>←</kbd>previous</span><span><kbd>→</kbd>next</span></div>
   </div>`;
   main.querySelectorAll("button[data-action]").forEach(b => b.onclick = () => decide(b.dataset.action));
+  if (r.box) {
+    document.getElementById("turnLeft").onclick = () => turn(-90);
+    document.getElementById("turnRight").onclick = () => turn(90);
+    document.getElementById("reread").onclick = reread;
+  }
   const letter = document.getElementById("letter");
   if (letter && !letter.value) {
     fetch(`/api/initial?key=${encodeURIComponent(r.key)}`).then(x => x.json())
@@ -126,12 +139,41 @@ function render() {
   }
 }
 
+function cropUrl(r) {
+  return r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}`
+    : `/crop?page=${r.page}&first=${r.first}&last=${r.last}`;
+}
+
+function turn(by) {
+  const r = queue[pos];
+  if (!r.box) return;
+  const text = document.getElementById("text").value;
+  r.turn = ((r.turn || 0) + by + 360) % 360;
+  render();
+  document.getElementById("text").value = text;
+}
+
+async function reread() {
+  const r = queue[pos];
+  if (!r.box) return;
+  const b = document.getElementById("reread");
+  b.disabled = true; b.textContent = "Reading…";
+  try {
+    const resp = await fetch(`/api/read?key=${encodeURIComponent(r.key)}&turn=${r.turn || 0}`);
+    if (!resp.ok) throw new Error(await resp.text());
+    const text = (await resp.json()).text;
+    r.draft = text;
+    if (queue[pos] === r) document.getElementById("text").value = text;
+  } catch (e) { alert(e); }
+  b.disabled = false; b.innerHTML = "<kbd>o</kbd>Read again";
+}
+
 async function decide(action) {
   const r = queue[pos];
   const letter = document.getElementById("letter");
   const text = action === "initial" ? (letter ? letter.value : "") : document.getElementById("text").value;
   if (action === "initial" && !text.trim()) { alert("Type the letter the initial shows first."); return; }
-  const body = {key: r.key, action, text};
+  const body = {key: r.key, action, text, turn: r.turn || 0};
   const resp = await fetch("/api/verdict", {method: "POST", body: JSON.stringify(body)});
   if (!resp.ok) { alert(await resp.text()); return; }
   r.answer = await resp.json();
@@ -165,6 +207,8 @@ document.addEventListener("keydown", e => {
   }
   if (KEYS[e.key]) decide(KEYS[e.key]);
   else if (e.key === "e") { e.preventDefault(); document.getElementById("text").focus(); }
+  else if (e.key === "r") turn(90);
+  else if (e.key === "o") reread();
   else if (e.key === "ArrowRight") { pos = Math.min(pos + 1, queue.length - 1); render(); }
   else if (e.key === "ArrowLeft") { pos = Math.max(pos - 1, 0); render(); }
 });
