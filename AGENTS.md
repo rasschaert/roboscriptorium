@@ -393,3 +393,8 @@ disagreements by mistake category.
   "THE FIFTH CHAPTER" and "THE SIXTH CHAPTER" were ≥ 85% similar; a heading
   repeated on 3+ other pages is a running head (was 5). Headings now: Sense
   49/50 (+0 spurious), Dolittle 14 → 20/21 (spurious 13 → 5), Crime 4/8 (+1).
+- 2026-10-06: Garbled lines (under half the tokens look like words: OCR read
+  from a drawing or a smudge) are now line-role candidates wherever they sit,
+  and clef calls them artefacts. Dolittle CER 5.48% → 4.82%, paragraph F1
+  0.839 → 0.861; Sense 3.02% → 3.00%. Plate captions still end up in the text
+  (a caption role belongs with the figures work).

@@ -27,3 +27,11 @@ def test_ordinal_headings_are_not_repeats_of_each_other():
     repeats = Repeats(pages)
     assert repeats.other_pages("THE SIXTH CHAPTER", 6) == 0
     assert repeats.other_pages("More Monev Troubles", 30) == 3
+
+
+def test_garbled_lines_are_candidates():
+    from roboscriptorium.roles import garbled
+
+    assert garbled(Line("r^fl rgeiKh WBpSBjlHpilT rtttnf: f- ''.'.", 0, 0, 1, 1))
+    assert not garbled(Line("Then his sister, Sarah Dolittle, came to him", 0, 0, 1, 1))
+    assert not garbled(Line('"John, how can you expect sick people—', 0, 0, 1, 1))

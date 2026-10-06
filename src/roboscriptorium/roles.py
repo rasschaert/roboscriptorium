@@ -45,6 +45,8 @@ REPEAT_LETTERS_PER_EDIT = 10
 # A chapter heading appears once. The model gives this count little weight, so a
 # "heading" whose text recurs on at least this many other pages is a running head.
 HEADING_MAX_REPEATS = 3
+# Lines where fewer than this share of tokens look like words are asked about too.
+GARBLED_MAX_WORDLIKE = 0.5
 # Lines this close to the top or bottom of the page are asked about.
 EDGE_LINES_TOP = 2
 EDGE_LINES_BOTTOM = 3
@@ -76,6 +78,22 @@ def _centred(line: Line, page: PageText, full: float) -> bool:
     )
 
 
+_WORDLIKE = re.compile(
+    r"^[\"'(“‘]*(?:[A-Za-zÀ-ÿ][a-zß-ÿ'’-]*|[A-ZÀ-Þ][A-ZÀ-Þ'’-]*)[.,;:!?\"')”’—-]*$"
+)
+# Dots and dashes on their own (spaced ellipses, dashes) are neither words nor noise.
+_NEUTRAL = re.compile(r"^[.…—–-]+$")
+
+
+def garbled(line: Line) -> bool:
+    """Text an OCR layer read from a picture or a smudge: mostly tokens that aren't words."""
+    tokens = [t for t in line.text.split() if not _NEUTRAL.match(t)]
+    if not tokens:
+        return False
+    wordlike = sum(1 for t in tokens if _WORDLIKE.match(t))
+    return wordlike / len(tokens) < GARBLED_MAX_WORDLIKE
+
+
 def candidates(page: PageText) -> list[int]:
     n = len(page.lines)
     if n == 0:
@@ -83,7 +101,8 @@ def candidates(page: PageText) -> list[int]:
     full, _ = _geometry(page)
     edge = set(range(min(EDGE_LINES_TOP, n))) | set(range(max(0, n - EDGE_LINES_BOTTOM), n))
     centred = {i for i, ln in enumerate(page.lines) if _centred(ln, page, full)}
-    return sorted(edge | centred)
+    noisy = {i for i, ln in enumerate(page.lines) if garbled(ln)}
+    return sorted(edge | centred | noisy)
 
 
 def _letters(text: str) -> str:
