@@ -269,7 +269,7 @@ uv run ruff format . && uv run ruff check . && uv run pytest
 **Reviewing a book.** `uv run roboscriptorium review work/<book>` builds the
 book, flags the regions that aren't plain running text and serves them on
 http://127.0.0.1:8765/ next to scan crops. Keys: `1` running text, `2` heading,
-`3` drop (page furniture, noise), `4` image, `5` a decorated initial (type the letter it shows; tesseract guesses), `6` a caption (kept out of the running text, for its picture); edit the text box first to give the
+`3` drop (page furniture, noise), `4` a decorated initial (type the letter it shows; tesseract guesses), `5` image, `6` a caption (kept out of the running text, for its picture); edit the text box first to give the
 text as printed; arrows move. A region with a box can be turned (`r`, or the
 ↺/↻ buttons) and read again by tesseract (`o`); the turn is saved with the answer.
 `-` and `+` zoom the crop out (up to about the whole page) and back in. "Rebuild book" applies the answers and rebuilds

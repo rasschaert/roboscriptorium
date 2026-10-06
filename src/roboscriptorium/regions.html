@@ -66,7 +66,7 @@ a { color: var(--accent); }
 let state = null, queue = [], pos = 0, out = 0;
 const main = document.getElementById("main");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-const KEYS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "initial", "6": "caption"};
+const KEYS = {"1": "text", "2": "heading", "3": "drop", "4": "initial", "5": "image", "6": "caption"};
 const CURRENT = {text: "text", heading: "heading", dropped: "drop", missing: "drop"};
 const NOW = {text: "kept as running text", heading: "made a heading", dropped: "left out of the book",
   missing: "has nothing here"};
@@ -125,7 +125,7 @@ function render() {
     <textarea id="text" rows="${Math.min(16, text.split("\n").length + 1)}">${esc(text)}</textarea>
     ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}
     <div class="actions">${buttons}</div>
-    ${r.box && r.reasons.some(x => x.startsWith("a picture")) ? `<div class="hint">For a decorated initial, the letter it shows: <input id="letter" size="2" maxlength="3" value="${a && a.action === "initial" ? esc(a.text || "") : ""}" style="font: 20px Georgia, serif; width: 3em; text-align: center"> then <kbd>5</kbd>.</div>` : ""}
+    ${r.box && r.reasons.some(x => x.startsWith("a picture")) ? `<div class="hint">For a decorated initial, the letter it shows: <input id="letter" size="2" maxlength="3" value="${a && a.action === "initial" ? esc(a.text || "") : ""}" style="font: 20px Georgia, serif; width: 3em; text-align: center"> then <kbd>4</kbd>.</div>` : ""}
     ${a ? `<div class="answer">Answered: ${esc(state.actions[a.action])}${a.text != null ? " · with your wording" : ""}</div>` : ""}
     <div class="hint">The highlighted button is what the pipeline did now. In the text box, <kbd>⌘↵</kbd> saves as running text, <kbd>Esc</kbd> leaves the box.</div>
     <div class="nav"><span><kbd>←</kbd>previous</span><span><kbd>→</kbd>next</span></div>
