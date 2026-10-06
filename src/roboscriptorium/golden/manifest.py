@@ -10,6 +10,7 @@ reference text, provenance and verdicts live in `work/golden/<name>/`.
 """
 
 import hashlib
+import json
 import shutil
 import tomllib
 from dataclasses import dataclass
@@ -161,12 +162,14 @@ def fetch(golden: Golden, scan: Scan, work: Path = Path("work")) -> Path:
 
     first, last = scan.body_pages
     cover = f"cover_page = {scan.cover_page}\n" if scan.cover_page else ""
+    # A JSON string is a valid TOML basic string, quotes and backslashes escaped.
+    q = lambda s: json.dumps(s, ensure_ascii=False)  # noqa: E731
     (book_dir / "book.toml").write_text(
-        f'title = "{golden.title}"\n'
-        f'author = "{golden.author}"\n'
-        f'language = "{golden.language}"\n'
+        f"title = {q(golden.title)}\n"
+        f"author = {q(golden.author)}\n"
+        f"language = {q(golden.language)}\n"
         f"{cover}"
         f"body_pages = [{first}, {last}]\n"
-        f'golden = "{golden.name}"\n'
+        f"golden = {q(golden.name)}\n"
     )
     return book_dir

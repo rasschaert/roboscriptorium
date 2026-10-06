@@ -1,8 +1,9 @@
 """Check a scan's OCR text layer against a second reading, line by line.
 
-An OCR model (glm-ocr) reads the crop of each body line. Where its reading
-differs from the text layer's (widened to whole words), the role model picks a
-reading from the crop of the scan, and a text model picks the version of the
+Two more readings of each body line: glm-ocr on the line's crop (best on
+letters and words) and tesseract on the page (best on dashes). Where either
+differs from the text layer (widened to whole words), the role model picks a
+version from the crop of the scan, and a text model picks the version of the
 line that reads right. When both pick the same reading and the role model is at least somewhat
 sure, it is applied; any other suspect is left to a human.
 
@@ -12,19 +13,23 @@ PDFs, whose text is exact, aren't checked.
 """
 
 import base64
+import csv
 import hashlib
+import io
 import json
 import re
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import asdict, dataclass, replace
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
 import httpx
 import pymupdf
 from rapidfuzz.distance import Levenshtein
 
+from roboscriptorium import ocr
 from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollaya import OllayaClient
+from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PageText
 from roboscriptorium.roles import DecisionCache
@@ -36,6 +41,8 @@ LINE_PAD = 3  # points around a line's crop for the OCR model
 MAX_LINE_TOKENS = 120
 # Readings are written to the cache every so many lines, so a long run keeps its progress.
 SAVE_EVERY = 200
+TESSERACT_VERSION = 1
+TESSERACT_WORKERS = 6
 # The role model must be at least this sure, and agree with the text model.
 SURE = 0.3
 CROP_ZOOM = 4
@@ -56,13 +63,17 @@ class Suspect:
     start: int  # the differing words, as a span of `original`
     end: int
     ours: str
-    theirs: str
+    others: tuple[str, ...]  # the other readings of the span
     box: tuple[float, float, float, float]
-    choice: str  # "ours", "theirs", or "review"
+    choice: str  # "ours", "other" (then `chosen` says which), or "review"
+    chosen: str | None = None
+    # Each model's pick: a version of the span (`ours` or one of `others`), or "".
+    votes: dict[str, str] = field(default_factory=dict)
 
     @property
-    def alternative(self) -> str:
-        return self.original[: self.start] + self.theirs + self.original[self.end :]
+    def alternatives(self) -> list[str]:
+        """The line as each other reading has it."""
+        return [self.original[: self.start] + o + self.original[self.end :] for o in self.others]
 
 
 def scanned(pdf: Path, sample: int = 10) -> bool:
@@ -108,29 +119,92 @@ def line_readings(
 
     def save() -> None:
         blob = {"version": READING_VERSION, "model": model, "lines": done}
-        cache.write_text(json.dumps(blob, ensure_ascii=False))
+        write_atomic(cache, json.dumps(blob, ensure_ascii=False))
 
-    def read(item: tuple[PageText, int]) -> tuple[str, str]:
-        page, k = item
-        line = page.lines[k]
-        clip = pymupdf.Rect(line.x0, line.y0, line.x1, line.y1) + (
-            -LINE_PAD,
-            -LINE_PAD,
-            LINE_PAD,
-            LINE_PAD,
-        )
-        with pymupdf.open(pdf) as doc:
-            png = doc[page.number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
-        return key(page, k), read_line(png, model, ollama_url)
-
-    with ThreadPoolExecutor(READ_WORKERS) as pool:
-        for n, (k, text) in enumerate(pool.map(read, todo), 1):
-            done[k] = text
-            if n % SAVE_EVERY == 0:
-                save()
-    if todo:
-        save()
+    # PyMuPDF isn't thread-safe: crops are rendered here, a batch at a time, and
+    # only the model calls run in the pool.
+    with pymupdf.open(pdf) as doc, ThreadPoolExecutor(READ_WORKERS) as pool:
+        for start in range(0, len(todo), SAVE_EVERY):
+            batch = todo[start : start + SAVE_EVERY]
+            crops = [_line_crop(doc, page, k) for page, k in batch]
+            texts = pool.map(lambda png: read_line(png, model, ollama_url), crops)
+            for (page, k), text in zip(batch, texts, strict=True):
+                done[key(page, k)] = text
+            save()
     return {ref: done[key(p, k)] for ref, (p, k) in wanted.items()}
+
+
+def tesseract_readings(
+    pdf: Path, pages: list[PageText], checked: set[SourceRef], lang: str, cache: Path
+) -> dict[SourceRef, str]:
+    """Tesseract's reading of each checked line: its words whose centres fall in the line."""
+    words = tesseract_words(pdf, [p.number for p in pages], lang, cache)
+    out = {}
+    for page in pages:
+        for k, line_words in enumerate(_by_line(page, words[page.number])):
+            ref = SourceRef(page.number, k)
+            if ref in checked and len(page.lines[k].text) >= MIN_LINE_CHARS:
+                out[ref] = " ".join(w[0] for w in line_words)
+    return out
+
+
+def tesseract_words(
+    pdf: Path, numbers: list[int], lang: str, cache: Path
+) -> dict[int, list[tuple[str, float, float, float, float]]]:
+    """Tesseract's words with their boxes in points, per page, cached."""
+    done: dict[int, list] = {}
+    if cache.exists():
+        raw = json.loads(cache.read_text())
+        if raw.get("version") == TESSERACT_VERSION and raw.get("lang") == lang:
+            done = {int(n): [tuple(w) for w in ws] for n, ws in raw["pages"].items()}
+    todo = [n for n in numbers if n not in done]
+    if todo:
+        # Pages are rendered on this thread (PyMuPDF isn't thread-safe); tesseract runs pooled.
+        with pymupdf.open(pdf) as doc, ThreadPoolExecutor(TESSERACT_WORKERS) as pool:
+            for start in range(0, len(todo), TESSERACT_WORKERS):
+                batch = todo[start : start + TESSERACT_WORKERS]
+                images = [doc[n - 1].get_pixmap(dpi=DPI).tobytes("png") for n in batch]
+                read = pool.map(lambda png: _tesseract_page(png, lang), images)
+                for n, page_words in zip(batch, read, strict=True):
+                    done[n] = page_words
+        blob = {"version": TESSERACT_VERSION, "lang": lang, "pages": done}
+        write_atomic(cache, json.dumps(blob, ensure_ascii=False))
+    return {n: done[n] for n in numbers}
+
+
+def _tesseract_page(png: bytes, lang: str) -> list[tuple[str, float, float, float, float]]:
+    out = ocr.tesseract(png, lang, config="tsv")
+    scale = 72 / DPI
+    words = []
+    for row in csv.DictReader(io.StringIO(out), delimiter="\t", quoting=csv.QUOTE_NONE):
+        text = (row.get("text") or "").strip()
+        if row["level"] == "5" and text:
+            x, y, w, h = (int(row[k]) * scale for k in ("left", "top", "width", "height"))
+            words.append((text, x, y, x + w, y + h))
+    return words
+
+
+def _by_line(page: PageText, words) -> list[list[tuple[str, float, float, float, float]]]:
+    """Words per line: the line band (widened a little) that holds the word's centre."""
+    out = [[] for _ in page.lines]
+    for w in words:
+        cx, cy = (w[1] + w[3]) / 2, (w[2] + w[4]) / 2
+        for k, ln in enumerate(page.lines):
+            if ln.x0 - 3 <= cx <= ln.x1 + 3 and ln.y0 - 2 <= cy <= ln.y1 + 2:
+                out[k].append(w)
+                break
+    return [sorted(ws, key=lambda w: w[1]) for ws in out]
+
+
+def _line_crop(doc: pymupdf.Document, page: PageText, k: int) -> bytes:
+    line = page.lines[k]
+    clip = pymupdf.Rect(line.x0, line.y0, line.x1, line.y1) + (
+        -LINE_PAD,
+        -LINE_PAD,
+        LINE_PAD,
+        LINE_PAD,
+    )
+    return doc[page.number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
 
 
 def read_line(png: bytes, model: str, ollama_url: str) -> str:
@@ -226,13 +300,13 @@ def _inside(w, line) -> bool:
 def check(
     pdf: Path,
     pages: list[PageText],
-    readings: dict[SourceRef, str],
+    readings: list[dict[SourceRef, str]],
     lang: str,
     vision: OllayaClient,
     reader: OllayaClient,
     cache: DecisionCache,
 ) -> list[Suspect]:
-    """Suspects on the lines with a second reading, each with what to do about it."""
+    """Suspects where any other reading differs from the text layer, each with a decision."""
     suspects = []
     with pymupdf.open(pdf) as doc:
         for page in pages:
@@ -240,76 +314,117 @@ def check(
             page_words = pdf_page.get_text("words")
             for k, line in enumerate(page.lines):
                 ours = line.text
-                theirs = readings.get(SourceRef(page.number, k), "")
-                if not theirs:
-                    continue
-                for a0, a1, b0, b1 in differences(ours, theirs):
+                others = [r.get(SourceRef(page.number, k), "") for r in readings]
+                for a0, a1, alternatives in merged_differences(ours, [o for o in others if o]):
                     box = _box(page_words, line, ours, a0, a1)
-                    choice = _decide(
-                        pdf_page,
-                        page.number,
-                        k,
-                        ours,
-                        a0,
-                        a1,
-                        theirs[b0:b1],
-                        box,
-                        lang,
-                        vision,
-                        reader,
-                        cache,
-                    )
+                    choice, chosen, votes = _decide(
+                        pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
+                        vision, reader, cache,
+                    )  # fmt: skip
                     suspects.append(
                         Suspect(
-                            page.number, k, ours, a0, a1, ours[a0:a1], theirs[b0:b1], box, choice
-                        )
+                            page.number,
+                            k,
+                            ours,
+                            a0,
+                            a1,
+                            ours[a0:a1],
+                            tuple(alternatives),
+                            box,
+                            choice,
+                            chosen,
+                            votes,
+                        )  # fmt: skip
                     )
     return suspects
 
 
+def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, list[str]]]:
+    """Spans of `ours` where any other reading differs, with each distinct other version.
+
+    Overlapping differences from different readings become one span; a reading
+    that agrees with `ours` there has no version of its own.
+    """
+    found = [
+        (a0, a1, b0, b1, r)
+        for r, other in enumerate(others)
+        for a0, a1, b0, b1 in differences(ours, other)
+    ]
+    groups: list[list] = []
+    for d in sorted(found):
+        if groups and d[0] <= max(g[1] for g in groups[-1]):
+            groups[-1].append(d)
+        else:
+            groups.append([d])
+    out = []
+    for group in groups:
+        g0, g1 = min(d[0] for d in group), max(d[1] for d in group)
+        versions = []
+        for r, other in enumerate(others):
+            mine = sorted((d for d in group if d[4] == r), key=lambda d: -d[0])
+            if not mine:
+                continue
+            piece = ours[g0:g1]
+            for a0, a1, b0, b1, _ in mine:
+                piece = piece[: a0 - g0] + other[b0:b1] + piece[a1 - g0 :]
+            if piece != ours[g0:g1] and piece not in versions:
+                versions.append(piece)
+        if versions:
+            out.append((g0, g1, versions))
+    return out
+
+
 def _decide(
-    pdf_page, number, k, ours, a0, a1, theirs_part, box, lang, vision, reader, cache
-) -> str:
-    ours_part = ours[a0:a1]
-    swapped = ours[:a0] + theirs_part + ours[a1:]
+    pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache
+) -> tuple[str, str | None, dict[str, str]]:
+    """\"ours\", \"other\" with the chosen version, or \"review\"; and each model's pick.
+
+    A pick is applied only when both models make it and the vision model is at
+    least somewhat sure; any disagreement goes to a human.
+    """
+    versions = [ours[a0:a1], *others]
+    letters = "abcdefg"[: len(versions)]
     seen = _ask(
         vision,
         cache,
         {
             "page": number,
             "line": k,
-            "readings": [ours_part, theirs_part],
+            "readings": versions,
             "box": [round(v, 1) for v in box],
         },
         {
             "reading": ollaya.choice(
                 "The image is cut from a scanned printed book. Which text does it show, "
                 "letter for letter, including quote marks, dashes and punctuation?",
-                {
-                    "a": f"exactly “{ours_part}”",
-                    "b": f"exactly “{theirs_part}”",
-                    "neither": "something else",
-                },
+                {**{c: f"exactly “{v}”" for c, v in zip(letters, versions, strict=True)},
+                 "neither": "something else"},
             )
         },
         image=lambda: _crop(pdf_page, box),
-    )
+    )  # fmt: skip
     language = LANGUAGE_NAMES.get(lang, "")
+    lines = [ours[:a0] + v + ours[a1:] for v in versions]
+    intro = "Two OCR readings" if len(lines) == 2 else "Several OCR readings"
     read = _ask(
         reader,
         cache,
-        {"a": ours, "b": swapped},
+        dict(zip(letters, lines, strict=True)),
         {
             "reading": ollaya.choice(
-                f"Two OCR readings of the same line of a printed {language} book differ. "
+                f"{intro} of the same line of a printed {language} book differ. "
                 "Which is the correct transcription, as printed?",
-                {"a": f"“{ours}”", "b": f"“{swapped}”"},
+                {c: f"“{line}”" for c, line in zip(letters, lines, strict=True)},
             )
         },
     )
+    pick = lambda value: versions[letters.index(value)] if value in letters else ""  # noqa: E731
+    votes = {vision.model: pick(seen["value"]), reader.model: pick(read["value"])}
     if seen["value"] == read["value"] and seen["confidence"] >= SURE:
-        return {"a": "ours", "b": "theirs"}[seen["value"]]
-    return "review"
+        if seen["value"] == "a":
+            return "ours", None, votes
+        return "other", versions[letters.index(seen["value"])], votes
+    return "review", None, votes
 
 
 def _ask(client: OllayaClient, cache: DecisionCache, state: dict, questions: dict, image=None):
@@ -333,7 +448,7 @@ def apply(pages: list[PageText], suspects: list[Suspect]) -> list[PageText]:
     """Copies of the pages with the chosen fixes, on lines still reading as the text layer did."""
     fixes: dict[tuple[int, str], list[Suspect]] = {}
     for s in suspects:
-        if s.choice == "theirs":
+        if s.choice == "other":
             fixes.setdefault((s.page, s.original), []).append(s)
     out = []
     for page in pages:
@@ -342,20 +457,33 @@ def apply(pages: list[PageText], suspects: list[Suspect]) -> list[PageText]:
             text = line.text
             # Right to left, so each fix leaves the spans before it in place.
             for s in sorted(fixes.get((page.number, text), []), key=lambda s: -s.start):
-                text = text[: s.start] + s.theirs + text[s.end :]
+                text = text[: s.start] + s.chosen + text[s.end :]
             lines.append(replace(line, text=text) if text != line.text else line)
         out.append(replace(page, lines=lines))
     return out
 
 
-def doubts(suspects: list[Suspect]) -> dict[tuple[int, str], list[str]]:
-    """Per (page, line text), the other readings of a line a human should choose between."""
-    out: dict[tuple[int, str], list[str]] = {}
+def doubts(suspects: list[Suspect]) -> dict[tuple[int, str], list[tuple[str, list[str]]]]:
+    """Per (page, line text), the readings of a line a human should choose between.
+
+    Each reading is the whole line, the text layer's first, with the models that
+    picked it.
+    """
+    out: dict[tuple[int, str], list[tuple[str, list[str]]]] = {}
     for s in suspects:
-        if s.choice == "review":
-            out.setdefault((s.page, s.original), []).append(s.alternative)
+        if s.choice != "review":
+            continue
+        readings = out.setdefault((s.page, s.original), [(s.original, [])])
+        for version in (s.ours, *s.others):
+            line = s.original[: s.start] + version + s.original[s.end :]
+            voters = [model for model, picked in s.votes.items() if picked == version]
+            known = next((r for r in readings if r[0] == line), None)
+            if known is None:
+                readings.append((line, voters))
+            else:
+                known[1].extend(v for v in voters if v not in known[1])
     return out
 
 
 def save(suspects: list[Suspect], path: Path) -> None:
-    path.write_text(json.dumps([asdict(s) for s in suspects], ensure_ascii=False, indent=1))
+    write_atomic(path, json.dumps([asdict(s) for s in suspects], ensure_ascii=False, indent=1))

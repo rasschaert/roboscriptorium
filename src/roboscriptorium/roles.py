@@ -301,7 +301,10 @@ class DecisionCache:
         self._entries: dict[str, dict] = {}
         if path.exists():
             for line in path.read_text().splitlines():
-                entry = json.loads(line)
+                try:
+                    entry = json.loads(line)
+                except json.JSONDecodeError:
+                    continue  # cut off by an interrupted run
                 self._entries[entry["key"]] = entry["answer"]
 
     @staticmethod

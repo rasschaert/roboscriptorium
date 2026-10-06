@@ -30,6 +30,39 @@ starting; keep it true.
   are cheap. Cache slow stages per book so reruns stay cheap, and run long
   builds in the background.
 
+## Engineering practices
+
+This project's bugs so far came from a handful of habits. Each rule below names
+the mistake it prevents; check a change against them before committing.
+
+- **A stage returns new data; it never edits its input.** Answers once rewrote
+  the text layer in place, and the review, which keyed on that text, then lost
+  them. If a function must change pages, it returns changed copies.
+- **Say which version of the data a consumer gets.** Raw text layer or
+  corrected copy, model roles or answered roles: name it in the type, field or
+  docstring. A key, cache entry or line reference must come from the version it
+  identifies.
+- **Positions aren't identities.** A line index means nothing once lines are
+  inserted or removed. Carry the original identity (`Line.source`) through any
+  stage that changes the list.
+- **Before finishing, find every reader of what you changed.** Grep the
+  consumers of a function, field or file, and check each one still gets what it
+  expects. The bugs live in the seams.
+- **Test the seams.** A new stage or a change in what flows between stages gets
+  a test through `pipeline.run` (see `tests/test_pipeline.py`), not only unit
+  tests of its parts.
+- **A rule that changes the author's text needs its counterexamples tested.**
+  `close_quotes` turned "the animals' language" into a closing quote. Write the
+  cases where the rule must *not* fire before the ones where it must; when the
+  two can't be told apart, flag for review instead of rewriting.
+- **Measure on every golden book, not the one you're fixing.** A line-grouping
+  change that helped Dolittle doubled Sense's CER.
+- **Shared resources are shared deliberately.** PyMuPDF isn't thread-safe: hold
+  `pdf.PDF_LOCK` wherever threads may meet, render on one thread and pool only
+  the model calls.
+- **Caches survive interruption.** Write them whole (`files.write_atomic`), skip
+  a cut-off last line in append-only logs, and version their format.
+
 ## Purpose and scope
 
 An end-to-end tool that turns books that aren't EPUBs into clean EPUB 3 files,
@@ -111,7 +144,9 @@ right, then expand.
     cached in `stages/second-reading.json`. Where a line's readings differ, clef picks from
     the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence; both agreeing
     with clef ≥ 0.3 applies the fix to a copy of the pages before reflow,
-    anything else becomes an `ocr-doubt` review region. Suspects are saved to
+    anything else becomes an `ocr-doubt` review region.
+    The judge is `judge_model` (clef:27b, `ROBO_JUDGE_MODEL`), not the role
+    model. Suspects are saved to
     `stages/ocr-check.json`; `eval --no-check-ocr` skips the stage.
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
     text layer lacks, or reads as scraps because it is printed sideways).
@@ -288,8 +323,12 @@ uv run ruff format . && uv run ruff check . && uv run pytest
 **Reviewing a book.** `uv run roboscriptorium review work/<book>` builds the
 book, flags the regions that aren't plain running text and serves them on
 http://127.0.0.1:8765/ next to scan crops. Keys: `1` running text, `2` heading,
-`3` drop (page furniture, noise), `4` a decorated initial (type the letter it shows; tesseract guesses), `5` image, `6` a caption (kept out of the running text, for its picture); edit the text box first to give the
-text as printed; arrows move. A region with a box can be turned (`r`, or the
+`3` drop (page furniture, noise), `4` image, `5` a caption (kept out of the
+running text, for its picture); edit the text box first to give the text as
+printed. A drawing that is a decorated initial is answered on its own line:
+its letter (guessed from the word it begins) and `↵`. Arrows move through all
+regions; an answered one shows the answer in green, and saving moves on to
+the next unanswered one. A region with a box can be turned (`r`, or the
 ↺/↻ buttons) and read again by tesseract (`o`); the turn is saved with the answer.
 `-` and `+` zoom the crop out (up to about the whole page) and back in.
 A region where two OCR readings differ shows them as buttons (`a` the text

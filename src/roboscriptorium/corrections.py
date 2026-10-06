@@ -9,6 +9,9 @@ Answers live in `work/<book>/review/regions.jsonl`; the latest per region wins.
 They are keyed on the region's page and text layer, so an answer stops applying
 when the text layer under it changes. Text given for a region the text layer has
 no lines for is inserted as a new line where the region sits.
+
+Answers apply to a copy of the pages: the text layer itself stays as it was, for
+the review and its keys, and each copied line keeps its text-layer index.
 """
 
 import functools
@@ -133,8 +136,17 @@ def _insert(
     roles[SourceRef(page.number, index)] = role
 
 
-def apply(pages: list[PageText], roles: dict[SourceRef, LineRole], corrections: Corrections) -> int:
-    """Override roles (and text) where a human answered; returns how many applied."""
+def apply(
+    pages: list[PageText], roles: dict[SourceRef, LineRole], corrections: Corrections
+) -> tuple[list[PageText], dict[SourceRef, LineRole], int]:
+    """Copies of the pages and roles with the answers applied, and how many applied.
+
+    The copies' roles are keyed on line positions in the copied pages.
+    """
+    pages = [
+        replace(p, lines=[replace(ln, source=i) for i, ln in enumerate(p.lines)]) for p in pages
+    ]
+    roles = dict(roles)
     by_number = {p.number: p for p in pages}
     applied = 0
     insertions = []
@@ -171,11 +183,12 @@ def apply(pages: list[PageText], roles: dict[SourceRef, LineRole], corrections: 
         # A blank line in the human's text separates paragraphs.
         paragraphs = [_join_lines(p) for p in re.split(r"\n\s*\n", c.text) if p.strip()]
         for k, text in reversed(list(enumerate(paragraphs))):
+            source = min(c.first, len(page.lines) - 1) if page.lines else None
             _insert(
                 page,
                 c.first,
-                Line(text, *c.box, starts_paragraph=k > 0 or None),
+                Line(text, *c.box, starts_paragraph=k > 0 or None, source=source),
                 _ROLE[c.action],
                 roles,
             )
-    return applied
+    return pages, roles, applied

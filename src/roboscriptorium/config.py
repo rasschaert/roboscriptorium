@@ -12,6 +12,9 @@ class Settings:
     role_model: str = "clef-flash:9b"
     # Text-only second opinion on OCR suspects, beside the role model's look at the crop.
     check_model: str = "winnow:e4b"
+    # Judges the OCR check's suspects from the crop; better than role_model at that,
+    # worse at line roles.
+    judge_model: str = "clef:27b"
     # OCR model on Ollama for the OCR check's second reading of each line.
     ocr_model: str = "glm-ocr:bf16"
 
@@ -25,4 +28,5 @@ class Settings:
             role_model=os.environ.get("ROBO_ROLE_MODEL", defaults.role_model),
             check_model=os.environ.get("ROBO_CHECK_MODEL", defaults.check_model),
             ocr_model=os.environ.get("ROBO_OCR_MODEL", defaults.ocr_model),
+            judge_model=os.environ.get("ROBO_JUDGE_MODEL", defaults.judge_model),
         )

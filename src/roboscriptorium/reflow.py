@@ -136,8 +136,9 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
         lines = page.lines if roles is not None else page.lines[: footer_start(page)]
         kept = []
         for index, line in enumerate(lines):
-            ref = SourceRef(page.number, index)
-            role = _role(roles, ref)
+            role = _role(roles, SourceRef(page.number, index))
+            # The IR points at the text layer's line, also on a corrected copy.
+            ref = SourceRef(page.number, index if line.source is None else line.source)
             if role == "body":
                 kept.append((ref, line))
                 continue
@@ -175,8 +176,10 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
 def close_quotes(text: str) -> str:
     """Mend a closing double quote that an old OCR layer read as a single one.
 
-    Only in straight-quoted text: a `'` that ends a word while a `"` is open and
-    no `'` is, closes the `"` ("asleep in his chair'" → "asleep in his chair\"").
+    Only in straight-quoted text: a `'` while a `"` is open and no `'` is closes
+    the `"`, when it follows punctuation ("before.' said he") or ends the
+    paragraph ("asleep in his chair'"). After a letter and before more text it may
+    be a plural possessive ("the animals' language"), so it stays.
     """
     if any(q in text for q in "“”‘’"):
         return text
@@ -192,7 +195,7 @@ def close_quotes(text: str) -> str:
         elif not before.isspace() and (after.isspace() or after in ".,;:!?—-"):
             if single:
                 single = False
-            elif double:
+            elif double and (before in ".,;:!?—-" or i == len(chars) - 1):
                 chars[i], double = '"', False
         elif before.isspace() or before in '"(':
             single = True

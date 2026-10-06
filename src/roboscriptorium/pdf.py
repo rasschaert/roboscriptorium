@@ -2,6 +2,7 @@
 
 import json
 import subprocess
+import threading
 from collections import Counter, defaultdict
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
@@ -9,11 +10,15 @@ from pathlib import Path
 import pymupdf
 
 from roboscriptorium import ocr
+from roboscriptorium.files import write_atomic
 
 # A fragment belongs to a visual line when it overlaps the line's vertical span by
 # at least this share of its own height. OCR layers box each word separately, and
 # the tops of one line's words differ by several points with ascenders and skew.
 SAME_LINE_OVERLAP = 0.5
+# PyMuPDF isn't thread-safe. A program that uses it from several threads (the
+# review server) holds this lock around every use.
+PDF_LOCK = threading.Lock()
 # Bumped whenever line extraction changes, so cached text layers are rebuilt.
 TEXT_LAYER_VERSION = 4
 # Ligatures a font may put in the Unicode private-use area, where the text layer
@@ -34,6 +39,9 @@ class Line:
     starts_paragraph: bool | None = None
     # The line begins with a decorated initial letter (a drop cap) a human supplied.
     initial: bool = False
+    # On a corrected copy of a page: the line's index in the text layer. A line a
+    # human typed in has the index of the line it was inserted before.
+    source: int | None = None
 
 
 @dataclass(frozen=True)
@@ -139,7 +147,7 @@ def cached_text_layer(pdf: Path, cache: Path) -> list[PageText]:
             ]
     pages = read_text_layer(pdf)
     blob = {"version": TEXT_LAYER_VERSION, "pages": [asdict(p) for p in pages]}
-    cache.write_text(json.dumps(blob, ensure_ascii=False, indent=1))
+    write_atomic(cache, json.dumps(blob, ensure_ascii=False, indent=1))
     return pages
 
 
