@@ -47,6 +47,9 @@ textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
 button { font: inherit; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
 button:hover { border-color: var(--accent); }
 button.current { background: var(--accent-bg); border-color: var(--accent); }
+.initial-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 12px 0 4px; font-size: 16px; }
+.initial-row input { font: 24px Georgia, serif; width: 2.2em; text-align: center; padding: 2px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+button.answered { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
 button:disabled { opacity: .5; cursor: progress; }
 kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; margin-right: 6px; color: var(--muted); }
 .answer { margin-top: 12px; padding: 8px 10px; border-radius: 6px; background: var(--ok-bg); color: var(--ok); }
@@ -60,7 +63,6 @@ a { color: var(--accent); }
   <h1>Regions to check</h1>
   <div class="progress"><div id="bar"></div></div>
   <span class="counts" id="counts"></span>
-  <label class="toggle"><input type="checkbox" id="showDone"> show answered</label>
   <button id="rebuild" title="Rebuild the EPUB with your answers">Rebuild book</button>
 </header>
 <main id="main"></main>
@@ -68,24 +70,35 @@ a { color: var(--accent); }
 let state = null, queue = [], pos = 0, out = 0;
 const main = document.getElementById("main");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-const KEYS = {"1": "text", "2": "heading", "3": "drop", "4": "initial", "5": "image", "6": "caption"};
+const KEYS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "caption"};
 const CURRENT = {text: "text", heading: "heading", dropped: "drop", missing: "drop"};
 const NOW = {text: "kept as running text", heading: "made a heading", dropped: "left out of the book",
   missing: "has nothing here"};
 
 async function load() {
   state = await (await fetch("/api/state")).json();
-  rebuild();
+  queue = state.items;
+  pos = Math.max(0, queue.findIndex(r => !r.answer));
+  render();
 }
 
+// After a rebuild the regions are new objects; stay on the same region where it still exists.
 function rebuild(keepKey) {
-  const done = document.getElementById("showDone").checked;
-  queue = state.items.filter(r => done || !r.answer);
+  queue = state.items;
   const i = keepKey ? queue.findIndex(r => r.key === keepKey) : -1;
   pos = i >= 0 ? i : Math.min(pos, Math.max(0, queue.length - 1));
   out = 0;
   render();
 }
+
+function nextUnanswered(from) {
+  const i = queue.findIndex((r, k) => k > from && !r.answer);
+  return i >= 0 ? i : Math.min(from + 1, queue.length - 1);
+}
+
+const picture = r => r.box && r.reasons.some(x => x.startsWith("a picture"));
+// The text box, which a picture region doesn't have.
+const textBox = () => document.getElementById("text");
 
 function counts() {
   const answered = state.items.filter(r => r.answer).length;
@@ -97,18 +110,22 @@ function counts() {
 function render() {
   counts();
   if (!queue.length) {
-    main.innerHTML = `<div class="card">Nothing left to look at. Tick “show answered” to revisit, or rebuild the book to apply your answers.</div>`;
+    main.innerHTML = `<div class="card">Nothing flagged in this book.</div>`;
     return;
   }
   const r = queue[pos];
   const a = r.answer;
   const text = a && a.text != null ? a.text : (r.draft || r.text || "");
-  const buttons = Object.entries(KEYS).map(([k, action]) =>
-    `<button data-action="${action}" class="${CURRENT[r.treatment] === action ? "current" : ""}"><kbd>${k}</kbd>${esc(state.actions[action])}</button>`).join("");
+  const drawing = picture(r);
+  // A decorated initial is answered with its letter, on its own line, and only for drawings.
+  const buttons = Object.entries(KEYS).map(([k, action]) => {
+    const cls = a && a.action === action ? "answered" : !a && CURRENT[r.treatment] === action ? "current" : "";
+    return `<button data-action="${action}" class="${cls}"><kbd>${k}</kbd>${esc(state.actions[action])}</button>`;
+  }).join("");
   main.innerHTML = `
   <div class="card">
     <div class="meta">
-      <span>${pos + 1} of ${queue.length} in this view</span>
+      <span>${pos + 1} of ${queue.length}${a ? " · answered" : ""}</span>
       <span>page ${r.page}${r.last >= r.first ? `, line ${r.first + 1}${r.last > r.first ? "–" + (r.last + 1) : ""}` : ""} · <a href="/page?page=${r.page}" target="_blank">full page</a></span>
     </div>
     <img class="crop" id="crop" src="${cropUrl(r)}" alt="Scan crop">
@@ -122,19 +139,27 @@ function render() {
       <button id="reread" title="Read the area again as it is turned now"><kbd>o</kbd>Read again</button>` : ""}
     </div>
     <div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>
-    <div class="now">The pipeline <b>${NOW[r.treatment]}</b>. ${r.text ? "Its reading of the highlighted lines (edit if the scan says otherwise):" : r.draft ? "Tesseract's draft of the highlighted area; correct it, then save as text:" : "Type the text here if it belongs in the book:"}</div>
+    ${drawing ? `<div class="initial-row ${a && a.action === "initial" ? "answered" : ""}">
+      <label for="letter">A decorated initial, showing the letter</label>
+      <input id="letter" size="2" maxlength="3" value="${a && a.action === "initial" ? esc(a.text || "") : ""}">
+      <button data-action="initial" class="${a && a.action === "initial" ? "answered" : ""}">Save as initial <kbd>↵</kbd></button>
+    </div>
+    <div class="now">Or, if it isn't an initial:</div>`
+    : `<div class="now">The pipeline <b>${NOW[r.treatment]}</b>. ${r.text ? "Its reading of the highlighted lines (edit if the scan says otherwise):" : r.draft ? "Tesseract's draft of the highlighted area; correct it, then save as text:" : "Type the text here if it belongs in the book:"}</div>
     ${r.before ? `<div class="context">${esc(r.before)}</div>` : ""}
     <textarea id="text" rows="${Math.min(16, text.split("\n").length + 1)}">${esc(text)}</textarea>
     ${r.readings && r.readings.length ? `<div class="readings">Readings:
       <button data-reading="-1"><kbd>a</kbd>${esc(r.text)}</button>
       ${r.readings.map((t, k) => `<button data-reading="${k}"><kbd>${"bcdfghj"[k] || ""}</kbd>${esc(t)}</button>`).join("")}
       <span class="hint">puts that reading in the box; then save with the button for what it is.</span></div>` : ""}
-    ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}
+    ${r.after ? `<div class="context">${esc(r.after)}</div>` : ""}`}
     <div class="actions">${buttons}</div>
-    ${r.box && r.reasons.some(x => x.startsWith("a picture")) ? `<div class="hint">For a decorated initial, the letter it shows: <input id="letter" size="2" maxlength="3" value="${a && a.action === "initial" ? esc(a.text || "") : ""}" style="font: 20px Georgia, serif; width: 3em; text-align: center"> then <kbd>4</kbd>.</div>` : ""}
-    ${a ? `<div class="answer">Answered: ${esc(state.actions[a.action])}${a.text != null ? " · with your wording" : ""}</div>` : ""}
-    <div class="hint">The highlighted button is what the pipeline did now. In the text box, <kbd>⌘↵</kbd> saves as running text, <kbd>Esc</kbd> leaves the box.</div>
-    <div class="nav"><span><kbd>←</kbd>previous</span><span><kbd>→</kbd>next</span></div>
+    ${a ? `<div class="answer">Your answer: ${esc(state.actions[a.action])}${a.action === "initial" ? ` “${esc(a.text || "")}”` : a.text != null ? " · with your wording" : ""}. Answer again to change it.</div>` : ""}
+    <div class="hint">${a ? "Green: your answer." : "Blue: what the pipeline did now."}${drawing ? "" : " In the text box, <kbd>⌘↵</kbd> saves as running text, <kbd>Esc</kbd> leaves the box."}</div>
+    <div class="nav">
+      <span>${pos > 0 ? "<kbd>←</kbd>previous" : "first region"}</span>
+      <span>${pos < queue.length - 1 ? "<kbd>→</kbd>next" : "last region"}</span>
+    </div>
   </div>`;
   main.querySelectorAll("button[data-action]").forEach(b => b.onclick = () => decide(b.dataset.action));
   main.querySelectorAll("button[data-reading]").forEach(b => b.onclick = () => useReading(+b.dataset.reading));
@@ -154,8 +179,8 @@ function render() {
 
 function useReading(k) {
   const r = queue[pos];
-  if (!r.readings || k >= r.readings.length) return;
-  document.getElementById("text").value = k < 0 ? r.text : r.readings[k];
+  if (!r.readings || k >= r.readings.length || !textBox()) return;
+  textBox().value = k < 0 ? r.text : r.readings[k];
 }
 
 function cropUrl(r) {
@@ -168,19 +193,19 @@ const MAX_OUT = 4;
 function zoom(by) {
   const next = Math.max(0, Math.min(MAX_OUT, out + by));
   if (next === out) return;
-  const text = document.getElementById("text").value;
+  const text = textBox() && textBox().value;
   out = next;
   render();
-  document.getElementById("text").value = text;
+  if (textBox()) textBox().value = text;
 }
 
 function turn(by) {
   const r = queue[pos];
   if (!r.box) return;
-  const text = document.getElementById("text").value;
+  const text = textBox() && textBox().value;
   r.turn = ((r.turn || 0) + by + 360) % 360;
   render();
-  document.getElementById("text").value = text;
+  if (textBox()) textBox().value = text;
 }
 
 async function reread() {
@@ -193,7 +218,7 @@ async function reread() {
     if (!resp.ok) throw new Error(await resp.text());
     const text = (await resp.json()).text;
     r.draft = text;
-    if (queue[pos] === r) document.getElementById("text").value = text;
+    if (queue[pos] === r && textBox()) textBox().value = text;
   } catch (e) { alert(e); }
   b.disabled = false; b.innerHTML = "<kbd>o</kbd>Read again";
 }
@@ -201,15 +226,15 @@ async function reread() {
 async function decide(action) {
   const r = queue[pos];
   const letter = document.getElementById("letter");
-  const text = action === "initial" ? (letter ? letter.value : "") : document.getElementById("text").value;
+  const text = action === "initial" ? (letter ? letter.value : "") : textBox() ? textBox().value : "";
   if (action === "initial" && !text.trim()) { alert("Type the letter the initial shows first."); return; }
   const body = {key: r.key, action, text, turn: r.turn || 0};
   const resp = await fetch("/api/verdict", {method: "POST", body: JSON.stringify(body)});
   if (!resp.ok) { alert(await resp.text()); return; }
   r.answer = await resp.json();
-  const showDone = document.getElementById("showDone").checked;
-  if (showDone) pos = Math.min(pos + 1, queue.length - 1);
-  rebuild(showDone ? queue[pos].key : null);
+  pos = nextUnanswered(pos);
+  out = 0;
+  render();
 }
 
 document.getElementById("rebuild").onclick = async () => {
@@ -236,7 +261,8 @@ document.addEventListener("keydown", e => {
     return;
   }
   if (KEYS[e.key]) decide(KEYS[e.key]);
-  else if (e.key === "e") { e.preventDefault(); document.getElementById("text").focus(); }
+  else if (e.key === "Enter" && document.getElementById("letter")) { e.preventDefault(); decide("initial"); }
+  else if (e.key === "e" && textBox()) { e.preventDefault(); textBox().focus(); }
   else if (e.key === "a") useReading(-1);
   else if ("bcdfghj".includes(e.key) && e.key.length === 1) useReading("bcdfghj".indexOf(e.key));
   else if (e.key === "r") turn(90);
@@ -246,7 +272,6 @@ document.addEventListener("keydown", e => {
   else if (e.key === "ArrowRight") { pos = Math.min(pos + 1, queue.length - 1); out = 0; render(); }
   else if (e.key === "ArrowLeft") { pos = Math.max(pos - 1, 0); out = 0; render(); }
 });
-document.getElementById("showDone").onchange = () => rebuild();
 load();
 </script>
 </body>

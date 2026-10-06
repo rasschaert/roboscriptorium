@@ -21,8 +21,8 @@ for regions of any book.
   doubtful drops and keeps, garbled, centred and set-apart lines, and, from
   the DocLayout-YOLO layout model, pictures, captions, titles and text the text
   layer lacks (drafted by tesseract). Keys `1` text, `2` heading, `3` drop,
-  `4` decorated initial (letter guessed from the word it begins), `5` image, `6` caption, `e`
-  edit. Answers go to `work/<book>/review/regions.jsonl` and apply on rebuild.
+  `4` image, `5` caption, `↵` decorated initial (letter guessed from the word it
+  begins), `e` edit. Answers go to `work/<book>/review/regions.jsonl` and apply on rebuild.
   The user started on Dolittle (a few answers so far).
 - **Golden disagreement review** moved to `roboscriptorium golden review`. The
   54 Crime disagreements still have no verdicts.

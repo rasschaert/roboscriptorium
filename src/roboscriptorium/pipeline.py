@@ -67,17 +67,21 @@ def run(
             reader = ollaya.for_model(
                 settings.check_model, settings.ollaya_url, settings.ollama_url
             )
-            readings = ocrcheck.line_readings(
-                book.source,
-                body,
-                kept,
-                settings.ocr_model,
-                settings.ollama_url,
-                book.stages / "second-reading.json",
-            )
-            suspects = ocrcheck.check(
-                book.source, body, readings, ocr.language(book.language), client, reader, cache
-            )
+            lang = ocr.language(book.language)
+            readings = [
+                ocrcheck.line_readings(
+                    book.source,
+                    body,
+                    kept,
+                    settings.ocr_model,
+                    settings.ollama_url,
+                    book.stages / "second-reading.json",
+                ),
+                ocrcheck.tesseract_readings(
+                    book.source, body, kept, lang, book.stages / "tesseract.json"
+                ),
+            ]
+            suspects = ocrcheck.check(book.source, body, readings, lang, client, reader, cache)
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
         corrected, roles, applied = corrections.apply(
             body, model_roles, Corrections(book.corrections_path)
