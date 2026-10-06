@@ -39,6 +39,14 @@ class Gutenberg:
 
 
 @dataclass(frozen=True)
+class PublisherEpub:
+    source: str  # edition and ISBN, for humans
+    sha256: str
+    files: tuple[str, ...]  # content files to read, in order
+    heading_prefixes: tuple[str, ...]  # classes of paragraphs that are headings
+
+
+@dataclass(frozen=True)
 class StandardEbooks:
     repo: str
     commit: str
@@ -50,7 +58,7 @@ class Golden:
     title: str
     author: str
     language: str
-    reference: Gutenberg
+    reference: Gutenberg | PublisherEpub
     standard_ebooks: StandardEbooks | None
     scans: list[Scan]
     eu_copyright_until: int | None = None  # last year of EU copyright, if any
@@ -98,13 +106,23 @@ class Golden:
             for s in data["scans"]
         ]
         ref = data["reference"]
+        reference = (
+            Gutenberg(ref["gutenberg"], ref["url"], tuple(ref["chapters"]))
+            if "gutenberg" in ref
+            else PublisherEpub(
+                ref["source"],
+                ref["sha256"],
+                tuple(ref["files"]),
+                tuple(ref.get("heading_prefixes", ())),
+            )
+        )
         se = data.get("standard_ebooks")
         return cls(
             name,
             data["title"],
             data["author"],
             data["language"],
-            Gutenberg(ref["gutenberg"], ref["url"], tuple(ref["chapters"])),
+            reference,
             StandardEbooks(se["repo"], se["commit"]) if se else None,
             scans,
             data.get("eu_copyright_until"),

@@ -82,6 +82,7 @@ right, then expand.
   - `experiments/`: throwaway probes for comparing models (line roles, page types).
   - `golden/`: golden books. `manifest.py` (scans, fetch with sha256 check),
     `gutenberg.py` (derives the reference text from a Project Gutenberg EPUB),
+    `epub.py` (from a publisher's EPUB: headings by tag or class prefix),
     `se.py` (derives Standard Ebooks' text, kept for later style work),
     `reference.py` (reads the reference chapters).
   - `evaluate.py`: CER, WER and paragraph F1 against a golden reference.
@@ -297,6 +298,8 @@ disagreements by mistake category.
 | Golden book | Scan | Notes |
 | --- | --- | --- |
 | the-nature-of-a-crime | `doubleday-1924` | **The scan Gutenberg #75172 was made from**; 94 body pages, short; Times OCR layer; running heads |
+| boze-tongen | `prometheus-2002` | Dutch (Flemish), 2002, Lanoye. Reference: part three of the 2013 omnibus EPUB (no separate ebook exists), which may carry revisions. Dialogue set as a play script in places, dialect, a drawn part title. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| de-aanslag | `calibre-pdf` | Dutch, Mulisch, 51st printing. **Not a scan**: calibre's PDF of the retail EPUB, so its text layer is exact. For born-digital PDFs, page joins and (later) italics. **Copyrighted**, all text in `work/golden/` |
 | lady-into-fox | `chatto-1922` | **Held out: score it to check that changes carry over, never tune on it.** 1922 first edition, same as Gutenberg #10337; one continuous text, no chapters; wood engravings. **EU copyright until 2051**: only the manifest is in git, the reference and verdicts live in `work/golden/lady-into-fox/` (`eu_copyright_until` in the manifest) |
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |

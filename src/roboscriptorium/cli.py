@@ -15,8 +15,9 @@ from roboscriptorium.clients.ollama import OllamaClient
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.config import Settings
 from roboscriptorium.disagreements import Verdicts
+from roboscriptorium.golden import epub as publisher_epub
 from roboscriptorium.golden import gutenberg, se
-from roboscriptorium.golden.manifest import Golden, fetch
+from roboscriptorium.golden.manifest import Golden, PublisherEpub, fetch, sha256
 from roboscriptorium.golden.reference import Chapter, load_chapters
 from roboscriptorium.ir import Document
 from roboscriptorium.pdf import cached_text_layer
@@ -71,14 +72,26 @@ app.add_typer(golden_app, name="golden")
 
 @golden_app.command("derive")
 def golden_derive(name: str, epub: Path | None = None) -> None:
-    """Regenerate a golden book's reference text from its Project Gutenberg transcription."""
+    """Regenerate a golden book's reference text from its Gutenberg or publisher's EPUB."""
     golden = Golden.load(name)
     ref = golden.reference
-    epub = epub or gutenberg.download(ref.url, Path("work/.cache/gutenberg") / f"{ref.ebook}.epub")
-    chapters = gutenberg.write_reference(epub, ref.ebook, ref.url, ref.chapters, golden.data_root)
+    out = golden.data_root
+    if isinstance(ref, PublisherEpub):
+        if epub is None:
+            raise typer.BadParameter(f"{name}'s reference can't be downloaded; pass --epub")
+        if (actual := sha256(epub)) != ref.sha256:
+            raise typer.BadParameter(f"{epub}: sha256 {actual}, expected {ref.sha256}")
+        chapters = publisher_epub.write_reference(
+            epub, ref.source, list(ref.files), ref.heading_prefixes, out
+        )
+    else:
+        epub = epub or gutenberg.download(
+            ref.url, Path("work/.cache/gutenberg") / f"{ref.ebook}.epub"
+        )
+        chapters = gutenberg.write_reference(epub, ref.ebook, ref.url, ref.chapters, out)
     typer.echo(
         f"{len(chapters)} chapters, {sum(len(c.paragraphs) for c in chapters)} paragraphs "
-        f"(see {golden.data_root / 'PROVENANCE.md'})"
+        f"(see {out / 'PROVENANCE.md'})"
     )
 
 

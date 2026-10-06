@@ -1,0 +1,23 @@
+title = "De aanslag"
+author = "Harry Mulisch"
+language = "nl"
+# Mulisch died in 2010: under copyright, so only this manifest is in git.
+eu_copyright_until = 2080
+
+# The retail EPUB of the 51st printing (De Bezige Bij).
+[reference]
+source = "De aanslag, De Bezige Bij, 51st printing, ISBN 9789023443780 (retail EPUB)"
+sha256 = "caf950c3f4c198a2d6c731f7ad7163ebacaad77deb943bd303845a156203229b"
+files = [
+  "9789023443780-B.xhtml", "9789023443780-C.xhtml", "9789023443780-D.xhtml",
+  "9789023443780-E.xhtml", "9789023443780-F.xhtml", "9789023443780-G.xhtml",
+]
+
+# Not a scan: calibre's PDF rendering of that same EPUB, US Letter pages. A
+# born-digital PDF whose text is exact, for structure, page joins and italics.
+[[scans]]
+id = "calibre-pdf"
+source = "a PDF made with calibre from the retail EPUB"
+sha256 = "d5c7f4e35400042af78ab9afe8a71904aa01afed01ea8234bfb74b48e2b91196"
+cover_page = 1
+body_pages = [6, 174]
