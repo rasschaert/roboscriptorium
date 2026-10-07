@@ -75,16 +75,16 @@ def align(pages: list[PageText], reference: list[Chapter]) -> dict[SourceRef, Li
             if split:
                 for k, part in ((i, split[0]), (i + 1, split[1])):
                     held[out_lines[k]].append((j, part))
-                    matched[out_lines[k]] += 1
+                    matched[out_lines[k]] += _wordy(out_words[k])
                 i += 1
                 continue
             held[out_lines[i]].append((j, ref_print[j]))
-            if _similarity(out_words[i], ref_words[j]) >= SIMILAR:
+            if _wordy(out_words[i]) and _similarity(out_words[i], ref_words[j]) >= SIMILAR:
                 matched[out_lines[i]] += 1
 
     total = dict.fromkeys(held, 0)
-    for ref in out_lines:
-        total[ref] += 1
+    for word, ref in zip(out_words, out_lines, strict=True):
+        total[ref] += _wordy(word)
     labels = {}
     for ref, indices in held.items():
         if matched[ref] < BODY_SHARE * total[ref]:
@@ -128,7 +128,19 @@ def _joined(out: list[str], lines: list[SourceRef], i: int, end: int, word: str)
 
 
 def _similarity(a: str, b: str) -> float:
-    return Levenshtein.normalized_similarity(a, b)
+    """Case and the strokes OCR confuses aside: a heading or a sign set in capitals is
+    the reference's word, and so is "Ill" read for "III"."""
+    return Levenshtein.normalized_similarity(
+        a.lower().translate(_STROKES), b.lower().translate(_STROKES)
+    )
+
+
+_STROKES = str.maketrans("l1|", "iii")
+
+
+def _wordy(word: str) -> bool:
+    """A word with a letter or digit; dots and dashes alone count neither way."""
+    return any(c.isalnum() for c in word)
 
 
 def _blocks(out: list[str], ref: list[str]):

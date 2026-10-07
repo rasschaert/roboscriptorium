@@ -36,3 +36,10 @@ def test_words_broken_over_a_line_end_are_broken_in_the_truth():
         "luid van de wc-",
         "rol en ‘zo’",
     ]
+
+
+def test_capitals_numerals_and_spaced_dots_are_still_the_reference():
+    pages = [_page(9, ["Ill", "ZORG DAT JE THUIS BENT.", "never sinned . . .", "12"])]
+    reference = [Chapter("III", ["Zorg dat je thuis bent. never sinned..."])]
+    labels = align(pages, reference)
+    assert [labels[SourceRef(9, k)].role for k in range(4)] == ["heading", "body", "body", "other"]
