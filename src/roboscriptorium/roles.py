@@ -16,6 +16,7 @@ from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.page import (
+    EDGE_LINES_BOTTOM,
     Repeats,
     bare_numeral,
     centred_on_page,
@@ -30,6 +31,7 @@ from roboscriptorium.page import (
     title_key,
 )
 from roboscriptorium.pdf import PageText
+from roboscriptorium.typestyle import Style, display, groups
 
 ROLES = {
     "body": "Part of the running text of the book: prose or dialogue, including the short "
@@ -183,15 +185,20 @@ class DecisionCache:
 
 
 def classify(
-    pages: list[PageText], client: OllayaClient, cache: DecisionCache
+    pages: list[PageText],
+    client: OllayaClient,
+    cache: DecisionCache,
+    styles: dict[SourceRef, Style] | None = None,
 ) -> dict[SourceRef, LineRole]:
+    """Roles for the candidate lines. `styles`, keyed on positions in `pages`, lets
+    lines set in one display type share the role most of them got."""
     roles = {}
     repeats = Repeats(pages)
     sunk = sunk_pages(pages)
     offset = page_offset(pages)
-    heading_lines: set[str] = set()
+    answers: dict[SourceRef, LineRole] = {}
+    repeated: dict[SourceRef, int] = {}
     for page in pages:
-        page_roles: dict[int, LineRole] = {}
         for i in candidates(page, page.number in sunk):
             st = state(page, i, repeats)
             key = DecisionCache.key(client.model, QUESTIONS, st)
@@ -205,11 +212,19 @@ def classify(
                 }
                 cache.put(key, answer)
             role = LineRole(**answer)
-            if (
-                role.role == "chapter_heading"
-                and st["similar_text_on_other_pages"] >= HEADING_MAX_REPEATS
-            ):
+            ref = SourceRef(page.number, i)
+            repeated[ref] = st["similar_text_on_other_pages"]
+            if role.role == "chapter_heading" and repeated[ref] >= HEADING_MAX_REPEATS:
                 role = LineRole("running_head", role.confidence, role.p_body, "repeated-heading")
+            answers[ref] = role
+    if styles:
+        _heading_styles(pages, answers, styles, repeated)
+
+    heading_lines: set[str] = set()
+    for page in pages:
+        page_roles: dict[int, LineRole] = {}
+        for i in candidates(page, page.number in sunk):
+            role = answers[SourceRef(page.number, i)]
             # The model reads a bare "V" as a page number; its place on the page says heading.
             if page.number in sunk and i < SUNK_HEADING_LINES and bare_numeral(page.lines[i].text):
                 role = LineRole("chapter_heading", role.confidence, 0.0, "sunk-numeral")
@@ -221,7 +236,7 @@ def classify(
                 and not _is_body(role)
                 and set_apart_opening(page)
                 and not garbled(page.lines[0])
-                and st["similar_text_on_other_pages"] < HEADING_MAX_REPEATS
+                and repeated[SourceRef(page.number, i)] < HEADING_MAX_REPEATS
             ):
                 role = LineRole("chapter_heading", role.confidence, 0.0, "sunk-opening")
             page_roles[i] = role
@@ -249,6 +264,48 @@ def classify(
         }
         roles.update({SourceRef(page.number, i): r for i, r in page_roles.items()})
     return roles
+
+
+def _heading_styles(
+    pages: list[PageText],
+    answers: dict[SourceRef, LineRole],
+    styles: dict[SourceRef, Style],
+    repeated: dict[SourceRef, int],
+) -> None:
+    """A line set in the display type of the book's headings is a heading.
+
+    Lines in one display style (larger or in capitals, at the top, middle or foot of
+    their pages) that the model didn't call body or find repeated on other pages
+    vote with the model's roles, weighted by its confidence; where headings win,
+    the rest of the group become headings too.
+    """
+    lines = {SourceRef(p.number, i): ln for p in pages for i, ln in enumerate(p.lines)}
+    places = {
+        SourceRef(p.number, i): "top"
+        if i < SUNK_HEADING_LINES
+        else "foot"
+        if i >= len(p.lines) - EDGE_LINES_BOTTOM
+        else "middle"
+        for p in pages
+        for i in range(len(p.lines))
+    }
+    voters = {
+        ref: styles[ref]
+        for ref, role in answers.items()
+        if display(styles.get(ref))
+        and not _is_body(role)
+        and not garbled(lines[ref])
+        and repeated[ref] < HEADING_MAX_REPEATS
+    }
+    for group in groups(voters, places):
+        votes: dict[str, float] = {}
+        for ref in group:
+            votes[answers[ref].role] = votes.get(answers[ref].role, 0.0) + answers[ref].confidence
+        if len(group) < 2 or max(votes, key=votes.get) != "chapter_heading":
+            continue
+        for ref in group:
+            if (role := answers[ref]).role != "chapter_heading":
+                answers[ref] = LineRole("chapter_heading", role.confidence, 0.0, "heading-style")
 
 
 def _subtitles(page: PageText, page_roles: dict[int, LineRole], offset: int | None) -> None:

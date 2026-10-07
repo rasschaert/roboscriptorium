@@ -140,3 +140,37 @@ def test_a_set_apart_first_line_of_a_sunk_opening_is_its_heading(tmp_path):
     assert roles[SourceRef(10, 0)].rule == "sunk-opening"
     assert roles[SourceRef(11, 0)].role != "chapter_heading"
     assert roles[SourceRef(3, 0)].role != "chapter_heading"
+
+
+def test_lines_set_like_the_headings_are_headings(tmp_path):
+    from roboscriptorium.typestyle import Style
+
+    tops = {2: "EEN", 4: "TWEE", 6: "DONDERDAG 16 MAART", 3: "Stempel"}
+    pages = [_page(n, tops.get(n, f"Kop {n}")) for n in range(1, 10)]
+    pages[7].lines.append(Line("SO", 300, 260, 320, 270))  # p8, at the foot
+    answers = {
+        "EEN": ("chapter_heading", 0.6),
+        "TWEE": ("chapter_heading", 0.5),
+        "DONDERDAG 16 MAART": ("artifact", 0.4),
+        "Stempel": ("artifact", 0.4),
+        "SO": ("artifact", 0.3),
+    }
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            role, p = answers.get(state["line"], ("running_head", 0.9))
+            return {"role": Answer("choice", role, p, {role: p, "body": 0.05})}
+
+    display = Style(1.5, 1.0, 1.5, True)
+    styles = {SourceRef(n, 0): display for n in (2, 4, 6)}
+    styles[SourceRef(8, 11)] = display
+    styles[SourceRef(3, 0)] = Style(1.0, 1.0, 1.0, False)
+    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"), styles)
+    assert roles[SourceRef(6, 0)].role == "chapter_heading"
+    assert roles[SourceRef(6, 0)].rule == "heading-style"
+    assert roles[SourceRef(2, 0)].rule == ""
+    # Not set like the headings: body type, or in another place on the page.
+    assert roles[SourceRef(3, 0)].role == "artifact"
+    assert roles[SourceRef(8, 11)].role == "artifact"

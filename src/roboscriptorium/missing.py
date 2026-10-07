@@ -45,7 +45,8 @@ def candidates(
     regions: dict[int, list[Region]],
     answered: dict[int, list[tuple[float, float, float, float]]],
 ) -> list[tuple[int, Region]]:
-    """Line-sized regions holding no text-layer line, one per spot (the surest).
+    """Line-sized regions holding no text-layer line and not part of one, one per spot
+    (the surest).
 
     `answered` holds, per page, the boxes of regions a human typed text for.
     """
@@ -65,6 +66,7 @@ def candidates(
                 or r.turned
                 or r.y1 - r.y0 > tallest
                 or any(_inside(ln, box) for ln in page.lines)
+                or any(_inside(centre, (ln.x0, ln.y0, ln.x1, ln.y1)) for ln in page.lines)
                 or any(_inside(centre, (f.x0, f.y0, f.x1, f.y1)) for f in figures)
                 or any(_inside(centre, b) for b in answered.get(page.number, []))
                 or any(_overlap(r, k) for k in kept)

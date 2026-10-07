@@ -167,6 +167,11 @@ right, then expand.
   - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
     `stages/layout.json`; run by `review`. Picture-only pages are also run turned a
     quarter, to find captions printed sideways.
+  - `typestyle.py`: each line's type relative to the body text, measured on the
+    page image (no model): size (tallest letters to baseline), stroke width, ink
+    width per letter, capitals; cached in `stages/type.json`. `groups` gathers
+    display lines (larger or capitals) set alike in one place on their pages;
+    `roles.py` lets such a group share the role most of it got.
   - `italics.py`: italic words, from each text-layer word's stroke slant on
     the page image (no model; scans and born-digital PDFs alike), marked on paragraphs by aligning their
     words with their source lines'; cached in `stages/italics.json`. The EPUB
@@ -854,3 +859,19 @@ disagreements by mistake category.
   small CER gains are noise. New direction: no new layout rules; type-size
   features and book-wide heading clusters, learned trust over thresholds, a
   Dutch lexicon, grouped review questions, changes reported as error counts.
+- 2026-10-07: Type measured per line from the scan (`typestyle.py`). Headings
+  stand apart on every tuning book: Goede dochter 1.5× the body text, Vals
+  alarm 1.3–1.7×, De aanslag 1.7–1.9×, Dolittle in letterspaced capitals;
+  page numbers are smaller (~0.7×). Crime's bare numerals differ only by being
+  capitals (`experiments/probe_type_features.py`). Telling clef the type in the
+  state ("larger than the body text (1.5×), in capitals") changed none of its
+  answers on Goede dochter pp. 9–64, so it is used book-wide instead: display
+  lines in one style and place vote with the model's roles, weighted by its
+  confidence, and a group that votes heading makes all its lines headings.
+  Goede dochter headings 3/4 → 4/4 (the part title "DONDERDAG 16 MAART, 1989";
+  "EEN" now by style, not the `sunk-opening` rule). Vals alarm, Crime,
+  Dolittle, De aanslag unchanged. Held-out Villa Toscane still 0/12: a vote
+  spreads the model's heading calls but can't make one.
+- 2026-10-07: The missing-lines stage added regions that lie inside a
+  text-layer line (Dolittle's page number at the end of its running head, read
+  again as "II"). Such regions are skipped now: Dolittle CER 1.78% → 1.72%.

@@ -22,6 +22,7 @@ def test_line_sized_regions_without_lines_are_candidates():
             Region("figure", 0.9, 20, 300, 300, 380),
             Region("abandon", 0.5, 100, 320, 120, 330),  # inside the figure
             Region("figure_caption", 0.7, 20, 385, 300, 395),
+            Region("abandon", 0.6, 280, 129, 300, 141),  # the end of a text-layer line
         ]
     }
     assert missing.candidates([page], regions, {}) == [(22, number)]

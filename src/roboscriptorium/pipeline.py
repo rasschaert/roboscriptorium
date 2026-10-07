@@ -5,7 +5,7 @@ from dataclasses import asdict, dataclass
 
 import pymupdf
 
-from roboscriptorium import corrections, figures, italics, layout, missing, ocr, ocrcheck
+from roboscriptorium import corrections, figures, italics, layout, missing, ocr, ocrcheck, typestyle
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.config import Settings
@@ -72,7 +72,8 @@ def run(
             body = missing.add(body, found, readings)
         client = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
         cache = DecisionCache(book.stages / "decisions.jsonl")
-        model_roles = classify(body, client, cache)
+        styles = typestyle.measure(book.source, body, book.stages / "type.json")
+        model_roles = classify(body, client, cache, styles)
         if check_ocr and ocrcheck.scanned(book.source):
             kept = {
                 SourceRef(p.number, i)
