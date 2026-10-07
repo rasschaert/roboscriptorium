@@ -348,7 +348,7 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 OCR scores on "Teirlinck 12 pages" come from the retired pre-reform bench and
 are history only. On modern Dutch (Goede dochter pp. 9–64, 1,622 body lines,
 typesetting folded) the text layer reads 0.21% CER, glm-ocr 0.25%, tesseract
-0.29%; re-bench candidates there and on the Boekenweek books and Reis om mijn
+0.29%, qwen3.8 0.17%; re-bench candidates there and on the Boekenweek books and Reis om mijn
 schedel before choosing an OCR model.
 
 | Runtime | Model | Use | Status |
@@ -374,7 +374,7 @@ schedel before choosing an OCR model.
 | Ollama | `nemotron3:33b` | Tried as Dutch OCR | **Unfit**: thinks by default (107 s and empty output); with `think: false`, 7 s/page but CER 14% on one Teirlinck page: invented words (`dampwalmen→dampwaarneming`) and modernised (`zijne→zijn`) |
 | — | DocLayout-YOLO (DocStructBench, `layout` group) | Page layout regions from the page image | 20 tricky pages, 0.1–0.5 s/page on MPS. Finds figures, captions, drawn initials, titles (Crime's bare "III"), and furniture as `abandon`. Sees printed text the OCR layer lacks (Dolittle p97 subtitle). Misses Boze tongen's spaced part title (`abandon`). Run on a page turned a quarter, it finds a landscape plate's caption (8/8 Dolittle plates, no false positives on 4 books) but not which way is up. See `experiments/probe_layout.py`, `probe_orientation.py` |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
-| Ollama | `qwen3.8:27b-nvfp4` (MLX, 18 GB) | **Proofreader**; reading and language-judge candidate | Stella proofreading test (68 answered regions, 9 really wrong): transcribing the tight crop and comparing in code catches 9/9 with 3 false alarms in 58 (gemma4: 6/7, 5 alarms); yes/no on crop and text AUC 0.92, no false alarms, but catches only 3. As text judge between its reading and the answer: 9/12 right with thinking off (unsure on punctuation, ~0.53), 10/12 with thinking on and winnow reading its reply (punctuation 0.72–0.88), ~20 s/call. ~1 s per crop reading. Thinking is on by default: pass `think: false` for one-token answers |
+| Ollama | `qwen3.8:27b-nvfp4` (MLX, 18 GB) | **Proofreader**; reading and language-judge candidate | Stella proofreading test (68 answered regions, 9 really wrong): transcribing the tight crop and comparing in code catches 9/9 with 3 false alarms in 58 (gemma4: 6/7, 5 alarms); yes/no on crop and text AUC 0.92, no false alarms, but catches only 3. As text judge between its reading and the answer: 9/12 right with thinking off (unsure on punctuation, ~0.53), 10/12 with thinking on and winnow reading its reply (punctuation 0.72–0.88), ~20 s/call. ~1 s per crop reading. Thinking is on by default: pass `think: false` for one-token answers. **Best line reading yet** on Goede dochter pp. 9–64: CER 0.17% folded, 1,504/1,622 lines exact (layer 0.20%, 1,460); right where the layer is wrong on 119 lines, wrong where it is right on 76. Its errors are real words (`doodgaan→doorgaan`, `woonden→wonden`, `verhieven→verheven`, once German `wartete`) and dropped or doubled letters, so it never decides alone |
 
 ## Environment
 
@@ -1156,3 +1156,12 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   Note for comparisons: Villa Toscane is scored with `--chapters 1-12`, and
   with learned trust Dolittle's CER rose 1.72% → 1.91% because agreed dash
   fixes now sit in the question budget instead of being applied.
+- 2026-10-07: qwen3.8 line readings benched on Goede dochter pp. 9–64 (1,622 body
+  lines, the OCR check's crops, `bench_line_readings.py --extra`): CER 0.17%
+  folded, 1,504 lines exact, against the text layer 0.20% / 1,460, glm-ocr
+  0.24% / 1,155, tesseract 0.29% / 1,404; it keeps quotes the others drop
+  (missing ' 9× against glm-ocr 31×, tesseract 80×). Right where the layer is
+  wrong on 119 lines (glm-ocr 114), wrong where the layer is right on 76
+  (glm-ocr 87). Its misreadings are plausible words (`doodgaan→doorgaan`,
+  `ontspanden→ontspannen`, `wachtte→wartete`), which a word list can't catch:
+  a third reading for the judges, not a replacement. ~1 s per line under load.
