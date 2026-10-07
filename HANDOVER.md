@@ -63,22 +63,30 @@ Then: `PYTHONPATH=experiments uv run python experiments/train_ocr_trust.py`
 
 ## Next steps, in order
 
-1. Retrain trust as above; first `bench` runs (tuning, validation).
-2. **Settle verdicts on the tuning books** with the user (`golden review`): 15%
-   of labelled suspects have no version matching the aligned truth, so trust
-   learns the reference's quirks. Sort the disagreements so those the trust
+1. First `bench` run with `ROBO_OCR_TRUST=0` once the rebuilds have filled the
+   caches (a baseline from the fixed rule), then retrain trust and bench again
+   (tuning, validation). Also: re-ask ~200 cached clef states and count flips,
+   the answer variance that a cold re-ask freezes into the cache.
+2. **Measure the slip rate where truth exists**: the user answers the review on
+   Goede dochter pp. 9–64 (~70 questions), scored against the aligned truth, per
+   question kind (choosing a reading vs typing); it doubles as verdict settling.
+   A book-quality feature for trust (winnow's alarm is worthless on Goede dochter,
+   see docs/design.md) goes with the retrain after that.
+3. **Settle verdicts on the tuning books** with the user (`golden review`): 17%
+   of suspects can't be labelled (no single version matches the aligned truth),
+   so trust never trains on them. Sort the disagreements so those the trust
    labels sit on come first; it needs the user's time.
-3. **Line-role classifier into the package**, behind a switch: features from
+4. **Line-role classifier into the package**, behind a switch: features from
    `experiments/train_line_roles.py` into `src/`, Thief-Taker's lines added,
    saved with without-each-book copies like trust, scored with `bench`.
-4. One crop reader on tesseract's line boxes, not the layer's (glm-ocr and Qwen
+5. One crop reader on tesseract's line boxes, not the layer's (glm-ocr and Qwen
    share the layer's crops, so they miss the same cut-off marks).
-5. `quality.catches` credits any flag overlapping an error's lines (a heading
+6. `quality.catches` credits any flag overlapping an error's lines (a heading
    region "catches" an OCR error on its lines); match by span where flags
    have one.
-6. Training code for shipped models into the package, with a test that a
+7. Training code for shipped models into the package, with a test that a
    retrain matches the saved model's feature count.
-7. Later: proofreading answers with Qwen, the paragraph language judge.
+8. Later: proofreading answers with Qwen, the paragraph language judge.
 
 Not taken on from the review: dropping winnow outright (the trust model already
 weighs it; the fixed rule that leans on it is now only an explicit fallback).

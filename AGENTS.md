@@ -9,6 +9,12 @@ starting; keep it true.
   a design choice, a tool or model installed, a model that scored better, a pitfall
   found — update AGENTS.md in the same change. Add a dated line to
   [docs/decisions.md](docs/decisions.md). Don't wait to be asked.
+- **Write down why, not only what.** Every component's job and the evidence
+  that it earns it live in [docs/design.md](docs/design.md): what it catches that
+  the others don't, its own failure, the measurement. A component whose reason
+  isn't there gets one before the change that touches it is committed; when new
+  numbers change the reason, the file changes in the same commit. A reviewer
+  should never have to rediscover from data why something is there.
 - **Keep the docs and diagrams up to date too.** A change to the stages, their
   order, or the model, code or person behind one also updates `README.md` and
   `docs/pipeline.d2` in the same commit; render the SVG again with
@@ -175,12 +181,14 @@ right, then expand.
   - `bench.py` (`roboscriptorium bench [tuning|validation]`): **the** measure for a
     change. Pinned golden slices per set, scored with `evaluate` and `quality`,
     saved whole to `work/bench/` (commit, settings, decider, model versions,
-    per-page counts) and compared with the previous run page by page: a change is
-    real only when the paired bootstrap interval excludes zero. A tuning book is
+    per-page counts) and compared with the previous run page by page. One test
+    decides: "after review" pooled over every page of the set must improve at the
+    low, mean and high slip rate, and no book alone may get worse (a veto); the
+    per-book intervals are diagnostics. A tuning book is
     scored with the trust model trained without it
     (`ocr-trust-without-<book>.pkl`, written by `train_ocr_trust.py --save`). "After review"
-    adds the reviewer's own slips (`quality.HUMAN_SLIPS`, 8 of 68 answers on
-    Stella) per question asked. Run it before and after a change; cite its
+    adds the reviewer's own slips per question asked (`quality.slip_rates`, a Beta
+    posterior from 8 wrong of 68 checked answers on Stella). Run it before and after a change; cite its
     starred lines, not single CER figures.
   - `quality.py` (`roboscriptorium quality book[:pages[:chapters]] …`): what a
     reviewer is left with. Wrong words per page before review and left unasked,
