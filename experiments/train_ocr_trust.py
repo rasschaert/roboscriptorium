@@ -9,8 +9,9 @@ more training book left out, for stability.
 
     PYTHONPATH=experiments uv run python experiments/train_ocr_trust.py [--save]
 
-`--save` trains on every book and writes the model the pipeline uses
-(ROBO_OCR_TRUST=1); `--save --without <book>` leaves that book out, to score it fairly.
+`--save` trains on the tuning books (never the held-out ones) and writes the model
+the pipeline uses (ROBO_OCR_TRUST=1); `--without <book>` leaves one more out, to
+score it fairly.
 """
 
 import sys
@@ -96,7 +97,12 @@ def scored(make, train_names, rows):
 books = {name: rows_of(name) for name in SPECS}
 if "--save" in sys.argv:
     without = sys.argv[sys.argv.index("--without") + 1] if "--without" in sys.argv else None
-    every = [r for name, rows in books.items() if name != without for r in rows]
+    every = [
+        r
+        for name, rows in books.items()
+        if name != without and name.split("--")[0] not in HELD_OUT
+        for r in rows
+    ]
     model = trust.train([r["s"] for r in every], [r["right"] for r in every])
     path = Path(Settings.from_env().ocr_trust_model)
     trust.save(model, path)

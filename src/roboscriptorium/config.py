@@ -19,7 +19,7 @@ class Settings:
     ocr_model: str = "glm-ocr:bf16"
     # Learned trust (`trust.py`) chooses the OCR check's fixes and questions instead of
     # the fixed rule, asking at most this many questions per page.
-    ocr_trust: bool = False
+    ocr_trust: bool = True
     ocr_trust_model: str = "work/models/ocr-trust.pkl"
     ocr_questions_per_page: float = 1.0
 
@@ -34,7 +34,7 @@ class Settings:
             check_model=os.environ.get("ROBO_CHECK_MODEL", defaults.check_model),
             ocr_model=os.environ.get("ROBO_OCR_MODEL", defaults.ocr_model),
             judge_model=os.environ.get("ROBO_JUDGE_MODEL", defaults.judge_model),
-            ocr_trust=os.environ.get("ROBO_OCR_TRUST", "") == "1",
+            ocr_trust=os.environ.get("ROBO_OCR_TRUST", "1") != "0",
             ocr_trust_model=os.environ.get("ROBO_OCR_TRUST_MODEL", defaults.ocr_trust_model),
             ocr_questions_per_page=float(
                 os.environ.get("ROBO_OCR_QUESTIONS", defaults.ocr_questions_per_page)

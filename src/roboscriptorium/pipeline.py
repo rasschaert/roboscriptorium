@@ -1,6 +1,7 @@
 """Run the stages for one book, from source PDF to EPUB."""
 
 import json
+import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -118,12 +119,16 @@ def run(
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, Lexicon.load(lang)
             )
-            if settings.ocr_trust:
-                model = trust.load(Path(settings.ocr_trust_model))
-                if model is None:
-                    raise FileNotFoundError(f"no trust model at {settings.ocr_trust_model}")
+            model = trust.load(Path(settings.ocr_trust_model)) if settings.ocr_trust else None
+            if model is not None:
                 budget = round(settings.ocr_questions_per_page * len(body))
                 suspects = trust.decide(suspects, model, budget)
+            elif settings.ocr_trust:
+                print(
+                    f"No trust model at {settings.ocr_trust_model}; the OCR check uses its "
+                    "fixed rule (train one with experiments/train_ocr_trust.py --save).",
+                    file=sys.stderr,
+                )
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
         corrected, roles, applied = corrections.apply(
             body, model_roles, Corrections(book.corrections_path)

@@ -214,9 +214,11 @@ right, then expand.
     trees) scores each version of a suspect from the judges' picks and confidence,
     which second readings read it, the word list and the kind of difference;
     the least sure suspects are asked up to `ROBO_OCR_QUESTIONS` per page, the
-    rest take their best version. Off unless `ROBO_OCR_TRUST=1`; the model lives
+    rest take their best version. On by default (`ROBO_OCR_TRUST=0` for the fixed
+    rule, which is also used when no model is trained); the model lives
     in `work/models/ocr-trust.pkl`, trained by `experiments/train_ocr_trust.py
-    --save` on the golden books' suspects (`experiments/ocr_trust_data.py`).
+    --save` on the tuning books' suspects, never the held-out ones
+    (`experiments/ocr_trust_data.py`).
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
     text layer lacks, or reads as scraps because it is printed sideways).
   - `initials.py`: guesses the letter of a decorated initial: the letters that
@@ -1072,3 +1074,9 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   unasked 0.27 → 0.45 (half the questions; at 1 question/page 0.71 → 0.47);
   inside the bootstrap intervals. Not yet the default: score the held-out books
   with it first.
+- 2026-10-07: Learned trust held out (model trained on the tuning books only):
+  De tuin wrong words 5.38 → 3.07/page, questions 3.43 → 1.57, unasked 1.38 →
+  1.43; Grand Hotel Europa 7.77 → 7.57, questions 2.53 → 2.03, unasked 0.77 →
+  0.77; Lady into Fox 3.34 → 3.29, questions 1.59 → 1.99, unasked 2.34 → 1.75.
+  It is now the default; the fixed rule (SURE/SURE_ALONE) remains as the
+  fallback.
