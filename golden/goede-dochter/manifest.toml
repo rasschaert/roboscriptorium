@@ -1,0 +1,36 @@
+title = "Goede dochter"
+author = "Karin Slaughter"
+language = "nl"
+# Slaughter and her translator are alive: under copyright, so only this
+# manifest is in git.
+eu_copyright_until = 2200
+
+# The retail EPUB of Ineke Lenting's translation (HarperCollins Holland 2017,
+# typeset by Mat-Zet like Boze tongen's). Chapter titles are "P_kop"
+# paragraphs, the part title "P_deeltitel"; italics are classes.
+[reference]
+source = "Goede dochter, HarperCollins Holland 2017, ISBN 9789402752663 (retail EPUB)"
+sha256 = "aa95cdc7910baa5cafc18e00bdbba89727b3b4dcfde0b27660f613014d5d06ff"
+files = [
+  "Text/section-0003.xhtml", "Text/section-0004.xhtml", "Text/section-0005.xhtml",
+  "Text/section-0006.xhtml", "Text/section-0007.xhtml", "Text/section-0008.xhtml",
+  "Text/section-0009.xhtml", "Text/section-0010.xhtml", "Text/section-0011.xhtml",
+  "Text/section-0012.xhtml", "Text/section-0013.xhtml", "Text/section-0014.xhtml",
+  "Text/section-0015.xhtml", "Text/section-0016.xhtml", "Text/section-0017.xhtml",
+  "Text/section-0018.xhtml", "Text/section-0019.xhtml", "Text/section-0020.xhtml",
+  "Text/section-0021.xhtml", "Text/section-0022.xhtml", "Text/section-0023.xhtml",
+  "Text/section-0024.xhtml", "Text/section-0025.xhtml", "Text/section-0026.xhtml",
+  "Text/section-0027.xhtml",
+]
+heading_prefixes = ["P_kop", "P_deeltitel"]
+italic_classes = ["P_plat_2__And__Italic", "C_Current__And__Italic", "C_SMS_2f_Mail"]
+
+# The first printing (June 2017) of the same translation. Internet Archive
+# lends it only, so it is placed by hand. Pages 9–508: the part title to the
+# end of the novel; the acknowledgements are left out.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/goededochter0000unse (borrow, then download the PDF)"
+sha256 = "1cf251de6f3b4be1638089cb45ce76e37f34f229d5ec58cea86aa8794f3175b5"
+cover_page = 1
+body_pages = [9, 508]
