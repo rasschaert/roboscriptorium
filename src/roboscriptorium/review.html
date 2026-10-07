@@ -120,11 +120,11 @@ function render() {
     <div class="context">…${esc(d.before)} <mark class="out">${show(d.got)}</mark><mark class="ref">${show(d.want)}</mark> ${esc(d.after)}…</div>
     <div class="pair">
       <div class="out"><small>Output</small>${show(d.got)}</div>
-      <div class="ref"><small>Gutenberg</small>${show(d.want)}</div>
+      <div class="ref"><small>Reference</small>${show(d.want)}</div>
     </div>
     <div class="actions">
       <div class="row">
-        <button class="primary" data-kind="reference"><kbd>1</kbd>Gutenberg is right</button>
+        <button class="primary" data-kind="reference"><kbd>1</kbd>Reference is right</button>
         <select id="pipelineCat">${options(state.pipeline, d.guess)}</select>
       </div>
       <div class="row">
