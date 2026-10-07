@@ -4,7 +4,7 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules and
 decisions; this file only covers the state of play. Replace it at the end of
 each session.
 
-## State on 2026-10-07 (morning; paused at the user's request)
+## State on 2026-10-07 (after a critical review)
 
 Everything is committed on `main`. New today:
 
@@ -48,24 +48,94 @@ Scores (chapters or pages in brackets):
 `--no-models` scores headings without the role model, so 0/n there says little:
 compare headings on full runs.
 
+## Critical review (2026-10-07): change of course
+
+A review of the approach, done with the user, who agreed with it. Read this
+before picking up any task below: it changes what counts as progress.
+
+**Where we stand.** The pipeline cuts the text layer's errors by ~40% (Goede
+dochter CER 0.40% → 0.23%, Vals alarm 0.74% → 0.47%, De tuin 0.72% → 0.41%).
+Against the goal it is far off: 0.25–0.45% CER is ~4–8 wrong characters a
+page, and review asks 2–3.5 questions a page. A 300-page book would leave
+~1,500 errors before review and ~800 questions for the human.
+
+**What the review found:**
+
+1. **The rule pile doesn't carry over.** Each tuning-book failure added a
+   rule to `roles.py` (`sunk-numeral`, `sunk-opening`, `section-number`,
+   `subtitle`, …). On the held-out books: Villa Toscane headings 0/12, Grand
+   Hotel Europa 3/16, Lady into Fox italic precision 0.31. That is the "tuned
+   to one book" failure AGENTS.md warns about.
+2. **The role model is blind to typography.** `roles.state()` sends text,
+   position, width, alignment and neighbours. No image, no type size, cap
+   height, all-caps, letterspacing or weight. Those are how a typesetter
+   marks a heading, and why clef reads "V" as a page number.
+3. **Decisions are per line; the structure is per book.** Page numbers form a
+   sequence, running heads alternate verso/recto, a book's chapter headings
+   share one style. `page_offset` and `Repeats` use this piecemeal.
+4. **Errors every reading shares are invisible.** Suspects come only from
+   disagreement. No per-word confidence is used (tesseract's, the layer's, or
+   glm-ocr's token probabilities). The only word list is the English
+   `/usr/share/dict/words`, also on Dutch books (`initials.py`,
+   `disagreements.py`).
+5. **The judges get a hard question.** "Which string does the crop show?"
+   fails where options differ by a period or a quote mark (clef misses small
+   periods; every model shares the opening-quote blind spot). `SURE` and
+   `SURE_ALONE` are guesses on top.
+6. **Measurements are noisier than the log suggests.** `verdicts_applied` is
+   0 on every recent run, so residual CER mixes real errors with edition
+   differences, and many logged wins (0.48% → 0.47% on 14.5k words) are a
+   couple of characters.
+
+**Rules for the next agent:**
+
+- **No new layout rules in `roles.py`** to fix a tuning-book miss. Fix the
+  model's evidence or the book-wide inference instead. Judge heading work by
+  the held-out scores (scored, never inspected).
+- **Report changes as error counts** with their book and slice, and say when
+  a difference is within noise. Settle verdicts on a tuning book before
+  claiming sub-0.1% gains on it.
+- **Group review questions** wherever one answer can settle many (a heading
+  style, a confusion pattern, a running head).
+
 ## Next steps, in order
 
-1. **Quotes in Dutch IA OCR layers**: openings misread as “ are fixed (commit
-   b0f4254, see the decision log). Still open: a ‘ the layer drops altogether,
-   and a period lost before a closing ’.
-2. **Headings**: tuning books now Vals alarm 10/10 (pp. 11–60), Goede dochter
-   3/4 (pp. 9–64). Next: why Goede dochter's part title "DONDERDAG 16 MAART,
-   1989" (alone on sunk p9) is still missed (`sunk-opening` should fire; check
-   its role and what reflow does with a heading followed by no text). Then
-   score the held-out books (Villa Toscane 0/12, Grand Hotel Europa 3/16, De
-   tuin) without inspecting them.
-3. Scene-break lines (`*****`) are dropped.
-4. A `bench` command; learned trust (Dawid–Skene) replacing `SURE`/`SURE_ALONE`
-   (winnow flips 15–20% of its answers given the lines around: see the log);
-   the metadata stage with `nuextract3:q6_k`.
-5. Italics: marks below the word (dash-glued words with one half italic).
-6. Smaller: p23's decorated initial (Dolittle) is answered "E" but shows an O;
-   some em dashes land after a space (`ago —when`).
+1. **Make CER mean something**: settle the disagreements on Goede dochter
+   (pp. 9–64) with `golden review`, so its score counts pipeline errors only.
+2. **Typographic features and book-wide heading styles.** Measure per line
+   x-height and cap height from the scan, all-caps, letterspacing, and the
+   layout model's `title` class. Cluster candidate heading lines across the
+   book by that style signature; the human answers once per cluster ("these
+   48 lines look alike: chapter headings?"). Aim to replace most of the
+   `roles.py` overrides. Success = held-out headings (Villa Toscane 0/12,
+   Grand Hotel Europa 3/16) going up. Goede dochter's missed part title
+   "DONDERDAG 16 MAART, 1989" (alone on sunk p9) is a test case.
+3. **Learned trust (Dawid–Skene)** replacing `SURE`/`SURE_ALONE`: align all
+   readings word by word (ROVER-style), weight each source per kind of error,
+   learned from review answers and verdicts. Comes with a `bench` command.
+4. **Shared errors**: a Dutch lexicon (OpenTaal / Hunspell `nl`; ask the user
+   before installing) plus the book's own vocabulary (a rare word one edit
+   from a frequent one is suspect); learn a book's confusions (`I`/`l`, `‘`/`“`)
+   from its first review answers and apply them book-wide, flagged.
+5. **Probe: judge by likelihood.** Score each candidate by the OCR model's own
+   probability of that exact text given the crop (teacher forcing). Ollama
+   can't do this; a local transformers or llama.cpp setup can (ask the user
+   before adding a runtime). Try it on Dolittle pp. 30–49's 67 suspects
+   against clef's 96%.
+6. **Review load**: group questions (one per confusion pattern, heading style,
+   running head) and sort the rest by how likely they are to be wrong. Target
+   well under 1 question per page.
+7. Later, a page-image-first reading for books whose layer is missing or
+   unusable (the parked Dwarsligger): layout regions → glm-ocr per region,
+   the text layer as one more reading. It would replace the special stages
+   for missing lines, sideways text and initials.
+8. Older open items, lower priority: quotes in Dutch IA layers (a ‘ dropped
+   altogether, a period lost before a closing ’; item 4 may cover them);
+   scene-break lines (`*****`) dropped; paragraph breaks after a full line
+   (try a decision model: "does a new paragraph start here?", speaker changes);
+   italics marks below the word; the metadata stage with `nuextract3:q6_k`;
+   Dolittle p23's initial answered "E" (shows an O); em dashes after a space
+   (`ago —when`).
 
 ## Working with the user
 

@@ -847,3 +847,10 @@ disagreements by mistake category.
   garbled. Goede dochter pp. 9–64 headings 2/4 → 3/4; Vals alarm, Crime,
   Dolittle, De aanslag unchanged. Still missed: the part title "DONDERDAG 16
   MAART, 1989", alone on p9.
+- 2026-10-07: Critical review of the approach (see HANDOVER.md). The
+  `roles.py` overrides don't carry over to held-out books (Villa Toscane
+  headings 0/12, Grand Hotel Europa 3/16), the role model sees no typography,
+  errors every reading shares go unflagged, and verdicts are unsettled so
+  small CER gains are noise. New direction: no new layout rules; type-size
+  features and book-wide heading clusters, learned trust over thresholds, a
+  Dutch lexicon, grouped review questions, changes reported as error counts.
