@@ -41,6 +41,7 @@ SPECS = [
     "work/de-tuin-van-de-avondnevel--ia-scan:11-52:1-3",
     "work/de-eerlijke-vinder--ia-scan",
     "work/reis-om-mijn-schedel--ia-scan",
+    "work/the-thief-takers-apprentice--ia-scan",
     "work/monterosso-mon-amour--ia-scan",
 ]
 # Scored like the others, but their errors aren't printed: they stay unseen.

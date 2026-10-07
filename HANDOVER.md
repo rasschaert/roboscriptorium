@@ -44,6 +44,11 @@ afternoon, after the second review:
   leading, furniture and, by eye, typeface as Stella; the best stand-in for
   measuring Stella. Text layer alone CER 0.72%, F1 0.853. A full `eval` was
   started at the end of the session (`work/reis-om-mijn-schedel--ia-scan/logs/`).
+- **The Thief-Taker's Apprentice** (Gollancz 2010) added: the first modern
+  English scan, an older InvisibleOCR layer. Text layer alone CER 0.82%; not
+  yet built with models. Open seam: `pdf._visual_lines` merges the two lines
+  beside a large first letter into one visual line (the letter's box spans
+  both); fix before trusting line-level OCR crops on it.
 - **Retired**: Sense and Sensibility (no same-edition reference). **The
   Teirlinck bench no longer chooses OCR models**; re-bench on modern Dutch
   (Goede dochter, the Boekenweek books, Reis) with

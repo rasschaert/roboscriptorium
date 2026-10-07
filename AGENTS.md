@@ -466,6 +466,7 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
 | de-eerlijke-vinder | `ia-scan` | Dutch, Spit, CPNB Boekenweekgeschenk 2023; IA Scribe scan in **Stella's format** (360 ppi MRC, GlyphLessFont layer, 104 pages); reference CPNB's own EPUB of the edition (via calibre). Pages 12–95, 4 parts ("I"–"IV", the first a drawn numeral the layer lacks). Design Frank August. In the leave-one-book-out set. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | monterosso-mon-amour | `ia-scan` | Dutch, Pfeijffer, CPNB Boekenweekgeschenk 2022; IA Scribe scan like Stella's; reference CPNB's EPUB, made after the first printing. Pages 9–96, 22 numbered chapters (the layer lacks the small "1"…). Typography Nico Richter: the same CPNB grid as De eerlijke vinder (13.2 pt pitch, ~57 characters a line) but another, lighter typeface. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | reis-om-mijn-schedel | `ia-scan` | Dutch translation (Karinthy, Frans van Nes), **Van Gennep, Stella's publisher**, first printing 2014; IA Scribe scan in Stella's format, 260 pages; reference Van Gennep's EPUB "naar de eerste druk". Pages 11–255, 27 chapter titles ("kop"). **The best stand-in for Stella**: same leading (15.0 pt), no running heads, folio centred at the foot, what looks like the same serif face; Stella's type is ~6% larger on a narrower measure (258 against 278 pt). Footnotes, left out of the reference for now. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| the-thief-takers-apprentice | `ia-scan` | **The first modern English scan**: Deas, Gollancz first edition 2010; reference Gollancz's eBook of the edition (via calibre). An older IA PDF: 300 ppi, LuraDocument, **InvisibleOCR** text layer (`pdf.py` reads it). Pages 11–292; three parts ("PART ONE" / "THE THIEF-TAKER") and 42 chapters (number line, name line), each label and title a heading (90); a large first letter on each chapter. Its layer drops some apostrophes and splits the word (`didn t`, `I m`). Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | het-ivoren-aapje (**retired as a bench**) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py`. **No longer used to choose OCR models**: pre-1934 spelling, unlike every book we target; re-bench on modern Dutch line crops instead |
 
 ## Decision log
@@ -976,3 +977,11 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   crops of Goede dochter, the two Boekenweek books and Reis om mijn schedel
   (`experiments/bench_line_readings.py`). The Teirlinck scores in the Models
   table stay as history only.
+- 2026-10-07: *The Thief-Taker's Apprentice* (Deas, Gollancz 2010), the first
+  modern English scan, with Gollancz's eBook of the same edition: English is a
+  real target after Stella. Its PDF is an older IA kind (300 ppi, LuraDocument,
+  InvisibleOCR font), which `pdf.py` reads. Text layer alone: CER 0.82%, WER
+  0.77%, paragraph F1 0.877, italics 0.946 / 0.897, headings 0/90. The layer
+  drops apostrophes in some contractions and splits the word (`didn t`, `I
+  m`, `priest s`). The tall box of each chapter's large first letter merges the
+  two printed lines beside it into one visual line (text order stays right).

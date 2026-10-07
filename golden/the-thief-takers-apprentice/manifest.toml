@@ -1,0 +1,26 @@
+title = "The Thief-Taker's Apprentice"
+author = "Stephen Deas"
+language = "en"
+# Deas is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Gollancz's eBook (eISBN 978 0 5750 9450 5, Jouve; "first published in 2010"),
+# passed through calibre. Part and chapter labels are "fmht" divs, their titles
+# "cst" divs; italics are <i>. The large first letter is <b>T</b>he: one word.
+[reference]
+source = "The Thief-Taker's Apprentice, Gollancz 2010, eISBN 9780575094505 (eBook, via calibre)"
+sha256 = "b01abdd24c1281d474dc263002b9d808275c05a37779b39a4a09ecdea589e06a"
+files = [
+  "text/part0005.html", "text/part0006.html", "text/part0007.html", "text/part0008.html", "text/part0009.html", "text/part0010.html", "text/part0011.html", "text/part0012.html", "text/part0013.html", "text/part0014.html", "text/part0015.html", "text/part0016.html", "text/part0017.html", "text/part0018.html", "text/part0019.html", "text/part0020.html", "text/part0021.html", "text/part0022.html", "text/part0023.html", "text/part0024.html", "text/part0025.html", "text/part0026.html", "text/part0027.html", "text/part0028.html", "text/part0029.html", "text/part0030.html", "text/part0031.html", "text/part0032.html", "text/part0033.html", "text/part0034.html", "text/part0035.html", "text/part0036.html", "text/part0037.html", "text/part0038.html", "text/part0039.html", "text/part0040.html", "text/part0041.html", "text/part0042.html", "text/part0043.html", "text/part0044.html", "text/part0045.html", "text/part0046.html", "text/part0047.html", "text/part0048.html", "text/part0049.html"
+]
+heading_prefixes = ["fmht", "cst"]
+
+# The first edition (Gollancz 2010, ISBN 978 0 575 09447 5). An older Internet
+# Archive PDF: 300 ppi, LuraDocument, an InvisibleOCR text layer. Pages 11–292:
+# part one's title page to the end of the novel.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org (The Thief-Taker's Apprentice, Gollancz 2010; borrow, then download the PDF)"
+sha256 = "de0bbb85c91a86ddc82686254480d51f0dbfee8a40fb712f16658c5ecc7e394f"
+cover_page = 1
+body_pages = [11, 292]
