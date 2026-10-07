@@ -48,6 +48,7 @@ class PublisherEpub:
     italic_classes: frozenset[str] = frozenset()  # classes that set text in italics
     roman_classes: frozenset[str] = frozenset()  # classes that set it upright again
     blank_classes: frozenset[str] = frozenset()  # paragraphs that stand for a blank line
+    note_classes: frozenset[str] = frozenset()  # footnotes, kept apart from the text
 
 
 @dataclass(frozen=True)
@@ -79,6 +80,10 @@ class Golden:
     @property
     def text_dir(self) -> Path:
         return self.data_root / "text"
+
+    @property
+    def notes_path(self) -> Path:
+        return self.data_root / "notes.txt"
 
     @property
     def verdicts_dir(self) -> Path:
@@ -121,6 +126,7 @@ class Golden:
                 frozenset(ref.get("italic_classes", ())),
                 frozenset(ref.get("roman_classes", ())),
                 frozenset(ref.get("blank_classes", ())),
+                frozenset(ref.get("note_classes", ())),
             )
         )
         se = data.get("standard_ebooks")

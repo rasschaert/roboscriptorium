@@ -11,7 +11,7 @@ from pathlib import Path
 
 from roboscriptorium import disagreements, flags, layout, ocrcheck, pipeline, quality
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range, _verdicts
+from roboscriptorium.cli import _range, _scored, _verdicts
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 
@@ -36,7 +36,7 @@ def main(specs: list[str]) -> None:
         if (span := _range(chapters or None)) is not None:
             reference = reference[span[0] - 1 : span[1]]
         reference, _ = disagreements.patch(reference, _verdicts(book))
-        errors = disagreements.find(stages.doc, reference, stages.corrected)
+        errors = disagreements.find(_scored(book, stages), reference, stages.corrected)
         suspects = {}
         for s in stages.suspects:
             suspects.setdefault((s.page, s.line), []).append(s)

@@ -7,8 +7,8 @@ eu_copyright_until = 2200
 
 # Van Gennep's own EPUB ("e-editie maart 2014, naar de eerste druk maart 2014").
 # Chapter titles are "kop" paragraphs; italics the "italic" class. Footnotes
-# ("noten", after a "bodybefore" rule) are left out: the pipeline doesn't place
-# footnotes yet, so the scan's footnote lines count as extra text.
+# ("noten", after a "bodybefore" rule) go to notes.txt: the pipeline doesn't
+# place footnotes yet, so scoring leaves the scan's footnote lines out.
 [reference]
 source = "Reis om mijn schedel, Van Gennep 2014, transl. Frans van Nes (EPUB)"
 sha256 = "18b21c8f85705ac829f21b5ee074716c95ea3b6f5de8d0a9026057cf398be434"
@@ -17,7 +17,8 @@ files = [
 ]
 heading_prefixes = ["kop"]
 italic_classes = ["italic"]
-blank_classes = ["noten", "bodybefore"]
+blank_classes = ["bodybefore"]
+note_classes = ["noten"]
 
 # The first printing (March 2014, ISBN 978 94 6164 274 5), from Stella's
 # publisher. Internet Archive lends it only, so it is placed by hand. Pages

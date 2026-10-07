@@ -152,7 +152,9 @@ right, then expand.
     `gutenberg.py` (derives the reference text from a Project Gutenberg EPUB),
     `epub.py` (from a publisher's EPUB: headings by tag or class prefix),
     `se.py` (derives Standard Ebooks' text, kept for later style work),
-    `reference.py` (reads the reference chapters, with their italic words).
+    `reference.py` (reads the reference chapters, with their italic words),
+    `notes.py` (a reference's footnotes, `notes.txt` from the manifest's
+    `note_classes`: the scan's footnote lines are left out of every score).
   - `evaluate.py`: CER, WER and paragraph F1 against a golden reference.
   - `disagreements.py`: where output and reference differ, located on the scan;
     clearly garbled output and whitespace-only differences are auto-resolved.
@@ -478,7 +480,7 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | de-eerlijke-vinder | `ia-scan` | Dutch, Spit, CPNB Boekenweekgeschenk 2023; IA Scribe scan in **Stella's format** (360 ppi MRC, GlyphLessFont layer, 104 pages); reference CPNB's own EPUB of the edition (via calibre). Pages 12–95, 4 parts ("I"–"IV", the first a drawn numeral the layer lacks). Design Frank August. In the leave-one-book-out set. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | monterosso-mon-amour | `ia-scan` | Dutch, Pfeijffer, CPNB Boekenweekgeschenk 2022; IA Scribe scan like Stella's; reference CPNB's EPUB, made after the first printing. Pages 9–96, 22 numbered chapters (the layer lacks the small "1"…). Typography Nico Richter: the same CPNB grid as De eerlijke vinder (13.2 pt pitch, ~57 characters a line) but another, lighter typeface. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
-| reis-om-mijn-schedel | `ia-scan` | Dutch translation (Karinthy, Frans van Nes), **Van Gennep, Stella's publisher**, first printing 2014; IA Scribe scan in Stella's format, 260 pages; reference Van Gennep's EPUB "naar de eerste druk". Pages 11–255, 27 chapter titles ("kop"). **The best stand-in for Stella**: same leading (15.0 pt), no running heads, folio centred at the foot, what looks like the same serif face; Stella's type is ~6% larger on a narrower measure (258 against 278 pt). Footnotes, left out of the reference for now. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| reis-om-mijn-schedel | `ia-scan` | Dutch translation (Karinthy, Frans van Nes), **Van Gennep, Stella's publisher**, first printing 2014; IA Scribe scan in Stella's format, 260 pages; reference Van Gennep's EPUB "naar de eerste druk". Pages 11–255, 27 chapter titles ("kop"); its footnotes are in `notes.txt` and left out of the score. **The best stand-in for Stella**: same leading (15.0 pt), no running heads, folio centred at the foot, what looks like the same serif face; Stella's type is ~6% larger on a narrower measure (258 against 278 pt). Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | the-thief-takers-apprentice | `ia-scan` | **The first modern English scan**: Deas, Gollancz first edition 2010; reference Gollancz's eBook of the edition (via calibre). An older IA PDF: 300 ppi, LuraDocument, **InvisibleOCR** text layer (`pdf.py` reads it). Pages 11–292; three parts ("PART ONE" / "THE THIEF-TAKER") and 42 chapters (number line, name line), each label and title a heading (90); a large first letter on each chapter. Its layer drops some apostrophes and splits the word (`didn t`, `I m`). Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | het-ivoren-aapje (**retired as a bench**) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py`. **No longer used to choose OCR models**: pre-1934 spelling, unlike every book we target; re-bench on modern Dutch line crops instead |
 
@@ -1034,3 +1036,11 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   both judges agree, and vetoing their unanimous pick: no measurable change on
   four books. So it decides nothing; its pick is recorded and shown to the
   reviewer, and kept as a feature for learned trust.
+- 2026-10-07: Footnotes kept apart from the score. A publisher's EPUB with
+  footnote paragraphs names their classes (`note_classes`); `golden derive`
+  writes them to `notes.txt`, and the text's links to them ("[*]") read as
+  printed ("*"). `eval` and `quality` drop the output's words from text-layer
+  lines that print a note (matched by words, not by position). Reis, Stella's
+  stand-in, was mostly footnote noise: CER 0.50% → 0.12%, wrong words 1.65 →
+  0.73/page, left unasked 1.17 → 0.25/page (at 1.67 questions/page). What it
+  leaves unasked now: punctuation 19, quotes 18, letters 12.

@@ -30,6 +30,7 @@ from roboscriptorium.corrections import Corrections
 from roboscriptorium.disagreements import Verdicts
 from roboscriptorium.golden import epub as publisher_epub
 from roboscriptorium.golden import gutenberg, se
+from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden.manifest import Golden, PublisherEpub, fetch, sha256
 from roboscriptorium.golden.reference import Chapter, load_chapters
 from roboscriptorium.ir import Document
@@ -103,6 +104,7 @@ def golden_derive(name: str, epub: Path | None = None) -> None:
             ref.italic_classes,
             ref.roman_classes,
             ref.blank_classes,
+            ref.note_classes,
         )
     else:
         epub = epub or gutenberg.download(
@@ -153,11 +155,19 @@ def _build_golden(
     book = Book.load(book_dir)
     if book.golden is None:
         raise typer.BadParameter(f"{book_dir}/book.toml names no golden book")
-    doc = pipeline.build(book, pages=_range(pages), use_models=not no_models, check_ocr=check_ocr)
+    stages = pipeline.run(book, pages=_range(pages), use_models=not no_models, check_ocr=check_ocr)
+    doc = _scored(book, stages)
     reference = load_chapters(Golden.load(book.golden).text_dir)
     if (span := _range(chapters)) is not None:
         reference = reference[span[0] - 1 : span[1]]
     return book, doc, reference
+
+
+def _scored(book: Book, stages: pipeline.Stages) -> Document:
+    """The document as scored: without the scan's footnotes where the reference sets them apart."""
+    found = golden_notes.load(Golden.load(book.golden).notes_path)
+    lines = golden_notes.note_lines(stages.pages, found) if found else set()
+    return golden_notes.without(stages.doc, lines, {p.number: p for p in stages.pages})
 
 
 def _verdicts(book: Book) -> Verdicts:
@@ -258,7 +268,7 @@ def quality_report(specs: list[str]) -> None:
         if (span := _range(chapters or None)) is not None:
             reference = reference[span[0] - 1 : span[1]]
         reference, applied = disagreements.patch(reference, _verdicts(book))
-        errors = disagreements.find(stages.doc, reference, stages.corrected)
+        errors = disagreements.find(_scored(book, stages), reference, stages.corrected)
         numbers = [p.number for p in stages.pages if p.lines]
         typer.echo(
             f"{Path(book_dir).name}: {len(numbers)} pages, {len(errors)} differing stretches, "
