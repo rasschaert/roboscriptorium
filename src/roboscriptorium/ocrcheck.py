@@ -397,15 +397,51 @@ def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, lis
             piece = ours[g0:g1]
             for a0, a1, b0, b1, _ in mine:
                 piece = piece[: a0 - g0] + other[b0:b1] + piece[a1 - g0 :]
+            if _curly(ours):
+                piece = _curled(piece)
             # Readings that differ only in quote style are one version.
             folded = [v.translate(_FOLD) for v in versions]
             if piece.translate(_FOLD) != ours[g0:g1].translate(_FOLD) and (
                 piece.translate(_FOLD) not in folded
             ):
                 versions.append(piece)
+        if versions and (both := _combined(ours[g0:g1], versions)):
+            versions.append(both)
         if versions:
             out.append((g0, g1, versions))
     return out
+
+
+def _curly(text: str) -> bool:
+    return any(c in text for c in "‘’“”") and not any(c in text for c in "'\"")
+
+
+def _curled(text: str) -> str:
+    """Straight quotes as curly ones: opening at a word's start, closing elsewhere."""
+    text = re.sub(r"(^|\s)'", r"\1‘", text)
+    text = re.sub(r"(^|\s)\"", r"\1“", text)
+    return text.replace("'", "’").replace('"', "”")
+
+
+_TRAILING = re.compile(r"^(.*?)([.,;:!?…]*)([’”'\"]*)$", re.S)
+
+
+def _combined(ours: str, versions: list[str]) -> str | None:
+    """The word with every reading's trailing marks, where each reading lost a different one.
+
+    Readings of the same word whose only differences are one punctuation mark
+    and one closing quote, each missing from some ("zijn’", "zijn."), give the
+    word with both ("zijn.’"), unless a reading already has it.
+    """
+    parts = [_TRAILING.match(v).groups() for v in (ours, *versions)]
+    if len({core for core, _, _ in parts}) != 1:
+        return None
+    marks = {m for _, m, _ in parts if m}
+    quotes = {q for _, _, q in parts if q}
+    if len(marks) != 1 or len(quotes) != 1:
+        return None
+    both = parts[0][0] + marks.pop() + quotes.pop()
+    return None if both == ours or both in versions else both
 
 
 def _decide(

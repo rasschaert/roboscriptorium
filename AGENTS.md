@@ -812,3 +812,13 @@ disagreements by mistake category.
   lacks them), CER 1.84% → 1.80%, headings and paragraphs unchanged. Crime
   unchanged (one page number). Goede dochter pp. 9–64, full pipeline before
   the stage and the quote rule: CER 0.29%, WER 0.24%, F1 0.958, headings 2/4.
+- 2026-10-07: Closing quotes in the OCR check. On Vals alarm the layer reads
+  `.’` as `’`, glm-ocr as `.`, tesseract as `.'`, so no reading the judges saw
+  was right. Readings now take a curly-quoted layer's quote style, and where
+  readings of one word each lost a different trailing mark (one a period, one
+  the quote) the word with both is offered too; the judges still decide. Vals
+  alarm pp. 11–60: CER 0.48% → 0.47%, paragraph F1 0.937 → 0.948; Crime CER
+  0.52% → 0.50%, F1 0.976 → 0.983; Dolittle unchanged. Many combined readings
+  still go to review: clef often misses the small period and keeps the
+  layer's `zijn’`, and winnow can't tell `zijn.` from `zijn.’` without the
+  open quote earlier in the paragraph.

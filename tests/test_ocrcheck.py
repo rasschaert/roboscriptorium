@@ -89,6 +89,39 @@ def test_quote_style_alone_doesnt_make_another_version():
     assert [versions for _, _, versions in found] == [['fee-fee?"']]
 
 
+def test_a_mark_each_reading_lost_is_offered_together():
+    from roboscriptorium.ocrcheck import merged_differences
+
+    ours = "‘Ga naar huis’ zei ze"
+    found = merged_differences(ours, ["‘Ga naar huis. zei ze", "'Ga naar huis.' zei ze"])
+    assert [versions for _, _, versions in found] == [["huis.", "huis.’"]]
+    found = merged_differences(ours, ["‘Ga naar huis. zei ze"])
+    assert [versions for _, _, versions in found] == [["huis.", "huis.’"]]
+
+
+def test_readings_that_disagree_on_a_mark_arent_combined():
+    from roboscriptorium.ocrcheck import merged_differences
+
+    ours = "‘Ga naar huis’ zei ze"
+    found = merged_differences(ours, ["‘Ga naar huis. zei ze", "‘Ga naar huis: zei ze"])
+    assert [versions for _, _, versions in found] == [["huis.", "huis:"]]
+    # Other letters, or one reading holding both marks, make no combination.
+    found = merged_differences("‘Ja?’ vroeg", ["‘Ja? vroeg"])
+    assert [versions for _, _, versions in found] == [["‘Ja?"]]
+    found = merged_differences("‘Nee’ zei", ["‘Neen. zei"])
+    assert [versions for _, _, versions in found] == [["‘Neen."]]
+
+
+def test_straight_quotes_take_a_curly_layers_style():
+    from roboscriptorium.ocrcheck import merged_differences
+
+    found = merged_differences("‘Ja’ zei ze", ["'Ja.' zei ze"])
+    assert [versions for _, _, versions in found] == [["‘Ja.’"]]
+    # A straight-quoted layer keeps the readings as they are.
+    found = merged_differences("'Ja' zei ze", ["'Ja.' zei ze"])
+    assert [versions for _, _, versions in found] == [["'Ja.'"]]
+
+
 def test_typographic_differences_have_the_same_letters():
     from roboscriptorium.ocrcheck import _typographic
 
