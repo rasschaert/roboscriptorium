@@ -4,58 +4,77 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules and
 decisions; this file only covers the state of play. Replace it at the end of
 each session.
 
-## State on 2026-10-07 (afternoon)
+## State on 2026-10-07 (night; the user is asleep, the agent works on)
 
-Everything is committed on `main` and pushed. New today:
+Everything is committed on `main`. New today:
 
-- **OCR check crops fixed.** A line's crop is its words' boxes together (Crime's
-  text layer gives lines boxes twice the print's height, so glm-ocr read the
-  neighbouring line too), reaching one em past the line's ends (line-end em
-  dashes the layer misses were cut to hyphens). Joining two words needs both
-  judges; `¬` equals `-`. Crime: 453 suspects for review → 54; Dolittle WER
-  1.92% → 1.81%; Lady into Fox unchanged.
-- **Second held-out book, Grand Hotel Europa** (Dutch IA scan, the user's EPUB
-  and PDF; copyrighted, all in `work/`). Cold start, chapters 1–3: CER 1.92%
-  (text layer alone 2.51%), headings 3/16. Never inspect its errors; score it in
-  slices (`--pages 15-44 --chapters 1-16` is chapters 1–3; scan page = printed
-  page + 4).
-- **Italics** (`italics.py`): each word's stroke slant on the scan, no model.
-  References keep `<i>` (`Chapter.italic`), the EPUB sets `<i>`, `eval` prints
-  italic precision/recall. Crime 0.952/0.909, Dolittle 0.833/0.814, held-out
-  Lady into Fox 0.315/0.895.
+- **OCR check crops fixed** (word-union crops, one em past line ends). Crime
+  review 453 → 54; Dolittle WER 1.92% → 1.81%.
+- **Italics stage** (`italics.py`): stroke slant on the page image, no model,
+  for scans and born-digital PDFs. A word is measured only if it has an upright
+  stem; ink is darker than each page's Otsu threshold (pale scans print grey).
+  Italic precision / recall: Crime 1.000 / 0.886, Dolittle 0.850 / 0.791,
+  De aanslag 0.987 / 0.855, Goede dochter (pp. 9–64) 0.958 / 0.828.
+- **Golden books reshaped** with the user's EPUB/PDF pairs (AGENTS.md's table
+  and decision log):
+  - Tuning, Dutch scans: **Goede dochter** (clean publisher EPUB, same
+    translation) and **Vals alarm** (48 chapter headings).
+  - Held out: Lady into Fox (EN scan), **Grand Hotel Europa**, **De tuin van
+    de avondnevel** (NL scans), **Villa Toscane** (NL born-digital). Score
+    them, never inspect their errors.
+  - Retired to `work/retired/`: Boze tongen, De dode kamer, Sense's Everyman
+    scans, Goede dochter's 8th printing (reasons in the decision log).
+  - Parked (`work/parked/README.md`): Goede dochter as a Dwarsligger, sideways
+    pages with an unusable OCR layer, for when the pipeline can OCR whole
+    pages itself.
+- Publisher manifests can list `italic_classes`, `roman_classes` and
+  `blank_classes`.
+- `experiments/probe_big_diffs.py` lists the largest differing stretches.
+
+Scores (chapters or pages in brackets):
+
+| Book | Text layer only (`--no-models`) | Full pipeline |
+| --- | --- | --- |
+| Villa Toscane (held out, born-digital, ch. 1–12) | — | CER 0.04%, F1 0.993, headings 0/12 |
+| De tuin van de avondnevel (held out, ch. 1–3, pp. 11–52) | CER 0.72%, F1 0.931, headings 0/3 | CER 0.41%, WER 0.25%, F1 0.946, headings 3/3; 389 suspects: 179 fixed, 148 review |
+| Goede dochter (ch. 1–4, pp. 9–64) | CER 0.45%, F1 0.943, headings 0/4 | not run yet |
+| Vals alarm (whole book) | CER 0.79%, F1 0.891, headings 0/48 | not run yet |
+
+`--no-models` scores headings without the role model, so 0/n there says little:
+compare headings on full runs.
 
 ## Next steps, in order
 
-1. **Rescore Boze tongen and Sense with the new crops**, in page slices (the
-   crops changed for every line, so glm-ocr re-reads them all; Boze tongen has
-   ~11k lines). One book per command, results reported before the next.
-2. **Italics, open ends:** marks below the word (dash-glued words with one half
-   italic: `instead—they'll`); born-digital PDFs have italics in their font
-   flags (De aanslag); Dutch publisher EPUBs italicise by CSS class, so their
-   references carry no italics yet (a manifest list of italic classes).
-   Lady into Fox's low precision is unexplained; it is held out, so don't look
-   at its errors: check the stage on tuning books instead.
-3. **Headings on unseen books** are the weakest carry-over (Grand Hotel Europa
-   3/16). A general signal rather than more rules: the layout model's `title`
-   regions, or the italic/size/centring of a line.
-4. **A `bench` command**: every job's labelled set scored for any model.
-5. **Learned trust** (Dawid–Skene, calibration) from the golden books and the
-   user's answers, replacing hand-set thresholds (`SURE`, `SURE_ALONE`).
-6. **Metadata stage** with `nuextract3:q6_k`.
-7. **Parked sources** (`work/parked/README.md`): Goede dochter as a Dwarsligger, sideways pages with an unusable OCR layer, for when the pipeline can OCR whole pages itself.
-8. Smaller: p23's decorated initial is answered "E" but shows an O; some em
-   dashes land after a space (`ago —when`) in Dolittle.
+1. **Full-pipeline baselines** for Goede dochter (pp. 9–64) and a Vals alarm
+   slice, one at a time, to see which headings the role model already finds.
+2. **Headings on unseen books**: Villa Toscane 0/12 and Grand Hotel Europa
+   3/16 with models. Work on the tuning books only, then check the held-out
+   ones. First look at what the missed headings have in common on the page,
+   then a general signal rather than more rules.
+3. **Quotes in Dutch OCR layers**: opening ‘ read as " or dropped, a period
+   lost before a closing quote (Vals alarm, Goede dochter).
+4. Scene-break lines (`*****`) are dropped.
+5. A `bench` command; learned trust (Dawid–Skene) replacing `SURE`/`SURE_ALONE`;
+   the metadata stage with `nuextract3:q6_k`.
+6. Italics: marks below the word (dash-glued words with one half italic).
+7. Smaller: p23's decorated initial (Dolittle) is answered "E" but shows an O;
+   some em dashes land after a space (`ago —when`).
 
 ## Working with the user
 
-- **One book per long command**, results reported before starting the next; no
-  multi-book runs that take long. Run small probes first and say how long a run
-  takes; keep outputs under `work/probes/`.
-- Held-out books (Lady into Fox, Grand Hotel Europa) are scored, never used to
-  find errors. The user cares that improvements carry over to unseen books.
+- **Before every long run, say why, what it should show, how long it takes and
+  what each outcome would mean.** Post updates while it runs. Answer every
+  question, even mid-task.
+- **One book per long command**, results reported before the next.
+- Be honest about the value of the books the user brings; retire what doesn't
+  help and say what would (Dutch 1960s–90s scans with a same-edition ebook;
+  real publisher print PDFs with their EPUB; another typesetting of a text we
+  already have). English same-scan Gutenberg pairs the agent finds itself.
+- Held-out books are scored, never used to find errors.
 - The user picks no models: choose from measurements and record why. Ask before
   adding a runtime or anything they must install or pull.
-- Commits are signed through 1Password; if signing fails, ask for it to be
-  unlocked.
+- Commit after every step and keep this file current: the laptop may lock.
+  Commits are signed through 1Password; if signing fails, stop and ask for it
+  to be unlocked.
 - Their connection is slow: avoid large downloads. Golden sources are in
   `work/.cache/` (checked against PROVENANCE.md).

@@ -784,3 +784,7 @@ disagreements by mistake category.
   typesetter). Text layer alone, whole book: CER 0.79%, WER 0.42%, paragraph
   F1 0.891, headings 0/48, italics 0.697 / 0.736. Its errors: opening ‘ read
   as " or lost, a period lost before a closing quote, `zon` for `zo'n`.
+- 2026-10-07: First held-out score of *De tuin van de avondnevel*, chapters
+  1–3: text layer alone CER 0.72%, WER 0.60%, F1 0.931, headings 0/3; full
+  pipeline CER 0.41%, WER 0.25%, F1 0.946, headings 3/3 (389 OCR suspects: 179
+  fixed, 148 for review). The OCR check carries over to an unseen Dutch scan.
