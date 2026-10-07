@@ -31,9 +31,11 @@ afternoon, after the second review:
 - **glm-ocr token confidence**: flat, not a question source (decision log).
 - **Line-role classifier** (`experiments/train_line_roles.py`, scikit-learn
   trees, leave one book out): 153 role errors against 182 for `roles.py` over
-  nine books; Villa Toscane headings 0/12 → 12/12. A run with the two CPNB
-  books added was in progress at the end of the session
-  (`work/probes/line-roles/run3.log`). The style vote (`typestyle.py` +
+  nine books; with the two CPNB books, eleven books: 224 (`roles.py`) against
+  279 (trees) and 272 (trees + clef). Big wins on unseen Dutch books
+  (Monterosso headings 3/19 → 18/19, Grand Hotel Europa 6/17 → 17/17, Villa
+  Toscane 0/12 → 12/12), big losses on Dolittle and Lady into Fox, and
+  unstable between runs (`work/probes/line-roles/run3.log`). The style vote (`typestyle.py` +
   `roles._heading_styles`) is a stopgap the classifier is meant to replace.
 - **New golden books**: De eerlijke vinder and Monterosso mon amour (CPNB, in
   Stella's scan format; different typesetters). Text layer alone: CER 0.37% /
@@ -124,9 +126,12 @@ better calibration, or add another OCR library on its own.
    Goede dochter; candidates not yet tried there: deepseek-ocr, gemma4) (Goede dochter line crops): glm-ocr
    was chosen, and vision models judged to modernise, on the 1909 Teirlinck
    bench in pre-reform spelling.
-5. **Golden books as training data** (classifier probe started; next: finish
-   the run with the CPNB books, then put the classifier in the pipeline behind
-   a switch and compare with `quality`). Align each scan with its reference word
+5. **Golden books as training data** (classifier probe running). Next:
+   regularise the trees (min samples per leaf, depth, fewer features; check
+   stability over seeds and training sets), find why Dolittle gets 87 false
+   headings (captions and picture text? labels for caption lines?), report
+   errors with bootstrap intervals over pages, then put the classifier in the
+   pipeline behind a switch and compare with `quality`. Align each scan with its reference word
    by word for labelled line crops and line roles. Train a small line-role
    classifier (gradient-boosted trees) on geometry, type size (`typestyle.py`),
    cap height, capitals, letterspacing, repetition and page-sequence features;

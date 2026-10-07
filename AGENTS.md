@@ -938,3 +938,11 @@ disagreements by mistake category.
   for review, 1.06 review questions per page. Of the OCR check's changes to
   word spacing on Stella and Goede dochter, all are right but `besefeen`;
   Goede dochter's `naaije` and `zeize` are the layer's own, left unfixed.
+- 2026-10-07: Line-role classifier with the two CPNB books added (eleven
+  books, leave one out): role errors `roles.py` 224, trees alone 279, trees with
+  clef's answer 272. The trees win on the Dutch books, most on those no rule
+  was written for (Monterosso 33 → 6, headings 3/19 → 18/19; Grand Hotel
+  Europa 33 → 21, headings 17/17; Villa Toscane 20 → 0; De eerlijke vinder
+  9 → 4) and lose on the English picture books (Dolittle 89 → 162–197, Lady
+  into Fox 8 → 12–41). Unstable: Dolittle went 83 → 162 when two books joined
+  the training set. Not in the pipeline yet; regularise first.
