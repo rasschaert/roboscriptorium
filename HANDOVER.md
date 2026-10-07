@@ -4,7 +4,7 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules and
 decisions; this file only covers the state of play. Replace it at the end of
 each session.
 
-## State on 2026-10-07 (after a critical review)
+## State on 2026-10-07 (after two critical reviews)
 
 Everything is committed on `main`. New today:
 
@@ -98,44 +98,59 @@ page, and review asks 2–3.5 questions a page. A 300-page book would leave
 - **Group review questions** wherever one answer can settle many (a heading
   style, a confusion pattern, a running head).
 
+## Second review (2026-10-07, agreed with the user): the machine learns nothing
+
+Every gain so far is a hand-written rule, a threshold or an off-the-shelf
+model; the golden books only score. Session 2026-10-07 (afternoon) confirmed
+it: type features per line (`typestyle.py`) plus a style vote gave Goede
+dochter one heading; clef ignores type in its state; a per-group question was
+right on every tuning group yet gained nothing held out (+2 spurious on De
+tuin), so it was dropped. The type measurements stay, as features for item 5.
+
+Don't: add rules that fix one book, swap in bigger judge models hoping for
+better calibration, or add another OCR library on its own.
+
 ## Next steps, in order
 
-1. **Make CER mean something**: settle the disagreements on Goede dochter
-   (pp. 9–64) with `golden review`, so its score counts pipeline errors only.
-2. **Typographic features and book-wide heading styles.** Measure per line
-   x-height and cap height from the scan, all-caps, letterspacing, and the
-   layout model's `title` class. Cluster candidate heading lines across the
-   book by that style signature; the human answers once per cluster ("these
-   48 lines look alike: chapter headings?"). Aim to replace most of the
-   `roles.py` overrides. Success = held-out headings (Villa Toscane 0/12,
-   Grand Hotel Europa 3/16) going up. Goede dochter's missed part title
-   "DONDERDAG 16 MAART, 1989" (alone on sunk p9) is a test case.
-3. **Learned trust (Dawid–Skene)** replacing `SURE`/`SURE_ALONE`: align all
-   readings word by word (ROVER-style), weight each source per kind of error,
-   learned from review answers and verdicts. Comes with a `bench` command.
-4. **Shared errors**: a Dutch lexicon (OpenTaal / Hunspell `nl`; ask the user
-   before installing) plus the book's own vocabulary (a rare word one edit
-   from a frequent one is suspect); learn a book's confusions (`I`/`l`, `‘`/`“`)
-   from its first review answers and apply them book-wide, flagged.
-5. **Probe: judge by likelihood.** Score each candidate by the OCR model's own
-   probability of that exact text given the crop (teacher forcing). Ollama
-   can't do this; a local transformers or llama.cpp setup can (ask the user
-   before adding a runtime). Try it on Dolittle pp. 30–49's 67 suspects
-   against clef's 96%.
-6. **Review load**: group questions (one per confusion pattern, heading style,
-   running head) and sort the rest by how likely they are to be wrong. Target
-   well under 1 question per page.
-7. Later, a page-image-first reading for books whose layer is missing or
-   unusable (the parked Dwarsligger): layout regions → glm-ocr per region,
-   the text layer as one more reading. It would replace the special stages
-   for missing lines, sideways text and initials.
-8. Older open items, lower priority: quotes in Dutch IA layers (a ‘ dropped
-   altogether, a period lost before a closing ’; item 4 may cover them);
-   scene-break lines (`*****`) dropped; paragraph breaks after a full line
-   (try a decision model: "does a new paragraph start here?", speaker changes);
-   italics marks below the word; the metadata stage with `nuextract3:q6_k`;
-   Dolittle p23's initial answered "E" (shows an O); em dashes after a space
-   (`ago —when`).
+1. **Error budget.** Settle Goede dochter's verdicts (pp. 9–64; 34 to answer
+   in `golden review`), then sort the remaining errors by category (quotes,
+   punctuation, letters, paragraph breaks, headings) and work on the biggest.
+   Stella has no headings: don't assume headings are where the errors are.
+2. **Measure what the human experiences.** The product is errors left after
+   review against questions asked. Report unflagged errors per page at fixed
+   question budgets (0.25, 0.5, 1 per page), with bootstrap error bars over
+   pages; claim no gain inside them. Turning silent errors into flagged ones is
+   a win even when CER stays flat.
+3. **glm-ocr's logprobs.** Ollama 0.40 returns `logprobs`/`top_logprobs` for
+   glm-ocr in `/api/generate`: a confidence per token of every reading and the
+   runner-up where it was unsure. Flag low-margin tokens even where all
+   readings agree (shared errors). No new runtime needed.
+4. **Re-bench OCR models on modern Dutch** (Goede dochter line crops): glm-ocr
+   was chosen, and vision models judged to modernise, on the 1909 Teirlinck
+   bench in pre-reform spelling.
+5. **Golden books as training data.** Align each scan with its reference word
+   by word for labelled line crops and line roles. Train a small line-role
+   classifier (gradient-boosted trees) on geometry, type size (`typestyle.py`),
+   cap height, capitals, letterspacing, repetition and page-sequence features;
+   score it leaving one book out at a time. Aim: replace the `roles.py`
+   overrides. Later: fine-tune glm-ocr (MLX) or a tesseract/Kraken line model
+   on aligned crops plus synthetic pages rendered from the EPUBs.
+6. **Page image first, sooner.** Full-page document models (dots.ocr, olmOCR,
+   MinerU, PaddleOCR-VL, Docling) see layout, heading size and italics; add
+   them as votes in the alignment. Ask the user before adding a runtime.
+7. **Book-level inference.** Page-number sequences, verso/recto running heads,
+   one heading style, a word spelled one way 50 times and once otherwise. Model
+   the book jointly (HMM/CRF over page states, or a small ILP) rather than
+   adding per-line features; this also yields grouped review questions.
+8. **More readings whose errors differ**: a second scan of the same edition
+   beats another vision model of a similar family.
+9. **Run Stella through the current pipeline now and then**: its `stages/`
+   holds only `textlayer.json` and `document.json`.
+10. Older items still open: Learned trust (Dawid–Skene) over `SURE`/
+   `SURE_ALONE`; a Dutch lexicon (ask before installing); quotes in Dutch IA
+   layers; `*****` scene breaks; paragraph breaks after a full line; italics
+   marks below the word; the metadata stage (`nuextract3:q6_k`); Dolittle
+   p23's initial "E"; em dashes after a space.
 
 ## Working with the user
 
