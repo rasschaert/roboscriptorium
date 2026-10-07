@@ -804,3 +804,11 @@ disagreements by mistake category.
   0.918. De aanslag unchanged (its real “ close with ” or ’’); English books
   are double- or straight-quoted, so the rule doesn't run. Still open: ‘ the
   layer drops altogether, and a period lost before a closing ’.
+- 2026-10-07: Missing-lines stage measured. Vals alarm pp. 11–60 (full
+  pipeline): 13 lines read back, all printed (7 chapter numbers, 5 page
+  numbers, one `'Ja.'`); headings 2/10 → 8/10 (+0 spurious), paragraph F1
+  0.929 → 0.937, CER 0.48% either way. Dolittle: 71 lines added, all printed
+  (mostly furniture, which the roles drop; four text lines of p97, whose layer
+  lacks them), CER 1.84% → 1.80%, headings and paragraphs unchanged. Crime
+  unchanged (one page number). Goede dochter pp. 9–64, full pipeline before
+  the stage and the quote rule: CER 0.29%, WER 0.24%, F1 0.958, headings 2/4.

@@ -30,8 +30,7 @@ Everything is committed on `main`. New today:
 - Publisher manifests can list `italic_classes`, `roman_classes` and
   `blank_classes`.
 - `experiments/probe_big_diffs.py` lists the largest differing stretches.
-- **Missing lines** (`missing.py`, commit 77625ab, *not yet measured on the
-  golden books*): layout regions about one line tall with no text-layer line
+- **Missing lines** (`missing.py`, measured: see the decision log): layout regions about one line tall with no text-layer line
   in them are read by glm-ocr and added before the line roles. Vals alarm's
   layer drops its single-digit chapter numbers (7 of 48 headings); the probe
   (`experiments/probe_missing_lines.py`) read all 15 Vals alarm candidates
@@ -44,30 +43,25 @@ Scores (chapters or pages in brackets):
 | Villa Toscane (held out, born-digital, ch. 1–12) | — | CER 0.04%, F1 0.993, headings 0/12 |
 | De tuin van de avondnevel (held out, ch. 1–3, pp. 11–52) | CER 0.72%, F1 0.931, headings 0/3 | CER 0.41%, WER 0.25%, F1 0.946, headings 3/3; 389 suspects: 179 fixed, 148 review |
 | Goede dochter (ch. 1–4, pp. 9–64) | CER 0.40%, F1 0.957, headings 0/4 (with the quote rule) | CER 0.29%, WER 0.24%, F1 0.958, headings 2/4, italics 0.973 / 0.838 (before missing lines and the quote rule) |
-| Vals alarm (whole book) | CER 0.74%, F1 0.918, headings 0/48 (with the quote rule) | not run yet |
+| Vals alarm (whole book; full pipeline pp. 11–60, ch. 1–10) | CER 0.74%, F1 0.918, headings 0/48 (with the quote rule) | CER 0.48%, WER 0.21%, F1 0.937, headings 8/10 |
 
 `--no-models` scores headings without the role model, so 0/n there says little:
 compare headings on full runs.
 
 ## Next steps, in order
 
-1. **Measure the missing-lines stage**: Vals alarm pp. 11–60 (chapters 1–10,
-   which hold the missing numbers), with and without the stage
-   (`missing.candidates` patched to return nothing gives the "without"), then
-   Dolittle and Crime for regressions. Running now:
-   `work/probes/vals-alarm-missing-on.log`.
-2. **Quotes in Dutch IA OCR layers**: openings misread as “ are fixed (commit
+1. **Quotes in Dutch IA OCR layers**: openings misread as “ are fixed (commit
    b0f4254, see the decision log). Still open: a ‘ the layer drops altogether,
    and a period lost before a closing ’.
-3. **Headings on unseen books**: Villa Toscane 0/12 and Grand Hotel Europa
+2. **Headings on unseen books**: Villa Toscane 0/12 and Grand Hotel Europa
    3/16 with models. Work on the tuning books only, then check the held-out
    ones. First look at what the missed headings have in common on the page,
    then a general signal rather than more rules.
-4. Scene-break lines (`*****`) are dropped.
-5. A `bench` command; learned trust (Dawid–Skene) replacing `SURE`/`SURE_ALONE`;
+3. Scene-break lines (`*****`) are dropped.
+4. A `bench` command; learned trust (Dawid–Skene) replacing `SURE`/`SURE_ALONE`;
    the metadata stage with `nuextract3:q6_k`.
-6. Italics: marks below the word (dash-glued words with one half italic).
-7. Smaller: p23's decorated initial (Dolittle) is answered "E" but shows an O;
+5. Italics: marks below the word (dash-glued words with one half italic).
+6. Smaller: p23's decorated initial (Dolittle) is answered "E" but shows an O;
    some em dashes land after a space (`ago —when`).
 
 ## Working with the user
