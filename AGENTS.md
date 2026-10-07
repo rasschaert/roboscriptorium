@@ -167,8 +167,8 @@ right, then expand.
   - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
     `stages/layout.json`; run by `review`. Picture-only pages are also run turned a
     quarter, to find captions printed sideways.
-  - `italics.py`: italic words on scanned books, from each text-layer word's
-    stroke slant on the scan (no model), marked on paragraphs by aligning their
+  - `italics.py`: italic words, from each text-layer word's stroke slant on
+    the page image (no model; scans and born-digital PDFs alike), marked on paragraphs by aligning their
     words with their source lines'; cached in `stages/italics.json`. The EPUB
     sets them in `<i>`; `eval` scores italic words.
   - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)
@@ -740,3 +740,10 @@ disagreements by mistake category.
   below the word), held-out Lady into Fox 0.315 / 0.895 (54 marked against 19;
   on the tuned books such extras were mostly italics Gutenberg left unmarked,
   unverified here). CER and the rest unchanged; epubcheck clean.
+- 2026-10-07: Italics on born-digital PDFs too, and a word is measured only
+  if it has an upright stem: two stems (h, n, u count two, m three), or one in
+  a word without diagonal letters. Two-letter words like "zo" and "ze" read as
+  italic in any type (De aanslag precision 0.377 at two letters). A line is
+  measured only when its words spell it (`pdf.spells`, private-use ligatures
+  allowed). Italic precision / recall: Crime 0.951 / 0.886, Dolittle 0.872 /
+  0.791, De aanslag (now with italics from its CSS classes) 0.987 / 0.855.

@@ -1,12 +1,14 @@
-"""Italic words, from the slant of their strokes on the scan.
+"""Italic words, from the slant of their strokes on the page image.
 
 Each text-layer word is cropped from the page image and its ink (above the
 baseline: a y's descender leans like italic) is sheared by a range of angles.
 The angle at which the strokes line up most sharply is the word's slant; italic
 type leans about 15°, roman stands upright. No model.
 
-A single letter has too few strokes to measure; one between
-two italic words is italic ("I can talk").
+Only words with an upright stem to measure are: two stems, or one in a word
+without diagonal letters. A word of round and diagonal letters ("zo", "ze")
+leans like italic whatever its type. An unmeasured word between two italic
+words is italic ("I can talk").
 """
 
 import json
@@ -20,13 +22,15 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import Block, Paragraph, SourceRef
-from roboscriptorium.pdf import PageText, line_words
+from roboscriptorium.pdf import PageText, line_words, spells
 
-VERSION = 2
+VERSION = 6
 DPI = 300
 ANGLES = np.arange(-25, 26, 1)
 ITALIC_AT = 8  # degrees of slant
-MIN_LETTERS = 2
+# Upright stems per letter, in roman and italic alike.
+STEMS = {c: 1 for c in "bdfijklpqrtBDEFIJKLPRT"} | {c: 2 for c in "hnuHNU"} | {"m": 3, "M": 2}
+DIAGONALS = set("kvwxyzAKVWXYZ")
 
 
 def slant(gray: np.ndarray) -> float:
@@ -80,11 +84,11 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:
     for k, (line, words) in enumerate(
         zip(page.lines, line_words(pdf_page.get_text("words"), page), strict=True)
     ):
-        if not words or [w[4] for w in words] != line.text.split(" "):
+        if not words or not spells(words, line.text):
             continue
         leaning = []
         for w in words:
-            if sum(c.isalpha() for c in w[4]) < MIN_LETTERS:
+            if not _measurable(w[4]):
                 leaning.append(None)
                 continue
             x0, y0, x1, y1 = (int(v * scale) for v in w[:4])
@@ -92,6 +96,11 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:
         if italic := _fill(leaning):
             out[str(k)] = italic
     return out
+
+
+def _measurable(word: str) -> bool:
+    stems = sum(STEMS.get(c, 0) for c in word)
+    return stems >= 2 or (stems == 1 and not DIAGONALS & set(word))
 
 
 def _fill(leaning: list[bool | None]) -> list[int]:

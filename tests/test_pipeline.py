@@ -111,7 +111,6 @@ def test_a_caption_inside_a_pictures_box_is_trimmed_off():
 def test_italic_words_on_the_scan_reach_the_epub(tmp_path, monkeypatch):
     _everything_is_body(monkeypatch)
     _no_layout(monkeypatch)
-    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
     doc = pymupdf.open()
     page = doc.new_page(width=400, height=600)
     for i, text in enumerate(LINES):

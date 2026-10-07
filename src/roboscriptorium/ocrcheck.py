@@ -31,7 +31,7 @@ from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
-from roboscriptorium.pdf import PageText, line_words
+from roboscriptorium.pdf import PageText, line_words, spells
 from roboscriptorium.roles import DecisionCache
 
 DPI = 300
@@ -227,7 +227,7 @@ def line_boxes(pdf_page: pymupdf.Page, page: PageText) -> list[tuple[float, floa
     """
     out = []
     for line, words in zip(page.lines, line_words(pdf_page.get_text("words"), page), strict=True):
-        if words and [w[4] for w in words] == line.text.split(" "):
+        if words and spells(words, line.text):
             out.append(_union(words))
         else:
             out.append((line.x0, line.y0, line.x1, line.y1))
@@ -311,11 +311,10 @@ def _box(words: list, box, original: str, start: int, end: int):
     At the line's start or end it reaches one em further, where a mark the text
     layer missed is printed.
     """
-    tokens = original.split(" ")
     k0 = original[:start].count(" ")
     k1 = k0 + original[start:end].strip().count(" ") + 1
     x0, y0, x1, y1 = box
-    if [w[4] for w in words] == tokens:
+    if spells(words, original):
         out = list(_union(words[k0:k1]))
     else:
         out = [x0 + (x1 - x0) * start / len(original), y0, x0 + (x1 - x0) * end / len(original), y1]

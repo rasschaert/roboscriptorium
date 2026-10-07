@@ -91,10 +91,9 @@ def run(
         )
 
     text = ocrcheck.apply(corrected, suspects)
-    blocks = reflow(text, roles)
-    if ocrcheck.scanned(book.source):
-        found = italics.detect(book.source, body, book.stages / "italics.json")
-        blocks = italics.mark(blocks, body, found)
+    blocks = italics.mark(
+        reflow(text, roles), body, italics.detect(book.source, body, book.stages / "italics.json")
+    )
     doc = Document(book.title, book.author, book.language, blocks)
     images = {}
     if layout.available():

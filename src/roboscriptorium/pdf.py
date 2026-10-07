@@ -119,6 +119,19 @@ def read_text_layer(pdf: Path) -> list[PageText]:
     return pages
 
 
+def spells(words: list, text: str) -> bool:
+    """Whether the text layer's words (as `get_text("words")` gives them) spell `text`.
+
+    A word's private-use glyphs are left out of the comparison: the line's text
+    has them spelled out ("\ue050anks" is "Thanks").
+    """
+    tokens = text.split(" ")
+    return len(words) == len(tokens) and all(
+        w[4] == t or "".join(c for c in w[4] if not _private(c)) in t
+        for w, t in zip(words, tokens, strict=True)
+    )
+
+
 def _private(ch: str) -> bool:
     return 0xE000 <= ord(ch) <= 0xF8FF
 
