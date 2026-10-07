@@ -48,3 +48,13 @@ def test_patch_keeps_the_printed_glyphs(tmp_path):
     patched, applied = patch(reference, verdicts)
     assert applied == 1
     assert patched[0].paragraphs == ["‘Wacht…’ zei ze. ‘Ik kwam.'"]
+
+
+def test_patch_applies_verdicts_within_each_others_context(tmp_path):
+    reference = [Chapter("I", ["a b c d e f g h i j k l m n o"])]
+    verdicts = Verdicts(tmp_path / "v.jsonl")
+    verdicts.record(Disagreement("1", "E", "e", "a b c d", "f g h i", 7, (1, 1)), "E", "edition")
+    verdicts.record(Disagreement("2", "G", "g", "c d e f", "h i j k", 7, (1, 1)), "G", "edition")
+    patched, applied = patch(reference, verdicts)
+    assert applied == 2
+    assert patched[0].paragraphs == ["a b c d E f G h i j k l m n o"]

@@ -1165,3 +1165,16 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   (glm-ocr 87). Its misreadings are plausible words (`doodgaan→doorgaan`,
   `ontspanden→ontspannen`, `wachtte→wartete`), which a word list can't catch:
   a third reading for the judges, not a replacement. ~1 s per line under load.
+- 2026-10-07: Four bugs from an outside review (Gemini, `review.md`), each
+  reproduced, fixed and tested. `disagreements.patch` finds every verdict in the
+  unpatched reference before applying any (a verdict within another's six-word
+  context was silently skipped). `ocrcheck.apply` keys fixes on the line's
+  index, not its text (identical lines on a page took each other's fixes:
+  `zon` → `zo'nn`). `corrections.apply` keeps `Line.source` on a retyped line.
+  Lines are grouped by each text-layer line's span without a large initial it
+  opens with (first glyph > 1.6× the rest), so a drop cap no longer pulls the
+  next printed line into its own: Thief-Taker's chapter openings (25 pages) and
+  Lady into Fox p13 now split into their printed lines; the other eleven books
+  read identical lines (`experiments/probe_line_grouping_diff.py`). A drop cap
+  that is a fragment of its own still joins the line below; only Thief-Taker
+  p70 has one (`experiments/probe_tall_fragments.py`).

@@ -72,6 +72,44 @@ What changed today, in the order it matters:
 6. Settle verdicts on Reis and the CPNB books (`golden review`), so small gains
    there can be told from edition noise.
 
+## From an outside review (Gemini, `review.md`, 2026-10-07)
+
+Another model reviewed the repo. Checked against the code, four of its bugs were
+real and are fixed, each with a test: `disagreements.patch` skipped a verdict
+whose context overlapped one applied before it; `ocrcheck.apply` keyed fixes on
+the line's text, so identical lines on a page took each other's fixes;
+`corrections.apply` dropped `Line.source` on a retyped line; and a large initial
+set inside a text-layer line made that line's box tall enough to swallow the
+next printed line (Thief-Taker's chapter openings). Its ideas worth keeping:
+
+- **A sequence model over pages for furniture and headings.** Page numbers
+  count up by one, running heads alternate verso/recto, a chapter title follows
+  its label, a chapter opening sits on a sunk page. A CRF/HMM (or a Viterbi pass
+  over the line-role classifier's per-line probabilities) enforces that
+  structure jointly, where the rules and the classifier now judge each line
+  alone. Try it as a layer on top of the classifier once that's wired in (step
+  4); the page-number sequence is the easiest first case.
+- **Don't ask a vision model about a tiny mark.** Whether a crop shows `zijn’` or
+  `zijn.’` is at the limit of what a patch-based encoder sees (clef missing the
+  small period on Vals alarm agrees). Prefer constraints that need no eyes:
+  quote pairing (`quotes.py`), sentence ends before a closing quote, the word
+  list, and give these to the trust model as features.
+- **Question ranking by kind ignores the kind of book.** `quality` ranks a
+  question's kind by how often it caught an error in other books; a kind means
+  different things in a picture book and in plain prose. Make the reason's hit
+  rate a feature conditioned on simple book traits, or learn it with the trust
+  model.
+- Smaller: votes are keyed by model name, so the same model as judge and reader
+  would collapse into one vote (key by role); a drop cap that is its own
+  fragment (Thief-Taker p70 "P", the only real one in fourteen books) still
+  joins the line below it; file reads and writes lean on the UTF-8 default.
+
+Checked and rejected: releasing `PDF_LOCK` during a review rebuild (the lock is
+what keeps PyMuPDF single-threaded while the pipeline runs; nothing inside
+takes it again, so no deadlock), `Figure` blocks reaching `figures.place` (they
+can't yet), making the page image the primary reading (the text layer is the
+best single reading on modern Dutch), and portability to non-Mac machines.
+
 ## Working with the user
 
 - Before every long run, say why, what it should show, how long it takes and

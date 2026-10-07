@@ -255,9 +255,7 @@ def apply(
             roles[SourceRef(c.page, i)] = _ROLE[c.action]
         if c.text is not None and c.action in ("text", "heading"):
             first = page.lines[c.first]
-            page.lines[c.first] = Line(
-                " ".join(c.text.split()), first.x0, first.y0, first.x1, first.y1
-            )
+            page.lines[c.first] = replace(first, text=" ".join(c.text.split()))
             for i in range(c.first + 1, c.last + 1):
                 roles[SourceRef(c.page, i)] = _ROLE["drop"]
         applied += 1

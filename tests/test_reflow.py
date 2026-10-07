@@ -1,5 +1,5 @@
 from roboscriptorium.ir import Heading, Paragraph, SourceRef
-from roboscriptorium.pdf import Line, PageText, _visual_lines
+from roboscriptorium.pdf import Line, PageText, _core, _visual_lines
 from roboscriptorium.reflow import join, reflow, tidy
 from roboscriptorium.roles import LineRole
 
@@ -93,6 +93,34 @@ def test_word_boxes_of_one_skewed_line_form_one_line():
     ]
     lines = _visual_lines(words)
     assert [ln.text for ln in lines] == ["when our grandfathers were", "little children"]
+
+
+def _layer_line(spans: list[tuple[str, float, float]]) -> dict:
+    return {
+        "bbox": (0, min(s[1] for s in spans), 300, max(s[2] for s in spans)),
+        "spans": [{"text": t, "bbox": (0, y0, 10, y1)} for t, y0, y1 in spans],
+    }
+
+
+def test_a_large_initial_does_not_pull_the_next_printed_line_into_its_own():
+    # The text layer sets a three-line drop cap and the first line as one line.
+    opening = _layer_line([("T", 178, 245), ("he crowd had come", 219, 232)])
+    assert _core(opening) == (219, 232)
+    # A capital barely taller than the text is no initial.
+    assert _core(_layer_line([("W", 217, 232), ("hen they", 220, 232)])) == (217, 232)
+    fragments = [
+        Line("The crowd had come", 22, 178, 300, 245),
+        Line("them had no idea", 66, 237, 300, 250),
+        Line("Square for the spectacle", 66, 255, 300, 268),
+    ]
+    cores = [_core(opening), (237, 250), (255, 268)]
+    assert [ln.text for ln in _visual_lines(fragments, cores)] == [
+        "The crowd had come",
+        "them had no idea",
+        "Square for the spectacle",
+    ]
+    # Grouping by the whole boxes glues the second line to the first.
+    assert len(_visual_lines(fragments)) == 2
 
 
 def test_headings_match_in_order_and_split_subtitles_count():

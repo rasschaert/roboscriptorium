@@ -642,17 +642,18 @@ def _crop(pdf_page: pymupdf.Page, box) -> bytes:
 
 def apply(pages: list[PageText], suspects: list[Suspect]) -> list[PageText]:
     """Copies of the pages with the chosen fixes, on lines still reading as the text layer did."""
-    fixes: dict[tuple[int, str], list[Suspect]] = {}
+    fixes: dict[tuple[int, int], list[Suspect]] = {}
     for s in suspects:
         if s.choice == "other":
-            fixes.setdefault((s.page, s.original), []).append(s)
+            fixes.setdefault((s.page, s.line), []).append(s)
     out = []
     for page in pages:
         lines = []
-        for line in page.lines:
+        for i, line in enumerate(page.lines):
             text = line.text
+            here = [s for s in fixes.get((page.number, i), []) if s.original == text]
             # Right to left, so each fix leaves the spans before it in place.
-            for s in sorted(fixes.get((page.number, text), []), key=lambda s: -s.start):
+            for s in sorted(here, key=lambda s: -s.start):
                 text = text[: s.start] + s.chosen + text[s.end :]
             lines.append(replace(line, text=text) if text != line.text else line)
         out.append(replace(page, lines=lines))

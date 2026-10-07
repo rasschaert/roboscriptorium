@@ -63,6 +63,21 @@ def test_text_typed_for_a_missing_region_is_inserted_with_its_paragraphs(tmp_pat
     assert len(page.lines) == 10
 
 
+def test_a_retyped_line_keeps_its_text_layer_identity_below_an_insertion(tmp_path):
+    page = _page()
+    roles = {SourceRef(1, 5): LineRole("artifact", 0.5, 0.3)}
+    retyped = flags.find([page], roles)[0]
+    missing = flags.Flag("p1-x", 1, 3, 2, "", "missing", ["missing-text"], (50, 125, 350, 150))
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(retyped, "text", "G.J. Sorgdrager * 13.6.1919")
+    answers.record(missing, "text", "An inserted line.")
+    fixed, _, applied = corrections.apply([page], roles, answers)
+    assert applied == 2
+    line = next(ln for ln in fixed[0].lines if ln.text.startswith("G.J."))
+    assert fixed[0].lines.index(line) == 6
+    assert line.source == 5
+
+
 def test_a_drawn_initial_goes_back_in_front_of_its_word(tmp_path):
     from roboscriptorium.epub import _block
     from roboscriptorium.reflow import reflow

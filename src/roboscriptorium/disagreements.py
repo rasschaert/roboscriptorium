@@ -239,19 +239,29 @@ def patch(reference: list[Chapter], verdicts: Verdicts) -> tuple[list[Chapter], 
         for p, para in enumerate(ch.paragraphs)
         for k, (w, printed) in enumerate(_printed(para))
     ]
-    applied = 0
+    # Each verdict's context is the unpatched reference's, so all are found before any
+    # is applied: a verdict a few words from another still matches.
+    words = [w for _, _, w, _, _ in flat]
+    found = []
     for v in verdicts.by_key.values():
         if v.truth is None or v.truth == v.want:
             continue
         before, want, after = v.before.split(), v.want.split(), v.after.split()
-        at = _find_sequence([w for _, _, w, _, _ in flat], before + want + after)
-        if at is None:
+        at = _find_sequence(words, before + want + after)
+        if at is not None:
+            found.append((at + len(before), len(want), v.truth.split()))
+    applied = 0
+    # Right to left, so each leaves the positions before it in place; a verdict
+    # overlapping one already applied is skipped.
+    taken = len(flat) + 1
+    for start, size, truth in sorted(found, key=lambda f: (-f[0], -f[1])):
+        if start + size > taken:
             continue
-        start = at + len(before)
         c, p, _, italic, _ = (
-            (flat[start] if want else flat[max(0, start - 1)]) if flat else (0, 0, "", False, "")
+            (flat[start] if size else flat[max(0, start - 1)]) if flat else (0, 0, "", False, "")
         )
-        flat[start : start + len(want)] = [(c, p, w, italic, w) for w in v.truth.split()]
+        flat[start : start + size] = [(c, p, w, italic, w) for w in truth]
+        taken = start
         applied += 1
 
     chapters = []

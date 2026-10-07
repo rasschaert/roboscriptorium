@@ -312,3 +312,17 @@ def test_a_break_hyphen_is_asked_as_the_word_across_the_break(tmp_path):
     answers.record(question, "text", "en daar was ik dankbaar")
     out, _, _ = apply([page], {}, answers)
     assert [ln.text for ln in out[0].lines] == ["en daar was ik dank-", after]
+
+
+def test_identical_lines_each_take_only_their_own_fix():
+    lines = [Line("zon", 10, 10, 50, 20), Line("ja", 10, 30, 50, 40), Line("zon", 10, 50, 50, 60)]
+    page = PageText(7, 300, 400, lines)
+    suspects = [
+        Suspect(7, i, "zon", 0, 3, "zon", ("zo'n",), (0, 0, 1, 1), "other", "zo'n") for i in (0, 2)
+    ]
+    assert [ln.text for ln in ocrcheck.apply([page], suspects)[0].lines] == ["zo'n", "ja", "zo'n"]
+    assert [ln.text for ln in ocrcheck.apply([page], suspects[:1])[0].lines] == [
+        "zo'n",
+        "ja",
+        "zon",
+    ]

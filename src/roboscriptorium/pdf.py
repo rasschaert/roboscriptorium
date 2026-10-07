@@ -16,11 +16,14 @@ from roboscriptorium.files import write_atomic
 # at least this share of its own height. OCR layers box each word separately, and
 # the tops of one line's words differ by several points with ascenders and skew.
 SAME_LINE_OVERLAP = 0.5
+# A line's first glyph this many times taller than the rest is a large initial
+# (a drop cap): its height says nothing about which printed line the text is on.
+INITIAL_HEIGHT = 1.6
 # PyMuPDF isn't thread-safe. A program that uses it from several threads (the
 # review server) holds this lock around every use.
 PDF_LOCK = threading.Lock()
 # Bumped whenever line extraction changes, so cached text layers are rebuilt.
-TEXT_LAYER_VERSION = 4
+TEXT_LAYER_VERSION = 5
 # Ligatures a font may put in the Unicode private-use area, where the text layer
 # then holds a code that means nothing outside that font.
 PRIVATE_LIGATURES = {"ff", "fi", "fl", "ffi", "ffl", "fj", "ft", "st", "ct", "Th", "ch", "ck", "tt"}
@@ -52,21 +55,30 @@ class PageText:
     lines: list[Line]
 
 
-def _visual_lines(fragments: list[Line]) -> list[Line]:
-    """Merge fragments that share a baseline, ordered top to bottom."""
-    merged: list[list[Line]] = []
-    for frag in sorted(fragments, key=lambda f: ((f.y0 + f.y1) / 2, f.x0)):
+def _visual_lines(
+    fragments: list[Line], cores: list[tuple[float, float]] | None = None
+) -> list[Line]:
+    """Merge fragments that share a baseline, ordered top to bottom.
+
+    `cores` is each fragment's vertical span without a large initial, which is what
+    decides its line; the lines' boxes still hold the whole fragments.
+    """
+    if cores is None:
+        cores = [(f.y0, f.y1) for f in fragments]
+    merged: list[list[tuple[Line, tuple[float, float]]]] = []
+    order = sorted(zip(fragments, cores, strict=True), key=lambda fc: (sum(fc[1]) / 2, fc[0].x0))
+    for frag, (y0, y1) in order:
         if merged:
-            top = min(f.y0 for f in merged[-1])
-            bottom = max(f.y1 for f in merged[-1])
-            overlap = min(bottom, frag.y1) - max(top, frag.y0)
-            if overlap >= SAME_LINE_OVERLAP * (frag.y1 - frag.y0):
-                merged[-1].append(frag)
+            top = min(c[0] for _, c in merged[-1])
+            bottom = max(c[1] for _, c in merged[-1])
+            overlap = min(bottom, y1) - max(top, y0)
+            if overlap >= SAME_LINE_OVERLAP * (y1 - y0):
+                merged[-1].append((frag, (y0, y1)))
                 continue
-        merged.append([frag])
+        merged.append([(frag, (y0, y1))])
     lines = []
-    for group in merged:
-        group.sort(key=lambda f: f.x0)
+    for members in merged:
+        group = sorted((f for f, _ in members), key=lambda f: f.x0)
         lines.append(
             Line(
                 text=" ".join(f.text for f in group),
@@ -100,19 +112,30 @@ def _holds(line, cx: float, cy: float) -> bool:
     return line.x0 - 3 <= cx <= line.x1 + 3 and line.y0 - 2 <= cy <= line.y1 + 2
 
 
+def _core(line: dict) -> tuple[float, float]:
+    """A text-layer line's vertical span, leaving out a large initial it opens with."""
+    spans = [s for s in line["spans"] if s["text"].strip()]
+    if len(spans) > 1:
+        first = spans[0]["bbox"][3] - spans[0]["bbox"][1]
+        rest = max(s["bbox"][3] - s["bbox"][1] for s in spans[1:])
+        if first > INITIAL_HEIGHT * rest:
+            return min(s["bbox"][1] for s in spans[1:]), max(s["bbox"][3] for s in spans[1:])
+    return line["bbox"][1], line["bbox"][3]
+
+
 def read_text_layer(pdf: Path) -> list[PageText]:
     pages = []
     with pymupdf.open(pdf) as doc:
         for index, page in enumerate(doc):
-            fragments = []
+            fragments, cores = [], []
             for block in page.get_text("dict")["blocks"]:
                 for line in block.get("lines", []):
                     text = "".join(span["text"] for span in line["spans"]).strip()
                     if text:
                         fragments.append(Line(text, *line["bbox"]))
-            pages.append(
-                PageText(index + 1, page.rect.width, page.rect.height, _visual_lines(fragments))
-            )
+                        cores.append(_core(line))
+            lines = _visual_lines(fragments, cores)
+            pages.append(PageText(index + 1, page.rect.width, page.rect.height, lines))
         spelled = str.maketrans(_private_ligatures(doc))
     for page in pages:
         page.lines[:] = [replace(ln, text=ln.text.translate(spelled)) for ln in page.lines]
