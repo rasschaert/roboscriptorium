@@ -17,6 +17,18 @@ files = [
   "Text/section-0027.html",
 ]
 heading_prefixes = ["P_kop"]
+# Every class the stylesheet sets in italics: words, and whole paragraphs in the
+# second voice's Gill face.
+italic_classes = [
+  "C_T2", "C_T6", "C_T7", "C_T11", "C_T12", "C_T18", "C_T19", "P_Heading_2", "P_Heading_4",
+  "P_plat_Gill2", "P_plat__And__Italic", "P_plat__And__Italic__And__Centre_Alignment",
+  "P_plat__And__Italic__And__Centre_Alignment__OPENPAR_1_CLOSEPAR_",
+  "P_plat__And__Italic__And__Left_Alignment", "P_plat_gill_light",
+  "P_plat_gill_light__And__Left_Indent__And__Right_Indent",
+  "P_plat_gill_light__And__Left_Indent__And__Right_Indent__OPENPAR_1_CLOSEPAR_",
+  "P_plat_gill_light__And__Left_Indent__And__Right_Indent__OPENPAR_2_CLOSEPAR_",
+  "P_plat_gill_light__And__Left_Indent__And__Right_Indent__OPENPAR_3_CLOSEPAR_",
+]
 
 # Amsterdam, Prometheus, 2002, first edition; a withdrawn copy of the Beveren
 # public library. Internet Archive lends it only, so it is placed by hand.

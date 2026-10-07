@@ -12,6 +12,9 @@ files = [
   "9789023443780-B.xhtml", "9789023443780-C.xhtml", "9789023443780-D.xhtml",
   "9789023443780-E.xhtml", "9789023443780-F.xhtml", "9789023443780-G.xhtml",
 ]
+# Italics are set in the italic font family ("schreefI"), not with font-style.
+italic_classes = ["wpt-cursief", "wpt-vetcursief", "wp-platcursief"]
+roman_classes = ["wpt-romein"]
 
 # Not a scan: calibre's PDF rendering of that same EPUB, US Letter pages. A
 # born-digital PDF whose text is exact, for structure, page joins and italics.

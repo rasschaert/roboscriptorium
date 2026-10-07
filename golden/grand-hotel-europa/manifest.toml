@@ -21,6 +21,8 @@ files = [
   "Text/part0030.xhtml", "Text/part0031.xhtml",
 ]
 heading_prefixes = ["class80", "class82", "class84", "class118"]
+# The classes the stylesheet sets in italics.
+italic_classes = ["class73", "class3321-0", "class3321-1", "class3328"]
 
 # Amsterdam, De Arbeiderspers, eleventh printing (June 2019), a later printing
 # than the reference's: differences may be the printer's corrections, and need

@@ -93,7 +93,13 @@ def golden_derive(name: str, epub: Path | None = None) -> None:
         if (actual := sha256(epub)) != ref.sha256:
             raise typer.BadParameter(f"{epub}: sha256 {actual}, expected {ref.sha256}")
         chapters = publisher_epub.write_reference(
-            epub, ref.source, list(ref.files), ref.heading_prefixes, out
+            epub,
+            ref.source,
+            list(ref.files),
+            ref.heading_prefixes,
+            out,
+            ref.italic_classes,
+            ref.roman_classes,
         )
     else:
         epub = epub or gutenberg.download(

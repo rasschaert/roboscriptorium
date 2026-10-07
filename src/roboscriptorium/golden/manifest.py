@@ -45,6 +45,8 @@ class PublisherEpub:
     sha256: str
     files: tuple[str, ...]  # content files to read, in order
     heading_prefixes: tuple[str, ...]  # classes of paragraphs that are headings
+    italic_classes: frozenset[str] = frozenset()  # classes that set text in italics
+    roman_classes: frozenset[str] = frozenset()  # classes that set it upright again
 
 
 @dataclass(frozen=True)
@@ -115,6 +117,8 @@ class Golden:
                 ref["sha256"],
                 tuple(ref["files"]),
                 tuple(ref.get("heading_prefixes", ())),
+                frozenset(ref.get("italic_classes", ())),
+                frozenset(ref.get("roman_classes", ())),
             )
         )
         se = data.get("standard_ebooks")
