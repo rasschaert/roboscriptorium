@@ -42,7 +42,8 @@ Everything is committed on `main` and pushed. New today:
 5. **Learned trust** (Dawid–Skene, calibration) from the golden books and the
    user's answers, replacing hand-set thresholds (`SURE`, `SURE_ALONE`).
 6. **Metadata stage** with `nuextract3:q6_k`.
-7. Smaller: p23's decorated initial is answered "E" but shows an O; some em
+7. **Parked sources** (`work/parked/README.md`): Goede dochter as a Dwarsligger, sideways pages with an unusable OCR layer, for when the pipeline can OCR whole pages itself.
+8. Smaller: p23's decorated initial is answered "E" but shows an O; some em
    dashes land after a space (`ago —when`) in Dolittle.
 
 ## Working with the user
