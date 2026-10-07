@@ -1113,3 +1113,16 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   list, the text judge and the human ("dankbaar" / "dank baar"). Stella: 67
   per-place doubts (1/page), 74 of its 81 questions already covered by the
   user's earlier whole-line answers.
+- 2026-10-07: Proofreading a human's answers (Stella, 67 answered regions; truth
+  proofread against the scan by the agent: 5 typing slips, a speck kept as a
+  period, plus the layer's "gedruktom"; `experiments/probe_proofread.py`).
+  gemma4 asked yes/no ("does this text match the crop?") is useless: AUC 0.47
+  with the image, 0.60 on text alone; it says "no" to 53/60 right answers.
+  Asked to transcribe the crop (tight to the line's words) and compared with
+  the answer in code, it catches 6/7 with 5/60 alarms, one of them a real
+  error both the human and the agent had missed (p. 43 "waarbijj"). Asked
+  then, text only, to pick between its reading and the answer
+  (`probe_proofread_judge.py`), it is confident on letters (waarbijj 0.98,
+  keeps "ís") and undecided on punctuation (~0.5). Transcribe-and-compare is
+  the shape to use; a straight quote in a curly-quoted book's answer is a slip
+  no model is needed for.
