@@ -7,12 +7,21 @@ readings cover, how many lines it gets exactly right, and its most frequent
 confusions (what it reads → what is printed), with typesetting
 (quote, dash and ellipsis glyphs) folded.
 
-    uv run python experiments/bench_line_readings.py work/<book> 9-64 1-4
+    uv run python experiments/bench_line_readings.py work/<book> 9-64 1-4 [--extra MODEL]
+
+`--extra MODEL` adds a generative vision model's reading of each line's crop (the OCR
+check's crop), cached in work/probes/line-readings/.
 """
 
+import base64
+import json
 import sys
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+
+import httpx
+import pymupdf
 
 from rapidfuzz.distance import Levenshtein
 
@@ -52,6 +61,44 @@ readings = {
         book.source, pages, kept, ocr.language(book.language), book.stages / "tesseract.json"
     ),
 }
+EXTRA_PROMPT = (
+    "Transcribe the printed text in this image exactly as printed: every letter, accent, "
+    "quote mark (‘ ’ “ ”), dash and punctuation mark. It is one line of a book. Output "
+    "only the text."
+)
+
+
+def extra_readings(model: str) -> dict[SourceRef, str]:
+    cache = Path("work/probes/line-readings") / f"{book.root.name}--{model.replace(':', '_')}.json"
+    done = json.loads(cache.read_text()) if cache.exists() else {}
+    todo = [r for r in sorted(kept, key=lambda r: (r.page, r.line)) if f"{r.page}:{r.line}" not in done
+            and len(next(p for p in pages if p.number == r.page).lines[r.line].text) >= ocrcheck.MIN_LINE_CHARS]
+
+    def read(png: bytes) -> str:
+        payload = {"model": model, "prompt": EXTRA_PROMPT, "images": [base64.b64encode(png).decode()],
+                   "stream": False, "think": False, "options": {"num_predict": 160, "temperature": 0}}
+        r = httpx.post(f"{settings.ollama_url}/api/generate", json=payload, timeout=600)
+        r.raise_for_status()
+        return r.json()["response"].strip().split("\n")[0].strip()
+
+    by_number = {p.number: p for p in pages}
+    with pymupdf.open(book.source) as pdf, ThreadPoolExecutor(2) as pool:
+        boxes = {n: ocrcheck.line_boxes(pdf[n - 1], by_number[n]) for n in {r.page for r in todo}}
+        for start in range(0, len(todo), 100):
+            batch = todo[start : start + 100]
+            crops = [ocrcheck._line_crop(pdf, r.page, boxes[r.page][r.line]) for r in batch]
+            for r, text in zip(batch, pool.map(read, crops), strict=True):
+                done[f"{r.page}:{r.line}"] = text
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            cache.write_text(json.dumps(done, ensure_ascii=False))
+            print(f"  {model}: {len(done)} lines read", flush=True)
+    return {SourceRef(*map(int, k.split(":"))): v for k, v in done.items()}
+
+
+if "--extra" in sys.argv:
+    model = sys.argv[sys.argv.index("--extra") + 1]
+    readings[model] = extra_readings(model)
+
 lines = [
     ref for ref, label in labels.items()
     if label.role == "body" and label.truth and all(ref in r for r in readings.values())
@@ -79,3 +126,12 @@ for name, reading in readings.items():
         f"\n{name:10} CER {edits / chars:.2%}, typesetting folded {folded_edits / chars:.2%}"
         f"  exact {exact}/{len(lines)}\n  folded: {top}"
     )
+
+
+layer = readings["text layer"]
+for name, reading in readings.items():
+    if name == "text layer":
+        continue
+    fixes = sum(normalise(reading[r]) == normalise(labels[r].truth) != normalise(layer[r]) for r in lines)
+    breaks = sum(normalise(layer[r]) == normalise(labels[r].truth) != normalise(reading[r]) for r in lines)
+    print(f"{name}: right where the layer is wrong on {fixes} lines; wrong where it is right on {breaks}")

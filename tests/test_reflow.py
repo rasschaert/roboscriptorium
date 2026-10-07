@@ -221,3 +221,25 @@ def test_an_opening_double_quote_closed_by_a_single_one_was_misread():
     assert open_single("“Wat doe je?’ vroeg ze.") == "‘Wat doe je?’ vroeg ze."
     assert open_single("“Ja, zei hij. ‘Nee.’") == "‘Ja, zei hij. ‘Nee.’"
     assert open_single("“Ik ben er klaar mee") == "‘Ik ben er klaar mee"
+
+
+def test_a_break_hyphen_stays_where_the_book_prints_the_word_with_it():
+    from collections import Counter
+
+    seen = Counter({"thief-taker": 5, "thieftaker": 0, "dankbaar": 3})
+    assert join("the thief-", "taker came", seen) == "the thief-taker came"
+    # A word the book prints whole, or never inside a line, loses the hyphen.
+    assert join("ik ben dank-", "baar voor", seen) == "ik ben dankbaar voor"
+    assert join("een paar-", "lemoer", seen) == "een paarlemoer"
+    assert join("the thief-", "taker came") == "the thieftaker came"
+
+
+def test_spellings_count_words_inside_lines_only():
+    from roboscriptorium.reflow import spellings
+
+    texts = ["money-box on the shelf", "the thief-taker’s thief-", "taker came"]
+    lines = [Line(t, 0, 12 * i, 100, 12 * i + 10) for i, t in enumerate(texts)]
+    seen = spellings([PageText(1, 300, 400, lines)])
+    assert seen["money-box"] == 1 and seen["thief-takers"] == 1
+    # The halves of a word cut at a line's end aren't words.
+    assert seen["thief-"] == seen["thief"] == seen["taker"] == 0

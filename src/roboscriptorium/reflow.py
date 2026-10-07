@@ -8,6 +8,7 @@ heuristic drops page numbers and the rest is treated as body text.
 import itertools
 import re
 import statistics
+from collections import Counter
 
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.page import NUMBERED_WORDS, bare_numeral
@@ -40,6 +41,8 @@ FOOTER_MAX_CHARS = 4
 HYPHENS = ("-", "\u00ad", "\u00ac")
 DASHES = ("\u2014", "\u2013")
 _LOWER_START = re.compile(r"^[a-zà-ÿ]")
+# What isn't part of a word, for counting spellings ("thief-taker’s," → "thief-takers").
+_WORD = re.compile(r"[^\w-]")
 # Older OCR layers keep the thin space some printers set before punctuation.
 _SPACE_BEFORE_PUNCTUATION = re.compile(r"\s+([,;:.!?])(?=\s|$)")
 
@@ -109,14 +112,37 @@ def _after_short_line(lines: list[Line], i: int, margin: float) -> bool:
     )
 
 
-def join(text: str, nxt: str) -> str:
-    """Append the next line, undoing hyphenation where the word continues."""
+def spellings(pages: list[PageText]) -> Counter:
+    """How often the book prints each word where no line break decides its spelling: all
+    but a line's last word cut by a hyphen and the next line's first word, its rest."""
+    seen: Counter = Counter()
+    for page in pages:
+        cut = False
+        for line in page.lines:
+            words = line.text.split()
+            whole = words[1:] if cut else words
+            cut = bool(words) and words[-1].endswith(HYPHENS)
+            for word in whole[:-1] if cut else whole:
+                if key := _WORD.sub("", word).lower():
+                    seen[key] += 1
+    return seen
+
+
+def join(text: str, nxt: str, seen: Counter | None = None) -> str:
+    """Append the next line, undoing hyphenation where the word continues.
+
+    `seen` is how the book spells words inside lines (`spellings`): a word it prints
+    with its hyphen ("thief-taker") keeps the hyphen at a line break too.
+    """
     if text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha():
         # A real hyphen: a capital after the break ("Noord-Holland"), or a compound
         # that has hyphens elsewhere ("Mens-erger-je-niet", "glas-in-lood").
         last, first = text.split()[-1][:-1], nxt.split()[0] if nxt.split() else ""
         if not _LOWER_START.match(nxt) or "-" in last or "-" in first:
             return text + nxt
+        stem, rest = _WORD.sub("", last).lower(), _WORD.sub("", first).lower()
+        if seen and seen[f"{stem}-{rest}"] > seen[f"{stem}{rest}"]:
+            return text.rstrip("".join(HYPHENS)) + "-" + nxt
         return text[:-1] + nxt
     if text.endswith(DASHES):
         # A spaced dash ("ziet – hoe") keeps its spaces; a closed one ("alles—en") doesn't.
@@ -131,6 +157,7 @@ def _role(roles: dict[SourceRef, LineRole] | None, ref: SourceRef) -> str:
 
 
 def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None) -> list[Block]:
+    seen = spellings(pages)
     blocks: list[Block] = []
     opening = True
     for page in pages:
@@ -144,7 +171,7 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
                 kept.append((ref, line))
                 continue
             # Indents are measured within each run of body lines.
-            _add_body(blocks, kept, opening)
+            _add_body(blocks, kept, opening, seen)
             if kept:
                 opening = False
             kept = []
@@ -162,7 +189,7 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
                     text = bare_numeral(line.text) or line.text
                     blocks.append(Heading(text, [ref], [text]))
                 opening = True
-        _add_body(blocks, kept, opening)
+        _add_body(blocks, kept, opening, seen)
         if kept:
             opening = False
     for block in blocks:
@@ -258,7 +285,9 @@ def _continues(previous: Block | None, line: Line, page: int) -> bool:
     return not _labels(line.text)
 
 
-def _add_body(blocks: list[Block], kept: list[tuple[SourceRef, Line]], opening: bool) -> None:
+def _add_body(
+    blocks: list[Block], kept: list[tuple[SourceRef, Line]], opening: bool, seen: Counter
+) -> None:
     flags = indented([ln for _, ln in kept])
     for k, ((ref, line), starts_paragraph) in enumerate(zip(kept, flags, strict=True)):
         current = blocks[-1] if blocks else None
@@ -269,5 +298,5 @@ def _add_body(blocks: list[Block], kept: list[tuple[SourceRef, Line]], opening: 
         elif starts_paragraph or line.initial:
             blocks.append(Paragraph(line.text, [ref], initial=line.initial))
         else:
-            current.text = join(current.text, line.text)
+            current.text = join(current.text, line.text, seen)
             current.sources.append(ref)

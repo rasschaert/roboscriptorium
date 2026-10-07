@@ -1146,3 +1146,13 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   thinking on (a free reply read by winnow), prefers the right punctuation
   (0.72–0.88). The candidate for a third reading in the OCR check and for
   proofreading answers; bench its line readings next.
+- 2026-10-07: A line-end hyphen is kept when the book itself prints the word
+  hyphenated inside lines more often than whole (`reflow.spellings`; words cut
+  by a line break don't count). The Thief-Taker's "thief-|taker" had become
+  "thieftaker" 12×. WER, spellings off → on: Thief-Taker 0.29% → 0.22%, Crime
+  0.33% → 0.29%, Dolittle 1.73% → 1.64%, held-out De tuin 0.17% → 0.15%; the
+  other seven books unchanged. Thief-Taker's first full build: CER 0.82%
+  (layer) → 0.34%, paragraph F1 0.923, headings 43/90, italics 0.993/0.921.
+  Note for comparisons: Villa Toscane is scored with `--chapters 1-12`, and
+  with learned trust Dolittle's CER rose 1.72% → 1.91% because agreed dash
+  fixes now sit in the question budget instead of being applied.
