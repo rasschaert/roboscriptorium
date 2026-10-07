@@ -51,6 +51,7 @@ mark.swap { background: var(--swap-bg); color: var(--swap); border-bottom: 2px d
 mark.lacks { background: var(--lacks-bg); color: var(--lacks); text-decoration: line-through 2px; }
 mark.lacks::before { content: "‸"; text-decoration: none; display: inline-block; margin-right: 1px; }
 mark .space { opacity: 0.7; font-weight: 400; }
+mark sub.dash { font: 600 9px system-ui, sans-serif; opacity: 0.8; margin-left: 1px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--muted); margin: 2px 0 8px; }
 .legend mark { font-size: 14px; }
 .turnbar { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
@@ -64,6 +65,8 @@ mark .space { opacity: 0.7; font-weight: 400; }
 textarea { width: 100%; font: 18px/1.45 Georgia, "Iowan Old Style", serif; padding: 8px 10px; margin: 4px 0;
   border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); resize: vertical; }
 textarea:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.pad { display: flex; flex-wrap: wrap; gap: 4px; margin: 2px 0 8px; }
+.pad button { font: 17px Georgia, serif; min-width: 2.2em; padding: 3px 8px; }
 button { font: inherit; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
 button:hover { border-color: var(--accent); }
 button:disabled { opacity: .5; cursor: progress; }
@@ -204,6 +207,10 @@ function render() {
   }
   const box = textBox();
   if (box) box.oninput = () => { draft.text = box.value; refreshSave(); };
+  main.querySelectorAll(".pad button").forEach(b => {
+    b.onmousedown = e => e.preventDefault();  // keep the cursor in the text box
+    b.onclick = () => insertChar(PAD[+b.dataset.k][0]);
+  });
   const letter = document.getElementById("letter");
   if (letter) {
     letter.oninput = () => { draft.letter = letter.value; refreshSave(); };
@@ -222,7 +229,7 @@ function textBlock(r, doubt) {
     const prompt = r.text ? "As printed (edit if the scan says otherwise):"
       : r.draft ? "Tesseract's draft of the highlighted area; correct it:" : "Type the text, as printed:";
     return `<div class="question">${prompt}</div>${before}
-      <textarea id="text" rows="${Math.min(16, draft.text.split("\n").length + 1)}">${esc(draft.text)}</textarea>${after}`;
+      <textarea id="text" rows="${Math.min(16, draft.text.split("\n").length + 1)}">${esc(draft.text)}</textarea>${charPad()}${after}`;
   }
   const base = central(r.readings.map(g => g.text));
   const rows = r.readings.map((g, k) => {
@@ -242,7 +249,24 @@ function textBlock(r, doubt) {
       <label class="option reading-option ${draft.reading === -1 ? "on" : ""}"><input type="radio" name="reading" value="-1" ${draft.reading === -1 ? "checked" : ""}>
         <kbd>e</kbd><span class="reading muted">Something else…</span></label>
     </div>
-    ${draft.reading === -1 ? `<textarea id="text" rows="2">${esc(draft.text)}</textarea>` : ""}${after}`;
+    ${draft.reading === -1 ? `<textarea id="text" rows="2">${esc(draft.text)}</textarea>${charPad()}` : ""}${after}`;
+}
+
+// Characters a keyboard lacks, inserted into the text box at the cursor.
+const PAD = [["—", "em dash (⌥⇧-)"], ["–", "en dash (⌥-)"], ["‘", "opening single quote (⌥])"],
+  ["’", "closing single quote, apostrophe (⌥⇧])"], ["“", "opening double quote (⌥[)"],
+  ["”", "closing double quote (⌥⇧[)"], ["…", "ellipsis (⌥;)"], ["\u2009", "thin space"]];
+const charPad = () => `<div class="pad">${PAD.map(([c, name], k) =>
+  `<button type="button" data-k="${k}" title="${esc(name)}">${c === "\u2009" ? "thin␣" : c}</button>`).join("")}</div>`;
+
+function insertChar(c) {
+  const box = textBox();
+  if (!box) return;
+  const at = box.selectionStart, end = box.selectionEnd;
+  box.value = box.value.slice(0, at) + c + box.value.slice(end);
+  box.selectionStart = box.selectionEnd = at + c.length;
+  draft.text = box.value;
+  refreshSave();
 }
 
 function canSave(r, doubt) {
@@ -311,7 +335,17 @@ function marked(text, base) {
     else if (j < base.length && (i === text.length || t[i][j + 1] >= t[i + 1][j])) push("edit", "", base[j++]);
     else push("edit", text[i++], "");
   }
-  const show = s => esc(s).replace(/ /g, '<span class="space">␣</span>');
+  // A lone space the two share between edits is part of one change.
+  for (let k = ops.length - 2; k > 0; k--) {
+    if (ops[k][0] === "same" && ops[k][1] === " ") {
+      const [, m0, t0] = ops[k - 1], [, m1, t1] = ops[k + 1];
+      ops.splice(k - 1, 3, ["edit", m0 + ops[k][1] + m1, t0 + ops[k][2] + t1]);
+      k--;
+    }
+  }
+  const DASHES = {"—": "em", "–": "en", "-": "hyphen", "‑": "hyphen"};
+  const show = s => esc(s).replace(/ /g, '<span class="space">␣</span>')
+    .replace(/[—–‑-]/g, d => `${d}<sub class="dash">${DASHES[d]}</sub>`);
   return ops.map(([kind, mine, theirs]) => kind === "same" ? esc(mine)
     : !mine ? `<mark class="lacks" title="this reading lacks it">${show(theirs)}</mark>`
     : !theirs ? `<mark class="has" title="only this reading has it">${show(mine)}</mark>`
