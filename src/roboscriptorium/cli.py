@@ -260,6 +260,12 @@ def _evaluate_book(
         f"recall {result.paragraph_recall:.3f}; "
         f"words: {result.output_words} out / {result.reference_words} reference"
     )
+    if result.italic_expected or result.italic_output:
+        typer.echo(
+            f"  italic words: precision {result.italic_precision:.3f}, "
+            f"recall {result.italic_recall:.3f} "
+            f"({result.italic_output} out / {result.italic_expected} reference)"
+        )
     if verdicts.by_key:
         text_layer = cached_text_layer(book.source, book.stages / "textlayer.json")
         mistakes = Counter(

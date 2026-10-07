@@ -106,3 +106,36 @@ def test_a_caption_inside_a_pictures_box_is_trimmed_off():
     assert _without((10, 10, 300, 400), [(280, 50, 295, 350)]) == (10, 10, 280 - TRIM_GAP, 400)
     assert _without((10, 10, 300, 400), [(40, 380, 260, 395)]) == (10, 10, 300, 380 - TRIM_GAP)
     assert _without((10, 10, 300, 400), [(10, 420, 300, 440)]) == (10, 10, 300, 400)
+
+
+def test_italic_words_on_the_scan_reach_the_epub(tmp_path, monkeypatch):
+    _everything_is_body(monkeypatch)
+    _no_layout(monkeypatch)
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=600)
+    for i, text in enumerate(LINES):
+        page.insert_text((40, 60 + 18 * i), text, fontsize=11)
+    y = 60 + 18 * len(LINES)
+    x = 40
+    for text, font in (
+        ("He said it was ", "tiro"),
+        ("truly remarkable", "tiit"),
+        (", and left.", "tiro"),
+    ):
+        page.insert_text((x, y), text, fontsize=11, fontname=font)
+        x += pymupdf.get_text_length(text, fontname=font, fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    (tmp_path / "book.toml").write_text(
+        'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, 1]\n'
+    )
+    book = Book.load(tmp_path)
+
+    paragraph = pipeline.run(book, check_ocr=False).doc.paragraphs[-1]
+    words = paragraph.text.split()
+    assert [words[k] for k in paragraph.italic] == ["truly", "remarkable,"]
+    import zipfile
+
+    with zipfile.ZipFile(book.epub_path) as z:
+        xhtml = "".join(z.read(n).decode() for n in z.namelist() if n.endswith(".xhtml"))
+    assert "it was <i>truly remarkable</i>, and left." in xhtml

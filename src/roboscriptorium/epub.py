@@ -1,5 +1,6 @@
 """Write a Document as an EPUB 3 file."""
 
+import re
 import uuid
 import zipfile
 from dataclasses import dataclass
@@ -124,6 +125,32 @@ def _nav(doc: Document, sections: list[_Section]) -> str:
     return _xhtml(doc.title, doc.language, body)
 
 
+def _inline(text: str, italic: set[int]) -> str:
+    """Escaped text with each run of italic words in `<i>`, punctuation around a run outside."""
+    out, pos, run = [], 0, None
+    words = list(re.finditer(r"\S+", text))
+    for k, m in enumerate(words):
+        if k in italic and run is None:
+            run = k
+        if run is not None and (k + 1 not in italic or k + 1 == len(words)):
+            start = words[run].start() + _lead(words[run].group())
+            end = m.end() - _trail(m.group())
+            if start < end:
+                out += [escape(text[pos:start]), "<i>", escape(text[start:end]), "</i>"]
+                pos = end
+            run = None
+    out.append(escape(text[pos:]))
+    return "".join(out)
+
+
+def _lead(word: str) -> int:
+    return len(word) - len(word.lstrip("\"“‘'([«—–-"))
+
+
+def _trail(word: str) -> int:
+    return len(word) - len(word.rstrip("\"”’'.,;:!?)]»—–-"))
+
+
 def _block(block: Block) -> str:
     if isinstance(block, Figure):
         alt = escape(block.caption or "Illustration", quote=True)
@@ -135,9 +162,14 @@ def _block(block: Block) -> str:
         return f'<figure><img src="images/{block.image}" alt="{alt}"/>{caption}</figure>'
     if isinstance(block, Heading):
         return f"<h2>{'<br/>'.join(escape(p) for p in block.parts or [block.text])}</h2>"
-    text = escape(block.text)
-    if block.initial and text:
-        text = f'<span class="initial">{text[0]}</span>{text[1:]}'
+    if block.initial and block.text:
+        rest = block.text[1:]
+        # The letter may have been a word of its own ("A" before "LONG"), shifting the rest.
+        shift = len(block.text.split()) - len(rest.split())
+        italic = {k - shift for k in block.italic if k >= shift}
+        text = f'<span class="initial">{escape(block.text[0])}</span>{_inline(rest, italic)}'
+    else:
+        text = _inline(block.text, set(block.italic))
     if block.opening or block.initial:
         return f'<p class="opening">{text}</p>'
     return f"<p>{text}</p>"

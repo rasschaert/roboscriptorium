@@ -21,6 +21,8 @@ class Paragraph:
     opening: bool = False
     # Its first letter is a decorated initial, set as a drop cap.
     initial: bool = False
+    # Indices of its italic words in `text.split()`, ascending.
+    italic: tuple[int, ...] = ()
 
 
 @dataclass

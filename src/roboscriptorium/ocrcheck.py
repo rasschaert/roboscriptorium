@@ -31,7 +31,7 @@ from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
-from roboscriptorium.pdf import PageText
+from roboscriptorium.pdf import PageText, line_words
 from roboscriptorium.roles import DecisionCache
 
 DPI = 300
@@ -153,10 +153,10 @@ def tesseract_readings(
         boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
     out = {}
     for page in pages:
-        for k, line_words in enumerate(_by_line(boxes[page.number], words[page.number])):
+        for k, found in enumerate(_by_line(boxes[page.number], words[page.number])):
             ref = SourceRef(page.number, k)
             if ref in checked and len(page.lines[k].text) >= MIN_LINE_CHARS:
-                out[ref] = " ".join(w[0] for w in line_words)
+                out[ref] = " ".join(w[0] for w in found)
     return out
 
 
@@ -220,23 +220,6 @@ def _line_crop(doc: pymupdf.Document, number: int, box) -> bytes:
     return doc[number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
 
 
-def line_words(page_words: list, page: PageText) -> list[list]:
-    """The text layer's words per line, left to right.
-
-    A word goes to the line whose vertical centre is nearest among those whose box
-    holds its centre: some OCR layers give lines boxes far taller than the print,
-    so neighbouring lines' boxes overlap.
-    """
-    out = [[] for _ in page.lines]
-    for w in page_words:
-        cx, cy = (w[0] + w[2]) / 2, (w[1] + w[3]) / 2
-        holding = [k for k, ln in enumerate(page.lines) if _holds(ln, cx, cy)]
-        if holding:
-            k = min(holding, key=lambda k: abs((page.lines[k].y0 + page.lines[k].y1) / 2 - cy))
-            out[k].append(w)
-    return [sorted(ws, key=lambda w: w[0]) for ws in out]
-
-
 def line_boxes(pdf_page: pymupdf.Page, page: PageText) -> list[tuple[float, float, float, float]]:
     """Each line's box as printed: its words' boxes together where they spell the line.
 
@@ -258,10 +241,6 @@ def _union(words) -> tuple[float, float, float, float]:
         max(w[2] for w in words),
         max(w[3] for w in words),
     )
-
-
-def _holds(line, cx: float, cy: float) -> bool:
-    return line.x0 - 3 <= cx <= line.x1 + 3 and line.y0 - 2 <= cy <= line.y1 + 2
 
 
 def read_line(png: bytes, model: str, ollama_url: str) -> str:

@@ -8,6 +8,7 @@ Metrics:
 - Paragraph F1: whether paragraph breaks fall where the reference has them.
 - Headings: how many reference chapter headings the output has (matched in order,
   fuzzily), and how many output headings match none.
+- Italics: precision and recall of italic words, over the words that align.
 
 Headings are left out of the text comparison on both sides.
 """
@@ -58,6 +59,10 @@ class Score:
     headings_found: int
     headings_expected: int
     headings_spurious: int
+    italic_expected: int = 0
+    italic_output: int = 0
+    italic_precision: float = 0.0
+    italic_recall: float = 0.0
     confusions: list[tuple[str, str, int]] = field(default_factory=list)
 
     @property
@@ -73,6 +78,21 @@ def _words_with_breaks(paragraphs: list[str]) -> tuple[list[str], set[int]]:
         starts.add(len(words))
         words += normalise(para).split()
     return words, starts
+
+
+def _italic_words(paragraphs: list[str], marks: list) -> set[int]:
+    """Indices into `_words_with_breaks`' words of the italic ones.
+
+    `marks` index each paragraph's `split()`; a paragraph whose word count
+    normalising changes is left out.
+    """
+    out, offset = set(), 0
+    for para, italic in zip(paragraphs, marks, strict=True):
+        n = len(normalise(para).split())
+        if n == len(para.split()):
+            out |= {offset + k for k in italic}
+        offset += n
+    return out
 
 
 def _heading_key(text: str) -> str:
@@ -129,6 +149,16 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     ref_chars = sum(len(w) + 1 for w in ref_words)
     matched = match_headings([h.text for h in doc.headings], [ch.heading for ch in reference])
 
+    ref_paragraphs = [p for ch in reference for p in ch.paragraphs]
+    ref_marks = [
+        ch.italic[k] if k < len(ch.italic) else ()
+        for ch in reference
+        for k in range(len(ch.paragraphs))
+    ]
+    ref_italic = _italic_words(ref_paragraphs, ref_marks)
+    out_italic = _italic_words([b.text for b in doc.paragraphs], [b.italic for b in doc.paragraphs])
+    hit_italic = {out_to_ref[i] for i in out_italic if i in out_to_ref} & ref_italic
+
     ref_bare = [w for p in reference for para in p.paragraphs for w in _bare_words(para)]
     out_bare = [w for b in doc.paragraphs for w in _bare_words(b.text)]
     word_edits = Levenshtein.distance(out_bare, ref_bare)
@@ -147,5 +177,9 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         headings_found=matched,
         headings_expected=len(reference),
         headings_spurious=len(doc.headings) - matched,
+        italic_expected=len(ref_italic),
+        italic_output=len(out_italic),
+        italic_precision=len(hit_italic) / len(out_italic) if out_italic else 0.0,
+        italic_recall=len(hit_italic) / len(ref_italic) if ref_italic else 0.0,
         confusions=[(got, want, n) for (got, want), n in confusions.most_common(top)],
     )

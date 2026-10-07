@@ -1,4 +1,4 @@
-from roboscriptorium import flags, ocrcheck
+from roboscriptorium import flags, ocrcheck, pdf
 from roboscriptorium.ocrcheck import Suspect, differences
 from roboscriptorium.pdf import Line, PageText
 
@@ -136,7 +136,7 @@ def test_words_go_to_the_nearest_of_overlapping_lines():
         (70, 219, 80, 235, "It"),
         (90, 221, 100, 235, "is"),
     ]
-    assert [[w[4] for w in ws] for ws in ocrcheck.line_words(words, page)] == [
+    assert [[w[4] for w in ws] for ws in pdf.line_words(words, page)] == [
         ["are,", "I", "suppose,"],
         ["Rome.", "It", "is"],
     ]

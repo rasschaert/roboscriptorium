@@ -167,6 +167,10 @@ right, then expand.
   - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
     `stages/layout.json`; run by `review`. Picture-only pages are also run turned a
     quarter, to find captions printed sideways.
+  - `italics.py`: italic words on scanned books, from each text-layer word's
+    stroke slant on the scan (no model), marked on paragraphs by aligning their
+    words with their source lines'; cached in `stages/italics.json`. The EPUB
+    sets them in `<i>`; `eval` scores italic words.
   - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)
     against glm-ocr's reading of each body line's crop (`ROBO_OCR_MODEL`),
     cached in `stages/second-reading.json`. Where a line's readings differ, clef picks from
@@ -729,3 +733,10 @@ disagreements by mistake category.
   italic words (`Chapter.italic`), also through verdict patches; plain text
   unchanged on every golden book. Publisher EPUBs that italicise by CSS class
   (the Dutch ones) don't carry italics yet.
+- 2026-10-07: Italics stage (`italics.py`), slant ≥ 8° on words of 2+ letters
+  (single letters between italic words fill in). Italic words, precision /
+  recall: Crime 0.952 / 0.909, Dolittle 0.833 / 0.814 (7 of 9 misses are
+  dash-glued words with one half italic, `instead—they'll`, which need marks
+  below the word), held-out Lady into Fox 0.315 / 0.895 (54 marked against 19;
+  on the tuned books such extras were mostly italics Gutenberg left unmarked,
+  unverified here). CER and the rest unchanged; epubcheck clean.

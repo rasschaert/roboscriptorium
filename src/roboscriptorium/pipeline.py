@@ -5,7 +5,7 @@ from dataclasses import asdict, dataclass
 
 import pymupdf
 
-from roboscriptorium import corrections, figures, layout, ocr, ocrcheck
+from roboscriptorium import corrections, figures, italics, layout, ocr, ocrcheck
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.config import Settings
@@ -91,7 +91,11 @@ def run(
         )
 
     text = ocrcheck.apply(corrected, suspects)
-    doc = Document(book.title, book.author, book.language, reflow(text, roles))
+    blocks = reflow(text, roles)
+    if ocrcheck.scanned(book.source):
+        found = italics.detect(book.source, body, book.stages / "italics.json")
+        blocks = italics.mark(blocks, body, found)
+    doc = Document(book.title, book.author, book.language, blocks)
     images = {}
     if layout.available():
         regions = layout.detect(book.source, [p.number for p in body], book.stages / "layout.json")

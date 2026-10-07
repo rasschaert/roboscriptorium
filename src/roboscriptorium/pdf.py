@@ -79,6 +79,27 @@ def _visual_lines(fragments: list[Line]) -> list[Line]:
     return lines
 
 
+def line_words(page_words: list, page: PageText) -> list[list]:
+    """The text layer's words per line, left to right.
+
+    A word goes to the line whose vertical centre is nearest among those whose box
+    holds its centre: some OCR layers give lines boxes far taller than the print,
+    so neighbouring lines' boxes overlap.
+    """
+    out = [[] for _ in page.lines]
+    for w in page_words:
+        cx, cy = (w[0] + w[2]) / 2, (w[1] + w[3]) / 2
+        holding = [k for k, ln in enumerate(page.lines) if _holds(ln, cx, cy)]
+        if holding:
+            k = min(holding, key=lambda k: abs((page.lines[k].y0 + page.lines[k].y1) / 2 - cy))
+            out[k].append(w)
+    return [sorted(ws, key=lambda w: w[0]) for ws in out]
+
+
+def _holds(line, cx: float, cy: float) -> bool:
+    return line.x0 - 3 <= cx <= line.x1 + 3 and line.y0 - 2 <= cy <= line.y1 + 2
+
+
 def read_text_layer(pdf: Path) -> list[PageText]:
     pages = []
     with pymupdf.open(pdf) as doc:

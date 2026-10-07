@@ -28,7 +28,7 @@ XHTML = "{http://www.w3.org/1999/xhtml}"
 CONTEXT = 3
 DPI = 300
 ANGLES = np.arange(-25, 26, 1)
-MIN_LETTERS = 3
+MIN_LETTERS = int(__import__("os").environ.get("MIN_LETTERS", 3))
 REPEATS = 3  # a word seen this often has a usual slant to compare with  # shorter words have too few strokes to measure
 
 
