@@ -822,3 +822,9 @@ disagreements by mistake category.
   still go to review: clef often misses the small period and keeps the
   layer's `zijn’`, and winnow can't tell `zijn.` from `zijn.’` without the
   open quote earlier in the paragraph.
+- 2026-10-07: The OCR check's text judge (winnow) now reads the lines before
+  and after the suspect line, where a quote opens or a sentence goes on. Vals
+  alarm pp. 11–60: WER 0.20% → 0.18%, applied 109 → 114, review 110 → 108;
+  Dolittle CER 1.80% → 1.78%; Crime unchanged. Review counts per book are now
+  saved with each run in `work/probes/` logs; earlier counts came from older
+  code and don't compare.

@@ -347,9 +347,13 @@ def check(
                 others = [r.get(SourceRef(page.number, k), "") for r in readings]
                 for a0, a1, alternatives in merged_differences(ours, [o for o in others if o]):
                     box = _box(words[k], boxes[k], ours, a0, a1)
+                    around = (
+                        page.lines[k - 1].text if k > 0 else "",
+                        page.lines[k + 1].text if k + 1 < len(page.lines) else "",
+                    )
                     choice, chosen, votes = _decide(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
-                        vision, reader, cache,
+                        vision, reader, cache, around,
                     )  # fmt: skip
                     suspects.append(
                         Suspect(
@@ -445,9 +449,12 @@ def _combined(ours: str, versions: list[str]) -> str | None:
 
 
 def _decide(
-    pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache
+    pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache, around=("", "")
 ) -> tuple[str, str | None, dict[str, str]]:
     """\"ours\", \"other\" with the chosen version, or \"review\"; and each model's pick.
+
+    The text model also reads the lines `around` this one (before, after), where a
+    quote opens or a sentence goes on.
 
     A pick is applied when both models make it and the vision model is at least
     somewhat sure, or, where the versions differ only in punctuation, dashes or
@@ -481,11 +488,16 @@ def _decide(
     read = _ask(
         reader,
         cache,
-        dict(zip(letters, lines, strict=True)),
+        {
+            "line before": around[0],
+            **dict(zip(letters, lines, strict=True)),
+            "line after": around[1],
+        },
         {
             "reading": ollaya.choice(
                 f"{intro} of the same line of a printed {language} book differ. "
-                "Which is the correct transcription, as printed?",
+                "Which is the correct transcription, as printed, read between "
+                "the line before and the line after?",
                 {c: f"“{line}”" for c, line in zip(letters, lines, strict=True)},
             )
         },
