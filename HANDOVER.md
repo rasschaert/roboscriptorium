@@ -4,49 +4,42 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules and
 decisions; this file only covers the state of play. Replace it at the end of
 each session.
 
-## State on 2026-10-07 (after two critical reviews)
+## State on 2026-10-07, evening
 
-Everything is committed on `main`. New today:
+Everything is committed on `main`. Earlier today: OCR-check crops, the italics
+stage, the golden books reshaped, missing lines (see the decision log). This
+afternoon, after the second review:
 
-- **OCR check crops fixed** (word-union crops, one em past line ends). Crime
-  review 453 → 54; Dolittle WER 1.92% → 1.81%.
-- **Italics stage** (`italics.py`): stroke slant on the page image, no model,
-  for scans and born-digital PDFs. A word is measured only if it has an upright
-  stem; ink is darker than each page's Otsu threshold (pale scans print grey).
-  Italic precision / recall: Crime 1.000 / 0.886, Dolittle 0.850 / 0.791,
-  De aanslag 0.987 / 0.855, Goede dochter (pp. 9–64) 0.958 / 0.828.
-- **Golden books reshaped** with the user's EPUB/PDF pairs (AGENTS.md's table
-  and decision log):
-  - Tuning, Dutch scans: **Goede dochter** (clean publisher EPUB, same
-    translation) and **Vals alarm** (48 chapter headings).
-  - Held out: Lady into Fox (EN scan), **Grand Hotel Europa**, **De tuin van
-    de avondnevel** (NL scans), **Villa Toscane** (NL born-digital). Score
-    them, never inspect their errors.
-  - Retired to `work/retired/`: Boze tongen, De dode kamer, Sense's Everyman
-    scans, Goede dochter's 8th printing (reasons in the decision log).
-  - Parked (`work/parked/README.md`): Goede dochter as a Dwarsligger, sideways
-    pages with an unusable OCR layer, for when the pipeline can OCR whole
-    pages itself.
-- Publisher manifests can list `italic_classes`, `roman_classes` and
-  `blank_classes`.
-- `experiments/probe_big_diffs.py` lists the largest differing stretches.
-- **Missing lines** (`missing.py`, measured: see the decision log): layout regions about one line tall with no text-layer line
-  in them are read by glm-ocr and added before the line roles. Vals alarm's
-  layer drops its single-digit chapter numbers (7 of 48 headings); the probe
-  (`experiments/probe_missing_lines.py`) read all 15 Vals alarm candidates
-  right and invented nothing on Dolittle's 73.
-
-Scores (chapters or pages in brackets):
-
-| Book | Text layer only (`--no-models`) | Full pipeline |
-| --- | --- | --- |
-| Villa Toscane (held out, born-digital, ch. 1–12) | — | CER 0.04%, F1 0.993, headings 0/12 |
-| De tuin van de avondnevel (held out, ch. 1–3, pp. 11–52) | CER 0.72%, F1 0.931, headings 0/3 | CER 0.41%, WER 0.25%, F1 0.946, headings 3/3; 389 suspects: 179 fixed, 148 review |
-| Goede dochter (ch. 1–4, pp. 9–64) | CER 0.40%, F1 0.957, headings 0/4 | CER 0.23%, WER 0.23%, F1 0.973, headings 3/4, italics 0.977 / 0.841 |
-| Vals alarm (whole book; full pipeline pp. 11–60, ch. 1–10) | CER 0.74%, F1 0.918, headings 0/48 (with the quote rule) | CER 0.47%, WER 0.18%, F1 0.950, headings 10/10 |
-
-`--no-models` scores headings without the role model, so 0/n there says little:
-compare headings on full runs.
+- **Goede dochter pp. 9–64 verdicts settled** by the user (23; the reference
+  was right in all but one). Its score now counts pipeline errors only: CER
+  0.18%, paragraph F1 0.979, headings 4/4. Comparisons fold `…` to `...`.
+- **`roboscriptorium quality book[:pages[:chapters]] …`** (`quality.py`): wrong
+  words per page before review and left unasked, at 0.25/0.5/1 questions per
+  page, with bootstrap intervals and the unasked errors by kind. Goede dochter:
+  1.53 wrong words/page, 2.24 questions/page, 0.58 left unasked; only 28 of 116
+  OCR-doubt questions sit on an error. Ranking questions by their kind is too
+  coarse to fill a budget well.
+- **Error budget, Goede dochter**: punctuation and quotes 23, OCR letters 18
+  (accents `én`/`één`, `hygiéne`, `lemand`), lost text 2. Not headings.
+- **`golden/align.py`**: every golden line's printed truth and role (body,
+  heading, other), by word alignment with the reference.
+  `disagreements.patch` keeps printed glyphs now.
+- **OCR bench on modern Dutch** (`experiments/bench_line_readings.py`, Goede
+  dochter, typesetting folded): text layer 0.21%, glm-ocr 0.25% (drops quotes
+  and sometimes words), tesseract 0.29%. Item 4 answered for this book: no
+  single reading wins; their errors differ.
+- **glm-ocr token confidence**: flat, not a question source (decision log).
+- **Line-role classifier** (`experiments/train_line_roles.py`, scikit-learn
+  trees, leave one book out): 153 role errors against 182 for `roles.py` over
+  nine books; Villa Toscane headings 0/12 → 12/12. A run with the two CPNB
+  books added was in progress at the end of the session
+  (`work/probes/line-roles/run3.log`). The style vote (`typestyle.py` +
+  `roles._heading_styles`) is a stopgap the classifier is meant to replace.
+- **New golden books**: De eerlijke vinder and Monterosso mon amour (CPNB, in
+  Stella's scan format; different typesetters). Text layer alone: CER 0.37% /
+  0.31%.
+- **Stella** built end to end for the first time: 44 OCR fixes (one wrong:
+  `besefeen`), 1.06 review questions per page.
 
 ## Critical review (2026-10-07): change of course
 
@@ -112,23 +105,28 @@ better calibration, or add another OCR library on its own.
 
 ## Next steps, in order
 
-1. **Error budget.** Settle Goede dochter's verdicts (pp. 9–64; 34 to answer
-   in `golden review`), then sort the remaining errors by category (quotes,
-   punctuation, letters, paragraph breaks, headings) and work on the biggest.
-   Stella has no headings: don't assume headings are where the errors are.
+1. **Error budget.** Goede dochter's verdicts are settled; its biggest
+   category is punctuation and quotes (a closing ’ lost after `,` `?` `!`, ‘
+   read as “), then accents. Work there next, measured with `quality`. Settle
+   verdicts on the CPNB books too (`golden review`), since they're the closest
+   to Stella.
 2. **Measure what the human experiences.** The product is errors left after
    review against questions asked. Report unflagged errors per page at fixed
    question budgets (0.25, 0.5, 1 per page), with bootstrap error bars over
    pages; claim no gain inside them. Turning silent errors into flagged ones is
    a win even when CER stays flat.
-3. **glm-ocr's logprobs.** Ollama 0.40 returns `logprobs`/`top_logprobs` for
+3. **glm-ocr's logprobs** (probed: flat on Goede dochter, see the log; keep
+   only as a feature for learned trust). Ollama 0.40 returns `logprobs`/`top_logprobs` for
    glm-ocr in `/api/generate`: a confidence per token of every reading and the
    runner-up where it was unsure. Flag low-margin tokens even where all
    readings agree (shared errors). No new runtime needed.
-4. **Re-bench OCR models on modern Dutch** (Goede dochter line crops): glm-ocr
+4. **Re-bench OCR models on modern Dutch** (done for the cached readings on
+   Goede dochter; candidates not yet tried there: deepseek-ocr, gemma4) (Goede dochter line crops): glm-ocr
    was chosen, and vision models judged to modernise, on the 1909 Teirlinck
    bench in pre-reform spelling.
-5. **Golden books as training data.** Align each scan with its reference word
+5. **Golden books as training data** (classifier probe started; next: finish
+   the run with the CPNB books, then put the classifier in the pipeline behind
+   a switch and compare with `quality`). Align each scan with its reference word
    by word for labelled line crops and line roles. Train a small line-role
    classifier (gradient-boosted trees) on geometry, type size (`typestyle.py`),
    cap height, capitals, letterspacing, repetition and page-sequence features;
@@ -147,8 +145,8 @@ better calibration, or add another OCR library on its own.
    adding per-line features; this also yields grouped review questions.
 8. **More readings whose errors differ**: a second scan of the same edition
    beats another vision model of a similar family.
-9. **Run Stella through the current pipeline now and then**: its `stages/`
-   holds only `textlayer.json` and `document.json`.
+9. **Run Stella through the current pipeline now and then** (done today; its
+   73 review items await a human).
 10. Older items still open: Learned trust (Dawid–Skene) over `SURE`/
    `SURE_ALONE`; a Dutch lexicon (ask before installing); quotes in Dutch IA
    layers; `*****` scene breaks; paragraph breaks after a full line; italics
