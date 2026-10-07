@@ -10,8 +10,8 @@ more training book left out, for stability.
     PYTHONPATH=experiments uv run python experiments/train_ocr_trust.py [--save]
 
 `--save` trains on the tuning books (never the held-out ones) and writes the model
-the pipeline uses (ROBO_OCR_TRUST=1); `--without <book>` leaves one more out, to
-score it fairly.
+the pipeline uses (ROBO_OCR_TRUST=1); with a copy trained without each tuning book,
+which `roboscriptorium bench` scores that book with.
 """
 
 import sys
@@ -97,17 +97,21 @@ def scored(make, train_names, rows):
 
 books = {name: rows_of(name) for name in SPECS}
 if "--save" in sys.argv:
-    without = sys.argv[sys.argv.index("--without") + 1] if "--without" in sys.argv else None
-    every = [
-        r
-        for name, rows in books.items()
-        if name != without and name.split("--")[0] not in HELD_OUT
-        for r in rows
-    ]
-    model = trust.train([r["s"] for r in every], [r["right"] for r in every])
+    # The model the pipeline uses, and one without each tuning book, which `bench`
+    # scores that book with.
+    tuning = [n for n in books if n.split("--")[0] not in HELD_OUT and n != "stella"]
     path = Path(Settings.from_env().ocr_trust_model)
-    trust.save(model, path)
-    print(f"trained on {len(every)} suspects, without {without}: {path}")
+    for without in [None, *tuning]:
+        every = [
+            r
+            for name, rows in books.items()
+            if name != without and name.split("--")[0] not in HELD_OUT
+            for r in rows
+        ]
+        model = trust.train([r["s"] for r in every], [r["right"] for r in every])
+        out = trust.without(path, without) if without else path
+        trust.save(model, out)
+        print(f"trained on {len(every)} suspects, without {without}: {out}")
     sys.exit()
 
 totals: Counter = Counter()

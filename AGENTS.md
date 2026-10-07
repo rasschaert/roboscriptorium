@@ -176,7 +176,9 @@ right, then expand.
     change. Pinned golden slices per set, scored with `evaluate` and `quality`,
     saved whole to `work/bench/` (commit, settings, decider, model versions,
     per-page counts) and compared with the previous run page by page: a change is
-    real only when the paired bootstrap interval excludes zero. "After review"
+    real only when the paired bootstrap interval excludes zero. A tuning book is
+    scored with the trust model trained without it
+    (`ocr-trust-without-<book>.pkl`, written by `train_ocr_trust.py --save`). "After review"
     adds the reviewer's own slips (`quality.HUMAN_SLIPS`, 8 of 68 answers on
     Stella) per question asked. Run it before and after a change; cite its
     starred lines, not single CER figures.

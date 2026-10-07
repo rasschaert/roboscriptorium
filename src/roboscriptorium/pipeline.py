@@ -66,8 +66,10 @@ def run(
     pages: tuple[int, int] | None = None,
     use_models: bool = True,
     check_ocr: bool = True,
+    settings: Settings | None = None,
 ) -> Stages:
-    """Build the book's EPUB. `pages` narrows the body range for quick experiments."""
+    """Build the book's EPUB. `pages` narrows the body range for quick experiments;
+    `settings` default to the environment's."""
     first, last = pages or book.body_pages
     body = [
         p
@@ -85,7 +87,7 @@ def run(
     corrected = body
     style = dash_style(book, body)
     if use_models:
-        settings = Settings.from_env()
+        settings = settings or Settings.from_env()
         if regions is not None and ocrcheck.scanned(book.source):
             found = missing.candidates(body, regions, _answered(book))
             readings = missing.read(

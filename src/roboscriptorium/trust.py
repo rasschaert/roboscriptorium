@@ -110,6 +110,11 @@ def load(path: Path):
     return model
 
 
+def without(path: Path, book: str) -> Path:
+    """Where the model trained without `book`'s suspects is kept, beside `path`."""
+    return path.with_name(f"{path.stem}-without-{book}{path.suffix}")
+
+
 def fingerprint(path: Path) -> str:
     """A short hash of the saved model's file, to record which model decided."""
     return hashlib.sha256(path.read_bytes()).hexdigest()[:12]

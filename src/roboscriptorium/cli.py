@@ -245,13 +245,13 @@ def review_disagreements(
     review.serve(review.Review(book.source, text_layer, found, verdicts), port)
 
 
-def _questions_and_errors(spec: str):
+def _questions_and_errors(spec: str, settings: Settings | None = None):
     """For a golden spec (book dir[:pages[:chapters]]): its name, the book, the build, the
     reference with verdicts applied, the remaining differences from it, the review's
     questions, and the number of verdicts applied."""
     book_dir, pages, chapters = (spec.split(":") + [None, None])[:3]
     book = Book.load(Path(book_dir))
-    stages = pipeline.run(book, pages=_range(pages or None))
+    stages = pipeline.run(book, pages=_range(pages or None), settings=settings)
     regions = None
     if layout.available():
         numbers = [p.number for p in stages.pages]
@@ -324,13 +324,14 @@ def run_bench(
     built = []
     for spec in bench.SETS[set_name]:
         typer.echo(f"== {spec}")
+        own = bench.unseen(settings, spec.split(":")[0])
         name, book, stages, reference, errors, found, applied = _questions_and_errors(
-            f"work/{spec}"
+            f"work/{spec}", own
         )
         score = evaluate.score(_scored(book, stages), reference)
-        built.append((spec, name, stages, errors, found, applied, score))
+        built.append((spec, name, stages, errors, found, applied, score, own))
     books = {}
-    for spec, name, stages, errors, found, applied, score in built:
+    for spec, name, stages, errors, found, applied, score, own in built:
         rates: dict[str, tuple[int, int]] = {}
         for other in built:
             if other[1] != name:
@@ -341,6 +342,7 @@ def run_bench(
         books[name] = {
             "spec": spec,
             "ocr_decider": stages.ocr_decider,
+            "ocr_trust_model": own.ocr_trust_model,
             "ocr_suspects": dict(Counter(s.choice for s in stages.suspects)),
             "verdicts_applied": applied,
             "score": {k: v for k, v in asdict(score).items() if k != "confusions"},

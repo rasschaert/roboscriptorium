@@ -30,3 +30,14 @@ def test_after_review_counts_the_reviewers_slips_on_each_question():
     asked = [SimpleNamespace(page=1, first=0, last=0, reasons=["x"])] * 2
     counts = bench.page_counts([1, 2], [], asked, slip_rate=0.25)
     assert counts == {1: [0, 0, 2, 0.5], 2: [0, 0, 0, 0.0]}
+
+
+def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path):
+    from roboscriptorium.config import Settings
+
+    settings = Settings(ocr_trust_model=str(tmp_path / "ocr-trust.pkl"))
+    assert bench.unseen(settings, "crime") == settings
+    (tmp_path / "ocr-trust-without-crime.pkl").write_bytes(b"")
+    assert bench.unseen(settings, "crime").ocr_trust_model == str(
+        tmp_path / "ocr-trust-without-crime.pkl"
+    )

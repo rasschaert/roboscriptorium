@@ -11,17 +11,19 @@ the noise worth measuring.
 
 import json
 import random
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
-from roboscriptorium import quality
+from roboscriptorium import quality, trust
+from roboscriptorium.config import Settings
 
 OUT = Path("work/bench")
 BOOTSTRAP_SAMPLES = 2000
 
-# Golden scans and the pages:chapters scored. Tuning books are tuned on; validation
-# books have been consulted for choices before, so they validate, not test.
+# Golden scans and the pages:chapters scored. Tuning books are tuned on, and scored
+# with models trained without them (`unseen`); validation books have been consulted
+# for choices before, so they validate, not test.
 SETS = {
     "tuning": [
         "goede-dochter--ia-scan:9-64:1-4",
@@ -55,6 +57,13 @@ class Change:
     @property
     def real(self) -> bool:
         return self.low > 0 or self.high < 0
+
+
+def unseen(settings: Settings, book: str) -> Settings:
+    """The settings to score `book` with: each learned model's copy trained without it,
+    where there is one, so a tuning book isn't scored by a model that saw its labels."""
+    path = trust.without(Path(settings.ocr_trust_model), book)
+    return replace(settings, ocr_trust_model=str(path)) if path.exists() else settings
 
 
 def page_counts(
