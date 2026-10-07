@@ -712,4 +712,7 @@ disagreements by mistake category.
   OCR layer, like Stella), since every other Dutch golden book has been tuned on.
   `golden derive` now reads a `<div>` holding no other blocks as a paragraph:
   its EPUB has no `<p>`. Boze tongen's and De aanslag's references re-derive
-  byte-identical.
+  byte-identical. Cold-start score, chapters 1–3 (pp. 15–44): text layer alone
+  CER 2.51%, WER 2.38%, paragraph F1 0.772, headings 0/16; full pipeline CER
+  1.92%, WER 1.80%, F1 0.814, headings 3/16 (the 16 count each chapter label,
+  title and section number); 146 OCR suspects, 74 for review.
