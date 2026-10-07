@@ -985,3 +985,12 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   drops apostrophes in some contractions and splits the word (`didn t`, `I
   m`, `priest s`). The tall box of each chapter's large first letter merges the
   two printed lines beside it into one visual line (text order stays right).
+- 2026-10-07: Reis om mijn schedel, Stella's stand-in, through the whole
+  pipeline: CER 0.72% → 0.51%, WER 0.59% → 0.44%, paragraph F1 0.853 → 0.890,
+  headings 0/27 → 24/27 (+3), italics 0.914 / 0.878. For a reviewer: 1.70
+  wrong words/page, 1.57 questions/page, 1.33 left unasked; only 53 of 340
+  OCR-doubt questions sit on an error. Unasked by kind: footnote text (left out
+  of the reference) 194, then quotes 44 (a lost opening ‘). A seam: `uur 's`
+  comes out `uur's` (the space before Dutch 's is removed). OCR bench, 6,697
+  body lines, typesetting folded: text layer 0.15%, glm-ocr 0.18% (drops
+  diaereses, `e` for `ë` 30×), tesseract 0.21%: the same order as Goede dochter.

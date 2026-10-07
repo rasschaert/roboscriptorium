@@ -4,7 +4,7 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules and
 decisions; this file only covers the state of play. Replace it at the end of
 each session.
 
-## State on 2026-10-07, evening
+## State at the end of 2026-10-07
 
 Everything is committed on `main`. Earlier today: OCR-check crops, the italics
 stage, the golden books reshaped, missing lines (see the decision log). This
@@ -42,8 +42,11 @@ afternoon, after the second review:
   0.31%.
 - **Reis om mijn schedel** (Van Gennep 2014, Stella's publisher) added: same
   leading, furniture and, by eye, typeface as Stella; the best stand-in for
-  measuring Stella. Text layer alone CER 0.72%, F1 0.853. A full `eval` was
-  started at the end of the session (`work/reis-om-mijn-schedel--ia-scan/logs/`).
+  measuring Stella. Full pipeline: CER 0.72% → 0.51%, F1 0.853 → 0.890,
+  headings 24/27 (+3); 1.57 questions/page leave 1.33 wrong words/page
+  unasked. Biggest unasked kind after footnotes: quotes. **Bug to fix first**:
+  `uur 's` → `uur's` (the space before Dutch 's is dropped, likely reflow's
+  punctuation spacing); Stella will have it too. Verdicts not settled yet.
 - **The Thief-Taker's Apprentice** (Gollancz 2010) added: the first modern
   English scan, an older InvisibleOCR layer. Text layer alone CER 0.82%; not
   yet built with models. Open seam: `pdf._visual_lines` merges the two lines
@@ -120,8 +123,8 @@ better calibration, or add another OCR library on its own.
 
 ## Next steps, in order
 
-1. **Error budget.** Goede dochter's verdicts are settled; its biggest
-   category is punctuation and quotes (a closing ’ lost after `,` `?` `!`, ‘
+1. **Error budget.** Fix the `uur's` seam (Reis). Goede dochter's verdicts are
+   settled; on it and on Reis the biggest category is punctuation and quotes (a closing ’ lost after `,` `?` `!`, ‘
    read as “), then accents. Work there next, measured with `quality`. Settle
    verdicts on the CPNB books too (`golden review`), since they're the closest
    to Stella.
