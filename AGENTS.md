@@ -1126,3 +1126,13 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   keeps "ís") and undecided on punctuation (~0.5). Transcribe-and-compare is
   the shape to use; a straight quote in a curly-quoted book's answer is a slip
   no model is needed for.
+- 2026-10-07: Line-role classifier regularised and given the layout model's
+  region classes as features (`train_line_roles.py`, `tune_line_roles.py`).
+  Twelve books, leave one out: `roles.py` 256 role errors; trees (balanced
+  weights, leaves ≥ 20, depth 4, l2 1.0) 142 without layout features, 111 with
+  (Dolittle 89 → 55, Reis 32 → 5, Monterosso 33 → 6; held out Grand Hotel
+  Europa 33 → 6, Villa Toscane 20 → 2). Unbounded depth and larger leaves are
+  worse (172–260). Not stable enough to wire in: leaving one more training
+  book out sends Lady into Fox 9 → up to 71 (rules: 8) and Crime 5 → 20 (rules:
+  4); only three English books train it. Next: more English training data
+  (The Thief-Taker's Apprentice), then wire in behind a switch.

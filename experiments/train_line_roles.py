@@ -20,7 +20,7 @@ from pathlib import Path
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingClassifier
 
-from roboscriptorium import disagreements, page as P, pipeline, typestyle
+from roboscriptorium import disagreements, layout, page as P, pipeline, typestyle
 from roboscriptorium.book import Book
 from roboscriptorium.cli import _range, _verdicts
 from roboscriptorium.flags import treatment
@@ -41,7 +41,6 @@ SPECS = [
     "work/de-tuin-van-de-avondnevel--ia-scan:11-52:1-3",
     "work/de-eerlijke-vinder--ia-scan",
     "work/reis-om-mijn-schedel--ia-scan",
-    "work/the-thief-takers-apprentice--ia-scan",
     "work/monterosso-mon-amour--ia-scan",
 ]
 # Scored like the others, but their errors aren't printed: they stay unseen.
@@ -53,7 +52,21 @@ OUT = Path("work/probes/line-roles")
 nan = math.nan
 
 
-def features(stages, styles) -> list[dict]:
+LAYOUT_CLASSES = ["title", "plain text", "abandon", "figure", "figure_caption", "table"]
+
+
+def _layout(line, regions) -> dict[str, float]:
+    """Per layout class, the confidence of the surest region of it holding the line's centre."""
+    cx, cy = (line.x0 + line.x1) / 2, (line.y0 + line.y1) / 2
+    out = {f"layout_{c}": 0.0 for c in LAYOUT_CLASSES}
+    for r in regions:
+        key = f"layout_{r.label}"
+        if key in out and r.x0 <= cx <= r.x1 and r.y0 <= cy <= r.y1:
+            out[key] = max(out[key], r.confidence)
+    return out
+
+
+def features(stages, styles, layout_regions=None) -> list[dict]:
     pages = stages.pages
     repeats = P.Repeats(pages)
     sunk = P.sunk_pages(pages)
@@ -66,6 +79,11 @@ def features(stages, styles) -> list[dict]:
         pitches = [b.y0 - a.y0 for a, b in zip(page.lines, page.lines[1:], strict=False)]
         pitch = statistics.median(pitches) if pitches else 12.0
         n = len(page.lines)
+        regions = [r for r in (layout_regions or {}).get(page.number, []) if not r.turned]
+        area = page.width * page.height
+        figures = sum(
+            (r.x1 - r.x0) * (r.y1 - r.y0) for r in regions if r.label == "figure" and r.confidence >= 0.5
+        )
         for i, ln in enumerate(page.lines):
             ref = SourceRef(page.number, i)
             st = styles.get(ref)
@@ -105,6 +123,8 @@ def features(stages, styles) -> list[dict]:
                 "asked": float(role is not None),
                 "p_body": role.p_body if role else nan,
                 **{f"model_{r}": float(role is not None and role.role == r) for r in MODEL_ROLES},
+                **_layout(ln, regions),
+                "page_figure_share": figures / area,
                 "pipeline": PIPELINE[treatment(role)],
             }
             rows.append({"page": page.number, "line": i, "text": text, "f": f})
@@ -124,7 +144,9 @@ def dataset(spec: str, rebuild: bool) -> list[dict]:
     reference, _ = disagreements.patch(reference, _verdicts(book))
     labels = align(stages.pages, reference)
     styles = typestyle.measure(book.source, stages.pages, book.stages / "type.json")
-    rows = features(stages, styles)
+    numbers = [p.number for p in stages.pages]
+    regions = layout.detect(book.source, numbers, book.stages / "layout.json")
+    rows = features(stages, styles, regions)
     for r in rows:
         r["label"] = labels[SourceRef(r["page"], r["line"])].role
     OUT.mkdir(parents=True, exist_ok=True)

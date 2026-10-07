@@ -4,12 +4,15 @@ Reads the feature sets `train_line_roles.py` cached in work/probes/line-roles/.
 For each setting: role errors over all books leaving one book out, and the
 spread of each book's errors when one more training book is left out too.
 
-    uv run python experiments/tune_line_roles.py
+    uv run python experiments/tune_line_roles.py [--focus]
+
+`--focus` runs only the best settings, with and without the layout model's features.
 """
 
 import itertools
 import json
 import statistics
+import sys
 from collections import Counter
 from pathlib import Path
 
@@ -54,18 +57,24 @@ baseline = sum(
 )
 print(f"roles.py: {baseline} errors over {len(books)} books")
 grid = list(itertools.product(["balanced", "sqrt", "none"], [20, 80], [None, 4], [0.0, 1.0]))
+feature_sets = [("+model", names), ("plain", plain)]
+if "--focus" in sys.argv:
+    grid = [("balanced", 20, 4, 1.0), ("sqrt", 20, 4, 1.0)]
+    no_layout = [k for k in names if not k.startswith(("layout_", "page_figure"))]
+    feature_sets = [("+model", names), ("+model, no layout", no_layout)]
+columns = dict(feature_sets)
 results = []
-for cols_label, cols in (("+model", names), ("plain", plain)):
+for cols_label, cols in feature_sets:
     for setting in grid:
         per_book = {n: errors(n, [m for m in books if m != n], cols, setting) for n in books}
         results.append((sum(per_book.values()), cols_label, setting, per_book))
-        print(f"{sum(per_book.values()):5} {cols_label:6} {setting}", flush=True)
+        print(f"{sum(per_book.values()):5} {cols_label:18} {setting}", flush=True)
 
 results.sort(key=lambda r: r[0])
 print("\nbest settings, per book (roles.py first):")
 for total, cols_label, setting, per_book in results[:4]:
     print(f"\n{total} {cols_label} {setting}")
-    cols = names if cols_label == "+model" else plain
+    cols = columns[cols_label]
     for n, e in per_book.items():
         pipe = sum(r["label"] != r["f"]["pipeline"] for r in books[n])
         # Stability: also leave out each other book in turn.
