@@ -27,3 +27,14 @@ def test_patch_puts_the_scan_reading_into_the_reference(tmp_path):
     assert patched[0].paragraphs == ["She was eager in every thing: her sorrows.", "Next."]
     # Verdicts persist and reload.
     assert Verdicts(tmp_path / "v.jsonl").by_key["k"].truth == "every thing:"
+
+
+def test_patch_keeps_italic_words(tmp_path):
+    reference = [Chapter("I", ["She was eager in everything: her sorrows."], [frozenset({4, 6})])]
+    verdicts = Verdicts(tmp_path / "v.jsonl")
+    d = Disagreement(
+        "k", "every thing:", "everything:", "She was eager in", "her sorrows.", 7, (1, 1)
+    )
+    verdicts.record(d, "every thing:", "edition")
+    patched, _ = patch(reference, verdicts)
+    assert patched[0].italic == [frozenset({4, 5, 7})]

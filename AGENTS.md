@@ -152,7 +152,7 @@ right, then expand.
     `gutenberg.py` (derives the reference text from a Project Gutenberg EPUB),
     `epub.py` (from a publisher's EPUB: headings by tag or class prefix),
     `se.py` (derives Standard Ebooks' text, kept for later style work),
-    `reference.py` (reads the reference chapters).
+    `reference.py` (reads the reference chapters, with their italic words).
   - `evaluate.py`: CER, WER and paragraph F1 against a golden reference.
   - `disagreements.py`: where output and reference differ, located on the scan;
     clearly garbled output and whitespace-only differences are auto-resolved.
@@ -716,3 +716,16 @@ disagreements by mistake category.
   CER 2.51%, WER 2.38%, paragraph F1 0.772, headings 0/16; full pipeline CER
   1.92%, WER 1.80%, F1 0.814, headings 3/16 (the 16 count each chapter label,
   title and section number); 146 OCR suspects, 74 for review.
+- 2026-10-07: Italics. Page-level "are there italic words?" with clef-flash:
+  11/15 italic pages at P ≥ 0.7, no false alarms; clef:27b says yes to every
+  page. Better and model-free: each text-layer word's **stroke slant** on the
+  scan (shear the ink above the baseline; the angle with the most peaked column
+  profile). Dolittle: italic median 16°, roman −1°; at ≥ 8°, 59/61 italic words
+  caught, 25 of 20,605 roman words flagged, nearly all of them italic in print
+  but unmarked by Gutenberg (running heads, phrases the truth didn't place).
+  Below the baseline is left out: a y's descender leans like italic. Crime,
+  same thresholds: 23/25, the 9 flags italic foreign words. ~0.2 s/page
+  (`experiments/probe_italic_words.py`). References now keep `<i>`/`<em>` as
+  italic words (`Chapter.italic`), also through verdict patches; plain text
+  unchanged on every golden book. Publisher EPUBs that italicise by CSS class
+  (the Dutch ones) don't carry italics yet.

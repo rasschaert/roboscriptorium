@@ -225,31 +225,40 @@ def patch(reference: list[Chapter], verdicts: Verdicts) -> tuple[list[Chapter], 
 
     Returns the patched chapters and how many verdicts were applied.
     """
-    # (chapter, paragraph, word) for every reference word, in order.
+    # (chapter, paragraph, word, italic) for every reference word, in order.
     flat = [
-        (c, p, w)
+        (c, p, w, k in (ch.italic[p] if p < len(ch.italic) else ()))
         for c, ch in enumerate(reference)
         for p, para in enumerate(ch.paragraphs)
-        for w in normalise(para).split()
+        for k, w in enumerate(normalise(para).split())
     ]
     applied = 0
     for v in verdicts.by_key.values():
         if v.truth is None or v.truth == v.want:
             continue
         before, want, after = v.before.split(), v.want.split(), v.after.split()
-        at = _find_sequence([w for _, _, w in flat], before + want + after)
+        at = _find_sequence([w for _, _, w, _ in flat], before + want + after)
         if at is None:
             continue
         start = at + len(before)
-        c, p = (flat[start][:2] if want else flat[max(0, start - 1)][:2]) if flat else (0, 0)
-        flat[start : start + len(want)] = [(c, p, w) for w in v.truth.split()]
+        c, p, _, italic = (
+            (flat[start] if want else flat[max(0, start - 1)]) if flat else (0, 0, "", False)
+        )
+        flat[start : start + len(want)] = [(c, p, w, italic) for w in v.truth.split()]
         applied += 1
 
     chapters = []
     for c, ch in enumerate(reference):
-        paragraphs = {}
-        for cc, p, w in flat:
+        paragraphs: dict[int, list[tuple[str, bool]]] = {}
+        for cc, p, w, italic in flat:
             if cc == c:
-                paragraphs.setdefault(p, []).append(w)
-        chapters.append(Chapter(ch.heading, [" ".join(ws) for _, ws in sorted(paragraphs.items())]))
+                paragraphs.setdefault(p, []).append((w, italic))
+        words = [ws for _, ws in sorted(paragraphs.items())]
+        chapters.append(
+            Chapter(
+                ch.heading,
+                [" ".join(w for w, _ in ws) for ws in words],
+                [frozenset(k for k, (_, italic) in enumerate(ws) if italic) for ws in words],
+            )
+        )
     return chapters, applied

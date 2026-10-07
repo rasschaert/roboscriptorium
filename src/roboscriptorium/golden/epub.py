@@ -17,6 +17,7 @@ from html.entities import name2codepoint
 from pathlib import Path
 
 from roboscriptorium.golden.gutenberg import Section, _chapter_xhtml, _clean
+from roboscriptorium.golden.reference import ITALIC_END, ITALIC_START, ITALIC_TAGS, unmarked
 
 XHTML = "{http://www.w3.org/1999/xhtml}"
 HEADING_TAGS = {f"{XHTML}h{n}" for n in range(1, 7)}
@@ -39,13 +40,16 @@ def _parse(raw: bytes) -> ET.Element:
 
 
 def _text(el: ET.Element):
-    """An element's text, with a space where a `<br/>` breaks the line."""
+    """An element's text, italics marked, with a space where a `<br/>` breaks the line."""
     if el.tag == f"{XHTML}br":
         yield " "
     if el.text:
         yield el.text
     for child in el:
+        italic = child.tag in ITALIC_TAGS
+        yield ITALIC_START if italic else ""
         yield from _text(child)
+        yield ITALIC_END if italic else ""
         if child.tail:
             yield child.tail
 
@@ -81,10 +85,10 @@ def read(epub: Path, files: list[str], heading_prefixes: tuple[str, ...] = ()) -
                 if el.tag not in HEADING_TAGS and not _is_paragraph(el):
                     continue
                 text = _clean("".join(_text(el)).replace("\u00a0", " "))
-                if not text:
+                if not unmarked(text).strip():
                     continue
                 if _is_heading(el, heading_prefixes):
-                    sections.append(Section(text, text))
+                    sections.append(Section(unmarked(text), unmarked(text)))
                 elif sections:
                     sections[-1].paragraphs.append(text)
     return sections

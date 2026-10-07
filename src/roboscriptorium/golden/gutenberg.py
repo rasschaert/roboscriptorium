@@ -17,6 +17,8 @@ from pathlib import Path
 
 import httpx
 
+from roboscriptorium.golden.reference import append_marked, marked_text, unmarked
+
 XHTML = "{http://www.w3.org/1999/xhtml}"
 SKIP_CLASSES = {
     "figcenter",
@@ -33,6 +35,7 @@ SKIP_TAGS = {f"{XHTML}{t}" for t in ("table", "img", "figure", "head")}
 class Section:
     heading: str  # the heading's first line
     full_heading: str
+    # Italic parts marked (see `reference.marked_text`).
     paragraphs: list[str] = field(default_factory=list)
 
 
@@ -85,21 +88,16 @@ class _Walker:
             return
         if el.tag == f"{XHTML}p":
             self._flush_verse()
-            if self.sections and (text := _clean("".join(_text_without_skipped(el)))):
+            text = _clean("".join(marked_text(el, _kept)))
+            if self.sections and unmarked(text).strip():
                 self.sections[-1].paragraphs.append(text)
             return
         for child in el:
             self.walk(child)
 
 
-def _text_without_skipped(el: ET.Element):
-    if el.text:
-        yield el.text
-    for child in el:
-        if not (child.tag in SKIP_TAGS or _classes(child) & SKIP_CLASSES):
-            yield from _text_without_skipped(child)
-        if child.tail:
-            yield child.tail
+def _kept(child: ET.Element) -> bool:
+    return not (child.tag in SKIP_TAGS or _classes(child) & SKIP_CLASSES)
 
 
 def read_epub(epub: Path) -> tuple[list[Section], list[str]]:
@@ -142,7 +140,7 @@ def _chapter_xhtml(section: Section) -> str:
     body = ET.SubElement(ET.SubElement(html, "body"), "section")
     ET.SubElement(body, "h2").text = section.full_heading
     for text in section.paragraphs:
-        ET.SubElement(body, "p").text = text
+        append_marked(ET.SubElement(body, "p"), text)
     ET.indent(html)
     return '<?xml version="1.0" encoding="utf-8"?>\n' + ET.tostring(html, encoding="unicode") + "\n"
 
