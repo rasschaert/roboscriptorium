@@ -58,7 +58,8 @@ compare headings on full runs.
    ones. First look at what the missed headings have in common on the page,
    then a general signal rather than more rules.
 3. Scene-break lines (`*****`) are dropped.
-4. A `bench` command; learned trust (Dawid–Skene) replacing `SURE`/`SURE_ALONE`;
+4. A `bench` command; learned trust (Dawid–Skene) replacing `SURE`/`SURE_ALONE`
+   (winnow flips 15–20% of its answers given the lines around: see the log);
    the metadata stage with `nuextract3:q6_k`.
 5. Italics: marks below the word (dash-glued words with one half italic).
 6. Smaller: p23's decorated initial (Dolittle) is answered "E" but shows an O;

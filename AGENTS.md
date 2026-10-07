@@ -825,6 +825,11 @@ disagreements by mistake category.
 - 2026-10-07: The OCR check's text judge (winnow) now reads the lines before
   and after the suspect line, where a quote opens or a sentence goes on. Vals
   alarm pp. 11–60: WER 0.20% → 0.18%, applied 109 → 114, review 110 → 108;
-  Dolittle CER 1.80% → 1.78%; Crime unchanged. Review counts per book are now
-  saved with each run in `work/probes/` logs; earlier counts came from older
-  code and don't compare.
+  Dolittle CER 1.80% → 1.78%; Crime unchanged in CER, but one italic word
+  lost (winnow now keeps `fiancee.` on p61). Against clef's sure picks (≥ 0.8)
+  winnow agrees, with context / without: Crime 56 / 65 of 79, Dolittle 397 /
+  379 of 419, Vals alarm 31 / 31 of 44 (`experiments/probe_reader_context.py`).
+  15–20% of its answers flip with the added lines: winnow is a noisy judge,
+  which argues for trust measured per model and kind of error over fixed
+  thresholds. `eval` now prints and records the OCR check's counts (fixed,
+  kept, for review). Crime: 236 suspects, 46 fixed, 123 kept, 67 for review.

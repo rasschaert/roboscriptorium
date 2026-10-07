@@ -1,5 +1,6 @@
 import json
 import subprocess
+import time
 from collections import Counter
 from dataclasses import asdict
 from datetime import UTC, datetime
@@ -249,10 +250,19 @@ def evaluate_books(
         typer.echo("\n" + "\n".join(summary))
 
 
+def _suspects(path: Path, since: float) -> Counter:
+    """The OCR check's choices (other, ours, review), if this build wrote them."""
+    if not path.exists() or path.stat().st_mtime < since:
+        return Counter()
+    return Counter(s["choice"] for s in json.loads(path.read_text()))
+
+
 def _evaluate_book(
     book_dir: Path, pages: str | None, chapters: str | None, no_models: bool, check_ocr: bool
 ) -> evaluate.Score:
+    started = time.time()
     book, doc, reference = _build_golden(book_dir, pages, chapters, no_models, check_ocr)
+    suspects = _suspects(book.stages / "ocr-check.json", started)
     verdicts = _verdicts(book)
     reference, applied = disagreements.patch(reference, verdicts)
     result = evaluate.score(doc, reference)
@@ -283,6 +293,11 @@ def _evaluate_book(
             f"  {applied} scan readings patched into the reference; remaining disagreements: "
             + ", ".join(f"{k} {n}" for k, n in mistakes.most_common())
         )
+    if suspects:
+        typer.echo(
+            f"  OCR check: {sum(suspects.values())} suspects, {suspects['other']} fixed, "
+            f"{suspects['ours']} kept, {suspects['review']} for review"
+        )
     typer.echo("  most frequent differences (output → reference):")
     for got, want, n in result.confusions:
         typer.echo(f"    {n:4}× {got[:40]!r} → {want[:40]!r}")
@@ -297,6 +312,7 @@ def _evaluate_book(
         "models": not no_models,
         "ocr_check": check_ocr and not no_models,
         "verdicts_applied": applied,
+        "ocr_suspects": dict(suspects),
         **{k: v for k, v in asdict(result).items() if k != "confusions"},
     }
     with (book.root / "eval-history.jsonl").open("a") as f:
