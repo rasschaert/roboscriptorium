@@ -61,6 +61,9 @@ class Lexicon:
             return good[0]
         return None
 
+    def verdict(self, version: str, continues: bool = False) -> bool | None:
+        return self._judge(version, continues)
+
     def _judge(self, version: str, continues: bool) -> bool | None:
         """True when every judged word is known, False when one isn't, None when none is judged."""
         tokens = _TOKEN.findall(version)

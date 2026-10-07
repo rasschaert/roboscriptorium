@@ -210,6 +210,13 @@ right, then expand.
     of. Word breaks, line-end fragments, stress accents and words without a
     vowel get no verdict. The OCR check records its pick as a vote ("word list",
     shown in the review) but doesn't act on it.
+  - `trust.py`: learned trust for the OCR check. A model (shallow gradient-boosted
+    trees) scores each version of a suspect from the judges' picks and confidence,
+    which second readings read it, the word list and the kind of difference;
+    the least sure suspects are asked up to `ROBO_OCR_QUESTIONS` per page, the
+    rest take their best version. Off unless `ROBO_OCR_TRUST=1`; the model lives
+    in `work/models/ocr-trust.pkl`, trained by `experiments/train_ocr_trust.py
+    --save` on the golden books' suspects (`experiments/ocr_trust_data.py`).
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
     text layer lacks, or reads as scraps because it is printed sideways).
   - `initials.py`: guesses the letter of a decorated initial: the letters that
@@ -1057,3 +1064,11 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   asks too much (logistic never reaches it); rank by uncertainty to a budget
   instead. Lady into Fox's labels are noisy (rule 70 silent of 149; Gutenberg
   differs from the print in typography), so its score says little.
+- 2026-10-07: Learned trust in the pipeline behind `ROBO_OCR_TRUST=1` (budget
+  `ROBO_OCR_QUESTIONS`, default 1 per page), scored with `quality`, each book's
+  model trained without it. Reis: wrong words before review 0.73 → 0.58/page,
+  questions 1.67 → 1.12/page, unasked with every question asked 0.25 → 0.22.
+  Goede dochter pp. 9–64: wrong words 1.18 → 1.00, questions 2.24 → 1.20,
+  unasked 0.27 → 0.45 (half the questions; at 1 question/page 0.71 → 0.47);
+  inside the bootstrap intervals. Not yet the default: score the held-out books
+  with it first.

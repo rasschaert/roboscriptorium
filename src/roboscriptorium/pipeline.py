@@ -2,6 +2,7 @@
 
 import json
 from dataclasses import asdict, dataclass
+from pathlib import Path
 
 import pymupdf
 
@@ -14,6 +15,7 @@ from roboscriptorium import (
     ocr,
     ocrcheck,
     quotes,
+    trust,
     typestyle,
 )
 from roboscriptorium.book import Book
@@ -99,8 +101,8 @@ def run(
                 settings.check_model, settings.ollaya_url, settings.ollama_url
             )
             lang = ocr.language(book.language)
-            readings = [
-                ocrcheck.line_readings(
+            readings = {
+                "glm": ocrcheck.line_readings(
                     book.source,
                     body,
                     kept,
@@ -108,14 +110,20 @@ def run(
                     settings.ollama_url,
                     book.stages / "second-reading.json",
                 ),
-                ocrcheck.tesseract_readings(
+                "tess": ocrcheck.tesseract_readings(
                     book.source, body, kept, lang, book.stages / "tesseract.json"
                 ),
-            ]
+            }
             judge = ollaya.for_model(settings.judge_model, settings.ollaya_url, settings.ollama_url)
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, Lexicon.load(lang)
             )
+            if settings.ocr_trust:
+                model = trust.load(Path(settings.ocr_trust_model))
+                if model is None:
+                    raise FileNotFoundError(f"no trust model at {settings.ocr_trust_model}")
+                budget = round(settings.ocr_questions_per_page * len(body))
+                suspects = trust.decide(suspects, model, budget)
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
         corrected, roles, applied = corrections.apply(
             body, model_roles, Corrections(book.corrections_path)

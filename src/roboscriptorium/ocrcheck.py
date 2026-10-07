@@ -80,6 +80,10 @@ class Suspect:
     votes: dict[str, str] = field(default_factory=dict)
     # Each model's confidence in its pick.
     confidence: dict[str, float] = field(default_factory=dict)
+    # Per second reading, whether it reads each version (`ours` first) here.
+    support: dict[str, tuple[bool, ...]] = field(default_factory=dict)
+    # Per version, whether the word list knows all its words (None: it can't tell).
+    known: tuple[bool | None, ...] = ()
 
     @property
     def alternatives(self) -> list[str]:
@@ -338,14 +342,15 @@ def _box(words: list, box, original: str, start: int, end: int):
 def check(
     pdf: Path,
     pages: list[PageText],
-    readings: list[dict[SourceRef, str]],
+    readings: dict[str, dict[SourceRef, str]],
     lang: str,
     vision: OllayaClient,
     reader: OllayaClient,
     cache: DecisionCache,
     lexicon: Lexicon | None = None,
 ) -> list[Suspect]:
-    """Suspects where any other reading differs from the text layer, each with a decision."""
+    """Suspects where any other reading (by name) differs from the text layer, each with a
+    decision."""
     suspects = []
     with pymupdf.open(pdf) as doc:
         for page in pages:
@@ -354,8 +359,10 @@ def check(
             boxes = line_boxes(pdf_page, page)
             for k, line in enumerate(page.lines):
                 ours = line.text
-                others = [r.get(SourceRef(page.number, k), "") for r in readings]
-                for a0, a1, alternatives in merged_differences(ours, [o for o in others if o]):
+                others = {n: r.get(SourceRef(page.number, k), "") for n, r in readings.items()}
+                read = [o for o in others.values() if o]
+                for a0, a1, alternatives in merged_differences(ours, read):
+                    versions = [ours[a0:a1], *alternatives]
                     box = _box(words[k], boxes[k], ours, a0, a1)
                     around = (
                         page.lines[k - 1].text if k > 0 else "",
@@ -365,9 +372,14 @@ def check(
                     (choice, chosen, votes), confidence = _decide(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache, around,
-                        lexicon.vouches([ours[a0:a1], *alternatives], continues)
-                        if lexicon else None,
+                        lexicon.vouches(versions, continues) if lexicon else None,
                     )  # fmt: skip
+                    support = {
+                        n: supports(ours, other, a0, a1, versions) for n, other in others.items()
+                    }
+                    known = (
+                        tuple(lexicon.verdict(v, continues) for v in versions) if lexicon else ()
+                    )
                     suspects.append(
                         Suspect(
                             page.number,
@@ -382,9 +394,22 @@ def check(
                             chosen,
                             votes,
                             confidence,
+                            support,
+                            known,
                         )  # fmt: skip
                     )
     return suspects
+
+
+def supports(ours: str, reading: str, a0: int, a1: int, versions: list[str]) -> tuple[bool, ...]:
+    """Whether a reading reads each version of the span `ours[a0:a1]`: one of its own
+    versions there, or, where it doesn't differ from `ours` there, ours (the first)."""
+    if not reading:
+        return tuple(False for _ in versions)
+    mine = [
+        v for b0, b1, vs in merged_differences(ours, [reading]) if b0 < a1 and a0 < b1 for v in vs
+    ]
+    return tuple(v in mine or (k == 0 and not mine) for k, v in enumerate(versions))
 
 
 def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, list[str]]]:

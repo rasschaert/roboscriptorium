@@ -10,21 +10,20 @@ reading said about each, and which version makes the line read as printed
 import json
 import re
 import sys
+from dataclasses import asdict
 from pathlib import Path
 
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium import ocr, ocrcheck, pipeline
+from roboscriptorium import ocrcheck, pipeline
 from roboscriptorium.book import Book
 from roboscriptorium.cli import _range, _verdicts
-from roboscriptorium.config import Settings
 from roboscriptorium.disagreements import patch
 from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.ir import SourceRef
-from roboscriptorium.lexicon import Lexicon
 
 SPECS = {
     "goede-dochter--ia-scan": "9-64:1-4",
@@ -58,18 +57,6 @@ def build(name: str, spec: str) -> list[dict]:
     truth = align(stages.pages, reference)
     in_notes = golden_notes.note_lines(stages.pages, golden_notes.load(golden.notes_path))
 
-    settings = Settings.from_env()
-    lang = ocr.language(book.language)
-    checked = {SourceRef(s.page, s.line) for s in stages.suspects}
-    glm = ocrcheck.line_readings(
-        book.source, stages.pages, checked, settings.ocr_model, settings.ollama_url,
-        book.stages / "second-reading.json",
-    )  # fmt: skip
-    tess = ocrcheck.tesseract_readings(
-        book.source, stages.pages, checked, lang, book.stages / "tesseract.json"
-    )
-    words = Lexicon.load(lang)
-
     rows = []
     for s in stages.suspects:
         ref = SourceRef(s.page, s.line)
@@ -81,32 +68,22 @@ def build(name: str, spec: str) -> list[dict]:
         distance = [Levenshtein.distance(fold(line), fold(t.truth)) for line in lines]
         best = min(distance)
         right = [d == best for d in distance]
-        supports = {}
-        for label, reading in (("glm", glm.get(ref, "")), ("tess", tess.get(ref, ""))):
-            found = ocrcheck.merged_differences(s.original, [reading]) if reading else []
-            mine = [v for a0, a1, vs in found if a0 < s.end and s.start < a1 for v in vs]
-            supports[label] = [v in mine or (k == 0 and reading and not mine)
-                               for k, v in enumerate(versions)]  # fmt: skip
         rows.append(
             {
-                "page": s.page,
-                "line": s.line,
-                "original": s.original,
+                "suspect": asdict(s),
                 "truth": t.truth,
-                "versions": versions,
                 "right": right,
                 "settled": right.count(True) == 1 and best <= max(2, len(s.ours) // 3),
-                "choice": s.choice,
-                "chosen": s.chosen,
-                "votes": s.votes,
-                "confidence": s.confidence,
-                "glm": supports["glm"],
-                "tess": supports["tess"],
-                "known": [words._judge(v, False) for v in versions],
-                "typographic": ocrcheck._typographic(versions),
             }
         )
     return rows
+
+
+def suspect(row: dict) -> ocrcheck.Suspect:
+    d = dict(row["suspect"])
+    d["others"], d["box"], d["known"] = tuple(d["others"]), tuple(d["box"]), tuple(d["known"])
+    d["support"] = {k: tuple(v) for k, v in d["support"].items()}
+    return ocrcheck.Suspect(**d)
 
 
 def load(name: str, rebuild: bool = False) -> list[dict]:
@@ -124,6 +101,6 @@ if __name__ == "__main__":
     for name in names:
         rows = load(name, "--rebuild" in sys.argv)
         settled = [r for r in rows if r["settled"]]
-        wrong = sum(not r["right"][0] for r in settled)
+        wrong = sum(not r["right"][0] for r in settled)  # the text layer's version
         print(f"{name[:34]:34} {len(rows):4} suspects, {len(settled):4} settled, "
               f"layer wrong on {wrong}", flush=True)  # fmt: skip
