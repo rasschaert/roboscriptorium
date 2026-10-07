@@ -5,14 +5,24 @@ from dataclasses import asdict, dataclass
 
 import pymupdf
 
-from roboscriptorium import corrections, figures, italics, layout, missing, ocr, ocrcheck, typestyle
+from roboscriptorium import (
+    corrections,
+    figures,
+    italics,
+    layout,
+    missing,
+    ocr,
+    ocrcheck,
+    quotes,
+    typestyle,
+)
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.epub import write_epub
 from roboscriptorium.flags import treatment
-from roboscriptorium.ir import Document, SourceRef
+from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText, cached_text_layer, render_jpeg
 from roboscriptorium.reflow import reflow
 from roboscriptorium.roles import DecisionCache, LineRole, classify
@@ -35,6 +45,9 @@ class Stages:
     doc: Document
     corrections_applied: int
     suspects: list[ocrcheck.Suspect]  # where a second OCR reading differs
+    # Lines of `pages` where a paragraph's quotes don't pair up, found before a
+    # human's answers so the review's questions stay put.
+    quote_lines: set[SourceRef]
 
 
 def run(
@@ -105,6 +118,12 @@ def run(
             body, model_roles, Corrections(book.corrections_path)
         )
 
+    unanswered = reflow(ocrcheck.apply(body, suspects), model_roles)
+    quote_lines = {
+        ref
+        for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
+        for ref in place.sources
+    }
     text = ocrcheck.apply(corrected, suspects)
     blocks = italics.mark(
         reflow(text, roles), body, italics.detect(book.source, body, book.stages / "italics.json")
@@ -124,7 +143,7 @@ def run(
 
     cover = render_jpeg(book.source, book.cover_page) if book.cover_page else None
     write_epub(doc, book.epub_path, cover, images)
-    return Stages(body, model_roles, corrected, roles, doc, applied, suspects)
+    return Stages(body, model_roles, corrected, roles, doc, applied, suspects, quote_lines)
 
 
 def _answered(book: Book) -> dict[int, list[tuple[float, float, float, float]]]:

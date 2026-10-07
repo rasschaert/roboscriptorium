@@ -1,5 +1,7 @@
 """The stages together, from a PDF to the document, with a mock model server."""
 
+from dataclasses import replace
+
 import httpx
 import pymupdf
 
@@ -161,3 +163,33 @@ def test_a_printed_line_the_text_layer_lacks_is_read_into_the_book(tmp_path, mon
     # The answer recorded before the line was added still finds its line.
     assert stages.corrections_applied == 1
     assert "Line five, as the scan prints it" in text and LINES[5] not in text
+
+
+def test_a_lost_quote_becomes_a_question_that_stays_once_answered(tmp_path, monkeypatch):
+    _everything_is_body(monkeypatch)
+    _no_layout(monkeypatch)
+    book = _book(tmp_path)
+    lost = "the story goes on, he said.’ And that was that"
+    read = pipeline.cached_text_layer
+
+    def layer(*args):
+        pages = read(*args)
+        lines = [replace(ln, text=lost) if k == 11 else ln for k, ln in enumerate(pages[0].lines)]
+        return [replace(pages[0], lines=lines)]
+
+    monkeypatch.setattr(pipeline, "cached_text_layer", layer)
+
+    def asked(stages) -> list[flags.Flag]:
+        found = flags.find(stages.pages, stages.model_roles, quotes=stages.quote_lines)
+        return [f for f in found if "quotes" in f.reasons]
+
+    stages = pipeline.run(book)
+    (question,) = asked(stages)
+    assert question.first <= 11 <= question.last
+    printed = question.text.replace("the story goes on, he", "‘the story goes on, he")
+    Corrections(book.corrections_path).record(question, "text", printed)
+    again = pipeline.run(book)
+    assert again.corrections_applied == 1
+    assert "‘the story" in " ".join(p.text for p in again.doc.paragraphs)
+    # The question was found before the answer, so it is still asked.
+    assert [f.key for f in asked(again)] == [question.key]

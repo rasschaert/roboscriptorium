@@ -181,7 +181,7 @@ def review_regions(
             numbers = [p.number for p in stages.pages]
             regions = layout.detect(book.source, numbers, book.stages / "layout.json")
         doubts = ocrcheck.doubts(stages.suspects)
-        found = flags.find(stages.pages, stages.model_roles, regions, doubts)
+        found = flags.find(stages.pages, stages.model_roles, regions, doubts, stages.quote_lines)
         return stages.pages, found, stages.corrections_applied
 
     body, regions, applied = rebuild()
@@ -248,7 +248,11 @@ def quality_report(specs: list[str]) -> None:
             numbers = [p.number for p in stages.pages]
             regions = layout.detect(book.source, numbers, book.stages / "layout.json")
         found = flags.find(
-            stages.pages, stages.model_roles, regions, ocrcheck.doubts(stages.suspects)
+            stages.pages,
+            stages.model_roles,
+            regions,
+            ocrcheck.doubts(stages.suspects),
+            stages.quote_lines,
         )
         reference = load_chapters(Golden.load(book.golden).text_dir)
         if (span := _range(chapters or None)) is not None:

@@ -48,6 +48,7 @@ REASONS = {
     "missing-text": "text the layout model sees, but the text layer lacks",
     "rotated": "text printed sideways",
     "ocr-doubt": "two OCR readings differ, and the models weren't sure which is right",
+    "quotes": "its paragraph's quote marks don't pair up: one may be lost or misread",
 }
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
@@ -277,7 +278,12 @@ def find(
     roles: dict[SourceRef, LineRole],
     layout: dict[int, list[Region]] | None = None,
     doubts: dict[tuple[int, str], list[tuple[str, list[str]]]] | None = None,
+    quotes: set[SourceRef] | None = None,
 ) -> list[Flag]:
+    """Regions of the pages a human should check.
+
+    `quotes` are lines where a paragraph's quote marks don't pair up (`quotes.unbalanced`).
+    """
     flags: list[Flag] = []
     furniture = _Furniture(P.Repeats(pages), P.page_offset(pages))
     for page in pages:
@@ -286,6 +292,8 @@ def find(
         for i, line in enumerate(page.lines):
             if (page.number, line.text) in (doubts or {}):
                 line_reasons.setdefault(i, []).append("ocr-doubt")
+            if SourceRef(page.number, i) in (quotes or set()):
+                line_reasons.setdefault(i, []).append("quotes")
         if any(r.turned for r in regions) or sideways(page):
             if not any(r.turned for r in regions):
                 boxes = [f for f in boxes if "picture" in f.reasons] + [_sideways_flag(page, roles)]

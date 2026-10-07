@@ -170,6 +170,10 @@ right, then expand.
     heads, printed page numbers) isn't flagged. With layout regions it also
     flags pictures, captions, titles that aren't headings, and text the text
     layer lacks (one region per page, as an area rather than lines).
+  - `quotes.py`: places where a paragraph's curly quotes don't pair up (a lost
+    opening ‘, a lost closing ’), apostrophes, Dutch `’s`, plural possessives,
+    nested quotes and quotations running over paragraphs aside. Found on the
+    text before a human's answers (`Stages.quote_lines`) and flagged as `quotes`.
   - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
     `stages/layout.json`; run by `review`. Picture-only pages are also run turned a
     quarter, to find captions printed sideways.
@@ -1001,3 +1005,11 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   is, and a split at an apostrophe is a word change, not typography. Reis:
   suspects 902 → 895, fixed 306 → 301, review 459 → 458, CER 0.51% → 0.50%.
   No other golden book had such a suspect.
+- 2026-10-07: Quote balance as a question source (`quotes.py`). Reis left 42
+  quote errors unasked, nearly all a lost opening ‘ or closing ’ in dialogue.
+  A paragraph whose quotes don't pair up is now flagged where the mark is
+  missing. Reis: questions 1.57 → 1.67/page, unasked wrong words 1.33 → 1.17
+  per page, unasked quote errors 42 → 18; 25 of 32 quote questions sit on an
+  error (OCR-doubt questions: 52 of 334). Goede dochter pp. 9–64: unasked 0.33
+  → 0.27/page, within noise; 2 of 3 on an error. Most of Reis's remaining
+  unasked words are its footnotes (194), which the reference leaves out.
