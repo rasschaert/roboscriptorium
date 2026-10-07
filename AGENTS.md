@@ -158,6 +158,12 @@ right, then expand.
     clearly garbled output and whitespace-only differences are auto-resolved.
     Verdicts (what the scan prints, plus a mistake category) are stored per scan
     and patched into the reference by `eval`.
+  - `quality.py` (`roboscriptorium quality book[:pages[:chapters]] …`): what a
+    reviewer is left with. Wrong words per page before review and left unasked,
+    with every question and at budgets of 0.25, 0.5 and 1 question per page
+    (questions ranked by how often their kind caught an error in the *other*
+    books given), each with a 95% bootstrap interval over pages; the unasked
+    errors by kind (punctuation, quotes, letters, word breaks, missing words…).
   - `flags.py`: regions a human should check, i.e. what isn't plain running
     text: headings, lines dropped mid-page or without the model being sure,
     garbled text, centred or set-apart lines. Page furniture (repeated running
@@ -881,3 +887,12 @@ disagreements by mistake category.
   0.69), but held out it changed nothing (Villa Toscane 0/12, Grand Hotel Europa
   3/16) and added 2 spurious headings to De tuin; not adopted. The plain vote
   stays: De tuin 3/3 (+0).
+- 2026-10-07: Second review, agreed with the user (see HANDOVER.md): the
+  machine learns nothing yet, and CER isn't what the human experiences. New
+  measure, `roboscriptorium quality`: wrong words per page left unasked at a
+  question budget. First run (verdicts mostly unsettled): Goede dochter pp.
+  9–64 1.53 wrong words/page, 2.24 questions/page, 0.58 unasked with all of
+  them; Vals alarm 3.48 / 2.12 / 1.66; Crime 1.15 / 0.78 / 0.83; Dolittle 3.08
+  / 1.30 / 1.74. Only 28 of Goede dochter's 116 OCR-doubt questions sit on a
+  remaining error. Comparisons now fold `…` to `...` (the print can't tell
+  them apart): 11 of Goede dochter's 34 disagreements were only that.

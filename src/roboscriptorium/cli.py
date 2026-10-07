@@ -18,6 +18,7 @@ from roboscriptorium import (
     ocr,
     ocrcheck,
     pipeline,
+    quality,
     review,
 )
 from roboscriptorium.book import Book
@@ -225,6 +226,60 @@ def review_disagreements(
     )
     typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
     review.serve(review.Review(book.source, text_layer, found, verdicts), port)
+
+
+@app.command("quality")
+def quality_report(specs: list[str]) -> None:
+    """Wrong words a reviewer is left with per page, at several question budgets.
+
+    SPECS are golden book dirs, each optionally with :pages:chapters
+    (work/goede-dochter--ia-scan:9-64:1-4).
+
+    Each book's questions are ranked by how often each kind of question caught an
+    error in the other books given.
+    """
+    books = []
+    for spec in specs:
+        book_dir, pages, chapters = (spec.split(":") + [None, None])[:3]
+        book = Book.load(Path(book_dir))
+        stages = pipeline.run(book, pages=_range(pages or None))
+        regions = None
+        if layout.available():
+            numbers = [p.number for p in stages.pages]
+            regions = layout.detect(book.source, numbers, book.stages / "layout.json")
+        found = flags.find(
+            stages.pages, stages.model_roles, regions, ocrcheck.doubts(stages.suspects)
+        )
+        reference = load_chapters(Golden.load(book.golden).text_dir)
+        if (span := _range(chapters or None)) is not None:
+            reference = reference[span[0] - 1 : span[1]]
+        reference, applied = disagreements.patch(reference, _verdicts(book))
+        errors = disagreements.find(stages.doc, reference, stages.corrected)
+        numbers = [p.number for p in stages.pages if p.lines]
+        typer.echo(
+            f"{Path(book_dir).name}: {len(numbers)} pages, {len(errors)} differing stretches, "
+            f"{len(found)} questions, {applied} verdicts applied"
+        )
+        books.append((Path(book_dir).name, numbers, errors, found))
+    for name, numbers, errors, found in books:
+        rates: dict[str, tuple[int, int]] = {}
+        for other, _, other_errors, other_flags in books:
+            if other != name:
+                for r, (h, n) in quality.hit_rates(other_flags, other_errors).items():
+                    h0, n0 = rates.get(r, (0, 0))
+                    rates[r] = (h0 + h, n0 + n)
+        typer.echo(f"\n== {name} (per page, 95% interval)")
+        for label, estimate in quality.report(numbers, errors, found, rates).items():
+            typer.echo(f"  {label:28} {estimate}")
+        unasked = quality.unasked_by_category(errors, found)
+        typer.echo(
+            "  unasked wrong words by kind: " + ", ".join(f"{k} {v}" for k, v in unasked.items())
+        )
+        own = quality.hit_rates(found, errors)
+        typer.echo(
+            "  questions that caught an error, by reason: "
+            + ", ".join(f"{r} {h}/{n}" for r, (h, n) in sorted(own.items(), key=lambda x: -x[1][1]))
+        )
 
 
 @app.command("eval")

@@ -2,7 +2,8 @@
 
 Metrics:
 - CER: character edits per reference character, after folding typography the
-  EPUB is free to choose (quote and dash glyphs, word joiners, whitespace).
+  EPUB is free to choose (quote, dash and ellipsis glyphs, word joiners,
+  whitespace).
 - WER: word edits per reference word, comparing lowercase letters and digits only,
   so it measures reading errors and ignores punctuation.
 - Paragraph F1: whether paragraph breaks fall where the reference has them.
@@ -35,6 +36,7 @@ _FOLD = str.maketrans(
         " ": " ",
         "–": "—",
         "―": "—",
+        "…": "...",
     }
 )
 
