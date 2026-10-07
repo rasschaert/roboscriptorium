@@ -771,3 +771,8 @@ disagreements by mistake category.
 - 2026-10-07: *Goede dochter* (Dutch translation, first printing, with the
   publisher's own EPUB) becomes the main Dutch tuning book: De dode kamer's
   EPUB was made by OCR and misses text, Boze tongen's is another edition.
+- 2026-10-07: Italics: ink is what is darker than each page's Otsu threshold,
+  not a fixed grey of 128. Goede dochter's pale scan prints in grey (120–140),
+  so most strokes went unseen: italic words 0.617 / 0.245 → 0.958 / 0.828
+  (pp. 9–64). Crime 0.951 → 1.000 precision; De aanslag unchanged; Dolittle
+  0.872 → 0.850 precision; De dode kamer 0.837 / 0.903 → 0.831 / 0.898.

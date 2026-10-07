@@ -3,7 +3,8 @@
 Each text-layer word is cropped from the page image and its ink (above the
 baseline: a y's descender leans like italic) is sheared by a range of angles.
 The angle at which the strokes line up most sharply is the word's slant; italic
-type leans about 15°, roman stands upright. No model.
+type leans about 10–15°, roman stands upright. Ink is what is darker than the
+page's own threshold (Otsu), so pale scans count their grey strokes. No model.
 
 Only words with an upright stem to measure are: two stems, or one in a word
 without diagonal letters. A word of round and diagonal letters ("zo", "ze")
@@ -24,7 +25,7 @@ from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import Block, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText, line_words, spells
 
-VERSION = 6
+VERSION = 7
 DPI = 300
 ANGLES = np.arange(-25, 26, 1)
 ITALIC_AT = 8  # degrees of slant
@@ -33,9 +34,24 @@ STEMS = {c: 1 for c in "bdfijklpqrtBDEFIJKLPRT"} | {c: 2 for c in "hnuHNU"} | {"
 DIAGONALS = set("kvwxyzAKVWXYZ")
 
 
-def slant(gray: np.ndarray) -> float:
-    """The shear angle (degrees, leaning right) that makes a word's strokes most upright."""
-    ink = gray < 128
+def ink_threshold(gray: np.ndarray) -> int:
+    """The grey level that best splits a page into ink and paper (Otsu)."""
+    hist = np.bincount(gray.ravel(), minlength=256).astype(float)
+    levels = np.arange(256)
+    weight = np.cumsum(hist)
+    mean = np.cumsum(hist * levels)
+    total, total_mean = weight[-1], mean[-1]
+    with np.errstate(divide="ignore", invalid="ignore"):
+        between = (total_mean * weight - mean * total) ** 2 / (weight * (total - weight))
+    return int(np.nanargmax(between[:-1]))
+
+
+def slant(gray: np.ndarray, threshold: int = 128) -> float:
+    """The shear angle (degrees, leaning right) that makes a word's strokes most upright.
+
+    Ink is darker than `threshold`.
+    """
+    ink = gray < threshold
     rows = ink.sum(axis=1)
     if rows.max(initial=0) == 0:
         return float("nan")
@@ -80,6 +96,7 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:
     pix = pdf_page.get_pixmap(dpi=DPI, colorspace=pymupdf.csGRAY)
     img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width)
     scale = DPI / 72
+    threshold = ink_threshold(img)
     out = {}
     for k, (line, words) in enumerate(
         zip(page.lines, line_words(pdf_page.get_text("words"), page), strict=True)
@@ -92,7 +109,7 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:
                 leaning.append(None)
                 continue
             x0, y0, x1, y1 = (int(v * scale) for v in w[:4])
-            leaning.append(slant(img[max(0, y0) : y1, max(0, x0) : x1]) >= ITALIC_AT)
+            leaning.append(slant(img[max(0, y0) : y1, max(0, x0) : x1], threshold) >= ITALIC_AT)
         if italic := _fill(leaning):
             out[str(k)] = italic
     return out

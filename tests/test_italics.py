@@ -31,3 +31,13 @@ def test_italic_words_are_scored_over_aligned_words():
     s = evaluate.score(doc, reference)
     assert (s.italic_expected, s.italic_output) == (2, 2)
     assert (s.italic_precision, s.italic_recall) == (0.5, 0.5)
+
+
+def test_the_ink_threshold_follows_a_pale_scan():
+    import numpy as np
+
+    from roboscriptorium.italics import ink_threshold
+
+    page = np.full((100, 100), 225, dtype=np.uint8)
+    page[40:60, 20:80] = 135  # grey print on a light page
+    assert 135 <= ink_threshold(page) < 225
