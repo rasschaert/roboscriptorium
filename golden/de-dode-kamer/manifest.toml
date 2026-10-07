@@ -7,7 +7,10 @@ eu_copyright_until = 2200
 # The retail EPUB of the first edition (November 2013), from the same publisher
 # as the scan. Chapter numbers are <h1>, their titles plain paragraphs; the
 # part titles are pictures. It sets the date lines' dashes as hyphens where the
-# print has em dashes, and runs some words together ("yourlife").
+# print has em dashes, and runs some words together ("yourlife"). It was
+# made by OCR and not fully proofread ("lorras" for "terras"), and lacks
+# about two pages of chapter 2 that the print has (scan pp. 50–51, after
+# "kennelijk niet zo goed als ik dacht"): scores need verdicts.
 [reference]
 source = "De dode kamer, Agemo Uitgeverij 2013, ISBN 9789082137002 (retail EPUB, first edition)"
 sha256 = "fbe0a43e84242db5bfc40d254b26e6d9d5ca4db0355021fc84970954fb20b79b"

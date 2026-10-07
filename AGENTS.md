@@ -754,6 +754,11 @@ disagreements by mistake category.
   scan with a reference of the same first edition, the first such Dutch book,
   so it is tuned on. Text layer alone, chapters 1–4 (pp. 19–57): CER 5.31%,
   WER 5.71%, paragraph F1 0.889, headings 0/4, italics 0.837 / 0.903.
+  With the OCR check: CER 5.20%, but 92% of that is ~2 pages of print the
+  EPUB lacks (pp. 50–51); without them, text layer ~0.50% → ~0.39%. The
+  EPUB itself has OCR errors ("lorras", "sucretaresse"), so it needs
+  verdicts. Pipeline misses: `*****` scene breaks, chapter titles.
+  `experiments/probe_big_diffs.py` lists the largest differing stretches.
   *Villa Toscane*: born-digital, held out. Boze tongen's italic score (0.13 /
   0.05) is an edition difference: the omnibus sets the diary in italics, the
   2002 print in an upright sans-serif. Boze tongen pp. 11–132 with the new
