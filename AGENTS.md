@@ -875,3 +875,9 @@ disagreements by mistake category.
 - 2026-10-07: The missing-lines stage added regions that lie inside a
   text-layer line (Dolittle's page number at the end of its running head, read
   again as "II"). Such regions are skipped now: Dolittle CER 1.78% → 1.72%.
+- 2026-10-07: Tried asking clef about a whole style group at once ("these lines
+  share one type and place: what are they?", `experiments/probe_style_groups.py`).
+  Right on every tuning-book group (Crime's numerals 0.9, Vals alarm's "1 Later"
+  0.69), but held out it changed nothing (Villa Toscane 0/12, Grand Hotel Europa
+  3/16) and added 2 spurious headings to De tuin; not adopted. The plain vote
+  stays: De tuin 3/3 (+0).
