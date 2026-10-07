@@ -29,6 +29,11 @@ REPEAT_LETTERS_PER_EDIT = 10
 # A page whose text starts this much lower (as a share of page height) than most
 # pages' does is sunk: a chapter opening.
 SUNK_PAGE_DROP = 0.08
+# A line of running text is at least this share of the page's usual line width.
+TEXT_LINE_WIDTH = 0.8
+# A page's first line stands alone when the next starts more than this many line
+# pitches below it.
+SET_APART_PITCHES = 1.8
 # A page offset counts only when this many pages, and this share of the numbers
 # found at page edges, agree on it.
 PAGE_OFFSET_MIN_PAGES = 3
@@ -127,13 +132,30 @@ def title_key(text: str) -> str:
 
 
 def sunk_pages(pages: list[PageText]) -> set[int]:
-    tops = [p.lines[0].y0 / p.height for p in pages if p.lines]
-    if not tops:
-        return set()
-    usual = statistics.median(tops)
-    return {
-        p.number for p in pages if p.lines and p.lines[0].y0 / p.height > usual + SUNK_PAGE_DROP
-    }
+    """Pages whose first line, or whose running text, starts well below the usual place.
+
+    A chapter label can sit at the usual height above a sunk opening ("EEN").
+    """
+    sunk: set[int] = set()
+    for top in (_first_line_top, _text_top):
+        tops = {p.number: t for p in pages if (t := top(p)) is not None}
+        if tops:
+            usual = statistics.median(tops.values())
+            sunk |= {n for n, t in tops.items() if t > usual + SUNK_PAGE_DROP}
+    return sunk
+
+
+def _first_line_top(page: PageText) -> float | None:
+    return page.lines[0].y0 / page.height if page.lines else None
+
+
+def _text_top(page: PageText) -> float | None:
+    """Where the first line of near full width starts, as a share of the page height."""
+    if not page.lines:
+        return None
+    full, _ = geometry(page)
+    wide = next((ln for ln in page.lines if ln.x1 - ln.x0 >= TEXT_LINE_WIDTH * full), None)
+    return wide.y0 / page.height if wide else None
 
 
 def page_number(text: str) -> int | None:
@@ -194,3 +216,19 @@ class Repeats:
             ):
                 pages |= numbers
         return len(pages - {page_number})
+
+
+def set_apart_opening(page: PageText) -> bool:
+    """The page's first line is short and stands alone: nothing below it, or a gap of
+    more than a line before the next."""
+    if not page.lines:
+        return False
+    full, _ = geometry(page)
+    first = page.lines[0]
+    if first.x1 - first.x0 >= TEXT_LINE_WIDTH * full:
+        return False
+    if len(page.lines) == 1:
+        return True
+    pitches = [b.y0 - a.y0 for a, b in zip(page.lines[1:], page.lines[2:], strict=False)]
+    pitch = statistics.median(pitches) if pitches else first.y1 - first.y0
+    return page.lines[1].y0 - first.y0 > SET_APART_PITCHES * pitch

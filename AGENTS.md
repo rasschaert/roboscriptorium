@@ -839,3 +839,11 @@ disagreements by mistake category.
   alarm's titled numbers page numbers (at 0.07). Vals alarm pp. 11–60 headings
   8/10 → 10/10, paragraph F1 0.948 → 0.950; Crime, Dolittle, De aanslag
   unchanged. On Vals alarm the sunk pages are exactly the chapter openings.
+- 2026-10-07: Sunk pages are also those whose running text (the first line of
+  near full width) starts low, since a chapter label can sit at the usual
+  height above a sunk opening (Goede dochter's "EEN"). On a sunk page, a short
+  first line set apart from the text (or alone on the page) is the chapter
+  heading unless the model calls it body, it repeats on other pages, or it is
+  garbled. Goede dochter pp. 9–64 headings 2/4 → 3/4; Vals alarm, Crime,
+  Dolittle, De aanslag unchanged. Still missed: the part title "DONDERDAG 16
+  MAART, 1989", alone on p9.

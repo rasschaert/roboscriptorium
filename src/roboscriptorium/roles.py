@@ -25,6 +25,7 @@ from roboscriptorium.page import (
     labelled,
     page_offset,
     printed_page_number,
+    set_apart_opening,
     sunk_pages,
     title_key,
 )
@@ -212,6 +213,17 @@ def classify(
             # The model reads a bare "V" as a page number; its place on the page says heading.
             if page.number in sunk and i < SUNK_HEADING_LINES and bare_numeral(page.lines[i].text):
                 role = LineRole("chapter_heading", role.confidence, 0.0, "sunk-numeral")
+            # A chapter opening's first line, set apart above the text, is its heading.
+            elif (
+                page.number in sunk
+                and i == 0
+                and role.role != "chapter_heading"
+                and not _is_body(role)
+                and set_apart_opening(page)
+                and not garbled(page.lines[0])
+                and st["similar_text_on_other_pages"] < HEADING_MAX_REPEATS
+            ):
+                role = LineRole("chapter_heading", role.confidence, 0.0, "sunk-opening")
             page_roles[i] = role
         for i, role in page_roles.items():
             text = page.lines[i].text

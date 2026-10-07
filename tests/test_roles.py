@@ -117,3 +117,26 @@ def test_a_chapter_label_off_centre_is_a_candidate():
     lines[12] = Line("the next chapter of her life", 12, 164, 150, 174)
     found = candidates(PageText(139, 270, 400, lines))
     assert 10 in found and 12 not in found
+
+
+def test_a_set_apart_first_line_of_a_sunk_opening_is_its_heading(tmp_path):
+    body = [Line("body text " * 5, 50, 200 + 15 * i, 350, 212 + 15 * i) for i in range(10)]
+    pages = [_page(n, f"{n} Running head") for n in range(1, 10)]
+    # A label at the usual height above text that starts low, like "EEN".
+    pages.append(PageText(10, 400, 600, [Line("EEN", 180, 50, 220, 60)] + body))
+    # A short line run on into the text is not set apart.
+    close = [Line("Kort.", 180, 185, 220, 197)] + body
+    pages.append(PageText(11, 400, 600, close))
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            if state["line"].startswith("body text"):
+                return {"role": Answer("choice", "body", 0.9, {"body": 0.9})}
+            return {"role": Answer("choice", "page_number", 0.9, {"page_number": 0.9, "body": 0.1})}
+
+    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
+    assert roles[SourceRef(10, 0)].rule == "sunk-opening"
+    assert roles[SourceRef(11, 0)].role != "chapter_heading"
+    assert roles[SourceRef(3, 0)].role != "chapter_heading"

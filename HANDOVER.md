@@ -4,7 +4,7 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules and
 decisions; this file only covers the state of play. Replace it at the end of
 each session.
 
-## State on 2026-10-07 (night; the user is asleep, the agent works on)
+## State on 2026-10-07 (morning; paused at the user's request)
 
 Everything is committed on `main`. New today:
 
@@ -42,8 +42,8 @@ Scores (chapters or pages in brackets):
 | --- | --- | --- |
 | Villa Toscane (held out, born-digital, ch. 1–12) | — | CER 0.04%, F1 0.993, headings 0/12 |
 | De tuin van de avondnevel (held out, ch. 1–3, pp. 11–52) | CER 0.72%, F1 0.931, headings 0/3 | CER 0.41%, WER 0.25%, F1 0.946, headings 3/3; 389 suspects: 179 fixed, 148 review |
-| Goede dochter (ch. 1–4, pp. 9–64) | CER 0.40%, F1 0.957, headings 0/4 (with the quote rule) | CER 0.29%, WER 0.24%, F1 0.958, headings 2/4, italics 0.973 / 0.838 (before missing lines and the quote rule) |
-| Vals alarm (whole book; full pipeline pp. 11–60, ch. 1–10) | CER 0.74%, F1 0.918, headings 0/48 (with the quote rule) | CER 0.48%, WER 0.21%, F1 0.937, headings 8/10 |
+| Goede dochter (ch. 1–4, pp. 9–64) | CER 0.40%, F1 0.957, headings 0/4 | CER 0.23%, WER 0.23%, F1 0.973, headings 3/4, italics 0.977 / 0.841 |
+| Vals alarm (whole book; full pipeline pp. 11–60, ch. 1–10) | CER 0.74%, F1 0.918, headings 0/48 (with the quote rule) | CER 0.47%, WER 0.18%, F1 0.950, headings 10/10 |
 
 `--no-models` scores headings without the role model, so 0/n there says little:
 compare headings on full runs.
@@ -53,10 +53,12 @@ compare headings on full runs.
 1. **Quotes in Dutch IA OCR layers**: openings misread as “ are fixed (commit
    b0f4254, see the decision log). Still open: a ‘ the layer drops altogether,
    and a period lost before a closing ’.
-2. **Headings on unseen books**: Villa Toscane 0/12 and Grand Hotel Europa
-   3/16 with models. Work on the tuning books only, then check the held-out
-   ones. First look at what the missed headings have in common on the page,
-   then a general signal rather than more rules.
+2. **Headings**: tuning books now Vals alarm 10/10 (pp. 11–60), Goede dochter
+   3/4 (pp. 9–64). Next: why Goede dochter's part title "DONDERDAG 16 MAART,
+   1989" (alone on sunk p9) is still missed (`sunk-opening` should fire; check
+   its role and what reflow does with a heading followed by no text). Then
+   score the held-out books (Villa Toscane 0/12, Grand Hotel Europa 3/16, De
+   tuin) without inspecting them.
 3. Scene-break lines (`*****`) are dropped.
 4. A `bench` command; learned trust (Dawid–Skene) replacing `SURE`/`SURE_ALONE`
    (winnow flips 15–20% of its answers given the lines around: see the log);
