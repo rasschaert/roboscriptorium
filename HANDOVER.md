@@ -40,6 +40,14 @@ afternoon, after the second review:
 - **New golden books**: De eerlijke vinder and Monterosso mon amour (CPNB, in
   Stella's scan format; different typesetters). Text layer alone: CER 0.37% /
   0.31%.
+- **Reis om mijn schedel** (Van Gennep 2014, Stella's publisher) added: same
+  leading, furniture and, by eye, typeface as Stella; the best stand-in for
+  measuring Stella. Text layer alone CER 0.72%, F1 0.853. A full `eval` was
+  started at the end of the session (`work/reis-om-mijn-schedel--ia-scan/logs/`).
+- **Retired**: Sense and Sensibility (no same-edition reference). **The
+  Teirlinck bench no longer chooses OCR models**; re-bench on modern Dutch
+  (Goede dochter, the Boekenweek books, Reis) with
+  `experiments/bench_line_readings.py` once each has a full build's readings.
 - **Stella** built end to end for the first time: 44 OCR fixes (one wrong:
   `besefeen`), 1.06 review questions per page.
 
@@ -123,7 +131,8 @@ better calibration, or add another OCR library on its own.
    runner-up where it was unsure. Flag low-margin tokens even where all
    readings agree (shared errors). No new runtime needed.
 4. **Re-bench OCR models on modern Dutch** (done for the cached readings on
-   Goede dochter; candidates not yet tried there: deepseek-ocr, gemma4) (Goede dochter line crops): glm-ocr
+   Goede dochter; next the Boekenweek books and Reis, after a full build of
+   each; candidates not yet tried there: deepseek-ocr, gemma4) (Goede dochter line crops): glm-ocr
    was chosen, and vision models judged to modernise, on the 1909 Teirlinck
    bench in pre-reform spelling.
 5. **Golden books as training data** (classifier probe running). Next:
