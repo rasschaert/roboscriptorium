@@ -71,3 +71,17 @@ def test_italic_classes_and_roman_inside_them(tmp_path):
     (chapter,) = load_chapters(tmp_path / "out")
     assert chapter.paragraphs == ["Het was vroeg in de ochtend.", "Op 12 september regende het."]
     assert chapter.italic == [frozenset({2, 3}), frozenset({0, 3, 4})]
+
+
+def test_blank_line_classes_are_left_out(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<p class="kop">Hoofdstuk een</p><p class="standaard">Op een berg.</p>'
+                '<p class="witregel">..</p><p class="standaard">Zesendertig jaar.</p>'
+            ),
+        )
+    sections = publisher_epub.read(epub, ["Text/a.html"], ("kop",), blank=frozenset({"witregel"}))
+    assert sections[0].paragraphs == ["Op een berg.", "Zesendertig jaar."]

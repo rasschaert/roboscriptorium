@@ -1,0 +1,30 @@
+title = "De tuin van de avondnevel"
+author = "Tan Twan Eng"
+language = "nl"
+# Tan Twan Eng and his translators are alive: under copyright, so only this
+# manifest is in git.
+eu_copyright_until = 2200
+
+# The retail EPUB of the Dutch translation by Reintje Ghoos and Jan Pieter van
+# der Sterre (Xander, 2013). Chapter headings are "kop" paragraphs, italics
+# the "cs" class, and a "witregel" paragraph of ".." is a blank line.
+[reference]
+source = "De tuin van de avondnevel, Xander Uitgevers 2013, ISBN 9789401600439 (retail EPUB)"
+sha256 = "6ed60bd0db12f4d1be2466bf787cce830d75ab0258c828d69819b2deb2a89416"
+files = ["text/part0006.html", "text/part0007.html", "text/part0008.html", "text/part0009.html", "text/part0010.html", "text/part0011.html", "text/part0012.html", "text/part0013.html", "text/part0014.html", "text/part0015.html", "text/part0016.html", "text/part0017.html", "text/part0018.html", "text/part0019.html", "text/part0020.html", "text/part0021.html", "text/part0022.html", "text/part0023.html", "text/part0024.html", "text/part0025.html", "text/part0026.html", "text/part0027.html", "text/part0028.html", "text/part0029.html", "text/part0030.html", "text/part0031.html"]
+heading_prefixes = ["kop"]
+italic_classes = ["cs"]
+blank_classes = ["witregel"]
+
+# The paperback, "Eerste druk 2014" (ISBN 9789401602457): the same translation
+# and typesetter as the reference, a later edition, so differences may be
+# corrections and need verdicts before they count as errors. Held out: scored
+# to check that changes carry over, never tuned on. Internet Archive lends it
+# only, so it is placed by hand. Pages 11–374: chapters 1–26; the author's
+# notes are left out.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/detuinvandeavond0000tant (borrow, then download the PDF)"
+sha256 = "2f3027bdccebc54cb2abb1f7534ed54548a3cf90dffeaea8184243e17b08f21e"
+cover_page = 1
+body_pages = [11, 374]

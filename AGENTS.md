@@ -430,6 +430,7 @@ disagreements by mistake category.
 | lady-into-fox | `chatto-1922` | **Held out: score it to check that changes carry over, never tune on it.** 1922 first edition, same as Gutenberg #10337; one continuous text, no chapters; wood engravings. **EU copyright until 2051**: only the manifest is in git, the reference and verdicts live in `work/golden/lady-into-fox/` (`eu_copyright_until` in the manifest) |
 | grand-hotel-europa | `ia-scan` | **Held out, like Lady into Fox.** Dutch, 2018, Pfeijffer; IA Scribe scan of the 11th printing (2019), 537 body pages. Reference: the retail EPUB, made from the 1st printing. Chapter label, title and numbered sections. Borrow-only scan; **copyrighted**, all text in `work/golden/`. Score it in slices (`--pages`/`--chapters`) |
 | de-dode-kamer | `ia-scan` | Dutch, 2013, Hoffschlag (first novel, small publisher). IA Scribe scan of the **same first edition** as the reference (the retail EPUB): the Dutch tuning book for OCR and italics (diary passages). The EPUB sets the date lines' em dashes as hyphens. Pages 19–717; part titles are pictures. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| de-tuin-van-de-avondnevel | `ia-scan` | **Held out.** Dutch translation (Tan Twan Eng, Xander); IA scan of the 2014 paperback, reference the 2013 retail EPUB of the same translation and typesetter. Many italic foreign words. Pages 11–374, chapters 1–26. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | villa-toscane | `calibre-pdf` | **Held out**, born-digital. Dutch, 2014, Van Rijn; calibre's PDF of the retail EPUB, like De aanslag. Novel = chapters 1–12 (13 is the colophon). **Copyrighted**, all text in `work/golden/` |
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
@@ -757,3 +758,7 @@ disagreements by mistake category.
   0.05) is an edition difference: the omnibus sets the diary in italics, the
   2002 print in an upright sans-serif. Boze tongen pp. 11–132 with the new
   crops: CER 1.68% → 1.53% with the OCR check, paragraph F1 0.845 → 0.866.
+- 2026-10-07: *De tuin van de avondnevel*, a third held-out book: a Dutch
+  scan whose reference is the same translation's retail EPUB. Its EPUB fills
+  blank lines with ".." paragraphs, so a manifest's `blank_classes` now leaves
+  such paragraphs out.

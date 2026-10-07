@@ -47,6 +47,7 @@ class PublisherEpub:
     heading_prefixes: tuple[str, ...]  # classes of paragraphs that are headings
     italic_classes: frozenset[str] = frozenset()  # classes that set text in italics
     roman_classes: frozenset[str] = frozenset()  # classes that set it upright again
+    blank_classes: frozenset[str] = frozenset()  # paragraphs that stand for a blank line
 
 
 @dataclass(frozen=True)
@@ -119,6 +120,7 @@ class Golden:
                 tuple(ref.get("heading_prefixes", ())),
                 frozenset(ref.get("italic_classes", ())),
                 frozenset(ref.get("roman_classes", ())),
+                frozenset(ref.get("blank_classes", ())),
             )
         )
         se = data.get("standard_ebooks")
