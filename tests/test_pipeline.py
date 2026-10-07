@@ -4,8 +4,9 @@ from dataclasses import replace
 
 import httpx
 import pymupdf
+import pytest
 
-from roboscriptorium import flags, pipeline
+from roboscriptorium import flags, pipeline, trust
 from roboscriptorium.book import Book
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.corrections import Corrections
@@ -232,3 +233,59 @@ def test_a_quote_question_offers_the_lines_marks_as_read_on_the_scan(tmp_path, m
     Corrections(book.corrections_path).record(question, "text", scan)
     again = pipeline.run(book, check_ocr=False)
     assert "‘the story goes on,’ he said." in " ".join(p.text for p in again.doc.paragraphs)
+
+
+def _checked_book(tmp_path, monkeypatch) -> tuple[Book, list[str]]:
+    """A scanned one-page book whose OCR check sees one suspect, on line 3, which only
+    the read model reads apart; and the prompts the read model is given."""
+    import json
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        names = json.loads(request.content)["questions"]
+        answer = {"type": "choice", "choice": "a", "confidence": 0.9}
+        answer["probabilities"] = {"a": 0.9, "b": 0.1}
+        if "role" in names:
+            answer = {**answer, "choice": "body", "probabilities": {"body": 0.9}}
+        return httpx.Response(200, json={"answers": {n: answer for n in names}})
+
+    def client(model, *_):
+        http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+        return OllayaClient("http://test", model, client=http)
+
+    monkeypatch.setattr(pipeline.ollaya, "for_model", client)
+    _no_layout(monkeypatch)
+    book = _book(tmp_path)
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    monkeypatch.setattr(pipeline, "dash_style", lambda book, body: None)
+    monkeypatch.setattr(pipeline.Lexicon, "load", lambda lang: None)
+    monkeypatch.setattr(pipeline.ocrcheck, "tesseract_readings", lambda *args: {})
+    # glm-ocr reads every line as the layer does; only the read model reads line 3 apart.
+    lines = iter(LINES)
+    monkeypatch.setattr(pipeline.ocrcheck, "read_line", lambda png, model, url: next(lines))
+    prompts = []
+
+    def transcribe(png, model, url, prompt):
+        prompts.append(prompt)
+        return "Line 3 of the stony goes on and on across the page" if len(prompts) == 4 else ""
+
+    monkeypatch.setattr(pipeline.ocrcheck, "transcribe", transcribe)
+    monkeypatch.setattr(pipeline.ocrcheck, "READ_WORKERS", 1)
+    return book, prompts
+
+
+def test_the_read_models_reading_of_a_line_is_checked_like_the_others(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
+    book, prompts = _checked_book(tmp_path, monkeypatch)
+    stages = pipeline.run(book)
+    assert stages.ocr_decider == "fixed rule"
+    (suspect,) = stages.suspects
+    assert (suspect.line, suspect.ours, suspect.others) == (3, "story", ("stony",))
+    assert suspect.support["qwen"] == (False, True) and suspect.support["glm"] == (True, False)
+    assert "English" in prompts[0]
+
+
+def test_the_ocr_check_stops_when_its_trust_model_is_missing(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST_MODEL", str(tmp_path / "none.pkl"))
+    book, _ = _checked_book(tmp_path, monkeypatch)
+    with pytest.raises(trust.Mismatch):
+        pipeline.run(book)

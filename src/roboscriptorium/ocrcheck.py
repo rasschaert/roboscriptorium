@@ -1,11 +1,12 @@
-"""Check a scan's OCR text layer against a second reading, line by line.
+"""Check a scan's OCR text layer against more readings, line by line.
 
-Two more readings of each body line: glm-ocr on the line's crop (best on
-letters and words) and tesseract on the page (best on dashes). Where either
-differs from the text layer (widened to whole words), the role model picks a
-version from the crop of the scan, and a text model picks the version of the
-line that reads right. When both pick the same reading and the role model is at least somewhat
-sure, it is applied; any other suspect is left to a human.
+More readings of each body line: glm-ocr on the line's crop (best on letters
+and words), tesseract on the page (best on dashes) and, told the book's style,
+qwen3.8 on the crop (best on quote marks). Where any differs from the text layer
+(widened to whole words), the role model picks a version from the crop of the
+scan, and a text model picks the version of the line that reads right. When both
+pick the same reading and the role model is at least somewhat sure, it is
+applied; any other suspect is left to a human.
 
 Fixes go into a copy of the pages, matched on the text layer's line text, so
 the line texts the review keys its answers on stay as they are. Born-digital

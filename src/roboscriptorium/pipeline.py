@@ -29,7 +29,7 @@ from roboscriptorium.flags import treatment
 from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, cached_text_layer, render_jpeg
-from roboscriptorium.reflow import reflow, single_quoted
+from roboscriptorium.reflow import reflow
 from roboscriptorium.roles import DecisionCache, LineRole, classify
 
 
@@ -56,6 +56,9 @@ class Stages:
     # Per quote-flagged line: the line as the OCR check left it, with the marks a vision
     # model reads (`quotes.proposed`), where they differ.
     quote_readings: dict[SourceRef, str] = field(default_factory=dict)
+    # What settled the OCR check's suspects: "fixed rule", "trust <model hash>", or ""
+    # when there was no check.
+    ocr_decider: str = ""
 
 
 def run(
@@ -75,6 +78,7 @@ def run(
     roles = model_roles = None
     applied = 0
     suspects: list[ocrcheck.Suspect] = []
+    decider = ""
     regions = None
     if layout.available():
         regions = layout.detect(book.source, [p.number for p in body], book.stages / "layout.json")
@@ -120,21 +124,33 @@ def run(
                     book.source, body, kept, lang, book.stages / "tesseract.json"
                 ),
             }
+            if settings.read_model:
+                readings["qwen"] = ocrcheck.line_readings(
+                    book.source,
+                    body,
+                    kept,
+                    settings.read_model,
+                    settings.ollama_url,
+                    book.stages / "third-reading.json",
+                    read_prompt(book, body, style),
+                )
             judge = ollaya.for_model(settings.judge_model, settings.ollaya_url, settings.ollama_url)
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, Lexicon.load(lang),
                 book_style(book, body, style),
             )  # fmt: skip
-            model = trust.load(Path(settings.ocr_trust_model)) if settings.ocr_trust else None
-            if model is not None:
+            decider = "fixed rule"
+            if settings.ocr_trust:
+                path = Path(settings.ocr_trust_model)
+                model = trust.load(path)
+                if model is None:
+                    raise trust.Mismatch(
+                        f"No trust model at {path}: train one (experiments/train_ocr_trust.py "
+                        "--save) or set ROBO_OCR_TRUST=0 for the fixed rule."
+                    )
                 budget = round(settings.ocr_questions_per_page * len(body))
                 suspects = trust.decide(suspects, model, budget)
-            elif settings.ocr_trust:
-                print(
-                    f"No trust model at {settings.ocr_trust_model}; the OCR check uses its "
-                    "fixed rule (train one with experiments/train_ocr_trust.py --save).",
-                    file=sys.stderr,
-                )
+                decider = f"trust {trust.fingerprint(path)}"
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
         corrected, roles, applied = corrections.apply(
             body, model_roles, Corrections(book.corrections_path), suspects
@@ -148,8 +164,7 @@ def run(
     }
     quote_readings = {}
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
-        dash = style.dash if style else None
-        quote_readings = proposals(book, body, suspects, unanswered, quote_lines, dash, settings)
+        quote_readings = proposals(book, body, suspects, quote_lines, style, settings)
     blocks = italics.mark(
         reflow(corrected, roles),
         body,
@@ -173,7 +188,16 @@ def run(
     cover = render_jpeg(book.source, book.cover_page) if book.cover_page else None
     write_epub(doc, book.epub_path, cover, images)
     return Stages(
-        body, model_roles, corrected, roles, doc, applied, suspects, quote_lines, quote_readings
+        body,
+        model_roles,
+        corrected,
+        roles,
+        doc,
+        applied,
+        suspects,
+        quote_lines,
+        quote_readings,
+        decider,
     )
 
 
@@ -181,28 +205,24 @@ def proposals(
     book: Book,
     body: list[PageText],
     suspects: list[ocrcheck.Suspect],
-    blocks: list,
     lines: set[SourceRef],
-    dash: str | None,
+    style: typography.DashStyle | None,
     settings: Settings,
 ) -> dict[SourceRef, str]:
     """Each quote-flagged line as the OCR check left it, with the quote marks and
     punctuation the read model sees on the scan, where they differ. Short lines are read
     too: "‘Nee." is where a closing quote is most often lost."""
-    paragraphs = [b for b in blocks if isinstance(b, Paragraph)]
-    text = " ".join(p.text for p in paragraphs)
-    dots = quotes.ellipsis(text)
-    prompt = quotes.style_prompt(book.language, single_quoted(paragraphs), dots, dash)
     read = ocrcheck.line_readings(
         book.source,
         body,
         lines,
         settings.read_model,
         settings.ollama_url,
-        book.stages / "quote-readings.json",
-        prompt,
+        book.stages / "third-reading.json",
+        read_prompt(book, body, style),
         shortest=1,
     )
+    dots = quotes.ellipsis(" ".join(ln.text for p in body for ln in p.lines))
     checked = {p.number: p for p in ocrcheck.apply(body, suspects)}
     out = {}
     for ref, reading in read.items():
@@ -210,6 +230,17 @@ def proposals(
         if (merged := quotes.proposed(line, reading, dots)) != line:
             out[ref] = merged
     return out
+
+
+def read_prompt(book: Book, body: list[PageText], dash: typography.DashStyle | None) -> str:
+    """The read model's prompt for a line of this book, telling it how the book is set."""
+    lines = [ln.text for p in body for ln in p.lines]
+    return quotes.style_prompt(
+        book.language,
+        quotes.single_quoted_lines(lines),
+        quotes.ellipsis(" ".join(lines)),
+        dash.dash if dash else None,
+    )
 
 
 def book_style(book: Book, body: list[PageText], dash: typography.DashStyle | None) -> str:

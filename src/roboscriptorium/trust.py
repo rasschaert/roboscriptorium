@@ -8,6 +8,7 @@ its best version: the least sure are asked, up to a budget of questions, and the
 rest take their best version.
 """
 
+import hashlib
 import pickle
 import unicodedata
 from dataclasses import replace
@@ -17,8 +18,10 @@ import numpy as np
 
 from roboscriptorium.ocrcheck import Suspect, _typographic
 
-MODEL_VERSION = 1
-READINGS = ("glm", "tess")
+MODEL_VERSION = 2
+# The length of `features`; a saved model of another width can't score them.
+FEATURES = 21
+READINGS = ("glm", "tess", "qwen")
 QUOTES = "'\"‘’“”"
 
 
@@ -86,12 +89,30 @@ def save(model, path: Path) -> None:
     path.write_bytes(pickle.dumps({"version": MODEL_VERSION, "model": model}))
 
 
+class Mismatch(RuntimeError):
+    """The saved model was trained on other features than these."""
+
+
 def load(path: Path):
-    """The saved model, or None when there is none of this version."""
+    """The saved model, or None when there is no file. A model of another version or
+    feature width raises `Mismatch`: it has to be retrained, not silently skipped."""
     if not path.exists():
         return None
     blob = pickle.loads(path.read_bytes())
-    return blob["model"] if blob.get("version") == MODEL_VERSION else None
+    model = blob["model"]
+    if blob.get("version") != MODEL_VERSION or model.n_features_in_ != FEATURES:
+        raise Mismatch(
+            f"The trust model {path} is version {blob.get('version')} with "
+            f"{model.n_features_in_} features; this code needs version {MODEL_VERSION} with "
+            f"{FEATURES}. Retrain it (experiments/train_ocr_trust.py --save) or set "
+            "ROBO_OCR_TRUST=0 for the fixed rule."
+        )
+    return model
+
+
+def fingerprint(path: Path) -> str:
+    """A short hash of the saved model's file, to record which model decided."""
+    return hashlib.sha256(path.read_bytes()).hexdigest()[:12]
 
 
 def decide(suspects: list[Suspect], model, questions: int) -> list[Suspect]:

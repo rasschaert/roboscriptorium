@@ -8,6 +8,7 @@ reading said about each, and which version makes the line read as printed
 """
 
 import json
+import os
 import re
 import sys
 from dataclasses import asdict
@@ -69,6 +70,8 @@ def answered(book: Book, suspects: list) -> dict[tuple, str]:
 def build(name: str, spec: str) -> list[dict]:
     pages_arg, chapters = (spec.split(":") + ["", ""])[:2] if spec else ("", "")
     book = Book.load(Path("work") / name)
+    # The fixed rule's choices are the baseline the trust model is scored against.
+    os.environ["ROBO_OCR_TRUST"] = "0"
     stages = pipeline.run(book, pages=_range(None if spec == "answers" else pages_arg or None))
     if spec == "answers":
         return rows_from(stages.suspects, answered(book, stages.suspects))

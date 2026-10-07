@@ -209,7 +209,9 @@ right, then expand.
     when lines are added above them.
   - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)
     against glm-ocr's reading of each body line's crop (`ROBO_OCR_MODEL`),
-    cached in `stages/second-reading.json`. Where a line's readings differ, clef picks from
+    cached in `stages/second-reading.json`, tesseract's of the page, and
+    `read_model`'s (qwen3.8) of the crop, told the book's typesetting
+    (`stages/third-reading.json`). Where a line's readings differ, clef picks from
     the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence; both agreeing
     with clef ≥ 0.3 applies the fix to a copy of the pages before reflow,
     anything else becomes an `ocr-doubt` review region.
@@ -227,8 +229,10 @@ right, then expand.
     trees) scores each version of a suspect from the judges' picks and confidence,
     which second readings read it, the word list and the kind of difference;
     the least sure suspects are asked up to `ROBO_OCR_QUESTIONS` per page, the
-    rest take their best version. On by default (`ROBO_OCR_TRUST=0` for the fixed
-    rule, which is also used when no model is trained); the model lives
+    rest take their best version. The budget is book-wide (questions per page ×
+    pages), so a bad page can take more than one. On by default (`ROBO_OCR_TRUST=0`
+    for the fixed rule); a missing model, or one saved for another version or
+    feature width (`MODEL_VERSION`, `FEATURES`), stops the build. The model lives
     in `work/models/ocr-trust.pkl`, trained by `experiments/train_ocr_trust.py
     --save` on the tuning books' suspects, never the held-out ones
     (`experiments/ocr_trust_data.py`).
@@ -484,7 +488,9 @@ uv run roboscriptorium golden derive goede-dochter --epub work/.cache/publisher/
 ```
 
 `eval` builds the book, prints the scores and the most frequent differences, and
-appends a line to `work/<book>/eval-history.jsonl`. Given several books it scores
+appends a line to `work/<book>/eval-history.jsonl` with the commit, the settings,
+which decider settled the OCR check (`fixed rule` or `trust <model hash>`) and each
+model's Ollama digest or Ollaya release. Given several books it scores
 them one after another and ends with a line per book.
 
 **Disagreements and verdicts.** Gutenberg is a transcription, not the scan, so
@@ -1212,3 +1218,14 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   168 → 169, typography 103 → 109 of 139. The text judge (winnow) told the style:
   Goede dochter 91 → 84, Vals alarm 120 → 129, so it keeps its prompt. clef's new
   answers are trust features: retrain the trust model on re-judged suspects.
+- 2026-10-07: An outside review (Fable) found that learned trust had been off
+  without notice: the model version was bumped for a new feature, the saved model
+  no longer loaded, and the pipeline fell back to the fixed rule with one line on
+  stderr. A missing or mismatched trust model now stops the build, and
+  eval-history records the decider, the settings and the model versions, since
+  runs at one commit had scored differently (Crime 0.634–0.713% CER) with no
+  record of why. The OCR check reads each line a third time with qwen3.8 told
+  the book's style; the trust model is being retrained on suspects rebuilt with
+  it, and the reading stays only if that beats the noise floor. From now on the
+  four "held-out" books count as a validation set: earlier choices (the word-list
+  vote, the style-group question) were made on their scores.

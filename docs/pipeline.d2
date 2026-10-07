@@ -106,7 +106,7 @@ check: 3 · Check the OCR (scans only) {
   s: {
     class: row
     horizontal-gap: 160
-    second: Second readings\nof each body line's crop {class: stage}
+    second: More readings\nof each body line {class: stage}
     judge: Judges\nwhere the readings differ {class: stage}
     trust: Learned trust\nfix, keep, or ask {class: stage}
     second -> judge -> trust
@@ -115,7 +115,7 @@ check: 3 · Check the OCR (scans only) {
     class: row
     glm: glm-ocr:bf16 {class: ollama}
     tess: tesseract (nld) {class: code}
-    qwen: qwen3.8:27b\nbest line reading {class: candidate}
+    qwen: "qwen3.8:27b, told the\nbook's style" {class: ollama}
     clef: "clef:27b\npicks from the crop" {class: ollaya}
     winnow: "winnow:e4b\npicks from the sentence" {class: ollaya}
     words: word list\n(tesseract's dictionary) {class: code}

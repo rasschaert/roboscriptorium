@@ -1,6 +1,5 @@
 import json
 import subprocess
-import time
 from collections import Counter
 from dataclasses import asdict
 from datetime import UTC, datetime
@@ -151,7 +150,7 @@ def _range(value: str | None) -> tuple[int, int] | None:
 
 def _build_golden(
     book_dir: Path, pages: str | None, chapters: str | None, no_models: bool, check_ocr: bool = True
-) -> tuple[Book, Document, list[Chapter]]:
+) -> tuple[Book, pipeline.Stages, Document, list[Chapter]]:
     book = Book.load(book_dir)
     if book.golden is None:
         raise typer.BadParameter(f"{book_dir}/book.toml names no golden book")
@@ -160,7 +159,7 @@ def _build_golden(
     reference = load_chapters(Golden.load(book.golden).text_dir)
     if (span := _range(chapters)) is not None:
         reference = reference[span[0] - 1 : span[1]]
-    return book, doc, reference
+    return book, stages, doc, reference
 
 
 def _scored(book: Book, stages: pipeline.Stages) -> Document:
@@ -231,7 +230,7 @@ def review_disagreements(
     port: int = typer.Option(8765, help="Port on 127.0.0.1"),
 ) -> None:
     """Review where the output disagrees with the reference, next to the scan."""
-    book, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
+    book, _, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
     text_layer = cached_text_layer(book.source, book.stages / "textlayer.json")
     found = disagreements.find(doc, reference, text_layer)
     verdicts = _verdicts(book)
@@ -327,19 +326,29 @@ def evaluate_books(
         typer.echo("\n" + "\n".join(summary))
 
 
-def _suspects(path: Path, since: float) -> Counter:
-    """The OCR check's choices (other, ours, review), if this build wrote them."""
-    if not path.exists() or path.stat().st_mtime < since:
-        return Counter()
-    return Counter(s["choice"] for s in json.loads(path.read_text()))
+def _model_versions(settings: Settings) -> dict[str, str]:
+    """What each model name served now is: Ollama's digest, Ollaya's release date."""
+    out = {}
+    try:
+        for m in httpx.get(f"{settings.ollama_url}/api/tags", timeout=5).json()["models"]:
+            digest = m["digest"][:12]
+            out[m["name"]] = ",".join(sorted({*out.get(m["name"], "").split(","), digest} - {""}))
+        for m in httpx.get(f"{settings.ollaya_url}/v1/models", timeout=5).json()["models"]:
+            out[m["name"]] = m.get("release_date", "")
+    except httpx.HTTPError:
+        pass
+    used = {
+        settings.role_model, settings.check_model, settings.judge_model,
+        settings.ocr_model, settings.read_model,
+    }  # fmt: skip
+    return {name: out.get(name, "?") for name in sorted(used - {""})}
 
 
 def _evaluate_book(
     book_dir: Path, pages: str | None, chapters: str | None, no_models: bool, check_ocr: bool
 ) -> evaluate.Score:
-    started = time.time()
-    book, doc, reference = _build_golden(book_dir, pages, chapters, no_models, check_ocr)
-    suspects = _suspects(book.stages / "ocr-check.json", started)
+    book, stages, doc, reference = _build_golden(book_dir, pages, chapters, no_models, check_ocr)
+    suspects = Counter(s.choice for s in stages.suspects)
     verdicts = _verdicts(book)
     reference, applied = disagreements.patch(reference, verdicts)
     result = evaluate.score(doc, reference)
@@ -379,6 +388,7 @@ def _evaluate_book(
     for got, want, n in result.confusions:
         typer.echo(f"    {n:4}× {got[:40]!r} → {want[:40]!r}")
 
+    settings = Settings.from_env()
     record = {
         "at": datetime.now(UTC).isoformat(timespec="seconds"),
         "commit": subprocess.run(
@@ -390,6 +400,9 @@ def _evaluate_book(
         "ocr_check": check_ocr and not no_models,
         "verdicts_applied": applied,
         "ocr_suspects": dict(suspects),
+        "ocr_decider": stages.ocr_decider,
+        "settings": {k: v for k, v in asdict(settings).items() if not k.endswith("_url")},
+        "model_versions": _model_versions(settings) if not no_models else {},
         **{k: v for k, v in asdict(result).items() if k != "confusions"},
     }
     with (book.root / "eval-history.jsonl").open("a") as f:

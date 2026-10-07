@@ -17,8 +17,8 @@ class Settings:
     judge_model: str = "clef:27b"
     # OCR model on Ollama for the OCR check's second reading of each line.
     ocr_model: str = "glm-ocr:bf16"
-    # Vision model on Ollama that reads the lines a quote question sits on, for the
-    # question's proposed reading ("" for none).
+    # Vision model on Ollama, told the book's style: the OCR check's third reading of
+    # each body line, and the reading of the lines quote questions sit on ("" for none).
     read_model: str = "qwen3.8:27b-nvfp4"
     # Learned trust (`trust.py`) chooses the OCR check's fixes and questions instead of
     # the fixed rule, asking at most this many questions per page.

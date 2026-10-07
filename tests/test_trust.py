@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from roboscriptorium import trust
 from roboscriptorium.ocrcheck import Suspect
@@ -40,3 +41,16 @@ def test_the_judges_count_by_role_whatever_the_models_are_called():
     votes, confidence = {"x": "Iemand", "y": "Iemand"}, {"x": 0.95, "y": 0.9}
     renamed = Suspect(**{**a.__dict__, "votes": votes, "confidence": confidence})
     assert trust.features(renamed, 1) == b
+
+
+def test_a_saved_model_of_another_width_stops_the_build_instead_of_being_skipped(tmp_path):
+    assert len(trust.features(_suspect("a", "b", "a", 0.9), 0)) == trust.FEATURES
+    narrow = trust.train([_suspect("a", "b", "a", 0.9)] * 20, [[True, False]] * 20)
+    path = tmp_path / "trust.pkl"
+    trust.save(narrow, path)
+    assert trust.load(path).n_features_in_ == trust.FEATURES
+    narrow.n_features_in_ = trust.FEATURES - 1
+    trust.save(narrow, path)
+    with pytest.raises(trust.Mismatch):
+        trust.load(path)
+    assert trust.load(tmp_path / "none.pkl") is None
