@@ -19,8 +19,17 @@ from roboscriptorium.flags import Flag
 
 BUDGETS = (0.25, 0.5, 1.0)
 BOOTSTRAP_SAMPLES = 1000
-# Answers a reviewer gets wrong, per question: 8 of 68 on Stella, by proofreading.
-HUMAN_SLIPS = 8 / 68
+# Answers a reviewer got wrong, of answers checked: Stella, by proofreading.
+SLIPS, ANSWERS = 8, 68
+
+
+def slip_rates(slips: int = SLIPS, answers: int = ANSWERS) -> tuple[float, float, float]:
+    """The reviewer's chance of a wrong answer per question: the 2.5% point, mean and
+    97.5% point of its Beta posterior from a uniform prior."""
+    from scipy.stats import beta
+
+    a, b = 1 + slips, 1 + answers - slips
+    return float(beta.ppf(0.025, a, b)), a / (a + b), float(beta.ppf(0.975, a, b))
 
 
 @dataclass(frozen=True)

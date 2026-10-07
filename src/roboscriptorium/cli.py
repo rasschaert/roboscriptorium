@@ -382,11 +382,20 @@ def run_bench(
         return
     old = json.loads(old_path.read_text())
     new = json.loads(path.read_text())
-    typer.echo(f"\nagainst {old_path.name} (per page; * where the 95% interval excludes 0)")
+    found = bench.verdict(old, new)
+    typer.echo(f"\nagainst {old_path.name}: {found.outcome.upper()}")
+    for c in found.pooled:
+        typer.echo(
+            f"  all pages, {c.measure:26} {c.before:6.2f} → {c.after:6.2f}"
+            f"  [{c.low:+.2f}, {c.high:+.2f}]"
+        )
+    if found.vetoes:
+        typer.echo("  worse on its own: " + ", ".join(found.vetoes))
+    typer.echo("per book (diagnostics, not tests; * where the 95% interval excludes 0):")
     for c in bench.compare(old, new):
         mark = "*" if c.real else " "
         typer.echo(
-            f" {mark} {c.book[:40]:40} {c.measure:13} {c.before:6.2f} → {c.after:6.2f}"
+            f" {mark} {c.book[:40]:40} {c.measure:26} {c.before:6.2f} → {c.after:6.2f}"
             f"  [{c.low:+.2f}, {c.high:+.2f}]"
         )
 
