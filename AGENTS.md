@@ -429,6 +429,8 @@ disagreements by mistake category.
 | de-aanslag | `calibre-pdf` | Dutch, Mulisch, 51st printing. **Not a scan**: calibre's PDF of the retail EPUB, so its text layer is exact. For born-digital PDFs, page joins and (later) italics. **Copyrighted**, all text in `work/golden/` |
 | lady-into-fox | `chatto-1922` | **Held out: score it to check that changes carry over, never tune on it.** 1922 first edition, same as Gutenberg #10337; one continuous text, no chapters; wood engravings. **EU copyright until 2051**: only the manifest is in git, the reference and verdicts live in `work/golden/lady-into-fox/` (`eu_copyright_until` in the manifest) |
 | grand-hotel-europa | `ia-scan` | **Held out, like Lady into Fox.** Dutch, 2018, Pfeijffer; IA Scribe scan of the 11th printing (2019), 537 body pages. Reference: the retail EPUB, made from the 1st printing. Chapter label, title and numbered sections. Borrow-only scan; **copyrighted**, all text in `work/golden/`. Score it in slices (`--pages`/`--chapters`) |
+| de-dode-kamer | `ia-scan` | Dutch, 2013, Hoffschlag (first novel, small publisher). IA Scribe scan of the **same first edition** as the reference (the retail EPUB): the Dutch tuning book for OCR and italics (diary passages). The EPUB sets the date lines' em dashes as hyphens. Pages 19–717; part titles are pictures. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| villa-toscane | `calibre-pdf` | **Held out**, born-digital. Dutch, 2014, Van Rijn; calibre's PDF of the retail EPUB, like De aanslag. Novel = chapters 1–12 (13 is the colophon). **Copyrighted**, all text in `work/golden/` |
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
 | het-ivoren-aapje (probe only) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py` |
@@ -747,3 +749,11 @@ disagreements by mistake category.
   measured only when its words spell it (`pdf.spells`, private-use ligatures
   allowed). Italic precision / recall: Crime 0.951 / 0.886, Dolittle 0.872 /
   0.791, De aanslag (now with italics from its CSS classes) 0.987 / 0.855.
+- 2026-10-07: Two more Dutch golden books from the user. *De dode kamer*: a
+  scan with a reference of the same first edition, the first such Dutch book,
+  so it is tuned on. Text layer alone, chapters 1–4 (pp. 19–57): CER 5.31%,
+  WER 5.71%, paragraph F1 0.889, headings 0/4, italics 0.837 / 0.903.
+  *Villa Toscane*: born-digital, held out. Boze tongen's italic score (0.13 /
+  0.05) is an edition difference: the omnibus sets the diary in italics, the
+  2002 print in an upright sans-serif. Boze tongen pp. 11–132 with the new
+  crops: CER 1.68% → 1.53% with the OCR check, paragraph F1 0.845 → 0.866.

@@ -1,0 +1,48 @@
+title = "De dode kamer"
+author = "Bronja Hoffschlag"
+language = "nl"
+# Hoffschlag is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# The retail EPUB of the first edition (November 2013), from the same publisher
+# as the scan. Chapter numbers are <h1>, their titles plain paragraphs; the
+# part titles are pictures. It sets the date lines' dashes as hyphens where the
+# print has em dashes, and runs some words together ("yourlife").
+[reference]
+source = "De dode kamer, Agemo Uitgeverij 2013, ISBN 9789082137002 (retail EPUB, first edition)"
+sha256 = "fbe0a43e84242db5bfc40d254b26e6d9d5ca4db0355021fc84970954fb20b79b"
+files = [
+  "Text/DeDodeKamer007.xhtml", "Text/DeDodeKamer008.xhtml", "Text/DeDodeKamer009.xhtml",
+  "Text/DeDodeKamer010.xhtml", "Text/DeDodeKamer011.xhtml", "Text/DeDodeKamer012.xhtml",
+  "Text/DeDodeKamer013.xhtml", "Text/DeDodeKamer014.xhtml", "Text/DeDodeKamer015.xhtml",
+  "Text/DeDodeKamer016.xhtml", "Text/DeDodeKamer017.xhtml", "Text/DeDodeKamer018.xhtml",
+  "Text/DeDodeKamer019.xhtml", "Text/DeDodeKamer020.xhtml", "Text/DeDodeKamer021.xhtml",
+  "Text/DeDodeKamer022.xhtml", "Text/DeDodeKamer023.xhtml", "Text/DeDodeKamer024.xhtml",
+  "Text/DeDodeKamer025.xhtml", "Text/DeDodeKamer026.xhtml", "Text/DeDodeKamer027.xhtml",
+  "Text/DeDodeKamer028.xhtml", "Text/DeDodeKamer029.xhtml", "Text/DeDodeKamer030.xhtml",
+  "Text/DeDodeKamer031.xhtml", "Text/DeDodeKamer032.xhtml", "Text/DeDodeKamer033.xhtml",
+  "Text/DeDodeKamer034.xhtml", "Text/DeDodeKamer035.xhtml", "Text/DeDodeKamer036.xhtml",
+  "Text/DeDodeKamer037.xhtml", "Text/DeDodeKamer038.xhtml", "Text/DeDodeKamer039.xhtml",
+  "Text/DeDodeKamer040.xhtml", "Text/DeDodeKamer041.xhtml", "Text/DeDodeKamer042.xhtml",
+  "Text/DeDodeKamer043.xhtml", "Text/DeDodeKamer044.xhtml", "Text/DeDodeKamer045.xhtml",
+  "Text/DeDodeKamer046.xhtml", "Text/DeDodeKamer047.xhtml", "Text/DeDodeKamer048.xhtml",
+  "Text/DeDodeKamer049.xhtml", "Text/DeDodeKamer050.xhtml", "Text/DeDodeKamer051.xhtml",
+  "Text/DeDodeKamer052.xhtml", "Text/DeDodeKamer053.xhtml", "Text/DeDodeKamer054.xhtml",
+  "Text/DeDodeKamer055.xhtml", "Text/DeDodeKamer056.xhtml", "Text/DeDodeKamer057.xhtml",
+  "Text/DeDodeKamer058.xhtml", "Text/DeDodeKamer059.xhtml", "Text/DeDodeKamer060.xhtml",
+  "Text/DeDodeKamer061.xhtml", "Text/DeDodeKamer062.xhtml", "Text/DeDodeKamer063.xhtml",
+  "Text/DeDodeKamer064.xhtml", "Text/DeDodeKamer065.xhtml", "Text/DeDodeKamer066.xhtml",
+  "Text/DeDodeKamer067.xhtml", "Text/DeDodeKamer068.xhtml", "Text/DeDodeKamer069.xhtml",
+]
+
+# The first edition, a library copy (Openbare Bibliotheek Osdorp). Internet
+# Archive lends it only, so it is placed by hand. Pages 19–717: the first
+# prologue to the last epilogue. Left out: the diary before the first heading
+# (pp. 13–18; the reference keeps only text under a heading) and the
+# acknowledgements.
+[[scans]]
+id = "ia-scan"
+source = "Internet Archive (borrow, then download the PDF)"
+sha256 = "17348db4204747ac861a7694e56c6e0501bc19c8b8ea053a92c699a521715eae"
+cover_page = 1
+body_pages = [19, 717]

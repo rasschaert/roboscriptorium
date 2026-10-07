@@ -1,0 +1,30 @@
+title = "Villa Toscane"
+author = "Linda van Rijn"
+language = "nl"
+# Van Rijn is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# The retail EPUB (Uitgeverij Marmer, 2014). Chapter headings are "Kop_1"
+# paragraphs; the colophon follows an invisible "Kop_1-Onzichtbaar" heading, so
+# it is chapter 13 and the novel is chapters 1–12. Only the headings are set in
+# italics.
+[reference]
+source = "Villa Toscane, Uitgeverij Marmer 2014, ISBN 9789460688966 (retail EPUB)"
+sha256 = "941c73702dcd5a5183193186216ff8b10a21a63ff18f45ba01efe2d2bf2049f9"
+files = [
+  "Text/9789460688966-2.html", "Text/9789460688966-3.html", "Text/9789460688966-4.html",
+  "Text/9789460688966-5.html", "Text/9789460688966-6.html", "Text/9789460688966-7.html",
+  "Text/9789460688966-8.html", "Text/9789460688966-9.html", "Text/9789460688966-10.html",
+  "Text/9789460688966-11.html", "Text/9789460688966-12.html", "Text/9789460688966-13.html",
+]
+heading_prefixes = ["Kop_1"]
+
+# Not a scan: calibre's PDF of that same EPUB, US Letter pages. Held out, like
+# Lady into Fox: scored to check that born-digital changes carry over, never
+# tuned on.
+[[scans]]
+id = "calibre-pdf"
+source = "a PDF made with calibre from the retail EPUB"
+sha256 = "3c85be7be6087e3af19e397f0f85f2c230a28116e59420e6e2a2f8dc68dc8d00"
+cover_page = 1
+body_pages = [7, 192]
