@@ -84,7 +84,8 @@ def rule(rows) -> tuple[int, int]:
 
 def pages_of(name: str) -> int:
     spec = SPECS[name]
-    first, last = _range(spec.split(":")[0]) if spec else Book.load(Path("work") / name).body_pages
+    ranged = spec and spec != "answers"
+    first, last = _range(spec.split(":")[0]) if ranged else Book.load(Path("work") / name).body_pages
     return last - first + 1
 
 

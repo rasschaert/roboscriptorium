@@ -18,6 +18,7 @@ from rapidfuzz.distance import Levenshtein
 from roboscriptorium import ocrcheck, pipeline
 from roboscriptorium.book import Book
 from roboscriptorium.cli import _range, _verdicts
+from roboscriptorium.corrections import Corrections, place
 from roboscriptorium.disagreements import patch
 from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden.align import align
@@ -34,6 +35,8 @@ SPECS = {
     "lady-into-fox--chatto-1922": "",
     "de-tuin-van-de-avondnevel--ia-scan": "11-52:1-3",
     "grand-hotel-europa--ia-scan": "15-44:1-16",
+    # No golden reference: labelled by a human's answers in the review.
+    "stella": "answers",
 }
 OUT = Path("work/probes/ocr-trust")
 _FOLD = str.maketrans("‘’“”¬–", "''\"\"-—")
@@ -45,10 +48,30 @@ def fold(text: str) -> str:
     return re.sub(r"(^|\s)(['\"]+) ", r"\1\2", re.sub(r" (['\"]+)(\s|$)", r"\1\2", text))
 
 
+def answered(book: Book, suspects: list) -> dict[tuple, str]:
+    """Per suspect (page, line, start), the line as a human answered it: a whole line
+    retyped or chosen labels every place in it; an answer about one place, only that
+    place."""
+    out = {}
+    answers = Corrections(book.corrections_path)
+    for s in suspects:
+        for c in answers.by_key.values():
+            if c.page != s.page or c.action != "text":
+                continue
+            if c.span is not None:
+                if c.original == s.original and c.span == (s.start, s.end) and place(c) is not None:
+                    out[(s.page, s.line, s.start)] = s.original[: s.start] + place(c) + s.original[s.end :]
+            elif c.first == c.last == s.line and c.original == s.original:
+                out[(s.page, s.line, s.start)] = c.text if c.text is not None else c.original
+    return out
+
+
 def build(name: str, spec: str) -> list[dict]:
     pages_arg, chapters = (spec.split(":") + ["", ""])[:2] if spec else ("", "")
     book = Book.load(Path("work") / name)
-    stages = pipeline.run(book, pages=_range(pages_arg or None))
+    stages = pipeline.run(book, pages=_range(None if spec == "answers" else pages_arg or None))
+    if spec == "answers":
+        return rows_from(stages.suspects, answered(book, stages.suspects))
     golden = Golden.load(book.golden)
     reference = load_chapters(golden.text_dir)
     if span := _range(chapters or None):
@@ -56,22 +79,31 @@ def build(name: str, spec: str) -> list[dict]:
     reference, _ = patch(reference, _verdicts(book))
     truth = align(stages.pages, reference)
     in_notes = golden_notes.note_lines(stages.pages, golden_notes.load(golden.notes_path))
+    lines = {
+        (s.page, s.line, s.start): t.truth
+        for s in stages.suspects
+        if (t := truth.get(SourceRef(s.page, s.line))) is not None
+        and t.role == "body"
+        and SourceRef(s.page, s.line) not in in_notes
+    }
+    return rows_from(stages.suspects, lines)
 
+
+def rows_from(suspects: list, truths: dict[tuple, str]) -> list[dict]:
+    """Each suspect with a true line, its versions labelled by which comes closest to it."""
     rows = []
-    for s in stages.suspects:
-        ref = SourceRef(s.page, s.line)
-        t = truth.get(ref)
-        if t is None or t.role != "body" or ref in in_notes:
+    for s in suspects:
+        if (truth := truths.get((s.page, s.line, s.start))) is None:
             continue
         versions = [s.ours, *s.others]
         lines = [s.original[: s.start] + v + s.original[s.end :] for v in versions]
-        distance = [Levenshtein.distance(fold(line), fold(t.truth)) for line in lines]
+        distance = [Levenshtein.distance(fold(line), fold(truth)) for line in lines]
         best = min(distance)
         right = [d == best for d in distance]
         rows.append(
             {
                 "suspect": asdict(s),
-                "truth": t.truth,
+                "truth": truth,
                 "right": right,
                 "settled": right.count(True) == 1 and best <= max(2, len(s.ours) // 3),
             }
