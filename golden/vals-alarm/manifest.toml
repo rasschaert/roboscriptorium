@@ -1,0 +1,37 @@
+title = "Vals alarm"
+author = "Marelle Boersma"
+language = "nl"
+# Boersma is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# The retail EPUB (Verbum Crime 2011). Chapter headings are "kop" paragraphs
+# ("1 Later", "Epiloog"); italics are the "cs" and "sanscs" classes.
+[reference]
+source = "Vals alarm, Verbum Crime 2011, ISBN 9789461090287 (retail EPUB)"
+sha256 = "fc0393d67d684d497a3afa723794b140244ab1ec35942eecc5ff47ebb27e846f"
+files = [
+  "9789461090287-1.html", "9789461090287-2.html", "9789461090287-3.html", "9789461090287-4.html",
+  "9789461090287-5.html", "9789461090287-6.html", "9789461090287-7.html", "9789461090287-8.html",
+  "9789461090287-9.html", "9789461090287-10.html", "9789461090287-11.html", "9789461090287-12.html",
+  "9789461090287-13.html", "9789461090287-14.html", "9789461090287-15.html", "9789461090287-16.html",
+  "9789461090287-17.html", "9789461090287-18.html", "9789461090287-19.html", "9789461090287-20.html",
+  "9789461090287-21.html", "9789461090287-22.html", "9789461090287-23.html", "9789461090287-24.html",
+  "9789461090287-25.html", "9789461090287-26.html", "9789461090287-27.html", "9789461090287-28.html",
+  "9789461090287-29.html", "9789461090287-30.html", "9789461090287-31.html", "9789461090287-32.html",
+  "9789461090287-33.html", "9789461090287-34.html", "9789461090287-35.html", "9789461090287-36.html",
+  "9789461090287-37.html", "9789461090287-38.html", "9789461090287-39.html", "9789461090287-40.html",
+  "9789461090287-41.html", "9789461090287-42.html", "9789461090287-43.html", "9789461090287-44.html",
+  "9789461090287-45.html", "9789461090287-46.html", "9789461090287-47.html", "9789461090287-48.html",
+]
+heading_prefixes = ["kop"]
+italic_classes = ["cs", "sanscs"]
+
+# The second printing (December 2011) of the first edition. Internet Archive
+# lends it only, so it is placed by hand. Pages 11–302: the prologue to the
+# epilogue; the thanks, afterword and advertising are left out.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/isbn_9789461090270 (borrow, then download the PDF)"
+sha256 = "44ddcf9f5561d60cb7e6bdb579cce1e490e18fee0329e931e4338aa66d585c94"
+cover_page = 1
+body_pages = [11, 302]

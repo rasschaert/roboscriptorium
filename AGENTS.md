@@ -430,6 +430,7 @@ disagreements by mistake category.
 | grand-hotel-europa | `ia-scan` | **Held out, like Lady into Fox.** Dutch, 2018, Pfeijffer; IA Scribe scan of the 11th printing (2019), 537 body pages. Reference: the retail EPUB, made from the 1st printing. Chapter label, title and numbered sections. Borrow-only scan; **copyrighted**, all text in `work/golden/`. Score it in slices (`--pages`/`--chapters`) |
 | de-tuin-van-de-avondnevel | `ia-scan` | **Held out.** Dutch translation (Tan Twan Eng, Xander); IA scan of the 2014 paperback, reference the 2013 retail EPUB of the same translation and typesetter. Many italic foreign words. Pages 11–374, chapters 1–26. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | goede-dochter | `ia-scan` | Dutch translation (Slaughter, HarperCollins Holland 2017); IA scan of the first printing, reference the retail EPUB of the same translation (typeset by Mat-Zet). The cleanest Dutch reference: **tune on it**. Pages 9–508, 25 chapters (a part title, then titled chapters). Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| vals-alarm | `ia-scan` | Dutch, 2011, Boersma (Verbum Crime). IA scan of the 2nd printing of the first edition, reference the retail EPUB. **Tune on it**: 48 chapter headings ("Vandaag", "1 Later", "2", "Epiloog") at the top of a new page. Pages 11–302. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | villa-toscane | `calibre-pdf` | **Held out**, born-digital. Dutch, 2014, Van Rijn; calibre's PDF of the retail EPUB, like De aanslag. Novel = chapters 1–12 (13 is the colophon). **Copyrighted**, all text in `work/golden/` |
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
@@ -779,3 +780,7 @@ disagreements by mistake category.
   other), De dode kamer (its EPUB was made by OCR and lacks printed text),
   Sense's two Everyman scans (other editions, never scored), and Goede
   dochter's eighth printing (same text as the first).
+- 2026-10-07: *Vals alarm*, a second Dutch tuning book (another publisher and
+  typesetter). Text layer alone, whole book: CER 0.79%, WER 0.42%, paragraph
+  F1 0.891, headings 0/48, italics 0.697 / 0.736. Its errors: opening ‘ read
+  as " or lost, a period lost before a closing quote, `zon` for `zo'n`.
