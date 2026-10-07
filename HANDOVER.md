@@ -50,9 +50,8 @@ points taken on, in the order they landed:
 `experiments/ocr_trust_data.py --rebuild <book>` (now pinned to the fixed rule,
 its baseline), one book per run, logs in `work/probes/ocr-trust/logs/`, the
 earlier data in `work/probes/ocr-trust/before-qwen/`. Done: Goede dochter
-(327 → 401 suspects), Vals alarm (267 → 320). Crime was running when the
-session ended (check its log and `work/probes/ocr-trust/the-nature-of-a-crime--doubleday-1924.json`'s
-time). Left: Dolittle, Reis, Lady into Fox, De tuin, Grand Hotel Europa,
+(327 → 401 suspects), Vals alarm (267 → 320), Crime (236 → 248; settled
+205 → 217, the layer wrong on 62 → 65 of them). Left: Dolittle, Reis, Lady into Fox, De tuin, Grand Hotel Europa,
 Stella (`answers`), ~1 h each. If the short-line change is committed first,
 Goede dochter, Vals alarm and Crime need a top-up rebuild (cheap).
 
