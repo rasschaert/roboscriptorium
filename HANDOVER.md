@@ -4,84 +4,57 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules and
 decisions; this file only covers the state of play. Replace it at the end of
 each session.
 
-## State on 2026-10-07 (end of day)
+## State on 2026-10-07 (afternoon)
 
-Everything is merged into `main` and pushed. M0–M2 done, M3 (OCR and
-decisions) well along, M4 (review) working, and the first figures in the EPUB.
-Direction, now in AGENTS.md: **build the machine, not the book**: compounded
-models that fail differently, combined by measured reliability, with new models
-benchmarked and plugged in.
+Everything is committed on `main` and pushed. New today:
 
-### What the pipeline does now
-
-- **Line roles:** clef-flash:9b plus rules in code; the shared layout analysis
-  lives in `page.py`, and `LineRole.rule` names the rule that overrode the model.
-- **OCR check** (`ocrcheck.py`, scanned books only): two second readings per body
-  line (glm-ocr on the line's crop for letters, tesseract on the page for
-  dashes). Where either differs from the text layer, clef:27b judges the crop and
-  winnow:e4b the sentence. Applied when they agree and clef ≥ 0.3, or, where the
-  versions differ only in punctuation, dashes or spacing, when clef:27b alone is
-  ≥ 0.5. Quote styles count as one version. Everything else goes to review.
-- **Figures** (`figures.py`): the layout model's pictures go into the EPUB at
-  300 dpi, trimmed where a caption overlaps, sideways plates turned upright,
-  captions from the review or read off a sideways plate. Dolittle: 48 pictures,
-  epubcheck clean.
-- **Review page:** each region asks "what is this?" (radio buttons, the
-  pipeline's call preselected) and, for OCR doubts, "which reading matches the
-  scan?" (each reading with the difference marked and the models that picked it).
-  One Save button (`↵`). Tested in a browser just before stopping; not yet used
-  by the user in this form.
-
-### Scores (latest; the rescore was still running at the end of the day)
-
-| Book | CER | WER | Paragraph P / R | Headings | OCR suspects for review |
-| --- | --- | --- | --- | --- | --- |
-| Dolittle | 1.89% (was 2.16%) | 1.92% | 0.818 / 0.953 | 21/21 (+1) | 100 of 657 |
-| Crime | 0.53% (was 0.63%) | 0.32% | 0.966 / 0.986 | 8/8 (+1) | **453 of 928** |
-| Lady into Fox (held out), Boze tongen, De aanslag, Sense | running | | | | |
-
-The rescore crashed twice on tesseract's word table. The cause: for Dutch,
-tesseract runs with `--tessdata-dir work/tessdata`, which has no `configs/`, so
-the `tsv` config silently gave plain text; it is now asked for with
-`-c tessedit_create_tsv=1`. Lady into Fox scored CER 0.93% (unchanged). Dolittle's and Crime's scores above come from
-`work/probes/rescore-2026-10-07.log`; Boze tongen, De aanslag and Sense
-were restarted into `work/probes/rescore-2026-10-07c.log`; read the
-summary lines at its end. The review server for Dolittle was stopped.
+- **OCR check crops fixed.** A line's crop is its words' boxes together (Crime's
+  text layer gives lines boxes twice the print's height, so glm-ocr read the
+  neighbouring line too), reaching one em past the line's ends (line-end em
+  dashes the layer misses were cut to hyphens). Joining two words needs both
+  judges; `¬` equals `-`. Crime: 453 suspects for review → 54; Dolittle WER
+  1.92% → 1.81%; Lady into Fox unchanged.
+- **Second held-out book, Grand Hotel Europa** (Dutch IA scan, the user's EPUB
+  and PDF; copyrighted, all in `work/`). Cold start, chapters 1–3: CER 1.92%
+  (text layer alone 2.51%), headings 3/16. Never inspect its errors; score it in
+  slices (`--pages 15-44 --chapters 1-16` is chapters 1–3; scan page = printed
+  page + 4).
+- **Italics** (`italics.py`): each word's stroke slant on the scan, no model.
+  References keep `<i>` (`Chapter.italic`), the EPUB sets `<i>`, `eval` prints
+  italic precision/recall. Crime 0.952/0.909, Dolittle 0.833/0.814, held-out
+  Lady into Fox 0.315/0.895.
 
 ## Next steps, in order
 
-1. **Read the rescore log** and record the scores in AGENTS.md's decision log.
-2. **Why Crime sends 453 suspects to review.** Its text layer is good (CER 0.5%),
-   so most must be differences that aren't errors (spacing around curly quotes?
-   glm-ocr normalising something?). Look at `work/the-nature-of-a-crime--doubleday-1924/stages/ocr-check.json`.
-3. **Dolittle's WER rose a hair** (1.83% → 1.92%) with the new decision rule:
-   find the wrong automatic fixes.
-4. **Italics probe** (`experiments/probe_italic_pages.py`): page-level "are there
-   italic words?" with truth from Gutenberg's markup (Dolittle has 62 italic
-   phrases on 34 pages). Needs Ollama free; it timed out while clef:27b was busy.
-5. **A `bench` command**: every job's labelled set scored for any model, so new
-   models are measured and plugged in quickly.
-6. **Learned trust**: per-model, per-kind-of-error reliability (Dawid–Skene,
-   calibration) from the golden books and the user's review answers, replacing
-   the hand-set thresholds. The user's observation: winnow caught a speck read as
-   "." after a hyphen ("ani-."), so the text model *does* know some punctuation.
-7. **Metadata stage** with `nuextract3:q6_k` (front pages → `book.toml`, the
-   human confirms).
-8. Smaller: p23's decorated initial is answered "E" but shows an O (the user
-   meant to fix it); 16 of Dolittle's 62 italic phrases couldn't be placed on a
-   page.
+1. **Rescore Boze tongen and Sense with the new crops**, in page slices (the
+   crops changed for every line, so glm-ocr re-reads them all; Boze tongen has
+   ~11k lines). One book per command, results reported before the next.
+2. **Italics, open ends:** marks below the word (dash-glued words with one half
+   italic: `instead—they'll`); born-digital PDFs have italics in their font
+   flags (De aanslag); Dutch publisher EPUBs italicise by CSS class, so their
+   references carry no italics yet (a manifest list of italic classes).
+   Lady into Fox's low precision is unexplained; it is held out, so don't look
+   at its errors: check the stage on tuning books instead.
+3. **Headings on unseen books** are the weakest carry-over (Grand Hotel Europa
+   3/16). A general signal rather than more rules: the layout model's `title`
+   regions, or the italic/size/centring of a line.
+4. **A `bench` command**: every job's labelled set scored for any model.
+5. **Learned trust** (Dawid–Skene, calibration) from the golden books and the
+   user's answers, replacing hand-set thresholds (`SURE`, `SURE_ALONE`).
+6. **Metadata stage** with `nuextract3:q6_k`.
+7. Smaller: p23's decorated initial is answered "E" but shows an O; some em
+   dashes land after a space (`ago —when`) in Dolittle.
 
 ## Working with the user
 
-- Run small probes first, say how long a big run takes, run it in the
-  background, and keep its output under `work/probes/` (never a scratchpad).
-- Long jobs share Ollama: clef:27b answers one request at a time, so two jobs
-  using it run at half speed each. Run them one after another.
+- **One book per long command**, results reported before starting the next; no
+  multi-book runs that take long. Run small probes first and say how long a run
+  takes; keep outputs under `work/probes/`.
+- Held-out books (Lady into Fox, Grand Hotel Europa) are scored, never used to
+  find errors. The user cares that improvements carry over to unseen books.
 - The user picks no models: choose from measurements and record why. Ask before
   adding a runtime or anything they must install or pull.
 - Commits are signed through 1Password; if signing fails, ask for it to be
   unlocked.
 - Their connection is slow: avoid large downloads. Golden sources are in
   `work/.cache/` (checked against PROVENANCE.md).
-- They try the review page while work goes on and report what's awkward; each
-  report so far became a general fix.
