@@ -212,7 +212,7 @@ class RegionReview:
         items = []
         for f in self.regions:
             page = self.scan.pages[f.page]
-            c = self.corrections.by_key.get(f.key)
+            c = self.corrections.for_flag(f)
             # Around sideways text the neighbouring lines are scraps too.
             context = "rotated" not in f.reasons
             items.append(
@@ -233,7 +233,7 @@ class RegionReview:
         return {"items": items, "actions": ACTIONS, "applied": self.applied}
 
     def _turn(self, f: F.Flag) -> int:
-        c = self.corrections.by_key.get(f.key)
+        c = self.corrections.for_flag(f)
         if c and c.turn:
             return c.turn
         return self.scan.turn(f.page, f.box, self.lang) if "rotated" in f.reasons else 0

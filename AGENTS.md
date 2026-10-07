@@ -231,6 +231,11 @@ right, then expand.
   - `initials.py`: guesses the letter of a decorated initial: the letters that
     make the word beside it a word (book vocabulary plus the system word list),
     then the role model picks among them from the drawing.
+  - `corrections.py` also takes answers about one place in a line (`Flag.span`):
+    an answer changes only that span, so several answers about one line, and the
+    OCR check's own fixes elsewhere in it, combine (`apply(..., fixes)`). A break
+    hyphen's place is asked across the break (`Flag.joined`: "dankbaar" or "dank
+    baar") and answered back as the hyphen or none.
   - `corrections.py`: a human's answers about regions (text, heading, drop,
     image, initial, caption, optionally the text as printed and the turn that
     makes the region upright; typed text for a missing region is
@@ -1098,3 +1103,13 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   glued; Stella 0.45 against 0.70: thin, as the user saw; the Dutch EPUBs' spaced
   en dashes 0.5–1.0 against 0.6–1.0: word). Every output dash takes the style;
   dash-only differences are no OCR doubts. Quote style may deserve the same.
+- 2026-10-07: OCR doubts are asked per place, not per line (from the user's
+  review of Stella: two wrong places in one line, each fixed by a different
+  reading, left no right option and made the user type, which added an error).
+  Each undecided suspect is its own question, cropped to its words, its readings
+  the line with only that place changed; answers change only their span, and the
+  check's settled fixes elsewhere in the line still apply. Where readings differ
+  only in a line-end hyphen, the place is read across the break by the word
+  list, the text judge and the human ("dankbaar" / "dank baar"). Stella: 67
+  per-place doubts (1/page), 74 of its 81 questions already covered by the
+  user's earlier whole-line answers.

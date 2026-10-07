@@ -21,6 +21,7 @@ from roboscriptorium import page as P
 from roboscriptorium import roles as R
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.layout import Region
+from roboscriptorium.ocrcheck import Doubt
 from roboscriptorium.pdf import PageText
 from roboscriptorium.roles import KEEP_BODY_AT, LineRole
 
@@ -80,6 +81,11 @@ class Flag:
     # When OCR readings of a line differ: the region as each reads it, the text
     # layer's first, each with the models that picked it ({"text", "votes"}).
     readings: list[dict] = field(default_factory=list)
+    # For a question about one place in a line: that place, as a span of line `first`
+    # as the text layer reads it. An answer then changes only that span.
+    span: tuple[int, int] | None = None
+    # For a break hyphen: the next line's first word, which the readings end with.
+    joined: str = ""
 
 
 def region_key(page: int, text: str) -> str:
@@ -160,21 +166,21 @@ def _reasons(
     return reasons
 
 
-def _with_readings(
-    page: PageText, flag: Flag, doubts: dict[tuple[int, str], list[tuple[str, list[str]]]]
-) -> Flag:
-    """The region's text as each reading of its doubted lines has it."""
-    lines = [page.lines[k].text for k in range(flag.first, flag.last + 1)]
-    readings: list[dict] = []
-    for k, line in enumerate(lines):
-        for other, votes in doubts.get((page.number, line), []):
-            text = "\n".join([*lines[:k], other, *lines[k + 1 :]])
-            known = next((r for r in readings if r["text"] == text), None)
-            if known is None:
-                readings.append({"text": text, "votes": list(votes)})
-            else:
-                known["votes"] += [v for v in votes if v not in known["votes"]]
-    return replace(flag, readings=readings) if readings else flag
+def _doubt(page: PageText, d: Doubt, roles: dict[SourceRef, LineRole]) -> Flag:
+    """The question about one place in a line: its readings as whole lines, its crop the place."""
+    return Flag(
+        region_key(page.number, f"{d.original}\n{d.start}:{d.end}"),
+        page.number,
+        d.line,
+        d.line,
+        d.original,
+        treatment(roles.get(SourceRef(page.number, d.line))),
+        ["ocr-doubt"],
+        d.box,
+        [{"text": text, "votes": list(votes)} for text, votes in d.readings],
+        (d.start, d.end),
+        d.joined,
+    )
 
 
 def _region(page: PageText, run: list[tuple[int, str, list[str]]]) -> Flag:
@@ -277,21 +283,21 @@ def find(
     pages: list[PageText],
     roles: dict[SourceRef, LineRole],
     layout: dict[int, list[Region]] | None = None,
-    doubts: dict[tuple[int, str], list[tuple[str, list[str]]]] | None = None,
+    doubts: list[Doubt] | None = None,
     quotes: set[SourceRef] | None = None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.
 
-    `quotes` are lines where a paragraph's quote marks don't pair up (`quotes.unbalanced`).
+    Each of the OCR check's `doubts` is a question of its own about one place in a line,
+    cropped to it. `quotes` are lines where a paragraph's quote marks don't pair up
+    (`quotes.unbalanced`).
     """
     flags: list[Flag] = []
     furniture = _Furniture(P.Repeats(pages), P.page_offset(pages))
     for page in pages:
         regions = (layout or {}).get(page.number, [])
         line_reasons, in_pictures, boxes = _layout(page, regions)
-        for i, line in enumerate(page.lines):
-            if (page.number, line.text) in (doubts or {}):
-                line_reasons.setdefault(i, []).append("ocr-doubt")
+        for i in range(len(page.lines)):
             if SourceRef(page.number, i) in (quotes or set()):
                 line_reasons.setdefault(i, []).append("quotes")
         if any(r.turned for r in regions) or sideways(page):
@@ -324,6 +330,6 @@ def find(
             replace(f, treatment=_treatment_of(page, f, roles)) if f.last >= f.first else f
             for f in boxes
         ]
-        page_flags = [_with_readings(page, f, doubts or {}) for f in page_flags]
+        page_flags += [_doubt(page, d, roles) for d in doubts or [] if d.page == page.number]
         flags += sorted(page_flags + boxes, key=lambda f: (f.first, f.last))
     return flags

@@ -85,6 +85,14 @@ class Suspect:
     support: dict[str, tuple[bool, ...]] = field(default_factory=dict)
     # Per version, whether the word list knows all its words (None: it can't tell).
     known: tuple[bool | None, ...] = ()
+    # Where the versions end the line and differ only in a break hyphen: the next
+    # line's first word, which the place is read with ("dank-" + "baar").
+    joined: str = ""
+
+    @property
+    def across(self) -> list[str]:
+        """The versions as read across the line break (`joined`), or as they are."""
+        return [across(v, self.joined) for v in (self.ours, *self.others)]
 
     @property
     def alternatives(self) -> list[str]:
@@ -378,10 +386,13 @@ def check(
                         page.lines[k + 1].text if k + 1 < len(page.lines) else "",
                     )
                     continues = a0 == 0 and k > 0 and page.lines[k - 1].text.endswith(HYPHENS)
+                    joined = hyphen_only(ours, a1, versions, around[1])
+                    read_as = [across(v, joined) for v in versions]
                     (choice, chosen, votes), confidence = _decide(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache, around,
-                        lexicon.vouches(versions, continues) if lexicon else None,
+                        lexicon.vouches(read_as, continues) if lexicon else None,
+                        joined,
                     )  # fmt: skip
                     support = {
                         n: supports(ours, other, a0, a1, versions) for n, other in others.items()
@@ -405,9 +416,31 @@ def check(
                             confidence,
                             support,
                             known,
+                            joined,
                         )  # fmt: skip
                     )
     return suspects
+
+
+def across(version: str, joined: str) -> str:
+    """A line's last word read with the next line's first: joined after a break hyphen
+    ("dank-" + "baar" = "dankbaar"), else apart ("dank baar")."""
+    if not joined:
+        return version
+    if version.endswith(HYPHENS):
+        return version.rstrip("".join(HYPHENS)) + joined
+    return f"{version} {joined}"
+
+
+def hyphen_only(ours: str, a1: int, versions: list[str], next_line: str) -> str:
+    """The next line's first word, where the versions end the line and differ only in a
+    break hyphen; else ""."""
+    words = next_line.split()
+    if a1 != len(ours) or not words or not words[0][:1].isalpha():
+        return ""
+    stems = {v.rstrip("".join(HYPHENS)) for v in versions}
+    hyphened = {v.endswith(HYPHENS) for v in versions}
+    return words[0].rstrip(".,;:!?’”'\"") if len(stems) == 1 and len(hyphened) == 2 else ""
 
 
 def supports(ours: str, reading: str, a0: int, a1: int, versions: list[str]) -> tuple[bool, ...]:
@@ -498,13 +531,14 @@ def _combined(ours: str, versions: list[str]) -> str | None:
 
 def _decide(
     pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache, around=("", ""),
-    vouched: int | None = None,
+    vouched: int | None = None, joined: str = "",
 ) -> tuple[tuple[str, str | None, dict[str, str]], dict[str, float]]:  # fmt: skip
     """\"ours\", \"other\" with the chosen version, or \"review\", with each model's pick;
     and each model's confidence in it.
 
     The text model also reads the lines `around` this one (before, after), where a
-    quote opens or a sentence goes on.
+    quote opens or a sentence goes on. Where the versions differ only in a break
+    hyphen, it reads the place across the break (`joined`): "dankbaar" or "dank baar".
 
     Where the word list knows the words of one version only (`vouched`, an index
     into the versions), that version is recorded as its vote. It decides nothing:
@@ -538,7 +572,9 @@ def _decide(
         image=lambda: _crop(pdf_page, box),
     )  # fmt: skip
     language = LANGUAGE_NAMES.get(lang, "")
-    lines = [ours[:a0] + v + ours[a1:] for v in versions]
+    lines = [ours[:a0] + across(v, joined) + ours[a1:] for v in versions]
+    if joined:
+        around = (around[0], around[1].split(maxsplit=1)[1] if " " in around[1].strip() else "")
     intro = "Two OCR readings" if len(lines) == 2 else "Several OCR readings"
     read = _ask(
         reader,
@@ -623,25 +659,39 @@ def apply(pages: list[PageText], suspects: list[Suspect]) -> list[PageText]:
     return out
 
 
-def doubts(suspects: list[Suspect]) -> dict[tuple[int, str], list[tuple[str, list[str]]]]:
-    """Per (page, line text), the readings of a line a human should choose between.
+@dataclass(frozen=True)
+class Doubt:
+    """One place in a line where the readings differ and no model settled it: one question."""
 
-    Each reading is the whole line, the text layer's first, with the models that
-    picked it.
-    """
-    out: dict[tuple[int, str], list[tuple[str, list[str]]]] = {}
+    page: int
+    line: int  # index into the text layer's lines
+    original: str  # the line as the text layer reads it
+    start: int  # the place, as a span of `original`
+    end: int
+    box: tuple[float, float, float, float]
+    # The whole line as each reading has it here (the text layer's first), with the
+    # models that picked it; the rest of the line as the text layer reads it.
+    readings: list[tuple[str, list[str]]]
+    # For a break hyphen: the next line's first word, which the readings end with.
+    joined: str = ""
+
+
+def doubts(suspects: list[Suspect]) -> list[Doubt]:
+    """A question per place a human should settle."""
+    out = []
     for s in suspects:
         if s.choice != "review":
             continue
-        readings = out.setdefault((s.page, s.original), [(s.original, [])])
+        readings: list[tuple[str, list[str]]] = []
         for version in (s.ours, *s.others):
-            line = s.original[: s.start] + version + s.original[s.end :]
+            line = s.original[: s.start] + across(version, s.joined) + s.original[s.end :]
             voters = [model for model, picked in s.votes.items() if picked == version]
             known = next((r for r in readings if r[0] == line), None)
             if known is None:
                 readings.append((line, voters))
             else:
                 known[1].extend(v for v in voters if v not in known[1])
+        out.append(Doubt(s.page, s.line, s.original, s.start, s.end, s.box, readings, s.joined))
     return out
 
 

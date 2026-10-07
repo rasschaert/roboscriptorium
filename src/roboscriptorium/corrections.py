@@ -59,6 +59,10 @@ class Correction:
     at: str
     box: tuple[float, float, float, float] | None = None
     turn: int = 0  # degrees clockwise that make the region upright
+    # An answer about one place in a line: that span of `original`, which alone it changes.
+    span: tuple[int, int] | None = None
+    # For a break hyphen: the next line's first word, which the answer was read with.
+    joined: str = ""
 
 
 class Corrections:
@@ -68,8 +72,9 @@ class Corrections:
         if path.exists():
             for line in path.read_text().splitlines():
                 raw = json.loads(line)
-                if raw.get("box"):
-                    raw["box"] = tuple(raw["box"])
+                for k in ("box", "span"):
+                    if raw.get(k):
+                        raw[k] = tuple(raw[k])
                 c = Correction(**raw)
                 self.by_key[c.key] = c
 
@@ -89,12 +94,51 @@ class Corrections:
             datetime.now(UTC).isoformat(timespec="seconds"),
             flag.box,
             turn,
+            flag.span,
+            flag.joined,
         )
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.path.open("a") as f:
             f.write(json.dumps(asdict(c), ensure_ascii=False) + "\n")
         self.by_key[c.key] = c
         return c
+
+    def for_flag(self, flag: Flag) -> Correction | None:
+        """The answer to a question: its own, or for a place in a line, an earlier answer
+        that retyped that whole line."""
+        if (c := self.by_key.get(flag.key)) is not None or flag.span is None:
+            return c
+        return next(
+            (
+                c
+                for c in self.by_key.values()
+                if c.span is None
+                and c.page == flag.page
+                and c.first <= flag.first <= c.last
+                and flag.text in c.original.split("\n")
+            ),
+            None,
+        )
+
+
+def place(c: Correction) -> str | None:
+    """What an answer about one place says is printed there, or None if the human
+    changed the line outside it (then the whole line is taken)."""
+    start, end = c.span
+    before, after = c.original[:start], c.original[end:]
+    text = c.text if c.text is not None else c.original
+    if not (text.startswith(before) and text.endswith(after)):
+        return None
+    if len(text) < len(before + after):
+        return None
+    found = text[len(before) : len(text) - len(after)]
+    if c.joined and c.text is not None:
+        # Read across the break: joined, the break hyphen is printed; apart, it isn't.
+        if not found.endswith(c.joined):
+            return None
+        stem = found[: -len(c.joined)]
+        return stem.rstrip() if stem.endswith(" ") else stem + "-"
+    return found
 
 
 def lines_beside(page: PageText, box: tuple[float, float, float, float]) -> list[int]:
@@ -160,11 +204,18 @@ def _located(page: PageText, c: Correction) -> Correction | None:
 
 
 def apply(
-    pages: list[PageText], roles: dict[SourceRef, LineRole], corrections: Corrections
+    pages: list[PageText],
+    roles: dict[SourceRef, LineRole],
+    corrections: Corrections,
+    fixes: list = (),
 ) -> tuple[list[PageText], dict[SourceRef, LineRole], int]:
     """Copies of the pages and roles with the answers applied, and how many applied.
 
-    The copies' roles are keyed on line positions in the copied pages.
+    `fixes` are the OCR check's suspects; those it settled (choice "other") change
+    their place in the line too, alongside a human's answers about other places in
+    it: each is a span of the line as the text layer reads it. A human's answer wins
+    where they overlap, and a line the human retyped whole takes no fixes. The
+    copies' roles are keyed on line positions in the copied pages.
     """
     pages = [
         replace(p, lines=[replace(ln, source=i) for i, ln in enumerate(p.lines)]) for p in pages
@@ -174,6 +225,9 @@ def apply(
     applied = 0
     insertions = []
     initials = []
+    # Per line: (start, end, text) spans of the text layer's line to replace.
+    places: dict[tuple[int, int], list[tuple[int, int, str]]] = {}
+    retyped: set[tuple[int, int]] = set()
     for c in corrections.by_key.values():
         page = by_number.get(c.page)
         if page is None:
@@ -192,6 +246,11 @@ def apply(
         lines = page.lines[c.first : c.last + 1]
         if "\n".join(ln.text for ln in lines) != c.original:
             continue
+        if c.span is not None and c.action == "text" and place(c) is not None:
+            places.setdefault((page.number, c.first), []).append((*c.span, place(c)))
+            applied += 1
+            continue
+        retyped.update((page.number, i) for i in range(c.first, c.last + 1))
         for i in range(c.first, c.last + 1):
             roles[SourceRef(c.page, i)] = _ROLE[c.action]
         if c.text is not None and c.action in ("text", "heading"):
@@ -202,6 +261,22 @@ def apply(
             for i in range(c.first + 1, c.last + 1):
                 roles[SourceRef(c.page, i)] = _ROLE["drop"]
         applied += 1
+    for s in fixes:
+        page = by_number.get(s.page)
+        if s.choice != "other" or page is None or (s.page, s.line) in retyped:
+            continue
+        if s.line >= len(page.lines) or page.lines[s.line].text != s.original:
+            continue
+        human = places.get((s.page, s.line), [])
+        if not any(a < s.end and s.start < b for a, b, _ in human):
+            places.setdefault((s.page, s.line), []).append((s.start, s.end, s.chosen))
+    # Places in one line, right to left, so each leaves the spans before it in place.
+    for (number, i), found in places.items():
+        line = by_number[number].lines[i]
+        text = line.text
+        for start, end, new in sorted(found, key=lambda f: -f[0]):
+            text = text[:start] + new + text[end:]
+        by_number[number].lines[i] = replace(line, text=text)
     for page, c in initials:
         _set_initial(page, c)
     # Bottom up, so each insertion leaves the indices above it alone.

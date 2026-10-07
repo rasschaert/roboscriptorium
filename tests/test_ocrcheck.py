@@ -70,7 +70,8 @@ def test_doubted_lines_are_flagged_with_their_other_reading():
         {"text": "he was so tired up if they come", "votes": ["clef:27b"]},
         {"text": "he was so tired up—if they come", "votes": ["winnow:e4b"]},
     ]
-    assert ocrcheck.doubts([_suspect("other")]) == {}
+    assert found[0].span == (16, 21)
+    assert ocrcheck.doubts([_suspect("other")]) == []
 
 
 def test_a_line_reading_stops_at_the_restart_and_spells_em_dashes(monkeypatch):
@@ -245,3 +246,69 @@ def test_the_word_list_votes_but_decides_nothing(monkeypatch):
     assert votes == {"clef": "lemand", "winnow": "Iemand", "word list": "Iemand"}
     assert confidence == {"clef": 0.9, "winnow": 0.9}
     assert decide("a", "a", 1)[0][:2] == decide("a", "a", None)[0][:2] == ("ours", None)
+
+
+def test_each_doubted_place_is_its_own_question_and_answers_combine(tmp_path):
+    from roboscriptorium.corrections import Corrections, apply
+
+    line = "zag ik uit, rondhangt, en dan"
+    page = PageText(9, 300, 400, [Line(line, 10, 10, 200, 20)])
+
+    def doubt(start, end, other, chosen=None):
+        choice = "other" if chosen else "review"
+        return Suspect(9, 0, line, start, end, line[start:end], (other,), (start, 0, end, 1),
+                       choice, chosen, {"clef": line[start:end], "winnow": other})  # fmt: skip
+
+    first, second = doubt(7, 11, "uit,’"), doubt(12, 22, "rondhangt,’")
+    fixed = doubt(26, 29, "dan.", chosen="dan.")
+    found = flags.find([page], {}, None, ocrcheck.doubts([first, second, fixed]))
+    assert [(f.span, f.box[0]) for f in found] == [((7, 11), 7), ((12, 22), 12)]
+    assert len({f.key for f in found}) == 2
+
+    answers = Corrections(tmp_path / "regions.jsonl")
+    for f in found:
+        answers.record(f, "text", f.readings[1]["text"])
+    out, _, applied = apply([page], {}, Corrections(tmp_path / "regions.jsonl"), [fixed])
+    # Both answers and the machine's fix elsewhere in the line, none lost.
+    assert out[0].lines[0].text == "zag ik uit,’ rondhangt,’ en dan."
+    assert applied == 2
+    assert page.lines[0].text == line
+
+
+def test_a_line_retyped_whole_takes_no_fixes_and_answers_its_places(tmp_path):
+    from roboscriptorium.corrections import Corrections, apply
+
+    page = _page()
+    whole = flags.Flag(flags.region_key(7, page.lines[0].text), 7, 0, 0, page.lines[0].text,
+                       "text", ["centred"])  # fmt: skip
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(whole, "text", "he was so tired, up—if they come")
+    out, _, _ = apply([page], {}, answers, [_suspect("other")])
+    assert out[0].lines[0].text == "he was so tired, up—if they come"
+    (slot,) = flags.find([page], {}, None, ocrcheck.doubts([_suspect("review")]))
+    assert answers.for_flag(slot) is answers.by_key[whole.key]
+
+
+def test_a_break_hyphen_is_asked_as_the_word_across_the_break(tmp_path):
+    from roboscriptorium.corrections import Corrections, apply
+
+    line, after = "en daar was ik dank", "baar voor, zei ze"
+    assert ocrcheck.hyphen_only(line, len(line), ["dank", "dank-"], after) == "baar"
+    # Not at the line's end, or differing in more than the hyphen: no.
+    assert ocrcheck.hyphen_only(line, 14, ["ik", "ik-"], after) == ""
+    assert ocrcheck.hyphen_only(line, len(line), ["dank", "danks-"], after) == ""
+    assert ocrcheck.across("dank-", "baar") == "dankbaar"
+    assert ocrcheck.across("dank", "baar") == "dank baar"
+
+    page = PageText(9, 300, 400, [Line(line, 10, 10, 200, 20), Line(after, 10, 30, 200, 40)])
+    s = Suspect(9, 0, line, 15, 19, "dank", ("dank-",), (150, 10, 200, 20), "review", None,
+                {"clef": "dank", "winnow": "dank-"}, joined="baar")  # fmt: skip
+    (question,) = flags.find([page], {}, None, ocrcheck.doubts([s]))
+    assert [r["text"] for r in question.readings] == [
+        "en daar was ik dank baar",
+        "en daar was ik dankbaar",
+    ]
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(question, "text", "en daar was ik dankbaar")
+    out, _, _ = apply([page], {}, answers)
+    assert [ln.text for ln in out[0].lines] == ["en daar was ik dank-", after]

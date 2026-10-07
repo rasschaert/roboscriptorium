@@ -132,7 +132,7 @@ def run(
                 )
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
         corrected, roles, applied = corrections.apply(
-            body, model_roles, Corrections(book.corrections_path)
+            body, model_roles, Corrections(book.corrections_path), suspects
         )
 
     unanswered = reflow(ocrcheck.apply(body, suspects), model_roles)
@@ -141,9 +141,10 @@ def run(
         for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
         for ref in place.sources
     }
-    text = ocrcheck.apply(corrected, suspects)
     blocks = italics.mark(
-        reflow(text, roles), body, italics.detect(book.source, body, book.stages / "italics.json")
+        reflow(corrected, roles),
+        body,
+        italics.detect(book.source, body, book.stages / "italics.json"),
     )
     if (style := dash_style(book, body)) is not None:
         blocks = typography.apply(blocks, style)
