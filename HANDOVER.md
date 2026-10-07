@@ -72,7 +72,7 @@ What changed today, in the order it matters:
 6. Settle verdicts on Reis and the CPNB books (`golden review`), so small gains
    there can be told from edition noise.
 
-## From an outside review (Gemini, `review.md`, 2026-10-07)
+## From an outside review (Gemini, 2026-10-07)
 
 Another model reviewed the repo. Checked against the code, four of its bugs were
 real and are fixed, each with a test: `disagreements.patch` skipped a verdict

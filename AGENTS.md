@@ -1173,7 +1173,7 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   (glm-ocr 87). Its misreadings are plausible words (`doodgaan→doorgaan`,
   `ontspanden→ontspannen`, `wachtte→wartete`), which a word list can't catch:
   a third reading for the judges, not a replacement. ~1 s per line under load.
-- 2026-10-07: Four bugs from an outside review (Gemini, `review.md`), each
+- 2026-10-07: Four bugs from an outside review (Gemini), each
   reproduced, fixed and tested. `disagreements.patch` finds every verdict in the
   unpatched reference before applying any (a verdict within another's six-word
   context was silently skipped). `ocrcheck.apply` keys fixes on the line's
