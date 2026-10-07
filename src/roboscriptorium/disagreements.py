@@ -220,39 +220,46 @@ def _find_sequence(words: list[str], seq: list[str]) -> int | None:
     return None
 
 
+def _printed(para: str) -> list[tuple[str, str]]:
+    """The paragraph's words, normalised and as printed."""
+    words, printed = normalise(para).split(), para.split()
+    return list(zip(words, printed if len(printed) == len(words) else words, strict=True))
+
+
 def patch(reference: list[Chapter], verdicts: Verdicts) -> tuple[list[Chapter], int]:
     """The reference with each verdict's truth put in where the scan differs from it.
 
     Returns the patched chapters and how many verdicts were applied.
     """
-    # (chapter, paragraph, word, italic) for every reference word, in order.
+    # (chapter, paragraph, word, italic, printed) for every reference word, in order:
+    # verdicts match on the normalised word, the chapters keep the word as printed.
     flat = [
-        (c, p, w, k in (ch.italic[p] if p < len(ch.italic) else ()))
+        (c, p, w, k in (ch.italic[p] if p < len(ch.italic) else ()), printed)
         for c, ch in enumerate(reference)
         for p, para in enumerate(ch.paragraphs)
-        for k, w in enumerate(normalise(para).split())
+        for k, (w, printed) in enumerate(_printed(para))
     ]
     applied = 0
     for v in verdicts.by_key.values():
         if v.truth is None or v.truth == v.want:
             continue
         before, want, after = v.before.split(), v.want.split(), v.after.split()
-        at = _find_sequence([w for _, _, w, _ in flat], before + want + after)
+        at = _find_sequence([w for _, _, w, _, _ in flat], before + want + after)
         if at is None:
             continue
         start = at + len(before)
-        c, p, _, italic = (
-            (flat[start] if want else flat[max(0, start - 1)]) if flat else (0, 0, "", False)
+        c, p, _, italic, _ = (
+            (flat[start] if want else flat[max(0, start - 1)]) if flat else (0, 0, "", False, "")
         )
-        flat[start : start + len(want)] = [(c, p, w, italic) for w in v.truth.split()]
+        flat[start : start + len(want)] = [(c, p, w, italic, w) for w in v.truth.split()]
         applied += 1
 
     chapters = []
     for c, ch in enumerate(reference):
         paragraphs: dict[int, list[tuple[str, bool]]] = {}
-        for cc, p, w, italic in flat:
+        for cc, p, _, italic, printed in flat:
             if cc == c:
-                paragraphs.setdefault(p, []).append((w, italic))
+                paragraphs.setdefault(p, []).append((printed, italic))
         words = [ws for _, ws in sorted(paragraphs.items())]
         chapters.append(
             Chapter(

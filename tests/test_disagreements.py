@@ -38,3 +38,13 @@ def test_patch_keeps_italic_words(tmp_path):
     verdicts.record(d, "every thing:", "edition")
     patched, _ = patch(reference, verdicts)
     assert patched[0].italic == [frozenset({4, 5, 7})]
+
+
+def test_patch_keeps_the_printed_glyphs(tmp_path):
+    reference = [Chapter("I", ["‘Wacht…’ zei ze. ‘Ik kom.’"])]
+    verdicts = Verdicts(tmp_path / "v.jsonl")
+    d = Disagreement("k", "kom.'", "kom.'", "'Wacht...' zei ze. 'Ik", "", 7, (1, 1))
+    verdicts.record(d, "kwam.'", "edition")
+    patched, applied = patch(reference, verdicts)
+    assert applied == 1
+    assert patched[0].paragraphs == ["‘Wacht…’ zei ze. ‘Ik kwam.'"]

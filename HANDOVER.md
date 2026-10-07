@@ -133,7 +133,10 @@ better calibration, or add another OCR library on its own.
    classifier (gradient-boosted trees) on geometry, type size (`typestyle.py`),
    cap height, capitals, letterspacing, repetition and page-sequence features;
    score it leaving one book out at a time. Aim: replace the `roles.py`
-   overrides. Later: fine-tune glm-ocr (MLX) or a tesseract/Kraken line model
+   overrides. Once it beats the current roles held out, **delete** the style
+   vote (`roles._heading_styles`) and every override it covers (`sunk-numeral`,
+   `sunk-opening`, `section-number`, `subtitle`, …); keep `typestyle.py` as
+   features. Labels: `golden/align.py` (done). Later: fine-tune glm-ocr (MLX) or a tesseract/Kraken line model
    on aligned crops plus synthetic pages rendered from the EPUBs.
 6. **Page image first, sooner.** Full-page document models (dots.ocr, olmOCR,
    MinerU, PaddleOCR-VL, Docling) see layout, heading size and italics; add

@@ -896,3 +896,12 @@ disagreements by mistake category.
   / 1.30 / 1.74. Only 28 of Goede dochter's 116 OCR-doubt questions sit on a
   remaining error. Comparisons now fold `…` to `...` (the print can't tell
   them apart): 11 of Goede dochter's 34 disagreements were only that.
+- 2026-10-07: Golden lines labelled by alignment (`golden/align.py`): each
+  text-layer line's reference words (as printed, line-end breaks kept) and role.
+  `disagreements.patch` now keeps the reference's printed glyphs (it returned
+  normalised words, straightening every quote). First per-line bench on modern
+  Dutch, Goede dochter pp. 9–64, 1,622 body lines, typesetting folded
+  (`experiments/bench_line_readings.py`): text layer CER 0.21% (1,459 lines
+  exact), glm-ocr 0.25% (1,154; drops quotes and sometimes whole words),
+  tesseract 0.29% (1,403). glm-ocr's lead on the 1909 Teirlinck bench doesn't
+  hold here; the readings' errors differ, which is what combining them needs.
