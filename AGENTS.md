@@ -344,6 +344,7 @@ for example OCR-specialised vision models, or `winnow` for decisions.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).
 - epubcheck (Homebrew).
+- scikit-learn (Python dep) for the line-role classifier probe.
 - Dependency group `layout` (a default group, so plain `uv run` has it): `doclayout-yolo` with
   PyTorch, and the DocLayout-YOLO DocStructBench weights
   (`juliozhao/DocLayout-YOLO-DocStructBench`, `doclayout_yolo_docstructbench_imgsz1024.pt`,
@@ -451,6 +452,8 @@ disagreements by mistake category.
 | vals-alarm | `ia-scan` | Dutch, 2011, Boersma (Verbum Crime). IA scan of the 2nd printing of the first edition, reference the retail EPUB. **Tune on it**: 48 chapter headings ("Vandaag", "1 Later", "2", "Epiloog") at the top of a new page. Pages 11–302. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | villa-toscane | `calibre-pdf` | **Held out**, born-digital. Dutch, 2014, Van Rijn; calibre's PDF of the retail EPUB, like De aanslag. Novel = chapters 1–12 (13 is the colophon). **Copyrighted**, all text in `work/golden/` |
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
+| de-eerlijke-vinder | `ia-scan` | Dutch, Spit, CPNB Boekenweekgeschenk 2023; IA Scribe scan in **Stella's format** (360 ppi MRC, GlyphLessFont layer, 104 pages); reference CPNB's own EPUB of the edition (via calibre). Pages 12–95, 4 parts ("I"–"IV", the first a drawn numeral the layer lacks). Design Frank August. In the leave-one-book-out set. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| monterosso-mon-amour | `ia-scan` | Dutch, Pfeijffer, CPNB Boekenweekgeschenk 2022; IA Scribe scan like Stella's; reference CPNB's EPUB, made after the first printing. Pages 9–96, 22 numbered chapters (the layer lacks the small "1"…). Typography Nico Richter: the same CPNB grid as De eerlijke vinder (13.2 pt pitch, ~57 characters a line) but another, lighter typeface. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
 | het-ivoren-aapje (probe only) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py` |
 
@@ -905,3 +908,20 @@ disagreements by mistake category.
   exact), glm-ocr 0.25% (1,154; drops quotes and sometimes whole words),
   tesseract 0.29% (1,403). glm-ocr's lead on the 1909 Teirlinck bench doesn't
   hold here; the readings' errors differ, which is what combining them needs.
+
+- 2026-10-07: Two CPNB Boekenweekgeschenken from the user, the closest match to
+  Stella among the golden books (IA Scribe scans, 360 ppi MRC, GlyphLessFont,
+  104 pages), each with CPNB's EPUB of the same edition: *De eerlijke vinder*
+  (2023) and *Monterosso mon amour* (2022). Different typesetting: one CPNB
+  grid (13.2–13.3 pt pitch, 245–252 pt measure) but different designers (Frank
+  August; Nico Richter) and typefaces (stroke/height 0.174 against 0.149).
+  Text layer alone: De eerlijke vinder CER 0.37%, paragraph F1 0.953, headings
+  0/4; Monterosso CER 0.31%, F1 0.868, headings 0/22. Both join the
+  leave-one-book-out set.
+- 2026-10-07: Line-role classifier probe (`experiments/train_line_roles.py`):
+  gradient-boosted trees on line geometry, type, text shape, repetition, sunk
+  pages, printed page numbers and clef's answer, labelled by `golden.align`,
+  scored leaving one book out over nine books: 153 line-role errors against
+  182 for `roles.py`; Villa Toscane headings 0/12 → 12/12, De tuin 1 → 0
+  errors; Grand Hotel Europa 34 against 33. Without clef's answer as a feature,
+  349.

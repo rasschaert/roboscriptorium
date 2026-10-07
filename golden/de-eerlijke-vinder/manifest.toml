@@ -1,0 +1,31 @@
+title = "De eerlijke vinder"
+author = "Lize Spit"
+language = "nl"
+# Spit is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# CPNB's EPUB of the Boekenweekgeschenk 2023 (e-book ISBN 978 90 5965 719 9),
+# passed through calibre. Parts are `h1` "I"–"IV" (each in its own file before
+# its text); italics are `<i>` and the "italic" and "smallcaps-italic" classes.
+# The author's note, thanks and advertising after the novella are left out.
+[reference]
+source = "De eerlijke vinder, Stichting CPNB 2023, ISBN 9789059657199 (EPUB, via calibre)"
+sha256 = "89bcb1c1df8b29f5708f6521066890b59bd5b112b5baefbf4662214f28eb4ec8"
+files = [
+  "OEBPS/Text/640c89c3258fd6.xhtml", "OEBPS/Text/640c89c3258fd7.xhtml",
+  "OEBPS/Text/640c89c3258fd8.xhtml", "OEBPS/Text/640c89c3258fd9.xhtml",
+  "OEBPS/Text/640c89c3258fd10.xhtml", "OEBPS/Text/640c89c3258fd11.xhtml",
+  "OEBPS/Text/640c89c3258fd12.xhtml", "OEBPS/Text/640c89c3258fd13.xhtml",
+]
+italic_classes = ["italic", "smallcaps-italic"]
+
+# The print edition (ISBN 978 90 5965 732 8; design Frank August, printed by
+# GGP Media). Internet Archive lends it only, so it is placed by hand. Pages
+# 12–95: part I's title page (a drawn numeral the text layer lacks) to the end
+# of the novella.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org (Boekenweekgeschenk 2023; borrow, then download the PDF)"
+sha256 = "26ca91cffc21e495ad624c43f2964c0c24d77fb13a983c5a6bdd652f950b84b1"
+cover_page = 1
+body_pages = [12, 95]

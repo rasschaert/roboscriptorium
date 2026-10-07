@@ -39,6 +39,8 @@ SPECS = [
     "work/villa-toscane--calibre-pdf::1-12",
     "work/grand-hotel-europa--ia-scan:15-44:1-16",
     "work/de-tuin-van-de-avondnevel--ia-scan:11-52:1-3",
+    "work/de-eerlijke-vinder--ia-scan",
+    "work/monterosso-mon-amour--ia-scan",
 ]
 # Scored like the others, but their errors aren't printed: they stay unseen.
 HELD_OUT = {"lady-into-fox", "villa-toscane", "grand-hotel-europa", "de-tuin-van-de-avondnevel"}

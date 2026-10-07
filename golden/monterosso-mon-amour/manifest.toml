@@ -1,0 +1,34 @@
+title = "Monterosso mon amour"
+author = "Ilja Leonard Pfeijffer"
+language = "nl"
+# Pfeijffer is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# CPNB's EPUB of the Boekenweekgeschenk 2022 (ISBN 978 90 5965 884 4, made by
+# Formaat "after the first printing, 2022"). Chapters are `h1` "1"–"22";
+# italics are the "fft-cursief" class. Front and back matter (bibliography,
+# about the author, NS advertising) are left out.
+[reference]
+source = "Monterosso mon amour, Stichting CPNB 2022, ISBN 9789059658844 (EPUB)"
+sha256 = "4c1f26367ae5699687a17d3d61f52927f05f6c320edfe3cbd7caf05d5d15676a"
+files = [
+  "Text/hoofdstuk 01.xhtml", "Text/hoofdstuk 02.xhtml", "Text/hoofdstuk 03.xhtml",
+  "Text/hoofdstuk 04.xhtml", "Text/hoofdstuk 05.xhtml", "Text/hoofdstuk 06.xhtml",
+  "Text/hoofdstuk 07.xhtml", "Text/hoofdstuk 08.xhtml", "Text/hoofdstuk 09.xhtml",
+  "Text/hoofdstuk 10.xhtml", "Text/hoofdstuk 11.xhtml", "Text/hoofdstuk 12.xhtml",
+  "Text/hoofdstuk 13.xhtml", "Text/hoofdstuk 14.xhtml", "Text/hoofdstuk 15.xhtml",
+  "Text/hoofdstuk 16.xhtml", "Text/hoofdstuk 17.xhtml", "Text/hoofdstuk 18.xhtml",
+  "Text/hoofdstuk 19.xhtml", "Text/hoofdstuk 20.xhtml", "Text/hoofdstuk 21.xhtml",
+  "Text/hoofdstuk 22.xhtml",
+]
+italic_classes = ["fft-cursief"]
+
+# The first printing (print ISBN 978 90 5965 878 3; typography Nico Richter,
+# printed by GGP Media). Internet Archive lends it only, so it is placed by
+# hand. Pages 9–96: chapter 1 to the end of the novella.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/monterossomonamo0000pfei (borrow, then download the PDF)"
+sha256 = "acf30bcf3abd12c3978f118a0cb66f5d3894bd743ab3ba7f61c4fbb546189b8d"
+cover_page = 1
+body_pages = [9, 96]
