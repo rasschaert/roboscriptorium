@@ -1044,3 +1044,16 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   stand-in, was mostly footnote noise: CER 0.50% → 0.12%, wrong words 1.65 →
   0.73/page, left unasked 1.17 → 0.25/page (at 1.67 questions/page). What it
   leaves unasked now: punctuation 19, quotes 18, letters 12.
+- 2026-10-07: Learned trust for the OCR check, probed
+  (`experiments/ocr_trust_data.py`, `train_ocr_trust.py`). Each suspect's
+  versions labelled from `golden.align`'s printed truth (quote style, dash
+  kind, ellipses and spaced quotes folded); features: each judge's pick and
+  confidence (now on `Suspect.confidence`), which second readings support the
+  version, the word list, the kind of difference. Leaving one book out, at the
+  rule's own number of questions, silent errors: rule 57 → logistic 31 →
+  shallow trees 15 over seven books (held out: De tuin 15 → 4, Grand Hotel
+  Europa 1 → 0); with one more training book left out the trees stay at or
+  under the rule (Dolittle 4–11 against 14). A 99%-precision threshold alone
+  asks too much (logistic never reaches it); rank by uncertainty to a budget
+  instead. Lady into Fox's labels are noisy (rule 70 silent of 149; Gutenberg
+  differs from the print in typography), so its score says little.

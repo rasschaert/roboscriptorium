@@ -78,6 +78,8 @@ class Suspect:
     chosen: str | None = None
     # Each model's pick: a version of the span (`ours` or one of `others`), or "".
     votes: dict[str, str] = field(default_factory=dict)
+    # Each model's confidence in its pick.
+    confidence: dict[str, float] = field(default_factory=dict)
 
     @property
     def alternatives(self) -> list[str]:
@@ -360,7 +362,7 @@ def check(
                         page.lines[k + 1].text if k + 1 < len(page.lines) else "",
                     )
                     continues = a0 == 0 and k > 0 and page.lines[k - 1].text.endswith(HYPHENS)
-                    choice, chosen, votes = _decide(
+                    (choice, chosen, votes), confidence = _decide(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache, around,
                         lexicon.vouches([ours[a0:a1], *alternatives], continues)
@@ -379,6 +381,7 @@ def check(
                             choice,
                             chosen,
                             votes,
+                            confidence,
                         )  # fmt: skip
                     )
     return suspects
@@ -462,8 +465,9 @@ def _combined(ours: str, versions: list[str]) -> str | None:
 def _decide(
     pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache, around=("", ""),
     vouched: int | None = None,
-) -> tuple[str, str | None, dict[str, str]]:  # fmt: skip
-    """\"ours\", \"other\" with the chosen version, or \"review\"; and each model's pick.
+) -> tuple[tuple[str, str | None, dict[str, str]], dict[str, float]]:  # fmt: skip
+    """\"ours\", \"other\" with the chosen version, or \"review\", with each model's pick;
+    and each model's confidence in it.
 
     The text model also reads the lines `around` this one (before, after), where a
     quote opens or a sentence goes on.
@@ -521,8 +525,14 @@ def _decide(
     )
     pick = lambda value: versions[letters.index(value)] if value in letters else ""  # noqa: E731
     votes = {vision.model: pick(seen["value"]), reader.model: pick(read["value"])}
+    confidence = {vision.model: seen["confidence"], reader.model: read["confidence"]}
     if vouched is not None:
         votes["word list"] = versions[vouched]
+    return _choose(versions, letters, seen, read, votes), confidence
+
+
+def _choose(versions, letters, seen, read, votes) -> tuple[str, str | None, dict[str, str]]:
+    """The fixed rule: both models agreeing, or the vision model alone on typography."""
     if _typographic(versions) and seen["value"] in letters and seen["confidence"] >= SURE_ALONE:
         if seen["value"] == "a":
             return "ours", None, votes

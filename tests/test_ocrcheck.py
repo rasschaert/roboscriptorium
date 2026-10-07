@@ -231,9 +231,8 @@ def test_the_word_list_votes_but_decides_nothing(monkeypatch):
             vouched=vouched,
         )  # fmt: skip
 
-    assert decide("a", "b", 1) == (
-        "review",
-        None,
-        {"clef": "lemand", "winnow": "Iemand", "word list": "Iemand"},
-    )
-    assert decide("a", "a", 1)[:2] == decide("a", "a", None)[:2] == ("ours", None)
+    (choice, chosen, votes), confidence = decide("a", "b", 1)
+    assert (choice, chosen) == ("review", None)
+    assert votes == {"clef": "lemand", "winnow": "Iemand", "word list": "Iemand"}
+    assert confidence == {"clef": 0.9, "winnow": 0.9}
+    assert decide("a", "a", 1)[0][:2] == decide("a", "a", None)[0][:2] == ("ours", None)
