@@ -935,5 +935,6 @@ disagreements by mistake category.
 - 2026-10-07: Stella through the whole pipeline for the first time: 67 pages,
   44 OCR fixes applied (`vijfjaar`, `scenes`, `knieén`, `Italié`, the stray
   `»`, `viekken` all fixed; `besef een` → `besefeen` wrong), 73 OCR suspects
-  for review, 1.06 review questions per page. The OCR check sometimes glues two
-  words (`besefeen` here, `zeize` and `naaije` on Goede dochter).
+  for review, 1.06 review questions per page. Of the OCR check's changes to
+  word spacing on Stella and Goede dochter, all are right but `besefeen`;
+  Goede dochter's `naaije` and `zeize` are the layer's own, left unfixed.
