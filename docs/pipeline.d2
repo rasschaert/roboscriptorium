@@ -1,0 +1,195 @@
+# From PDF to EPUB: the stages, in the order `pipeline.run` runs them, and the
+# model (or plain code, or a person) each one uses.
+# Render: d2 docs/pipeline.d2 docs/pipeline.svg
+
+direction: down
+
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 0
+    pad: 30
+  }
+}
+
+classes: {
+  stage: {
+    shape: rectangle
+    style: {fill: "#ffffff"; stroke: "#3b4252"; border-radius: 6; font-size: 15}
+  }
+  row: {
+    label: ""
+    grid-rows: 1
+    horizontal-gap: 30
+    style: {fill: transparent; stroke: transparent}
+  }
+  code: {
+    shape: hexagon
+    style: {fill: "#eceff4"; stroke: "#4c566a"; font-size: 13}
+  }
+  ollama: {
+    shape: oval
+    style: {fill: "#fde8d0"; stroke: "#c2671b"; font-size: 13}
+  }
+  ollaya: {
+    shape: oval
+    style: {fill: "#dbe9f7"; stroke: "#2e6db4"; font-size: 13}
+  }
+  vision: {
+    shape: oval
+    style: {fill: "#e3f2dc"; stroke: "#3f7f2f"; font-size: 13}
+  }
+  human: {
+    shape: person
+    style: {fill: "#f6e3f0"; stroke: "#9b3d7f"; font-size: 13}
+  }
+  candidate: {
+    shape: oval
+    style: {fill: "#ffffff"; stroke: "#c2671b"; stroke-dash: 4; font-size: 13}
+  }
+  file: {
+    shape: document
+    style: {fill: "#fff8db"; stroke: "#8a6d00"; font-size: 15; bold: true}
+  }
+  uses: {style: {stroke: "#9a9a9a"; stroke-dash: 3; font-size: 12}}
+  group: {
+    grid-columns: 1
+    vertical-gap: 70
+    style: {fill: "#f7f9fc"; stroke: "#7b8aa6"; font-size: 20; bold: true}
+  }
+}
+
+pdf: source.pdf\n(scan or born-digital) {class: file}
+
+read: 1 · Read the page {
+  class: group
+  s: {
+    class: row
+    layer: Text layer\nvisual lines with boxes {class: stage}
+    regions: Layout regions\nfigures, captions, titles {class: stage}
+    missing: Missing lines\nprinted lines the layer lacks {class: stage}
+    type: Type style\nsize, weight, capitals {class: stage}
+    layer -> regions -> missing -> type
+  }
+  m: {
+    class: row
+    mupdf: PyMuPDF {class: code}
+    yolo: DocLayout-YOLO {class: vision}
+    glm: glm-ocr:bf16 {class: ollama}
+    ink: ink on the page image {class: code}
+  }
+  s.layer -> m.mupdf {class: uses}
+  s.regions -> m.yolo {class: uses}
+  s.missing -> m.glm: reads the region {class: uses}
+  s.type -> m.ink {class: uses}
+}
+
+understand: 2 · Understand the page {
+  class: group
+  s: {
+    class: row
+    roles: Line roles\nbody, heading, page number,\nrunning head, artefact {class: stage}
+  }
+  m: {
+    class: row
+    flash: clef-flash:9b {class: ollaya}
+    rules: layout rules +\nstyle-group vote {class: code}
+    tree: line-role classifier\n(gradient-boosted trees) {class: candidate}
+  }
+  s.roles -> m.flash: doubtful lines {class: uses}
+  s.roles -> m.rules {class: uses}
+  s.roles -> m.tree {class: uses}
+}
+
+check: 3 · Check the OCR (scans only) {
+  class: group
+  s: {
+    class: row
+    horizontal-gap: 160
+    second: Second readings\nof each body line's crop {class: stage}
+    judge: Judges\nwhere the readings differ {class: stage}
+    trust: Learned trust\nfix, keep, or ask {class: stage}
+    second -> judge -> trust
+  }
+  m: {
+    class: row
+    glm: glm-ocr:bf16 {class: ollama}
+    tess: tesseract (nld) {class: code}
+    qwen: qwen3.8:27b\nbest line reading {class: candidate}
+    clef: "clef:27b\npicks from the crop" {class: ollaya}
+    winnow: "winnow:e4b\npicks from the sentence" {class: ollaya}
+    words: word list\n(tesseract's dictionary) {class: code}
+    gbt: gradient-boosted trees {class: code}
+  }
+  s.second -> m.glm {class: uses}
+  s.second -> m.tess {class: uses}
+  s.second -> m.qwen {class: uses}
+  s.judge -> m.clef {class: uses}
+  s.judge -> m.winnow {class: uses}
+  s.judge -> m.words: a vote {class: uses}
+  s.trust -> m.gbt {class: uses}
+}
+
+review: 4 · Review {
+  class: group
+  s: {
+    class: row
+    flags: Questions\nOCR doubts per place, headings,\nfigures, unpaired quotes {class: stage}
+    page: Review page\nthe scan crop beside each question {class: stage}
+    answers: Answers\nregions.jsonl {class: stage}
+    flags -> page -> answers
+  }
+  m: {
+    class: row
+    you: you {class: human}
+    proof: qwen3.8 proofreads\nthe answers {class: candidate}
+  }
+  s.page -> m.you: a key per answer {class: uses}
+  s.answers -> m.proof {class: uses}
+}
+
+build: 5 · Assemble the book {
+  class: group
+  s: {
+    class: row
+    reflow: Reflow\nparagraphs, line-end hyphens {class: stage}
+    italics: Italics {class: stage}
+    dash: Typography\none dash style per book {class: stage}
+    figures: Figures\npictures, captions, drop caps {class: stage}
+    reflow -> italics -> dash -> figures
+  }
+  m: {
+    class: row
+    spell: the book's own spellings {class: code}
+    slant: stroke slant per word {class: code}
+    gap: dash length and gaps,\nor book.toml {class: code}
+    init: clef-flash:9b\nguesses drawn initials {class: ollaya}
+  }
+  s.reflow -> m.spell {class: uses}
+  s.italics -> m.slant {class: uses}
+  s.dash -> m.gap {class: uses}
+  s.figures -> m.init {class: uses}
+}
+
+epub: book.epub\nEPUB 3, checked by epubcheck {class: file}
+
+pdf -> read
+read -> understand: lines
+understand -> check: lines with roles
+check -> review: undecided places
+review -> build: answers, on the next build
+check -> build: fixes applied {style.stroke-dash: 0}
+build -> epub
+
+legend: Who does the work {
+  class: group
+  grid-columns: 6
+  horizontal-gap: 30
+  v: vision model\n(not an LLM) {class: vision}
+  g: generative model\n(Ollama) {class: ollama}
+  d: decision model\n(Ollaya, systemone) {class: ollaya}
+  c: plain code {class: code}
+  h: a person {class: human}
+  p: candidate,\nnot wired in yet {class: candidate}
+}
+epub -> legend {style.opacity: 0}

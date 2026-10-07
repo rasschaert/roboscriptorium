@@ -147,6 +147,9 @@ right, then expand.
     that starts above it; JPEG at 300 dpi, at most 1600 px.
   - `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib).
   - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`.
+  - `docs/pipeline.d2`: the README's diagram of the stages and the model behind
+    each (`d2 docs/pipeline.d2 docs/pipeline.svg`). Update it when a stage or a
+    model's job changes.
   - `experiments/`: throwaway probes for comparing models (line roles, page types).
   - `golden/`: golden books. `manifest.py` (scans, fetch with sha256 check),
     `gutenberg.py` (derives the reference text from a Project Gutenberg EPUB),
