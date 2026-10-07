@@ -704,4 +704,6 @@ disagreements by mistake category.
   hyphens, which the judge then applied ("live on-" + "even" → "oneven").
   Joining two words is no longer a punctuation-only difference the vision judge
   decides alone, and a `¬` line-end hyphen equals `-`. Crime: suspects 928 →
-  236, for review 453 → 54, CER 0.53% → 0.52%.
+  236, for review 453 → 54, CER 0.53% → 0.52%. Dolittle: CER 1.89% → 1.84%,
+  WER 1.92% → 1.81%, applied fixes the reference contradicts 24 → 3, for review
+  100 → 107.
