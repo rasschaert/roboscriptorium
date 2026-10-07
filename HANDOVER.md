@@ -30,6 +30,12 @@ Everything is committed on `main`. New today:
 - Publisher manifests can list `italic_classes`, `roman_classes` and
   `blank_classes`.
 - `experiments/probe_big_diffs.py` lists the largest differing stretches.
+- **Missing lines** (`missing.py`, commit 77625ab, *not yet measured on the
+  golden books*): layout regions about one line tall with no text-layer line
+  in them are read by glm-ocr and added before the line roles. Vals alarm's
+  layer drops its single-digit chapter numbers (7 of 48 headings); the probe
+  (`experiments/probe_missing_lines.py`) read all 15 Vals alarm candidates
+  right and invented nothing on Dolittle's 73.
 
 Scores (chapters or pages in brackets):
 
@@ -45,14 +51,19 @@ compare headings on full runs.
 
 ## Next steps, in order
 
-1. **Full-pipeline baselines** for Goede dochter (pp. 9–64) and a Vals alarm
-   slice, one at a time, to see which headings the role model already finds.
-2. **Headings on unseen books**: Villa Toscane 0/12 and Grand Hotel Europa
+1. **Measure the missing-lines stage**: Vals alarm pp. 11–60 (chapters 1–10,
+   which hold the missing numbers), with and without the stage
+   (`missing.candidates` patched to return nothing gives the "without"), then
+   Dolittle and Crime for regressions. Goede dochter pp. 9–64 was run with the
+   code before the stage (`work/probes/goede-dochter-1.log`).
+2. **Quotes in Dutch IA OCR layers**: the print sets dialogue in ‘…’; the layer
+   reads many openings as “ (Vals alarm 226 “ against 6 in print, Goede dochter
+   777 against 101) and loses about half the closing ’. See how much the OCR
+   check already repairs before writing a rule; a real “ closes with ”.
+3. **Headings on unseen books**: Villa Toscane 0/12 and Grand Hotel Europa
    3/16 with models. Work on the tuning books only, then check the held-out
    ones. First look at what the missed headings have in common on the page,
    then a general signal rather than more rules.
-3. **Quotes in Dutch OCR layers**: opening ‘ read as " or dropped, a period
-   lost before a closing quote (Vals alarm, Goede dochter).
 4. Scene-break lines (`*****`) are dropped.
 5. A `bench` command; learned trust (Dawid–Skene) replacing `SURE`/`SURE_ALONE`;
    the metadata stage with `nuextract3:q6_k`.
