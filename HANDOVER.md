@@ -43,8 +43,8 @@ Scores (chapters or pages in brackets):
 | --- | --- | --- |
 | Villa Toscane (held out, born-digital, ch. 1–12) | — | CER 0.04%, F1 0.993, headings 0/12 |
 | De tuin van de avondnevel (held out, ch. 1–3, pp. 11–52) | CER 0.72%, F1 0.931, headings 0/3 | CER 0.41%, WER 0.25%, F1 0.946, headings 3/3; 389 suspects: 179 fixed, 148 review |
-| Goede dochter (ch. 1–4, pp. 9–64) | CER 0.45%, F1 0.943, headings 0/4 | not run yet |
-| Vals alarm (whole book) | CER 0.79%, F1 0.891, headings 0/48 | not run yet |
+| Goede dochter (ch. 1–4, pp. 9–64) | CER 0.40%, F1 0.957, headings 0/4 (with the quote rule) | CER 0.29%, WER 0.24%, F1 0.958, headings 2/4, italics 0.973 / 0.838 (before missing lines and the quote rule) |
+| Vals alarm (whole book) | CER 0.74%, F1 0.918, headings 0/48 (with the quote rule) | not run yet |
 
 `--no-models` scores headings without the role model, so 0/n there says little:
 compare headings on full runs.
@@ -54,12 +54,11 @@ compare headings on full runs.
 1. **Measure the missing-lines stage**: Vals alarm pp. 11–60 (chapters 1–10,
    which hold the missing numbers), with and without the stage
    (`missing.candidates` patched to return nothing gives the "without"), then
-   Dolittle and Crime for regressions. Goede dochter pp. 9–64 was run with the
-   code before the stage (`work/probes/goede-dochter-1.log`).
-2. **Quotes in Dutch IA OCR layers**: the print sets dialogue in ‘…’; the layer
-   reads many openings as “ (Vals alarm 226 “ against 6 in print, Goede dochter
-   777 against 101) and loses about half the closing ’. See how much the OCR
-   check already repairs before writing a rule; a real “ closes with ”.
+   Dolittle and Crime for regressions. Running now:
+   `work/probes/vals-alarm-missing-on.log`.
+2. **Quotes in Dutch IA OCR layers**: openings misread as “ are fixed (commit
+   b0f4254, see the decision log). Still open: a ‘ the layer drops altogether,
+   and a period lost before a closing ’.
 3. **Headings on unseen books**: Villa Toscane 0/12 and Grand Hotel Europa
    3/16 with models. Work on the tuning books only, then check the held-out
    ones. First look at what the missed headings have in common on the page,
