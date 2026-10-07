@@ -191,3 +191,33 @@ def test_a_closing_double_quote_read_as_single_is_mended():
     nested = "\"She said 'never' to me,\" he said. Don't."
     assert close_quotes(nested) == nested
     assert close_quotes("“It is,’ she said") == "“It is,’ she said"
+
+
+def test_a_real_double_quote_in_single_quoted_text_stays():
+    from roboscriptorium.reflow import open_single
+
+    nested = "‘Hij zei: “Kom hier,” en liep weg.’"
+    assert open_single(nested) == nested
+    assert open_single("“Zo’n ding,” zei hij.") == "“Zo’n ding,” zei hij."
+    assert open_single("het woord “ontmoeten’’.") == "het woord “ontmoeten’’."
+    assert open_single("een boek met de titel “De ’s avonds zingende vogels”.") == (
+        "een boek met de titel “De ’s avonds zingende vogels”."
+    )
+
+
+def test_double_quoted_books_are_not_single_quoted():
+    from roboscriptorium.ir import Paragraph
+    from roboscriptorium.reflow import single_quoted
+
+    english = [Paragraph("“What is it?” he said. “I don’t know.”"), Paragraph("‘Tis so.")]
+    assert not single_quoted(english)
+    dutch = [Paragraph("‘Wat is het?’ zei hij. ‘Kom.’"), Paragraph("‘Ja.’"), Paragraph("“Nee’.")]
+    assert single_quoted(dutch)
+
+
+def test_an_opening_double_quote_closed_by_a_single_one_was_misread():
+    from roboscriptorium.reflow import open_single
+
+    assert open_single("“Wat doe je?’ vroeg ze.") == "‘Wat doe je?’ vroeg ze."
+    assert open_single("“Ja, zei hij. ‘Nee.’") == "‘Ja, zei hij. ‘Nee.’"
+    assert open_single("“Ik ben er klaar mee") == "‘Ik ben er klaar mee"

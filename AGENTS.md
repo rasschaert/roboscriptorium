@@ -795,3 +795,12 @@ disagreements by mistake category.
   1–3: text layer alone CER 0.72%, WER 0.60%, F1 0.931, headings 0/3; full
   pipeline CER 0.41%, WER 0.25%, F1 0.946, headings 3/3 (389 OCR suspects: 179
   fixed, 148 for review). The OCR check carries over to an unseen Dutch scan.
+- 2026-10-07: Dutch print sets dialogue in ‘…’, and Internet Archive's OCR reads
+  many openings as “ (Vals alarm 226 “ in the layer against 6 in print, Goede
+  dochter 777 against 101). In a book whose text opens with ‘ more than twice
+  as often as with “, a “ that the next quote mark (apostrophes aside) doesn't
+  close as ” or ’’ becomes ‘. Text layer alone: Goede dochter pp. 9–64 CER
+  0.45% → 0.40%, F1 0.943 → 0.957; Vals alarm CER 0.79% → 0.74%, F1 0.891 →
+  0.918. De aanslag unchanged (its real “ close with ” or ’’); English books
+  are double- or straight-quoted, so the rule doesn't run. Still open: ‘ the
+  layer drops altogether, and a period lost before a closing ’.

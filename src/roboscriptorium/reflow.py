@@ -171,7 +171,45 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
             block.text = close_quotes(block.text)
         if isinstance(block, Heading):
             block.parts = [tidy(p) for p in block.parts]
+    if single_quoted(blocks):
+        for block in blocks:
+            if isinstance(block, Paragraph):
+                block.text = open_single(block.text)
     return blocks
+
+
+def single_quoted(blocks: list[Block]) -> bool:
+    """Whether the book opens its dialogue with ‘ rather than “, as Dutch print does.
+
+    Counted on the book's own text: an OCR layer misreads some ‘ as “, not most.
+    """
+    text = " ".join(b.text for b in blocks if isinstance(b, Paragraph))
+    return text.count("‘") > 2 * text.count("“")
+
+
+def open_single(text: str) -> str:
+    """In single-quoted text, a “ that no ” closes is a ‘ the OCR layer misread.
+
+    What closes it is the next quote mark after it, apostrophes (zo’n, ’s) aside.
+    A real “ (a quote within the dialogue, a title) closes with ”, or with ’’ in
+    some typesetting, so it stays.
+    """
+    chars = list(text)
+    for i, c in enumerate(chars):
+        if c != "“":
+            continue
+        closer = None
+        for k in range(i + 1, len(chars)):
+            if chars[k] not in "‘“’”":
+                continue
+            after = chars[k + 1] if k + 1 < len(chars) else " "
+            if chars[k] == "’" and after.isalpha():
+                continue
+            closer = "”" if "".join(chars[k : k + 2]) == "’’" else chars[k]
+            break
+        if closer != "”":
+            chars[i] = "‘"
+    return "".join(chars)
 
 
 def close_quotes(text: str) -> str:
