@@ -9,6 +9,7 @@ import httpx
 import typer
 
 from roboscriptorium import (
+    bench,
     disagreements,
     evaluate,
     flags,
@@ -244,6 +245,33 @@ def review_disagreements(
     review.serve(review.Review(book.source, text_layer, found, verdicts), port)
 
 
+def _questions_and_errors(spec: str):
+    """For a golden spec (book dir[:pages[:chapters]]): its name, the book, the build, the
+    reference with verdicts applied, the remaining differences from it, the review's
+    questions, and the number of verdicts applied."""
+    book_dir, pages, chapters = (spec.split(":") + [None, None])[:3]
+    book = Book.load(Path(book_dir))
+    stages = pipeline.run(book, pages=_range(pages or None))
+    regions = None
+    if layout.available():
+        numbers = [p.number for p in stages.pages]
+        regions = layout.detect(book.source, numbers, book.stages / "layout.json")
+    found = flags.find(
+        stages.pages,
+        stages.model_roles,
+        regions,
+        ocrcheck.doubts(stages.suspects),
+        stages.quote_lines,
+        stages.quote_readings,
+    )
+    reference = load_chapters(Golden.load(book.golden).text_dir)
+    if (span := _range(chapters or None)) is not None:
+        reference = reference[span[0] - 1 : span[1]]
+    reference, applied = disagreements.patch(reference, _verdicts(book))
+    errors = disagreements.find(_scored(book, stages), reference, stages.corrected)
+    return Path(book_dir).name, book, stages, reference, errors, found, applied
+
+
 @app.command("quality")
 def quality_report(specs: list[str]) -> None:
     """Wrong words a reviewer is left with per page, at several question budgets.
@@ -256,32 +284,13 @@ def quality_report(specs: list[str]) -> None:
     """
     books = []
     for spec in specs:
-        book_dir, pages, chapters = (spec.split(":") + [None, None])[:3]
-        book = Book.load(Path(book_dir))
-        stages = pipeline.run(book, pages=_range(pages or None))
-        regions = None
-        if layout.available():
-            numbers = [p.number for p in stages.pages]
-            regions = layout.detect(book.source, numbers, book.stages / "layout.json")
-        found = flags.find(
-            stages.pages,
-            stages.model_roles,
-            regions,
-            ocrcheck.doubts(stages.suspects),
-            stages.quote_lines,
-            stages.quote_readings,
-        )
-        reference = load_chapters(Golden.load(book.golden).text_dir)
-        if (span := _range(chapters or None)) is not None:
-            reference = reference[span[0] - 1 : span[1]]
-        reference, applied = disagreements.patch(reference, _verdicts(book))
-        errors = disagreements.find(_scored(book, stages), reference, stages.corrected)
+        name, _, stages, _, errors, found, applied = _questions_and_errors(spec)
         numbers = [p.number for p in stages.pages if p.lines]
         typer.echo(
-            f"{Path(book_dir).name}: {len(numbers)} pages, {len(errors)} differing stretches, "
+            f"{name}: {len(numbers)} pages, {len(errors)} differing stretches, "
             f"{len(found)} questions, {applied} verdicts applied"
         )
-        books.append((Path(book_dir).name, numbers, errors, found))
+        books.append((name, numbers, errors, found))
     for name, numbers, errors, found in books:
         rates: dict[str, tuple[int, int]] = {}
         for other, _, other_errors, other_flags in books:
@@ -300,6 +309,83 @@ def quality_report(specs: list[str]) -> None:
         typer.echo(
             "  questions that caught an error, by reason: "
             + ", ".join(f"{r} {h}/{n}" for r, (h, n) in sorted(own.items(), key=lambda x: -x[1][1]))
+        )
+
+
+@app.command("bench")
+def run_bench(
+    set_name: str = typer.Argument("tuning", help=f"One of {', '.join(bench.SETS)}"),
+    against: str | None = typer.Option(None, help="A saved run to compare with (default: last)"),
+) -> None:
+    """Score a fixed set of golden slices, save the run, and compare it page by page."""
+    if set_name not in bench.SETS:
+        raise typer.BadParameter(f"no bench set {set_name!r}")
+    settings = Settings.from_env()
+    built = []
+    for spec in bench.SETS[set_name]:
+        typer.echo(f"== {spec}")
+        name, book, stages, reference, errors, found, applied = _questions_and_errors(
+            f"work/{spec}"
+        )
+        score = evaluate.score(_scored(book, stages), reference)
+        built.append((spec, name, stages, errors, found, applied, score))
+    books = {}
+    for spec, name, stages, errors, found, applied, score in built:
+        rates: dict[str, tuple[int, int]] = {}
+        for other in built:
+            if other[1] != name:
+                for r, (h, n) in quality.hit_rates(other[4], other[3]).items():
+                    h0, n0 = rates.get(r, (0, 0))
+                    rates[r] = (h0 + h, n0 + n)
+        numbers = [p.number for p in stages.pages if p.lines]
+        books[name] = {
+            "spec": spec,
+            "ocr_decider": stages.ocr_decider,
+            "ocr_suspects": dict(Counter(s.choice for s in stages.suspects)),
+            "verdicts_applied": applied,
+            "score": {k: v for k, v in asdict(score).items() if k != "confusions"},
+            "quality": {
+                k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()
+            },
+            "unasked_by_kind": quality.unasked_by_category(errors, found),
+            "pages": bench.page_counts(numbers, errors, found),
+        }
+    commit = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
+    ).stdout.strip()
+    dirty = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=no"], capture_output=True, text=True
+    ).stdout.strip()
+    record = {
+        "set": set_name,
+        "at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "commit": commit + ("-dirty" if dirty else ""),
+        "settings": {k: v for k, v in asdict(settings).items() if not k.endswith("_url")},
+        "model_versions": _model_versions(settings),
+        "books": books,
+    }
+    path = bench.save(record)
+    typer.echo(f"\nsaved {path}")
+    for name, b in books.items():
+        q = b["quality"]
+        typer.echo(
+            f"{name[:40]:40} CER {b['score']['cer']:6.2%}"
+            f"  wrong/page {q['wrong words']['mean']:.2f}"
+            f"  questions {q['questions']['mean']:.2f}"
+            f"  unasked {q['unasked, all questions']['mean']:.2f}"
+            f"  after review {sum(v[3] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
+        )
+    old_path = Path(against) if against else bench.previous(set_name, path)
+    if old_path is None:
+        return
+    old = json.loads(old_path.read_text())
+    new = json.loads(path.read_text())
+    typer.echo(f"\nagainst {old_path.name} (per page; * where the 95% interval excludes 0)")
+    for c in bench.compare(old, new):
+        mark = "*" if c.real else " "
+        typer.echo(
+            f" {mark} {c.book[:40]:40} {c.measure:13} {c.before:6.2f} → {c.after:6.2f}"
+            f"  [{c.low:+.2f}, {c.high:+.2f}]"
         )
 
 

@@ -168,6 +168,14 @@ right, then expand.
     clearly garbled output and whitespace-only differences are auto-resolved.
     Verdicts (what the scan prints, plus a mistake category) are stored per scan
     and patched into the reference by `eval`.
+  - `bench.py` (`roboscriptorium bench [tuning|validation]`): **the** measure for a
+    change. Pinned golden slices per set, scored with `evaluate` and `quality`,
+    saved whole to `work/bench/` (commit, settings, decider, model versions,
+    per-page counts) and compared with the previous run page by page: a change is
+    real only when the paired bootstrap interval excludes zero. "After review"
+    adds the reviewer's own slips (`quality.HUMAN_SLIPS`, 8 of 68 answers on
+    Stella) per question asked. Run it before and after a change; cite its
+    starred lines, not single CER figures.
   - `quality.py` (`roboscriptorium quality book[:pages[:chapters]] …`): what a
     reviewer is left with. Wrong words per page before review and left unasked,
     with every question and at budgets of 0.25, 0.5 and 1 question per page

@@ -19,6 +19,8 @@ from roboscriptorium.flags import Flag
 
 BUDGETS = (0.25, 0.5, 1.0)
 BOOTSTRAP_SAMPLES = 1000
+# Answers a reviewer gets wrong, per question: 8 of 68 on Stella, by proofreading.
+HUMAN_SLIPS = 8 / 68
 
 
 @dataclass(frozen=True)
