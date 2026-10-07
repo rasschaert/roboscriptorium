@@ -12,6 +12,7 @@ leans like italic whatever its type. An unmeasured word between two italic
 words is italic ("I can talk").
 """
 
+import hashlib
 import json
 import re
 from dataclasses import replace
@@ -25,7 +26,7 @@ from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import Block, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText, line_words, spells
 
-VERSION = 7
+VERSION = 8
 DPI = 300
 ANGLES = np.arange(-25, 26, 1)
 ITALIC_AT = 8  # degrees of slant
@@ -72,24 +73,32 @@ def slant(gray: np.ndarray, threshold: int = 128) -> float:
 def detect(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, frozenset[int]]:
     """Per text-layer line, the indices of its italic words in `line.text.split(" ")`.
 
-    Only lines whose text-layer words spell the line are measured. Cached per page.
+    Only lines whose text-layer words spell the line are measured. Cached per page,
+    with the page's lines, so a page whose lines change is measured again.
     """
-    done: dict[str, dict[str, list[int]]] = {}
+    done: dict[str, dict] = {}
     if cache.exists():
         raw = json.loads(cache.read_text())
         if raw.get("version") == VERSION:
             done = raw["pages"]
-    todo = [p for p in pages if str(p.number) not in done]
+    todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != _lines(p)]
     if todo:
         with pymupdf.open(pdf) as doc:
             for page in todo:
-                done[str(page.number)] = _page(doc[page.number - 1], page)
+                done[str(page.number)] = {
+                    "lines": _lines(page),
+                    "italic": _page(doc[page.number - 1], page),
+                }
         write_atomic(cache, json.dumps({"version": VERSION, "pages": done}))
     return {
         SourceRef(p.number, int(k)): frozenset(v)
         for p in pages
-        for k, v in done[str(p.number)].items()
+        for k, v in done[str(p.number)]["italic"].items()
     }
+
+
+def _lines(page: PageText) -> str:
+    return hashlib.sha256("\n".join(ln.text for ln in page.lines).encode()).hexdigest()[:16]
 
 
 def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:

@@ -5,7 +5,7 @@ from dataclasses import asdict, dataclass
 
 import pymupdf
 
-from roboscriptorium import corrections, figures, italics, layout, ocr, ocrcheck
+from roboscriptorium import corrections, figures, italics, layout, missing, ocr, ocrcheck
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
 from roboscriptorium.config import Settings
@@ -22,8 +22,9 @@ from roboscriptorium.roles import DecisionCache, LineRole, classify
 class Stages:
     """What a build decided, for review: the body pages, line roles and document.
 
-    `pages` and `model_roles` are the text layer as read and the model's roles for
-    it; the review and its answer keys use those. `corrected` and `roles` have a
+    `pages` and `model_roles` are the text layer as read, with the printed lines it
+    lacks added (`missing.py`), and the model's roles for it; the review and its
+    answer keys use those. `corrected` and `roles` have a
     human's answers applied (lines typed in, text replaced) and feed the book.
     """
 
@@ -51,11 +52,24 @@ def run(
     ]
 
     roles = model_roles = None
-    corrected = body
     applied = 0
     suspects: list[ocrcheck.Suspect] = []
+    regions = None
+    if layout.available():
+        regions = layout.detect(book.source, [p.number for p in body], book.stages / "layout.json")
+    corrected = body
     if use_models:
         settings = Settings.from_env()
+        if regions is not None and ocrcheck.scanned(book.source):
+            found = missing.candidates(body, regions, _answered(book))
+            readings = missing.read(
+                book.source,
+                found,
+                settings.ocr_model,
+                settings.ollama_url,
+                book.stages / "missing-lines.json",
+            )
+            body = missing.add(body, found, readings)
         client = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
         cache = DecisionCache(book.stages / "decisions.jsonl")
         model_roles = classify(body, client, cache)
@@ -96,8 +110,7 @@ def run(
     )
     doc = Document(book.title, book.author, book.language, blocks)
     images = {}
-    if layout.available():
-        regions = layout.detect(book.source, [p.number for p in body], book.stages / "layout.json")
+    if regions is not None:
         with pymupdf.open(book.source) as pdf:
             pictures = figures.select(
                 pdf, body, regions, Corrections(book.corrections_path), ocr.language(book.language)
@@ -111,6 +124,15 @@ def run(
     cover = render_jpeg(book.source, book.cover_page) if book.cover_page else None
     write_epub(doc, book.epub_path, cover, images)
     return Stages(body, model_roles, corrected, roles, doc, applied, suspects)
+
+
+def _answered(book: Book) -> dict[int, list[tuple[float, float, float, float]]]:
+    """Per page, the boxes of regions the text layer lacked that a human typed text for."""
+    out: dict[int, list[tuple[float, float, float, float]]] = {}
+    for c in Corrections(book.corrections_path).by_key.values():
+        if c.last < c.first and c.box and c.text:
+            out.setdefault(c.page, []).append(c.box)
+    return out
 
 
 def build(

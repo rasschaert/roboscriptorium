@@ -138,3 +138,26 @@ def test_italic_words_on_the_scan_reach_the_epub(tmp_path, monkeypatch):
     with zipfile.ZipFile(book.epub_path) as z:
         xhtml = "".join(z.read(n).decode() for n in z.namelist() if n.endswith(".xhtml"))
     assert "it was <i>truly remarkable</i>, and left." in xhtml
+
+
+def test_a_printed_line_the_text_layer_lacks_is_read_into_the_book(tmp_path, monkeypatch):
+    from roboscriptorium.layout import Region
+
+    _everything_is_body(monkeypatch)
+    book = _book(tmp_path)
+    answers = Corrections(book.corrections_path)
+    retyped = flags.Flag(flags.region_key(1, LINES[5]), 1, 5, 5, LINES[5], "text", ["centred"])
+    answers.record(retyped, "text", "Line five, as the scan prints it")
+    number = Region("abandon", 0.6, 190, 20, 200, 32)
+    monkeypatch.setattr(pipeline.layout, "available", lambda: True)
+    monkeypatch.setattr(pipeline.layout, "detect", lambda pdf, numbers, cache: {1: [number]})
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    monkeypatch.setattr(pipeline.missing.ocrcheck, "read_line", lambda png, model, url: "Seven")
+
+    stages = pipeline.run(book, check_ocr=False)
+    assert [ln.text for ln in stages.pages[0].lines] == ["Seven"] + LINES
+    text = " ".join(p.text for p in stages.doc.paragraphs)
+    assert text.startswith("Seven")
+    # The answer recorded before the line was added still finds its line.
+    assert stages.corrections_applied == 1
+    assert "Line five, as the scan prints it" in text and LINES[5] not in text

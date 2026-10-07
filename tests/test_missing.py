@@ -1,0 +1,65 @@
+from roboscriptorium import missing
+from roboscriptorium.layout import Region
+from roboscriptorium.pdf import Line, PageText
+
+
+def _page() -> PageText:
+    lines = [
+        Line(f"line {i} of the running text", 20, 100 + 15 * i, 300, 111 + 15 * i) for i in range(6)
+    ]
+    return PageText(22, 333, 580, lines)
+
+
+def test_line_sized_regions_without_lines_are_candidates():
+    page = _page()
+    number = Region("abandon", 0.6, 159, 60, 167, 72)
+    regions = {
+        22: [
+            number,
+            Region("title", 0.3, 160, 61, 168, 73),  # the same spot again, less sure
+            Region("plain text", 0.9, 20, 100, 300, 190),  # holds lines
+            Region("abandon", 0.8, 150, 400, 200, 460),  # taller than a line
+            Region("figure", 0.9, 20, 300, 300, 380),
+            Region("abandon", 0.5, 100, 320, 120, 330),  # inside the figure
+            Region("figure_caption", 0.7, 20, 385, 300, 395),
+        ]
+    }
+    assert missing.candidates([page], regions, {}) == [(22, number)]
+    assert missing.candidates([page], regions, {22: [(150, 50, 180, 80)]}) == []
+
+
+def test_read_lines_go_into_a_copy_in_reading_order():
+    page = _page()
+    number = Region("abandon", 0.6, 159, 60, 167, 72)
+    folio = Region("abandon", 0.8, 300, 546, 310, 554)
+    smudge = Region("abandon", 0.4, 20, 500, 40, 510)
+    found = [(22, number), (22, folio), (22, smudge)]
+    readings = {
+        missing._key(22, number): "3",
+        missing._key(22, folio): "18",
+        missing._key(22, smudge): "~ .",
+    }
+    out = missing.add([page], found, readings)[0]
+    assert [ln.text for ln in out.lines] == ["3"] + [ln.text for ln in page.lines] + ["18"]
+    assert len(page.lines) == 6
+
+
+def test_an_answer_finds_its_lines_after_a_line_is_added_above():
+    from roboscriptorium.corrections import Correction, _located
+
+    page = _page()
+    moved = PageText(22, 333, 580, [Line("3", 159, 60, 167, 72)] + page.lines)
+    answer = Correction(
+        "k",
+        22,
+        2,
+        3,
+        "line 2 of the running text\nline 3 of the running text",
+        "text",
+        "fixed",
+        "now",
+    )
+    assert (_located(page, answer).first, _located(page, answer).last) == (2, 3)
+    assert (_located(moved, answer).first, _located(moved, answer).last) == (3, 4)
+    gap = Correction("g", 22, 2, 1, "", "text", "typed", "now", box=(20, 128, 300, 129))
+    assert _located(moved, gap).first == 3

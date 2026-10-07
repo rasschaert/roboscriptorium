@@ -171,6 +171,13 @@ right, then expand.
     the page image (no model; scans and born-digital PDFs alike), marked on paragraphs by aligning their
     words with their source lines'; cached in `stages/italics.json`. The EPUB
     sets them in `<i>`; `eval` scores italic words.
+  - `missing.py`: printed lines the OCR layer lacks (bare chapter numbers,
+    page numbers, short lines of dialogue). A layout region about one line tall
+    with no text-layer line in it is read by glm-ocr and added to a copy of the
+    page in reading order, before the line roles; figures, captions and regions
+    a human answered are left alone. Scans only; cached in
+    `stages/missing-lines.json`. Review answers find their lines again by text
+    when lines are added above them.
   - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)
     against glm-ocr's reading of each body line's crop (`ROBO_OCR_MODEL`),
     cached in `stages/second-reading.json`. Where a line's readings differ, clef picks from

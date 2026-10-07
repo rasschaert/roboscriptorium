@@ -7,7 +7,9 @@ turn that makes it upright. A caption stays out of the running text; its text
 waits for its picture.
 Answers live in `work/<book>/review/regions.jsonl`; the latest per region wins.
 They are keyed on the region's page and text layer, so an answer stops applying
-when the text layer under it changes. Text given for a region the text layer has
+when the text layer under it changes. Lines added above an answered region (a
+line the text layer lacked, see `missing.py`) don't: the answer's lines are
+found again by their text. Text given for a region the text layer has
 no lines for is inserted as a new line where the region sits.
 
 Answers apply to a copy of the pages: the text layer itself stays as it was, for
@@ -136,6 +138,27 @@ def _insert(
     roles[SourceRef(page.number, index)] = role
 
 
+def _located(page: PageText, c: Correction) -> Correction | None:
+    """The answer with its line positions as they are on this page, or None if gone.
+
+    Lines it named are found by their text where they moved; a region the text
+    layer had no lines for goes where its box sits.
+    """
+    if c.last < c.first:
+        if c.box is None:
+            return c if c.first <= len(page.lines) else None
+        first = sum(1 for ln in page.lines if (ln.y0 + ln.y1) / 2 < c.box[1])
+        return replace(c, first=first, last=first - 1)
+    texts = [ln.text for ln in page.lines]
+    size = c.last - c.first + 1
+    if "\n".join(texts[c.first : c.last + 1]) == c.original:
+        return c
+    at = [i for i in range(len(texts) - size + 1) if "\n".join(texts[i : i + size]) == c.original]
+    if len(at) != 1:
+        return None
+    return replace(c, first=at[0], last=at[0] + size - 1)
+
+
 def apply(
     pages: list[PageText], roles: dict[SourceRef, LineRole], corrections: Corrections
 ) -> tuple[list[PageText], dict[SourceRef, LineRole], int]:
@@ -153,7 +176,10 @@ def apply(
     initials = []
     for c in corrections.by_key.values():
         page = by_number.get(c.page)
-        if page is None or c.last >= len(page.lines):
+        if page is None:
+            continue
+        c = _located(page, c)
+        if c is None:
             continue
         if c.action == "initial" and c.box and c.text:
             initials.append((page, c))
