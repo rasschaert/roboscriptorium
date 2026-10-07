@@ -924,3 +924,16 @@ disagreements by mistake category.
   182 for `roles.py`; Villa Toscane headings 0/12 → 12/12, De tuin 1 → 0
   errors; Grand Hotel Europa 34 against 33. Without clef's answer as a feature,
   349.
+- 2026-10-07: glm-ocr's token probabilities as review questions
+  (`experiments/probe_token_confidence.py`; Ollama 0.40 returns `logprobs` and
+  `top_logprobs` from `/api/generate`). Goede dochter pp. 9–64, every line read
+  again: a word's least likely token is almost never below P 0.3, so the signal
+  is flat. Lines with a word below 0.5: 2.93 questions/page catching 10 of 65
+  wrong words; below 0.4: 0.40/page catching 2; the review's own 2.24/page
+  catch 47. The unasked errors are mostly quotes the layer dropped, where
+  glm-ocr was sure. Not a question source on its own; at most a feature.
+- 2026-10-07: Stella through the whole pipeline for the first time: 67 pages,
+  44 OCR fixes applied (`vijfjaar`, `scenes`, `knieén`, `Italié`, the stray
+  `»`, `viekken` all fixed; `besef een` → `besefeen` wrong), 73 OCR suspects
+  for review, 1.06 review questions per page. The OCR check sometimes glues two
+  words (`besefeen` here, `zeize` and `naaije` on Goede dochter).
