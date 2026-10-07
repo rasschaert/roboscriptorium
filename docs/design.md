@@ -6,7 +6,9 @@ dated history behind each line is in [decisions.md](decisions.md).
 
 Numbers marked *trust data* come from the OCR check's labelled suspects
 (`experiments/ocr_trust_data.py`, each version labelled from the aligned golden
-text, settled ones only): 2,663 over nine books on 2026-10-07.
+text, settled ones only): 2,514 over eight books on 2026-10-07, Lady into Fox left
+out (its labels differ from its print in typography; see winnow below; as a
+validation book it is scored, never trained on).
 
 ## The text layer is one reading, not the truth
 
@@ -32,17 +34,18 @@ segmentation errors; only tesseract doesn't.
 
 **Two judges where the readings differ.**
 
-- *clef:27b looks at the crop.* It is the judge that is usually right: 2,290 of
-  2,663 alone (86%, trust data). Told the book's typesetting and given options in
+- *clef:27b looks at the crop.* It is the judge that is usually right: 2,236 of
+  2,514 alone (89%, trust data). Told the book's typesetting and given options in
   ⟨ ⟩ rather than “ ”, it picks right more often on typography (Goede dochter 92 →
   98 of 102).
-- *winnow:e4b reads the sentence, not the image.* It is a poor judge alone (1,728
-  of 2,663, 65%) and is kept as **an alarm on clef**: where winnow agrees with
-  clef, clef is wrong on 59 of 1,536 (4%); where it disagrees, on 314 of 1,127
-  (28%). The alarm works on every book but the cleanest: on Goede dochter clef is
+- *winnow:e4b reads the sentence, not the image.* It is a poor judge alone (1,596
+  of 2,514, 63%) and is kept as **an alarm on clef**: where winnow agrees with
+  clef, clef is wrong on 58 of 1,495 (4%); where it disagrees, on 220 of
+  1,019 (22%). The alarm works on every book but the cleanest: on Goede dochter clef is
   wrong 13/170 against 12/191, no lift. On Lady into Fox winnow even beats clef
   (132 against 54 of 149), but that book's labels differ from its print in
-  typography, so the number measures the reference more than the judges. Told the
+  typography, so the number measures the reference more than the judges, and the book
+  is left out of these totals. Told the
   book's style winnow got worse on Goede dochter (91 → 84 of 200), so it isn't.
 - *The word list is a vote, not a judge.* Where it knows only one version's words
   it is nearly always right, but acting on it added unasked errors on two
@@ -95,17 +98,22 @@ English data makes it stable and the bench says so.
 
 - **`bench`, not single runs.** Warm caches replay themselves, so reruns agree;
   the noise is which pages a book happens to have. Runs are compared page by
-  page, with one primary test ("after review" pooled over the set's pages, at the
-  low, mean and high slip rate) and a veto when any book alone gets worse: 24
-  separate intervals would star about one by chance each run.
+  page, with one primary test ("after review" averaged over the set's books, each
+  weighing the same, at the low, mean and high slip rate; pooling pages would let
+  the three longest books, 78% of the pages, decide) and a veto when a book alone
+  gets worse by ≥ 0.05 wrong words per page at 99% (at 95% six books would veto
+  about one good change in seven): 24 separate intervals would star about one by
+  chance each run.
 - **"After review" counts the reviewer's slips.** 8 of 68 checked answers on
   Stella were wrong (Beta posterior 0.06–0.21), so a question isn't free.
 - **Validation books are not a test.** Earlier choices were made on their scores.
 - **Tuning books are scored by models trained without them**
   (`*-without-<book>.pkl`).
-- **The reference isn't the truth either.** 563 of 3,232 suspects (17%) can't be
-  labelled: no single version is close enough to the aligned reference (edition
-  differences, transcriber changes, or no reading right). They are left out of
-  the trust data, so trust isn't trained on them, but in a build they are
-  questions with no right option, where the reviewer types and slips more.
-  Verdicts (`golden review`) settle the reference's side.
+- **The reference isn't the truth either.** Two groups of suspects lack a clean
+  label. 563 of 3,232 (17%) are unsettled (no single version is close enough to
+  the aligned reference) and are left out of the trust data; in a build they are
+  questions with no right option, where the reviewer types and slips more. 394 of
+  the 2,669 settled ones (15%) have no version equal to the truth, and are trained
+  on with the closest version marked right: 286 of them one character off, 108
+  more. How much of that is alignment noise and how much a wrong label is
+  unmeasured. Verdicts (`golden review`) settle the reference's side.

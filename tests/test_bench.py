@@ -62,3 +62,18 @@ def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path):
     assert bench.unseen(settings, "crime").ocr_trust_model == str(
         tmp_path / "ocr-trust-without-crime.pkl"
     )
+
+
+def test_each_book_weighs_the_same_whatever_its_pages():
+    big = [(1.0, 1.0)] * 300
+    small = [(1.0, 0.0)] * 10
+    before, after, low, high = bench.pooled([big, small])
+    assert (before, after) == (1.0, 0.5) and high < 0
+
+
+def test_a_book_slightly_worse_does_not_veto():
+    flat = {p: [2, 1, 1, 1.0] for p in range(30)}
+    fewer = {p: [2, 0, 1, 0.0] for p in range(30)}
+    slightly = {p: [2, 1, 1, 1.02] for p in range(30)}
+    found = bench.verdict(_run(flat, c=flat), _run(fewer, c=slightly))
+    assert (found.outcome, found.vetoes) == ("better", [])

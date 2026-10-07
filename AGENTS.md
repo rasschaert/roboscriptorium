@@ -182,9 +182,9 @@ right, then expand.
     change. Pinned golden slices per set, scored with `evaluate` and `quality`,
     saved whole to `work/bench/` (commit, settings, decider, model versions,
     per-page counts) and compared with the previous run page by page. One test
-    decides: "after review" pooled over every page of the set must improve at the
-    low, mean and high slip rate, and no book alone may get worse (a veto); the
-    per-book intervals are diagnostics. A tuning book is
+    decides: "after review", each book of the set weighing the same, must improve
+    at the low, mean and high slip rate, and no book may get worse by ≥ 0.05 wrong
+    words per page at 99% (a veto); the per-book intervals are diagnostics. A tuning book is
     scored with the trust model trained without it
     (`ocr-trust-without-<book>.pkl`, written by `train_ocr_trust.py --save`). "After review"
     adds the reviewer's own slips per question asked (`quality.slip_rates`, a Beta

@@ -52,9 +52,13 @@ PAIRED = (
     ("after review, few slips", 4),
     ("after review, many slips", 5),
 )
-# The one test that decides a change: "after review" on every page of the set pooled,
-# at each slip rate.
+# The one test that decides a change: "after review" over the set, each book weighing
+# the same, at each slip rate.
 PRIMARY = ("after review", "after review, few slips", "after review, many slips")
+# A book vetoes a change only when it gets worse by at least this much per page with
+# 99% confidence: six books at 95% would veto about one change in seven that helps all.
+VETO_LEVEL = 0.99
+VETO_MIN = 0.05
 
 
 @dataclass(frozen=True)
@@ -91,20 +95,34 @@ def page_counts(
     }
 
 
-def paired(pairs: list[tuple[float, float]], seed: int = 0) -> tuple[float, float, float, float]:
-    """Mean per page before and after, and the 95% bootstrap interval of the mean
+def paired(
+    pairs: list[tuple[float, float]], seed: int = 0, level: float = 0.95
+) -> tuple[float, float, float, float]:
+    """Mean per page before and after, and the bootstrap interval of the mean
     difference, from each page's (before, after)."""
-    if not pairs:
+    return pooled([pairs], seed, level)
+
+
+def pooled(
+    books: list[list[tuple[float, float]]], seed: int = 0, level: float = 0.95
+) -> tuple[float, float, float, float]:
+    """Per-page means before and after, averaged over books so each weighs the same,
+    and the bootstrap interval of that difference (pages resampled within each book)."""
+    books = [b for b in books if b]
+    if not books:
         return 0.0, 0.0, 0.0, 0.0
-    diffs = [a - b for b, a in pairs]
     rng = random.Random(seed)
-    n = len(diffs)
-    means = sorted(sum(rng.choices(diffs, k=n)) / n for _ in range(BOOTSTRAP_SAMPLES))
+    diffs = [[a - b for b, a in pairs] for pairs in books]
+    means = sorted(
+        sum(sum(rng.choices(d, k=len(d))) / len(d) for d in diffs) / len(diffs)
+        for _ in range(BOOTSTRAP_SAMPLES)
+    )
+    tail = (1 - level) / 2
     return (
-        sum(b for b, _ in pairs) / n,
-        sum(a for _, a in pairs) / n,
-        means[int(0.025 * BOOTSTRAP_SAMPLES)],
-        means[int(0.975 * BOOTSTRAP_SAMPLES) - 1],
+        sum(sum(b for b, _ in pairs) / len(pairs) for pairs in books) / len(books),
+        sum(sum(a for _, a in pairs) / len(pairs) for pairs in books) / len(books),
+        means[int(tail * BOOTSTRAP_SAMPLES)],
+        means[int((1 - tail) * BOOTSTRAP_SAMPLES) - 1],
     )
 
 
@@ -130,28 +148,32 @@ def compare(old: dict, new: dict) -> list[Change]:
 @dataclass(frozen=True)
 class Verdict:
     outcome: str  # "better", "worse", "no change" or "vetoed"
-    pooled: list[Change]  # the primary measure over all shared pages, per slip rate
+    pooled: list[Change]  # the primary measure over the shared books, per slip rate
     vetoes: list[str]  # books whose own "after review" got worse
 
 
 def verdict(old: dict, new: dict) -> Verdict:
-    """Whether the new run is better: "after review" over every page the runs share,
-    pooled, must improve at every slip rate, and no book's own may get worse."""
+    """Whether the new run is better: "after review", each book weighing the same, must
+    improve at every slip rate, and no book may clearly get worse (`VETO_LEVEL`,
+    `VETO_MIN`)."""
     shared = [n for n in new["books"] if n in old["books"]]
     index = dict(PAIRED)
-    pooled = [Change("all", m, *paired(_pairs(old, new, index[m], shared))) for m in PRIMARY]
-    vetoes = [
-        n
-        for n in shared
-        if Change(n, PRIMARY[0], *paired(_pairs(old, new, index[PRIMARY[0]], [n]))).low > 0
+    primary = [
+        Change("all", m, *pooled([_pairs(old, new, index[m], [n]) for n in shared]))
+        for m in PRIMARY
     ]
-    if all(c.high < 0 for c in pooled):
+    vetoes = []
+    for n in shared:
+        before, after, low, _ = paired(_pairs(old, new, index[PRIMARY[0]], [n]), level=VETO_LEVEL)
+        if low > 0 and after - before >= VETO_MIN:
+            vetoes.append(n)
+    if all(c.high < 0 for c in primary):
         outcome = "vetoed" if vetoes else "better"
-    elif all(c.low > 0 for c in pooled):
+    elif all(c.low > 0 for c in primary):
         outcome = "worse"
     else:
         outcome = "no change"
-    return Verdict(outcome, pooled, vetoes)
+    return Verdict(outcome, primary, vetoes)
 
 
 def save(record: dict, out: Path = OUT) -> Path:

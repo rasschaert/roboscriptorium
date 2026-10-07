@@ -10,8 +10,8 @@ class Settings:
     ollaya_url: str = "http://127.0.0.1:11435"
     decision_model: str = "laya:multilingual"
     role_model: str = "clef-flash:9b"
-    # Reads OCR suspects from the sentence, not the image. Weak alone (65% right), it is
-    # kept as an alarm on the judge: clef is wrong 4% where it agrees, 28% where it
+    # Reads OCR suspects from the sentence, not the image. Weak alone (63% right), it is
+    # kept as an alarm on the judge: clef is wrong 4% where it agrees, 22% where it
     # doesn't (docs/design.md).
     check_model: str = "winnow:e4b"
     # Judges the OCR check's suspects from the crop; better than role_model at that,
