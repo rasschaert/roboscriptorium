@@ -908,7 +908,6 @@ disagreements by mistake category.
   exact), glm-ocr 0.25% (1,154; drops quotes and sometimes whole words),
   tesseract 0.29% (1,403). glm-ocr's lead on the 1909 Teirlinck bench doesn't
   hold here; the readings' errors differ, which is what combining them needs.
-
 - 2026-10-07: Two CPNB Boekenweekgeschenken from the user, the closest match to
   Stella among the golden books (IA Scribe scans, 360 ppi MRC, GlyphLessFont,
   104 pages), each with CPNB's EPUB of the same edition: *De eerlijke vinder*
