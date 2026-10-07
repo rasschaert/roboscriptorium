@@ -213,3 +213,27 @@ def test_tesseract_words_go_to_the_nearest_line_box():
         ["suppose,"],
         ["Rome."],
     ]
+
+
+def test_the_word_list_votes_but_decides_nothing(monkeypatch):
+    from types import SimpleNamespace
+
+    answers = iter([])
+    monkeypatch.setattr(ocrcheck, "_ask", lambda *args, **kwargs: next(answers))
+    clef, winnow = SimpleNamespace(model="clef"), SimpleNamespace(model="winnow")
+
+    def decide(seen: str, read: str, vouched: int | None):
+        nonlocal answers
+        answers = iter([{"value": seen, "confidence": 0.9}, {"value": read, "confidence": 0.9}])
+        line = "Toen kwam lemand binnen"
+        return ocrcheck._decide(
+            None, 1, 0, line, 10, 16, ["Iemand"], (0, 0, 1, 1), "nld", clef, winnow, None,
+            vouched=vouched,
+        )  # fmt: skip
+
+    assert decide("a", "b", 1) == (
+        "review",
+        None,
+        {"clef": "lemand", "winnow": "Iemand", "word list": "Iemand"},
+    )
+    assert decide("a", "a", 1)[:2] == decide("a", "a", None)[:2] == ("ours", None)

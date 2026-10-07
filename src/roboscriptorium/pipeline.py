@@ -23,6 +23,7 @@ from roboscriptorium.corrections import Corrections
 from roboscriptorium.epub import write_epub
 from roboscriptorium.flags import treatment
 from roboscriptorium.ir import Document, Paragraph, SourceRef
+from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, cached_text_layer, render_jpeg
 from roboscriptorium.reflow import reflow
 from roboscriptorium.roles import DecisionCache, LineRole, classify
@@ -112,7 +113,9 @@ def run(
                 ),
             ]
             judge = ollaya.for_model(settings.judge_model, settings.ollaya_url, settings.ollama_url)
-            suspects = ocrcheck.check(book.source, body, readings, lang, judge, reader, cache)
+            suspects = ocrcheck.check(
+                book.source, body, readings, lang, judge, reader, cache, Lexicon.load(lang)
+            )
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
         corrected, roles, applied = corrections.apply(
             body, model_roles, Corrections(book.corrections_path)

@@ -31,7 +31,9 @@ from roboscriptorium.clients import ollaya
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
+from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, line_words, spells
+from roboscriptorium.reflow import HYPHENS
 from roboscriptorium.roles import DecisionCache
 
 DPI = 300
@@ -339,6 +341,7 @@ def check(
     vision: OllayaClient,
     reader: OllayaClient,
     cache: DecisionCache,
+    lexicon: Lexicon | None = None,
 ) -> list[Suspect]:
     """Suspects where any other reading differs from the text layer, each with a decision."""
     suspects = []
@@ -356,9 +359,12 @@ def check(
                         page.lines[k - 1].text if k > 0 else "",
                         page.lines[k + 1].text if k + 1 < len(page.lines) else "",
                     )
+                    continues = a0 == 0 and k > 0 and page.lines[k - 1].text.endswith(HYPHENS)
                     choice, chosen, votes = _decide(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache, around,
+                        lexicon.vouches([ours[a0:a1], *alternatives], continues)
+                        if lexicon else None,
                     )  # fmt: skip
                     suspects.append(
                         Suspect(
@@ -454,12 +460,18 @@ def _combined(ours: str, versions: list[str]) -> str | None:
 
 
 def _decide(
-    pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache, around=("", "")
-) -> tuple[str, str | None, dict[str, str]]:
+    pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache, around=("", ""),
+    vouched: int | None = None,
+) -> tuple[str, str | None, dict[str, str]]:  # fmt: skip
     """\"ours\", \"other\" with the chosen version, or \"review\"; and each model's pick.
 
     The text model also reads the lines `around` this one (before, after), where a
     quote opens or a sentence goes on.
+
+    Where the word list knows the words of one version only (`vouched`, an index
+    into the versions), that version is recorded as its vote. It decides nothing:
+    acting on it saved questions on the tuning books and added unasked errors on
+    held-out ones.
 
     A pick is applied when both models make it and the vision model is at least
     somewhat sure, or, where the versions differ only in punctuation, dashes or
@@ -509,6 +521,8 @@ def _decide(
     )
     pick = lambda value: versions[letters.index(value)] if value in letters else ""  # noqa: E731
     votes = {vision.model: pick(seen["value"]), reader.model: pick(read["value"])}
+    if vouched is not None:
+        votes["word list"] = versions[vouched]
     if _typographic(versions) and seen["value"] in letters and seen["confidence"] >= SURE_ALONE:
         if seen["value"] == "a":
             return "ours", None, votes

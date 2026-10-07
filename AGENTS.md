@@ -202,6 +202,12 @@ right, then expand.
     The judge is `judge_model` (clef:27b, `ROBO_JUDGE_MODEL`), not the role
     model. Suspects are saved to
     `stages/ocr-check.json`; `eval --no-check-ocr` skips the stage.
+  - `lexicon.py`: a language's word list, unpacked from tesseract's own model
+    (`<lang>.traineddata`'s LSTM word DAWG: Dutch 478k words, English 338k) into
+    `work/lexicon/`, and which one of several readings it knows all the words
+    of. Word breaks, line-end fragments, stress accents and words without a
+    vowel get no verdict. The OCR check records its pick as a vote ("word list",
+    shown in the review) but doesn't act on it.
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
     text layer lacks, or reads as scraps because it is printed sideways).
   - `initials.py`: guesses the letter of a decorated initial: the letters that
@@ -359,6 +365,9 @@ schedel before choosing an OCR model.
   PyTorch, and the DocLayout-YOLO DocStructBench weights
   (`juliozhao/DocLayout-YOLO-DocStructBench`, `doclayout_yolo_docstructbench_imgsz1024.pt`,
   in the Hugging Face cache). Used by `review` to flag regions from page images.
+- Word lists: `work/lexicon/{nld,eng}-words.txt`, built by `lexicon.py` from the
+  tessdata models with `combine_tessdata` and `dawg2wordlist` (both come with
+  Homebrew's tesseract). Nothing installed.
 - tesseract 5.5.3 (Homebrew, `eng`/`osd` only). The Dutch model is
   `nld.traineddata` from tessdata_best in `work/tessdata/` (pass
   `--tessdata-dir work/tessdata`); `tesseract-lang` (~650 MB) is not installed.
@@ -1013,3 +1022,15 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   error (OCR-doubt questions: 52 of 334). Goede dochter pp. 9–64: unasked 0.33
   → 0.27/page, within noise; 2 of 3 on an error. Most of Reis's remaining
   unasked words are its footnotes (194), which the reference leaves out.
+- 2026-10-07: tesseract's dictionary as a word list (`lexicon.py`), as a vote
+  in the OCR check. Where it knows the words of only one reading it is nearly
+  always right on Goede dochter (`hygiëne`, `Iemand`; even against both judges
+  on `binnengedrongen`), but not on word breaks (Dutch compounds it lacks split
+  into words it has: `martel kamers`), stress accents (`míj`), tiny words
+  (`Si` for `Sjjj`), or vowelless entries (`rjg`, `Sh!`); those get no verdict.
+  Applied with one judge agreeing: questions down on every book (Reis 458 →
+  443, Goede dochter 139 → 134), but held out it added ~2 unasked wrong words
+  each on Grand Hotel Europa (−9 questions) and De tuin (−4). Applied only when
+  both judges agree, and vetoing their unanimous pick: no measurable change on
+  four books. So it decides nothing; its pick is recorded and shown to the
+  reviewer, and kept as a feature for learned trust.
