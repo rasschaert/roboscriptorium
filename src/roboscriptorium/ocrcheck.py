@@ -60,6 +60,7 @@ MIN_LINE_CHARS = 12
 # hyphen, one character for one, so offsets stay put.
 _FOLD = str.maketrans("‘’“”¬", "''\"\"-")
 _OPENING_QUOTES = re.compile(r"(^|\s)[\"'‘’“”]+")
+_ANY_DASH = re.compile(r"\s*[—–]\s*|\s+-\s+|\s+-(?=['\"]|$)")
 _SPACE_BEFORE_APOSTROPHE = re.compile(r"(?<=\w) +'(?=\w)")
 LANGUAGE_NAMES = {"nld": "Dutch", "eng": "English"}
 
@@ -291,7 +292,9 @@ def differences(ours: str, theirs: str) -> list[tuple[int, int, int, int]]:
     quote marks isn't one: OCR models read a printed “ as ‘, and no model can
     tell them apart in a crop. Nor is a reading without the space before an
     apostrophe ("uur’s" for "uur ’s"): OCR models miss the narrow space Dutch
-    print sets before the article ’s, and no judge sees it in a crop.
+    print sets before the article ’s, and no judge sees it in a crop. Nor are
+    differences in a dash's kind or the space around it: a book sets all its dashes
+    one way (`typography.py`).
     """
     spans = []
     for op in Levenshtein.opcodes(ours.translate(_FOLD), theirs.translate(_FOLD)):
@@ -311,7 +314,13 @@ def differences(ours: str, theirs: str) -> list[tuple[int, int, int, int]]:
         != theirs[s[2] : s[3]].translate(_FOLD).strip()
         and _SPACE_BEFORE_APOSTROPHE.sub("'", ours[s[0] : s[1]].translate(_FOLD))
         != theirs[s[2] : s[3]].translate(_FOLD)
+        and _dashes(ours[s[0] : s[1]]) != _dashes(theirs[s[2] : s[3]])
     ]
+
+
+def _dashes(text: str) -> str:
+    """Text with every dash between words alike: the book's dash style is set book-wide."""
+    return _ANY_DASH.sub("—", text.translate(_FOLD)).strip()
 
 
 def _bare(text: str) -> str:

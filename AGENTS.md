@@ -219,6 +219,13 @@ right, then expand.
     in `work/models/ocr-trust.pkl`, trained by `experiments/train_ocr_trust.py
     --save` on the tuning books' suspects, never the held-out ones
     (`experiments/ocr_trust_data.py`).
+  - `typography.py`: the book's dash style (en or em; no, thin or word spacing),
+    from `book.toml` (`dash`, `dash_spacing`) or, on a scan, measured on the page
+    image (the stroke's length against the line's letter width, its gaps against
+    the gaps between words; cached in `stages/typography.json`, and printed so a
+    human can settle it). Every dash between words in the output is then set that
+    way (a no-break space before it, narrow when thin); number ranges and hyphens
+    stay. The OCR check no longer raises dash kind or spacing as a doubt.
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
     text layer lacks, or reads as scraps because it is printed sideways).
   - `initials.py`: guesses the letter of a decorated initial: the letters that
@@ -393,6 +400,8 @@ author = "Marlen Haushofer"
 language = "nl"
 cover_page = 1
 body_pages = [5, 71]   # inclusive; Ollaya page classification replaces this later
+dash = "–"             # optional: how the book prints dashes ("–" or "—") …
+dash_spacing = "thin"  # … and their gaps ("none", "thin", "word"); else measured
 ```
 
 ```sh
@@ -1080,3 +1089,12 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   0.77; Lady into Fox 3.34 → 3.29, questions 1.59 → 1.99, unasked 2.34 → 1.75.
   It is now the default; the fixed rule (SURE/SURE_ALONE) remains as the
   fallback.
+- 2026-10-07: Dash style is a book-wide decision (from the user's review of
+  Stella: dash questions came one line at a time, which would mix styles). OCR
+  layers write every dash as an em dash and space it at random, so the style is
+  measured on the scan: on eleven scans the kind matches the reference (Dutch
+  books en, ~1.1–1.3 letters long; Crime, Lady into Fox, Dolittle em, ~2.0–2.2),
+  and the gaps against the book's word gaps give spacing (Crime 0.07 letters:
+  glued; Stella 0.45 against 0.70: thin, as the user saw; the Dutch EPUBs' spaced
+  en dashes 0.5–1.0 against 0.6–1.0: word). Every output dash takes the style;
+  dash-only differences are no OCR doubts. Quote style may deserve the same.

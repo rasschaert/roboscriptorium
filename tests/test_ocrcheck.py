@@ -29,6 +29,15 @@ def test_a_reading_without_the_space_before_an_apostrophe_is_not_a_difference():
     assert _spans("je 's morgens", "je's morgens") == []
 
 
+def test_a_dashs_kind_and_spacing_are_no_difference_but_a_lost_dash_is():
+    assert _spans("dat irriteert—een beetje", "dat irriteert – een beetje") == []
+    assert _spans("dat irriteert - een beetje", "dat irriteert—een beetje") == []
+    assert _spans("‘Ik zei toch—’", "‘Ik zei toch –’") == []
+    assert _spans("up if they come", "up—if they come") == [("up if", "up—if")]
+    # A hyphen inside a word is a letter of it.
+    assert _spans("een wc-bril", "een wc—bril") == [("wc-bril", "wc—bril")]
+
+
 def _page() -> PageText:
     lines = [
         Line("he was so tired up if they come", 10, 10, 200, 20),

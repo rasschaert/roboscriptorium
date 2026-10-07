@@ -18,6 +18,7 @@ from roboscriptorium import (
     quotes,
     trust,
     typestyle,
+    typography,
 )
 from roboscriptorium.book import Book
 from roboscriptorium.clients import ollaya
@@ -144,6 +145,8 @@ def run(
     blocks = italics.mark(
         reflow(text, roles), body, italics.detect(book.source, body, book.stages / "italics.json")
     )
+    if (style := dash_style(book, body)) is not None:
+        blocks = typography.apply(blocks, style)
     doc = Document(book.title, book.author, book.language, blocks)
     images = {}
     if regions is not None:
@@ -160,6 +163,28 @@ def run(
     cover = render_jpeg(book.source, book.cover_page) if book.cover_page else None
     write_epub(doc, book.epub_path, cover, images)
     return Stages(body, model_roles, corrected, roles, doc, applied, suspects, quote_lines)
+
+
+def dash_style(book: Book, body: list[PageText]) -> typography.DashStyle | None:
+    """The book's dash style: as book.toml sets it, else as measured on a scan (said aloud).
+
+    A born-digital PDF's dashes are exact, so they are left as they are.
+    """
+    if book.dash and book.dash_spacing:
+        return typography.DashStyle(book.dash, book.dash_spacing)
+    if not ocrcheck.scanned(book.source):
+        return None
+    guess = typography.guess(book.source, [p.number for p in body], book.stages / "typography.json")
+    if guess is None:
+        return None
+    name = {"–": "en", "—": "em"}[guess.style.dash]
+    print(
+        f"Dash style measured on the scan: {guess.describe()}. To settle it, put "
+        f'dash = "{guess.style.dash}" ({name}) and dash_spacing = "{guess.style.spacing}" '
+        "in book.toml.",
+        file=sys.stderr,
+    )
+    return guess.style
 
 
 def _answered(book: Book) -> dict[int, list[tuple[float, float, float, float]]]:

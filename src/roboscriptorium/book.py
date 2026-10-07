@@ -3,7 +3,7 @@
 Layout of a book directory (always under the gitignored `work/`):
 
     work/<book>/
-      book.toml       metadata and page ranges
+      book.toml       metadata, page ranges and typography a human settled
       source.pdf      the input
       stages/         resumable per-stage artefacts
       review/         a human's answers about flagged regions
@@ -27,6 +27,10 @@ class Book:
     body_pages: tuple[int, int]
     # Name of the golden book under golden/ that this scan is scored against.
     golden: str | None = None
+    # How the book prints its dashes: "–" or "—", and "none", "thin" or "word" spacing.
+    # Unset, the pipeline measures it on the scan (`typography.py`).
+    dash: str | None = None
+    dash_spacing: str | None = None
 
     @classmethod
     def load(cls, root: Path) -> "Book":
@@ -42,6 +46,8 @@ class Book:
             cover_page=data.get("cover_page"),
             body_pages=(first, last),
             golden=data.get("golden"),
+            dash=data.get("dash"),
+            dash_spacing=data.get("dash_spacing"),
         )
 
     @property
