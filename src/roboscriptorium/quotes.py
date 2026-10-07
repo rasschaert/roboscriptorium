@@ -4,10 +4,15 @@ Curly quotes only: an opening ‘ or “ at a word's start, a closing ’ or ”
 end. A ’ inside a word (zo’n, auto’s) or opening a Dutch article (’s avonds, ’t)
 is an apostrophe. A quote left open at a paragraph's end is fine when the next
 paragraph opens with the same mark, as a quotation running over paragraphs does.
+
+A vision model's reading of such a line, told how the book is set (`style_prompt`),
+proposes the line with its marks (`proposed`); the letters stay the text layer's.
 """
 
 import re
 from dataclasses import dataclass
+
+from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.ir import Paragraph, SourceRef
 
@@ -106,3 +111,82 @@ def _around(p: Paragraph, offset: int, why: str) -> list[SourceRef]:
 
 def _excerpt(text: str, offset: int) -> str:
     return text[max(0, offset - 40) : offset + 40].replace("\n", " ")
+
+
+def _word_span(text: str, start: int, end: int) -> tuple[int, int]:
+    while start > 0 and not text[start - 1].isspace():
+        start -= 1
+    while end < len(text) and not text[end].isspace():
+        end += 1
+    return start, end
+
+
+# A contraction's ending that an OCR layer split off by losing its apostrophe
+# ("didn t", "I m", "auto s").
+_SPLIT_CONTRACTION = re.compile(r"(?<=\w) (?=(?:t|m|s|re|ve|ll|d|n)\b)")
+
+
+def _letters(text: str) -> list[str]:
+    """Each word's letters and digits: what a proposal may not change."""
+    return ["".join(c for c in word if c.isalnum()) for word in text.split()]
+
+
+def proposed(ours: str, reading: str, ellipsis: str = "…") -> str:
+    """`ours` with another reading's quote marks and punctuation.
+
+    Each word where the two differ only in marks, not letters or word breaks (but for
+    a contraction the layer split, "I m" for "I’m"), and the reading's has a quote
+    mark, takes the reading's; every other word stays ours. The reading's straight
+    quotes are taken as curly and its ellipses as the book's `ellipsis`."""
+    reading = re.sub(r"(^|\s)'", r"\1‘", reading).replace("'", "’")
+    reading = re.sub(r'(^|\s)"', r"\1“", reading).replace('"', "”")
+    reading = re.sub(r"…|\.\.\.", ellipsis, reading)
+    spans: list[list[int]] = []
+    for op in Levenshtein.opcodes(ours, reading):
+        if op.tag == "equal":
+            continue
+        a = _word_span(ours, op.src_start, op.src_end)
+        b = _word_span(reading, op.dest_start, op.dest_end)
+        if spans and a[0] <= spans[-1][1]:
+            last = spans[-1]
+            spans[-1] = [last[0], max(last[1], a[1]), last[2], max(last[3], b[1])]
+        else:
+            spans.append([*a, *b])
+    out, at = [], 0
+    for a0, a1, b0, b1 in spans:
+        theirs = reading[b0:b1]
+        mine = ours[a0:a1]
+        same = _letters(mine) == _letters(theirs) or (
+            _letters(_SPLIT_CONTRACTION.sub("’", mine)) == _letters(theirs)
+        )
+        if same and any(c in theirs for c in "‘’“”"):
+            out += [ours[at:a0], theirs]
+            at = a1
+    return "".join(out) + ours[at:]
+
+
+def ellipsis(text: str) -> str:
+    """How the book prints an ellipsis: one character or three periods, by majority."""
+    return "…" if text.count("…") >= text.count("...") else "..."
+
+
+def style_note(language: str, single: bool, ellipsis: str, dash: str | None) -> str:
+    """How the book is set, as a sentence for a model reading or judging its text."""
+    outer, inner = ("‘ ’", "“ ”") if single else ("“ ”", "‘ ’")
+    marks = "the ellipsis as one character …" if ellipsis == "…" else "the ellipsis as ..."
+    dashes = {"–": ", en dashes –", "—": ", em dashes —"}.get(dash or "", "")
+    name = {"nl": "Dutch", "en": "English"}.get(language, language)
+    return (
+        f"This book is {name} and set in this style: dialogue in curly quotes {outer}, a "
+        f"quotation inside dialogue in {inner}, the apostrophe ’, {marks}{dashes}."
+    )
+
+
+def style_prompt(language: str, single: bool, ellipsis: str, dash: str | None) -> str:
+    """A prompt to transcribe one printed line, telling the model how the book is set."""
+    return (
+        style_note(language, single, ellipsis, dash)
+        + " Use exactly these characters, never straight quotes. "
+        "Transcribe the printed text in this image exactly as printed: every letter, accent, "
+        "quote mark, dash and punctuation mark. It is one line of a book. Output only the text."
+    )

@@ -135,3 +135,24 @@ for name, reading in readings.items():
     fixes = sum(normalise(reading[r]) == normalise(labels[r].truth) != normalise(layer[r]) for r in lines)
     breaks = sum(normalise(layer[r]) == normalise(labels[r].truth) != normalise(reading[r]) for r in lines)
     print(f"{name}: right where the layer is wrong on {fixes} lines; wrong where it is right on {breaks}")
+
+
+# Lines only one other reading gets right, where the layer is wrong: what that reading
+# alone would add to the OCR check's versions.
+others = [n for n in readings if n != "text layer"]
+for name in others:
+    rest = [n for n in others if n != name]
+    alone = [
+        r for r in lines
+        if normalise(readings[name][r]) == normalise(labels[r].truth) != normalise(layer[r])
+        and all(normalise(readings[n][r]) != normalise(labels[r].truth) for n in rest)
+    ]
+    print(f"{name}: the only reading right where the layer is wrong on {len(alone)} lines")
+    for r in alone[:12]:
+        print(f"    p{r.page}:{r.line} layer {layer[r]!r}\n{'':14}{name} {readings[name][r]!r}")
+
+wrong = [r for r in lines if normalise(layer[r]) != normalise(labels[r].truth)]
+nobody = [r for r in wrong if all(normalise(readings[n][r]) != normalise(labels[r].truth) for n in others)]
+print(f"layer wrong on {len(wrong)} lines; no reading right on {len(nobody)}")
+for r in nobody[:40]:
+    print(f"    p{r.page}:{r.line} layer {layer[r]!r}\n{'':14}truth {labels[r].truth!r}")

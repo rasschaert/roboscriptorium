@@ -121,12 +121,21 @@ def line_readings(
     model: str,
     ollama_url: str,
     cache: Path,
+    prompt: str = "",
+    shortest: int = MIN_LINE_CHARS,
 ) -> dict[SourceRef, str]:
-    """The OCR model's reading of each checked line's crop, cached on the line's text."""
+    """The OCR model's reading of each checked line's crop, cached on the line's text.
+
+    With a `prompt`, a generative vision model reads it (`transcribe`); without, glm-ocr
+    (`read_line`). Lines shorter than `shortest` aren't read."""
     done: dict[str, str] = {}
     if cache.exists():
         raw = json.loads(cache.read_text())
-        if raw.get("version") == READING_VERSION and raw.get("model") == model:
+        if (
+            raw.get("version") == READING_VERSION
+            and raw.get("model") == model
+            and raw.get("prompt", "") == prompt
+        ):
             done = raw["lines"]
 
     with pymupdf.open(pdf) as doc:
@@ -141,12 +150,12 @@ def line_readings(
         SourceRef(p.number, k): (p, k)
         for p in pages
         for k, line in enumerate(p.lines)
-        if SourceRef(p.number, k) in checked and len(line.text) >= MIN_LINE_CHARS
+        if SourceRef(p.number, k) in checked and len(line.text) >= shortest
     }
     todo = [(p, k) for p, k in wanted.values() if key(p, k) not in done]
 
     def save() -> None:
-        blob = {"version": READING_VERSION, "model": model, "lines": done}
+        blob = {"version": READING_VERSION, "model": model, "prompt": prompt, "lines": done}
         write_atomic(cache, json.dumps(blob, ensure_ascii=False))
 
     # PyMuPDF isn't thread-safe: crops are rendered here, a batch at a time, and
@@ -155,7 +164,10 @@ def line_readings(
         for start in range(0, len(todo), SAVE_EVERY):
             batch = todo[start : start + SAVE_EVERY]
             crops = [_line_crop(doc, page.number, boxes[page.number][k]) for page, k in batch]
-            texts = pool.map(lambda png: read_line(png, model, ollama_url), crops)
+            if prompt:
+                texts = pool.map(lambda png: transcribe(png, model, ollama_url, prompt), crops)
+            else:
+                texts = pool.map(lambda png: read_line(png, model, ollama_url), crops)
             for (page, k), text in zip(batch, texts, strict=True):
                 done[key(page, k)] = text
             save()
@@ -283,6 +295,21 @@ def read_line(png: bytes, model: str, ollama_url: str) -> str:
             if "\n" in out.strip():
                 break
     return out.strip().split("\n")[0].strip().replace("一", "—")
+
+
+def transcribe(png: bytes, model: str, ollama_url: str, prompt: str) -> str:
+    """A generative vision model's transcription of one printed line, thinking off."""
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "images": [base64.b64encode(png).decode()],
+        "stream": False,
+        "think": False,
+        "options": {"num_predict": MAX_LINE_TOKENS, "temperature": 0},
+    }
+    resp = httpx.post(f"{ollama_url}/api/generate", json=payload, timeout=600)
+    resp.raise_for_status()
+    return resp.json()["response"].strip().split("\n")[0].strip()
 
 
 def _word_span(text: str, start: int, end: int) -> tuple[int, int]:

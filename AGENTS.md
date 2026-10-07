@@ -123,7 +123,8 @@ right, then expand.
 - Layout: `src/roboscriptorium/` (src layout), tests in `tests/`.
   - `cli.py`: typer app, the entry point.
   - `config.py`: `Settings`, overridable via `ROBO_OLLAMA_URL`, `ROBO_OLLAYA_URL`,
-    `ROBO_DECISION_MODEL` and `ROBO_ROLE_MODEL`.
+    `ROBO_DECISION_MODEL`, `ROBO_ROLE_MODEL` and the others it lists (`ROBO_READ_MODEL`
+    reads quote questions' lines, "" for none).
   - `clients/ollaya.py` also serves Ollama's `/v1/systemone`: `for_model` routes
     `clef-*` models there and everything else to Ollaya.
   - `clients/ollama.py`, `clients/ollaya.py`: thin httpx clients. All model calls go
@@ -183,6 +184,10 @@ right, then expand.
     opening ‘, a lost closing ’), apostrophes, Dutch `’s`, plural possessives,
     nested quotes and quotations running over paragraphs aside. Found on the
     text before a human's answers (`Stages.quote_lines`) and flagged as `quotes`.
+    Each such line (short ones too) is read by `read_model` (qwen3.8) with the book's
+    typesetting in the prompt (`style_prompt`: quote marks, ellipsis, dashes); its
+    marks on the OCR-checked line's letters (`proposed`) become the question's second
+    reading (`Stages.quote_readings`, cached in `stages/quote-readings.json`).
   - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
     `stages/layout.json`; run by `review`. Picture-only pages are also run turned a
     quarter, to find captions printed sideways.
@@ -381,7 +386,7 @@ schedel before choosing an OCR model.
 | Ollama | `nemotron3:33b` | Tried as Dutch OCR | **Unfit**: thinks by default (107 s and empty output); with `think: false`, 7 s/page but CER 14% on one Teirlinck page: invented words (`dampwalmen→dampwaarneming`) and modernised (`zijne→zijn`) |
 | — | DocLayout-YOLO (DocStructBench, `layout` group) | Page layout regions from the page image | 20 tricky pages, 0.1–0.5 s/page on MPS. Finds figures, captions, drawn initials, titles (Crime's bare "III"), and furniture as `abandon`. Sees printed text the OCR layer lacks (Dolittle p97 subtitle). Misses Boze tongen's spaced part title (`abandon`). Run on a page turned a quarter, it finds a landscape plate's caption (8/8 Dolittle plates, no false positives on 4 books) but not which way is up. See `experiments/probe_layout.py`, `probe_orientation.py` |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
-| Ollama | `qwen3.8:27b-nvfp4` (MLX, 18 GB) | **Proofreader**; reading and language-judge candidate | Stella proofreading test (68 answered regions, 9 really wrong): transcribing the tight crop and comparing in code catches 9/9 with 3 false alarms in 58 (gemma4: 6/7, 5 alarms); yes/no on crop and text AUC 0.92, no false alarms, but catches only 3. As text judge between its reading and the answer: 9/12 right with thinking off (unsure on punctuation, ~0.53), 10/12 with thinking on and winnow reading its reply (punctuation 0.72–0.88), ~20 s/call. ~1 s per crop reading. Thinking is on by default: pass `think: false` for one-token answers. **Best line reading yet** on Goede dochter pp. 9–64: CER 0.17% folded, 1,504/1,622 lines exact (layer 0.20%, 1,460); right where the layer is wrong on 119 lines, wrong where it is right on 76. Its errors are real words (`doodgaan→doorgaan`, `woonden→wonden`, `verhieven→verheven`, once German `wartete`) and dropped or doubled letters, so it never decides alone |
+| Ollama | `qwen3.8:27b-nvfp4` (MLX, 18 GB) | **Reads quote questions' lines (in use, `read_model`)**; proofreader; reading and language-judge candidate | Quote questions, told the book's style, its marks on the layer's letters: right where the line is wrong / wrong where right: Reis 51/0 of 120, Vals alarm 29/0 of 60, Thief-Taker 76/3 of 287, held-out De tuin 42/1 of 73. The style sentence matters: Reis raw readings 55/4 without it, 57/2 with. | Stella proofreading test (68 answered regions, 9 really wrong): transcribing the tight crop and comparing in code catches 9/9 with 3 false alarms in 58 (gemma4: 6/7, 5 alarms); yes/no on crop and text AUC 0.92, no false alarms, but catches only 3. As text judge between its reading and the answer: 9/12 right with thinking off (unsure on punctuation, ~0.53), 10/12 with thinking on and winnow reading its reply (punctuation 0.72–0.88), ~20 s/call. ~1 s per crop reading. Thinking is on by default: pass `think: false` for one-token answers. **Best line reading yet** on Goede dochter pp. 9–64: CER 0.17% folded, 1,504/1,622 lines exact (layer 0.20%, 1,460); right where the layer is wrong on 119 lines, wrong where it is right on 76. Its errors are real words (`doodgaan→doorgaan`, `woonden→wonden`, `verhieven→verheven`, once German `wartete`) and dropped or doubled letters, so it never decides alone |
 
 ## Environment
 
@@ -1186,3 +1191,15 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   read identical lines (`experiments/probe_line_grouping_diff.py`). A drop cap
   that is a fragment of its own still joins the line below; only Thief-Taker
   p70 has one (`experiments/probe_tall_fragments.py`).
+- 2026-10-07: Quote questions offer a proposed reading (the user's idea: tell the
+  model the book's style). qwen3.8 reads each quote-flagged line, told how the book
+  sets dialogue, nested quotes, ellipses and dashes; only its quote marks and the
+  punctuation beside them are taken onto the OCR-checked line (its letters slip:
+  `krimpachtig`, `pijsnelle`, a Cyrillic word), never a changed word break except
+  a contraction the layer split (`I m`). Right where the line is wrong / wrong where
+  it is right: Reis 51/0 (of 120 questions), Vals alarm pp. 11–60 29/0 (of 60),
+  Thief-Taker 76/3 (of 287; `‘’Scuse` loses its elision), held-out De tuin pp.
+  11–52 42/1 (of 73). Short lines are read too: `‘Nee.` is where a closing quote is
+  lost most. On Reis, without the style sentence: 55/4. Qwen as a vote for the
+  trust model (plain prompt, Goede dochter by page folds) showed no gain; rerun it
+  with the style prompt before ruling it out.

@@ -40,3 +40,44 @@ def test_places_point_at_the_lines_where_the_mark_is_missing():
     (place,) = unbalanced([q])
     assert place.why == "no opening"
     assert place.sources == refs[-2:]
+
+
+def test_a_proposal_takes_only_the_readings_marks():
+    from roboscriptorium.quotes import proposed
+
+    # Letters the reading changes stay the layer's, whatever its marks.
+    assert proposed("krampachtig, ‘vergissing…", "krimpachtig, ‘vergissing...’") == (
+        "krampachtig, ‘vergissing…’"
+    )
+    # A word that differs in a mark other than a quote stays as it is.
+    assert proposed("Ja, ja, goedemorgen…!", "Ja, ja, goedemorgen.!") == "Ja, ja, goedemorgen…!"
+    # A reading without the space before ’s doesn't join the words.
+    assert proposed("om zes uur ’s avonds", "om zes uur’s avonds") == "om zes uur ’s avonds"
+    # Nothing to propose where the marks agree.
+    assert proposed("‘Nou dan.’", "'Nou dan.'") == "‘Nou dan.’"
+
+
+def test_a_proposal_puts_back_a_lost_quote_and_its_period():
+    from roboscriptorium.quotes import proposed
+
+    assert proposed(
+        "Je zei immers over acht, tien dagen”", "'Je zei immers over acht, tien dagen.'"
+    ) == ("‘Je zei immers over acht, tien dagen.’")
+    assert proposed("domme gans, herhaalde ik", "domme gans,’ herhaalde ik") == (
+        "domme gans,’ herhaalde ik"
+    )
+    # A contraction the layer split by losing its apostrophe is joined again.
+    assert proposed("I m not going to kill you", "‘I’m not going to kill you") == (
+        "‘I’m not going to kill you"
+    )
+    # Ellipses come in the book's own form.
+    assert proposed("een zuigeling…", "een zuigeling...’", "...") == "een zuigeling...’"
+
+
+def test_the_style_prompt_names_the_books_marks():
+    from roboscriptorium.quotes import style_prompt
+
+    dutch = style_prompt("nl", True, "…", "–")
+    assert "Dutch" in dutch and "curly quotes ‘ ’" in dutch and "en dashes" in dutch
+    english = style_prompt("en", False, "...", None)
+    assert "curly quotes “ ”" in english and "dash" not in english.split("Transcribe")[0]

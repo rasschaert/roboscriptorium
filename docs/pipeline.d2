@@ -141,9 +141,11 @@ review: 4 · Review {
   }
   m: {
     class: row
+    qread: "qwen3.8:27b, told the book's style,\nproposes an unpaired quote's marks" {class: ollama}
     you: you {class: human}
     proof: qwen3.8 proofreads\nthe answers {class: candidate}
   }
+  s.flags -> m.qread {class: uses}
   s.page -> m.you: a key per answer {class: uses}
   s.answers -> m.proof {class: uses}
 }

@@ -183,11 +183,22 @@ def _doubt(page: PageText, d: Doubt, roles: dict[SourceRef, LineRole]) -> Flag:
     )
 
 
-def _region(page: PageText, run: list[tuple[int, str, list[str]]]) -> Flag:
+def _region(
+    page: PageText, run: list[tuple[int, str, list[str]]], proposed: dict[SourceRef, str]
+) -> Flag:
+    """A run of flagged lines; with `proposed` lines in it, the region as the text layer
+    reads it and as proposed are its two readings."""
     first, last = run[0][0], run[-1][0]
     text = "\n".join(page.lines[k].text for k in range(first, last + 1))
     reasons = list(dict.fromkeys(r for _, _, rs in run for r in rs))
-    return Flag(region_key(page.number, text), page.number, first, last, text, run[0][1], reasons)
+    flag = Flag(region_key(page.number, text), page.number, first, last, text, run[0][1], reasons)
+    refs = [SourceRef(page.number, k) for k in range(first, last + 1)]
+    if any(r in proposed for r in refs):
+        other = "\n".join(proposed.get(r, page.lines[r.line].text) for r in refs)
+        flag = replace(
+            flag, readings=[{"text": text, "votes": []}, {"text": other, "votes": ["scan reading"]}]
+        )
+    return flag
 
 
 def _inside(line, region: Region) -> bool:
@@ -285,12 +296,14 @@ def find(
     layout: dict[int, list[Region]] | None = None,
     doubts: list[Doubt] | None = None,
     quotes: set[SourceRef] | None = None,
+    proposed: dict[SourceRef, str] | None = None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.
 
     Each of the OCR check's `doubts` is a question of its own about one place in a line,
     cropped to it. `quotes` are lines where a paragraph's quote marks don't pair up
-    (`quotes.unbalanced`).
+    (`quotes.unbalanced`); `proposed` are such lines as a vision model reads their marks
+    (`Stages.quote_readings`), offered as a second reading.
     """
     flags: list[Flag] = []
     furniture = _Furniture(P.Repeats(pages), P.page_offset(pages))
@@ -322,10 +335,10 @@ def find(
                 run.append((i, how, reasons))
                 continue
             if run:
-                page_flags.append(_region(page, run))
+                page_flags.append(_region(page, run, proposed or {}))
             run = [(i, how, reasons)] if reasons else []
         if run:
-            page_flags.append(_region(page, run))
+            page_flags.append(_region(page, run, proposed or {}))
         boxes = [
             replace(f, treatment=_treatment_of(page, f, roles)) if f.last >= f.first else f
             for f in boxes

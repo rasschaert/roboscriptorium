@@ -193,3 +193,42 @@ def test_a_lost_quote_becomes_a_question_that_stays_once_answered(tmp_path, monk
     assert "‘the story" in " ".join(p.text for p in again.doc.paragraphs)
     # The question was found before the answer, so it is still asked.
     assert [f.key for f in asked(again)] == [question.key]
+
+
+def test_a_quote_question_offers_the_lines_marks_as_read_on_the_scan(tmp_path, monkeypatch):
+    _everything_is_body(monkeypatch)
+    _no_layout(monkeypatch)
+    book = _book(tmp_path)
+    lost = "the story goes on, he said.’ And that was that"
+    read = pipeline.cached_text_layer
+
+    def layer(*args):
+        pages = read(*args)
+        lines = [replace(ln, text=lost) if k == 11 else ln for k, ln in enumerate(pages[0].lines)]
+        return [replace(pages[0], lines=lines)]
+
+    monkeypatch.setattr(pipeline, "cached_text_layer", layer)
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    monkeypatch.setattr(pipeline, "dash_style", lambda book, body: None)
+    prompts = []
+
+    def transcribe(png, model, url, prompt):
+        prompts.append(prompt)
+        return "'the story gaes on,' he said.' And that was that"
+
+    monkeypatch.setattr(pipeline.ocrcheck, "transcribe", transcribe)
+    stages = pipeline.run(book, check_ocr=False)
+    found = flags.find(
+        stages.pages, stages.model_roles, quotes=stages.quote_lines,
+        proposed=stages.quote_readings,
+    )  # fmt: skip
+    (question,) = [f for f in found if "quotes" in f.reasons]
+    layer_text, scan = (r["text"] for r in question.readings)
+    assert layer_text == question.text
+    # The scan's marks, the text layer's letters ("goes", not "gaes").
+    assert "‘the story goes on,’ he said.’" in scan
+    assert prompts and "English" in prompts[0]
+    # A reading that is picked is the answer, applied on the next build.
+    Corrections(book.corrections_path).record(question, "text", scan)
+    again = pipeline.run(book, check_ocr=False)
+    assert "‘the story goes on,’ he said." in " ".join(p.text for p in again.doc.paragraphs)

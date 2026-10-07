@@ -17,6 +17,9 @@ class Settings:
     judge_model: str = "clef:27b"
     # OCR model on Ollama for the OCR check's second reading of each line.
     ocr_model: str = "glm-ocr:bf16"
+    # Vision model on Ollama that reads the lines a quote question sits on, for the
+    # question's proposed reading ("" for none).
+    read_model: str = "qwen3.8:27b-nvfp4"
     # Learned trust (`trust.py`) chooses the OCR check's fixes and questions instead of
     # the fixed rule, asking at most this many questions per page.
     ocr_trust: bool = True
@@ -33,6 +36,7 @@ class Settings:
             role_model=os.environ.get("ROBO_ROLE_MODEL", defaults.role_model),
             check_model=os.environ.get("ROBO_CHECK_MODEL", defaults.check_model),
             ocr_model=os.environ.get("ROBO_OCR_MODEL", defaults.ocr_model),
+            read_model=os.environ.get("ROBO_READ_MODEL", defaults.read_model),
             judge_model=os.environ.get("ROBO_JUDGE_MODEL", defaults.judge_model),
             ocr_trust=os.environ.get("ROBO_OCR_TRUST", "1") != "0",
             ocr_trust_model=os.environ.get("ROBO_OCR_TRUST_MODEL", defaults.ocr_trust_model),

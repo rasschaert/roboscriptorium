@@ -2,7 +2,7 @@
 
 import json
 import sys
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
 import pymupdf
@@ -29,7 +29,7 @@ from roboscriptorium.flags import treatment
 from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, cached_text_layer, render_jpeg
-from roboscriptorium.reflow import reflow
+from roboscriptorium.reflow import reflow, single_quoted
 from roboscriptorium.roles import DecisionCache, LineRole, classify
 
 
@@ -53,6 +53,9 @@ class Stages:
     # Lines of `pages` where a paragraph's quotes don't pair up, found before a
     # human's answers so the review's questions stay put.
     quote_lines: set[SourceRef]
+    # Per quote-flagged line: the line as the OCR check left it, with the marks a vision
+    # model reads (`quotes.proposed`), where they differ.
+    quote_readings: dict[SourceRef, str] = field(default_factory=dict)
 
 
 def run(
@@ -141,12 +144,17 @@ def run(
         for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
         for ref in place.sources
     }
+    style = dash_style(book, body)
+    quote_readings = {}
+    if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
+        dash = style.dash if style else None
+        quote_readings = proposals(book, body, suspects, unanswered, quote_lines, dash, settings)
     blocks = italics.mark(
         reflow(corrected, roles),
         body,
         italics.detect(book.source, body, book.stages / "italics.json"),
     )
-    if (style := dash_style(book, body)) is not None:
+    if style is not None:
         blocks = typography.apply(blocks, style)
     doc = Document(book.title, book.author, book.language, blocks)
     images = {}
@@ -163,7 +171,44 @@ def run(
 
     cover = render_jpeg(book.source, book.cover_page) if book.cover_page else None
     write_epub(doc, book.epub_path, cover, images)
-    return Stages(body, model_roles, corrected, roles, doc, applied, suspects, quote_lines)
+    return Stages(
+        body, model_roles, corrected, roles, doc, applied, suspects, quote_lines, quote_readings
+    )
+
+
+def proposals(
+    book: Book,
+    body: list[PageText],
+    suspects: list[ocrcheck.Suspect],
+    blocks: list,
+    lines: set[SourceRef],
+    dash: str | None,
+    settings: Settings,
+) -> dict[SourceRef, str]:
+    """Each quote-flagged line as the OCR check left it, with the quote marks and
+    punctuation the read model sees on the scan, where they differ. Short lines are read
+    too: "‘Nee." is where a closing quote is most often lost."""
+    paragraphs = [b for b in blocks if isinstance(b, Paragraph)]
+    text = " ".join(p.text for p in paragraphs)
+    dots = quotes.ellipsis(text)
+    prompt = quotes.style_prompt(book.language, single_quoted(paragraphs), dots, dash)
+    read = ocrcheck.line_readings(
+        book.source,
+        body,
+        lines,
+        settings.read_model,
+        settings.ollama_url,
+        book.stages / "quote-readings.json",
+        prompt,
+        shortest=1,
+    )
+    checked = {p.number: p for p in ocrcheck.apply(body, suspects)}
+    out = {}
+    for ref, reading in read.items():
+        line = checked[ref.page].lines[ref.line].text
+        if (merged := quotes.proposed(line, reading, dots)) != line:
+            out[ref] = merged
+    return out
 
 
 def dash_style(book: Book, body: list[PageText]) -> typography.DashStyle | None:
