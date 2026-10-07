@@ -374,6 +374,7 @@ schedel before choosing an OCR model.
 | Ollama | `nemotron3:33b` | Tried as Dutch OCR | **Unfit**: thinks by default (107 s and empty output); with `think: false`, 7 s/page but CER 14% on one Teirlinck page: invented words (`dampwalmen→dampwaarneming`) and modernised (`zijne→zijn`) |
 | — | DocLayout-YOLO (DocStructBench, `layout` group) | Page layout regions from the page image | 20 tricky pages, 0.1–0.5 s/page on MPS. Finds figures, captions, drawn initials, titles (Crime's bare "III"), and furniture as `abandon`. Sees printed text the OCR layer lacks (Dolittle p97 subtitle). Misses Boze tongen's spaced part title (`abandon`). Run on a page turned a quarter, it finds a landscape plate's caption (8/8 Dolittle plates, no false positives on 4 books) but not which way is up. See `experiments/probe_layout.py`, `probe_orientation.py` |
 | Ollama | `hf.co/unsloth/Qwen3.6-27B-MTP-GGUF:Q6_K` | Correction / structure candidate | available, unevaluated |
+| Ollama | `qwen3.8:27b-nvfp4` (MLX, 18 GB) | **Proofreader**; reading and language-judge candidate | Stella proofreading test (68 answered regions, 9 really wrong): transcribing the tight crop and comparing in code catches 9/9 with 3 false alarms in 58 (gemma4: 6/7, 5 alarms); yes/no on crop and text AUC 0.92, no false alarms, but catches only 3. As text judge between its reading and the answer: 9/12 right with thinking off (unsure on punctuation, ~0.53), 10/12 with thinking on and winnow reading its reply (punctuation 0.72–0.88), ~20 s/call. ~1 s per crop reading. Thinking is on by default: pass `think: false` for one-token answers |
 
 ## Environment
 
@@ -1136,3 +1137,12 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   book out sends Lady into Fox 9 → up to 71 (rules: 8) and Crime 5 → 20 (rules:
   4); only three English books train it. Next: more English training data
   (The Thief-Taker's Apprentice), then wire in behind a switch.
+- 2026-10-07: qwen3.8:27b-nvfp4 on the Stella proofreading test: reading the
+  crop and comparing in code caught all of the human's slips and the agent's
+  misses (9/9; one more real error found: p. 42's lost opening ‘ in "‘je
+  trilt"), with 3 false alarms in 58, its own misreadings (a speck as a
+  period, "trofik", "beseffen"). Its text-only judgement between its reading
+  and the answer rejects its own misreadings confidently (0.07–0.21) and, with
+  thinking on (a free reply read by winnow), prefers the right punctuation
+  (0.72–0.88). The candidate for a third reading in the OCR check and for
+  proofreading answers; bench its line readings next.
