@@ -7,14 +7,18 @@
 <style>
 :root {
   --bg: #f6f5f1; --card: #fff; --ink: #1d1d1b; --muted: #6b6a66; --line: #dddbd3;
-  --ok: #1f6f43; --ok-bg: #e3f2e8; --warn: #9a3412; --warn-bg: #fcebdc;
+  --ok: #1f6f43; --ok-bg: #e3f2e8;
   --accent: #2f5bd3; --accent-bg: #e6ecfb;
+  --has: #0b6b2e; --has-bg: #c9f0d6; --lacks: #b4161b; --lacks-bg: #fde0e0;
+  --swap: #6b21a8; --swap-bg: #ead9fb;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #161614; --card: #22221f; --ink: #ecebe6; --muted: #9b9a94; --line: #3a3a35;
-    --ok: #7dd3a0; --ok-bg: #183326; --warn: #fdba74; --warn-bg: #3b2414;
+    --ok: #7dd3a0; --ok-bg: #183326;
     --accent: #8aa8ff; --accent-bg: #1d2640;
+    --has: #86efac; --has-bg: #12391f; --lacks: #fca5a5; --lacks-bg: #4a1414;
+    --swap: #d8b4fe; --swap-bg: #351b52;
   }
 }
 * { box-sizing: border-box; }
@@ -41,13 +45,19 @@ input.letter { font: 24px Georgia, serif; width: 2.2em; text-align: center; padd
 .saverow { display: flex; gap: 12px; align-items: center; margin-top: 14px; }
 button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; padding: 9px 22px; }
 button.primary:disabled { background: var(--line); border-color: var(--line); color: var(--muted); cursor: not-allowed; }
-mark { background: var(--warn-bg); color: var(--warn); border-radius: 3px; padding: 0 1px; }
-mark.gap { display: inline-block; width: 3px; height: 1em; vertical-align: -0.1em; background: var(--warn); }
+mark { border-radius: 3px; padding: 0 2px; font-weight: 700; }
+mark.has { background: var(--has-bg); color: var(--has); border-bottom: 2px solid var(--has); }
+mark.swap { background: var(--swap-bg); color: var(--swap); border-bottom: 2px dotted var(--swap); }
+mark.lacks { background: var(--lacks-bg); color: var(--lacks); text-decoration: line-through 2px; }
+mark.lacks::before { content: "‸"; text-decoration: none; display: inline-block; margin-right: 1px; }
+mark .space { opacity: 0.7; font-weight: 400; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--muted); margin: 2px 0 8px; }
+.legend mark { font-size: 14px; }
 .turnbar { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
 .turnbar button { padding: 4px 10px; }
 .crop { max-width: 100%; max-height: 75vh; margin: 0 auto; border: 1px solid var(--line); border-radius: 6px; background: #fff; display: block; min-height: 60px; }
 .why { margin: 12px 0 4px; color: var(--muted); font-size: 13px; }
-.why span { display: inline-block; background: var(--warn-bg); color: var(--warn); border-radius: 4px; padding: 0 6px; margin: 0 4px 4px 0; }
+.why span { display: inline-block; background: var(--line); color: var(--ink); border-radius: 4px; padding: 0 6px; margin: 0 4px 4px 0; }
 .now { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
 .now b { color: var(--ink); }
 .context { font-family: Georgia, "Iowan Old Style", serif; font-size: 15px; color: var(--muted); white-space: pre-wrap; }
@@ -214,14 +224,20 @@ function textBlock(r, doubt) {
     return `<div class="question">${prompt}</div>${before}
       <textarea id="text" rows="${Math.min(16, draft.text.split("\n").length + 1)}">${esc(draft.text)}</textarea>${after}`;
   }
+  const base = central(r.readings.map(g => g.text));
   const rows = r.readings.map((g, k) => {
-    const against = r.readings[k === 0 ? 1 : 0].text;
     const who = [k === 0 ? "text layer" : "", ...g.votes].filter(Boolean).join(" · ");
-    return `<label class="option reading-option ${draft.reading === k ? "on" : ""}"><input type="radio" name="reading" value="${k}" ${draft.reading === k ? "checked" : ""}>
-      <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${marked(g.text, against)}</span>
+    const text = k === base ? esc(g.text) : marked(g.text, r.readings[base].text);
+    return `<label class="option reading-option ${draft.reading === k ? "on" : ""} ${k === base ? "base" : ""}"><input type="radio" name="reading" value="${k}" ${draft.reading === k ? "checked" : ""}>
+      <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${text}</span>
       <span class="votes">${esc(who)}</span></label>`;
   }).join("");
-  return `<div class="question">Which reading matches the scan?</div>${before}
+  return `<div class="question">Which reading matches the scan?</div>
+    <div class="legend">Marked where a reading differs from reading ${READING_KEYS[base]}, the one the others are closest to:
+      <span><mark class="has">x</mark> only this one has it</span>
+      <span><mark class="lacks">x</mark> this one lacks it</span>
+      <span><mark class="swap">x</mark> this one has something else</span>
+      <span><mark class="has"><span class="space">␣</span></mark> a space</span></div>${before}
     <div class="options">${rows}
       <label class="option reading-option ${draft.reading === -1 ? "on" : ""}"><input type="radio" name="reading" value="-1" ${draft.reading === -1 ? "checked" : ""}>
         <kbd>e</kbd><span class="reading muted">Something else…</span></label>
@@ -262,15 +278,44 @@ function setReading(k) {
 // Keys for the readings; e (something else), o (read again) and r (turn) are taken.
 const READING_KEYS = "abcdfghj";
 
-// The text with the part where it differs from `other` marked.
-function marked(text, other) {
-  let i = 0;
-  while (i < text.length && i < other.length && text[i] === other[i]) i++;
-  let j = 0;
-  while (j < text.length - i && j < other.length - i && text[text.length - 1 - j] === other[other.length - 1 - j]) j++;
-  const middle = text.slice(i, text.length - j);
-  return esc(text.slice(0, i)) + (middle ? `<mark>${esc(middle)}</mark>` : `<mark class="gap"></mark>`)
-    + esc(text.slice(text.length - j));
+// The longest common subsequence table of two strings, filled from the ends.
+function lcs(a, b) {
+  const t = Array.from({length: a.length + 1}, () => new Uint16Array(b.length + 1));
+  for (let i = a.length - 1; i >= 0; i--)
+    for (let j = b.length - 1; j >= 0; j--)
+      t[i][j] = a[i] === b[j] ? t[i + 1][j + 1] + 1 : Math.max(t[i + 1][j], t[i][j + 1]);
+  return t;
+}
+
+// The reading the others differ from least: every other reading is marked against it.
+function central(texts) {
+  const cost = texts.map(a => texts.reduce((sum, b) => sum + a.length + b.length - 2 * lcs(a, b)[0][0], 0));
+  return cost.indexOf(Math.min(...cost));
+}
+
+// `text` with every place it differs from `base` marked: what only it has, what it
+// lacks (shown struck through), or what it has instead. Spaces in a mark show as ␣.
+function marked(text, base) {
+  const t = lcs(text, base);
+  const ops = [];  // [kind, mine, theirs], adjacent edits merged
+  const push = (kind, mine, theirs) => {
+    const last = ops[ops.length - 1];
+    if (last && (last[0] !== "same") === (kind !== "same")) {
+      last[1] += mine; last[2] += theirs;
+      if (kind !== "same") last[0] = "edit";
+    } else ops.push([kind, mine, theirs]);
+  };
+  let i = 0, j = 0;
+  while (i < text.length || j < base.length) {
+    if (i < text.length && j < base.length && text[i] === base[j]) push("same", text[i++], base[j++]);
+    else if (j < base.length && (i === text.length || t[i][j + 1] >= t[i + 1][j])) push("edit", "", base[j++]);
+    else push("edit", text[i++], "");
+  }
+  const show = s => esc(s).replace(/ /g, '<span class="space">␣</span>');
+  return ops.map(([kind, mine, theirs]) => kind === "same" ? esc(mine)
+    : !mine ? `<mark class="lacks" title="this reading lacks it">${show(theirs)}</mark>`
+    : !theirs ? `<mark class="has" title="only this reading has it">${show(mine)}</mark>`
+    : `<mark class="swap" title="the plain reading has “${esc(theirs)}” here">${show(mine)}</mark>`).join("");
 }
 
 function cropUrl(r) {
