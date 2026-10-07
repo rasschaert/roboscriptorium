@@ -9,6 +9,11 @@ starting; keep it true.
   a design choice, a tool or model installed, a model that scored better, a pitfall
   found — update AGENTS.md in the same change. Add a dated line to the
   [Decision log](#decision-log). Don't wait to be asked.
+- **Keep the docs and diagrams up to date too.** A change to the stages, their
+  order, or the model, code or person behind one also updates `README.md` and
+  `docs/pipeline.d2` in the same commit; render the SVG again with
+  `d2 docs/pipeline.d2 docs/pipeline.svg` and commit both. A diagram that shows
+  the pipeline as it was is worse than none.
 - **Local only.** No cloud APIs or hosted models. All AI runs on this machine via
   Ollama and Ollaya.
 - **No copyrighted material in git.** Books, page images, OCR output and golden
@@ -387,6 +392,7 @@ schedel before choosing an OCR model.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).
 - epubcheck (Homebrew).
+- d2 (Homebrew), renders `docs/pipeline.d2` to the README's diagram.
 - scikit-learn (Python dep) for the line-role classifier probe.
 - Dependency group `layout` (a default group, so plain `uv run` has it): `doclayout-yolo` with
   PyTorch, and the DocLayout-YOLO DocStructBench weights
