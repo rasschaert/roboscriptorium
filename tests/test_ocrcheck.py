@@ -95,6 +95,12 @@ def test_typographic_differences_have_the_same_letters():
     assert _typographic(["year at", "year-at", "year—at"])
     assert not _typographic(["Tolly", "‘Polly"])
     assert not _typographic(["was 3 thing", "was a thing"])
+    assert _typographic(["Action ?", "Action?"])
+    assert not _typographic(["have never", "havenever"])
+
+
+def test_a_not_sign_line_end_hyphen_is_not_a_difference():
+    assert _spans("present to me are both your¬", "present to me are both your-") == []
 
 
 def test_tesseract_text_where_a_word_table_was_asked_for_is_an_error(monkeypatch):
@@ -105,3 +111,59 @@ def test_tesseract_text_where_a_word_table_was_asked_for_is_an_error(monkeypatch
     monkeypatch.setattr(ocrcheck.ocr, "tesseract", lambda png, lang, tsv=False: "LICHAAMSTAAL")
     with pytest.raises(ValueError, match="no word table"):
         ocrcheck._tesseract_page(b"png", "nld")
+
+
+class _WordsPage:
+    def __init__(self, words):
+        self.words = words
+
+    def get_text(self, kind):
+        return self.words
+
+
+def test_words_go_to_the_nearest_of_overlapping_lines():
+    # Line boxes from font metrics, twice the height of the printed words.
+    lines = [
+        Line("are, I suppose,", 20, 188, 270, 223),
+        Line("Rome. It is", 20, 209, 270, 238),
+    ]
+    page = PageText(25, 300, 400, lines)
+    words = [
+        (20, 203, 50, 218, "are,"),
+        (60, 203, 70, 218, "I"),
+        (80, 203, 130, 218, "suppose,"),
+        (20, 220, 60, 235, "Rome."),
+        (70, 219, 80, 235, "It"),
+        (90, 221, 100, 235, "is"),
+    ]
+    assert [[w[4] for w in ws] for ws in ocrcheck.line_words(words, page)] == [
+        ["are,", "I", "suppose,"],
+        ["Rome.", "It", "is"],
+    ]
+    assert ocrcheck.line_boxes(_WordsPage(words), page) == [
+        (20, 203, 130, 218),
+        (20, 219, 100, 235),
+    ]
+
+
+def test_a_line_its_words_dont_spell_keeps_its_own_box():
+    page = PageText(3, 300, 400, [Line("one two", 20, 100, 120, 114)])
+    words = [(20, 101, 60, 114, "one"), (70, 100, 120, 113, "tw")]
+    assert ocrcheck.line_boxes(_WordsPage(words), page) == [(20, 100, 120, 114)]
+
+
+def test_a_suspect_at_a_line_end_has_room_for_a_missed_dash():
+    words = [(20, 100, 40, 110, "his"), (45, 100, 70, 110, "name"), (75, 100, 110, 110, "Dolittle")]
+    line = "his name Dolittle"
+    assert ocrcheck._box(words, (20, 100, 110, 110), line, 9, 17) == (75, 100, 120, 110)
+    assert ocrcheck._box(words, (20, 100, 110, 110), line, 4, 8) == (45, 100, 70, 110)
+    assert ocrcheck._box(words, (20, 100, 110, 110), line, 0, 3) == (10, 100, 40, 110)
+
+
+def test_tesseract_words_go_to_the_nearest_line_box():
+    boxes = [(20, 203, 130, 218), (20, 219, 100, 235)]
+    words = [("Rome.", 20, 219, 60, 234), ("suppose,", 80, 203, 130, 217)]
+    assert [[w[0] for w in ws] for ws in ocrcheck._by_line(boxes, words)] == [
+        ["suppose,"],
+        ["Rome."],
+    ]

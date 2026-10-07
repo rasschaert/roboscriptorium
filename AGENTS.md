@@ -696,3 +696,12 @@ disagreements by mistake category.
   such left out. Shared page analysis moved from roles.py to page.py, with
   identical roles, reflow and flags on all six golden books; `LineRole.rule`
   names the rule that overrode the model.
+- 2026-10-07: OCR check crops fixed. Crime's text layer gives lines boxes about
+  twice the print's height (font metrics), so glm-ocr read the neighbouring line
+  into its reading; a line's crop is now its words' boxes together. Crops (the
+  line's, and a suspect's at a line end) also reach one em past the line, where
+  the text layer misses dashes: Dolittle's line-end em dashes were cut to
+  hyphens, which the judge then applied ("live on-" + "even" → "oneven").
+  Joining two words is no longer a punctuation-only difference the vision judge
+  decides alone, and a `¬` line-end hyphen equals `-`. Crime: suspects 928 →
+  236, for review 453 → 54, CER 0.53% → 0.52%.

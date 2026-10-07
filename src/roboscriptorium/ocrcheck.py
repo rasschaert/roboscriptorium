@@ -35,9 +35,11 @@ from roboscriptorium.pdf import PageText
 from roboscriptorium.roles import DecisionCache
 
 DPI = 300
-READING_VERSION = 1
+READING_VERSION = 2
 READ_WORKERS = 4
-LINE_PAD = 3  # points around a line's crop for the OCR model
+# Points above and below a line's crop for the OCR model. Crops also reach one em (the
+# line's height) past each end, where a dash or quote the text layer missed is printed.
+LINE_PAD = 3
 MAX_LINE_TOKENS = 120
 # Readings are written to the cache every so many lines, so a long run keeps its progress.
 SAVE_EVERY = 200
@@ -52,8 +54,9 @@ CROP_ZOOM = 4
 CROP_PAD = 4  # points around the suspect words
 # Lines shorter than this are page numbers and scraps, not worth a second reading.
 MIN_LINE_CHARS = 12
-# Curly quotes as straight ones, one character for one, so offsets stay put.
-_FOLD = str.maketrans("‘’“”", "''\"\"")
+# Curly quotes as straight ones, and a not sign (some OCR layers' line-end hyphen) as a
+# hyphen, one character for one, so offsets stay put.
+_FOLD = str.maketrans("‘’“”¬", "''\"\"-")
 _OPENING_QUOTES = re.compile(r"(^|\s)[\"'‘’“”]+")
 LANGUAGE_NAMES = {"nld": "Dutch", "eng": "English"}
 
@@ -108,9 +111,13 @@ def line_readings(
         if raw.get("version") == READING_VERSION and raw.get("model") == model:
             done = raw["lines"]
 
+    with pymupdf.open(pdf) as doc:
+        boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
+
     def key(page: PageText, k: int) -> str:
-        text = page.lines[k].text
-        return f"{page.number}:{k}:{hashlib.sha1(text.encode()).hexdigest()[:10]}"
+        text = hashlib.sha1(page.lines[k].text.encode()).hexdigest()[:10]
+        box = ",".join(f"{v:.0f}" for v in boxes[page.number][k])
+        return f"{page.number}:{k}:{text}:{box}"
 
     wanted = {
         SourceRef(p.number, k): (p, k)
@@ -129,7 +136,7 @@ def line_readings(
     with pymupdf.open(pdf) as doc, ThreadPoolExecutor(READ_WORKERS) as pool:
         for start in range(0, len(todo), SAVE_EVERY):
             batch = todo[start : start + SAVE_EVERY]
-            crops = [_line_crop(doc, page, k) for page, k in batch]
+            crops = [_line_crop(doc, page.number, boxes[page.number][k]) for page, k in batch]
             texts = pool.map(lambda png: read_line(png, model, ollama_url), crops)
             for (page, k), text in zip(batch, texts, strict=True):
                 done[key(page, k)] = text
@@ -142,9 +149,11 @@ def tesseract_readings(
 ) -> dict[SourceRef, str]:
     """Tesseract's reading of each checked line: its words whose centres fall in the line."""
     words = tesseract_words(pdf, [p.number for p in pages], lang, cache)
+    with pymupdf.open(pdf) as doc:
+        boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
     out = {}
     for page in pages:
-        for k, line_words in enumerate(_by_line(page, words[page.number])):
+        for k, line_words in enumerate(_by_line(boxes[page.number], words[page.number])):
             ref = SourceRef(page.number, k)
             if ref in checked and len(page.lines[k].text) >= MIN_LINE_CHARS:
                 out[ref] = " ".join(w[0] for w in line_words)
@@ -190,27 +199,69 @@ def _tesseract_page(png: bytes, lang: str) -> list[tuple[str, float, float, floa
     return words
 
 
-def _by_line(page: PageText, words) -> list[list[tuple[str, float, float, float, float]]]:
-    """Words per line: the line band (widened a little) that holds the word's centre."""
-    out = [[] for _ in page.lines]
+def _by_line(boxes: list, words) -> list[list[tuple[str, float, float, float, float]]]:
+    """Tesseract's words per line: the nearest line box (widened a little) holding the centre."""
+    out = [[] for _ in boxes]
     for w in words:
         cx, cy = (w[1] + w[3]) / 2, (w[2] + w[4]) / 2
-        for k, ln in enumerate(page.lines):
-            if ln.x0 - 3 <= cx <= ln.x1 + 3 and ln.y0 - 2 <= cy <= ln.y1 + 2:
-                out[k].append(w)
-                break
+        holding = [
+            k
+            for k, b in enumerate(boxes)
+            if b[0] - 3 <= cx <= b[2] + 3 and b[1] - 2 <= cy <= b[3] + 2
+        ]
+        if holding:
+            out[min(holding, key=lambda k: abs((boxes[k][1] + boxes[k][3]) / 2 - cy))].append(w)
     return [sorted(ws, key=lambda w: w[1]) for ws in out]
 
 
-def _line_crop(doc: pymupdf.Document, page: PageText, k: int) -> bytes:
-    line = page.lines[k]
-    clip = pymupdf.Rect(line.x0, line.y0, line.x1, line.y1) + (
-        -LINE_PAD,
-        -LINE_PAD,
-        LINE_PAD,
-        LINE_PAD,
+def _line_crop(doc: pymupdf.Document, number: int, box) -> bytes:
+    em = box[3] - box[1]
+    clip = pymupdf.Rect(box) + (-em, -LINE_PAD, em, LINE_PAD)
+    return doc[number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
+
+
+def line_words(page_words: list, page: PageText) -> list[list]:
+    """The text layer's words per line, left to right.
+
+    A word goes to the line whose vertical centre is nearest among those whose box
+    holds its centre: some OCR layers give lines boxes far taller than the print,
+    so neighbouring lines' boxes overlap.
+    """
+    out = [[] for _ in page.lines]
+    for w in page_words:
+        cx, cy = (w[0] + w[2]) / 2, (w[1] + w[3]) / 2
+        holding = [k for k, ln in enumerate(page.lines) if _holds(ln, cx, cy)]
+        if holding:
+            k = min(holding, key=lambda k: abs((page.lines[k].y0 + page.lines[k].y1) / 2 - cy))
+            out[k].append(w)
+    return [sorted(ws, key=lambda w: w[0]) for ws in out]
+
+
+def line_boxes(pdf_page: pymupdf.Page, page: PageText) -> list[tuple[float, float, float, float]]:
+    """Each line's box as printed: its words' boxes together where they spell the line.
+
+    Some OCR layers give lines boxes far taller than the print.
+    """
+    out = []
+    for line, words in zip(page.lines, line_words(pdf_page.get_text("words"), page), strict=True):
+        if words and [w[4] for w in words] == line.text.split(" "):
+            out.append(_union(words))
+        else:
+            out.append((line.x0, line.y0, line.x1, line.y1))
+    return out
+
+
+def _union(words) -> tuple[float, float, float, float]:
+    return (
+        min(w[0] for w in words),
+        min(w[1] for w in words),
+        max(w[2] for w in words),
+        max(w[3] for w in words),
     )
-    return doc[page.number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
+
+
+def _holds(line, cx: float, cy: float) -> bool:
+    return line.x0 - 3 <= cx <= line.x1 + 3 and line.y0 - 2 <= cy <= line.y1 + 2
 
 
 def read_line(png: bytes, model: str, ollama_url: str) -> str:
@@ -275,32 +326,26 @@ def _bare(text: str) -> str:
     return _OPENING_QUOTES.sub(r"\1", text.translate(_FOLD)).strip()
 
 
-def _box(page_words: list, line, original: str, start: int, end: int):
-    """The suspect words' box: the text layer's word boxes, or a share of the line's width."""
-    words = sorted((w for w in page_words if _inside(w, line)), key=lambda w: w[0])
+def _box(words: list, box, original: str, start: int, end: int):
+    """The suspect words' box: the text layer's word boxes, or a share of the line's box.
+
+    At the line's start or end it reaches one em further, where a mark the text
+    layer missed is printed.
+    """
     tokens = original.split(" ")
     k0 = original[:start].count(" ")
     k1 = k0 + original[start:end].strip().count(" ") + 1
+    x0, y0, x1, y1 = box
     if [w[4] for w in words] == tokens:
-        picked = words[k0:k1]
-        return (
-            min(w[0] for w in picked),
-            min(w[1] for w in picked),
-            max(w[2] for w in picked),
-            max(w[3] for w in picked),
-        )
-    width = line.x1 - line.x0
-    return (
-        line.x0 + width * start / len(original),
-        line.y0,
-        line.x0 + width * end / len(original),
-        line.y1,
-    )
-
-
-def _inside(w, line) -> bool:
-    cx, cy = (w[0] + w[2]) / 2, (w[1] + w[3]) / 2
-    return line.x0 - 3 <= cx <= line.x1 + 3 and line.y0 - 2 <= cy <= line.y1 + 2
+        out = list(_union(words[k0:k1]))
+    else:
+        out = [x0 + (x1 - x0) * start / len(original), y0, x0 + (x1 - x0) * end / len(original), y1]
+    em = y1 - y0
+    if start == 0:
+        out[0] -= em
+    if end == len(original):
+        out[2] += em
+    return tuple(out)
 
 
 def check(
@@ -317,12 +362,13 @@ def check(
     with pymupdf.open(pdf) as doc:
         for page in pages:
             pdf_page = doc[page.number - 1]
-            page_words = pdf_page.get_text("words")
+            words = line_words(pdf_page.get_text("words"), page)
+            boxes = line_boxes(pdf_page, page)
             for k, line in enumerate(page.lines):
                 ours = line.text
                 others = [r.get(SourceRef(page.number, k), "") for r in readings]
                 for a0, a1, alternatives in merged_differences(ours, [o for o in others if o]):
-                    box = _box(page_words, line, ours, a0, a1)
+                    box = _box(words[k], boxes[k], ours, a0, a1)
                     choice, chosen, votes = _decide(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache,
@@ -444,8 +490,11 @@ def _decide(
 
 
 def _typographic(versions: list[str]) -> bool:
-    """Whether the versions have the same letters and digits, differing only in the rest."""
-    return len({re.sub(r"[^\w]", "", v) for v in versions}) == 1
+    """Whether the versions have the same words, differing only in what lies between them.
+
+    Joining two words ("have never" → "havenever") changes the words.
+    """
+    return len({tuple(re.sub(r"[^\w]", " ", v).split()) for v in versions}) == 1
 
 
 def _ask(client: OllayaClient, cache: DecisionCache, state: dict, questions: dict, image=None):
