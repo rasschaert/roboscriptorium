@@ -214,7 +214,8 @@ right, then expand.
     with clef ≥ 0.3 applies the fix to a copy of the pages before reflow,
     anything else becomes an `ocr-doubt` review region.
     The judge is `judge_model` (clef:27b, `ROBO_JUDGE_MODEL`), not the role
-    model. Suspects are saved to
+    model; it is told the book's typesetting (`quotes.style_note`) and sees the
+    versions set off by ⟨ ⟩. Suspects are saved to
     `stages/ocr-check.json`; `eval --no-check-ocr` skips the stage.
   - `lexicon.py`: a language's word list, unpacked from tesseract's own model
     (`<lang>.traineddata`'s LSTM word DAWG: Dutch 478k words, English 338k) into
@@ -1203,3 +1204,11 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   lost most. On Reis, without the style sentence: 55/4. Qwen as a vote for the
   trust model (plain prompt, Goede dochter by page folds) showed no gain; rerun it
   with the style prompt before ruling it out.
+- 2026-10-07: The OCR check's crop judge (clef:27b) is told the book's typesetting
+  and sees its options as `exactly ⟨…⟩` instead of `exactly “…”`, which looked like
+  the quote marks the versions differ in. On 200 labelled suspects each
+  (`experiments/probe_judge_prompts.py`), right picks: Goede dochter 177 → 182
+  (⟨ ⟩ alone) → 183 (with the style), typography 92 → 98 of 102; Vals alarm 162 →
+  168 → 169, typography 103 → 109 of 139. The text judge (winnow) told the style:
+  Goede dochter 91 → 84, Vals alarm 120 → 129, so it keeps its prompt. clef's new
+  answers are trust features: retrain the trust model on re-judged suspects.

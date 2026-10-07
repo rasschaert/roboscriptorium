@@ -248,6 +248,28 @@ def test_the_word_list_votes_but_decides_nothing(monkeypatch):
     assert decide("a", "a", 1)[0][:2] == decide("a", "a", None)[0][:2] == ("ours", None)
 
 
+def test_the_vision_judge_is_told_the_books_style_and_the_text_judge_isnt(monkeypatch):
+    from types import SimpleNamespace
+
+    asked = []
+
+    def ask(client, cache, state, questions, image=None):
+        asked.append((client.model, questions["reading"]))
+        return {"value": "a", "confidence": 0.9}
+
+    monkeypatch.setattr(ocrcheck, "_ask", ask)
+    clef, winnow = SimpleNamespace(model="clef"), SimpleNamespace(model="winnow")
+    style = "This book is Dutch and set in this style: dialogue in curly quotes ‘ ’."
+    line = "“Kom hier, zei hij."
+    ocrcheck._decide(
+        None, 1, 0, line, 0, 4, ["‘Kom"], (0, 0, 1, 1), "nld", clef, winnow, None, style=style
+    )
+    (_, seen), (_, read) = asked
+    assert style in seen["instructions"] and style not in read["instructions"]
+    # The versions are set off by marks that none of them contains.
+    assert seen["criteria"]["a"] == "exactly ⟨“Kom⟩" and seen["criteria"]["b"] == "exactly ⟨‘Kom⟩"
+
+
 def test_each_doubted_place_is_its_own_question_and_answers_combine(tmp_path):
     from roboscriptorium.corrections import Corrections, apply
 

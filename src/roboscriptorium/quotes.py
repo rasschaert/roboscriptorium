@@ -170,6 +170,12 @@ def ellipsis(text: str) -> str:
     return "…" if text.count("…") >= text.count("...") else "..."
 
 
+def single_quoted_lines(texts: list[str]) -> bool:
+    """Whether the book opens its dialogue with ‘ rather than “, counted on its lines."""
+    text = " ".join(texts)
+    return text.count("‘") > 2 * text.count("“")
+
+
 def style_note(language: str, single: bool, ellipsis: str, dash: str | None) -> str:
     """How the book is set, as a sentence for a model reading or judging its text."""
     outer, inner = ("‘ ’", "“ ”") if single else ("“ ”", "‘ ’")

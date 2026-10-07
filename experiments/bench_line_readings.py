@@ -10,7 +10,8 @@ confusions (what it reads → what is printed), with typesetting
     uv run python experiments/bench_line_readings.py work/<book> 9-64 1-4 [--extra MODEL]
 
 `--extra MODEL` adds a generative vision model's reading of each line's crop (the OCR
-check's crop), cached in work/probes/line-readings/.
+check's crop), cached in work/probes/line-readings/; with `--style`, its prompt tells
+it the book's typesetting (`quotes.style_prompt`).
 """
 
 import base64
@@ -68,14 +69,15 @@ EXTRA_PROMPT = (
 )
 
 
-def extra_readings(model: str) -> dict[SourceRef, str]:
-    cache = Path("work/probes/line-readings") / f"{book.root.name}--{model.replace(':', '_')}.json"
+def extra_readings(model: str, prompt: str = EXTRA_PROMPT) -> dict[SourceRef, str]:
+    styled = "--styled" if prompt != EXTRA_PROMPT else ""
+    cache = Path("work/probes/line-readings") / f"{book.root.name}--{model.replace(':', '_')}{styled}.json"
     done = json.loads(cache.read_text()) if cache.exists() else {}
     todo = [r for r in sorted(kept, key=lambda r: (r.page, r.line)) if f"{r.page}:{r.line}" not in done
             and len(next(p for p in pages if p.number == r.page).lines[r.line].text) >= ocrcheck.MIN_LINE_CHARS]
 
     def read(png: bytes) -> str:
-        payload = {"model": model, "prompt": EXTRA_PROMPT, "images": [base64.b64encode(png).decode()],
+        payload = {"model": model, "prompt": prompt, "images": [base64.b64encode(png).decode()],
                    "stream": False, "think": False, "options": {"num_predict": 160, "temperature": 0}}
         r = httpx.post(f"{settings.ollama_url}/api/generate", json=payload, timeout=600)
         r.raise_for_status()
@@ -98,6 +100,17 @@ def extra_readings(model: str) -> dict[SourceRef, str]:
 if "--extra" in sys.argv:
     model = sys.argv[sys.argv.index("--extra") + 1]
     readings[model] = extra_readings(model)
+    if "--style" in sys.argv:
+        from roboscriptorium import quotes
+        from roboscriptorium.reflow import single_quoted
+
+        paragraphs = stages.doc.paragraphs
+        text = " ".join(p.text for p in paragraphs)
+        dash = pipeline.dash_style(book, pages)
+        prompt = quotes.style_prompt(
+            book.language, single_quoted(paragraphs), quotes.ellipsis(text), dash.dash if dash else None
+        )
+        readings[model + " styled"] = extra_readings(model, prompt)
 
 lines = [
     ref for ref, label in labels.items()

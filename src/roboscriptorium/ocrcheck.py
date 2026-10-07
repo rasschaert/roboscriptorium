@@ -392,9 +392,10 @@ def check(
     reader: OllayaClient,
     cache: DecisionCache,
     lexicon: Lexicon | None = None,
+    style: str = "",
 ) -> list[Suspect]:
     """Suspects where any other reading (by name) differs from the text layer, each with a
-    decision."""
+    decision. `style` tells the vision judge how the book is set (`quotes.style_note`)."""
     suspects = []
     with pymupdf.open(pdf) as doc:
         for page in pages:
@@ -419,7 +420,7 @@ def check(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache, around,
                         lexicon.vouches(read_as, continues) if lexicon else None,
-                        joined,
+                        joined, style,
                     )  # fmt: skip
                     support = {
                         n: supports(ours, other, a0, a1, versions) for n, other in others.items()
@@ -558,7 +559,7 @@ def _combined(ours: str, versions: list[str]) -> str | None:
 
 def _decide(
     pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache, around=("", ""),
-    vouched: int | None = None, joined: str = "",
+    vouched: int | None = None, joined: str = "", style: str = "",
 ) -> tuple[tuple[str, str | None, dict[str, str]], dict[str, float]]:  # fmt: skip
     """\"ours\", \"other\" with the chosen version, or \"review\", with each model's pick;
     and each model's confidence in it.
@@ -576,6 +577,10 @@ def _decide(
     somewhat sure, or, where the versions differ only in punctuation, dashes or
     spacing (which a text model can't judge), when the vision model alone is sure.
     Anything else goes to a human.
+
+    The vision judge sees the versions set off by ⟨ ⟩, which no version contains (“ ”
+    looked like the marks they differ in), and is told the book's `style`. The text
+    judge isn't: told the style, it picked right less often.
     """
     versions = [ours[a0:a1], *others]
     letters = "abcdefg"[: len(versions)]
@@ -591,8 +596,9 @@ def _decide(
         {
             "reading": ollaya.choice(
                 "The image is cut from a scanned printed book. Which text does it show, "
-                "letter for letter, including quote marks, dashes and punctuation?",
-                {**{c: f"exactly “{v}”" for c, v in zip(letters, versions, strict=True)},
+                "letter for letter, including quote marks, dashes and punctuation?"
+                + (f" {style}" if style else ""),
+                {**{c: f"exactly ⟨{v}⟩" for c, v in zip(letters, versions, strict=True)},
                  "neither": "something else"},
             )
         },

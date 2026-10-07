@@ -79,6 +79,7 @@ def run(
     if layout.available():
         regions = layout.detect(book.source, [p.number for p in body], book.stages / "layout.json")
     corrected = body
+    style = dash_style(book, body)
     if use_models:
         settings = Settings.from_env()
         if regions is not None and ocrcheck.scanned(book.source):
@@ -121,8 +122,9 @@ def run(
             }
             judge = ollaya.for_model(settings.judge_model, settings.ollaya_url, settings.ollama_url)
             suspects = ocrcheck.check(
-                book.source, body, readings, lang, judge, reader, cache, Lexicon.load(lang)
-            )
+                book.source, body, readings, lang, judge, reader, cache, Lexicon.load(lang),
+                book_style(book, body, style),
+            )  # fmt: skip
             model = trust.load(Path(settings.ocr_trust_model)) if settings.ocr_trust else None
             if model is not None:
                 budget = round(settings.ocr_questions_per_page * len(body))
@@ -144,7 +146,6 @@ def run(
         for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
         for ref in place.sources
     }
-    style = dash_style(book, body)
     quote_readings = {}
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         dash = style.dash if style else None
@@ -209,6 +210,17 @@ def proposals(
         if (merged := quotes.proposed(line, reading, dots)) != line:
             out[ref] = merged
     return out
+
+
+def book_style(book: Book, body: list[PageText], dash: typography.DashStyle | None) -> str:
+    """How the book is set, as the OCR layer's lines show it, for a model to be told."""
+    lines = [ln.text for p in body for ln in p.lines]
+    return quotes.style_note(
+        book.language,
+        quotes.single_quoted_lines(lines),
+        quotes.ellipsis(" ".join(lines)),
+        dash.dash if dash else None,
+    )
 
 
 def dash_style(book: Book, body: list[PageText]) -> typography.DashStyle | None:
