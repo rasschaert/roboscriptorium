@@ -424,6 +424,7 @@ disagreements by mistake category.
 | boze-tongen | `prometheus-2002` | Dutch (Flemish), 2002, Lanoye. Reference: part three of the 2013 omnibus EPUB (no separate ebook exists), which may carry revisions. Dialogue set as a play script in places, dialect, a drawn part title. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | de-aanslag | `calibre-pdf` | Dutch, Mulisch, 51st printing. **Not a scan**: calibre's PDF of the retail EPUB, so its text layer is exact. For born-digital PDFs, page joins and (later) italics. **Copyrighted**, all text in `work/golden/` |
 | lady-into-fox | `chatto-1922` | **Held out: score it to check that changes carry over, never tune on it.** 1922 first edition, same as Gutenberg #10337; one continuous text, no chapters; wood engravings. **EU copyright until 2051**: only the manifest is in git, the reference and verdicts live in `work/golden/lady-into-fox/` (`eu_copyright_until` in the manifest) |
+| grand-hotel-europa | `ia-scan` | **Held out, like Lady into Fox.** Dutch, 2018, Pfeijffer; IA Scribe scan of the 11th printing (2019), 537 body pages. Reference: the retail EPUB, made from the 1st printing. Chapter label, title and numbered sections. Borrow-only scan; **copyrighted**, all text in `work/golden/`. Score it in slices (`--pages`/`--chapters`) |
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
 | het-ivoren-aapje (probe only) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py` |
@@ -706,4 +707,9 @@ disagreements by mistake category.
   decides alone, and a `¬` line-end hyphen equals `-`. Crime: suspects 928 →
   236, for review 453 → 54, CER 0.53% → 0.52%. Dolittle: CER 1.89% → 1.84%,
   WER 1.92% → 1.81%, applied fixes the reference contradicts 24 → 3, for review
-  100 → 107.
+  100 → 107. Held-out Lady into Fox: CER 0.93% → 0.92%, WER 0.309% → 0.305%.
+- 2026-10-07: Second held-out book, *Grand Hotel Europa* (Dutch, a scan with an
+  OCR layer, like Stella), since every other Dutch golden book has been tuned on.
+  `golden derive` now reads a `<div>` holding no other blocks as a paragraph:
+  its EPUB has no `<p>`. Boze tongen's and De aanslag's references re-derive
+  byte-identical.

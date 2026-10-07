@@ -26,3 +26,19 @@ def test_class_headings_and_blank_lines(tmp_path):
     assert sections[0].paragraphs == []
     assert sections[1].paragraphs == ["Katrien schond haar aangezicht."]
     assert sections[2].paragraphs == ["Café & de nsb-leider."]
+
+
+def test_divs_holding_no_blocks_are_paragraphs(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.xhtml",
+            PAGE.format(
+                '<div class="class80">HOOFDSTUK EEN</div><div class="class84">1</div>'
+                '<div class="class86">De eerste <span>die</span> ik sprak.</div>'
+                '<div class="wrap"><p>Binnen een omslag.</p></div>'
+            ),
+        )
+    sections = publisher_epub.read(epub, ["Text/a.xhtml"], ("class80", "class84"))
+    assert [s.full_heading for s in sections] == ["HOOFDSTUK EEN", "1"]
+    assert sections[1].paragraphs == ["De eerste die ik sprak.", "Binnen een omslag."]

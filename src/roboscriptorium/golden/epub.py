@@ -2,8 +2,9 @@
 
 For books with no Gutenberg transcription: a retail EPUB of the same printing, or
 an omnibus holding the scanned book as one part. The manifest names the content
-files to read, in order. Headings are `h1`–`h6`, or paragraphs whose class
-starts with one of the manifest's heading prefixes; each heading starts a chapter,
+files to read, in order. Paragraphs are `p`, or `div` holding no `p` or `div`
+(some EPUBs set every paragraph as one). Headings are `h1`–`h6`, or paragraphs
+whose class starts with one of the manifest's heading prefixes; each heading starts a chapter,
 even when no text follows it ("Eerste episode 1945" above "1"). Empty paragraphs
 (blank lines) are left out.
 """
@@ -19,6 +20,7 @@ from roboscriptorium.golden.gutenberg import Section, _chapter_xhtml, _clean
 
 XHTML = "{http://www.w3.org/1999/xhtml}"
 HEADING_TAGS = {f"{XHTML}h{n}" for n in range(1, 7)}
+BLOCK_TAGS = {f"{XHTML}p", f"{XHTML}div"}
 
 
 _XML_ENTITIES = {"amp", "lt", "gt", "quot", "apos"}
@@ -59,7 +61,15 @@ def _is_heading(el: ET.Element, prefixes: tuple[str, ...]) -> bool:
     if el.tag in HEADING_TAGS:
         return True
     classes = (el.get("class") or "").split()
-    return el.tag == f"{XHTML}p" and any(c.startswith(prefixes) for c in classes)
+    return _is_paragraph(el) and any(c.startswith(prefixes) for c in classes)
+
+
+def _is_paragraph(el: ET.Element) -> bool:
+    if el.tag == f"{XHTML}p":
+        return True
+    return el.tag == f"{XHTML}div" and not any(
+        d.tag in BLOCK_TAGS for d in el.iter() if d is not el
+    )
 
 
 def read(epub: Path, files: list[str], heading_prefixes: tuple[str, ...] = ()) -> list[Section]:
@@ -68,7 +78,7 @@ def read(epub: Path, files: list[str], heading_prefixes: tuple[str, ...] = ()) -
         for name in files:
             body = _parse(z.read(_member(z, name))).find(f"{XHTML}body")
             for el in body.iter():
-                if el.tag not in HEADING_TAGS and el.tag != f"{XHTML}p":
+                if el.tag not in HEADING_TAGS and not _is_paragraph(el):
                     continue
                 text = _clean("".join(_text(el)).replace("\u00a0", " "))
                 if not text:
