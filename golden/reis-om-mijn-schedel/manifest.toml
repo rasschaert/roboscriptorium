@@ -1,0 +1,31 @@
+title = "Reis om mijn schedel"
+author = "Frigyes Karinthy"
+language = "nl"
+# Translated by Frans van Nes, who is alive: under copyright, so only this
+# manifest is in git.
+eu_copyright_until = 2200
+
+# Van Gennep's own EPUB ("e-editie maart 2014, naar de eerste druk maart 2014").
+# Chapter titles are "kop" paragraphs; italics the "italic" class. Footnotes
+# ("noten", after a "bodybefore" rule) are left out: the pipeline doesn't place
+# footnotes yet, so the scan's footnote lines count as extra text.
+[reference]
+source = "Reis om mijn schedel, Van Gennep 2014, transl. Frans van Nes (EPUB)"
+sha256 = "18b21c8f85705ac829f21b5ee074716c95ea3b6f5de8d0a9026057cf398be434"
+files = [
+  "Text/Section0005.xhtml", "Text/Section0006.xhtml", "Text/Section0007.xhtml", "Text/Section0008.xhtml", "Text/Section0009.xhtml", "Text/Section0010.xhtml", "Text/Section0011.xhtml", "Text/Section0012.xhtml", "Text/Section0013.xhtml", "Text/Section0014.xhtml", "Text/Section0015.xhtml", "Text/Section0016.xhtml", "Text/Section0017.xhtml", "Text/Section0018.xhtml", "Text/Section0019.xhtml", "Text/Section0020.xhtml", "Text/Section0021.xhtml", "Text/Section0022.xhtml", "Text/Section0023.xhtml", "Text/Section0024.xhtml", "Text/Section0025.xhtml", "Text/Section0026.xhtml", "Text/Section0027.xhtml", "Text/Section0028.xhtml", "Text/Section0029.xhtml", "Text/Section0030.xhtml", "Text/Section0031.xhtml"
+]
+heading_prefixes = ["kop"]
+italic_classes = ["italic"]
+blank_classes = ["noten", "bodybefore"]
+
+# The first printing (March 2014, ISBN 978 94 6164 274 5), from Stella's
+# publisher. Internet Archive lends it only, so it is placed by hand. Pages
+# 11–255: the Voorwoord to the end of the last chapter; library labels and
+# stamps before and after.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org (Reis om mijn schedel, Van Gennep 2014; borrow, then download the PDF)"
+sha256 = "fee265e48d8747631d7d45655c6c66804a47508fa83f75f87e00108a92276a86"
+cover_page = 1
+body_pages = [11, 255]

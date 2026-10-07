@@ -312,6 +312,12 @@ The model for each stage is chosen by its score on golden pages, then pinned
 (never `latest`) and recorded here. More models can be pulled whenever needed,
 for example OCR-specialised vision models, or `winnow` for decisions.
 
+OCR scores on "Teirlinck 12 pages" come from the retired pre-reform bench and
+are history only. On modern Dutch (Goede dochter pp. 9–64, 1,622 body lines,
+typesetting folded) the text layer reads 0.21% CER, glm-ocr 0.25%, tesseract
+0.29%; re-bench candidates there and on the Boekenweek books and Reis om mijn
+schedel before choosing an OCR model.
+
 | Runtime | Model | Use | Status |
 | --- | --- | --- | --- |
 | Ollaya | `laya:multilingual` | Decisions on Dutch text | **unfit for line roles** (see log) |
@@ -413,13 +419,15 @@ and `standard-ebooks/` (SE's text, see below).
   edition differences, not just pipeline errors.
 
 ```sh
-uv run roboscriptorium golden derive sense-and-sensibility
-uv run roboscriptorium golden fetch sense-and-sensibility
-uv run roboscriptorium eval work/sense-and-sensibility--tauchnitz-1864
-# quick loop: chapters 1–9 only (~1 min with a cold decision cache)
-uv run roboscriptorium eval work/sense-and-sensibility--tauchnitz-1864 --pages 7-45 --chapters 1-9
+uv run roboscriptorium golden derive the-nature-of-a-crime
+uv run roboscriptorium golden fetch the-nature-of-a-crime
+uv run roboscriptorium eval work/the-nature-of-a-crime--doubleday-1924
+# quick loop: a slice of pages and the chapters they hold
+uv run roboscriptorium eval work/goede-dochter--ia-scan --pages 9-64 --chapters 1-4
 # heuristics only, no models
-uv run roboscriptorium eval work/sense-and-sensibility--tauchnitz-1864 --no-models
+uv run roboscriptorium eval work/goede-dochter--ia-scan --no-models
+# a publisher's EPUB can't be downloaded: pass it to derive
+uv run roboscriptorium golden derive goede-dochter --epub work/.cache/publisher/goede-dochter.epub
 ```
 
 `eval` builds the book, prints the scores and the most frequent differences, and
@@ -441,6 +449,9 @@ six words of context either side, so they survive pipeline changes. `eval`
 patches them into the reference for that scan and reports the remaining
 disagreements by mistake category.
 
+Retired (in `work/retired/`, manifests in git history): Boze tongen, De dode
+kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
+
 | Golden book | Scan | Notes |
 | --- | --- | --- |
 | the-nature-of-a-crime | `doubleday-1924` | **The scan Gutenberg #75172 was made from**; 94 body pages, short; Times OCR layer; running heads |
@@ -454,8 +465,8 @@ disagreements by mistake category.
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | de-eerlijke-vinder | `ia-scan` | Dutch, Spit, CPNB Boekenweekgeschenk 2023; IA Scribe scan in **Stella's format** (360 ppi MRC, GlyphLessFont layer, 104 pages); reference CPNB's own EPUB of the edition (via calibre). Pages 12–95, 4 parts ("I"–"IV", the first a drawn numeral the layer lacks). Design Frank August. In the leave-one-book-out set. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | monterosso-mon-amour | `ia-scan` | Dutch, Pfeijffer, CPNB Boekenweekgeschenk 2022; IA Scribe scan like Stella's; reference CPNB's EPUB, made after the first printing. Pages 9–96, 22 numbered chapters (the layer lacks the small "1"…). Typography Nico Richter: the same CPNB grid as De eerlijke vinder (13.2 pt pitch, ~57 characters a line) but another, lighter typeface. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
-| sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
-| het-ivoren-aapje (probe only) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py` |
+| reis-om-mijn-schedel | `ia-scan` | Dutch translation (Karinthy, Frans van Nes), **Van Gennep, Stella's publisher**, first printing 2014; IA Scribe scan in Stella's format, 260 pages; reference Van Gennep's EPUB "naar de eerste druk". Pages 11–255, 27 chapter titles ("kop"). **The best stand-in for Stella**: same leading (15.0 pt), no running heads, folio centred at the foot, what looks like the same serif face; Stella's type is ~6% larger on a narrower measure (258 against 278 pt). Footnotes, left out of the reference for now. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| het-ivoren-aapje (**retired as a bench**) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py`. **No longer used to choose OCR models**: pre-1934 spelling, unlike every book we target; re-bench on modern Dutch line crops instead |
 
 ## Decision log
 
@@ -946,3 +957,22 @@ disagreements by mistake category.
   9 → 4) and lose on the English picture books (Dolittle 89 → 162–197, Lady
   into Fox 8 → 12–41). Unstable: Dolittle went 83 → 162 when two books joined
   the training set. Not in the pipeline yet; regularise first.
+- 2026-10-07: *Reis om mijn schedel* (Karinthy, transl. Frans van Nes), from
+  Stella's publisher Van Gennep (2014), with Van Gennep's EPUB of the same
+  printing. Measured against Stella: the same leading (15.0 pt), furniture
+  (no running heads, folio centred at the foot) and, by eye, typeface; Stella's
+  type ~6% larger on a narrower measure (258 against 278 pt, 54 against 60
+  characters a line), indent 10.8 against 13.5 pt. The best stand-in for
+  measuring Stella. Text layer alone: CER 0.72%, WER 0.59%, paragraph F1
+  0.853, italics 0.904 / 0.872. Its footnotes are left out of the reference
+  until the pipeline places footnotes.
+- 2026-10-07: Sense and Sensibility (Tauchnitz 1864) retired, by the user's
+  decision: no reference of the same edition, so its differences are mostly
+  edition noise, and it would put bad labels into the training set. Its scan
+  and reference moved to `work/retired/`; the manifest and text leave git.
+- 2026-10-07: The Teirlinck bench (*Het ivoren aapje*, 1909, pre-reform
+  spelling) no longer chooses OCR models, by the user's decision: every target
+  book is in modern spelling. OCR models are re-benched on modern Dutch line
+  crops of Goede dochter, the two Boekenweek books and Reis om mijn schedel
+  (`experiments/bench_line_readings.py`). The Teirlinck scores in the Models
+  table stay as history only.
