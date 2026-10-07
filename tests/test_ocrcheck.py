@@ -18,6 +18,17 @@ def test_quote_style_and_opening_quotes_alone_are_not_differences():
     assert _spans("fee-fee?' said", "fee-fee?” said") == [("fee-fee?'", "fee-fee?”")]
 
 
+def test_a_reading_without_the_space_before_an_apostrophe_is_not_a_difference():
+    # A possessive or plural stays a difference either way round.
+    assert _spans("de foto's hier", "de foto ’s hier") == [("foto's", "foto ’s")]
+    assert _spans("Rózsi’s zoontje", "Rózsi zoontje") == [("Rózsi’s", "Rózsi")]
+    # The layer joining the article to the word before is a difference.
+    assert _spans("zat ik's avonds", "zat ik ’s avonds") == [("ik's", "ik ’s")]
+    # OCR models set the narrow space before Dutch ’s tight: no difference.
+    assert _spans("zes uur ’s avonds", "zes uur’s avonds") == []
+    assert _spans("je 's morgens", "je's morgens") == []
+
+
 def _page() -> PageText:
     lines = [
         Line("he was so tired up if they come", 10, 10, 200, 20),
@@ -130,6 +141,8 @@ def test_typographic_differences_have_the_same_letters():
     assert not _typographic(["was 3 thing", "was a thing"])
     assert _typographic(["Action ?", "Action?"])
     assert not _typographic(["have never", "havenever"])
+    assert not _typographic(["ik's", "ik ’s"])
+    assert _typographic(["liggen,’", "liggen,", "‘liggen"])
 
 
 def test_a_not_sign_line_end_hyphen_is_not_a_difference():

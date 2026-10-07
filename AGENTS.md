@@ -994,3 +994,10 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
   comes out `uur's` (the space before Dutch 's is removed). OCR bench, 6,697
   body lines, typesetting folded: text layer 0.15%, glm-ocr 0.18% (drops
   diaereses, `e` for `ë` 30×), tesseract 0.21%: the same order as Goede dochter.
+- 2026-10-07: The space before Dutch `’s` ("uur ’s avonds"). glm-ocr reads
+  it tight ("uur’s"), and both judges agreed on 6 of 7 such suspects on Reis,
+  all wrong (4 applied). A reading that only lacks the space before an
+  apostrophe is no longer a difference; the layer joining them ("ik's") still
+  is, and a split at an apostrophe is a word change, not typography. Reis:
+  suspects 902 → 895, fixed 306 → 301, review 459 → 458, CER 0.51% → 0.50%.
+  No other golden book had such a suspect.

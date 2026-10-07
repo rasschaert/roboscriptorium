@@ -58,6 +58,7 @@ MIN_LINE_CHARS = 12
 # hyphen, one character for one, so offsets stay put.
 _FOLD = str.maketrans("‘’“”¬", "''\"\"-")
 _OPENING_QUOTES = re.compile(r"(^|\s)[\"'‘’“”]+")
+_SPACE_BEFORE_APOSTROPHE = re.compile(r"(?<=\w) +'(?=\w)")
 LANGUAGE_NAMES = {"nld": "Dutch", "eng": "English"}
 
 
@@ -280,7 +281,9 @@ def differences(ours: str, theirs: str) -> list[tuple[int, int, int, int]]:
 
     Curly and straight quotes count as the same. A difference only in opening
     quote marks isn't one: OCR models read a printed “ as ‘, and no model can
-    tell them apart in a crop.
+    tell them apart in a crop. Nor is a reading without the space before an
+    apostrophe ("uur’s" for "uur ’s"): OCR models miss the narrow space Dutch
+    print sets before the article ’s, and no judge sees it in a crop.
     """
     spans = []
     for op in Levenshtein.opcodes(ours.translate(_FOLD), theirs.translate(_FOLD)):
@@ -298,6 +301,8 @@ def differences(ours: str, theirs: str) -> list[tuple[int, int, int, int]]:
         if _bare(ours[s[0] : s[1]]) != _bare(theirs[s[2] : s[3]])
         and ours[s[0] : s[1]].translate(_FOLD).strip()
         != theirs[s[2] : s[3]].translate(_FOLD).strip()
+        and _SPACE_BEFORE_APOSTROPHE.sub("'", ours[s[0] : s[1]].translate(_FOLD))
+        != theirs[s[2] : s[3]].translate(_FOLD)
     ]
 
 
@@ -518,9 +523,10 @@ def _decide(
 def _typographic(versions: list[str]) -> bool:
     """Whether the versions have the same words, differing only in what lies between them.
 
-    Joining two words ("have never" → "havenever") changes the words.
+    Joining two words ("have never" → "havenever", "ik ’s" → "ik's") changes the words.
     """
-    return len({tuple(re.sub(r"[^\w]", " ", v).split()) for v in versions}) == 1
+    words = lambda v: tuple(re.findall(r"\w+(?:'\w+)*", v.translate(_FOLD)))  # noqa: E731
+    return len({words(v) for v in versions}) == 1
 
 
 def _ask(client: OllayaClient, cache: DecisionCache, state: dict, questions: dict, image=None):
