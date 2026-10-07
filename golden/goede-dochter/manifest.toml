@@ -35,12 +35,3 @@ sha256 = "1cf251de6f3b4be1638089cb45ce76e37f34f229d5ec58cea86aa8794f3175b5"
 cover_page = 1
 body_pages = [9, 508]
 
-# The eighth printing (February 2019, another printer) of the same typesetting:
-# the same pages, another copy and scan with its own OCR layer. For checking
-# that what is learned on one scan carries over to another of the same text.
-[[scans]]
-id = "ia-scan-8"
-source = "Internet Archive (borrow, then download the PDF)"
-sha256 = "07d05a1eea1bee36dbca79ed8057b91ec3e7f1d9431cda72ca3052735b2fc2a3"
-cover_page = 1
-body_pages = [9, 508]

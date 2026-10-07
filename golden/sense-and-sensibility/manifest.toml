@@ -23,22 +23,3 @@ url = "https://archive.org/download/bub_gb_RtT0OLKFMHsC/bub_gb_RtT0OLKFMHsC.pdf"
 sha256 = "0a4f90fc3d4896c289ff98d8172cd2956592bb820a27b8650544b58b39e7b6b8"
 cover_page = 5
 body_pages = [7, 346]
-
-# London, J. M. Dent (Everyman's Library), after 1946: yellowed, uneven inking,
-# a different edition from the reference. Borrow-only on archive.org, so it
-# can't be fetched; put the PDF in place by hand.
-[[scans]]
-id = "everyman-dent"
-source = "https://archive.org/details/sensesensibility0000jane_z6u7"
-sha256 = "4011f0df3dd0a4cb4cfb4b6ca81ad775ca02535f71de815ff7b4b80a92c3b1e6"
-cover_page = 1
-body_pages = [23, 343]
-
-# Everyman's Library (Knopf), 1992 edition, 1997 printing: modern copyrighted
-# introduction, volume divisions, Garamond. Borrow-only on archive.org.
-[[scans]]
-id = "everyman-1992"
-source = "https://archive.org/details/sensesensibility0000aust_z4p6"
-sha256 = "760112374de7f6211390ad55e3945fabc4da712e3461e556c4d48e36cff90c4d"
-cover_page = 1
-body_pages = [45, 411]

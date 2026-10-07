@@ -425,19 +425,15 @@ disagreements by mistake category.
 | Golden book | Scan | Notes |
 | --- | --- | --- |
 | the-nature-of-a-crime | `doubleday-1924` | **The scan Gutenberg #75172 was made from**; 94 body pages, short; Times OCR layer; running heads |
-| boze-tongen | `prometheus-2002` | Dutch (Flemish), 2002, Lanoye. Reference: part three of the 2013 omnibus EPUB (no separate ebook exists), which may carry revisions. Dialogue set as a play script in places, dialect, a drawn part title. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | de-aanslag | `calibre-pdf` | Dutch, Mulisch, 51st printing. **Not a scan**: calibre's PDF of the retail EPUB, so its text layer is exact. For born-digital PDFs, page joins and (later) italics. **Copyrighted**, all text in `work/golden/` |
 | lady-into-fox | `chatto-1922` | **Held out: score it to check that changes carry over, never tune on it.** 1922 first edition, same as Gutenberg #10337; one continuous text, no chapters; wood engravings. **EU copyright until 2051**: only the manifest is in git, the reference and verdicts live in `work/golden/lady-into-fox/` (`eu_copyright_until` in the manifest) |
 | grand-hotel-europa | `ia-scan` | **Held out, like Lady into Fox.** Dutch, 2018, Pfeijffer; IA Scribe scan of the 11th printing (2019), 537 body pages. Reference: the retail EPUB, made from the 1st printing. Chapter label, title and numbered sections. Borrow-only scan; **copyrighted**, all text in `work/golden/`. Score it in slices (`--pages`/`--chapters`) |
-| de-dode-kamer | `ia-scan` | Dutch, 2013, Hoffschlag (first novel, small publisher). IA Scribe scan of the **same first edition** as the reference (the retail EPUB): the Dutch tuning book for OCR and italics (diary passages). The EPUB sets the date lines' em dashes as hyphens. Pages 19–717; part titles are pictures. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | de-tuin-van-de-avondnevel | `ia-scan` | **Held out.** Dutch translation (Tan Twan Eng, Xander); IA scan of the 2014 paperback, reference the 2013 retail EPUB of the same translation and typesetter. Many italic foreign words. Pages 11–374, chapters 1–26. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
-| goede-dochter | `ia-scan` | Dutch translation (Slaughter, HarperCollins Holland 2017); IA scan of the first printing, reference the retail EPUB of the same translation (typeset by Mat-Zet). The cleanest Dutch reference: **tune on it**. Pages 9–508, 25 chapters (a part title, then titled chapters). A second scan, `ia-scan-8`, is the 8th printing of the same typesetting: same pages, another copy and OCR layer. Borrow-only scans; **copyrighted**, all text in `work/golden/` |
+| goede-dochter | `ia-scan` | Dutch translation (Slaughter, HarperCollins Holland 2017); IA scan of the first printing, reference the retail EPUB of the same translation (typeset by Mat-Zet). The cleanest Dutch reference: **tune on it**. Pages 9–508, 25 chapters (a part title, then titled chapters). Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | villa-toscane | `calibre-pdf` | **Held out**, born-digital. Dutch, 2014, Van Rijn; calibre's PDF of the retail EPUB, like De aanslag. Novel = chapters 1–12 (13 is the colophon). **Copyrighted**, all text in `work/golden/` |
 | the-story-of-doctor-dolittle | `stokes-1920` | Tenth printing, same as Gutenberg #501; full-page plates with captions, drawn initials the text layer drops |
 | sense-and-sensibility | `tauchnitz-1864` | Not the edition of Gutenberg #161 (1811 first edition); old Courier OCR layer; running heads, signature lines, "Digitized by Google" |
 | het-ivoren-aapje (probe only) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py` |
-| sense-and-sensibility | `everyman-dent` | Dent, after 1946; yellowed; borrow-only |
-| sense-and-sensibility | `everyman-1992` | Knopf 1992/1997; modern copyrighted introduction; borrow-only |
 
 ## Decision log
 
@@ -776,3 +772,10 @@ disagreements by mistake category.
   so most strokes went unseen: italic words 0.617 / 0.245 → 0.958 / 0.828
   (pp. 9–64). Crime 0.951 → 1.000 precision; De aanslag unchanged; Dolittle
   0.872 → 0.850 precision; De dode kamer 0.837 / 0.903 → 0.831 / 0.898.
+- 2026-10-07: Golden books culled to those whose reference matches the scan
+  closely enough to tell pipeline errors from edition differences. Retired
+  (files moved to `work/retired/`, manifests in git history): Boze tongen
+  (omnibus reference with revisions, the diary italic in one and not the
+  other), De dode kamer (its EPUB was made by OCR and lacks printed text),
+  Sense's two Everyman scans (other editions, never scored), and Goede
+  dochter's eighth printing (same text as the first).
