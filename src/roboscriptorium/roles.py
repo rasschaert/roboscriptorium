@@ -92,13 +92,25 @@ def candidates(page: PageText, sunk: bool = False) -> list[int]:
 
 
 def _section_number(
-    page: PageText, i: int, offset: int | None, page_roles: dict[int, "LineRole"]
+    page: PageText, i: int, offset: int | None, page_roles: dict[int, "LineRole"], sunk: bool
 ) -> bool:
-    """A bare number opening the page, above body text, that isn't its printed page number."""
+    """A number opening the page, above body text, that isn't its printed page number.
+
+    On a sunk page a short title may follow the number ("1 Later"): a page number
+    with words beside it is a running head, and chapter openings carry none.
+    """
     text = page.lines[i].text.strip()
-    if i != 0 or not text.isdigit() or not _is_body(page_roles.get(i + 1)):
+    if i != 0 or not _is_body(page_roles.get(i + 1)):
+        return False
+    if sunk and _NUMBERED_TITLE.match(text):
+        return True
+    if not text.isdigit():
         return False
     return offset is None or abs(int(text) - (page.number - offset)) > PAGE_NUMBER_SLACK
+
+
+# A number and a title of a few words, with no sentence ending in it.
+_NUMBERED_TITLE = re.compile(r"^\d{1,3}\s+[^\s\d.!?][^.!?]{0,40}$")
 
 
 _OPEN_END = re.compile(r"[a-zà-ÿ,\-\u00ad\u00ac]$")
@@ -213,7 +225,7 @@ def classify(
                     page_roles[i] = LineRole(
                         "running_head", role.confidence, role.p_body, "repeated-title"
                     )
-            elif _section_number(page, i, offset, page_roles):
+            elif _section_number(page, i, offset, page_roles, page.number in sunk):
                 page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0, "section-number")
             elif not _is_body(role) and _finishes_sentence(page, i, page_roles):
                 page_roles[i] = LineRole("body", role.confidence, 1.0, "finishes-sentence")

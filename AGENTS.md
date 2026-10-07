@@ -833,3 +833,9 @@ disagreements by mistake category.
   which argues for trust measured per model and kind of error over fixed
   thresholds. `eval` now prints and records the OCR check's counts (fixed,
   kept, for review). Crime: 236 suspects, 46 fixed, 123 kept, 67 for review.
+- 2026-10-07: A number with a short title opening a sunk page ("1 Later") is a
+  chapter heading, whatever the page number: a page number with words beside it
+  is a running head, and chapter openings carry none. clef called both of Vals
+  alarm's titled numbers page numbers (at 0.07). Vals alarm pp. 11–60 headings
+  8/10 → 10/10, paragraph F1 0.948 → 0.950; Crime, Dolittle, De aanslag
+  unchanged. On Vals alarm the sunk pages are exactly the chapter openings.

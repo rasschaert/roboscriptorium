@@ -67,6 +67,27 @@ def test_bare_numeral_on_a_sunk_page_is_a_heading(tmp_path):
     assert roles[SourceRef(3, 0)].rule == ""
 
 
+def test_a_number_and_title_opening_a_sunk_page_is_a_heading(tmp_path):
+    # Running heads hold a page number and a title too, but not on a sunk page.
+    pages = [_page(n, f"{n + 4} Vals alarm") for n in range(1, 10)]
+    for n, top in [(10, "1 Later"), (11, "3 mei kwam hij eindelijk thuis, moe en nat.")]:
+        pages.append(PageText(n, 400, 600, [Line(top, 150, 150, 250, 162)] + pages[0].lines[1:]))
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            if state["line"].startswith("body text"):
+                return {"role": Answer("choice", "body", 0.9, {"body": 0.9})}
+            return {"role": Answer("choice", "page_number", 0.9, {"page_number": 0.9, "body": 0.1})}
+
+    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
+    assert roles[SourceRef(10, 0)].role == "chapter_heading"
+    assert roles[SourceRef(10, 0)].rule == "section-number"
+    assert roles[SourceRef(3, 0)].role == "page_number"
+    assert roles[SourceRef(11, 0)].role != "chapter_heading"
+
+
 def test_running_title_keys():
     assert title_key("Animal Language II") == title_key("ANIMAL LANGUAGE")
     assert title_key("12 The Story of Doctor Dolittle") == "THESTORYOFDOCTORDOLITTLE"
