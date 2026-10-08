@@ -6,6 +6,10 @@ label says how warm the caches were, which matters more than the page count. A r
 with nothing cached costs **0.8–1.1 min per page** for a trust-data rebuild
 (glm-ocr, tesseract and qwen3.8 per line, then clef and winnow per suspect).
 
+A run made partly or wholly in macOS Low Power Mode (the battery can't keep up with
+Ollama even on the charger) says so in its label and doesn't count towards the
+estimate: it runs slower by an unmeasured amount.
+
 | Date | Run | Pages | Minutes | Exit |
 | --- | --- | --- | --- | --- |
 | 2026-10-07 | trust data, Goede dochter (Qwen readings cached by the line bench) | 56 | 3 | 0 |
