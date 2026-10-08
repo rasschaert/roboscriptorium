@@ -382,11 +382,12 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
   - [ ] imajev (mindchain, Qwen3.5 vision decision models, 2B/4B/9B Q8_0) for the vision
         judge against clef:27b. Ollama's systemone takes no images for GGUF models and a
         GGUF lacks imajev's trained readout, so it runs through llama.cpp on Ollama's blobs
-        with the readout applied in `experiments/imajev_llama.py`. Judge set v1 (518
+        with the readout applied in `clients/llama.py`. Judge set v1 (518
         suspects), weighted right: 2B 80.7%, 4B 84.0%, clef 90.0%; 0.12 / 0.25 s a question.
         No replacement. **A strong alarm**: clef is wrong on 4.6% where the 4B agrees, 34%
         where it disagrees (winnow: 4% / 22%), and the 4B's own pick is right on 139 of the
-        150 clef errors it flags. 9B when the user's pull lands
+        150 clef errors it flags. The 9B: 82.4%, weaker as an alarm on English books; the
+        4B is the one to try in the pipeline
     - [ ] As a third judge beside clef and winnow (the screen says it adds): `trust.py`
           takes the judges by position, two of them; widen it to three, rebuild the trust
           data with imajev's answers (llama.cpp beside the runs), retrain, bench

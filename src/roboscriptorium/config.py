@@ -15,6 +15,11 @@ class Settings:
     # Judges the OCR check's suspects from the crop; better than role_model at that,
     # worse at line roles.
     judge_model: str = "clef:27b"
+    # A second vision judge on the OCR check's suspects, served by llama.cpp at llama_url
+    # (`clients/llama.py`): a vote for the arbiter, "" for none. imajev-4b disagrees with
+    # clef where clef is wrong 34% of the time and where it is right 4.6% (judge set v1).
+    alarm_model: str = ""
+    llama_url: str = "http://127.0.0.1:8092"
     # A hosted build of judge_model that answers in its place (`openrouter:…`, used only
     # when the user asks), its answers cached under judge_model's name. "" for none.
     judge_via: str = ""
@@ -44,6 +49,8 @@ class Settings:
             read_model=os.environ.get("ROBO_READ_MODEL", defaults.read_model),
             read_via=os.environ.get("ROBO_READ_VIA", defaults.read_via),
             judge_model=os.environ.get("ROBO_JUDGE_MODEL", defaults.judge_model),
+            alarm_model=os.environ.get("ROBO_ALARM_MODEL", defaults.alarm_model),
+            llama_url=os.environ.get("ROBO_LLAMA_URL", defaults.llama_url),
             judge_via=os.environ.get("ROBO_JUDGE_VIA", defaults.judge_via),
             ocr_trust=os.environ.get("ROBO_OCR_TRUST", "1") != "0",
             ocr_trust_model=os.environ.get("ROBO_OCR_TRUST_MODEL", defaults.ocr_trust_model),

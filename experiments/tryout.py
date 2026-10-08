@@ -467,9 +467,11 @@ def run_judge(model: str) -> None:
     cache.parent.mkdir(parents=True, exist_ok=True)
     done = json.loads(cache.read_text()) if cache.exists() else {}
     if model.startswith("llama:"):
-        from imajev_llama import ImajevClient
+        # llama:<model>@<port>: a decision model with a readout on llama-server.
+        from roboscriptorium.clients import llama
 
-        client = ImajevClient(model)
+        name, port = model.removeprefix("llama:").split("@")
+        client = llama.ReadoutClient(name, f"http://127.0.0.1:{port}")
     else:
         client = decide.for_model(model, settings.ollama_url)
     todo = [i for i in items if i["id"] not in done]

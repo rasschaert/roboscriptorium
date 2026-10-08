@@ -997,3 +997,4 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   whole-body style change (a43b008) and the winnow switch are benched together against
   the ellipsis run, not apart.
 - 2026-10-08: Every new model gets two questions, by the user's rule: can it replace a model in a role, and could adding it anywhere in the workflow improve the application (AGENTS.md, Model roles).
+- 2026-10-09: imajev-4b is the second vision judge to try (`alarm_model`, off by default until the bench says so): on judge set v1 the best all-round alarm on clef (2B and 9B screened too; the 9B is better on Dutch, worse on English). It runs on llama.cpp (`clients/llama.py`) because Ollama's systemone takes no images for GGUF models and the GGUF lacks imajev's trained readout. The arbiter takes a third judge (`trust.MODEL_VERSION` 4, 26 features).

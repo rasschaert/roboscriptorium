@@ -17,7 +17,7 @@ class _Model:
     """Trusts whatever the vision judge picked, as sure as it was."""
 
     def predict_proba(self, X):
-        p = np.where(X[:, -9] > 0, X[:, -8], 0.05)
+        p = np.where(X[:, -12] > 0, X[:, -11], 0.05)
         return np.column_stack([1 - p, p])
 
 
@@ -86,3 +86,20 @@ def test_a_saved_model_of_another_width_stops_the_build_instead_of_being_skipped
     with pytest.raises(trust.Mismatch):
         trust.load(path)
     assert trust.load(tmp_path / "none.pkl") is None
+
+
+def test_a_second_vision_judge_has_its_own_features_and_none_reads_as_absent():
+    from dataclasses import replace
+
+    plain = _suspect("a", "b", "b", 0.9)
+    alarmed = replace(
+        plain,
+        votes={"vision": "b", "text": "b", "imajev": "a", "word list": "b"},
+        confidence={"vision": 0.9, "text": 0.9, "imajev": 0.6},
+    )
+    f0, f1 = trust.features(plain, 0), trust.features(alarmed, 0)
+    assert len(f0) == len(f1) == trust.FEATURES
+    # From the end: the prior (2), the two judges' agreement, then the third judge's three.
+    # Everything else is the same with or without it.
+    assert f0[:-6] == f1[:-6] and f0[-3:] == f1[-3:]
+    assert f0[-6:-3] == [0.0, 0.0, 0.0] and f1[-6:-3] == [1.0, 0.6, 0.0]

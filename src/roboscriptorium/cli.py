@@ -22,7 +22,7 @@ from roboscriptorium import (
     review,
 )
 from roboscriptorium.book import Book
-from roboscriptorium.clients import decide
+from roboscriptorium.clients import decide, llama
 from roboscriptorium.clients.ollama import OllamaClient
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
@@ -68,6 +68,20 @@ def doctor() -> None:
         except httpx.HTTPError as exc:
             ok = False
             typer.echo(f"decide  {model}  FAILED: {exc}")
+    if settings.alarm_model:
+        try:
+            client = llama.ReadoutClient(settings.alarm_model, settings.llama_url)
+            question = decide.choice(
+                "Which colour is a clear daytime sky?", {"blue": "", "red": ""}
+            )
+            answer = client.decide({}, {"q": question})["q"]
+            typer.echo(
+                f"llama   {settings.alarm_model}  {settings.llama_url}  smoke test: "
+                f"{answer.value} ({answer.confidence:.2f})"
+            )
+        except (httpx.HTTPError, OSError) as exc:
+            ok = False
+            typer.echo(f"llama   {settings.alarm_model}  {settings.llama_url}  FAILED: {exc}")
 
     raise typer.Exit(0 if ok else 1)
 
@@ -472,7 +486,12 @@ def _model_versions(settings: Settings) -> dict[str, str]:
         settings.role_model, settings.check_model, settings.judge_model,
         settings.ocr_model, settings.read_model,
     }  # fmt: skip
-    return {name: out.get(name, "?") for name in sorted(used - {""})}
+    versions = {name: out.get(name, "?") for name in sorted(used - {""})}
+    if settings.alarm_model:
+        size = settings.alarm_model.removeprefix("imajev-")
+        readout = llama.READOUTS / f"{size}-decision_readout.safetensors"
+        versions[settings.alarm_model] = sha256(readout)[:12] if readout.exists() else "?"
+    return versions
 
 
 def _evaluate_book(

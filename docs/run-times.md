@@ -59,3 +59,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | tryout: judge v1, imajev:4b, alongside 1 run | 518 | 0 | 1 |
 | 2026-10-09 | tryout: judge v1, imajev 2B via llama.cpp + readout, alongside 1 run | 518 | 1 | 0 |
 | 2026-10-09 | tryout: judge v1, imajev 4B via llama.cpp + readout, alongside 1 run | 518 | 2 | 0 |
+| 2026-10-09 | tryout: judge v1, imajev 9B via llama.cpp + readout, alongside 1 run | 518 | 4 | 0 |

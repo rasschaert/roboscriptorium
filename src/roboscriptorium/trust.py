@@ -23,9 +23,9 @@ import numpy as np
 
 from roboscriptorium.ocrcheck import Suspect, _typographic
 
-MODEL_VERSION = 3
+MODEL_VERSION = 4
 # The length of `features`; a saved model of another width can't score them.
-FEATURES = 23
+FEATURES = 26
 # A substitution's prior counts only when the training books that show it number this
 # many: one book's reference conventions must not teach every other book.
 MIN_BOOKS = 2
@@ -117,14 +117,16 @@ def features(s: Suspect, k: int, pairs: Pairs | None = None) -> list[float]:
         float(len(v) - len(ours)),
     ]
     picks = []
-    # The judges by role, as `ocrcheck` records them: the vision judge, then the text judge.
-    judges = [m for m in s.votes if m != "word list"][:2]
-    for model in judges + [""] * (2 - len(judges)):
+    # The judges by role, as `ocrcheck` records them: the vision judge, the text judge,
+    # then the second vision judge (`alarm`) where one was asked.
+    judges = [m for m in s.votes if m != "word list"][:3]
+    for model in judges + [""] * (3 - len(judges)):
         picked = s.votes.get(model) == v
         c = s.confidence.get(model, 0.0)
         f += [float(picked), c if picked else -c, float(s.votes.get(model) == "")]
         picks.append(picked)
-    f.append(float(all(picks)))
+    # Whether the vision and the text judge both pick it.
+    f.append(float(all(picks[:2])))
     return f + prior(s, k, pairs or {})
 
 

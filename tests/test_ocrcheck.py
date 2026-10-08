@@ -253,6 +253,34 @@ def test_the_word_list_votes_but_decides_nothing(monkeypatch):
     assert decide("a", "a", 1)[0][:2] == decide("a", "a", None)[0][:2] == ("ours", None)
 
 
+def test_a_second_vision_judge_is_asked_the_same_question_and_only_votes(monkeypatch):
+    from types import SimpleNamespace
+
+    asked = []
+
+    def ask(client, cache, state, questions, image=None):
+        asked.append((client.model, state, questions))
+        return {
+            "value": {"clef": "a", "winnow": "a", "imajev": "b"}[client.model],
+            "confidence": 0.7,
+        }
+
+    monkeypatch.setattr(ocrcheck, "_ask", ask)
+    clef, winnow = SimpleNamespace(model="clef"), SimpleNamespace(model="winnow")
+    imajev = SimpleNamespace(model="imajev")
+    line = "Toen kwam lemand binnen"
+    (choice, chosen, votes), confidence = ocrcheck._decide(
+        None, 1, 0, line, 10, 16, ["Iemand"], (0, 0, 1, 1), "nld", clef, winnow, None,
+        vouched=1, alarm=imajev,
+    )  # fmt: skip
+    (_, s1, q1), _, (_, s3, q3) = asked
+    assert (s1, q1) == (s3, q3)
+    # The fixed rule goes by clef and winnow alone.
+    assert (choice, chosen) == ("ours", None)
+    assert list(votes) == ["clef", "winnow", "imajev", "word list"]
+    assert votes["imajev"] == "Iemand" and confidence["imajev"] == 0.7
+
+
 def test_the_vision_judge_is_told_the_books_style_and_the_text_judge_isnt(monkeypatch):
     from types import SimpleNamespace
 

@@ -316,6 +316,7 @@ def test_a_scans_spaced_ellipses_come_out_as_printed_and_a_born_digital_pdfs_as_
 
 
 def test_a_slice_is_read_with_the_whole_books_style(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
     book, prompts = _checked_book(tmp_path, monkeypatch)
     (tmp_path / "book.toml").write_text(
         'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, 2]\n'

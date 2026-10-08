@@ -21,7 +21,7 @@ from roboscriptorium import (
     typography,
 )
 from roboscriptorium.book import Book
-from roboscriptorium.clients import decide
+from roboscriptorium.clients import decide, llama
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.epub import write_epub
@@ -138,9 +138,12 @@ def run(
                     settings.read_via,
                 )
             judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
+            alarm = None
+            if settings.alarm_model:
+                alarm = llama.ReadoutClient(settings.alarm_model, settings.llama_url)
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
-                book_style(book, whole, style),
+                book_style(book, whole, style), alarm,
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:
