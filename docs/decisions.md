@@ -910,3 +910,13 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   errors are three to five signatures (`|`→`I`, a lost `’`, `é`→`ë`) nearly deterministic
   across books, and that a substitution-pair prior in trust cuts silent errors at one
   question a page from 23 to 11 over nine books, leave-one-out (checklist 6b).
+- 2026-10-08: Trust gets a prior for the exact substitution a version makes (`trust.pair`,
+  model version 3, 23 features; the priors saved with the model). On the labelled
+  suspects each scan's errors are three to five signatures, nearly deterministic across
+  books (a lost `’` the print 223/234, `|`→`I` 59/59, `é`→`ë` 28/28; glm-ocr dropping a
+  `’` wrong 232/235), which the kind features can't tell apart. Leave one book out over
+  nine books: silent errors at 0/.25/.5/1 questions a page 153/87/44/23 → 117/50/31/11.
+  A pair counts when seen in ≥ 2 training books (Opus's caution: one book's reference
+  conventions must not teach the rest) and a training suspect is scored without its own
+  label (with it in, 76/48/28 at .25/.5/1: worse than no prior). Its bench step waits for
+  the retrain (checklist 6b). The saved model stays version 1 until `--save`.

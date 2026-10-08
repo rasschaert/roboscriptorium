@@ -1,7 +1,8 @@
 """Learned trust for the OCR check (`trust.py`), scored leaving one book out, against the rule.
 
 Each version of each settled suspect (`ocr_trust_data.py`) is a row: is this what
-the scan prints? Per book: the fixed rule's silent errors (applied or kept, but
+the scan prints? The substitution priors (`trust.pairs_table`) come from the training
+books of each fold, never from the book scored. Per book: the fixed rule's silent errors (applied or kept, but
 wrong) and questions, and each model's silent errors at the rule's own number of
 questions and at budgets of questions per page (the least sure suspects asked,
 the rest taking their most likely version). Then the same for the trees with one
@@ -51,17 +52,18 @@ def rows_of(name: str) -> list[dict]:
     rows = [r for r in load(name) if r["settled"]]
     for r in rows:
         r["s"] = suspect(r)
+        r["book"] = name
     return rows
 
 
-def matrix(rows: list[dict]) -> tuple[np.ndarray, np.ndarray, list[int]]:
-    X, y, owner = [], [], []
+def matrix(rows: list[dict], pairs: trust.Pairs) -> tuple[np.ndarray, list[int]]:
+    """Feature rows of the suspects to score, with the substitution priors `pairs`."""
+    X, owner = [], []
     for i, r in enumerate(rows):
-        for k, ok in enumerate(r["right"]):
-            X.append(trust.features(r["s"], k))
-            y.append(int(ok))
+        for k in range(len(r["right"])):
+            X.append(trust.features(r["s"], k, pairs))
             owner.append(i)
-    return np.array(X), np.array(y), owner
+    return np.array(X), owner
 
 
 def per_suspect(rows, probs, owner) -> list[np.ndarray]:
@@ -97,8 +99,13 @@ def pages_of(name: str) -> int:
 
 
 def scored(make, train_names, rows):
-    X, y, _ = matrix([r for n in train_names for r in books[n]])
-    Xt, _, owner = matrix(rows)
+    """`rows` scored by `make()` trained on the named books, with the substitution
+    priors from those books (each training suspect scored without its own label)."""
+    train = [r for n in train_names for r in books[n]]
+    suspects, right = [r["s"] for r in train], [r["right"] for r in train]
+    pairs = trust.pairs_table(suspects, right, [n for n in train_names for _ in books[n]])
+    X, y = trust.training_matrix(suspects, right, pairs)
+    Xt, owner = matrix(rows, pairs)
     return per_suspect(rows, make().fit(X, y).predict_proba(Xt)[:, 1], owner)
 
 
@@ -152,7 +159,9 @@ if "--save" in sys.argv:
             if name != without and trainable(name)
             for r in rows
         ]
-        model = trust.train([r["s"] for r in every], [r["right"] for r in every])
+        model = trust.train(
+            [r["s"] for r in every], [r["right"] for r in every], [r["book"] for r in every]
+        )
         out = trust.without(path, without) if without else path
         trust.save(model, out)
         print(f"trained on {len(every)} suspects, without {without}: {out}")

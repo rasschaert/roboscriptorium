@@ -75,7 +75,26 @@ probabilities of being right, and how much each signal is worth differs by kind 
 error and book (the winnow numbers above). Shallow trees over the judges' picks
 and confidence, the readings' support, the word list and the kind of difference
 learn that from labels: leaving one book out, silent errors at the rule's own
-number of questions fell 57 → 15 over seven books. The fixed rule (both judges
+number of questions fell 57 → 15 over seven books.
+
+**The exact substitution is a prior.** A scan's errors are a few signatures: the
+top five (layer → print) cover 135 of Vals alarm's 202 layer-wrong suspects, 294 of
+Dolittle's 372, 110 of Artemis's 207, and across books they go one way: a lost `’` is
+the print 223 of 234 times it is raised, `|`→`I` 59 of 59, `é`→`ë` 28 of 28, while
+glm-ocr dropping a `’` is wrong 232 of 235 times. The kind features ("same letters",
+"length differs") can't tell `é`→`ë` from `ë`→`e`, so each version carries how often
+its exact substitution was the print in the training books (`trust.pair`, Laplace
+smoothed, with how often it was seen). Leaving one book out over nine books
+(`experiments/probe_trust_pair_prior.py`), silent errors at 0 / 0.25 / 0.5 / 1
+questions a page fell from 153 / 87 / 44 / 23 to 117 / 50 / 31 / 11, stable to one
+more training book left out. Two guards, each measured: a pair counts only when seen
+in two training books (one book's reference conventions must not teach the rest;
+Lady into Fox showed they can), and a training suspect is scored without its own
+label (counted in, the trees leaned on the prior and did worse: 76 / 48 / 28 at
+0.25 / 0.5 / 1). What the prior can't know is a signature in no other book: Vals
+alarm loses the full stop before a closing quote 47 times (`word’` for `word.’`), and
+only that book's own answers can teach it (checklist 6b). The bench decides whether
+the gain carries into a build. The fixed rule (both judges
 agree, clef ≥ 0.3) asks about 35% of suspects because it needs winnow's
 agreement; it is only an explicit fallback (`ROBO_OCR_TRUST=0`). A missing or
 mismatched model stops the build, because a silent fallback once ran unnoticed.

@@ -1,19 +1,18 @@
-"""Trust with a substitution-pair prior, scored leaving one book out, against trust as it is.
+"""Trust with its substitution-pair prior against trust without it, leaving one book out.
 
-The prior for a version: how often, in the training books, a version that differs from
-the layer's by exactly this substitution (from → to, e.g. '' → '’', '|' → 'I', 'é' → 'ë')
-was the print, Laplace-smoothed, with how often the pair was seen (log). The layer's own
-version gets its strongest rival's prior, inverted. A pair counts only when seen in at
-least `--min-books` training books (default 2), so one book's reference conventions can't
-teach every other book. Training rows are scored with their own label left out of the
-table (a leaked label made the model trust the prior too much and did worse).
+The prior (`trust.pairs_table`, `trust.prior`): how often, in the training books, a
+version differing from the layer's by exactly this substitution ('' → '’', '|' → 'I',
+'é' → 'ë') was the print. A pair counts when seen in at least `trust.MIN_BOOKS`
+training books (`--min-books` overrides), and a training suspect is scored without its
+own label (`trust.training_matrix`; counted in, the trees leaned on the prior and did
+worse).
 
 Per book, as `train_ocr_trust.py` prints: silent errors (the chosen version wrong) at the
-fixed rule's own number of questions, and at budgets of 0, 0.25, 0.5 and 1 question per
-page, for the trees as they are and with the prior. Then the prior's stability with one
-more training book left out, and, with `--two-pass`, a second pass where the asked
-suspects' labels (the reviewer's answers) give a per-book posterior per pair that
-rescores the unasked ones.
+fixed rule's own number of questions and at budgets of 0, 0.25, 0.5 and 1 question per
+page, for the trees without the prior (an empty table) and with it. Then the prior's
+stability with one more training book left out, and, with `--two-pass`, a second pass
+where the asked suspects' labels (the reviewer's answers) give a per-book posterior per
+pair that rescores the unasked ones.
 
     PYTHONPATH=experiments uv run python experiments/probe_trust_pair_prior.py [--min-books N] [--two-pass] [--per-book PAIR]
 
@@ -21,10 +20,8 @@ rescores the unasked ones.
 single book dominates it.
 """
 
-import difflib
-import math
 import sys
-from collections import Counter, defaultdict
+from collections import Counter
 from pathlib import Path
 
 import numpy as np
@@ -35,37 +32,19 @@ from roboscriptorium import trust
 from roboscriptorium.book import Book
 from roboscriptorium.cli import _range
 
-HELD_OUT = {
-    "lady-into-fox",
-    "grand-hotel-europa",
-    "de-tuin-van-de-avondnevel",
-    "de-eerlijke-vinder",
-    "youre-never-weird-on-the-internet",
-}
+HELD_OUT = {"lady-into-fox", "grand-hotel-europa", "de-tuin-van-de-avondnevel", "de-eerlijke-vinder", "youre-never-weird-on-the-internet"}
 READINGS = {"glm", "tess", "qwen"}
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
 
 args = sys.argv[1:]
-MIN_BOOKS = int(args[args.index("--min-books") + 1]) if "--min-books" in args else 2
+if "--min-books" in args:
+    trust.MIN_BOOKS = int(args[args.index("--min-books") + 1])
 TWO_PASS = "--two-pass" in args
 PER_BOOK = args[args.index("--per-book") + 1] if "--per-book" in args else ""
 
 
-def pair(ours: str, other: str) -> str:
-    """The substitution between two versions of a span: each differing stretch, from → to."""
-    sm = difflib.SequenceMatcher(None, ours, other, autojunk=False)
-    parts = [
-        f"{ours[i1:i2]!r}→{other[j1:j2]!r}"
-        for tag, i1, i2, j1, j2 in sm.get_opcodes()
-        if tag != "equal"
-    ]
-    return "|".join(parts) or "="
-
-
 def make():
-    return HistGradientBoostingClassifier(
-        max_depth=3, min_samples_leaf=20, l2_regularization=1.0, random_state=0
-    )
+    return HistGradientBoostingClassifier(max_depth=3, min_samples_leaf=20, l2_regularization=1.0, random_state=0)
 
 
 def rows_of(name: str) -> list[dict]:
@@ -90,65 +69,8 @@ def trainable(name: str) -> bool:
 def pages_of(name: str) -> int:
     spec = SPECS[name]
     ranged = spec and spec != "answers"
-    first, last = (
-        _range(spec.split(":")[0]) if ranged else Book.load(Path("work") / name).body_pages
-    )
+    first, last = _range(spec.split(":")[0]) if ranged else Book.load(Path("work") / name).body_pages
     return last - first + 1
-
-
-def table(train: list[dict]) -> dict[str, list[int]]:
-    """Per pair: [times the other version was the print, times seen], over the training
-    rows, pairs seen in fewer than MIN_BOOKS books left out."""
-    counts: dict[str, list[int]] = defaultdict(lambda: [0, 0])
-    seen_in: dict[str, set] = defaultdict(set)
-    for r in train:
-        s = r["s"]
-        for k, v in enumerate(s.others, 1):
-            key = pair(s.ours, v)
-            counts[key][0] += r["right"][k]
-            counts[key][1] += 1
-            seen_in[key].add(r["book"])
-    return {key: c for key, c in counts.items() if len(seen_in[key]) >= MIN_BOOKS}
-
-
-def prior(s, k: int, counts: dict) -> list[float]:
-    """The prior features of version k: P(the print) and log(1 + times seen)."""
-
-    def look(key: str) -> tuple[float, float]:
-        a, n = counts.get(key, (0, 0))
-        return (a + 1) / (n + 2), math.log1p(max(0, n))
-
-    if k == 0:
-        rivals = [look(pair(s.ours, v)) for v in s.others]
-        p, n = max(rivals, key=lambda t: t[0]) if rivals else (0.5, 0.0)
-        return [1 - p, n]
-    return list(look(pair(s.ours, s.others[k - 1])))
-
-
-def matrix(rows: list[dict], counts: dict | None, training: bool = False):
-    """Feature rows per version; with `counts`, the prior features appended. A training
-    row is scored with its own labels left out of the table."""
-    X, y, owner = [], [], []
-    for i, r in enumerate(rows):
-        s = r["s"]
-        if counts is not None and training:
-            for k, v in enumerate(s.others, 1):
-                if (key := pair(s.ours, v)) in counts:
-                    counts[key][0] -= r["right"][k]
-                    counts[key][1] -= 1
-        for k, ok in enumerate(r["right"]):
-            f = trust.features(s, k)
-            if counts is not None:
-                f = f + prior(s, k, counts)
-            X.append(f)
-            y.append(int(ok))
-            owner.append(i)
-        if counts is not None and training:
-            for k, v in enumerate(s.others, 1):
-                if (key := pair(s.ours, v)) in counts:
-                    counts[key][0] += r["right"][k]
-                    counts[key][1] += 1
-    return np.array(X), np.array(y), owner
 
 
 def per_suspect(rows, probs, owner) -> list[np.ndarray]:
@@ -159,17 +81,20 @@ def per_suspect(rows, probs, owner) -> list[np.ndarray]:
 
 
 def scored(train: list[dict], rows: list[dict], with_prior: bool) -> list[np.ndarray]:
-    counts = table(train) if with_prior else None
-    X, y, _ = matrix(train, counts, training=True)
-    Xt, _, owner = matrix(rows, counts)
-    return per_suspect(rows, make().fit(X, y).predict_proba(Xt)[:, 1], owner)
+    suspects, right = [r["s"] for r in train], [r["right"] for r in train]
+    pairs = trust.pairs_table(suspects, right, [r["book"] for r in train]) if with_prior else {}
+    X, y = trust.training_matrix(suspects, right, pairs)
+    Xt, owner = [], []
+    for i, r in enumerate(rows):
+        for k in range(len(r["right"])):
+            Xt.append(trust.features(r["s"], k, pairs))
+            owner.append(i)
+    return per_suspect(rows, make().fit(X, y).predict_proba(np.array(Xt))[:, 1], owner)
 
 
 def silent_at(rows, ps, n: int) -> int:
     """Silent errors when the n least sure suspects are asked and the rest take their best."""
-    order = sorted(
-        (p.max(), not r["right"][int(p.argmax())]) for r, p in zip(rows, ps, strict=True)
-    )
+    order = sorted((p.max(), not r["right"][int(p.argmax())]) for r, p in zip(rows, ps, strict=True))
     return sum(wrong for _, wrong in order[n:])
 
 
@@ -187,7 +112,7 @@ def rule(rows) -> tuple[int, int]:
 
 books = {name: rows_of(name) for name in SPECS if usable(name)}
 print("books:", ", ".join(f"{n} {len(r)}" for n, r in books.items()))
-print(f"a pair counts when seen in ≥ {MIN_BOOKS} training books\n")
+print(f"a pair counts when seen in ≥ {trust.MIN_BOOKS} training books\n")
 
 if PER_BOOK:
     print(f"pair {PER_BOOK} per book (other version the print / seen):")
@@ -195,16 +120,14 @@ if PER_BOOK:
         a = n = 0
         for r in rows:
             for k, v in enumerate(r["s"].others, 1):
-                if pair(r["s"].ours, v) == PER_BOOK:
+                if trust.pair(r["s"].ours, v) == PER_BOOK:
                     a += r["right"][k]
                     n += 1
         if n:
             print(f"  {name[:34]:34} {a:4}/{n:<4}")
     print()
 
-print(
-    f"{'book':34} {'pages':>5} {'rule s/a':>9}   {'trees: at rule q (0/.25/.5/1)':>30}   {'+prior: same':>30}"
-)
+print(f"{'book':34} {'pages':>5} {'rule s/a':>9}   {'trees: at rule q (0/.25/.5/1)':>30}   {'+prior: same':>30}")
 totals: Counter = Counter()
 curves = {"trees": np.zeros(len(BUDGETS)), "prior": np.zeros(len(BUDGETS))}
 for name, rows in books.items():
@@ -228,21 +151,11 @@ print(
     f"trees {curves['trees'].astype(int).tolist()}, +prior {curves['prior'].astype(int).tolist()}"
 )
 
-print(
-    "\nstability (+prior, silent at the rule's questions, one more training book left out): min–max"
-)
+print("\nstability (+prior, silent at the rule's questions, one more training book left out): min–max")
 for name, rows in books.items():
     asked = rule(rows)[1]
     spread = [
-        silent_at(
-            rows,
-            scored(
-                [r for n in books if n not in (name, drop) and trainable(n) for r in books[n]],
-                rows,
-                True,
-            ),
-            asked,
-        )
+        silent_at(rows, scored([r for n in books if n not in (name, drop) and trainable(n) for r in books[n]], rows, True), asked)
         for drop in books
         if drop != name and trainable(drop)
     ]
@@ -250,7 +163,7 @@ for name, rows in books.items():
 
 if TWO_PASS:
     print(
-        f"\ntwo passes (+prior): the asked suspects' labels give a per-book posterior per pair, "
+        "\ntwo passes (+prior): the asked suspects' labels give a per-book posterior per pair, "
         "which rescores the unasked. Silent at .25/.5/1 per page: one pass → two"
     )
 
@@ -260,8 +173,8 @@ if TWO_PASS:
             return (a + 1) / (n + 2)
 
         if k == 0:
-            return 1 - max((look(pair(s.ours, v)) for v in s.others), default=0.5)
-        return look(pair(s.ours, s.others[k - 1]))
+            return 1 - max((look(trust.pair(s.ours, v)) for v in s.others), default=0.5)
+        return look(trust.pair(s.ours, s.others[k - 1]))
 
     one_total = np.zeros(3)
     two_total = np.zeros(3)
@@ -278,7 +191,7 @@ if TWO_PASS:
             for i in asked:
                 s = rows[i]["s"]
                 for k, v in enumerate(s.others, 1):
-                    a, n = answered.get(key := pair(s.ours, v), (0, 0))
+                    a, n = answered.get(key := trust.pair(s.ours, v), (0, 0))
                     answered[key] = (a + rows[i]["right"][k], n + 1)
             two = 0
             for i in rest:
@@ -288,9 +201,5 @@ if TWO_PASS:
             twos.append(two)
         one_total += ones
         two_total += twos
-        print(
-            f"  {name[:34]:34} {'/'.join(f'{c:3}' for c in ones)} → {'/'.join(f'{c:3}' for c in twos)}"
-        )
-    print(
-        f"  {'all':34} {'/'.join(f'{int(c):3}' for c in one_total)} → {'/'.join(f'{int(c):3}' for c in two_total)}"
-    )
+        print(f"  {name[:34]:34} {'/'.join(f'{c:3}' for c in ones)} → {'/'.join(f'{c:3}' for c in twos)}")
+    print(f"  {'all':34} {'/'.join(f'{int(c):3}' for c in one_total)} → {'/'.join(f'{int(c):3}' for c in two_total)}")

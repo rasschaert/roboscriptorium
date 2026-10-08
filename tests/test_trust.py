@@ -17,7 +17,7 @@ class _Model:
     """Trusts whatever the vision judge picked, as sure as it was."""
 
     def predict_proba(self, X):
-        p = np.where(X[:, -7] > 0, X[:, -6], 0.05)
+        p = np.where(X[:, -9] > 0, X[:, -8], 0.05)
         return np.column_stack([1 - p, p])
 
 
@@ -25,7 +25,7 @@ def test_the_least_sure_are_asked_and_the_rest_take_their_best_version():
     sure = _suspect("lemand", "Iemand", "Iemand", 0.95)
     unsure = _suspect("hygiéne", "hygiëne", "hygiéne", 0.4)
     kept = _suspect("foto's", "foto’s", "foto's", 0.9)
-    out = trust.decide([sure, unsure, kept], _Model(), questions=1)
+    out = trust.decide([sure, unsure, kept], trust.Trust(_Model(), {}), questions=1)
     assert [(s.choice, s.chosen) for s in out] == [
         ("other", "Iemand"),
         ("review", None),
@@ -43,13 +43,44 @@ def test_the_judges_count_by_role_whatever_the_models_are_called():
     assert trust.features(renamed, 1) == b
 
 
+def test_a_substitution_seen_in_two_books_becomes_a_prior_and_one_books_does_not():
+    assert trust.pair("lemand", "Iemand") == "'l'→'I'"
+    assert trust.pair("zei", "zei’") == "''→'’'"
+    assert trust.pair("zei", "zei") == "="
+    lost_quote = [_suspect("zei", "zei’", "zei’", 0.9) for _ in range(6)]
+    bar = [_suspect("|", "I", "I", 0.9) for _ in range(4)]
+    right = [[False, True]] * 10
+    books = ["a", "a", "a", "b", "b", "b", "c", "c", "c", "c"]
+    pairs = trust.pairs_table(lost_quote + bar, right, books)
+    assert pairs == {"''→'’'": (6, 6)}
+    # The other version's prior is its share, the layer's the complement; a pair the
+    # table lacks is even.
+    assert trust.prior(lost_quote[0], 1, pairs)[0] == pytest.approx(7 / 8)
+    assert trust.prior(lost_quote[0], 0, pairs)[0] == pytest.approx(1 / 8)
+    assert trust.prior(bar[0], 1, pairs) == [0.5, 0.0]
+    assert len(trust.features(bar[0], 1, pairs)) == trust.FEATURES
+
+
+def test_a_training_suspect_is_scored_without_its_own_label():
+    a, b = _suspect("zei", "zei’", "zei’", 0.9), _suspect("zag", "zag’", "zag’", 0.9)
+    right = [[False, True], [True, False]]
+    pairs = trust.pairs_table([a, b], right, ["x", "y"])
+    assert pairs == {"''→'’'": (1, 2)}
+    X, y = trust.training_matrix([a, b], right, pairs)
+    # a's other version sees only b's label (wrong), b's only a's (right).
+    assert X[1, -2] == pytest.approx(1 / 3)
+    assert X[3, -2] == pytest.approx(2 / 3)
+    assert y.tolist() == [0, 1, 1, 0]
+
+
 def test_a_saved_model_of_another_width_stops_the_build_instead_of_being_skipped(tmp_path):
     assert len(trust.features(_suspect("a", "b", "a", 0.9), 0)) == trust.FEATURES
     narrow = trust.train([_suspect("a", "b", "a", 0.9)] * 20, [[True, False]] * 20)
     path = tmp_path / "trust.pkl"
     trust.save(narrow, path)
-    assert trust.load(path).n_features_in_ == trust.FEATURES
-    narrow.n_features_in_ = trust.FEATURES - 1
+    loaded = trust.load(path)
+    assert loaded.model.n_features_in_ == trust.FEATURES and loaded.pairs == {}
+    narrow.model.n_features_in_ = trust.FEATURES - 1
     trust.save(narrow, path)
     with pytest.raises(trust.Mismatch):
         trust.load(path)

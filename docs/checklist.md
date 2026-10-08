@@ -284,12 +284,15 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       whose parts are both words (13 right, 3 wrong on Metro and Artemis; 0 against 44 on
       Dutch, so never there), asked in the joined form the OCR check already has; scored
       by `quality` and `bench` as a question source
-- [ ] The substitution-pair prior in `trust.py`: the exact (layer → reading) difference,
-      target-encoded from the training books, a pair counted when seen in ≥ 2 books, each
-      training row's own label left out. Leave one book out, silent errors summed over
-      nine books at 0/.25/.5/1 questions a page: trees [153, 87, 44, 23] → [117, 50, 31,
-      11]; at the rule's questions 7 → 6; stable to one more book left out (0–4). Its own
-      bench step after the baseline (3): baseline, trust as it is, trust with the prior
+- [x] The substitution-pair prior in `trust.py` (model version 3, 23 features): the exact
+      (layer → reading) difference, target-encoded from the training books, a pair counted
+      when seen in ≥ 2 books, each training row's own label left out. Leave one book out,
+      silent errors summed over nine books at 0/.25/.5/1 questions a page: trees [153, 87,
+      44, 23] → [117, 50, 31, 11]; at the rule's questions 7 → 6; stable to one more book
+      left out (0–4). The trainer's logistic variant with the prior: [94, 43, 29, 15]
+- [ ] Its own bench step after the baseline (3): baseline, trust without the prior (an
+      empty table), trust with it. The saved model is still version 1: `--save` once the
+      tuning data is complete, then both benches
 - [ ] The reviewer's answers checked against the readings on disk: an answer that matches
       none of the line's readings (layer, glm-ocr, tesseract, Qwen's cached third reading)
       is shown once more before it is saved; the first answer logged, so the slip-rate

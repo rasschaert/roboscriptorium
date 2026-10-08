@@ -276,7 +276,9 @@ right, then expand.
     shown in the review) but doesn't act on it.
   - `trust.py`: learned trust for the OCR check. A model (shallow gradient-boosted
     trees) scores each version of a suspect from the judges' picks and confidence,
-    which second readings read it, the word list and the kind of difference;
+    which second readings read it, the word list, the kind of difference and a prior
+    for its exact substitution (`pair`: how often `|`→`I` was the print in the training
+    books, pairs seen in two books or more, saved with the model);
     the least sure suspects are asked up to `ROBO_OCR_QUESTIONS` per page, the
     rest take their best version. The budget is book-wide (questions per page ×
     pages), so a bad page can take more than one. On by default (`ROBO_OCR_TRUST=0`

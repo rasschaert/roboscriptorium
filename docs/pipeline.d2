@@ -119,7 +119,7 @@ check: 3 · Check the OCR (scans only) {
     clef: "clef:27b\npicks from the crop" {class: ollaya}
     winnow: "winnow:e4b\npicks from the sentence" {class: ollaya}
     words: word list\n(tesseract's dictionary) {class: code}
-    gbt: gradient-boosted trees {class: code}
+    gbt: gradient-boosted trees\n+ substitution priors {class: code}
   }
   s.second -> m.glm {class: uses}
   s.second -> m.tess {class: uses}
