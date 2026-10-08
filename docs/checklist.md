@@ -68,6 +68,10 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       baseline in 3, so the baseline includes it
 - [ ] Metro's trust data (in `ocr_trust_data.py`, pp. 7–111): ~2 h cold. Before the
       baseline too
+- [x] De cipier, a pair with no known deviations: chapters 1–4 (pp. 9–92) in
+      `bench tuning`
+- [ ] De cipier's trust data (in `ocr_trust_data.py`, pp. 9–92): ~1.5 h cold. Before
+      the baseline, so it isn't rerun when it joins
 - [ ] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
 - [ ] `golden check <pdf> <epub>`, writing a draft manifest: worth it once a batch
       of candidates comes
