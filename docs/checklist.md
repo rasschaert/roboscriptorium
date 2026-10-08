@@ -70,6 +70,9 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       baseline too
 - [x] De cipier, a pair with no known deviations: chapters 1–4 (pp. 9–92) in
       `bench tuning`
+- [x] Artemis: chapters 1–3 (pp. 13–80) in `bench tuning`
+- [ ] Artemis's trust data (in `ocr_trust_data.py`, pp. 13–80): ~1.2 h cold, after
+      Metro
 - [ ] De cipier's trust data (in `ocr_trust_data.py`, pp. 9–92): ~1.5 h cold. Before
       the baseline, so it isn't rerun when it joins
 - [ ] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics

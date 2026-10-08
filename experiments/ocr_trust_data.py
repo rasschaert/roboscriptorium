@@ -36,6 +36,7 @@ SPECS = {
     "afscheid-van-verspilde-tijd--ia-scan": "9-70:1-11",
     "metro-2033--ia-scan": "7-111:1-10",
     "de-cipier--ia-scan": "9-92:1-4",
+    "artemis--ia-scan": "13-80:1-3",
     "de-tuin-van-de-avondnevel--ia-scan": "11-52:1-3",
     "grand-hotel-europa--ia-scan": "15-44:1-16",
     # No golden reference: labelled by a human's answers in the review.
