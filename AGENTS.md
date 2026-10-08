@@ -21,11 +21,12 @@ starting; keep it true.
   `d2 docs/pipeline.d2 docs/pipeline.svg` and commit both. A diagram that shows
   the pipeline as it was is worse than none.
 - **Local first.** AI runs on this machine via Ollama and Ollaya. A hosted model
-  (OpenRouter, `clients/openrouter.py`) is allowed where the user chooses it for
-  speed (2026-10-08): pinned to one provider and precision, never falling back,
-  refusing providers that keep prompts, and measured against the local model before
-  it replaces it. Sending page crops out sends copyrighted scans to that provider:
-  only where the user has chosen it.
+  (OpenRouter, `clients/openrouter.py`) costs money and sends copyrighted page crops
+  to its provider, so it is used **only when the user explicitly allows or asks for
+  it**, for that use: never on an agent's own initiative, never by carrying an earlier
+  permission over to another run, and never as a default in `config.py`. When it is
+  used it is pinned to one provider and precision, never falls back, refuses
+  providers that keep prompts, and is measured against the local model first.
 - **No copyrighted material in git.** Books, page images, OCR output and golden
   pages live in `work/` (gitignored). Commit only code, prompts, question sets,
   configs and synthetic test fixtures.

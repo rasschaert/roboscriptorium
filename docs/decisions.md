@@ -808,3 +808,5 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   lines with quote marks wrong; Darkbloom fp4 0.15%, 305, 5 (worse than the layer's
   0.13% and 1); DeepInfra bf16 0.11%, 310, 0, the same reading as local on 94.5% of
   lines, at ~10 lines a second against the Mac's 0.7. fp4 there is not our nvfp4.
+- 2026-10-08: OpenRouter only when the user explicitly allows or asks for it, per use:
+  it costs money and sends the scans out. No agent starts a hosted run on its own.
