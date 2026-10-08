@@ -46,7 +46,7 @@ the short lines.
 - [x] De tuin van de avondnevel: 51 min cold (389 → 472 suspects; layer wrong on 310 → 350 settled)
 - [x] Grand Hotel Europa: 32 min cold (125 → 173 suspects; layer wrong on 79 → 99 settled)
 - [ ] Stella, labelled by the user's answers: ~75 min cold. **Running** since 2026-10-08 12:05
-- [ ] Lady into Fox: ~3.3 h cold
+- [ ] ~~Lady into Fox: ~1.7 h cold~~ dropped: retired to reserve (its reference's typography differs from the print), so no validation data is needed from it
 - [ ] Reis om mijn schedel: ~4.5 h cold (its quote readings are a separate cache)
 
 ## 2b. Two new golden pairs (Fable's session)

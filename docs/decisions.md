@@ -749,3 +749,14 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   are read from one table. The cost driver is the whole-book bench specs
   (Thief-Taker 282, Reis 245, Dolittle 180, Afscheid 116 pages, the test book 315),
   not deviations: no pair has both many deviations and many pages.
+- 2026-10-08: Lady into Fox retired from validation to reserve: out of `bench
+  validation` and the trust data, still in every `HELD_OUT` list so nothing trains on
+  it. Its reference differs from its print in typography, enough that winnow beat
+  clef there on labels alone (docs/design.md).
+- 2026-10-08: The bench's whole-book specs sliced at chapter boundaries, the user
+  being short of processor time: Thief-Taker pages 11–84 (Part One, chapters 1–10),
+  Reis 11–110 (Voorwoord, chapters 1–10; its trust data too, not yet rebuilt),
+  Dolittle 23–88 (chapters 1–7, twenty pages with a plate or a drawn initial),
+  Afscheid 9–70 (chapters 1–11), and the test book 9–101 (Boek 3, chapters 1–9).
+  Tuning drops from 1,212 to 675 scanned pages, about 12 h cold instead of 22;
+  the test from 315 to 93. Trust data already built on whole books is kept.

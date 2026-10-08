@@ -12,20 +12,20 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 
 | Book | Set | Pages body / scored | Words | Cold | Layer CER | Bare-word | Unplaced | Headings | Declared | Eval CER / WER |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| afscheid-van-verspilde-tijd | tuning | 116 / 116 | 37430 | 2.1 h | 0.17% | 0.13% | 12.6% | 21 / 23 | hyphen_dash | none yet |
+| afscheid-van-verspilde-tijd | tuning | 116 / 62 | 37430 | 1.1 h | 0.17% | 0.12% | 11.2% | 9 / 11 | hyphen_dash | none yet |
 | de-aanslag | reserve | 169 / 169 | 55729 | minutes | 0.17% | 0.43% | 0.0% | 31 / 26 | none | 0.14% / 0.14% |
 | de-cipier | tuning | 474 / 84 | 158385 | 1.5 h | 0.19% | 0.34% | 2.7% | 2 / 4 | none | none yet |
 | de-eerlijke-vinder | reserve | 84 / 84 | 23802 | 1.5 h | 0.32% | 0.34% | 0.3% | 0 / 4 | none | none yet |
 | de-tuin-van-de-avondnevel | validation | 364 / 42 | 129776 | 0.8 h | 0.74% | 0.48% | 2.8% | 3 / 3 | none | 0.17% / 0.15% |
 | goede-dochter | tuning | 500 / 56 | 163184 | 1.0 h | 0.20% | 0.44% | 2.7% | 4 / 4 | none | 0.10% / 0.15% |
 | grand-hotel-europa | validation | 537 / 30 | 188700 | 0.6 h | 0.40% | 0.39% | 6.1% | 7 / 16 | none | 1.89% / 1.81% |
-| het-geluid-van-bananen | **test** | 315 / 315 | 78071 | 5.8 h | unmeasured | | | | none | untouched |
-| lady-into-fox | validation | 91 / 91 | 24456 | 1.7 h | 0.39% | 0.12% | 6.6% | 1 / 1 | none | 0.90% / 0.30% |
+| het-geluid-van-bananen | **test** | 315 / 93 | 78071 | 1.7 h | unmeasured | | | | none | untouched |
+| lady-into-fox | reserve | 91 / 91 | 24456 | 1.7 h | 0.39% | 0.12% | 6.6% | 1 / 1 | none | 0.90% / 0.30% |
 | metro-2033 | tuning | 458 / 105 | 197756 | 1.9 h | 0.18% | 0.24% | 2.4% | 9 / 10 | hyphen_dash | none yet |
 | monterosso-mon-amour | reserve | 88 / 88 | 25640 | 1.6 h | 0.33% | 0.41% | 3.0% | 13 / 22 | none | none yet |
-| reis-om-mijn-schedel | tuning | 245 / 245 | 66738 | 4.5 h | 0.16% | 0.10% | 3.7% | 27 / 27 | none | 0.12% / 0.09% |
+| reis-om-mijn-schedel | tuning | 245 / 100 | 66738 | 1.8 h | 0.16% | 0.09% | 3.9% | 11 / 11 | none | 0.12% / 0.09% |
 | the-nature-of-a-crime | tuning | 94 / 94 | 14710 | 1.7 h | 0.86% | 0.77% | 7.7% | 8 / 8 | none | 0.34% / 0.29% |
-| the-story-of-doctor-dolittle | tuning | 180 / 180 | 24667 | 3.3 h | 1.42% | 1.22% | 8.7% | 41 / 21 | none | 1.91% / 1.64% |
-| the-thief-takers-apprentice | tuning | 282 / 282 | 83490 | 5.2 h | 0.32% | 0.40% | 3.4% | 95 / 90 | none | 0.34% / 0.22% |
+| the-story-of-doctor-dolittle | tuning | 180 / 66 | 24667 | 1.2 h | 0.93% | 0.79% | 11.0% | 14 / 7 | none | 1.91% / 1.64% |
+| the-thief-takers-apprentice | tuning | 282 / 74 | 83490 | 1.4 h | 0.28% | 0.34% | 3.4% | 22 / 22 | none | 0.34% / 0.22% |
 | vals-alarm | tuning | 292 / 50 | 87748 | 0.9 h | 0.68% | 0.45% | 3.0% | 4 / 10 | none | 0.36% / 0.16% |
 | villa-toscane | validation | 186 / 186 | 49902 | minutes | 0.00% | 0.00% | 0.0% | 12 / 12 | none | 0.04% / 0.04% |

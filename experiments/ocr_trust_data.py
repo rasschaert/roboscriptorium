@@ -32,11 +32,10 @@ SPECS = {
     "vals-alarm--ia-scan": "11-60:1-10",
     "the-nature-of-a-crime--doubleday-1924": "",
     "the-story-of-doctor-dolittle--stokes-1920": "",
-    "reis-om-mijn-schedel--ia-scan": "",
+    "reis-om-mijn-schedel--ia-scan": "11-110:1-11",
     "afscheid-van-verspilde-tijd--ia-scan": "",
     "metro-2033--ia-scan": "7-111:1-10",
     "de-cipier--ia-scan": "9-92:1-4",
-    "lady-into-fox--chatto-1922": "",
     "de-tuin-van-de-avondnevel--ia-scan": "11-52:1-3",
     "grand-hotel-europa--ia-scan": "15-44:1-16",
     # No golden reference: labelled by a human's answers in the review.
