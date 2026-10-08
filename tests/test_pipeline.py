@@ -289,3 +289,27 @@ def test_the_ocr_check_stops_when_its_trust_model_is_missing(tmp_path, monkeypat
     book, _ = _checked_book(tmp_path, monkeypatch)
     with pytest.raises(trust.Mismatch):
         pipeline.run(book)
+
+
+def test_a_scans_spaced_ellipses_come_out_as_printed_and_a_born_digital_pdfs_as_they_are(
+    tmp_path, monkeypatch
+):
+    _everything_is_body(monkeypatch)
+    _no_layout(monkeypatch)
+    book = _book(tmp_path)
+    read = pipeline.cached_text_layer
+
+    def layer(*args):
+        # Half the reads keep the print's gaps; reflow's tidying would squash the rest.
+        pages = read(*args)
+        said = ["it went . . . on", "it went... on"]
+        lines = [replace(ln, text=said[k % 2]) for k, ln in enumerate(pages[0].lines)]
+        return [replace(pages[0], lines=lines)]
+
+    monkeypatch.setattr(pipeline, "cached_text_layer", layer)
+    monkeypatch.setattr(pipeline, "dash_style", lambda book, body: None)
+    text = " ".join(p.text for p in pipeline.run(book, use_models=False).doc.paragraphs)
+    assert "went..." in text and " " not in text
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    text = " ".join(p.text for p in pipeline.run(book, use_models=False).doc.paragraphs)
+    assert text.count("went . . . on") == len(LINES)

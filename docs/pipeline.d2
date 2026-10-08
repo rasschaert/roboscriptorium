@@ -160,7 +160,7 @@ build: 5 · Assemble the book {
     class: row
     reflow: Reflow\nparagraphs, line-end hyphens {class: stage}
     italics: Italics {class: stage}
-    dash: Typography\none dash style per book {class: stage}
+    dash: Typography\none dash and ellipsis style per book {class: stage}
     figures: Figures\npictures and captions {class: stage}
     reflow -> italics -> dash -> figures
   }
@@ -169,7 +169,7 @@ build: 5 · Assemble the book {
     spell: the book's own spellings {class: code}
     words: the word list\n(which form it knows) {class: code}
     slant: stroke slant per word {class: code}
-    gap: "dash length and gaps (or book.toml),\nmeasured first and told to the readers" {class: code}
+    gap: "dash length and gaps, ellipsis form\n(or book.toml), measured first,\ndashes told to the readers" {class: code}
     regions: "the spotter's pictures;\nthe reviewer's turns" {class: code}
   }
   s.reflow -> m.spell {class: uses}

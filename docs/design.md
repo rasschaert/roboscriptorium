@@ -119,9 +119,20 @@ the line and added an error.
 
 ## Book-wide style
 
-Dash kind and spacing, and the quote style, are a property of the book, not of a
-line: asked line by line they came out mixed. Dashes are measured on the scan;
-quote style comes from the layer's own marks. Models that read or judge
+Dash kind and spacing, the ellipsis, and the quote style, are a property of the book,
+not of a line: asked line by line they came out mixed. Dashes are measured on the scan;
+quote style comes from the layer's own marks.
+
+The ellipsis is read in the layer: the glyph, three dots or spaced dots, and whether a
+space comes before it. The five English trade books print `word . . .` with a space
+before; the Dutch ones `word...` or `word…`. Layers merge spaced dots and drop that
+space on a third to half of their reads, but hardly ever invent gaps (Dutch books: at
+most 1% of runs read spaced), so a book is spaced when a quarter of its runs read so,
+and the space before is voted on by the runs that kept their gaps. This reads every
+golden book's space as its reference has it, Crime aside, whose transcription drops
+the space its print sets (fixed in derive, `ellipsis_space`). Without it, reflow's
+tidying squashed every spaced ellipsis, and the bench counted each as a wrong word:
+Metro 4.63 → 0.43 wrong words a page after review, the set 1.53 → 1.00. Models that read or judge
 typography are told the style; this halved Qwen's wrong quote proposals on Reis.
 
 ## Quote questions

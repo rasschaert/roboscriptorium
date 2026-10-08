@@ -135,8 +135,15 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       wrong words a page over the set ([-0.57, -0.09], all three slip rates), with
       questions 3.1 → 1.6 a page. **Vetoed by Metro**: after review 4.08 → 4.63, its
       unasked word breaks 342 → 441 (the arbiter keeps the layer where the rule asked)
-- [ ] Metro's word breaks: 342 unasked even under the fixed rule, so something
-      systematic (spacing around its spaced dashes or ellipses?), then rerun the bench
+- [x] Metro's word breaks: its spaced ellipses (`people . . . The`), which reflow's
+      tidying squashed to `people...`; 235 of Metro's 297 remaining differences. Each
+      book's ellipsis style is now read in the layer and set on every ellipsis
+      (`typography.py`); Crime's reference gets back the space its print sets
+      (`ellipsis_space`). Bench tuning, 1 min warm each: with the arbiter 1.53 → 1.00
+      after review (Metro 4.63 → 0.43, Artemis 1.18 → 0.68, 11-22-63 2.13 → 1.08, none
+      worse); the fixed rule 1.80 → 1.37
+- [x] The retrained arbiter against the fixed rule, both with the fix: **better, no
+      veto**: after review 1.37 → 1.00 ([-0.66, -0.21]), eight books better, none worse
 - [ ] Afscheid's slice: pp. 20, 32, 70 are washed-out pages whose layer is noise, kept as
       body text (should be flagged as garbled); p. 37's text fails to align. ~280 wrong
       words each, in both arms

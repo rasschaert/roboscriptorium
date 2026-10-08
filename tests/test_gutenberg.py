@@ -37,3 +37,14 @@ def test_read_epub_keeps_text_and_drops_apparatus(tmp_path):
         "The end.",
     ]
     assert notes == ["Page 7, period added."]
+
+
+def test_space_ellipses_puts_back_the_space_the_print_sets_and_nothing_else():
+    from roboscriptorium.golden.reference import ITALIC_END, ITALIC_START, space_ellipses
+
+    for text in ("pillars.... And", "“... and then", "(... and", "June ... I"):
+        assert space_ellipses(text) == text
+    assert space_ellipses("what is June?... I") == "what is June? ... I"
+    assert space_ellipses("others?...”") == "others? ...”"
+    marked = f"{ITALIC_START}Ulysses{ITALIC_END}... toen"
+    assert space_ellipses(marked) == f"{ITALIC_START}Ulysses{ITALIC_END} ... toen"

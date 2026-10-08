@@ -8,6 +8,9 @@ language = "en-GB"
 gutenberg = 75172
 url = "https://www.gutenberg.org/cache/epub/75172/pg75172-images-3.epub"
 chapters = ["I", "VIII"]
+# The print sets a wide space before every ellipsis ("pillars . . . And"); the
+# transcription mostly drops it.
+ellipsis_space = true
 
 # Kept for later style work. Not a faithful reference.
 [standard_ebooks]

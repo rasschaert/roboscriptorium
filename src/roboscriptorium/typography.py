@@ -1,4 +1,5 @@
-"""A book's dash style, measured on the scan or set in book.toml, and written into every dash.
+"""A book's dash and ellipsis style, measured on the scan or set in book.toml, and written
+into every dash and ellipsis.
 
 OCR layers write every dash as an em dash and space it at random, so how a book
 prints its dashes is a decision for the whole book, not per line. On the page
@@ -10,6 +11,11 @@ glued from thin from word-spaced dashes.
 The output then sets every dash between words that way: a no-break space before
 it (narrow for thin gaps) and a breaking one after it. Number ranges (1914–1918)
 and hyphens are left alone.
+
+Ellipses are a book-wide choice too: the glyph, three dots or spaced dots, with or
+without a space before. OCR layers merge spaced dots and drop the gap before them,
+but hardly ever invent gaps (Dutch books with tight dots: at most 1% of their runs
+read spaced), so the runs that kept their gaps are the evidence.
 """
 
 import json
@@ -220,24 +226,105 @@ def styled(text: str, style: DashStyle) -> tuple[str, list[int]]:
     return "".join(out), where
 
 
-def apply(blocks: list[Block], style: DashStyle) -> list[Block]:
-    """Copies of the paragraphs with their dashes styled; italic marks follow their words."""
+@dataclass(frozen=True)
+class EllipsisStyle:
+    dots: str  # "…", "..." or ". . ."
+    space_before: bool
+
+
+# Spaced reads are rare noise in a tightly set book, common in a spaced one.
+SPACED_FROM = 0.25
+# Fewer ellipses than this in the layer leave the book's style unknown.
+FEW = 10
+# The glyph, or three dots with at most one space between each, with the space before it;
+# not part of four dots.
+_RUN = re.compile(r"(?<![.…\s])(\s*)(?<![.…] )(…|\.(?: ?\.){2})(?! ?[.…])")
+# What opens a quotation or aside: an ellipsis after it takes no space.
+_OPENING = "‘“'\"([—–-"
+
+
+def guess_ellipsis(lines: list[str]) -> EllipsisStyle | None:
+    """How the layer's lines set their ellipses, by majority; None when there are too few."""
+    runs = []
+    for line in lines:
+        for m in _RUN.finditer(line):
+            if m.start() == 0 or line[m.start() - 1] in _OPENING:
+                continue
+            runs.append((m.group(2), bool(m.group(1))))
+    if len(runs) < FEW:
+        return None
+    glyphs = [r for r in runs if r[0] == "…"]
+    dots = [r for r in runs if r[0] != "…"]
+    spaced = [r for r in dots if r[0] == ". . ."]
+    if len(glyphs) > len(dots):
+        form, votes = "…", glyphs
+    elif len(spaced) >= SPACED_FROM * len(dots):
+        form, votes = ". . .", spaced
+    else:
+        form, votes = "...", dots
+    return EllipsisStyle(form, 2 * sum(sp for _, sp in votes) > len(votes))
+
+
+def ellipsised(text: str, style: EllipsisStyle) -> tuple[str, list[int]]:
+    """The text with every ellipsis set in the book's style, and where each of the old
+    text's characters went in it.
+
+    The space before is set only after a word or closing punctuation, as a no-break
+    space, and spaced dots are held together; what follows the ellipsis is left as it is.
+    Four dots (a full stop and an ellipsis) are left alone.
+    """
+    dots = style.dots.replace(" ", "\u00a0")
+    out, where, pos = [], [], 0
+    for m in _RUN.finditer(text):
+        for c in text[pos : m.start()]:
+            where.append(len("".join(out)))
+            out.append(c)
+        prev = text[m.start() - 1] if m.start() > 0 else ""
+        lead = m.group(1)
+        if prev and prev not in _OPENING:
+            lead = "\u00a0" if style.space_before else ""
+        at = len("".join(out)) + len(lead)
+        where += [at] * (m.end() - m.start())
+        out.append(lead + dots)
+        pos = m.end()
+    for c in text[pos:]:
+        where.append(len("".join(out)))
+        out.append(c)
+    return "".join(out), where
+
+
+def apply(
+    blocks: list[Block], dash: DashStyle | None, ellipsis: EllipsisStyle | None = None
+) -> list[Block]:
+    """Copies of the paragraphs with their dashes and ellipses styled; italic marks follow
+    their words."""
     out = []
     for block in blocks:
-        if not isinstance(block, Paragraph) or not any(c in block.text for c in "—–-"):
-            out.append(block)
-            continue
-        text, where = styled(block.text, style)
-        new_words = [(m.start(), m.end()) for m in re.finditer(r"\S+", text)]
-
-        token = {i: k for k, (a, b) in enumerate(new_words) for i in range(a, b)}
-
-        old_words = [m for m in re.finditer(r"\S+", block.text)]
-        # A bare dash isn't an italic word, though it came from one ("Ulysses—een").
-        italic = sorted(
-            t
-            for t in {token[where[i]] for k in block.italic for i in range(*old_words[k].span())}
-            if text[slice(*new_words[t])] not in DASHES
-        )
-        out.append(replace(block, text=text, italic=tuple(italic)))
+        if isinstance(block, Paragraph):
+            if dash is not None and any(c in block.text for c in "—–-"):
+                block = _restyled(block, styled(block.text, dash))
+            if ellipsis is not None and ("…" in block.text or "." in block.text):
+                block = _restyled(block, ellipsised(block.text, ellipsis))
+        out.append(block)
     return out
+
+
+def _restyled(block: Paragraph, change: tuple[str, list[int]]) -> Paragraph:
+    text, where = change
+    if text == block.text:
+        return block
+    new_words = [(m.start(), m.end()) for m in re.finditer(r"\S+", text)]
+    token = {i: k for k, (a, b) in enumerate(new_words) for i in range(a, b)}
+    old_words = [m for m in re.finditer(r"\S+", block.text)]
+    # A bare dash or dot isn't an italic word, though it came from one ("Ulysses—een").
+    italic = sorted(
+        t
+        for t in {
+            token[where[i]]
+            for k in block.italic
+            for i in range(*old_words[k].span())
+            if where[i] in token
+        }
+        if any(c.isalnum() for c in text[slice(*new_words[t])])
+    )
+    return replace(block, text=text, italic=tuple(italic))

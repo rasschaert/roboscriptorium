@@ -47,3 +47,6 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | eval Thief-Taker pp. 11-84, Qwen readings via hosted, warm otherwise | 74 | 14 | 0 |
 | 2026-10-08 | bench tuning, fixed rule (baseline), warm (Dolittle re-read by local Qwen) | 839 | 32 | 0 |
 | 2026-10-08 | bench tuning, retrained trust, warm | 839 | 1 | 0 |
+| 2026-10-08 | bench tuning, ellipsis style, retrained trust, warm | 839 | 1 | 0 |
+| 2026-10-08 | bench tuning, ellipsis style, fixed rule, warm | 839 | 1 | 0 |
+| 2026-10-08 | bench tuning, ellipsis style, retrained trust against fixed rule, warm | 839 | 1 | 0 |

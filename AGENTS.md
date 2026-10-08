@@ -296,7 +296,11 @@ right, then expand.
     --save` on the tuning books' suspects, never the validation ones (it refuses while a
     tuning book's data is missing or built before the current readings)
     (`experiments/ocr_trust_data.py`).
-  - `typography.py`: the book's dash style (en or em; no, thin or word spacing),
+  - `typography.py`: the book's ellipsis style (`…`, `...` or `. . .`, with or without a
+    space before), read in a scan's text layer or set in `book.toml` (`ellipsis`,
+    `ellipsis_space`), and set on every three-dot ellipsis in the output (no-break
+    spaces); four dots and an ellipsis opening a quote are left alone. And the
+    book's dash style (en or em; no, thin or word spacing),
     from `book.toml` (`dash`, `dash_spacing`) or, on a scan, measured on the page
     image (the stroke's length against the line's letter width, its gaps against
     the gaps between words; cached in `stages/typography.json`, and printed so a
@@ -522,6 +526,8 @@ cover_page = 1
 body_pages = [5, 71]   # inclusive; Ollaya page classification replaces this later
 dash = "–"             # optional: how the book prints dashes ("–" or "—") …
 dash_spacing = "thin"  # … and their gaps ("none", "thin", "word"); else measured
+ellipsis = "..."       # optional: "…", "..." or ". . ." …
+ellipsis_space = false # … and a space before it; else read in the text layer
 ```
 
 ```sh
@@ -590,7 +596,9 @@ and `standard-ebooks/` (SE's text, see below).
   (0.2–0.5% CER), not real-word swaps or a band that jumps. Prefer IA Scribe scans
   (Stella's format); skip calibre-made PDFs, other printings, DRM and pre-1934
   spelling. An EPUB that sets its dashes as spaced hyphens gets
-  `hyphen_dash = "–"` in `[reference]`, which derive sets as the print's dash.
+  `hyphen_dash = "–"` in `[reference]`, which derive sets as the print's dash; a
+  Gutenberg transcription that drops the space its print sets before an ellipsis
+  gets `ellipsis_space = true` (Crime).
 - **Known deviations.** No publisher's EPUB matches its print in every
   convention. Each known deviation of a pair is handled in one of three places,
   and nowhere else: a gap derive can undo is declared in the manifest's `[reference]`

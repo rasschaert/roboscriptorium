@@ -177,8 +177,7 @@ def run(
         body,
         italics.detect(book.source, body, book.stages / "italics.json"),
     )
-    if style is not None:
-        blocks = typography.apply(blocks, style)
+    blocks = typography.apply(blocks, style, ellipsis_style(book, body))
     doc = Document(book.title, book.author, book.language, blocks)
     images = {}
     if regions is not None:
@@ -259,6 +258,28 @@ def book_style(book: Book, body: list[PageText], dash: typography.DashStyle | No
         quotes.ellipsis(" ".join(lines)),
         dash.dash if dash else None,
     )
+
+
+def ellipsis_style(book: Book, body: list[PageText]) -> typography.EllipsisStyle | None:
+    """The book's ellipsis style: as book.toml sets it, else as a scan's layer reads it
+    (said aloud). A born-digital PDF's ellipses are exact, so they are left as they are.
+    """
+    if book.ellipsis and book.ellipsis_space is not None:
+        return typography.EllipsisStyle(book.ellipsis, book.ellipsis_space)
+    if not ocrcheck.scanned(book.source):
+        return None
+    lines = [ln.text for p in body for ln in p.lines]
+    guess = typography.guess_ellipsis(lines)
+    if guess is None:
+        return None
+    space = "true" if guess.space_before else "false"
+    print(
+        f"Ellipsis style read in the text layer: {guess.dots!r}, "
+        f"{'a' if guess.space_before else 'no'} space before. To settle it, put "
+        f'ellipsis = "{guess.dots}" and ellipsis_space = {space} in book.toml.',
+        file=sys.stderr,
+    )
+    return guess
 
 
 def dash_style(book: Book, body: list[PageText]) -> typography.DashStyle | None:

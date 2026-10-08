@@ -979,3 +979,12 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   `/v1/systemone`. Ollaya no longer serves `laya:multilingual`, so `doctor` now
   smoke-tests the models the pipeline asks (sorter, judge, second judge) through
   `for_model`; the unused `decision_model` setting (`ROBO_DECISION_MODEL`) is gone.
+- 2026-10-08: Metro's "word breaks" were its spaced ellipses (`people . . . The`), which
+  `reflow.tidy` squashed to `people...`. A book's ellipsis style is now read in the
+  layer and set on every ellipsis (`typography.py`, docs/design.md); Crime's reference
+  gets back the space its print sets (`ellipsis_space`, re-derived: two paragraphs).
+  Bench tuning: 1.53 → 1.00 after review with the arbiter, and the arbiter against the
+  fixed rule, both fixed, 1.37 → 1.00 with no veto: tonight's Metro veto was this bug.
+  The probe that checked the rule on every book's text layer also counted the ellipses
+  in Het geluid van bananen's (the test set) by mistake; nothing was scored, and the
+  rule was set before.

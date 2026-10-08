@@ -41,6 +41,18 @@ def marked_text(el: ET.Element, keep=lambda child: True):
             yield child.tail
 
 
+# An ellipsis right after a word or closing punctuation, italic marks aside; not four dots.
+_TIGHT_ELLIPSIS = re.compile(
+    r"(?<=[^\s.…‘“(\[\x01\x02])(?=\x02?(?:…|\.(?: ?\.){2})(?! ?[.…]))(\x02?)"
+)
+
+
+def space_ellipses(text: str) -> str:
+    """The text with a space before every ellipsis that follows a word, for a reference
+    whose transcriber dropped the one its print sets."""
+    return _TIGHT_ELLIPSIS.sub(r"\1 ", text)
+
+
 def unmarked(text: str) -> str:
     return text.translate(_MARKS)
 

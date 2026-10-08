@@ -120,7 +120,9 @@ def golden_derive(name: str, epub: Path | None = None) -> None:
         epub = epub or gutenberg.download(
             ref.url, Path("work/.cache/gutenberg") / f"{ref.ebook}.epub"
         )
-        chapters = gutenberg.write_reference(epub, ref.ebook, ref.url, ref.chapters, out)
+        chapters = gutenberg.write_reference(
+            epub, ref.ebook, ref.url, ref.chapters, out, ref.ellipsis_space
+        )
     typer.echo(
         f"{len(chapters)} chapters, {sum(len(c.paragraphs) for c in chapters)} paragraphs "
         f"(see {out / 'PROVENANCE.md'})"

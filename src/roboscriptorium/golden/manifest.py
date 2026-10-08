@@ -37,6 +37,8 @@ class Gutenberg:
     ebook: int
     url: str
     chapters: tuple[str, str]  # first lines of the first and last chapter headings
+    # The print sets a space before an ellipsis the transcription leaves out.
+    ellipsis_space: bool = False
 
 
 @dataclass(frozen=True)
@@ -121,7 +123,12 @@ class Golden:
         ]
         ref = data["reference"]
         reference = (
-            Gutenberg(ref["gutenberg"], ref["url"], tuple(ref["chapters"]))
+            Gutenberg(
+                ref["gutenberg"],
+                ref["url"],
+                tuple(ref["chapters"]),
+                ref.get("ellipsis_space", False),
+            )
             if "gutenberg" in ref
             else PublisherEpub(
                 ref["source"],

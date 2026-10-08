@@ -311,11 +311,12 @@ A hyphen at the end of a line stays or goes by evidence, strongest first:
 3. a capital after the break, as in `Noord-Holland`;
 4. whether the parts beside a hyphen already in the word are words themselves.
 
-### Italics, dashes and figures
+### Italics, dashes, ellipses and figures
 
 Plain code finds italic words from the slant of each word's strokes on the page
-image (`italics.py`), and sets every dash between words in the book's one style
-(`typography.py`).
+image (`italics.py`), and sets every dash between words and every ellipsis in the
+book's one style (`typography.py`): the dash measured on the scan, the ellipsis read
+in the text layer (`word . . .` or `word...`), either settled in `book.toml`.
 
 `figures.py` takes the pictures the spotter marked on body pages. It trims a
 picture where a caption overlaps it, turns it upright if it was printed sideways,
