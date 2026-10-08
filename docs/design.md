@@ -34,6 +34,11 @@ time but gets quote marks wrong where Qwen doesn't (Goede dochter pp. 9–20: 4 
 against 0, CER 0.21% against 0.10%), and the newest open models that might
 (DeepSeek V4.1, GLM-5.3, MiMo 2.6, Step 3.7) are 200–760B, too big for this machine.
 
+Each crop reaches one em past the line's ends and 3 pt above and below it, but never
+into a neighbouring line's box (`crop_span`): where boxes are as tall as the line pitch
+(Metro, Dolittle, Crime, most of De tuin) the margin used to take in half the next line,
+and glm-ocr read it (Metro pp. 7–30: CER 1.87% on those lines, 0.29% cut short).
+
 glm-ocr and qwen3.8 read crops cut from the layer's boxes, so they share its
 segmentation errors; only tesseract doesn't.
 

@@ -45,6 +45,8 @@ HOSTED_WORKERS = 16
 # Points above and below a line's crop for the OCR model. Crops also reach one em (the
 # line's height) past each end, where a dash or quote the text layer missed is printed.
 LINE_PAD = 3
+# Points a neighbouring line's box may reach into that pad before the crop stops at it.
+NEIGHBOUR_SLACK = 0.5
 MAX_LINE_TOKENS = 120
 # Readings are written to the cache every so many lines, so a long run keeps its progress.
 SAVE_EVERY = 200
@@ -146,10 +148,19 @@ def line_readings(
     with pymupdf.open(pdf) as doc:
         boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
 
+    def span(page: PageText, k: int) -> tuple[float, float]:
+        return crop_span(boxes[page.number], k)
+
     def key(page: PageText, k: int) -> str:
+        """The line's text and box, and the crop's span where a neighbour cuts it short:
+        a crop that changes is read again."""
+        box = boxes[page.number][k]
         text = hashlib.sha1(page.lines[k].text.encode()).hexdigest()[:10]
-        box = ",".join(f"{v:.0f}" for v in boxes[page.number][k])
-        return f"{page.number}:{k}:{text}:{box}"
+        out = f"{page.number}:{k}:{text}:" + ",".join(f"{v:.0f}" for v in box)
+        top, bottom = span(page, k)
+        if (top, bottom) != (box[1] - LINE_PAD, box[3] + LINE_PAD):
+            out += f":{top:.1f}-{bottom:.1f}"
+        return out
 
     wanted = {
         SourceRef(p.number, k): (p, k)
@@ -172,7 +183,10 @@ def line_readings(
     with pymupdf.open(pdf) as doc, ThreadPoolExecutor(workers) as pool:
         for start in range(0, len(todo), SAVE_EVERY):
             batch = todo[start : start + SAVE_EVERY]
-            crops = [_line_crop(doc, page.number, boxes[page.number][k]) for page, k in batch]
+            crops = [
+                _line_crop(doc, page.number, boxes[page.number][k], span(page, k))
+                for page, k in batch
+            ]
             if prompt:
                 texts = pool.map(lambda png: transcribe(png, reader, ollama_url, prompt), crops)
             else:
@@ -255,9 +269,31 @@ def _by_line(boxes: list, words) -> list[list[tuple[str, float, float, float, fl
     return [sorted(ws, key=lambda w: w[1]) for ws in out]
 
 
-def _line_crop(doc: pymupdf.Document, number: int, box) -> bytes:
+def crop_span(boxes: list, k: int) -> tuple[float, float]:
+    """The top and bottom of line k's crop: LINE_PAD beyond its box, but not into the box
+    of a line above or below it in the same column, where a reader would read that line
+    too. A neighbour reaching less than NEIGHBOUR_SLACK into the pad leaves it whole."""
+    x0, y0, x1, y1 = boxes[k]
+    top, bottom = y0 - LINE_PAD, y1 + LINE_PAD
+    for j, (a0, b0, a1, b1) in enumerate(boxes):
+        if j == k or a1 <= x0 or x1 <= a0:
+            continue
+        if b0 + b1 < y0 + y1:
+            if b1 - top > NEIGHBOUR_SLACK:
+                top = max(top, min(b1, y0))
+        elif bottom - b0 > NEIGHBOUR_SLACK:
+            bottom = min(bottom, max(b0, y1))
+    return top, bottom
+
+
+def _line_crop(
+    doc: pymupdf.Document, number: int, box, span: tuple[float, float] | None = None
+) -> bytes:
+    """A line's crop: one em past either end, and `span` (`crop_span`) or LINE_PAD above
+    and below."""
     em = box[3] - box[1]
-    clip = pymupdf.Rect(box) + (-em, -LINE_PAD, em, LINE_PAD)
+    top, bottom = span or (box[1] - LINE_PAD, box[3] + LINE_PAD)
+    clip = pymupdf.Rect(box[0] - em, top, box[2] + em, bottom)
     return doc[number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
 
 

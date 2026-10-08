@@ -866,3 +866,10 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   clauses) where local does on 1, which lifts its CER to 0.64% against 0.16%. gemma4:26b
   does so on 254. Metro's crops hold parts of the neighbouring lines (tight leading), so
   every reader is tempted; such a reading only adds a suspect the judges reject.
+- 2026-10-08: Line crops stop at a neighbouring line's box (`ocrcheck.crop_span`, half a
+  point of slack); only a line whose crop changes gets a new cache key and is read again.
+  The 3 pt margin above and below reached into the next line wherever the layer's boxes
+  are as tall as the line pitch: 97% of Metro's crops, 91% of Dolittle's, 87% of Crime's,
+  half of De tuin's, 15% of Goede dochter's. glm-ocr on Metro pp. 7–30, the 738 changed
+  crops: CER 1.87% → 0.29%, exact 630 → 639. Found because hosted Qwen and Gemma read
+  whole clauses of the neighbouring line.

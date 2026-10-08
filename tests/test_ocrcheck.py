@@ -384,3 +384,48 @@ def test_a_build_read_via_is_cached_under_the_models_name_and_marked(monkeypatch
         tmp_path / "source.pdf", pages, checked, "qwen3.8:27b-nvfp4", "", cache, "Read."
     )
     assert used == []  # the local model finds them cached
+
+
+def _page_of(tmp_path, leading: float) -> tuple[pymupdf.Document, list]:
+    """Five lines of synthetic text set `leading` points apart, and their boxes."""
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=300)
+    for i in range(5):
+        page.insert_text(
+            (40, 60 + leading * i), f"Line {i} of a tightly set page goes on", fontsize=12
+        )
+    doc.save(tmp_path / "source.pdf")
+    doc = pymupdf.open(tmp_path / "source.pdf")
+    layer = pdf.read_text_layer(tmp_path / "source.pdf")[0]
+    return doc, ocrcheck.line_boxes(doc[0], layer)
+
+
+def test_a_crop_on_a_tight_page_stays_out_of_its_neighbours(tmp_path):
+    doc, boxes = _page_of(tmp_path, 13)
+    assert boxes[2][1] - boxes[1][3] < ocrcheck.LINE_PAD  # the pad would reach line 1
+    top, bottom = ocrcheck.crop_span(boxes, 2)
+    # Up to the neighbour's box, or to its own where the two overlap.
+    assert top >= min(boxes[1][3], boxes[2][1]) and bottom <= max(boxes[3][1], boxes[2][3])
+    assert top <= boxes[2][1] and bottom >= boxes[2][3]  # its own line stays whole
+
+
+def test_a_crop_with_room_keeps_its_pad(tmp_path):
+    doc, boxes = _page_of(tmp_path, 30)
+    box = boxes[2]
+    assert ocrcheck.crop_span(boxes, 2) == (box[1] - ocrcheck.LINE_PAD, box[3] + ocrcheck.LINE_PAD)
+
+
+def test_only_a_crop_cut_short_is_read_again(monkeypatch, tmp_path):
+    reads = []
+    monkeypatch.setattr(ocrcheck, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
+    for leading, first_line_read_again in ((30, False), (13, True)):
+        sub = tmp_path / str(leading)
+        sub.mkdir()
+        doc, boxes = _page_of(sub, leading)
+        pages = pdf.read_text_layer(sub / "source.pdf")
+        checked = {SourceRef(1, k) for k in range(len(boxes))}
+        cache = sub / "third-reading.json"
+        ocrcheck.line_readings(sub / "source.pdf", pages, checked, "m", "", cache, "Read.")
+        blob = json.loads(cache.read_text())
+        cut = [k for k in blob["lines"] if k.count(":") == 4]
+        assert bool(cut) == first_line_read_again

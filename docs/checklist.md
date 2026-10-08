@@ -143,9 +143,25 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [ ] The two failed MoE models take 39 GB: **user** says whether to remove them
 - [x] Hosted Qwen3.8 bf16 on Metro pp. 7–30 (the user's go): the same as local on 97% of
       lines, 935 exact against 934, 14× faster; reads beyond its line on 7 of 958 (local 1)
-- [ ] Line crops on tightly leaded books (Metro) hold parts of the neighbouring lines, and
-      readers sometimes read them: a reading far longer or shorter than the layer's line
-      could count as no reading. Measured by `bench`, after the baseline
+- [ ] **The crop bug.** `ocrcheck._line_crop` pads each line 3 pt above and below its
+      layer box; where boxes are as tall as the line pitch, that reaches into the next
+      line, and glm-ocr and Qwen read part of it (Metro p17: the line above, readable).
+      Share of crops reaching into a neighbour's box: Metro 97%, Dolittle 91%, Crime 87%,
+      De tuin 50%, 11/22/63 37%, Reis 28%, Goede dochter 15%; Artemis, Vals alarm,
+      De cipier, Thief-Taker and You're Never Weird under 5%
+  - [x] `crop_span`: the pad stops at a neighbour's box (half a point of slack); only
+        lines whose crop changes get a new cache key, so only they are read again.
+        Regression tests on synthetic tight and loose pages
+  - [x] Before and after on Metro pp. 7–30 with glm-ocr (`experiments/probe_crop_span.py`):
+        738 of 983 crops change; on them CER 1.87% → 0.29%, exact 630 → 639, better on 25
+        lines (no longer reading the neighbouring line), worse on 13 (the model's noise on a
+        crop moved by a point: the quote it dropped is plainly in the new crop)
+  - [ ] The same with hosted Qwen (the **user**'s go, ~3 cents), then commit if it helps
+  - [ ] Re-read the affected lines and rebuild the trust data of the books done on the
+        old crops (Goede dochter, Crime, Dolittle, De tuin, Metro), warm apart from those
+        lines
+  - [ ] A reading far longer or shorter than its line counting as no reading, if readers
+        still stray after the fix: measured by `bench`
 - [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:
       after the baseline bench, each measured by it
 
