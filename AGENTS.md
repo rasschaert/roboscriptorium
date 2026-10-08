@@ -151,7 +151,7 @@ right, then expand.
 - Layout: `src/roboscriptorium/` (src layout), tests in `tests/`.
   - `cli.py`: typer app, the entry point.
   - `config.py`: `Settings`, overridable via `ROBO_OLLAMA_URL`, `ROBO_OLLAYA_URL`,
-    `ROBO_DECISION_MODEL`, `ROBO_ROLE_MODEL` and the others it lists (`ROBO_READ_MODEL`
+    `ROBO_ROLE_MODEL` and the others it lists (`ROBO_READ_MODEL`
     reads quote questions' lines, "" for none).
   - `clients/ollaya.py` also serves Ollama's `/v1/systemone`: `for_model` routes
     `clef-*` models there and everything else to Ollaya.
@@ -423,7 +423,7 @@ and where it holds up, move it and stop depending on Ollaya.
 
 ```sh
 curl http://127.0.0.1:11435/api/decide -d '{
-  "model": "laya:multilingual",
+  "model": "winnow:e4b",
   "state": "<text, or JSON describing the situation>",
   "questions": {"role": {"type": "choice", "instructions": "...",
                 "criteria": {"page_number": "...", "body": "..."}}}
@@ -481,7 +481,7 @@ schedel before choosing an OCR model.
 ## Environment
 
 - Apple M4 Max, 64 GB RAM, macOS.
-- Ollama 0.40.0 at `http://127.0.0.1:11434` (updated 2026-10-06 from 0.35.1; earlier scores were on 0.35.1).
+- Ollama 0.40.1 at `http://127.0.0.1:11434` (0.40.0 on 2026-10-06, 0.40.1 on 2026-10-08; scores before 2026-10-06 were on 0.35.1).
 - Ollaya at `http://127.0.0.1:11435`.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).

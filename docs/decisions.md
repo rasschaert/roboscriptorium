@@ -975,3 +975,7 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   Ollaya's 0.63 for the same pick). Measured against Ollaya's build on cached suspects
   before any use; if it falls short, the fallback is our own client rendering winnow's
   protocol to `/api/generate` and reading the letter's log-probability.
+- 2026-10-08: Ollama 0.40.1. `winnow-ollama:e4b` still lists `decision` and answers on
+  `/v1/systemone`. Ollaya no longer serves `laya:multilingual`, so `doctor` now
+  smoke-tests the models the pipeline asks (sorter, judge, second judge) through
+  `for_model`; the unused `decision_model` setting (`ROBO_DECISION_MODEL`) is gone.

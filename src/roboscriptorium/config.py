@@ -8,7 +8,6 @@ from dataclasses import dataclass
 class Settings:
     ollama_url: str = "http://127.0.0.1:11434"
     ollaya_url: str = "http://127.0.0.1:11435"
-    decision_model: str = "laya:multilingual"
     role_model: str = "clef-flash:9b"
     # Reads OCR suspects from the sentence, not the image. Weak alone (63% right), it is
     # kept as an alarm on the judge: clef is wrong 4% where it agrees, 22% where it
@@ -41,7 +40,6 @@ class Settings:
         return cls(
             ollama_url=os.environ.get("ROBO_OLLAMA_URL", defaults.ollama_url),
             ollaya_url=os.environ.get("ROBO_OLLAYA_URL", defaults.ollaya_url),
-            decision_model=os.environ.get("ROBO_DECISION_MODEL", defaults.decision_model),
             role_model=os.environ.get("ROBO_ROLE_MODEL", defaults.role_model),
             check_model=os.environ.get("ROBO_CHECK_MODEL", defaults.check_model),
             ocr_model=os.environ.get("ROBO_OCR_MODEL", defaults.ocr_model),

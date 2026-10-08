@@ -53,21 +53,29 @@ def doctor() -> None:
         typer.echo(f"ollama  {settings.ollama_url}  UNREACHABLE: {exc}")
 
     try:
-        client = OllayaClient(settings.ollaya_url, settings.decision_model)
-        names = client.models()
+        names = OllayaClient(settings.ollaya_url, "").models()
         typer.echo(f"ollaya  {settings.ollaya_url}  {', '.join(names)}")
-        answer = client.decide(
-            {"line": "12", "position": "last line, centred, below body text"},
-            {
-                "role": ollaya.choice(
-                    "What is this line?", {"page_number": "A page number", "body": "Body text"}
-                )
-            },
-        )["role"]
-        typer.echo(f"ollaya  decision smoke test: {answer.value} ({answer.confidence:.2f})")
     except httpx.HTTPError as exc:
         ok = False
         typer.echo(f"ollaya  {settings.ollaya_url}  UNREACHABLE: {exc}")
+
+    # The decision models the pipeline asks, each on the runtime that serves it.
+    for model in dict.fromkeys([settings.role_model, settings.judge_model, settings.check_model]):
+        try:
+            client = ollaya.for_model(model, settings.ollaya_url, settings.ollama_url)
+            answer = client.decide(
+                {"line": "12", "position": "last line, centred, below body text"},
+                {
+                    "role": ollaya.choice(
+                        "What is this line?",
+                        {"page_number": "A page number", "body": "Body text"},
+                    )
+                },
+            )["role"]
+            typer.echo(f"decide  {model}  smoke test: {answer.value} ({answer.confidence:.2f})")
+        except httpx.HTTPError as exc:
+            ok = False
+            typer.echo(f"decide  {model}  FAILED: {exc}")
 
     raise typer.Exit(0 if ok else 1)
 
