@@ -63,7 +63,8 @@ Local and hosted Qwen proved interchangeable (3b) and the user said go: Qwen rea
 through OpenRouter and three books run side by side (the GPU still does glm-ocr and
 clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted reading left):
 
-- [ ] Artemis, pp. 13–80 (tuning): ~1.2 h cold. **Running**, Qwen via hosted (the user's go)
+- [x] Artemis, pp. 13–80: 63 min, Qwen via hosted, beside other runs (317 suspects, 273
+      settled, layer wrong on 207: its `|` for I; clef right on 87%, winnow 83%)
 - [ ] 11/22/63, pp. 15–94 (tuning): ~1.5 h cold. Stopped after 14 min by a local call
       timing out with five jobs on Ollama; resumes (its line roles are cached) when a lane
       frees. At most three pipelines at once, re-reads included
@@ -175,7 +176,8 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
     - [x] De tuin: 4 min; 101 of 1,440 crops changed (the overlap estimate counted any
           touch; the fix cuts in only past half a point); glm-ocr exact 78 → 83, Qwen 93 →
           90 (noise level); 472 → 473 suspects, settled 454 → 455. Neutral to positive
-    - [ ] Crime: **running**
+    - [ ] Crime: stopped after 9 min by a local glm-ocr call timing out under load; local
+          model calls now retry a timeout (`clients/retry.py`); restarted
     - [ ] Dolittle, Metro, Stella, one at a time, each checked first
   - [ ] A reading far longer or shorter than its line counting as no reading, if readers
         still stray after the fix: measured by `bench`

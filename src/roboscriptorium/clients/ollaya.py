@@ -13,6 +13,8 @@ from typing import Any
 
 import httpx
 
+from roboscriptorium.clients.retry import patiently
+
 # Decision models with these name prefixes are served by Ollama's /v1/systemone.
 OLLAMA_PREFIXES = ("clef",)
 
@@ -85,7 +87,7 @@ class OllayaClient:
         }
         if image_png is not None:
             payload["images"] = [base64.b64encode(image_png).decode()]
-        resp = self._http.post(self.endpoint, json=payload)
+        resp = patiently(lambda: self._http.post(self.endpoint, json=payload))
         resp.raise_for_status()
         return {name: Answer.from_json(a) for name, a in resp.json()["answers"].items()}
 

@@ -30,6 +30,7 @@ from rapidfuzz.distance import Levenshtein
 from roboscriptorium import ocr
 from roboscriptorium.clients import ollaya, openrouter
 from roboscriptorium.clients.ollaya import OllayaClient
+from roboscriptorium.clients.retry import patiently
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
@@ -333,15 +334,19 @@ def read_line(png: bytes, model: str, ollama_url: str) -> str:
         "images": [base64.b64encode(png).decode()],
         "options": {"num_predict": MAX_LINE_TOKENS},
     }
-    out = ""
-    with httpx.stream("POST", f"{ollama_url}/api/generate", json=payload, timeout=300) as resp:
-        resp.raise_for_status()
-        for chunk in resp.iter_lines():
-            if chunk:
-                out += json.loads(chunk).get("response", "")
-            if "\n" in out.strip():
-                break
-    return out.strip().split("\n")[0].strip().replace("一", "—")
+
+    def read() -> str:
+        out = ""
+        with httpx.stream("POST", f"{ollama_url}/api/generate", json=payload, timeout=300) as resp:
+            resp.raise_for_status()
+            for chunk in resp.iter_lines():
+                if chunk:
+                    out += json.loads(chunk).get("response", "")
+                if "\n" in out.strip():
+                    break
+        return out
+
+    return patiently(read).strip().split("\n")[0].strip().replace("一", "—")
 
 
 def transcribe(png: bytes, model: str, ollama_url: str, prompt: str) -> str:
@@ -358,7 +363,7 @@ def transcribe(png: bytes, model: str, ollama_url: str, prompt: str) -> str:
         "think": False,
         "options": {"num_predict": MAX_LINE_TOKENS, "temperature": 0},
     }
-    resp = httpx.post(f"{ollama_url}/api/generate", json=payload, timeout=600)
+    resp = patiently(lambda: httpx.post(f"{ollama_url}/api/generate", json=payload, timeout=600))
     resp.raise_for_status()
     return resp.json()["response"].strip().split("\n")[0].strip()
 
