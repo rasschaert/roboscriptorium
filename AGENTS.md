@@ -16,8 +16,8 @@ starting; keep it true.
   numbers change the reason, the file changes in the same commit. A reviewer
   should never have to rediscover from data why something is there.
 - **Keep the docs and diagrams up to date too.** A change to the stages, their
-  order, or the model, code or person behind one also updates `README.md` and
-  `docs/pipeline.d2` in the same commit; render the SVG again with
+  order, or the model, code or person behind one also updates `README.md`,
+  `docs/how-it-works.md` and `docs/pipeline.d2` in the same commit; render the SVG again with
   `d2 docs/pipeline.d2 docs/pipeline.svg` and commit both. A diagram that shows
   the pipeline as it was is worse than none.
 - **Local first.** AI runs on this machine via Ollama and Ollaya. A hosted model

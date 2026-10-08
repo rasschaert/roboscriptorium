@@ -114,7 +114,7 @@ check: 3 · Check the OCR (scans only) {
   m: {
     class: row
     glm: glm-ocr:bf16 {class: ollama}
-    tess: tesseract (nld) {class: code}
+    tess: tesseract\n(the book's language) {class: code}
     qwen: "qwen3.8:27b, told the\nbook's style" {class: ollama}
     clef: "clef:27b\npicks from the crop" {class: ollaya}
     winnow: "winnow:e4b\npicks from the sentence" {class: ollaya}
@@ -142,11 +142,15 @@ review: 4 · Review {
   m: {
     class: row
     qread: "qwen3.8:27b, told the book's style,\nproposes an unpaired quote's marks" {class: ollama}
+    init: clef-flash:9b\nguesses a drawn initial's letter {class: ollaya}
     you: you {class: human}
+    slip: answer check: a typed line\nmust match a reading {class: code}
     proof: qwen3.8 proofreads\nthe answers {class: candidate}
   }
   s.flags -> m.qread {class: uses}
+  s.flags -> m.init {class: uses}
   s.page -> m.you: a key per answer {class: uses}
+  s.page -> m.slip: before saving {class: uses}
   s.answers -> m.proof {class: uses}
 }
 
@@ -157,7 +161,7 @@ build: 5 · Assemble the book {
     reflow: Reflow\nparagraphs, line-end hyphens {class: stage}
     italics: Italics {class: stage}
     dash: Typography\none dash style per book {class: stage}
-    figures: Figures\npictures, captions, drop caps {class: stage}
+    figures: Figures\npictures and captions {class: stage}
     reflow -> italics -> dash -> figures
   }
   m: {
@@ -165,14 +169,14 @@ build: 5 · Assemble the book {
     spell: the book's own spellings {class: code}
     words: the word list\n(which form it knows) {class: code}
     slant: stroke slant per word {class: code}
-    gap: dash length and gaps,\nor book.toml {class: code}
-    init: clef-flash:9b\nguesses drawn initials {class: ollaya}
+    gap: "dash length and gaps (or book.toml),\nmeasured first and told to the readers" {class: code}
+    regions: "layout regions;\nyour answers turn plates" {class: code}
   }
   s.reflow -> m.spell {class: uses}
   s.reflow -> m.words {class: uses}
   s.italics -> m.slant {class: uses}
   s.dash -> m.gap {class: uses}
-  s.figures -> m.init {class: uses}
+  s.figures -> m.regions {class: uses}
 }
 
 epub: book.epub\nEPUB 3, checked by epubcheck {class: file}
@@ -191,7 +195,7 @@ legend: Who does the work {
   horizontal-gap: 30
   v: vision model\n(not an LLM) {class: vision}
   g: generative model\n(Ollama) {class: ollama}
-  d: decision model\n(Ollaya, systemone) {class: ollaya}
+  d: "decision model, systemone\n(Ollaya; Ollama for clef)" {class: ollaya}
   c: plain code {class: code}
   h: a person {class: human}
   p: candidate,\nnot wired in yet {class: candidate}

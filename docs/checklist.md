@@ -81,7 +81,7 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
       build hardly reads the image (70% same pick, right on 275 of 377 against local's
       352); Cloudflare's 96.2% same, 348 right, shift 0.063. **Fails all three: clef stays
       local.** The client stays (`ROBO_JUDGE_VIA`), for a later build
-- [ ] Reis om mijn schedel, pp. 11–110 (tuning): ~1.8 h cold. Its data from before Qwen
+- [ ] Reis om mijn schedel, pp. 11–110 (tuning, **running**): ~1 h with Qwen via hosted. Its data from before Qwen
       must not be trained on until then (it has no Qwen support)
 - [ ] De eerlijke vinder, pp. 12–95 (validation, held out): ~1.5 h cold
 - [ ] You're Never Weird on the Internet, pp. 13–94 (validation, held out): ~1.6 h cold
@@ -196,8 +196,14 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
           its own): 823 of 2,336 crops changed; glm-ocr 758 → 755 exact, Qwen 774 → 770,
           the worse lines the models' habits (`suredly` → `surely`), not the crop; 257 →
           262 suspects, settled 222 → 231. Neutral
-    - [ ] Dolittle (**running**), Metro, Stella: for consistency (the pipeline cuts these crops now, so
-          trust data and bench must be read from them), one at a time, each checked
+    - [x] Dolittle (resumed after a GPU out-of-memory; 40 + 3 min): 3,279 of 3,658 crops
+          changed; glm-ocr CER 0.69% → 0.64%, exact 2,924 → 2,923; Qwen 0.57% → 0.58%,
+          exact 2,922 → 2,921; 684 suspects, settled 561 → 570. Neutral
+    - [ ] Metro (**running**): for consistency (the pipeline cuts these crops now, so
+          trust data and bench must be read from them)
+    - [ ] ~~Stella~~ dropped: 330 of 1,994 crops change, but only ~10 of its 61 suspect
+          lines; its labels are the user's answers, so new suspects would be unlabelled.
+          Its next real build reads the new crops anyway
   - [x] **The user's idea, a crop fitted to each line's ink** (`experiments/ink_crop.py`):
         tried and not adopted. Measured with no model (`probe_crop_ink.py`), the box crop
         holds slivers of other lines' ink in 50–87% of crops (1–2.5 pt: descender tips)
