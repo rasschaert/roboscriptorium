@@ -818,3 +818,10 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   against 0, so unfit. The newest open models (DeepSeek V4.1 Flash, GLM-5.3 Flash,
   MiMo V2.6, Step 3.7 Flash) are 200–760B and don't fit in 64 GB; the mixture-of-experts
   models that do, qwen3.6:35b-a3b and gemma4:26b (3–4B active), are being tried.
+- 2026-10-08: A reader of the finished text planned (checklist 3c), on the user's point
+  that nothing reads the output itself: every check starts where OCR readings disagree,
+  so shared misreadings and reflow faults go unseen. Guarded against editing the author:
+  it only asks, with closed options and no replacement text; it is told the text is a
+  transcription; its silence on deliberate oddities is measured on a counterexample set
+  first; `bench` scores it as a question source and reports the share of flags on text
+  that already matches the reference.

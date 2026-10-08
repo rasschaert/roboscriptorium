@@ -126,6 +126,39 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:
       after the baseline bench, each measured by it
 
+## 3c. A reader of the finished text
+
+Every check so far starts where the OCR readings disagree; a mistake all readings
+share, or one reflow makes, is never looked at. A model reading the built text
+paragraph by paragraph can see a sentence that breaks off, a word that makes no sense,
+a running head or picture text inside a sentence, a paragraph split mid-sentence. The
+danger is that it edits the author. Guards, all of them:
+
+- **It only asks, never changes.** Its output is a place and a kind, never replacement
+  text: the reviewer sees the crop and decides.
+- **Closed options, no free text.** A decision with declared kinds (sentence broken
+  off, word that isn't one, furniture in the text, picture text, paragraph split or
+  merged, none), nothing like "could read better". Bounded answer, so a decision model.
+- **Told what the text is:** a transcription, whose spelling, grammar, dialect and style
+  are the author's and stay; only faults of reading or layout count.
+- **The counterexamples first.** A set of places where it must stay silent, written
+  before the ones where it must fire: deliberate misspellings and play (`Vidya Gamez!`,
+  `Fevah`, `Meeeeee`, `#lookit` in You're Never Weird), fragments ("Raised without
+  clocks."), dialogue that trails off, foreign words (De tuin), names. Its silence there
+  is measured, not hoped for.
+- **Measured as a question source by `bench`:** how many remaining errors its questions
+  catch against how many it costs, with the reviewer's slips. A flag where the output
+  already matches the reference is an editorial urge, and that rate is reported.
+- **Grounded where possible:** a flag counts for more where the machine touched the
+  text (a line or page join, a de-hyphenation, a word the readings disagreed on, a
+  word the word list lacks), less in untouched running text.
+
+- [ ] Probe: every paragraph of Goede dochter's and Metro's built text, as a decision
+      (clef, or Qwen with thinking off) with the kinds above, scored against their known
+      remaining errors and the counterexample set: catches, false alarms, editorial urges.
+      After the baseline bench; roughly a tenth of the line readings' calls
+- [ ] If it earns it: a stage after reflow that emits review questions, decided by `bench`
+
 ## 4. The user's part
 
 - [ ] **user** Slip rate per question kind: answer the review on Goede dochter
@@ -162,4 +195,3 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 ## Later
 
 - [ ] Proofreading answers with Qwen
-- [ ] The paragraph language judge
