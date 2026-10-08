@@ -230,7 +230,14 @@ danger is that it edits the author. Guards, all of them:
 ## 4. The user's part
 
 - [ ] **user** Slip rate per question kind: answer the review on Goede dochter
-      pp. 9–64 (~70 questions), scored against the aligned truth: ~1 h
+      pp. 9–64, scored against the aligned truth. **After the retrain, with trust on**:
+      tried on the fixed rule on 2026-10-08, it asked 215 questions, nearly all obvious
+      (`ven eeuwigheid`, `drijthout`, words the word list and clef settle), which would
+      measure a near-zero slip rate on questions trust never asks. 6 answers kept in
+      `work/probes/slip-rate/`, out of the book's folder so no build applies them
+- [x] Review page: the doubt's whole line tinted, its place underlined beneath the print,
+      nothing drawn over the letters (the box hid the quote marks it asked about); softer
+      colours; `h` turns highlights off, remembered
 - [ ] **user** Settle verdicts on the tuning books (`golden review`), the
       disagreements trust's labels sit on first: hours, spread out
 

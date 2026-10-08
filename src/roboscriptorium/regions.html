@@ -87,6 +87,9 @@ a { color: var(--accent); }
 <main id="main"></main>
 <script>
 let state = null, queue = [], pos = 0, out = 0;
+// Whether the crop shows its highlights (`h`); remembered across visits where storage works.
+let marks = true;
+try { marks = localStorage.getItem("marks") !== "off"; } catch (e) {}
 const main = document.getElementById("main");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
 const KINDS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "caption", "6": "initial"};
@@ -173,6 +176,7 @@ function render() {
     <div class="turnbar">
       <button id="zoomOut" title="Show more of the page around it"><kbd>-</kbd>Zoom out</button>
       <button id="zoomIn" title="Back towards the region" ${out ? "" : "disabled"}><kbd>+</kbd>Zoom in</button>
+      <button id="marks" title="Show or hide the highlights on the scan"><kbd>h</kbd>Highlight ${marks ? "on" : "off"}</button>
       ${r.box ? `<span>·</span>
       <button id="turnLeft" title="Turn a quarter anticlockwise">↺</button>
       <button id="turnRight" title="Turn a quarter clockwise"><kbd>r</kbd>↻</button>
@@ -200,6 +204,7 @@ function render() {
   document.getElementById("save").onclick = save;
   document.getElementById("zoomOut").onclick = () => zoom(1);
   document.getElementById("zoomIn").onclick = () => zoom(-1);
+  document.getElementById("marks").onclick = toggleMarks;
   if (r.box) {
     document.getElementById("turnLeft").onclick = () => turn(-90);
     document.getElementById("turnRight").onclick = () => turn(90);
@@ -353,8 +358,17 @@ function marked(text, base) {
 }
 
 function cropUrl(r) {
-  return r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}&out=${out}`
-    : `/crop?page=${r.page}&first=${r.first}&last=${r.last}&out=${out}`;
+  const m = `&mark=${marks ? 1 : 0}`;
+  // A doubt's box is a place in its line: the line is tinted, the place underlined.
+  const line = r.span ? `&line=${r.first}` : "";
+  return r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}&out=${out}${line}${m}`
+    : `/crop?page=${r.page}&first=${r.first}&last=${r.last}&out=${out}${m}`;
+}
+
+function toggleMarks() {
+  marks = !marks;
+  try { localStorage.setItem("marks", marks ? "on" : "off"); } catch (e) {}
+  render();
 }
 
 // Zoom-out steps; 4 shows about a whole page. Moving to another region resets it.
@@ -442,6 +456,7 @@ document.addEventListener("keydown", e => {
     && READING_KEYS.indexOf(e.key) < r.readings.length) setReading(READING_KEYS.indexOf(e.key));
   else if (e.key === "r") turn(90);
   else if (e.key === "o") reread();
+  else if (e.key === "h") toggleMarks();
   else if (e.key === "-") zoom(1);
   else if (e.key === "+" || e.key === "=") zoom(-1);
   else if (e.key === "ArrowRight") go(pos + 1);

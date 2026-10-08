@@ -890,3 +890,9 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   (it did, though `--save` never has: the numbers changes were chosen on had seen De
   tuin's and Grand Hotel's labels). Loading a missing book used to start its cold build;
   `--save` now refuses while tuning data is missing (`--partial` to override).
+- 2026-10-08: Review highlights never cover the print: a faint tint behind the lines in
+  question, a soft outline around a region, a doubt's place underlined beneath its line;
+  `h` hides them. The user found the orange box over the very quote marks they were asked
+  about. The slip-rate review waits for trust: on the fixed rule it asked 215 questions
+  on Goede dochter, nearly all settled by the word list and clef, the wrong mix to
+  measure a reviewer on.
