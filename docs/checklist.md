@@ -126,9 +126,10 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       Goede dochter pp. 9–20 only 1 of 324 lines has no current reading right, so no
       candidate can add much there; the errors left come from choosing, not from missing
       readings
-- [ ] The crossover on a harder book (Metro pp. 7–30, English): each candidate's unique
-      catches against its noise. Qwen's readings are cached, so it costs only the
-      candidate's reading time
+- [x] The crossover on Metro pp. 7–30 (954 body lines, English): again only 1 line has no
+      current reading right. gemma4:latest adds 0 there, is wrong on 288 lines the layer
+      has right, and writes text that isn't on the line (whole invented clauses)
+- [ ] Each later candidate through the crossover on Metro too, not only Goede dochter
       Decided before the results: switch only if ≥ 3× faster **and** no worse (quote marks
       wrong on no more lines than Qwen3.8's, CER within a few lines of it), confirmed on a
       second book (Metro, English) before the switch; better but not faster: noted, no

@@ -835,3 +835,9 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   where the layer is right). On Goede dochter pp. 9–20 only 1 of 324 body lines has no
   current reading exact (layer, glm-ocr, tesseract, Qwen3.8), so the remaining errors
   there come from choosing among readings; the question moves to a harder book (Metro).
+- 2026-10-08: Metro pp. 7–30 (954 body lines): only 1 has no current reading exact
+  (layer 902, glm-ocr 821, tesseract 872, Qwen3.8 934), so on English too the readings
+  cover nearly every line and the errors left are in choosing. gemma4:latest there:
+  CER 22.6%, wrong on 288 lines the layer has right, and it writes text the line
+  doesn't hold ("discuss the best place to shoot him. I looked at his boss, and it was
+  as if…" before the printed line): a model that invents is unfit to transcribe.
