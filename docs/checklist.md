@@ -45,7 +45,7 @@ the short lines.
 - [x] Dolittle: 98 min cold (642 → 684 suspects; layer wrong on 374 → 396 settled)
 - [x] De tuin van de avondnevel: 51 min cold (389 → 472 suspects; layer wrong on 310 → 350 settled)
 - [x] Grand Hotel Europa: 32 min cold (125 → 173 suspects; layer wrong on 79 → 99 settled)
-- [ ] Stella, labelled by the user's answers: ~75 min cold. **Running** since 2026-10-08 12:05
+- [x] Stella, labelled by the user's answers: 53 min cold (65 → 66 suspects; layer wrong on 34 settled, unchanged: only answered places are labelled)
 - [ ] ~~Lady into Fox: ~1.7 h cold~~ dropped: retired to reserve (its reference's typography differs from the print), so no validation data is needed from it
 - [ ] Reis om mijn schedel, pp. 11–110 (chapters 1–11, as in `bench tuning`): ~1.8 h cold
 
@@ -66,7 +66,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       kind (no reference rebuilt so far has spaced dots, so its trust data stands)
 - [ ] Afscheid's trust data, pp. 9–70 (chapters 1–11, as in `bench tuning`): ~1.1 h cold. Before the
       baseline in 3, so the baseline includes it
-- [ ] Metro's trust data (in `ocr_trust_data.py`, pp. 7–111): ~2 h cold. Before the
+- [ ] Metro's trust data (in `ocr_trust_data.py`, pp. 7–111): ~1.9 h cold. **Running** since 2026-10-08 12:58. Before the
       baseline too
 - [x] De cipier, a pair with no known deviations: chapters 1–4 (pp. 9–92) in
       `bench tuning`
