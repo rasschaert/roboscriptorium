@@ -85,7 +85,8 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
       must not be trained on until then (it has no Qwen support)
 - [ ] De eerlijke vinder, pp. 12–95 (validation, held out, **running**): ~1.5 h cold,
       Qwen via hosted
-- [ ] You're Never Weird on the Internet, pp. 13–94 (validation, held out): ~1.6 h cold
+- [ ] You're Never Weird on the Internet, pp. 13–94 (validation, held out, **running**):
+      ~1.6 h cold, Qwen via hosted
 
 ## 2b. New golden pairs (Fable's session, ended; its steps are this session's now)
 
@@ -181,7 +182,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
   - [x] Committed (`565e9bf`). Hosted Qwen on the new crops (the user's go): on the 737
         changed lines CER 0.04% against local Qwen's 0.20% on the old crops, 722 exact on
         both, no neighbouring clauses read
-  - [ ] Re-read the affected lines and rebuild the trust data of the books done on the
+  - [x] Re-read the affected lines and rebuild the trust data of the books done on the
         old crops, one book at a time, each checked before the next (Qwen via hosted, the
         user's go):
     - [x] Goede dochter: 2 min; 79 of 1,730 crops changed; glm-ocr unchanged (65 exact),
@@ -200,8 +201,9 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
     - [x] Dolittle (resumed after a GPU out-of-memory; 40 + 3 min): 3,279 of 3,658 crops
           changed; glm-ocr CER 0.69% → 0.64%, exact 2,924 → 2,923; Qwen 0.57% → 0.58%,
           exact 2,922 → 2,921; 684 suspects, settled 561 → 570. Neutral
-    - [ ] Metro (**running**): for consistency (the pipeline cuts these crops now, so
-          trust data and bench must be read from them)
+    - [x] Metro: 34 min; 3,067 of 4,285 crops changed; glm-ocr CER 2.24% → 0.27%, exact
+          2,643 → 2,683; Qwen 0.39% → 0.03%, exact 2,995 → 3,006; 917 → 835 suspects,
+          801 → 745 with a clear label, layer wrong on 204 → 222. A clear gain
     - [ ] ~~Stella~~ dropped: 330 of 1,994 crops change, but only ~10 of its 61 suspect
           lines; its labels are the user's answers, so new suspects would be unlabelled.
           Its next real build reads the new crops anyway
