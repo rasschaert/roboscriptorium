@@ -95,18 +95,20 @@ def test_spaced_hyphens_become_the_prints_dash(tmp_path):
             "OEBPS/Text/a.html",
             PAGE.format(
                 "<h1>1</h1><p>Toen - heel terloops - zei hij: wc-rol, 1914-1918.</p>"
-                "<p>Hij kwam -</p>"
+                "<p>Hij kwam -</p><p>- Denk na!</p>"
             ),
         )
     (section,) = publisher_epub.read(epub, ["Text/a.html"], hyphen_dash="–")
     assert section.paragraphs == [
         "Toen – heel terloops – zei hij: wc-rol, 1914-1918.",
         "Hij kwam –",
+        "– Denk na!",
     ]
     (section,) = publisher_epub.read(epub, ["Text/a.html"])
     assert section.paragraphs == [
         "Toen - heel terloops - zei hij: wc-rol, 1914-1918.",
         "Hij kwam -",
+        "- Denk na!",
     ]
 
 
