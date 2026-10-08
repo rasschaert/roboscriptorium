@@ -64,8 +64,9 @@ through OpenRouter and three books run side by side (the GPU still does glm-ocr 
 clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted reading left):
 
 - [ ] Artemis, pp. 13–80 (tuning): ~1.2 h cold. **Running**, Qwen via hosted (the user's go)
-- [ ] 11/22/63, pp. 15–94 (tuning): ~1.5 h cold. **Running**, Qwen via hosted, beside
-      Artemis and De cipier
+- [ ] 11/22/63, pp. 15–94 (tuning): ~1.5 h cold. Stopped after 14 min by a local call
+      timing out with five jobs on Ollama; resumes (its line roles are cached) when a lane
+      frees. At most three pipelines at once, re-reads included
 - [ ] De cipier, pp. 9–92 (tuning): ~1.5 h cold. **Running**, Qwen via hosted (the user's go)
 - [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold
 - [ ] Reis om mijn schedel, pp. 11–110 (tuning): ~1.8 h cold. Its data from before Qwen
