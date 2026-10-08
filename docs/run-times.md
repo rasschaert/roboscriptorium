@@ -15,3 +15,4 @@ with nothing cached costs **0.8–1.1 min per page** for a trust-data rebuild
 | 2026-10-08 | trust data, Vals alarm, short lines only new | 50 | 2 | 0 |
 | 2026-10-08 | trust data, Crime, short lines only new | 94 | 1 | 0 |
 | 2026-10-08 | trust data, Dolittle, cold | 91 | 98 | 0 |
+| 2026-10-08 | trust data, De tuin, cold | 42 | 51 | 0 |

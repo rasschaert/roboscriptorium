@@ -43,8 +43,8 @@ the short lines.
 - [x] Vals alarm: 39 min cold, top-up 2 min
 - [x] Crime: 81 min cold, top-up 1 min
 - [x] Dolittle: 98 min cold (642 → 684 suspects; layer wrong on 374 → 396 settled)
-- [ ] De tuin van de avondnevel: ~45 min cold. **Running** since 2026-10-08 10:43
-- [ ] Grand Hotel Europa: ~35 min cold
+- [x] De tuin van de avondnevel: 51 min cold (389 → 472 suspects; layer wrong on 310 → 350 settled)
+- [ ] Grand Hotel Europa: ~35 min cold. **Running** since 2026-10-08 11:33
 - [ ] Stella, labelled by the user's answers: ~75 min cold
 - [ ] Lady into Fox: ~3.3 h cold
 - [ ] Reis om mijn schedel: ~4.5 h cold (its quote readings are a separate cache)
