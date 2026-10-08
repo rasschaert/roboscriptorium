@@ -43,3 +43,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | trust data, metro-2033--ia-scan, re-read of new crops (Qwen via hosted), alongside other runs | 105 | 34 | 0 |
 | 2026-10-08 | trust data, Reis pp. 11-110, Qwen via hosted, alongside 2 runs | 100 | 46 | 0 |
 | 2026-10-08 | trust data, You're Never Weird pp. 13-94, cold, Qwen via hosted, alongside 2 runs | 82 | 66 | 0 |
+| 2026-10-08 | trust data, De eerlijke vinder pp. 12-95, cold, Qwen via hosted, alongside 2 runs | 84 | 86 | 0 |

@@ -83,8 +83,8 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
       local.** The client stays (`ROBO_JUDGE_VIA`), for a later build
 - [x] Reis om mijn schedel, pp. 11–110 (tuning): 46 min, Qwen via hosted. 480 suspects,
       363 with a clear label, layer wrong on 94
-- [ ] De eerlijke vinder, pp. 12–95 (validation, held out, **running**): ~1.5 h cold,
-      Qwen via hosted
+- [x] De eerlijke vinder, pp. 12–95 (validation, held out): 86 min, Qwen via hosted.
+      895 suspects, 829 with a clear label, layer wrong on 85
 - [x] You're Never Weird on the Internet, pp. 13–94 (validation, held out): 66 min,
       Qwen via hosted. 317 suspects, 283 with a clear label, layer wrong on 87 (lost
       apostrophes, `Fie` for "He", missing spaces, real-word slips); clef right on 268
@@ -125,8 +125,12 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 ## 3. Baseline, retrain, bench, decide
 
 - [ ] Baseline bench on the fixed rule (`ROBO_OCR_TRUST=0 … bench`): unmeasured
-- [ ] Retrain trust and compare with the before-Qwen data: minutes
-- [ ] `train_ocr_trust.py --save` (the main and the leave-one-out models): minutes
+- [x] Retrain trust and compare with the before-Qwen data: silent errors at 0/.25/.5/1
+      questions a page, each book left out: Goede dochter 25/17/13/5 → 5/0/0/0, Crime
+      12/6/4/2 → 9/2/1/0, De tuin 24/17/11/6 → 16/12/10/4, Dolittle 31/9/5/2 → 23/10/7/2;
+      Vals alarm worse, 5/3/2/1 → 9/7/4/4 (its lost full stop is in no other book)
+- [x] `train_ocr_trust.py --save` (the main and the leave-one-out models): 8 s, 3,841
+      suspects from 11 books
 - [ ] `bench tuning`, then `bench validation`: unmeasured
 - [ ] **Decide:** keep Qwen's third reading and short lines only if the bench says so
 - [ ] Re-ask ~200 cached clef answers and count the flips (answer variance): ~15 min
@@ -346,8 +350,9 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
 
 - [x] Reader set v1 frozen (`experiments/tryout.py`, `tryouts/reader-v1.json`): 550
       lines of the tuning slices, 30 the layer reads wrong and 20 it reads right a book
-- [ ] gemma4 on the reader screen, the known-worse check of the screen itself:
-      ~10 min, once the trust-data runs are done (needs local qwen3.8 for 111 lines)
+- [x] gemma4 on the reader screen, the known-worse check of the screen itself: 9 min.
+      Loses on every count: hard lines right 274 of 330 (qwen3.8 302, glm-ocr 294),
+      control lines broken 10 of 220 (qwen3.8 3), the only reader right on 3 (qwen3.8 19)
 - [x] PP-DocLayoutV3 as the spotter, Dolittle pp. 23–88 scored downstream: worse
       (CER 1.22% → 1.71%), not adopted
 - [ ] winnow:12b as the second judge on the cached suspects (`probe_second_judge.py`)
