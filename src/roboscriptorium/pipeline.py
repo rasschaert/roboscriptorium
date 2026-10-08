@@ -135,6 +135,7 @@ def run(
                     settings.ollama_url,
                     book.stages / "third-reading.json",
                     read_prompt(book, body, style),
+                    settings.read_via,
                 )
             judge = ollaya.for_model(settings.judge_model, settings.ollaya_url, settings.ollama_url)
             suspects = ocrcheck.check(
@@ -222,6 +223,7 @@ def proposals(
         settings.ollama_url,
         book.stages / "third-reading.json",
         read_prompt(book, body, style),
+        settings.read_via,
     )
     dots = quotes.ellipsis(" ".join(ln.text for p in body for ln in p.lines))
     checked = {p.number: p for p in ocrcheck.apply(body, suspects)}

@@ -22,6 +22,10 @@ class Settings:
     # Vision model on Ollama, told the book's style: the OCR check's third reading of
     # each body line, and the reading of the lines quote questions sit on ("" for none).
     read_model: str = "qwen3.8:27b-nvfp4"
+    # A hosted build of read_model that reads in its place (`openrouter:…`, used only
+    # when the user asks): its readings are cached under read_model's name, each line
+    # marked with the build that read it. "" reads with read_model itself.
+    read_via: str = ""
     # Learned trust (`trust.py`) chooses the OCR check's fixes and questions instead of
     # the fixed rule, asking at most this many questions per page.
     ocr_trust: bool = True
@@ -39,6 +43,7 @@ class Settings:
             check_model=os.environ.get("ROBO_CHECK_MODEL", defaults.check_model),
             ocr_model=os.environ.get("ROBO_OCR_MODEL", defaults.ocr_model),
             read_model=os.environ.get("ROBO_READ_MODEL", defaults.read_model),
+            read_via=os.environ.get("ROBO_READ_VIA", defaults.read_via),
             judge_model=os.environ.get("ROBO_JUDGE_MODEL", defaults.judge_model),
             ocr_trust=os.environ.get("ROBO_OCR_TRUST", "1") != "0",
             ocr_trust_model=os.environ.get("ROBO_OCR_TRUST_MODEL", defaults.ocr_trust_model),

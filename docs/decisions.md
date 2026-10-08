@@ -854,3 +854,9 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   3.5× faster, one invented opening quote); on Metro pp. 7–30 CER 23%: on 297 lines the
   layer has right it reads another line than the cropped one or adds invented text. Out,
   and the reason a candidate is confirmed on a second book before any switch.
+- 2026-10-08: `ROBO_READ_VIA`: a hosted build reads in place of the local read model,
+  its readings cached under the local model's name (so the bench and later runs reuse
+  them) and each line listed with the build that read it. The user's reasoning: hosted
+  bf16 reads like local nvfp4 (Goede dochter: CER 0.11% against 0.10%, no quote marks
+  wrong on either), so keeping them apart only costs re-reading; the marks keep the
+  provenance a plain rename would lose.

@@ -123,13 +123,16 @@ def line_readings(
     ollama_url: str,
     cache: Path,
     prompt: str = "",
+    via: str = "",
 ) -> dict[SourceRef, str]:
     """The OCR model's reading of each checked line's crop, cached on the line's text.
 
     With a `prompt`, a generative vision model reads it (`transcribe`); without, glm-ocr
     (`read_line`). Short lines are read too: "keek.’" ends dialogue, and that is where a
-    closing quote is lost."""
+    closing quote is lost. With `via`, another build of the same model reads the lines
+    still to read; they are cached under `model` and listed under `via` in the cache."""
     done: dict[str, str] = {}
+    read_by: dict[str, list[str]] = {}
     if cache.exists():
         raw = json.loads(cache.read_text())
         if (
@@ -138,6 +141,7 @@ def line_readings(
             and raw.get("prompt", "") == prompt
         ):
             done = raw["lines"]
+            read_by = raw.get("via", {})
 
     with pymupdf.open(pdf) as doc:
         boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
@@ -157,21 +161,26 @@ def line_readings(
 
     def save() -> None:
         blob = {"version": READING_VERSION, "model": model, "prompt": prompt, "lines": done}
+        if read_by:
+            blob["via"] = read_by
         write_atomic(cache, json.dumps(blob, ensure_ascii=False))
 
     # PyMuPDF isn't thread-safe: crops are rendered here, a batch at a time, and
     # only the model calls run in the pool.
-    workers = HOSTED_WORKERS if openrouter.hosted(model) else READ_WORKERS
+    reader = via or model
+    workers = HOSTED_WORKERS if openrouter.hosted(reader) else READ_WORKERS
     with pymupdf.open(pdf) as doc, ThreadPoolExecutor(workers) as pool:
         for start in range(0, len(todo), SAVE_EVERY):
             batch = todo[start : start + SAVE_EVERY]
             crops = [_line_crop(doc, page.number, boxes[page.number][k]) for page, k in batch]
             if prompt:
-                texts = pool.map(lambda png: transcribe(png, model, ollama_url, prompt), crops)
+                texts = pool.map(lambda png: transcribe(png, reader, ollama_url, prompt), crops)
             else:
-                texts = pool.map(lambda png: read_line(png, model, ollama_url), crops)
+                texts = pool.map(lambda png: read_line(png, reader, ollama_url), crops)
             for (page, k), text in zip(batch, texts, strict=True):
                 done[key(page, k)] = text
+                if via:
+                    read_by.setdefault(via, []).append(key(page, k))
             save()
     return {ref: done[key(p, k)] for ref, (p, k) in wanted.items()}
 

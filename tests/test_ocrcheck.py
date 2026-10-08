@@ -1,4 +1,9 @@
+import json
+
+import pymupdf
+
 from roboscriptorium import flags, ocrcheck, pdf
+from roboscriptorium.ir import SourceRef
 from roboscriptorium.ocrcheck import Suspect, differences
 from roboscriptorium.pdf import Line, PageText
 
@@ -348,3 +353,34 @@ def test_identical_lines_each_take_only_their_own_fix():
         "ja",
         "zon",
     ]
+
+
+def test_a_build_read_via_is_cached_under_the_models_name_and_marked(monkeypatch, tmp_path):
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=200)
+    for i, text in enumerate(["The first line of it", "and the second line"]):
+        page.insert_text((40, 60 + 18 * i), text, fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    pages = pdf.read_text_layer(tmp_path / "source.pdf")
+    checked = {SourceRef(1, k) for k in range(len(pages[0].lines))}
+    used = []
+
+    def read(png, model, url, prompt):
+        used.append(model)
+        return "read"
+
+    monkeypatch.setattr(ocrcheck, "transcribe", read)
+    cache = tmp_path / "third-reading.json"
+    hosted = "openrouter:qwen/qwen3.8-27b@deepinfra/bf16"
+    got = ocrcheck.line_readings(
+        tmp_path / "source.pdf", pages, checked, "qwen3.8:27b-nvfp4", "", cache, "Read.", hosted
+    )
+    assert set(used) == {hosted} and set(got.values()) == {"read"}
+    blob = json.loads(cache.read_text())
+    assert blob["model"] == "qwen3.8:27b-nvfp4"
+    assert sorted(blob["via"][hosted]) == sorted(blob["lines"])
+    used.clear()
+    ocrcheck.line_readings(
+        tmp_path / "source.pdf", pages, checked, "qwen3.8:27b-nvfp4", "", cache, "Read."
+    )
+    assert used == []  # the local model finds them cached
