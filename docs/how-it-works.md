@@ -30,31 +30,45 @@ Around this OCR check, other stages work out what each line is (body text, a
 heading, a page number), join lines into paragraphs, and set the typography the
 way the book was printed.
 
-## Two kinds of model
+## Who does what
 
-Every model call is one of two kinds.
+| Job | Who | Kind |
+| --- | --- | --- |
+| Find figures, captions and titles on the page image | DocLayout-YOLO | vision model |
+| Read a printed line the text layer lacks | glm-ocr | reader |
+| Decide what each doubtful line is (body, heading, page number…) | clef-flash:9b | decision model |
+| Read every body line again | glm-ocr, tesseract, qwen3.8 | readers |
+| Pick a version of each suspect | clef:27b, winnow:e4b, the word list | judges |
+| Fix, keep or ask about each suspect | the trust model | trees trained on golden books |
+| Answer what the machine is unsure of | you | reviewer |
 
-### Decision models
+### Readers write text
 
-A decision model answers a question whose options are fixed in advance, and gives
-a probability for each option. "Is this line body text, a heading or a page
-number?" "Which of these three versions does the crop show?" It writes no text, so
-there is no prose to parse.
+A reader looks at the scan and writes down the text it sees. glm-ocr and qwen3.8
+are generative models on Ollama, reading one line's crop at a time. tesseract is a
+classic OCR program, reading the whole page.
 
-These are winnow on Ollaya, and clef and clef-flash on Ollama's `/v1/systemone`.
+### Judges choose from a list
 
-### Generative models
+The AI judges are decision models. They answer a question whose options are
+fixed in advance, such as "which of these versions does the crop show?", and give
+a probability for each option. They write no text, so there is no prose to parse.
+clef runs on Ollama's `/v1/systemone` endpoint, winnow on Ollaya.
 
-A generative model writes new text: it reads a line crop, or a printed line the
-text layer lacks. These are glm-ocr and qwen3.8 on Ollama.
+The third judge, the word list, is plain code.
 
-### Choosing between them
+clef-flash, which decides line roles, is the same kind of decision model as the
+judges, asked a different question.
 
-If the answer comes from a list known beforehand, a decision model gives it.
+The rule behind this split: if the answer comes from a list known beforehand, a
+decision model gives it. Only a job that needs new text gets a reader.
 
-A model's confidence is a number it reports, and it can differ a lot from the
-chance that the model is right. So where a decision depends on it, the confidence
-is calibrated or learned from labelled data, as in *Learned trust* below.
+### The trust model weighs them
+
+A judge's confidence is a number it reports, and it can differ a lot from the
+chance that the judge is right. So the trust model doesn't take any judge's word.
+It learns from labelled books how far to believe each reader and judge, for each
+kind of difference.
 
 ### Local first
 
