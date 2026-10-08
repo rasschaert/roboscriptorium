@@ -825,3 +825,8 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   transcription; its silence on deliberate oddities is measured on a counterexample set
   first; `bench` scores it as a question source and reports the share of flags on text
   that already matches the reference.
+- 2026-10-08: qwen3.6:35b-a3b-nvfp4 (MoE, 3B active) as the line reader on Goede
+  dochter pp. 9–20, the pipeline's prompt: 0.37 s a line, but it takes the style
+  sentence ("dialogue in curly quotes ‘ ’") as an order and wraps narration in quotes
+  (‘Twintig meter. Vijftien. Tien.’): quote marks wrong on 94 of 324 lines, CER 0.67%.
+  Out: an invented mark is the worst failure for this job.

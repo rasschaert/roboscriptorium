@@ -117,8 +117,11 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       like ours, Darkbloom fp4 worse. Not used: only when the **user** says so
 - [x] gemma4:latest (8B) as the line reader: 4.5× faster, worse (quote marks wrong on
       4 lines against 0). Unfit
-- [ ] qwen3.6:35b-a3b-nvfp4 (MoE, 3B active) and gemma4:26b-nvfp4 (MoE, 4B active) as
-      the line reader, same pages: ~10 min each once downloaded; Artemis waits on them.
+- [x] qwen3.6:35b-a3b-nvfp4 (MoE, 3B active): 0.37 s a line, but it reads the style
+      sentence as an order and wraps plain narration in quote marks (94 lines wrong,
+      CER 0.67%). Out
+- [ ] gemma4:26b-nvfp4 (MoE, 4B active) as the line reader, same pages: ~10 min once
+      downloaded; Artemis waits on it. Then, if it fails too, MiniCPM-V 4.6 (May 2026).
       Decided before the results: switch only if ≥ 3× faster **and** no worse (quote marks
       wrong on no more lines than Qwen3.8's, CER within a few lines of it), confirmed on a
       second book (Metro, English) before the switch; better but not faster: noted, no
