@@ -722,3 +722,18 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   retiring it. The signals that need no verdicts are the layer's CER against the
   reference and the share of body lines the aligner can't place; the bench is to
   print both per book (checklist).
+- 2026-10-08: **Metro 2033** (Gollancz 2010, transl. Randall; IA Scribe scan of the
+  fifth impression against Gollancz's eBook) joins `bench tuning` as the second
+  modern English scan, sliced to chapters 1–5 (pages 7–111): the text layer agrees
+  with the EPUB at 0.32% CER, every frequent difference a convention (spaced
+  hyphens for dashes, spaced ellipses, single quotes) or an OCR slip. The line-role
+  classifier wanted more English books.
+- 2026-10-08: A golden pair's known deviations are tracked in three places and no
+  other:
+  the manifest (`hyphen_dash`, undone by derive and listed in PROVENANCE.md), the
+  scorer's fold (quote and dash glyphs, an ellipsis glyph or spaced dots, joiners),
+  and verdicts. The fold now covers spaced dots (". . .", which Gollancz prints and
+  the layer reads both ways) and is counted per kind on each side: `eval` prints
+  what it forgave, so a convention gap skews a score visibly, not silently. The
+  ellipsis's spacing itself belongs with the dash style in `typography.py`, measured
+  on the page like the dashes; a checklist step.

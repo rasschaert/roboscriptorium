@@ -490,6 +490,16 @@ def _evaluate_book(
             f"recall {result.italic_recall:.3f} "
             f"({result.italic_output} out / {result.italic_expected} reference)"
         )
+    folded = {
+        k: (result.folded_output.get(k, 0), v)
+        for k, v in result.folded_reference.items()
+        if v or result.folded_output.get(k)
+    }
+    if folded:
+        typer.echo(
+            "  typography folded before scoring (output / reference): "
+            + ", ".join(f"{k} {o}/{r}" for k, (o, r) in folded.items())
+        )
     if verdicts.by_key:
         text_layer = cached_text_layer(book.source, book.stages / "textlayer.json")
         mistakes = Counter(

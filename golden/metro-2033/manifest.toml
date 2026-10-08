@@ -1,0 +1,35 @@
+title = "Metro 2033"
+author = "Dmitry Glukhovsky"
+language = "en"
+# Glukhovsky and his translator Natasha Randall are alive: under copyright, so
+# only this manifest is in git.
+eu_copyright_until = 2200
+
+# Gollancz's own eBook (first published 2010, eISBN 978 0 575 08626 5, produced
+# by Jouve). One file per chapter; the chapter label ("CHAPTER 1") is a "ct"
+# div and its title a "cst" div, so each chapter is two headings; paragraphs are
+# "tx" divs, italics <i>. Dashes are spaced hyphens where the print has spaced
+# en dashes (`hyphen_dash`); ellipses are spaced dots (". . .") in both.
+[reference]
+source = "Metro 2033, Gollancz 2010, transl. Natasha Randall, eISBN 9780575086265 (EPUB)"
+sha256 = "1698a7a11a34fe1c88a3cf4d754c1307b056ae9c857417d7dd61c40cd18e81ea"
+files = [
+  "dmit_9780575086265_oeb_c01_r1.html", "dmit_9780575086265_oeb_c02_r1.html", "dmit_9780575086265_oeb_c03_r1.html", "dmit_9780575086265_oeb_c04_r1.html", "dmit_9780575086265_oeb_c05_r1.html", "dmit_9780575086265_oeb_c06_r1.html", "dmit_9780575086265_oeb_c07_r1.html", "dmit_9780575086265_oeb_c08_r1.html", "dmit_9780575086265_oeb_c09_r1.html", "dmit_9780575086265_oeb_c10_r1.html", "dmit_9780575086265_oeb_c11_r1.html", "dmit_9780575086265_oeb_c12_r1.html", "dmit_9780575086265_oeb_c13_r1.html", "dmit_9780575086265_oeb_c14_r1.html", "dmit_9780575086265_oeb_c15_r1.html", "dmit_9780575086265_oeb_c16_r1.html", "dmit_9780575086265_oeb_c17_r1.html", "dmit_9780575086265_oeb_c18_r1.html", "dmit_9780575086265_oeb_c19_r1.html", "dmit_9780575086265_oeb_c20_r1.html"
+]
+heading_prefixes = ["ct", "cst"]
+hyphen_dash = "–"
+
+# The trade paperback (ISBN 978 0 575 08624 1), fifth impression of the 2010
+# edition (printer's key "5 7 9 10 8 6"), typeset by The Spartan Press: one
+# impression later than the eBook's text, so a correction between them would
+# show as an edition difference. IA Scribe scan (2022), 360 ppi MRC,
+# GlyphLessFont layer, 374×629 pt. Pages 7–464: chapter 1 to the end of
+# chapter 20; a metro map, the copyright page and an epigraph before, the
+# map again and the back cover after. Internet Archive lends it only, so it
+# is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/ison_9780575086241 (borrow, then download the PDF)"
+sha256 = "025c46c1e1fa1f3493eba420fbff424c342cd89548874dd5415a225912c12c9b"
+cover_page = 1
+body_pages = [7, 464]

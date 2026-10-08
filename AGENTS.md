@@ -182,7 +182,10 @@ right, then expand.
     `reference.py` (reads the reference chapters, with their italic words),
     `notes.py` (a reference's footnotes, `notes.txt` from the manifest's
     `note_classes`: the scan's footnote lines are left out of every score).
-  - `evaluate.py`: CER, WER and paragraph F1 against a golden reference.
+  - `evaluate.py`: CER, WER and paragraph F1 against a golden reference. Typography
+    the EPUB may set differently (quote and dash glyphs, an ellipsis glyph or spaced
+    dots, joiners) is folded on both sides and counted per side (`folded_*`, printed
+    by `eval`), so a pair's convention gap is visible, not silent.
   - `disagreements.py`: where output and reference differ, located on the scan;
     clearly garbled output and whitespace-only differences are auto-resolved.
     Verdicts (what the scan prints, plus a mistake category) are stored per scan
@@ -524,12 +527,21 @@ and `standard-ebooks/` (SE's text, see below).
   (Stella's format); skip calibre-made PDFs, other printings, DRM and pre-1934
   spelling. An EPUB that sets its dashes as spaced hyphens gets
   `hyphen_dash = "–"` in `[reference]`, which derive sets as the print's dash.
+- **Known deviations.** No publisher's EPUB matches its print in every
+  convention. Each known deviation of a pair is handled in one of three places,
+  and nowhere else: a gap derive can undo is declared in the manifest's `[reference]`
+  (`hyphen_dash`) and listed in PROVENANCE.md; a glyph choice the output may
+  make differently is folded by `evaluate.normalise` and counted per side, so
+  `eval` prints how much it forgave; what neither covers (a corrected word, a
+  later impression) is settled by a verdict. A deviation that lives only in a
+  comment or in this table is untracked: move it to one of the three.
 - **Retiring a book.** A reference can stop being one: when a book's remaining
   disagreements are mostly edition differences, or its verdict backlog never
   shrinks, its score measures the edition, not the pipeline. Two signals need no
   verdicts: the text layer's CER against the reference and the share of its body
   lines the aligner can't place (both printed by `probe_candidate.py`; the bench
-  is to print them per book). Past about three times the layer's usual rate, or
+  is to print them per book), and `eval`'s fold counts where the two sides
+  differ. Past about three times the layer's usual rate, or
   one body line in twenty unplaced, the book is suspect. **Whoever notices says
   so in the session's report and proposes retiring it, without being asked.**
   Retired books go to `work/retired/`, with a dated line in docs/decisions.md.
@@ -587,4 +599,5 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
 | the-thief-takers-apprentice | `ia-scan` | **The first modern English scan**: Deas, Gollancz first edition 2010; reference Gollancz's eBook of the edition (via calibre). An older IA PDF: 300 ppi, LuraDocument, **InvisibleOCR** text layer (`pdf.py` reads it). Pages 11–292; three parts ("PART ONE" / "THE THIEF-TAKER") and 42 chapters (number line, name line), each label and title a heading (90); a large first letter on each chapter. Its layer drops some apostrophes and splits the word (`didn t`, `I m`). Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | afscheid-van-verspilde-tijd | `ia-scan` | **Tuning.** Dutch translation (Wijkmark, Elke Schütt), Uitgeverij de Rode Kamer, first printing 2011; IA Scribe scan in Stella's format, 132 pages; reference the publisher's own ebook (via calibre), whose dashes are spaced hyphens (`hyphen_dash`). Pages 9–124, 23 bare-numeral chapter headings, some of which the layer lacks; a Times-like face, spaced en dashes, specks read as characters. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | het-geluid-van-bananen | `ia-scan` | **The test set: score nothing on it until the end (`--score-test`).** Dutch translation (Temelkuran, Margreet Dorleijn), **Van Gennep, Stella's publisher**, first printing 2013; IA Scribe scan in Stella's format, 328 pages, a library copy with stamps and a catalogue slip; reference Van Gennep's EPUB "naar de eerste druk", set like Reis's. Pages 9–323: three part pages, 28 numbered chapters, 26 footnotes in `notes.txt`, "* * *" scene breaks. Seen in the text layer alone: ç read as g (Tunç), dotless ı, superscript ordinals as °, single quotes as doubles, small chapter numerals missing or "Io". Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| metro-2033 | `ia-scan` | **Tuning**, the second modern English scan: Glukhovsky, transl. Natasha Randall, **Gollancz 2010 like Thief-Taker**; IA Scribe scan (2022) of the trade paperback's fifth impression, 468 pages, 374×629 pt; reference Gollancz's eBook of the same year (one impression earlier). Pages 7–464, 20 chapters, each a label line ("CHAPTER 1", spaced sans capitals) and a title (40 headings); `<i>` italics. Typeset by The Spartan Press: spaced en dashes (the EPUB's spaced hyphens, `hyphen_dash`), spaced ellipses ". . ." in print and EPUB alike (the layer reads them both ways), single quotes read as doubles, "I" read as "|", "1" or "P" (`Pll`). Bench slice pages 7–111, chapters 1–5 (sections 1–10). Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | het-ivoren-aapje (**retired as a bench**) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py`. **No longer used to choose OCR models**: pre-1934 spelling, unlike every book we target; re-bench on modern Dutch line crops instead |

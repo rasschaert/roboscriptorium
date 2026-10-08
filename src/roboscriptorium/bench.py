@@ -35,6 +35,7 @@ SETS = {
         "the-story-of-doctor-dolittle--stokes-1920",
         "the-thief-takers-apprentice--ia-scan",
         "afscheid-van-verspilde-tijd--ia-scan",
+        "metro-2033--ia-scan:7-111:1-10",
     ],
     "validation": [
         "de-tuin-van-de-avondnevel--ia-scan:11-52:1-3",

@@ -2,8 +2,10 @@
 
 Metrics:
 - CER: character edits per reference character, after folding typography the
-  EPUB is free to choose (quote, dash and ellipsis glyphs, word joiners,
-  whitespace).
+  EPUB is free to choose (quote and dash glyphs, an ellipsis glyph or spaced
+  dots, word joiners, whitespace). `folded_reference` and `folded_output` count
+  each kind on each side: what the fold forgave, so a pair whose EPUB and scan
+  differ in convention shows it instead of hiding it.
 - WER: word edits per reference word, comparing lowercase letters and digits only,
   so it measures reading errors and ignores punctuation.
 - Paragraph F1: whether paragraph breaks fall where the reference has them.
@@ -39,11 +41,25 @@ _FOLD = str.maketrans(
         "…": "...",
     }
 )
+_SPACED_DOTS = re.compile(r"\.(?: \.){2,}")
+# What `normalise` folds, by kind, for counting.
+_FOLD_KINDS = {
+    "quotes": re.compile("[‘’“”]"),
+    "dashes": re.compile("[–―]"),
+    "ellipses": re.compile(r"…|\.(?: \.){2,}"),
+    "spaces": re.compile("[\u2060\ufeff\u00a0]"),
+}
 
 
 def normalise(text: str) -> str:
     text = unicodedata.normalize("NFC", text).translate(_FOLD)
+    text = _SPACED_DOTS.sub(lambda m: m.group(0).replace(" ", ""), text)
     return re.sub(r"\s+", " ", text).strip()
+
+
+def folds(texts: list[str]) -> dict[str, int]:
+    """How often each kind of typography `normalise` folds occurs in `texts`."""
+    return {kind: sum(len(rx.findall(t)) for t in texts) for kind, rx in _FOLD_KINDS.items()}
 
 
 def _bare_words(text: str) -> list[str]:
@@ -66,6 +82,9 @@ class Score:
     italic_precision: float = 0.0
     italic_recall: float = 0.0
     confusions: list[tuple[str, str, int]] = field(default_factory=list)
+    # Per kind, how much typography the fold forgave on each side.
+    folded_reference: dict[str, int] = field(default_factory=dict)
+    folded_output: dict[str, int] = field(default_factory=dict)
 
     @property
     def paragraph_f1(self) -> float:
@@ -184,4 +203,6 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         italic_precision=len(hit_italic) / len(out_italic) if out_italic else 0.0,
         italic_recall=len(hit_italic) / len(ref_italic) if ref_italic else 0.0,
         confusions=[(got, want, n) for (got, want), n in confusions.most_common(top)],
+        folded_reference=folds(ref_paragraphs),
+        folded_output=folds([b.text for b in doc.paragraphs]),
     )
