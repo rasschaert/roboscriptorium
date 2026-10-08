@@ -1,9 +1,12 @@
 # Roboscriptorium
 
-Turns books that aren't EPUBs into clean EPUBs, automated as far as possible and
-running entirely on local AI (generative models on Ollama; decision models on Ollaya
-and Ollama's systemone endpoint). Scanned PDFs
-come first.
+Turns a book's PDF into a clean EPUB 3, automated as far as possible and running
+entirely on local AI (generative models on Ollama; decision models on Ollaya and
+Ollama's systemone endpoint).
+
+It takes searchable PDFs (a scan with an OCR text layer, as the Internet Archive
+makes them) and born-digital ones (made from the typeset text). Image-only scans,
+without a text layer, aren't supported yet.
 
 ![From PDF to EPUB: the stages and the model behind each](docs/pipeline.svg)
 

@@ -41,3 +41,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | trust data, the-story-of-doctor-dolittle--stokes-1920, re-read of new crops (Qwen via hosted), alongside other runs | 180 | 3 | 0 |
 | 2026-10-08 | trust data, Afscheid pp. 9-70, resumed after a GPU out-of-memory, Qwen via hosted, alongside 2 runs | 62 | 18 | 0 |
 | 2026-10-08 | trust data, metro-2033--ia-scan, re-read of new crops (Qwen via hosted), alongside other runs | 105 | 34 | 0 |
+| 2026-10-08 | trust data, Reis pp. 11-110, Qwen via hosted, alongside 2 runs | 100 | 46 | 0 |
