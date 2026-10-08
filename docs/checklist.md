@@ -118,7 +118,11 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [x] gemma4:latest (8B) as the line reader: 4.5× faster, worse (quote marks wrong on
       4 lines against 0). Unfit
 - [ ] qwen3.6:35b-a3b-nvfp4 (MoE, 3B active) and gemma4:26b-nvfp4 (MoE, 4B active) as
-      the line reader, same pages: ~10 min each once downloaded; Artemis waits on them
+      the line reader, same pages: ~10 min each once downloaded; Artemis waits on them.
+      Decided before the results: switch only if ≥ 3× faster **and** no worse (quote marks
+      wrong on no more lines than Qwen3.8's, CER within a few lines of it), confirmed on a
+      second book (Metro, English) before the switch; better but not faster: noted, no
+      switch; faster but worse: out
 - [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:
       after the baseline bench, each measured by it
 
