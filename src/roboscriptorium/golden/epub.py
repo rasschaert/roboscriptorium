@@ -33,8 +33,8 @@ BLOCK_TAGS = {f"{XHTML}p", f"{XHTML}div"}
 # A note's link back to the text, after its marker: "* – [terug]", "[1.] – [terug]".
 _BACK_LINK = re.compile(r"^\[?(\*+|\d+)\.?\]?\s*–\s*\[[^\]]*\]")
 _NOTE_LINK = re.compile(r"\[(\*+|\d+)\]")
-# After a word and before a space or the paragraph's end ("kwam -", an interrupted sentence).
-_SPACED_HYPHEN = re.compile(r"(?<=\S) -(?= |$)")
+# Between words, at a paragraph's end ("kwam -", an interruption) or at its start ("- Denk na!").
+_SPACED_HYPHEN = re.compile(r"(?<=\S) -(?= |$)|^- (?=\S)")
 _XML_ENTITIES = {"amp", "lt", "gt", "quot", "apos"}
 
 
@@ -134,7 +134,7 @@ def read(
                     text = ITALIC_START + text + ITALIC_END
                 text = _clean(text)
                 if hyphen_dash:
-                    text = _SPACED_HYPHEN.sub(f" {hyphen_dash} ", text)
+                    text = _SPACED_HYPHEN.sub(lambda m: m.group(0).replace("-", hyphen_dash), text)
                 if notes:
                     text = _NOTE_LINK.sub(r"\1", text)
                 if not unmarked(text).strip():
