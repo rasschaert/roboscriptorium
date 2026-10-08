@@ -35,3 +35,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | trust data, 11/22/63 pp. 15-94, resumed (line roles partly cached), Qwen via hosted, alongside 2 runs | 80 | 35 | 1 |
 | 2026-10-08 | trust data, the-nature-of-a-crime--doubleday-1924, re-read of new crops (Qwen via hosted), alongside other runs | 94 | 35 | 1 |
 | 2026-10-08 | trust data, the-nature-of-a-crime--doubleday-1924, re-read of new crops (Qwen via hosted), alongside other runs | 94 | 6 | 0 |
+| 2026-10-08 | trust data, 11/22/63 pp. 15-94, resumed after an Ollama stall, Qwen via hosted, alongside 1 run | 80 | 46 | 0 |

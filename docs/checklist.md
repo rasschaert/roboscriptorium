@@ -65,12 +65,19 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
 
 - [x] Artemis, pp. 13–80: 63 min, Qwen via hosted, beside other runs (317 suspects, 273
       settled, layer wrong on 207: its `|` for I; clef right on 87%, winnow 83%)
-- [ ] 11/22/63, pp. 15–94 (tuning): ~1.5 h cold. Stopped after 14 min by a local call
-      timing out with five jobs on Ollama; resumes (its line roles are cached) when a lane
-      frees. At most three pipelines at once, re-reads included. **Running** again
+- [x] 11/22/63, pp. 15–94: 14 + 35 + 46 min over three runs (Ollama stalls), Qwen via
+      hosted (357 suspects, 319 settled, layer wrong on 188: its I read as T or |; clef
+      right on 86%, winnow 73%, and right on 31 of clef's 46 misses). At most three
+      pipelines at once, re-reads included
 - [x] De cipier, pp. 9–92, Qwen via hosted, beside other runs (429 suspects, 327 settled,
       layer wrong on 97; clef right on 94%, winnow 52%)
 - [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold. **Running**, Qwen via hosted
+- [x] Hosted clef as the judge, measured before any use (user's go, criteria fixed
+      first: same pick ≥ 97%, no fewer right, median confidence shift < 0.05), Goede
+      dochter's 419 suspects (`experiments/probe_hosted_judge.py`): PrimeIntellect's
+      build hardly reads the image (70% same pick, right on 275 of 377 against local's
+      352); Cloudflare's 96.2% same, 348 right, shift 0.063. **Fails all three: clef stays
+      local.** The client stays (`ROBO_JUDGE_VIA`), for a later build
 - [ ] Reis om mijn schedel, pp. 11–110 (tuning): ~1.8 h cold. Its data from before Qwen
       must not be trained on until then (it has no Qwen support)
 - [ ] De eerlijke vinder, pp. 12–95 (validation, held out): ~1.5 h cold

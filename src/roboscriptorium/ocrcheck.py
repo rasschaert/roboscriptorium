@@ -444,7 +444,7 @@ def check(
     pages: list[PageText],
     readings: dict[str, dict[SourceRef, str]],
     lang: str,
-    vision: OllayaClient,
+    vision: OllayaClient | ollaya.HostedClient,
     reader: OllayaClient,
     cache: DecisionCache,
     lexicon: Lexicon | None = None,
@@ -712,12 +712,20 @@ def _typographic(versions: list[str]) -> bool:
     return len({words(v) for v in versions}) == 1
 
 
-def _ask(client: OllayaClient, cache: DecisionCache, state: dict, questions: dict, image=None):
+def _ask(
+    client: OllayaClient | ollaya.HostedClient,
+    cache: DecisionCache,
+    state: dict,
+    questions: dict,
+    image=None,
+):
     key = DecisionCache.key(client.model, questions, state)
     answer = cache.get(key)
     if answer is None:
         a = client.decide(state, questions, image_png=image() if image else None)["reading"]
         answer = {"value": a.value, "confidence": a.confidence}
+        if via := getattr(client, "via", ""):
+            answer["via"] = via
         cache.put(key, answer)
     return answer
 

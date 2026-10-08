@@ -945,3 +945,12 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   Crime 774 against 752. What hurt the readers was reading the whole next line, which
   the box crop already prevents. The box crop's own re-read on Crime is neutral
   (glm-ocr 758 → 755, Qwen 774 → 770, worse on the models' habits, not the crop).
+- 2026-10-08: Hosted clef (OpenRouter `cloudflare/clef`) is not used as the OCR check's
+  judge. Measured against local clef:27b (nvfp4) on Goede dochter pp. 9–64's 419 cached
+  suspects, the same states, questions and crops, against criteria fixed first (same
+  pick on ≥ 97%, no fewer right on the settled ones, median confidence shift under 0.05,
+  since trust uses the confidence): PrimeIntellect's endpoint barely reads the image
+  (69.9% same pick, 275 of 377 right against 352; it picks a made-up line over the
+  printed one), Cloudflare's comes close but fails all three (96.2%, 348 of 377, shift
+  0.063, 90th percentile 0.150). `ROBO_JUDGE_VIA` and `ollaya.HostedClient` stay for a
+  later build; the decisions API takes the image inside `state`.

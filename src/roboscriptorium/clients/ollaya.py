@@ -13,6 +13,7 @@ from typing import Any
 
 import httpx
 
+from roboscriptorium.clients import openrouter
 from roboscriptorium.clients.retry import patiently
 
 # Decision models with these name prefixes are served by Ollama's /v1/systemone.
@@ -92,8 +93,36 @@ class OllayaClient:
         return {name: Answer.from_json(a) for name, a in resp.json()["answers"].items()}
 
 
-def for_model(model: str, ollaya_url: str, ollama_url: str) -> OllayaClient:
-    """A client on whichever runtime serves this decision model."""
+class HostedClient:
+    """A local decision model's questions answered by a hosted build of it (`via`,
+    `openrouter:<model>@<provider tag>`), under the local model's name, so the
+    answers cache as the local model's."""
+
+    def __init__(self, model: str, via: str, client: httpx.Client | None = None):
+        self.model = model
+        self.via = via
+        self._http = client or httpx.Client(timeout=300)
+
+    def decide(
+        self,
+        state: str | dict[str, Any],
+        questions: dict[str, dict[str, Any]],
+        model: str | None = None,
+        image_png: bytes | None = None,
+    ) -> dict[str, Answer]:
+        if not isinstance(state, str):
+            state = json.dumps(state, ensure_ascii=False)
+        answers = openrouter.decide(self.via, state, questions, image_png, self._http)
+        return {name: Answer.from_json(a) for name, a in answers.items()}
+
+
+def for_model(
+    model: str, ollaya_url: str, ollama_url: str, via: str = ""
+) -> "OllayaClient | HostedClient":
+    """A client on whichever runtime serves this decision model, or on its hosted
+    build `via`."""
+    if via:
+        return HostedClient(model, via)
     if model.startswith(OLLAMA_PREFIXES):
         return OllayaClient(ollama_url, model, endpoint="/v1/systemone")
     return OllayaClient(ollaya_url, model)

@@ -139,7 +139,9 @@ def run(
                     read_prompt(book, body, style),
                     settings.read_via,
                 )
-            judge = ollaya.for_model(settings.judge_model, settings.ollaya_url, settings.ollama_url)
+            judge = ollaya.for_model(
+                settings.judge_model, settings.ollaya_url, settings.ollama_url, settings.judge_via
+            )
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, body, style),

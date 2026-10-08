@@ -158,7 +158,9 @@ right, then expand.
     its readings cache under its own name; as `ROBO_READ_VIA`
     (`openrouter:qwen/qwen3.8-27b@deepinfra/bf16`) it reads in place of the local
     `read_model`, its readings cached under the local name and each listed under `via`
-    in the cache, so a later local run reuses them and a reader can tell them apart. `experiments/probe_line_reader.py`
+    in the cache, so a later local run reuses them and a reader can tell them apart. A
+    decision model's hosted build answers through `ollaya.HostedClient` (`ROBO_JUDGE_VIA`
+    for the judge), its answers cached under the local name with `via`. `experiments/probe_line_reader.py`
     compares it with the local readings of a book.
   - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
   - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages.
@@ -437,7 +439,7 @@ schedel before choosing an OCR model.
 | Ollama | `deepseek-ocr:3b` | OCR candidate | Teirlinck 12 pages: CER 0.37% but **modernises** 10× (`vóor→vóór`, `éen→één`, `streelend→strelend`) and keeps line-end hyphens. ~9 s/page. Prompt `Free OCR.`; the grounding/markdown prompt loops |
 | Ollama | `numind/nuextract3:q6_k` | **Metadata candidate**: front pages in, a filled JSON template out | Stella, Lady into Fox, Crime: all fields right, 4–10 s per book, given **all** front pages as images and an instruction to ignore stamps and handwriting and to describe this edition (without it: Stella's original publisher, an owner's inscription as author, a library barcode as ISBN). Read Crime's title page, which the text layer lacks, verbatim ("FORD MADOX FORD"). `experiments/probe_metadata.py` |
 | Ollama | `numind/nuextract3` (BF16 safetensors, `latest`) | — | **Broken under Ollama 0.40**: gibberish from images and text alike. Use the GGUF `q6_k` tag |
-| Ollama | `clef:27b` | **OCR-check judge (in use, `judge_model`)** | OCR suspects (Dolittle pp. 30–49, glm-ocr readings): 54/55 right; confident (≥ 0.8) on 46, all right, where clef-flash was confident on 16. ~3.4 s per suspect under load. **Worse at line roles**: Crime CER 0.63% → 0.98%, paragraph precision 0.966 → 0.695 (keeps page numbers, splits paragraphs), so clef-flash keeps that job |
+| Ollama | `clef:27b` | **OCR-check judge (in use, `judge_model`)** | OCR suspects (Dolittle pp. 30–49, glm-ocr readings): 54/55 right; hosted builds (OpenRouter `cloudflare/clef`, Goede dochter's 419 suspects) judge differently: Cloudflare 96.2% the same pick, 348 of 377 right against local's 352; PrimeIntellect hardly reads the image (275), so neither replaces it; confident (≥ 0.8) on 46, all right, where clef-flash was confident on 16. ~3.4 s per suspect under load. **Worse at line roles**: Crime CER 0.63% → 0.98%, paragraph precision 0.966 → 0.695 (keeps page numbers, splits paragraphs), so clef-flash keeps that job |
 | Ollama | `translategemma:4b` | Tried as Dutch→Dutch OCR | **Unfit**: with its translation prompt it paraphrases (`hief`→`heeft`, `trillend opwiegelen`→`trilde omhoog`) and modernises, CER 4.9% on one page; any other prompt gives empty output |
 | Ollama | `translategemma:12b` | Tried as Dutch→Dutch OCR | **Unfit**: its translation prompt hallucinates a scene description; with the old-spelling prompt it transcribes at ~1.4% CER (worse than gemma4 and tesseract), modernises 12×, and loops on one page of 12 (Ollama aborts: "token repeat limit reached"). ~14 s/page |
 | Ollama | `translategemma:27b` | Tried as Dutch→Dutch OCR | **Unfit**: old-spelling prompt, Teirlinck 12 pages: CER 0.99% (gemma4 0.63%), word swaps (`eenvoud→eenvoudig`, `onschuld→onschuldig`), 11 accent/spelling changes. Merged with tesseract it stays at 0.99% with 11 wrong words unflagged. ~30 s/page |
