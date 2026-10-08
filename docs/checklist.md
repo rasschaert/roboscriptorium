@@ -72,9 +72,9 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
       pipelines at once, re-reads included
 - [x] De cipier, pp. 9–92, Qwen via hosted, beside other runs (429 suspects, 327 settled,
       layer wrong on 97; clef right on 94%, winnow 52%)
-- [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold. Stopped after 40 min
-      when a probe beside three runs ran the GPU out of memory; **running** again, Qwen
-      via hosted
+- [x] Afscheid van verspilde tijd, pp. 9–70 (tuning): 40 + 18 min, Qwen via hosted
+      (stopped once when a probe beside three runs ran the GPU out of memory). 266
+      suspects, 240 settled, layer wrong on 88
 - [x] Hosted clef as the judge, measured before any use (user's go, criteria fixed
       first: same pick ≥ 97%, no fewer right, median confidence shift < 0.05), Goede
       dochter's 419 suspects (`experiments/probe_hosted_judge.py`): PrimeIntellect's
@@ -83,7 +83,8 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
       local.** The client stays (`ROBO_JUDGE_VIA`), for a later build
 - [ ] Reis om mijn schedel, pp. 11–110 (tuning, **running**): ~1 h with Qwen via hosted. Its data from before Qwen
       must not be trained on until then (it has no Qwen support)
-- [ ] De eerlijke vinder, pp. 12–95 (validation, held out): ~1.5 h cold
+- [ ] De eerlijke vinder, pp. 12–95 (validation, held out, **running**): ~1.5 h cold,
+      Qwen via hosted
 - [ ] You're Never Weird on the Internet, pp. 13–94 (validation, held out): ~1.6 h cold
 
 ## 2b. New golden pairs (Fable's session, ended; its steps are this session's now)
