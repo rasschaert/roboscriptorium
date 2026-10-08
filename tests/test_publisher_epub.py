@@ -139,3 +139,23 @@ def test_a_bracketed_note_marker_and_its_back_link_are_stripped(tmp_path):
     )
     assert [unmarked(p) for p in section.paragraphs] == ["Na de Hotelgevechten1 dan."]
     assert notes == ["1 Een van de eerste."]
+
+
+def test_a_heading_set_as_an_image_reads_its_alt_text(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<h2><img alt="Chapter Header, Chapter 2" src="x.jpg"/></h2><p>Armstrong sucks.</p>'
+                '<h2><img alt="ornament" src="y.jpg"/></h2><p>Still chapter 2.</p>'
+            ),
+        )
+    (section,) = publisher_epub.read(
+        epub, ["Text/a.html"], image_heading=r"Chapter Header, Chapter (\d+)"
+    )
+    assert (section.full_heading, section.paragraphs) == (
+        "2",
+        ["Armstrong sucks.", "Still chapter 2."],
+    )
+    assert publisher_epub.read(epub, ["Text/a.html"]) == []

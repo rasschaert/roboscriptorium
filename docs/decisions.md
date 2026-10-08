@@ -760,3 +760,10 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   Afscheid 9–70 (chapters 1–11), and the test book 9–101 (Boek 3, chapters 1–9).
   Tuning drops from 1,212 to 675 scanned pages, about 12 h cold instead of 22;
   the test from 315 to 93. Trust data already built on whole books is kept.
+- 2026-10-08: **Artemis** (Del Rey UK paperback 2018 against Penguin's 2026 e-book of
+  the same UK text) joins `bench tuning` as the third modern English scan, sliced to
+  chapters 1–3 (pages 13–80). The layer agrees at 0.44% CER, nearly all of it the
+  sans-serif "I" read as a bar and dropped apostrophes; one known deviation, a name
+  the reissue changed (Vetrov), goes to verdicts. Its chapter numbers are images in
+  the EPUB: `image_heading` in the manifest takes the heading from the image's alt
+  text, so the reference has the "2" the print draws in a circle.

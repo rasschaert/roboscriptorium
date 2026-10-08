@@ -51,6 +51,9 @@ class PublisherEpub:
     note_classes: frozenset[str] = frozenset()  # footnotes, kept apart from the text
     # The print's dash where the EPUB sets a spaced hyphen-minus ("" keeps the hyphen).
     hyphen_dash: str = ""
+    # A heading set as an image: a regex on the image's alt text whose group 1 is the
+    # heading as printed ("Chapter Header, Chapter (\\d+)" gives "2").
+    image_heading: str = ""
 
 
 @dataclass(frozen=True)
@@ -130,6 +133,7 @@ class Golden:
                 frozenset(ref.get("blank_classes", ())),
                 frozenset(ref.get("note_classes", ())),
                 ref.get("hyphen_dash", ""),
+                ref.get("image_heading", ""),
             )
         )
         se = data.get("standard_ebooks")

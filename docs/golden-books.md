@@ -13,6 +13,7 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 | Book | Set | Pages body / scored | Words | Cold | Layer CER | Bare-word | Unplaced | Headings | Declared | Eval CER / WER |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | afscheid-van-verspilde-tijd | tuning | 116 / 62 | 37430 | 1.1 h | 0.17% | 0.12% | 11.2% | 9 / 11 | hyphen_dash | none yet |
+| artemis | tuning | 305 / 68 | 87544 | 1.2 h | 0.37% | 0.97% | 3.1% | 0 / 3 | none | none yet |
 | de-aanslag | reserve | 169 / 169 | 55729 | minutes | 0.17% | 0.43% | 0.0% | 31 / 26 | none | 0.14% / 0.14% |
 | de-cipier | tuning | 474 / 84 | 158385 | 1.5 h | 0.19% | 0.34% | 2.7% | 2 / 4 | none | none yet |
 | de-eerlijke-vinder | reserve | 84 / 84 | 23802 | 1.5 h | 0.32% | 0.34% | 0.3% | 0 / 4 | none | none yet |

@@ -106,6 +106,7 @@ def golden_derive(name: str, epub: Path | None = None) -> None:
             ref.blank_classes,
             ref.note_classes,
             hyphen_dash=ref.hyphen_dash,
+            image_heading=ref.image_heading,
         )
     else:
         epub = epub or gutenberg.download(

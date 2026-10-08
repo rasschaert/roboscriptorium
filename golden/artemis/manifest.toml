@@ -1,0 +1,34 @@
+title = "Artemis"
+author = "Andy Weir"
+language = "en"
+# Weir is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Penguin Books' 2026 e-book of the UK text (ISBN 978 1 473 58231 6; "First
+# published in paperback by Del Rey 2018"), one reissue later than the scan.
+# Known deviation: it writes "Vetrov" where the print has "Vetrova" (4 times);
+# verdicts settle those. Chapter numbers are images ("Chapter Header, Chapter
+# 2"), read through `image_heading`; italics <em>; the emails between
+# chapters are "sans" paragraphs.
+[reference]
+source = "Artemis, Penguin Books 2026 (UK text, first Del Rey 2017), ISBN 9781473582316 (EPUB)"
+sha256 = "8a31de2af3318e90fbce612f72c71fe9dfe61c990efa72aa0e90f2f48961a7ab"
+files = [
+  "xhtml/chapter01.xhtml", "xhtml/chapter02.xhtml", "xhtml/chapter03.xhtml", "xhtml/chapter04.xhtml", "xhtml/chapter05.xhtml", "xhtml/chapter06.xhtml", "xhtml/chapter07.xhtml", "xhtml/chapter08.xhtml", "xhtml/chapter09.xhtml", "xhtml/chapter10.xhtml", "xhtml/chapter11.xhtml", "xhtml/chapter12.xhtml", "xhtml/chapter13.xhtml", "xhtml/chapter14.xhtml", "xhtml/chapter15.xhtml", "xhtml/chapter16.xhtml", "xhtml/chapter17.xhtml"
+]
+image_heading = "Chapter Header, Chapter (\\d+)"
+
+# The Del Rey (Ebury) UK paperback, 2018 edition, second printing (ISBN
+# 9781785030253, Clays); IA Scribe scan, 360 ppi MRC, GlyphLessFont layer,
+# 322×540 pt; a library copy (Norfolk). Serif body with the emails in a bold
+# sans; running heads with the folio ("48 ANDY WEIR", "ARTEMIS 167"); each
+# chapter opens with its number drawn in a circle, which the layer lacks;
+# double quotes, unspaced em dashes, spaced ellipses. Pages 13–317: chapter 1
+# to the end of chapter 17; the acknowledgements and adverts are left out.
+# Internet Archive lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/artemis0000weir (borrow, then download the PDF)"
+sha256 = "0c24b02605f950d7de2c14b3f3d5e7eb8a05bb7b012a0bda0b613e0ef352d9b7"
+cover_page = 1
+body_pages = [13, 317]
