@@ -1,5 +1,4 @@
-"""Client for decision models behind a Jev-compatible API: Ollaya's
-`/api/decide`, or Ollama's `/v1/systemone` (e.g. clef-flash).
+"""Client for decision models on Ollama's `/v1/systemone` (clef, clef-flash, winnow).
 
 Use it for questions whose possible answers are known in advance. A bare string
 is ambiguous to a decision model, so pass a dict state with context (position on
@@ -15,10 +14,6 @@ import httpx
 
 from roboscriptorium.clients import openrouter
 from roboscriptorium.clients.retry import patiently
-
-# Decision models with these name prefixes are served by Ollama's /v1/systemone: clef,
-# and winnow's Hugging Face build made a decision model there (modelfiles/).
-OLLAMA_PREFIXES = ("clef", "winnow-ollama")
 
 
 def choice(instructions: str, criteria: dict[str, str]) -> dict[str, Any]:
@@ -55,22 +50,12 @@ class Answer:
         return cls(kind, data[kind], data["confidence"], data["probabilities"])
 
 
-class OllayaClient:
-    def __init__(
-        self,
-        base_url: str,
-        model: str,
-        client: httpx.Client | None = None,
-        endpoint: str = "/api/decide",
-    ):
-        self.model = model
-        self.endpoint = endpoint
-        self._http = client or httpx.Client(base_url=base_url, timeout=300)
+class DecisionClient:
+    ENDPOINT = "/v1/systemone"
 
-    def models(self) -> list[str]:
-        resp = self._http.get("/v1/models")
-        resp.raise_for_status()
-        return [m["name"] for m in resp.json()["models"]]
+    def __init__(self, base_url: str, model: str, client: httpx.Client | None = None):
+        self.model = model
+        self._http = client or httpx.Client(base_url=base_url, timeout=300)
 
     def decide(
         self,
@@ -89,7 +74,7 @@ class OllayaClient:
         }
         if image_png is not None:
             payload["images"] = [base64.b64encode(image_png).decode()]
-        resp = patiently(lambda: self._http.post(self.endpoint, json=payload))
+        resp = patiently(lambda: self._http.post(self.ENDPOINT, json=payload))
         resp.raise_for_status()
         return {name: Answer.from_json(a) for name, a in resp.json()["answers"].items()}
 
@@ -117,13 +102,8 @@ class HostedClient:
         return {name: Answer.from_json(a) for name, a in answers.items()}
 
 
-def for_model(
-    model: str, ollaya_url: str, ollama_url: str, via: str = ""
-) -> "OllayaClient | HostedClient":
-    """A client on whichever runtime serves this decision model, or on its hosted
-    build `via`."""
+def for_model(model: str, ollama_url: str, via: str = "") -> "DecisionClient | HostedClient":
+    """A client for this decision model on Ollama, or on its hosted build `via`."""
     if via:
         return HostedClient(model, via)
-    if model.startswith(OLLAMA_PREFIXES):
-        return OllayaClient(ollama_url, model, endpoint="/v1/systemone")
-    return OllayaClient(ollaya_url, model)
+    return DecisionClient(ollama_url, model)

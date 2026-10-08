@@ -22,9 +22,8 @@ from roboscriptorium import (
     review,
 )
 from roboscriptorium.book import Book
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
 from roboscriptorium.clients.ollama import OllamaClient
-from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.disagreements import Verdicts
@@ -41,7 +40,7 @@ app = typer.Typer(no_args_is_help=True, help="Turn books that aren't EPUBs into 
 
 @app.command()
 def doctor() -> None:
-    """Check that Ollama and Ollaya are reachable and answering."""
+    """Check that Ollama is reachable and its decision models answer."""
     settings = Settings.from_env()
     ok = True
 
@@ -52,21 +51,14 @@ def doctor() -> None:
         ok = False
         typer.echo(f"ollama  {settings.ollama_url}  UNREACHABLE: {exc}")
 
-    try:
-        names = OllayaClient(settings.ollaya_url, "").models()
-        typer.echo(f"ollaya  {settings.ollaya_url}  {', '.join(names)}")
-    except httpx.HTTPError as exc:
-        ok = False
-        typer.echo(f"ollaya  {settings.ollaya_url}  UNREACHABLE: {exc}")
-
     # The decision models the pipeline asks, each on the runtime that serves it.
     for model in dict.fromkeys([settings.role_model, settings.judge_model, settings.check_model]):
         try:
-            client = ollaya.for_model(model, settings.ollaya_url, settings.ollama_url)
+            client = decide.for_model(model, settings.ollama_url)
             answer = client.decide(
                 {"line": "12", "position": "last line, centred, below body text"},
                 {
-                    "role": ollaya.choice(
+                    "role": decide.choice(
                         "What is this line?",
                         {"page_number": "A page number", "body": "Body text"},
                     )
@@ -233,7 +225,7 @@ def review_regions(
     typer.echo(f"{len(regions)} regions to look at ({done} already answered, {applied} applied)")
     typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
     settings = Settings.from_env()
-    decider = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
+    decider = decide.for_model(settings.role_model, settings.ollama_url)
     vocab = initials.vocabulary(body, book.language)
     page = review.RegionReview(
         book.source,
@@ -468,14 +460,12 @@ def evaluate_books(
 
 
 def _model_versions(settings: Settings) -> dict[str, str]:
-    """What each model name served now is: Ollama's digest, Ollaya's release date."""
+    """What each model name served now is: its Ollama digest."""
     out = {}
     try:
         for m in httpx.get(f"{settings.ollama_url}/api/tags", timeout=5).json()["models"]:
             digest = m["digest"][:12]
             out[m["name"]] = ",".join(sorted({*out.get(m["name"], "").split(","), digest} - {""}))
-        for m in httpx.get(f"{settings.ollaya_url}/v1/models", timeout=5).json()["models"]:
-            out[m["name"]] = m.get("release_date", "")
     except httpx.HTTPError:
         pass
     used = {

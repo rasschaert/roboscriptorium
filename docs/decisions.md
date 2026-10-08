@@ -988,3 +988,11 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   The probe that checked the rule on every book's text layer also counted the ellipses
   in Het geluid van bananen's (the test set) by mistake; nothing was scored, and the
   rule was set before.
+- 2026-10-08: **Ollaya uninstalled; Ollama only.** The user removed Ollaya, so the one
+  winnow is `winnow-ollama:e4b` on Ollama's `/v1/systemone`, now the default
+  `check_model`. The client is `clients/decide.py` (`DecisionClient`), always on Ollama;
+  `ollaya_url` and `ROBO_OLLAYA_URL` are gone, and `doctor` checks Ollama alone. The
+  model keeps its name because the cached answers are keyed on it. Ollaya's models stay
+  in the Models table as history. Because the Ollaya winnow can't answer any more, the
+  whole-body style change (a43b008) and the winnow switch are benched together against
+  the ellipsis run, not apart.

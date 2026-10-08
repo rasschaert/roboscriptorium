@@ -25,7 +25,7 @@ from rapidfuzz import fuzz
 from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.book import Book
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
 from roboscriptorium.evaluate import _FOLD, normalise
 from roboscriptorium.golden.manifest import Golden
@@ -98,10 +98,11 @@ def main() -> None:
         )
     )
     settings = Settings.from_env()
-    client = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
+    client = decide.for_model(settings.role_model, settings.ollama_url)
     # Second opinions: another vision model on the crop, and a text model on the sentence.
-    decider = ollaya.OllayaClient(settings.ollaya_url, "decider:2b-vision")
-    winnow = ollaya.OllayaClient(settings.ollaya_url, "winnow:e4b")
+    # decider:2b-vision has no Ollama build: its calls fail and are printed as failed.
+    decider = decide.DecisionClient(settings.ollama_url, "decider:2b-vision")
+    winnow = decide.for_model(settings.check_model, settings.ollama_url)
     records = []
 
     tally: Counter = Counter()
@@ -161,7 +162,7 @@ def main() -> None:
                         matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip
                     ).tobytes("png")
                     question = {
-                        "reading": ollaya.choice(
+                        "reading": decide.choice(
                             "The image is cut from a scanned printed book. Which text does it "
                             "show, letter for letter, including quote marks, dashes and "
                             "punctuation?",
@@ -187,7 +188,7 @@ def main() -> None:
                     in_context = winnow.decide(
                         {"a": ours, "b": swapped},
                         {
-                            "reading": ollaya.choice(
+                            "reading": decide.choice(
                                 "Two OCR readings of the same line of a printed English novel "
                                 "differ. Which is the correct transcription, as printed?",
                                 {"a": f"“{ours}”", "b": f"“{swapped}”"},

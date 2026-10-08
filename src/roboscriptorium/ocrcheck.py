@@ -26,8 +26,8 @@ import pymupdf
 from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import ocr
-from roboscriptorium.clients import ollaya, openrouter
-from roboscriptorium.clients.ollaya import OllayaClient
+from roboscriptorium.clients import decide, openrouter
+from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.clients.retry import patiently
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
@@ -453,8 +453,8 @@ def check(
     pages: list[PageText],
     readings: dict[str, dict[SourceRef, str]],
     lang: str,
-    vision: OllayaClient | ollaya.HostedClient,
-    reader: OllayaClient,
+    vision: DecisionClient | decide.HostedClient,
+    reader: DecisionClient,
     cache: DecisionCache,
     lexicon: Lexicon | None = None,
     style: str = "",
@@ -659,7 +659,7 @@ def _decide(
             "box": [round(v, 1) for v in box],
         },
         {
-            "reading": ollaya.choice(
+            "reading": decide.choice(
                 "The image is cut from a scanned printed book. Which text does it show, "
                 "letter for letter, including quote marks, dashes and punctuation?"
                 + (f" {style}" if style else ""),
@@ -683,7 +683,7 @@ def _decide(
             "line after": around[1],
         },
         {
-            "reading": ollaya.choice(
+            "reading": decide.choice(
                 f"{intro} of the same line of a printed {language} book differ. "
                 "Which is the correct transcription, as printed, read between "
                 "the line before and the line after?",
@@ -722,7 +722,7 @@ def _typographic(versions: list[str]) -> bool:
 
 
 def _ask(
-    client: OllayaClient | ollaya.HostedClient,
+    client: DecisionClient | decide.HostedClient,
     cache: DecisionCache,
     state: dict,
     questions: dict,

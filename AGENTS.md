@@ -20,7 +20,7 @@ starting; keep it true.
   `docs/how-it-works.md` and `docs/pipeline.d2` in the same commit; render the SVG again with
   `d2 docs/pipeline.d2 docs/pipeline.svg` and commit both. A diagram that shows
   the pipeline as it was is worse than none.
-- **Local first.** AI runs on this machine via Ollama and Ollaya. A hosted model
+- **Local first.** AI runs on this machine via Ollama. A hosted model
   (OpenRouter, `clients/openrouter.py`) costs money and sends copyrighted page crops
   to its provider, so it is used **only when the user explicitly allows or asks for
   it**, for that use: never on an agent's own initiative, never by carrying an earlier
@@ -41,7 +41,7 @@ starting; keep it true.
   that causes it: tick a step off, add a step the moment one is planned, mark one
   dropped (and why) when the plan changes, and update an estimate after a timed run.
   The user reads it to see where things stand, so a stale row misleads them.
-- **Installs:** Homebrew tools, Python deps and Ollama/Ollaya models may be
+- **Installs:** Homebrew tools, Python deps and Ollama models may be
   installed freely. Record each one under [Environment](#environment).
 - **Handholding first.** Prefer flagging uncertain output for human review over
   guessing silently. Automation increases only as measured quality earns it.
@@ -150,12 +150,11 @@ right, then expand.
 - Python 3.13, managed with **uv**. Package and CLI are both named `roboscriptorium`.
 - Layout: `src/roboscriptorium/` (src layout), tests in `tests/`.
   - `cli.py`: typer app, the entry point.
-  - `config.py`: `Settings`, overridable via `ROBO_OLLAMA_URL`, `ROBO_OLLAYA_URL`,
+  - `config.py`: `Settings`, overridable via `ROBO_OLLAMA_URL`,
     `ROBO_ROLE_MODEL` and the others it lists (`ROBO_READ_MODEL`
     reads quote questions' lines, "" for none).
-  - `clients/ollaya.py` also serves Ollama's `/v1/systemone`: `for_model` routes
-    `clef-*` models there and everything else to Ollaya.
-  - `clients/ollama.py`, `clients/ollaya.py`: thin httpx clients. All model calls go
+  - `clients/decide.py`: decision models on Ollama's `/v1/systemone` (`for_model`).
+  - `clients/ollama.py`, `clients/decide.py`: thin httpx clients. All model calls go
     through these.
   - `clients/openrouter.py`: a hosted model, named `openrouter:<model>@<provider tag>`
     read by `ocrcheck.transcribe`; the key is `OPENROUTER_API_KEY`. As `ROBO_READ_MODEL`
@@ -163,7 +162,7 @@ right, then expand.
     (`openrouter:qwen/qwen3.8-27b@deepinfra/bf16`) it reads in place of the local
     `read_model`, its readings cached under the local name and each listed under `via`
     in the cache, so a later local run reuses them and a reader can tell them apart. A
-    decision model's hosted build answers through `ollaya.HostedClient` (`ROBO_JUDGE_VIA`
+    decision model's hosted build answers through `decide.HostedClient` (`ROBO_JUDGE_VIA`
     for the judge), its answers cached under the local name with `via`. `experiments/probe_line_reader.py`
     compares it with the local readings of a book.
   - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
@@ -359,10 +358,10 @@ Review (`flags.py`, `review.py`) runs on a build's output; scoring is `eval`,
 
 ### Milestones
 
-- M0: AGENTS.md, repo skeleton, uv project, Ollama/Ollaya client smoke tests
+- M0: AGENTS.md, repo skeleton, uv project, model client smoke tests
 - M1: Stella end to end (crude), from the existing text layer to a valid EPUB
 - M2: golden pages + evaluation harness
-- M3: better OCR (multiple candidates + Ollaya arbitration) and reflow
+- M3: better OCR (multiple candidates + decision-model arbitration) and reflow
 - M4: review web UI
 - M5: Stella "nailed"; loosen the thresholds; then a second book or format
 
@@ -385,7 +384,7 @@ the user refer to it by that role ([docs/how-it-works.md](docs/how-it-works.md))
 | spotter | DocLayout-YOLO | marks figures, captions, titles and furniture on the page image |
 | reader | glm-ocr, tesseract, qwen3.8 | reads text from the scan (also a line the layer missed) |
 | sorter | clef-flash:9b | decides each doubtful line's role; guesses a drawn initial |
-| judge | clef:27b, winnow:e4b, the word list | picks a version of a suspect |
+| judge | clef:27b, winnow-ollama:e4b, the word list | picks a version of a suspect |
 | arbiter | the trust model (`trust.py`) | fixes, keeps or asks, weighing readers and judges |
 | reviewer | the user | answers what the arbiter is unsure of |
 
@@ -396,39 +395,29 @@ arbiter retrained.
 
 Two kinds of model, used for different jobs:
 
-- **Ollaya: decision models ("System One").** Answers bounded questions whose
-  options are declared in advance, with a typed answer and a probability. It
-  generates no text.
-- **Ollama: generative models ("System Two").** Produces text: vision-LLM OCR,
+- **Decision models ("System One")**, on Ollama's `/v1/systemone`. Answer bounded
+  questions whose options are declared in advance, with a typed answer and a
+  probability. They generate no text.
+- **Generative models ("System Two")**, on Ollama. Produce text: vision-LLM OCR,
   OCR-error correction, structure and metadata.
 
-**Rule: if the answer comes from a list that's known in advance, use Ollaya. If it
-needs new text, use Ollama.** Never prompt an LLM and parse its prose for a
-decision that Ollaya can make.
+**Rule: if the answer comes from a list that's known in advance, ask a decision model.
+If it needs new text, a generative one.** Never prompt an LLM and parse its prose for a
+decision a decision model can make.
 
-### Ollaya
+### Decision models
 
-Ollaya serves one model the pipeline uses, winnow:e4b (the second judge); clef and
-clef-flash already run on Ollama's `/v1/systemone`, and every question is a `choice`.
-**At the start of a session, check whether Ollama now offers winnow** (or any model
-we only get from Ollaya). If it does, try it for its role against the Ollaya build,
-and where it holds up, move it and stop depending on Ollaya.
+clef, clef-flash and winnow (`winnow-ollama:e4b`) answer on Ollama's `/v1/systemone`;
+every question the pipeline asks is a `choice`. A model pulled as a plain GGUF lacks
+the `decision` capability; a Modelfile adds it (Environment, `winnow-ollama:e4b`).
 
-- Desktop app (`Ollaya.app`) plus the CLI at `/usr/local/bin/ollaya` (it may not be
-  on the agent shell's PATH). Serves at `http://127.0.0.1:11435`.
-- Models: `ollaya list`, `ollaya pull <model>`, `ollaya show <model>`. Use the
-  documented CLI and API only. If they don't cover what's needed, ask the user
-  rather than guessing endpoints.
-- Vision (`decider:*-vision`): one base64 PNG per request in `images` (JPEG is
-  rejected), at most ~1 MP (resized to multiples of 32), at most 10 options.
-- Jev/TypeSafe-compatible: `/v1/systemone`, `/v1/decisions`, `/v1/models`, plus
-  the native `POST /api/decide`.
+- Images: raw base64 PNG, JPEG or WebP in `images`, one per request.
 - Question types: `choice` (probability per declared option), `score` (ordinal
   scale), `noul` (probability that a statement is true).
 
 ```sh
-curl http://127.0.0.1:11435/api/decide -d '{
-  "model": "winnow:e4b",
+curl http://127.0.0.1:11434/v1/systemone -d '{
+  "model": "winnow-ollama:e4b",
   "state": "<text, or JSON describing the situation>",
   "questions": {"role": {"type": "choice", "instructions": "...",
                 "criteria": {"page_number": "...", "body": "..."}}}
@@ -441,9 +430,8 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   the candidate plus its position on the page, its neighbouring lines and the page
   type. Confidence is **not** correctness: calibrate thresholds on golden pages
   before trusting them.
-- Load time is ~1.5 s on the first call, then ~50 ms per decision.
 - `noul` answers carry only `noul` (P(true)). `choice` and `score` carry
-  `confidence` and `probabilities`. `OllayaClient.decide` normalises all three
+  `confidence` and `probabilities`. `DecisionClient.decide` normalises all three
   into `Answer(type, value, confidence, probabilities)`.
 
 ### Models
@@ -460,12 +448,13 @@ schedel before choosing an OCR model.
 
 | Runtime | Model | Use | Status |
 | --- | --- | --- | --- |
-| Ollaya | `laya:multilingual` | Decisions on Dutch text | **unfit for line roles** (see docs/decisions.md) |
-| Ollaya | `laya:en` | Decisions on English text | **unfit for line roles** (see docs/decisions.md) |
-| Ollaya | `winnow:e4b` | Line roles (previous default) | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
-| Ollaya | `winnow:e4b` (as `check_model`) | Second opinion on OCR suspects, from the line's text only | Dolittle pp. 30–49: 74/90 right alone; its disagreeing with clef marks clef's errors (clef right on only 9/13 of those) |
-| Ollaya | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
-| Ollaya | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
+| Ollaya (gone) | `laya:multilingual` | Decisions on Dutch text | **unfit for line roles** (see docs/decisions.md) |
+| Ollaya (gone) | `laya:en` | Decisions on English text | **unfit for line roles** (see docs/decisions.md) |
+| Ollaya (gone) | `winnow:e4b` | Line roles (previous default) | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
+| Ollaya (gone) | `winnow:e4b` (as `check_model`) | Second opinion on OCR suspects, from the line's text only | Dolittle pp. 30–49: 74/90 right alone; its disagreeing with clef marks clef's errors (clef right on only 9/13 of those) |
+| Ollama | `winnow-ollama:e4b` (as `check_model`) | **Second judge (in use)**: picks a version of an OCR suspect from the sentence | On three tuning books' cached suspects, right alone 285/208/265 where Ollaya's build got 174 each; right where clef is wrong on 78 of 100 against 45. ~0.13 s a question. The only winnow since Ollaya was uninstalled (2026-10-08) |
+| Ollaya (gone) | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
+| Ollaya (gone) | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
 | Ollama | `clef-flash:9b` | **Line roles (in use)**; page types candidate | Line roles: 60/60 at P(body) ≥ 0.5 (its probabilities are softer than winnow's, so don't use 0.9). Pages: 19/23, low confidence where it errs. ~0.8 s/line and ~3.9 s/page, measured under load. Endpoint `/v1/systemone`; raw base64 PNG/JPEG/WebP in `images`; up to 64 questions per call; 64K context. Confidence = how concentrated the probabilities are, not P(correct) |
 | Ollama | `gemma4:latest` (8B dense, nvfp4) | Vision OCR candidate; **unfit as the line reader** | Teirlinck 12 pages: CER 0.70% (0.63% with the old-spelling prompt) but **modernises** old Dutch: 41 (27) reform spellings per 12 pages (`tusschen→tussen`, `oogenblik→ogenblik`), plus word swaps (`eenvoud→eenvoudig`). ~22 s/page. Never use alone; pair with tesseract As a line reader told the book's style (Goede dochter pp. 9–20, 324 body lines, 2026-10-08): 0.31 s a line, 4.5× Qwen's speed, but CER 0.21% against Qwen's 0.10% and the layer's 0.13%, quote marks wrong on 4 lines against Qwen's 0 |
 | — | tesseract 5.5.3 + `nld` (tessdata_best) | Plain OCR candidate | Teirlinck 12 pages: CER 0.90%, no modernisation; errors are visual (`,`/`.`, mangled ellipses) and dropped short lines. <1 s/page |
@@ -487,7 +476,7 @@ schedel before choosing an OCR model.
 
 - Apple M4 Max, 64 GB RAM, macOS.
 - Ollama 0.40.1 at `http://127.0.0.1:11434` (0.40.0 on 2026-10-06, 0.40.1 on 2026-10-08; scores before 2026-10-06 were on 0.35.1).
-- Ollaya at `http://127.0.0.1:11435`.
+- Ollaya was uninstalled on 2026-10-08; every model runs on Ollama.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).
 - epubcheck (Homebrew).
@@ -498,11 +487,10 @@ schedel before choosing an OCR model.
   `decision` capability, so `/v1/systemone` refuses it ("does not support decision");
   the Modelfile adds `CAPABILITY decision` and `CAPABILITY vision` and an empty
   `TEMPLATE {{ .Prompt }}`, copied from clef-flash's. Ollama then renders the decision
-  prompt its own way (95 input tokens on a test question against Ollaya's 109), not in
+  prompt its own way (95 input tokens on a test question against the native build's 109), not in
   the layout winnow was trained on (EldanRing/winnow-inference `native/protocol.h`:
   Gemma turns, a fixed system prompt, `State:`, `Question:`, lettered `Options:`, the
-  answer read from the letter's logit). Routed by name (`OLLAMA_PREFIXES`). Not used
-  by the pipeline until it measures equal to Ollaya's build.
+  answer read from the letter's logit). The pipeline's second judge (`check_model`).
 - scikit-learn (Python dep) for the line-role classifier probe.
 - Dependency group `layout` (a default group, so plain `uv run` has it): `doclayout-yolo` with
   PyTorch, and the DocLayout-YOLO DocStructBench weights
@@ -524,7 +512,7 @@ title = "Wij doden Stella"
 author = "Marlen Haushofer"
 language = "nl"
 cover_page = 1
-body_pages = [5, 71]   # inclusive; Ollaya page classification replaces this later
+body_pages = [5, 71]   # inclusive; page classification replaces this later
 dash = "–"             # optional: how the book prints dashes ("–" or "—") …
 dash_spacing = "thin"  # … and their gaps ("none", "thin", "word"); else measured
 ellipsis = "..."       # optional: "…", "..." or ". . ." …
@@ -532,7 +520,7 @@ ellipsis_space = false # … and a space before it; else read in the text layer
 ```
 
 ```sh
-uv run roboscriptorium doctor            # are Ollama and Ollaya reachable and answering?
+uv run roboscriptorium doctor            # is Ollama up, and do its decision models answer?
 uv run roboscriptorium build work/stella # → work/stella/stella.epub
 epubcheck work/stella/stella.epub        # must report 0 errors / 0 warnings
 uv run ruff format . && uv run ruff check . && uv run pytest
@@ -638,7 +626,7 @@ uv run roboscriptorium golden derive goede-dochter --epub work/.cache/publisher/
 `eval` builds the book, prints the scores and the most frequent differences, and
 appends a line to `work/<book>/eval-history.jsonl` with the commit, the settings,
 which decider settled the OCR check (`fixed rule` or `trust <model hash>`) and each
-model's Ollama digest or Ollaya release. Given several books it scores
+model's Ollama digest. Given several books it scores
 them one after another and ends with a line per book.
 
 **Disagreements and verdicts.** Gutenberg is a transcription, not the scan, so

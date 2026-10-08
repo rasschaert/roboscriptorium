@@ -152,7 +152,8 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       prompt are now kept aside, and the style is measured on the whole body; tested
       through `pipeline.run`. Vals alarm and Dolittle get a new prompt: their trust data
       rebuilt with hosted Qwen (the user's go for tonight's Qwen reads)
-  - [ ] `bench tuning` against the ellipsis run: ~1 min warm
+  - [ ] `bench tuning` against the ellipsis run, with the winnow switch (Ollaya is gone,
+        so the two are measured together): ~1 min warm
 - [ ] `bench validation`
 - [ ] **Decide:** keep Qwen's third reading and short lines only if the bench says so
 - [ ] Re-ask ~200 cached clef answers and count the flips (answer variance): ~15 min
@@ -182,7 +183,8 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       worse (quote marks wrong on no more lines than Qwen3.8's, CER within a few lines of
       it), confirmed on Metro before the switch; better but not faster: noted; faster but
       worse: out. Every candidate also goes through the crossover on Metro
-- [ ] winnow:12b as the second judge (`ROBO_CHECK_MODEL`), never tried there (only on
+- [ ] ~~winnow:12b as the second judge~~ dropped: Ollaya, its only server, was uninstalled.
+      (`ROBO_CHECK_MODEL`), never tried there (only on
       line roles: a little better than e4b, 2.6× slower): ask it the cached suspects of the
       tuning books, text only, ~5 min a book; it earns the job if it catches more of clef's
       misses (e4b: 31 of 46 on 11/22/63, fewer on the Dutch books). After the queue, then
@@ -377,7 +379,7 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       control lines broken 10 of 220 (qwen3.8 3), the only reader right on 3 (qwen3.8 19)
 - [x] PP-DocLayoutV3 as the spotter, Dolittle pp. 23–88 scored downstream: worse
       (CER 1.22% → 1.71%), not adopted
-- [ ] winnow:12b as the second judge on the cached suspects (`probe_second_judge.py`)
+- [ ] ~~winnow:12b as the second judge~~ dropped: Ollaya, its only server, was uninstalled
 - [ ] A judge set and a sorter set like the reader set, versioned the same way
 - [x] winnow on Ollama: the user pulled the Hugging Face GGUF; a Modelfile makes it a
       decision model (`modelfiles/`, AGENTS.md Environment). Screened on the cached
@@ -388,8 +390,8 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
         data: ~20–30 min
   - [ ] Retrain the arbiter (`train_ocr_trust.py --save`): under a minute
   - [ ] `bench tuning`, then `bench validation`, against the current arbiter: ~1 h
-  - [ ] If it holds: strip Ollaya from the code and docs (client, config, AGENTS.md,
-        design.md, how-it-works, the diagram, README); winnow was its only use
+  - [x] Ollaya stripped from the code and docs: the user uninstalled it, so it went
+        before the bench (winnow on Ollama is the only winnow)
 
 ## 6d. Image-only scans
 

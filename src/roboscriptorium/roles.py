@@ -12,8 +12,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from roboscriptorium.clients import ollaya
-from roboscriptorium.clients.ollaya import OllayaClient
+from roboscriptorium.clients import decide
+from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.page import (
     EDGE_LINES_BOTTOM,
@@ -45,7 +45,7 @@ ROLES = {
     "signature mark at the bottom of a page, or scanning noise",
 }
 QUESTIONS = {
-    "role": ollaya.choice(
+    "role": decide.choice(
         "This is one line of text extracted from a scanned page of a printed book. What is it?",
         ROLES,
     )
@@ -186,7 +186,7 @@ class DecisionCache:
 
 def classify(
     pages: list[PageText],
-    client: OllayaClient,
+    client: DecisionClient,
     cache: DecisionCache,
     styles: dict[SourceRef, Style] | None = None,
 ) -> dict[SourceRef, LineRole]:

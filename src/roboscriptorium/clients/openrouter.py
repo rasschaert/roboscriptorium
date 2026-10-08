@@ -88,7 +88,7 @@ def _post(url: str, body: dict, client: httpx.Client | None) -> dict:
 def decide(
     model: str, state: str, questions: dict, png: bytes | None, client: httpx.Client | None = None
 ) -> dict:
-    """The hosted decision model's answers, as Ollaya's JSON gives them."""
+    """The hosted decision model's answers, as Ollama's `/v1/systemone` gives them."""
     body = _post(DECISIONS_URL, decision_payload(model, state, questions, png), client)
     if "answers" not in body:
         raise RuntimeError(f"OpenRouter: {body.get('error', body)}")

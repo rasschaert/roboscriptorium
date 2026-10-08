@@ -31,7 +31,7 @@ classes: {
     shape: oval
     style: {fill: "#fde8d0"; stroke: "#c2671b"; font-size: 13}
   }
-  ollaya: {
+  decision: {
     shape: oval
     style: {fill: "#dbe9f7"; stroke: "#2e6db4"; font-size: 13}
   }
@@ -92,7 +92,7 @@ understand: 2 · Understand the page {
   }
   m: {
     class: row
-    flash: "the sorter\nclef-flash:9b" {class: ollaya}
+    flash: "the sorter\nclef-flash:9b" {class: decision}
     rules: layout rules +\nstyle-group vote {class: code}
     tree: line-role classifier\n(gradient-boosted trees) {class: candidate}
   }
@@ -116,8 +116,8 @@ check: 3 · Check the OCR (scans only) {
     glm: "reader\nglm-ocr:bf16" {class: ollama}
     tess: "reader\ntesseract (the book's language)" {class: code}
     qwen: "reader\nqwen3.8:27b, told the book's style" {class: ollama}
-    clef: "judge\nclef:27b, from the crop" {class: ollaya}
-    winnow: "judge\nwinnow:e4b, from the sentence" {class: ollaya}
+    clef: "judge\nclef:27b, from the crop" {class: decision}
+    winnow: "judge\nwinnow-ollama:e4b, from the sentence" {class: decision}
     words: "judge\nthe word list" {class: code}
     gbt: "the arbiter\ntrees trained on golden books" {class: code}
   }
@@ -142,7 +142,7 @@ review: 4 · Review {
   m: {
     class: row
     qread: "a reader, qwen3.8:27b,\nproposes an unpaired quote's marks" {class: ollama}
-    init: "the sorter, clef-flash:9b,\nguesses a drawn initial's letter" {class: ollaya}
+    init: "the sorter, clef-flash:9b,\nguesses a drawn initial's letter" {class: decision}
     you: the reviewer {class: human}
     slip: answer check: a typed line\nmust match a reading {class: code}
     proof: qwen3.8 proofreads\nthe answers {class: candidate}
@@ -195,7 +195,7 @@ legend: Who does the work {
   horizontal-gap: 30
   v: vision model\n(not an LLM) {class: vision}
   g: generative model\n(Ollama) {class: ollama}
-  d: "decision model, systemone\n(Ollaya; Ollama for clef)" {class: ollaya}
+  d: "decision model\n(Ollama systemone)" {class: decision}
   c: plain code {class: code}
   h: a person {class: human}
   p: candidate,\nnot wired in yet {class: candidate}

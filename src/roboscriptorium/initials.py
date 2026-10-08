@@ -10,8 +10,8 @@ import re
 import string
 from pathlib import Path
 
-from roboscriptorium.clients import ollaya
-from roboscriptorium.clients.ollaya import OllayaClient
+from roboscriptorium.clients import decide
+from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.pdf import PageText
 
 WORD_LIST = Path("/usr/share/dict/words")
@@ -37,18 +37,18 @@ def candidates(rest: str, vocab: set[str]) -> list[str]:
     return [c for c in string.ascii_uppercase if (c + rest).lower() in vocab]
 
 
-def guess(client: OllayaClient, vocab: set[str], png: bytes, line: str) -> str:
+def guess(client: DecisionClient, vocab: set[str], png: bytes, line: str) -> str:
     """The letter, or "" when no letter makes the line's first word a word."""
     rest = fragment(line)
     letters = candidates(rest, vocab) if rest else []
     return choose(client, png, rest, letters) if letters else ""
 
 
-def choose(client: OllayaClient, png: bytes, rest: str, letters: list[str]) -> str:
+def choose(client: DecisionClient, png: bytes, rest: str, letters: list[str]) -> str:
     if len(letters) == 1:
         return letters[0]
     question = {
-        "letter": ollaya.choice(
+        "letter": decide.choice(
             "The image is a decorated initial letter from a printed book. The word it "
             f"begins continues with “{rest}”. Which letter does the drawing show?",
             {c: f"The letter {c}, making “{c}{rest}”" for c in letters},

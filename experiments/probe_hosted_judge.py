@@ -16,13 +16,13 @@ sys.path.insert(0, str(Path(__file__).parent))
 import ocr_trust_data  # noqa: E402
 
 from roboscriptorium import ocrcheck  # noqa: E402
-from roboscriptorium.clients import ollaya  # noqa: E402
+from roboscriptorium.clients import decide  # noqa: E402
 from roboscriptorium.config import Settings  # noqa: E402
 from roboscriptorium.roles import DecisionCache  # noqa: E402
 
 name, spec, via = sys.argv[1:4]
 settings = Settings.from_env()
-hosted = ollaya.HostedClient(settings.judge_model, via)
+hosted = decide.HostedClient(settings.judge_model, via)
 out = Path("work/probes/hosted-judge") / f"{name}-{via.split('@')[1].replace('/', '-')}.json"
 answers = json.loads(out.read_text()) if out.exists() else {}
 pairs = {}  # (page, line, versions) -> (local, hosted)

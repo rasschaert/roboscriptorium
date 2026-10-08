@@ -8,7 +8,7 @@ import pytest
 
 from roboscriptorium import flags, pipeline, trust
 from roboscriptorium.book import Book
-from roboscriptorium.clients.ollaya import OllayaClient
+from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.corrections import Corrections
 
 LINES = [f"Line {i} of the story goes on and on across the page" for i in range(12)]
@@ -39,9 +39,9 @@ def _everything_is_body(monkeypatch) -> None:
 
     def client(model, *_):
         http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
-        return OllayaClient("http://test", model, client=http)
+        return DecisionClient("http://test", model, client=http)
 
-    monkeypatch.setattr(pipeline.ollaya, "for_model", client)
+    monkeypatch.setattr(pipeline.decide, "for_model", client)
 
 
 def test_answers_apply_to_the_book_and_keep_their_keys_across_builds(tmp_path, monkeypatch):
@@ -250,9 +250,9 @@ def _checked_book(tmp_path, monkeypatch) -> tuple[Book, list[str]]:
 
     def client(model, *_):
         http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
-        return OllayaClient("http://test", model, client=http)
+        return DecisionClient("http://test", model, client=http)
 
-    monkeypatch.setattr(pipeline.ollaya, "for_model", client)
+    monkeypatch.setattr(pipeline.decide, "for_model", client)
     _no_layout(monkeypatch)
     book = _book(tmp_path)
     monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)

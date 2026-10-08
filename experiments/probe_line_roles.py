@@ -7,7 +7,7 @@ often mislabelled "other" there, so read the listed misses before trusting the t
 """
 
 import json, random, statistics, sys, time
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
 
 model = sys.argv[1]
 PER_CLASS = int(sys.argv[2]) if len(sys.argv) > 2 else 30
@@ -35,14 +35,14 @@ def state(key):
         "next_line": lines[i + 1]["text"] if i + 1 < len(lines) else None,
     }
 
-Q = {"role": ollaya.choice(
+Q = {"role": decide.choice(
     "This is one line of text extracted from a scanned page of a printed book. What is it?",
     {"body": "Part of the running text of the book: prose or dialogue, including the short last line of a paragraph",
      "running_head": "The book or chapter title repeated at the top of every page, often with a page number",
      "page_number": "A page number on its own",
      "chapter_heading": "A chapter or part heading such as 'CHAPTER XII.'",
      "artifact": "Not part of the book's text: a library or digitisation stamp, a printer's signature mark at the bottom of a page, or scanning noise"})}
-client = ollaya.for_model(model, "http://127.0.0.1:11435", "http://127.0.0.1:11434")
+client = decide.for_model(model, "http://127.0.0.1:11434")
 rows = []; t0 = time.time()
 for key, gold in sample:
     a = client.decide(state(key), Q)["role"]

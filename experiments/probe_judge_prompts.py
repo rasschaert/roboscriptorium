@@ -25,7 +25,7 @@ from ocr_trust_data import load, suspect
 
 from roboscriptorium import ocrcheck, quotes
 from roboscriptorium.book import Book
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
 from roboscriptorium.pdf import cached_text_layer
 from roboscriptorium.roles import DecisionCache
@@ -46,8 +46,8 @@ single = text.count("‘") > 2 * text.count("“")
 note = quotes.style_note(book.language, single, quotes.ellipsis(text), book.dash or "–")
 print(f"{len(rows)} suspects; {note}")
 
-vision = ollaya.for_model(settings.judge_model, settings.ollaya_url, settings.ollama_url)
-reader = ollaya.for_model(settings.check_model, settings.ollaya_url, settings.ollama_url)
+vision = decide.for_model(settings.judge_model, settings.ollama_url)
+reader = decide.for_model(settings.check_model, settings.ollama_url)
 out = Path("work/probes/judge-prompts")
 out.mkdir(parents=True, exist_ok=True)
 probe_cache = DecisionCache(out / f"{name}.jsonl")
@@ -70,7 +70,7 @@ def ask(pdf, r, variant):
     seen = ocrcheck._ask(
         vision, cache,
         {"page": s.page, "line": s.line, "readings": versions, "box": [round(v, 1) for v in s.box]},
-        {"reading": ollaya.choice(
+        {"reading": decide.choice(
             "The image is cut from a scanned printed book. Which text does it show, "
             f"letter for letter, including quote marks, dashes and punctuation?{style}",
             {**{c: f"exactly {wrap(v, variant)}" for c, v in zip(letters, versions, strict=True)},
@@ -88,7 +88,7 @@ def ask(pdf, r, variant):
     read = ocrcheck._ask(
         reader, cache,
         {"line before": around[0], **dict(zip(letters, lines, strict=True)), "line after": around[1]},
-        {"reading": ollaya.choice(
+        {"reading": decide.choice(
             f"{intro} of the same line of a printed {lang} book differ. Which is the correct "
             f"transcription, as printed, read between the line before and the line after?{style}",
             {c: wrap(line, variant) for c, line in zip(letters, lines, strict=True)},

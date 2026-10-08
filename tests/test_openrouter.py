@@ -38,7 +38,7 @@ def test_a_hosted_name_must_name_its_provider():
 
 
 def test_a_hosted_decision_answers_under_the_local_name(monkeypatch):
-    from roboscriptorium.clients import ollaya
+    from roboscriptorium.clients import decide
 
     monkeypatch.setenv("OPENROUTER_API_KEY", "k")
     sent = []
@@ -50,8 +50,8 @@ def test_a_hosted_decision_answers_under_the_local_name(monkeypatch):
         return httpx.Response(200, json={"answers": {"reading": reading}})
 
     http = httpx.Client(transport=httpx.MockTransport(answer))
-    client = ollaya.HostedClient("clef:27b", "openrouter:cloudflare/clef@primeintellect", http)
-    question = {"reading": ollaya.choice("Which?", {"a": "x", "b": "y"})}
+    client = decide.HostedClient("clef:27b", "openrouter:cloudflare/clef@primeintellect", http)
+    question = {"reading": decide.choice("Which?", {"a": "x", "b": "y"})}
     got = client.decide({"page": 3}, question, image_png=b"png")["reading"]
     assert (client.model, got.value, got.probabilities["b"]) == ("clef:27b", "b", 0.9)
     body = sent[0]

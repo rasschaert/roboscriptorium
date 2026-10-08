@@ -1,4 +1,4 @@
-from roboscriptorium.clients.ollaya import Answer
+from roboscriptorium.clients.decide import Answer
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.page import Repeats, bare_numeral, title_key
 from roboscriptorium.pdf import Line, PageText

@@ -21,7 +21,7 @@ from roboscriptorium import (
     typography,
 )
 from roboscriptorium.book import Book
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.epub import write_epub
@@ -101,7 +101,7 @@ def run(
                 book.stages / "missing-lines.json",
             )
             body = missing.add(body, found, readings)
-        client = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
+        client = decide.for_model(settings.role_model, settings.ollama_url)
         cache = DecisionCache(book.stages / "decisions.jsonl")
         styles = typestyle.measure(book.source, body, book.stages / "type.json")
         model_roles = classify(body, client, cache, styles)
@@ -112,9 +112,7 @@ def run(
                 for i in range(len(p.lines))
                 if treatment(model_roles.get(SourceRef(p.number, i))) != "dropped"
             }
-            reader = ollaya.for_model(
-                settings.check_model, settings.ollaya_url, settings.ollama_url
-            )
+            reader = decide.for_model(settings.check_model, settings.ollama_url)
             readings = {
                 "glm": ocrcheck.line_readings(
                     book.source,
@@ -139,9 +137,7 @@ def run(
                     read_prompt(book, whole, style),
                     settings.read_via,
                 )
-            judge = ollaya.for_model(
-                settings.judge_model, settings.ollaya_url, settings.ollama_url, settings.judge_via
-            )
+            judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, whole, style),

@@ -2,9 +2,9 @@ import json
 
 import httpx
 
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
+from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.clients.ollama import OllamaClient
-from roboscriptorium.clients.ollaya import OllayaClient
 
 
 def _http(handler) -> httpx.Client:
@@ -37,13 +37,13 @@ def test_decide_parses_all_question_types():
             },
         )
 
-    client = OllayaClient("http://test", "laya:multilingual", client=_http(handler))
+    client = DecisionClient("http://test", "laya:multilingual", client=_http(handler))
     answers = client.decide(
         {"line": "Io", "note": "scène"},
         {
-            "role": ollaya.choice("?", {"page_number": "", "body": ""}),
-            "garbled": ollaya.noul("?"),
-            "quality": ollaya.score("?", ["bad", "ok", "good"]),
+            "role": decide.choice("?", {"page_number": "", "body": ""}),
+            "garbled": decide.noul("?"),
+            "quality": decide.score("?", ["bad", "ok", "good"]),
         },
     )
 
@@ -67,13 +67,7 @@ def test_generate_sends_images_and_returns_text(tmp_path):
     assert client.generate("gemma4:latest", "OCR this", images=[image]) == "tekst"
 
 
-def test_for_model_routes_clef_to_ollama():
-    clef = ollaya.for_model("clef-flash:9b", "http://ollaya", "http://ollama")
-    winnow = ollaya.for_model("winnow:e4b", "http://ollaya", "http://ollama")
-    assert (str(clef._http.base_url), clef.endpoint) == ("http://ollama", "/v1/systemone")
-    assert (str(winnow._http.base_url), winnow.endpoint) == ("http://ollaya", "/api/decide")
-
-
-def test_for_model_routes_winnows_ollama_build_to_ollama():
-    pulled = ollaya.for_model("winnow-ollama:e4b", "http://ollaya", "http://ollama")
-    assert (str(pulled._http.base_url), pulled.endpoint) == ("http://ollama", "/v1/systemone")
+def test_every_decision_model_is_asked_on_ollama():
+    for model in ("clef-flash:9b", "clef:27b", "winnow-ollama:e4b"):
+        client = decide.for_model(model, "http://ollama")
+        assert str(client._http.base_url) == "http://ollama"

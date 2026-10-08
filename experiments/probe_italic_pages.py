@@ -20,7 +20,7 @@ from pathlib import Path
 from rapidfuzz import fuzz
 
 from roboscriptorium.book import Book
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
 from roboscriptorium.pdf import cached_text_layer, render_png
 
@@ -78,9 +78,9 @@ def main() -> None:
     plain = random.sample(sorted(set(pages) - set(found)), per_class)
 
     settings = Settings.from_env()
-    client = ollaya.for_model(model, settings.ollaya_url, settings.ollama_url)
+    client = decide.for_model(model, settings.ollama_url)
     question = {
-        "italic": ollaya.noul(
+        "italic": decide.noul(
             "This is a page of running text from a printed book. Some words in the running "
             "text on this page are printed in italic type: slanted letters, used for emphasis "
             "or titles."

@@ -38,7 +38,7 @@ printed.
 | spotter | DocLayout-YOLO | marks figures, captions, titles and page furniture on each page image | vision model |
 | readers | glm-ocr, tesseract, qwen3.8 | read the text again from the scan | generative models and a classic OCR program |
 | sorter | clef-flash:9b | decides what each doubtful line is | decision model |
-| judges | clef:27b, winnow:e4b, the word list | each pick a version of a suspect | decision models and plain code |
+| judges | clef:27b, winnow-ollama:e4b, the word list | each pick a version of a suspect | decision models and plain code |
 | arbiter | the trust model (`trust.py`) | fixes, keeps, or asks about each suspect | trees trained on golden books |
 | reviewer | you | answer what the arbiter is unsure of | a person |
 
@@ -54,8 +54,7 @@ time. tesseract is a classic OCR program, and reads the whole page.
 The sorter and the AI judges are decision models. Each answers a question whose
 options are fixed in advance, such as "which of these versions does the crop
 show?", with a probability for each option. They write no text, so there is no
-prose to parse. clef and clef-flash run on Ollama's `/v1/systemone` endpoint,
-winnow on Ollaya.
+prose to parse. clef, clef-flash and winnow run on Ollama's `/v1/systemone` endpoint.
 
 The third judge, the word list, is plain code.
 
@@ -197,7 +196,7 @@ Every suspect goes to the three judges.
 clef:27b looks at the crop of that place on the scan and picks the version it
 shows. It is told the book's typesetting, and it is usually right.
 
-winnow:e4b reads only the sentence and picks the version that reads well. On its
+winnow (winnow-ollama:e4b) reads only the sentence and picks the version that reads well. On its
 own it is a poor judge. It is there as an alarm: where it disagrees with clef,
 clef is wrong several times as often as where they agree.
 
@@ -419,7 +418,7 @@ it stays.
 ## Running it
 
 ```sh
-uv run roboscriptorium doctor              # are Ollama and Ollaya answering?
+uv run roboscriptorium doctor              # is Ollama up, do its decision models answer?
 uv run roboscriptorium build work/stella   # → work/stella/stella.epub
 uv run roboscriptorium review work/stella  # questions on http://127.0.0.1:8765/
 uv run roboscriptorium eval work/<golden scan> --pages 9-64 --chapters 1-4

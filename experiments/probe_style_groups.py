@@ -13,7 +13,7 @@ from pathlib import Path
 
 from roboscriptorium import pipeline, roles, typestyle
 from roboscriptorium.book import Book
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
 from roboscriptorium.page import sunk_pages
 
@@ -66,11 +66,11 @@ GROUP_ROLES = {
     "artifact": "Not part of the book's text: stamps, printer's marks or scanning noise",
     "body": "Lines of the running text that happen to be short",
 }
-QUESTION = {"role": ollaya.choice(
+QUESTION = {"role": decide.choice(
     "These lines come from different pages of a printed book. They are set in the same type "
     "and sit in the same place on their pages. What are they?", GROUP_ROLES)}
 settings = Settings.from_env()
-client = ollaya.for_model(settings.role_model, settings.ollaya_url, settings.ollama_url)
+client = decide.for_model(settings.role_model, settings.ollama_url)
 out = []
 for group in typestyle.groups(voters, places):
     if len(group) < 2:

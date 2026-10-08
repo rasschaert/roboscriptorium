@@ -14,13 +14,13 @@ sys.path.insert(0, str(Path(__file__).parent))
 import ocr_trust_data  # noqa: E402
 
 from roboscriptorium import ocrcheck  # noqa: E402
-from roboscriptorium.clients import ollaya  # noqa: E402
+from roboscriptorium.clients import decide  # noqa: E402
 from roboscriptorium.config import Settings  # noqa: E402
 from roboscriptorium.roles import DecisionCache  # noqa: E402
 
 name, spec, model = sys.argv[1:4]
 settings = Settings.from_env()
-other = ollaya.for_model(model, settings.ollaya_url, settings.ollama_url)
+other = decide.for_model(model, settings.ollama_url)
 out = Path("work/probes/second-judge") / f"{name}-{model.replace(':', '-').replace('/', '_')}.json"
 out.parent.mkdir(parents=True, exist_ok=True)
 answers = json.loads(out.read_text()) if out.exists() else {}

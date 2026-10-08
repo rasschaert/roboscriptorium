@@ -9,7 +9,7 @@ answer token's `top_logprobs`.
 Generative models don't reliably answer with one letter. Without `--think` the answer is
 read from the first token's probabilities (and how much of them fall on A or B is
 shown). With `--think` the model answers freely, thinking first, and a decision model
-(winnow, through Ollaya) reads that reply and answers a typed choice: A, B or unsure.
+(winnow) reads that reply and answers a typed choice: A, B or unsure.
 """
 
 import json
@@ -22,7 +22,7 @@ import httpx
 from probe_proofread import fold
 from rapidfuzz import fuzz
 
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
 
 OUT = Path("work/probes/proofread/stella")
@@ -34,7 +34,7 @@ ASK = (
 )
 
 
-EXTRACT = ollaya.choice(
+EXTRACT = decide.choice(
     "A model was asked which of two transcriptions, A or B, a carefully edited book "
     "prints, and replied as given. Which one did the reply settle on?",
     {"A": "transcription A", "B": "transcription B",
@@ -73,7 +73,7 @@ def pick(model: str, a: str, b: str, url: str) -> float:
 def main(model: str, think: bool) -> None:
     settings = Settings.from_env()
     url = settings.ollama_url
-    extractor = ollaya.for_model(settings.check_model, settings.ollaya_url, url)
+    extractor = decide.for_model(settings.check_model, url)
     name = model.replace(":", "_").replace("/", "_")
     results = json.loads((OUT / f"{name}-read.json").read_text())
     for r in results:

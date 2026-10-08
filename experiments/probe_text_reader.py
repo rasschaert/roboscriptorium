@@ -22,7 +22,7 @@ import pymupdf
 
 from roboscriptorium import ocrcheck
 from roboscriptorium.cli import _questions_and_errors
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
 from roboscriptorium.golden.reference import unmarked
 from roboscriptorium.ir import Paragraph
@@ -136,7 +136,7 @@ QUESTION = {
 
 judged = []
 if judge_model:
-    judge = ollaya.for_model(judge_model, settings.ollaya_url, settings.ollama_url)
+    judge = decide.for_model(judge_model, settings.ollama_url)
     for para, quote, kind in flags:
         state = {"language": book.language, "paragraph": paragraphs[para], "flagged": quote,
                  "reader's kind": kind}  # fmt: skip
