@@ -293,11 +293,13 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
 - [ ] Its own bench step after the baseline (3): baseline, trust without the prior (an
       empty table), trust with it. The saved model is still version 1: `--save` once the
       tuning data is complete, then both benches
-- [ ] The reviewer's answers checked against the readings on disk: an answer that matches
-      none of the line's readings (layer, glm-ocr, tesseract, Qwen's cached third reading)
-      is shown once more before it is saved; the first answer logged, so the slip-rate
-      review (4) measures slips before and after the check. No model call (Stella:
-      transcribe-and-compare caught 9 of 9 slips, 3 false alarms in 58)
+- [x] The reviewer's answers checked before they are saved (`review.doubtful`): a typed
+      line that matches none of the question's readings, or a straight quote in a book
+      set with curly ones, is queried once and saved on the second Save; warned answers
+      logged in `review/warnings.jsonl`, so the slip-rate review (4) measures slips before
+      and after the check. No model call (Stella: transcribe-and-compare caught 9 of 9
+      slips, 3 false alarms in 58). Left: comparing with Qwen's cached reading of the
+      whole line for regions that carry no readings (headings, missing text)
 - [ ] The book teaches itself: after the answers, a per-book posterior per substitution
       pair rescores the unasked suspects (`decide`, two passes). Simulated: silent errors
       at .25/.5/1 a page over nine books 50/31/11 → 47/30/11, Vals alarm 7/6/1 → 5/5/1

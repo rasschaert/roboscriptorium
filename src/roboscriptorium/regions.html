@@ -73,6 +73,7 @@ button:disabled { opacity: .5; cursor: progress; }
 kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; margin-right: 6px; color: var(--muted); }
 .answer { margin-top: 12px; padding: 8px 10px; border-radius: 6px; background: var(--ok-bg); color: var(--ok); }
 .hint { color: var(--muted); font-size: 13px; margin-top: 10px; }
+.hint.warn { color: #b3261e; }
 .nav { display: flex; justify-content: space-between; margin-top: 12px; color: var(--muted); font-size: 13px; }
 a { color: var(--accent); }
 </style>
@@ -211,7 +212,7 @@ function render() {
     document.getElementById("reread").onclick = reread;
   }
   const box = textBox();
-  if (box) box.oninput = () => { draft.text = box.value; refreshSave(); };
+  if (box) box.oninput = () => { draft.text = box.value; draft.confirm = false; refreshSave(); };
   main.querySelectorAll(".pad button").forEach(b => {
     b.onmousedown = e => e.preventDefault();  // keep the cursor in the text box
     b.onclick = () => insertChar(PAD[+b.dataset.k][0]);
@@ -289,7 +290,9 @@ function saveHint(r, doubt) {
 function refreshSave() {
   const r = queue[pos], doubt = r.readings && r.readings.length > 1;
   document.getElementById("save").disabled = !canSave(r, doubt);
-  document.querySelector(".saverow .hint").textContent = saveHint(r, doubt);
+  const hint = document.querySelector(".saverow .hint");
+  hint.textContent = saveHint(r, doubt);
+  hint.classList.remove("warn");
 }
 
 function setKind(kind) {
@@ -300,6 +303,7 @@ function setKind(kind) {
 
 function setReading(k) {
   draft.reading = k;
+  draft.confirm = false;
   render();
   if (k === -1) textBox()?.focus();
 }
@@ -409,10 +413,19 @@ async function save() {
   else if (WITH_TEXT.has(draft.kind)) {
     text = doubt && draft.reading >= 0 ? r.readings[draft.reading].text : draft.text;
   }
-  const body = {key: r.key, action: draft.kind, text, turn: r.turn || 0};
+  const body = {key: r.key, action: draft.kind, text, turn: r.turn || 0, confirm: !!draft.confirm};
   const resp = await fetch("/api/verdict", {method: "POST", body: JSON.stringify(body)});
   if (!resp.ok) { alert(await resp.text()); return; }
-  r.answer = await resp.json();
+  const result = await resp.json();
+  if (result.warning) {
+    // A likely slip: say so once; Save again keeps the answer as it is.
+    draft.confirm = true;
+    const hint = document.querySelector(".saverow .hint");
+    hint.textContent = `${result.warning} Save again to keep it.`;
+    hint.classList.add("warn");
+    return;
+  }
+  r.answer = result;
   draft = null;
   pos = nextUnanswered(pos);
   out = 0;

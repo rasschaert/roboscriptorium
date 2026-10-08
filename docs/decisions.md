@@ -920,3 +920,12 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   conventions must not teach the rest) and a training suspect is scored without its own
   label (with it in, 76/48/28 at .25/.5/1: worse than no prior). Its bench step waits for
   the retrain (checklist 6b). The saved model stays version 1 until `--save`.
+- 2026-10-08: A reviewer's answer is checked before it is saved (`review.doubtful`): a
+  line typed for a question with readings must match one of them (quote glyphs and
+  spacing aside), and a straight quote in a book set with curly ones is a slip; the page
+  says why once and saves on the second Save, logging the warned answer in
+  `review/warnings.jsonl`. At the measured slip rate (8 of 68) one question a page costs
+  about 0.12 wrong words a page, more than trust leaves silent at that budget; the
+  question's own readings give the transcribe-and-compare check (Stella: 9 of 9 slips,
+  3 alarms in 58) without a model call. Built before the slip-rate review so that review
+  measures both rates.

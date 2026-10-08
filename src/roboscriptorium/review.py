@@ -14,8 +14,10 @@ import io
 import json
 import re
 import threading
+import unicodedata
 from collections.abc import Callable
 from dataclasses import asdict
+from datetime import UTC, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -211,6 +213,32 @@ class Review:
         return asdict(self.verdicts.record(d, truth, category, body.get("note", "")))
 
 
+_CURLY = "‘’“”"
+_STRAIGHT = str.maketrans("‘’“”", "''\"\"")
+
+
+def _fold(text: str) -> str:
+    return " ".join(unicodedata.normalize("NFC", text).translate(_STRAIGHT).split())
+
+
+def doubtful(flag: F.Flag, action: str, text: str | None) -> str:
+    """Why an answer deserves a second look before it is saved, or "" when it doesn't.
+
+    A reviewer's typed answer is wrong about one time in eight (`quality.slip_rates`),
+    so a line typed for a question with readings must match one of them, letter for
+    letter but for quote glyphs and spacing; and an answer with a straight quote where
+    the book's line or readings use curly ones is a typing slip no model is needed for.
+    """
+    if text is None or action not in ("text", "heading", "caption"):
+        return ""
+    lines = [flag.text, *(g["text"] for g in flag.readings)]
+    if any(c in line for line in lines for c in _CURLY) and any(c in text for c in "'\""):
+        return "That has a straight quote where the book sets curly ones."
+    if len(flag.readings) > 1 and _fold(text) not in {_fold(g["text"]) for g in flag.readings}:
+        return "That matches none of the readings of this line. Check the scan once more."
+    return ""
+
+
 class RegionReview:
     """Flagged regions of a book; `rebuild` reruns the pipeline and returns new flags."""
 
@@ -295,9 +323,27 @@ class RegionReview:
         return self.guess_letter(png, page.lines[beside[0]].text)
 
     def record(self, body: dict) -> dict:
+        """The answer saved, or, the first time an answer looks like a slip (`doubtful`),
+        a warning instead; the page sends it again with `confirm` to save it anyway.
+        Warned answers are logged beside the answers, so the slip rate can be measured
+        before and after the check."""
         flag = next(f for f in self.regions if f.key == body["key"])
         turn = int(body.get("turn") or 0)
-        return asdict(self.corrections.record(flag, body["action"], body.get("text"), turn))
+        text = body.get("text")
+        if not body.get("confirm") and (why := doubtful(flag, body["action"], text)):
+            path = self.corrections.path.with_name("warnings.jsonl")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            with path.open("a") as f:
+                entry = {
+                    "key": flag.key,
+                    "page": flag.page,
+                    "text": text,
+                    "why": why,
+                    "at": datetime.now(UTC).isoformat(timespec="seconds"),
+                }
+                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+            return {"warning": why}
+        return asdict(self.corrections.record(flag, body["action"], text, turn))
 
     def rebuild(self) -> dict:
         with self._lock, PDF_LOCK:

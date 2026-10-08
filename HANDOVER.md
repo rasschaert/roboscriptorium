@@ -4,6 +4,26 @@ Where work stopped, for the next session. AGENTS.md holds the standing rules,
 docs/decisions.md the dated decisions; this file only covers the state of play.
 Replace it at the end of each session.
 
+## Added on 2026-10-08 by a second session (Fable), on top of the state below
+
+Three commits on `main`, each measured, lint and tests green, Opus's uncommitted
+files (`experiments/probe_text_reader.py`, `probe_remaining_errors.py`) untouched:
+
+- `52ea4d3` line-end hyphens by evidence (`reflow.join`): book spelling, word list,
+  capital, the parts beside an inner hyphen. 29 → 15 wrong of 1,574 breaks on six
+  slices (`experiments/probe_hyphen_breaks.py`).
+- `fbf1925` trust's substitution-pair prior (`trust.pair`, model version 3, 23
+  features, priors saved with the model, ≥ 2 books, leak-free training rows).
+  Leave one book out: silent errors at 0/.25/.5/1 a page 153/87/44/23 → 117/50/31/11
+  (`experiments/probe_trust_pair_prior.py`). **The saved model is still version 1**:
+  every build with trust on still stops until `train_ocr_trust.py --save`.
+- the reviewer's answers checked before saving (`review.doubtful`, `regions.html`),
+  warned answers in `review/warnings.jsonl`.
+
+Checklist section 6b holds the numbers and what is left (the hyphen question route,
+the prior's own bench step, the per-book posterior). Notes and probe outputs in
+`work/probes/thinker-2026-10-08/`.
+
 ## State at the end of 2026-10-07 (night)
 
 On `main`, pushed. Another Claude session works on the review page

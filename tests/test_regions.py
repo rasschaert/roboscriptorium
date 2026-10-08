@@ -165,3 +165,44 @@ def test_a_dropped_speck_is_not_flagged():
     page.lines.insert(3, Line("1", 258, 78, 260, 81))
     roles = {SourceRef(1, 3): LineRole("artifact", 0.6, 0.2)}
     assert 3 not in [f.first for f in flags.find([page], roles)]
+
+
+def test_an_answer_that_matches_no_reading_is_queried_once_then_saved(tmp_path):
+    from roboscriptorium import review
+
+    page = _page()
+    doubt = flags.Flag(
+        "k1", 1, 2, 2, "De sheriff stuurt een patrouillewagen, zei ze.", "text", ["ocr-doubt"],
+        readings=[
+            {"text": "De sheriff stuurt een patrouillewagen, zei ze.", "votes": []},
+            {"text": "De sheriff stuurt een patrouillewagen,’ zei ze.", "votes": ["a"]},
+        ],
+        span=(22, 39),
+    )  # fmt: skip
+    answers = Corrections(tmp_path / "review" / "regions.jsonl")
+    page_review = review.RegionReview(
+        tmp_path / "none.pdf", [page], [doubt], answers, lambda: ([page], [doubt], 0), "nld"
+    )
+    # A reading chosen as it is saves at once.
+    saved = page_review.record({"key": "k1", "action": "text", "text": doubt.readings[1]["text"]})
+    assert saved["text"] == doubt.readings[1]["text"]
+    # A typed line that matches none of the readings is queried, not saved …
+    typed = "De sheriff stuurt een patrouilewagen,’ zei ze."
+    out = page_review.record({"key": "k1", "action": "text", "text": typed})
+    assert "none of the readings" in out["warning"]
+    assert answers.for_flag(doubt).text == doubt.readings[1]["text"]
+    assert "patrouilewagen" in (tmp_path / "review" / "warnings.jsonl").read_text()
+    # … and saved when the reviewer confirms it.
+    out = page_review.record({"key": "k1", "action": "text", "text": typed, "confirm": True})
+    assert out["text"] == typed
+    # A straight quote in a book set with curly ones is a slip, whatever the readings.
+    straight = "De sheriff stuurt een patrouillewagen,' zei ze."
+    assert (
+        "straight quote"
+        in page_review.record({"key": "k1", "action": "text", "text": straight})["warning"]
+    )
+    # Spacing and quote glyphs alone don't make a typed line a stranger.
+    spaced = "De sheriff  stuurt een patrouillewagen,’ zei ze. "
+    assert "warning" not in page_review.record({"key": "k1", "action": "text", "text": spaced})
+    # Dropping the region carries no text to check.
+    assert "warning" not in page_review.record({"key": "k1", "action": "drop", "text": None})

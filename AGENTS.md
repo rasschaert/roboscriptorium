@@ -498,7 +498,9 @@ preselected, and takes the text as printed in a text box. Where OCR readings
 differ it asks which one matches the scan instead: each reading on its own row,
 the differing part marked, with the models that picked it (`a`, `b`, …; `e` for
 something else). One Save button (`↵`; `⌘↵` in the text box) records the answer
-and moves to the next unanswered region; arrows move through all regions. A
+and moves to the next unanswered region; a typed line that matches none of the readings,
+or a straight quote in a curly-quoted book, is queried once and saved on the second
+Save (`review.doubtful`; warned answers in `review/warnings.jsonl`). Arrows move through all regions. A
 region with a box can be turned (`r`, ↺/↻) and read again by tesseract (`o`);
 `-` and `+` zoom the crop out and back in. "Rebuild book" applies the answers and rebuilds
 the EPUB. Flags come from the model's decisions before answers, so the list

@@ -158,6 +158,23 @@ parts are words). Those are the question's: a break where the list is silent and
 parts are words fired 13 right against 3 wrong on the English slices and 0 against 44
 on the Dutch, so it can trigger a question on an English book and never decide.
 
+## The reviewer's answers are checked
+
+**A question isn't free: the reviewer slips.** 8 of 68 checked answers on Stella were
+wrong (`quality.slip_rates`), and at one question a page that is about 0.12 wrong
+words a page, more than trust leaves silent at that budget and more than the hyphen
+breaks. Transcribing the crop and comparing in code caught 9 of 9 slips there with
+3 false alarms in 58; the readings every question already carries are the same
+comparison without a model call. So before an answer is saved (`review.doubtful`): a
+line typed for a question with readings must match one of them, letter for letter
+but for quote glyphs and spacing, and an answer with a straight quote where the
+book's line or readings set curly ones is a slip no model is needed for. The page
+says why once and saves on the second Save; the warned answer is logged beside the
+answers (`review/warnings.jsonl`), so the slip-rate review measures slips before and
+after the check. Its failure: a line the reviewer rightly retypes at two places
+matches no reading and is queried once; and a region with no readings (a heading
+typed in, text the layer lacks) gets only the quote check.
+
 ## Measuring
 
 - **`bench`, not single runs.** Warm caches replay themselves, so reruns agree;
