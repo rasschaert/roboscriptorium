@@ -954,3 +954,7 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   printed one), Cloudflare's comes close but fails all three (96.2%, 348 of 377, shift
   0.063, 90th percentile 0.150). `ROBO_JUDGE_VIA` and `ollaya.HostedClient` stay for a
   later build; the decisions API takes the image inside `state`.
+- 2026-10-08: The models are named by the role they play: spotter, readers, sorter,
+  judges, arbiter (the trust model) and reviewer, in docs/how-it-works.md, the diagram
+  and AGENTS.md. The user asked for it as a shared vocabulary: a new model is tried
+  for a role and measured against the one playing it.

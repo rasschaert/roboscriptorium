@@ -74,8 +74,8 @@ read: 1 · Read the page {
   m: {
     class: row
     mupdf: PyMuPDF {class: code}
-    yolo: DocLayout-YOLO {class: vision}
-    glm: glm-ocr:bf16 {class: ollama}
+    yolo: "the spotter\nDocLayout-YOLO" {class: vision}
+    glm: "a reader\nglm-ocr:bf16" {class: ollama}
     ink: ink on the page image {class: code}
   }
   s.layer -> m.mupdf {class: uses}
@@ -92,7 +92,7 @@ understand: 2 · Understand the page {
   }
   m: {
     class: row
-    flash: clef-flash:9b {class: ollaya}
+    flash: "the sorter\nclef-flash:9b" {class: ollaya}
     rules: layout rules +\nstyle-group vote {class: code}
     tree: line-role classifier\n(gradient-boosted trees) {class: candidate}
   }
@@ -107,26 +107,26 @@ check: 3 · Check the OCR (scans only) {
     class: row
     horizontal-gap: 160
     second: More readings\nof each body line {class: stage}
-    judge: Judges\nwhere the readings differ {class: stage}
-    trust: Learned trust\nfix, keep, or ask {class: stage}
+    judge: Judges\npick a version of each suspect {class: stage}
+    trust: Arbiter\nfix, keep, or ask {class: stage}
     second -> judge -> trust
   }
   m: {
     class: row
-    glm: glm-ocr:bf16 {class: ollama}
-    tess: tesseract\n(the book's language) {class: code}
-    qwen: "qwen3.8:27b, told the\nbook's style" {class: ollama}
-    clef: "clef:27b\npicks from the crop" {class: ollaya}
-    winnow: "winnow:e4b\npicks from the sentence" {class: ollaya}
-    words: word list\n(tesseract's dictionary) {class: code}
-    gbt: gradient-boosted trees\n+ substitution priors {class: code}
+    glm: "reader\nglm-ocr:bf16" {class: ollama}
+    tess: "reader\ntesseract (the book's language)" {class: code}
+    qwen: "reader\nqwen3.8:27b, told the book's style" {class: ollama}
+    clef: "judge\nclef:27b, from the crop" {class: ollaya}
+    winnow: "judge\nwinnow:e4b, from the sentence" {class: ollaya}
+    words: "judge\nthe word list" {class: code}
+    gbt: "the arbiter\ntrees trained on golden books" {class: code}
   }
   s.second -> m.glm {class: uses}
   s.second -> m.tess {class: uses}
   s.second -> m.qwen {class: uses}
   s.judge -> m.clef {class: uses}
   s.judge -> m.winnow {class: uses}
-  s.judge -> m.words: a vote {class: uses}
+  s.judge -> m.words {class: uses}
   s.trust -> m.gbt {class: uses}
 }
 
@@ -141,9 +141,9 @@ review: 4 · Review {
   }
   m: {
     class: row
-    qread: "qwen3.8:27b, told the book's style,\nproposes an unpaired quote's marks" {class: ollama}
-    init: clef-flash:9b\nguesses a drawn initial's letter {class: ollaya}
-    you: you {class: human}
+    qread: "a reader, qwen3.8:27b,\nproposes an unpaired quote's marks" {class: ollama}
+    init: "the sorter, clef-flash:9b,\nguesses a drawn initial's letter" {class: ollaya}
+    you: the reviewer {class: human}
     slip: answer check: a typed line\nmust match a reading {class: code}
     proof: qwen3.8 proofreads\nthe answers {class: candidate}
   }
@@ -170,7 +170,7 @@ build: 5 · Assemble the book {
     words: the word list\n(which form it knows) {class: code}
     slant: stroke slant per word {class: code}
     gap: "dash length and gaps (or book.toml),\nmeasured first and told to the readers" {class: code}
-    regions: "layout regions;\nyour answers turn plates" {class: code}
+    regions: "the spotter's pictures;\nthe reviewer's turns" {class: code}
   }
   s.reflow -> m.spell {class: uses}
   s.reflow -> m.words {class: uses}
