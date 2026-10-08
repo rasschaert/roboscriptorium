@@ -52,3 +52,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | bench tuning, ellipsis style, retrained trust against fixed rule, warm | 839 | 1 | 0 |
 | 2026-10-08 | trust data, Vals alarm pp. 11-60, whole-body style prompt, Qwen via hosted, alongside 1 run | 50 | 3 | 1 |
 | 2026-10-08 | trust data, Dolittle, whole-body style prompt, Qwen via hosted, alongside 1 run | 180 | 5 | 1 |
+| 2026-10-08 | trust data, the-story-of-doctor-dolittle--stokes-1920, whole-body style, winnow-ollama:e4b, Qwen cached (hosted for misses), alongside 2 runs | 180 | 14 | 0 |
+| 2026-10-08 | trust data, vals-alarm--ia-scan, whole-body style, winnow-ollama:e4b, Qwen cached (hosted for misses), alongside 2 runs | 50 | 14 | 0 |

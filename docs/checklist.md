@@ -376,6 +376,13 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       (CER 1.22% → 1.71%), not adopted
 - [ ] ~~winnow:12b as the second judge~~ dropped: Ollaya, its only server, was uninstalled
 - [ ] A judge set and a sorter set like the reader set, versioned the same way
+  - [x] The judge role in `experiments/tryout.py`: settled suspects of the tuning slices,
+        the vision judge's exact questions and crops, 25 it gets wrong and 25 right a book
+  - [ ] Build judge set v1 once the winnow trust data is in: a cached rerun, ~15 min
+  - [ ] imajev (mindchain, Qwen3.5 vision decision models, 2B/4B/9B Q8_0) for the vision
+        judge against clef:27b: 2B pulled and made a decision model
+        (`modelfiles/imajev-2b.Modelfile`); 4B and 9B when the user pulls them. One model
+        at a time, with the GPU otherwise quiet; 550 questions, ~5 min each for 2B
 - [x] winnow on Ollama: the user pulled the Hugging Face GGUF; a Modelfile makes it a
       decision model (`modelfiles/`, AGENTS.md Environment). Screened on the cached
       suspects of Goede dochter, Vals alarm and Reis: right alone 285/208/265 against

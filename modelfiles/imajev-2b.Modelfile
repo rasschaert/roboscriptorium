@@ -1,0 +1,12 @@
+# imajev-2b (mindchain, Qwen3.5 vision decision model) as a decision model on Ollama's
+# /v1/systemone. Pull the weights first (the user runs this):
+#   ollama pull hf.co/mindchain/imajev-2b-GGUF:Q8_0
+# Then: ollama create imajev:2b -f modelfiles/imajev-2b.Modelfile
+# As for winnow (winnow-ollama-e4b.Modelfile): the CAPABILITY lines make /v1/systemone
+# accept it, and Ollama builds the decision prompt itself, not in imajev's lettered
+# options. Its card's calibration temperature (1.305) is not applied.
+FROM hf.co/mindchain/imajev-2b-GGUF:Q8_0
+TEMPLATE {{ .Prompt }}
+CAPABILITY decision
+CAPABILITY vision
+PARAMETER num_ctx 16384

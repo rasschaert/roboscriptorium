@@ -196,6 +196,10 @@ right, then expand.
   - `docs/pipeline.d2`: the README's diagram of the stages and the model behind
     each; kept current under the standing rules.
   - `experiments/`: throwaway probes for comparing models (line roles, page types).
+  - `experiments/tryout.py`: a candidate model tried for a role (reader, judge) on a frozen,
+    versioned set (`tryouts/<role>-v<N>.json` in git, crops in `work/tryout/`), against
+    the model playing the role; results in `tryouts/results.jsonl`. The screen before a
+    trust-data rebuild and `bench`.
   - `golden/`: golden books. `manifest.py` (scans, fetch with sha256 check),
     `gutenberg.py` (derives the reference text from a Project Gutenberg EPUB),
     `epub.py` (from a publisher's EPUB: headings by tag or class prefix),
@@ -481,6 +485,11 @@ schedel before choosing an OCR model.
   (`pdfinfo`, `pdftotext`, `pdfimages`).
 - epubcheck (Homebrew).
 - d2 (Homebrew), renders `docs/pipeline.d2` to the README's diagram.
+- `imajev:2b` (Ollama, 2026-10-08): mindchain's imajev-2b (Qwen3.5-2B vision decision
+  model, `hf.co/mindchain/imajev-2b-GGUF:Q8_0`, pulled by the user; its vision projector
+  comes with it under Ollama 0.40.1) made a decision model with
+  `modelfiles/imajev-2b.Modelfile`, as winnow below. A candidate for the vision judge;
+  4B and 9B have Modelfiles too.
 - `winnow-ollama:e4b` (Ollama, 2026-10-08): winnow:e4b's Hugging Face GGUF
   (`hf.co/EldanRing/Winnow-E4B:Q8_0`, pulled by the user) made a decision model with
   `modelfiles/winnow-ollama-e4b.Modelfile`. **A workaround:** a pulled GGUF has no
