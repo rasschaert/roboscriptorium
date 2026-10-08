@@ -3,6 +3,8 @@ crops, on a golden book's pages: the lines whose crop changed are read again int
 fresh cache and scored with the old readings against the aligned reference.
 
     uv run python experiments/probe_crop_span.py <book dir> <first> <last> <chapters> [glm|qwen]
+
+With qwen, ROBO_READ_VIA reads through a hosted build.
 """
 
 import hashlib
@@ -50,11 +52,13 @@ with pymupdf.open(book.source) as doc:
                 text = hashlib.sha1(line.text.encode()).hexdigest()[:10]
                 base = f"{p.number}:{k}:{text}:" + ",".join(f"{v:.0f}" for v in box)
                 changed[SourceRef(p.number, k)] = base
-out = Path("work/probes/crop-span") / f"{book_dir.name}-{first}-{last}-{which}.json"
+via = "-via-hosted" if which == "qwen" and settings.read_via else ""
+out = Path("work/probes/crop-span") / f"{book_dir.name}-{first}-{last}-{which}{via}.json"
 out.parent.mkdir(parents=True, exist_ok=True)
 start = time.time()
 new = ocrcheck.line_readings(
-    book.source, pages, set(changed), old["model"], settings.ollama_url, out, old.get("prompt", "")
+    book.source, pages, set(changed), old["model"], settings.ollama_url, out, old.get("prompt", ""),
+    settings.read_via if which == "qwen" else "",
 )
 print(f"{which}: {len(changed)} of {sum(len(p.lines) for p in pages)} lines have a new crop; "
       f"read in {time.time() - start:.0f} s")

@@ -156,7 +156,9 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
         738 of 983 crops change; on them CER 1.87% → 0.29%, exact 630 → 639, better on 25
         lines (no longer reading the neighbouring line), worse on 13 (the model's noise on a
         crop moved by a point: the quote it dropped is plainly in the new crop)
-  - [ ] The same with hosted Qwen (the **user**'s go, ~3 cents), then commit if it helps
+  - [x] Committed (`565e9bf`). Hosted Qwen on the new crops (the user's go): on the 737
+        changed lines CER 0.04% against local Qwen's 0.20% on the old crops, 722 exact on
+        both, no neighbouring clauses read
   - [ ] Re-read the affected lines and rebuild the trust data of the books done on the
         old crops (Goede dochter, Crime, Dolittle, De tuin, Metro), warm apart from those
         lines

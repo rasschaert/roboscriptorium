@@ -873,3 +873,8 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   half of De tuin's, 15% of Goede dochter's. glm-ocr on Metro pp. 7–30, the 738 changed
   crops: CER 1.87% → 0.29%, exact 630 → 639. Found because hosted Qwen and Gemma read
   whole clauses of the neighbouring line.
+- 2026-10-08: Hosted Qwen3.8 bf16 on Metro pp. 7–30's 737 changed crops: CER 0.04%,
+  against local Qwen's 0.20% on the old crops, 722 exact on both, better and worse on 7
+  lines each (small: a stray `*`, `Moskvín`, a closing quote) and no neighbouring clause
+  read. With the builds equal on Goede dochter and on Metro's old crops, the gain is the
+  crop's.
