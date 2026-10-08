@@ -40,6 +40,10 @@ starting; keep it true.
   Standard Ebooks does it) takes people weeks, so hours of machine time per book
   are cheap. Cache slow stages per book so reruns stay cheap, and run long
   builds in the background.
+- **Time long runs and give an estimate first.** Run anything over a few minutes
+  through `experiments/timed.sh`, which appends its minutes to
+  [docs/run-times.md](docs/run-times.md). Before starting one, say how long it
+  should take from that table.
 
 ## Engineering practices
 
