@@ -53,7 +53,10 @@ starting; keep it true.
 - **Time long runs and give an estimate first.** Run anything over a few minutes
   through `experiments/timed.sh`, which appends its minutes to
   [docs/run-times.md](docs/run-times.md). Before starting one, say how long it
-  should take from that table.
+  should take from that table. Start it detached, through `experiments/detached.sh
+  <name> <command…>` (a `screen` session, output in `work/runs/<name>.out`), so it
+  outlives the terminal and the agent session: the user must be able to close either.
+  `screen -ls` lists the runs.
 
 ## Engineering practices
 

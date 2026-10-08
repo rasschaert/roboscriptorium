@@ -16,12 +16,13 @@ section 3: `train_ocr_trust.py --save`, the baseline bench, the substitution pri
 own bench step, `bench tuning`, `bench validation`, and the call on Qwen and short
 lines.
 
-### Runs that may have been cut off when the session ended
+### Runs going in `screen` (they outlive the session)
 
-All caches survive interruption, so a rerun of the same command picks up where it
-stopped. Check `docs/run-times.md` and `work/probes/ocr-trust/logs/` for which
-finished; a finished one prints its suspects line in the log and adds a row to
-run-times.
+`screen -ls` shows `robo-afscheid`, `robo-dolittle-crops`, `robo-metro-crops` while
+they run; their output is in `work/runs/<name>.out`, a finished one adds a row to
+`docs/run-times.md` and prints its suspects line. All caches survive interruption, so
+if one died, the same command (below, through `experiments/detached.sh`) picks up where
+it stopped.
 
 - Afscheid, `ocr_trust_data.py --rebuild afscheid-van-verspilde-tijd--ia-scan`
 - Dolittle's crop re-read and check, `work/probes/crop-reread.sh
