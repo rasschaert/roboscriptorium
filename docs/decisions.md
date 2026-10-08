@@ -737,3 +737,9 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   what it forgave, so a convention gap skews a score visibly, not silently. The
   ellipsis's spacing itself belongs with the dash style in `typography.py`, measured
   on the page like the dashes; a checklist step.
+- 2026-10-08: **De cipier** (Van Holkema & Warendorf 2013, transl. Heijman; IA
+  Scribe scan of the first printing against the publisher's e-book of the same
+  printing and typesetter) joins `bench tuning`, sliced to the foreword and
+  chapters 1–3 (pages 9–92). The cleanest pair yet: 0.21% layer CER and no known
+  deviation, every difference an OCR slip the layer makes on Dutch (ë read as é,
+  stress accents dropped, small capitals read as lower case, numerals missing).

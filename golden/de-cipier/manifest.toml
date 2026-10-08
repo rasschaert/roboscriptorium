@@ -1,0 +1,33 @@
+title = "De cipier"
+author = "Luke Delaney"
+language = "nl"
+# Delaney and his translator Paul Heijman are alive: under copyright, so only
+# this manifest is in git.
+eu_copyright_until = 2200
+
+# The publisher's e-book ("Deze digitale editie is gemaakt naar de eerste druk,
+# 2013", typeset by ZetSpiegel like the print). Each chapter an h1 ("Woord
+# vooraf", "1"–"14", "Drie dagen later", "Epiloog"); italics the
+# "garamond-italic" class; police ranks in small capitals ("garamond-sc", the
+# text in capitals: DC, DS). Scene breaks are a blank line in the print and
+# only a class on the paragraph before it here. The Dankwoord is left out.
+[reference]
+source = "De cipier, Van Holkema & Warendorf 2013, transl. Paul Heijman, e-book ISBN 9789000322787 (EPUB)"
+sha256 = "272957a5e3bfbdc6c539f764d90b9afc4a71a6e2616f80a47c3b681c64745c29"
+files = [
+  "Text/De_cipier_epub-5.xhtml", "Text/De_cipier_epub-6.xhtml", "Text/De_cipier_epub-7.xhtml", "Text/De_cipier_epub-8.xhtml", "Text/De_cipier_epub-9.xhtml", "Text/De_cipier_epub-10.xhtml", "Text/De_cipier_epub-11.xhtml", "Text/De_cipier_epub-12.xhtml", "Text/De_cipier_epub-13.xhtml", "Text/De_cipier_epub-14.xhtml", "Text/De_cipier_epub-15.xhtml", "Text/De_cipier_epub-16.xhtml", "Text/De_cipier_epub-17.xhtml", "Text/De_cipier_epub-18.xhtml", "Text/De_cipier_epub-19.xhtml", "Text/De_cipier_epub-20.xhtml", "Text/De_cipier_epub-21.xhtml"
+]
+italic_classes = ["garamond-italic"]
+
+# The first printing (2013, ISBN 978 90 00 32277 0), Garamond on 346×566 pt;
+# IA Scribe scan (2023), 360 ppi MRC, GlyphLessFont layer; a library copy
+# (Heerenveen) with labels on the front pages. Pages 9–482: the Woord vooraf
+# to the end of the Epiloog. The layer lacks the chapter numerals 1–9, reads
+# ë as é and small capitals as lower case. Internet Archive lends it only, so
+# it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/ison_9789000322770 (borrow, then download the PDF)"
+sha256 = "38cffab52be926ac7e135b99d099c9ff461c95553ede3d1e9b5668b2cd77bb47"
+cover_page = 1
+body_pages = [9, 482]
