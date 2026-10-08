@@ -64,7 +64,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       chapters 1–5 (pp. 7–111) in `bench tuning`
 - [x] `evaluate.normalise` folds spaced dots; scores count what the fold forgave per
       kind (no reference rebuilt so far has spaced dots, so its trust data stands)
-- [ ] Afscheid's trust data (in `ocr_trust_data.py`, the whole book): ~2.1 h cold. Before the
+- [ ] Afscheid's trust data, pp. 9–70 (chapters 1–11, as in `bench tuning`): ~1.1 h cold. Before the
       baseline in 3, so the baseline includes it
 - [ ] Metro's trust data (in `ocr_trust_data.py`, pp. 7–111): ~2 h cold. Before the
       baseline too

@@ -33,7 +33,7 @@ SPECS = {
     "the-nature-of-a-crime--doubleday-1924": "",
     "the-story-of-doctor-dolittle--stokes-1920": "",
     "reis-om-mijn-schedel--ia-scan": "11-110:1-11",
-    "afscheid-van-verspilde-tijd--ia-scan": "",
+    "afscheid-van-verspilde-tijd--ia-scan": "9-70:1-11",
     "metro-2033--ia-scan": "7-111:1-10",
     "de-cipier--ia-scan": "9-92:1-4",
     "de-tuin-van-de-avondnevel--ia-scan": "11-52:1-3",
