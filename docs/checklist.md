@@ -357,7 +357,17 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       (CER 1.22% → 1.71%), not adopted
 - [ ] winnow:12b as the second judge on the cached suspects (`probe_second_judge.py`)
 - [ ] A judge set and a sorter set like the reader set, versioned the same way
-- [ ] Session start: does Ollama offer winnow yet? If so, try it against Ollaya's
+- [x] winnow on Ollama: the user pulled the Hugging Face GGUF; a Modelfile makes it a
+      decision model (`modelfiles/`, AGENTS.md Environment). Screened on the cached
+      suspects of Goede dochter, Vals alarm and Reis: right alone 285/208/265 against
+      Ollaya's 174/174/174; right where clef is wrong 78 of 100 against 45
+- [ ] winnow-ollama:e4b as `check_model`, confirmed: after tonight's two tuning benches
+  - [ ] Re-ask every book's suspects (winnow only, clef cached) and rebuild the trust
+        data: ~20–30 min
+  - [ ] Retrain the arbiter (`train_ocr_trust.py --save`): under a minute
+  - [ ] `bench tuning`, then `bench validation`, against the current arbiter: ~1 h
+  - [ ] If it holds: strip Ollaya from the code and docs (client, config, AGENTS.md,
+        design.md, how-it-works, the diagram, README); winnow was its only use
 
 ## 6d. Image-only scans
 
