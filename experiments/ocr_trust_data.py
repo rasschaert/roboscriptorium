@@ -42,6 +42,7 @@ SPECS = {
     "11-22-63--ia-scan": "15-94:1-24",
     "de-tuin-van-de-avondnevel--ia-scan": "11-52:1-3",
     "de-eerlijke-vinder--ia-scan": "",
+    "youre-never-weird-on-the-internet--ia-scan": "13-94:1-16",
     # No golden reference: labelled by a human's answers in the review.
     "stella": "answers",
 }

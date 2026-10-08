@@ -115,7 +115,8 @@ English data makes it stable and the bench says so.
 - **"After review" counts the reviewer's slips.** 8 of 68 checked answers on
   Stella were wrong (Beta posterior 0.06–0.21), so a question isn't free.
 - **Validation books are not a test.** Earlier choices were made on their scores. They
-  are De tuin, Villa Toscane and De eerlijke vinder. Grand Hotel Europa was one until
+  are De tuin, Villa Toscane, De eerlijke vinder and You're Never Weird on the Internet
+  (the only English one, and the hardest layout: pictures holding text). Grand Hotel Europa was one until
   its pair failed: an EPUB of another printing, and reference headings the scan lacks.
 - **The test set is a book nothing was chosen on.** Het geluid van bananen
   (Stella's publisher and scan format) is scored once, at the end of the plan;

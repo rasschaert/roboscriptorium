@@ -89,6 +89,9 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       place (another printing than its EPUB; 9 of 16 reference headings not on the scan)
 - [ ] De eerlijke vinder's trust data (in `ocr_trust_data.py`, pp. 12–95, held out):
       ~1.5 h cold, before the baseline
+- [x] You're Never Weird on the Internet (Touchstone 2015, 5th printing, against the
+      edition's ebook): validation, pp. 13–94 (sections 1–16), the only English one
+- [ ] Its trust data (in `ocr_trust_data.py`, held out): ~1.6 h cold, before the baseline
 - [ ] Dolittle's captions scored properly: derive them into the reference, or leave
       caption lines out of the score as footnotes are
 - [x] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics

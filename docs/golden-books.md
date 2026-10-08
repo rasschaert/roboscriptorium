@@ -31,3 +31,4 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 | the-thief-takers-apprentice | tuning | 282 / 74 | 83490 | 1.4 h | 0.28% | 0.34% | 3.4% | 22 / 22 | none | 0.34% / 0.22% |
 | vals-alarm | tuning | 292 / 50 | 87748 | 0.9 h | 0.68% | 0.45% | 3.0% | 4 / 10 | none | 0.36% / 0.16% |
 | villa-toscane | validation | 186 / 186 | 49902 | minutes | 0.00% | 0.00% | 0.0% | 12 / 12 | none | 0.04% / 0.04% |
+| youre-never-weird-on-the-internet | validation | 260 / 82 | 66184 | 1.5 h | 0.52% | 0.61% | 6.4% | 17 / 16 | none | none yet |

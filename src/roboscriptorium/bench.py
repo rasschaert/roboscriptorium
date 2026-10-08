@@ -45,6 +45,7 @@ SETS = {
     "validation": [
         "de-tuin-van-de-avondnevel--ia-scan:11-52:1-3",
         "de-eerlijke-vinder--ia-scan",
+        "youre-never-weird-on-the-internet--ia-scan:13-94:1-16",
         "villa-toscane--calibre-pdf::1-12",
     ],
     "test": [

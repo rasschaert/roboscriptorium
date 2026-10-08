@@ -1,0 +1,35 @@
+title = "You're Never Weird on the Internet (Almost)"
+author = "Felicia Day"
+language = "en"
+# Day is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Touchstone's ebook of the first hardcover edition (ISBN 978 1 4767 8567 7;
+# "First Touchstone hardcover edition August 2015", the same copyright page as
+# the print). Chapter numbers ("- 1 -") are h2.h2a, titles h2.h2b, sections
+# ("[ Jesus Loved Me! ]") h3; each chapter's subtitle is a "sidel" div. Pictures
+# are <img alt="images"> with their captions and any text in them baked in, so
+# the reference has no words for them; italics are "txit" spans.
+[reference]
+source = "You're Never Weird on the Internet (Almost), Touchstone 2015, ISBN 9781476785677 (ebook)"
+sha256 = "5b1b11cd809130f36c5838330ed8af550a8a92d7fc6ad6b23839727da85e6fa0"
+files = [
+  "xhtml/forword.html", "xhtml/intro.html", "xhtml/ch01.html", "xhtml/ch02.html", "xhtml/ch03.html", "xhtml/ch04.html", "xhtml/ch05.html", "xhtml/ch06.html", "xhtml/ch07.html", "xhtml/ch08.html", "xhtml/ch09.html", "xhtml/ch10.html", "xhtml/ch11.html", "xhtml/ch12.html"
+]
+
+# The first Touchstone hardcover edition, fifth printing (key "10 9 8 7 6 5";
+# interior design Jill Putorti); an older Internet Archive PDF like Thief-Taker's:
+# 300 ppi, LuraDocument, Times text layer, 280 pages, 515×785 pt, a library copy
+# with a catalogue label. Running heads with the folio ("Why I'm Weird / 21"),
+# photos and pictures holding text (a book cover reading "LEARNING"), lettered
+# hanging lists, spaced ellipses, unspaced em dashes. The layer agrees at 0.46%
+# CER in every 20-page band (0.32–0.76%), every frequent difference its own
+# (`Em` for I'm, `111` for I'll, dropped apostrophes). Pages 13–272: the Foreword
+# to the end of chapter 12; the thanks and the author's note are left out.
+# Internet Archive lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org (You're Never Weird on the Internet (Almost), Touchstone 2015; borrow, then download the PDF)"
+sha256 = "34a4379005b88de2d3e71be5158d3a7690958af8babc1f36aabb06e1583e44cf"
+cover_page = 1
+body_pages = [13, 272]

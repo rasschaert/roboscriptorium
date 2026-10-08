@@ -794,3 +794,10 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   reference was made from its scan and the build reaches 0.34%; Dolittle is the only
   book with plates, captions and drawn initials, and its high CER is partly its
   reference leaving captions out, which is ours to fix.
+- 2026-10-08: **You're Never Weird on the Internet** (Day, Touchstone first hardcover
+  edition, fifth printing, against the edition's ebook) for validation, pages 13–94
+  (sections 1–16): validation had no English book since Lady into Fox left, and this
+  one was never consulted. A later printing than its ebook, like Metro, accepted on the
+  layer: 0.46% CER in every 20-page band and every frequent difference the layer's own,
+  unlike Grand Hotel Europa. Pictures hold their captions and other text, which the
+  reference has no words for, so it also tests that picture text stays out of the text.
