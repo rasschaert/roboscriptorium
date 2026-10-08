@@ -230,7 +230,7 @@ right, then expand.
     `stages/missing-lines.json`. Review answers find their lines again by text
     when lines are added above them.
   - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)
-    against glm-ocr's reading of each body line's crop (`ROBO_OCR_MODEL`),
+    against glm-ocr's reading of each body line's crop (short lines too) (`ROBO_OCR_MODEL`),
     cached in `stages/second-reading.json`, tesseract's of the page, and
     `read_model`'s (qwen3.8) of the crop, told the book's typesetting
     (`stages/third-reading.json`). Where a line's readings differ, clef picks from

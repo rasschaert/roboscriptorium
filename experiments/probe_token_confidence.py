@@ -71,7 +71,7 @@ with pymupdf.open(book.source) as doc:
         boxes = ocrcheck.line_boxes(doc[p.number - 1], p)
         for k, line in enumerate(p.lines):
             key = f"{p.number}:{k}"
-            if key not in cache and len(line.text) >= ocrcheck.MIN_LINE_CHARS:
+            if key not in cache and len(line.text) >= 12:
                 todo.append((key, ocrcheck._line_crop(doc, p.number, boxes[k])))
 print(f"{len(todo)} lines to read", flush=True)
 with ThreadPoolExecutor(ocrcheck.READ_WORKERS) as pool:

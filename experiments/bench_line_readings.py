@@ -74,7 +74,7 @@ def extra_readings(model: str, prompt: str = EXTRA_PROMPT) -> dict[SourceRef, st
     cache = Path("work/probes/line-readings") / f"{book.root.name}--{model.replace(':', '_')}{styled}.json"
     done = json.loads(cache.read_text()) if cache.exists() else {}
     todo = [r for r in sorted(kept, key=lambda r: (r.page, r.line)) if f"{r.page}:{r.line}" not in done
-            and len(next(p for p in pages if p.number == r.page).lines[r.line].text) >= ocrcheck.MIN_LINE_CHARS]
+            and len(next(p for p in pages if p.number == r.page).lines[r.line].text) >= 12]
 
     def read(png: bytes) -> str:
         payload = {"model": model, "prompt": prompt, "images": [base64.b64encode(png).decode()],

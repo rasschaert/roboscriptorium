@@ -32,6 +32,14 @@ for the best score alone:
 glm-ocr and qwen3.8 read crops cut from the layer's boxes, so they share its
 segmentation errors; only tesseract doesn't.
 
+**Every body line is read, short ones too.** A dialogue line ending "keek.’" is
+where a closing quote is lost. On Goede dochter pp. 9–64, reading the lines under 12
+characters added 18 suspects. About three of them are real layer errors (`weg?` for
+`weg?’`, `zin.` for `zijn.’`, `moet—` for `moet –’`). Eight came from glm-ocr
+alone, and the layer was right on all eight: on a tiny crop it returns `?`, `‘` or a
+markdown fence. clef was right on all 14 settled ones, and trust sees which readings
+back a version, so these are left to trust and the bench, with no rule of their own.
+
 **Two judges where the readings differ.**
 
 - *clef:27b looks at the crop.* It is the judge that is usually right: 2,236 of

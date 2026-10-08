@@ -222,7 +222,6 @@ def proposals(
         settings.ollama_url,
         book.stages / "third-reading.json",
         read_prompt(book, body, style),
-        shortest=1,
     )
     dots = quotes.ellipsis(" ".join(ln.text for p in body for ln in p.lines))
     checked = {p.number: p for p in ocrcheck.apply(body, suspects)}

@@ -701,3 +701,7 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   it, and the reading stays only if that beats the noise floor. From now on the
   four "held-out" books count as a validation set: earlier choices (the word-list
   vote, the style-group question) were made on their scores.
+- 2026-10-08: The OCR check reads short lines too (the 12-character gate is gone):
+  on Goede dochter pp. 9–64 that adds 18 suspects and about three real layer errors,
+  two of them lost closing quotes; glm-ocr alone raised eight, all of them noise.
+  The bench after the retrain decides whether it stays (docs/design.md).

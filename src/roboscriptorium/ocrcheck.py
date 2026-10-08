@@ -55,8 +55,6 @@ SURE = 0.3
 SURE_ALONE = 0.5
 CROP_ZOOM = 4
 CROP_PAD = 4  # points around the suspect words
-# Lines shorter than this are page numbers and scraps, not worth a second reading.
-MIN_LINE_CHARS = 12
 # Curly quotes as straight ones, and a not sign (some OCR layers' line-end hyphen) as a
 # hyphen, one character for one, so offsets stay put.
 _FOLD = str.maketrans("‘’“”¬", "''\"\"-")
@@ -123,12 +121,12 @@ def line_readings(
     ollama_url: str,
     cache: Path,
     prompt: str = "",
-    shortest: int = MIN_LINE_CHARS,
 ) -> dict[SourceRef, str]:
     """The OCR model's reading of each checked line's crop, cached on the line's text.
 
     With a `prompt`, a generative vision model reads it (`transcribe`); without, glm-ocr
-    (`read_line`). Lines shorter than `shortest` aren't read."""
+    (`read_line`). Short lines are read too: "keek.’" ends dialogue, and that is where a
+    closing quote is lost."""
     done: dict[str, str] = {}
     if cache.exists():
         raw = json.loads(cache.read_text())
@@ -151,7 +149,7 @@ def line_readings(
         SourceRef(p.number, k): (p, k)
         for p in pages
         for k, line in enumerate(p.lines)
-        if SourceRef(p.number, k) in checked and len(line.text) >= shortest
+        if SourceRef(p.number, k) in checked and line.text.strip()
     }
     todo = [(p, k) for p, k in wanted.values() if key(p, k) not in done]
 
@@ -186,7 +184,7 @@ def tesseract_readings(
     for page in pages:
         for k, found in enumerate(_by_line(boxes[page.number], words[page.number])):
             ref = SourceRef(page.number, k)
-            if ref in checked and len(page.lines[k].text) >= MIN_LINE_CHARS:
+            if ref in checked and page.lines[k].text.strip():
                 out[ref] = " ".join(w[0] for w in found)
     return out
 
