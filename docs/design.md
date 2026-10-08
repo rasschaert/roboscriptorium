@@ -112,6 +112,33 @@ answer makes 111 role errors to the rules' 256 over twelve books, but is unstabl
 on the English books with three to train on. It replaces the rules once more
 English data makes it stable and the bench says so.
 
+## Reflow: line-end hyphens
+
+**Nothing else looks at a line-end hyphen.** The OCR check starts where readings
+differ, and every reading agrees a line ends in "-"; whether the word keeps it is
+decided in reflow alone, four to six times a page in Dutch. Measured against the
+reference on six golden slices (`experiments/probe_hyphen_breaks.py`, 1,574 decidable
+breaks, no models), the old rules were wrong 29 times, 0.02–0.17 words a page per
+book: more than the OCR check's silent errors at one question a page.
+
+**Evidence in order of its measured reliability**, strongest first, each used only
+where the stronger ones are silent:
+
+| Evidence | Why it is there | Its own failure |
+| --- | --- | --- |
+| the book's own spelling inside lines (`spellings`) | 12 of 12 right where it spoke | silent on a word printed once |
+| the word list knows exactly one of the two forms | fixes 7 wrong calls, breaks none where the book is silent | knows a closed form the print hyphenates (`faceplate`, `northernmost`: 3); knows both (`make-up`, `makeup`) |
+| a capital after the break (`Noord-Holland`) | right on every true capital | a word set in capitals (`WE-` + `RELDGESCHIEDENIS`), 0 of 3: so it no longer counts as one |
+| a hyphen already in the word | `Mens-erger-je-niet`, `good-for-nothing` | kept as a rule it was wrong 8 of 10 (`Zuid-Lon-den`, `Majuba-theeplan-tage`): now only where the parts beside the break are both words and don't make one |
+
+After the change 15 of the 1,574 are wrong (Vals alarm 0, De cipier 1, Goede dochter 2,
+De tuin 2, Artemis 2, Metro 8). What is left is English compounds the list lacks or
+knows closed (`night-vision`, `semi-erased`, `slate-black`), `make-up` with both forms
+known, and one Dutch compound (`heen-en-weerbewegingen`, closed in print though both
+parts are words). Those are the question's: a break where the list is silent and both
+parts are words fired 13 right against 3 wrong on the English slices and 0 against 44
+on the Dutch, so it can trigger a question on an English book and never decide.
+
 ## Measuring
 
 - **`bench`, not single runs.** Warm caches replay themselves, so reruns agree;

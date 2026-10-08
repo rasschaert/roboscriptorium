@@ -896,3 +896,17 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   about. The slip-rate review waits for trust: on the fixed rule it asked 215 questions
   on Goede dochter, nearly all settled by the word list and clef, the wrong mix to
   measure a reviewer on.
+- 2026-10-08: Line-end hyphens decided by evidence, not by rule alone (`reflow.join`;
+  `experiments/probe_hyphen_breaks.py`, six golden slices, 1,574 decidable breaks against
+  the reference, no models). The rules were wrong 29 times, 0.02–0.17 words a page, more
+  than the OCR check leaves silent at one question a page, and nothing asks about a hyphen.
+  The book's own spelling was 12/12 right; the word list, where it knows one form only,
+  fixed 7 and broke none the book hadn't settled; a capital after the break was right on
+  every true capital and wrong on all 3 words set in capitals; "a hyphen already in the
+  word keeps this one" was wrong 8 of 10. Now in that order, the inner-hyphen case kept
+  only where the parts beside the break are both words and don't make one. 29 → 15 wrong;
+  what is left is mostly English compounds the list lacks (`night-vision`), for a question.
+  An outside review (Fable), who also found, on the labelled suspects, that each scan's
+  errors are three to five signatures (`|`→`I`, a lost `’`, `é`→`ë`) nearly deterministic
+  across books, and that a substitution-pair prior in trust cuts silent errors at one
+  question a page from 23 to 11 over nine books, leave-one-out (checklist 6b).

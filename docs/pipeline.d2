@@ -163,11 +163,13 @@ build: 5 · Assemble the book {
   m: {
     class: row
     spell: the book's own spellings {class: code}
+    words: the word list\n(which form it knows) {class: code}
     slant: stroke slant per word {class: code}
     gap: dash length and gaps,\nor book.toml {class: code}
     init: clef-flash:9b\nguesses drawn initials {class: ollaya}
   }
   s.reflow -> m.spell {class: uses}
+  s.reflow -> m.words {class: uses}
   s.italics -> m.slant {class: uses}
   s.dash -> m.gap {class: uses}
   s.figures -> m.init {class: uses}

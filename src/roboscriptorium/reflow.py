@@ -9,6 +9,7 @@ import itertools
 import re
 import statistics
 from collections import Counter
+from collections.abc import Callable
 
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.page import NUMBERED_WORDS, bare_numeral
@@ -128,20 +129,24 @@ def spellings(pages: list[PageText]) -> Counter:
     return seen
 
 
-def join(text: str, nxt: str, seen: Counter | None = None) -> str:
+def join(
+    text: str, nxt: str, seen: Counter | None = None, known: Callable[[str], bool] | None = None
+) -> str:
     """Append the next line, undoing hyphenation where the word continues.
 
-    `seen` is how the book spells words inside lines (`spellings`): a word it prints
-    with its hyphen ("thief-taker") keeps the hyphen at a line break too.
+    Whether a hyphen at the line's end is the word's own is settled by evidence, the
+    strongest first: how the book spells the word inside lines (`seen`, from
+    `spellings`: "thief-taker" elsewhere keeps it, "thieftaker" drops it); which of the
+    two forms the language's word list knows (`known`, such as `Lexicon.knows`: it has
+    "wc-rol" and not "wcrol"); a capital after the break ("Noord-Holland"; a word set
+    in capitals isn't one); and, with a hyphen already in the word, whether the parts
+    beside the break are both words ("Mens-erger-je-niet" keeps it) or one word broken
+    ("Zuid-Lon-den" doesn't; without a word list the hyphen stays). Otherwise the hyphen
+    was the break's.
     """
     if text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha():
-        # A real hyphen: a capital after the break ("Noord-Holland"), or a compound
-        # that has hyphens elsewhere ("Mens-erger-je-niet", "glas-in-lood").
         last, first = text.split()[-1][:-1], nxt.split()[0] if nxt.split() else ""
-        if not _LOWER_START.match(nxt) or "-" in last or "-" in first:
-            return text + nxt
-        stem, rest = _WORD.sub("", last).lower(), _WORD.sub("", first).lower()
-        if seen and seen[f"{stem}-{rest}"] > seen[f"{stem}{rest}"]:
+        if _hyphen_stays(nxt, _WORD.sub("", last), _WORD.sub("", first), seen, known):
             return text.rstrip("".join(HYPHENS)) + "-" + nxt
         return text[:-1] + nxt
     if text.endswith(DASHES):
@@ -150,13 +155,42 @@ def join(text: str, nxt: str, seen: Counter | None = None) -> str:
     return f"{text} {nxt}"
 
 
+def _hyphen_stays(
+    nxt: str, stem: str, rest: str, seen: Counter | None, known: Callable[[str], bool] | None
+) -> bool:
+    """Whether the hyphen between `stem` and `rest` is the word's own (see `join`)."""
+    closed, hyphenated = stem + rest, f"{stem}-{rest}"
+    if seen and seen[hyphenated.lower()] != seen[closed.lower()]:
+        return seen[hyphenated.lower()] > seen[closed.lower()]
+    if known is not None and known(hyphenated) != known(closed):
+        return known(hyphenated)
+    if not _LOWER_START.match(nxt):
+        return not (len(rest) > 1 and rest.isupper())
+    if "-" in stem or "-" in rest:
+        if known is None:
+            return True
+        # The parts beside the break: a word of their own ("Lon" + "den") was broken
+        # there; two words ("erger" + "je") were joined by the hyphen.
+        before, after = stem.rsplit("-", 1)[-1], rest.split("-", 1)[0]
+        if known(before + after):
+            return False
+        return min(len(before), len(after)) >= 3 and known(before) and known(after)
+    return False
+
+
 def _role(roles: dict[SourceRef, LineRole] | None, ref: SourceRef) -> str:
     if roles is None or (r := roles.get(ref)) is None or r.p_body >= KEEP_BODY_AT:
         return "body"
     return r.role
 
 
-def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None) -> list[Block]:
+def reflow(
+    pages: list[PageText],
+    roles: dict[SourceRef, LineRole] | None = None,
+    known: Callable[[str], bool] | None = None,
+) -> list[Block]:
+    """Lines into blocks. `known` says whether the language's word list has a word
+    (`Lexicon.knows`), evidence for the hyphens at line ends (`join`)."""
     seen = spellings(pages)
     blocks: list[Block] = []
     opening = True
@@ -171,7 +205,7 @@ def reflow(pages: list[PageText], roles: dict[SourceRef, LineRole] | None = None
                 kept.append((ref, line))
                 continue
             # Indents are measured within each run of body lines.
-            _add_body(blocks, kept, opening, seen)
+            _add_body(blocks, kept, opening, seen, known)
             if kept:
                 opening = False
             kept = []
@@ -286,7 +320,11 @@ def _continues(previous: Block | None, line: Line, page: int) -> bool:
 
 
 def _add_body(
-    blocks: list[Block], kept: list[tuple[SourceRef, Line]], opening: bool, seen: Counter
+    blocks: list[Block],
+    kept: list[tuple[SourceRef, Line]],
+    opening: bool,
+    seen: Counter,
+    known: Callable[[str], bool] | None = None,
 ) -> None:
     flags = indented([ln for _, ln in kept])
     for k, ((ref, line), starts_paragraph) in enumerate(zip(kept, flags, strict=True)):
@@ -298,5 +336,5 @@ def _add_body(
         elif starts_paragraph or line.initial:
             blocks.append(Paragraph(line.text, [ref], initial=line.initial))
         else:
-            current.text = join(current.text, line.text, seen)
+            current.text = join(current.text, line.text, seen, known)
             current.sources.append(ref)

@@ -173,7 +173,9 @@ right, then expand.
     override the model where layout settles it; `LineRole.rule` names the rule
     that set a role ("" for the model's own answer).
   - `reflow.py`: lines → blocks (headings, paragraphs; indents, de-hyphenation,
-    punctuation spacing). Without roles it falls back to a footer heuristic.
+    punctuation spacing). A line-end hyphen stays or goes by evidence in order: the
+    book's own spelling, the word list, a capital after the break, the parts beside an
+    inner hyphen (docs/design.md). Without roles it falls back to a footer heuristic.
   - `ir.py`: the IR (`Document`; `Paragraph` and `Heading` with `SourceRef`s back
     to page lines; `Figure` with its image file, page box and caption).
   - `figures.py`: the pictures in the book. The layout model's figures on body

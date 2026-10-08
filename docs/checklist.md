@@ -269,6 +269,38 @@ danger is that it edits the author. Guards, all of them:
 - [ ] `quality.catches` matches by span where flags have one
 - [ ] Training code for shipped models into the package, with a feature-count test
 
+## 6b. Where the labelled suspects say the errors are (Fable's review, 2026-10-08)
+
+Measured on the trust data and the golden slices, no models; the scripts and numbers
+are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py` and
+`work/probes/thinker-2026-10-08/NOTES.md`.
+
+- [x] Line-end hyphens: reflow's decision was wrong on 29 of 1,574 decidable breaks
+      (0.02–0.17 words a page, more than the OCR check leaves silent at one question a
+      page). Now evidence in order (docs/design.md): the book's spelling, the word list,
+      a capital (not a word in capitals), the parts beside an inner hyphen. 29 → 15; on
+      warm caches Goede dochter pp. 9–64 WER 0.00211 → 0.00187, De cipier unchanged
+- [ ] The 15 breaks left as a question: on an English book, a break the list is silent on
+      whose parts are both words (13 right, 3 wrong on Metro and Artemis; 0 against 44 on
+      Dutch, so never there), asked in the joined form the OCR check already has; scored
+      by `quality` and `bench` as a question source
+- [ ] The substitution-pair prior in `trust.py`: the exact (layer → reading) difference,
+      target-encoded from the training books, a pair counted when seen in ≥ 2 books, each
+      training row's own label left out. Leave one book out, silent errors summed over
+      nine books at 0/.25/.5/1 questions a page: trees [153, 87, 44, 23] → [117, 50, 31,
+      11]; at the rule's questions 7 → 6; stable to one more book left out (0–4). Its own
+      bench step after the baseline (3): baseline, trust as it is, trust with the prior
+- [ ] The reviewer's answers checked against the readings on disk: an answer that matches
+      none of the line's readings (layer, glm-ocr, tesseract, Qwen's cached third reading)
+      is shown once more before it is saved; the first answer logged, so the slip-rate
+      review (4) measures slips before and after the check. No model call (Stella:
+      transcribe-and-compare caught 9 of 9 slips, 3 false alarms in 58)
+- [ ] The book teaches itself: after the answers, a per-book posterior per substitution
+      pair rescores the unasked suspects (`decide`, two passes). Simulated: silent errors
+      at .25/.5/1 a page over nine books 50/31/11 → 47/30/11, Vals alarm 7/6/1 → 5/5/1
+      (its lost full stop before a closing quote, 47×, is in no other book). After the
+      slip-rate review; its review-page form is one question per pattern, applied to all
+
 ## 7. A real test set
 
 - [x] A new golden book, left unscored until the end: Het geluid van bananen (2b),

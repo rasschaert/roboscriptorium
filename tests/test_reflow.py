@@ -271,3 +271,59 @@ def test_spellings_count_words_inside_lines_only():
     assert seen["money-box"] == 1 and seen["thief-takers"] == 1
     # The halves of a word cut at a line's end aren't words.
     assert seen["thief-"] == seen["thief"] == seen["taker"] == 0
+
+
+def test_a_word_set_in_capitals_is_not_a_proper_noun_at_a_break():
+    # The counterexamples first: a capital after the break keeps the hyphen …
+    assert join("Noord-", "Holland") == "Noord-Holland"
+    assert join("naar Nieuw-", "Zeeland.") == "naar Nieuw-Zeeland."
+    # … but a word set in capitals is broken like any other.
+    assert join("GEK OP WE-", "RELDGESCHIEDENIS.") == "GEK OP WERELDGESCHIEDENIS."
+    assert join("DE TUIN VAN DE AVONDNE-", "VEL.") == "DE TUIN VAN DE AVONDNEVEL."
+
+
+def test_the_word_list_settles_a_break_the_book_does_not():
+    from collections import Counter
+
+    words = {"wc-rol", "twenty-four", "anti-piracy", "afstormde", "homebrew", "makeup", "make-up"}
+    known = lambda w: w.lower() in words  # noqa: E731
+    # Only one form in the list: that form.
+    assert join("de wc-", "rol was nat", known=known) == "de wc-rol was nat"
+    assert join("Twenty-", "four", known=known) == "Twenty-four"
+    assert join("the anti-", "piracy law", known=known) == "the anti-piracy law"
+    assert join("ze af-", "stormde", known=known) == "ze afstormde"
+    # Both forms, or neither: the list is silent, and the hyphen was the break's.
+    assert join("her make-", "up", known=known) == "her makeup"
+    assert join("the night-", "vision", known=known) == "the nightvision"
+    # The book's own spelling comes before the list.
+    seen = Counter({"home-brew": 2})
+    assert join("some home-", "brew", seen, known) == "some home-brew"
+
+
+def test_a_hyphen_already_in_the_word_keeps_the_breaks_only_between_words():
+    words = {
+        "mens",
+        "erger",
+        "niet",
+        "good",
+        "for",
+        "nothing",
+        "lon",
+        "den",
+        "londen",
+        "tem",
+        "pel",
+        "tempel",
+    }
+    known = lambda w: w.lower() in words  # noqa: E731
+    # A chained compound broken at one of its own hyphens.
+    assert join("Mens-", "erger-je-niet", known=known) == "Mens-erger-je-niet"
+    assert join("a good-for-", "nothing", known=known) == "a good-for-nothing"
+    # A compound with a real hyphen earlier and a break hyphen later.
+    # The parts beside the break are both in the list, but so is the word they make.
+    assert join("Zuid-Lon-", "den", known=known) == "Zuid-Londen"
+    assert join("de Yasukuni-tem-", "pel", known=known) == "de Yasukuni-tempel"
+    assert join("Majuba-theeplan-", "tage", known=known) == "Majuba-theeplantage"
+    assert join("Serpukhovsko-Timiryazev-", "skaya", known=known) == "Serpukhovsko-Timiryazevskaya"
+    # Without a word list the old rule stands: the hyphen stays.
+    assert join("Zuid-Lon-", "den") == "Zuid-Lon-den"

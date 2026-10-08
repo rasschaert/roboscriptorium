@@ -71,6 +71,9 @@ def run(
     """Build the book's EPUB. `pages` narrows the body range for quick experiments;
     `settings` default to the environment's."""
     first, last = pages or book.body_pages
+    lang = ocr.language(book.language)
+    lexicon = Lexicon.load(lang)
+    known = lexicon.knows if lexicon is not None else None
     body = [
         p
         for p in cached_text_layer(book.source, book.stages / "textlayer.json")
@@ -112,7 +115,6 @@ def run(
             reader = ollaya.for_model(
                 settings.check_model, settings.ollaya_url, settings.ollama_url
             )
-            lang = ocr.language(book.language)
             readings = {
                 "glm": ocrcheck.line_readings(
                     book.source,
@@ -139,7 +141,7 @@ def run(
                 )
             judge = ollaya.for_model(settings.judge_model, settings.ollaya_url, settings.ollama_url)
             suspects = ocrcheck.check(
-                book.source, body, readings, lang, judge, reader, cache, Lexicon.load(lang),
+                book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, body, style),
             )  # fmt: skip
             decider = "fixed rule"
@@ -159,7 +161,7 @@ def run(
             body, model_roles, Corrections(book.corrections_path), suspects
         )
 
-    unanswered = reflow(ocrcheck.apply(body, suspects), model_roles)
+    unanswered = reflow(ocrcheck.apply(body, suspects), model_roles, known)
     quote_lines = {
         ref
         for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
@@ -169,7 +171,7 @@ def run(
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, suspects, quote_lines, style, settings)
     blocks = italics.mark(
-        reflow(corrected, roles),
+        reflow(corrected, roles, known),
         body,
         italics.detect(book.source, body, book.stages / "italics.json"),
     )
