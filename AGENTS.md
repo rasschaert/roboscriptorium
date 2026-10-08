@@ -156,7 +156,7 @@ right, then expand.
   - `clients/openrouter.py`: a hosted model, named `openrouter:<model>@<provider tag>`
     (`ROBO_READ_MODEL=openrouter:qwen/qwen3.8-27b@deepinfra/bf16`), read by
     `ocrcheck.transcribe`; the key is `OPENROUTER_API_KEY`. Its readings cache under
-    that name, apart from the local model's. `experiments/probe_hosted_reading.py`
+    that name, apart from the local model's. `experiments/probe_line_reader.py`
     compares it with the local readings of a book.
   - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
   - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages.
