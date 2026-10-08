@@ -58,12 +58,15 @@ short lines. Qwen's reading of every line is 70–75% of a cold run (3b).
       settled, layer wrong on 204; clef right on 92%, winnow 38%)
 - [x] Metro relabelled the same way: under a minute (settled 852 → 801)
 
-The queue, in run order, before the baseline in 3 so the baseline includes every book:
+The queue, in run order, before the baseline in 3 so the baseline includes every book.
+If local and hosted Qwen prove interchangeable (3b) and the user says go, Qwen reads
+through OpenRouter and three books run side by side (the GPU still does glm-ocr and
+clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted reading left):
 
-- [ ] Artemis, pp. 13–80 (tuning): ~1.2 h cold. Next
+- [ ] Artemis, pp. 13–80 (tuning): ~1.2 h cold. **Running**, Qwen via hosted (the user's go)
 - [ ] 11/22/63, pp. 15–94 (tuning): ~1.5 h cold (English first: the line-role classifier
       is short of English books)
-- [ ] De cipier, pp. 9–92 (tuning): ~1.5 h cold
+- [ ] De cipier, pp. 9–92 (tuning): ~1.5 h cold. **Running**, Qwen via hosted (the user's go)
 - [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold
 - [ ] Reis om mijn schedel, pp. 11–110 (tuning): ~1.8 h cold. Its data from before Qwen
       must not be trained on until then (it has no Qwen support)
