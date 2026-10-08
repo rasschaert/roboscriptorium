@@ -115,6 +115,15 @@ English data makes it stable and the bench says so.
 - **"After review" counts the reviewer's slips.** 8 of 68 checked answers on
   Stella were wrong (Beta posterior 0.06–0.21), so a question isn't free.
 - **Validation books are not a test.** Earlier choices were made on their scores.
+- **The test set is a book nothing was chosen on.** Het geluid van bananen
+  (Stella's publisher and scan format) is scored once, at the end of the plan;
+  no model trains on it and the CLI refuses to score it without `--score-test`.
+  A change that carries over to the validation books proves less than that.
+- **A reference can stop being one.** When a book's remaining disagreements are
+  mostly edition differences, or its verdicts never settle, its score measures
+  the edition. The text layer's CER against the reference and the share of body
+  lines the aligner can't place say so without verdicts
+  (`experiments/probe_candidate.py`; the bench is to print both per book).
 - **Tuning books are scored by models trained without them**
   (`*-without-<book>.pkl`).
 - **The reference isn't the truth either.** Two groups of suspects lack a clean

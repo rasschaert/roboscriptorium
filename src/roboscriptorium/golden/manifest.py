@@ -49,6 +49,8 @@ class PublisherEpub:
     roman_classes: frozenset[str] = frozenset()  # classes that set it upright again
     blank_classes: frozenset[str] = frozenset()  # paragraphs that stand for a blank line
     note_classes: frozenset[str] = frozenset()  # footnotes, kept apart from the text
+    # The print's dash where the EPUB sets a spaced hyphen-minus ("" keeps the hyphen).
+    hyphen_dash: str = ""
 
 
 @dataclass(frozen=True)
@@ -127,6 +129,7 @@ class Golden:
                 frozenset(ref.get("roman_classes", ())),
                 frozenset(ref.get("blank_classes", ())),
                 frozenset(ref.get("note_classes", ())),
+                ref.get("hyphen_dash", ""),
             )
         )
         se = data.get("standard_ebooks")

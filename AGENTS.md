@@ -187,7 +187,7 @@ right, then expand.
     clearly garbled output and whitespace-only differences are auto-resolved.
     Verdicts (what the scan prints, plus a mistake category) are stored per scan
     and patched into the reference by `eval`.
-  - `bench.py` (`roboscriptorium bench [tuning|validation]`): **the** measure for a
+  - `bench.py` (`roboscriptorium bench [tuning|validation|test]`): **the** measure for a
     change. Pinned golden slices per set, scored with `evaluate` and `quality`,
     saved whole to `work/bench/` (commit, settings, decider, model versions,
     per-page counts) and compared with the previous run page by page. One test
@@ -507,6 +507,32 @@ and `standard-ebooks/` (SE's text, see below).
 - A scan of another edition than the transcription differs in spelling, quote
   style, spaced dashes, "Mrs" vs "Mrs.", and so on, so its scores include
   edition differences, not just pipeline errors.
+- **Three sets.** Tuning books are chosen on; validation books were consulted
+  before, so they check that a change carries over; the **test set**
+  (`bench.SETS["test"]`: Het geluid van bananen) is scored **once, at the end of
+  the plan, and touched by nothing else**: no eval, quality, review or bench run,
+  no trust data, no probe. `eval`, `quality`, `golden review` and `bench test`
+  refuse it without `--score-test`.
+- **Checking a candidate pair** (scan PDF plus the publisher's EPUB) before
+  writing its manifest: `uv run python experiments/probe_candidate.py <scan.pdf>
+  <ref.epub> [heading prefix …]`, no models, about 10 s per 100 pages. It prints
+  the scan's kind, the EPUB's edition and markup, the body page range, the text
+  layer's CER against the EPUB per band of pages and the most frequent word
+  differences. A pair fits when the EPUB's colophon names the scan's printing and
+  the differences are OCR slips (a letter, a quote mark) at the layer's own rate
+  (0.2–0.5% CER), not real-word swaps or a band that jumps. Prefer IA Scribe scans
+  (Stella's format); skip calibre-made PDFs, other printings, DRM and pre-1934
+  spelling. An EPUB that sets its dashes as spaced hyphens gets
+  `hyphen_dash = "–"` in `[reference]`, which derive sets as the print's dash.
+- **Retiring a book.** A reference can stop being one: when a book's remaining
+  disagreements are mostly edition differences, or its verdict backlog never
+  shrinks, its score measures the edition, not the pipeline. Two signals need no
+  verdicts: the text layer's CER against the reference and the share of its body
+  lines the aligner can't place (both printed by `probe_candidate.py`; the bench
+  is to print them per book). Past about three times the layer's usual rate, or
+  one body line in twenty unplaced, the book is suspect. **Whoever notices says
+  so in the session's report and proposes retiring it, without being asked.**
+  Retired books go to `work/retired/`, with a dated line in docs/decisions.md.
 
 ```sh
 uv run roboscriptorium golden derive the-nature-of-a-crime
@@ -559,4 +585,6 @@ kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
 | monterosso-mon-amour | `ia-scan` | Dutch, Pfeijffer, CPNB Boekenweekgeschenk 2022; IA Scribe scan like Stella's; reference CPNB's EPUB, made after the first printing. Pages 9–96, 22 numbered chapters (the layer lacks the small "1"…). Typography Nico Richter: the same CPNB grid as De eerlijke vinder (13.2 pt pitch, ~57 characters a line) but another, lighter typeface. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | reis-om-mijn-schedel | `ia-scan` | Dutch translation (Karinthy, Frans van Nes), **Van Gennep, Stella's publisher**, first printing 2014; IA Scribe scan in Stella's format, 260 pages; reference Van Gennep's EPUB "naar de eerste druk". Pages 11–255, 27 chapter titles ("kop"); its footnotes are in `notes.txt` and left out of the score. **The best stand-in for Stella**: same leading (15.0 pt), no running heads, folio centred at the foot, what looks like the same serif face; Stella's type is ~6% larger on a narrower measure (258 against 278 pt). Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | the-thief-takers-apprentice | `ia-scan` | **The first modern English scan**: Deas, Gollancz first edition 2010; reference Gollancz's eBook of the edition (via calibre). An older IA PDF: 300 ppi, LuraDocument, **InvisibleOCR** text layer (`pdf.py` reads it). Pages 11–292; three parts ("PART ONE" / "THE THIEF-TAKER") and 42 chapters (number line, name line), each label and title a heading (90); a large first letter on each chapter. Its layer drops some apostrophes and splits the word (`didn t`, `I m`). Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| afscheid-van-verspilde-tijd | `ia-scan` | **Tuning.** Dutch translation (Wijkmark, Elke Schütt), Uitgeverij de Rode Kamer, first printing 2011; IA Scribe scan in Stella's format, 132 pages; reference the publisher's own ebook (via calibre), whose dashes are spaced hyphens (`hyphen_dash`). Pages 9–124, 23 bare-numeral chapter headings, some of which the layer lacks; a Times-like face, spaced en dashes, specks read as characters. Borrow-only scan; **copyrighted**, all text in `work/golden/` |
+| het-geluid-van-bananen | `ia-scan` | **The test set: score nothing on it until the end (`--score-test`).** Dutch translation (Temelkuran, Margreet Dorleijn), **Van Gennep, Stella's publisher**, first printing 2013; IA Scribe scan in Stella's format, 328 pages, a library copy with stamps and a catalogue slip; reference Van Gennep's EPUB "naar de eerste druk", set like Reis's. Pages 9–323: three part pages, 28 numbered chapters, 26 footnotes in `notes.txt`, "* * *" scene breaks. Seen in the text layer alone: ç read as g (Tunç), dotless ı, superscript ordinals as °, single quotes as doubles, small chapter numerals missing or "Io". Borrow-only scan; **copyrighted**, all text in `work/golden/` |
 | het-ivoren-aapje (**retired as a bench**) | Gutenberg #28068 page images | Dutch, 1909, pre-1934 spelling; PNG page images and no text layer, so the OCR test bench. **EU copyright until 2038**: reference and images stay in `work/het-ivoren-aapje/`, see `experiments/probe_ocr.py`. **No longer used to choose OCR models**: pre-1934 spelling, unlike every book we target; re-bench on modern Dutch line crops instead |

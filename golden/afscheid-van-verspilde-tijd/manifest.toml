@@ -1,0 +1,29 @@
+title = "Afscheid van verspilde tijd"
+author = "Carl-Henning Wijkmark"
+language = "nl"
+# Translated by Elke Schütt (2011): under copyright, so only this manifest is
+# in git.
+eu_copyright_until = 2200
+
+# Uitgeverij de Rode Kamer's own ebook (2011), through calibre: one "hfd N"
+# file per chapter with its number as an h1, italics in <i>, and every dash a
+# spaced hyphen-minus where the print has a spaced en dash (`hyphen_dash`).
+[reference]
+source = "Afscheid van verspilde tijd, Uitgeverij de Rode Kamer 2011, transl. Elke Schütt, ebook ISBN 9789491259432 (EPUB)"
+sha256 = "adfaa8153697be3889011b3321cb8f38a6cf184345b3972f9df505af0a2c89d0"
+files = [
+  "Text/hfd 1.html", "Text/hfd 2.html", "Text/hfd 3.html", "Text/hfd 4.html", "Text/hfd 5.html", "Text/hfd 6.html", "Text/hfd 7.html", "Text/hfd 8.html", "Text/hfd 9.html", "Text/hfd 10.html", "Text/hfd 11.html", "Text/hfd 12.html", "Text/hfd 13.html", "Text/hfd 14.html", "Text/hfd 15.html", "Text/hfd 16.html", "Text/hfd 17.html", "Text/hfd 18.html", "Text/hfd 19.html", "Text/hfd 20.html", "Text/hfd 21.html", "Text/hfd 22.html", "Text/hfd 23.html"
+]
+hyphen_dash = "–"
+
+# The first printing (September 2011, ISBN 9789491259258), an IA Scribe scan in
+# Stella's format (360 ppi MRC, GlyphLessFont layer). Pages 9–124: chapter 1 to
+# the end of chapter 23; page 8 is the title page's show-through, and the
+# blurbs at the back are left out. Internet Archive lends it only, so it is
+# placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org (Afscheid van verspilde tijd, De Rode Kamer 2011; borrow, then download the PDF)"
+sha256 = "eb8a2c46a66244b7ef9ec94bdc69fa5f08ce366a20e82975585d0cef547e4df6"
+cover_page = 1
+body_pages = [9, 124]

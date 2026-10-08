@@ -1,0 +1,38 @@
+title = "Het geluid van bananen"
+author = "Ece Temelkuran"
+language = "nl"
+# Translated by Margreet Dorleijn, who is alive: under copyright, so only this
+# manifest is in git.
+eu_copyright_until = 2200
+
+# THE TEST BOOK (`bench.SETS["test"]`): nothing is chosen on it and no model
+# trains on it. Manifest, derive and fetch only; it is scored once, at the end,
+# with `bench test --score-test`.
+
+# Van Gennep's own EPUB ("e-editie november 2013, naar de eerste druk november
+# 2013"), set like Reis om mijn schedel's: chapter numbers are "kop"
+# paragraphs, part pages "deelpagina" (title) and "deelpagina-sub" (name),
+# italics the "italic" class, footnotes "noten" (to notes.txt). Scene breaks
+# are "* * *" paragraphs, as the print has them. The Dankwoord is left out.
+[reference]
+source = "Het geluid van bananen, Van Gennep 2013, transl. Margreet Dorleijn, ISBN 9789461641847 (EPUB)"
+sha256 = "9d405312574aea311231f29d84dde1fe2e8d0a28c4156c6d93db0559cb5efcf4"
+files = [
+  "Text/Section0004.xhtml", "Text/Section0005.xhtml", "Text/Section0006.xhtml", "Text/Section0007.xhtml", "Text/Section0008.xhtml", "Text/Section0009.xhtml", "Text/Section0010.xhtml", "Text/Section0011.xhtml", "Text/Section0012.xhtml", "Text/Section0013.xhtml", "Text/Section0014.xhtml", "Text/Section0015.xhtml", "Text/Section0016.xhtml", "Text/Section0017.xhtml", "Text/Section0018.xhtml", "Text/Section0019.xhtml", "Text/Section0020.xhtml", "Text/Section0021.xhtml", "Text/Section0022.xhtml", "Text/Section0023.xhtml", "Text/Section0024.xhtml", "Text/Section0025.xhtml", "Text/Section0026.xhtml", "Text/Section0027.xhtml", "Text/Section0028.xhtml", "Text/Section0029.xhtml", "Text/Section0030.xhtml", "Text/Section0031.xhtml", "Text/Section0032.xhtml", "Text/Section0033.xhtml", "Text/Section0034.xhtml", "Text/Section0035.xhtml", "Text/Section0036.xhtml"
+]
+heading_prefixes = ["kop", "deelpagina"]
+italic_classes = ["italic"]
+blank_classes = ["bodybefore"]
+note_classes = ["noten"]
+
+# The first printing (November 2013), from Stella's publisher, in Stella's scan
+# format (IA Scribe, 360 ppi MRC, GlyphLessFont layer). A library copy: stamps
+# and a catalogue slip on the front pages, labels at the back. Pages 9–323: the
+# first part page ("Boek 3" / "Stof") to the end of the last chapter ("Einde").
+# Internet Archive lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org (Het geluid van bananen, Van Gennep 2013; borrow, then download the PDF)"
+sha256 = "34ae842a4db18b2415b4eef0fd4519d24aa3da7e47aa6e56ea7a1ecdc8df8471"
+cover_page = 1
+body_pages = [9, 323]

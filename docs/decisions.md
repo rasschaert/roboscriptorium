@@ -705,3 +705,20 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   on Goede dochter pp. 9–64 that adds 18 suspects and about three real layer errors,
   two of them lost closing quotes; glm-ocr alone raised eight, all of them noise.
   The bench after the retrain decides whether it stays (docs/design.md).
+- 2026-10-08: Two new golden pairs, checked without models by
+  `experiments/probe_candidate.py` (the text layer against the EPUB: both agree at
+  the layer's own error rate, every frequent difference an OCR slip). **Het geluid
+  van bananen** (Van Gennep 2013, Stella's publisher and scan format) is the **test
+  set**: nothing is chosen on it, no model trains on it, and `eval`, `quality`,
+  `golden review` and `bench test` refuse it without `--score-test`; it is scored
+  once, at the end. **Afscheid van verspilde tijd** (De Rode Kamer 2011, another
+  typesetter) joins `bench tuning` and the trust data before the baseline bench, so
+  the baseline, the retrain and the verdict include it. Its EPUB sets dashes as
+  spaced hyphens: `hyphen_dash` in the manifest sets them as the print's en dash
+  when deriving. A heading without a letter or digit (`******`) is an ornament,
+  not a chapter; a note marker `[1.] – [terug]` is stripped like `* – [terug]`.
+- 2026-10-08: Retiring a golden book is everyone's job (AGENTS.md): whoever sees a
+  reference measuring the edition rather than the pipeline says so and proposes
+  retiring it. The signals that need no verdicts are the layer's CER against the
+  reference and the share of body lines the aligner can't place; the bench is to
+  print both per book (checklist).

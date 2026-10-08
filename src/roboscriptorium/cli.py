@@ -105,6 +105,7 @@ def golden_derive(name: str, epub: Path | None = None) -> None:
             ref.roman_classes,
             ref.blank_classes,
             ref.note_classes,
+            hyphen_dash=ref.hyphen_dash,
         )
     else:
         epub = epub or gutenberg.download(
@@ -147,6 +148,20 @@ def _range(value: str | None) -> tuple[int, int] | None:
         return None
     first, _, last = value.partition("-")
     return int(first), int(last or first)
+
+
+def _score_test() -> bool:
+    return typer.Option(
+        False, "--score-test", help="Score a book of the test set, which is done once, at the end"
+    )
+
+
+def _not_the_test_set(book_dir: Path, score_test: bool) -> None:
+    """The test set is scored once, at the end, on purpose; refuse it otherwise."""
+    if book_dir.name in bench.TEST_BOOKS and not score_test:
+        raise typer.BadParameter(
+            f"{book_dir.name} is in the test set, scored only at the end (pass --score-test)"
+        )
 
 
 def _build_golden(
@@ -229,8 +244,10 @@ def review_disagreements(
     chapters: str | None = typer.Option(None, help="Reference chapters to compare, e.g. 1-9"),
     no_models: bool = typer.Option(False, help="Skip decision models (heuristics only)"),
     port: int = typer.Option(8765, help="Port on 127.0.0.1"),
+    score_test: bool = _score_test(),
 ) -> None:
     """Review where the output disagrees with the reference, next to the scan."""
+    _not_the_test_set(book_dir, score_test)
     book, _, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
     text_layer = cached_text_layer(book.source, book.stages / "textlayer.json")
     found = disagreements.find(doc, reference, text_layer)
@@ -273,7 +290,7 @@ def _questions_and_errors(spec: str, settings: Settings | None = None):
 
 
 @app.command("quality")
-def quality_report(specs: list[str]) -> None:
+def quality_report(specs: list[str], score_test: bool = _score_test()) -> None:
     """Wrong words a reviewer is left with per page, at several question budgets.
 
     SPECS are golden book dirs, each optionally with :pages:chapters
@@ -284,6 +301,7 @@ def quality_report(specs: list[str]) -> None:
     """
     books = []
     for spec in specs:
+        _not_the_test_set(Path(spec.split(":")[0]), score_test)
         name, _, stages, _, errors, found, applied = _questions_and_errors(spec)
         numbers = [p.number for p in stages.pages if p.lines]
         typer.echo(
@@ -316,10 +334,13 @@ def quality_report(specs: list[str]) -> None:
 def run_bench(
     set_name: str = typer.Argument("tuning", help=f"One of {', '.join(bench.SETS)}"),
     against: str | None = typer.Option(None, help="A saved run to compare with (default: last)"),
+    score_test: bool = _score_test(),
 ) -> None:
     """Score a fixed set of golden slices, save the run, and compare it page by page."""
     if set_name not in bench.SETS:
         raise typer.BadParameter(f"no bench set {set_name!r}")
+    if set_name == "test" and not score_test:
+        raise typer.BadParameter("the test set is scored once, at the end: pass --score-test")
     settings = Settings.from_env()
     built = []
     for spec in bench.SETS[set_name]:
@@ -407,8 +428,11 @@ def evaluate_books(
     chapters: str | None = typer.Option(None, help="Reference chapters to compare, e.g. 1-9"),
     no_models: bool = typer.Option(False, help="Skip decision models (heuristics only)"),
     check_ocr: bool = typer.Option(True, help="Check the OCR layer against a second reading"),
+    score_test: bool = _score_test(),
 ) -> None:
     """Build golden books' scans and score each against its reference text, one by one."""
+    for book_dir in book_dirs:
+        _not_the_test_set(book_dir, score_test)
     summary = []
     for book_dir in book_dirs:
         typer.echo(f"== {book_dir.name}")

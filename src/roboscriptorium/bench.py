@@ -23,7 +23,9 @@ BOOTSTRAP_SAMPLES = 2000
 
 # Golden scans and the pages:chapters scored. Tuning books are tuned on, and scored
 # with models trained without them (`unseen`); validation books have been consulted
-# for choices before, so they validate, not test.
+# for choices before, so they validate, not test. The test set is scored once, at
+# the end: nothing is chosen on it, no model trains on it, and the CLI refuses to
+# score it without `--score-test`.
 SETS = {
     "tuning": [
         "goede-dochter--ia-scan:9-64:1-4",
@@ -32,6 +34,7 @@ SETS = {
         "the-nature-of-a-crime--doubleday-1924",
         "the-story-of-doctor-dolittle--stokes-1920",
         "the-thief-takers-apprentice--ia-scan",
+        "afscheid-van-verspilde-tijd--ia-scan",
     ],
     "validation": [
         "de-tuin-van-de-avondnevel--ia-scan:11-52:1-3",
@@ -39,7 +42,11 @@ SETS = {
         "lady-into-fox--chatto-1922",
         "villa-toscane--calibre-pdf::1-12",
     ],
+    "test": [
+        "het-geluid-van-bananen--ia-scan",
+    ],
 }
+TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
 
 # Per-page counts compared between runs: (name, index into a page's counts). "After
 # review" is the unasked plus the reviewer's expected slips per question, at the mean

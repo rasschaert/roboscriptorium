@@ -1,6 +1,7 @@
 import zipfile
 
 from roboscriptorium.golden import epub as publisher_epub
+from roboscriptorium.golden.reference import unmarked
 
 PAGE = """<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -85,3 +86,45 @@ def test_blank_line_classes_are_left_out(tmp_path):
         )
     sections = publisher_epub.read(epub, ["Text/a.html"], ("kop",), blank=frozenset({"witregel"}))
     assert sections[0].paragraphs == ["Op een berg.", "Zesendertig jaar."]
+
+
+def test_spaced_hyphens_become_the_prints_dash(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format("<h1>1</h1><p>Toen - heel terloops - zei hij: wc-rol, 1914-1918.</p>"),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], hyphen_dash="–")
+    assert section.paragraphs == ["Toen – heel terloops – zei hij: wc-rol, 1914-1918."]
+    (section,) = publisher_epub.read(epub, ["Text/a.html"])
+    assert section.paragraphs == ["Toen - heel terloops - zei hij: wc-rol, 1914-1918."]
+
+
+def test_an_ornament_set_as_a_heading_is_no_chapter(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format("<h1>23</h1><p>Het eind is goed.</p><h3><b>******</b></h3><p></p>"),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"])
+    assert (section.full_heading, section.paragraphs) == ("23", ["Het eind is goed."])
+
+
+def test_a_bracketed_note_marker_and_its_back_link_are_stripped(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<p class="kop">5</p><p>Na de <i>Hotelgevechten</i><a href="#n1">[1]</a> dan.</p>'
+                '<p class="noten"><a id="n1">[1.] – [<span>terug</span>]</a> Een van de eerste.</p>'
+            ),
+        )
+    notes: list[str] = []
+    (section,) = publisher_epub.read(
+        epub, ["Text/a.html"], ("kop",), notes=frozenset({"noten"}), found_notes=notes
+    )
+    assert [unmarked(p) for p in section.paragraphs] == ["Na de Hotelgevechten1 dan."]
+    assert notes == ["1 Een van de eerste."]

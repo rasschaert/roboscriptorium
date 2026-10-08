@@ -1,7 +1,11 @@
 import json
+from pathlib import Path
 from types import SimpleNamespace
 
-from roboscriptorium import bench, quality
+import pytest
+import typer
+
+from roboscriptorium import bench, cli, quality
 
 
 def _run(pages: dict[int, list[float]], **books: dict[int, list[float]]) -> dict:
@@ -77,3 +81,15 @@ def test_a_book_slightly_worse_does_not_veto():
     slightly = {p: [2, 1, 1, 1.02] for p in range(30)}
     found = bench.verdict(_run(flat, c=flat), _run(fewer, c=slightly))
     assert (found.outcome, found.vetoes) == ("better", [])
+
+
+def test_the_test_set_is_scored_only_on_purpose():
+    book = next(iter(bench.TEST_BOOKS))
+    with pytest.raises(typer.BadParameter):
+        cli._not_the_test_set(Path("work") / book, False)
+    cli._not_the_test_set(Path("work") / book, True)
+    cli._not_the_test_set(Path("work/goede-dochter--ia-scan"), False)
+    others = {
+        s.split(":")[0] for name, specs in bench.SETS.items() if name != "test" for s in specs
+    }
+    assert not bench.TEST_BOOKS & others
