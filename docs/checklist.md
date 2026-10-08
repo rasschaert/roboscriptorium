@@ -49,7 +49,7 @@ the short lines.
 - [ ] ~~Lady into Fox: ~1.7 h cold~~ dropped: retired to reserve (its reference's typography differs from the print), so no validation data is needed from it
 - [ ] Reis om mijn schedel, pp. 11–110 (chapters 1–11, as in `bench tuning`): ~1.8 h cold
 
-## 2b. Two new golden pairs (Fable's session)
+## 2b. New golden pairs (Fable's session, ended; its steps are this session's now)
 
 Placed under `work/` like the others: the scans in `work/<book>--ia-scan/source.pdf`,
 the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
@@ -79,7 +79,8 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       Artemis (English first: the line-role classifier is short of English books)
 - [ ] De cipier's trust data (in `ocr_trust_data.py`, pp. 9–92): ~1.5 h cold. Before
       the baseline, so it isn't rerun when it joins
-- [ ] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
+- [x] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
+      (`golden/signals.py`: layer CER and unplaced body lines, a suspect named)
 - [ ] `golden check <pdf> <epub>`, writing a draft manifest: worth it once a batch
       of candidates comes
 - [ ] **user** Hunt for modern English Scribe scans with the publisher's EPUB of the

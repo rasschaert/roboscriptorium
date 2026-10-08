@@ -29,7 +29,7 @@ from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.disagreements import Verdicts
 from roboscriptorium.golden import epub as publisher_epub
-from roboscriptorium.golden import gutenberg, se
+from roboscriptorium.golden import gutenberg, se, signals
 from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden.manifest import Golden, PublisherEpub, fetch, sha256
 from roboscriptorium.golden.reference import Chapter, load_chapters
@@ -351,18 +351,25 @@ def run_bench(
             f"work/{spec}", own
         )
         score = evaluate.score(_scored(book, stages), reference)
-        built.append((spec, name, stages, errors, found, applied, score, own))
-    books = {}
-    for spec, name, stages, errors, found, applied, score, own in built:
+        built.append((spec, name, stages, reference, errors, found, applied, score, own))
+    books, pairs = {}, {}
+    for spec, name, stages, reference, errors, found, applied, score, own in built:
         rates: dict[str, tuple[int, int]] = {}
         for other in built:
             if other[1] != name:
-                for r, (h, n) in quality.hit_rates(other[4], other[3]).items():
+                for r, (h, n) in quality.hit_rates(other[5], other[4]).items():
                     h0, n0 = rates.get(r, (0, 0))
                     rates[r] = (h0 + h, n0 + n)
         numbers = [p.number for p in stages.pages if p.lines]
+        body = (
+            None
+            if stages.model_roles is None
+            else {r for r, role in stages.model_roles.items() if role.role == "body"}
+        )
+        pairs[name] = signals.measure(stages.pages, reference, body)
         books[name] = {
             "spec": spec,
+            "pair": asdict(pairs[name]),
             "ocr_decider": stages.ocr_decider,
             "ocr_trust_model": own.ocr_trust_model,
             "ocr_suspects": dict(Counter(s.choice for s in stages.suspects)),
@@ -399,6 +406,8 @@ def run_bench(
             f"  unasked {q['unasked, all questions']['mean']:.2f}"
             f"  after review {sum(v[3] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
         )
+    for name, why in signals.suspects(pairs).items():
+        typer.echo(f"  suspect pair, consider retiring {name}: {'; '.join(why)}")
     old_path = Path(against) if against else bench.previous(set_name, path)
     if old_path is None:
         return

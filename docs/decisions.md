@@ -773,3 +773,8 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   CER per band and every frequent difference is the layer's (the capital I read five
   ways, "in a" merged); no known deviation. Its 345 numbered sections, each a small
   centred numeral and a heading in the reference, make it the heading test.
+- 2026-10-08: The retirement signals into the bench (`golden/signals.py`): each book's
+  text layer against its reference, CER and unplaced share over the lines the build
+  calls body, recorded in the run and a book past 3× the set's median CER or 5%
+  unplaced named as a suspect pair. Over all lines, as `golden_overview.py` counts,
+  page furniture is unplaced by design and seven books pass 5% (Afscheid 11%).

@@ -123,7 +123,10 @@ English data makes it stable and the bench says so.
   mostly edition differences, or its verdicts never settle, its score measures
   the edition. The text layer's CER against the reference and the share of body
   lines the aligner can't place say so without verdicts
-  (`experiments/probe_candidate.py`; the bench is to print both per book).
+  (`golden/signals.py`): the bench records both per book over the build's body lines
+  and names a book past 3× the set's median layer CER, or with one body line in twenty
+  unplaced, as a suspect pair. Over body lines, because page furniture is unplaced by
+  design: counted over all lines, seven books pass 5%.
 - **Tuning books are scored by models trained without them**
   (`*-without-<book>.pkl`).
 - **The reference isn't the truth either.** Two groups of suspects lack a clean

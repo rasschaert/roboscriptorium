@@ -180,7 +180,8 @@ right, then expand.
     `epub.py` (from a publisher's EPUB: headings by tag or class prefix),
     `se.py` (derives Standard Ebooks' text, kept for later style work),
     `reference.py` (reads the reference chapters, with their italic words),
-    `notes.py` (a reference's footnotes, `notes.txt` from the manifest's
+    `signals.py` (whether a pair still measures the pipeline: layer CER and unplaced
+    lines against the reference, printed by `bench`), `notes.py` (a reference's footnotes, `notes.txt` from the manifest's
     `note_classes`: the scan's footnote lines are left out of every score).
   - `evaluate.py`: CER, WER and paragraph F1 against a golden reference. Typography
     the EPUB may set differently (quote and dash glyphs, an ellipsis glyph or spaced
@@ -541,12 +542,14 @@ and `standard-ebooks/` (SE's text, see below).
   disagreements are mostly edition differences, or its verdict backlog never
   shrinks, its score measures the edition, not the pipeline. Two signals need no
   verdicts: the text layer's CER against the reference and the share of its body
-  lines the aligner can't place, both per book in
-  [docs/golden-books.md](docs/golden-books.md) (regenerate it with
+  lines the aligner can't place (`golden/signals.py`). `bench` records both per book,
+  over the lines the build calls body, and names each book past a threshold as a
+  suspect pair; [docs/golden-books.md](docs/golden-books.md) has them over all lines
+  (regenerate it with
   `uv run python experiments/golden_overview.py > docs/golden-books.md`, half a
-  minute, no models, after adding, slicing or retiring a book), and `eval`'s fold
-  counts where the two sides differ. Past about three times the layer's usual rate, or
-  one body line in twenty unplaced, the book is suspect. **Whoever notices says
+  minute, no models, after adding, slicing or retiring a book; there furniture counts as
+  unplaced too), and `eval`'s fold counts where the two sides differ. Past three times
+  the set's median layer CER, or one body line in twenty unplaced, the book is suspect. **Whoever notices says
   so in the session's report and proposes retiring it, without being asked.**
   Retired books go to `work/retired/`, with a dated line in docs/decisions.md.
 

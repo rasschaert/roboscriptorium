@@ -13,17 +13,14 @@ deviations, and the latest full eval's CER and WER. The test set is left unmeasu
 
 import json
 import tomllib
+from dataclasses import astuple
 from datetime import date
 from pathlib import Path
 
-from rapidfuzz.distance import Levenshtein
-
 from roboscriptorium import bench, pdf
-from roboscriptorium.evaluate import _bare_words, normalise
-from roboscriptorium.golden import align
+from roboscriptorium.golden import signals
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters, unmarked
-from roboscriptorium.ir import SourceRef
 
 COLD_MINUTES_PER_PAGE = 1.1
 
@@ -32,26 +29,6 @@ for name, lst in bench.SETS.items():
     for s in lst:
         book, pages, chapters = (s.split(":") + ["", ""])[:3]
         specs[book] = (name, pages, chapters)
-
-
-def layer_against_reference(layer, ref):
-    labels = align.align(layer, ref)
-    dist = chars = other = bad = words = n = headings = 0
-    for p in layer:
-        for k, ln in enumerate(p.lines):
-            t = labels[SourceRef(p.number, k)]
-            if t.role == "other":
-                other += 1
-                continue
-            headings += t.role == "heading"
-            got, want = normalise(ln.text), normalise(t.truth)
-            dist += Levenshtein.distance(got, want)
-            chars += len(want)
-            gw, ww = _bare_words(got), _bare_words(want)
-            bad += Levenshtein.distance(gw, ww)
-            words += len(ww)
-            n += 1
-    return dist / max(1, chars), bad / max(1, words), other / max(1, n + other), headings
 
 
 def latest_full_eval(book_dir: Path):
@@ -106,7 +83,7 @@ for m in sorted(Path("golden").glob("*/manifest.toml")):
             continue
         layer = pdf.cached_text_layer(book_dir / "source.pdf", book_dir / "stages" / "textlayer.json")
         layer = [p for p in layer if a <= p.number <= b]
-        cer, bare, unplaced, headings = layer_against_reference(layer, ref)
+        cer, bare, unplaced, headings = astuple(signals.measure(layer, ref))
         print(
             f"| {g.name} | {role} | {body} / {scored} | {words} | {cold} | {cer:.2%} | {bare:.2%} |"
             f" {unplaced:.1%} | {headings} / {len(ref)} | {declared} | {ev_text} |"

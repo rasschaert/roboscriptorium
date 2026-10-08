@@ -4,8 +4,13 @@ from types import SimpleNamespace
 
 import pytest
 import typer
+from typer.testing import CliRunner
 
-from roboscriptorium import bench, cli, quality
+from roboscriptorium import bench, cli, evaluate, quality
+from roboscriptorium.golden.reference import Chapter
+from roboscriptorium.ir import SourceRef
+from roboscriptorium.pdf import Line, PageText
+from roboscriptorium.roles import LineRole
 
 
 def _run(pages: dict[int, list[float]], **books: dict[int, list[float]]) -> dict:
@@ -93,3 +98,39 @@ def test_the_test_set_is_scored_only_on_purpose():
         s.split(":")[0] for name, specs in bench.SETS.items() if name != "test" for s in specs
     }
     assert not bench.TEST_BOOKS & others
+
+
+def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, tmp_path):
+    def page(texts):
+        lines = [Line(t, 20, 20 + 15 * i, 280, 30 + 15 * i) for i, t in enumerate(texts)]
+        return PageText(11, 300, 500, lines)
+
+    body = LineRole("body", 1.0, 1.0)
+    clean = page(["Charlie liep naar de", "verder gelegen school."])
+    garbled = page(["Charlie liep naar de", "verder gelegen school.", "xq zv wk"])
+    reference = [Chapter("", ["Charlie liep naar de verder gelegen school."])]
+
+    def build(spec, settings):
+        p = garbled if "garbled" in spec else clean
+        roles = {SourceRef(11, k): body for k in range(len(p.lines))}
+        stages = SimpleNamespace(
+            pages=[p], model_roles=roles, suspects=[], ocr_decider="fixed rule"
+        )
+        return spec.split(":")[0].split("/")[-1], None, stages, reference, [], [], 0
+
+    monkeypatch.setitem(bench.SETS, "probe", ["a", "b", "garbled"])
+    monkeypatch.setattr(cli, "_questions_and_errors", build)
+    monkeypatch.setattr(cli, "_scored", lambda book, stages: None)
+    monkeypatch.setattr(
+        evaluate, "score", lambda doc, ref: evaluate.Score(0, 0, 1, 1, 7, 7, 0, 0, 0)
+    )
+    monkeypatch.setattr(cli, "_model_versions", lambda settings: {})
+    monkeypatch.setattr(bench, "OUT", tmp_path)
+    monkeypatch.setattr(bench.save, "__defaults__", (tmp_path,))
+    result = CliRunner().invoke(cli.app, ["bench", "probe"])
+    assert result.exit_code == 0, result.output
+    assert "suspect pair, consider retiring garbled" in result.output
+    assert "consider retiring a" not in result.output
+    record = json.loads(next(tmp_path.glob("probe-*.json")).read_text())
+    assert record["books"]["garbled"]["pair"]["unplaced"] == 1 / 3
+    assert record["books"]["a"]["pair"]["cer"] == 0
