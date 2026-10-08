@@ -1,262 +1,411 @@
 # How it works
 
-A walk through what happens to a book, from the PDF to the EPUB, and how the
-machine is measured and taught. [design.md](design.md) says *why* each part is
-there and what it was measured to earn; [AGENTS.md](../AGENTS.md) lists the
-modules; the [diagram](pipeline.svg) draws the stages with the model behind each.
-This page is the story that connects them.
+This page follows a book from its PDF to its EPUB, then explains how the machine
+is measured and how it learns.
 
-## The idea in one paragraph
+Three other documents go with it. [design.md](design.md) gives the reason for each
+part and the measurements behind it. [AGENTS.md](../AGENTS.md) lists the modules.
+The [diagram](pipeline.svg) draws the stages with the model behind each one.
 
-A scanned book already carries an OCR text layer, and it is good: a few errors in a
-thousand characters. Those few are the whole problem, because a careful edition
-has none. No single reader fixes them; every OCR model has its own habits. So the
-book is read several more times by readers that fail *differently*, the places
-where the readings disagree become suspects, judges look at each one, and a model
-trained on books whose true text is known decides which version to trust. What it
-isn't sure of becomes a question for a person, with the scan crop beside it. The
-person's answers go into the next build and become labels the machine learns from.
-Around that core, other stages work out what each line *is* (body text, heading,
-page number), join lines into paragraphs, and set the book's typography the way it
-was printed.
+## The idea
+
+A scanned book usually comes with an OCR text layer, and that layer is good: a few
+wrong characters in every thousand. A careful edition has none, so those few are
+what this project exists to fix.
+
+No single OCR reader fixes them, because every reader makes mistakes of its own.
+So the book is read several more times, by readers chosen because they make
+*different* mistakes. Where the readings disagree, the place becomes a suspect.
+
+Judges look at each suspect, and a model trained on books whose printed text is
+known decides which version to believe. Where that model is unsure, a person gets
+a question, with the scan beside it.
+
+The person's answers go into the next build. They also become labels the trust
+model learns from.
+
+Around this OCR check, other stages work out what each line is (body text, a
+heading, a page number), join lines into paragraphs, and set the typography the
+way the book was printed.
 
 ## Two kinds of model
 
-Every model call is one of two kinds, and the rule for choosing is strict:
+Every model call is one of two kinds.
 
-- **Decision models** ("System One": winnow on Ollaya, clef and clef-flash on
-  Ollama's `/v1/systemone`) answer a question whose options are fixed in advance
-  and return a probability for each. "Is this line body text, a heading, a page
-  number…?" "Which of these three versions does the crop show?" They generate no
-  text, so there is no prose to parse.
-- **Generative models** ("System Two": glm-ocr, qwen3.8 on Ollama) produce new
-  text: reading a line crop, a printed line the layer lacks.
+### Decision models
 
-If the answer comes from a list known beforehand, a decision model gives it. A
-model's confidence is not taken as the probability it is right; where that matters,
-it is calibrated or learned from labelled data (see *Learned trust* below).
+A decision model answers a question whose options are fixed in advance, and gives
+a probability for each option. "Is this line body text, a heading or a page
+number?" "Which of these three versions does the crop show?" It writes no text, so
+there is no prose to parse.
 
-Everything runs on this machine. A hosted model is used only when the user allows
-it for a particular run, pinned to one provider, and its outputs are cached under
-the local model's name with a note of where they came from.
+These are winnow on Ollaya, and clef and clef-flash on Ollama's `/v1/systemone`.
+
+### Generative models
+
+A generative model writes new text: it reads a line crop, or a printed line the
+text layer lacks. These are glm-ocr and qwen3.8 on Ollama.
+
+### Choosing between them
+
+If the answer comes from a list known beforehand, a decision model gives it.
+
+A model's confidence is a number it reports, and it can differ a lot from the
+chance that the model is right. So where a decision depends on it, the confidence
+is calibrated or learned from labelled data, as in *Learned trust* below.
+
+### Local first
+
+Every model runs on this machine. A hosted model is used only when the user allows
+it for a particular run. It is then pinned to one provider, and its outputs are
+cached under the local model's name, with a note saying where they came from.
 
 ## A book on disk
 
-A book is a directory, `work/<book>/`, holding `source.pdf` and a `book.toml`
-(title, author, language, cover page, body page range, optionally the dash style).
-Every stage caches what it produced under `work/<book>/stages/`: the text layer,
+A book is a directory, `work/<book>/`, with two files in it to start:
+
+- `source.pdf`, the scan or the born-digital PDF;
+- `book.toml`, with the title, author, language, cover page, body page range and,
+  optionally, the dash style.
+
+Every stage caches its output under `work/<book>/stages/`: the text layer, the
 layout regions, each reading of each line, every decision a model made. A rebuild
-reuses all of it, so only what changed costs model time. Caches are written whole
-and versioned, and append-only ones skip a cut-off last line, so a run killed
-halfway resumes where it stopped.
+reuses all of it, so only what changed costs model time.
 
-Nothing here is in git: books, scans and anything derived from them stay in
-`work/`. Only code, prompts, configs and synthetic test fixtures are committed.
+Caches are written whole and include a format version, and append-only ones skip a
+last line that was cut off. A run killed halfway resumes where it stopped.
 
-## The stages
+Books, scans and everything derived from them stay in `work/`, outside git.
 
-`pipeline.run` builds a book in this order.
+## Stage 1: reading the page
 
-### 1. Read the page
+### The text layer
 
-**Text layer** (`pdf.py`). PyMuPDF reads the PDF's own text as visual lines, each
-with its box on the page and a stable identity (`SourceRef`: page and line
-number). That identity follows the line through every later stage: a fix, an
-answer or a score always refers back to the line as the layer had it.
+`pdf.py` reads the PDF's own text with PyMuPDF, as visual lines. Each line has its
+box on the page and an identity, `SourceRef`: its page and line number.
 
-**Layout regions** (`layout.py`). DocLayout-YOLO, a vision model (not an LLM),
-marks figures, captions, titles and page furniture on each page image. Pages that
-hold only a picture are also run turned a quarter, to find captions printed
-sideways.
+That identity follows the line through every later stage. A fix, an answer or a
+score always refers back to the line as the text layer had it.
 
-**Missing lines** (`missing.py`, scans only). OCR layers drop short lines: a bare
-chapter number, a one-word line of dialogue. Where the layout model sees a
-one-line region with no text-layer line in it, glm-ocr reads that region and the
-reading is added to a *copy* of the page as a line of its own, in reading order.
+### Layout regions
 
-**Type** (`typestyle.py`). Each line's type size, stroke weight, letter width and
-capitals, measured on the page image relative to the body text, with no model.
-Lines set alike in one place on their pages (all chapter titles, say) form a group.
+`layout.py` runs DocLayout-YOLO, a vision model, on each page image. It marks
+figures, captions, titles, and page furniture such as running heads.
 
-**Dash style** (`typography.py`) is measured here too, before any model reads a
-line: en or em dash, and how wide the gaps around it are, from the stroke lengths
-and spacing on the scan (or from `book.toml`). Together with the quote style the
-layer shows (single or double quotes, the ellipsis glyph), it becomes a sentence
-the readers and judges are told, because typography is a property of the book, not
-of a line.
+Pages with only a picture on them are run a second time, turned a quarter, to find
+captions printed sideways.
 
-### 2. Understand the page: line roles
+### Missing lines
 
-(`roles.py`) Each line gets a role: body, heading, page number, running head, or a
-print artefact to drop. Lines in the middle of the text block, flush with the
-margin, are body text without asking. The doubtful ones, near the top or bottom of
-the page and short centred lines anywhere, go to clef-flash with their position,
-their neighbours, and features the model can't see for itself (does this text
-repeat on other pages, as a running head does?). Then rules in code override the
-model where layout settles the question: what is true by definition is enforced,
-not hoped for. A style group shares the role most of its lines got. Answers are
-cached in `stages/decisions.jsonl`.
+OCR layers drop short lines: a bare chapter number, a one-word line of dialogue.
+The layout model still sees a region there.
 
-### 3. Check the OCR (scans only)
+Where it sees a region one line tall with no text-layer line in it, `missing.py`
+has glm-ocr read that region. The reading is added to a copy of the page as a line
+of its own, in reading order, so the later stages treat it like any other line.
+This runs on scans only.
 
-This is the core, and where most of the model time goes.
+### Type
 
-**More readings.** Every body line is read again, short lines too, by three readers
-chosen because they fail in different ways:
+`typestyle.py` measures each line's type on the page image, relative to the body
+text: its size, stroke weight, letter width, and whether it is set in capitals. No
+model is involved.
 
-| Reader | Sees | Good at | Bad at |
+Lines set alike in one place on their pages form a group, such as all the chapter
+titles of a book.
+
+### Dashes and quotes
+
+`typography.py` measures the book's dash on the scan: an en or an em dash, and how
+wide the gaps around it are. `book.toml` can set it instead.
+
+The quote style (single or double quotes, the ellipsis glyph) comes from the text
+layer's own marks.
+
+Both are measured before any model reads a line. The readers and judges are told
+them in a sentence, because typography belongs to the book. Asked line by line,
+the models set it inconsistently.
+
+## Stage 2: what each line is
+
+`roles.py` gives each line a role: body, heading, page number, running head, or a
+print artefact to drop.
+
+Lines in the middle of the text block, flush with the margin, are body text, and
+no model is asked about them.
+
+The doubtful lines go to clef-flash. These are lines near the top or bottom of
+the page, and short centred lines anywhere. The model is given each line's
+position and neighbours, and facts it can't see for itself, such as whether the
+same text appears on other pages, as a running head does.
+
+Rules in code then override the model where the layout decides the question. What
+is true by definition, such as a chapter heading appearing once, is enforced
+there. A style group takes the role most of its lines got.
+
+The answers are cached in `stages/decisions.jsonl`.
+
+## Stage 3: checking the OCR
+
+This stage runs on scans only, and it costs most of a build's model time.
+
+### More readings
+
+Every body line is read again by three readers, short lines included:
+
+| Reader | Sees | Good at | Weak at |
 | --- | --- | --- | --- |
 | glm-ocr | the line's crop | letters and words | drops quote marks and diaereses |
-| tesseract | the whole page, its own segmentation | marks the layer's boxes cut off, dashes | punctuation, opening quotes |
-| qwen3.8, told the book's style | the line's crop | quote marks | swaps in a plausible real word |
+| tesseract | the whole page, with its own line finding | marks the layer's boxes cut off, dashes | punctuation, opening quotes |
+| qwen3.8, told the book's style | the line's crop | quote marks | sometimes writes a plausible but wrong word |
 
-A crop reaches one em past the line's ends and a few points above and below, but
-stops at a neighbouring line's box, so a reader never sees half of the next line.
+A crop reaches one em past each end of the line and a few points above and below
+it. It stops at the next line's box, so a reader never sees part of another line.
 
-**Suspects.** Where any reading differs from the text layer, the differing stretch
-(widened to whole words) becomes a *suspect* with its *versions*: the layer's
-first, then each different reading. Take an invented line the layer reads as
+### Suspects
+
+Where any reading differs from the text layer, the differing stretch, widened to
+whole words, becomes a suspect. Its versions are the text layer's reading first,
+then each different reading.
+
+An invented example: the text layer reads a line as
 
     Hij keek naar buiten.
 
-while glm-ocr also reads `buiten.` and qwen3.8 reads `buiten.’`. One suspect, two
-versions: `buiten.` (layer, glm-ocr) and `buiten.’` (qwen3.8). Two places that
-differ in one line are two suspects, so each can be settled on its own.
+glm-ocr agrees, and qwen3.8 reads `buiten.’`, with a closing quote. That gives one
+suspect with two versions: `buiten.` from the text layer and glm-ocr, and
+`buiten.’` from qwen3.8.
 
-**Judges.** For every suspect:
+Two differences in one line make two suspects, and each is decided on its own.
 
-- **clef:27b** sees the crop of the place on the scan and picks the version it
-  shows. It is usually right, and is told the book's typesetting.
-- **winnow:e4b** reads only the sentence and picks the version that reads right.
-  Alone it is a poor judge; its value is as an alarm: where it disagrees with clef,
-  clef is wrong several times as often.
-- **The word list** (unpacked from tesseract's own language model) says which
-  versions consist of known words. It is a vote, shown to the reviewer and used as
-  a feature, never a decision on its own.
+### Judges
 
-Each suspect also records which readings support which version.
+Three opinions are collected for every suspect.
 
-**Learned trust** (`trust.py`). A small model (shallow gradient-boosted trees)
-scores each version of each suspect: how likely is this what the page prints? Its
-features are the judges' picks and confidences, which readings back the version,
-the word list's verdict, the kind of difference (a quote mark, a letter, a word
-break, a length change), and a *prior* for the exact substitution: across books,
-`|` read for `I` is nearly always the layer's error, glm-ocr dropping a `’` nearly
-always glm-ocr's. Then:
+clef:27b looks at the crop of that place on the scan and picks the version it
+shows. It is told the book's typesetting, and it is usually right.
 
-1. the suspects are ranked by how sure the model is of its best version;
-2. the least sure are **asked**, up to a budget of questions per page, counted over
-   the whole book so a bad page can take several and a clean page none;
-3. every other suspect takes its best version: kept as the layer reads it, or
-   **fixed**.
+winnow:e4b reads only the sentence and picks the version that reads well. On its
+own it is a poor judge. It is there as an alarm: where it disagrees with clef,
+clef is wrong several times as often as where they agree.
 
-Fixes go into a copy of the pages; the original layer stays as it was, because
-review answers are keyed on it. The trust model is trained only on tuning books
-(see *Measuring*); if it is missing or was saved for another feature set, the
-build stops rather than fall back silently. `ROBO_OCR_TRUST=0` selects the old
-fixed rule (both judges agree and clef is at least somewhat sure) explicitly.
+The word list, unpacked from tesseract's own language model, says which versions
+consist of known words. It is shown to the reviewer and used as a feature, and it
+decides nothing by itself.
 
-### 4. Review
+Each suspect also records which readings back which version.
 
-Run with `roboscriptorium review work/<book>`. The build flags what a person
-should look at (`flags.py`): the OCR doubts trust asked about, one question per
-place; headings; lines dropped or kept without the model being sure; garbled text;
-pictures, captions, titles that aren't headings; text the layout model sees and the
-layer lacks; and paragraphs whose curly quotes don't pair up (`quotes.py`).
+### Learned trust
 
-A local web page (`review.py`) shows each question beside its scan crop. An OCR
-doubt lists each version on its own row with the part that differs marked and the
-models that picked it; one key answers. A quote question offers qwen3.8's reading
-of the line, but only its quote marks and the punctuation beside them, on the
-checked letters, since its quote marks are reliable where its letters aren't. A
-drawn initial gets a guess at its letter from clef-flash: which letters make the
-word beside it a word, then which of those the drawing shows.
+`trust.py` is a small model of shallow gradient-boosted trees. For each version
+of each suspect, it estimates how likely that version is what the page prints.
 
-People slip too (about one answer in eight on Stella), so an answer is checked
-before it is saved: a typed line must match one of the readings, and a straight
-quote in a book set with curly ones is queried. The page says why once, and saves
-on the second press.
+It looks at:
 
-Answers go to `work/<book>/review/regions.jsonl`. The flags are computed from the
-model's decisions *before* answers are applied, so the list stays put while you
-work through it.
+- what the judges picked, and how sure they were;
+- which readings back the version;
+- what the word list says;
+- what kind of difference it is: a quote mark, a letter, a word break, a change in
+  length;
+- how often this exact substitution was the printed text in the training books.
 
-### 5. Answers, then assembly
+That last feature exists because a scan's errors repeat. Across books, `|` read
+for `I` is almost always the text layer's mistake, and glm-ocr dropping a `’` is
+almost always glm-ocr's.
 
-**Answers** (`corrections.py`) are applied to copies of the pages and roles on the
-next build: a retyped line, a role changed, a picture marked, a missing line
-inserted where its region sits. An answer about one place in a line changes only
-that place, so several answers and the OCR check's own fixes in one line combine.
+With every version scored, the book's suspects are sorted by how sure the model is
+of its best version. The least sure ones are asked, up to a budget of questions
+per page. The budget is counted over the whole book, so a bad page can get several
+questions and a clean page none.
 
-**Reflow** (`reflow.py`) joins lines into paragraphs and headings, using
-indentation, short last lines and the roles. A line-end hyphen stays or goes by
-evidence, strongest first: how the book spells the word elsewhere inside a line;
-which of the two forms the word list knows; a capital after the break; the parts
-beside a hyphen already in the word.
+Every other suspect takes its best version. If that is the text layer's, the line
+stays as it was; if not, it is fixed.
 
-**Italics** (`italics.py`) come from each word's stroke slant on the page image,
-no model. **Typography** sets every dash between words in the book's one style.
-**Figures** (`figures.py`) are the layout model's pictures on body pages, trimmed
-where a caption overlaps, turned upright where printed sideways, placed after the
-paragraph they follow, with their captions.
+Fixes go into a copy of the pages. The original text layer stays as it was,
+because review answers are keyed on it.
 
-**The EPUB** (`epub.py`) is written by hand with zipfile and must pass epubcheck
-with no errors or warnings.
+### When there is no trust model
 
-## Measuring: golden books
+The trust model is trained on the tuning books only, described under *Measuring*.
 
-A change is good only if it is measured to be. The measure is a set of **golden
-books**: real scans paired with a human-checked reference text (a Project
-Gutenberg transcription of the same edition, or the publisher's own EPUB of the
-same printing). [golden-books.md](golden-books.md) lists them.
+If the model file is missing, or was saved for a different set of features, the
+build stops. It doesn't fall back silently. `ROBO_OCR_TRUST=0` chooses the older
+fixed rule on purpose: apply a fix when both judges agree and clef is at least
+somewhat sure.
 
-- **Alignment.** The build's output is aligned with the reference
-  (`golden/align.py`), and every difference is located on the scan.
-- **Verdicts.** The reference isn't the scan either: an EPUB may correct a word or
-  set a dash differently. Where output and reference differ, a person can say what
-  the scan prints (`golden review`); verdicts are stored in git and patched into
-  the reference. Typography the EPUB may set differently (quote glyphs, ellipses)
-  is folded on both sides and counted, so the gap stays visible.
-- **`eval`** prints CER, WER and paragraph F1 for one book.
-- **`quality`** counts what a reviewer is left with: wrong words per page left
-  unasked, at budgets of a quarter, a half and one question per page.
-- **`bench`** is *the* measure for a change. It scores pinned slices of every
-  book in a set before and after, page by page, and asks one question: does
-  "after review" (unasked errors plus the reviewer's own slips per question)
-  improve over the set's books, each weighing the same? Any single book getting
-  clearly worse vetoes the change.
+## Stage 4: the review
 
-The books come in three sets. **Tuning** books are the ones choices are made on
-and the trust model is trained on. **Validation** books check that a choice carries
-over to books it wasn't made on. The **test** book is scored once, at the end, and
-touched by nothing else; the CLI refuses to score it without `--score-test`.
+`roboscriptorium review work/<book>` builds the book and serves its questions on a
+local web page.
 
-A pair can stop measuring the pipeline: when its EPUB was made from another
-printing, most "errors" are edition differences. The bench records two signals per
-book that need no verdicts (the layer's own CER against the reference, and the
-share of body lines that can't be placed), and a book past the threshold is
-proposed for retirement.
+### What gets asked
+
+`flags.py` collects what a person should look at:
+
+- the OCR doubts that trust chose to ask, one question per place;
+- headings;
+- lines the role model dropped, or kept without being sure;
+- garbled text;
+- pictures, captions, and titles that aren't headings;
+- text the layout model sees and the text layer lacks;
+- paragraphs whose curly quotes don't pair up (`quotes.py`).
+
+The list is built from the models' decisions before any answers are applied, so
+it doesn't change while you work through it.
+
+### Answering
+
+`review.py` shows each question beside its crop of the scan.
+
+An OCR doubt lists each version on its own row, with the differing part marked and
+the models that picked it beside it. One key answers.
+
+A quote question offers qwen3.8's reading of the line, but takes only its quote
+marks and the punctuation next to them, laid on the checked letters. Its quote
+marks are reliable where its letters are not.
+
+A drawn initial comes with a guess at its letter. Code finds the letters that make
+the word beside it a word, and clef-flash picks the one the drawing shows.
+
+### Checking the answers
+
+People make mistakes too: about one answer in eight on Stella was wrong. So an
+answer is checked before it is saved.
+
+A line typed for a question must match one of its readings, apart from quote
+glyphs and spacing. A straight quote in a book set with curly quotes is queried.
+The page says why once, and saves when you press Save again.
+
+Answers are stored in `work/<book>/review/regions.jsonl`.
+
+## Stage 5: assembling the book
+
+### Answers
+
+`corrections.py` applies the answers on the next build, to copies of the pages and
+roles. An answer can retype a line, change a role, mark a picture, or insert a
+missing line where its region sits.
+
+An answer about one place in a line changes only that place. Several answers in
+one line, and the OCR check's own fixes there, all apply together.
+
+### Paragraphs
+
+`reflow.py` joins lines into paragraphs and headings, using indentation, short last
+lines and the roles.
+
+A hyphen at the end of a line stays or goes by evidence, strongest first:
+
+1. how the book spells the word elsewhere, inside a line;
+2. which of the two forms the word list knows;
+3. a capital after the break, as in `Noord-Holland`;
+4. whether the parts beside a hyphen already in the word are words themselves.
+
+### Italics, dashes and figures
+
+`italics.py` finds italic words from the slant of each word's strokes on the page
+image, with no model.
+
+`typography.py` sets every dash between words in the book's one style.
+
+`figures.py` takes the layout model's pictures on body pages. It trims a picture
+where a caption overlaps it, turns it upright if it was printed sideways, and
+places it after the paragraph it follows, with its caption.
+
+### The EPUB
+
+`epub.py` writes the EPUB 3 file directly with zipfile. It has to pass epubcheck
+with no errors and no warnings.
+
+## Measuring
+
+A change counts as an improvement only once it is measured as one.
+
+### Golden books
+
+The measuring is done on golden books: scans paired with a reference text a person
+checked. The reference is a Project Gutenberg transcription of the same edition,
+or the publisher's own EPUB of the same printing. [golden-books.md](golden-books.md)
+lists them.
+
+The build's output is aligned with the reference, and every difference is located
+on the scan.
+
+### Verdicts
+
+The reference isn't identical to the scan either: an EPUB may correct a word or
+set a dash differently. Where output and reference differ, a person can say what
+the scan prints, with `golden review`. These verdicts are kept in git and patched
+into the reference.
+
+Typography an EPUB may set differently, such as quote glyphs and ellipses, is
+folded to one form on both sides and counted, so the gap stays visible.
+
+### The scores
+
+`eval` prints a book's character and word error rates and how well its paragraphs
+match.
+
+`quality` counts what a reviewer is left with: the wrong words per page that no
+question covers, at a quarter, a half and one question per page.
+
+`bench` decides whether a change goes in. It scores fixed slices of every book in
+a set, before and after the change, and compares them page by page. The change has
+to improve the "after review" figure, which adds the reviewer's own expected
+mistakes to the errors left unasked, with each book weighing the same. If any one
+book gets clearly worse, the change is rejected.
+
+### Three sets of books
+
+Tuning books are the ones choices are made on, and the trust model is trained on
+them.
+
+Validation books check that a choice also works on books it wasn't made on.
+
+The test book is scored once, at the end of the plan, and used for nothing else.
+The command line refuses to score it without `--score-test`.
+
+### Retiring a book
+
+A pair of scan and reference can stop measuring the pipeline. When the EPUB was
+made from another printing, most of the "errors" are differences between editions.
+
+The bench records two signals for each book that need no verdicts: the text
+layer's own error rate against the reference, and the share of body lines the
+aligner can't place. A book past either threshold is proposed for retirement.
 
 ## How the machine learns
 
-The trust model is where the machine learns, and the loop goes like this:
+The trust model is what learns, in three steps.
 
-1. **Trust data** (`experiments/ocr_trust_data.py`). A book is built and its
-   suspects collected. Each version of each suspect is labelled by comparing the
-   line with the aligned reference: does this version make the line read as
-   printed? A suspect where no version comes close enough is left unsettled and out
-   of training. A book without a reference (Stella) is labelled by the user's own
-   review answers instead.
-2. **Training** (`experiments/train_ocr_trust.py --save`). The trees are trained on
-   every tuning book's settled suspects, and once more without each tuning book in
-   turn, so the bench can score a tuning book with a model that never saw it.
-   Validation and test books are never trained on.
-3. **Benching.** The new model is measured on tuning, then validation.
+### 1. Trust data
 
-A new model release fits the same loop: add it as a reading or a judge, rebuild
-the trust data, retrain, and let the bench say whether it earns its place. The
-target book comes out right because the machine does, not because rules were tuned
-to it.
+`experiments/ocr_trust_data.py` builds a golden book and collects its suspects.
+Each version of each suspect is labelled by comparing the line with the aligned
+reference: does this version make the line read as printed?
+
+A suspect where no version comes close enough to the reference is left out of the
+training data.
+
+Stella has no reference, so its suspects are labelled from the user's own review
+answers.
+
+### 2. Training
+
+`experiments/train_ocr_trust.py --save` trains the trees on every tuning book's
+labelled suspects. It then trains them again once for each tuning book, leaving
+that book out, so the bench can score each tuning book with a model that never saw
+it.
+
+Validation and test books are never trained on.
+
+### 3. Benching
+
+The new model is measured on the tuning books, then on the validation books.
+
+A newly released model goes through the same loop. It is added as a reader or a
+judge, the trust data is rebuilt, the trust model retrained, and the bench decides
+whether it stays.
 
 ## Running it
 
@@ -268,7 +417,9 @@ uv run roboscriptorium eval work/<golden scan> --pages 9-64 --chapters 1-4
 uv run roboscriptorium bench tuning
 ```
 
-A cold build costs about a minute per page, most of it the line readers and
-judges; a warm rebuild, seconds. Long runs go through `experiments/detached.sh`
-(in `screen`, so they outlive the terminal) and `experiments/timed.sh` (which
-records their minutes in [run-times.md](run-times.md)).
+A build with nothing cached costs about a minute per page, most of it spent on the
+line readers and judges. A rebuild with warm caches takes seconds.
+
+Long runs go through two scripts. `experiments/detached.sh` starts them in
+`screen`, so they keep running after the terminal closes. `experiments/timed.sh`
+records how many minutes they took in [run-times.md](run-times.md).
