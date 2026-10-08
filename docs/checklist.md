@@ -49,7 +49,25 @@ the short lines.
 - [ ] Lady into Fox: ~3.3 h cold
 - [ ] Reis om mijn schedel: ~4.5 h cold (its quote readings are a separate cache)
 
-## 3. Baseline, retrain, bench, decide
+## 2b. Two new golden pairs (Fable's session)
+
+Placed under `work/` like the others: the scans in `work/<book>--ia-scan/source.pdf`,
+the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
+
+- [x] `experiments/probe_candidate.py`: a no-model check of a scan and EPUB pair
+- [ ] Afscheid van verspilde tijd (Wijkmark, Rode Kamer 2011): manifest, derive
+      (spaced hyphens as en dashes), fetch; into `bench tuning`
+- [ ] Afscheid's trust data, in `ocr_trust_data.py`: ~2.4 h cold. Before the
+      baseline in 3, so the baseline includes it
+- [ ] Het geluid van bananen (Temelkuran, Van Gennep 2013): manifest, derive, fetch,
+      then **untouched**: a `test` bench set that won't run without a flag, in no
+      trust data
+- [ ] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
+- [ ] `golden check <pdf> <epub>`, writing a draft manifest: worth it once a batch
+      of candidates comes
+- [ ] **user** Hunt for modern English Scribe scans with the publisher's EPUB of the
+      same printing (two more unblock the line-role classifier in 6)
+
 
 - [ ] Baseline bench on the fixed rule (`ROBO_OCR_TRUST=0 … bench`): unmeasured
 - [ ] Retrain trust and compare with the before-Qwen data: minutes
