@@ -830,3 +830,8 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   sentence ("dialogue in curly quotes ‘ ’") as an order and wraps narration in quotes
   (‘Twintig meter. Vijftien. Tien.’): quote marks wrong on 94 of 324 lines, CER 0.67%.
   Out: an invented mark is the worst failure for this job.
+- 2026-10-08: A candidate reader is judged by what it adds, not by its own score: its
+  unique catches (right where every current reading is wrong) against its noise (wrong
+  where the layer is right). On Goede dochter pp. 9–20 only 1 of 324 body lines has no
+  current reading exact (layer, glm-ocr, tesseract, Qwen3.8), so the remaining errors
+  there come from choosing among readings; the question moves to a harder book (Metro).
