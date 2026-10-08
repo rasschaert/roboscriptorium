@@ -7,8 +7,8 @@ dated history behind each line is in [decisions.md](decisions.md).
 Numbers marked *trust data* come from the OCR check's labelled suspects
 (`experiments/ocr_trust_data.py`, each version labelled from the aligned golden
 text, settled ones only): 2,514 over eight books on 2026-10-07, Lady into Fox left
-out (its labels differ from its print in typography; see winnow below; as a
-validation book it is scored, never trained on).
+out (its labels differ from its print in typography; see winnow below; it is in
+reserve now, never trained on).
 
 ## The text layer is one reading, not the truth
 
@@ -114,7 +114,9 @@ English data makes it stable and the bench says so.
   chance each run.
 - **"After review" counts the reviewer's slips.** 8 of 68 checked answers on
   Stella were wrong (Beta posterior 0.06–0.21), so a question isn't free.
-- **Validation books are not a test.** Earlier choices were made on their scores.
+- **Validation books are not a test.** Earlier choices were made on their scores. They
+  are De tuin, Villa Toscane and De eerlijke vinder. Grand Hotel Europa was one until
+  its pair failed: an EPUB of another printing, and reference headings the scan lacks.
 - **The test set is a book nothing was chosen on.** Het geluid van bananen
   (Stella's publisher and scan format) is scored once, at the end of the plan;
   no model trains on it and the CLI refuses to score it without `--score-test`.

@@ -30,7 +30,7 @@ from roboscriptorium.book import Book
 from roboscriptorium.cli import _range
 from roboscriptorium.config import Settings
 
-HELD_OUT = {"lady-into-fox", "grand-hotel-europa", "de-tuin-van-de-avondnevel"}
+HELD_OUT = {"lady-into-fox", "grand-hotel-europa", "de-tuin-van-de-avondnevel", "de-eerlijke-vinder"}
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
 MODELS = {
     "logistic": lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)),

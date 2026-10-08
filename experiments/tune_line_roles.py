@@ -20,7 +20,13 @@ import numpy as np
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 OUT = Path("work/probes/line-roles")
-HELD_OUT = {"lady-into-fox", "villa-toscane", "grand-hotel-europa", "de-tuin-van-de-avondnevel"}
+HELD_OUT = {
+    "lady-into-fox",
+    "villa-toscane",
+    "grand-hotel-europa",
+    "de-tuin-van-de-avondnevel",
+    "de-eerlijke-vinder",
+}
 WITHOUT_MODEL = {"asked", "p_body"}
 
 books = {p.stem: json.loads(p.read_text()) for p in sorted(OUT.glob("*.json"))}

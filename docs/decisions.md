@@ -784,3 +784,13 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   the faithful `you. . . .` and `listen :` were labelled wrong (Crime 20 labels change,
   Dolittle 37, mostly to unsettled: versions that differ only in what the output sets
   anyway carry no label).
+- 2026-10-08: Grand Hotel Europa retired from validation to reserve, De eerlijke vinder
+  validation in its place (whole, pp. 12–95). Grand Hotel's EPUB was made from the 1st
+  printing, the scan is the 11th, and 9 of its slice's 16 reference headings have no
+  line on the scan; the build stays at 1.9% CER where the layer alone is 0.4%. De
+  eerlijke vinder is CPNB's EPUB of its own edition in Stella's scan format (layer
+  0.32%, 0.3% unplaced). It leaves the line-role probes' training set (held out there
+  too) and gets trust data as a held-out book. Crime and Dolittle stay: Crime's
+  reference was made from its scan and the build reaches 0.34%; Dolittle is the only
+  book with plates, captions and drawn initials, and its high CER is partly its
+  reference leaving captions out, which is ours to fix.

@@ -44,7 +44,13 @@ SPECS = [
     "work/monterosso-mon-amour--ia-scan",
 ]
 # Scored like the others, but their errors aren't printed: they stay unseen.
-HELD_OUT = {"lady-into-fox", "villa-toscane", "grand-hotel-europa", "de-tuin-van-de-avondnevel"}
+HELD_OUT = {
+    "lady-into-fox",
+    "villa-toscane",
+    "grand-hotel-europa",
+    "de-tuin-van-de-avondnevel",
+    "de-eerlijke-vinder",
+}
 ROLES = ["body", "heading", "other"]
 PIPELINE = {"text": "body", "heading": "heading", "dropped": "other"}
 MODEL_ROLES = ["body", "running_head", "page_number", "chapter_heading", "artifact"]

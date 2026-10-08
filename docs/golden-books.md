@@ -17,10 +17,10 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 | artemis | tuning | 305 / 68 | 87544 | 1.2 h | 0.37% | 0.97% | 3.1% | 0 / 3 | none | none yet |
 | de-aanslag | reserve | 169 / 169 | 55729 | minutes | 0.17% | 0.43% | 0.0% | 31 / 26 | none | 0.14% / 0.14% |
 | de-cipier | tuning | 474 / 84 | 158385 | 1.5 h | 0.19% | 0.34% | 2.7% | 2 / 4 | none | none yet |
-| de-eerlijke-vinder | reserve | 84 / 84 | 23802 | 1.5 h | 0.32% | 0.34% | 0.3% | 0 / 4 | none | none yet |
+| de-eerlijke-vinder | validation | 84 / 84 | 23802 | 1.5 h | 0.32% | 0.34% | 0.3% | 0 / 4 | none | none yet |
 | de-tuin-van-de-avondnevel | validation | 364 / 42 | 129776 | 0.8 h | 0.74% | 0.48% | 2.8% | 3 / 3 | none | 0.17% / 0.15% |
 | goede-dochter | tuning | 500 / 56 | 163184 | 1.0 h | 0.20% | 0.44% | 2.7% | 4 / 4 | none | 0.10% / 0.15% |
-| grand-hotel-europa | validation | 537 / 30 | 188700 | 0.6 h | 0.40% | 0.39% | 6.1% | 7 / 16 | none | 1.89% / 1.81% |
+| grand-hotel-europa | reserve | 537 / 537 | 188700 | 9.8 h | 0.48% | 0.57% | 4.0% | 70 / 200 | none | 1.89% / 1.81% |
 | het-geluid-van-bananen | **test** | 315 / 93 | 78071 | 1.7 h | unmeasured | | | | none | untouched |
 | lady-into-fox | reserve | 91 / 91 | 24456 | 1.7 h | 0.39% | 0.12% | 6.6% | 1 / 1 | none | 0.90% / 0.30% |
 | metro-2033 | tuning | 458 / 105 | 197756 | 1.9 h | 0.18% | 0.24% | 2.4% | 9 / 10 | hyphen_dash | none yet |

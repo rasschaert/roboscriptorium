@@ -83,6 +83,12 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       Artemis (English first: the line-role classifier is short of English books)
 - [ ] De cipier's trust data (in `ocr_trust_data.py`, pp. 9–92): ~1.5 h cold. Before
       the baseline, so it isn't rerun when it joins
+- [x] Grand Hotel Europa retired to reserve, De eerlijke vinder into validation in its
+      place (another printing than its EPUB; 9 of 16 reference headings not on the scan)
+- [ ] De eerlijke vinder's trust data (in `ocr_trust_data.py`, pp. 12–95, held out):
+      ~1.5 h cold, before the baseline
+- [ ] Dolittle's captions scored properly: derive them into the reference, or leave
+      caption lines out of the score as footnotes are
 - [x] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
       (`golden/signals.py`: layer CER and unplaced body lines, a suspect named)
 - [ ] `golden check <pdf> <epub>`, writing a draft manifest: worth it once a batch
