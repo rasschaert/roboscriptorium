@@ -7,8 +7,7 @@ of each session.
 
 ## State at the end of 2026-10-08
 
-On `main`, pushed. Lint and tests green (168 passed, 1 xfailed). The only untracked
-file, `experiments/probe_remaining_errors.py`, is an older probe: leave it alone.
+On `main`, pushed. Lint and tests green (168 passed, 1 xfailed); nothing uncommitted.
 
 **Where the plan stands:** checklist section 2's queue (trust data for every tuning
 and validation book, with the third reading and short lines) is nearly done; then
