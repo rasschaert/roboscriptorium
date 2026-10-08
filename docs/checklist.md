@@ -141,6 +141,11 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       baseline. A new reader only pays off by speed, since the current ones already
       cover nearly every line
 - [ ] The two failed MoE models take 39 GB: **user** says whether to remove them
+- [x] Hosted Qwen3.8 bf16 on Metro pp. 7–30 (the user's go): the same as local on 97% of
+      lines, 935 exact against 934, 14× faster; reads beyond its line on 7 of 958 (local 1)
+- [ ] Line crops on tightly leaded books (Metro) hold parts of the neighbouring lines, and
+      readers sometimes read them: a reading far longer or shorter than the layer's line
+      could count as no reading. Measured by `bench`, after the baseline
 - [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:
       after the baseline bench, each measured by it
 

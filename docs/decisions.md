@@ -860,3 +860,9 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   bf16 reads like local nvfp4 (Goede dochter: CER 0.11% against 0.10%, no quote marks
   wrong on either), so keeping them apart only costs re-reading; the marks keep the
   provenance a plain rename would lose.
+- 2026-10-08: Hosted Qwen3.8 27B (DeepInfra bf16) on Metro pp. 7–30, English: the same
+  reading as local on 929 of 958 lines, 935 exact against local's 934, 0.10 s a line
+  (14× faster); but it reads beyond or beside its crop on 7 lines (whole neighbouring
+  clauses) where local does on 1, which lifts its CER to 0.64% against 0.16%. gemma4:26b
+  does so on 254. Metro's crops hold parts of the neighbouring lines (tight leading), so
+  every reader is tempted; such a reading only adds a suspect the judges reject.
