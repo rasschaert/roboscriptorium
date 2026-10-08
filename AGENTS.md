@@ -370,10 +370,10 @@ repetition across pages), then measure the decision model against that set.
 Enforce in code what is true by definition (a chapter heading appears once)
 rather than hoping the model weighs it.
 
-**Model roles.** Every model plays a role, and the docs, the diagram and talk with
+**Model roles.** Every model has a role, and the docs, the diagram and talk with
 the user refer to it by that role ([docs/how-it-works.md](docs/how-it-works.md)):
 
-| Role | Played by now | Job |
+| Role | Model | Job |
 | --- | --- | --- |
 | spotter | DocLayout-YOLO | marks figures, captions, titles and furniture on the page image |
 | reader | glm-ocr, tesseract, qwen3.8 | reads text from the scan (also a line the layer missed) |

@@ -33,7 +33,7 @@ printed.
 
 ## The models and their roles
 
-| Role | Played by | What it does | Kind |
+| Role | Model | What it does | Kind |
 | --- | --- | --- | --- |
 | spotter | DocLayout-YOLO | marks figures, captions, titles and page furniture on each page image | vision model |
 | readers | glm-ocr, tesseract, qwen3.8 | read the text again from the scan | generative models and a classic OCR program |
