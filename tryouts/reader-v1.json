@@ -1,0 +1,3359 @@
+{
+ "role": "reader",
+ "version": 1,
+ "created": "2026-10-08T18:45:39+00:00",
+ "commit": "f57cc84",
+ "strata": {
+  "hard": 30,
+  "control": 20,
+  "seed": 0
+ },
+ "books": {
+  "goede-dochter--ia-scan": {
+   "spec": "goede-dochter--ia-scan:9-64:1-4",
+   "prompt_sha": "8e163497ce6df401"
+  },
+  "vals-alarm--ia-scan": {
+   "spec": "vals-alarm--ia-scan:11-60:1-10",
+   "prompt_sha": "ce1a793f91f65c25"
+  },
+  "reis-om-mijn-schedel--ia-scan": {
+   "spec": "reis-om-mijn-schedel--ia-scan:11-110:1-11",
+   "prompt_sha": "84b01260ff1bf705"
+  },
+  "the-nature-of-a-crime--doubleday-1924": {
+   "spec": "the-nature-of-a-crime--doubleday-1924",
+   "prompt_sha": "639e8c385723e1b7"
+  },
+  "the-story-of-doctor-dolittle--stokes-1920": {
+   "spec": "the-story-of-doctor-dolittle--stokes-1920:23-88:1-7",
+   "prompt_sha": "8b6e596cfa30543e"
+  },
+  "the-thief-takers-apprentice--ia-scan": {
+   "spec": "the-thief-takers-apprentice--ia-scan:11-84:1-22",
+   "prompt_sha": "8246bf255f0fb65e"
+  },
+  "afscheid-van-verspilde-tijd--ia-scan": {
+   "spec": "afscheid-van-verspilde-tijd--ia-scan:9-70:1-11",
+   "prompt_sha": "84b01260ff1bf705"
+  },
+  "metro-2033--ia-scan": {
+   "spec": "metro-2033--ia-scan:7-111:1-10",
+   "prompt_sha": "8246bf255f0fb65e"
+  },
+  "de-cipier--ia-scan": {
+   "spec": "de-cipier--ia-scan:9-92:1-4",
+   "prompt_sha": "8e163497ce6df401"
+  },
+  "artemis--ia-scan": {
+   "spec": "artemis--ia-scan:13-80:1-3",
+   "prompt_sha": "ded196cd69a2d035"
+  },
+  "11-22-63--ia-scan": {
+   "spec": "11-22-63--ia-scan:15-94:1-24",
+   "prompt_sha": "ded196cd69a2d035"
+  }
+ },
+ "items": [
+  {
+   "id": "goede-dochter--ia-scan:11:6",
+   "stratum": "control",
+   "crop": "c0385a79993dc0a8",
+   "truth_sha": "6b26afc9b9ebf40d"
+  },
+  {
+   "id": "goede-dochter--ia-scan:12:21",
+   "stratum": "control",
+   "crop": "434de790596bfe3b",
+   "truth_sha": "fac1d68c08710815"
+  },
+  {
+   "id": "goede-dochter--ia-scan:16:5",
+   "stratum": "hard",
+   "crop": "2e55d7d79d32a13c",
+   "truth_sha": "3e9662fd67fb13c0"
+  },
+  {
+   "id": "goede-dochter--ia-scan:18:1",
+   "stratum": "hard",
+   "crop": "d1a84ace4e72c88a",
+   "truth_sha": "cd1c3dfc1120cf27"
+  },
+  {
+   "id": "goede-dochter--ia-scan:18:3",
+   "stratum": "control",
+   "crop": "790a71718d0be7fd",
+   "truth_sha": "fc9613bc08bde61c"
+  },
+  {
+   "id": "goede-dochter--ia-scan:18:6",
+   "stratum": "control",
+   "crop": "aa24b677e8c6605a",
+   "truth_sha": "ffab1580ab35abe2"
+  },
+  {
+   "id": "goede-dochter--ia-scan:18:26",
+   "stratum": "hard",
+   "crop": "94b752163b7e0864",
+   "truth_sha": "7b44199d036382b3"
+  },
+  {
+   "id": "goede-dochter--ia-scan:21:9",
+   "stratum": "control",
+   "crop": "a1a4c0b118f745ec",
+   "truth_sha": "55a9b4eec55e90cc"
+  },
+  {
+   "id": "goede-dochter--ia-scan:22:9",
+   "stratum": "hard",
+   "crop": "4101b7b02f32ecef",
+   "truth_sha": "76ad58cf4aa608a5"
+  },
+  {
+   "id": "goede-dochter--ia-scan:22:12",
+   "stratum": "hard",
+   "crop": "52fd38c499433b6c",
+   "truth_sha": "0ae9cdc613fe186e"
+  },
+  {
+   "id": "goede-dochter--ia-scan:27:30",
+   "stratum": "hard",
+   "crop": "6a1f5c3847a454e1",
+   "truth_sha": "657c2b19ffcd7c20"
+  },
+  {
+   "id": "goede-dochter--ia-scan:29:6",
+   "stratum": "hard",
+   "crop": "6162aaa5e97b3305",
+   "truth_sha": "d22b8797c695df76"
+  },
+  {
+   "id": "goede-dochter--ia-scan:29:8",
+   "stratum": "hard",
+   "crop": "d421f8319a40a348",
+   "truth_sha": "610385b4d26223fc"
+  },
+  {
+   "id": "goede-dochter--ia-scan:31:20",
+   "stratum": "control",
+   "crop": "bd7e52e8c8373b39",
+   "truth_sha": "8de2d8b72c79f061"
+  },
+  {
+   "id": "goede-dochter--ia-scan:32:5",
+   "stratum": "hard",
+   "crop": "3616e6844f3ec1f4",
+   "truth_sha": "890fc957f335ed0c"
+  },
+  {
+   "id": "goede-dochter--ia-scan:32:25",
+   "stratum": "control",
+   "crop": "24ed8a5e290c4dfd",
+   "truth_sha": "97576910279aabb2"
+  },
+  {
+   "id": "goede-dochter--ia-scan:32:27",
+   "stratum": "hard",
+   "crop": "24e883ffc3097e5c",
+   "truth_sha": "e28ed8339e43057a"
+  },
+  {
+   "id": "goede-dochter--ia-scan:33:4",
+   "stratum": "hard",
+   "crop": "f59cc2ee5d778765",
+   "truth_sha": "943beae762b8bc6d"
+  },
+  {
+   "id": "goede-dochter--ia-scan:33:28",
+   "stratum": "hard",
+   "crop": "5806d37e192e26f2",
+   "truth_sha": "18a8e415b51b6bf9"
+  },
+  {
+   "id": "goede-dochter--ia-scan:34:24",
+   "stratum": "control",
+   "crop": "9b337de3ca9a0603",
+   "truth_sha": "1115919d1a647984"
+  },
+  {
+   "id": "goede-dochter--ia-scan:34:25",
+   "stratum": "hard",
+   "crop": "61745ec60add877e",
+   "truth_sha": "b273986116f9c57b"
+  },
+  {
+   "id": "goede-dochter--ia-scan:36:7",
+   "stratum": "hard",
+   "crop": "96e7ead872ced102",
+   "truth_sha": "a5139f211e8befaa"
+  },
+  {
+   "id": "goede-dochter--ia-scan:36:12",
+   "stratum": "control",
+   "crop": "7d2246becf5cacdc",
+   "truth_sha": "6f579b03571907c3"
+  },
+  {
+   "id": "goede-dochter--ia-scan:36:32",
+   "stratum": "control",
+   "crop": "e98c206c2abcfde5",
+   "truth_sha": "c9ccf4325aa5afe4"
+  },
+  {
+   "id": "goede-dochter--ia-scan:38:5",
+   "stratum": "hard",
+   "crop": "8d4a63b96cfb7706",
+   "truth_sha": "15f2dd47ca752f17"
+  },
+  {
+   "id": "goede-dochter--ia-scan:38:17",
+   "stratum": "control",
+   "crop": "9861a72ce2ea9fde",
+   "truth_sha": "d8e9af940687cb84"
+  },
+  {
+   "id": "goede-dochter--ia-scan:39:26",
+   "stratum": "hard",
+   "crop": "d8271be5e84c00d8",
+   "truth_sha": "085bcdd2177ba99c"
+  },
+  {
+   "id": "goede-dochter--ia-scan:40:24",
+   "stratum": "hard",
+   "crop": "b0f9a923ea56cd58",
+   "truth_sha": "24f60f8268ba5641"
+  },
+  {
+   "id": "goede-dochter--ia-scan:41:0",
+   "stratum": "hard",
+   "crop": "d7a71e81c74f24e2",
+   "truth_sha": "e754bf6dbca20bea"
+  },
+  {
+   "id": "goede-dochter--ia-scan:41:15",
+   "stratum": "hard",
+   "crop": "a28745cca52a16b8",
+   "truth_sha": "25daa071cd285d7f"
+  },
+  {
+   "id": "goede-dochter--ia-scan:42:19",
+   "stratum": "hard",
+   "crop": "1cbf8d74b75f5d5d",
+   "truth_sha": "5455f8c482e24f4c"
+  },
+  {
+   "id": "goede-dochter--ia-scan:42:22",
+   "stratum": "hard",
+   "crop": "95a655a59d4bd78b",
+   "truth_sha": "9f1e63c9ab441be4"
+  },
+  {
+   "id": "goede-dochter--ia-scan:43:15",
+   "stratum": "control",
+   "crop": "4b010f2890885c02",
+   "truth_sha": "7ed9598363bfba26"
+  },
+  {
+   "id": "goede-dochter--ia-scan:44:5",
+   "stratum": "hard",
+   "crop": "c2fc1cec5bc683f9",
+   "truth_sha": "53db35f617d63162"
+  },
+  {
+   "id": "goede-dochter--ia-scan:44:20",
+   "stratum": "control",
+   "crop": "e34e875694963182",
+   "truth_sha": "11df2caf47d90bc3"
+  },
+  {
+   "id": "goede-dochter--ia-scan:45:22",
+   "stratum": "control",
+   "crop": "a478be269e18c61a",
+   "truth_sha": "bf7d4fef2ffa177a"
+  },
+  {
+   "id": "goede-dochter--ia-scan:45:29",
+   "stratum": "hard",
+   "crop": "f82f31fb07cd7fa3",
+   "truth_sha": "6cbc2a1d87c0281b"
+  },
+  {
+   "id": "goede-dochter--ia-scan:47:16",
+   "stratum": "control",
+   "crop": "e721eb260ec725fe",
+   "truth_sha": "6ee546307187666e"
+  },
+  {
+   "id": "goede-dochter--ia-scan:52:22",
+   "stratum": "hard",
+   "crop": "6e078e35bccbaa1e",
+   "truth_sha": "d43f67ca59507fa4"
+  },
+  {
+   "id": "goede-dochter--ia-scan:54:29",
+   "stratum": "control",
+   "crop": "5f20fd01ef0feefe",
+   "truth_sha": "1dfdb0e57e8a0dbf"
+  },
+  {
+   "id": "goede-dochter--ia-scan:55:13",
+   "stratum": "hard",
+   "crop": "2f9e6307719222ca",
+   "truth_sha": "dbdc6c3999a0190d"
+  },
+  {
+   "id": "goede-dochter--ia-scan:55:22",
+   "stratum": "hard",
+   "crop": "89de404dd932bd9f",
+   "truth_sha": "62f2f359a1e76e5a"
+  },
+  {
+   "id": "goede-dochter--ia-scan:56:4",
+   "stratum": "hard",
+   "crop": "ac709b18941bcfbc",
+   "truth_sha": "26aaf8256a9d4c4b"
+  },
+  {
+   "id": "goede-dochter--ia-scan:57:13",
+   "stratum": "hard",
+   "crop": "0010b4ccacbebadf",
+   "truth_sha": "20cea3f7dbc96be8"
+  },
+  {
+   "id": "goede-dochter--ia-scan:58:9",
+   "stratum": "control",
+   "crop": "a64b13f366688fa3",
+   "truth_sha": "0273f66a234eada3"
+  },
+  {
+   "id": "goede-dochter--ia-scan:58:31",
+   "stratum": "control",
+   "crop": "16eaf0d09a1d925c",
+   "truth_sha": "400e85f4c8c6c350"
+  },
+  {
+   "id": "goede-dochter--ia-scan:59:20",
+   "stratum": "hard",
+   "crop": "deae890ba645b1e0",
+   "truth_sha": "a4d1805b6e60876f"
+  },
+  {
+   "id": "goede-dochter--ia-scan:61:32",
+   "stratum": "control",
+   "crop": "10d274d9a9c85f3e",
+   "truth_sha": "e5d8bf411b91426b"
+  },
+  {
+   "id": "goede-dochter--ia-scan:63:18",
+   "stratum": "control",
+   "crop": "c3d79af2f5550a4d",
+   "truth_sha": "ba7af8d6cb9ab4b7"
+  },
+  {
+   "id": "goede-dochter--ia-scan:64:4",
+   "stratum": "hard",
+   "crop": "1194ff3b88d4dc04",
+   "truth_sha": "aa6fe52f50bfc61f"
+  },
+  {
+   "id": "vals-alarm--ia-scan:12:26",
+   "stratum": "control",
+   "crop": "4e665b7a28bcab7e",
+   "truth_sha": "54905824cafc7bf1"
+  },
+  {
+   "id": "vals-alarm--ia-scan:12:32",
+   "stratum": "control",
+   "crop": "766e458d8fec76f9",
+   "truth_sha": "27b2c16f8a3b1a54"
+  },
+  {
+   "id": "vals-alarm--ia-scan:15:15",
+   "stratum": "control",
+   "crop": "ec87ed4050c5817c",
+   "truth_sha": "7ce840d4af9a5110"
+  },
+  {
+   "id": "vals-alarm--ia-scan:15:33",
+   "stratum": "control",
+   "crop": "e12529ed1e2aa1fa",
+   "truth_sha": "1d9a7202c09aace6"
+  },
+  {
+   "id": "vals-alarm--ia-scan:16:10",
+   "stratum": "control",
+   "crop": "f7ddc26a0352b011",
+   "truth_sha": "3f00e04a00613e27"
+  },
+  {
+   "id": "vals-alarm--ia-scan:18:33",
+   "stratum": "control",
+   "crop": "78ce4035fad7a606",
+   "truth_sha": "9285736980c5ffe2"
+  },
+  {
+   "id": "vals-alarm--ia-scan:19:31",
+   "stratum": "control",
+   "crop": "a71f9eedef83bc93",
+   "truth_sha": "05dfa4533a1560e0"
+  },
+  {
+   "id": "vals-alarm--ia-scan:21:24",
+   "stratum": "control",
+   "crop": "d92b4e281ad4a827",
+   "truth_sha": "2e444e9f7572227e"
+  },
+  {
+   "id": "vals-alarm--ia-scan:21:26",
+   "stratum": "control",
+   "crop": "d8eb9106788c7c49",
+   "truth_sha": "53fcb20ab204ef8f"
+  },
+  {
+   "id": "vals-alarm--ia-scan:23:6",
+   "stratum": "hard",
+   "crop": "4f549ce37c6738db",
+   "truth_sha": "0fff8bba24fd70a3"
+  },
+  {
+   "id": "vals-alarm--ia-scan:23:21",
+   "stratum": "hard",
+   "crop": "d5bc3aa8819b586e",
+   "truth_sha": "efab6d95572f57e5"
+  },
+  {
+   "id": "vals-alarm--ia-scan:25:18",
+   "stratum": "hard",
+   "crop": "0f98e56f7b5cbe75",
+   "truth_sha": "956d31452fd2b657"
+  },
+  {
+   "id": "vals-alarm--ia-scan:26:7",
+   "stratum": "control",
+   "crop": "bcb20641a45f86dd",
+   "truth_sha": "8673eb16d1f48b37"
+  },
+  {
+   "id": "vals-alarm--ia-scan:29:25",
+   "stratum": "hard",
+   "crop": "51a722dddf1bfc1b",
+   "truth_sha": "90633857e74b550a"
+  },
+  {
+   "id": "vals-alarm--ia-scan:30:8",
+   "stratum": "hard",
+   "crop": "dcbb417a1ad09068",
+   "truth_sha": "2400987bb1e3c7da"
+  },
+  {
+   "id": "vals-alarm--ia-scan:33:18",
+   "stratum": "hard",
+   "crop": "4654aec6536909bd",
+   "truth_sha": "96bd5028b58d0436"
+  },
+  {
+   "id": "vals-alarm--ia-scan:34:5",
+   "stratum": "control",
+   "crop": "cbd2cb85abdc5232",
+   "truth_sha": "78155e6186fcdd26"
+  },
+  {
+   "id": "vals-alarm--ia-scan:34:8",
+   "stratum": "hard",
+   "crop": "a17d182e383e3ec6",
+   "truth_sha": "e80ec3378c0ed5cb"
+  },
+  {
+   "id": "vals-alarm--ia-scan:35:4",
+   "stratum": "hard",
+   "crop": "3f3f02fc3812e4ea",
+   "truth_sha": "5023b9118b7aa91d"
+  },
+  {
+   "id": "vals-alarm--ia-scan:36:24",
+   "stratum": "hard",
+   "crop": "9108b8cb3e17cb55",
+   "truth_sha": "731bf48e863d8b2c"
+  },
+  {
+   "id": "vals-alarm--ia-scan:36:25",
+   "stratum": "hard",
+   "crop": "9a9d70bf62617320",
+   "truth_sha": "3ec077b21b38f327"
+  },
+  {
+   "id": "vals-alarm--ia-scan:38:6",
+   "stratum": "hard",
+   "crop": "0d0feef78ab031c0",
+   "truth_sha": "47c45ca2e1d76db0"
+  },
+  {
+   "id": "vals-alarm--ia-scan:40:10",
+   "stratum": "control",
+   "crop": "60cedb0356cdf18e",
+   "truth_sha": "3a383dcfe41291e0"
+  },
+  {
+   "id": "vals-alarm--ia-scan:40:27",
+   "stratum": "hard",
+   "crop": "b716320582661fb8",
+   "truth_sha": "63378f843972e72a"
+  },
+  {
+   "id": "vals-alarm--ia-scan:41:18",
+   "stratum": "hard",
+   "crop": "6a1f00990aa5cd12",
+   "truth_sha": "4499db181b5dc163"
+  },
+  {
+   "id": "vals-alarm--ia-scan:44:1",
+   "stratum": "hard",
+   "crop": "1732df8907d7d0a3",
+   "truth_sha": "caa63cdc2d0a301e"
+  },
+  {
+   "id": "vals-alarm--ia-scan:45:5",
+   "stratum": "control",
+   "crop": "83d1edb42a44f536",
+   "truth_sha": "76279edb4591d553"
+  },
+  {
+   "id": "vals-alarm--ia-scan:47:1",
+   "stratum": "hard",
+   "crop": "1336e06259c3b126",
+   "truth_sha": "e6a950f374bb7b07"
+  },
+  {
+   "id": "vals-alarm--ia-scan:47:3",
+   "stratum": "hard",
+   "crop": "c37a405620f1f3bd",
+   "truth_sha": "589f350dc0d1b3df"
+  },
+  {
+   "id": "vals-alarm--ia-scan:49:32",
+   "stratum": "hard",
+   "crop": "bdeae3249edd6b23",
+   "truth_sha": "85a1b67c357a1d44"
+  },
+  {
+   "id": "vals-alarm--ia-scan:50:3",
+   "stratum": "control",
+   "crop": "065d120db795fc46",
+   "truth_sha": "18fd2d73e8fe1ac8"
+  },
+  {
+   "id": "vals-alarm--ia-scan:50:23",
+   "stratum": "hard",
+   "crop": "4933f6f728061e1a",
+   "truth_sha": "9eef1bb6d15a2169"
+  },
+  {
+   "id": "vals-alarm--ia-scan:52:0",
+   "stratum": "hard",
+   "crop": "947dc139f9cce8ea",
+   "truth_sha": "1a162789e3f0475e"
+  },
+  {
+   "id": "vals-alarm--ia-scan:52:2",
+   "stratum": "hard",
+   "crop": "31fe69528e60352b",
+   "truth_sha": "5c9110d6e57a7969"
+  },
+  {
+   "id": "vals-alarm--ia-scan:52:10",
+   "stratum": "control",
+   "crop": "664867eb69a4569b",
+   "truth_sha": "06c16ce0807a4689"
+  },
+  {
+   "id": "vals-alarm--ia-scan:52:15",
+   "stratum": "hard",
+   "crop": "9e6435a82830e670",
+   "truth_sha": "9518ffc7f5f3e964"
+  },
+  {
+   "id": "vals-alarm--ia-scan:52:17",
+   "stratum": "hard",
+   "crop": "d54fca744749ba1e",
+   "truth_sha": "e5cf9b6ba212d03a"
+  },
+  {
+   "id": "vals-alarm--ia-scan:52:28",
+   "stratum": "hard",
+   "crop": "27bc0336ae5ab261",
+   "truth_sha": "39cc401b4139c167"
+  },
+  {
+   "id": "vals-alarm--ia-scan:53:18",
+   "stratum": "control",
+   "crop": "38ac67732c1d1e7b",
+   "truth_sha": "4e8c4d9ea08e9f2d"
+  },
+  {
+   "id": "vals-alarm--ia-scan:53:22",
+   "stratum": "control",
+   "crop": "850c7a109de297d7",
+   "truth_sha": "f028019630af347b"
+  },
+  {
+   "id": "vals-alarm--ia-scan:53:28",
+   "stratum": "hard",
+   "crop": "28f3bb65cff5682c",
+   "truth_sha": "af4845758e2ada1d"
+  },
+  {
+   "id": "vals-alarm--ia-scan:54:20",
+   "stratum": "control",
+   "crop": "f9d9cbf36ab32052",
+   "truth_sha": "02fd9ffbc7b59ef0"
+  },
+  {
+   "id": "vals-alarm--ia-scan:54:26",
+   "stratum": "control",
+   "crop": "b01e1e459bf0e304",
+   "truth_sha": "f38a25279cfb1256"
+  },
+  {
+   "id": "vals-alarm--ia-scan:56:5",
+   "stratum": "hard",
+   "crop": "7acad6ce52afea9a",
+   "truth_sha": "4d3c56b6c45957bc"
+  },
+  {
+   "id": "vals-alarm--ia-scan:57:0",
+   "stratum": "hard",
+   "crop": "8fea4ed10172cff0",
+   "truth_sha": "62414b05bb208ebf"
+  },
+  {
+   "id": "vals-alarm--ia-scan:58:26",
+   "stratum": "hard",
+   "crop": "8cfebeb2ce36bede",
+   "truth_sha": "e3fe2d57bf1749c2"
+  },
+  {
+   "id": "vals-alarm--ia-scan:58:29",
+   "stratum": "control",
+   "crop": "318ff4812d46f46e",
+   "truth_sha": "3408e548b642d828"
+  },
+  {
+   "id": "vals-alarm--ia-scan:59:2",
+   "stratum": "hard",
+   "crop": "e91b0512a5ad60f9",
+   "truth_sha": "e69f061d74398438"
+  },
+  {
+   "id": "vals-alarm--ia-scan:59:28",
+   "stratum": "hard",
+   "crop": "fd4e0eb0cb742338",
+   "truth_sha": "5ebf64932efde227"
+  },
+  {
+   "id": "vals-alarm--ia-scan:60:6",
+   "stratum": "hard",
+   "crop": "08976033cf2493cd",
+   "truth_sha": "e21b3bcabbce432d"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:14:2",
+   "stratum": "control",
+   "crop": "c3e058de0509d302",
+   "truth_sha": "bb80f01d39d002a1"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:17:3",
+   "stratum": "control",
+   "crop": "059b1dd85d69a87c",
+   "truth_sha": "ac9f17b29cf3e8f0"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:21:5",
+   "stratum": "control",
+   "crop": "fce7dacf85e423b2",
+   "truth_sha": "21dc8c2f4102d815"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:23:30",
+   "stratum": "control",
+   "crop": "426ac2fcd8b6c487",
+   "truth_sha": "a62826edbb260f27"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:26:4",
+   "stratum": "control",
+   "crop": "d31e10c9ff80384d",
+   "truth_sha": "fa8c24a396831ebe"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:31:12",
+   "stratum": "control",
+   "crop": "71aa7f81e9c57d75",
+   "truth_sha": "bed4b786cabe5802"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:33:28",
+   "stratum": "control",
+   "crop": "95a73d414cede04f",
+   "truth_sha": "a2f679fb0c7975cb"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:34:9",
+   "stratum": "control",
+   "crop": "3349ddafc3d6100d",
+   "truth_sha": "45db15c691c40018"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:35:7",
+   "stratum": "control",
+   "crop": "90f777df80a33965",
+   "truth_sha": "875db52cbdeaace6"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:36:10",
+   "stratum": "hard",
+   "crop": "339a65dda521373d",
+   "truth_sha": "4dceaf917d829c6d"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:39:16",
+   "stratum": "control",
+   "crop": "2d330c462d59315e",
+   "truth_sha": "2ff85a35dbed2cd4"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:40:20",
+   "stratum": "hard",
+   "crop": "2eaec9860bf8fa76",
+   "truth_sha": "68e84c2904d1fb71"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:43:19",
+   "stratum": "control",
+   "crop": "2784b9162945e502",
+   "truth_sha": "638e3db6214b9c5f"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:46:13",
+   "stratum": "control",
+   "crop": "8e7f51f16d3330fc",
+   "truth_sha": "8da8e814a312d37e"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:53:9",
+   "stratum": "control",
+   "crop": "41bfc37e355e4f41",
+   "truth_sha": "b2e2963c7987c56e"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:53:18",
+   "stratum": "control",
+   "crop": "b0c339d21d15e6da",
+   "truth_sha": "290fdfb23c437711"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:57:2",
+   "stratum": "control",
+   "crop": "6f4d36a5ee2daee2",
+   "truth_sha": "a2801fa9b7dff90a"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:57:27",
+   "stratum": "hard",
+   "crop": "0fc013009c4ef3c9",
+   "truth_sha": "0359af3439395042"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:58:8",
+   "stratum": "hard",
+   "crop": "806de32f687bd3ce",
+   "truth_sha": "a2b7a7eadb5d44d6"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:59:15",
+   "stratum": "hard",
+   "crop": "c89682fcf0f8cac1",
+   "truth_sha": "f46a4d45c184fb97"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:61:14",
+   "stratum": "hard",
+   "crop": "4890fbfcf9ade8a2",
+   "truth_sha": "d015a8087e629576"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:62:25",
+   "stratum": "hard",
+   "crop": "44f0935718a9aaa9",
+   "truth_sha": "0bbef89b41d03156"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:62:29",
+   "stratum": "control",
+   "crop": "a78ee707475bcabe",
+   "truth_sha": "afc31b1a033b04b9"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:63:6",
+   "stratum": "hard",
+   "crop": "cb79d3bcad0e6a7a",
+   "truth_sha": "bd5d4a9df2909a3c"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:64:14",
+   "stratum": "hard",
+   "crop": "80223e82d2fcdc88",
+   "truth_sha": "05bc00e2dccdc2bd"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:66:11",
+   "stratum": "hard",
+   "crop": "9c983cff16b6e302",
+   "truth_sha": "ba904b5e5645716f"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:68:13",
+   "stratum": "hard",
+   "crop": "b4ba87adb5402133",
+   "truth_sha": "f679e175612d7114"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:73:16",
+   "stratum": "hard",
+   "crop": "d0c53b07e39e552b",
+   "truth_sha": "176ea8ea90da2645"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:73:19",
+   "stratum": "hard",
+   "crop": "2a3c37d881e1112f",
+   "truth_sha": "e670f032e8ca8047"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:74:7",
+   "stratum": "control",
+   "crop": "15c48867e0c3441e",
+   "truth_sha": "369cd03a5453d02d"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:75:20",
+   "stratum": "hard",
+   "crop": "ff84a616e5ee8e48",
+   "truth_sha": "41ccdae859d38495"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:75:21",
+   "stratum": "hard",
+   "crop": "e82a715678ec9c77",
+   "truth_sha": "084a177a4e04f9d2"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:77:7",
+   "stratum": "hard",
+   "crop": "4f3da4bb57070f8d",
+   "truth_sha": "88cd1d3c75e91137"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:77:8",
+   "stratum": "hard",
+   "crop": "a2cef605c3d9af44",
+   "truth_sha": "1cd27ff537f0b66d"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:77:15",
+   "stratum": "hard",
+   "crop": "12f626486d8a64b1",
+   "truth_sha": "6a696fbdcd974b56"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:77:20",
+   "stratum": "hard",
+   "crop": "3dd93d3a01b017f3",
+   "truth_sha": "db2dbdc6fe2ffeb7"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:77:26",
+   "stratum": "hard",
+   "crop": "52b3fc994ab0a91d",
+   "truth_sha": "6a7077e4b2231e8c"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:77:29",
+   "stratum": "hard",
+   "crop": "a61ee357bc8c7d80",
+   "truth_sha": "c0133b8cd65da81c"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:80:25",
+   "stratum": "hard",
+   "crop": "183a47cef6eaf1f6",
+   "truth_sha": "a57cd92ff38a2a35"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:82:15",
+   "stratum": "control",
+   "crop": "2d9c6e14f9b4e560",
+   "truth_sha": "e30b2e63c2d92065"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:84:7",
+   "stratum": "hard",
+   "crop": "51ee59a2b76e815b",
+   "truth_sha": "1c401ebba70d073e"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:85:25",
+   "stratum": "control",
+   "crop": "d3b161beb04697a1",
+   "truth_sha": "352b5966c2fba65d"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:92:20",
+   "stratum": "control",
+   "crop": "75e893240adfeb71",
+   "truth_sha": "c20f212f1189e69a"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:95:22",
+   "stratum": "hard",
+   "crop": "e5cd636b96837422",
+   "truth_sha": "7c54a26eda95810f"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:99:25",
+   "stratum": "hard",
+   "crop": "591a54b8c047c734",
+   "truth_sha": "3e950c80dbd5e5ed"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:102:12",
+   "stratum": "hard",
+   "crop": "bae9467cfb575be7",
+   "truth_sha": "8219f2995ad1e291"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:103:13",
+   "stratum": "hard",
+   "crop": "ec351ac09e0d8253",
+   "truth_sha": "565a417ea55b495a"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:105:2",
+   "stratum": "hard",
+   "crop": "f9fec7f51ecaf18a",
+   "truth_sha": "e456718a2dbb3439"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:108:22",
+   "stratum": "hard",
+   "crop": "af2a50264f005606",
+   "truth_sha": "3c34e3c030988c01"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:110:14",
+   "stratum": "hard",
+   "crop": "e01d2c82cf1b6ed8",
+   "truth_sha": "ee92b4342c136147"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:27:16",
+   "stratum": "hard",
+   "crop": "3646e7ec13e68a0f",
+   "truth_sha": "1d93e585badfdd58"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:27:21",
+   "stratum": "hard",
+   "crop": "5447827027514faa",
+   "truth_sha": "8eb5ea849dfa6b5a"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:29:5",
+   "stratum": "hard",
+   "crop": "5a846ae435460f9c",
+   "truth_sha": "4e310e4403b35b28"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:30:2",
+   "stratum": "hard",
+   "crop": "c77bf4dad1238018",
+   "truth_sha": "ccd9af20b33eeef0"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:31:6",
+   "stratum": "hard",
+   "crop": "80500936c5fce066",
+   "truth_sha": "3b51809ed90014b1"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:31:11",
+   "stratum": "control",
+   "crop": "3b21b49f45f775e3",
+   "truth_sha": "6f18428e8ad6fc0e"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:31:17",
+   "stratum": "hard",
+   "crop": "d79fae68fc97ce4e",
+   "truth_sha": "f30e2acb2f1442e4"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:37:19",
+   "stratum": "control",
+   "crop": "5b9b5ad85e68f879",
+   "truth_sha": "05e26cfac65d15c6"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:38:1",
+   "stratum": "hard",
+   "crop": "d92ef5c372d235bd",
+   "truth_sha": "0b086e0ef4b00904"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:42:24",
+   "stratum": "control",
+   "crop": "d579c97f5b339a8b",
+   "truth_sha": "002bc489470017a7"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:43:10",
+   "stratum": "control",
+   "crop": "65a6e5783f873c73",
+   "truth_sha": "b80b80b6a5c0c664"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:44:6",
+   "stratum": "control",
+   "crop": "063c3115345f873e",
+   "truth_sha": "e6afc960945ccf24"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:47:23",
+   "stratum": "hard",
+   "crop": "cadee6621216a008",
+   "truth_sha": "87e824a8f374859f"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:48:10",
+   "stratum": "control",
+   "crop": "a7470ca8efa458e4",
+   "truth_sha": "2ef21d2d2a59d944"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:48:20",
+   "stratum": "control",
+   "crop": "db21cc4e9018cfe5",
+   "truth_sha": "ae598302137490d4"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:49:11",
+   "stratum": "hard",
+   "crop": "59c350102cc226a0",
+   "truth_sha": "a3e84f8a01c8a716"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:50:13",
+   "stratum": "hard",
+   "crop": "37a8f21a9f6bf154",
+   "truth_sha": "b1ff28fe7a4a1bb2"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:50:24",
+   "stratum": "hard",
+   "crop": "424cddb4c784b88b",
+   "truth_sha": "18cea1d57859eebb"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:53:14",
+   "stratum": "hard",
+   "crop": "f600da519070bbf5",
+   "truth_sha": "92a282d39ff633ab"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:56:3",
+   "stratum": "control",
+   "crop": "0fc60dd2a5cdae5a",
+   "truth_sha": "7af9f51e891b0197"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:57:9",
+   "stratum": "control",
+   "crop": "986a3d5108e4a029",
+   "truth_sha": "f2a7eb805ed908b6"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:58:13",
+   "stratum": "hard",
+   "crop": "8ea288d1134c7af0",
+   "truth_sha": "d83bde908536b845"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:66:16",
+   "stratum": "hard",
+   "crop": "223a48e4aea80e80",
+   "truth_sha": "7f4047a8819bd8c8"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:67:6",
+   "stratum": "control",
+   "crop": "e7b9f303ea2e0beb",
+   "truth_sha": "40d7338de54b2162"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:68:23",
+   "stratum": "control",
+   "crop": "17344bb495fc3287",
+   "truth_sha": "64c88734ee820ed2"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:73:8",
+   "stratum": "control",
+   "crop": "eec23f1731290517",
+   "truth_sha": "d82161d1643c5920"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:79:17",
+   "stratum": "hard",
+   "crop": "b36938389fe824b2",
+   "truth_sha": "646f70837322bafe"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:82:24",
+   "stratum": "hard",
+   "crop": "2fb24ee59d8d6266",
+   "truth_sha": "21a1df73c168356f"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:83:12",
+   "stratum": "hard",
+   "crop": "d34c54d9ffdb1ffe",
+   "truth_sha": "4eadb78589b5cc9d"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:83:21",
+   "stratum": "control",
+   "crop": "5629eee6c74b3a8e",
+   "truth_sha": "6b8be3e3d40b504a"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:85:12",
+   "stratum": "hard",
+   "crop": "af3b845ddf5cd73b",
+   "truth_sha": "7ad69a969a631b9e"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:86:23",
+   "stratum": "hard",
+   "crop": "d810b2dfb363055d",
+   "truth_sha": "f4b2e7cb11b827cc"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:88:24",
+   "stratum": "hard",
+   "crop": "44fca50dd3376bfa",
+   "truth_sha": "84086c4de520c28c"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:90:22",
+   "stratum": "control",
+   "crop": "d753056834958e10",
+   "truth_sha": "8204ae929cf21e64"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:95:9",
+   "stratum": "control",
+   "crop": "4f568edc1a3fdd52",
+   "truth_sha": "ccb5e28dcb6f139b"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:96:8",
+   "stratum": "hard",
+   "crop": "fad883754e2c7bc6",
+   "truth_sha": "e0c82edf4d68d2a4"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:96:17",
+   "stratum": "hard",
+   "crop": "fefb553f14b53e18",
+   "truth_sha": "4063f45e9a7444e9"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:97:14",
+   "stratum": "hard",
+   "crop": "8a7c8c45a52ee28c",
+   "truth_sha": "7193b74213514baf"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:100:19",
+   "stratum": "hard",
+   "crop": "d90bcf5b83de72a8",
+   "truth_sha": "deec5168c31925ce"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:102:8",
+   "stratum": "hard",
+   "crop": "3a6dd8c6c3a970bb",
+   "truth_sha": "541eddbb37d05ecc"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:104:14",
+   "stratum": "hard",
+   "crop": "91ef3d2f2bb3f8d5",
+   "truth_sha": "7d127150d4e1f1b6"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:106:24",
+   "stratum": "hard",
+   "crop": "61844ebcda67c0a8",
+   "truth_sha": "354ecbdecd503a96"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:107:10",
+   "stratum": "hard",
+   "crop": "f45ec9ec8f04b2c0",
+   "truth_sha": "a640fcad811c1ad8"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:107:17",
+   "stratum": "control",
+   "crop": "7babb23286631908",
+   "truth_sha": "810fc8f736a8326b"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:108:13",
+   "stratum": "control",
+   "crop": "451258726e09f9a6",
+   "truth_sha": "115c3e86b88a4618"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:110:23",
+   "stratum": "control",
+   "crop": "7e4d3611848e26c7",
+   "truth_sha": "74b176a03a57acc0"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:110:24",
+   "stratum": "hard",
+   "crop": "52de77e26f6c4f5e",
+   "truth_sha": "9ead35af53eb69ae"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:111:6",
+   "stratum": "control",
+   "crop": "fdab0288a1647155",
+   "truth_sha": "2da1aa4e00eec4a1"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:114:21",
+   "stratum": "control",
+   "crop": "0f69adf260674ae9",
+   "truth_sha": "a0eade076c3c76d5"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:117:16",
+   "stratum": "hard",
+   "crop": "e04d1a56d13e9284",
+   "truth_sha": "d399e7a599c52f6c"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:23:16",
+   "stratum": "control",
+   "crop": "8675f605001401a0",
+   "truth_sha": "4fd13b99c98af7ec"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:26:23",
+   "stratum": "hard",
+   "crop": "6f65677eac5ba45f",
+   "truth_sha": "e9de8f7ab287e147"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:29:15",
+   "stratum": "hard",
+   "crop": "052929c67742d80b",
+   "truth_sha": "cdc82edcaad61675"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:31:9",
+   "stratum": "control",
+   "crop": "91299b94106500a8",
+   "truth_sha": "cea10f2e67ca59c6"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:31:20",
+   "stratum": "hard",
+   "crop": "53c54d00ec9a2917",
+   "truth_sha": "03b7f3846dbb2037"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:34:5",
+   "stratum": "hard",
+   "crop": "149e1cc5f5332f3e",
+   "truth_sha": "d7657d5a12820450"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:34:14",
+   "stratum": "hard",
+   "crop": "4c0323b0cb94e5d4",
+   "truth_sha": "f740daba59e77c80"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:35:1",
+   "stratum": "hard",
+   "crop": "4b762603ce56d920",
+   "truth_sha": "4235aa64e2b72325"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:36:10",
+   "stratum": "control",
+   "crop": "1413329493641cbe",
+   "truth_sha": "a1a22368f57619da"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:38:1",
+   "stratum": "hard",
+   "crop": "7146b00239b38164",
+   "truth_sha": "81f4a0e25fdd4471"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:39:10",
+   "stratum": "control",
+   "crop": "9df3105ffd2a5cef",
+   "truth_sha": "50ea4fbaf5b7fef4"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:41:11",
+   "stratum": "control",
+   "crop": "7ef31177e6f0d6bc",
+   "truth_sha": "4e7f8ae46d088e71"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:42:23",
+   "stratum": "control",
+   "crop": "c1270f3e8302a596",
+   "truth_sha": "96212c435586d421"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:44:22",
+   "stratum": "hard",
+   "crop": "2230e5d4f8192b83",
+   "truth_sha": "35d333cfa23345e3"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:47:20",
+   "stratum": "hard",
+   "crop": "38e572cf27efceca",
+   "truth_sha": "7da473582d0731ed"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:48:2",
+   "stratum": "control",
+   "crop": "a936f85b1d720dae",
+   "truth_sha": "c2964cd3982faa40"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:51:7",
+   "stratum": "control",
+   "crop": "2fa7df62c43eacc4",
+   "truth_sha": "f6d69c43f6d0b278"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:51:19",
+   "stratum": "hard",
+   "crop": "3b65f06a73a9a725",
+   "truth_sha": "9dc27901e3d1832b"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:52:15",
+   "stratum": "hard",
+   "crop": "2e467f867ed1201c",
+   "truth_sha": "8f71fd60d7b2322a"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:53:4",
+   "stratum": "hard",
+   "crop": "82b0f6ab159411e0",
+   "truth_sha": "b5adf803a4aa28b4"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:54:12",
+   "stratum": "control",
+   "crop": "1bb9d9b25ff7d641",
+   "truth_sha": "9121622f9221dd32"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:54:14",
+   "stratum": "hard",
+   "crop": "0a4718722f52cc90",
+   "truth_sha": "8b87b9eb8bb1e5f0"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:55:3",
+   "stratum": "control",
+   "crop": "64c7d2e3c6ea8b0b",
+   "truth_sha": "01e9a4b40e227bab"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:56:8",
+   "stratum": "control",
+   "crop": "70edbd0442722e90",
+   "truth_sha": "41cc5c83f071c814"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:56:23",
+   "stratum": "hard",
+   "crop": "1b775da1625fd0d6",
+   "truth_sha": "d063e07504f37a2b"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:59:5",
+   "stratum": "control",
+   "crop": "3bed1f8248694fa7",
+   "truth_sha": "aa31319429cff18f"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:59:19",
+   "stratum": "hard",
+   "crop": "89412fcbdb3f3bf9",
+   "truth_sha": "92f96a79dab0684c"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:62:4",
+   "stratum": "hard",
+   "crop": "497850522494b5c3",
+   "truth_sha": "7a7c8992fc37038f"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:65:5",
+   "stratum": "hard",
+   "crop": "233f47fbb9edfbf4",
+   "truth_sha": "ad09cc8cb21ec579"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:66:1",
+   "stratum": "hard",
+   "crop": "b65fb024aae78501",
+   "truth_sha": "4c6ea23a53a69b4a"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:69:17",
+   "stratum": "control",
+   "crop": "5adbdc575e974905",
+   "truth_sha": "1b0d0cab74a19bb5"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:69:20",
+   "stratum": "hard",
+   "crop": "48c5207230d3a114",
+   "truth_sha": "ff248d1d85b2c2fa"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:70:4",
+   "stratum": "hard",
+   "crop": "c49c4a0afdd20ae5",
+   "truth_sha": "c1bc20d9c6ef0a85"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:71:20",
+   "stratum": "control",
+   "crop": "2e2563ee49e3e9b8",
+   "truth_sha": "9db05e669844de91"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:72:7",
+   "stratum": "hard",
+   "crop": "b11a8597e84c5848",
+   "truth_sha": "e019eb7178d7e4f1"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:72:8",
+   "stratum": "hard",
+   "crop": "d022788d3d1d9b97",
+   "truth_sha": "a88b7c583dcdb7c1"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:72:15",
+   "stratum": "hard",
+   "crop": "4c379b522d62bef7",
+   "truth_sha": "64a39a912fc38655"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:73:22",
+   "stratum": "hard",
+   "crop": "c9496010ade6dbb3",
+   "truth_sha": "c66ba3d0ff7f02e1"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:75:9",
+   "stratum": "control",
+   "crop": "2b18808bcad26d02",
+   "truth_sha": "85939fce4f68a62c"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:76:8",
+   "stratum": "control",
+   "crop": "af69ab943961e497",
+   "truth_sha": "ef690700353b9855"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:77:11",
+   "stratum": "hard",
+   "crop": "32481168e3941082",
+   "truth_sha": "6b36ead179608ee2"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:77:13",
+   "stratum": "hard",
+   "crop": "3f618e2b6e0a0464",
+   "truth_sha": "bc3d891e0a57ab6a"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:78:11",
+   "stratum": "hard",
+   "crop": "762743f09a22bfa5",
+   "truth_sha": "38e9eab605e1f9de"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:78:14",
+   "stratum": "control",
+   "crop": "1b85e95ef3cec87f",
+   "truth_sha": "e41a9a9a0934e097"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:79:21",
+   "stratum": "hard",
+   "crop": "36836f036c8ecfa7",
+   "truth_sha": "948705db7f3f0e42"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:79:24",
+   "stratum": "control",
+   "crop": "af4a658b55358ac4",
+   "truth_sha": "56d97dab7e38d0e2"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:80:19",
+   "stratum": "control",
+   "crop": "26ab7b260941e7f5",
+   "truth_sha": "4332f9fcf3eab14d"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:82:14",
+   "stratum": "control",
+   "crop": "edd968fd3fca88a4",
+   "truth_sha": "e1da75c0a7bf5946"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:82:15",
+   "stratum": "hard",
+   "crop": "a277f7e72fb8c71a",
+   "truth_sha": "d4f9f5ce247328fb"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:85:3",
+   "stratum": "hard",
+   "crop": "aba9025dad8ae51c",
+   "truth_sha": "df10775dcb512bdb"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:13:6",
+   "stratum": "control",
+   "crop": "93d98f976ee48f21",
+   "truth_sha": "1af24c9d329849f0"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:13:8",
+   "stratum": "control",
+   "crop": "523772ab6397d37a",
+   "truth_sha": "03f0da3f08d18ba5"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:14:4",
+   "stratum": "hard",
+   "crop": "2c7fa84eef75a5e2",
+   "truth_sha": "76b2e06ff966d62b"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:14:5",
+   "stratum": "control",
+   "crop": "43bbb73a0f180a49",
+   "truth_sha": "0b0891c3978ad947"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:14:7",
+   "stratum": "control",
+   "crop": "2fe19aa6c8d2c3d4",
+   "truth_sha": "88f267cb0e4569b6"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:18:21",
+   "stratum": "control",
+   "crop": "0adf8827882f78bb",
+   "truth_sha": "ef84458e237c5c68"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:18:28",
+   "stratum": "hard",
+   "crop": "0d4f0ef376ba8ca2",
+   "truth_sha": "0e345d4b8a4526cd"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:22:3",
+   "stratum": "hard",
+   "crop": "7809b4f8ceb997bd",
+   "truth_sha": "41c905ebbf6caa67"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:22:29",
+   "stratum": "control",
+   "crop": "d39c6fc587022add",
+   "truth_sha": "2df04196121bbafe"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:23:3",
+   "stratum": "hard",
+   "crop": "66a30231a479f7fa",
+   "truth_sha": "6f13b47624665754"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:24:31",
+   "stratum": "hard",
+   "crop": "d85ec90880f0852f",
+   "truth_sha": "371049a660f5b549"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:27:13",
+   "stratum": "control",
+   "crop": "d7db71e3fe5d47fe",
+   "truth_sha": "1b3693260609b9c6"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:29:6",
+   "stratum": "control",
+   "crop": "11c6fb12784b4d2d",
+   "truth_sha": "c43f4acc0932e049"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:30:4",
+   "stratum": "hard",
+   "crop": "8f8c8eac84b1b0c8",
+   "truth_sha": "855e070c96a0581a"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:30:6",
+   "stratum": "hard",
+   "crop": "e5d508b73b11449c",
+   "truth_sha": "4af4daeb6f3f6644"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:35:10",
+   "stratum": "hard",
+   "crop": "e99c01de6a83f346",
+   "truth_sha": "7171744ff43d4486"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:36:11",
+   "stratum": "control",
+   "crop": "ad4fc862436ca750",
+   "truth_sha": "d167a190ba333f74"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:39:15",
+   "stratum": "hard",
+   "crop": "cf54367fc453beee",
+   "truth_sha": "7615363e77d9954d"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:40:2",
+   "stratum": "hard",
+   "crop": "d59ac33b461f7f21",
+   "truth_sha": "2f75efbf12be86ba"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:42:4",
+   "stratum": "control",
+   "crop": "416226605fc0a844",
+   "truth_sha": "d3a905b11df4f45e"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:43:23",
+   "stratum": "control",
+   "crop": "a59e32e2ab34d500",
+   "truth_sha": "4f2594f03432d274"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:43:25",
+   "stratum": "hard",
+   "crop": "0ba5063ba0f93192",
+   "truth_sha": "38d17c3b8809c6bc"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:45:0",
+   "stratum": "hard",
+   "crop": "e85f9c70af7a02db",
+   "truth_sha": "0c6fe21aa0776da5"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:47:2",
+   "stratum": "hard",
+   "crop": "454527392cc223f8",
+   "truth_sha": "d61d65865dbd3bcd"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:48:8",
+   "stratum": "hard",
+   "crop": "74eac9d02025d6fc",
+   "truth_sha": "9049f3561c144e48"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:49:18",
+   "stratum": "hard",
+   "crop": "580b84af5fa0db46",
+   "truth_sha": "9bc4721ecac982dc"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:52:7",
+   "stratum": "hard",
+   "crop": "9311ebba3918b63a",
+   "truth_sha": "44ef0e8ddf563675"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:53:2",
+   "stratum": "hard",
+   "crop": "b7e65edc81cfedb6",
+   "truth_sha": "2d2afc27510c56b0"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:53:10",
+   "stratum": "control",
+   "crop": "23e744d6bafaa202",
+   "truth_sha": "9ae34c7b0ec5d581"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:55:0",
+   "stratum": "hard",
+   "crop": "86000a0bad34a3ab",
+   "truth_sha": "56f03f4bcf2c3f20"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:58:28",
+   "stratum": "control",
+   "crop": "bc8b065c2b30a057",
+   "truth_sha": "a117b9206d4ef6a5"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:60:31",
+   "stratum": "hard",
+   "crop": "f856a72a2d66a523",
+   "truth_sha": "8196afa1c1846bd5"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:61:27",
+   "stratum": "control",
+   "crop": "d17c6dcbbc525701",
+   "truth_sha": "e4c58c9a767eef5f"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:62:8",
+   "stratum": "hard",
+   "crop": "35a86b23947fcade",
+   "truth_sha": "dd8430ce8245c530"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:65:4",
+   "stratum": "control",
+   "crop": "eafcfba0202f3cc1",
+   "truth_sha": "759d755f9f1da18a"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:65:20",
+   "stratum": "control",
+   "crop": "8280c3f82182f691",
+   "truth_sha": "a04a4f735b8ae7d5"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:66:5",
+   "stratum": "hard",
+   "crop": "bf4a95a1f0429e8a",
+   "truth_sha": "e6ee1de1f0916357"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:66:8",
+   "stratum": "hard",
+   "crop": "176e67ce7e4cf496",
+   "truth_sha": "d6c1dd55aa907f65"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:66:25",
+   "stratum": "hard",
+   "crop": "6cdda0ed07ce2f1f",
+   "truth_sha": "b1002d3151325a6a"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:67:6",
+   "stratum": "hard",
+   "crop": "bcd2838233e9da0c",
+   "truth_sha": "83a943ccf73a1330"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:67:11",
+   "stratum": "hard",
+   "crop": "6b05dbaef2e89703",
+   "truth_sha": "a4fa0eabc0259a25"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:67:21",
+   "stratum": "control",
+   "crop": "433f8752f703bc26",
+   "truth_sha": "d52dfb16fc881e71"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:71:7",
+   "stratum": "hard",
+   "crop": "0d5f75591fcb8c06",
+   "truth_sha": "b2d0cd1478eacb93"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:72:34",
+   "stratum": "hard",
+   "crop": "ef78abcb06d121a8",
+   "truth_sha": "c9e2bc54b99a531a"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:74:18",
+   "stratum": "control",
+   "crop": "18e09d4a07a899ad",
+   "truth_sha": "19d21a617950bc56"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:78:34",
+   "stratum": "hard",
+   "crop": "26573d4906ed2fec",
+   "truth_sha": "e80c9ad8167c9abe"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:81:1",
+   "stratum": "hard",
+   "crop": "8fd93b8cd1dd71bf",
+   "truth_sha": "f96dd9738cc22098"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:83:1",
+   "stratum": "hard",
+   "crop": "118dfa97c7d81045",
+   "truth_sha": "537ea89c7b2900f2"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:83:20",
+   "stratum": "control",
+   "crop": "4c71af45a830fec8",
+   "truth_sha": "c075ffca7dfa6b36"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:84:14",
+   "stratum": "control",
+   "crop": "fd96e348fa04fb17",
+   "truth_sha": "39fbdf4a1d45d9da"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:10:21",
+   "stratum": "control",
+   "crop": "5ad12f49c3bbab69",
+   "truth_sha": "80383f264e5c7add"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:12:2",
+   "stratum": "control",
+   "crop": "32ca77a52fef256b",
+   "truth_sha": "b50a680e87b95402"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:12:5",
+   "stratum": "control",
+   "crop": "11642fcaad45a019",
+   "truth_sha": "398097312904eec9"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:14:3",
+   "stratum": "hard",
+   "crop": "085648078b7a6432",
+   "truth_sha": "8b47a505efb4c231"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:18:35",
+   "stratum": "control",
+   "crop": "52178abac87e04e0",
+   "truth_sha": "cedefa17271d2601"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:21:27",
+   "stratum": "hard",
+   "crop": "f14b4622a55fa50c",
+   "truth_sha": "e0ed68c7e1e1027e"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:22:19",
+   "stratum": "hard",
+   "crop": "00edc38f0aec13d9",
+   "truth_sha": "952aac09cc603e85"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:24:1",
+   "stratum": "control",
+   "crop": "17bd78843c8c3d2b",
+   "truth_sha": "37a9a60f0317ac5d"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:24:13",
+   "stratum": "hard",
+   "crop": "871de7f14fdf01b4",
+   "truth_sha": "b9e5d10fdc0606f3"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:24:14",
+   "stratum": "hard",
+   "crop": "b79468323ab0c7b0",
+   "truth_sha": "ce948b16b5029b05"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:24:20",
+   "stratum": "hard",
+   "crop": "ec8a1285abe6a165",
+   "truth_sha": "7cf919e44b78f0d3"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:25:33",
+   "stratum": "hard",
+   "crop": "cf17c43f5c28cbf5",
+   "truth_sha": "392be32b56fd9b04"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:26:0",
+   "stratum": "control",
+   "crop": "43abac125c7e6369",
+   "truth_sha": "b1f0b29ec316191d"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:26:2",
+   "stratum": "hard",
+   "crop": "1b014cb393adaa0a",
+   "truth_sha": "ccc6a9353cdaccd3"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:26:28",
+   "stratum": "hard",
+   "crop": "8bcf6172e4630600",
+   "truth_sha": "99f2e187ae18bd42"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:28:3",
+   "stratum": "control",
+   "crop": "a454f0b05c53587c",
+   "truth_sha": "0389b1408d25df54"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:28:10",
+   "stratum": "hard",
+   "crop": "90a7c8f90c2ef2de",
+   "truth_sha": "bb5a83e2d4431d0d"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:28:16",
+   "stratum": "hard",
+   "crop": "6a57493151c35156",
+   "truth_sha": "f8379bfdcc582a9d"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:29:31",
+   "stratum": "hard",
+   "crop": "0604fefb0856a12f",
+   "truth_sha": "0fb2cdc04decfa02"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:34:16",
+   "stratum": "control",
+   "crop": "fb88fda3655e40ae",
+   "truth_sha": "83d05f6465f56b1e"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:35:35",
+   "stratum": "control",
+   "crop": "1b2aa04b02ff3973",
+   "truth_sha": "9d01cb1487845df4"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:37:0",
+   "stratum": "hard",
+   "crop": "9b1d08370ba10eb8",
+   "truth_sha": "b90deedf6c7a93af"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:40:4",
+   "stratum": "control",
+   "crop": "72290545e111512a",
+   "truth_sha": "92bbe23b1eef00e1"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:40:23",
+   "stratum": "hard",
+   "crop": "293a6e50ebbc5b22",
+   "truth_sha": "17c2e3afebfa3648"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:41:15",
+   "stratum": "hard",
+   "crop": "b50b80f1233f092b",
+   "truth_sha": "9d341d5c4cb73ae2"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:41:20",
+   "stratum": "hard",
+   "crop": "01284c95c94a3e1e",
+   "truth_sha": "a5afaa6fee5bd359"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:44:1",
+   "stratum": "hard",
+   "crop": "cc455c969c64d564",
+   "truth_sha": "2ae76e190af59c69"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:44:6",
+   "stratum": "hard",
+   "crop": "d915ebb94025286d",
+   "truth_sha": "5c4358502fdd0972"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:44:10",
+   "stratum": "control",
+   "crop": "43718c08f735e299",
+   "truth_sha": "9cf992506bb48edd"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:45:6",
+   "stratum": "control",
+   "crop": "ae806a797a7f43f0",
+   "truth_sha": "04c5a133ffdc5af5"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:47:18",
+   "stratum": "hard",
+   "crop": "facd6a7601770aa1",
+   "truth_sha": "0f93916d5be391f4"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:47:20",
+   "stratum": "hard",
+   "crop": "4ac76cb592e5f8cb",
+   "truth_sha": "eff879628db6276a"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:50:17",
+   "stratum": "hard",
+   "crop": "04d5e4a5e48e8683",
+   "truth_sha": "5657cf6239517e8f"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:51:11",
+   "stratum": "control",
+   "crop": "12acd134cbf23c40",
+   "truth_sha": "e5e897bd81b5f9d7"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:51:34",
+   "stratum": "hard",
+   "crop": "af30971d1e6f327b",
+   "truth_sha": "bbb612d561ea0437"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:51:35",
+   "stratum": "hard",
+   "crop": "0a5a715b87970acb",
+   "truth_sha": "a755936899b740dc"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:52:32",
+   "stratum": "hard",
+   "crop": "3b98724cb246166a",
+   "truth_sha": "288be79f851753d2"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:53:1",
+   "stratum": "control",
+   "crop": "b431d70f226c43a6",
+   "truth_sha": "84b2109c27061617"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:54:2",
+   "stratum": "hard",
+   "crop": "00cf2b890e957c9e",
+   "truth_sha": "e259d37a50e5f921"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:55:20",
+   "stratum": "hard",
+   "crop": "3d3dc5a468784856",
+   "truth_sha": "9e27ec89f6bc1535"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:56:7",
+   "stratum": "control",
+   "crop": "72e232095bd12e5e",
+   "truth_sha": "bcb268a4ca629026"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:60:1",
+   "stratum": "control",
+   "crop": "8c0ee2f4a5d61020",
+   "truth_sha": "b74e5cb728447240"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:61:23",
+   "stratum": "control",
+   "crop": "1c9fa729b3ceb0cb",
+   "truth_sha": "ce7b72107fb0266b"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:63:9",
+   "stratum": "control",
+   "crop": "4c417ec48ae486c7",
+   "truth_sha": "88b5f7a65230ae83"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:64:18",
+   "stratum": "hard",
+   "crop": "1fc2be20ededb8c9",
+   "truth_sha": "75cda908a6bc7960"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:65:19",
+   "stratum": "hard",
+   "crop": "b19b4d6bca3fb861",
+   "truth_sha": "c667b68266208c32"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:66:15",
+   "stratum": "control",
+   "crop": "0b511f5e50e2d4d1",
+   "truth_sha": "80ca1877f126ab80"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:67:35",
+   "stratum": "hard",
+   "crop": "a7113dfe754d07d7",
+   "truth_sha": "68f59369e895d148"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:68:26",
+   "stratum": "hard",
+   "crop": "a669137514dbb2c0",
+   "truth_sha": "36178b68436662df"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:69:6",
+   "stratum": "control",
+   "crop": "0728451f09b8aee0",
+   "truth_sha": "22a48b219be6844f"
+  },
+  {
+   "id": "metro-2033--ia-scan:8:36",
+   "stratum": "hard",
+   "crop": "e1e835ebdb295cdc",
+   "truth_sha": "357e74a2483656cd"
+  },
+  {
+   "id": "metro-2033--ia-scan:11:2",
+   "stratum": "hard",
+   "crop": "c30efb143c2d46b9",
+   "truth_sha": "bc875cbb09395962"
+  },
+  {
+   "id": "metro-2033--ia-scan:11:5",
+   "stratum": "hard",
+   "crop": "0cb51bf19feb5d2d",
+   "truth_sha": "f99c0f75316a66fd"
+  },
+  {
+   "id": "metro-2033--ia-scan:13:0",
+   "stratum": "control",
+   "crop": "0ec8b78c114acd84",
+   "truth_sha": "31a9d4752d47a01d"
+  },
+  {
+   "id": "metro-2033--ia-scan:15:19",
+   "stratum": "control",
+   "crop": "28084133407456f0",
+   "truth_sha": "d5cd7a990a05ad1d"
+  },
+  {
+   "id": "metro-2033--ia-scan:18:33",
+   "stratum": "control",
+   "crop": "374f883fa679d32e",
+   "truth_sha": "03e8dc235a951822"
+  },
+  {
+   "id": "metro-2033--ia-scan:19:34",
+   "stratum": "control",
+   "crop": "5c13a462d19f0cc6",
+   "truth_sha": "cfb1af76e227aeb8"
+  },
+  {
+   "id": "metro-2033--ia-scan:21:24",
+   "stratum": "hard",
+   "crop": "71672af333c05ffc",
+   "truth_sha": "b353392622ba5b41"
+  },
+  {
+   "id": "metro-2033--ia-scan:24:40",
+   "stratum": "hard",
+   "crop": "5d7048b694356f63",
+   "truth_sha": "6412d3b838f9d9b3"
+  },
+  {
+   "id": "metro-2033--ia-scan:26:21",
+   "stratum": "hard",
+   "crop": "7ef43c5d68db39a9",
+   "truth_sha": "90e1d4f0e416868a"
+  },
+  {
+   "id": "metro-2033--ia-scan:28:0",
+   "stratum": "hard",
+   "crop": "d233081367a8c87d",
+   "truth_sha": "21c4a48d7c2bc6e9"
+  },
+  {
+   "id": "metro-2033--ia-scan:28:17",
+   "stratum": "control",
+   "crop": "db1656b01a628a30",
+   "truth_sha": "0b1aa845948844fd"
+  },
+  {
+   "id": "metro-2033--ia-scan:29:12",
+   "stratum": "hard",
+   "crop": "f7634eb7612a62ce",
+   "truth_sha": "a9a72b00627f6517"
+  },
+  {
+   "id": "metro-2033--ia-scan:36:24",
+   "stratum": "control",
+   "crop": "f2983642dce9562f",
+   "truth_sha": "f66f4a6006ce9a3f"
+  },
+  {
+   "id": "metro-2033--ia-scan:40:6",
+   "stratum": "hard",
+   "crop": "0c51ea9202dc896a",
+   "truth_sha": "530dcfd31c62c612"
+  },
+  {
+   "id": "metro-2033--ia-scan:40:16",
+   "stratum": "hard",
+   "crop": "52b2fe73e27976d0",
+   "truth_sha": "6146b89d2d1aa2b1"
+  },
+  {
+   "id": "metro-2033--ia-scan:40:38",
+   "stratum": "hard",
+   "crop": "60dc0618bda16356",
+   "truth_sha": "104d53de9c862044"
+  },
+  {
+   "id": "metro-2033--ia-scan:41:0",
+   "stratum": "hard",
+   "crop": "84dffea6a4ca442d",
+   "truth_sha": "01ba0191d9b9db10"
+  },
+  {
+   "id": "metro-2033--ia-scan:41:19",
+   "stratum": "hard",
+   "crop": "e871bdccc1a602ee",
+   "truth_sha": "75887e3dd1372342"
+  },
+  {
+   "id": "metro-2033--ia-scan:43:9",
+   "stratum": "hard",
+   "crop": "6bc57ea7add92576",
+   "truth_sha": "3b80223d6211d534"
+  },
+  {
+   "id": "metro-2033--ia-scan:43:24",
+   "stratum": "hard",
+   "crop": "104df16a62d242cc",
+   "truth_sha": "6d5bb4bf933e9f56"
+  },
+  {
+   "id": "metro-2033--ia-scan:43:25",
+   "stratum": "control",
+   "crop": "c0306cdfcc5060b4",
+   "truth_sha": "87a0966621c31d52"
+  },
+  {
+   "id": "metro-2033--ia-scan:44:0",
+   "stratum": "control",
+   "crop": "e00820e0711f01c5",
+   "truth_sha": "28edfebca0c77be2"
+  },
+  {
+   "id": "metro-2033--ia-scan:44:25",
+   "stratum": "control",
+   "crop": "82e81f91c8c41892",
+   "truth_sha": "3d2582ae4d3382eb"
+  },
+  {
+   "id": "metro-2033--ia-scan:45:17",
+   "stratum": "hard",
+   "crop": "8bc9b2c91dbfe1d5",
+   "truth_sha": "18454d78b7326fa8"
+  },
+  {
+   "id": "metro-2033--ia-scan:46:33",
+   "stratum": "hard",
+   "crop": "0cad9519b7eac743",
+   "truth_sha": "a6c47c33dfa1b517"
+  },
+  {
+   "id": "metro-2033--ia-scan:47:0",
+   "stratum": "control",
+   "crop": "bd351d2e2522ef13",
+   "truth_sha": "082bc899bdc91354"
+  },
+  {
+   "id": "metro-2033--ia-scan:48:19",
+   "stratum": "hard",
+   "crop": "4e137acc64e7d606",
+   "truth_sha": "80eb10ea8fc2e662"
+  },
+  {
+   "id": "metro-2033--ia-scan:49:20",
+   "stratum": "hard",
+   "crop": "9075957649057cea",
+   "truth_sha": "86600d858144cc17"
+  },
+  {
+   "id": "metro-2033--ia-scan:56:2",
+   "stratum": "control",
+   "crop": "df11391cfb3c0c62",
+   "truth_sha": "b8577d550b5a1eca"
+  },
+  {
+   "id": "metro-2033--ia-scan:57:12",
+   "stratum": "control",
+   "crop": "d0463afb185ef46b",
+   "truth_sha": "94bd95f40500984d"
+  },
+  {
+   "id": "metro-2033--ia-scan:57:21",
+   "stratum": "hard",
+   "crop": "c47bfcd363ff5ae8",
+   "truth_sha": "ced9ff2db8f3fcca"
+  },
+  {
+   "id": "metro-2033--ia-scan:63:8",
+   "stratum": "hard",
+   "crop": "03aaefebbf33b29d",
+   "truth_sha": "302ce56c667cee4d"
+  },
+  {
+   "id": "metro-2033--ia-scan:64:19",
+   "stratum": "control",
+   "crop": "3c3446ff23d749c8",
+   "truth_sha": "6c126dba7bde3cf0"
+  },
+  {
+   "id": "metro-2033--ia-scan:65:7",
+   "stratum": "control",
+   "crop": "2ce74a9da29ac171",
+   "truth_sha": "4e739229ea01ef31"
+  },
+  {
+   "id": "metro-2033--ia-scan:66:39",
+   "stratum": "hard",
+   "crop": "74e7bc9ac8ad64c0",
+   "truth_sha": "e9adadad1f758b29"
+  },
+  {
+   "id": "metro-2033--ia-scan:69:38",
+   "stratum": "control",
+   "crop": "c7c1d3b325f8f21b",
+   "truth_sha": "d66c9809849033cf"
+  },
+  {
+   "id": "metro-2033--ia-scan:70:17",
+   "stratum": "hard",
+   "crop": "29b38c1435a5d30c",
+   "truth_sha": "2fc09d8569faa52c"
+  },
+  {
+   "id": "metro-2033--ia-scan:75:13",
+   "stratum": "control",
+   "crop": "339b59e3a4a8260d",
+   "truth_sha": "3cf3431eafe1dd88"
+  },
+  {
+   "id": "metro-2033--ia-scan:83:15",
+   "stratum": "hard",
+   "crop": "ab001e8c812c570d",
+   "truth_sha": "1a090a42621441ca"
+  },
+  {
+   "id": "metro-2033--ia-scan:88:33",
+   "stratum": "hard",
+   "crop": "527c909165b52a01",
+   "truth_sha": "a449cf30bab08a24"
+  },
+  {
+   "id": "metro-2033--ia-scan:91:13",
+   "stratum": "hard",
+   "crop": "b7a777d4ffde566d",
+   "truth_sha": "2457e5d9a951eb7e"
+  },
+  {
+   "id": "metro-2033--ia-scan:91:22",
+   "stratum": "hard",
+   "crop": "9880225acdf7b9bc",
+   "truth_sha": "d714e5a56c36fe13"
+  },
+  {
+   "id": "metro-2033--ia-scan:95:3",
+   "stratum": "control",
+   "crop": "31625763415a5ca6",
+   "truth_sha": "7191d18a42daf917"
+  },
+  {
+   "id": "metro-2033--ia-scan:95:14",
+   "stratum": "control",
+   "crop": "27c03ffe8473bff9",
+   "truth_sha": "7f0d1170a7225dd9"
+  },
+  {
+   "id": "metro-2033--ia-scan:107:7",
+   "stratum": "control",
+   "crop": "473bebc03ef9faa4",
+   "truth_sha": "5f7e7672bbc63a20"
+  },
+  {
+   "id": "metro-2033--ia-scan:109:6",
+   "stratum": "hard",
+   "crop": "ef811654c5505ad7",
+   "truth_sha": "8265965a5c48afc5"
+  },
+  {
+   "id": "metro-2033--ia-scan:109:26",
+   "stratum": "hard",
+   "crop": "b6c3cd152a37c206",
+   "truth_sha": "a53453e652d0aa60"
+  },
+  {
+   "id": "metro-2033--ia-scan:109:31",
+   "stratum": "control",
+   "crop": "b0a93b5be0df3cba",
+   "truth_sha": "422cb8200bb85c92"
+  },
+  {
+   "id": "metro-2033--ia-scan:110:8",
+   "stratum": "hard",
+   "crop": "f2873cfb2ebc9a6e",
+   "truth_sha": "14ea6980de2b7c48"
+  },
+  {
+   "id": "de-cipier--ia-scan:9:8",
+   "stratum": "hard",
+   "crop": "5ba36eca0d0c340e",
+   "truth_sha": "69ac64944f41eb82"
+  },
+  {
+   "id": "de-cipier--ia-scan:13:21",
+   "stratum": "hard",
+   "crop": "60363667ce8ccadc",
+   "truth_sha": "eb2d154cf200400e"
+  },
+  {
+   "id": "de-cipier--ia-scan:14:30",
+   "stratum": "hard",
+   "crop": "2c4ad362adc05690",
+   "truth_sha": "e16135055e1e437d"
+  },
+  {
+   "id": "de-cipier--ia-scan:15:21",
+   "stratum": "hard",
+   "crop": "92d6abdd1781efa3",
+   "truth_sha": "3627053f98436905"
+  },
+  {
+   "id": "de-cipier--ia-scan:16:2",
+   "stratum": "control",
+   "crop": "cc29d506af9c5939",
+   "truth_sha": "1a2ccdd7128cd0e0"
+  },
+  {
+   "id": "de-cipier--ia-scan:17:18",
+   "stratum": "control",
+   "crop": "60d39a0e2a0a636b",
+   "truth_sha": "d70b1afbc2291b92"
+  },
+  {
+   "id": "de-cipier--ia-scan:18:23",
+   "stratum": "hard",
+   "crop": "81031df824cf5510",
+   "truth_sha": "3b39f2670c6bb47c"
+  },
+  {
+   "id": "de-cipier--ia-scan:20:18",
+   "stratum": "control",
+   "crop": "b7b773bc6c326dea",
+   "truth_sha": "ce007a7b90daa5a3"
+  },
+  {
+   "id": "de-cipier--ia-scan:24:34",
+   "stratum": "control",
+   "crop": "2c8e5a7a985afb48",
+   "truth_sha": "addb3133fb1b3ee6"
+  },
+  {
+   "id": "de-cipier--ia-scan:25:21",
+   "stratum": "hard",
+   "crop": "ef0724be7e9d116e",
+   "truth_sha": "b565a1b8e27f04d2"
+  },
+  {
+   "id": "de-cipier--ia-scan:27:19",
+   "stratum": "control",
+   "crop": "c6d4b558c40227db",
+   "truth_sha": "09e12a312864c5d8"
+  },
+  {
+   "id": "de-cipier--ia-scan:27:21",
+   "stratum": "hard",
+   "crop": "faef100a51763f29",
+   "truth_sha": "1e038ca76f7a6ea4"
+  },
+  {
+   "id": "de-cipier--ia-scan:29:34",
+   "stratum": "control",
+   "crop": "014e990ad74ecd23",
+   "truth_sha": "bc56c5cec60913fc"
+  },
+  {
+   "id": "de-cipier--ia-scan:30:9",
+   "stratum": "control",
+   "crop": "1181efd25f92b45a",
+   "truth_sha": "375549b303042bf2"
+  },
+  {
+   "id": "de-cipier--ia-scan:31:1",
+   "stratum": "hard",
+   "crop": "cfaa115be55fd4d4",
+   "truth_sha": "8d3824dbe19a4030"
+  },
+  {
+   "id": "de-cipier--ia-scan:31:21",
+   "stratum": "hard",
+   "crop": "2a0a4e562543d660",
+   "truth_sha": "65477169da6ba9f5"
+  },
+  {
+   "id": "de-cipier--ia-scan:34:20",
+   "stratum": "control",
+   "crop": "50cba05272ef341e",
+   "truth_sha": "345401294ef67332"
+  },
+  {
+   "id": "de-cipier--ia-scan:34:25",
+   "stratum": "hard",
+   "crop": "a22c12bf67a3dc32",
+   "truth_sha": "135cfacb12901069"
+  },
+  {
+   "id": "de-cipier--ia-scan:35:10",
+   "stratum": "hard",
+   "crop": "9318d8da98134a6e",
+   "truth_sha": "d4553116f0a309c1"
+  },
+  {
+   "id": "de-cipier--ia-scan:37:9",
+   "stratum": "hard",
+   "crop": "ef8b84237f8f3a9b",
+   "truth_sha": "292ebcda3347006b"
+  },
+  {
+   "id": "de-cipier--ia-scan:42:0",
+   "stratum": "hard",
+   "crop": "d9802f9e627497b9",
+   "truth_sha": "8b4828c87fe94696"
+  },
+  {
+   "id": "de-cipier--ia-scan:43:12",
+   "stratum": "control",
+   "crop": "a179414fb245e74c",
+   "truth_sha": "47fe87da2723e3e5"
+  },
+  {
+   "id": "de-cipier--ia-scan:44:15",
+   "stratum": "control",
+   "crop": "9bada3cfd895286e",
+   "truth_sha": "53e743d0b85abdb1"
+  },
+  {
+   "id": "de-cipier--ia-scan:45:15",
+   "stratum": "hard",
+   "crop": "9f5d3f669e53e2b0",
+   "truth_sha": "225d29ac09a35025"
+  },
+  {
+   "id": "de-cipier--ia-scan:47:16",
+   "stratum": "hard",
+   "crop": "e234dd2f1dd9b4e6",
+   "truth_sha": "2e940f22ed6bec21"
+  },
+  {
+   "id": "de-cipier--ia-scan:47:30",
+   "stratum": "hard",
+   "crop": "01a6745085b795b6",
+   "truth_sha": "da3ef421a789e577"
+  },
+  {
+   "id": "de-cipier--ia-scan:48:25",
+   "stratum": "hard",
+   "crop": "98c53a8b5eb9ecc4",
+   "truth_sha": "cccab54e3cb0a992"
+  },
+  {
+   "id": "de-cipier--ia-scan:49:6",
+   "stratum": "hard",
+   "crop": "5a261cf5f1c1758e",
+   "truth_sha": "6e91cb8a7d938fb3"
+  },
+  {
+   "id": "de-cipier--ia-scan:49:15",
+   "stratum": "control",
+   "crop": "b357efb42d08dc64",
+   "truth_sha": "7626ea7fdc77e90f"
+  },
+  {
+   "id": "de-cipier--ia-scan:50:12",
+   "stratum": "control",
+   "crop": "2d3c2932f1fce0b8",
+   "truth_sha": "69d5ff98a1b0d362"
+  },
+  {
+   "id": "de-cipier--ia-scan:50:17",
+   "stratum": "hard",
+   "crop": "d30c4df789edb80d",
+   "truth_sha": "e8b7eb7d7281c01c"
+  },
+  {
+   "id": "de-cipier--ia-scan:51:11",
+   "stratum": "hard",
+   "crop": "52217074936fc713",
+   "truth_sha": "02d0203ec015bf3c"
+  },
+  {
+   "id": "de-cipier--ia-scan:55:16",
+   "stratum": "hard",
+   "crop": "60347bf1cef94101",
+   "truth_sha": "b02e44bdca08841d"
+  },
+  {
+   "id": "de-cipier--ia-scan:57:8",
+   "stratum": "hard",
+   "crop": "96b0c4e4686b8413",
+   "truth_sha": "4d377a5cf8fac100"
+  },
+  {
+   "id": "de-cipier--ia-scan:61:32",
+   "stratum": "hard",
+   "crop": "dc6b6e0a47751777",
+   "truth_sha": "ec0ca94c7c2a2f35"
+  },
+  {
+   "id": "de-cipier--ia-scan:63:19",
+   "stratum": "hard",
+   "crop": "372d92e08746dcb7",
+   "truth_sha": "9a9add803d0bc766"
+  },
+  {
+   "id": "de-cipier--ia-scan:64:17",
+   "stratum": "control",
+   "crop": "988ddccdd8ca3397",
+   "truth_sha": "48a738e864b0a48c"
+  },
+  {
+   "id": "de-cipier--ia-scan:65:23",
+   "stratum": "hard",
+   "crop": "bd83a118dfe0dd6f",
+   "truth_sha": "49d8517c142d178d"
+  },
+  {
+   "id": "de-cipier--ia-scan:71:21",
+   "stratum": "hard",
+   "crop": "0b049d712f59191f",
+   "truth_sha": "c0e4c35be0375c50"
+  },
+  {
+   "id": "de-cipier--ia-scan:73:6",
+   "stratum": "hard",
+   "crop": "ebe1495510a88f55",
+   "truth_sha": "f1ef11c3fe146beb"
+  },
+  {
+   "id": "de-cipier--ia-scan:73:21",
+   "stratum": "hard",
+   "crop": "62b744147b697a8a",
+   "truth_sha": "c96922d27e8e3119"
+  },
+  {
+   "id": "de-cipier--ia-scan:73:33",
+   "stratum": "control",
+   "crop": "677e9e709b2fe8a8",
+   "truth_sha": "3abcf12399431aaa"
+  },
+  {
+   "id": "de-cipier--ia-scan:74:0",
+   "stratum": "hard",
+   "crop": "2156113d2b2ede81",
+   "truth_sha": "f658b644feda8391"
+  },
+  {
+   "id": "de-cipier--ia-scan:75:22",
+   "stratum": "control",
+   "crop": "249cb49a580a8d7f",
+   "truth_sha": "f5b2ce2fe31889a2"
+  },
+  {
+   "id": "de-cipier--ia-scan:76:30",
+   "stratum": "control",
+   "crop": "daa5188862172b03",
+   "truth_sha": "1615d95329207c56"
+  },
+  {
+   "id": "de-cipier--ia-scan:82:33",
+   "stratum": "control",
+   "crop": "2f0a3ba456e1c45e",
+   "truth_sha": "881981959a2475a0"
+  },
+  {
+   "id": "de-cipier--ia-scan:87:11",
+   "stratum": "control",
+   "crop": "7d41856a22ea1d3e",
+   "truth_sha": "a068a095f7c14362"
+  },
+  {
+   "id": "de-cipier--ia-scan:89:22",
+   "stratum": "hard",
+   "crop": "004f6b80c6a93b97",
+   "truth_sha": "2b7e84d688a6a47e"
+  },
+  {
+   "id": "de-cipier--ia-scan:89:31",
+   "stratum": "control",
+   "crop": "7e36a25348237b20",
+   "truth_sha": "a8bfce786a230807"
+  },
+  {
+   "id": "de-cipier--ia-scan:90:20",
+   "stratum": "control",
+   "crop": "9ade0b34f79a85cf",
+   "truth_sha": "6f32858e5223ae15"
+  },
+  {
+   "id": "artemis--ia-scan:14:3",
+   "stratum": "control",
+   "crop": "119c41498c74e1c9",
+   "truth_sha": "5e89523664589460"
+  },
+  {
+   "id": "artemis--ia-scan:16:2",
+   "stratum": "control",
+   "crop": "42210185fd4c8b7e",
+   "truth_sha": "5088121253f4d818"
+  },
+  {
+   "id": "artemis--ia-scan:17:7",
+   "stratum": "hard",
+   "crop": "0bf8389991be0d10",
+   "truth_sha": "0f613dc6e77414b7"
+  },
+  {
+   "id": "artemis--ia-scan:22:7",
+   "stratum": "hard",
+   "crop": "9a3390ea9c157bcc",
+   "truth_sha": "f3f27cae7d4cad4d"
+  },
+  {
+   "id": "artemis--ia-scan:25:21",
+   "stratum": "control",
+   "crop": "77fb72b41d2ec6dc",
+   "truth_sha": "8543a314633908f6"
+  },
+  {
+   "id": "artemis--ia-scan:26:4",
+   "stratum": "control",
+   "crop": "16e573331db28418",
+   "truth_sha": "22687b693a8a7fbf"
+  },
+  {
+   "id": "artemis--ia-scan:29:24",
+   "stratum": "control",
+   "crop": "e2839e5194515140",
+   "truth_sha": "bed73cb5b1bd3cdf"
+  },
+  {
+   "id": "artemis--ia-scan:30:20",
+   "stratum": "hard",
+   "crop": "f97f640d6d21928d",
+   "truth_sha": "9e1d77db5e457f87"
+  },
+  {
+   "id": "artemis--ia-scan:31:9",
+   "stratum": "control",
+   "crop": "9e95010c25e1978f",
+   "truth_sha": "a6f0eebddac1a2c6"
+  },
+  {
+   "id": "artemis--ia-scan:32:2",
+   "stratum": "hard",
+   "crop": "3407776ac5ed9ad7",
+   "truth_sha": "0d8061d334d064f8"
+  },
+  {
+   "id": "artemis--ia-scan:33:10",
+   "stratum": "hard",
+   "crop": "d9f469d322ff2a8d",
+   "truth_sha": "fb0d79098646f1e5"
+  },
+  {
+   "id": "artemis--ia-scan:33:11",
+   "stratum": "hard",
+   "crop": "6678107f7a101870",
+   "truth_sha": "d5cb7b76563aafb1"
+  },
+  {
+   "id": "artemis--ia-scan:36:21",
+   "stratum": "control",
+   "crop": "73ba0c20c03becd5",
+   "truth_sha": "0e4daf49cbf7e213"
+  },
+  {
+   "id": "artemis--ia-scan:37:15",
+   "stratum": "hard",
+   "crop": "36525fc617a106dc",
+   "truth_sha": "7c33481226274439"
+  },
+  {
+   "id": "artemis--ia-scan:37:17",
+   "stratum": "hard",
+   "crop": "a757cd11217ec8aa",
+   "truth_sha": "261d60a711788292"
+  },
+  {
+   "id": "artemis--ia-scan:38:14",
+   "stratum": "hard",
+   "crop": "e82b94e9cc1f054b",
+   "truth_sha": "06b70abfb363dc8b"
+  },
+  {
+   "id": "artemis--ia-scan:38:24",
+   "stratum": "hard",
+   "crop": "f0930fe99768cbfa",
+   "truth_sha": "1dff30a896df9021"
+  },
+  {
+   "id": "artemis--ia-scan:39:15",
+   "stratum": "control",
+   "crop": "2dbe593ceaf3a257",
+   "truth_sha": "9ada00cf82128650"
+  },
+  {
+   "id": "artemis--ia-scan:41:21",
+   "stratum": "control",
+   "crop": "c48cd260401be780",
+   "truth_sha": "56e7b5bb596519ab"
+  },
+  {
+   "id": "artemis--ia-scan:41:31",
+   "stratum": "control",
+   "crop": "9a20f947028f01de",
+   "truth_sha": "e6e4b04b0a84af42"
+  },
+  {
+   "id": "artemis--ia-scan:43:7",
+   "stratum": "control",
+   "crop": "5468fb048f0c2661",
+   "truth_sha": "40e5fc9522b29a28"
+  },
+  {
+   "id": "artemis--ia-scan:45:23",
+   "stratum": "hard",
+   "crop": "1307db51a215db2f",
+   "truth_sha": "60a89e02c42c67b3"
+  },
+  {
+   "id": "artemis--ia-scan:46:21",
+   "stratum": "control",
+   "crop": "09504dcd6ccccf94",
+   "truth_sha": "11d6e8dc15b598ad"
+  },
+  {
+   "id": "artemis--ia-scan:51:12",
+   "stratum": "hard",
+   "crop": "40f5578b71d3e6d5",
+   "truth_sha": "cbc6bd30485bf1dc"
+  },
+  {
+   "id": "artemis--ia-scan:54:8",
+   "stratum": "hard",
+   "crop": "71649dee284844bb",
+   "truth_sha": "18a48a9f362107be"
+  },
+  {
+   "id": "artemis--ia-scan:57:11",
+   "stratum": "hard",
+   "crop": "05807d6564874288",
+   "truth_sha": "1f2c214ccccff7cd"
+  },
+  {
+   "id": "artemis--ia-scan:58:6",
+   "stratum": "hard",
+   "crop": "14cf84b504a40a55",
+   "truth_sha": "6894280660628bb0"
+  },
+  {
+   "id": "artemis--ia-scan:58:11",
+   "stratum": "hard",
+   "crop": "7263845ad8a960bc",
+   "truth_sha": "9422d7725c90e7ad"
+  },
+  {
+   "id": "artemis--ia-scan:59:20",
+   "stratum": "hard",
+   "crop": "fdad9eae093a9da5",
+   "truth_sha": "d21d2781cbdf0928"
+  },
+  {
+   "id": "artemis--ia-scan:60:11",
+   "stratum": "control",
+   "crop": "a47f4eb56d4085bd",
+   "truth_sha": "a4c8c12bd122a22e"
+  },
+  {
+   "id": "artemis--ia-scan:60:13",
+   "stratum": "hard",
+   "crop": "db7b555a0ddc3b9f",
+   "truth_sha": "c3366858d26e963a"
+  },
+  {
+   "id": "artemis--ia-scan:61:4",
+   "stratum": "hard",
+   "crop": "421acf6e09f8a5e6",
+   "truth_sha": "1749e960210d8d97"
+  },
+  {
+   "id": "artemis--ia-scan:62:18",
+   "stratum": "control",
+   "crop": "5d5e73999c4be6c0",
+   "truth_sha": "3f13a49161eab18e"
+  },
+  {
+   "id": "artemis--ia-scan:64:11",
+   "stratum": "hard",
+   "crop": "b854061e3ad0ffc8",
+   "truth_sha": "4a580781971b84a8"
+  },
+  {
+   "id": "artemis--ia-scan:66:11",
+   "stratum": "control",
+   "crop": "545d4e55897a1f8c",
+   "truth_sha": "ce9817f39c08eabf"
+  },
+  {
+   "id": "artemis--ia-scan:66:27",
+   "stratum": "hard",
+   "crop": "f7e43e82b4b0dd8a",
+   "truth_sha": "92d153b57a9a6f3c"
+  },
+  {
+   "id": "artemis--ia-scan:67:4",
+   "stratum": "hard",
+   "crop": "5a354d700b37a26d",
+   "truth_sha": "2244f953b5009168"
+  },
+  {
+   "id": "artemis--ia-scan:68:5",
+   "stratum": "control",
+   "crop": "b5c6ffa073bea207",
+   "truth_sha": "dfebbd07c31ac350"
+  },
+  {
+   "id": "artemis--ia-scan:68:29",
+   "stratum": "control",
+   "crop": "75175f6fc9927d11",
+   "truth_sha": "0025107230aeaf05"
+  },
+  {
+   "id": "artemis--ia-scan:70:5",
+   "stratum": "hard",
+   "crop": "aa706f92a81c9e39",
+   "truth_sha": "15e9ba3fbbd2abc2"
+  },
+  {
+   "id": "artemis--ia-scan:70:22",
+   "stratum": "hard",
+   "crop": "5569beb8c55e28ea",
+   "truth_sha": "f812c91de6ba3885"
+  },
+  {
+   "id": "artemis--ia-scan:70:27",
+   "stratum": "control",
+   "crop": "d0510acd4697a423",
+   "truth_sha": "88f9e59558bf5819"
+  },
+  {
+   "id": "artemis--ia-scan:71:19",
+   "stratum": "hard",
+   "crop": "f0b2cf4a37959fc5",
+   "truth_sha": "a808aace0abe3ac4"
+  },
+  {
+   "id": "artemis--ia-scan:73:19",
+   "stratum": "hard",
+   "crop": "2fb7011f414dcc65",
+   "truth_sha": "88e01c751728c32d"
+  },
+  {
+   "id": "artemis--ia-scan:73:26",
+   "stratum": "control",
+   "crop": "8b8a23f8aee7c666",
+   "truth_sha": "df9197a739c8c43f"
+  },
+  {
+   "id": "artemis--ia-scan:75:8",
+   "stratum": "hard",
+   "crop": "c88369d73f59c609",
+   "truth_sha": "20dbde1958fdbcdc"
+  },
+  {
+   "id": "artemis--ia-scan:76:29",
+   "stratum": "control",
+   "crop": "3e0bff1eefbf77c6",
+   "truth_sha": "f96359a79d975954"
+  },
+  {
+   "id": "artemis--ia-scan:77:19",
+   "stratum": "hard",
+   "crop": "9d9cb007b3955355",
+   "truth_sha": "c5c592d933a9d74f"
+  },
+  {
+   "id": "artemis--ia-scan:78:10",
+   "stratum": "hard",
+   "crop": "66fdd21acbc3438b",
+   "truth_sha": "8aac6cec7e6e4edb"
+  },
+  {
+   "id": "artemis--ia-scan:80:3",
+   "stratum": "hard",
+   "crop": "171b540730bdfc28",
+   "truth_sha": "163b9adaa640e30e"
+  },
+  {
+   "id": "11-22-63--ia-scan:17:0",
+   "stratum": "control",
+   "crop": "f03ac1bc0de39657",
+   "truth_sha": "f3c21814f4e31224"
+  },
+  {
+   "id": "11-22-63--ia-scan:18:20",
+   "stratum": "hard",
+   "crop": "7b96b42b163a7dc5",
+   "truth_sha": "46415ed03e84fe21"
+  },
+  {
+   "id": "11-22-63--ia-scan:18:31",
+   "stratum": "control",
+   "crop": "fd53264e48736e72",
+   "truth_sha": "ca926b861e58664a"
+  },
+  {
+   "id": "11-22-63--ia-scan:20:30",
+   "stratum": "hard",
+   "crop": "9228956221b8a8f4",
+   "truth_sha": "8db2717518524e4f"
+  },
+  {
+   "id": "11-22-63--ia-scan:26:29",
+   "stratum": "hard",
+   "crop": "1fbbca90042b03bc",
+   "truth_sha": "92c59890b7b76552"
+  },
+  {
+   "id": "11-22-63--ia-scan:30:3",
+   "stratum": "hard",
+   "crop": "9dd716cff9b54665",
+   "truth_sha": "51e690c51839632c"
+  },
+  {
+   "id": "11-22-63--ia-scan:32:2",
+   "stratum": "hard",
+   "crop": "076e8f42a1fbaa06",
+   "truth_sha": "1fc33550cb751e88"
+  },
+  {
+   "id": "11-22-63--ia-scan:32:31",
+   "stratum": "hard",
+   "crop": "3bb7dfcc9a7e9255",
+   "truth_sha": "6e60dd42c4dc9489"
+  },
+  {
+   "id": "11-22-63--ia-scan:33:10",
+   "stratum": "hard",
+   "crop": "11b645a3c41a29b6",
+   "truth_sha": "e0b668de30b6ff35"
+  },
+  {
+   "id": "11-22-63--ia-scan:34:26",
+   "stratum": "control",
+   "crop": "a40f6b37dc908b15",
+   "truth_sha": "98a9d2e36828099b"
+  },
+  {
+   "id": "11-22-63--ia-scan:35:33",
+   "stratum": "hard",
+   "crop": "f0599127915e2daa",
+   "truth_sha": "d175dca4767af416"
+  },
+  {
+   "id": "11-22-63--ia-scan:37:36",
+   "stratum": "hard",
+   "crop": "57778cbc53cfbf27",
+   "truth_sha": "274a37b26d24d848"
+  },
+  {
+   "id": "11-22-63--ia-scan:38:23",
+   "stratum": "control",
+   "crop": "76c28676f6d361cf",
+   "truth_sha": "31f0cca898121317"
+  },
+  {
+   "id": "11-22-63--ia-scan:38:30",
+   "stratum": "hard",
+   "crop": "4a9a736f3afcbfba",
+   "truth_sha": "ee715ea7c8ed242f"
+  },
+  {
+   "id": "11-22-63--ia-scan:42:23",
+   "stratum": "hard",
+   "crop": "128c91c219e061ba",
+   "truth_sha": "32d08df7e4a5603c"
+  },
+  {
+   "id": "11-22-63--ia-scan:45:4",
+   "stratum": "control",
+   "crop": "74e955c853619775",
+   "truth_sha": "fcdb50bf38513a4f"
+  },
+  {
+   "id": "11-22-63--ia-scan:48:5",
+   "stratum": "hard",
+   "crop": "fdc404abd7e06e45",
+   "truth_sha": "03c3c991a034e5c1"
+  },
+  {
+   "id": "11-22-63--ia-scan:53:5",
+   "stratum": "control",
+   "crop": "15b1bf076a23156e",
+   "truth_sha": "edd6010e8cc63a88"
+  },
+  {
+   "id": "11-22-63--ia-scan:55:35",
+   "stratum": "hard",
+   "crop": "9bf485417acc30c9",
+   "truth_sha": "b39cd6177b925b72"
+  },
+  {
+   "id": "11-22-63--ia-scan:56:22",
+   "stratum": "hard",
+   "crop": "6da030da3a79b1ae",
+   "truth_sha": "09ebb399eb43a285"
+  },
+  {
+   "id": "11-22-63--ia-scan:60:30",
+   "stratum": "control",
+   "crop": "076799aa54cb9b5d",
+   "truth_sha": "4572b24ac3d813eb"
+  },
+  {
+   "id": "11-22-63--ia-scan:62:12",
+   "stratum": "hard",
+   "crop": "5a25194ad0d4e873",
+   "truth_sha": "884817eec029f038"
+  },
+  {
+   "id": "11-22-63--ia-scan:62:26",
+   "stratum": "control",
+   "crop": "4e1f0311f07a8dc1",
+   "truth_sha": "41f30f9715ec0a4c"
+  },
+  {
+   "id": "11-22-63--ia-scan:65:5",
+   "stratum": "hard",
+   "crop": "c7d3c122a6207bdc",
+   "truth_sha": "9d88ab1a94481e9c"
+  },
+  {
+   "id": "11-22-63--ia-scan:66:1",
+   "stratum": "hard",
+   "crop": "bde3893e3217d339",
+   "truth_sha": "c13ff3216e3d0ffe"
+  },
+  {
+   "id": "11-22-63--ia-scan:67:22",
+   "stratum": "control",
+   "crop": "8064fecb6fe882cd",
+   "truth_sha": "1cfb4fbf9c31d448"
+  },
+  {
+   "id": "11-22-63--ia-scan:70:11",
+   "stratum": "control",
+   "crop": "457abbae99510725",
+   "truth_sha": "52241122b374ed4a"
+  },
+  {
+   "id": "11-22-63--ia-scan:71:26",
+   "stratum": "control",
+   "crop": "14ec1a9fc93235b2",
+   "truth_sha": "010642402598e1c0"
+  },
+  {
+   "id": "11-22-63--ia-scan:72:1",
+   "stratum": "hard",
+   "crop": "69395143ef95d230",
+   "truth_sha": "eee15947995610f1"
+  },
+  {
+   "id": "11-22-63--ia-scan:73:11",
+   "stratum": "hard",
+   "crop": "7407d8fe6ee9a57c",
+   "truth_sha": "46253bb33ce2efdc"
+  },
+  {
+   "id": "11-22-63--ia-scan:75:8",
+   "stratum": "hard",
+   "crop": "0fb1a5e6e6349853",
+   "truth_sha": "d7f55d8dcef8dc64"
+  },
+  {
+   "id": "11-22-63--ia-scan:75:31",
+   "stratum": "control",
+   "crop": "336561fad18e94e1",
+   "truth_sha": "2b4be61ff464b72d"
+  },
+  {
+   "id": "11-22-63--ia-scan:76:3",
+   "stratum": "hard",
+   "crop": "c23da297b53c943e",
+   "truth_sha": "5eba78360aa8cdf8"
+  },
+  {
+   "id": "11-22-63--ia-scan:77:8",
+   "stratum": "hard",
+   "crop": "5de8773bdd5507c2",
+   "truth_sha": "dfab932383a08502"
+  },
+  {
+   "id": "11-22-63--ia-scan:79:3",
+   "stratum": "hard",
+   "crop": "b2c5fedba3bd4cc2",
+   "truth_sha": "181deba2a73c6e77"
+  },
+  {
+   "id": "11-22-63--ia-scan:79:5",
+   "stratum": "hard",
+   "crop": "5f8491925007d771",
+   "truth_sha": "866c34cb27bd8b85"
+  },
+  {
+   "id": "11-22-63--ia-scan:80:2",
+   "stratum": "hard",
+   "crop": "ceaab44d57618c8a",
+   "truth_sha": "ec5673087fc0210e"
+  },
+  {
+   "id": "11-22-63--ia-scan:81:2",
+   "stratum": "hard",
+   "crop": "a526b89c36aa9b1a",
+   "truth_sha": "9f9710aefc02ae7d"
+  },
+  {
+   "id": "11-22-63--ia-scan:82:3",
+   "stratum": "hard",
+   "crop": "eb26e3ccf24e9e7d",
+   "truth_sha": "508652ab4cbac619"
+  },
+  {
+   "id": "11-22-63--ia-scan:82:13",
+   "stratum": "control",
+   "crop": "6709c9c606f86874",
+   "truth_sha": "3b142bf8bd7cb5e8"
+  },
+  {
+   "id": "11-22-63--ia-scan:86:7",
+   "stratum": "control",
+   "crop": "dcf9cc4ab93e545a",
+   "truth_sha": "7fbd32607b80069d"
+  },
+  {
+   "id": "11-22-63--ia-scan:86:28",
+   "stratum": "control",
+   "crop": "a7887a4ed814a02f",
+   "truth_sha": "2a583ad842b1d180"
+  },
+  {
+   "id": "11-22-63--ia-scan:88:33",
+   "stratum": "control",
+   "crop": "4be4d3da804336c3",
+   "truth_sha": "214352a166bb8031"
+  },
+  {
+   "id": "11-22-63--ia-scan:90:12",
+   "stratum": "control",
+   "crop": "1f0b5db8d6232faa",
+   "truth_sha": "5fbe16c61431fd42"
+  },
+  {
+   "id": "11-22-63--ia-scan:90:25",
+   "stratum": "control",
+   "crop": "69ca103dde2b6131",
+   "truth_sha": "8daf6c7f076f9441"
+  },
+  {
+   "id": "11-22-63--ia-scan:91:23",
+   "stratum": "control",
+   "crop": "fe57f7060392915b",
+   "truth_sha": "c584ed6c853c0846"
+  },
+  {
+   "id": "11-22-63--ia-scan:93:1",
+   "stratum": "hard",
+   "crop": "af2878413d38aa15",
+   "truth_sha": "7ad152bb35de81fb"
+  },
+  {
+   "id": "11-22-63--ia-scan:93:3",
+   "stratum": "hard",
+   "crop": "37c0a8be93a9d811",
+   "truth_sha": "b13f959d3c038077"
+  },
+  {
+   "id": "11-22-63--ia-scan:93:10",
+   "stratum": "control",
+   "crop": "b7f30bdd73b751a1",
+   "truth_sha": "6f68f08bc5bfde06"
+  },
+  {
+   "id": "11-22-63--ia-scan:94:1",
+   "stratum": "hard",
+   "crop": "23879a9248b151f8",
+   "truth_sha": "9a075dcfc6c5012f"
+  }
+ ]
+}
