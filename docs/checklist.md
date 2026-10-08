@@ -55,19 +55,26 @@ Placed under `work/` like the others: the scans in `work/<book>--ia-scan/source.
 the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 
 - [x] `experiments/probe_candidate.py`: a no-model check of a scan and EPUB pair
-- [ ] Afscheid van verspilde tijd (Wijkmark, Rode Kamer 2011): manifest, derive
-      (spaced hyphens as en dashes), fetch; into `bench tuning`
-- [ ] Afscheid's trust data, in `ocr_trust_data.py`: ~2.4 h cold. Before the
-      baseline in 3, so the baseline includes it
-- [ ] Het geluid van bananen (Temelkuran, Van Gennep 2013): manifest, derive, fetch,
-      then **untouched**: a `test` bench set that won't run without a flag, in no
+- [x] Afscheid van verspilde tijd (Wijkmark, Rode Kamer 2011): manifest, derive
+      (spaced hyphens as en dashes, `hyphen_dash`), fetch; in `bench tuning`
+- [x] Het geluid van bananen (Temelkuran, Van Gennep 2013): manifest, derive, fetch,
+      then **untouched**: the `test` bench set, which won't run without a flag, in no
       trust data
+- [x] Metro 2033 (Gollancz 2010, transl. Randall), the second modern English scan:
+      chapters 1–5 (pp. 7–111) in `bench tuning`
+- [x] `evaluate.normalise` folds spaced dots; scores count what the fold forgave per
+      kind (no reference rebuilt so far has spaced dots, so its trust data stands)
+- [ ] Afscheid's trust data (in `ocr_trust_data.py`): ~2.4 h cold. Before the
+      baseline in 3, so the baseline includes it
+- [ ] Metro's trust data (in `ocr_trust_data.py`, pp. 7–111): ~2 h cold. Before the
+      baseline too
 - [ ] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
 - [ ] `golden check <pdf> <epub>`, writing a draft manifest: worth it once a batch
       of candidates comes
 - [ ] **user** Hunt for modern English Scribe scans with the publisher's EPUB of the
       same printing (two more unblock the line-role classifier in 6)
 
+## 3. Baseline, retrain, bench, decide
 
 - [ ] Baseline bench on the fixed rule (`ROBO_OCR_TRUST=0 … bench`): unmeasured
 - [ ] Retrain trust and compare with the before-Qwen data: minutes
@@ -92,6 +99,10 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 
 ## 6. Other components, each scored by `bench`
 
+- [ ] An ellipsis style in `typography.py`, measured on the page like the dash style
+      (the book's glyph or spaced dots)
+- [ ] Italics measured on Metro's typeface: 360 italic words found against the
+      reference's 59 in chapters 1–5 (heuristics only)
 - [ ] Line-role classifier into the package, behind a switch
 - [ ] A crop reader on tesseract's line boxes (not the layer's)
 - [ ] `quality.catches` matches by span where flags have one
