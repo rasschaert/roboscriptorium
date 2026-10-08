@@ -36,3 +36,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | trust data, the-nature-of-a-crime--doubleday-1924, re-read of new crops (Qwen via hosted), alongside other runs | 94 | 35 | 1 |
 | 2026-10-08 | trust data, the-nature-of-a-crime--doubleday-1924, re-read of new crops (Qwen via hosted), alongside other runs | 94 | 6 | 0 |
 | 2026-10-08 | trust data, 11/22/63 pp. 15-94, resumed after an Ollama stall, Qwen via hosted, alongside 1 run | 80 | 46 | 0 |
+| 2026-10-08 | trust data, Afscheid pp. 9-70, cold, Qwen via hosted, alongside 2 runs | 62 | 40 | 1 |
+| 2026-10-08 | trust data, the-story-of-doctor-dolittle--stokes-1920, re-read of new crops (Qwen via hosted), alongside other runs | 180 | 40 | 1 |

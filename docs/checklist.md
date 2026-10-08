@@ -72,7 +72,9 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
       pipelines at once, re-reads included
 - [x] De cipier, pp. 9–92, Qwen via hosted, beside other runs (429 suspects, 327 settled,
       layer wrong on 97; clef right on 94%, winnow 52%)
-- [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold. **Running**, Qwen via hosted
+- [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold. Stopped after 40 min
+      when a probe beside three runs ran the GPU out of memory; **running** again, Qwen
+      via hosted
 - [x] Hosted clef as the judge, measured before any use (user's go, criteria fixed
       first: same pick ≥ 97%, no fewer right, median confidence shift < 0.05), Goede
       dochter's 419 suspects (`experiments/probe_hosted_judge.py`): PrimeIntellect's
@@ -155,7 +157,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       line roles: a little better than e4b, 2.6× slower): ask it the cached suspects of the
       tuning books, text only, ~5 min a book; it earns the job if it catches more of clef's
       misses (e4b: 31 of 46 on 11/22/63, fewer on the Dutch books). After the queue, then
-      retrain
+      retrain. Run it with no pipelines going: beside three it ran the GPU out of memory
 - [ ] MiniCPM-V 4.6 (May 2026, 1.3B, `minicpm-v4.6`), the last small candidate: after the
       baseline. A new reader only pays off by speed, since the current ones already
       cover nearly every line

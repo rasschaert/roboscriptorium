@@ -28,13 +28,14 @@ run-times.
   the-story-of-doctor-dolittle--stokes-1920 23 202 1-21 180`
 - Metro's crop re-read and check, `work/probes/crop-reread.sh metro-2033--ia-scan 7
   111 1-10 105`
-- The winnow:12b probe (below), on 11/22/63 then Goede dochter
 
 The trust-data runs read Qwen through OpenRouter: source `~/.openrouter.env`, export
 `OPENROUTER_API_KEY="$KEY"` and `ROBO_READ_VIA="openrouter:qwen/qwen3.8-27b@deepinfra/bf16"`
 (the crop-reread script does this itself). The user allowed hosted Qwen for the whole
 remaining queue and the crop re-reads, nothing else. **At most three pipelines at
-once**: more overloads Ollama and calls time out.
+once**, and nothing else on the GPU beside them: Ollaya shares its memory. A winnow:12b
+probe (13 GB) beside three runs ran Metal out of memory at 19:36 and killed Afscheid and
+Dolittle's re-read; both were restarted (resuming from their caches).
 
 ### Still in the queue after those
 
@@ -60,12 +61,12 @@ Reis (11–110, tuning), De eerlijke vinder (12–95, validation), You're Never 
   `main`; the saved trust model is still the old version, so every build with trust on
   stops until `--save`.
 
-### Probe in flight: winnow:12b as the second judge
+### Probe stopped: winnow:12b as the second judge (run it with no pipelines going)
 
 `experiments/probe_second_judge.py <book> <spec> winnow:12b` asks the cached
 suspects' text questions of winnow:12b beside winnow:e4b and scores both against the
 trust labels, overall and where clef is wrong. Logs in `work/probes/second-judge/`,
-answers cached there. If it catches more of clef's misses, try it as `check_model`
+answers cached there (50 of 11/22/63's so far). If it catches more of clef's misses, try it as `check_model`
 before the retrain (checklist section 3b's list).
 
 ### Waiting on the user
