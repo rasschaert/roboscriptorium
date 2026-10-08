@@ -11,8 +11,9 @@ drops a step.
 two unmeasured changes to the OCR check stay: the third reading (Qwen, told the
 book's style) and reading short lines too (Goede dochter: +18 suspects, ~3 real
 errors). Both are in the build until the bench in 3 decides. First the trust data
-for every tuning and validation book, one book at a time on the local Qwen (section 2,
-the queue in run order, ~10 h); the faster readers tried in 3b didn't beat it.
+for every tuning and validation book (section 2's queue, three at a time, Qwen read
+through OpenRouter with the user's go; clef stays local, its hosted builds failed 3b's
+test); the faster readers tried in 3b didn't beat Qwen.
 
 ## 1. Measurement that can be trusted
 
