@@ -849,3 +849,8 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   called "punctuation", and 3 quoting text that isn't there, caught by requiring the
   quote verbatim. The task finds what nothing else does; an 8B model's precision (~1 in
   14) would cost more in questions and slips than it catches.
+- 2026-10-08: gemma4:26b-nvfp4 (MoE, 4B active) as the line reader: on Goede dochter pp.
+  9–20 the best reading yet (CER 0.07% against Qwen3.8's 0.10%, 314 exact against 311,
+  3.5× faster, one invented opening quote); on Metro pp. 7–30 CER 23%: on 297 lines the
+  layer has right it reads another line than the cropped one or adds invented text. Out,
+  and the reason a candidate is confirmed on a second book before any switch.

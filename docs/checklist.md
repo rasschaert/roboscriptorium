@@ -10,7 +10,9 @@ drops a step.
 **The plan now:** make measurement trustworthy, then let the bench decide whether
 two unmeasured changes to the OCR check stay: the third reading (Qwen, told the
 book's style) and reading short lines too (Goede dochter: +18 suspects, ~3 real
-errors). Both are in the build until the bench in 3 decides.
+errors). Both are in the build until the bench in 3 decides. First the trust data
+for every tuning and validation book, one book at a time on the local Qwen (section 2,
+the queue in run order, ~10 h); the faster readers tried in 3b didn't beat it.
 
 ## 1. Measurement that can be trusted
 
@@ -36,8 +38,9 @@ errors). Both are in the build until the bench in 3 decides.
 ## 2. Trust data rebuilt with the third reading and short lines
 
 One book per run, `experiments/ocr_trust_data.py --rebuild <book>`, on the fixed
-rule. About 1.1 min per page cold (Dolittle; Crime and Vals alarm ran at 0.8); a top-up after the short-line change reads only
-the short lines.
+rule. About 1.1 min per page cold (Dolittle; Crime and Vals alarm ran at 0.8; Metro
+1.5, partly in Low Power Mode); a top-up after the short-line change reads only the
+short lines. Qwen's reading of every line is 70–75% of a cold run (3b).
 
 - [x] Goede dochter: 3 min (Qwen readings cached), top-up 2 min
 - [x] Vals alarm: 39 min cold, top-up 2 min
@@ -51,8 +54,21 @@ the short lines.
       Labelled before it, their spaced ellipses (`you. . . .`) and spaced colons
       (`listen :`) counted the faithful reading wrong. Settled 223 → 222 and 582 → 561;
       clef right on 85% and 93% of them (was 84% and 91%)
+- [x] Metro 2033, pp. 7–111: 156 min cold, partly in Low Power Mode (917 suspects, 801
+      settled, layer wrong on 204; clef right on 92%, winnow 38%)
 - [x] Metro relabelled the same way: under a minute (settled 852 → 801)
-- [ ] Reis om mijn schedel, pp. 11–110 (chapters 1–11, as in `bench tuning`): ~1.8 h cold
+
+The queue, in run order, before the baseline in 3 so the baseline includes every book:
+
+- [ ] Artemis, pp. 13–80 (tuning): ~1.2 h cold. Next
+- [ ] 11/22/63, pp. 15–94 (tuning): ~1.5 h cold (English first: the line-role classifier
+      is short of English books)
+- [ ] De cipier, pp. 9–92 (tuning): ~1.5 h cold
+- [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold
+- [ ] Reis om mijn schedel, pp. 11–110 (tuning): ~1.8 h cold. Its data from before Qwen
+      must not be trained on until then (it has no Qwen support)
+- [ ] De eerlijke vinder, pp. 12–95 (validation, held out): ~1.5 h cold
+- [ ] You're Never Weird on the Internet, pp. 13–94 (validation, held out): ~1.6 h cold
 
 ## 2b. New golden pairs (Fable's session, ended; its steps are this session's now)
 
@@ -68,29 +84,16 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [x] Metro 2033 (Gollancz 2010, transl. Randall), the second modern English scan:
       chapters 1–5 (pp. 7–111) in `bench tuning`
 - [x] `evaluate.normalise` folds spaced dots; scores count what the fold forgave per
-      kind (no reference rebuilt so far has spaced dots, so its trust data stands)
-- [ ] Afscheid's trust data, pp. 9–70 (chapters 1–11, as in `bench tuning`): ~1.1 h cold. Before the
-      baseline in 3, so the baseline includes it
-- [x] Metro's trust data, pp. 7–111: 156 min cold, partly in Low Power Mode (917 suspects,
-      801 settled, layer wrong on 204; clef right on 92%, winnow 38%)
+      kind. The trust labeller now folds through it too (section 2's relabels)
 - [x] De cipier, a pair with no known deviations: chapters 1–4 (pp. 9–92) in
       `bench tuning`
 - [x] Artemis: chapters 1–3 (pp. 13–80) in `bench tuning`
-- [ ] Artemis's trust data (in `ocr_trust_data.py`, pp. 13–80): ~1.2 h cold, after
-      Metro
 - [x] 11/22/63 (Scribner 2011), the first American scan and the heading test (386
       headings): the prologue and chapters 1–3 (pp. 15–94) in `bench tuning`
-- [ ] 11/22/63's trust data (in `ocr_trust_data.py`, pp. 15–94): ~1.5 h cold, after
-      Artemis (English first: the line-role classifier is short of English books)
-- [ ] De cipier's trust data (in `ocr_trust_data.py`, pp. 9–92): ~1.5 h cold. Before
-      the baseline, so it isn't rerun when it joins
 - [x] Grand Hotel Europa retired to reserve, De eerlijke vinder into validation in its
       place (another printing than its EPUB; 9 of 16 reference headings not on the scan)
-- [ ] De eerlijke vinder's trust data (in `ocr_trust_data.py`, pp. 12–95, held out):
-      ~1.5 h cold, before the baseline
 - [x] You're Never Weird on the Internet (Touchstone 2015, 5th printing, against the
       edition's ebook): validation, pp. 13–94 (sections 1–16), the only English one
-- [ ] Its trust data (in `ocr_trust_data.py`, held out): ~1.6 h cold, before the baseline
 - [ ] Dolittle's captions scored properly: derive them into the reference, or leave
       caption lines out of the score as footnotes are
 - [x] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
@@ -120,8 +123,9 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [x] qwen3.6:35b-a3b-nvfp4 (MoE, 3B active): 0.37 s a line, but it reads the style
       sentence as an order and wraps plain narration in quote marks (94 lines wrong,
       CER 0.67%). Out
-- [ ] gemma4:26b-nvfp4 (MoE, 4B active) as the line reader, same pages: ~10 min once
-      downloaded; Artemis waits on it. Then, if it fails too, MiniCPM-V 4.6 (May 2026).
+- [x] gemma4:26b-nvfp4 (MoE, 4B active): on Goede dochter the best reading yet (CER
+      0.07%, 314 exact, 3.5× Qwen's speed, one invented opening quote); on Metro CER 23%,
+      reading whole lines that aren't the cropped one. Out
 - [x] Crossover, not only the best model (`experiments/probe_reader_crossover.py`): on
       Goede dochter pp. 9–20 only 1 of 324 lines has no current reading right, so no
       candidate can add much there; the errors left come from choosing, not from missing
@@ -129,11 +133,14 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [x] The crossover on Metro pp. 7–30 (954 body lines, English): again only 1 line has no
       current reading right. gemma4:latest adds 0 there, is wrong on 288 lines the layer
       has right, and writes text that isn't on the line (whole invented clauses)
-- [ ] Each later candidate through the crossover on Metro too, not only Goede dochter
-      Decided before the results: switch only if ≥ 3× faster **and** no worse (quote marks
-      wrong on no more lines than Qwen3.8's, CER within a few lines of it), confirmed on a
-      second book (Metro, English) before the switch; better but not faster: noted, no
-      switch; faster but worse: out
+- [x] The rule, decided before the results: switch only if ≥ 3× faster **and** no
+      worse (quote marks wrong on no more lines than Qwen3.8's, CER within a few lines of
+      it), confirmed on Metro before the switch; better but not faster: noted; faster but
+      worse: out. Every candidate also goes through the crossover on Metro
+- [ ] MiniCPM-V 4.6 (May 2026, 1.3B, `minicpm-v4.6`), the last small candidate: after the
+      baseline. A new reader only pays off by speed, since the current ones already
+      cover nearly every line
+- [ ] The two failed MoE models take 39 GB: **user** says whether to remove them
 - [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:
       after the baseline bench, each measured by it
 
@@ -171,10 +178,15 @@ danger is that it edits the author. Guards, all of them:
       text that isn't there (dropped by the verbatim check). Real catches, far too many
       urges: next, a larger model and a tighter format (a short quoted span, or one
       decision per paragraph)
-- [ ] Probe: every paragraph of Goede dochter's and Metro's built text, as a decision
-      (clef, or Qwen with thinking off) with the kinds above, scored against their known
-      remaining errors and the counterexample set: catches, false alarms, editorial urges.
-      After the baseline bench; roughly a tenth of the line readings' calls
+- [x] The user's idea: a decision model after the generative one, to force a strict
+      answer. clef asked of each flag "fault of scanning, or the author's text?": at
+      P(fault) ≥ 0.3 it keeps 9 of 45 flags and both clear catches, dropping 31 of 37
+      urges; with the line's scan crop it does no better (keeps 5, drops `ALLEs $1`).
+      Both drop a real lost closing quote. The weak part is now the proposer
+- [ ] Probe: a stronger proposer (Qwen3.8 with thinking on, or gemma4:26b) with clef
+      as the filter, on Goede dochter's and Metro's built text, scored against their
+      known remaining errors and the counterexample set: catches, false alarms, editorial
+      urges. After the baseline bench; roughly a tenth of the line readings' calls
 - [ ] If it earns it: a stage after reflow that emits review questions, decided by `bench`
 
 ## 4. The user's part
@@ -207,8 +219,9 @@ danger is that it edits the author. Guards, all of them:
 
 ## 7. A real test set
 
-- [ ] A new golden book, left unscored until the end: the **user** picks, the
-      machine derives
+- [x] A new golden book, left unscored until the end: Het geluid van bananen (2b),
+      the `test` set
+- [ ] Score it once, at the end of the plan: `bench test --score-test`
 
 ## Later
 
