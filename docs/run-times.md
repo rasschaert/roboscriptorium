@@ -31,3 +31,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | trust data, 11/22/63 pp. 15-94, cold, Qwen via hosted, alongside 2 books and a re-read: stopped by a local model call timing out (Ollama overloaded) | 80 | 14 | 1 |
 | 2026-10-08 | trust data, Artemis pp. 13-80, cold, Qwen read via hosted bf16 | 68 | 63 | 0 |
 | 2026-10-08 | trust data, the-nature-of-a-crime--doubleday-1924, re-read of new crops (Qwen via hosted), alongside other runs | 94 | 9 | 1 |
+| 2026-10-08 | trust data, De cipier pp. 9-92, glm-ocr partly cached, Qwen read via hosted bf16, alongside Artemis | 84 | 47 | 0 |
