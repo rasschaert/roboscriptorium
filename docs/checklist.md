@@ -51,8 +51,7 @@ the short lines.
       Labelled before it, their spaced ellipses (`you. . . .`) and spaced colons
       (`listen :`) counted the faithful reading wrong. Settled 223 → 222 and 582 → 561;
       clef right on 85% and 93% of them (was 84% and 91%)
-- [ ] Metro relabelled the same way, once its run is done (it started on the old code):
-      under a minute
+- [x] Metro relabelled the same way: under a minute (settled 852 → 801)
 - [ ] Reis om mijn schedel, pp. 11–110 (chapters 1–11, as in `bench tuning`): ~1.8 h cold
 
 ## 2b. New golden pairs (Fable's session, ended; its steps are this session's now)
@@ -72,8 +71,8 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       kind (no reference rebuilt so far has spaced dots, so its trust data stands)
 - [ ] Afscheid's trust data, pp. 9–70 (chapters 1–11, as in `bench tuning`): ~1.1 h cold. Before the
       baseline in 3, so the baseline includes it
-- [ ] Metro's trust data (in `ocr_trust_data.py`, pp. 7–111): ~1.9 h cold. **Running** since 2026-10-08 12:58. Before the
-      baseline too
+- [x] Metro's trust data, pp. 7–111: 156 min cold, partly in Low Power Mode (917 suspects,
+      801 settled, layer wrong on 204; clef right on 92%, winnow 38%)
 - [x] De cipier, a pair with no known deviations: chapters 1–4 (pp. 9–92) in
       `bench tuning`
 - [x] Artemis: chapters 1–3 (pp. 13–80) in `bench tuning`
