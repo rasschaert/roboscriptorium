@@ -13,13 +13,15 @@ A scanned book usually comes with an OCR text layer, and that layer is good: a f
 wrong characters in every thousand. A careful edition has none, so those few are
 what this project exists to fix.
 
-No single OCR reader fixes them, because every reader makes mistakes of its own.
-So the book is read several more times, by readers chosen because they make
-*different* mistakes. Where the readings disagree, the place becomes a suspect.
+No single OCR model fixes them, because every one makes mistakes of its own. So
+the book is read several more times, by *readers* chosen because they make
+different mistakes. Each reader gives a *reading* of every line. Where a reading
+differs from the text layer, the place becomes a *suspect*, and each way of reading
+it is a *version*.
 
-Judges look at each suspect, and a model trained on books whose printed text is
-known decides which version to believe. Where that model is unsure, a person gets
-a question, with the scan beside it.
+*Judges* look at each suspect and pick a version. Then the *trust model*, trained
+on books whose printed text is known, decides which version to believe. Where the
+trust model is unsure, a person gets a question, with the scan beside it.
 
 The person's answers go into the next build. They also become labels the trust
 model learns from.
@@ -101,7 +103,7 @@ OCR layers drop short lines: a bare chapter number, a one-word line of dialogue.
 The layout model still sees a region there.
 
 Where it sees a region one line tall with no text-layer line in it, `missing.py`
-has glm-ocr read that region. The reading is added to a copy of the page as a line
+has glm-ocr, one of the readers, read that region. The reading is added to a copy of the page as a line
 of its own, in reading order, so the later stages treat it like any other line.
 This runs on scans only.
 
@@ -122,9 +124,9 @@ wide the gaps around it are. `book.toml` can set it instead.
 The quote style (single or double quotes, the ellipsis glyph) comes from the text
 layer's own marks.
 
-Both are measured before any model reads a line. The readers and judges are told
+Both are measured before any reader sees a line. The readers and judges are told
 them in a sentence, because typography belongs to the book. Asked line by line,
-the models set it inconsistently.
+the readers and judges set it inconsistently.
 
 ## Stage 2: what each line is
 
@@ -135,11 +137,11 @@ Lines in the middle of the text block, flush with the margin, are body text, and
 no model is asked about them.
 
 The doubtful lines go to clef-flash. These are lines near the top or bottom of
-the page, and short centred lines anywhere. The model is given each line's
+the page, and short centred lines anywhere. clef-flash is given each line's
 position and neighbours, and facts it can't see for itself, such as whether the
 same text appears on other pages, as a running head does.
 
-Rules in code then override the model where the layout decides the question. What
+Rules in code then override clef-flash where the layout decides the question. What
 is true by definition, such as a chapter heading appearing once, is enforced
 there. A style group takes the role most of its lines got.
 
@@ -180,7 +182,7 @@ Two differences in one line make two suspects, and each is decided on its own.
 
 ### Judges
 
-Three opinions are collected for every suspect.
+Every suspect goes to three judges.
 
 clef:27b looks at the crop of that place on the scan and picks the version it
 shows. It is told the book's typesetting, and it is usually right.
@@ -189,16 +191,16 @@ winnow:e4b reads only the sentence and picks the version that reads well. On its
 own it is a poor judge. It is there as an alarm: where it disagrees with clef,
 clef is wrong several times as often as where they agree.
 
-The word list, unpacked from tesseract's own language model, says which versions
-consist of known words. It is shown to the reviewer and used as a feature, and it
-decides nothing by itself.
+The word list, unpacked from tesseract's own language model, is the third judge.
+It says which versions consist of known words. Its pick is shown to the reviewer
+and used by the trust model, and it decides nothing by itself.
 
 Each suspect also records which readings back which version.
 
 ### Learned trust
 
-`trust.py` is a small model of shallow gradient-boosted trees. For each version
-of each suspect, it estimates how likely that version is what the page prints.
+The trust model (`trust.py`) is a set of shallow gradient-boosted trees. For each
+version of each suspect, it estimates how likely that version is what the page prints.
 
 It looks at:
 
@@ -213,8 +215,8 @@ That last feature exists because a scan's errors repeat. Across books, `|` read
 for `I` is almost always the text layer's mistake, and glm-ocr dropping a `’` is
 almost always glm-ocr's.
 
-With every version scored, the book's suspects are sorted by how sure the model is
-of its best version. The least sure ones are asked, up to a budget of questions
+With every version scored, the book's suspects are sorted by how sure the trust model
+is of its best version. The least sure ones are asked, up to a budget of questions
 per page. The budget is counted over the whole book, so a bad page can get several
 questions and a clean page none.
 
@@ -228,7 +230,7 @@ because review answers are keyed on it.
 
 The trust model is trained on the tuning books only, described under *Measuring*.
 
-If the model file is missing, or was saved for a different set of features, the
+If the trust model's file is missing, or was saved for a different set of features, the
 build stops. It doesn't fall back silently. `ROBO_OCR_TRUST=0` chooses the older
 fixed rule on purpose: apply a fix when both judges agree and clef is at least
 somewhat sure.
@@ -244,21 +246,21 @@ local web page.
 
 - the OCR doubts that trust chose to ask, one question per place;
 - headings;
-- lines the role model dropped, or kept without being sure;
+- lines clef-flash dropped, or kept without being sure;
 - garbled text;
 - pictures, captions, and titles that aren't headings;
 - text the layout model sees and the text layer lacks;
 - paragraphs whose curly quotes don't pair up (`quotes.py`).
 
-The list is built from the models' decisions before any answers are applied, so
-it doesn't change while you work through it.
+The list is built before any answers are applied, so it doesn't change while you
+work through it.
 
 ### Answering
 
 `review.py` shows each question beside its crop of the scan.
 
 An OCR doubt lists each version on its own row, with the differing part marked and
-the models that picked it beside it. One key answers.
+the judges that picked it beside it. One key answers.
 
 A quote question offers qwen3.8's reading of the line, but takes only its quote
 marks and the punctuation next to them, laid on the checked letters. Its quote
@@ -401,7 +403,7 @@ Validation and test books are never trained on.
 
 ### 3. Benching
 
-The new model is measured on the tuning books, then on the validation books.
+The retrained trust model is measured on the tuning books, then on the validation books.
 
 A newly released model goes through the same loop. It is added as a reader or a
 judge, the trust data is rebuilt, the trust model retrained, and the bench decides
