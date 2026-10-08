@@ -70,7 +70,7 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
       frees. At most three pipelines at once, re-reads included. **Running** again
 - [x] De cipier, pp. 9–92, Qwen via hosted, beside other runs (429 suspects, 327 settled,
       layer wrong on 97; clef right on 94%, winnow 52%)
-- [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold
+- [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold. **Running**, Qwen via hosted
 - [ ] Reis om mijn schedel, pp. 11–110 (tuning): ~1.8 h cold. Its data from before Qwen
       must not be trained on until then (it has no Qwen support)
 - [ ] De eerlijke vinder, pp. 12–95 (validation, held out): ~1.5 h cold
@@ -181,7 +181,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
           its own): 823 of 2,336 crops changed; glm-ocr 758 → 755 exact, Qwen 774 → 770,
           the worse lines the models' habits (`suredly` → `surely`), not the crop; 257 →
           262 suspects, settled 222 → 231. Neutral
-    - [ ] Dolittle, Metro, Stella: for consistency (the pipeline cuts these crops now, so
+    - [ ] Dolittle (**running**), Metro, Stella: for consistency (the pipeline cuts these crops now, so
           trust data and bench must be read from them), one at a time, each checked
   - [x] **The user's idea, a crop fitted to each line's ink** (`experiments/ink_crop.py`):
         tried and not adopted. Measured with no model (`probe_crop_ink.py`), the box crop
