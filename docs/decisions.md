@@ -878,3 +878,10 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   lines each (small: a stray `*`, `Moskvín`, a closing quote) and no neighbouring clause
   read. With the builds equal on Goede dochter and on Metro's old crops, the gain is the
   crop's.
+- 2026-10-08: Local (nvfp4) and hosted (DeepInfra bf16) Qwen3.8 27B are interchangeable
+  on line crops, by criteria fixed before the result, on Metro pp. 7–30's 738 new crops:
+  720 and 722 exact, quote marks wrong on 1 and 2 lines, 1 line each read beyond its
+  crop, the same reading on 97.6%. Hosted readings cached under the local name
+  (`ROBO_READ_VIA`, each marked) are therefore trained and benched alongside local ones.
+  The crop fix itself is neutral for local Qwen there (722 → 720 exact; CER 0.20% →
+  0.18%); its gain is glm-ocr's, and hosted Qwen's habit of reading the next line.

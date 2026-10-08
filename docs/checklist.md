@@ -167,13 +167,10 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
         user's go):
     - [x] Goede dochter: 2 min; 79 of 1,730 crops changed; glm-ocr unchanged (65 exact),
           Qwen 65 → 66; 419 suspects, settled 376 → 377. Neutral
-    - [ ] **Waiting:** local against hosted Qwen, both on Metro's 738 new crops (running,
-          free). The user wants that answer before more is read hosted. Decided before the
-          result: the builds are interchangeable only if exact lines against the reference
-          are within ±5, lines with quote marks wrong within ±2, lines read beyond their
-          crop about equal and near zero, and the same reading on ≥ ~95% of lines. If not,
-          hosted readings get their own model name, and Artemis and Goede dochter's hosted
-          lines are read again locally
+    - [x] Local against hosted Qwen, both on Metro's 738 new crops, against criteria fixed
+          before the result: exact 720 / 722 (±5 ✓), quote marks wrong 1 / 2 (±2 ✓), read
+          beyond the crop 1 / 1 ✓, the same reading on 97.6% ✓. **Interchangeable.** For
+          local Qwen the crop fix is neutral (722 → 720 exact); it is glm-ocr that gains
     - [ ] De tuin, Crime, Dolittle, Metro, Stella
   - [ ] A reading far longer or shorter than its line counting as no reading, if readers
         still stray after the fix: measured by `bench`
