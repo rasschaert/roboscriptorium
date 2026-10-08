@@ -171,8 +171,11 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
           before the result: exact 720 / 722 (±5 ✓), quote marks wrong 1 / 2 (±2 ✓), read
           beyond the crop 1 / 1 ✓, the same reading on 97.6% ✓. **Interchangeable.** For
           local Qwen the crop fix is neutral (722 → 720 exact); it is glm-ocr that gains
-    - [ ] De tuin: **running** (Qwen via hosted, the user's go)
-    - [ ] Crime, Dolittle, Metro, Stella, one at a time, each checked first
+    - [x] De tuin: 4 min; 101 of 1,440 crops changed (the overlap estimate counted any
+          touch; the fix cuts in only past half a point); glm-ocr exact 78 → 83, Qwen 93 →
+          90 (noise level); 472 → 473 suspects, settled 454 → 455. Neutral to positive
+    - [ ] Crime: **running**
+    - [ ] Dolittle, Metro, Stella, one at a time, each checked first
   - [ ] A reading far longer or shorter than its line counting as no reading, if readers
         still stray after the fix: measured by `bench`
 - [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:
