@@ -137,27 +137,25 @@ def probabilities(trust: Trust, s: Suspect) -> np.ndarray:
 
 
 def training_matrix(
-    suspects: list[Suspect], right: list[list[bool]], pairs: Pairs
+    suspects: list[Suspect], right: list[list[bool]], books: list[str]
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Feature rows and labels for every version of the training suspects. Each suspect
-    is scored with its own labels left out of `pairs`: counted in, the prior repeats the
-    label and the trees learn to lean on it."""
-    counts = {k: list(v) for k, v in pairs.items()}
+    """Feature rows and labels for every version of the training suspects. Each book's
+    suspects get their priors from the other training books only, as a scored book's
+    come from books it isn't in: with its own book's suspects counted in (or only its
+    own label left out), a signature common in that book looked surer in training
+    than it is on a new book."""
     X, y = [], []
-    for s, ok in zip(suspects, right, strict=True):
-        own = [(pair(s.ours, v), ok[k]) for k, v in enumerate(s.others, 1)]
-        for key, hit in own:
-            if key in counts:
-                counts[key][0] -= hit
-                counts[key][1] -= 1
-        table = {k: (a, n) for k, (a, n) in counts.items()}
-        for k, hit in enumerate(ok):
-            X.append(features(s, k, table))
-            y.append(int(hit))
-        for key, hit in own:
-            if key in counts:
-                counts[key][0] += hit
-                counts[key][1] += 1
+    for book in dict.fromkeys(books):
+        others = [i for i, b in enumerate(books) if b != book]
+        table = pairs_table(
+            [suspects[i] for i in others], [right[i] for i in others], [books[i] for i in others]
+        )
+        for s, ok, b in zip(suspects, right, books, strict=True):
+            if b != book:
+                continue
+            for k, hit in enumerate(ok):
+                X.append(features(s, k, table))
+                y.append(int(hit))
     return np.array(X), np.array(y)
 
 
@@ -168,8 +166,9 @@ def train(
     (`books` names each suspect's book; without it no pair reaches `MIN_BOOKS`)."""
     from sklearn.ensemble import HistGradientBoostingClassifier
 
-    pairs = pairs_table(suspects, right, books or [""] * len(suspects))
-    X, y = training_matrix(suspects, right, pairs)
+    books = books or [""] * len(suspects)
+    X, y = training_matrix(suspects, right, books)
+    pairs = pairs_table(suspects, right, books)
     model = HistGradientBoostingClassifier(
         max_depth=3, min_samples_leaf=20, l2_regularization=1.0, random_state=0
     )

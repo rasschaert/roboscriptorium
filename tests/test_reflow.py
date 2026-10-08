@@ -1,3 +1,5 @@
+import pytest
+
 from roboscriptorium.ir import Heading, Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText, _core, _visual_lines
 from roboscriptorium.reflow import join, reflow, tidy
@@ -292,9 +294,6 @@ def test_the_word_list_settles_a_break_the_book_does_not():
     assert join("Twenty-", "four", known=known) == "Twenty-four"
     assert join("the anti-", "piracy law", known=known) == "the anti-piracy law"
     assert join("ze af-", "stormde", known=known) == "ze afstormde"
-    # Both forms, or neither: the list is silent, and the hyphen was the break's.
-    assert join("her make-", "up", known=known) == "her makeup"
-    assert join("the night-", "vision", known=known) == "the nightvision"
     # The book's own spelling comes before the list.
     seen = Counter({"home-brew": 2})
     assert join("some home-", "brew", seen, known) == "some home-brew"
@@ -327,3 +326,14 @@ def test_a_hyphen_already_in_the_word_keeps_the_breaks_only_between_words():
     assert join("Serpukhovsko-Timiryazev-", "skaya", known=known) == "Serpukhovsko-Timiryazevskaya"
     # Without a word list the old rule stands: the hyphen stays.
     assert join("Zuid-Lon-", "den") == "Zuid-Lon-den"
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason="checklist 6b: a compound the word list lacks, or knows both ways, is the question's",
+)
+def test_a_compound_the_list_cannot_settle_keeps_its_hyphen():
+    words = {"makeup", "make-up"}
+    known = lambda w: w.lower() in words  # noqa: E731
+    assert join("her make-", "up", known=known) == "her make-up"
+    assert join("the night-", "vision", known=known) == "the night-vision"

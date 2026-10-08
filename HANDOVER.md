@@ -14,7 +14,7 @@ files (`experiments/probe_text_reader.py`, `probe_remaining_errors.py`) untouche
   slices (`experiments/probe_hyphen_breaks.py`).
 - `fbf1925` trust's substitution-pair prior (`trust.pair`, model version 3, 23
   features, priors saved with the model, ≥ 2 books, leak-free training rows).
-  Leave one book out: silent errors at 0/.25/.5/1 a page 153/87/44/23 → 117/50/31/11
+  Leave one book out: silent errors at 0/.25/.5/1 a page 153/87/44/23 → 110/48/25/10
   (`experiments/probe_trust_pair_prior.py`). **The saved model is still version 1**:
   every build with trust on still stops until `train_ocr_trust.py --save`.
 - the reviewer's answers checked before saving (`review.doubtful`, `regions.html`),

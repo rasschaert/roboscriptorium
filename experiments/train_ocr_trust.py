@@ -100,11 +100,12 @@ def pages_of(name: str) -> int:
 
 def scored(make, train_names, rows):
     """`rows` scored by `make()` trained on the named books, with the substitution
-    priors from those books (each training suspect scored without its own label)."""
+    priors from those books (each training book's suspects from the other books')."""
     train = [r for n in train_names for r in books[n]]
     suspects, right = [r["s"] for r in train], [r["right"] for r in train]
-    pairs = trust.pairs_table(suspects, right, [n for n in train_names for _ in books[n]])
-    X, y = trust.training_matrix(suspects, right, pairs)
+    names = [n for n in train_names for _ in books[n]]
+    pairs = trust.pairs_table(suspects, right, names)
+    X, y = trust.training_matrix(suspects, right, names)
     Xt, owner = matrix(rows, pairs)
     return per_suspect(rows, make().fit(X, y).predict_proba(Xt)[:, 1], owner)
 

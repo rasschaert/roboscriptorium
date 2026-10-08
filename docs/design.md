@@ -86,12 +86,14 @@ glm-ocr dropping a `’` is wrong 232 of 235 times. The kind features ("same let
 its exact substitution was the print in the training books (`trust.pair`, Laplace
 smoothed, with how often it was seen). Leaving one book out over nine books
 (`experiments/probe_trust_pair_prior.py`), silent errors at 0 / 0.25 / 0.5 / 1
-questions a page fell from 153 / 87 / 44 / 23 to 117 / 50 / 31 / 11, stable to one
+questions a page fell from 153 / 87 / 44 / 23 to 110 / 48 / 25 / 10, stable to one
 more training book left out. Two guards, each measured: a pair counts only when seen
 in two training books (one book's reference conventions must not teach the rest;
-Lady into Fox showed they can), and a training suspect is scored without its own
-label (counted in, the trees leaned on the prior and did worse: 76 / 48 / 28 at
-0.25 / 0.5 / 1). What the prior can't know is a signature in no other book: Vals
+Lady into Fox showed they can), and a training book's suspects get their priors from
+the other training books only, as a scored book's do. With its own book counted in
+the prior repeats the label and the trees lean on it: 76 / 48 / 28 at 0.25 / 0.5 / 1,
+worse than none; with only the suspect's own label left out a signature common in
+its book still looks surer than it will on a new one, 117 / 50 / 31 / 11. What the prior can't know is a signature in no other book: Vals
 alarm loses the full stop before a closing quote 47 times (`word’` for `word.’`), and
 only that book's own answers can teach it (checklist 6b). The bench decides whether
 the gain carries into a build. The fixed rule (both judges

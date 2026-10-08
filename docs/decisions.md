@@ -929,3 +929,10 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   question's own readings give the transcribe-and-compare check (Stella: 9 of 9 slips,
   3 alarms in 58) without a model call. Built before the slip-rate review so that review
   measures both rates.
+- 2026-10-08: A training book's substitution priors come from the other training books
+  only (`trust.training_matrix`), as a scored book's do. Opus's point: scored with only
+  its own label left out, a suspect still saw its book's other suspects, so a signature
+  common in that book looked surer in training than on a new book. Leave one book out:
+  117/50/31/11 → 110/48/25/10 silent errors at 0/.25/.5/1 questions a page. The two
+  hyphen cases the word list can't settle (`make-up`, `night-vision`) are a strict
+  xfail test naming checklist 6b, not an assertion of the wrong output.

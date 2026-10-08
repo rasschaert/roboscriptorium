@@ -61,16 +61,17 @@ def test_a_substitution_seen_in_two_books_becomes_a_prior_and_one_books_does_not
     assert len(trust.features(bar[0], 1, pairs)) == trust.FEATURES
 
 
-def test_a_training_suspect_is_scored_without_its_own_label():
-    a, b = _suspect("zei", "zei’", "zei’", 0.9), _suspect("zag", "zag’", "zag’", 0.9)
-    right = [[False, True], [True, False]]
-    pairs = trust.pairs_table([a, b], right, ["x", "y"])
-    assert pairs == {"''→'’'": (1, 2)}
-    X, y = trust.training_matrix([a, b], right, pairs)
-    # a's other version sees only b's label (wrong), b's only a's (right).
-    assert X[1, -2] == pytest.approx(1 / 3)
-    assert X[3, -2] == pytest.approx(2 / 3)
-    assert y.tolist() == [0, 1, 1, 0]
+def test_a_training_suspect_gets_its_prior_from_the_other_books_only():
+    a = _suspect("zei", "zei’", "zei’", 0.9)
+    b = _suspect("zag", "zag’", "zag’", 0.9)
+    c = _suspect("zat", "zat’", "zat’", 0.9)
+    right = [[False, True], [True, False], [False, True]]
+    X, y = trust.training_matrix([a, b, c], right, ["x", "y", "z"])
+    # a's other version sees b's and c's labels (1 of 2), b's sees a's and c's (2 of 2).
+    assert X[1, -2] == pytest.approx(2 / 4)
+    assert X[3, -2] == pytest.approx(3 / 4)
+    assert X[5, -2] == pytest.approx(2 / 4)
+    assert y.tolist() == [0, 1, 1, 0, 0, 1]
 
 
 def test_a_saved_model_of_another_width_stops_the_build_instead_of_being_skipped(tmp_path):

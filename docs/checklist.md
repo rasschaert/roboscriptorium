@@ -286,10 +286,11 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       by `quality` and `bench` as a question source
 - [x] The substitution-pair prior in `trust.py` (model version 3, 23 features): the exact
       (layer → reading) difference, target-encoded from the training books, a pair counted
-      when seen in ≥ 2 books, each training row's own label left out. Leave one book out,
+      when seen in ≥ 2 books, each training book's priors from the other books only (Opus's
+      point: with only the row's own label out, [117, 50, 31, 11]). Leave one book out,
       silent errors summed over nine books at 0/.25/.5/1 questions a page: trees [153, 87,
-      44, 23] → [117, 50, 31, 11]; at the rule's questions 7 → 6; stable to one more book
-      left out (0–4). The trainer's logistic variant with the prior: [94, 43, 29, 15]
+      44, 23] → [110, 48, 25, 10]; at the rule's questions 7 → 7; stable to one more book
+      left out (0–3). The trainer's logistic variant with the prior: [94, 43, 29, 15]
 - [ ] Its own bench step after the baseline (3): baseline, trust without the prior (an
       empty table), trust with it. The saved model is still version 1: `--save` once the
       tuning data is complete, then both benches

@@ -3,9 +3,8 @@
 The prior (`trust.pairs_table`, `trust.prior`): how often, in the training books, a
 version differing from the layer's by exactly this substitution ('' → '’', '|' → 'I',
 'é' → 'ë') was the print. A pair counts when seen in at least `trust.MIN_BOOKS`
-training books (`--min-books` overrides), and a training suspect is scored without its
-own label (`trust.training_matrix`; counted in, the trees leaned on the prior and did
-worse).
+training books (`--min-books` overrides), and a training book's suspects get their priors
+from the other training books only (`trust.training_matrix`), as a scored book's do.
 
 Per book, as `train_ocr_trust.py` prints: silent errors (the chosen version wrong) at the
 fixed rule's own number of questions and at budgets of 0, 0.25, 0.5 and 1 question per
@@ -83,7 +82,11 @@ def per_suspect(rows, probs, owner) -> list[np.ndarray]:
 def scored(train: list[dict], rows: list[dict], with_prior: bool) -> list[np.ndarray]:
     suspects, right = [r["s"] for r in train], [r["right"] for r in train]
     pairs = trust.pairs_table(suspects, right, [r["book"] for r in train]) if with_prior else {}
-    X, y = trust.training_matrix(suspects, right, pairs)
+    X, y = (
+        trust.training_matrix(suspects, right, [r["book"] for r in train])
+        if with_prior
+        else trust.training_matrix(suspects, right, [""] * len(train))
+    )
     Xt, owner = [], []
     for i, r in enumerate(rows):
         for k in range(len(r["right"])):
@@ -112,7 +115,7 @@ def rule(rows) -> tuple[int, int]:
 
 books = {name: rows_of(name) for name in SPECS if usable(name)}
 print("books:", ", ".join(f"{n} {len(r)}" for n, r in books.items()))
-print(f"a pair counts when seen in ≥ {trust.MIN_BOOKS} training books\n")
+print(f"a pair counts when seen in ≥ {trust.MIN_BOOKS} training books; a training book's priors come from the other books\n")
 
 if PER_BOOK:
     print(f"pair {PER_BOOK} per book (other version the print / seen):")
