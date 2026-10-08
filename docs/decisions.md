@@ -885,3 +885,8 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   (`ROBO_READ_VIA`, each marked) are therefore trained and benched alongside local ones.
   The crop fix itself is neutral for local Qwen there (722 → 720 exact; CER 0.20% →
   0.18%); its gain is glm-ocr's, and hosted Qwen's habit of reading the next line.
+- 2026-10-08: `train_ocr_trust.py` trains only on data that exists and holds every
+  current reading, and its leave-one-out analysis no longer trains on validation books
+  (it did, though `--save` never has: the numbers changes were chosen on had seen De
+  tuin's and Grand Hotel's labels). Loading a missing book used to start its cold build;
+  `--save` now refuses while tuning data is missing (`--partial` to override).

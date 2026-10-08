@@ -281,7 +281,8 @@ right, then expand.
     for the fixed rule); a missing model, or one saved for another version or
     feature width (`MODEL_VERSION`, `FEATURES`), stops the build. The model lives
     in `work/models/ocr-trust.pkl`, trained by `experiments/train_ocr_trust.py
-    --save` on the tuning books' suspects, never the validation ones
+    --save` on the tuning books' suspects, never the validation ones (it refuses while a
+    tuning book's data is missing or built before the current readings)
     (`experiments/ocr_trust_data.py`).
   - `typography.py`: the book's dash style (en or em; no, thin or word spacing),
     from `book.toml` (`dash`, `dash_spacing`) or, on a scan, measured on the page

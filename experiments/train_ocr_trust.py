@@ -11,7 +11,14 @@ more training book left out, for stability.
 
 `--save` trains on the tuning books (never the held-out ones) and writes the model
 the pipeline uses (ROBO_OCR_TRUST=1); with a copy trained without each tuning book,
-which `roboscriptorium bench` scores that book with.
+which `roboscriptorium bench` scores that book with. It refuses while a tuning book's
+data is missing or stale (`--partial` saves anyway).
+
+Only books whose data exists and was built with every current reading are used:
+loading a missing one would start a cold build of it. Validation books are scored but
+never trained on, here as in `--save`. Per book it also prints how often each judge
+picks the labelled version: a book where winnow, which reads only the sentence, beats
+clef, which reads the crop, has a reference more standard than its print.
 """
 
 import sys
@@ -19,7 +26,7 @@ from collections import Counter
 from pathlib import Path
 
 import numpy as np
-from ocr_trust_data import SPECS, load, suspect
+from ocr_trust_data import OUT, SPECS, load, suspect
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
@@ -95,17 +102,54 @@ def scored(make, train_names, rows):
     return per_suspect(rows, make().fit(X, y).predict_proba(Xt)[:, 1], owner)
 
 
-books = {name: rows_of(name) for name in SPECS}
+# Every reading the OCR check now makes; data built before one of them lacks its support.
+READINGS = {"glm", "tess", "qwen"}
+
+
+def usable(name: str) -> str:
+    """Why a book's data can't be used, or "" when it can."""
+    if not (OUT / f"{name}.json").exists():
+        return "no data yet"
+    rows = load(name)
+    if rows and not READINGS <= set(rows[0]["suspect"]["support"]):
+        return "built before the current readings"
+    return ""
+
+
+def trainable(name: str) -> bool:
+    return name.split("--")[0] not in HELD_OUT
+
+
+skipped = {name: why for name in SPECS if (why := usable(name))}
+books = {name: rows_of(name) for name in SPECS if name not in skipped}
+for name, why in skipped.items():
+    print(f"skipped {name}: {why}")
+
+print(f"\n{'book':40} {'settled':>7} {'clef':>5} {'winnow':>6}")
+for name, rows in books.items():
+    def right(judge: str) -> int:
+        return sum(
+            r["s"].votes.get(judge) in {v for v, ok in zip([r["s"].ours, *r["s"].others], r["right"], strict=True) if ok}
+            for r in rows
+        )
+    clef, winnow = right("clef:27b"), right("winnow:e4b")
+    flag = "  << winnow ahead: is the reference more standard than the print?" if winnow >= clef else ""
+    print(f"{name[:40]:40} {len(rows):7} {clef / max(1, len(rows)):5.0%} {winnow / max(1, len(rows)):6.0%}{flag}")
+print()
+
 if "--save" in sys.argv:
+    missing = [n for n in skipped if trainable(n)]
+    if missing and "--partial" not in sys.argv:
+        sys.exit(f"not saving: tuning data missing or stale for {', '.join(missing)} (--partial to save anyway)")
     # The model the pipeline uses, and one without each tuning book, which `bench`
     # scores that book with.
-    tuning = [n for n in books if n.split("--")[0] not in HELD_OUT and n != "stella"]
+    tuning = [n for n in books if trainable(n) and n != "stella"]
     path = Path(Settings.from_env().ocr_trust_model)
     for without in [None, *tuning]:
         every = [
             r
             for name, rows in books.items()
-            if name != without and name.split("--")[0] not in HELD_OUT
+            if name != without and trainable(name)
             for r in rows
         ]
         model = trust.train([r["s"] for r in every], [r["right"] for r in every])
@@ -124,7 +168,7 @@ for name, rows in books.items():
     pages = pages_of(name)
     cells = []
     for label, make in MODELS.items():
-        ps = scored(make, [n for n in books if n != name], rows)
+        ps = scored(make, [n for n in books if n != name and trainable(n)], rows)
         same = silent_at(rows, ps, asked)
         curve = [silent_at(rows, ps, int(b * pages)) for b in BUDGETS]
         totals[label] += same
@@ -137,8 +181,8 @@ print("\nstability (trees, silent at the rule's questions, one more training boo
 for name, rows in books.items():
     asked = rule(rows)[1]
     spread = [
-        silent_at(rows, scored(MODELS["trees"], [n for n in books if n not in (name, drop)], rows), asked)
+        silent_at(rows, scored(MODELS["trees"], [n for n in books if n not in (name, drop) and trainable(n)], rows), asked)
         for drop in books
-        if drop != name
+        if drop != name and trainable(drop)
     ]
     print(f"  {name[:34]:34} {min(spread)}–{max(spread)}")

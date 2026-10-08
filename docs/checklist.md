@@ -234,9 +234,13 @@ danger is that it edits the author. Guards, all of them:
 
 - [ ] A book-quality feature (winnow's alarm is worthless on clean books): after
       the slip-rate answers in 4
-- [ ] Per book, clef against winnow on the trust data, printed by `train_ocr_trust.py`:
-      a book where the sentence judge beats the crop judge has a reference more standard
-      than its print (Lady into Fox: clef 36%, winnow 89%; every other book clef ahead)
+- [x] Per book, clef against winnow on the trust data, printed by `train_ocr_trust.py`,
+      a book flagged where winnow is ahead (Lady into Fox: clef 36%, winnow 89%; every
+      current book clef ahead)
+- [x] `train_ocr_trust.py` uses only data that exists and has every current reading
+      (it used to start a cold build of a missing book, and Reis's pre-Qwen data would
+      have taught "Qwen never backs a version"); its leave-one-out analysis no longer
+      trains on validation books; `--save` refuses while tuning data is missing
 - [ ] Thief-Taker's suspects in the trust data, pp. 11–84 (chapters 1–22, its
       `bench tuning` slice): ~1.4 h cold
 
