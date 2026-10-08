@@ -140,7 +140,7 @@ for name, rows in books.items():
             r["s"].votes.get(judge) in {v for v, ok in zip([r["s"].ours, *r["s"].others], r["right"], strict=True) if ok}
             for r in rows
         )
-    clef, winnow = right("clef:27b"), right("winnow:e4b")
+    clef, winnow = right(Settings().judge_model), right(Settings().check_model)
     flag = "  << winnow ahead: is the reference more standard than the print?" if winnow >= clef else ""
     print(f"{name[:40]:40} {len(rows):7} {clef / max(1, len(rows)):5.0%} {winnow / max(1, len(rows)):6.0%}{flag}")
 print()

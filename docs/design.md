@@ -6,9 +6,8 @@ dated history behind each line is in [decisions.md](decisions.md).
 
 Numbers marked *trust data* come from the OCR check's labelled suspects
 (`experiments/ocr_trust_data.py`, each version labelled from the aligned golden
-text, settled ones only): 2,514 over eight books on 2026-10-07, Lady into Fox left
-out (its labels differ from its print in typography; see winnow below; it is in
-reserve now, never trained on).
+text, settled ones only): 5,412 over 14 books on 2026-10-09, the three validation books
+among them (counted here, never trained on).
 
 ## The text layer is one reading, not the truth
 
@@ -60,19 +59,20 @@ back a version, so these are left to trust and the bench, with no rule of their 
 
 **Two judges where the readings differ.**
 
-- *clef:27b looks at the crop.* It is the judge that is usually right: 2,236 of
-  2,514 alone (89%, trust data). Told the book's typesetting and given options in
-  ⟨ ⟩ rather than “ ”, it picks right more often on typography (Goede dochter 92 →
-  98 of 102).
-- *winnow:e4b reads the sentence, not the image.* It is a poor judge alone (1,596
-  of 2,514, 63%) and is kept as **an alarm on clef**: where winnow agrees with
-  clef, clef is wrong on 58 of 1,495 (4%); where it disagrees, on 220 of
-  1,019 (22%). The alarm works on every book but the cleanest: on Goede dochter clef is
-  wrong 13/170 against 12/191, no lift. On Lady into Fox winnow even beats clef
-  (132 against 54 of 149), but that book's labels differ from its print in
-  typography, so the number measures the reference more than the judges, and the book
-  is left out of these totals. Told the
-  book's style winnow got worse on Goede dochter (91 → 84 of 200), so it isn't.
+- *clef:27b looks at the crop.* It is the judge that is usually right: 4,846 of
+  5,412 alone (90%, trust data of 14 books, 2026-10-09). Told the book's typesetting
+  and given options in ⟨ ⟩ rather than “ ”, it picks right more often on typography
+  (Goede dochter 92 → 98 of 102).
+- *winnow (`winnow-ollama:e4b`) reads the sentence, not the image.* It is a poor judge
+  alone (3,610 of 5,412, 67%) and is kept as **an alarm on clef**: where winnow agrees
+  with clef, clef is wrong on 141 of 3,363 (4%); where it disagrees, on 425 of 2,049
+  (21%). The alarm works on 12 of 14 books, Goede dochter included (2/265 against
+  23/112); it is weak on 11/22/63 (12% against 17%) and reversed on Stella's 65
+  suspects (8/40 against 2/25). Its Ollaya build, the one before it, got 63% alone
+  with a 4% / 22% alarm and none on Goede dochter. Lady into Fox, whose labels
+  differ from its print in typography, favoured winnow over clef there, which measured
+  the reference more than the judges; it is in no set now. Told the book's style, the
+  Ollaya build got worse on Goede dochter (91 → 84 of 200), so it isn't.
 - *The word list is a vote, not a judge.* Where it knows only one version's words
   it is nearly always right, but acting on it added unasked errors on two
   validation books (lost compounds, stress accents). It is shown to the reviewer

@@ -60,3 +60,7 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | tryout: judge v1, imajev 2B via llama.cpp + readout, alongside 1 run | 518 | 1 | 0 |
 | 2026-10-09 | tryout: judge v1, imajev 4B via llama.cpp + readout, alongside 1 run | 518 | 2 | 0 |
 | 2026-10-09 | tryout: judge v1, imajev 9B via llama.cpp + readout, alongside 1 run | 518 | 4 | 0 |
+| 2026-10-09 | trust data, 12 books, winnow-ollama:e4b as check_model, readings cached, alongside 1 run (11 books; stopped on Stella, DeepInfra down) | 1200 | 61 | 143 |
+| 2026-10-09 | trust data, Stella, winnow-ollama:e4b as check_model, local Qwen for the uncached lines | 67 | 4 | 0 |
+| 2026-10-09 | bench tuning, winnow-ollama + book-wide style, retrained trust, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, first run (baseline), winnow-ollama, retrained trust | 250 | 0 | 0 |

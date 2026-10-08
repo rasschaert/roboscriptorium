@@ -152,9 +152,14 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       prompt are now kept aside, and the style is measured on the whole body; tested
       through `pipeline.run`. Vals alarm and Dolittle get a new prompt: their trust data
       rebuilt with hosted Qwen (the user's go for tonight's Qwen reads)
-  - [ ] `bench tuning` against the ellipsis run, with the winnow switch (Ollaya is gone,
-        so the two are measured together): ~1 min warm
-- [ ] `bench validation`
+  - [x] `bench tuning` against the ellipsis run, with the winnow switch (Ollaya is gone,
+        so the two are measured together): 1 min warm. **No change**: after review 1.00 →
+        1.02 [−0.02, +0.07], no veto; 11/22/63 before review 7.23 → 6.08 (the book-wide
+        ellipsis style), the arbiter asking those lines already. Trust data first: 61 min
+        for 11 books, then Stella stalled on DeepInfra (down, 0% uptime on OpenRouter) and
+        was finished by local Qwen in 4 min
+- [x] `bench validation`: <1 min warm, the first run, so the baseline (after review: De
+      tuin 0.79, De eerlijke vinder 1.28, You're Never Weird 1.07, Villa Toscane 0.12)
 - [ ] **Decide:** keep Qwen's third reading and short lines only if the bench says so
 - [ ] Re-ask ~200 cached clef answers and count the flips (answer variance): ~15 min
 
@@ -378,7 +383,7 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
 - [ ] A judge set and a sorter set like the reader set, versioned the same way
   - [x] The judge role in `experiments/tryout.py`: settled suspects of the tuning slices,
         the vision judge's exact questions and crops, 25 it gets wrong and 25 right a book
-  - [ ] Build judge set v1 once the winnow trust data is in: a cached rerun, ~15 min
+  - [x] Build judge set v1 once the winnow trust data is in: 518 suspects
   - [ ] imajev (mindchain, Qwen3.5 vision decision models, 2B/4B/9B Q8_0) for the vision
         judge against clef:27b. Ollama's systemone takes no images for GGUF models and a
         GGUF lacks imajev's trained readout, so it runs through llama.cpp on Ollama's blobs
@@ -388,9 +393,11 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
         where it disagrees (winnow: 4% / 22%), and the 4B's own pick is right on 139 of the
         150 clef errors it flags. The 9B: 82.4%, weaker as an alarm on English books; the
         4B is the one to try in the pipeline
-    - [ ] As a third judge beside clef and winnow (the screen says it adds): `trust.py`
-          takes the judges by position, two of them; widen it to three, rebuild the trust
-          data with imajev's answers (llama.cpp beside the runs), retrain, bench
+    - [ ] As a third judge beside clef and winnow (the screen says it adds)
+      - [x] `trust.py` takes three judges by position (`ROBO_ALARM_MODEL`, off by default)
+      - [ ] Rebuild the trust data with the 4B's answers (llama-server beside the run;
+            9,237 suspects × 0.25 s, ~40 min plus the cached pipeline), retrain, bench
+            tuning and validation against the runs without it
     - [ ] Page types from the page image (nothing decides them yet; `body_pages` in
           book.toml): the ~23 sample pages of the old page-type probe first
     - [ ] Which way a plate is up (the reviewer answers it now): Dolittle's 8 plates
