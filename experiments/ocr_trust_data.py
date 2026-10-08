@@ -21,11 +21,13 @@ from roboscriptorium.book import Book
 from roboscriptorium.cli import _range, _verdicts
 from roboscriptorium.corrections import Corrections, place
 from roboscriptorium.disagreements import patch
+from roboscriptorium.evaluate import normalise
 from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.ir import SourceRef
+from roboscriptorium.reflow import _SPACE_BEFORE_PUNCTUATION
 
 SPECS = {
     "goede-dochter--ia-scan": "9-64:1-4",
@@ -44,12 +46,11 @@ SPECS = {
     "stella": "answers",
 }
 OUT = Path("work/probes/ocr-trust")
-_FOLD = str.maketrans("‘’“”¬–", "''\"\"-—")
-
-
 def fold(text: str) -> str:
-    """Text compared as typography aside: quote style, dashes, ellipses, spaced quotes."""
-    text = re.sub(r"\s+", " ", text.translate(_FOLD).replace("…", "...")).strip()
+    """Text compared as the score compares it (`evaluate.normalise`: quote and dash
+    glyphs, ellipses, spaced dots), with what reflow sets anyway folded too: a break
+    hyphen, spaces before punctuation, spaced quotes."""
+    text = _SPACE_BEFORE_PUNCTUATION.sub(r"\1", normalise(text.replace("¬", "-")))
     return re.sub(r"(^|\s)(['\"]+) ", r"\1\2", re.sub(r" (['\"]+)(\s|$)", r"\1\2", text))
 
 

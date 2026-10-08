@@ -778,3 +778,9 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   calls body, recorded in the run and a book past 3× the set's median CER or 5%
   unplaced named as a suspect pair. Over all lines, as `golden_overview.py` counts,
   page furniture is unplaced by design and seven books pass 5% (Afscheid 11%).
+- 2026-10-08: The trust labeller compares a version to the truth through
+  `evaluate.normalise` plus reflow's space-before-punctuation rule, not a fold of its
+  own. Its own fold lacked spaced dots and spaced punctuation, so on the 1920s books
+  the faithful `you. . . .` and `listen :` were labelled wrong (Crime 20 labels change,
+  Dolittle 37, mostly to unsettled: versions that differ only in what the output sets
+  anyway carry no label).
