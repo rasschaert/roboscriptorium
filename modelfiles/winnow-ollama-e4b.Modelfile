@@ -1,0 +1,11 @@
+# winnow:e4b's Hugging Face build as a decision model on Ollama's /v1/systemone.
+# Pull the weights first (the user runs this): ollama pull hf.co/EldanRing/Winnow-E4B:Q8_0
+# Then: ollama create winnow-ollama:e4b -f modelfiles/winnow-ollama-e4b.Modelfile
+# A pulled GGUF has only completion capabilities; the CAPABILITY lines, copied from
+# clef-flash's Modelfile, make /v1/systemone accept it. Ollama then builds the decision
+# prompt itself, not in winnow's trained layout (winnow-inference native/protocol.h).
+FROM hf.co/EldanRing/Winnow-E4B:Q8_0
+TEMPLATE {{ .Prompt }}
+CAPABILITY decision
+CAPABILITY vision
+PARAMETER num_ctx 16384

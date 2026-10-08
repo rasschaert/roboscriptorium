@@ -21,7 +21,7 @@ from roboscriptorium.roles import DecisionCache  # noqa: E402
 name, spec, model = sys.argv[1:4]
 settings = Settings.from_env()
 other = ollaya.for_model(model, settings.ollaya_url, settings.ollama_url)
-out = Path("work/probes/second-judge") / f"{name}-{model.replace(':', '-')}.json"
+out = Path("work/probes/second-judge") / f"{name}-{model.replace(':', '-').replace('/', '_')}.json"
 out.parent.mkdir(parents=True, exist_ok=True)
 answers = json.loads(out.read_text()) if out.exists() else {}
 asked = {}  # (page, line, first line) -> {"judge", "check", "other"} answers

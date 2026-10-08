@@ -16,8 +16,9 @@ import httpx
 from roboscriptorium.clients import openrouter
 from roboscriptorium.clients.retry import patiently
 
-# Decision models with these name prefixes are served by Ollama's /v1/systemone.
-OLLAMA_PREFIXES = ("clef",)
+# Decision models with these name prefixes are served by Ollama's /v1/systemone: clef,
+# and winnow's Hugging Face build made a decision model there (modelfiles/).
+OLLAMA_PREFIXES = ("clef", "winnow-ollama")
 
 
 def choice(instructions: str, criteria: dict[str, str]) -> dict[str, Any]:

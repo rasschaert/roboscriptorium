@@ -967,3 +967,11 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   page. It marks body lines near pictures as captions and misses the drawn initials.
   Not adopted; the class mapping is ours, but fitting it until it wins would tune the
   screen to the candidate.
+- 2026-10-08: winnow on Ollama, to stop depending on Ollaya. Its Hugging Face GGUF pulls
+  into Ollama as a completion model, which `/v1/systemone` refuses; a Modelfile adding
+  clef-flash's `CAPABILITY decision` lines makes it answer (`modelfiles/`). Ollama then
+  builds its own decision prompt, not winnow's trained one (`native/protocol.h` in
+  EldanRing/winnow-inference), and on a test question was far surer (0.97 against
+  Ollaya's 0.63 for the same pick). Measured against Ollaya's build on cached suspects
+  before any use; if it falls short, the fallback is our own client rendering winnow's
+  protocol to `/api/generate` and reading the letter's log-probability.

@@ -487,6 +487,17 @@ schedel before choosing an OCR model.
   (`pdfinfo`, `pdftotext`, `pdfimages`).
 - epubcheck (Homebrew).
 - d2 (Homebrew), renders `docs/pipeline.d2` to the README's diagram.
+- `winnow-ollama:e4b` (Ollama, 2026-10-08): winnow:e4b's Hugging Face GGUF
+  (`hf.co/EldanRing/Winnow-E4B:Q8_0`, pulled by the user) made a decision model with
+  `modelfiles/winnow-ollama-e4b.Modelfile`. **A workaround:** a pulled GGUF has no
+  `decision` capability, so `/v1/systemone` refuses it ("does not support decision");
+  the Modelfile adds `CAPABILITY decision` and `CAPABILITY vision` and an empty
+  `TEMPLATE {{ .Prompt }}`, copied from clef-flash's. Ollama then renders the decision
+  prompt its own way (95 input tokens on a test question against Ollaya's 109), not in
+  the layout winnow was trained on (EldanRing/winnow-inference `native/protocol.h`:
+  Gemma turns, a fixed system prompt, `State:`, `Question:`, lettered `Options:`, the
+  answer read from the letter's logit). Routed by name (`OLLAMA_PREFIXES`). Not used
+  by the pipeline until it measures equal to Ollaya's build.
 - scikit-learn (Python dep) for the line-role classifier probe.
 - Dependency group `layout` (a default group, so plain `uv run` has it): `doclayout-yolo` with
   PyTorch, and the DocLayout-YOLO DocStructBench weights

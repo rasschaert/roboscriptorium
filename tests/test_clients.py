@@ -72,3 +72,8 @@ def test_for_model_routes_clef_to_ollama():
     winnow = ollaya.for_model("winnow:e4b", "http://ollaya", "http://ollama")
     assert (str(clef._http.base_url), clef.endpoint) == ("http://ollama", "/v1/systemone")
     assert (str(winnow._http.base_url), winnow.endpoint) == ("http://ollaya", "/api/decide")
+
+
+def test_for_model_routes_winnows_ollama_build_to_ollama():
+    pulled = ollaya.for_model("winnow-ollama:e4b", "http://ollaya", "http://ollama")
+    assert (str(pulled._http.base_url), pulled.endpoint) == ("http://ollama", "/v1/systemone")
