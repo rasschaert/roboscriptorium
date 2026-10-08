@@ -397,6 +397,12 @@ against the one playing it, and record it in the Models table with its role. A n
 reader or judge reaches the arbiter only after the trust data is rebuilt and the
 arbiter retrained.
 
+**Every new model gets two questions.** Can it replace a model in a role we have? And
+could the application improve by *adding* it: as another reader or judge beside the
+ones in use, which the arbiter weighs, or as the model for a decision still made by
+hand, by `book.toml` or by a rule (page types, which way a plate is up, a washed-out
+page)? List both kinds of use, rank them by what they could gain, and screen the best.
+
 Two kinds of model, used for different jobs:
 
 - **Decision models ("System One")**, on Ollama's `/v1/systemone`. Answer bounded

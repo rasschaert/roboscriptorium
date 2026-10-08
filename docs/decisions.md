@@ -996,3 +996,4 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   in the Models table as history. Because the Ollaya winnow can't answer any more, the
   whole-body style change (a43b008) and the winnow switch are benched together against
   the ellipsis run, not apart.
+- 2026-10-08: Every new model gets two questions, by the user's rule: can it replace a model in a role, and could adding it anywhere in the workflow improve the application (AGENTS.md, Model roles).
