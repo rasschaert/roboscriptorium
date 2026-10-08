@@ -1,5 +1,7 @@
-"""OCR of page regions with tesseract, for drafts a human then corrects."""
+"""OCR with tesseract: drafts of page regions a human then corrects, and the words of a
+page with their boxes."""
 
+import csv
 import io
 import re
 import subprocess
@@ -51,3 +53,21 @@ def tesseract(png: bytes, lang: str, single_char: bool = False, tsv: bool = Fals
         cmd += ["-c", "tessedit_create_tsv=1"]
     result = subprocess.run(cmd, input=png, capture_output=True, check=True)
     return result.stdout.decode().strip()
+
+
+def tesseract_words(
+    png: bytes, lang: str, dpi: int
+) -> list[tuple[str, float, float, float, float]]:
+    """Tesseract's words in an image rendered at `dpi`, each with its box in points."""
+    out = tesseract(png, lang, tsv=True)
+    rows = csv.DictReader(io.StringIO(out), delimiter="\t", quoting=csv.QUOTE_NONE)
+    if out and "level" not in (rows.fieldnames or []):
+        raise ValueError(f"tesseract gave no word table: {out[:200]!r}")
+    scale = 72 / dpi
+    words = []
+    for row in rows:
+        text = (row.get("text") or "").strip()
+        if row["level"] == "5" and text:
+            x, y, w, h = (int(row[k]) * scale for k in ("left", "top", "width", "height"))
+            words.append((text, x, y, x + w, y + h))
+    return words

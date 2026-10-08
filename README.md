@@ -5,8 +5,8 @@ entirely on local AI (generative models on Ollama; decision models on Ollaya and
 Ollama's systemone endpoint).
 
 It takes searchable PDFs (a scan with an OCR text layer, as the Internet Archive
-makes them) and born-digital ones (made from the typeset text). Image-only scans,
-without a text layer, aren't supported yet.
+makes them) and born-digital ones (made from the typeset text). An image-only scan,
+without a text layer, gets its first reading from tesseract.
 
 ![From PDF to EPUB: the stages and the model behind each](docs/pipeline.svg)
 

@@ -167,7 +167,9 @@ right, then expand.
     for the judge), its answers cached under the local name with `via`. `experiments/probe_line_reader.py`
     compares it with the local readings of a book.
   - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
-  - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages.
+  - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages. An
+    image-only PDF, given the book's language, is read by tesseract instead
+    (`first_reading`), its words grouped into lines as an OCR layer's are.
   - `page.py`: what a page's layout says without a model, shared by roles,
     flags and reflow: geometry, edge lines, text repeated across pages, sunk
     pages, printed page numbers, heading labels and numerals, garbled lines.
@@ -400,6 +402,12 @@ needs new text, use Ollama.** Never prompt an LLM and parse its prose for a
 decision that Ollaya can make.
 
 ### Ollaya
+
+Ollaya serves one model the pipeline uses, winnow:e4b (the second judge); clef and
+clef-flash already run on Ollama's `/v1/systemone`, and every question is a `choice`.
+**At the start of a session, check whether Ollama now offers winnow** (or any model
+we only get from Ollaya). If it does, try it for its role against the Ollaya build,
+and where it holds up, move it and stop depending on Ollaya.
 
 - Desktop app (`Ollaya.app`) plus the CLI at `/usr/local/bin/ollaya` (it may not be
   on the agent shell's PATH). Serves at `http://127.0.0.1:11435`.

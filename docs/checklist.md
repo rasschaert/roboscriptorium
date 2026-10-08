@@ -81,12 +81,13 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
       build hardly reads the image (70% same pick, right on 275 of 377 against local's
       352); Cloudflare's 96.2% same, 348 right, shift 0.063. **Fails all three: clef stays
       local.** The client stays (`ROBO_JUDGE_VIA`), for a later build
-- [ ] Reis om mijn schedel, pp. 11–110 (tuning, **running**): ~1 h with Qwen via hosted. Its data from before Qwen
-      must not be trained on until then (it has no Qwen support)
+- [x] Reis om mijn schedel, pp. 11–110 (tuning): 46 min, Qwen via hosted. 480 suspects,
+      363 with a clear label, layer wrong on 94
 - [ ] De eerlijke vinder, pp. 12–95 (validation, held out, **running**): ~1.5 h cold,
       Qwen via hosted
-- [ ] You're Never Weird on the Internet, pp. 13–94 (validation, held out, **running**):
-      ~1.6 h cold, Qwen via hosted
+- [x] You're Never Weird on the Internet, pp. 13–94 (validation, held out): 66 min,
+      Qwen via hosted. 317 suspects, 283 with a clear label, layer wrong on 87 (lost
+      apostrophes, `Fie` for "He", missing spaces, real-word slips); clef right on 268
 
 ## 2b. New golden pairs (Fable's session, ended; its steps are this session's now)
 
@@ -340,6 +341,27 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       at .25/.5/1 a page over nine books 50/31/11 → 47/30/11, Vals alarm 7/6/1 → 5/5/1
       (its lost full stop before a closing quote, 47×, is in no other book). After the
       slip-rate review; its review-page form is one question per pattern, applied to all
+
+## 6c. Tryouts: a model screened for a role before the bench
+
+- [x] Reader set v1 frozen (`experiments/tryout.py`, `tryouts/reader-v1.json`): 550
+      lines of the tuning slices, 30 the layer reads wrong and 20 it reads right a book
+- [ ] gemma4 on the reader screen, the known-worse check of the screen itself:
+      ~10 min, once the trust-data runs are done (needs local qwen3.8 for 111 lines)
+- [x] PP-DocLayoutV3 as the spotter, Dolittle pp. 23–88 scored downstream: worse
+      (CER 1.22% → 1.71%), not adopted
+- [ ] winnow:12b as the second judge on the cached suspects (`probe_second_judge.py`)
+- [ ] A judge set and a sorter set like the reader set, versioned the same way
+- [ ] Session start: does Ollama offer winnow yet? If so, try it against Ollaya's
+
+## 6d. Image-only scans
+
+- [x] tesseract's first reading of an image-only PDF (`pdf.first_reading`); Goede
+      dochter pp. 9–64 with its layer removed: CER 0.35% against the IA layer's 0.20%
+- [ ] The whole pipeline on that copy, after the retrain: does the OCR check close the
+      gap? ~1 h cold (every line read anew)
+- [ ] Italics on an image-only PDF: `italics.py` takes the PDF's word boxes, which
+      it lacks; give it tesseract's
 
 ## 7. A real test set
 

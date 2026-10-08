@@ -958,3 +958,12 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   judges, arbiter (the trust model) and reviewer, in docs/how-it-works.md, the diagram
   and AGENTS.md. The user asked for it as a shared vocabulary: a new model is tried
   for a role and measured against the one playing it.
+- 2026-10-08: An image-only PDF is read by tesseract first (`pdf.first_reading`), only when
+  the whole PDF has no text, so no searchable scan changes. On Goede dochter pp. 9–64
+  with its layer removed: CER 0.35% against the IA layer's 0.20%, unplaced lines 2.4%
+  against 2.7%. Ollaya serves only winnow:e4b; a session checks whether Ollama offers it.
+- 2026-10-08: PP-DocLayoutV3 as the spotter, scored downstream on Dolittle pp. 23–88 with
+  the arbiter and qwen3.8 off in both arms: CER 1.22% → 1.71%, wrong words 2.29 → 3.13 a
+  page. It marks body lines near pictures as captions and misses the drawn initials.
+  Not adopted; the class mapping is ours, but fitting it until it wins would tune the
+  screen to the candidate.

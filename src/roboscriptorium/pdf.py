@@ -1,9 +1,14 @@
-"""Read a PDF's existing text layer as positioned lines, and render page images."""
+"""Read a PDF's text layer as positioned lines, and render page images.
+
+An image-only PDF (a scan without a text layer) gets its first reading from tesseract,
+when the caller names the book's language: its words, grouped into visual lines as
+an OCR layer's are."""
 
 import json
 import subprocess
 import threading
 from collections import Counter, defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 
@@ -29,6 +34,10 @@ TEXT_LAYER_VERSION = 5
 PRIVATE_LIGATURES = {"ff", "fi", "fl", "ffi", "ffl", "fj", "ft", "st", "ct", "Th", "ch", "ck", "tt"}
 # Zoom for reading a word with such a glyph: born-digital text renders cleanly.
 PRIVATE_READ_ZOOM = 6
+# The first reading of an image-only PDF: the resolution tesseract reads its pages at,
+# and how many pages it reads at once.
+FIRST_READER_DPI = 300
+FIRST_READER_WORKERS = 6
 
 
 @dataclass(frozen=True)
@@ -123,7 +132,9 @@ def _core(line: dict) -> tuple[float, float]:
     return line["bbox"][1], line["bbox"][3]
 
 
-def read_text_layer(pdf: Path) -> list[PageText]:
+def read_text_layer(pdf: Path, lang: str | None = None) -> list[PageText]:
+    """The PDF's text as visual lines per page. With `lang`, an image-only PDF is read
+    by tesseract in that language instead (`first_reading`)."""
     pages = []
     with pymupdf.open(pdf) as doc:
         for index, page in enumerate(doc):
@@ -137,6 +148,8 @@ def read_text_layer(pdf: Path) -> list[PageText]:
             lines = _visual_lines(fragments, cores)
             pages.append(PageText(index + 1, page.rect.width, page.rect.height, lines))
         spelled = str.maketrans(_private_ligatures(doc))
+        if lang and not any(p.lines for p in pages):
+            pages = first_reading(doc, pages, lang)
     for page in pages:
         page.lines[:] = [replace(ln, text=ln.text.translate(spelled)) for ln in page.lines]
     return pages
@@ -194,16 +207,43 @@ def _private_ligatures(doc: pymupdf.Document) -> dict[str, str]:
     return {glyph: counts.most_common(1)[0][0] for glyph, counts in votes.items()}
 
 
-def cached_text_layer(pdf: Path, cache: Path) -> list[PageText]:
+def first_reading(doc: pymupdf.Document, pages: list[PageText], lang: str) -> list[PageText]:
+    """Pages with tesseract's words as their lines, on every page with an image."""
+    numbers = [p.number for p in pages if doc[p.number - 1].get_images()]
+    found: dict[int, list] = {}
+    # Pages are rendered on this thread (PyMuPDF isn't thread-safe); tesseract runs pooled.
+    with ThreadPoolExecutor(FIRST_READER_WORKERS) as pool:
+        for start in range(0, len(numbers), FIRST_READER_WORKERS):
+            batch = numbers[start : start + FIRST_READER_WORKERS]
+            images = [doc[n - 1].get_pixmap(dpi=FIRST_READER_DPI).tobytes("png") for n in batch]
+            read = pool.map(lambda png: ocr.tesseract_words(png, lang, FIRST_READER_DPI), images)
+            found.update(zip(batch, read, strict=True))
+    return [
+        replace(p, lines=_visual_lines([Line(w[0], *w[1:]) for w in found[p.number]]))
+        if p.number in found
+        else p
+        for p in pages
+    ]
+
+
+def cached_text_layer(pdf: Path, cache: Path, lang: str | None = None) -> list[PageText]:
+    """`read_text_layer`, cached. A cache without lines, written without `lang`, is read
+    again when a caller gives one: the PDF may be image-only."""
     if cache.exists():
         raw = json.loads(cache.read_text())
         if isinstance(raw, dict) and raw.get("version") == TEXT_LAYER_VERSION:
-            return [
+            pages = [
                 PageText(p["number"], p["width"], p["height"], [Line(**ln) for ln in p["lines"]])
                 for p in raw["pages"]
             ]
-    pages = read_text_layer(pdf)
-    blob = {"version": TEXT_LAYER_VERSION, "pages": [asdict(p) for p in pages]}
+            if lang is None or any(p.lines for p in pages) or raw.get("first_reader") == lang:
+                return pages
+    pages = read_text_layer(pdf, lang)
+    blob = {
+        "version": TEXT_LAYER_VERSION,
+        "first_reader": lang or "",
+        "pages": [asdict(p) for p in pages],
+    }
     write_atomic(cache, json.dumps(blob, ensure_ascii=False, indent=1))
     return pages
 

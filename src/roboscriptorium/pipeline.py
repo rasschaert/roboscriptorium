@@ -76,7 +76,7 @@ def run(
     known = lexicon.knows if lexicon is not None else None
     body = [
         p
-        for p in cached_text_layer(book.source, book.stages / "textlayer.json")
+        for p in cached_text_layer(book.source, book.stages / "textlayer.json", lang)
         if first <= p.number <= last
     ]
 

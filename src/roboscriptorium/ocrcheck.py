@@ -14,9 +14,7 @@ PDFs, whose text is exact, aren't checked.
 """
 
 import base64
-import csv
 import hashlib
-import io
 import json
 import re
 from concurrent.futures import ThreadPoolExecutor
@@ -105,7 +103,8 @@ class Suspect:
 
 
 def scanned(pdf: Path, sample: int = 10) -> bool:
-    """Whether the text layer is invisible OCR over page images (not born-digital text)."""
+    """Whether the PDF is a scan: its text is invisible OCR over page images, or it has no
+    text at all (an image-only PDF, which `pdf.first_reading` reads). Not born-digital."""
     invisible = visible = 0
     with pymupdf.open(pdf) as doc:
         step = max(1, doc.page_count // sample)
@@ -115,7 +114,7 @@ def scanned(pdf: Path, sample: int = 10) -> bool:
                     invisible += len(span["chars"])
                 else:
                     visible += len(span["chars"])
-    return invisible > visible
+    return invisible > visible or visible == 0
 
 
 def line_readings(
@@ -241,18 +240,7 @@ def tesseract_words(
 
 
 def _tesseract_page(png: bytes, lang: str) -> list[tuple[str, float, float, float, float]]:
-    out = ocr.tesseract(png, lang, tsv=True)
-    rows = csv.DictReader(io.StringIO(out), delimiter="\t", quoting=csv.QUOTE_NONE)
-    if out and "level" not in (rows.fieldnames or []):
-        raise ValueError(f"tesseract gave no word table: {out[:200]!r}")
-    scale = 72 / DPI
-    words = []
-    for row in rows:
-        text = (row.get("text") or "").strip()
-        if row["level"] == "5" and text:
-            x, y, w, h = (int(row[k]) * scale for k in ("left", "top", "width", "height"))
-            words.append((text, x, y, x + w, y + h))
-    return words
+    return ocr.tesseract_words(png, lang, DPI)
 
 
 def _by_line(boxes: list, words) -> list[list[tuple[str, float, float, float, float]]]:

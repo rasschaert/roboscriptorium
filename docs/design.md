@@ -17,6 +17,14 @@ quote marks, misreads accents and splits contractions. Every other reading exist
 to catch what it gets wrong; none replaces it, because each has errors of its own
 (bench: `experiments/bench_line_readings.py`, Goede dochter pp. 9–64).
 
+**An image-only scan's first reading is tesseract's.** It gives words with boxes, which
+the rest of the pipeline needs as lines, and it is the reader that segments a page on
+its own. Against the scan's own OCR layer, on Goede dochter pp. 9–64 with the layer
+removed and the images untouched (`experiments/probe_first_reader.py`): CER 0.35%
+against 0.20%, bare-word 0.57% against 0.44%, unplaced lines 2.4% against 2.7%. Its
+extra errors are mostly quote marks (a `’` dropped 83 times), which qwen3.8 reads best;
+whether the OCR check closes the gap is not measured yet.
+
 ## OCR check
 
 **Several readings that fail differently.** A reading only helps where it is

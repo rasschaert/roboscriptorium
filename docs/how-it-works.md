@@ -103,6 +103,9 @@ page and an identity, `SourceRef`: its page and line number.
 That identity follows the line through every later stage. A fix, an answer or a
 score always refers back to the line as the text layer had it.
 
+An image-only PDF has no text layer. tesseract, one of the readers, then reads each
+page first, and its words, grouped into visual lines, stand in for the text layer.
+
 ### The spotter
 
 The spotter (`layout.py`) looks at each page image and marks figures, captions,
