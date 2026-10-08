@@ -810,3 +810,11 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   lines, at ~10 lines a second against the Mac's 0.7. fp4 there is not our nvfp4.
 - 2026-10-08: OpenRouter only when the user explicitly allows or asks for it, per use:
   it costs money and sends the scans out. No agent starts a hosted run on its own.
+- 2026-10-08: Where a cold run's time goes, from the stage caches' times: qwen3.8's
+  reading of every line 70–75% (Dolittle 75 of 98 min, De tuin 36 of 51), clef's
+  judging 20–25%, the rest ~15–20 min per 100 pages. gemma4:latest (8B, nvfp4) as the
+  line reader, told the book's style, on Goede dochter pp. 9–20: 0.31 s a line against
+  ~1.4, but CER 0.21% (Qwen 0.10%, layer 0.13%) and quote marks wrong on 4 lines
+  against 0, so unfit. The newest open models (DeepSeek V4.1 Flash, GLM-5.3 Flash,
+  MiMo V2.6, Step 3.7 Flash) are 200–760B and don't fit in 64 GB; the mixture-of-experts
+  models that do, qwen3.6:35b-a3b and gemma4:26b (3–4B active), are being tried.

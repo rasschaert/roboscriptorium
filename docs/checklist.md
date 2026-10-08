@@ -109,6 +109,19 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [ ] **Decide:** keep Qwen's third reading and short lines only if the bench says so
 - [ ] Re-ask ~200 cached clef answers and count the flips (answer variance): ~15 min
 
+## 3b. A faster line reader (Qwen is 70–75% of a cold run)
+
+- [x] Where the time goes, from the stage caches' times: Qwen 70–75%, clef's judging
+      20–25%, everything else ~15–20 min per 100 pages
+- [x] Hosted Qwen3.8 27B (OpenRouter, Goede dochter pp. 9–20): DeepInfra bf16 reads
+      like ours, Darkbloom fp4 worse. Not used: only when the **user** says so
+- [x] gemma4:latest (8B) as the line reader: 4.5× faster, worse (quote marks wrong on
+      4 lines against 0). Unfit
+- [ ] qwen3.6:35b-a3b-nvfp4 (MoE, 3B active) and gemma4:26b-nvfp4 (MoE, 4B active) as
+      the line reader, same pages: ~10 min each once downloaded; Artemis waits on them
+- [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:
+      after the baseline bench, each measured by it
+
 ## 4. The user's part
 
 - [ ] **user** Slip rate per question kind: answer the review on Goede dochter

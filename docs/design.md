@@ -27,7 +27,12 @@ for the best score alone:
 | --- | --- | --- |
 | glm-ocr, line crop | letters and words (right where the layer is wrong on 114 of Goede dochter's lines) | drops quotes, diaereses; a word now and then |
 | tesseract, whole page | its own line segmentation, so it sees marks the layer's boxes cut off; dashes | punctuation, opening quotes |
-| qwen3.8, line crop, told the book's style | quote marks (keeps them where glm-ocr loses 31, tesseract 80) | plausible real words (`doodgaan→doorgaan`) |
+| qwen3.8, line crop, told the book's style | quote marks (keeps them where glm-ocr loses 31, tesseract 80) | plausible real words (`doodgaan→doorgaan`); its cost: 70–75% of a cold run |
+
+No faster reader matches qwen3.8 yet: gemma4 8B reads a line in a quarter of the
+time but gets quote marks wrong where Qwen doesn't (Goede dochter pp. 9–20: 4 lines
+against 0, CER 0.21% against 0.10%), and the newest open models that might
+(DeepSeek V4.1, GLM-5.3, MiMo 2.6, Step 3.7) are 200–760B, too big for this machine.
 
 glm-ocr and qwen3.8 read crops cut from the layer's boxes, so they share its
 segmentation errors; only tesseract doesn't.
