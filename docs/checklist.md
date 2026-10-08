@@ -150,6 +150,11 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       worse (quote marks wrong on no more lines than Qwen3.8's, CER within a few lines of
       it), confirmed on Metro before the switch; better but not faster: noted; faster but
       worse: out. Every candidate also goes through the crossover on Metro
+- [ ] winnow:12b as the second judge (`ROBO_CHECK_MODEL`), never tried there (only on
+      line roles: a little better than e4b, 2.6× slower): ask it the cached suspects of the
+      tuning books, text only, ~5 min a book; it earns the job if it catches more of clef's
+      misses (e4b: 31 of 46 on 11/22/63, fewer on the Dutch books). After the queue, then
+      retrain
 - [ ] MiniCPM-V 4.6 (May 2026, 1.3B, `minicpm-v4.6`), the last small candidate: after the
       baseline. A new reader only pays off by speed, since the current ones already
       cover nearly every line
