@@ -62,6 +62,8 @@ Then: `PYTHONPATH=experiments uv run python experiments/train_ocr_trust.py`
 
 ## Next steps, in order
 
+The full list, with estimates and status, is [docs/checklist.md](docs/checklist.md).
+
 1. First `bench` run with `ROBO_OCR_TRUST=0` once the rebuilds have filled the
    caches (a baseline from the fixed rule), then retrain trust and bench again
    (tuning, validation). Also: re-ask ~200 cached clef states and count flips,

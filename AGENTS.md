@@ -30,7 +30,8 @@ starting; keep it true.
 - **This file is the single source of agent instructions.** Claude Code reads
   AGENTS.md natively; don't add a `CLAUDE.md`.
 - **Read `HANDOVER.md` at the start of a session** for where work stopped, and
-  rewrite it at the end of one.
+  rewrite it at the end of one. The plan's steps, done and left, are in
+  [docs/checklist.md](docs/checklist.md): tick them off in the change that does them.
 - **Installs:** Homebrew tools, Python deps and Ollama/Ollaya models may be
   installed freely. Record each one under [Environment](#environment).
 - **Handholding first.** Prefer flagging uncertain output for human review over
