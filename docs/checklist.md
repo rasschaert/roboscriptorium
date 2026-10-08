@@ -73,6 +73,10 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [x] Artemis: chapters 1–3 (pp. 13–80) in `bench tuning`
 - [ ] Artemis's trust data (in `ocr_trust_data.py`, pp. 13–80): ~1.2 h cold, after
       Metro
+- [x] 11/22/63 (Scribner 2011), the first American scan and the heading test (386
+      headings): the prologue and chapters 1–3 (pp. 15–94) in `bench tuning`
+- [ ] 11/22/63's trust data (in `ocr_trust_data.py`, pp. 15–94): ~1.5 h cold, after
+      Artemis (English first: the line-role classifier is short of English books)
 - [ ] De cipier's trust data (in `ocr_trust_data.py`, pp. 9–92): ~1.5 h cold. Before
       the baseline, so it isn't rerun when it joins
 - [ ] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
