@@ -1,0 +1,3179 @@
+{
+ "role": "judge",
+ "version": 1,
+ "created": "2026-10-08T21:50:25+00:00",
+ "commit": "ac18082",
+ "incumbent": "clef:27b",
+ "strata": {
+  "hard": 25,
+  "control": 25,
+  "seed": 0
+ },
+ "books": {
+  "goede-dochter--ia-scan": {
+   "spec": "goede-dochter--ia-scan:9-64:1-4",
+   "settled": 377,
+   "wrong": 25
+  },
+  "vals-alarm--ia-scan": {
+   "spec": "vals-alarm--ia-scan:11-60:1-10",
+   "settled": 337,
+   "wrong": 51
+  },
+  "reis-om-mijn-schedel--ia-scan": {
+   "spec": "reis-om-mijn-schedel--ia-scan:11-110:1-11",
+   "settled": 363,
+   "wrong": 21
+  },
+  "the-nature-of-a-crime--doubleday-1924": {
+   "spec": "the-nature-of-a-crime--doubleday-1924",
+   "settled": 231,
+   "wrong": 32
+  },
+  "the-story-of-doctor-dolittle--stokes-1920": {
+   "spec": "the-story-of-doctor-dolittle--stokes-1920:23-88:1-7",
+   "settled": 215,
+   "wrong": 12
+  },
+  "the-thief-takers-apprentice--ia-scan": {
+   "spec": "the-thief-takers-apprentice--ia-scan:11-84:1-22",
+   "settled": 347,
+   "wrong": 51
+  },
+  "afscheid-van-verspilde-tijd--ia-scan": {
+   "spec": "afscheid-van-verspilde-tijd--ia-scan:9-70:1-11",
+   "settled": 240,
+   "wrong": 15
+  },
+  "metro-2033--ia-scan": {
+   "spec": "metro-2033--ia-scan:7-111:1-10",
+   "settled": 745,
+   "wrong": 65
+  },
+  "de-cipier--ia-scan": {
+   "spec": "de-cipier--ia-scan:9-92:1-4",
+   "settled": 327,
+   "wrong": 20
+  },
+  "artemis--ia-scan": {
+   "spec": "artemis--ia-scan:13-80:1-3",
+   "settled": 273,
+   "wrong": 34
+  },
+  "11-22-63--ia-scan": {
+   "spec": "11-22-63--ia-scan:15-94:1-24",
+   "settled": 319,
+   "wrong": 46
+  }
+ },
+ "items": [
+  {
+   "id": "goede-dochter--ia-scan:36:25:29",
+   "stratum": "hard",
+   "crop": "19f5092dee9c736a",
+   "question_sha": "ae24bb1e42e0ee66"
+  },
+  {
+   "id": "goede-dochter--ia-scan:37:20:33",
+   "stratum": "hard",
+   "crop": "c6464278a4f0356f",
+   "question_sha": "33469695f9d294cd"
+  },
+  {
+   "id": "goede-dochter--ia-scan:16:3:54",
+   "stratum": "hard",
+   "crop": "1e604b005cfa3cd4",
+   "question_sha": "6d26d8d5ced16a02"
+  },
+  {
+   "id": "goede-dochter--ia-scan:28:22:6",
+   "stratum": "hard",
+   "crop": "74dfa982e53c0737",
+   "question_sha": "ec41d0d479cabffa"
+  },
+  {
+   "id": "goede-dochter--ia-scan:45:14:35",
+   "stratum": "hard",
+   "crop": "6276799eb3fe6378",
+   "question_sha": "e387ee4113e3244f"
+  },
+  {
+   "id": "goede-dochter--ia-scan:41:19:19",
+   "stratum": "hard",
+   "crop": "432fac13c254ef50",
+   "question_sha": "192d0fd87f042118"
+  },
+  {
+   "id": "goede-dochter--ia-scan:60:32:22",
+   "stratum": "hard",
+   "crop": "5e43de7fd281827a",
+   "question_sha": "bc3b86dd7ef57ac7"
+  },
+  {
+   "id": "goede-dochter--ia-scan:30:13:3",
+   "stratum": "hard",
+   "crop": "dc0e30e2fed0d59d",
+   "question_sha": "e33fa68643161d1b"
+  },
+  {
+   "id": "goede-dochter--ia-scan:54:20:39",
+   "stratum": "hard",
+   "crop": "13bb98be9100b541",
+   "question_sha": "0d8e65a88742abde"
+  },
+  {
+   "id": "goede-dochter--ia-scan:36:2:24",
+   "stratum": "hard",
+   "crop": "ec49ceb3932b0a62",
+   "question_sha": "5fa395bfe21c96dd"
+  },
+  {
+   "id": "goede-dochter--ia-scan:53:20:7",
+   "stratum": "hard",
+   "crop": "2c49d31a1c44eae8",
+   "question_sha": "52d46046b075ba6a"
+  },
+  {
+   "id": "goede-dochter--ia-scan:17:9:47",
+   "stratum": "hard",
+   "crop": "7a80dda66d1432e3",
+   "question_sha": "cd0f4e69faa0b81d"
+  },
+  {
+   "id": "goede-dochter--ia-scan:59:14:24",
+   "stratum": "hard",
+   "crop": "bf10725e5f2627b4",
+   "question_sha": "5ac0e7534fb5f158"
+  },
+  {
+   "id": "goede-dochter--ia-scan:16:20:27",
+   "stratum": "hard",
+   "crop": "74dab932b04939ed",
+   "question_sha": "a7aa60aa4acf9737"
+  },
+  {
+   "id": "goede-dochter--ia-scan:21:3:68",
+   "stratum": "hard",
+   "crop": "d4bfd61019d16a82",
+   "question_sha": "56c580b95a85cab3"
+  },
+  {
+   "id": "goede-dochter--ia-scan:59:9:55",
+   "stratum": "hard",
+   "crop": "ea84c55eafbef02f",
+   "question_sha": "64f74e9c49946dcf"
+  },
+  {
+   "id": "goede-dochter--ia-scan:60:20:24",
+   "stratum": "hard",
+   "crop": "1de00a43722434cd",
+   "question_sha": "36b1051282509b70"
+  },
+  {
+   "id": "goede-dochter--ia-scan:34:13:25",
+   "stratum": "hard",
+   "crop": "acb115b489c6be9b",
+   "question_sha": "9d5fda61a49a5407"
+  },
+  {
+   "id": "goede-dochter--ia-scan:26:27:43",
+   "stratum": "hard",
+   "crop": "2a1b1771accf29d3",
+   "question_sha": "cc7a3b9b6ee3379e"
+  },
+  {
+   "id": "goede-dochter--ia-scan:24:5:26",
+   "stratum": "hard",
+   "crop": "4eccc289bec6e6a0",
+   "question_sha": "d88c36ff7f253477"
+  },
+  {
+   "id": "goede-dochter--ia-scan:26:21:12",
+   "stratum": "hard",
+   "crop": "68bbc0d387291b94",
+   "question_sha": "1105838fc872110b"
+  },
+  {
+   "id": "goede-dochter--ia-scan:54:18:51",
+   "stratum": "hard",
+   "crop": "041f27afc91c55a6",
+   "question_sha": "003c387923e4937c"
+  },
+  {
+   "id": "goede-dochter--ia-scan:60:26:66",
+   "stratum": "hard",
+   "crop": "178749b3fcb35e6d",
+   "question_sha": "9fb84bc490dfd967"
+  },
+  {
+   "id": "goede-dochter--ia-scan:12:16:11",
+   "stratum": "hard",
+   "crop": "d1031c4fc8452347",
+   "question_sha": "f216124c5f0a7540"
+  },
+  {
+   "id": "goede-dochter--ia-scan:41:2:6",
+   "stratum": "hard",
+   "crop": "0725791a7367c5e7",
+   "question_sha": "4283be66c0ba94d4"
+  },
+  {
+   "id": "goede-dochter--ia-scan:64:24:0",
+   "stratum": "control",
+   "crop": "71f406618a9d0832",
+   "question_sha": "5adbdb275183ab5c"
+  },
+  {
+   "id": "goede-dochter--ia-scan:34:6:11",
+   "stratum": "control",
+   "crop": "f013b958d9b8540f",
+   "question_sha": "0b29252120e88c84"
+  },
+  {
+   "id": "goede-dochter--ia-scan:44:12:68",
+   "stratum": "control",
+   "crop": "96c7afd3408d36ec",
+   "question_sha": "bb81f9103ffa04a3"
+  },
+  {
+   "id": "goede-dochter--ia-scan:55:29:40",
+   "stratum": "control",
+   "crop": "9143e166bf08ef4b",
+   "question_sha": "d9e23cb5cf13e650"
+  },
+  {
+   "id": "goede-dochter--ia-scan:19:5:22",
+   "stratum": "control",
+   "crop": "f7afc4181446847e",
+   "question_sha": "9388bb5383de4580"
+  },
+  {
+   "id": "goede-dochter--ia-scan:36:5:22",
+   "stratum": "control",
+   "crop": "574d4f56ba582984",
+   "question_sha": "a766b67f5dd82805"
+  },
+  {
+   "id": "goede-dochter--ia-scan:42:3:15",
+   "stratum": "control",
+   "crop": "281d1edd7e73c15f",
+   "question_sha": "75dff213a04fa5e0"
+  },
+  {
+   "id": "goede-dochter--ia-scan:33:4:31",
+   "stratum": "control",
+   "crop": "04b07543087b7a5d",
+   "question_sha": "f3dbf31ec8e1a9a3"
+  },
+  {
+   "id": "goede-dochter--ia-scan:58:17:0",
+   "stratum": "control",
+   "crop": "309920c6eb8faafc",
+   "question_sha": "8070bff3a3044855"
+  },
+  {
+   "id": "goede-dochter--ia-scan:61:20:57",
+   "stratum": "control",
+   "crop": "efa787f982abe6e9",
+   "question_sha": "afb248f4030e7685"
+  },
+  {
+   "id": "goede-dochter--ia-scan:26:1:0",
+   "stratum": "control",
+   "crop": "7fe7aa15bd81d844",
+   "question_sha": "af7e253f3be51b94"
+  },
+  {
+   "id": "goede-dochter--ia-scan:55:22:66",
+   "stratum": "control",
+   "crop": "c048bb2e597d347f",
+   "question_sha": "76ddc36274c6ad48"
+  },
+  {
+   "id": "goede-dochter--ia-scan:44:25:0",
+   "stratum": "control",
+   "crop": "a315b5d53d5d9c09",
+   "question_sha": "317808bee1ef351b"
+  },
+  {
+   "id": "goede-dochter--ia-scan:42:24:3",
+   "stratum": "control",
+   "crop": "02eb20c73b0de3dc",
+   "question_sha": "eefd04778cc1c6da"
+  },
+  {
+   "id": "goede-dochter--ia-scan:53:1:30",
+   "stratum": "control",
+   "crop": "8c77dcbf88979985",
+   "question_sha": "2d9a87cf4dbd132c"
+  },
+  {
+   "id": "goede-dochter--ia-scan:29:1:46",
+   "stratum": "control",
+   "crop": "3ed9efbbd5b262c9",
+   "question_sha": "e17563f156c21f1d"
+  },
+  {
+   "id": "goede-dochter--ia-scan:15:17:0",
+   "stratum": "control",
+   "crop": "76cfedf03da5d659",
+   "question_sha": "89c2eadb40a1b5b4"
+  },
+  {
+   "id": "goede-dochter--ia-scan:55:13:8",
+   "stratum": "control",
+   "crop": "da574b4fceb9eb8d",
+   "question_sha": "1f7a8cfa64d3b556"
+  },
+  {
+   "id": "goede-dochter--ia-scan:12:15:69",
+   "stratum": "control",
+   "crop": "c6aea2a561cad5d4",
+   "question_sha": "97afa6ef57262901"
+  },
+  {
+   "id": "goede-dochter--ia-scan:18:29:0",
+   "stratum": "control",
+   "crop": "3ab69bba005898b7",
+   "question_sha": "cba3914564deaa01"
+  },
+  {
+   "id": "goede-dochter--ia-scan:39:23:59",
+   "stratum": "control",
+   "crop": "43a8c373309fd44b",
+   "question_sha": "863e47a5c4ee8822"
+  },
+  {
+   "id": "goede-dochter--ia-scan:63:27:8",
+   "stratum": "control",
+   "crop": "9b699efd4cd1504e",
+   "question_sha": "847262daaccc125c"
+  },
+  {
+   "id": "goede-dochter--ia-scan:60:0:6",
+   "stratum": "control",
+   "crop": "eb406f21cbe4ce5f",
+   "question_sha": "39b0fe2bcbef5762"
+  },
+  {
+   "id": "goede-dochter--ia-scan:11:8:0",
+   "stratum": "control",
+   "crop": "7a12f943a1fddf4f",
+   "question_sha": "7706bce7c3c8252f"
+  },
+  {
+   "id": "goede-dochter--ia-scan:58:19:0",
+   "stratum": "control",
+   "crop": "93d26132fe9c3e5e",
+   "question_sha": "eece353df6ccf508"
+  },
+  {
+   "id": "vals-alarm--ia-scan:50:22:7",
+   "stratum": "hard",
+   "crop": "c0d50d4352a515aa",
+   "question_sha": "894cdbd98189b5d7"
+  },
+  {
+   "id": "vals-alarm--ia-scan:43:5:32",
+   "stratum": "hard",
+   "crop": "fef2bb083e75a041",
+   "question_sha": "c4bb3cace880f76e"
+  },
+  {
+   "id": "vals-alarm--ia-scan:35:27:39",
+   "stratum": "hard",
+   "crop": "95d58a8e9b8c7d99",
+   "question_sha": "4f26d0f5ba374afa"
+  },
+  {
+   "id": "vals-alarm--ia-scan:59:19:36",
+   "stratum": "hard",
+   "crop": "84c86f2346770351",
+   "question_sha": "dc0ddaa10007c014"
+  },
+  {
+   "id": "vals-alarm--ia-scan:42:21:9",
+   "stratum": "hard",
+   "crop": "933837e99bc69d1c",
+   "question_sha": "a31d56e2876ab350"
+  },
+  {
+   "id": "vals-alarm--ia-scan:59:5:30",
+   "stratum": "hard",
+   "crop": "14f7fbb81c523d74",
+   "question_sha": "317c1a5020935ef3"
+  },
+  {
+   "id": "vals-alarm--ia-scan:18:21:11",
+   "stratum": "hard",
+   "crop": "313fd722f3042924",
+   "question_sha": "bbbbee489bf048b0"
+  },
+  {
+   "id": "vals-alarm--ia-scan:34:33:50",
+   "stratum": "hard",
+   "crop": "918d09071b1b6e0d",
+   "question_sha": "58963934892fbd77"
+  },
+  {
+   "id": "vals-alarm--ia-scan:52:28:28",
+   "stratum": "hard",
+   "crop": "47978915b484890c",
+   "question_sha": "a581d71a47fd84db"
+  },
+  {
+   "id": "vals-alarm--ia-scan:35:7:12",
+   "stratum": "hard",
+   "crop": "e332280c46a2f535",
+   "question_sha": "389fde988b307e07"
+  },
+  {
+   "id": "vals-alarm--ia-scan:60:10:14",
+   "stratum": "hard",
+   "crop": "7744585ab42df562",
+   "question_sha": "e411509d0bb736d2"
+  },
+  {
+   "id": "vals-alarm--ia-scan:32:26:35",
+   "stratum": "hard",
+   "crop": "e71b9c1bd9d81630",
+   "question_sha": "d62fe3597c7026a5"
+  },
+  {
+   "id": "vals-alarm--ia-scan:51:20:4",
+   "stratum": "hard",
+   "crop": "fa12aeff75eb4cd3",
+   "question_sha": "c634d1af872f3ce2"
+  },
+  {
+   "id": "vals-alarm--ia-scan:44:21:14",
+   "stratum": "hard",
+   "crop": "30d9a99e8fcd12c5",
+   "question_sha": "abfa1a5b7be0bba1"
+  },
+  {
+   "id": "vals-alarm--ia-scan:19:0:24",
+   "stratum": "hard",
+   "crop": "31ddec99817c1c04",
+   "question_sha": "9c3d74ecec0aeb6b"
+  },
+  {
+   "id": "vals-alarm--ia-scan:58:18:32",
+   "stratum": "hard",
+   "crop": "a157712acd7c3892",
+   "question_sha": "c52a3554f159181b"
+  },
+  {
+   "id": "vals-alarm--ia-scan:59:23:5",
+   "stratum": "hard",
+   "crop": "cc61ac1c3ddca25c",
+   "question_sha": "4cb589738570b658"
+  },
+  {
+   "id": "vals-alarm--ia-scan:50:27:59",
+   "stratum": "hard",
+   "crop": "52b92d9ab4bd3316",
+   "question_sha": "e01d2afbaf2801fb"
+  },
+  {
+   "id": "vals-alarm--ia-scan:60:27:45",
+   "stratum": "hard",
+   "crop": "a46584acbd3aa9f8",
+   "question_sha": "89fc0a684e931756"
+  },
+  {
+   "id": "vals-alarm--ia-scan:29:10:15",
+   "stratum": "hard",
+   "crop": "419daa948f254982",
+   "question_sha": "ec5448137c224732"
+  },
+  {
+   "id": "vals-alarm--ia-scan:57:7:6",
+   "stratum": "hard",
+   "crop": "a0953e04c0deee1a",
+   "question_sha": "d47bc64815cc5d3b"
+  },
+  {
+   "id": "vals-alarm--ia-scan:36:31:25",
+   "stratum": "hard",
+   "crop": "06997af6803f6d5e",
+   "question_sha": "b902b3b7fd32ffbb"
+  },
+  {
+   "id": "vals-alarm--ia-scan:48:10:27",
+   "stratum": "hard",
+   "crop": "12d5ca65a0d61690",
+   "question_sha": "2d47b5ace5c91a04"
+  },
+  {
+   "id": "vals-alarm--ia-scan:43:12:39",
+   "stratum": "hard",
+   "crop": "9daa9546794df8bf",
+   "question_sha": "606f6073423da289"
+  },
+  {
+   "id": "vals-alarm--ia-scan:18:8:20",
+   "stratum": "hard",
+   "crop": "4fef62e80cad34b8",
+   "question_sha": "0ff3dd95b91a8500"
+  },
+  {
+   "id": "vals-alarm--ia-scan:60:19:0",
+   "stratum": "control",
+   "crop": "cceb1a722f4ff318",
+   "question_sha": "6a3f478975ced3cb"
+  },
+  {
+   "id": "vals-alarm--ia-scan:45:27:22",
+   "stratum": "control",
+   "crop": "503d97e67195c241",
+   "question_sha": "1fa87488eace5a68"
+  },
+  {
+   "id": "vals-alarm--ia-scan:60:5:5",
+   "stratum": "control",
+   "crop": "39a4d51b771883f5",
+   "question_sha": "a499e1f705cb50ca"
+  },
+  {
+   "id": "vals-alarm--ia-scan:33:22:16",
+   "stratum": "control",
+   "crop": "2352581e7e7b5e23",
+   "question_sha": "4f0b118696b33a28"
+  },
+  {
+   "id": "vals-alarm--ia-scan:41:17:17",
+   "stratum": "control",
+   "crop": "04229cc0002e5dea",
+   "question_sha": "0a262a5a7bea3045"
+  },
+  {
+   "id": "vals-alarm--ia-scan:55:7:34",
+   "stratum": "control",
+   "crop": "a0f35ba7f6b2c8ed",
+   "question_sha": "93c3efcc3dc97c53"
+  },
+  {
+   "id": "vals-alarm--ia-scan:21:12:44",
+   "stratum": "control",
+   "crop": "2228af9fbe57848e",
+   "question_sha": "ce913e914a7dd380"
+  },
+  {
+   "id": "vals-alarm--ia-scan:51:1:58",
+   "stratum": "control",
+   "crop": "6f1e117d0d411126",
+   "question_sha": "16b90b48ecb352bd"
+  },
+  {
+   "id": "vals-alarm--ia-scan:44:27:5",
+   "stratum": "control",
+   "crop": "0bd87a3eb4eb65ce",
+   "question_sha": "16444d2ba2ffef3c"
+  },
+  {
+   "id": "vals-alarm--ia-scan:36:12:53",
+   "stratum": "control",
+   "crop": "ff40e89f579438d2",
+   "question_sha": "a499b89573474983"
+  },
+  {
+   "id": "vals-alarm--ia-scan:41:23:46",
+   "stratum": "control",
+   "crop": "25b681ddc3a49813",
+   "question_sha": "d118b2c15c209d94"
+  },
+  {
+   "id": "vals-alarm--ia-scan:32:17:12",
+   "stratum": "control",
+   "crop": "b6d3acea091ccec9",
+   "question_sha": "755d78d79f1d31c9"
+  },
+  {
+   "id": "vals-alarm--ia-scan:32:27:33",
+   "stratum": "control",
+   "crop": "5b60c61c166aa5cb",
+   "question_sha": "adbc3ab155d4d77b"
+  },
+  {
+   "id": "vals-alarm--ia-scan:32:27:27",
+   "stratum": "control",
+   "crop": "04f35bf25730c649",
+   "question_sha": "acf4f571d88d28e4"
+  },
+  {
+   "id": "vals-alarm--ia-scan:16:1:30",
+   "stratum": "control",
+   "crop": "c7cd9da6df4dd2e8",
+   "question_sha": "b47adaaaef39f76c"
+  },
+  {
+   "id": "vals-alarm--ia-scan:38:18:51",
+   "stratum": "control",
+   "crop": "69d766989d396272",
+   "question_sha": "c2469b6cf4229e20"
+  },
+  {
+   "id": "vals-alarm--ia-scan:57:18:0",
+   "stratum": "control",
+   "crop": "d1edffae46f661ca",
+   "question_sha": "63f69bf7e2d8e7e3"
+  },
+  {
+   "id": "vals-alarm--ia-scan:20:19:15",
+   "stratum": "control",
+   "crop": "1a846f02432bf12f",
+   "question_sha": "ecd892111d32e0f1"
+  },
+  {
+   "id": "vals-alarm--ia-scan:21:11:16",
+   "stratum": "control",
+   "crop": "dedf89a8585e240a",
+   "question_sha": "025d7a9060a7072d"
+  },
+  {
+   "id": "vals-alarm--ia-scan:25:11:10",
+   "stratum": "control",
+   "crop": "1ea3e212ccd6bb46",
+   "question_sha": "fa7fb5d91c902301"
+  },
+  {
+   "id": "vals-alarm--ia-scan:28:10:0",
+   "stratum": "control",
+   "crop": "9e5ea3ae89a9c129",
+   "question_sha": "01068f4852f2bc27"
+  },
+  {
+   "id": "vals-alarm--ia-scan:17:14:46",
+   "stratum": "control",
+   "crop": "60db2d7a92f9e6f8",
+   "question_sha": "7f58fb8c6f798e9a"
+  },
+  {
+   "id": "vals-alarm--ia-scan:21:7:0",
+   "stratum": "control",
+   "crop": "4e3c37089e5e8e0b",
+   "question_sha": "0157293bd562e099"
+  },
+  {
+   "id": "vals-alarm--ia-scan:51:9:0",
+   "stratum": "control",
+   "crop": "065bc477be6a5121",
+   "question_sha": "0401a8fe8e1f03a1"
+  },
+  {
+   "id": "vals-alarm--ia-scan:59:18:13",
+   "stratum": "control",
+   "crop": "54faed044b8b4ab0",
+   "question_sha": "e404411b26f48bb3"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:44:4:36",
+   "stratum": "hard",
+   "crop": "947a317a926a1522",
+   "question_sha": "aaf32a9fbe49011b"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:87:22:35",
+   "stratum": "hard",
+   "crop": "8fba16ba459e5f88",
+   "question_sha": "e7ad6736ba7242fe"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:43:20:23",
+   "stratum": "hard",
+   "crop": "e8e751fceb3d68e1",
+   "question_sha": "c0c88c3909964d1c"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:40:20:20",
+   "stratum": "hard",
+   "crop": "81b95253183dc89e",
+   "question_sha": "fd4bce9c313e2481"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:79:21:43",
+   "stratum": "hard",
+   "crop": "0a3d29e0e98a7640",
+   "question_sha": "d5570a25afc30417"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:104:18:0",
+   "stratum": "hard",
+   "crop": "105c0bf488990ce5",
+   "question_sha": "f0ed13958196d0ac"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:92:2:0",
+   "stratum": "hard",
+   "crop": "0e9ee6884d2674e7",
+   "question_sha": "ce0d6e1aa9b3aded"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:85:14:35",
+   "stratum": "hard",
+   "crop": "da3b9a6741a84030",
+   "question_sha": "6e45001ed5c86c84"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:59:9:18",
+   "stratum": "hard",
+   "crop": "d9f02c43b783f016",
+   "question_sha": "695e59a923b4aa03"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:79:4:19",
+   "stratum": "hard",
+   "crop": "05888b54906970d9",
+   "question_sha": "6d43a69132cf6671"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:40:18:18",
+   "stratum": "hard",
+   "crop": "582b5b7f37aaa674",
+   "question_sha": "5f8cf2060952899d"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:21:8:26",
+   "stratum": "hard",
+   "crop": "a91f4fac06ab47c3",
+   "question_sha": "f583dbf8173dd630"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:66:17:0",
+   "stratum": "hard",
+   "crop": "a5ac5845f4e22999",
+   "question_sha": "e28b40a3085e9851"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:55:2:56",
+   "stratum": "hard",
+   "crop": "381407cbda85bf8c",
+   "question_sha": "a89532173c692e32"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:27:5:31",
+   "stratum": "hard",
+   "crop": "a506916ba6177edf",
+   "question_sha": "82c17b191a296baa"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:39:12:25",
+   "stratum": "hard",
+   "crop": "142a3e838f88d9a9",
+   "question_sha": "ebc9096d61778fd7"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:24:30:29",
+   "stratum": "hard",
+   "crop": "c470988161e788fb",
+   "question_sha": "63604f2ffa958721"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:94:13:5",
+   "stratum": "hard",
+   "crop": "8b7367b0a7c621c0",
+   "question_sha": "8745d36ba8bc2c7b"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:12:26:52",
+   "stratum": "hard",
+   "crop": "e8aad73016a97ed7",
+   "question_sha": "a981ea9805796043"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:86:0:21",
+   "stratum": "hard",
+   "crop": "d16a066cfa7440fc",
+   "question_sha": "373b09b752d64df7"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:88:13:56",
+   "stratum": "hard",
+   "crop": "c6623f42173be07a",
+   "question_sha": "ebb9b39a07a052ef"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:33:25:7",
+   "stratum": "control",
+   "crop": "56ecf0bf391324e8",
+   "question_sha": "8b546e7019b05001"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:55:7:15",
+   "stratum": "control",
+   "crop": "bd5fa9a6c50497b4",
+   "question_sha": "534f3074e0b6ce26"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:71:3:17",
+   "stratum": "control",
+   "crop": "81b7ee2f95e578df",
+   "question_sha": "700ec9d6232eeee3"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:43:18:0",
+   "stratum": "control",
+   "crop": "8386d46953b6b29a",
+   "question_sha": "0a56cfa05e653803"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:66:14:50",
+   "stratum": "control",
+   "crop": "540b1616dd18867b",
+   "question_sha": "4a696eeedbec77a5"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:77:8:29",
+   "stratum": "control",
+   "crop": "e93fe7c916de22ca",
+   "question_sha": "d5f09c51adf741ba"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:24:18:48",
+   "stratum": "control",
+   "crop": "4ea8ac41947aa9dd",
+   "question_sha": "ea6f526d4913b2b1"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:30:1:50",
+   "stratum": "control",
+   "crop": "392a68261b6a8a80",
+   "question_sha": "49da0eb6a4e3d66f"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:40:6:44",
+   "stratum": "control",
+   "crop": "8782e58a3abd9f0e",
+   "question_sha": "6ecaf0e2b7d7b5b3"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:22:22:31",
+   "stratum": "control",
+   "crop": "cc580a69d16d2b29",
+   "question_sha": "aedd9d3866297c7f"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:96:17:17",
+   "stratum": "control",
+   "crop": "fd079e8257cb3427",
+   "question_sha": "b7774c1d7b695d70"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:107:12:0",
+   "stratum": "control",
+   "crop": "86efd934c5fbb452",
+   "question_sha": "2a9edd9ee2d3fc34"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:92:9:0",
+   "stratum": "control",
+   "crop": "0f2a94325726f8bc",
+   "question_sha": "c21237933348c72b"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:102:14:11",
+   "stratum": "control",
+   "crop": "95587670dfe40270",
+   "question_sha": "c12b52d0a5d7b5d4"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:26:1:28",
+   "stratum": "control",
+   "crop": "1fa2cec92f9dc8b0",
+   "question_sha": "52f85d54b1a977a2"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:17:25:43",
+   "stratum": "control",
+   "crop": "c98da26068c1d835",
+   "question_sha": "47513618ebabb528"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:34:19:53",
+   "stratum": "control",
+   "crop": "7b0fe46ab023be66",
+   "question_sha": "553d9d9476e1bf38"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:107:22:41",
+   "stratum": "control",
+   "crop": "bd36fc16130d6e78",
+   "question_sha": "c2e94de4f418d8f5"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:47:3:22",
+   "stratum": "control",
+   "crop": "f2086138cbe50663",
+   "question_sha": "56d3c75cf50c4e2d"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:103:3:19",
+   "stratum": "control",
+   "crop": "d6251eb1d3693406",
+   "question_sha": "f06a161ebf02e266"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:96:18:36",
+   "stratum": "control",
+   "crop": "bb7628888efc977c",
+   "question_sha": "f55e4a45effb8d8a"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:34:4:0",
+   "stratum": "control",
+   "crop": "dc46abc1b177277f",
+   "question_sha": "07fe25f87908fdfe"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:73:5:37",
+   "stratum": "control",
+   "crop": "e59f641313ef1e86",
+   "question_sha": "f1858fba033ff60b"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:28:1:24",
+   "stratum": "control",
+   "crop": "bcfc74a6db8c979d",
+   "question_sha": "3c7e015b05ec2bf3"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:71:3:0",
+   "stratum": "control",
+   "crop": "9e6e8bd3346e8acb",
+   "question_sha": "603993582e50184b"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:45:22:0",
+   "stratum": "hard",
+   "crop": "bb2dfa63650c2139",
+   "question_sha": "86ce5ff9aa116088"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:37:21:0",
+   "stratum": "hard",
+   "crop": "32cdf5e7df305fef",
+   "question_sha": "5c80e3be0e48caa1"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:74:24:4",
+   "stratum": "hard",
+   "crop": "1436244ec157f83c",
+   "question_sha": "4364711b7573b9ac"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:34:8:0",
+   "stratum": "hard",
+   "crop": "a104bea49dbbee34",
+   "question_sha": "bc28f0bd58cf5c02"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:44:7:23",
+   "stratum": "hard",
+   "crop": "ccb4935d82d1fd7c",
+   "question_sha": "57e05ecbcb1c006e"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:42:16:34",
+   "stratum": "hard",
+   "crop": "04fbd84990510486",
+   "question_sha": "25e6ad3443a61b1a"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:82:24:16",
+   "stratum": "hard",
+   "crop": "288faf00ad0c0f1b",
+   "question_sha": "a310f3b551b8f895"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:39:2:31",
+   "stratum": "hard",
+   "crop": "5a006411b2cee5c5",
+   "question_sha": "bccf2b2cadbfd8ac"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:65:17:27",
+   "stratum": "hard",
+   "crop": "396d775f465c5d2b",
+   "question_sha": "3344d9ff179d6d12"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:104:24:13",
+   "stratum": "hard",
+   "crop": "99a1ef178d1d563b",
+   "question_sha": "de092f3fe231dc49"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:112:3:0",
+   "stratum": "hard",
+   "crop": "a06e06ef435f495e",
+   "question_sha": "1a8abc589068a8bc"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:105:2:28",
+   "stratum": "hard",
+   "crop": "b42639b70b6d3658",
+   "question_sha": "88d1565791b7de20"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:68:19:0",
+   "stratum": "hard",
+   "crop": "6fe4d64d5d2af670",
+   "question_sha": "8b9d0927889384c0"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:62:10:8",
+   "stratum": "hard",
+   "crop": "1393842be92fd661",
+   "question_sha": "a36498e2ab0c73cd"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:89:21:0",
+   "stratum": "hard",
+   "crop": "eefb181b4d25d1bb",
+   "question_sha": "3ace36836db8a1de"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:46:11:31",
+   "stratum": "hard",
+   "crop": "6b3a55323574f828",
+   "question_sha": "736879a0bed15dc3"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:37:22:12",
+   "stratum": "hard",
+   "crop": "475c0d2f9ee9bbca",
+   "question_sha": "5c81c96dcf0f6d57"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:111:7:22",
+   "stratum": "hard",
+   "crop": "074fb636cab42d94",
+   "question_sha": "914a70fbc7c2abf6"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:80:24:14",
+   "stratum": "hard",
+   "crop": "66cb17a6f9459876",
+   "question_sha": "2080dc8cbe3b59c8"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:52:2:25",
+   "stratum": "hard",
+   "crop": "504ef5b04bcc5ed9",
+   "question_sha": "85b24d57bc3b152a"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:39:19:14",
+   "stratum": "hard",
+   "crop": "e8e16ac2c99e32c7",
+   "question_sha": "3f52038d0c40f890"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:104:14:0",
+   "stratum": "hard",
+   "crop": "e56a35a5974d38cc",
+   "question_sha": "e0895cdbb231823f"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:90:24:8",
+   "stratum": "hard",
+   "crop": "96f3c0f670bed970",
+   "question_sha": "9194dbfaf63e48e8"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:88:24:11",
+   "stratum": "hard",
+   "crop": "a45b6516f9a34b36",
+   "question_sha": "d9aa11c8b8d5f149"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:76:24:10",
+   "stratum": "hard",
+   "crop": "b57caa89ec063c7b",
+   "question_sha": "d35e5c85b467ab7e"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:82:20:0",
+   "stratum": "control",
+   "crop": "b08d311ff906f463",
+   "question_sha": "e7947bdf3b9e8c3e"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:77:15:0",
+   "stratum": "control",
+   "crop": "157176e9dcc1af7e",
+   "question_sha": "b8f2369f91697cfe"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:29:6:32",
+   "stratum": "control",
+   "crop": "c1b3829d86050307",
+   "question_sha": "cb24e4561e148313"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:100:3:5",
+   "stratum": "control",
+   "crop": "24823e2761d82278",
+   "question_sha": "5542dfc0739af7d5"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:37:22:29",
+   "stratum": "control",
+   "crop": "ee71abfac9280d42",
+   "question_sha": "6d2f82118a30039f"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:111:8:23",
+   "stratum": "control",
+   "crop": "24f9b4e01c318205",
+   "question_sha": "138aa10ed401d3e7"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:67:9:26",
+   "stratum": "control",
+   "crop": "9871c93cde9a82c8",
+   "question_sha": "8d4e222cda317c05"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:49:5:9",
+   "stratum": "control",
+   "crop": "a4699e05b924a573",
+   "question_sha": "179e156632251dde"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:55:12:0",
+   "stratum": "control",
+   "crop": "10810eb87d875c86",
+   "question_sha": "563cde2bcb31977a"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:65:19:4",
+   "stratum": "control",
+   "crop": "770305e0a8b39bd7",
+   "question_sha": "8da91420460a472c"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:116:5:24",
+   "stratum": "control",
+   "crop": "bc33d5d7c7295947",
+   "question_sha": "55f76787c581b07c"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:78:8:23",
+   "stratum": "control",
+   "crop": "f9710ef6f920fdeb",
+   "question_sha": "42ed9cffda188924"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:95:22:4",
+   "stratum": "control",
+   "crop": "150253665296d8cb",
+   "question_sha": "4af2c934365a8529"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:46:14:12",
+   "stratum": "control",
+   "crop": "fb71ef07f9654922",
+   "question_sha": "b751eee5106262c4"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:110:10:7",
+   "stratum": "control",
+   "crop": "e45bc3d92cb67dbe",
+   "question_sha": "7431b3cf838410e9"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:107:10:13",
+   "stratum": "control",
+   "crop": "162136de8769b6e9",
+   "question_sha": "a66e20dcf123b845"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:49:7:23",
+   "stratum": "control",
+   "crop": "f2dbdf75a5563ed0",
+   "question_sha": "ab59e190c7d6d47f"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:31:6:13",
+   "stratum": "control",
+   "crop": "afdc15f22a2e0781",
+   "question_sha": "8797f0cf5d9d5bf8"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:107:11:6",
+   "stratum": "control",
+   "crop": "4934b1ad2ace8421",
+   "question_sha": "0270c1a292f675d2"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:45:12:20",
+   "stratum": "control",
+   "crop": "f1ecb49dcbf1bfa0",
+   "question_sha": "65dca2c9985db557"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:46:11:0",
+   "stratum": "control",
+   "crop": "9ee9ee18999b4aa9",
+   "question_sha": "9e0641f2606d7047"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:65:2:29",
+   "stratum": "control",
+   "crop": "52c84421e4713b9f",
+   "question_sha": "e8b9162a83430274"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:85:17:19",
+   "stratum": "control",
+   "crop": "29d8d2285a5498cf",
+   "question_sha": "9fd7e1dd1c3b9878"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:54:14:6",
+   "stratum": "control",
+   "crop": "5b0653c91b8f89dc",
+   "question_sha": "14de0924ef6f6f3c"
+  },
+  {
+   "id": "the-nature-of-a-crime--doubleday-1924:39:18:8",
+   "stratum": "control",
+   "crop": "86a36b934dc063c2",
+   "question_sha": "e0050baeac21935b"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:78:15:34",
+   "stratum": "hard",
+   "crop": "fb365a0a88baae59",
+   "question_sha": "d4856c78e3bd0e06"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:65:7:0",
+   "stratum": "hard",
+   "crop": "629615c02b978947",
+   "question_sha": "9103d236a568d70e"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:34:13:0",
+   "stratum": "hard",
+   "crop": "0a786e5b09f5ac8b",
+   "question_sha": "399a602e7c7833c2"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:29:2:0",
+   "stratum": "hard",
+   "crop": "521ff1d5ea04d487",
+   "question_sha": "de495812f813c250"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:84:15:0",
+   "stratum": "hard",
+   "crop": "10e084263fd66ddd",
+   "question_sha": "f90dca4e71cac8a3"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:48:21:27",
+   "stratum": "hard",
+   "crop": "fd3e0cb64b54a9f9",
+   "question_sha": "42002435e778807f"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:34:17:0",
+   "stratum": "hard",
+   "crop": "07ac589d48ddcb28",
+   "question_sha": "a3bef36a545a7cad"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:44:11:0",
+   "stratum": "hard",
+   "crop": "a132f275ee1ea34c",
+   "question_sha": "19bdc68c544d46be"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:85:19:38",
+   "stratum": "hard",
+   "crop": "b5aba2021b5b6db9",
+   "question_sha": "c57e552af536a311"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:54:21:0",
+   "stratum": "hard",
+   "crop": "c61212c0924caba7",
+   "question_sha": "3e0ee92031cff961"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:31:17:32",
+   "stratum": "hard",
+   "crop": "c56123c89e5de461",
+   "question_sha": "fd54eed09c882335"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:72:8:16",
+   "stratum": "hard",
+   "crop": "380b58dcc0e20a9f",
+   "question_sha": "b23bf1383f1d53b3"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:75:3:8",
+   "stratum": "control",
+   "crop": "3aad56ef826aaf99",
+   "question_sha": "7f294aa970d2c685"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:39:20:23",
+   "stratum": "control",
+   "crop": "8b92a8a10a6f1352",
+   "question_sha": "c0106c3814aaf0b7"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:34:24:11",
+   "stratum": "control",
+   "crop": "5ba802a9da17d1d1",
+   "question_sha": "08475a05df145d9a"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:71:16:9",
+   "stratum": "control",
+   "crop": "b01aa24736059aaf",
+   "question_sha": "16cb4fd036a1180a"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:78:11:38",
+   "stratum": "control",
+   "crop": "e541dfaf1ee582a1",
+   "question_sha": "94cb0cc7ffd82df4"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:26:12:30",
+   "stratum": "control",
+   "crop": "672c25ea8bffb96d",
+   "question_sha": "50cadc9073029c5e"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:58:5:39",
+   "stratum": "control",
+   "crop": "f8d1ead2ac17dc58",
+   "question_sha": "cd81cba848e25f78"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:85:3:0",
+   "stratum": "control",
+   "crop": "98da3bcb730a4c6a",
+   "question_sha": "fb4dd5bd3f782f62"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:31:15:0",
+   "stratum": "control",
+   "crop": "dbbdfec4bb57b546",
+   "question_sha": "095d0249401dc6f1"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:45:12:46",
+   "stratum": "control",
+   "crop": "0f4f513fa4aabba4",
+   "question_sha": "70c86315a9384d1f"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:85:14:21",
+   "stratum": "control",
+   "crop": "17780db948985047",
+   "question_sha": "4d30aebdf53915d1"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:29:15:0",
+   "stratum": "control",
+   "crop": "bd95aee942b07c56",
+   "question_sha": "d163773bb0bc38d0"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:66:6:17",
+   "stratum": "control",
+   "crop": "dd3050b3d42e866e",
+   "question_sha": "a50d4260f405ca4f"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:40:14:0",
+   "stratum": "control",
+   "crop": "52d18874a64a36f5",
+   "question_sha": "338fa16a8e225cf2"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:34:6:27",
+   "stratum": "control",
+   "crop": "500d884421bead45",
+   "question_sha": "3d05a0b3d37861cb"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:39:11:0",
+   "stratum": "control",
+   "crop": "28f571eb8bccbe66",
+   "question_sha": "6b0a637c37adb2c4"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:61:8:26",
+   "stratum": "control",
+   "crop": "076869be7bc0503c",
+   "question_sha": "2c83c2a8a39b518f"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:47:21:31",
+   "stratum": "control",
+   "crop": "5138cfec812eb993",
+   "question_sha": "e40e372d154cf2c4"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:72:22:7",
+   "stratum": "control",
+   "crop": "296125c439c81b51",
+   "question_sha": "c183f19a129e2662"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:40:17:0",
+   "stratum": "control",
+   "crop": "1c76b31e0b7df260",
+   "question_sha": "f02a12370b7e4f14"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:77:20:28",
+   "stratum": "control",
+   "crop": "d21400831b1df627",
+   "question_sha": "fda7adc4c7cf5a32"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:48:1:0",
+   "stratum": "control",
+   "crop": "33314c83ec1014b7",
+   "question_sha": "8a1a217d50bacfdb"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:72:12:5",
+   "stratum": "control",
+   "crop": "6bd3e81dc0a14cf4",
+   "question_sha": "2bad80a94db85f48"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:74:1:36",
+   "stratum": "control",
+   "crop": "b7bb5f4dc29bfe24",
+   "question_sha": "4f54c2eb9892365d"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:73:20:0",
+   "stratum": "control",
+   "crop": "853d5a27ace55fc9",
+   "question_sha": "25f89a1034a68952"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:34:28:21",
+   "stratum": "hard",
+   "crop": "6f26f62db183b6ae",
+   "question_sha": "512e8ec9378d57a3"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:77:2:0",
+   "stratum": "hard",
+   "crop": "28fbb9b929e3832b",
+   "question_sha": "bc75cb4d6e005a15"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:45:10:18",
+   "stratum": "hard",
+   "crop": "3f2bd4a03905ae9c",
+   "question_sha": "e03e58ea0e174b02"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:52:8:0",
+   "stratum": "hard",
+   "crop": "bb15c9fa55997ed7",
+   "question_sha": "b0cb12dc84360fd0"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:52:8:24",
+   "stratum": "hard",
+   "crop": "8ad35eac439f0867",
+   "question_sha": "f4e53a8e199daeeb"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:73:11:9",
+   "stratum": "hard",
+   "crop": "355510d4113dee4a",
+   "question_sha": "c4c0a41f02423dc9"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:33:1:19",
+   "stratum": "hard",
+   "crop": "7e21b0fada2cdcbb",
+   "question_sha": "9f65f7e4049013e7"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:22:3:30",
+   "stratum": "hard",
+   "crop": "e668422edd728a99",
+   "question_sha": "a8f78c3c3405edfb"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:65:11:15",
+   "stratum": "hard",
+   "crop": "6d269b4dcffaf5de",
+   "question_sha": "fc0e1afae7c350ef"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:42:6:18",
+   "stratum": "hard",
+   "crop": "99abcf66f0e0ed42",
+   "question_sha": "d5652ec5122299a0"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:49:2:14",
+   "stratum": "hard",
+   "crop": "64dd7625c77eeb6a",
+   "question_sha": "2128d7a2588e0d61"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:38:2:0",
+   "stratum": "hard",
+   "crop": "186597686bf75b9d",
+   "question_sha": "9d75d13c024b41c4"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:42:8:43",
+   "stratum": "hard",
+   "crop": "d4e3cb927fc31216",
+   "question_sha": "fcf2ffec9193b33b"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:42:8:36",
+   "stratum": "hard",
+   "crop": "50cbcd8201166ae1",
+   "question_sha": "07902e0c7c3d7b1c"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:54:5:29",
+   "stratum": "hard",
+   "crop": "fc3680dde4d95399",
+   "question_sha": "1eb46f839ef83dc8"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:78:7:29",
+   "stratum": "hard",
+   "crop": "9339df029023cfee",
+   "question_sha": "7e608b71c28e9edf"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:77:3:0",
+   "stratum": "hard",
+   "crop": "2d4819773c26e54f",
+   "question_sha": "7009cd2c570e651b"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:26:6:30",
+   "stratum": "hard",
+   "crop": "36914a036a5c4f80",
+   "question_sha": "442b6abfb78043a4"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:52:8:10",
+   "stratum": "hard",
+   "crop": "9d888965680bc3db",
+   "question_sha": "fed7436842a00784"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:57:11:16",
+   "stratum": "hard",
+   "crop": "6d43c566e7e8e4e4",
+   "question_sha": "cf9ae81181d3ed01"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:58:5:11",
+   "stratum": "hard",
+   "crop": "aded7ba07b5711c3",
+   "question_sha": "3d6daa7c044dec95"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:71:11:18",
+   "stratum": "hard",
+   "crop": "af4d068b55ab1ff3",
+   "question_sha": "1bfefa9b49eb2ae7"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:50:11:23",
+   "stratum": "hard",
+   "crop": "28a5ba43c93cb769",
+   "question_sha": "c4172e78802f5440"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:22:9:29",
+   "stratum": "hard",
+   "crop": "74f81fa5a14d3def",
+   "question_sha": "ae60c04ae9bb0f10"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:76:5:22",
+   "stratum": "hard",
+   "crop": "bab6d20e36c507cf",
+   "question_sha": "224e0baef9bce68e"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:69:0:16",
+   "stratum": "control",
+   "crop": "6cb80342bc8bd450",
+   "question_sha": "886e459e1cce2e99"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:25:17:21",
+   "stratum": "control",
+   "crop": "63fc95b1c390da4c",
+   "question_sha": "cd0e3028ea78a386"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:48:5:27",
+   "stratum": "control",
+   "crop": "f97d60c676047a96",
+   "question_sha": "69dfa9a0c37df6b9"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:36:16:0",
+   "stratum": "control",
+   "crop": "197c46c2eb11fe7e",
+   "question_sha": "2da1e4782d1f10af"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:75:29:30",
+   "stratum": "control",
+   "crop": "3eca2e566ce7dfd4",
+   "question_sha": "dcf282c47dce8666"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:73:20:54",
+   "stratum": "control",
+   "crop": "b4a20978a8698187",
+   "question_sha": "4b0f4566a601a65a"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:82:28:0",
+   "stratum": "control",
+   "crop": "b8be535db303fb13",
+   "question_sha": "eee6e5f9ed9ec0b6"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:13:2:0",
+   "stratum": "control",
+   "crop": "a076cc322e641420",
+   "question_sha": "5724fb8684bad9df"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:21:15:0",
+   "stratum": "control",
+   "crop": "b088216d742dcbaa",
+   "question_sha": "31263e1ebaf5ad94"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:74:2:50",
+   "stratum": "control",
+   "crop": "a1ef336a7ada4f6f",
+   "question_sha": "2f5dc466f6b06144"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:55:4:7",
+   "stratum": "control",
+   "crop": "655d56bd5ba629b2",
+   "question_sha": "6f07f9233a9d4797"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:53:19:20",
+   "stratum": "control",
+   "crop": "7f1725bab2b2a69f",
+   "question_sha": "9e497538df2f537e"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:71:25:49",
+   "stratum": "control",
+   "crop": "5e5d730c780319be",
+   "question_sha": "ff8adf0d214fbf83"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:24:13:24",
+   "stratum": "control",
+   "crop": "a88849b4373021b2",
+   "question_sha": "f1faa77dbe4dd6a7"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:66:25:4",
+   "stratum": "control",
+   "crop": "24ddde9260323128",
+   "question_sha": "d96dd92a39c431f0"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:39:34:0",
+   "stratum": "control",
+   "crop": "01169736f793ffb0",
+   "question_sha": "45b40267fa9dbd98"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:80:1:0",
+   "stratum": "control",
+   "crop": "74bb0d41a22f6d86",
+   "question_sha": "71835be96d57d4ce"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:28:6:17",
+   "stratum": "control",
+   "crop": "bee92100f327b4a9",
+   "question_sha": "249f5f7b9db6a0e8"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:32:3:17",
+   "stratum": "control",
+   "crop": "a4b1f94106c12fa1",
+   "question_sha": "235d532218b6ac15"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:16:10:46",
+   "stratum": "control",
+   "crop": "ee9fac8f64efc04f",
+   "question_sha": "9d4cae1638626082"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:64:9:50",
+   "stratum": "control",
+   "crop": "e9df3532a4ef3256",
+   "question_sha": "bc501130d4521bbf"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:66:26:47",
+   "stratum": "control",
+   "crop": "6a3ace2aad703a63",
+   "question_sha": "89639f6e98aa12eb"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:53:33:7",
+   "stratum": "control",
+   "crop": "ae6b350040380491",
+   "question_sha": "1c2bd8d00858187b"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:13:2:48",
+   "stratum": "control",
+   "crop": "2735862ec685a532",
+   "question_sha": "4d064ea461bf2871"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:42:5:24",
+   "stratum": "control",
+   "crop": "b196f6b5fa4cd000",
+   "question_sha": "267e3051c719d0d1"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:23:0:58",
+   "stratum": "hard",
+   "crop": "ba49385122738a75",
+   "question_sha": "94a974da7410226e"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:55:32:15",
+   "stratum": "hard",
+   "crop": "38412b2ba7db9f77",
+   "question_sha": "33c93d31db9d2866"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:67:3:49",
+   "stratum": "hard",
+   "crop": "7ac63b15943c7859",
+   "question_sha": "342183e2822f8c90"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:68:6:8",
+   "stratum": "hard",
+   "crop": "d0cb28ae2915d609",
+   "question_sha": "7380b4c9fbffb0ff"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:54:20:28",
+   "stratum": "hard",
+   "crop": "48703cc49830d2b5",
+   "question_sha": "2efa72426f7e410b"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:43:34:16",
+   "stratum": "hard",
+   "crop": "583e43d31277a7dd",
+   "question_sha": "025de438d6be73b3"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:23:18:51",
+   "stratum": "hard",
+   "crop": "95d3e2f27015a86f",
+   "question_sha": "46343ac34edbd77a"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:29:5:39",
+   "stratum": "hard",
+   "crop": "bddf03bdf46d6b81",
+   "question_sha": "6a9d6e42a81b32ca"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:67:34:18",
+   "stratum": "hard",
+   "crop": "654f79a59bd5b24b",
+   "question_sha": "bdb70e0296aa7792"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:35:34:17",
+   "stratum": "hard",
+   "crop": "88b8fe1d23f07555",
+   "question_sha": "fed56146b15e9a22"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:49:14:38",
+   "stratum": "hard",
+   "crop": "33d90ef07e44557c",
+   "question_sha": "04839df8b3272e5d"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:26:19:45",
+   "stratum": "hard",
+   "crop": "750c0bbfeab40605",
+   "question_sha": "39e72a291baccf7e"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:38:4:0",
+   "stratum": "hard",
+   "crop": "841195a373b1950a",
+   "question_sha": "bcf9481aef539573"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:39:32:13",
+   "stratum": "hard",
+   "crop": "3a313be5fc8dac9d",
+   "question_sha": "7e4a4c9ac6f7d2dc"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:41:13:50",
+   "stratum": "hard",
+   "crop": "84b9cdf1bbe17205",
+   "question_sha": "861ef8a66b21a8e3"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:41:18:59",
+   "stratum": "control",
+   "crop": "1d5b35803112e094",
+   "question_sha": "a95c0219cb0a4d6d"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:68:8:47",
+   "stratum": "control",
+   "crop": "50b3592c479ee3c8",
+   "question_sha": "53c56474f05332ec"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:36:1:56",
+   "stratum": "control",
+   "crop": "5008a57dabba752a",
+   "question_sha": "fb1940433f1e3548"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:51:35:12",
+   "stratum": "control",
+   "crop": "a921130b1e6116b0",
+   "question_sha": "a19c58a5e8488586"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:15:24:48",
+   "stratum": "control",
+   "crop": "1a8801ef4efc716a",
+   "question_sha": "a80ef03fa93f68d4"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:11:16:38",
+   "stratum": "control",
+   "crop": "5ca55035c276dd56",
+   "question_sha": "9dd69b3937312f08"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:27:15:63",
+   "stratum": "control",
+   "crop": "ae6561a0703b7f93",
+   "question_sha": "4c0fefa77d370d83"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:40:24:34",
+   "stratum": "control",
+   "crop": "3174c0bc68985ebf",
+   "question_sha": "c6d54219cc3b4d1c"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:64:2:46",
+   "stratum": "control",
+   "crop": "a1fe375ba204e276",
+   "question_sha": "4e15ca5b5b77473a"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:63:5:5",
+   "stratum": "control",
+   "crop": "6e9e824ddfe4ccfe",
+   "question_sha": "724107c0839a59e2"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:19:1:47",
+   "stratum": "control",
+   "crop": "48b93d59225b1147",
+   "question_sha": "6431701cb585822d"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:26:8:63",
+   "stratum": "control",
+   "crop": "bcc271de9591953d",
+   "question_sha": "77a0fd41992449e4"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:21:8:0",
+   "stratum": "control",
+   "crop": "a27336a565df1fc0",
+   "question_sha": "2553db33f427b92f"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:53:4:0",
+   "stratum": "control",
+   "crop": "146429f093f41c6b",
+   "question_sha": "9f0c8823a27fd506"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:44:10:39",
+   "stratum": "control",
+   "crop": "a46e9c0eca7f48af",
+   "question_sha": "2e4e7e1a35b1a7ca"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:65:16:0",
+   "stratum": "control",
+   "crop": "acc8e292c8c3dff5",
+   "question_sha": "d701d487be321ac4"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:52:32:0",
+   "stratum": "control",
+   "crop": "eddc04c5d8f88f5c",
+   "question_sha": "dc6de7eacb4a6621"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:52:24:30",
+   "stratum": "control",
+   "crop": "53944cd2fea291e6",
+   "question_sha": "4a1d6c5b4c61de3f"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:31:13:58",
+   "stratum": "control",
+   "crop": "820648078632ef37",
+   "question_sha": "6c33909b2e34131a"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:66:29:0",
+   "stratum": "control",
+   "crop": "8be3a6e7353ff7ed",
+   "question_sha": "80c968d0010e7998"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:22:6:0",
+   "stratum": "control",
+   "crop": "36b40d484904681a",
+   "question_sha": "faa012523493a079"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:27:28:29",
+   "stratum": "control",
+   "crop": "195f0bd666431a5e",
+   "question_sha": "29d75656c7d324a6"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:11:1:58",
+   "stratum": "control",
+   "crop": "91dc0700a4d5f462",
+   "question_sha": "216b3a0d9f61ba07"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:12:28:9",
+   "stratum": "control",
+   "crop": "b53f2329ae3205bf",
+   "question_sha": "30ba77e42f88fd14"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:61:31:57",
+   "stratum": "control",
+   "crop": "bab5f8bb86744410",
+   "question_sha": "dee393eccb8be16f"
+  },
+  {
+   "id": "metro-2033--ia-scan:58:9:45",
+   "stratum": "hard",
+   "crop": "c08b43bd4d240b82",
+   "question_sha": "3315820c03501c64"
+  },
+  {
+   "id": "metro-2033--ia-scan:63:8:61",
+   "stratum": "hard",
+   "crop": "a3f57b9843b7ed9d",
+   "question_sha": "f193d9d6f82e68d5"
+  },
+  {
+   "id": "metro-2033--ia-scan:66:3:38",
+   "stratum": "hard",
+   "crop": "a43a449ad44e70f2",
+   "question_sha": "58f58c05793ce130"
+  },
+  {
+   "id": "metro-2033--ia-scan:43:34:26",
+   "stratum": "hard",
+   "crop": "f339be5329dc4e58",
+   "question_sha": "af96b63a8b099256"
+  },
+  {
+   "id": "metro-2033--ia-scan:104:39:35",
+   "stratum": "hard",
+   "crop": "bac864f9e0ed604a",
+   "question_sha": "95815649c59a017f"
+  },
+  {
+   "id": "metro-2033--ia-scan:48:27:10",
+   "stratum": "hard",
+   "crop": "79d79d848e8cb5bf",
+   "question_sha": "7887b83bb112303b"
+  },
+  {
+   "id": "metro-2033--ia-scan:66:23:40",
+   "stratum": "hard",
+   "crop": "54abe2e64ec2805b",
+   "question_sha": "c5f88f18646b7a8b"
+  },
+  {
+   "id": "metro-2033--ia-scan:98:30:16",
+   "stratum": "hard",
+   "crop": "cad25eedfe1c5a8b",
+   "question_sha": "4f6db44276081733"
+  },
+  {
+   "id": "metro-2033--ia-scan:9:30:29",
+   "stratum": "hard",
+   "crop": "40b9723d30ced4ff",
+   "question_sha": "bf239ba3ff795379"
+  },
+  {
+   "id": "metro-2033--ia-scan:99:37:40",
+   "stratum": "hard",
+   "crop": "44836950a36d97f2",
+   "question_sha": "7f8539097aebf181"
+  },
+  {
+   "id": "metro-2033--ia-scan:84:10:27",
+   "stratum": "hard",
+   "crop": "0c03e077b8078bb6",
+   "question_sha": "0e9b05f72f851108"
+  },
+  {
+   "id": "metro-2033--ia-scan:77:12:23",
+   "stratum": "hard",
+   "crop": "a454a47f2f14ff9d",
+   "question_sha": "c63186238d997da6"
+  },
+  {
+   "id": "metro-2033--ia-scan:70:17:0",
+   "stratum": "hard",
+   "crop": "d6e14ad78548b9e2",
+   "question_sha": "4c270eda283e7e07"
+  },
+  {
+   "id": "metro-2033--ia-scan:74:5:6",
+   "stratum": "hard",
+   "crop": "d616285dff3ca773",
+   "question_sha": "14d16347ce20d784"
+  },
+  {
+   "id": "metro-2033--ia-scan:60:36:15",
+   "stratum": "hard",
+   "crop": "9fadd98125acc63c",
+   "question_sha": "7bba6060dfdd89e5"
+  },
+  {
+   "id": "metro-2033--ia-scan:83:16:32",
+   "stratum": "hard",
+   "crop": "1c9a1ca2142d9021",
+   "question_sha": "faa790fc94829f59"
+  },
+  {
+   "id": "metro-2033--ia-scan:93:16:41",
+   "stratum": "hard",
+   "crop": "c3400c63e9479052",
+   "question_sha": "86eb432c585c2788"
+  },
+  {
+   "id": "metro-2033--ia-scan:60:11:16",
+   "stratum": "hard",
+   "crop": "173081b29ec72e34",
+   "question_sha": "a8168f263b83b434"
+  },
+  {
+   "id": "metro-2033--ia-scan:72:18:6",
+   "stratum": "hard",
+   "crop": "1ad9f40d7b7d9636",
+   "question_sha": "dd7f9dc5d3474e2c"
+  },
+  {
+   "id": "metro-2033--ia-scan:59:10:48",
+   "stratum": "hard",
+   "crop": "062a017ceeb338be",
+   "question_sha": "df147ae4c442f228"
+  },
+  {
+   "id": "metro-2033--ia-scan:104:27:41",
+   "stratum": "hard",
+   "crop": "3dc8d9f8bb5ebd23",
+   "question_sha": "3642c0043e0f7d04"
+  },
+  {
+   "id": "metro-2033--ia-scan:65:10:37",
+   "stratum": "hard",
+   "crop": "10fe389739b21308",
+   "question_sha": "b3772154233c0233"
+  },
+  {
+   "id": "metro-2033--ia-scan:22:0:0",
+   "stratum": "hard",
+   "crop": "38c5f9b25bc1c121",
+   "question_sha": "3a863f64fd02953e"
+  },
+  {
+   "id": "metro-2033--ia-scan:27:31:10",
+   "stratum": "hard",
+   "crop": "289edfd1f55b5287",
+   "question_sha": "92f823639478d807"
+  },
+  {
+   "id": "metro-2033--ia-scan:49:5:26",
+   "stratum": "hard",
+   "crop": "fc283bca1af64a83",
+   "question_sha": "803d1c34cc45cda9"
+  },
+  {
+   "id": "metro-2033--ia-scan:98:15:47",
+   "stratum": "control",
+   "crop": "2ad8c401fb8a9783",
+   "question_sha": "813472547bfa8463"
+  },
+  {
+   "id": "metro-2033--ia-scan:48:24:29",
+   "stratum": "control",
+   "crop": "896dfb7be0420d44",
+   "question_sha": "1609552471fefbb1"
+  },
+  {
+   "id": "metro-2033--ia-scan:8:9:11",
+   "stratum": "control",
+   "crop": "b7d246ae0b3322b4",
+   "question_sha": "66886a69e51cca9e"
+  },
+  {
+   "id": "metro-2033--ia-scan:27:5:16",
+   "stratum": "control",
+   "crop": "18fa6b275366a4d4",
+   "question_sha": "f5015c19cc2be588"
+  },
+  {
+   "id": "metro-2033--ia-scan:28:22:19",
+   "stratum": "control",
+   "crop": "3832a407e8b7f8c1",
+   "question_sha": "6f4c78580e460f83"
+  },
+  {
+   "id": "metro-2033--ia-scan:46:10:55",
+   "stratum": "control",
+   "crop": "9b1d7feba1856d38",
+   "question_sha": "43010d01b88a80df"
+  },
+  {
+   "id": "metro-2033--ia-scan:57:20:20",
+   "stratum": "control",
+   "crop": "98da6ce0fa6157dd",
+   "question_sha": "9f60848bc2724f01"
+  },
+  {
+   "id": "metro-2033--ia-scan:58:0:19",
+   "stratum": "control",
+   "crop": "86dda92484c8e968",
+   "question_sha": "77ffe10b225cf85c"
+  },
+  {
+   "id": "metro-2033--ia-scan:61:0:16",
+   "stratum": "control",
+   "crop": "2777b3b00c4d1eea",
+   "question_sha": "d32cbe671306d3eb"
+  },
+  {
+   "id": "metro-2033--ia-scan:24:9:8",
+   "stratum": "control",
+   "crop": "08a3416f3aa265b4",
+   "question_sha": "705e35e316c17905"
+  },
+  {
+   "id": "metro-2033--ia-scan:58:3:7",
+   "stratum": "control",
+   "crop": "b1b7c882fecbeb8a",
+   "question_sha": "dc02becd2036ea1c"
+  },
+  {
+   "id": "metro-2033--ia-scan:104:11:14",
+   "stratum": "control",
+   "crop": "e9761d21231e0b86",
+   "question_sha": "ca7d77c827ed39f7"
+  },
+  {
+   "id": "metro-2033--ia-scan:11:34:40",
+   "stratum": "control",
+   "crop": "7d4efb19ea6c4fc2",
+   "question_sha": "b7260374f4a2aae6"
+  },
+  {
+   "id": "metro-2033--ia-scan:13:4:38",
+   "stratum": "control",
+   "crop": "e255a62f4dc1cf79",
+   "question_sha": "9b46f9ba16037e98"
+  },
+  {
+   "id": "metro-2033--ia-scan:46:6:0",
+   "stratum": "control",
+   "crop": "4bc0914a0151ffae",
+   "question_sha": "aa0c8cfc2cfe434b"
+  },
+  {
+   "id": "metro-2033--ia-scan:30:8:43",
+   "stratum": "control",
+   "crop": "4c9a962010cf3412",
+   "question_sha": "9a6379284b04d55d"
+  },
+  {
+   "id": "metro-2033--ia-scan:28:10:26",
+   "stratum": "control",
+   "crop": "4daa60933dd9c329",
+   "question_sha": "7309c86d815d0a16"
+  },
+  {
+   "id": "metro-2033--ia-scan:98:1:52",
+   "stratum": "control",
+   "crop": "e6453ca240332144",
+   "question_sha": "300c777e76d54162"
+  },
+  {
+   "id": "metro-2033--ia-scan:48:13:21",
+   "stratum": "control",
+   "crop": "973e7759aa220fe0",
+   "question_sha": "dbe668bae7366569"
+  },
+  {
+   "id": "metro-2033--ia-scan:60:23:52",
+   "stratum": "control",
+   "crop": "8ebdce82f4be1c8d",
+   "question_sha": "1561838b681614b9"
+  },
+  {
+   "id": "metro-2033--ia-scan:63:22:57",
+   "stratum": "control",
+   "crop": "3ba56cff5c033152",
+   "question_sha": "55eeab64034382fa"
+  },
+  {
+   "id": "metro-2033--ia-scan:91:35:18",
+   "stratum": "control",
+   "crop": "5f4e2df091697e3e",
+   "question_sha": "899acc5851f3f724"
+  },
+  {
+   "id": "metro-2033--ia-scan:25:14:17",
+   "stratum": "control",
+   "crop": "1a6fb8c1d1e477c1",
+   "question_sha": "d6b17017a2c126de"
+  },
+  {
+   "id": "metro-2033--ia-scan:48:27:16",
+   "stratum": "control",
+   "crop": "9ab377a897b4e6c0",
+   "question_sha": "c63beed0469d22cd"
+  },
+  {
+   "id": "metro-2033--ia-scan:24:39:38",
+   "stratum": "control",
+   "crop": "a14aa8f91ac2650a",
+   "question_sha": "3c2c1cba0b6b41dd"
+  },
+  {
+   "id": "de-cipier--ia-scan:65:21:0",
+   "stratum": "hard",
+   "crop": "b2d86f45b9c90cb9",
+   "question_sha": "7f66ee7f416a578b"
+  },
+  {
+   "id": "de-cipier--ia-scan:45:20:0",
+   "stratum": "hard",
+   "crop": "43e936f89a2b4c79",
+   "question_sha": "63fd0faccca54a5c"
+  },
+  {
+   "id": "de-cipier--ia-scan:28:33:38",
+   "stratum": "hard",
+   "crop": "d249b0020b2c9d65",
+   "question_sha": "e935b52ee7a21490"
+  },
+  {
+   "id": "de-cipier--ia-scan:49:34:37",
+   "stratum": "hard",
+   "crop": "e52defa1b8a98bc1",
+   "question_sha": "7156b7ccb3c23a6a"
+  },
+  {
+   "id": "de-cipier--ia-scan:44:7:7",
+   "stratum": "hard",
+   "crop": "153186021adc1278",
+   "question_sha": "9cef05a3f1c10135"
+  },
+  {
+   "id": "de-cipier--ia-scan:59:21:0",
+   "stratum": "hard",
+   "crop": "08176cd61af82531",
+   "question_sha": "14c3b7d824d43b02"
+  },
+  {
+   "id": "de-cipier--ia-scan:48:32:40",
+   "stratum": "hard",
+   "crop": "7e1e2e9d72c250f7",
+   "question_sha": "d63e6433736fb232"
+  },
+  {
+   "id": "de-cipier--ia-scan:58:20:41",
+   "stratum": "hard",
+   "crop": "f0f1784e622f182f",
+   "question_sha": "921bedb56ec461e7"
+  },
+  {
+   "id": "de-cipier--ia-scan:75:21:0",
+   "stratum": "hard",
+   "crop": "4616d32705337e86",
+   "question_sha": "3fcd15ede62282e9"
+  },
+  {
+   "id": "de-cipier--ia-scan:39:21:0",
+   "stratum": "hard",
+   "crop": "7543e4be0031acea",
+   "question_sha": "d295d1dbdf725daa"
+  },
+  {
+   "id": "de-cipier--ia-scan:44:33:32",
+   "stratum": "hard",
+   "crop": "3a241a70cdbeb9a7",
+   "question_sha": "097efee87e8b0fb7"
+  },
+  {
+   "id": "de-cipier--ia-scan:79:16:38",
+   "stratum": "hard",
+   "crop": "41354f7368ed6729",
+   "question_sha": "474f0e97e1cf38f6"
+  },
+  {
+   "id": "de-cipier--ia-scan:53:21:0",
+   "stratum": "hard",
+   "crop": "48bf572b83987005",
+   "question_sha": "f60e1deae025648d"
+  },
+  {
+   "id": "de-cipier--ia-scan:31:27:29",
+   "stratum": "hard",
+   "crop": "23dcae942ce11d8b",
+   "question_sha": "2e421c4794866e83"
+  },
+  {
+   "id": "de-cipier--ia-scan:13:21:0",
+   "stratum": "hard",
+   "crop": "6bb6ac0b77fe7886",
+   "question_sha": "0e3267968438b5fd"
+  },
+  {
+   "id": "de-cipier--ia-scan:61:12:48",
+   "stratum": "hard",
+   "crop": "75774ce463317244",
+   "question_sha": "613db0ae5fff1edd"
+  },
+  {
+   "id": "de-cipier--ia-scan:74:16:13",
+   "stratum": "hard",
+   "crop": "be9e13228ca938fe",
+   "question_sha": "5941e31a3b9dd00a"
+  },
+  {
+   "id": "de-cipier--ia-scan:59:8:58",
+   "stratum": "hard",
+   "crop": "d41db87787833a8c",
+   "question_sha": "eea1f29a6967a0c6"
+  },
+  {
+   "id": "de-cipier--ia-scan:31:21:0",
+   "stratum": "hard",
+   "crop": "4476d7f7edbb1b55",
+   "question_sha": "a54a5da4d36612ab"
+  },
+  {
+   "id": "de-cipier--ia-scan:76:18:5",
+   "stratum": "hard",
+   "crop": "a03766717d35e173",
+   "question_sha": "e9c8ee80b39658f1"
+  },
+  {
+   "id": "de-cipier--ia-scan:26:16:57",
+   "stratum": "control",
+   "crop": "9a4c9718dc0eee93",
+   "question_sha": "fc1977d15860ffc0"
+  },
+  {
+   "id": "de-cipier--ia-scan:74:0:42",
+   "stratum": "control",
+   "crop": "c20cd6595347e2a9",
+   "question_sha": "feed41df50110795"
+  },
+  {
+   "id": "de-cipier--ia-scan:26:1:0",
+   "stratum": "control",
+   "crop": "5476044ed3c02cef",
+   "question_sha": "af74c2505240ac84"
+  },
+  {
+   "id": "de-cipier--ia-scan:75:20:45",
+   "stratum": "control",
+   "crop": "722e75f9ec815e8a",
+   "question_sha": "72b994ee3fceda8a"
+  },
+  {
+   "id": "de-cipier--ia-scan:68:11:0",
+   "stratum": "control",
+   "crop": "fd4f7d7cccebd043",
+   "question_sha": "d71ae0dd5d080cb4"
+  },
+  {
+   "id": "de-cipier--ia-scan:14:30:6",
+   "stratum": "control",
+   "crop": "5cf551d63ba9618a",
+   "question_sha": "5431552b28627e2a"
+  },
+  {
+   "id": "de-cipier--ia-scan:49:27:0",
+   "stratum": "control",
+   "crop": "ce56dbd14af210d3",
+   "question_sha": "a7d52849d5ba8764"
+  },
+  {
+   "id": "de-cipier--ia-scan:55:21:0",
+   "stratum": "control",
+   "crop": "35048d50329ace4e",
+   "question_sha": "14c744866a1c56a3"
+  },
+  {
+   "id": "de-cipier--ia-scan:30:8:11",
+   "stratum": "control",
+   "crop": "ef0876d4db32ebc2",
+   "question_sha": "234ad1584e093629"
+  },
+  {
+   "id": "de-cipier--ia-scan:32:13:9",
+   "stratum": "control",
+   "crop": "c9bc58ed6a8c75b4",
+   "question_sha": "f5915508583d3d60"
+  },
+  {
+   "id": "de-cipier--ia-scan:88:24:25",
+   "stratum": "control",
+   "crop": "88364f43a07d3953",
+   "question_sha": "a23774d53dc5d1e8"
+  },
+  {
+   "id": "de-cipier--ia-scan:60:2:54",
+   "stratum": "control",
+   "crop": "936dae114c28adf0",
+   "question_sha": "34e86520d921fe42"
+  },
+  {
+   "id": "de-cipier--ia-scan:21:11:10",
+   "stratum": "control",
+   "crop": "571e351b893b4937",
+   "question_sha": "0ac89771477edb74"
+  },
+  {
+   "id": "de-cipier--ia-scan:18:23:19",
+   "stratum": "control",
+   "crop": "06b80fdfde10648c",
+   "question_sha": "ed5ce02ba67c0371"
+  },
+  {
+   "id": "de-cipier--ia-scan:21:10:14",
+   "stratum": "control",
+   "crop": "a786fcf1b61fef0b",
+   "question_sha": "12f042fa8a474c38"
+  },
+  {
+   "id": "de-cipier--ia-scan:37:2:0",
+   "stratum": "control",
+   "crop": "cbace4f561380aff",
+   "question_sha": "ce596d28a4dd1d78"
+  },
+  {
+   "id": "de-cipier--ia-scan:41:21:0",
+   "stratum": "control",
+   "crop": "36cb9ddcbb0fe0b6",
+   "question_sha": "5d2eb15745e24b20"
+  },
+  {
+   "id": "de-cipier--ia-scan:18:0:0",
+   "stratum": "control",
+   "crop": "abdfd8dd0695dc11",
+   "question_sha": "4588cc287b615c82"
+  },
+  {
+   "id": "de-cipier--ia-scan:61:2:47",
+   "stratum": "control",
+   "crop": "008dfc3849a75ea1",
+   "question_sha": "0d3e3488f1e009ba"
+  },
+  {
+   "id": "de-cipier--ia-scan:11:14:46",
+   "stratum": "control",
+   "crop": "c824766005de4299",
+   "question_sha": "176927cb7af876d6"
+  },
+  {
+   "id": "de-cipier--ia-scan:23:21:0",
+   "stratum": "control",
+   "crop": "03e3b4682ae23833",
+   "question_sha": "8e064e00e8221440"
+  },
+  {
+   "id": "de-cipier--ia-scan:62:34:30",
+   "stratum": "control",
+   "crop": "963acac70359e7ff",
+   "question_sha": "28b422f570857079"
+  },
+  {
+   "id": "de-cipier--ia-scan:87:8:34",
+   "stratum": "control",
+   "crop": "7b0ba12b69fb0649",
+   "question_sha": "0983ef6c213e90a5"
+  },
+  {
+   "id": "de-cipier--ia-scan:78:28:40",
+   "stratum": "control",
+   "crop": "52f600956c19a7a8",
+   "question_sha": "fc99684210cf0349"
+  },
+  {
+   "id": "de-cipier--ia-scan:48:31:23",
+   "stratum": "control",
+   "crop": "9c20d4e5809567eb",
+   "question_sha": "2e6004b92b3f06d5"
+  },
+  {
+   "id": "artemis--ia-scan:74:9:9",
+   "stratum": "hard",
+   "crop": "75cb19caf6ed19da",
+   "question_sha": "348f8f100aa02a03"
+  },
+  {
+   "id": "artemis--ia-scan:77:15:22",
+   "stratum": "hard",
+   "crop": "431a18f3a83dba7a",
+   "question_sha": "9fd4b055b406e6ac"
+  },
+  {
+   "id": "artemis--ia-scan:38:11:10",
+   "stratum": "hard",
+   "crop": "4dedcf7f569b567c",
+   "question_sha": "3c7fc4c3848f4583"
+  },
+  {
+   "id": "artemis--ia-scan:79:9:21",
+   "stratum": "hard",
+   "crop": "64e11f7ada7c9c71",
+   "question_sha": "ee289690349e0269"
+  },
+  {
+   "id": "artemis--ia-scan:21:28:57",
+   "stratum": "hard",
+   "crop": "036a446516d42cc2",
+   "question_sha": "9a393312c3bb1dc4"
+  },
+  {
+   "id": "artemis--ia-scan:32:9:62",
+   "stratum": "hard",
+   "crop": "3d817509db09b8e0",
+   "question_sha": "5afd0bffecbb4c24"
+  },
+  {
+   "id": "artemis--ia-scan:30:6:0",
+   "stratum": "hard",
+   "crop": "4b670db056b082a7",
+   "question_sha": "feef1ee164941093"
+  },
+  {
+   "id": "artemis--ia-scan:30:32:51",
+   "stratum": "hard",
+   "crop": "5516aa7c56515bf5",
+   "question_sha": "9ef64f420413652f"
+  },
+  {
+   "id": "artemis--ia-scan:51:27:16",
+   "stratum": "hard",
+   "crop": "fd2cd184b47ebb32",
+   "question_sha": "71aaf747ef01b1d5"
+  },
+  {
+   "id": "artemis--ia-scan:59:24:4",
+   "stratum": "hard",
+   "crop": "463836f202102025",
+   "question_sha": "9917ee8be9b1072e"
+  },
+  {
+   "id": "artemis--ia-scan:28:25:0",
+   "stratum": "hard",
+   "crop": "e9b738f368badbd6",
+   "question_sha": "516304d9afe41da4"
+  },
+  {
+   "id": "artemis--ia-scan:77:1:0",
+   "stratum": "hard",
+   "crop": "38ac684a96ae7cf5",
+   "question_sha": "7499eb652c8ac01d"
+  },
+  {
+   "id": "artemis--ia-scan:30:3:51",
+   "stratum": "hard",
+   "crop": "56152b4dc59a58f3",
+   "question_sha": "e98fdabea0b53b45"
+  },
+  {
+   "id": "artemis--ia-scan:79:16:54",
+   "stratum": "hard",
+   "crop": "8ef098793a13d35b",
+   "question_sha": "459138e2c192f896"
+  },
+  {
+   "id": "artemis--ia-scan:23:23:59",
+   "stratum": "hard",
+   "crop": "504b2946cd1f35d9",
+   "question_sha": "17c5e64b78db4449"
+  },
+  {
+   "id": "artemis--ia-scan:74:23:57",
+   "stratum": "hard",
+   "crop": "57c5037e7e4abff1",
+   "question_sha": "94e4cf73f1164ef7"
+  },
+  {
+   "id": "artemis--ia-scan:13:4:25",
+   "stratum": "hard",
+   "crop": "fb089877f3cc3d23",
+   "question_sha": "82021fb149e076cd"
+  },
+  {
+   "id": "artemis--ia-scan:48:8:0",
+   "stratum": "hard",
+   "crop": "3631a35fe240e863",
+   "question_sha": "3be77c7b6768f284"
+  },
+  {
+   "id": "artemis--ia-scan:42:11:35",
+   "stratum": "hard",
+   "crop": "48549f09e27c9347",
+   "question_sha": "6bfb510d56efeccb"
+  },
+  {
+   "id": "artemis--ia-scan:37:7:19",
+   "stratum": "hard",
+   "crop": "3402cb83f3c92db5",
+   "question_sha": "31f55cf068a70cbe"
+  },
+  {
+   "id": "artemis--ia-scan:32:9:17",
+   "stratum": "hard",
+   "crop": "3d817509db09b8e0",
+   "question_sha": "5afd0bffecbb4c24"
+  },
+  {
+   "id": "artemis--ia-scan:53:13:61",
+   "stratum": "hard",
+   "crop": "e3f5f2ded9667439",
+   "question_sha": "d51b86cbcccf1938"
+  },
+  {
+   "id": "artemis--ia-scan:20:23:5",
+   "stratum": "hard",
+   "crop": "2588e84ced8e3f67",
+   "question_sha": "08c26c8679ebc1ed"
+  },
+  {
+   "id": "artemis--ia-scan:73:12:17",
+   "stratum": "hard",
+   "crop": "bd06a365a0eca7ec",
+   "question_sha": "d5b5ff3793b7f1e7"
+  },
+  {
+   "id": "artemis--ia-scan:56:14:56",
+   "stratum": "hard",
+   "crop": "7b783f0e06686260",
+   "question_sha": "553500ef3310b6cf"
+  },
+  {
+   "id": "artemis--ia-scan:34:3:58",
+   "stratum": "control",
+   "crop": "e008674022781958",
+   "question_sha": "1ac9f1d793c8bd0d"
+  },
+  {
+   "id": "artemis--ia-scan:33:9:41",
+   "stratum": "control",
+   "crop": "917c8455931b5e46",
+   "question_sha": "a306fb97fc3c9dd2"
+  },
+  {
+   "id": "artemis--ia-scan:63:14:0",
+   "stratum": "control",
+   "crop": "a232c09edb1681ed",
+   "question_sha": "c0b5c0b456bd16e4"
+  },
+  {
+   "id": "artemis--ia-scan:16:22:0",
+   "stratum": "control",
+   "crop": "15bd0fa763b4e3d9",
+   "question_sha": "b0353167c0d453c5"
+  },
+  {
+   "id": "artemis--ia-scan:76:2:7",
+   "stratum": "control",
+   "crop": "58b59e51e22f6e79",
+   "question_sha": "647d189a864b4562"
+  },
+  {
+   "id": "artemis--ia-scan:33:10:30",
+   "stratum": "control",
+   "crop": "2cd1370fc5ba6920",
+   "question_sha": "d1bd75c84b53c3f2"
+  },
+  {
+   "id": "artemis--ia-scan:61:6:3",
+   "stratum": "control",
+   "crop": "e9103a75326c1538",
+   "question_sha": "c7707531272e303e"
+  },
+  {
+   "id": "artemis--ia-scan:28:29:21",
+   "stratum": "control",
+   "crop": "17d29821c46b6cf3",
+   "question_sha": "30ae514675ff839a"
+  },
+  {
+   "id": "artemis--ia-scan:26:11:6",
+   "stratum": "control",
+   "crop": "6eae3b4a346519c3",
+   "question_sha": "573f06cbc9b64be9"
+  },
+  {
+   "id": "artemis--ia-scan:33:2:0",
+   "stratum": "control",
+   "crop": "e16aa5c31ed8a552",
+   "question_sha": "15c39a708861bfd8"
+  },
+  {
+   "id": "artemis--ia-scan:54:3:0",
+   "stratum": "control",
+   "crop": "e6b1316ae0799618",
+   "question_sha": "489150c49d70a532"
+  },
+  {
+   "id": "artemis--ia-scan:47:36:26",
+   "stratum": "control",
+   "crop": "34f6c82597c8afde",
+   "question_sha": "11c1206e8ef6b5bb"
+  },
+  {
+   "id": "artemis--ia-scan:46:16:37",
+   "stratum": "control",
+   "crop": "3260b6b574bcd1fa",
+   "question_sha": "51319f495614d152"
+  },
+  {
+   "id": "artemis--ia-scan:59:8:68",
+   "stratum": "control",
+   "crop": "13a27992c6e844fa",
+   "question_sha": "84c5a80fd6ff61de"
+  },
+  {
+   "id": "artemis--ia-scan:78:3:30",
+   "stratum": "control",
+   "crop": "21e243182bb0c735",
+   "question_sha": "b4e7431c12294e31"
+  },
+  {
+   "id": "artemis--ia-scan:29:1:55",
+   "stratum": "control",
+   "crop": "887d6d50ce177095",
+   "question_sha": "4dee2dab3341615c"
+  },
+  {
+   "id": "artemis--ia-scan:80:4:28",
+   "stratum": "control",
+   "crop": "4f9c9e37ba728376",
+   "question_sha": "f68adcde938ff85c"
+  },
+  {
+   "id": "artemis--ia-scan:60:7:61",
+   "stratum": "control",
+   "crop": "3786248223b5db8f",
+   "question_sha": "e2dcfb7cd3a8dac2"
+  },
+  {
+   "id": "artemis--ia-scan:56:11:44",
+   "stratum": "control",
+   "crop": "d4b57ab7531514d8",
+   "question_sha": "f5c7ff4deb2ac19d"
+  },
+  {
+   "id": "artemis--ia-scan:80:8:0",
+   "stratum": "control",
+   "crop": "7be4a431230fd3dd",
+   "question_sha": "68c0e49d0db962ff"
+  },
+  {
+   "id": "artemis--ia-scan:59:21:18",
+   "stratum": "control",
+   "crop": "4f9087d44b4613a9",
+   "question_sha": "65c991b7a13c7326"
+  },
+  {
+   "id": "artemis--ia-scan:50:4:0",
+   "stratum": "control",
+   "crop": "0480e3491eea1775",
+   "question_sha": "fcad4ee6efd36c9d"
+  },
+  {
+   "id": "artemis--ia-scan:63:8:0",
+   "stratum": "control",
+   "crop": "abbc533979b933d8",
+   "question_sha": "50d59952e671ffd0"
+  },
+  {
+   "id": "artemis--ia-scan:66:18:0",
+   "stratum": "control",
+   "crop": "85087edc92cbc858",
+   "question_sha": "9b7a219b02e9c905"
+  },
+  {
+   "id": "artemis--ia-scan:52:6:0",
+   "stratum": "control",
+   "crop": "e61f5bcab6c43983",
+   "question_sha": "94a6e05c3dd8c990"
+  },
+  {
+   "id": "11-22-63--ia-scan:76:1:23",
+   "stratum": "hard",
+   "crop": "21d146f18bd915cf",
+   "question_sha": "532fa243675ab180"
+  },
+  {
+   "id": "11-22-63--ia-scan:72:2:33",
+   "stratum": "hard",
+   "crop": "a204f5f6e7c29bda",
+   "question_sha": "13dda8800f43bf3b"
+  },
+  {
+   "id": "11-22-63--ia-scan:92:9:13",
+   "stratum": "hard",
+   "crop": "99b364f844b5a7f1",
+   "question_sha": "7cc30e046f0d5d4d"
+  },
+  {
+   "id": "11-22-63--ia-scan:53:31:0",
+   "stratum": "hard",
+   "crop": "647f5c890de771be",
+   "question_sha": "745a8b8aa068938d"
+  },
+  {
+   "id": "11-22-63--ia-scan:93:1:22",
+   "stratum": "hard",
+   "crop": "2a2c5c0a577c287e",
+   "question_sha": "96062cd5bda6a99c"
+  },
+  {
+   "id": "11-22-63--ia-scan:90:33:10",
+   "stratum": "hard",
+   "crop": "9b17a198fd4cafae",
+   "question_sha": "13b8971c2244c819"
+  },
+  {
+   "id": "11-22-63--ia-scan:41:32:0",
+   "stratum": "hard",
+   "crop": "0f447978b24bd49e",
+   "question_sha": "75b72fc513d296a5"
+  },
+  {
+   "id": "11-22-63--ia-scan:76:3:8",
+   "stratum": "hard",
+   "crop": "38c939c5f5b62c0d",
+   "question_sha": "cc693872a44e4156"
+  },
+  {
+   "id": "11-22-63--ia-scan:42:1:33",
+   "stratum": "hard",
+   "crop": "1544e1c818e676bb",
+   "question_sha": "0110214cdefa8935"
+  },
+  {
+   "id": "11-22-63--ia-scan:20:4:8",
+   "stratum": "hard",
+   "crop": "fc485809b8e39883",
+   "question_sha": "143857955e407aa7"
+  },
+  {
+   "id": "11-22-63--ia-scan:54:4:23",
+   "stratum": "hard",
+   "crop": "1ec3873c984da6ba",
+   "question_sha": "ad4451b6e6a0a82a"
+  },
+  {
+   "id": "11-22-63--ia-scan:92:6:24",
+   "stratum": "hard",
+   "crop": "db6c560fa6c7de4b",
+   "question_sha": "94ba3ebbcea9ed2e"
+  },
+  {
+   "id": "11-22-63--ia-scan:81:33:0",
+   "stratum": "hard",
+   "crop": "19c59d3b0ff01419",
+   "question_sha": "91e2ac23908f3aed"
+  },
+  {
+   "id": "11-22-63--ia-scan:20:27:5",
+   "stratum": "hard",
+   "crop": "95d37caa1caaca2c",
+   "question_sha": "47e2907f89f5b65b"
+  },
+  {
+   "id": "11-22-63--ia-scan:37:36:22",
+   "stratum": "hard",
+   "crop": "d795b9c0c60e6597",
+   "question_sha": "471fdc5cd8442f61"
+  },
+  {
+   "id": "11-22-63--ia-scan:65:13:24",
+   "stratum": "hard",
+   "crop": "fbb82c01854290a7",
+   "question_sha": "d04c7de149e4f3a0"
+  },
+  {
+   "id": "11-22-63--ia-scan:37:32:66",
+   "stratum": "hard",
+   "crop": "0699553fef0669cd",
+   "question_sha": "81a73b4d11a80c36"
+  },
+  {
+   "id": "11-22-63--ia-scan:52:32:36",
+   "stratum": "hard",
+   "crop": "500170e1cf4afd07",
+   "question_sha": "a59df14c1539d5c2"
+  },
+  {
+   "id": "11-22-63--ia-scan:63:3:21",
+   "stratum": "hard",
+   "crop": "a7c75eb802689272",
+   "question_sha": "6b53429bcd55537e"
+  },
+  {
+   "id": "11-22-63--ia-scan:20:35:53",
+   "stratum": "hard",
+   "crop": "2c15e05b4244d0a5",
+   "question_sha": "a188683a743ccae1"
+  },
+  {
+   "id": "11-22-63--ia-scan:86:1:21",
+   "stratum": "hard",
+   "crop": "1d8a16dca7d0ec27",
+   "question_sha": "579506a482dbfd18"
+  },
+  {
+   "id": "11-22-63--ia-scan:50:22:38",
+   "stratum": "hard",
+   "crop": "39939a5970db7a08",
+   "question_sha": "89cf7dea6cfb8b5e"
+  },
+  {
+   "id": "11-22-63--ia-scan:88:13:56",
+   "stratum": "hard",
+   "crop": "99dfa0f905945d4b",
+   "question_sha": "443eb37e91203307"
+  },
+  {
+   "id": "11-22-63--ia-scan:62:8:67",
+   "stratum": "hard",
+   "crop": "21b9354f79f39183",
+   "question_sha": "5ead9c90e3e3109c"
+  },
+  {
+   "id": "11-22-63--ia-scan:42:17:39",
+   "stratum": "hard",
+   "crop": "68dca7f084559b7a",
+   "question_sha": "27122f93bd3ccb0c"
+  },
+  {
+   "id": "11-22-63--ia-scan:30:31:28",
+   "stratum": "control",
+   "crop": "c90ac4f55bfdb387",
+   "question_sha": "a356881ecfd592b8"
+  },
+  {
+   "id": "11-22-63--ia-scan:33:17:3",
+   "stratum": "control",
+   "crop": "1a0cfa0a6b3ca6d2",
+   "question_sha": "0fb50ecae62c0292"
+  },
+  {
+   "id": "11-22-63--ia-scan:91:28:0",
+   "stratum": "control",
+   "crop": "ef3ab18e6d337097",
+   "question_sha": "8916a7f03179daff"
+  },
+  {
+   "id": "11-22-63--ia-scan:26:34:63",
+   "stratum": "control",
+   "crop": "a7ee9e060a68ae2c",
+   "question_sha": "d74c20f7f8afd95f"
+  },
+  {
+   "id": "11-22-63--ia-scan:94:11:0",
+   "stratum": "control",
+   "crop": "8ed06418db968378",
+   "question_sha": "925a25bfafa17fbd"
+  },
+  {
+   "id": "11-22-63--ia-scan:54:1:33",
+   "stratum": "control",
+   "crop": "47d07ccab583a1eb",
+   "question_sha": "834c6e75e6b6f42a"
+  },
+  {
+   "id": "11-22-63--ia-scan:38:27:0",
+   "stratum": "control",
+   "crop": "27bac95afe24e80d",
+   "question_sha": "1a2c5170f273ec95"
+  },
+  {
+   "id": "11-22-63--ia-scan:93:32:0",
+   "stratum": "control",
+   "crop": "bdf3c34012361c3f",
+   "question_sha": "a8a34697d8731c2c"
+  },
+  {
+   "id": "11-22-63--ia-scan:62:22:2",
+   "stratum": "control",
+   "crop": "921fc270e13d46d3",
+   "question_sha": "89e43e11ac8357c9"
+  },
+  {
+   "id": "11-22-63--ia-scan:19:11:25",
+   "stratum": "control",
+   "crop": "7b3dfe4f2a91499d",
+   "question_sha": "0dfb15f28a1db35d"
+  },
+  {
+   "id": "11-22-63--ia-scan:82:24:48",
+   "stratum": "control",
+   "crop": "f5681814090eba24",
+   "question_sha": "2d66163c4c5ac08d"
+  },
+  {
+   "id": "11-22-63--ia-scan:67:16:28",
+   "stratum": "control",
+   "crop": "cc104eb1ad4ddb56",
+   "question_sha": "48e453b76e4f4d89"
+  },
+  {
+   "id": "11-22-63--ia-scan:43:6:0",
+   "stratum": "control",
+   "crop": "bd4b1f0823b939f0",
+   "question_sha": "897d5d5cc6e32430"
+  },
+  {
+   "id": "11-22-63--ia-scan:41:10:0",
+   "stratum": "control",
+   "crop": "505d5564ba7b2002",
+   "question_sha": "94078190a0ac41ec"
+  },
+  {
+   "id": "11-22-63--ia-scan:84:12:18",
+   "stratum": "control",
+   "crop": "e3c392c9d63c6c5f",
+   "question_sha": "216cb073a44940e5"
+  },
+  {
+   "id": "11-22-63--ia-scan:74:19:19",
+   "stratum": "control",
+   "crop": "750216b14c3b7c39",
+   "question_sha": "dd4a927dc3730825"
+  },
+  {
+   "id": "11-22-63--ia-scan:75:9:55",
+   "stratum": "control",
+   "crop": "11f501d6b443d882",
+   "question_sha": "d2d3213cdeecc6de"
+  },
+  {
+   "id": "11-22-63--ia-scan:26:2:56",
+   "stratum": "control",
+   "crop": "23247a8f9a21490f",
+   "question_sha": "62306b8f5d7c3a37"
+  },
+  {
+   "id": "11-22-63--ia-scan:61:32:37",
+   "stratum": "control",
+   "crop": "781ca0c7b35d98d2",
+   "question_sha": "94162f2d6120aa33"
+  },
+  {
+   "id": "11-22-63--ia-scan:27:12:0",
+   "stratum": "control",
+   "crop": "d866a1ec014995c5",
+   "question_sha": "b19237b15930f8b1"
+  },
+  {
+   "id": "11-22-63--ia-scan:71:4:65",
+   "stratum": "control",
+   "crop": "fd63dfe6a5636365",
+   "question_sha": "7deb92f2f47fed28"
+  },
+  {
+   "id": "11-22-63--ia-scan:77:8:4",
+   "stratum": "control",
+   "crop": "5a1790a853aef3c9",
+   "question_sha": "e4c9da03bb01ae24"
+  },
+  {
+   "id": "11-22-63--ia-scan:77:33:23",
+   "stratum": "control",
+   "crop": "dd90f2e5c111f632",
+   "question_sha": "462727f1911d4645"
+  },
+  {
+   "id": "11-22-63--ia-scan:57:24:9",
+   "stratum": "control",
+   "crop": "739c96ff80e46a32",
+   "question_sha": "86fe4022987ccfdf"
+  },
+  {
+   "id": "11-22-63--ia-scan:75:8:19",
+   "stratum": "control",
+   "crop": "c5582af67acc886e",
+   "question_sha": "8a4502ee01c4607d"
+  }
+ ]
+}

@@ -380,11 +380,16 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
         the vision judge's exact questions and crops, 25 it gets wrong and 25 right a book
   - [ ] Build judge set v1 once the winnow trust data is in: a cached rerun, ~15 min
   - [ ] imajev (mindchain, Qwen3.5 vision decision models, 2B/4B/9B Q8_0) for the vision
-        judge against clef:27b: 2B pulled and made a decision model
-        (`modelfiles/imajev-2b.Modelfile`); 4B and 9B when the user pulls them. One model
-        at a time, with the GPU otherwise quiet; 550 questions, ~5 min each for 2B
-    - [ ] As a second vision judge beside clef (another model family): the judge set's
-          "right where clef is wrong" says whether it adds; then trust data and arbiter
+        judge against clef:27b. Ollama's systemone takes no images for GGUF models and a
+        GGUF lacks imajev's trained readout, so it runs through llama.cpp on Ollama's blobs
+        with the readout applied in `experiments/imajev_llama.py`. Judge set v1 (518
+        suspects), weighted right: 2B 80.7%, 4B 84.0%, clef 90.0%; 0.12 / 0.25 s a question.
+        No replacement. **A strong alarm**: clef is wrong on 4.6% where the 4B agrees, 34%
+        where it disagrees (winnow: 4% / 22%), and the 4B's own pick is right on 139 of the
+        150 clef errors it flags. 9B when the user's pull lands
+    - [ ] As a third judge beside clef and winnow (the screen says it adds): `trust.py`
+          takes the judges by position, two of them; widen it to three, rebuild the trust
+          data with imajev's answers (llama.cpp beside the runs), retrain, bench
     - [ ] Page types from the page image (nothing decides them yet; `body_pages` in
           book.toml): the ~23 sample pages of the old page-type probe first
     - [ ] Which way a plate is up (the reviewer answers it now): Dolittle's 8 plates

@@ -466,7 +466,12 @@ def run_judge(model: str) -> None:
     )
     cache.parent.mkdir(parents=True, exist_ok=True)
     done = json.loads(cache.read_text()) if cache.exists() else {}
-    client = decide.for_model(model, settings.ollama_url)
+    if model.startswith("llama:"):
+        from imajev_llama import ImajevClient
+
+        client = ImajevClient(model)
+    else:
+        client = decide.for_model(model, settings.ollama_url)
     todo = [i for i in items if i["id"] not in done]
     seconds = []
     for n, i in enumerate(todo, 1):
@@ -493,7 +498,7 @@ def run_judge(model: str) -> None:
         "at": datetime.now(UTC).isoformat(timespec="seconds"),
         "commit": _commit(),
         "candidate": model,
-        "digests": _digests([model]),
+        "digests": _digests([model]) if not model.startswith("llama:") else {},
         "seconds": statistics.median(seconds) if seconds else None,
         "rows": rows,
     }

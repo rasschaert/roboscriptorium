@@ -463,6 +463,7 @@ schedel before choosing an OCR model.
 | Ollaya (gone) | `winnow:e4b` | Line roles (previous default) | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
 | Ollaya (gone) | `winnow:e4b` (as `check_model`) | Second opinion on OCR suspects, from the line's text only | Dolittle pp. 30–49: 74/90 right alone; its disagreeing with clef marks clef's errors (clef right on only 9/13 of those) |
 | Ollama | `winnow-ollama:e4b` (as `check_model`) | **Second judge (in use)**: picks a version of an OCR suspect from the sentence | On three tuning books' cached suspects, right alone 285/208/265 where Ollaya's build got 174 each; right where clef is wrong on 78 of 100 against 45. ~0.13 s a question. The only winnow since Ollaya was uninstalled (2026-10-08) |
+| llama.cpp | imajev-4b (Q8_0 GGUF + its trained readout) | Vision judge candidate; **an alarm on clef** | Judge set v1: 84.0% weighted right (clef 90.0%), 25 confidently wrong; clef wrong on 4.6% where it agrees, 34% where it disagrees; its own pick right on 139/150 of the clef errors it flags. 0.25 s a question. The 2B: 80.7%, alarm 4.9% / 28.8%, 0.12 s. English-only by its card |
 | Ollaya (gone) | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
 | Ollaya (gone) | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
 | Ollama | `clef-flash:9b` | **Line roles (in use)**; page types candidate | Line roles: 60/60 at P(body) ≥ 0.5 (its probabilities are softer than winnow's, so don't use 0.9). Pages: 19/23, low confidence where it errs. ~0.8 s/line and ~3.9 s/page, measured under load. Endpoint `/v1/systemone`; raw base64 PNG/JPEG/WebP in `images`; up to 64 questions per call; 64K context. Confidence = how concentrated the probabilities are, not P(correct) |
@@ -491,6 +492,12 @@ schedel before choosing an OCR model.
   (`pdfinfo`, `pdftotext`, `pdfimages`).
 - epubcheck (Homebrew).
 - d2 (Homebrew), renders `docs/pipeline.d2` to the README's diagram.
+- llama.cpp (Homebrew, 0.6.0, 2026-10-09): `llama-server` runs imajev for the judge
+  tryout on Ollama's own blobs, with its readout applied in `experiments/imajev_llama.py`
+  (Ollama's systemone takes no images for GGUF models). Its image placeholder is random
+  per start; read it from `/props` (`media_marker`).
+- imajev decision readouts and calibrations (`work/models/imajev/`, 2–4 MB each, from
+  `mohit67890/imajev-{2b,4b,9b}`).
 - `imajev:2b` (Ollama, 2026-10-08): mindchain's imajev-2b (Qwen3.5-2B vision decision
   model, `hf.co/mindchain/imajev-2b-GGUF:Q8_0`, pulled by the user; its vision projector
   comes with it under Ollama 0.40.1) made a decision model with

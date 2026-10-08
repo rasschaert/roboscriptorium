@@ -54,3 +54,8 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | trust data, Dolittle, whole-body style prompt, Qwen via hosted, alongside 1 run | 180 | 5 | 1 |
 | 2026-10-08 | trust data, the-story-of-doctor-dolittle--stokes-1920, whole-body style, winnow-ollama:e4b, Qwen cached (hosted for misses), alongside 2 runs | 180 | 14 | 0 |
 | 2026-10-08 | trust data, vals-alarm--ia-scan, whole-body style, winnow-ollama:e4b, Qwen cached (hosted for misses), alongside 2 runs | 50 | 14 | 0 |
+| 2026-10-08 | tryout: build judge set v1 (11 tuning slices, cached), alongside 1 run | 839 | 5 | 0 |
+| 2026-10-08 | tryout: judge v1, imajev:2b, alongside 1 run | 518 | 0 | 1 |
+| 2026-10-08 | tryout: judge v1, imajev:4b, alongside 1 run | 518 | 0 | 1 |
+| 2026-10-09 | tryout: judge v1, imajev 2B via llama.cpp + readout, alongside 1 run | 518 | 1 | 0 |
+| 2026-10-09 | tryout: judge v1, imajev 4B via llama.cpp + readout, alongside 1 run | 518 | 2 | 0 |
