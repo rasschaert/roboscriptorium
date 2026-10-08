@@ -383,6 +383,11 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
         judge against clef:27b: 2B pulled and made a decision model
         (`modelfiles/imajev-2b.Modelfile`); 4B and 9B when the user pulls them. One model
         at a time, with the GPU otherwise quiet; 550 questions, ~5 min each for 2B
+    - [ ] As a second vision judge beside clef (another model family): the judge set's
+          "right where clef is wrong" says whether it adds; then trust data and arbiter
+    - [ ] Page types from the page image (nothing decides them yet; `body_pages` in
+          book.toml): the ~23 sample pages of the old page-type probe first
+    - [ ] Which way a plate is up (the reviewer answers it now): Dolittle's 8 plates
 - [x] winnow on Ollama: the user pulled the Hugging Face GGUF; a Modelfile makes it a
       decision model (`modelfiles/`, AGENTS.md Environment). Screened on the cached
       suspects of Goede dochter, Vals alarm and Reis: right alone 285/208/265 against
