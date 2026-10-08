@@ -74,11 +74,11 @@ def run(
     lang = ocr.language(book.language)
     lexicon = Lexicon.load(lang)
     known = lexicon.knows if lexicon is not None else None
-    body = [
-        p
-        for p in cached_text_layer(book.source, book.stages / "textlayer.json", lang)
-        if first <= p.number <= last
-    ]
+    layer = cached_text_layer(book.source, book.stages / "textlayer.json", lang)
+    # How the book is set is read on its whole body, so a slice is read and set as the
+    # book is, and shares its readings.
+    whole = [p for p in layer if book.body_pages[0] <= p.number <= book.body_pages[1]]
+    body = [p for p in layer if first <= p.number <= last]
 
     roles = model_roles = None
     applied = 0
@@ -88,7 +88,7 @@ def run(
     if layout.available():
         regions = layout.detect(book.source, [p.number for p in body], book.stages / "layout.json")
     corrected = body
-    style = dash_style(book, body)
+    style = dash_style(book, whole)
     if use_models:
         settings = settings or Settings.from_env()
         if regions is not None and ocrcheck.scanned(book.source):
@@ -136,7 +136,7 @@ def run(
                     settings.read_model,
                     settings.ollama_url,
                     book.stages / "third-reading.json",
-                    read_prompt(book, body, style),
+                    read_prompt(book, whole, style),
                     settings.read_via,
                 )
             judge = ollaya.for_model(
@@ -144,7 +144,7 @@ def run(
             )
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
-                book_style(book, body, style),
+                book_style(book, whole, style),
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:
@@ -171,13 +171,13 @@ def run(
     }
     quote_readings = {}
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
-        quote_readings = proposals(book, body, suspects, quote_lines, style, settings)
+        quote_readings = proposals(book, body, whole, suspects, quote_lines, style, settings)
     blocks = italics.mark(
         reflow(corrected, roles, known),
         body,
         italics.detect(book.source, body, book.stages / "italics.json"),
     )
-    blocks = typography.apply(blocks, style, ellipsis_style(book, body))
+    blocks = typography.apply(blocks, style, ellipsis_style(book, whole))
     doc = Document(book.title, book.author, book.language, blocks)
     images = {}
     if regions is not None:
@@ -210,6 +210,7 @@ def run(
 def proposals(
     book: Book,
     body: list[PageText],
+    whole: list[PageText],
     suspects: list[ocrcheck.Suspect],
     lines: set[SourceRef],
     style: typography.DashStyle | None,
@@ -225,10 +226,10 @@ def proposals(
         settings.read_model,
         settings.ollama_url,
         book.stages / "third-reading.json",
-        read_prompt(book, body, style),
+        read_prompt(book, whole, style),
         settings.read_via,
     )
-    dots = quotes.ellipsis(" ".join(ln.text for p in body for ln in p.lines))
+    dots = quotes.ellipsis(" ".join(ln.text for p in whole for ln in p.lines))
     checked = {p.number: p for p in ocrcheck.apply(body, suspects)}
     out = {}
     for ref, reading in read.items():

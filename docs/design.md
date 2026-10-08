@@ -121,7 +121,11 @@ the line and added an error.
 
 Dash kind and spacing, the ellipsis, and the quote style, are a property of the book,
 not of a line: asked line by line they came out mixed. Dashes are measured on the scan;
-quote style comes from the layer's own marks.
+quote style comes from the layer's own marks. All of it is measured on the whole body,
+even when a slice is built: a slice is short of evidence (Dolittle's 23–88 has too few
+dashes to measure, Vals alarm's 11–60 none, Goede dochter's 9–64 twelve, which read
+thin where sixty read word-spaced), and a style that differs from the whole book's
+gives the read model another prompt, so the slice and the book were read twice.
 
 The ellipsis is read in the layer: the glyph, three dots or spaced dots, and whether a
 space comes before it. The five English trade books print `word . . .` with a space

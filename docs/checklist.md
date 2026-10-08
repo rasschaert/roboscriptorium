@@ -147,9 +147,12 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [ ] Afscheid's slice: pp. 20, 32, 70 are washed-out pages whose layer is noise, kept as
       body text (should be flagged as garbled); p. 37's text fails to align. ~280 wrong
       words each, in both arms
-- [ ] The read model's cache holds one prompt; a slice whose style prompt differs
-      (Dolittle 23–88 against the whole book) evicts every reading. Keep readings per
-      prompt and take the style from the whole body, with a test through `pipeline.run`
+- [x] The read model's cache held one prompt, so a slice whose style prompt differed
+      (Dolittle 23–88 against the whole book) evicted every reading. Readings by another
+      prompt are now kept aside, and the style is measured on the whole body; tested
+      through `pipeline.run`. Vals alarm and Dolittle get a new prompt: their trust data
+      rebuilt with hosted Qwen (the user's go for tonight's Qwen reads)
+  - [ ] `bench tuning` against the ellipsis run: ~1 min warm
 - [ ] `bench validation`
 - [ ] **Decide:** keep Qwen's third reading and short lines only if the bench says so
 - [ ] Re-ask ~200 cached clef answers and count the flips (answer variance): ~15 min

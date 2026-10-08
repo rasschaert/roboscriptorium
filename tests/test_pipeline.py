@@ -313,3 +313,26 @@ def test_a_scans_spaced_ellipses_come_out_as_printed_and_a_born_digital_pdfs_as_
     monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
     text = " ".join(p.text for p in pipeline.run(book, use_models=False).doc.paragraphs)
     assert text.count("went . . . on") == len(LINES)
+
+
+def test_a_slice_is_read_with_the_whole_books_style(tmp_path, monkeypatch):
+    book, prompts = _checked_book(tmp_path, monkeypatch)
+    (tmp_path / "book.toml").write_text(
+        'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, 2]\n'
+    )
+    book = Book.load(tmp_path)
+    read = pipeline.cached_text_layer
+
+    def layer(*args):
+        # Page 2 is set in single quotes; page 1 has none.
+        (page,) = read(*args)
+        quoted = [replace(ln, text="‘Yes,’ she said, ‘it was.’") for ln in page.lines]
+        return [page, replace(page, number=2, lines=quoted)]
+
+    monkeypatch.setattr(pipeline, "cached_text_layer", layer)
+    monkeypatch.setattr(pipeline, "dash_style", lambda book, body: None)
+    pipeline.run(book, pages=(1, 1))
+    pages = layer(book.source, book.stages / "textlayer.json")
+    whole = pipeline.read_prompt(book, pages, None)
+    assert prompts and set(prompts) == {whole}
+    assert whole != pipeline.read_prompt(book, pages[:1], None)

@@ -117,6 +117,32 @@ def scanned(pdf: Path, sample: int = 10) -> bool:
     return invisible > visible or visible == 0
 
 
+def _shelf(cache: Path, model: str, prompt: str) -> Path:
+    """Where readings by another model or prompt than the cache's are kept aside."""
+    tag = hashlib.sha1(f"{model}\n{prompt}".encode()).hexdigest()[:10]
+    return cache.with_name(f"{cache.stem}.{tag}{cache.suffix}")
+
+
+def _readings(cache: Path, model: str, prompt: str) -> dict | None:
+    """The cached readings by `model` with `prompt`, or None. The cache holds one model
+    and prompt; readings by another are moved to their shelf rather than lost, and come
+    back from it when asked for again (a slice and its whole book may differ)."""
+    if not cache.exists():
+        return None
+    raw = json.loads(cache.read_text())
+    if raw.get("version") != READING_VERSION:
+        return None
+    if raw.get("model") == model and raw.get("prompt", "") == prompt:
+        return raw
+    write_atomic(_shelf(cache, raw.get("model", ""), raw.get("prompt", "")), cache.read_text())
+    shelf = _shelf(cache, model, prompt)
+    if shelf.exists():
+        kept = json.loads(shelf.read_text())
+        if kept.get("version") == READING_VERSION:
+            return kept
+    return None
+
+
 def line_readings(
     pdf: Path,
     pages: list[PageText],
@@ -135,15 +161,10 @@ def line_readings(
     still to read; they are cached under `model` and listed under `via` in the cache."""
     done: dict[str, str] = {}
     read_by: dict[str, list[str]] = {}
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        if (
-            raw.get("version") == READING_VERSION
-            and raw.get("model") == model
-            and raw.get("prompt", "") == prompt
-        ):
-            done = raw["lines"]
-            read_by = raw.get("via", {})
+    raw = _readings(cache, model, prompt)
+    if raw is not None:
+        done = raw["lines"]
+        read_by = raw.get("via", {})
 
     with pymupdf.open(pdf) as doc:
         boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}

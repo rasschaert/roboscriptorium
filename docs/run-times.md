@@ -50,3 +50,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | bench tuning, ellipsis style, retrained trust, warm | 839 | 1 | 0 |
 | 2026-10-08 | bench tuning, ellipsis style, fixed rule, warm | 839 | 1 | 0 |
 | 2026-10-08 | bench tuning, ellipsis style, retrained trust against fixed rule, warm | 839 | 1 | 0 |
+| 2026-10-08 | trust data, Vals alarm pp. 11-60, whole-body style prompt, Qwen via hosted, alongside 1 run | 50 | 3 | 1 |

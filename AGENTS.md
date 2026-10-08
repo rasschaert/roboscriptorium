@@ -268,7 +268,8 @@ right, then expand.
     against glm-ocr's reading of each body line's crop (short lines too) (`ROBO_OCR_MODEL`),
     cached in `stages/second-reading.json`, tesseract's of the page, and
     `read_model`'s (qwen3.8) of the crop, told the book's typesetting
-    (`stages/third-reading.json`). Where a line's readings differ, clef picks from
+    (`stages/third-reading.json`; readings by another model or prompt are kept aside
+    in `third-reading.<hash>.json` and come back when asked for). Where a line's readings differ, clef picks from
     the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence; both agreeing
     with clef ≥ 0.3 applies the fix to a copy of the pages before reflow,
     anything else becomes an `ocr-doubt` review region.

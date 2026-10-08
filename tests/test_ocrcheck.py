@@ -429,3 +429,25 @@ def test_only_a_crop_cut_short_is_read_again(monkeypatch, tmp_path):
         blob = json.loads(cache.read_text())
         cut = [k for k in blob["lines"] if k.count(":") == 4]
         assert bool(cut) == first_line_read_again
+
+
+def test_readings_by_another_prompt_are_kept_aside_and_come_back(monkeypatch, tmp_path):
+    reads = []
+    monkeypatch.setattr(ocrcheck, "transcribe", lambda png, m, u, p: reads.append(p) or p)
+    doc, boxes = _page_of(tmp_path, 30)
+    pages = pdf.read_text_layer(tmp_path / "source.pdf")
+    checked = {SourceRef(1, k) for k in range(len(boxes))}
+    cache = tmp_path / "third-reading.json"
+
+    def read(prompt):
+        return ocrcheck.line_readings(
+            tmp_path / "source.pdf", pages, checked, "m", "", cache, prompt
+        )
+
+    assert set(read("A").values()) == {"A"}
+    assert set(read("B").values()) == {"B"}
+    reads.clear()
+    assert set(read("A").values()) == {"A"} and reads == []
+    assert set(read("B").values()) == {"B"} and reads == []
+    # The cache itself holds the prompt read last, as its readers expect.
+    assert json.loads(cache.read_text())["prompt"] == "B"
