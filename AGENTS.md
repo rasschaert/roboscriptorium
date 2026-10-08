@@ -56,7 +56,8 @@ starting; keep it true.
   should take from that table. Start it detached, through `experiments/detached.sh
   <name> <command…>` (a `screen` session, output in `work/runs/<name>.out`), so it
   outlives the terminal and the agent session: the user must be able to close either.
-  `screen -ls` lists the runs.
+  `screen -ls` lists the runs; an agent watches one with a background loop that ends
+  when its screen does (the script's header), which is harmless to lose.
 
 ## Engineering practices
 
