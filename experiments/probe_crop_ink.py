@@ -7,7 +7,9 @@ line (separated from the line's own by an empty row), crops cutting the line's o
 off (its band reaching past the crop's top or bottom), and lines whose band touches
 the next one with no empty row between (where no crop can separate them by rows).
 
-    uv run python experiments/probe_crop_ink.py [pages per book]
+    PYTHONPATH=experiments uv run python experiments/probe_crop_ink.py [pages per book] [--boxes]
+
+Without --boxes it measures the ink crops of `ink_crop.py`.
 """
 
 import sys
@@ -17,9 +19,14 @@ from pathlib import Path
 import numpy as np
 import pymupdf
 
+from ink_crop import ink_spans
+
 from roboscriptorium import ocrcheck, pdf
 
-PAGES = int(sys.argv[1]) if len(sys.argv) > 1 else 12
+args = [a for a in sys.argv[1:] if not a.startswith("--")]
+PAGES = int(args[0]) if args else 12
+# --boxes measures the crops cut from the layer's boxes (`crop_span`) instead of the ink.
+BOXES = "--boxes" in sys.argv
 DPI = 150
 SCALE = DPI / 72
 INK = 128  # grey level below which a pixel is ink
@@ -57,11 +64,12 @@ for d in sorted(Path("work").glob("*--*")):
             pix = page.get_pixmap(dpi=DPI, colorspace=pymupdf.csGRAY)
             img = np.frombuffer(pix.samples, np.uint8).reshape(pix.height, pix.stride)[:, : pix.width]
             boxes = ocrcheck.line_boxes(page, p)
+            spans = None if BOXES else ink_spans(page, boxes)
             for k, line in enumerate(p.lines):
                 if not line.text.strip():
                     continue
                 x0, y0, x1, y1 = boxes[k]
-                top, bottom = ocrcheck.crop_span(boxes, k)
+                top, bottom = ocrcheck.crop_span(boxes, k) if BOXES else spans[k]
                 c0, c1 = int(x0 * SCALE), int(x1 * SCALE) + 1
                 # Rows from a little above the crop to a little below, so a cut band shows.
                 r0, r1 = max(0, int((top - 8) * SCALE)), min(img.shape[0], int((bottom + 8) * SCALE) + 1)

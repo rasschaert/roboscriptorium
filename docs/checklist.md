@@ -177,9 +177,19 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
     - [x] De tuin: 4 min; 101 of 1,440 crops changed (the overlap estimate counted any
           touch; the fix cuts in only past half a point); glm-ocr exact 78 → 83, Qwen 93 →
           90 (noise level); 472 → 473 suspects, settled 454 → 455. Neutral to positive
-    - [ ] Crime: stopped after 9 min by a local glm-ocr call timing out under load; local
-          model calls now retry a timeout (`clients/retry.py`); restarted
-    - [ ] Dolittle, Metro, Stella, one at a time, each checked first
+    - [x] Crime (after two stops: Ollama stalled for all runs at once, then recovered on
+          its own): 823 of 2,336 crops changed; glm-ocr 758 → 755 exact, Qwen 774 → 770,
+          the worse lines the models' habits (`suredly` → `surely`), not the crop; 257 →
+          262 suspects, settled 222 → 231. Neutral
+    - [ ] Dolittle, Metro, Stella: for consistency (the pipeline cuts these crops now, so
+          trust data and bench must be read from them), one at a time, each checked
+  - [x] **The user's idea, a crop fitted to each line's ink** (`experiments/ink_crop.py`):
+        tried and not adopted. Measured with no model (`probe_crop_ink.py`), the box crop
+        holds slivers of other lines' ink in 50–87% of crops (1–2.5 pt: descender tips)
+        and cuts 1–2.5 pt of its own in up to 37% (11/22/63); the ink crop takes both to
+        0–2%. But the readers read no better from it: glm-ocr exact on Metro 830 (box) →
+        817 (ink), on 11/22/63 619 → 621; Crime's check read both ways, Qwen 774 → 752
+        with the ink crop. Neither slivers nor cut tips trouble a reader; the next line did
   - [ ] A reading far longer or shorter than its line counting as no reading, if readers
         still stray after the fix: measured by `bench`
 - [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:

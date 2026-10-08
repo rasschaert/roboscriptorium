@@ -936,3 +936,12 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   117/50/31/11 → 110/48/25/10 silent errors at 0/.25/.5/1 questions a page. The two
   hyphen cases the word list can't settle (`make-up`, `night-vision`) are a strict
   xfail test naming checklist 6b, not an assertion of the wrong output.
+- 2026-10-08: Line crops fitted to each line's ink (the user's idea, `experiments/
+  ink_crop.py`) tried and not adopted. With no model, the box crop (`crop_span`) holds
+  slivers of a neighbour's ink (1–2.5 pt, descender tips) in most crops and cuts 1–2.5 pt
+  of its own line's ink in up to 37% (11/22/63); the ink crop takes both to 0–2%. The
+  readers read no better: glm-ocr exact lines on Metro pp. 7–30 830 with the box crop
+  against 817 with the ink crop, on 11/22/63 pp. 15–40 619 against 621, and Qwen on
+  Crime 774 against 752. What hurt the readers was reading the whole next line, which
+  the box crop already prevents. The box crop's own re-read on Crime is neutral
+  (glm-ocr 758 → 755, Qwen 774 → 770, worse on the models' habits, not the crop).
