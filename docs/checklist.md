@@ -59,13 +59,13 @@ short lines. Qwen's reading of every line is 70–75% of a cold run (3b).
 - [x] Metro relabelled the same way: under a minute (settled 852 → 801)
 
 The queue, in run order, before the baseline in 3 so the baseline includes every book.
-If local and hosted Qwen prove interchangeable (3b) and the user says go, Qwen reads
+Local and hosted Qwen proved interchangeable (3b) and the user said go: Qwen reads
 through OpenRouter and three books run side by side (the GPU still does glm-ocr and
 clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted reading left):
 
 - [ ] Artemis, pp. 13–80 (tuning): ~1.2 h cold. **Running**, Qwen via hosted (the user's go)
-- [ ] 11/22/63, pp. 15–94 (tuning): ~1.5 h cold (English first: the line-role classifier
-      is short of English books)
+- [ ] 11/22/63, pp. 15–94 (tuning): ~1.5 h cold. **Running**, Qwen via hosted, beside
+      Artemis and De cipier
 - [ ] De cipier, pp. 9–92 (tuning): ~1.5 h cold. **Running**, Qwen via hosted (the user's go)
 - [ ] Afscheid van verspilde tijd, pp. 9–70 (tuning): ~1.1 h cold
 - [ ] Reis om mijn schedel, pp. 11–110 (tuning): ~1.8 h cold. Its data from before Qwen
@@ -171,7 +171,8 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
           before the result: exact 720 / 722 (±5 ✓), quote marks wrong 1 / 2 (±2 ✓), read
           beyond the crop 1 / 1 ✓, the same reading on 97.6% ✓. **Interchangeable.** For
           local Qwen the crop fix is neutral (722 → 720 exact); it is glm-ocr that gains
-    - [ ] De tuin, Crime, Dolittle, Metro, Stella
+    - [ ] De tuin: **running** (Qwen via hosted, the user's go)
+    - [ ] Crime, Dolittle, Metro, Stella, one at a time, each checked first
   - [ ] A reading far longer or shorter than its line counting as no reading, if readers
         still stray after the fix: measured by `bench`
 - [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:
