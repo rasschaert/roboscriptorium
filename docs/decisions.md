@@ -743,3 +743,9 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   chapters 1–3 (pages 9–92). The cleanest pair yet: 0.21% layer CER and no known
   deviation, every difference an OCR slip the layer makes on Dutch (ë read as é,
   stress accents dropped, small capitals read as lower case, numerals missing).
+- 2026-10-08: `docs/golden-books.md` (from `experiments/golden_overview.py`, no
+  models) lists every golden book with its set, scored pages, estimated cold cost
+  and the text layer against the reference, so the cost and the fitness of a pair
+  are read from one table. The cost driver is the whole-book bench specs
+  (Thief-Taker 282, Reis 245, Dolittle 180, Afscheid 116 pages, the test book 315),
+  not deviations: no pair has both many deviations and many pages.

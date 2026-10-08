@@ -489,7 +489,9 @@ stays put while you work.
 ### Golden books
 
 Public-domain scans paired with a human-checked reference text, which is what
-every change gets measured against. Each lives in `golden/<name>/` **in git**:
+every change gets measured against. [docs/golden-books.md](docs/golden-books.md)
+lists every book with its set, the pages scored, the estimated cold cost and how
+far its text layer is from its reference. Each lives in `golden/<name>/` **in git**:
 `manifest.toml` (the scans with URL and sha256, page ranges, the Gutenberg
 source and chapter range), the derived chapters in `text/` with `PROVENANCE.md`,
 and `standard-ebooks/` (SE's text, see below).
@@ -539,9 +541,11 @@ and `standard-ebooks/` (SE's text, see below).
   disagreements are mostly edition differences, or its verdict backlog never
   shrinks, its score measures the edition, not the pipeline. Two signals need no
   verdicts: the text layer's CER against the reference and the share of its body
-  lines the aligner can't place (both printed by `probe_candidate.py`; the bench
-  is to print them per book), and `eval`'s fold counts where the two sides
-  differ. Past about three times the layer's usual rate, or
+  lines the aligner can't place, both per book in
+  [docs/golden-books.md](docs/golden-books.md) (regenerate it with
+  `uv run python experiments/golden_overview.py > docs/golden-books.md`, half a
+  minute, no models, after adding, slicing or retiring a book), and `eval`'s fold
+  counts where the two sides differ. Past about three times the layer's usual rate, or
   one body line in twenty unplaced, the book is suspect. **Whoever notices says
   so in the session's report and proposes retiring it, without being asked.**
   Retired books go to `work/retired/`, with a dated line in docs/decisions.md.
