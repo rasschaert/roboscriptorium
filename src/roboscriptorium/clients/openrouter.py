@@ -10,6 +10,7 @@ image inside the state and bills the model's whole context on every call.
 """
 
 import base64
+import json
 import os
 import time
 
@@ -19,6 +20,13 @@ PREFIX = "openrouter:"
 URL = "https://openrouter.ai/api/v1/chat/completions"
 DECISIONS_URL = "https://openrouter.ai/api/alpha/decisions"
 RETRIES = 5
+# Whole seconds a request may take: a stalled provider keeps the connection open with
+# keep-alive bytes, so httpx's read timeout never fires.
+DEADLINE = 120
+
+
+class Stalled(Exception):
+    pass
 
 
 def hosted(model: str) -> bool:
@@ -72,17 +80,39 @@ def decision_payload(model: str, state: str, questions: dict, png: bytes | None)
 
 
 def _post(url: str, body: dict, client: httpx.Client | None) -> dict:
-    """The response to one request; rate limits and server errors are retried."""
+    """The response to one request; rate limits, server errors and stalls are retried."""
     http = client or httpx.Client(timeout=300)
     headers = {"Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}"}
     for attempt in range(RETRIES):
-        resp = http.post(url, json=body, headers=headers)
-        if resp.status_code in (429, 500, 502, 503, 504) and attempt < RETRIES - 1:
+        last = attempt == RETRIES - 1
+        try:
+            status, content = _within_deadline(http, url, body, headers)
+        except Stalled:
+            if last:
+                raise
+            continue
+        if status in (429, 500, 502, 503, 504) and not last:
             time.sleep(2**attempt)
             continue
-        resp.raise_for_status()
-        return resp.json()
+        if status >= 400:
+            raise httpx.HTTPStatusError(
+                f"OpenRouter: {status} {content[:200]!r}",
+                request=httpx.Request("POST", url),
+                response=httpx.Response(status, content=content),
+            )
+        return json.loads(content)
     raise RuntimeError("unreachable")
+
+
+def _within_deadline(http: httpx.Client, url: str, body: dict, headers: dict) -> tuple[int, bytes]:
+    start = time.monotonic()
+    with http.stream("POST", url, json=body, headers=headers) as resp:
+        chunks = []
+        for chunk in resp.iter_bytes():
+            chunks.append(chunk)
+            if time.monotonic() - start > DEADLINE:
+                raise Stalled(url)
+        return resp.status_code, b"".join(chunks)
 
 
 def decide(

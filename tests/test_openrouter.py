@@ -59,3 +59,21 @@ def test_a_hosted_decision_answers_under_the_local_name(monkeypatch):
     assert body["provider"]["only"] == ["primeintellect"]
     assert [part["type"] for part in body["state"]] == ["image_url", "text"]
     assert body["state"][1]["text"] == '{"page": 3}'
+
+
+def test_a_request_that_stalls_on_keep_alives_is_cut_off_and_asked_again(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "k")
+    clock = iter(range(0, 10_000, 50))
+    monkeypatch.setattr(openrouter.time, "monotonic", lambda: next(clock))
+    calls = []
+
+    def answer(request):
+        calls.append(request)
+        if len(calls) == 1:
+            return httpx.Response(200, content=iter([b"\n"] * 9))
+        return httpx.Response(200, json={"choices": [{"message": {"content": "keek"}}]})
+
+    client = httpx.Client(transport=httpx.MockTransport(answer))
+    model = "openrouter:qwen/qwen3.8-27b@deepinfra/bf16"
+    assert openrouter.transcribe(b"png", model, "Read it.", 120, client) == "keek"
+    assert len(calls) == 2
