@@ -20,8 +20,12 @@ starting; keep it true.
   `docs/pipeline.d2` in the same commit; render the SVG again with
   `d2 docs/pipeline.d2 docs/pipeline.svg` and commit both. A diagram that shows
   the pipeline as it was is worse than none.
-- **Local only.** No cloud APIs or hosted models. All AI runs on this machine via
-  Ollama and Ollaya.
+- **Local first.** AI runs on this machine via Ollama and Ollaya. A hosted model
+  (OpenRouter, `clients/openrouter.py`) is allowed where the user chooses it for
+  speed (2026-10-08): pinned to one provider and precision, never falling back,
+  refusing providers that keep prompts, and measured against the local model before
+  it replaces it. Sending page crops out sends copyrighted scans to that provider:
+  only where the user has chosen it.
 - **No copyrighted material in git.** Books, page images, OCR output and golden
   pages live in `work/` (gitignored). Commit only code, prompts, question sets,
   configs and synthetic test fixtures.
@@ -148,6 +152,11 @@ right, then expand.
     `clef-*` models there and everything else to Ollaya.
   - `clients/ollama.py`, `clients/ollaya.py`: thin httpx clients. All model calls go
     through these.
+  - `clients/openrouter.py`: a hosted model, named `openrouter:<model>@<provider tag>`
+    (`ROBO_READ_MODEL=openrouter:qwen/qwen3.8-27b@deepinfra/bf16`), read by
+    `ocrcheck.transcribe`; the key is `OPENROUTER_API_KEY`. Its readings cache under
+    that name, apart from the local model's. `experiments/probe_hosted_reading.py`
+    compares it with the local readings of a book.
   - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
   - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages.
   - `page.py`: what a page's layout says without a model, shared by roles,

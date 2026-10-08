@@ -801,3 +801,10 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   layer: 0.46% CER in every 20-page band and every frequent difference the layer's own,
   unlike Grand Hotel Europa. Pictures hold their captions and other text, which the
   reference has no words for, so it also tests that picture text stays out of the text.
+- 2026-10-08: Hosted models allowed where the user chooses them for speed (the user's
+  change to "local only"), through OpenRouter pinned to one provider and precision,
+  no fallback, providers that keep prompts refused. Qwen3.8 27B on Goede dochter pp.
+  9–20 (326 body lines) against the aligned truth: local nvfp4 0.10% CER, 313 exact, 0
+  lines with quote marks wrong; Darkbloom fp4 0.15%, 305, 5 (worse than the layer's
+  0.13% and 1); DeepInfra bf16 0.11%, 310, 0, the same reading as local on 94.5% of
+  lines, at ~10 lines a second against the Mac's 0.7. fp4 there is not our nvfp4.

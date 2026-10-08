@@ -28,7 +28,7 @@ import pymupdf
 from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import ocr
-from roboscriptorium.clients import ollaya
+from roboscriptorium.clients import ollaya, openrouter
 from roboscriptorium.clients.ollaya import OllayaClient
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
@@ -40,6 +40,8 @@ from roboscriptorium.roles import DecisionCache
 DPI = 300
 READING_VERSION = 2
 READ_WORKERS = 4
+# A hosted model serves many requests at once.
+HOSTED_WORKERS = 16
 # Points above and below a line's crop for the OCR model. Crops also reach one em (the
 # line's height) past each end, where a dash or quote the text layer missed is printed.
 LINE_PAD = 3
@@ -159,7 +161,8 @@ def line_readings(
 
     # PyMuPDF isn't thread-safe: crops are rendered here, a batch at a time, and
     # only the model calls run in the pool.
-    with pymupdf.open(pdf) as doc, ThreadPoolExecutor(READ_WORKERS) as pool:
+    workers = HOSTED_WORKERS if openrouter.hosted(model) else READ_WORKERS
+    with pymupdf.open(pdf) as doc, ThreadPoolExecutor(workers) as pool:
         for start in range(0, len(todo), SAVE_EVERY):
             batch = todo[start : start + SAVE_EVERY]
             crops = [_line_crop(doc, page.number, boxes[page.number][k]) for page, k in batch]
@@ -297,7 +300,11 @@ def read_line(png: bytes, model: str, ollama_url: str) -> str:
 
 
 def transcribe(png: bytes, model: str, ollama_url: str, prompt: str) -> str:
-    """A generative vision model's transcription of one printed line, thinking off."""
+    """A generative vision model's transcription of one printed line, thinking off: on
+    Ollama, or hosted when the model is named `openrouter:…`."""
+    if openrouter.hosted(model):
+        text = openrouter.transcribe(png, model, prompt, MAX_LINE_TOKENS)
+        return text.strip().split("\n")[0].strip()
     payload = {
         "model": model,
         "prompt": prompt,
