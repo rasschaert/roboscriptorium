@@ -47,10 +47,12 @@ the short lines.
 - [x] Grand Hotel Europa: 32 min cold (125 → 173 suspects; layer wrong on 79 → 99 settled)
 - [x] Stella, labelled by the user's answers: 53 min cold (65 → 66 suspects; layer wrong on 34 settled, unchanged: only answered places are labelled)
 - [ ] ~~Lady into Fox: ~1.7 h cold~~ dropped: retired to reserve (its reference's typography differs from the print), so no validation data is needed from it
-- [ ] Crime, Dolittle and Metro relabelled with the score's fold (warm rebuilds, ~3 min
-      each, after Metro): labelled before it, their spaced ellipses (`you. . . .`) and
-      spaced colons (`listen :`) counted the faithful reading wrong; Crime 20 labels
-      change, Dolittle 37
+- [x] Crime and Dolittle relabelled with the score's fold: under a minute each, warm.
+      Labelled before it, their spaced ellipses (`you. . . .`) and spaced colons
+      (`listen :`) counted the faithful reading wrong. Settled 223 → 222 and 582 → 561;
+      clef right on 85% and 93% of them (was 84% and 91%)
+- [ ] Metro relabelled the same way, once its run is done (it started on the old code):
+      under a minute
 - [ ] Reis om mijn schedel, pp. 11–110 (chapters 1–11, as in `bench tuning`): ~1.8 h cold
 
 ## 2b. New golden pairs (Fable's session, ended; its steps are this session's now)

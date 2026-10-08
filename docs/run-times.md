@@ -18,3 +18,5 @@ with nothing cached costs **0.8–1.1 min per page** for a trust-data rebuild
 | 2026-10-08 | trust data, De tuin, cold | 42 | 51 | 0 |
 | 2026-10-08 | trust data, Grand Hotel Europa, cold | 30 | 32 | 0 |
 | 2026-10-08 | trust data, Stella, cold | 67 | 53 | 0 |
+| 2026-10-08 | trust data relabel, Crime, warm | 94 | 0 | 0 |
+| 2026-10-08 | trust data relabel, Dolittle, warm | 180 | 0 | 0 |
