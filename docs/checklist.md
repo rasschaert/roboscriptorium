@@ -36,18 +36,18 @@ errors). Both are in the build until the bench in 3 decides.
 ## 2. Trust data rebuilt with the third reading and short lines
 
 One book per run, `experiments/ocr_trust_data.py --rebuild <book>`, on the fixed
-rule. About 0.8 min per page cold; a top-up after the short-line change reads only
+rule. About 1.1 min per page cold (Dolittle; Crime and Vals alarm ran at 0.8); a top-up after the short-line change reads only
 the short lines.
 
 - [x] Goede dochter: 3 min (Qwen readings cached), top-up 2 min
 - [x] Vals alarm: 39 min cold, top-up 2 min
 - [x] Crime: 81 min cold, top-up 1 min
-- [ ] Dolittle: ~75 min cold. **Running** since 2026-10-08 09:03
-- [ ] Reis om mijn schedel: ≤ 3 h (some Qwen readings cached)
-- [ ] Lady into Fox: ~2.5 h
-- [ ] De tuin van de avondnevel: ~35 min
-- [ ] Grand Hotel Europa: ~25 min
-- [ ] Stella, labelled by the user's answers: ~55 min
+- [x] Dolittle: 98 min cold (642 → 684 suspects; layer wrong on 374 → 396 settled)
+- [ ] De tuin van de avondnevel: ~45 min cold. **Running** since 2026-10-08 10:43
+- [ ] Grand Hotel Europa: ~35 min cold
+- [ ] Stella, labelled by the user's answers: ~75 min cold
+- [ ] Lady into Fox: ~3.3 h cold
+- [ ] Reis om mijn schedel: ~4.5 h cold (its quote readings are a separate cache)
 
 ## 3. Baseline, retrain, bench, decide
 

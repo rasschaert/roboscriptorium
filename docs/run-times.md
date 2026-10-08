@@ -3,7 +3,7 @@
 Wall-clock minutes of the long runs on this machine (M4 Max, 64 GB), so a run can
 be estimated before it starts. `experiments/timed.sh` appends a row per run; the
 label says how warm the caches were, which matters more than the page count. A run
-with nothing cached costs about **0.8 min per page** for a trust-data rebuild
+with nothing cached costs **0.8–1.1 min per page** for a trust-data rebuild
 (glm-ocr, tesseract and qwen3.8 per line, then clef and winnow per suspect).
 
 | Date | Run | Pages | Minutes | Exit |
@@ -14,3 +14,4 @@ with nothing cached costs about **0.8 min per page** for a trust-data rebuild
 | 2026-10-08 | trust data, Goede dochter, short lines only new | 56 | 2 | 0 |
 | 2026-10-08 | trust data, Vals alarm, short lines only new | 50 | 2 | 0 |
 | 2026-10-08 | trust data, Crime, short lines only new | 94 | 1 | 0 |
+| 2026-10-08 | trust data, Dolittle, cold | 91 | 98 | 0 |
