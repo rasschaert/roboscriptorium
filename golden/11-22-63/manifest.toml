@@ -1,0 +1,38 @@
+title = "11/22/63"
+author = "Stephen King"
+language = "en"
+# King is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Scribner's eBook of the first edition (ISBN 978-1-4516-2730-5; its copyright
+# page is the hardcover's, "First Scribner hardcover edition November 2011",
+# with both ISBNs), as a calibre conversion of the Kindle file: calibre class
+# names, obfuscated fonts (no content DRM). Parts and chapters are h2, the
+# numbered sections inside chapters h3, so a chapter is many headings; the
+# untitled prologue follows the half title, an "ht" paragraph taken as its
+# heading; italics <em>. From the half title to the Afterword; the reading
+# group guide and the adverts are left out.
+[reference]
+source = "11/22/63, Scribner 2011, eBook ISBN 9781451627305 (EPUB, calibre conversion of the Kindle file)"
+sha256 = "fcd8094343b93291db7710da6ff03beb05d7a95cadc9de083684f037b75314ef"
+files = [
+  "Text/part0007.html", "Text/part0008.html", "Text/part0009.html", "Text/part0010.html", "Text/part0011.html", "Text/part0012.html", "Text/part0013.html", "Text/part0014.html", "Text/part0015.html", "Text/part0016.html", "Text/part0017.html", "Text/part0018.html", "Text/part0019.html", "Text/part0020.html", "Text/part0021.html", "Text/part0022.html", "Text/part0023.html", "Text/part0024.html", "Text/part0025.html", "Text/part0026.html", "Text/part0027.html", "Text/part0028.html", "Text/part0029.html", "Text/part0030.html", "Text/part0031.html", "Text/part0032.html", "Text/part0033.html", "Text/part0034.html", "Text/part0035.html", "Text/part0036.html", "Text/part0037.html", "Text/part0038.html", "Text/part0039.html", "Text/part0040.html", "Text/part0041.html", "Text/part0042.html", "Text/part0043.html", "Text/part0044.html", "Text/part0045.html", "Text/part0046.html", "Text/part0047.html", "Text/part0048.html"
+]
+heading_prefixes = ["ht"]
+
+# The first Scribner hardcover edition, first printing (November 2011, ISBN
+# 978-1-4516-2728-2, printer's key 1 3 5 7 9 10 8 6 4 2, designed by Erich
+# Hobbing): a serif body, chapter labels in a condensed bold
+# sans, numbered sections as small centred numerals, running heads with the
+# folio ("STEPHEN KING" / "11/22/63"), double quotes, unspaced em dashes, spaced
+# ellipses. IA Scribe scan (version 4.3, Stella's vintage), 360 ppi MRC,
+# GlyphLessFont layer, 374×644 pt, a library copy (Richmond). Pages 15–865: the
+# half title and prologue to the end of the Afterword. The layer reads the
+# capital I as T, |, 1, \ or J and merges "in a" to "ina". Internet Archive
+# lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/112263novel0000king_a7f3 (borrow, then download the PDF)"
+sha256 = "f63510d34c0fdefec3995ee99d91b44c6caf687531aaa4ad7979ae0927c38e5d"
+cover_page = 1
+body_pages = [15, 865]

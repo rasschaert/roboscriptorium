@@ -767,3 +767,9 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   the reissue changed (Vetrov), goes to verdicts. Its chapter numbers are images in
   the EPUB: `image_heading` in the manifest takes the heading from the image's alt
   text, so the reference has the "2" the print draws in a circle.
+- 2026-10-08: **11/22/63** (Scribner first edition, first printing, against Scribner's
+  eBook of the same edition) joins `bench tuning` as the fourth modern English scan,
+  sliced to the prologue and chapters 1–3 (pages 15–94). The layer agrees at 0.24–0.59%
+  CER per band and every frequent difference is the layer's (the capital I read five
+  ways, "in a" merged); no known deviation. Its 345 numbered sections, each a small
+  centred numeral and a heading in the reference, make it the heading test.
