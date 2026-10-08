@@ -841,3 +841,11 @@ What was learned or decided, dated, oldest first. Add a line with every change t
   CER 22.6%, wrong on 288 lines the layer has right, and it writes text the line
   doesn't hold ("discuss the best place to shoot him. I looked at his boss, and it was
   as if…" before the printed line): a model that invents is unfit to transcribe.
+- 2026-10-08: A reader of the finished text, first probe: gemma4:latest with the user's
+  prompt (technical flaws only, old spelling allowed, no prose review) on Goede
+  dochter's first 200 output paragraphs. 56 flags: about 4 real errors pinpointed that
+  the OCR check let through (`we-bril` for wc-bril, `aaN-knop`, `Kedsgympen`, a lost
+  closing quote), 46 on text that matches the reference, mostly whole correct sentences
+  called "punctuation", and 3 quoting text that isn't there, caught by requiring the
+  quote verbatim. The task finds what nothing else does; an 8B model's precision (~1 in
+  14) would cost more in questions and slips than it catches.

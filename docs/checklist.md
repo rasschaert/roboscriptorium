@@ -164,6 +164,13 @@ danger is that it edits the author. Guards, all of them:
   text (a line or page join, a de-hyphenation, a word the readings disagreed on, a
   word the word list lacks), less in untouched running text.
 
+- [x] First probe, the user's free-text prompt ("find technical flaws, not prose"),
+      gemma4:latest on Goede dochter's first 200 paragraphs (`experiments/probe_text_reader.py`):
+      56 flags, ~4 real errors pinpointed (`we-bril`, `aaN-knop`, `Kedsgympen`, a lost
+      closing quote), 46 on correct text (whole sentences as "punctuation"), 3 quoting
+      text that isn't there (dropped by the verbatim check). Real catches, far too many
+      urges: next, a larger model and a tighter format (a short quoted span, or one
+      decision per paragraph)
 - [ ] Probe: every paragraph of Goede dochter's and Metro's built text, as a decision
       (clef, or Qwen with thinking off) with the kinds above, scored against their known
       remaining errors and the counterexample set: catches, false alarms, editorial urges.
