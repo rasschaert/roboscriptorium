@@ -33,7 +33,8 @@ BLOCK_TAGS = {f"{XHTML}p", f"{XHTML}div"}
 # A note's link back to the text, after its marker: "* – [terug]", "[1.] – [terug]".
 _BACK_LINK = re.compile(r"^\[?(\*+|\d+)\.?\]?\s*–\s*\[[^\]]*\]")
 _NOTE_LINK = re.compile(r"\[(\*+|\d+)\]")
-_SPACED_HYPHEN = re.compile(r"(?<=\S) - (?=\S)")
+# After a word and before a space or the paragraph's end ("kwam -", an interrupted sentence).
+_SPACED_HYPHEN = re.compile(r"(?<=\S) -(?= |$)")
 _XML_ENTITIES = {"amp", "lt", "gt", "quot", "apos"}
 
 

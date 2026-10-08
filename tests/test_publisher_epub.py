@@ -93,12 +93,21 @@ def test_spaced_hyphens_become_the_prints_dash(tmp_path):
     with zipfile.ZipFile(epub, "w") as z:
         z.writestr(
             "OEBPS/Text/a.html",
-            PAGE.format("<h1>1</h1><p>Toen - heel terloops - zei hij: wc-rol, 1914-1918.</p>"),
+            PAGE.format(
+                "<h1>1</h1><p>Toen - heel terloops - zei hij: wc-rol, 1914-1918.</p>"
+                "<p>Hij kwam -</p>"
+            ),
         )
     (section,) = publisher_epub.read(epub, ["Text/a.html"], hyphen_dash="–")
-    assert section.paragraphs == ["Toen – heel terloops – zei hij: wc-rol, 1914-1918."]
+    assert section.paragraphs == [
+        "Toen – heel terloops – zei hij: wc-rol, 1914-1918.",
+        "Hij kwam –",
+    ]
     (section,) = publisher_epub.read(epub, ["Text/a.html"])
-    assert section.paragraphs == ["Toen - heel terloops - zei hij: wc-rol, 1914-1918."]
+    assert section.paragraphs == [
+        "Toen - heel terloops - zei hij: wc-rol, 1914-1918.",
+        "Hij kwam -",
+    ]
 
 
 def test_an_ornament_set_as_a_heading_is_no_chapter(tmp_path):
