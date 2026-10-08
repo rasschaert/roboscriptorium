@@ -124,14 +124,26 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 
 ## 3. Baseline, retrain, bench, decide
 
-- [ ] Baseline bench on the fixed rule (`ROBO_OCR_TRUST=0 … bench`): unmeasured
+- [x] Baseline bench on the fixed rule (`ROBO_OCR_TRUST=0 … bench`): 32 min warm
 - [x] Retrain trust and compare with the before-Qwen data: silent errors at 0/.25/.5/1
       questions a page, each book left out: Goede dochter 25/17/13/5 → 5/0/0/0, Crime
       12/6/4/2 → 9/2/1/0, De tuin 24/17/11/6 → 16/12/10/4, Dolittle 31/9/5/2 → 23/10/7/2;
       Vals alarm worse, 5/3/2/1 → 9/7/4/4 (its lost full stop is in no other book)
 - [x] `train_ocr_trust.py --save` (the main and the leave-one-out models): 8 s, 3,841
       suspects from 11 books
-- [ ] `bench tuning`, then `bench validation`: unmeasured
+- [x] `bench tuning` with the retrained arbiter: 1 min warm. After review 1.80 → 1.53
+      wrong words a page over the set ([-0.57, -0.09], all three slip rates), with
+      questions 3.1 → 1.6 a page. **Vetoed by Metro**: after review 4.08 → 4.63, its
+      unasked word breaks 342 → 441 (the arbiter keeps the layer where the rule asked)
+- [ ] Metro's word breaks: 342 unasked even under the fixed rule, so something
+      systematic (spacing around its spaced dashes or ellipses?), then rerun the bench
+- [ ] Afscheid's slice: pp. 20, 32, 70 are washed-out pages whose layer is noise, kept as
+      body text (should be flagged as garbled); p. 37's text fails to align. ~280 wrong
+      words each, in both arms
+- [ ] The read model's cache holds one prompt; a slice whose style prompt differs
+      (Dolittle 23–88 against the whole book) evicts every reading. Keep readings per
+      prompt and take the style from the whole body, with a test through `pipeline.run`
+- [ ] `bench validation`
 - [ ] **Decide:** keep Qwen's third reading and short lines only if the bench says so
 - [ ] Re-ask ~200 cached clef answers and count the flips (answer variance): ~15 min
 
