@@ -47,7 +47,7 @@ the short lines.
 - [x] Grand Hotel Europa: 32 min cold (125 → 173 suspects; layer wrong on 79 → 99 settled)
 - [ ] Stella, labelled by the user's answers: ~75 min cold. **Running** since 2026-10-08 12:05
 - [ ] ~~Lady into Fox: ~1.7 h cold~~ dropped: retired to reserve (its reference's typography differs from the print), so no validation data is needed from it
-- [ ] Reis om mijn schedel: ~4.5 h cold (its quote readings are a separate cache)
+- [ ] Reis om mijn schedel, pp. 11–110 (chapters 1–11, as in `bench tuning`): ~1.8 h cold
 
 ## 2b. Two new golden pairs (Fable's session)
 
@@ -64,7 +64,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       chapters 1–5 (pp. 7–111) in `bench tuning`
 - [x] `evaluate.normalise` folds spaced dots; scores count what the fold forgave per
       kind (no reference rebuilt so far has spaced dots, so its trust data stands)
-- [ ] Afscheid's trust data (in `ocr_trust_data.py`): ~2.4 h cold. Before the
+- [ ] Afscheid's trust data (in `ocr_trust_data.py`, the whole book): ~2.1 h cold. Before the
       baseline in 3, so the baseline includes it
 - [ ] Metro's trust data (in `ocr_trust_data.py`, pp. 7–111): ~2 h cold. Before the
       baseline too
@@ -98,8 +98,8 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 
 - [ ] A book-quality feature (winnow's alarm is worthless on clean books): after
       the slip-rate answers in 4
-- [ ] Thief-Taker's suspects in the trust data (it is in `bench tuning`, not in
-      `ocr_trust_data.py`): ~4 h cold
+- [ ] Thief-Taker's suspects in the trust data, pp. 11–84 (chapters 1–22, its
+      `bench tuning` slice): ~1.4 h cold
 
 ## 6. Other components, each scored by `bench`
 
