@@ -160,8 +160,13 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
         changed lines CER 0.04% against local Qwen's 0.20% on the old crops, 722 exact on
         both, no neighbouring clauses read
   - [ ] Re-read the affected lines and rebuild the trust data of the books done on the
-        old crops (Goede dochter, Crime, Dolittle, De tuin, Metro), warm apart from those
-        lines
+        old crops, one book at a time, each checked before the next (Qwen via hosted, the
+        user's go):
+    - [x] Goede dochter: 2 min; 79 of 1,730 crops changed; glm-ocr unchanged (65 exact),
+          Qwen 65 → 66; 419 suspects, settled 376 → 377. Neutral
+    - [ ] **Waiting:** local against hosted Qwen, both on Metro's new crops (running,
+          free). The user wants that answer before more is read hosted
+    - [ ] De tuin, Crime, Dolittle, Metro, Stella
   - [ ] A reading far longer or shorter than its line counting as no reading, if readers
         still stray after the fix: measured by `bench`
 - [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:

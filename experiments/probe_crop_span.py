@@ -4,7 +4,8 @@ fresh cache and scored with the old readings against the aligned reference.
 
     uv run python experiments/probe_crop_span.py <book dir> <first> <last> <chapters> [glm|qwen]
 
-With qwen, ROBO_READ_VIA reads through a hosted build.
+With qwen, ROBO_READ_VIA reads through a hosted build. With --stage, the new readings
+come from the book's own cache, already read again by a rebuild.
 """
 
 import hashlib
@@ -26,7 +27,7 @@ from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.ir import SourceRef
 
 book_dir, first, last, chapters = Path(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4]
-which = sys.argv[5] if len(sys.argv) > 5 else "glm"
+which = sys.argv[5] if len(sys.argv) > 5 and not sys.argv[5].startswith("--") else "glm"
 book = Book.load(book_dir)
 settings = Settings.from_env()
 stage = book.stages / ("second-reading.json" if which == "glm" else "third-reading.json")
@@ -54,6 +55,9 @@ with pymupdf.open(book.source) as doc:
                 changed[SourceRef(p.number, k)] = base
 via = "-via-hosted" if which == "qwen" and settings.read_via else ""
 out = Path("work/probes/crop-span") / f"{book_dir.name}-{first}-{last}-{which}{via}.json"
+if "--stage" in sys.argv:
+    # After a rebuild on the new crops: both readings are in the book's own cache.
+    out = stage
 out.parent.mkdir(parents=True, exist_ok=True)
 start = time.time()
 new = ocrcheck.line_readings(

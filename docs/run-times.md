@@ -26,3 +26,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-08 | trust data relabel, Dolittle, warm | 180 | 0 | 0 |
 | 2026-10-08 | trust data, Metro 2033 pp. 7-111, cold, partly in Low Power Mode | 105 | 156 | 0 |
 | 2026-10-08 | trust data relabel, Metro, warm | 105 | 0 | 0 |
+| 2026-10-08 | trust data, Goede dochter, re-read of new crops (Qwen via hosted), alongside Artemis and De cipier | 56 | 2 | 0 |
