@@ -370,8 +370,8 @@ repetition across pages), then measure the decision model against that set.
 Enforce in code what is true by definition (a chapter heading appears once)
 rather than hoping the model weighs it.
 
-**The cast.** Every model plays a role, and the docs, the diagram and talk with the
-user name models by it ([docs/how-it-works.md](docs/how-it-works.md)):
+**Model roles.** Every model plays a role, and the docs, the diagram and talk with
+the user refer to it by that role ([docs/how-it-works.md](docs/how-it-works.md)):
 
 | Role | Played by now | Job |
 | --- | --- | --- |
@@ -382,7 +382,7 @@ user name models by it ([docs/how-it-works.md](docs/how-it-works.md)):
 | arbiter | the trust model (`trust.py`) | fixes, keeps or asks, weighing readers and judges |
 | reviewer | the user | answers what the arbiter is unsure of |
 
-A new model is tried *for a role*: say which one it auditions for, measure it there
+A new model is tried *for a role*: say which one it is tried for, measure it there
 against the one playing it, and record it in the Models table with its role. A new
 reader or judge reaches the arbiter only after the trust data is rebuilt and the
 arbiter retrained.

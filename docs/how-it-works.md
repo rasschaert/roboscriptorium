@@ -5,7 +5,7 @@ is measured and how it learns.
 
 Three other documents go with it. [design.md](design.md) gives the reason for each
 part and the measurements behind it. [AGENTS.md](../AGENTS.md) lists the modules.
-The [diagram](pipeline.svg) draws the stages with the cast member behind each one.
+The [diagram](pipeline.svg) draws the stages with the model behind each one.
 
 ## The idea
 
@@ -14,24 +14,24 @@ wrong characters in every thousand. A careful edition has none, so those few are
 what this project exists to fix.
 
 The text layer is one reading of the book. No single OCR program fixes its
-mistakes, because every one makes mistakes of its own. So *readers* read the book
-again, chosen because they make different mistakes. Where a reader disagrees with
+mistakes, because every one makes mistakes of its own. So more OCR models, the
+*readers*, read the book again, chosen because they make different mistakes. Where a reader disagrees with
 the text layer, the place becomes a *suspect*, and each way of reading it is a
 *version*.
 
-*Judges* look at each suspect and each pick a version. The *arbiter*, who has
-learned from books whose printed text is known how far to believe each reader and
-judge, then decides. Where the arbiter is unsure, it asks the *reviewer*: you, with
+Other models, the *judges*, look at each suspect and each pick a version. Then the
+*arbiter*, a model trained on books whose printed text is known, decides how far to
+believe each reader and judge. Where the arbiter is unsure, it asks the *reviewer*: you, with
 the scan beside the question.
 
-Your answers go into the next build. They also become lessons for the arbiter.
+Your answers go into the next build. They also become labels the arbiter learns from.
 
 Before any of that, the *spotter* marks what is on each page, and the *sorter*
 decides what each line is: body text, a heading, a page number. After it, plain
 code joins the lines into paragraphs and sets the typography the way the book was
 printed.
 
-## The cast
+## The models and their roles
 
 | Role | Played by | What it does | Kind |
 | --- | --- | --- | --- |
@@ -71,7 +71,7 @@ kind of difference.
 
 ### Local first
 
-Every member of the cast runs on this machine. A reader or judge runs hosted only when the
+Every model runs on this machine. A reader or judge runs hosted only when the
 user allows it for a particular run. It is then pinned to one provider, and what
 it says is cached under the local model's name, with a note saying where it came
 from.
@@ -84,7 +84,7 @@ A book is a directory, `work/<book>/`, with two files in it to start:
 - `book.toml`, with the title, author, language, cover page, body page range and,
   optionally, the dash style.
 
-Everything the cast says is cached under `work/<book>/stages/`: the text layer, the
+Everything the models say is cached under `work/<book>/stages/`: the text layer, the
 spotter's regions, each reading of each line, every answer the sorter and the
 judges gave. A rebuild reuses all of it, so only what changed costs model time.
 
@@ -118,7 +118,7 @@ The spotter still sees something printed there.
 
 Where the spotter marks a region one line tall with no text-layer line in it, a
 reader, glm-ocr, reads that region (`missing.py`). Its reading is added to a copy
-of the page as a line of its own, in reading order, so the rest of the cast treats
+of the page as a line of its own, in reading order, so the other models treat
 it like any other line. This happens on scans only.
 
 ### Type, dashes and quotes
@@ -325,7 +325,7 @@ with no errors and no warnings.
 
 ## Measuring
 
-A change counts as an improvement only once it is measured as one. The cast is
+A change counts as an improvement only once it is measured as one. The models are
 measured on golden books.
 
 ### Golden books
@@ -372,7 +372,7 @@ The command line refuses to score it without `--score-test`.
 
 ### Retiring a book
 
-A pair of scan and reference can stop measuring the cast. When the EPUB was made
+A pair of scan and reference can stop measuring the pipeline. When the EPUB was made
 from another printing, most of the "errors" are differences between editions.
 
 The bench records two signals for each book that need no verdicts: the text
@@ -381,9 +381,9 @@ can't be aligned. A book past either threshold is proposed for retirement.
 
 ## How the arbiter learns
 
-The arbiter is the member of the cast that learns, in three steps.
+The arbiter is the model that learns, in three steps.
 
-### 1. Lessons
+### 1. Trust data
 
 `experiments/ocr_trust_data.py` builds a golden book and collects its suspects,
 with what each reader read and each judge picked. Each version is labelled by
@@ -408,9 +408,9 @@ The arbiter never learns from validation or test books.
 The retrained arbiter is measured on the tuning books, then on the validation
 books.
 
-A new model joins the cast through the same loop. It is added as a reader or a
-judge, the lessons are rebuilt, the arbiter retrained, and the bench decides whether
-the newcomer stays.
+A new model is tried through the same loop. It is added as a reader or a
+judge, the trust data is rebuilt, the arbiter retrained, and the bench decides whether
+it stays.
 
 ## Running it
 
