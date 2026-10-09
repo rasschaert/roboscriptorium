@@ -101,9 +101,10 @@ def catches(flag: Flag, error: Disagreement) -> bool:
             return False
     if flag.last < flag.first:
         # A region with no lines asks for text the layer lacks, between lines first - 1
-        # and first; the missing words sit between the words either side of them, whose
-        # lines may both be the one above it.
-        return not error.got and error.lines[0] < flag.first <= error.lines[1] + 1
+        # and first: it catches an error short of words there, whose lines may both be
+        # the one above it.
+        lost = len(error.want.split()) > len(error.got.split())
+        return lost and error.lines[0] < flag.first <= error.lines[1] + 1
     return flag.first <= error.lines[1] and error.lines[0] <= flag.last
 
 

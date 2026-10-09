@@ -152,3 +152,7 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench validation, You re Never Weird italics derived, warm | 250 | 0 | 0 |
 | 2026-10-09 | bench tuning, each book its own record, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench validation, each book its own record, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, lost lines asked, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, lost lines asked, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, lost lines asked, no specks or notes, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, lost lines asked, no specks or notes, warm | 250 | 0 | 0 |

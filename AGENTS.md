@@ -257,7 +257,8 @@ right, then expand.
     garbled text, centred or set-apart lines. Page furniture (repeated running
     heads, printed page numbers) isn't flagged. With layout regions it also
     flags pictures, captions, titles that aren't headings, and text the text
-    layer lacks (one region per page, as an area rather than lines).
+    layer lacks (one region per page, as an area rather than lines), and a line's height
+    of white space inside a sentence, where the layer lost a line (`lost-line`).
   - `faint.py`: body pages scanned too faint to read (Afscheid's and 11/22/63's
     washed-out pages): the grey levels between the paper and the ink inside the text
     layer's line boxes, at 60 dpi, cached in `stages/contrast.json`; a page with words and

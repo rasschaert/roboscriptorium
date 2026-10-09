@@ -239,6 +239,17 @@ lines tall are read too: Artemis draws each chapter number in a circle about fou
 high, which DocLayout-YOLO marks and glm-ocr reads right ("1", "2", "3"). Headings 0/3 →
 3/3, no other book changed (bench, 2026-10-09).
 
+## Lost lines
+
+An OCR layer sometimes loses a whole printed line, and when the spotter sees nothing there
+either, `missing.py` can't read it. The layer's own boxes still show it: a line's height
+of white space below a line that stops mid-word or mid-sentence (Vals alarm p. 33, after
+"be-"). Such a gap becomes a question of its own, the reviewer typing the line from a
+tesseract draft (`flags.lost-line`); not where a picture fills the gap, nor above a
+footnote or a speck at the foot, which made most of a first version's false questions.
+13 questions over 15 books caught 2 errors at first; with those left out, `bench` no
+change (tuning 0.57 → 0.56, validation 0.80 → 0.77; De eerlijke vinder 1.28 → 1.14).
+
 ## Line roles
 
 clef-flash:9b answers the doubtful lines, and rules in `roles.py` override it

@@ -51,6 +51,7 @@ REASONS = {
     "ocr-doubt": "two OCR readings differ, and the models weren't sure which is right",
     "quotes": "its paragraph's quote marks don't pair up: one may be lost or misread",
     "washed-out": "the scan is too faint to read: the text layer here is guesswork",
+    "lost-line": "white space inside a sentence: the text layer may have lost a line",
 }
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
@@ -63,6 +64,13 @@ SIDEWAYS_PAD = 60
 # the page's usual line height (a stroke of a quote mark, a dot of ink).
 SPECK_MAX_CHARS = 2
 SPECK_HEIGHT = 0.5
+# A gap between two running-text lines this many times the page's line pitch, below a
+# line stopping mid-word or mid-sentence, is a line the text layer lost.
+LOST_LINE_GAP = 1.5
+# The line below such a gap is running text: this long, opening with a letter, a digit or
+# a quote mark.
+LOST_LINE_MIN_CHARS = 10
+QUOTES = "‘’“”'\"„"
 # Layout regions below this confidence are ignored when they hold no text-layer line.
 MISSING_TEXT_CONFIDENCE = 0.5
 
@@ -259,6 +267,41 @@ def _layout(
     return reasons, in_pictures, flags
 
 
+def _lost_lines(
+    page: PageText, roles: dict[SourceRef, LineRole], regions: list[Region]
+) -> list[Region]:
+    """The gaps where a line of running text is missing: a line's height or more of white
+    space between two adjacent running-text lines, below one that stops mid-word or
+    mid-sentence (a paragraph ends in punctuation), with no picture in it."""
+    text = [
+        treatment(roles.get(SourceRef(page.number, i))) == "text" for i in range(len(page.lines))
+    ]
+    pitches = [
+        b.y0 - a.y0
+        for k, (a, b) in enumerate(zip(page.lines, page.lines[1:], strict=False))
+        if text[k] and text[k + 1]
+    ]
+    if len(pitches) < 3:
+        return []
+    pitch = statistics.median(pitches)
+    pictures = [r for r in regions if r.label == "figure"]
+    out = []
+    for k, (a, b) in enumerate(zip(page.lines, page.lines[1:], strict=False)):
+        end = a.text.rstrip()[-1:]
+        if not (text[k] and text[k + 1] and end and (end.isalnum() or end in "-\u00ad\u00ac")):
+            continue
+        # A speck at the foot read as a scrap ("ae"), or a footnote ("*Een met was…").
+        start = b.text.lstrip()[:1]
+        if len(b.text.strip()) < LOST_LINE_MIN_CHARS or not (start.isalnum() or start in QUOTES):
+            continue
+        if min(b.y0 - a.y0, b.y1 - a.y1) <= LOST_LINE_GAP * pitch:
+            continue
+        if any(r.y0 < b.y0 and a.y1 < r.y1 for r in pictures):
+            continue
+        out.append(Region("lost line", 1.0, min(a.x0, b.x0), a.y1, max(a.x1, b.x1), b.y0))
+    return out
+
+
 def sideways(page: PageText) -> bool:
     """Text printed turned (a landscape plate's caption): the layer reads a column of scraps."""
     lines = page.lines
@@ -359,6 +402,12 @@ def find(
         boxes = [
             replace(f, treatment=_treatment_of(page, f, roles)) if f.last >= f.first else f
             for f in boxes
+        ]
+        missing = [f.box for f in boxes if "missing-text" in f.reasons]
+        boxes += [
+            _box_flag(page, gap, [], "lost-line")
+            for gap in _lost_lines(page, roles, regions)
+            if not any(b[1] <= gap.y1 and gap.y0 <= b[3] for b in missing)
         ]
         page_flags += [_doubt(page, d, roles) for d in doubts or [] if d.page == page.number]
         flags += sorted(page_flags + boxes, key=lambda f: (f.first, f.last))

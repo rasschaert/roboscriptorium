@@ -293,7 +293,7 @@ class RegionReview:
 
     def _draft(self, f: F.Flag) -> str | None:
         """Tesseract's reading of text the text layer lacks or reads as scraps."""
-        if not {"missing-text", "rotated"} & set(f.reasons) or f.box is None:
+        if not {"missing-text", "lost-line", "rotated"} & set(f.reasons) or f.box is None:
             return None
         if f.key not in self._drafts:
             self._drafts[f.key] = self.scan.read_box(f.page, f.box, self.lang, turn=self._turn(f))

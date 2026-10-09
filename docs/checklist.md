@@ -368,8 +368,10 @@ build. Each change benched on its own.
 - [x] Paragraph starts in runs of one-line dialogue (the window's margin was the indent),
       after a blank line, and in letters spaced apart: page margin fitted from full lines.
       Breaks a page: tuning 0.46 → 0.33, validation 0.32 → 0.21, words unchanged
-- [ ] A lost line as a question: a gap of a line inside a paragraph (Vals alarm p. 33, after
-      "be-") where the spotter saw nothing, flagged as missing text
+- [x] A lost line as a question (`flags.lost-line`): a line's height of white space below a
+      line stopping mid-sentence, not around a picture, not above a footnote or a speck.
+      No change by the test (tuning 0.57 → 0.56, validation 0.80 → 0.77); De eerlijke vinder
+      1.28 → 1.14 from one lost line
 - [x] The bench records how much of each book's Qwen reading was the hosted build
       (`read_via`): all but Goede dochter (5%) and De tuin (7%) were read hosted, 97–100%
 - [x] The arbiter calibrated (isotonic, on its leave-one-book-out predictions), so the 0.8

@@ -216,3 +216,29 @@ def test_a_washed_out_page_is_one_region_and_nothing_on_it_is_asked_apart():
         (2, 5, 5, ["dropped-mid-page", "dropped-unsure"]),
     ]
     assert found[0].box == (0.0, 0.0, 400, 600) and found[0].treatment == "text"
+
+
+def _gapped(above: str, picture: bool = False):
+    """Ten running-text lines with a line's worth of white space after line 4."""
+    lines = []
+    for i in range(10):
+        y = 80 + 15 * i + (15 if i >= 5 else 0)
+        lines.append(Line(above if i == 4 else "en zo verder in de tekst", 50, y, 350, y + 12))
+    regions = {1: [flags.Region("figure", 0.9, 50, 155, 350, 168)]} if picture else None
+    return PageText(1, 400, 600, lines), regions
+
+
+def test_white_space_inside_a_sentence_is_a_lost_line():
+    page, _ = _gapped("Haar intonatie geeft de woorden een andere be-")
+    found = flags.find([page], {})
+    assert [(f.first, f.last, f.reasons) for f in found] == [(5, 4, ["lost-line"])]
+
+
+def test_white_space_after_a_sentence_or_around_a_picture_is_no_lost_line():
+    page, _ = _gapped("en toen was het stil.")
+    assert flags.find([page], {}) == []
+    page, _ = _gapped("en toen liep hij naar de")
+    page.lines[5] = Line("*_Een voetnoot onder de tekst", 50, 170, 350, 182)
+    assert flags.find([page], {}) == []
+    page, regions = _gapped("en toen liep hij naar de", picture=True)
+    assert [f.reasons for f in flags.find([page], {}, regions)] == [["picture"]]
