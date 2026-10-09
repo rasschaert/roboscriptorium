@@ -235,7 +235,7 @@ right, then expand.
     per-page counts) and compared with the previous run page by page. One test
     decides: "after review", each book of the set weighing the same, must improve
     at the low, mean and high slip rate, and no book may get worse by ≥ 0.05 wrong
-    words per page at 99% (a veto); the per-book intervals are diagnostics. A tuning book is
+    words per page on the mean with its 99% interval above zero (a veto); the per-book intervals are diagnostics. A tuning book is
     scored with the trust model trained without it
     (`ocr-trust-without-<book>.pkl`, written by `train_ocr_trust.py --save`). "After review"
     adds the reviewer's own slips per question asked (`quality.slip_rates`, a Beta

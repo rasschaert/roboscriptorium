@@ -241,9 +241,10 @@ typed in, text the layer lacks) gets only the quote check.
   page, with one primary test ("after review" averaged over the set's books, each
   weighing the same, at the low, mean and high slip rate; pooling pages would let
   the three longest books, 78% of the pages, decide) and a veto when a book alone
-  gets worse by ≥ 0.05 wrong words per page at 99% (at 95% six books would veto
-  about one good change in seven): 24 separate intervals would star about one by
-  chance each run.
+  gets worse by ≥ 0.05 wrong words per page on the mean with its 99% interval above
+  zero (at 95% the eleven tuning books would veto about one change in four that
+  leaves them all as they were; at 99%, one in nineteen): 24 separate intervals
+  would star about one by chance each run.
 - **"After review" counts the reviewer's slips.** 8 of 68 checked answers on
   Stella were wrong (Beta posterior 0.06–0.21), so a question isn't free.
 - **Validation books are not a test.** Earlier choices were made on their scores. They
