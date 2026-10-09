@@ -248,7 +248,7 @@ right, then expand.
     scored with the trust model trained without it
     (`ocr-trust-without-<book>.pkl`, written by `train_ocr_trust.py --save`). "After review"
     adds the reviewer's own slips per question asked (`quality.slip_rates`, a Beta
-    posterior from 8 wrong of 68 checked answers on Stella). Run it before and after a change; cite its
+    posterior from 10 wrong of 100 checked answers, Stella's and Goede dochter's reviews pooled). Run it before and after a change; cite its
     starred lines, not single CER figures.
   - `quality.py` (`roboscriptorium quality book[:pages[:chapters]] …`): what a
     reviewer is left with. Wrong words per page before review and left unasked,
