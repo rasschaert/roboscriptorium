@@ -150,3 +150,34 @@ def test_a_proposal_sets_a_spaced_reading_in_the_books_ellipsis():
         "Nou... nee,’ zei hij."
     )
     assert proposed("Ja nee... zei hij.", "Ja nee. . .’ zei hij.", "...") == "Ja nee...’ zei hij."
+
+
+def test_a_proposal_takes_no_dash_or_letter_from_the_reading():
+    from roboscriptorium.quotes import proposed
+
+    assert proposed("in de buurt van de directeursk—", "in de buurt van de directeursk-’") == (
+        "in de buurt van de directeursk—’"
+    )
+
+
+def test_quote_readings_offer_the_checked_line_and_combine_a_nested_quotation():
+    from roboscriptorium.quotes import readings
+
+    # The print sets the wrong mark: the checked line keeps it, the scan reading "corrects" it.
+    layer = "‘Tk snap het niet,’ zei Charlie.’ Waarom doe je dit?’"
+    checked = "‘Ik snap het niet,’ zei Charlie.’ Waarom doe je dit?’"
+    found = readings(
+        layer, checked, "‘Ik snap het niet,’ zei Charlie. ‘Waarom doe je dit?’", "…", True
+    )
+    assert found["OCR check"] == checked
+    assert found["scan reading"] == "‘Ik snap het niet,’ zei Charlie. ‘Waarom doe je dit?’"
+    assert "marks combined" not in found
+    # A quotation inside dialogue: the layer lost the outer ’, the reader read “ as ‘.
+    line = "valboek voorgelezen. ‘“Maar dan moet het gevonden worden.”"
+    read = "valboek voorgelezen. ‘‘Maar dan moet het gevonden worden.’’"
+    found = readings(line, line, read, "…", True)
+    assert found["marks combined"] == "valboek voorgelezen. ‘“Maar dan moet het gevonden worden.”’"
+    # The layer read the outer ‘ as “.
+    line = "had Charlie gelezen. ““Wanneer je tot stilstand komt"
+    found = readings(line, line, "had Charlie gelezen. “Wanneer je tot stilstand komt", "…", True)
+    assert found["marks combined"] == "had Charlie gelezen. ‘“Wanneer je tot stilstand komt"

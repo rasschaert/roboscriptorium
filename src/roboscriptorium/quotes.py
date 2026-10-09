@@ -167,13 +167,94 @@ def proposed(ours: str, reading: str, ellipsis: str = "…") -> str:
     for a0, a1, b0, b1 in spans:
         theirs = reading[b0:b1]
         mine = ours[a0:a1]
-        same = _letters(mine) == _letters(theirs) or (
-            _letters(_SPLIT_CONTRACTION.sub("’", mine)) == _letters(theirs)
-        )
-        if same and any(c in theirs for c in "‘’“”"):
-            out += [ours[at:a0], theirs]
+        same = _letters(mine) == _letters(theirs)
+        split = not same and _letters(_SPLIT_CONTRACTION.sub("’", mine)) == _letters(theirs)
+        if (same or split) and any(c in theirs for c in CURLY):
+            # A split contraction takes the reading's word; otherwise only its marks.
+            out += [ours[at:a0], theirs if split else _marks(mine, theirs)]
             at = a1
     return "".join(out) + ours[at:]
+
+
+CURLY = "‘’“”"
+# What a proposal may take from a reading: quote marks and the punctuation beside them.
+_MARKS = set(CURLY) | set(".,;:!?…")
+_DASH = str.maketrans("-‐–—", "————")
+
+
+def _marks(mine: str, theirs: str) -> str:
+    """`mine` with the quote marks and punctuation where `theirs` differs; its letters,
+    dashes and hyphens stay (Qwen reads "directeursk-’" where the print has "—’")."""
+    out, at = [], 0
+    # Dashes and hyphens count as one character, so a hyphen read for a dash is no edit.
+    for op in Levenshtein.opcodes(mine.translate(_DASH), theirs.translate(_DASH)):
+        if op.tag == "equal":
+            continue
+        gone, come = mine[op.src_start : op.src_end], theirs[op.dest_start : op.dest_end]
+        moved = set(gone + come) & set(CURLY)
+        # A quote may move across a space ("zei Charlie.’ Waarom", "Charlie. ‘Waarom").
+        if set(gone + come) <= _MARKS | ({" "} if moved else set()):
+            out += [mine[at : op.src_start], come]
+            at = op.src_end
+    return "".join(out) + mine[at:]
+
+
+_LEAD = re.compile(f"^[{CURLY}]*")
+_TRAIL = re.compile(f"[{CURLY}]*$")
+
+
+def combined(ours: str, reading: str) -> str:
+    """`ours` with the quote marks one reading has beyond the other's at a word's ends: a
+    lost outer mark of a nested quotation ("worden.”" and "worden.’’" give "worden.”’")."""
+    reading = re.sub(r"(^|\s)'", r"\1‘", reading).replace("'", "’")
+    reading = re.sub(r'(^|\s)"', r"\1“", reading).replace('"', "”")
+    words, theirs = ours.split(" "), reading.split()
+    if [_letters(w) for w in words if _letters(w)] != [_letters(w) for w in theirs if _letters(w)]:
+        return ours
+    pairs = iter(t for t in theirs if _letters(t))
+    out = []
+    for w in words:
+        if not _letters(w):
+            out.append(w)
+            continue
+        t = next(pairs)
+        a, b = _LEAD.match(w).group(), _LEAD.match(t).group()
+        if len(b) > len(a):
+            w = b[: len(b) - len(a)] + w
+        a, b = _TRAIL.search(w).group(), _TRAIL.search(t).group()
+        if len(b) > len(a):
+            w = w + b[len(a) :]
+        out.append(w)
+    return " ".join(out)
+
+
+# The kinds of reading a quote question offers beside the text layer's, in order.
+KINDS = ("OCR check", "scan reading", "marks combined")
+
+
+def readings(layer: str, checked: str, reading: str, ellipsis: str, single: bool) -> dict[str, str]:
+    """A quote-flagged line's readings beside the layer's, by kind, each where it differs
+    from those before it: the line as the OCR check left it (its fixed letters with the
+    print's marks, which may be wrong in print too), with the marks the read model sees
+    (`proposed`), and, for a nested quotation, those combined (`combined`, `nested`)."""
+    out: dict[str, str] = {}
+    seen = {layer}
+    scan = proposed(checked, reading, ellipsis)
+    both = combined(checked, scan)
+    if single:
+        both = nested(both)
+    nesting = sum(both.count(m) for m in ("‘“", "”’")) > sum(checked.count(m) for m in ("‘“", "”’"))
+    for kind, text in zip(KINDS, (checked, scan, both if nesting else checked), strict=True):
+        if text not in seen:
+            out[kind] = text
+            seen.add(text)
+    return out
+
+
+def nested(text: str) -> str:
+    """In a book whose dialogue opens with ‘, a doubled “ opens dialogue and a quotation in
+    it at once (the layer reads ‘ as “ there), and a doubled ” closes both."""
+    return re.sub("““", "‘“", re.sub("””", "”’", text))
 
 
 def ellipsis(text: str, style: EllipsisStyle | None = None) -> str:

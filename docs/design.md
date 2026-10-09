@@ -230,6 +230,15 @@ the punctuation beside them on the OCR-checked letters: its letters slip too oft
 to take (`krimpachtig`, a Cyrillic word), its quote marks rarely do (Reis right on
 51 lines where the line is wrong, wrong on none where it is right).
 
+**A quote question offers up to three readings beside the layer's** (`quotes.readings`):
+the line as the OCR check left it, its letters fixed and the print's marks kept, which may
+be wrong in print too (Goede dochter p. 36 sets `Charlie.’ Waarom`, and so does the
+publisher's EPUB); the line with the read model's quote marks and the punctuation beside
+them, never its dashes or letters (Qwen read `directeursk-’` for `—’`); and, for a
+quotation inside dialogue (`‘“…”’`), the two readings' marks combined, a doubled `““`
+read as `‘“` in a single-quoted book. In the slip review the quote questions offered a
+right reading on 0 of 4; with these, 3 of 4 (2026-10-09).
+
 ## Missing lines
 
 A layout region with no text-layer line in it is read by glm-ocr only when it is about
