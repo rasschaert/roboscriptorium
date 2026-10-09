@@ -25,7 +25,7 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
   reads regions up to five lines tall above a sunk page's text. Headings 0/3 → 3/3.
 - Probe: Afscheid p. 20's text isn't in the PDF (the mask layer holds traced blobs), so
   no image tuning recovers it. Internet Archive's page images might, but they are
-  private on that borrow-only item.
+  private on that lending-library item.
 - Gemini's brief on combining models (from the user): mostly built already; two ideas
   kept in the checklist (Surya as a second spotter; block quotes, epigraphs, verse,
   ornaments).
@@ -64,7 +64,7 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
      on one page). If it is, see whether a low confidence or a `suspicious` mark
      separates the real errors among the trust data's suspects.
    - `_scandata.xml` page types as page-classification labels: public on every IA
-     golden book, the borrow-only Dutch ones too, so the one part of this that reaches
+     golden book, the lending-library Dutch ones too, so the one part of this that reaches
      contemporary Dutch.
    - The Dutch pairs in 6f are all pre-1934 spelling, so no bench book: worth one only
      if the image probe's result looks language-dependent.

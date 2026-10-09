@@ -490,7 +490,7 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
 A Scribe item holds more than the PDF: the page images the PDF was compressed from
 (`_jp2.zip`), ABBYY's OCR with a confidence per letter (`_abbyy.gz`) and the scan's
 page data (`_scandata.xml`: page types, crop boxes; `_page_numbers.json`). Public on
-public-domain items only; a borrow-only item keeps all but `_scandata.xml` private.
+public-domain items only; a lending-library item keeps all but `_scandata.xml` private.
 
 - [x] `golden fetch` takes them from a scan's `[scans.ia]` (item, files with sha256)
       into `work/<book>/ia/`: Crime (300 ppi) and Dolittle (500 ppi), both tuning books
@@ -505,7 +505,7 @@ public-domain items only; a borrow-only item keeps all but `_scandata.xml` priva
       `suspicious` marks to the layer's letters; does a low one separate the trust
       data's real errors? ~1 h, no models
 - [ ] `_scandata.xml` page types (Cover, Title, Copyright, Contents, Normal) as labels
-      for page classification; public even on borrow-only items, so every IA golden
+      for page classification; public even on lending-library items, so every IA golden
       book has them. ~30 min to fetch and compare with `body_pages`
 - [x] A Dutch public-domain Scribe item with its files public, paired with Gutenberg:
       70 title matches between Gutenberg's 1,110 Dutch books and IA's 8,169 public Dutch
@@ -515,7 +515,7 @@ public-domain items only; a borrow-only item keeps all but `_scandata.xml` priva
       gespannen snaren (#31297, 32), Hilda van Suylenburg (#65536, 45), Extaze (Couperus,
       #12003, 56–66: the layer reads his "zoû", "weêr" without the circumflex). All 400
       ppi with page images and ABBYY public, but all pre-1934 spelling: no bench book,
-      and no help with contemporary Dutch, whose scans are borrow-only with these files
+      and no help with contemporary Dutch, whose scans are lending-library items with these files
       private. Pallieter doesn't pair: the public scan is the 30th printing
       in post-1946 spelling, Gutenberg #11355 an older edition
 - [ ] Make one of them a golden book (Het Kindeken Jezus) only if the image probe's
@@ -545,7 +545,7 @@ public-domain items only; a borrow-only item keeps all but `_scandata.xml` priva
       variants on sample lines, keep the one where the independent readers agree most
       and the word list knows most; no reference needed. Null on normal pages so far,
       and no use on a washed-out page whose PDF lost the letters (Afscheid). Internet
-      Archive's page images (`_jp2.zip`) might still hold them, but on a borrow-only
+      Archive's page images (`_jp2.zip`) might still hold them, but on a lending-library
       item they are private (6f)
 - [ ] You're Never Weird p. 47: text inside a picture read into the body; picture text
       should stay in the picture
