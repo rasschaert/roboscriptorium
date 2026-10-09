@@ -7,11 +7,7 @@ of each session.
 
 ## State at the end of 2026-10-09 (night)
 
-Lint and tests green (188 passed, 1 xfailed). **Not all committed**: 1Password locked
-during the night, so everything after 121b643 is staged or on disk in the working tree
-(`git status`). Commit and push it first (one commit is fine; the message is in the
-session: washed-out pages flagged; imajev-4b left off as third judge and page sorter;
-Qwen's third reading kept on the bench; ablation settings for the trust data).
+On `main`, pushed. Lint and tests green (188 passed, 1 xfailed). No runs going;
 llama-server is stopped.
 
 ### Done this session
@@ -48,12 +44,11 @@ llama-server is stopped.
 
 ### Next (checklist)
 
-1. Commit and push the staged work.
-2. Section 5: a book-quality feature for the arbiter; Vals alarm's lost full stops
+1. Section 5: a book-quality feature for the arbiter; Vals alarm's lost full stops
    (only its own answers can teach it).
-3. Section 3b: a faster line reader than Qwen, should one appear (Qwen is 70–75% of a
+2. Section 3b: a faster line reader than Qwen, should one appear (Qwen is 70–75% of a
    cold run and earns it, see above).
-4. The washed-out pages' text: a human types them or a rescan; the flag only says so.
+3. The washed-out pages' text: a human types them or a rescan; the flag only says so.
 
 ### Working with the user (also in memory)
 
