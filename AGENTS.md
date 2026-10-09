@@ -36,6 +36,9 @@ starting; keep it true.
   AGENTS.md natively; don't add a `CLAUDE.md`.
 - **Read `HANDOVER.md` at the start of a session** for where work stopped, and
   rewrite it at the end of one.
+- **Choosing what to work on:** [docs/outlook.md](docs/outlook.md) says how close the
+  build is to its goal, where results can still move, and what was tried without
+  effect. Update it when the bench moves or a probe comes back null.
 - **Keep [docs/checklist.md](docs/checklist.md) true.** It is the plan: every step,
   done and left, with who does it and how long it should take. In the same change
   that causes it: tick a step off, add a step the moment one is planned, mark one

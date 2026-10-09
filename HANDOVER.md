@@ -32,7 +32,7 @@ On `main`, pushed. Lint and tests green (253 passed, 2 xfailed). No runs going.
   reads better); Qwen's second look at 450 dpi as a trust feature (branch
   `qwen-second-look`, worktree `../roboscriptorium-qwen2`): strong signal, no bench gain.
 
-### Next (checklist)
+### Next (checklist; docs/outlook.md ranks the areas with room)
 
 1. Headings still lost: Afscheid's "1" read as "l"; Artemis's drawn chapter numbers;
    De eerlijke vinder's part numerals I–IV (and a spurious "de"); You're Never Weird
