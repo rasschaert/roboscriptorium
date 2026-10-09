@@ -16,6 +16,8 @@ sha256 = "5b1b11cd809130f36c5838330ed8af550a8a92d7fc6ad6b23839727da85e6fa0"
 files = [
   "xhtml/forword.html", "xhtml/intro.html", "xhtml/ch01.html", "xhtml/ch02.html", "xhtml/ch03.html", "xhtml/ch04.html", "xhtml/ch05.html", "xhtml/ch06.html", "xhtml/ch07.html", "xhtml/ch08.html", "xhtml/ch09.html", "xhtml/ch10.html", "xhtml/ch11.html", "xhtml/ch12.html"
 ]
+# Italics are the "txit" class.
+italic_classes = ["txit"]
 
 # The first Touchstone hardcover edition, fifth printing (key "10 9 8 7 6 5";
 # interior design Jill Putorti); an older Internet Archive PDF like Thief-Taker's:

@@ -148,3 +148,7 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench validation, paragraph starts, gap not after a broken line, warm | 250 | 0 | 0 |
 | 2026-10-09 | bench tuning, arbiter calibrated, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench validation, arbiter calibrated, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, hosted share and italics recorded, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, You re Never Weird italics derived, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, each book its own record, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, each book its own record, warm | 250 | 0 | 0 |

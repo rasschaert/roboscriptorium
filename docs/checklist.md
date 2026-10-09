@@ -338,8 +338,9 @@ danger is that it edits the author. Guards, all of them:
 - [x] An ellipsis style in `typography.py` (`326a89d`), read in the text layer or set in
       `book.toml` (the glyph, dots or spaced dots, a space before or not), not measured on
       the page. Bench tuning after review 1.53 → 1.00 (Metro 4.63 → 0.43)
-- [ ] Italics measured on Metro's typeface: 360 italic words found against the
-      reference's 59 in chapters 1–5 (heuristics only)
+- [x] Italics measured on Metro's typeface: 360 italic words found against the
+      reference's 59 in chapters 1–5. The print is right and the eBook isn't: the print sets
+      every station name in italics (checked on the scan), the eBook two; not scored now
 - [ ] Line-role classifier into the package, behind a switch
 - [ ] A crop reader on tesseract's line boxes (not the layer's)
 - [x] `quality.catches` matches by span where flags have one: a question about one place
@@ -369,14 +370,16 @@ build. Each change benched on its own.
       Breaks a page: tuning 0.46 → 0.33, validation 0.32 → 0.21, words unchanged
 - [ ] A lost line as a question: a gap of a line inside a paragraph (Vals alarm p. 33, after
       "be-") where the spotter saw nothing, flagged as missing text
-- [ ] The bench records how much of each book's Qwen reading was the hosted build
+- [x] The bench records how much of each book's Qwen reading was the hosted build
+      (`read_via`): all but Goede dochter (5%) and De tuin (7%) were read hosted, 97–100%
 - [x] The arbiter calibrated (isotonic, on its leave-one-book-out predictions), so the 0.8
       ask threshold means 80% right whatever the retrain. No change by the bench (raw 0.8
       was already right 83% of the time); kept for stability. Training ~1 min
-- [ ] Italic scores marked unscored where the reference sets italics unlike the print
-      (Metro's station names, You're Never Weird has none)
+- [x] Italic scores marked unscored where the reference sets italics unlike the print
+      (`italics_unlike_print`: Metro's station names). You're Never Weird's EPUB had them in
+      a `txit` class the manifest never named: derived now, italics 0.99 / 0.92
 - [ ] Scene breaks: "* * *" lines and blank-line gaps as a break in the IR and the EPUB
-- [ ] Budget diagnostics: questions of one reason asked in a shuffled order, not page order
+- [x] Budget diagnostics: questions of one reason asked in a shuffled order, not page order
 - [ ] **user** Re-measure the slip rate on today's questions (picks with the difference
       marked, typed lines checked), pick and typed apart (~30 min of review)
 - [ ] Qwen's readings of the bench books again locally, so the bench measures the build that

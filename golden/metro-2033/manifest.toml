@@ -18,6 +18,7 @@ files = [
 ]
 heading_prefixes = ["ct", "cst"]
 hyphen_dash = "–"
+italics_unlike_print = "the print sets every station name in italics, the eBook two in its first five chapters"
 
 # The trade paperback (ISBN 978 0 575 08624 1), fifth impression of the 2010
 # edition (printer's key "5 7 9 10 8 6"), typeset by The Spartan Press: one

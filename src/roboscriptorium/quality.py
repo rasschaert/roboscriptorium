@@ -122,13 +122,16 @@ def hit_rates(flags: list[Flag], errors: list[Disagreement]) -> dict[str, tuple[
 
 
 def ranked(flags: list[Flag], rates: dict[str, tuple[int, int]]) -> list[Flag]:
-    """Flags, those whose reason caught errors most often elsewhere first."""
+    """Flags, those whose reason caught errors most often elsewhere first; within a
+    reason in a fixed shuffle, so a budget doesn't ask the book's first pages only."""
 
     def score(f: Flag) -> float:
         h, n = rates.get(reason(f), (0, 0))
         return (h + 1) / (n + 2)  # Laplace: an unseen reason scores 0.5
 
-    return sorted(flags, key=score, reverse=True)
+    shuffled = list(flags)
+    random.Random(0).shuffle(shuffled)
+    return sorted(shuffled, key=score, reverse=True)
 
 
 def weight(flag: Flag) -> int:

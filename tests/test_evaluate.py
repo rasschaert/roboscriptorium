@@ -82,6 +82,7 @@ def test_eval_locates_remaining_disagreements_on_the_corrected_pages_by_their_re
     verdicts.record(edition, "Y", "edition")
     monkeypatch.setattr(cli, "_build_golden", lambda *a: (book, stages, doc, reference))
     monkeypatch.setattr(cli, "_verdicts", lambda book: verdicts)
+    monkeypatch.setattr(cli, "_italics_unlike", lambda book: "")
     lines = []
     monkeypatch.setattr(cli.typer, "echo", lambda text="": lines.append(text))
     cli._evaluate_book(tmp_path, None, None, True, False)

@@ -62,6 +62,9 @@ class PublisherEpub:
     # A heading set as an image: a regex on the image's alt text whose group 1 is the
     # heading as printed ("Chapter Header, Chapter (\\d+)" gives "2").
     image_heading: str = ""
+    # Why the EPUB's italics aren't the print's, when they aren't: its italic words are
+    # then not scored ("" scores them).
+    italics_unlike_print: str = ""
 
 
 @dataclass(frozen=True)
@@ -149,6 +152,7 @@ class Golden:
                 frozenset(ref.get("note_classes", ())),
                 ref.get("hyphen_dash", ""),
                 ref.get("image_heading", ""),
+                ref.get("italics_unlike_print", ""),
             )
         )
         se = data.get("standard_ebooks")

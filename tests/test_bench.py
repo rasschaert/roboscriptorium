@@ -178,7 +178,8 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
         stages = SimpleNamespace(
             pages=[p], corrected=[p], model_roles=roles, suspects=[], ocr_decider="fixed rule"
         )
-        return spec.split(":")[0].split("/")[-1], None, stages, reference, [], [], 0
+        name = spec.split(":")[0].split("/")[-1]
+        return name, f"book {name}", stages, reference, [], [], 0
 
     monkeypatch.setitem(bench.SETS, "probe", ["a", "b", "garbled"])
     monkeypatch.setattr(cli, "_questions_and_errors", build)
@@ -188,6 +189,8 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
     )
     monkeypatch.setattr(cli, "_model_versions", lambda settings: {})
     monkeypatch.setattr(cli.disagreements, "break_errors", lambda doc, ref, pages: [])
+    monkeypatch.setattr(cli, "_read_via", lambda book, pages: {book: 1.0})
+    monkeypatch.setattr(cli, "_italics_unlike", lambda book: "")
     monkeypatch.setattr(bench, "OUT", tmp_path)
     monkeypatch.setattr(bench.save, "__defaults__", (tmp_path,))
     result = CliRunner().invoke(cli.app, ["bench", "probe"])
@@ -197,6 +200,8 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
     record = json.loads(next(tmp_path.glob("probe-*.json")).read_text())
     assert record["books"]["garbled"]["pair"]["unplaced"] == 1 / 3
     assert record["books"]["a"]["pair"]["cer"] == 0
+    # Each book's own build is recorded, not the last one built.
+    assert record["books"]["a"]["read_via"] == {"book a": 1.0}
 
 
 def test_a_change_to_a_books_structure_is_reported_beside_the_test():

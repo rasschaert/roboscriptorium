@@ -141,6 +141,8 @@ def read(
                     continue
                 inside = _italic(el, False, italic, roman)
                 text = "".join(_text(el, italic, roman, inside)).replace("\u00a0", " ")
+                # Italic spans that touch are one ("Hors" + "e" in two spans is "Horse").
+                text = text.replace(ITALIC_END + ITALIC_START, "")
                 if inside:
                     text = ITALIC_START + text + ITALIC_END
                 text = _clean(text)

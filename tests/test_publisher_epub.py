@@ -74,6 +74,27 @@ def test_italic_classes_and_roman_inside_them(tmp_path):
     assert chapter.italic == [frozenset({2, 3}), frozenset({0, 3, 4})]
 
 
+def test_italic_spans_that_touch_are_one_word(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.xhtml",
+            PAGE.format(
+                '<p class="kop">I</p><p>Of <span class="txit">The Fan Dancer’s Hors</span>'
+                '<span class="txit">e</span>?</p>'
+            ),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.xhtml"], ("kop",), frozenset({"txit"}))
+    (tmp_path / "out").mkdir()
+    from roboscriptorium.golden.gutenberg import _chapter_xhtml
+    from roboscriptorium.golden.reference import load_chapters
+
+    (tmp_path / "out" / "chapter-1.xhtml").write_text(_chapter_xhtml(section))
+    (chapter,) = load_chapters(tmp_path / "out")
+    assert chapter.paragraphs == ["Of The Fan Dancer’s Horse?"]
+    assert chapter.italic == [frozenset({1, 2, 3, 4})]
+
+
 def test_blank_line_classes_are_left_out(tmp_path):
     epub = tmp_path / "book.epub"
     with zipfile.ZipFile(epub, "w") as z:

@@ -201,6 +201,26 @@ def _build_golden(
     return book, stages, doc, reference
 
 
+def _italics_unlike(book: Book) -> str:
+    """Why the book's reference sets italics unlike its print, or "" when it doesn't."""
+    return getattr(Golden.load(book.golden).reference, "italics_unlike_print", "")
+
+
+def _read_via(book: Book, pages: set[int]) -> dict[str, float]:
+    """Of the read model's cached readings of these pages, the share each hosted build
+    read in its place (`ROBO_READ_VIA`): a bench run says which reader it measured."""
+    path = book.stages / "third-reading.json"
+    if not path.exists():
+        return {}
+    raw = json.loads(path.read_text())
+    keys = {k for k in raw.get("lines", {}) if int(k.split(":")[0]) in pages}
+    return {
+        via: round(len(keys & set(read)) / len(keys), 3)
+        for via, read in raw.get("via", {}).items()
+        if keys
+    }
+
+
 def _scored(book: Book, stages: pipeline.Stages) -> Document:
     """The document as scored: without the scan's footnotes where the reference sets them apart."""
     found = golden_notes.load(Golden.load(book.golden).notes_path)
@@ -378,13 +398,13 @@ def run_bench(
             f"work/{spec}", own
         )
         score = evaluate.score(_scored(book, stages), reference)
-        built.append((spec, name, stages, reference, errors, found, applied, score, own))
+        built.append((spec, name, book, stages, reference, errors, found, applied, score, own))
     books, pairs = {}, {}
-    for spec, name, stages, reference, errors, found, applied, score, own in built:
+    for spec, name, book, stages, reference, errors, found, applied, score, own in built:
         rates: dict[str, tuple[int, int]] = {}
         for other in built:
             if other[1] != name:
-                for r, (h, n) in quality.hit_rates(other[5], other[4]).items():
+                for r, (h, n) in quality.hit_rates(other[6], other[5]).items():
                     h0, n0 = rates.get(r, (0, 0))
                     rates[r] = (h0 + h, n0 + n)
         numbers = [p.number for p in stages.pages if p.lines]
@@ -400,6 +420,8 @@ def run_bench(
             "ocr_decider": stages.ocr_decider,
             "ocr_trust_model": own.ocr_trust_model,
             "ocr_suspects": dict(Counter(s.choice for s in stages.suspects)),
+            "read_via": _read_via(book, {p.number for p in stages.pages}),
+            "italics_scored": not _italics_unlike(book),
             "verdicts_applied": applied,
             "score": {k: v for k, v in asdict(score).items() if k != "confusions"},
             "quality": {
@@ -543,7 +565,11 @@ def _evaluate_book(
         f"recall {result.paragraph_recall:.3f}; "
         f"words: {result.output_words} out / {result.reference_words} reference"
     )
-    if result.italic_expected or result.italic_output:
+    if unlike := _italics_unlike(book):
+        typer.echo(
+            f"  italic words: not scored, the reference's italics aren't the print's ({unlike})"
+        )
+    elif result.italic_expected or result.italic_output:
         typer.echo(
             f"  italic words: precision {result.italic_precision:.3f}, "
             f"recall {result.italic_recall:.3f} "
