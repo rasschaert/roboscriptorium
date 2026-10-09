@@ -343,7 +343,14 @@ danger is that it edits the author. Guards, all of them:
       every station name in italics (checked on the scan), the eBook two; not scored now
 - [x] Line-role classifier into the package, behind a switch (`sorter.py`, `ROBO_SORTER=1`,
       off by default; `experiments/train_sorter.py`). Leaving one book out: role errors
-      tuning 406 → 152, validation 77 → 29. Bench pending (6g)
+      tuning 406 → 152, validation 77 → 29. Bench, with two rules enforced in code (a
+      heading or edge line repeated on 3+ pages is furniture; a line kept while the trees
+      give it P(body) ≥ 0.25): no change by the test, tuning 0.56 → 0.52, validation 0.77 →
+      0.70; Artemis 0.76 → 0.53, 11/22/63 1.00 → 0.73, Villa Toscane 0.12 → 0.06, Crime
+      0.43 → 0.71 (one lost line, p. 97)
+- [ ] Switch the sorter on by default: bench it again once the local re-read has settled
+      the reader (`ROBO_SORTER=1 bench tuning|validation`, ~10 min warm), and look at
+      Crime p. 97 and De cipier p. 49 (last lines dropped)
 - [ ] A crop reader on tesseract's line boxes (not the layer's)
 - [x] `quality.catches` matches by span where flags have one: a question about one place
       catches only errors sharing a word with it (6g)
@@ -393,9 +400,13 @@ build. Each change benched on its own.
       body lines or kept running heads, now kept at P(body) ≥ 0.25 and repeated edge text
       made furniture), rerun pending
 - [ ] **user** Re-measure the slip rate on today's questions (picks with the difference
-      marked, typed lines checked), pick and typed apart (~30 min of review)
+      marked, typed lines checked), pick and typed apart: 32 questions on a copy of Goede
+      dochter pp. 9–64, served on http://127.0.0.1:8766/ (`robo-slipreview`), ~20 min
+- [ ] A ledger of each probe's prediction beside the bench's verdict for the same change
+      (docs/outlook.md has the first): when a probe is enough and when only the bench decides
 - [ ] Qwen's readings of the bench books again locally, so the bench measures the build that
-      is run (~1.4 s a line, ~12 h for 30k lines; or the user's go to read Stella hosted)
+      is run: 30,572 lines, ~12 h, then trust data, arbiter and both benches (the user's go,
+      2026-10-09; running overnight as `robo-reread`, `work/runs/reread-chain.zsh`)
 
 ## 6b. Where the labelled suspects say the errors are (Fable's review, 2026-10-08)
 

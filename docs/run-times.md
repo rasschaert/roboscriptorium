@@ -158,3 +158,9 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench validation, lost lines asked, no specks or notes, warm | 250 | 0 | 0 |
 | 2026-10-09 | bench tuning, scene breaks, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench validation, scene breaks, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, line roles by trees, new lines read locally | 839 | 4 | 0 |
+| 2026-10-09 | bench validation, line roles by trees | 250 | 5 | 0 |
+| 2026-10-09 | bench tuning, line roles by trees, repeated headings are running heads, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, line roles by trees, repeated headings, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, trees keep doubtful lines, edge repeats are furniture | 839 | 3 | 0 |
+| 2026-10-09 | bench validation, trees keep doubtful lines, edge repeats are furniture | 250 | 1 | 0 |

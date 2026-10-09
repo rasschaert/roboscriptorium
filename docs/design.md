@@ -254,10 +254,16 @@ change (tuning 0.57 → 0.56, validation 0.80 → 0.77; De eerlijke vinder 1.28 
 
 clef-flash:9b answers the doubtful lines, and rules in `roles.py` override it
 where layout settles the question. The rules don't carry over to unseen books
-(Villa Toscane headings 0/12); a tree classifier over layout, type and clef's
-answer makes 111 role errors to the rules' 256 over twelve books, but is unstable
-on the English books with three to train on. It replaces the rules once more
-English data makes it stable and the bench says so.
+(Villa Toscane headings 0/12). Trees over layout, type, repetition and clef's answer
+(`sorter.py`, `ROBO_SORTER=1`) make 152 role errors to the rules' 406 on the tuning
+books and 29 to 77 on validation, leaving one book out (five English books now, where
+three made them unstable). Two things are enforced in code, being true by definition or
+by every label: text repeated at the pages' edges is furniture (346 labelled lines, none
+body), and a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
+line costs ten words, a stray folio one or two). Bench (2026-10-09): no change by the
+test, tuning 0.56 → 0.52, validation 0.77 → 0.70; Artemis 0.76 → 0.53, 11/22/63 1.00 →
+0.73, Villa Toscane 0.12 → 0.06; Crime 0.43 → 0.71, one body line dropped. Off by
+default until a bench on the local Qwen readings confirms it.
 
 A chapter number the text layer misreads ("l" for 1, "e," for 2, "UH" for 11 on
 Afscheid) matches no numeral rule, and clef-flash calls it a page number or an
