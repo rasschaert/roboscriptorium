@@ -402,6 +402,11 @@ build. Each change benched on its own.
 - [ ] **user** Re-measure the slip rate on today's questions (picks with the difference
       marked, typed lines checked), pick and typed apart: 32 questions on a copy of Goede
       dochter pp. 9–64, served on http://127.0.0.1:8766/ (`robo-slipreview`), ~20 min
+- [ ] Quote questions offer the OCR-checked line itself as a reading where it differs from
+      the layer: Goede dochter p. 36 offered the layer's `Tk snap` and the checked line with
+      Qwen's marks (`Charlie. ‘Waarom`), while the print, and the publisher's EPUB, set the
+      wrong mark (`Charlie.’ Waarom`); the faithful line had to be typed. Count, in the
+      slip review, how many quote questions sit on a mark the print itself sets wrong
 - [ ] A ledger of each probe's prediction beside the bench's verdict for the same change
       (docs/outlook.md has the first): when a probe is enough and when only the bench decides
 - [ ] Qwen's readings of the bench books again locally, so the bench measures the build that
