@@ -466,9 +466,9 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       12/12 (a label's number taken for a folio), De cipier 3/4 → 4/4 (a section number
       near the folio). Thief-Taker and Metro count a label and its title as two
       headings where the build makes one heading of two parts (scoring, not text)
-- [ ] Afscheid's "1": the layer reads it as a lowercase "l" (p. 9, top line), which no
-      numeral or section rule takes; read it as the book's numbering style (digits
-      here, Roman elsewhere) from its other headings, or ask. "2": not yet located
+- [x] Afscheid's misread chapter numbers ("l", "e,", "UH" for 1, 2, 11): a dropped top
+      line boxed like the book's numeral headings is one (`numeral-slot`), and the OCR
+      check fixes its text; headings 8/11 → 11/11, nothing else changed, 1 h
 - [ ] Artemis's chapter numbers, drawn in a circle (0/3), and De eerlijke vinder's
       part numerals I–IV (0/4, a spurious "de"): read from the drawing
 - [ ] You're Never Weird 5/16: bracketed sections and "- 1 -" chapter numbers

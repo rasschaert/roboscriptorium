@@ -197,6 +197,16 @@ answer makes 111 role errors to the rules' 256 over twelve books, but is unstabl
 on the English books with three to train on. It replaces the rules once more
 English data makes it stable and the bench says so.
 
+A chapter number the text layer misreads ("l" for 1, "e," for 2, "UH" for 11 on
+Afscheid) matches no numeral rule, and clef-flash calls it a page number or an
+artifact, so it was dropped before any reader saw it. Its box gives it away: at the
+top, centred, as tall as the numerals the book's other chapters open with (21–22 pt on
+every Afscheid chapter page). `numeral-slot` keeps such a line as a heading, and the
+OCR check then reads its crop: glm-ocr, tesseract and Qwen read all three right, and
+the arbiter fixed all three. Headings 8/11 → 11/11, no other book changed (bench,
+2026-10-09). A washed-out line at the top (Afscheid p. 32) is as tall but wide and off
+centre, so it isn't taken.
+
 ## Reflow: line-end hyphens
 
 **Nothing else looks at a line-end hyphen.** The OCR check starts where readings

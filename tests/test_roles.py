@@ -315,3 +315,31 @@ def test_a_top_number_is_a_section_where_the_page_prints_its_folio_elsewhere(tmp
     roles = classify(pages, _NumbersAsPageNumbers(), DecisionCache(tmp_path / "d.jsonl"))
     assert roles[SourceRef(11, 0)].role == "chapter_heading"
     assert roles[SourceRef(12, 0)].role != "chapter_heading"
+
+
+def test_a_misread_numeral_in_a_numeral_headings_place_is_a_heading(tmp_path):
+    def opening(number: int, top: Line) -> PageText:
+        return PageText(number, 400, 600, [top] + _page(number, "x").lines[1:])
+
+    pages = [opening(n, Line(str(k), 190, 40, 210, 62)) for k, n in enumerate((11, 15, 19), 1)]
+    pages += [
+        opening(24, Line("l", 192, 41, 208, 63)),  # the "1" of a later part, misread
+        opening(25, Line("peeters bent och kane eg u.", 60, 40, 340, 62)),  # a washed-out line
+        opening(26, Line("e,", 60, 41, 80, 63)),  # boxed alike, but off-centre
+        opening(27, Line("°", 196, 50, 204, 56)),  # a speck, not a numeral's height
+    ]
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            if state["line"].startswith("body text"):
+                return {"role": Answer("choice", "body", 0.9, {"body": 0.9})}
+            return {"role": Answer("choice", "artifact", 0.5, {"artifact": 0.5, "body": 0.05})}
+
+    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
+    assert [roles[SourceRef(n, 0)].rule for n in (11, 15, 19)] == ["section-number"] * 3
+    assert roles[SourceRef(24, 0)].role == "chapter_heading"
+    assert roles[SourceRef(24, 0)].rule == "numeral-slot"
+    for n in (25, 26, 27):
+        assert roles[SourceRef(n, 0)].role == "artifact", n

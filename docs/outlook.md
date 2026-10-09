@@ -37,8 +37,7 @@ Bench totals: tuning 0.96, validation 0.75 wrong words a page after review.
    - Artemis 0/3: chapter numbers drawn in a circle, absent from the text layer.
    - De eerlijke vinder 0/4 (plus a spurious "de"): part numerals I–IV, the first drawn.
    - You're Never Weird 4/16: "- 1 -" numbers, bracketed sections, subtitles.
-   - Afscheid 8/11: "1" read as a lowercase "l" (p. 9); "2" not located.
-   - Paragraph F1: Afscheid 0.705, You're Never Weird 0.901, Dolittle 0.905, Reis 0.922.
+   - Paragraph F1: Afscheid 0.709, You're Never Weird 0.901, Dolittle 0.905, Reis 0.922.
    - Thief-Taker 9/22 and Metro 5/10 are a scoring convention: the reference has label
      and title as two headings, the build one heading of two parts.
    - Not handled at all yet: footnotes in the body, verse, tables, scene breaks beyond

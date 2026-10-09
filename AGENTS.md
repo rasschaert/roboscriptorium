@@ -521,7 +521,7 @@ schedel before choosing an OCR model.
 ## Environment
 
 - Apple M4 Max, 64 GB RAM, macOS.
-- Ollama 0.40.1 at `http://127.0.0.1:11434` (0.40.0 on 2026-10-06, 0.40.1 on 2026-10-08; scores before 2026-10-06 were on 0.35.1).
+- Ollama 0.40.2 at `http://127.0.0.1:11434` (0.40.0 on 2026-10-06, 0.40.1 on 2026-10-08, 0.40.2 by 2026-10-09; scores before 2026-10-06 were on 0.35.1).
 - Ollaya was uninstalled on 2026-10-08; every model runs on Ollama.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler
   (`pdfinfo`, `pdftotext`, `pdfimages`).
