@@ -267,6 +267,7 @@ local web page.
   ink, yet a text layer full of scraps), one question for the whole page;
 - pictures, captions, and titles that aren't headings;
 - text the spotter sees and the text layer lacks;
+- white space inside a sentence, where the text layer lost a printed line;
 - paragraphs whose curly quotes don't pair up (`quotes.py`).
 
 The list is built before any answers are applied, so it doesn't change while you
@@ -311,7 +312,13 @@ one line, and the arbiter's own fixes there, all apply together.
 ### Paragraphs
 
 Plain code (`reflow.py`) joins lines into paragraphs and headings, using
-indentation, short last lines and the sorter's roles.
+indentation, short last lines, white space and the sorter's roles.
+
+A line starts a paragraph when it stands right of the margin. The margin is read
+from the lines around it, and from the page's full lines where every line around it
+is indented, as in a run of one-line dialogue. A line's height of white space after a
+sentence starts a paragraph too, and two lines' worth, or a line of ornaments such as
+`* * *`, is a scene break.
 
 A hyphen at the end of a line stays or goes by evidence, strongest first:
 
@@ -372,8 +379,12 @@ question covers, at a quarter, a half and one question per page.
 `bench` decides whether a change goes in. It scores fixed slices of every book in
 a set, before and after the change, and compares them page by page. The change has
 to improve the "after review" figure, which adds the reviewer's own expected
-mistakes to the errors the arbiter left unasked, with each book weighing the same.
+mistakes to the errors the arbiter left unasked, with each book weighing the same,
+or the number of paragraph breaks set wrong, without the other getting clearly worse.
 If any one book gets clearly worse, the change is rejected.
+
+A question counts as catching an error only at its own place in a line, and a page
+the reviewer types whole counts as a question for each of its lines.
 
 ### Three sets of books
 
