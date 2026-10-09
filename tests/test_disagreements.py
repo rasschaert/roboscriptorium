@@ -114,3 +114,26 @@ def test_patch_applies_verdicts_within_each_others_context(tmp_path):
     patched, applied = patch(reference, verdicts)
     assert applied == 2
     assert patched[0].paragraphs == ["a b c d E f G h i j k l m n o"]
+
+
+def _two_pages(first: str, second: str) -> tuple[Document, list[PageText]]:
+    pages = [
+        PageText(37, 300, 500, [Line(first, 20, 20, 280, 35)]),
+        PageText(38, 300, 500, [Line(second, 20, 20, 280, 35)]),
+    ]
+    para = Paragraph(f"{first} {second}", [SourceRef(37, 0), SourceRef(38, 0)])
+    return Document("t", "a", "nl", [para]), pages
+
+
+def test_an_error_over_a_page_break_belongs_to_the_page_holding_most_of_it():
+    # Mostly on the first page: it stays there.
+    doc, pages = _two_pages("de man liep xq zw vk", "naar huis toe")
+    (found,) = disagreements.find(
+        doc, [Chapter("1", ["de man liep heel snel weg naar huis toe"])], pages
+    )
+    assert found.page == 37
+    # A washed-out page read as scraps, its error starting on the page before.
+    doc, pages = _two_pages("de man liep naar zq", "xq zw vk pt ab cd ef")
+    ref = [Chapter("1", ["de man liep naar huis en sliep daar die hele lange nacht"])]
+    (found,) = disagreements.find(doc, ref, pages)
+    assert found.page == 38

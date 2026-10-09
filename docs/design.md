@@ -264,6 +264,12 @@ typed in, text the layer lacks) gets only the quote check.
   would star about one by chance each run.
 - **"After review" counts the reviewer's slips.** 8 of 68 checked answers on
   Stella were wrong (Beta posterior 0.06–0.21), so a question isn't free.
+- **An error over a page break counts on the page holding most of it.** Counted on
+  its first word's page, washed-out Afscheid p. 38 (one region the reviewer types)
+  scored as 297 unasked words on p. 37, and the scraps of Dolittle's p. 57 plate as
+  13 on p. 56: Afscheid read 5.03 wrong words a page after review where it is 0.24.
+  A whole page typed by the reviewer still counts as one question's slips, which
+  flatters a washed-out book.
 - **Validation books are not a test.** Earlier choices were made on their scores. They
   are De tuin, Villa Toscane, De eerlijke vinder and You're Never Weird on the Internet
   (the only English one, and the hardest layout: pictures holding text). Grand Hotel Europa was one until

@@ -16,11 +16,12 @@ a human answering only what the machine can't.
 | Clean scan, modern Dutch prose (Stella's kind) | Goede dochter, Reis, De cipier | 0.25–0.40 | 1.2–1.3 |
 | Clean scan, modern English prose | Metro, Thief-Taker, Crime | 0.40–0.42 | 1.2–1.5 |
 | Born-digital PDF | Villa Toscane | 0.12 | 0.13 |
-| Old typography, plates | Dolittle | 0.98 | 1.6 |
+| Old typography, plates | Dolittle | 0.77 | 1.6 |
 | Busy layout, pictures | 11/22/63, You're Never Weird | 0.83–0.84 | 2.2 |
-| Washed-out scan | Afscheid | 5.03 | 0.5 |
+| Washed-out scan | Afscheid | 0.24 (a typed page counts as one question) | 0.5 |
 
-Bench totals: tuning 0.96, validation 0.75 wrong words a page after review.
+Bench totals: tuning 0.50, validation 0.75 wrong words a page after review (tuning
+was 0.96 until an error over a page break counted on the page holding most of it).
 
 **Assessment (2026-10-09):**
 - Stella coming out as a clean, valid EPUB is likely (~80–90%) and near: its kind of
@@ -59,9 +60,9 @@ Bench totals: tuning 0.96, validation 0.75 wrong words a page after review.
    A better vision reader or judge is the likeliest source of a step change. Screen
    each new model on the frozen sets (`tryout.py run reader|judge`) for every role
    (AGENTS.md: every new model gets two questions).
-5. **The hard tail, by hand or rescan.** Washed-out pages (Afscheid's 297 unasked words)
-   are flagged whole (`faint.py`); no model reads them. A human types them, or the book
-   is rescanned.
+5. **The hard tail, by hand or rescan.** Washed-out pages (Afscheid's four in its slice)
+   are flagged whole (`faint.py`); no model reads them, and the readers invent fluent
+   text on them. A human types them, or the book is rescanned.
 
 ## Tried, and why it didn't help
 

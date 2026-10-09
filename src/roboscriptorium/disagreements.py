@@ -12,6 +12,7 @@ Verdicts live in git, one JSON object per line, in
 import hashlib
 import json
 import re
+from collections import Counter
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
@@ -180,7 +181,9 @@ def find(
         if not span:
             near = [refs[i] for i in (s0 - 1, s0) if 0 <= i < len(refs)]
             span = [r for r in near if r is not None]
-        page = span[0].page if span else None
+        # A stretch running over a page break belongs to the page holding most of it: a
+        # washed-out page read as scraps is one error that starts on the page before.
+        page = Counter(r.page for r in span).most_common(1)[0][0] if span else None
         on_page = [r.line for r in span if r.page == page]
         found.append(
             Disagreement(

@@ -117,3 +117,9 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench validation, top number with the folio elsewhere, warm | 250 | 0 | 0 |
 | 2026-10-09 | bench tuning, numeral slots, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench validation, numeral slots, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, faint pages left out of the OCR check, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, faint pages left out of the OCR check, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, faint pages unchecked, ask below 0.9, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench tuning, faint pages unchecked, ask below 0.8, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench tuning, errors over a page break on the page holding most, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, errors over a page break on the page holding most, warm | 250 | 0 | 0 |
