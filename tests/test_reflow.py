@@ -424,3 +424,31 @@ def test_a_blank_line_starts_an_unindented_paragraph():
     page_.lines.extend(below)
     paragraphs = reflow([page_])
     assert [p.text[:6] for p in paragraphs] == ["Tekst ", "Na de "]
+
+
+def test_a_speck_or_an_ordinary_gap_is_no_scene_break():
+    rows = [(10, 280, f"Tekst tot de rand, regel {i}") for i in range(4)] + [(10, 120, "Eind.")]
+    page_ = _lines(rows)
+    page_.lines.insert(3, Line("*", 140, 20 + 3 * SPACING - 4, 143, 20 + 3 * SPACING - 1))
+    # Letters spaced apart (1.6 pitches): a paragraph, but no scene break.
+    y = 20 + 4 * SPACING + 1.6 * SPACING
+    page_.lines.append(Line("Nieuwe alinea na wit", 10, y, 280, y + 10))
+    paragraphs = reflow([page_])
+    assert paragraphs[-1].text.startswith("Nieuwe")
+    assert not any(p.break_before for p in paragraphs)
+
+
+def test_an_ornament_line_or_two_blank_lines_set_a_scene_break():
+    rows = [(10, 280, f"Tekst tot de rand, regel {i}") for i in range(4)] + [(10, 120, "Eind.")]
+    rows += [(130, 160, "* * *"), (22, 280, "Een nieuwe scène begint"), (10, 280, "en loopt")]
+    rows += [(10, 120, "door. Klaar.")]
+    page_ = _lines(rows)
+    y = 30 + 10 * SPACING + 2 * SPACING
+    page_.lines.append(Line("Na een grote witruimte", 10, y, 280, y + 10))
+    paragraphs = reflow([page_])
+    assert [(p.text[:10], p.break_before) for p in paragraphs] == [
+        ("Tekst tot ", False),
+        ("Een nieuwe", True),
+        ("Na een gro", True),
+    ]
+    assert "* * *" not in " ".join(p.text for p in paragraphs)

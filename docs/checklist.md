@@ -380,7 +380,11 @@ build. Each change benched on its own.
 - [x] Italic scores marked unscored where the reference sets italics unlike the print
       (`italics_unlike_print`: Metro's station names). You're Never Weird's EPUB had them in
       a `txit` class the manifest never named: derived now, italics 0.99 / 0.92
-- [ ] Scene breaks: "* * *" lines and blank-line gaps as a break in the IR and the EPUB
+- [x] Scene breaks: "* * *" lines and blank-line gaps as a break in the IR and the EPUB
+      (`Paragraph.break_before`, `<hr class="break"/>`). Reis 63, De eerlijke vinder 27;
+      spot-checked right on the scan. Not scored: the references drop their blank lines
+- [ ] Score scene breaks: derive keeps a reference's blank-line paragraphs and ornaments as a
+      break mark, the score counts them like paragraph breaks
 - [x] Budget diagnostics: questions of one reason asked in a shuffled order, not page order
 - [ ] **user** Re-measure the slip rate on today's questions (picks with the difference
       marked, typed lines checked), pick and typed apart (~30 min of review)
@@ -598,5 +602,5 @@ public-domain items only; a lending-library item keeps all but `_scandata.xml` p
 - [ ] Surya's layout model as a second spotter beside DocLayout-YOLO (a vote, not a
       replacement): screen it first on the drawn numerals DocLayout-YOLO misses (De eerlijke
       vinder) and the figure/caption pages
-- [ ] Block quotes, epigraphs, verse, and ornaments used as scene breaks: none is handled
+- [ ] Block quotes, epigraphs and verse: none is handled (scene breaks are, 6g)
       yet; find golden pages that have them before designing anything

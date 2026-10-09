@@ -196,7 +196,7 @@ right, then expand.
     book's own spelling, the word list, a capital after the break, the parts beside an
     inner hyphen (docs/design.md). Without roles it falls back to a footer heuristic.
   - `ir.py`: the IR (`Document`; `Paragraph` and `Heading` with `SourceRef`s back
-    to page lines; `Figure` with its image file, page box and caption).
+    to page lines, a paragraph marking a scene break before it; `Figure` with its image file, page box and caption).
   - `figures.py`: the pictures in the book. The layout model's figures on body
     pages (≥ 0.5) unless a human answered them as something else; trimmed
     where a caption overlaps; sideways plates turned upright (the human's turn,

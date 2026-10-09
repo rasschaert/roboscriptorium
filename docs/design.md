@@ -292,6 +292,12 @@ Measured as paragraph breaks set wrong per page (2026-10-09): tuning 0.46 → 0.
 on), Artemis's letters set without spacing, and a section break that falls on a page
 turn, where nothing on the page shows it.
 
+**A scene break is white space of two lines, or an ornament line.** Over 1.8 pitches
+after a sentence (one blank line is two pitches), or a line of three ornament marks or
+more ("* * *"; one or two are a speck), puts a break before the next paragraph, set
+unindented after an `<hr class="break"/>`. Reis has 63 in its slice, spot-checked right
+on the scan. The score doesn't see them yet: derive drops a reference's blank lines.
+
 ## Reflow: line-end hyphens
 
 **Nothing else looks at a line-end hyphen.** The OCR check starts where readings

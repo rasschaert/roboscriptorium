@@ -27,3 +27,11 @@ def test_epub_structure(tmp_path):
         assert "<h2>CHAPTER II.</h2>" in z.read("OEBPS/text-002.xhtml").decode()
         assert "CHAPTER II." in z.read("OEBPS/nav.xhtml").decode()
         assert "Titel &amp; co" in z.read("OEBPS/content.opf").decode()
+
+
+def test_a_scene_break_is_set_before_its_paragraph():
+    from roboscriptorium.epub import _block
+    from roboscriptorium.ir import Paragraph
+
+    html = _block(Paragraph("Een nieuwe scène.", opening=True, break_before=True))
+    assert html == '<hr class="break"/>\n<p class="opening">Een nieuwe scène.</p>'

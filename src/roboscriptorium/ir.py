@@ -23,6 +23,8 @@ class Paragraph:
     initial: bool = False
     # Indices of its italic words in `text.split()`, ascending.
     italic: tuple[int, ...] = ()
+    # A scene break comes before it: white space or an ornament ("* * *") in the print.
+    break_before: bool = False
 
 
 @dataclass

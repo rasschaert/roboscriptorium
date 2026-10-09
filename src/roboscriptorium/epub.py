@@ -14,6 +14,7 @@ CSS = """\
 body { margin: 0 5%; }
 p { margin: 0; text-indent: 1.5em; text-align: justify; hyphens: auto; }
 p.opening { text-indent: 0; }
+hr.break { border: 0; margin: 1.5em 0; }
 span.initial { float: left; font-size: 3.2em; line-height: 0.85; margin: 0.05em 0.08em 0 0; }
 h2 { text-align: center; margin: 2em 0 1em; font-weight: normal; }
 img.cover { display: block; max-width: 100%; max-height: 100vh; margin: 0 auto; }
@@ -170,9 +171,10 @@ def _block(block: Block) -> str:
         text = f'<span class="initial">{escape(block.text[0])}</span>{_inline(rest, italic)}'
     else:
         text = _inline(block.text, set(block.italic))
+    scene = '<hr class="break"/>\n' if block.break_before else ""
     if block.opening or block.initial:
-        return f'<p class="opening">{text}</p>'
-    return f"<p>{text}</p>"
+        return f'{scene}<p class="opening">{text}</p>'
+    return f"{scene}<p>{text}</p>"
 
 
 def _section(doc: Document, section: _Section) -> str:

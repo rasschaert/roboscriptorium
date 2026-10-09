@@ -39,6 +39,10 @@ PAGE_MARGIN_LINES = 4
 # pitch, at its top and its bottom alike, starts a paragraph: a blank line set before
 # an unindented one, or letters spaced apart. Box tops alone jitter on some layers.
 PARAGRAPH_GAP = 1.5
+# White space of this many pitches before a paragraph is a scene break.
+SCENE_GAP = 1.8
+# A line of nothing but ornaments ("* * *", "⁂", "• • •") sets a scene break.
+_ORNAMENT = re.compile(r"^\s*(?:[*·•⁂~#◊♦]\s*){1,}$")
 SENTENCE_END = tuple(".!?:'\"’”)…")
 # The footer (page number, ornaments, specks read as text) starts after a gap
 # wider than this many line spacings, in the bottom fifth of the page, and holds
@@ -168,16 +172,17 @@ def _pitch(lines: list[Line]) -> float | None:
     return statistics.median(pitches) if len(pitches) >= 3 else None
 
 
-def _spaced(above: Line, line: Line, pitch: float | None) -> bool:
-    """White space between two lines, after one that ends in punctuation: below a line
-    stopping mid-word or mid-sentence ("be-"), the gap is a line the layer lost."""
+def _spaced(above: Line, line: Line, pitch: float | None, times: float = PARAGRAPH_GAP) -> bool:
+    """White space of `times` pitches between two lines, after one that ends in
+    punctuation: below a line stopping mid-word or mid-sentence ("be-"), the gap is a line
+    the layer lost."""
     end = above.text.rstrip()[-1:]
     return (
         pitch is not None
         and bool(end)
         and not end.isalnum()
         and end not in HYPHENS
-        and min(line.y0 - above.y0, line.y1 - above.y1) > PARAGRAPH_GAP * pitch
+        and min(line.y0 - above.y0, line.y1 - above.y1) > times * pitch
     )
 
 
@@ -279,6 +284,8 @@ def reflow(
     seen = spellings(pages)
     blocks: list[Block] = []
     opening = True
+    # Whether a scene break waits for the next paragraph.
+    scene = [False]
     for page in pages:
         lines = page.lines if roles is not None else page.lines[: footer_start(page)]
         kept = []
@@ -291,8 +298,11 @@ def reflow(
                 kept.append((ref, line))
                 continue
             # Indents are measured within each run of body lines.
-            opening = _add_body(blocks, kept, opening, seen, known)
+            opening = _add_body(blocks, kept, opening, seen, known, scene)
             kept = []
+            if _ornament(line):
+                scene[0] = True
+                continue
             if role == "chapter_heading":
                 previous = blocks[-1] if blocks else None
                 if _continues(previous, line, page.number):
@@ -310,7 +320,7 @@ def reflow(
                     text = bare_numeral(line.text) or line.text
                     blocks.append(Heading(text, [ref], [text]))
                 opening = True
-        opening = _add_body(blocks, kept, opening, seen, known)
+        opening = _add_body(blocks, kept, opening, seen, known, scene)
     for block in blocks:
         block.text = tidy(block.text)
         if isinstance(block, Paragraph):
@@ -405,21 +415,48 @@ def _continues(previous: Block | None, line: Line, page: int) -> bool:
     return not _labels(line.text)
 
 
+def _ornament(line: Line) -> bool:
+    """A line of ornaments marking a scene break: "⁂", or three marks at least ("* * *";
+    one or two are a speck)."""
+    marks = line.text.replace(" ", "")
+    return bool(_ORNAMENT.match(line.text)) and (len(marks) >= 3 or marks == "⁂")
+
+
 def _add_body(
     blocks: list[Block],
     kept: list[tuple[SourceRef, Line]],
     opening: bool,
     seen: Counter,
     known: Callable[[str], bool] | None,
+    scene: list[bool] | None = None,
 ) -> bool:
-    """Append a run of body lines to `blocks`; whether the next block still opens a section."""
-    flags = indented([ln for _, ln in kept])
+    """Append a run of body lines to `blocks`; whether the next block still opens a section.
+
+    `scene` holds whether a scene break waits for the next paragraph: an ornament line
+    sets it, and white space of `SCENE_GAP` pitches after a sentence is one too."""
+    scene = scene if scene is not None else [False]
+    lines = [ln for _, ln in kept]
+    flags = indented(lines)
+    pitch = _pitch(lines)
     for k, ((ref, line), starts_paragraph) in enumerate(zip(kept, flags, strict=True)):
+        if _ornament(line):
+            scene[0] = True
+            continue
+        if k and pitch is not None and _spaced(lines[k - 1], line, pitch, SCENE_GAP):
+            scene[0] = True
         current = blocks[-1] if blocks else None
-        if not isinstance(current, Paragraph) or (k == 0 and opening):
+        if not isinstance(current, Paragraph) or (k == 0 and opening) or scene[0]:
+            first = opening and k == 0
             blocks.append(
-                Paragraph(line.text, [ref], opening=opening and k == 0, initial=line.initial)
+                Paragraph(
+                    line.text,
+                    [ref],
+                    opening=first or scene[0],
+                    initial=line.initial,
+                    break_before=scene[0] and not first,
+                )
             )
+            scene[0] = False
         elif starts_paragraph or line.initial:
             blocks.append(Paragraph(line.text, [ref], initial=line.initial))
         else:
