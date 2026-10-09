@@ -230,6 +230,7 @@ def review_regions(
             doubts,
             stages.quote_lines,
             stages.quote_readings,
+            stages.faint_pages,
         )
         return stages.pages, found, stages.corrections_applied
 
@@ -297,6 +298,7 @@ def _questions_and_errors(spec: str, settings: Settings | None = None):
         ocrcheck.doubts(stages.suspects),
         stages.quote_lines,
         stages.quote_readings,
+        stages.faint_pages,
     )
     reference = load_chapters(Golden.load(book.golden).text_dir)
     if (span := _range(chapters or None)) is not None:

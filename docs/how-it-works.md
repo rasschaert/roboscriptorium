@@ -255,6 +255,8 @@ local web page.
 - headings;
 - lines the sorter dropped, or kept without being sure;
 - garbled text;
+- a page scanned too faint to read (`faint.py`: little contrast between paper and
+  ink, yet a text layer full of scraps), one question for the whole page;
 - pictures, captions, and titles that aren't headings;
 - text the spotter sees and the text layer lacks;
 - paragraphs whose curly quotes don't pair up (`quotes.py`).

@@ -64,3 +64,14 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | trust data, Stella, winnow-ollama:e4b as check_model, local Qwen for the uncached lines | 67 | 4 | 0 |
 | 2026-10-09 | bench tuning, winnow-ollama + book-wide style, retrained trust, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench validation, first run (baseline), winnow-ollama, retrained trust | 250 | 0 | 0 |
+| 2026-10-09 | trust data, 14 books, imajev-4b as third judge (llama.cpp), readings and other judges cached | 1270 | 31 | 0 |
+| 2026-10-09 | bench tuning, imajev-4b third judge, retrained trust, warm | 839 | 3 | 0 |
+| 2026-10-09 | bench validation, imajev-4b third judge, retrained trust, warm | 250 | 0 | 0 |
+| 2026-10-09 | probe: body range, imajev-4b, alongside 1 run | 250 | 13 | 0 |
+| 2026-10-09 | probe: body range, clef-flash:9b, alongside 1 run | 250 | 15 | 0 |
+| 2026-10-09 | bench tuning, washed-out pages flagged, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, washed-out pages flagged, warm | 250 | 0 | 0 |
+| 2026-10-09 | trust data, 14 books, without Qwen (ablation), other readings cached | 1270 | 19 | 0 |
+| 2026-10-09 | bench tuning, without Qwen (ablation) | 839 | 2 | 0 |
+| 2026-10-09 | bench validation, without Qwen (ablation) | 250 | 0 | 0 |
+| 2026-10-09 | tryout: judge v1, clef:27b re-asked (answer variance) | 518 | 12 | 0 |

@@ -9,6 +9,7 @@ import pymupdf
 
 from roboscriptorium import (
     corrections,
+    faint,
     figures,
     italics,
     layout,
@@ -59,6 +60,8 @@ class Stages:
     # What settled the OCR check's suspects: "fixed rule", "trust <model hash>", or ""
     # when there was no check.
     ocr_decider: str = ""
+    # Body pages scanned too faint to read (`faint.py`), on scans only.
+    faint_pages: set[int] = field(default_factory=set)
 
 
 def run(
@@ -168,6 +171,9 @@ def run(
         for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
         for ref in place.sources
     }
+    faint_pages = set()
+    if ocrcheck.scanned(book.source):
+        faint_pages = faint.pages(book.source, body, book.stages / "contrast.json")
     quote_readings = {}
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, whole, suspects, quote_lines, style, settings)
@@ -203,6 +209,7 @@ def run(
         quote_lines,
         quote_readings,
         decider,
+        faint_pages,
     )
 
 

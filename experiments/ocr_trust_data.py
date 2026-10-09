@@ -2,7 +2,8 @@
 
 For every suspect: its versions (the text layer's first), what each model and
 reading said about each, and which version makes the line read as printed
-(`golden.align`). Cached per book in work/probes/ocr-trust/<book>.json.
+(`golden.align`). Cached per book in work/probes/ocr-trust/<book>.json
+(`ROBO_TRUST_DATA` for another folder).
 
     uv run python experiments/ocr_trust_data.py [--rebuild] [book …]
 """
@@ -46,7 +47,8 @@ SPECS = {
     # No golden reference: labelled by a human's answers in the review.
     "stella": "answers",
 }
-OUT = Path("work/probes/ocr-trust")
+# ROBO_TRUST_DATA keeps an ablation's data apart (another reader set, say).
+OUT = Path(os.environ.get("ROBO_TRUST_DATA", "work/probes/ocr-trust"))
 def fold(text: str) -> str:
     """Text compared as the score compares it (`evaluate.normalise`: quote and dash
     glyphs, ellipses, spaced dots), with what reflow sets anyway folded too: a break

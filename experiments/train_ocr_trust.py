@@ -24,6 +24,7 @@ clef, which reads the crop, has a reference more standard than its print.
 
 import sys
 from collections import Counter
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -48,10 +49,21 @@ MODELS = {
 }
 
 
+# The judges a build asks: votes of any other model in the data (an alarm tried and left
+# off) would train the arbiter on a vote it never gets.
+_SETTINGS = Settings.from_env()
+JUDGES = {_SETTINGS.judge_model, _SETTINGS.check_model, _SETTINGS.alarm_model, "word list"} - {""}
+
+
 def rows_of(name: str) -> list[dict]:
     rows = [r for r in load(name) if r["settled"]]
     for r in rows:
-        r["s"] = suspect(r)
+        s = suspect(r)
+        r["s"] = replace(
+            s,
+            votes={m: v for m, v in s.votes.items() if m in JUDGES},
+            confidence={m: c for m, c in s.confidence.items() if m in JUDGES},
+        )
         r["book"] = name
     return rows
 
@@ -110,8 +122,9 @@ def scored(make, train_names, rows):
     return per_suspect(rows, make().fit(X, y).predict_proba(Xt)[:, 1], owner)
 
 
-# Every reading the OCR check now makes; data built before one of them lacks its support.
-READINGS = {"glm", "tess", "qwen"}
+# Every reading the OCR check makes with these settings; data built before one of them
+# lacks its support.
+READINGS = {"glm", "tess"} | ({"qwen"} if _SETTINGS.read_model else set())
 
 
 def usable(name: str) -> str:
@@ -140,7 +153,7 @@ for name, rows in books.items():
             r["s"].votes.get(judge) in {v for v, ok in zip([r["s"].ours, *r["s"].others], r["right"], strict=True) if ok}
             for r in rows
         )
-    clef, winnow = right(Settings().judge_model), right(Settings().check_model)
+    clef, winnow = right(_SETTINGS.judge_model), right(_SETTINGS.check_model)
     flag = "  << winnow ahead: is the reference more standard than the print?" if winnow >= clef else ""
     print(f"{name[:40]:40} {len(rows):7} {clef / max(1, len(rows)):5.0%} {winnow / max(1, len(rows)):6.0%}{flag}")
 print()

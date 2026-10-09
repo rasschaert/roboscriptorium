@@ -243,6 +243,11 @@ right, then expand.
     heads, printed page numbers) isn't flagged. With layout regions it also
     flags pictures, captions, titles that aren't headings, and text the text
     layer lacks (one region per page, as an area rather than lines).
+  - `faint.py`: body pages scanned too faint to read (Afscheid's and 11/22/63's
+    washed-out pages): the grey levels between the paper and the ink inside the text
+    layer's line boxes, at 60 dpi, cached in `stages/contrast.json`; a page with words and
+    under 30 levels (printed pages measure 50 or more, washed-out ones under 10). On scans
+    only (`Stages.faint_pages`); `flags.find` makes such a page one `washed-out` region.
   - `quotes.py`: places where a paragraph's curly quotes don't pair up (a lost
     opening ‘, a lost closing ’), apostrophes, Dutch `’s`, plural possessives,
     nested quotes and quotations running over paragraphs aside. Found on the
@@ -302,7 +307,10 @@ right, then expand.
     in `work/models/ocr-trust.pkl`, trained by `experiments/train_ocr_trust.py
     --save` on the tuning books' suspects, never the validation ones (it refuses while a
     tuning book's data is missing or built before the current readings)
-    (`experiments/ocr_trust_data.py`).
+    (`experiments/ocr_trust_data.py`). Training uses only the votes of the judges the
+    settings name. An ablation (another reader set, say) keeps its data and models apart:
+    `ROBO_TRUST_DATA` for the data folder, `ROBO_OCR_TRUST_MODEL` for the model, whose
+    leave-one-out copies sit beside it.
   - `typography.py`: the book's ellipsis style (`…`, `...` or `. . .`, with or without a
     space before), read in a scan's text layer or set in `book.toml` (`ellipsis`,
     `ellipsis_space`), and set on every three-dot ellipsis in the output (no-break
@@ -466,7 +474,7 @@ schedel before choosing an OCR model.
 | Ollaya (gone) | `winnow:e4b` | Line roles (previous default) | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
 | Ollaya (gone) | `winnow:e4b` (as `check_model`) | Second opinion on OCR suspects, from the line's text only | Dolittle pp. 30–49: 74/90 right alone; its disagreeing with clef marks clef's errors (clef right on only 9/13 of those) |
 | Ollama | `winnow-ollama:e4b` (as `check_model`) | **Second judge (in use)**: picks a version of an OCR suspect from the sentence | On three tuning books' cached suspects, right alone 285/208/265 where Ollaya's build got 174 each; right where clef is wrong on 78 of 100 against 45. ~0.13 s a question. The only winnow since Ollaya was uninstalled (2026-10-08) |
-| llama.cpp | imajev-4b (Q8_0 GGUF + its trained readout) | Second vision judge candidate (`alarm_model`); **an alarm on clef** | Judge set v1: 84.0% weighted right (clef 90.0%), 25 confidently wrong; clef wrong on 4.6% where it agrees, 34% where it disagrees, on Dutch books (3.2% / 31%) as on English (5.8% / 35%), though its card says English only; its own pick right on 139/150 of the clef errors it flags. 0.25 s a question. The 2B: 80.7%, alarm 4.9% / 28.8%, 0.12 s. The 9B: 82.4%, 31 confidently wrong, the sharpest alarm on Dutch (39%) and the weakest on English (8.5% / 23%), 0.43 s |
+| llama.cpp | imajev-4b (Q8_0 GGUF + its trained readout) | Second vision judge (`alarm_model`), **off by default**: an alarm on clef the bench can't tell from none | Trust data (5,412 suspects, 14 books): right alone 85% (clef 90%); clef wrong on 5% where it agrees, 37% where it disagrees, but it disagrees on 904 against winnow's 2,049, so it flags 338 of clef's 566 errors to winnow's 425. As a third judge, retrained: `bench tuning` after review 1.02 → 1.01 [−0.04, −0.00], `bench validation` 0.81 → 0.80 [−0.05, +0.02], no change (2026-10-09). Judge set v1: 84.0% weighted right (clef 90.0%), 25 confidently wrong; clef wrong on 4.6% where it agrees, 34% where it disagrees, on Dutch books (3.2% / 31%) as on English (5.8% / 35%), though its card says English only; its own pick right on 139/150 of the clef errors it flags. 0.25 s a question. The 2B: 80.7%, alarm 4.9% / 28.8%, 0.12 s. The 9B: 82.4%, 31 confidently wrong, the sharpest alarm on Dutch (39%) and the weakest on English (8.5% / 23%), 0.43 s. Page types: 19/23 like clef-flash; the body's ends (252 pages round 18 books' ranges) 227 against clef-flash's 231, the same pages missed, so neither decides them. Which way a plate is up: 10/10 on Dolittle (four turns each, P(yes) ≥ 0.95 on the right one), the candidate for plates without a caption |
 | Ollaya (gone) | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
 | Ollaya (gone) | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
 | Ollama | `clef-flash:9b` | **Line roles (in use)**; page types candidate | Line roles: 60/60 at P(body) ≥ 0.5 (its probabilities are softer than winnow's, so don't use 0.9). Pages: 19/23, low confidence where it errs. ~0.8 s/line and ~3.9 s/page, measured under load. Endpoint `/v1/systemone`; raw base64 PNG/JPEG/WebP in `images`; up to 64 questions per call; 64K context. Confidence = how concentrated the probabilities are, not P(correct) |

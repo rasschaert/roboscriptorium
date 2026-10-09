@@ -337,3 +337,20 @@ def test_a_slice_is_read_with_the_whole_books_style(tmp_path, monkeypatch):
     whole = pipeline.read_prompt(book, pages, None)
     assert prompts and set(prompts) == {whole}
     assert whole != pipeline.read_prompt(book, pages[:1], None)
+
+
+def test_a_washed_out_scan_page_reaches_the_review_as_one_region(tmp_path, monkeypatch):
+    _no_layout(monkeypatch)
+    book = _book(tmp_path)
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=600)
+    page.draw_rect(page.rect, color=None, fill=(0.61,) * 3)
+    for i, text in enumerate(LINES):
+        page.insert_text((40, 60 + 18 * i), text, fontsize=11, color=(0.58,) * 3)
+    doc.save(book.source)
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    monkeypatch.setattr(pipeline, "dash_style", lambda book, body: None)
+    stages = pipeline.run(book, use_models=False)
+    assert stages.faint_pages == {1}
+    found = flags.find(stages.pages, {}, faint=stages.faint_pages)
+    assert [(f.first, f.last, f.reasons) for f in found] == [(0, len(LINES) - 1, ["washed-out"])]

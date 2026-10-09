@@ -36,6 +36,12 @@ for the best score alone:
 | tesseract, whole page | its own line segmentation, so it sees marks the layer's boxes cut off; dashes | punctuation, opening quotes |
 | qwen3.8, line crop, told the book's style | quote marks (keeps them where glm-ocr loses 31, tesseract 80) | plausible real words (`doodgaan→doorgaan`); its cost: 70–75% of a cold run |
 
+qwen3.8 earns its cost in a build: without it (trust data rebuilt and the arbiter
+retrained without its reading), `bench tuning` goes from 1.00 to 1.33 wrong words a
+page after review [+0.07, +0.75] and `bench validation` from 0.81 to 1.01 [+0.12,
++0.27]; 11/22/63, Artemis, Vals alarm and De tuin lose most (2026-10-09). Without it 867
+of 6,145 suspects are never raised, and the ones that are leave more unasked errors.
+
 No faster reader matches qwen3.8 yet: gemma4 8B reads a line in a quarter of the
 time but gets quote marks wrong where Qwen doesn't (Goede dochter pp. 9–20: 4 lines
 against 0, CER 0.21% against 0.10%), and the newest open models that might
@@ -73,6 +79,14 @@ back a version, so these are left to trust and the bench, with no rule of their 
   differ from its print in typography, favoured winnow over clef there, which measured
   the reference more than the judges; it is in no set now. Told the book's style, the
   Ollaya build got worse on Goede dochter (91 → 84 of 200), so it isn't.
+- *imajev-4b, a second vision judge, is not used* (`ROBO_ALARM_MODEL`, off). Asked clef's
+  question on the crop, it is right alone on 85% and a sharper alarm than winnow where it
+  speaks (clef wrong on 37% of their disagreements against 5% of their agreements) but
+  it speaks less (904 disagreements against winnow's 2,049), and as the arbiter's third
+  judge the bench saw no change: tuning 1.02 → 1.01 after review [−0.04, −0.00],
+  validation 0.81 → 0.80 [−0.05, +0.02] (2026-10-09). Not worth a second model server and
+  a quarter second a suspect. Its votes stay in the trust data; training uses only the
+  judges the settings name.
 - *The word list is a vote, not a judge.* Where it knows only one version's words
   it is nearly always right, but acting on it added unasked errors on two
   validation books (lost compounds, stress accents). It is shown to the reviewer
@@ -116,6 +130,26 @@ clean pages.
 **Doubts are asked per place, not per line.** Two wrong places in one line, each
 fixed by a different reading, left no right option, and the reviewer then typed
 the line and added an error.
+
+**A washed-out page is one question, from the scan's contrast** (`faint.py`). Some
+scans have pages too faint to read (Afscheid 9, 11/22/63 13, Grand Hotel Europa 9), yet
+their text layer is full: short scraps that pass for words, 89% of them in the word list
+on Afscheid p. 20, so neither the garbled-line rule nor a word-list share finds them
+(11/22/63's normal pages go as low as 68%). The image does: between the paper and the
+ink inside the layer's line boxes, every washed-out page measures under 10 grey levels
+and every printed one of 18 books 48 or more (2026-10-09); the line is drawn at 30. Such
+a page becomes one region of all its lines instead of one OCR doubt per scrap: `bench
+tuning` better, after review 1.02 → 1.00 [−0.04, −0.01] (Afscheid 5.07 → 4.94, its
+questions 1.58 → 0.55 a page), validation unchanged. No model reads these pages; a
+human types them or rescans.
+
+**Where the body starts and ends stays in book.toml.** Asked the page-type question
+on the four pages outside each end of the body and three inside (252 pages of 18
+books), imajev-4b put 227 on the right side and clef-flash 231 (2026-10-09), and both
+missed the same kind of page: a preface or foreword inside the range, a blank or title
+page at its first page, an afterword just past it. Those are as much the range's
+convention as the models' errors, and one wrong end cuts or pads a book, so a model
+would need a human to confirm both ends anyway.
 
 ## Book-wide style
 

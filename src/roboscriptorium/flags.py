@@ -50,6 +50,7 @@ REASONS = {
     "rotated": "text printed sideways",
     "ocr-doubt": "two OCR readings differ, and the models weren't sure which is right",
     "quotes": "its paragraph's quote marks don't pair up: one may be lost or misread",
+    "washed-out": "the scan is too faint to read: the text layer here is guesswork",
 }
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
@@ -283,6 +284,15 @@ def _sideways_flag(page: PageText, roles: dict[SourceRef, LineRole]) -> Flag:
     return replace(flag, treatment=_treatment_of(page, flag, roles))
 
 
+def _washed_out_flag(page: PageText, roles: dict[SourceRef, LineRole]) -> Flag:
+    text = "\n".join(ln.text for ln in page.lines)
+    flag = Flag(
+        region_key(page.number, text), page.number, 0, len(page.lines) - 1, text, "",
+        ["washed-out"], (0.0, 0.0, page.width, page.height),
+    )  # fmt: skip
+    return replace(flag, treatment=_treatment_of(page, flag, roles))
+
+
 def _treatment_of(page: PageText, flag: Flag, roles: dict[SourceRef, LineRole]) -> str:
     kinds = {
         treatment(roles.get(SourceRef(page.number, i))) for i in range(flag.first, flag.last + 1)
@@ -297,8 +307,12 @@ def find(
     doubts: list[Doubt] | None = None,
     quotes: set[SourceRef] | None = None,
     proposed: dict[SourceRef, str] | None = None,
+    faint: set[int] | None = None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.
+
+    A page in `faint` (scanned too faint to read, `faint.pages`) is one region of all its
+    lines: nothing on it can be trusted, so it gets no finer questions.
 
     Each of the OCR check's `doubts` is a question of its own about one place in a line,
     cropped to it. `quotes` are lines where a paragraph's quote marks don't pair up
@@ -308,6 +322,9 @@ def find(
     flags: list[Flag] = []
     furniture = _Furniture(P.Repeats(pages), P.page_offset(pages))
     for page in pages:
+        if page.number in (faint or set()) and page.lines:
+            flags.append(_washed_out_flag(page, roles))
+            continue
         regions = (layout or {}).get(page.number, [])
         line_reasons, in_pictures, boxes = _layout(page, regions)
         for i in range(len(page.lines)):

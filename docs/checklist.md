@@ -144,9 +144,14 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       worse); the fixed rule 1.80 → 1.37
 - [x] The retrained arbiter against the fixed rule, both with the fix: **better, no
       veto**: after review 1.37 → 1.00 ([-0.66, -0.21]), eight books better, none worse
-- [ ] Afscheid's slice: pp. 20, 32, 70 are washed-out pages whose layer is noise, kept as
+- [x] Afscheid's slice: pp. 20, 32, 70 are washed-out pages whose layer is noise, kept as
       body text (should be flagged as garbled); p. 37's text fails to align. ~280 wrong
-      words each, in both arms
+      words each, in both arms. Done as `faint.py`: a page whose ink barely stands off
+      the paper (under 30 grey levels; washed-out pages under 10, printed ones 48 or
+      more over 18 books) is one `washed-out` region. 31 pages in 3 books (Afscheid's p.
+      38 the one meant by "p. 37"). `bench tuning` **better**, after review 1.02 → 1.00
+      [−0.04, −0.01]; validation unchanged. The words stay wrong until a human types
+      the page
 - [x] The read model's cache held one prompt, so a slice whose style prompt differed
       (Dolittle 23–88 against the whole book) evicted every reading. Readings by another
       prompt are now kept aside, and the style is measured on the whole body; tested
@@ -160,8 +165,15 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
         was finished by local Qwen in 4 min
 - [x] `bench validation`: <1 min warm, the first run, so the baseline (after review: De
       tuin 0.79, De eerlijke vinder 1.28, You're Never Weird 1.07, Villa Toscane 0.12)
-- [ ] **Decide:** keep Qwen's third reading and short lines only if the bench says so
-- [ ] Re-ask ~200 cached clef answers and count the flips (answer variance): ~15 min
+- [x] **Decide:** keep Qwen's third reading and short lines only if the bench says so.
+      **Qwen stays**: without it (trust data rebuilt, 19 min; the arbiter retrained in
+      `work/models/no-qwen/`) `bench tuning` is worse, 1.00 → 1.33 after review [+0.07,
+      +0.75], and `bench validation` 0.81 → 1.01 [+0.12, +0.27]. Short lines stay: they
+      have no switch to ablate and add a few suspects a book (Goede dochter +18)
+- [x] Re-ask ~200 cached clef answers and count the flips (answer variance): all 518 of
+      judge set v1 in 12 min (`tryout.py run judge clef:27b`): **2 flips**, both where it
+      was all but unsure (confidence 0.02 and 0.1); the median confidence moved 0.001.
+      Cached answers stand for fresh ones
 
 ## 3b. A faster line reader (Qwen is 70–75% of a cold run)
 
@@ -393,14 +405,24 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
         where it disagrees (winnow: 4% / 22%), and the 4B's own pick is right on 139 of the
         150 clef errors it flags. The 9B: 82.4%, weaker as an alarm on English books; the
         4B is the one to try in the pipeline
-    - [ ] As a third judge beside clef and winnow (the screen says it adds)
+    - [x] As a third judge beside clef and winnow (the screen says it adds): not kept
       - [x] `trust.py` takes three judges by position (`ROBO_ALARM_MODEL`, off by default)
-      - [ ] Rebuild the trust data with the 4B's answers (llama-server beside the run;
-            9,237 suspects × 0.25 s, ~40 min plus the cached pipeline), retrain, bench
-            tuning and validation against the runs without it
-    - [ ] Page types from the page image (nothing decides them yet; `body_pages` in
-          book.toml): the ~23 sample pages of the old page-type probe first
-    - [ ] Which way a plate is up (the reviewer answers it now): Dolittle's 8 plates
+      - [x] Rebuild the trust data with the 4B's answers: 31 min for 14 books; retrain,
+            bench: **no change** (tuning 1.02 → 1.01 [−0.04, −0.00], validation 0.81 →
+            0.80 [−0.05, +0.02]), so it stays off. Training keeps only the configured
+            judges' votes, and the arbiter without it reproduces the two-judge bench exactly
+    - [x] Page types from the page image (nothing decides them yet; `body_pages` in
+          book.toml): the 23 sample pages, 19 right like clef-flash, 1.4 s a page against
+          3.9; then where the body starts and ends (`experiments/probe_body_range.py`,
+          252 pages round both ends of 18 books' ranges): 227 right, clef-flash 231, the
+          same pages missed (prefaces, forewords, blanks at the edges). **Not used**:
+          `body_pages` stays in book.toml
+    - [x] Which way a plate is up (the reviewer answers it now): Dolittle's 8 plates and
+          2 upright pages, each rendered at four turns and asked "is this upright?"
+          (`experiments/probe_upright.py`): **10/10**, P(yes) 0.95–0.97 on the right turn
+          and under 0.1 on the others. Not wired in: the caption rule (`ocr.read_sideways`)
+          already turns every captioned plate, and no golden book has a plate without a
+          caption or one upside down, where the 4B would add. The candidate for that job
 - [x] winnow on Ollama: the user pulled the Hugging Face GGUF; a Modelfile makes it a
       decision model (`modelfiles/`, AGENTS.md Environment). Screened on the cached
       suspects of Goede dochter, Vals alarm and Reis: right alone 285/208/265 against

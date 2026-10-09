@@ -206,3 +206,13 @@ def test_an_answer_that_matches_no_reading_is_queried_once_then_saved(tmp_path):
     assert "warning" not in page_review.record({"key": "k1", "action": "text", "text": spaced})
     # Dropping the region carries no text to check.
     assert "warning" not in page_review.record({"key": "k1", "action": "drop", "text": None})
+
+
+def test_a_washed_out_page_is_one_region_and_nothing_on_it_is_asked_apart():
+    roles = {SourceRef(n, 5): LineRole("artifact", 0.5, 0.3) for n in (1, 2)}
+    found = flags.find([_page(1), _page(2)], roles, faint={1})
+    assert [(f.page, f.first, f.last, f.reasons) for f in found] == [
+        (1, 0, 9, ["washed-out"]),
+        (2, 5, 5, ["dropped-mid-page", "dropped-unsure"]),
+    ]
+    assert found[0].box == (0.0, 0.0, 400, 600) and found[0].treatment == "text"

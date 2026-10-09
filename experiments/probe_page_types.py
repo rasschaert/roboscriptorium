@@ -1,6 +1,7 @@
 """Probe a vision decision model on page types for a hand-labelled sample.
 
-Usage: uv run python experiments/probe_page_types.py MODEL
+Usage: uv run python experiments/probe_page_types.py MODEL (an Ollama decision model, or
+llama:<imajev name>@<port> for llama-server)
 Labels: Tauchnitz front/back matter from a contact sheet, chapter starts from
 the text layer; Stella pages as described in AGENTS.md. 23 pages, ~4 s each.
 """
@@ -8,11 +9,11 @@ the text layer; Stella pages as described in AGENTS.md. 23 pages, ~4 s each.
 import json, sys, time
 from collections import Counter
 from pathlib import Path
-from roboscriptorium.clients import decide
+from roboscriptorium.clients import decide, llama
 from roboscriptorium.pdf import render_png
 
 model = sys.argv[1]
-TAU = Path("work/sense-and-sensibility--tauchnitz-1864/source.pdf")
+TAU = Path("work/retired/sense-and-sensibility--tauchnitz-1864/source.pdf")
 STE = Path("work/stella/source.pdf")
 chapters = {7, 11, 17, 21, 26, 29, 33, 37, 40, 46, 52, 56, 61, 67, 72, 79, 85, 90, 95, 103, 110, 118, 126, 133, 139, 145, 152, 159, 163, 175, 183, 194, 201, 209, 217, 224, 232, 245, 253, 258, 266, 273, 278, 287, 303, 309, 317, 324, 328, 339}
 gold = {}
@@ -35,7 +36,11 @@ Q = {"page": decide.choice("This is a scanned page of a printed book. What kind 
     "library_or_scan": "A library card, due-date slip, barcode, ownership stamp or digitisation notice"})}
 SAMPLE = {(TAU, n) for n in (1, 2, 3, 4, 5, 6, 7, 8, 11, 100, 175, 200, 347, 348, 349)} | {(STE, n) for n in (1, 3, 4, 5, 30, 74, 75, 76)}
 gold = {k: v for k, v in gold.items() if k in SAMPLE}
-client = decide.for_model(model, "http://127.0.0.1:11434")
+if model.startswith("llama:"):
+    name, port = model.removeprefix("llama:").split("@")
+    client = llama.ReadoutClient(name, f"http://127.0.0.1:{port}")
+else:
+    client = decide.for_model(model, "http://127.0.0.1:11434")
 rows, t0 = [], time.time()
 for (pdf, n), g in gold.items():
     t1 = time.time()
@@ -49,4 +54,5 @@ for book in ("sense-and-sensibility--tauchnitz-1864", "stella"):
     conf = Counter((g, p) for _, _, g, p, _ in r if g != p)
     for (g, p), c in conf.most_common(8): print(f"     {c:3}× {g} → {p}")
     print("     non-body pages:", [(n, g, p, round(c, 2)) for _, n, g, p, c in r if g not in ("body", "chapter_start")])
-json.dump(rows, open(f"work/probe-pages-{model.replace(':', '_')}.json", "w"))
+Path("work/probes").mkdir(exist_ok=True)
+json.dump(rows, open(f"work/probes/pages-{model.replace(':', '_').replace('@', '_')}.json", "w"))
