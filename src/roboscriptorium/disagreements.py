@@ -200,6 +200,33 @@ def find(
     return found
 
 
+def break_errors(doc: Document, reference: list[Chapter], pages: list[PageText]) -> list[int]:
+    """The page of each paragraph break the output gets wrong: a reference paragraph that
+    starts mid-paragraph in the output, or an output paragraph starting mid-paragraph in
+    the reference. Only where the words on both sides align: garbled text isn't a break
+    error as well as a word error. `pages` are the ones `doc`'s sources index."""
+    out, refs = _word_sources(doc, {p.number: p for p in pages})
+    starts, k = set(), 0
+    for para in doc.paragraphs:
+        if words := normalise(para.text).split():
+            starts.add(k)
+            k += len(words)
+    ref, ref_starts = [], set()
+    for ch in reference:
+        for para in ch.paragraphs:
+            ref_starts.add(len(ref))
+            ref += normalise(para).split()
+    to_ref = {}
+    for op in Levenshtein.opcodes(out, ref):
+        if op.tag == "equal":
+            for i in range(op.src_end - op.src_start):
+                to_ref[op.src_start + i] = op.dest_start + i
+    to_out = {r: o for o, r in to_ref.items()}
+    wrong = [o for o in starts if o in to_ref and to_ref[o] not in ref_starts]
+    wrong += [to_out[r] for r in ref_starts if r in to_out and to_out[r] not in starts]
+    return sorted(refs[o].page for o in wrong if refs[o] is not None)
+
+
 class Verdicts:
     def __init__(self, path: Path):
         self.path = path

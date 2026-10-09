@@ -11,6 +11,7 @@ the noise worth measuring.
 
 import json
 import random
+from collections import Counter
 from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
@@ -68,6 +69,7 @@ PAIRED = (
     ("after review", 3),
     ("after review, few slips", 4),
     ("after review, many slips", 5),
+    ("paragraph breaks", 6),
 )
 # The one test that decides a change: "after review" over the set, each book weighing
 # the same, at each slip rate.
@@ -115,15 +117,22 @@ def unseen(settings: Settings, book: str) -> Settings:
 
 
 def page_counts(
-    pages: list[int], errors, found, slips: tuple[float, float, float] | None = None
+    pages: list[int],
+    errors,
+    found,
+    slips: tuple[float, float, float] | None = None,
+    breaks: list[int] = (),
 ) -> dict[int, list[float]]:
-    """Per page: wrong words, wrong words no question catches, questions, and wrong words
+    """Per page: wrong words, wrong words no question catches, questions, wrong words
     after the reviewer answers every question (the unasked plus expected slips) at the
-    mean slip rate, the low end and the high end (`quality.slip_rates`)."""
+    mean slip rate, the low end and the high end (`quality.slip_rates`), and paragraph
+    breaks set wrong (`disagreements.break_errors`, no question asks about them)."""
     low, mean, high = slips or quality.slip_rates()
     counts = quality.per_page(pages, errors, found)
+    wrong = Counter(breaks)
     return {
-        p: [w, u, q, u + mean * q, u + low * q, u + high * q] for p, (w, u, q) in counts.items()
+        p: [w, u, q, u + mean * q, u + low * q, u + high * q, wrong[p]]
+        for p, (w, u, q) in counts.items()
     }
 
 
@@ -162,7 +171,12 @@ def _pairs(old: dict, new: dict, i: int, books: list[str]) -> list[tuple[float, 
     out = []
     for name in books:
         before, after = old["books"][name]["pages"], new["books"][name]["pages"]
-        out += [(before[p][i], after[p][i]) for p in sorted(set(before) & set(after))]
+        # A run saved before a measure existed has no count for it.
+        out += [
+            (before[p][i], after[p][i])
+            for p in sorted(set(before) & set(after))
+            if len(before[p]) > i and len(after[p]) > i
+        ]
     return out
 
 
@@ -182,12 +196,14 @@ class Verdict:
     outcome: str  # "better", "worse", "no change" or "vetoed"
     pooled: list[Change]  # the primary measure over the shared books, per slip rate
     vetoes: list[str]  # books whose own "after review" got worse
+    breaks: Change | None = None  # paragraph breaks over the shared books
 
 
 def verdict(old: dict, new: dict) -> Verdict:
     """Whether the new run is better: "after review", each book weighing the same, must
-    improve at every slip rate, and no book may clearly get worse (`VETO_LEVEL`,
-    `VETO_MIN` on the mean)."""
+    improve at every slip rate, or the paragraph breaks set wrong must fall, with neither
+    clearly worse; and no book may clearly get worse in words (`VETO_LEVEL`, `VETO_MIN`
+    on the mean)."""
     shared = [n for n in new["books"] if n in old["books"]]
     index = dict(PAIRED)
     primary = [
@@ -199,13 +215,18 @@ def verdict(old: dict, new: dict) -> Verdict:
         before, after, low, _ = paired(_pairs(old, new, index[PRIMARY[0]], [n]), level=VETO_LEVEL)
         if low > 0 and after - before >= VETO_MIN:
             vetoes.append(n)
-    if all(c.high < 0 for c in primary):
-        outcome = "vetoed" if vetoes else "better"
-    elif all(c.low > 0 for c in primary):
+    pairs = [_pairs(old, new, index["paragraph breaks"], [n]) for n in shared]
+    breaks = Change("all", "paragraph breaks", *pooled(pairs)) if any(pairs) else None
+    words_better, words_worse = all(c.high < 0 for c in primary), all(c.low > 0 for c in primary)
+    breaks_better = breaks is not None and breaks.high < 0
+    breaks_worse = breaks is not None and breaks.low > 0
+    if words_worse or breaks_worse:
         outcome = "worse"
+    elif words_better or breaks_better:
+        outcome = "vetoed" if vetoes else "better"
     else:
         outcome = "no change"
-    return Verdict(outcome, primary, vetoes)
+    return Verdict(outcome, primary, vetoes, breaks)
 
 
 def _f1(score: dict) -> float:

@@ -406,7 +406,14 @@ def run_bench(
                 k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()
             },
             "unasked_by_kind": quality.unasked_by_category(errors, found),
-            "pages": bench.page_counts(numbers, errors, found),
+            "pages": bench.page_counts(
+                numbers,
+                errors,
+                found,
+                breaks=disagreements.break_errors(
+                    _scored(book, stages), reference, stages.corrected
+                ),
+            ),
         }
     commit = subprocess.run(
         ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
@@ -432,6 +439,7 @@ def run_bench(
             f"  questions {q['questions']['mean']:.2f}"
             f"  unasked {q['unasked, all questions']['mean']:.2f}"
             f"  after review {sum(v[3] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
+            f"  breaks {sum(v[6] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
             f"  headings {b['score']['headings_found']}/{b['score']['headings_expected']}"
             f" (+{b['score']['headings_spurious']})"
         )
@@ -445,6 +453,11 @@ def run_bench(
     found = bench.verdict(old, new)
     typer.echo(f"\nagainst {old_path.name}: {found.outcome.upper()}")
     for c in found.pooled:
+        typer.echo(
+            f"  all pages, {c.measure:26} {c.before:6.2f} → {c.after:6.2f}"
+            f"  [{c.low:+.2f}, {c.high:+.2f}]"
+        )
+    if (c := found.breaks) is not None:
         typer.echo(
             f"  all pages, {c.measure:26} {c.before:6.2f} → {c.after:6.2f}"
             f"  [{c.low:+.2f}, {c.high:+.2f}]"

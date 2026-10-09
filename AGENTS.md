@@ -235,10 +235,12 @@ right, then expand.
   - `bench.py` (`roboscriptorium bench [tuning|validation|test]`): **the** measure for a
     change. Pinned golden slices per set, scored with `evaluate` and `quality`,
     saved whole to `work/bench/` (commit, settings, decider, model versions,
-    per-page counts) and compared with the previous run page by page. One test
-    decides: "after review", each book of the set weighing the same, must improve
-    at the low, mean and high slip rate, and no book may get worse by ≥ 0.05 wrong
-    words per page on the mean with its 99% interval above zero (a veto); the per-book intervals are diagnostics, and so are the heading and paragraph-F1 changes it prints beside the test (`bench.structure`), which the word counts can't see. A tuning book is
+    per-page counts, paragraph breaks set wrong among them) and compared with the
+    previous run page by page. One test decides: "after review", each book of the set
+    weighing the same, must improve at the low, mean and high slip rate, or the
+    paragraph breaks set wrong must fall, neither clearly rising, and no book may get
+    worse by ≥ 0.05 wrong words per page on the mean with its 99% interval above zero
+    (a veto); the per-book intervals are diagnostics, and so are the heading and paragraph-F1 changes it prints beside the test (`bench.structure`), which the word counts can't see. A tuning book is
     scored with the trust model trained without it
     (`ocr-trust-without-<book>.pkl`, written by `train_ocr_trust.py --save`). "After review"
     adds the reviewer's own slips per question asked (`quality.slip_rates`, a Beta

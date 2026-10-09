@@ -342,8 +342,37 @@ danger is that it edits the author. Guards, all of them:
       reference's 59 in chapters 1–5 (heuristics only)
 - [ ] Line-role classifier into the package, behind a switch
 - [ ] A crop reader on tesseract's line boxes (not the layer's)
-- [ ] `quality.catches` matches by span where flags have one
+- [x] `quality.catches` matches by span where flags have one: a question about one place
+      catches only errors sharing a word with it (6g)
 - [ ] Training code for shipped models into the package, with a feature-count test
+
+## 6g. Fable's second review (2026-10-09)
+
+What the bench couldn't see, and leaks in the OCR check, found in a review of the whole
+build. Each change benched on its own.
+
+- [x] The bench counts paragraph breaks set wrong, per page (`disagreements.break_errors`,
+      where both sides' words align), and a change that clearly moves them decides like
+      the words. Tuning per page: Afscheid 1.73 and Artemis 1.29, the rest 0.01–0.42
+- [x] A question about one place in a line catches only the errors at that place; a typed
+      washed-out page counts a question per line. Tuning after review 0.48 → 0.56 by this
+      alone (Afscheid 0.25 → 0.64, 11/22/63 0.83 → 0.99, Reis 0.24 → 0.32): the new baseline
+- [ ] The ellipsis glyph is no OCR difference (the typography stage sets it book-wide), and
+      the trust labels stop forgiving a space before a quote that no stage removes; trust
+      data relabelled, arbiter retrained (~45 min, done), bench
+- [ ] Paragraph starts in runs of one-line dialogue (the window's margin was the indent),
+      after a blank line, and in letters spaced apart: page margin fitted from full lines
+- [ ] The bench records how much of each book's Qwen reading was the hosted build
+- [ ] The arbiter calibrated (isotonic, on its leave-one-book-out predictions), so the 0.8
+      ask threshold means 80% right whatever the retrain
+- [ ] Italic scores marked unscored where the reference sets italics unlike the print
+      (Metro's station names, You're Never Weird has none)
+- [ ] Scene breaks: "* * *" lines and blank-line gaps as a break in the IR and the EPUB
+- [ ] Budget diagnostics: questions of one reason asked in a shuffled order, not page order
+- [ ] **user** Re-measure the slip rate on today's questions (picks with the difference
+      marked, typed lines checked), pick and typed apart (~30 min of review)
+- [ ] Qwen's readings of the bench books again locally, so the bench measures the build that
+      is run (~1.4 s a line, ~12 h for 30k lines; or the user's go to read Stella hosted)
 
 ## 6b. Where the labelled suspects say the errors are (Fable's review, 2026-10-08)
 

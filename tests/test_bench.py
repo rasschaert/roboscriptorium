@@ -15,10 +15,14 @@ from roboscriptorium.roles import LineRole
 
 
 def _run(pages: dict[int, list[float]], **books: dict[int, list[float]]) -> dict:
-    """A saved run of book "b" (and any others), each page's counts padded to six.
+    """A saved run of book "b" (and any others), each page's counts padded to six (the
+    paragraph breaks, a seventh, only where given).
     Through JSON, as saved runs are read back: page numbers become strings."""
     every = {"b": pages, **books}
-    padded = {n: {p: (c + [c[-1]] * 6)[:6] for p, c in pg.items()} for n, pg in every.items()}
+    padded = {
+        n: {p: c if len(c) == 7 else (c + [c[-1]] * 6)[:6] for p, c in pg.items()}
+        for n, pg in every.items()
+    }
     return json.loads(json.dumps({"books": {n: {"pages": pg} for n, pg in padded.items()}}))
 
 
@@ -42,7 +46,55 @@ def test_only_pages_both_runs_scored_are_compared():
 def test_after_review_counts_the_reviewers_slips_on_each_question():
     asked = [SimpleNamespace(page=1, first=0, last=0, reasons=["x"])] * 2
     counts = bench.page_counts([1, 2], [], asked, slips=(0.1, 0.25, 0.5))
-    assert counts == {1: [0, 0, 2, 0.5, 0.2, 1.0], 2: [0, 0, 0, 0.0, 0.0, 0.0]}
+    assert counts == {1: [0, 0, 2, 0.5, 0.2, 1.0, 0], 2: [0, 0, 0, 0.0, 0.0, 0.0, 0]}
+
+
+def test_a_washed_out_page_is_a_question_per_line_typed():
+    page = SimpleNamespace(page=1, first=0, last=29, reasons=["washed-out"])
+    assert bench.page_counts([1], [], [page], slips=(0.1, 0.1, 0.1))[1][2] == 30
+
+
+def test_a_question_about_one_place_catches_only_errors_at_that_place():
+    from roboscriptorium.disagreements import Disagreement
+    from roboscriptorium.flags import Flag
+
+    line = "Hij keek naar buiten en zei niets"
+    other = line.replace("buiten", "bulten")
+    readings = [{"text": line, "votes": []}, {"text": other, "votes": []}]
+    flag = Flag("k", 3, 0, 0, line, "text", ["ocr-doubt"], span=(14, 20), readings=readings)
+    there = Disagreement("a", "buiten", "buiten.’", "", "", 3, (0, 0))
+    elsewhere = Disagreement("b", "zei", "zegt", "", "", 3, (0, 0))
+    no_words = Disagreement("c", "–", "—", "", "", 3, (0, 0))
+    assert quality.catches(flag, there)
+    assert not quality.catches(flag, elsewhere)
+    assert quality.catches(flag, no_words)
+
+
+def test_paragraph_breaks_set_wrong_count_and_decide_a_change():
+    flat = {p: [2, 1, 1, 1.0, 1.0, 1.0, 2] for p in range(30)}
+    fewer = {p: [2, 1, 1, 1.0, 1.0, 1.0, 0] for p in range(30)}
+    found = bench.verdict(_run(flat, c=flat), _run(fewer, c=fewer))
+    assert found.outcome == "better" and found.breaks.after == 0
+    assert bench.verdict(_run(fewer, c=fewer), _run(flat, c=flat)).outcome == "worse"
+
+
+def test_where_breaks_go_wrong():
+    from roboscriptorium.disagreements import break_errors
+    from roboscriptorium.ir import Document, Paragraph
+
+    page = PageText(4, 300, 500, [Line("Een twee drie", 0, 0, 1, 1), Line("vier vijf", 0, 2, 1, 3)])
+    joined = Document(
+        "", "", "", [Paragraph("Een twee drie vier vijf", [SourceRef(4, 0), SourceRef(4, 1)])]
+    )
+    reference = [Chapter("", ["Een twee drie", "vier vijf"])]
+    assert break_errors(joined, reference, [page]) == [4]
+    split = Document(
+        "",
+        "",
+        "",
+        [Paragraph("Een twee drie", [SourceRef(4, 0)]), Paragraph("vier vijf", [SourceRef(4, 1)])],
+    )
+    assert break_errors(split, reference, [page]) == []
 
 
 def test_the_slip_rate_is_an_interval_around_the_counts():
@@ -124,7 +176,7 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
         p = garbled if "garbled" in spec else clean
         roles = {SourceRef(11, k): body for k in range(len(p.lines))}
         stages = SimpleNamespace(
-            pages=[p], model_roles=roles, suspects=[], ocr_decider="fixed rule"
+            pages=[p], corrected=[p], model_roles=roles, suspects=[], ocr_decider="fixed rule"
         )
         return spec.split(":")[0].split("/")[-1], None, stages, reference, [], [], 0
 
@@ -135,6 +187,7 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
         evaluate, "score", lambda doc, ref: evaluate.Score(0, 0, 1, 1, 7, 7, 0, 0, 0)
     )
     monkeypatch.setattr(cli, "_model_versions", lambda settings: {})
+    monkeypatch.setattr(cli.disagreements, "break_errors", lambda doc, ref, pages: [])
     monkeypatch.setattr(bench, "OUT", tmp_path)
     monkeypatch.setattr(bench.save, "__defaults__", (tmp_path,))
     result = CliRunner().invoke(cli.app, ["bench", "probe"])

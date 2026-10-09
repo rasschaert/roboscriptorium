@@ -133,3 +133,8 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench validation, ask below 0.8 by default, warm | 250 | 1 | 0 |
 | 2026-10-09 | bench tuning, drawn numbers above sunk openings, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench validation, drawn numbers above sunk openings, warm | 250 | 1 | 0 |
+| 2026-10-09 | bench tuning, baseline before the review fixes, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, baseline before the review fixes, warm | 250 | 0 | 0 |
+| 2026-10-09 | trust data, all books, ellipsis style folded and spaced quotes labelled, warm readings | 0 | 5 | 0 |
+| 2026-10-09 | bench tuning, break errors, per-place catching, washed-out per line, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, break errors, per-place catching, washed-out per line, warm | 250 | 0 | 0 |

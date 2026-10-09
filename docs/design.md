@@ -294,6 +294,21 @@ typed in, text the layer lacks) gets only the quote check.
   would star about one by chance each run.
 - **"After review" counts the reviewer's slips.** 8 of 68 checked answers on
   Stella were wrong (Beta posterior 0.06–0.21), so a question isn't free.
+- **Paragraph breaks count.** A break in the wrong place is as visible in an edition as
+  a wrong word, and no question asks about it, so the bench counts them per page
+  (`disagreements.break_errors`: a reference paragraph starting mid-paragraph in the
+  output, or the reverse, where both sides' words align) and a change that clearly moves
+  them decides like the words. On the tuning books they ran 0.01–0.42 a page beside
+  0.19–0.99 wrong words after review, Artemis 1.29 and Afscheid 1.73 (most of those its
+  EPUB's: it breaks paragraphs where the print runs on).
+- **A question catches the error at its place.** A question about one place in a line
+  counted any error on its line as caught, though the reviewer looks at the marked
+  place: Reis 0.08 of its 0.24 wrong words after review, Metro 0.09 of 0.34. It now
+  catches an error only when they share a word (an error of no words, a lost dash, still
+  by line).
+- **A typed washed-out page is a question per line.** Counted as one question, its
+  three hundred typed words cost one answer's slips: Afscheid 0.25 after review where it
+  is 0.64.
 - **An error over a page break counts on the page holding most of it.** Counted on
   its first word's page, washed-out Afscheid p. 38 (one region the reviewer types)
   scored as 297 unasked words on p. 37, and the scraps of Dolittle's p. 57 plate as

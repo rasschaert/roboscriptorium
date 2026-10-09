@@ -13,6 +13,7 @@ Per-page figures come with a bootstrap interval over pages.
 """
 
 import random
+import re
 from dataclasses import dataclass
 
 from roboscriptorium.disagreements import Disagreement
@@ -70,11 +71,34 @@ def size(error: Disagreement) -> int:
     return max(len(error.got.split()), len(error.want.split()), 1)
 
 
+def _words(text: str) -> set[str]:
+    return set(re.findall(r"\w+", text.lower()))
+
+
+def _place(flag: Flag) -> set[str]:
+    """The words a question about one place in a line asks about: the place in the
+    layer's line, and the words its readings differ in."""
+    line = flag.text.split("\n")[0]
+    out = _words(line[flag.span[0] : flag.span[1]])
+    base = _words(flag.readings[0]["text"]) if flag.readings else set()
+    for r in flag.readings[1:]:
+        out |= _words(r["text"]) ^ base
+    return out
+
+
 def catches(flag: Flag, error: Disagreement) -> bool:
+    """Whether answering the question would put the error in front of the reviewer: it
+    covers the error's lines, and a question about one place in a line only catches an
+    error that shares a word with that place (an error without words, a lost dash, any
+    on its line)."""
     if flag.page != error.page:
         return False
     if error.lines is None:
         return False
+    if flag.span is not None:
+        words = _words(error.got) | _words(error.want)
+        if words and not words & _place(flag):
+            return False
     if flag.last < flag.first:
         # A region with no lines asks for text the layer lacks, between lines first - 1
         # and first; the missing words sit between the words either side of them, whose
@@ -107,6 +131,12 @@ def ranked(flags: list[Flag], rates: dict[str, tuple[int, int]]) -> list[Flag]:
     return sorted(flags, key=score, reverse=True)
 
 
+def weight(flag: Flag) -> int:
+    """How many questions a flag is to the reviewer: a washed-out page is typed whole, a
+    question per line, each line as likely to slip as an answer."""
+    return flag.last - flag.first + 1 if "washed-out" in flag.reasons else 1
+
+
 def per_page(
     pages: list[int], errors: list[Disagreement], asked: list[Flag]
 ) -> dict[int, tuple[int, int, int]]:
@@ -119,7 +149,7 @@ def per_page(
                 out[e.page][1] += size(e)
     for f in asked:
         if f.page in out:
-            out[f.page][2] += 1
+            out[f.page][2] += weight(f)
     return {p: tuple(v) for p, v in out.items()}
 
 
