@@ -4,7 +4,9 @@ An image-only PDF (a scan without a text layer) gets its first reading from tess
 when the caller names the book's language: its words, grouped into visual lines as
 an OCR layer's are."""
 
+import hashlib
 import json
+import statistics
 import subprocess
 import threading
 from collections import Counter, defaultdict
@@ -28,7 +30,7 @@ INITIAL_HEIGHT = 1.6
 # review server) holds this lock around every use.
 PDF_LOCK = threading.Lock()
 # Bumped whenever line extraction changes, so cached text layers are rebuilt.
-TEXT_LAYER_VERSION = 5
+TEXT_LAYER_VERSION = 6
 # Ligatures a font may put in the Unicode private-use area, where the text layer
 # then holds a code that means nothing outside that font.
 PRIVATE_LIGATURES = {"ff", "fi", "fl", "ffi", "ffl", "fj", "ft", "st", "ct", "Th", "ch", "ck", "tt"}
@@ -51,8 +53,9 @@ class Line:
     starts_paragraph: bool | None = None
     # The line begins with a decorated initial letter (a drop cap) a human supplied.
     initial: bool = False
-    # On a corrected copy of a page: the line's index in the text layer. A line a
-    # human typed in has the index of the line it was inserted before.
+    # On a corrected copy of a page: the line's index on the page before answers
+    # (the text layer with missing lines added). A line a human typed in has the
+    # index of the line it was inserted before.
     source: int | None = None
 
 
@@ -74,12 +77,18 @@ def _visual_lines(
     """
     if cores is None:
         cores = [(f.y0, f.y1) for f in fragments]
+    if not cores:
+        return []
+    tall = INITIAL_HEIGHT * statistics.median(y1 - y0 for y0, y1 in cores)
     merged: list[list[tuple[Line, tuple[float, float]]]] = []
     order = sorted(zip(fragments, cores, strict=True), key=lambda fc: (sum(fc[1]) / 2, fc[0].x0))
     for frag, (y0, y1) in order:
         if merged:
-            top = min(c[0] for _, c in merged[-1])
-            bottom = max(c[1] for _, c in merged[-1])
+            # A fragment much taller than a line (an initial, a speck boxed alone) joins
+            # a line but doesn't stretch its span over the next printed line.
+            span = [c for _, c in merged[-1] if c[1] - c[0] <= tall] or [c for _, c in merged[-1]]
+            top = min(c[0] for c in span)
+            bottom = max(c[1] for c in span)
             overlap = min(bottom, y1) - max(top, y0)
             if overlap >= SAME_LINE_OVERLAP * (y1 - y0):
                 merged[-1].append((frag, (y0, y1)))
@@ -98,6 +107,11 @@ def _visual_lines(
             )
         )
     return lines
+
+
+def lines_digest(page: PageText) -> str:
+    """A short hash of the page's line texts, for caches measured on those lines."""
+    return hashlib.sha256("\n".join(ln.text for ln in page.lines).encode()).hexdigest()[:16]
 
 
 def line_words(page_words: list, page: PageText) -> list[list]:
@@ -150,9 +164,10 @@ def read_text_layer(pdf: Path, lang: str | None = None) -> list[PageText]:
         spelled = str.maketrans(_private_ligatures(doc))
         if lang and not any(p.lines for p in pages):
             pages = first_reading(doc, pages, lang)
-    for page in pages:
-        page.lines[:] = [replace(ln, text=ln.text.translate(spelled)) for ln in page.lines]
-    return pages
+    return [
+        replace(page, lines=[replace(ln, text=ln.text.translate(spelled)) for ln in page.lines])
+        for page in pages
+    ]
 
 
 def spells(words: list, text: str) -> bool:

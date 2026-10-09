@@ -329,11 +329,30 @@ def test_a_hyphen_already_in_the_word_keeps_the_breaks_only_between_words():
 
 
 @pytest.mark.xfail(
-    strict=True,
-    reason="checklist 6b: a compound the word list lacks, or knows both ways, is the question's",
+    strict=True, reason="checklist 6b: a compound the word list knows both ways is a question"
 )
-def test_a_compound_the_list_cannot_settle_keeps_its_hyphen():
+def test_a_compound_the_list_knows_both_ways_keeps_its_hyphen():
     words = {"makeup", "make-up"}
     known = lambda w: w.lower() in words  # noqa: E731
     assert join("her make-", "up", known=known) == "her make-up"
+
+
+@pytest.mark.xfail(strict=True, reason="checklist 6b: a compound the word list lacks is a question")
+def test_a_compound_the_list_lacks_keeps_its_hyphen():
+    known = lambda w: w.lower() in {"makeup", "make-up"}  # noqa: E731
     assert join("the night-", "vision", known=known) == "the night-vision"
+
+
+def test_the_word_list_settles_a_hyphen_in_a_pages_last_run_of_body_lines():
+    known = lambda w: w.lower() in {"wc-rol"}  # noqa: E731
+    pages = [page(1, [(20, "Hij pakte een wc-"), (10, "rol uit de kast.")])]
+    assert reflow(pages, known=known)[0].text == "Hij pakte een wc-rol uit de kast."
+
+
+def test_a_numeral_under_a_heading_label_is_read_as_one():
+    pages = [page(1, [(100, "CHAPTER"), (120, "Ill."), (20, "It began."), (10, "And so on.")])]
+    head = LineRole("chapter_heading", 0.9, 0.0)
+    blocks = reflow(pages, {SourceRef(1, 0): head, SourceRef(1, 1): head})
+    assert isinstance(blocks[0], Heading)
+    assert blocks[0].text == "CHAPTER III."
+    assert blocks[0].parts == ["CHAPTER III."]

@@ -12,7 +12,6 @@ leans like italic whatever its type. An unmeasured word between two italic
 words is italic ("I can talk").
 """
 
-import hashlib
 import json
 import re
 from dataclasses import replace
@@ -24,7 +23,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import Block, Paragraph, SourceRef
-from roboscriptorium.pdf import PageText, line_words, spells
+from roboscriptorium.pdf import PageText, line_words, lines_digest, spells
 
 VERSION = 8
 DPI = 300
@@ -81,12 +80,12 @@ def detect(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, fro
         raw = json.loads(cache.read_text())
         if raw.get("version") == VERSION:
             done = raw["pages"]
-    todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != _lines(p)]
+    todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != lines_digest(p)]
     if todo:
         with pymupdf.open(pdf) as doc:
             for page in todo:
                 done[str(page.number)] = {
-                    "lines": _lines(page),
+                    "lines": lines_digest(page),
                     "italic": _page(doc[page.number - 1], page),
                 }
         write_atomic(cache, json.dumps({"version": VERSION, "pages": done}))
@@ -95,10 +94,6 @@ def detect(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, fro
         for p in pages
         for k, v in done[str(p.number)]["italic"].items()
     }
-
-
-def _lines(page: PageText) -> str:
-    return hashlib.sha256("\n".join(ln.text for ln in page.lines).encode()).hexdigest()[:16]
 
 
 def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:

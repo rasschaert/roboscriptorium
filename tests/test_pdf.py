@@ -49,3 +49,25 @@ def test_a_pdf_with_a_text_layer_is_never_read_by_tesseract(tmp_path, monkeypatc
     assert [ln.text for ln in pdf.read_text_layer(tmp_path / "source.pdf", "eng")[0].lines] == [
         "Printed text"
     ]
+
+
+def test_a_tall_fragment_boxed_alone_does_not_merge_two_printed_lines():
+    words = [
+        pdf.Line("Tall", 40, 100, 60, 122),  # a drop cap or speck reaching into the next line
+        pdf.Line("first", 70, 100, 120, 112),
+        pdf.Line("line", 125, 101, 160, 112),
+        pdf.Line("second", 70, 116, 130, 128),
+        pdf.Line("line", 135, 117, 170, 128),
+    ]
+    assert [ln.text for ln in pdf._visual_lines(words)] == ["Tall first line", "second line"]
+
+
+def test_ascenders_descenders_and_superscripts_still_join_their_line():
+    words = [
+        pdf.Line("Then", 40, 100, 70, 112),
+        pdf.Line("gypsy", 75, 102, 110, 115),  # descenders
+        pdf.Line("1", 112, 99, 116, 107),  # a superscript
+        pdf.Line("hold", 120, 99, 150, 112),
+        pdf.Line("next", 40, 116, 70, 128),
+    ]
+    assert [ln.text for ln in pdf._visual_lines(words)] == ["Then gypsy 1 hold", "next"]

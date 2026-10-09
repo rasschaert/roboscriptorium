@@ -92,11 +92,14 @@ def read(
             done = raw["lines"]
     todo = [(n, r) for n, r in found if _key(n, r) not in done]
     if todo:
-        with pymupdf.open(pdf) as doc:
-            for n, r in todo:
-                png = ocrcheck._line_crop(doc, n, (r.x0, r.y0, r.x1, r.y1))
-                done[_key(n, r)] = ocrcheck.read_line(png, model, ollama_url)
-        write_atomic(cache, json.dumps({"version": VERSION, "model": model, "lines": done}))
+        # Saved however the reads end, so an interrupted run keeps the ones done.
+        try:
+            with pymupdf.open(pdf) as doc:
+                for n, r in todo:
+                    png = ocrcheck._line_crop(doc, n, (r.x0, r.y0, r.x1, r.y1))
+                    done[_key(n, r)] = ocrcheck.read_line(png, model, ollama_url)
+        finally:
+            write_atomic(cache, json.dumps({"version": VERSION, "model": model, "lines": done}))
     return {_key(n, r): done[_key(n, r)] for n, r in found}
 
 

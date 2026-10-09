@@ -1,4 +1,9 @@
-from roboscriptorium import missing
+import json
+
+import pymupdf
+import pytest
+
+from roboscriptorium import missing, ocrcheck
 from roboscriptorium.layout import Region
 from roboscriptorium.pdf import Line, PageText
 
@@ -64,3 +69,25 @@ def test_an_answer_finds_its_lines_after_a_line_is_added_above():
     assert (_located(moved, answer).first, _located(moved, answer).last) == (3, 4)
     gap = Correction("g", 22, 2, 1, "", "text", "typed", "now", box=(20, 128, 300, 129))
     assert _located(moved, gap).first == 3
+
+
+def test_reads_done_before_a_failure_are_kept(tmp_path, monkeypatch):
+    doc = pymupdf.open()
+    doc.new_page(width=333, height=580)
+    doc.save(tmp_path / "source.pdf")
+    found = [
+        (1, Region("abandon", 0.6, 10, 10, 50, 20)),
+        (1, Region("abandon", 0.6, 10, 40, 50, 50)),
+    ]
+    replies = iter(["3"])
+
+    def read_line(png, model, url):
+        if (reply := next(replies, None)) is None:
+            raise RuntimeError("model gone")
+        return reply
+
+    monkeypatch.setattr(ocrcheck, "read_line", read_line)
+    cache = tmp_path / "missing-lines.json"
+    with pytest.raises(RuntimeError):
+        missing.read(tmp_path / "source.pdf", found, "m", "", cache)
+    assert json.loads(cache.read_text())["lines"] == {missing._key(*found[0]): "3"}

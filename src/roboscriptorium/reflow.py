@@ -199,33 +199,33 @@ def reflow(
         kept = []
         for index, line in enumerate(lines):
             role = _role(roles, SourceRef(page.number, index))
-            # The IR points at the text layer's line, also on a corrected copy.
+            # The IR points at the line's index on the page before answers, also on a
+            # corrected copy (`Line.source`).
             ref = SourceRef(page.number, index if line.source is None else line.source)
             if role == "body":
                 kept.append((ref, line))
                 continue
             # Indents are measured within each run of body lines.
-            _add_body(blocks, kept, opening, seen, known)
-            if kept:
-                opening = False
+            opening = _add_body(blocks, kept, opening, seen, known)
             kept = []
             if role == "chapter_heading":
                 previous = blocks[-1] if blocks else None
                 if _continues(previous, line, page.number):
                     # A heading set over several lines, like "CHAPTER" above "I."
-                    previous.text += f" {line.text}"
+                    # A numeral read with "l" or "1" for "I" ("Ill.") keeps its full stop.
+                    numeral = bare_numeral(line.text)
+                    text = numeral + line.text.strip()[len(numeral) :] if numeral else line.text
+                    previous.text += f" {text}"
                     previous.sources.append(ref)
-                    if _labels(previous.parts[-1]) and not bare_numeral(line.text):
-                        previous.parts.append(line.text)
+                    if _labels(previous.parts[-1]) and not numeral:
+                        previous.parts.append(text)
                     else:
-                        previous.parts[-1] += f" {line.text}"
+                        previous.parts[-1] += f" {text}"
                 else:
                     text = bare_numeral(line.text) or line.text
                     blocks.append(Heading(text, [ref], [text]))
                 opening = True
-        _add_body(blocks, kept, opening, seen)
-        if kept:
-            opening = False
+        opening = _add_body(blocks, kept, opening, seen, known)
     for block in blocks:
         block.text = tidy(block.text)
         if isinstance(block, Paragraph):
@@ -324,8 +324,9 @@ def _add_body(
     kept: list[tuple[SourceRef, Line]],
     opening: bool,
     seen: Counter,
-    known: Callable[[str], bool] | None = None,
-) -> None:
+    known: Callable[[str], bool] | None,
+) -> bool:
+    """Append a run of body lines to `blocks`; whether the next block still opens a section."""
     flags = indented([ln for _, ln in kept])
     for k, ((ref, line), starts_paragraph) in enumerate(zip(kept, flags, strict=True)):
         current = blocks[-1] if blocks else None
@@ -338,3 +339,4 @@ def _add_body(
         else:
             current.text = join(current.text, line.text, seen, known)
             current.sources.append(ref)
+    return opening and not kept

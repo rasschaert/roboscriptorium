@@ -89,9 +89,18 @@ def test_a_number_and_title_opening_a_sunk_page_is_a_heading(tmp_path):
 
 
 def test_running_title_keys():
-    assert title_key("Animal Language II") == title_key("ANIMAL LANGUAGE")
-    assert title_key("12 The Story of Doctor Dolittle") == "THESTORYOFDOCTORDOLITTLE"
+    assert title_key("Animal Language II", 11) == title_key("ANIMAL LANGUAGE", 10)
+    assert title_key("12 The Story of Doctor Dolittle", 12) == "THESTORYOFDOCTORDOLITTLE"
+    assert title_key("SENSE AND SENSIBILITY 28", 23) == "SENSEANDSENSIBILITY"  # a misread folio
+    assert title_key("SENSE AND SENSIBILITY 23") == "SENSEANDSENSIBILITY"  # folio unknown
     assert title_key("CHAPTER XL1I.") != title_key("CHAPTER XLI.")
+
+
+def test_chapter_numbers_are_not_page_numbers():
+    assert title_key("CHAPTER 2", 29) != title_key("CHAPTER 3", 53)
+    assert title_key("Hoofdstuk 3", 41) == "HOOFDSTUK3"
+    assert title_key("DEEL II", 11) == "DEEL"  # only where it reads as the folio
+    assert title_key("DEEL II", 40) != title_key("DEEL III", 90)
 
 
 def test_short_last_line_of_a_sentence_is_body(tmp_path):
@@ -174,3 +183,77 @@ def test_lines_set_like_the_headings_are_headings(tmp_path):
     # Not set like the headings: body type, or in another place on the page.
     assert roles[SourceRef(3, 0)].role == "artifact"
     assert roles[SourceRef(8, 11)].role == "artifact"
+
+
+def _numbered_pages(heads: dict[int, str], offset: int = 16) -> list[PageText]:
+    """Pages with a printed folio at the foot (page number minus `offset`) and `heads` on top."""
+    pages = []
+    for n in range(20, 100):
+        lines = _page(n, heads.get(n, "body text " * 5)).lines
+        lines.append(Line(str(n - offset), 190, 560, 210, 570))
+        pages.append(PageText(n, 400, 600, lines))
+    return pages
+
+
+def test_chapter_labels_with_numbers_are_not_repeats_of_each_other():
+    pages = _numbered_pages({25: "CHAPTER 1", 45: "CHAPTER 2", 69: "CHAPTER 3", 80: "CHAPTER 4"})
+    repeats = Repeats(pages)
+    assert repeats.other_pages("CHAPTER 2", 45) == 0
+    assert repeats.other_pages("Hoofdstuk 3", 69) == 0
+
+
+def test_a_running_head_of_digits_repeats_and_page_numbers_alone_do_not():
+    heads = {n: "11/22/63" if n % 2 else "STEPHEN KING" for n in range(27, 60)}
+    heads[63] = "11/22/63 “A"
+    repeats = Repeats(_numbered_pages(heads))
+    assert repeats.other_pages("11/22/63 “A", 63) >= 10
+    assert repeats.other_pages("11/22/63", 27) >= 10
+    assert repeats.other_pages(str(40 - 16), 40) == 0
+    assert repeats.other_pages("124", 40) == 0
+
+
+def test_a_running_head_with_its_folio_at_either_end_repeats():
+    heads = {n: f"SENSE AND SENSIBILITY {n - 16}" for n in range(30, 60, 2)}
+    heads |= {n: f"{n - 16} SENSE AND SENSIBILITY" for n in range(31, 60, 2)}
+    repeats = Repeats(_numbered_pages(heads))
+    assert repeats.other_pages("SENSE AND SENSIBILITY 23", 39) >= 20
+    assert repeats.other_pages("28 SENSE AND SENSIBILITY", 39) >= 20  # a misread folio
+
+
+def test_numbered_chapter_labels_stay_headings(tmp_path):
+    pages = _numbered_pages({25: "CHAPTER 1", 45: "CHAPTER 2", 69: "CHAPTER 3"})
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            if state["line"].startswith("CHAPTER"):
+                return {"role": Answer("choice", "chapter_heading", 0.9, {"body": 0.1})}
+            return {"role": Answer("choice", "body", 0.9, {"body": 0.9})}
+
+    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
+    assert [roles[SourceRef(n, 0)].role for n in (25, 45, 69)] == ["chapter_heading"] * 3
+
+
+def test_a_chapter_label_on_its_own_printed_page_number_stays_a_heading(tmp_path):
+    pages = _numbered_pages({25: "CHAPTER 1", 40: "16 SENSE AND SENSIBILITY"}, offset=24)
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            if "SENSE" in state["line"] or "CHAPTER" in state["line"]:
+                return {"role": Answer("choice", "chapter_heading", 0.9, {"body": 0.1})}
+            return {"role": Answer("choice", "body", 0.9, {"body": 0.9})}
+
+    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
+    assert roles[SourceRef(25, 0)].role == "chapter_heading"
+    assert roles[SourceRef(40, 0)].rule == "printed-page-number"
+
+
+def test_an_answer_cut_off_by_an_interrupted_run_does_not_swallow_the_next(tmp_path):
+    path = tmp_path / "decisions.jsonl"
+    path.write_text('{"key": "a", "answer": {"role": "body"}}\n{"key": "b", "answ')
+    DecisionCache(path).put("c", {"role": "page_number"})
+    assert DecisionCache(path).get("c") == {"role": "page_number"}
+    assert DecisionCache(path).get("a") == {"role": "body"}

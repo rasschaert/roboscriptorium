@@ -21,8 +21,10 @@ from roboscriptorium.page import (
     bare_numeral,
     centred_on_page,
     edge_lines,
+    folio,
     garbled,
     geometry,
+    label_number,
     labelled,
     page_offset,
     printed_page_number,
@@ -180,8 +182,14 @@ class DecisionCache:
 
     def put(self, key: str, answer: dict) -> None:
         self._entries[key] = answer
-        with self.path.open("a") as f:
-            f.write(json.dumps({"key": key, "answer": answer}) + "\n")
+        line = json.dumps({"key": key, "answer": answer}) + "\n"
+        with self.path.open("ab+") as f:
+            # A line cut off by an interrupted run is ended, so this one stands alone.
+            if f.seek(0, 2):
+                f.seek(-1, 2)
+                if f.read(1) != b"\n":
+                    line = "\n" + line
+            f.write(line.encode())
 
 
 def classify(
@@ -243,8 +251,9 @@ def classify(
         for i, role in page_roles.items():
             text = page.lines[i].text
             if role.role == "chapter_heading":
-                key = title_key(text)
-                if printed_page_number(text, page, offset):
+                key = title_key(text, folio(page.number, offset))
+                # "CHAPTER 1" on printed page 1 is the chapter's number, not the folio.
+                if printed_page_number(text, page, offset) and not label_number(text):
                     page_roles[i] = LineRole(
                         "running_head", role.confidence, role.p_body, "printed-page-number"
                     )
@@ -258,7 +267,7 @@ def classify(
                 page_roles[i] = LineRole("body", role.confidence, 1.0, "finishes-sentence")
         _subtitles(page, page_roles, offset)
         heading_lines |= {
-            title_key(page.lines[i].text)
+            title_key(page.lines[i].text, folio(page.number, offset))
             for i, r in page_roles.items()
             if r.role == "chapter_heading"
         }

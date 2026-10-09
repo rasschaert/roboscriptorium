@@ -3,8 +3,9 @@
 A washed-out scan (Afscheid's paper reads grey 156, its ink 149) still gets an OCR
 layer, full of short scraps that pass for words, so neither the garbled-line rule nor
 the word list notices. The page image does: between the paper (the page's median
-grey) and the ink inside the layer's line boxes a printed page has some 60–90 grey
-levels, a washed-out one under 10. Only a page whose layer holds words is measured.
+grey) and the ink inside the layer's line boxes a printed page measures 48 grey levels
+or more, a washed-out one under 10; the line is drawn at 30. Only a page whose layer
+holds at least MIN_WORDS words is measured.
 At 60 dpi; cached per page in `stages/contrast.json`.
 """
 

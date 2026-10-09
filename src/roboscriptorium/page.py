@@ -6,6 +6,7 @@ page geometry, the lines at the page's edges, text repeated across pages
 numerals, and lines the OCR read from a drawing or a smudge.
 """
 
+import itertools
 import re
 import statistics
 from collections import Counter, defaultdict
@@ -22,7 +23,7 @@ EDGE_LINES_BOTTOM = 3
 # share of page width) and it is shorter than SHORT_LINE of a full line.
 CENTRED_TOLERANCE = 0.08
 SHORT_LINE = 0.8
-# Lines whose letters differ by at most one edit per this many letters count as the
+# Lines whose letters and digits differ by at most one edit per this many count as the
 # same text when looking for repeats across pages: enough for OCR noise ("MONEV"),
 # not for headings that share words ("THE FIFTH CHAPTER", "THE SIXTH CHAPTER").
 REPEAT_LETTERS_PER_EDIT = 10
@@ -102,10 +103,6 @@ def labelled(line: Line, full: float) -> bool:
     return line.x1 - line.x0 < SHORT_LINE * full and bool(NUMBERED_WORDS & words)
 
 
-def letters(text: str) -> str:
-    return re.sub(r"[^A-Z]", "", text.upper())
-
-
 def numeral(text: str) -> str:
     """A trailing Roman numeral, as in "CHAPTER XII.", or ""."""
     words = re.sub(r"[^A-Za-z\s]", " ", text).split()
@@ -120,15 +117,57 @@ def bare_numeral(text: str) -> str:
     return t.replace("l", "I").replace("1", "I") if "l" in t or "1" in t else t
 
 
-def title_key(text: str) -> str:
-    """Letters and digits of a line without a page number at either end ("Animal Language II")."""
+# How the OCR layer misreads the digits of a page number ("Il" for "11").
+_DIGIT_MISREADS = str.maketrans("IlOo", "1100")
+
+
+def _reads_as_folio(word: str, folio: int | None) -> bool:
+    """Whether `word` is the page's printed number. With `folio` unknown, any number is.
+
+    A folio of two digits or more may have one digit misread ("28" on page 23); a
+    chapter number rarely has as many digits and all but one in common.
+    """
+    word = word.strip(".,")
+    if folio is None:
+        return word.isdigit()
+    word = word.translate(_DIGIT_MISREADS)
+    if not word.isdigit():
+        return False
+    printed = str(folio)
+    if word == printed:
+        return True
+    return (
+        len(printed) >= 2
+        and len(word) == len(printed)
+        and sum(a != b for a, b in zip(word, printed, strict=True)) == 1
+    )
+
+
+def without_folio(text: str, folio: int | None) -> str:
+    """The line without the page number `folio` at either end ("Animal Language II")."""
     words = text.split()
-    while words and re.fullmatch(r"[\dIl]+", words[-1]):
+    while words and _reads_as_folio(words[-1], folio):
         words.pop()
-    while words and re.fullmatch(r"\d+", words[0]):
+    while words and _reads_as_folio(words[0], folio):
         words.pop(0)
-    # Digits stay: "CHAPTER XL1I." is not "CHAPTER XLI.".
-    return re.sub(r"[^A-Z0-9]", "", " ".join(words).upper())
+    return " ".join(words)
+
+
+def title_key(text: str, folio: int | None = None) -> str:
+    """Letters and digits of a line without its page number `folio` at either end.
+
+    Digits stay: "CHAPTER XL1I." is not "CHAPTER XLI.", "CHAPTER 2" not "CHAPTER 3".
+    """
+    return re.sub(r"[^A-Z0-9]", "", without_folio(text, folio).upper())
+
+
+def label_number(text: str) -> str:
+    """The number after a heading label ("CHAPTER 12", "Hoofdstuk 3"), or ""."""
+    words = [w.strip(".,»«*:") for w in text.upper().split()]
+    for word, nxt in itertools.pairwise(words):
+        if word in NUMBERED_WORDS and nxt.isdigit():
+            return nxt
+    return ""
 
 
 def sunk_pages(pages: list[PageText]) -> set[int]:
@@ -188,33 +227,44 @@ def printed_page_number(text: str, page: PageText, offset: int | None) -> bool:
     return offset is not None and page_number(text) == page.number - offset
 
 
+def folio(page_number: int, offset: int | None) -> int | None:
+    """The number printed on a page, given the book's `page_offset`."""
+    return None if offset is None else page_number - offset
+
+
 class Repeats:
     """How often each page-edge line's text recurs at the edge of other pages.
 
-    Letters match within a small edit budget, to absorb OCR noise in running heads,
-    but a trailing Roman numeral must match exactly: "CHAPTER II." and "CHAPTER III."
-    are different texts.
+    A line's letters and digits, without its page number, match within a small edit
+    budget, to absorb OCR noise in running heads, but a trailing Roman numeral and a
+    heading label's number must match exactly: "CHAPTER II." and "CHAPTER III.",
+    "CHAPTER 2" and "CHAPTER 3" are different texts.
     """
 
     def __init__(self, pages: list[PageText]):
-        self._pages: dict[tuple[str, str], set[int]] = defaultdict(set)
+        self._offset = page_offset(pages)
+        self._pages: dict[tuple[str, str, str], set[int]] = defaultdict(set)
         for page in pages:
             for i in edge_lines(page):
-                text = page.lines[i].text
-                if key := letters(text):
-                    self._pages[(key, numeral(text))].add(page.number)
+                key = self._key(page.lines[i].text, page.number)
+                if key[0]:
+                    self._pages[key].add(page.number)
+
+    def _key(self, text: str, page_number: int) -> tuple[str, str, str]:
+        text = without_folio(text, folio(page_number, self._offset))
+        return title_key(text), numeral(text), label_number(text)
 
     def other_pages(self, text: str, page_number: int) -> int:
-        key, num = letters(text), numeral(text)
+        key, *numbers = self._key(text, page_number)
         if len(key) < 4:
             return 0
         pages: set[int] = set()
-        for (other, other_numeral), numbers in self._pages.items():
-            if other_numeral == num and (
+        for (other, *other_numbers), found in self._pages.items():
+            if other_numbers == numbers and (
                 other == key
                 or Levenshtein.distance(key, other) <= max(1, len(key) // REPEAT_LETTERS_PER_EDIT)
             ):
-                pages |= numbers
+                pages |= found
         return len(pages - {page_number})
 
 

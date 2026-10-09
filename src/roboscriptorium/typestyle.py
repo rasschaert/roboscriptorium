@@ -7,7 +7,6 @@ ascenders or digits count), its stroke width and its ink width per letter. The
 book's body text is the median over its full-width lines. No model.
 """
 
-import hashlib
 import json
 import re
 from dataclasses import dataclass
@@ -21,7 +20,7 @@ from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.italics import ink_threshold
 from roboscriptorium.page import geometry
-from roboscriptorium.pdf import PageText, line_words
+from roboscriptorium.pdf import PageText, line_words, lines_digest
 
 VERSION = 2
 DPI = 300
@@ -56,12 +55,12 @@ def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, St
         raw = json.loads(cache.read_text())
         if raw.get("version") == VERSION:
             done = raw["pages"]
-    todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != _lines(p)]
+    todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != lines_digest(p)]
     if todo:
         with pymupdf.open(pdf) as doc:
             for page in todo:
                 done[str(page.number)] = {
-                    "lines": _lines(page),
+                    "lines": lines_digest(page),
                     "measured": _page(doc[page.number - 1], page),
                 }
         write_atomic(cache, json.dumps({"version": VERSION, "pages": done}))
@@ -125,10 +124,6 @@ def _ratio(value: float | None, norm: float | None) -> float | None:
 def _median(values: list[float | None]) -> float | None:
     values = [v for v in values if v is not None]
     return median(values) if values else None
-
-
-def _lines(page: PageText) -> str:
-    return hashlib.sha256("\n".join(ln.text for ln in page.lines).encode()).hexdigest()[:16]
 
 
 def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, dict]:

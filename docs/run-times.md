@@ -75,3 +75,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench tuning, without Qwen (ablation) | 839 | 2 | 0 |
 | 2026-10-09 | bench validation, without Qwen (ablation) | 250 | 0 | 0 |
 | 2026-10-09 | tryout: judge v1, clef:27b re-asked (answer variance) | 518 | 12 | 0 |
+| 2026-10-09 | bench tuning, baseline: 9f304c2 + measuring fixes (09fbefe), warm | 839 | 2 | 0 |
+| 2026-10-09 | bench validation, baseline: 9f304c2 + measuring fixes, warm | 250 | 1 | 0 |
