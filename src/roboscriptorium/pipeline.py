@@ -17,6 +17,7 @@ from roboscriptorium import (
     ocr,
     ocrcheck,
     quotes,
+    sorter,
     trust,
     typestyle,
     typography,
@@ -114,6 +115,9 @@ def run(
         cache = DecisionCache(book.stages / "decisions.jsonl")
         styles = typestyle.measure(book.source, body, book.stages / "type.json")
         model_roles = classify(body, client, cache, styles)
+        if settings.sorter:
+            trees = sorter.load(Path(settings.sorter_model))
+            model_roles = sorter.apply(trees, body, model_roles, styles, regions)
         if check_ocr and ocrcheck.scanned(book.source):
             # A washed-out page is one region for the reviewer to type; on its faint crops
             # the readers invent fluent text and the judges pick it.

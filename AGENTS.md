@@ -191,6 +191,10 @@ right, then expand.
     and answers are cached in `stages/decisions.jsonl`. Rules in code then
     override the model where layout settles it; `LineRole.rule` names the rule
     that set a role ("" for the model's own answer).
+  - `sorter.py`: line roles from trees over layout, type, repetition and the role
+    model's answer, in place of `roles.py`'s rules (`ROBO_SORTER=1`, off until the bench
+    says otherwise); trained by `experiments/train_sorter.py --save`, its copies without
+    each tuning book scored by `bench`.
   - `reflow.py`: lines → blocks (headings, paragraphs; indents, de-hyphenation,
     punctuation spacing). A line-end hyphen stays or goes by evidence in order: the
     book's own spelling, the word list, a capital after the break, the parts beside an

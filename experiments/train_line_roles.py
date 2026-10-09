@@ -175,31 +175,36 @@ def scores(truth: list[str], pred: list[str]) -> str:
     return f"errors {errors:4}  body lost {lost:3}  " + "; ".join(out)
 
 
-books = {Path(s.split(":")[0]).name: dataset(s, "--rebuild" in sys.argv) for s in SPECS}
-for name, rows in books.items():
-    print(f"{name[:34]:34} {len(rows):5} lines  {dict(Counter(r['label'] for r in rows))}")
-all_names = [k for k in next(iter(books.values()))[0]["f"] if k != "pipeline"]
-variants = {
-    "trees, no role model": [k for k in all_names if k not in {"asked", "p_body"}
-                             and not k.startswith("model_")],
-    "trees + role model": all_names,
-}
-total = Counter()
-for name, rows in books.items():
-    truth = [r["label"] for r in rows]
-    print(f"\n== {name}")
-    pipe = [r["f"]["pipeline"] for r in rows]
-    print(f"  {'roles.py (now)':22} {scores(truth, pipe)}")
-    total["roles.py (now)"] += sum(t != p for t, p in zip(truth, pipe, strict=True))
-    train = [r for other, rs in books.items() if other != name for r in rs]
-    for label, names in variants.items():
-        clf = HistGradientBoostingClassifier(class_weight="balanced", random_state=0)
-        clf.fit(matrix(train, names), [r["label"] for r in train])
-        pred = list(clf.predict(matrix(rows, names)))
-        print(f"  {label:22} {scores(truth, pred)}")
-        total[label] += sum(t != p for t, p in zip(truth, pred, strict=True))
-        if label == "trees + role model" and name.split("--")[0] not in HELD_OUT:
-            wrong = [(r, p) for r, p in zip(rows, pred, strict=True) if p != r["label"]]
-            for r, p in wrong[:6]:
-                print(f"     p{r['page']} {r['label']}→{p} {r['text'][:50]!r}")
-print("\nerrors over all books:", dict(total))
+def main() -> None:
+    books = {Path(s.split(":")[0]).name: dataset(s, "--rebuild" in sys.argv) for s in SPECS}
+    for name, rows in books.items():
+        print(f"{name[:34]:34} {len(rows):5} lines  {dict(Counter(r['label'] for r in rows))}")
+    all_names = [k for k in next(iter(books.values()))[0]["f"] if k != "pipeline"]
+    variants = {
+        "trees, no role model": [k for k in all_names if k not in {"asked", "p_body"}
+                                 and not k.startswith("model_")],
+        "trees + role model": all_names,
+    }
+    total = Counter()
+    for name, rows in books.items():
+        truth = [r["label"] for r in rows]
+        print(f"\n== {name}")
+        pipe = [r["f"]["pipeline"] for r in rows]
+        print(f"  {'roles.py (now)':22} {scores(truth, pipe)}")
+        total["roles.py (now)"] += sum(t != p for t, p in zip(truth, pipe, strict=True))
+        train = [r for other, rs in books.items() if other != name for r in rs]
+        for label, names in variants.items():
+            clf = HistGradientBoostingClassifier(class_weight="balanced", random_state=0)
+            clf.fit(matrix(train, names), [r["label"] for r in train])
+            pred = list(clf.predict(matrix(rows, names)))
+            print(f"  {label:22} {scores(truth, pred)}")
+            total[label] += sum(t != p for t, p in zip(truth, pred, strict=True))
+            if label == "trees + role model" and name.split("--")[0] not in HELD_OUT:
+                wrong = [(r, p) for r, p in zip(rows, pred, strict=True) if p != r["label"]]
+                for r, p in wrong[:6]:
+                    print(f"     p{r['page']} {r['label']}→{p} {r['text'][:50]!r}")
+    print("\nerrors over all books:", dict(total))
+
+
+if __name__ == "__main__":
+    main()

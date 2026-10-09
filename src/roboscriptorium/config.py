@@ -53,6 +53,10 @@ class Settings:
     # one may be asked). 0.8 about halves the questions at the same wrong words after
     # review (docs/design.md).
     ocr_ask_below: float = 0.8
+    # Line roles from trees over layout, type and the role model's answer (`sorter.py`)
+    # instead of the rules in `roles.py`.
+    sorter: bool = False
+    sorter_model: str = "work/models/line-roles.pkl"
 
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
@@ -82,4 +86,6 @@ class Settings:
                 os.environ.get("ROBO_OCR_QUESTIONS", defaults.ocr_questions_per_page)
             ),
             ocr_ask_below=float(os.environ.get("ROBO_OCR_ASK_BELOW", defaults.ocr_ask_below)),
+            sorter=_flag("ROBO_SORTER", defaults.sorter),
+            sorter_model=os.environ.get("ROBO_SORTER_MODEL", defaults.sorter_model),
         )

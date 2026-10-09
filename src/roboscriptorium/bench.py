@@ -16,7 +16,7 @@ from dataclasses import dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
-from roboscriptorium import quality, trust
+from roboscriptorium import quality, sorter, trust
 from roboscriptorium.config import Settings
 
 OUT = Path("work/bench")
@@ -58,6 +58,8 @@ TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
 # the trust model never trains on them, so they are scored with the full model.
 NO_TRUST_DATA = frozenset({"the-thief-takers-apprentice--ia-scan"})
 TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST_DATA
+# The line-role model trains on every tuning book (`experiments/train_sorter.py`).
+SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"])
 
 # Per-page counts compared between runs: (name, index into a page's counts). "After
 # review" is the unasked plus the reviewer's expected slips per question, at the mean
@@ -103,6 +105,15 @@ def unseen(settings: Settings, book: str) -> Settings:
     The trust model trains on the tuning books with trust data (`TRAINED_ON`,
     `train_ocr_trust.py --save`), so one of them without its copy is refused; any other
     book is scored with the full model."""
+    if settings.sorter:
+        copy = sorter.without(Path(settings.sorter_model), book)
+        if copy.exists():
+            settings = replace(settings, sorter_model=str(copy))
+        elif book in SORTER_TRAINED_ON:
+            raise FileNotFoundError(
+                f"{copy} is missing: {book} is a tuning book, which the line-role model "
+                "trains on (experiments/train_sorter.py --save writes it)"
+            )
     if not settings.ocr_trust:
         return settings
     path = trust.without(Path(settings.ocr_trust_model), book)

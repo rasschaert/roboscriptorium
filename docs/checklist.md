@@ -341,7 +341,9 @@ danger is that it edits the author. Guards, all of them:
 - [x] Italics measured on Metro's typeface: 360 italic words found against the
       reference's 59 in chapters 1–5. The print is right and the eBook isn't: the print sets
       every station name in italics (checked on the scan), the eBook two; not scored now
-- [ ] Line-role classifier into the package, behind a switch
+- [x] Line-role classifier into the package, behind a switch (`sorter.py`, `ROBO_SORTER=1`,
+      off by default; `experiments/train_sorter.py`). Leaving one book out: role errors
+      tuning 406 → 152, validation 77 → 29. Bench pending (6g)
 - [ ] A crop reader on tesseract's line boxes (not the layer's)
 - [x] `quality.catches` matches by span where flags have one: a question about one place
       catches only errors sharing a word with it (6g)
@@ -386,6 +388,10 @@ build. Each change benched on its own.
 - [ ] Score scene breaks: derive keeps a reference's blank-line paragraphs and ornaments as a
       break mark, the score counts them like paragraph breaks
 - [x] Budget diagnostics: questions of one reason asked in a shuffled order, not page order
+- [ ] Line roles by trees on by default if the bench says so: first run no change
+      (11/22/63 1.00 → 0.73, Artemis 0.76 → 0.53; Crime, De cipier, You're Never Weird lost
+      body lines or kept running heads, now kept at P(body) ≥ 0.25 and repeated edge text
+      made furniture), rerun pending
 - [ ] **user** Re-measure the slip rate on today's questions (picks with the difference
       marked, typed lines checked), pick and typed apart (~30 min of review)
 - [ ] Qwen's readings of the bench books again locally, so the bench measures the build that
