@@ -91,3 +91,17 @@ def test_reads_done_before_a_failure_are_kept(tmp_path, monkeypatch):
     with pytest.raises(RuntimeError):
         missing.read(tmp_path / "source.pdf", found, "m", "", cache)
     assert json.loads(cache.read_text())["lines"] == {missing._key(*found[0]): "3"}
+
+
+def test_a_drawn_number_above_a_sunk_opening_is_a_candidate_though_tall():
+    pages = [_page() for _ in range(4)]
+    pages = [PageText(20 + i, 333, 580, p.lines) for i, p in enumerate(pages)]
+    sunk = PageText(
+        24, 333, 580, [Line(ln.text, ln.x0, ln.y0 + 80, ln.x1, ln.y1 + 80) for ln in pages[0].lines]
+    )
+    circle = Region("abandon", 0.6, 140, 68, 186, 106)  # above the sunk text
+    regions = {
+        24: [circle, Region("abandon", 0.6, 140, 300, 186, 338)],  # as tall, below the top
+        20: [Region("abandon", 0.6, 140, 30, 186, 68)],  # as tall, on an ordinary page
+    }
+    assert missing.candidates(pages + [sunk], regions, {}) == [(24, circle)]

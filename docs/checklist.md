@@ -469,8 +469,11 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
 - [x] Afscheid's misread chapter numbers ("l", "e,", "UH" for 1, 2, 11): a dropped top
       line boxed like the book's numeral headings is one (`numeral-slot`), and the OCR
       check fixes its text; headings 8/11 → 11/11, nothing else changed, 1 h
-- [ ] Artemis's chapter numbers, drawn in a circle (0/3), and De eerlijke vinder's
-      part numerals I–IV (0/4, a spurious "de"): read from the drawing
+- [x] Artemis's chapter numbers, drawn in a circle (0/3 → 3/3): DocLayout-YOLO marks
+      them, glm-ocr reads them; `missing.py` now reads regions up to five lines tall
+      above a sunk page's text. +3 questions, no other book changed, 20 min
+- [ ] De eerlijke vinder's part numerals I–IV (0/4, a spurious "de"): read from the
+      drawing
 - [ ] You're Never Weird 5/16: bracketed sections and "- 1 -" chapter numbers
 
 ## 6d. Image-only scans
@@ -512,7 +515,7 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
 
 - [ ] Proofreading answers with Qwen
 - [ ] Surya's layout model as a second spotter beside DocLayout-YOLO (a vote, not a
-      replacement): screen it first on the drawn numerals DocLayout-YOLO misses (Artemis,
-      De eerlijke vinder) and the figure/caption pages
+      replacement): screen it first on the drawn numerals DocLayout-YOLO misses (De eerlijke
+      vinder) and the figure/caption pages
 - [ ] Block quotes, epigraphs, verse, and ornaments used as scene breaks: none is handled
       yet; find golden pages that have them before designing anything

@@ -7,7 +7,7 @@ of each session.
 
 ## State at the end of 2026-10-09 (evening)
 
-On `main`, pushed. Lint and tests green (260 passed, 2 xfailed). No runs going.
+On `main`, pushed. Lint and tests green (261 passed, 2 xfailed). No runs going.
 Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
 
 ### Done this session
@@ -21,6 +21,8 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
 - **Suspects the arbiter is ≥ 0.8 sure of aren't asked** (`ROBO_OCR_ASK_BELOW`, the
   user's choice): questions about halved at the same wrong words after review. **A
   figure to revisit** with any new arbiter, judge or reader (checklist).
+- **Artemis's drawn chapter numbers** (in a circle, absent from the layer): `missing.py`
+  reads regions up to five lines tall above a sunk page's text. Headings 0/3 → 3/3.
 - Probe: Afscheid p. 20's text isn't in the PDF (the mask layer holds traced blobs), so
   no image tuning recovers it. Internet Archive's original captures might.
 - Gemini's brief on combining models (from the user): mostly built already; two ideas
@@ -29,8 +31,8 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
 
 ### Next (checklist; docs/outlook.md ranks the areas with room)
 
-1. Headings still lost: Artemis's drawn chapter numbers (0/3); De eerlijke vinder's part
-   numerals I–IV (0/4, a spurious "de"); You're Never Weird 4/16.
+1. Headings still lost: De eerlijke vinder's part numerals I–IV (0/4, a spurious "de",
+   a validation book); You're Never Weird 4/16; Reis 10/11.
 2. Bad pages by the readers' disagreement, a label-free alarm beside `faint.py`.
 3. You're Never Weird p. 47: picture text read into the body.
 4. Section 5: a book-quality feature for the arbiter; Vals alarm's lost full stops.
@@ -48,5 +50,8 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
 
 ### Waiting on the user
 
-Nothing. Two extra worktrees can go when convenient: `../roboscriptorium-baseline` and
+- `/doctor` (2026-10-09) proposed, unanswered: move AGENTS.md's Models table, golden-books
+  notes and module tour to `docs/` (~8k est. tokens a session; AGENTS.md is 66.6k chars,
+  past the large-file warning), switch off 10 unused claude.ai connectors in `/mcp`, and
+  make auto mode the default in `~/.claude/settings.json`. Nothing applied. Two extra worktrees can go when convenient: `../roboscriptorium-baseline` and
 `../roboscriptorium-qwen2`.

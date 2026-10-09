@@ -21,10 +21,14 @@ import pymupdf
 from roboscriptorium import ocrcheck
 from roboscriptorium.files import write_atomic
 from roboscriptorium.layout import Region
+from roboscriptorium.page import sunk_pages
 from roboscriptorium.pdf import Line, PageText
 
 VERSION = 1
 MAX_HEIGHT = 1.8  # times the book's median line height
+# Above a sunk page's text, where a chapter opens, a drawn number may stand taller
+# (Artemis sets each in a circle about four lines high).
+OPENING_MAX_HEIGHT = 5.0
 SKIPPED = {"figure", "figure_caption"}
 
 
@@ -46,7 +50,7 @@ def candidates(
     answered: dict[int, list[tuple[float, float, float, float]]],
 ) -> list[tuple[int, Region]]:
     """Line-sized regions holding no text-layer line and not part of one, one per spot
-    (the surest).
+    (the surest); above the text of a sunk page, regions up to a few lines tall.
 
     `answered` holds, per page, the boxes of regions a human typed text for.
     """
@@ -54,8 +58,11 @@ def candidates(
     if not heights:
         return []
     tallest = MAX_HEIGHT * median(heights)
+    opening = OPENING_MAX_HEIGHT * median(heights)
+    sunk = sunk_pages(pages)
     found = []
     for page in pages:
+        top = min((ln.y0 for ln in page.lines), default=0.0)
         figures = [r for r in regions.get(page.number, []) if r.label == "figure"]
         kept: list[Region] = []
         for r in sorted(regions.get(page.number, []), key=lambda r: -r.confidence):
@@ -65,6 +72,7 @@ def candidates(
                 r.label in SKIPPED
                 or r.turned
                 or r.y1 - r.y0 > tallest
+                and not (page.number in sunk and r.y1 <= top and r.y1 - r.y0 <= opening)
                 or any(_inside(ln, box) for ln in page.lines)
                 or any(_inside(centre, (ln.x0, ln.y0, ln.x1, ln.y1)) for ln in page.lines)
                 or any(_inside(centre, (f.x0, f.y0, f.x1, f.y1)) for f in figures)

@@ -37,7 +37,6 @@ on the page holding most of it; questions halved by not asking what the arbiter 
 1. **Structure the word counts can't see.** Until 2026-10-09 the bench counted only
    words, and a book could lose every heading unseen (Villa Toscane 0/12 in every run).
    `bench` now prints headings and paragraph F1 per book. Still lost:
-   - Artemis 0/3: chapter numbers drawn in a circle, absent from the text layer.
    - De eerlijke vinder 0/4 (plus a spurious "de"): part numerals I–IV, the first drawn.
    - You're Never Weird 4/16: "- 1 -" numbers, bracketed sections, subtitles.
    - Paragraph F1: Afscheid 0.709, You're Never Weird 0.901, Dolittle 0.905, Reis 0.922.

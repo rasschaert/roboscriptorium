@@ -209,6 +209,15 @@ the punctuation beside them on the OCR-checked letters: its letters slip too oft
 to take (`krimpachtig`, a Cyrillic word), its quote marks rarely do (Reis right on
 51 lines where the line is wrong, wrong on none where it is right).
 
+## Missing lines
+
+A layout region with no text-layer line in it is read by glm-ocr only when it is about
+one line tall (1.8× the book's line height): taller ones are pictures or blocks the
+figures stage owns. Above a sunk page's text, where a chapter opens, regions up to five
+lines tall are read too: Artemis draws each chapter number in a circle about four lines
+high, which DocLayout-YOLO marks and glm-ocr reads right ("1", "2", "3"). Headings 0/3 →
+3/3, no other book changed (bench, 2026-10-09).
+
 ## Line roles
 
 clef-flash:9b answers the doubtful lines, and rules in `roles.py` override it

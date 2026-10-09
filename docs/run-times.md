@@ -131,3 +131,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench validation, faint out, ask below 0.8, warm | 250 | 0 | 0 |
 | 2026-10-09 | bench tuning, ask below 0.8 by default, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench validation, ask below 0.8 by default, warm | 250 | 1 | 0 |
+| 2026-10-09 | bench tuning, drawn numbers above sunk openings, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, drawn numbers above sunk openings, warm | 250 | 1 | 0 |
