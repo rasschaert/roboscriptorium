@@ -157,8 +157,14 @@ right, then expand.
   - `clients/llama.py`: imajev, a vision decision model whose trained readout a GGUF
     lacks, on llama-server (`ROBO_LLAMA_URL`); as `ROBO_ALARM_MODEL` it is the OCR check's
     second vision judge, asked clef's question, a vote for the arbiter only.
-  - `clients/ollama.py`, `clients/decide.py`: thin httpx clients. All model calls go
-    through these.
+  - `clients/ollama.py`: a thin httpx client for Ollama's own API (`doctor` lists the
+    models with it). Decision models answer through `clients/decide.py` (or
+    `clients/llama.py`), hosted models through `clients/openrouter.py`; the line readers
+    (`ocrcheck.read_line`, `ocrcheck.transcribe`) post to Ollama's `/api/generate`
+    themselves.
+  - `clients/retry.py`: `patiently`, a local model call tried again after a timeout
+    (three tries), so one slow answer from a queued Ollama doesn't end a long run.
+  - `files.py`: `write_atomic`, how every per-book cache is written (whole or not at all).
   - `clients/openrouter.py`: a hosted model, named `openrouter:<model>@<provider tag>`
     read by `ocrcheck.transcribe`; the key is `OPENROUTER_API_KEY`. As `ROBO_READ_MODEL`
     its readings cache under its own name; as `ROBO_READ_VIA`
@@ -195,7 +201,9 @@ right, then expand.
     human, else a sideways caption's reading. Each goes after the last block
     that starts above it; JPEG at 300 dpi, at most 1600 px.
   - `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib).
-  - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`.
+  - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`:
+    the text layer in `textlayer.json`, the finished IR in `document.json`, and each
+    stage's own cache named under its module.
   - `docs/pipeline.d2`: the README's diagram of the stages and the model behind
     each; kept current under the standing rules.
   - `experiments/`: throwaway probes for comparing models (line roles, page types).
@@ -210,7 +218,9 @@ right, then expand.
     `reference.py` (reads the reference chapters, with their italic words),
     `signals.py` (whether a pair still measures the pipeline: layer CER and unplaced
     lines against the reference, printed by `bench`), `notes.py` (a reference's footnotes, `notes.txt` from the manifest's
-    `note_classes`: the scan's footnote lines are left out of every score).
+    `note_classes`: the scan's footnote lines are left out of every score),
+    `align.py` (labels a golden scan's text-layer lines with the reference words they
+    hold, and their role: heading, body or furniture).
   - `evaluate.py`: CER, WER and paragraph F1 against a golden reference. Typography
     the EPUB may set differently (quote and dash glyphs, an ellipsis glyph or spaced
     dots, joiners) is folded on both sides and counted per side (`folded_*`, printed
@@ -255,9 +265,12 @@ right, then expand.
     Each such line (short ones too) is read by `read_model` (qwen3.8) with the book's
     typesetting in the prompt (`style_prompt`: quote marks, ellipsis, dashes); its
     marks on the OCR-checked line's letters (`proposed`) become the question's second
-    reading (`Stages.quote_readings`, cached in `stages/quote-readings.json`).
+    reading (`Stages.quote_readings`, `pipeline.proposals`). The readings are cached with
+    the OCR check's third readings in `stages/third-reading.json`, under the same model
+    and prompt.
   - `layout.py`: DocLayout-YOLO regions per page from the page image, cached in
-    `stages/layout.json`; run by `review`. Picture-only pages are also run turned a
+    `stages/layout.json`; run on every build when the `layout` group is installed
+    (`layout.available`). Picture-only pages are also run turned a
     quarter, to find captions printed sideways.
   - `typestyle.py`: each line's type relative to the body text, measured on the
     page image (no model): size (tallest letters to baseline), stroke width, ink
@@ -281,9 +294,13 @@ right, then expand.
     `read_model`'s (qwen3.8) of the crop, told the book's typesetting
     (`stages/third-reading.json`; readings by another model or prompt are kept aside
     in `third-reading.<hash>.json` and come back when asked for). Where a line's readings differ, clef picks from
-    the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence; both agreeing
-    with clef ≥ 0.3 applies the fix to a copy of the pages before reflow,
-    anything else becomes an `ocr-doubt` review region.
+    the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence. The learned trust
+    (`trust.py`, on by default) then fixes, keeps or asks. The fixed rule
+    (`ROBO_OCR_TRUST=0`, `_choose`) applies a version when both judges pick it with clef
+    ≥ 0.3 (`SURE`), or clef alone picks it with ≥ 0.5 (`SURE_ALONE`) where the versions
+    differ only in punctuation, dashes or spacing; anything else becomes an `ocr-doubt`
+    review region. Fixes go into a copy of the pages before reflow. Tesseract's page
+    readings are cached in `stages/tesseract.json`.
     The judge is `judge_model` (clef:27b, `ROBO_JUDGE_MODEL`), not the role
     model; it is told the book's typesetting (`quotes.style_note`) and sees the
     versions set off by ⟨ ⟩. Suspects are saved to
@@ -321,7 +338,7 @@ right, then expand.
     the gaps between words; cached in `stages/typography.json`, and printed so a
     human can settle it). Every dash between words in the output is then set that
     way (a no-break space before it, narrow when thin); number ranges and hyphens
-    stay. The OCR check no longer raises dash kind or spacing as a doubt.
+    stay. The OCR check doesn't raise dash kind or spacing as a doubt.
   - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
     text layer lacks, or reads as scraps because it is printed sideways).
   - `initials.py`: guesses the letter of a decorated initial: the letters that
@@ -354,16 +371,20 @@ so a rerun skips finished work and model calls.
 
 1. **Text layer** (`pdf.py`): the PDF's own text as visual lines with boxes. The
    body pages come from `book.toml` (no page classification yet).
-2. **Layout regions** (`layout.py`, DocLayout-YOLO) and **missing lines**
-   (`missing.py`, glm-ocr): printed lines the layer lacks, added in reading order.
+2. **Layout regions** (`layout.py`, DocLayout-YOLO, when installed) and the book's
+   **dash style** (`typography.py`: `book.toml`, else measured on a scan), which the
+   readers are told. Then **missing lines** (`missing.py`, glm-ocr): printed lines the
+   layer lacks, added in reading order.
 3. **Type** (`typestyle.py`) and **line roles** (`roles.py`, clef-flash plus rules
-   and a style vote): body, heading, page number, running head, drop.
+   and a style vote): body, chapter heading, page number, running head, artifact.
+   A line not sure enough to be body is dropped, or kept as a heading.
 4. **OCR check** (`ocrcheck.py`, `trust.py`): more readings of each body line,
    judges where they differ, learned trust to fix, keep or ask.
 5. **Answers** (`corrections.py`): a human's review answers, applied to copies.
 6. **Reflow** (`reflow.py`): lines into headings and paragraphs; de-hyphenation.
-7. **Quote questions** (`quotes.py`): unpaired quotes, with a proposed reading.
-8. **Italics** (`italics.py`), **dashes** (`typography.py`), **figures**
+7. **Washed-out pages** (`faint.py`, scans only) and **quote questions**
+   (`quotes.py`): unpaired quotes, with a proposed reading.
+8. **Italics** (`italics.py`), **dashes and ellipses** (`typography.py`), **figures**
    (`figures.py`) on the IR (`ir.py`).
 9. **EPUB** (`epub.py`), checked with epubcheck.
 
@@ -529,7 +550,8 @@ schedel before choosing an OCR model.
 - Dependency group `layout` (a default group, so plain `uv run` has it): `doclayout-yolo` with
   PyTorch, and the DocLayout-YOLO DocStructBench weights
   (`juliozhao/DocLayout-YOLO-DocStructBench`, `doclayout_yolo_docstructbench_imgsz1024.pt`,
-  in the Hugging Face cache). Used by `review` to flag regions from page images.
+  in the Hugging Face cache). `layout.py` runs it on every build to find regions on page
+  images.
 - Word lists: `work/lexicon/{nld,eng}-words.txt`, built by `lexicon.py` from the
   tessdata models with `combine_tessdata` and `dawg2wordlist` (both come with
   Homebrew's tesseract). Nothing installed.

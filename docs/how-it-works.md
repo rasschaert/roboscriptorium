@@ -81,7 +81,8 @@ A book is a directory, `work/<book>/`, with two files in it to start:
 
 - `source.pdf`, the scan or the born-digital PDF;
 - `book.toml`, with the title, author, language, cover page, body page range and,
-  optionally, the dash style.
+  optionally, the dash style (`dash`, `dash_spacing`) and the ellipsis style
+  (`ellipsis`, `ellipsis_space`).
 
 Everything the models say is cached under `work/<book>/stages/`: the text layer, the
 spotter's regions, each reading of each line, every answer the sorter and the
@@ -132,8 +133,8 @@ all the chapter titles of a book.
 
 Plain code also measures the book's dash on the scan: an en or an em dash, and how
 wide the gaps around it are (`typography.py`). `book.toml` can set it instead. The
-quote style (single or double quotes, the ellipsis glyph) comes from the text
-layer's own marks.
+quote style (single or double quotes) comes from the text layer's own marks, and so
+does the ellipsis style (`…`, `...` or `. . .`) unless `book.toml` sets it.
 
 Both are measured before any reader sees a line, and the readers and judges are
 told them in a sentence. Typography belongs to the book: asked line by line, the
@@ -239,8 +240,10 @@ The arbiter learns from the tuning books only, described under *Measuring*.
 
 If its file is missing, or was saved for a different set of features, the build
 stops rather than continue without it. `ROBO_OCR_TRUST=0` replaces it on purpose
-with the older fixed rule: apply a fix when clef and winnow agree and clef is at
-least somewhat sure.
+with a fixed rule. It applies a version when clef and winnow both pick it and clef is
+at least somewhat sure (0.3), or when clef alone picks it at 0.5 or more where the
+versions differ only in punctuation, dashes or spacing, which winnow can't tell
+apart from the sentence. Everything else goes to the reviewer.
 
 ## Stage 4: the reviewer
 
@@ -317,7 +320,8 @@ A hyphen at the end of a line stays or goes by evidence, strongest first:
 Plain code finds italic words from the slant of each word's strokes on the page
 image (`italics.py`), and sets every dash between words and every ellipsis in the
 book's one style (`typography.py`): the dash measured on the scan, the ellipsis read
-in the text layer (`word . . .` or `word...`), either settled in `book.toml`.
+in the text layer (`word . . .` or `word...`), either one settled in `book.toml`
+when it sets it.
 
 `figures.py` takes the pictures the spotter marked on body pages. It trims a
 picture where a caption overlaps it, turns it upright if it was printed sideways,

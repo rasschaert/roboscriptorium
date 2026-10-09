@@ -134,7 +134,7 @@ review: 4 · Review {
   class: group
   s: {
     class: row
-    flags: Questions\nOCR doubts per place, headings,\nfigures, unpaired quotes {class: stage}
+    flags: Questions\nOCR doubts per place, headings,\nfigures, unpaired quotes,\nwashed-out pages {class: stage}
     page: Review page\nthe scan crop beside each question {class: stage}
     answers: Answers\nregions.jsonl {class: stage}
     flags -> page -> answers
@@ -143,12 +143,14 @@ review: 4 · Review {
     class: row
     qread: "a reader, qwen3.8:27b,\nproposes an unpaired quote's marks" {class: ollama}
     init: "the sorter, clef-flash:9b,\nguesses a drawn initial's letter" {class: decision}
+    faint: "contrast between paper\nand ink (scans only)" {class: code}
     you: the reviewer {class: human}
     slip: answer check: a typed line\nmust match a reading {class: code}
     proof: qwen3.8 proofreads\nthe answers {class: candidate}
   }
   s.flags -> m.qread {class: uses}
   s.flags -> m.init {class: uses}
+  s.flags -> m.faint {class: uses}
   s.page -> m.you: a key per answer {class: uses}
   s.page -> m.slip: before saving {class: uses}
   s.answers -> m.proof {class: uses}

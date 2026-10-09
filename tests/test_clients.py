@@ -67,7 +67,13 @@ def test_generate_sends_images_and_returns_text(tmp_path):
     assert client.generate("gemma4:latest", "OCR this", images=[image]) == "tekst"
 
 
-def test_every_decision_model_is_asked_on_ollama():
-    for model in ("clef-flash:9b", "clef:27b", "winnow-ollama:e4b"):
-        client = decide.for_model(model, "http://ollama")
-        assert str(client._http.base_url) == "http://ollama"
+def test_a_decision_model_is_asked_on_ollama_unless_a_hosted_build_is_named():
+    local = decide.for_model("clef:27b", "http://ollama")
+    assert isinstance(local, DecisionClient)
+    assert local.model == "clef:27b"
+    assert str(local._http.base_url) == "http://ollama"
+
+    via = "openrouter:cloudflare/clef@cloudflare"
+    hosted = decide.for_model("clef:27b", "http://ollama", via)
+    assert isinstance(hosted, decide.HostedClient)
+    assert (hosted.model, hosted.via) == ("clef:27b", via)

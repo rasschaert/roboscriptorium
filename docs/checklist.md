@@ -204,10 +204,10 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [ ] MiniCPM-V 4.6 (May 2026, 1.3B, `minicpm-v4.6`), the last small candidate: after the
       baseline. A new reader only pays off by speed, since the current ones already
       cover nearly every line
-- [ ] The two failed MoE models take 39 GB: **user** says whether to remove them
+- [x] The two failed MoE models take 39 GB: **user** said remove them; deleted (2026-10-09)
 - [x] Hosted Qwen3.8 bf16 on Metro pp. 7–30 (the user's go): the same as local on 97% of
       lines, 935 exact against 934, 14× faster; reads beyond its line on 7 of 958 (local 1)
-- [ ] **The crop bug.** `ocrcheck._line_crop` pads each line 3 pt above and below its
+- [x] **The crop bug.** `ocrcheck._line_crop` pads each line 3 pt above and below its
       layer box; where boxes are as tall as the line pitch, that reaches into the next
       line, and glm-ocr and Qwen read part of it (Metro p17: the line above, readable).
       Share of crops reaching into a neighbour's box: Metro 97%, Dolittle 91%, Crime 87%,
@@ -335,8 +335,9 @@ danger is that it edits the author. Guards, all of them:
 
 ## 6. Other components, each scored by `bench`
 
-- [ ] An ellipsis style in `typography.py`, measured on the page like the dash style
-      (the book's glyph or spaced dots)
+- [x] An ellipsis style in `typography.py` (`326a89d`), read in the text layer or set in
+      `book.toml` (the glyph, dots or spaced dots, a space before or not), not measured on
+      the page. Bench tuning after review 1.53 → 1.00 (Metro 4.63 → 0.43)
 - [ ] Italics measured on Metro's typeface: 360 italic words found against the
       reference's 59 in chapters 1–5 (heuristics only)
 - [ ] Line-role classifier into the package, behind a switch
@@ -396,7 +397,7 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
   - [x] The judge role in `experiments/tryout.py`: settled suspects of the tuning slices,
         the vision judge's exact questions and crops, 25 it gets wrong and 25 right a book
   - [x] Build judge set v1 once the winnow trust data is in: 518 suspects
-  - [ ] imajev (mindchain, Qwen3.5 vision decision models, 2B/4B/9B Q8_0) for the vision
+  - [x] imajev (mindchain, Qwen3.5 vision decision models, 2B/4B/9B Q8_0) for the vision
         judge against clef:27b. Ollama's systemone takes no images for GGUF models and a
         GGUF lacks imajev's trained readout, so it runs through llama.cpp on Ollama's blobs
         with the readout applied in `clients/llama.py`. Judge set v1 (518
@@ -404,7 +405,7 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
         No replacement. **A strong alarm**: clef is wrong on 4.6% where the 4B agrees, 34%
         where it disagrees (winnow: 4% / 22%), and the 4B's own pick is right on 139 of the
         150 clef errors it flags. The 9B: 82.4%, weaker as an alarm on English books; the
-        4B is the one to try in the pipeline
+        4B is the one to try in the pipeline. Decided: off (below); the 2B and 9B deleted
     - [x] As a third judge beside clef and winnow (the screen says it adds): not kept
       - [x] `trust.py` takes three judges by position (`ROBO_ALARM_MODEL`, off by default)
       - [x] Rebuild the trust data with the 4B's answers: 31 min for 14 books; retrain,
@@ -427,11 +428,12 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       decision model (`modelfiles/`, AGENTS.md Environment). Screened on the cached
       suspects of Goede dochter, Vals alarm and Reis: right alone 285/208/265 against
       Ollaya's 174/174/174; right where clef is wrong 78 of 100 against 45
-- [ ] winnow-ollama:e4b as `check_model`, confirmed: after tonight's two tuning benches
-  - [ ] Re-ask every book's suspects (winnow only, clef cached) and rebuild the trust
-        data: ~20–30 min
-  - [ ] Retrain the arbiter (`train_ocr_trust.py --save`): under a minute
-  - [ ] `bench tuning`, then `bench validation`, against the current arbiter: ~1 h
+- [x] winnow-ollama:e4b as `check_model`, confirmed (`121b643`)
+  - [x] Re-ask every book's suspects (winnow only, clef cached) and rebuild the trust
+        data: 14 books
+  - [x] Retrain the arbiter (`train_ocr_trust.py --save`)
+  - [x] `bench tuning`, then `bench validation`: tuning no change (after review 1.00 →
+        1.02, no veto); validation's first run is its baseline (0.81)
   - [x] Ollaya stripped from the code and docs: the user uninstalled it, so it went
         before the bench (winnow on Ollama is the only winnow)
 

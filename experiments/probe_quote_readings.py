@@ -63,9 +63,13 @@ print(
 )
 
 if "--missed" in sys.argv:
-    read = __import__("json").loads((book.stages / "quote-readings.json").read_text())["lines"]
+    # `pipeline.proposals` reads quote lines into the third-reading cache, which the run
+    # above left holding the read model and prompt it used.
+    read = __import__("json").loads((book.stages / "third-reading.json").read_text())["lines"]
     for r in lines:
         line, want = checked[r.page].lines[r.line].text, truth[r].truth
         if r not in stages.quote_readings and norm(line) != norm(want):
             qwen = next((v for k, v in read.items() if k.startswith(f"{r.page}:{r.line}:")), None)
-            print(f"missed p{r.page}:{r.line}\n  line  {line!r}\n  qwen  {qwen!r}\n  print {want!r}")
+            print(
+                f"missed p{r.page}:{r.line}\n  line  {line!r}\n  qwen  {qwen!r}\n  print {want!r}"
+            )
