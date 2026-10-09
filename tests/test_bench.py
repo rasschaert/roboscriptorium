@@ -144,3 +144,21 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
     record = json.loads(next(tmp_path.glob("probe-*.json")).read_text())
     assert record["books"]["garbled"]["pair"]["unplaced"] == 1 / 3
     assert record["books"]["a"]["pair"]["cer"] == 0
+
+
+def test_a_change_to_a_books_structure_is_reported_beside_the_test():
+    def run(found, spurious, f1):
+        score = {
+            "headings_found": found,
+            "headings_expected": 24,
+            "headings_spurious": spurious,
+            "paragraph_precision": f1,
+            "paragraph_recall": f1,
+        }
+        return {"books": {"a": {"score": score}, "b": {"score": dict(score)}}}
+
+    old, new = run(5, 4, 0.95), run(23, 1, 0.95)
+    new["books"]["b"]["score"] = dict(old["books"]["b"]["score"])
+    lines = bench.structure(old, new)
+    assert len(lines) == 1 and "5/24 (+4) → 23/24 (+1)" in lines[0]
+    assert bench.structure(old, old) == []

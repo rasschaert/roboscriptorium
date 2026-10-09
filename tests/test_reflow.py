@@ -356,3 +356,13 @@ def test_a_numeral_under_a_heading_label_is_read_as_one():
     assert isinstance(blocks[0], Heading)
     assert blocks[0].text == "CHAPTER III."
     assert blocks[0].parts == ["CHAPTER III."]
+
+
+def test_a_section_number_under_a_numbered_chapter_label_is_its_own_heading():
+    head = LineRole("chapter_heading", 0.9, 0.0)
+    roles = {SourceRef(1, 0): head, SourceRef(1, 1): head}
+    split = [page(1, [(100, "CHAPTER 2"), (130, "1"), (20, "It began."), (10, "And so on.")])]
+    assert [b.text for b in reflow(split, roles) if isinstance(b, Heading)] == ["CHAPTER 2", "1"]
+    # A label still waiting for its number takes it.
+    whole = [page(1, [(100, "CHAPTER"), (130, "12"), (20, "It began."), (10, "And so on.")])]
+    assert [b.text for b in reflow(whole, roles) if isinstance(b, Heading)] == ["CHAPTER 12"]

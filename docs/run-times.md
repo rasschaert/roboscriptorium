@@ -77,3 +77,41 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | tryout: judge v1, clef:27b re-asked (answer variance) | 518 | 12 | 0 |
 | 2026-10-09 | bench tuning, baseline: 9f304c2 + measuring fixes (09fbefe), warm | 839 | 2 | 0 |
 | 2026-10-09 | bench validation, baseline: 9f304c2 + measuring fixes, warm | 250 | 1 | 0 |
+| 2026-10-09 | trust data, vals-alarm--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, reis-om-mijn-schedel--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 2 | 0 |
+| 2026-10-09 | trust data, goede-dochter--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, de-tuin-van-de-avondnevel--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 2 | 0 |
+| 2026-10-09 | trust data, de-cipier--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 3 | 0 |
+| 2026-10-09 | trust data, stella, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 0 | 0 |
+| 2026-10-09 | trust data, metro-2033--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 35 | 0 |
+| 2026-10-09 | trust data, the-story-of-doctor-dolittle--stokes-1920, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 4 | 0 |
+| 2026-10-09 | trust data, the-nature-of-a-crime--doubleday-1924, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 17 | 0 |
+| 2026-10-09 | trust data, afscheid-van-verspilde-tijd--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, 11/22/63 pp. 15-94, fully cold (stages moved aside) after the review's fixes, Qwen via hosted, alongside 2 runs | 80 | 63 | 0 |
+| 2026-10-09 | trust data, artemis--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 12 | 0 |
+| 2026-10-09 | trust data, de-eerlijke-vinder--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, youre-never-weird-on-the-internet--ia-scan, after the review's fixes (new suspects and changed lines only), Qwen via hosted, alongside 2 runs | 0 | 12 | 0 |
+| 2026-10-09 | bench tuning, after the review fixes, retrained trust, warm | 839 | 5 | 0 |
+| 2026-10-09 | bench validation, after the review fixes, retrained trust, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, section numbers mid-page, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, section numbers mid-page, warm | 250 | 0 | 0 |
+| 2026-10-09 | trust data, stella, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | bench tuning, Qwen second look at 450 dpi as a trust feature (experiment), warm | 839 | 2 | 0 |
+| 2026-10-09 | bench validation, Qwen second look (experiment), warm | 250 | 0 | 0 |
+| 2026-10-09 | trust data, artemis--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, vals-alarm--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, metro-2033--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 2 | 0 |
+| 2026-10-09 | trust data, 11-22-63--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, reis-om-mijn-schedel--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, goede-dochter--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, the-story-of-doctor-dolittle--stokes-1920, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 2 | 0 |
+| 2026-10-09 | trust data, de-eerlijke-vinder--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 2 | 0 |
+| 2026-10-09 | trust data, de-tuin-van-de-avondnevel--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, the-nature-of-a-crime--doubleday-1924, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 0 | 0 |
+| 2026-10-09 | trust data, youre-never-weird-on-the-internet--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, afscheid-van-verspilde-tijd--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | trust data, de-cipier--ia-scan, Qwen second look at 450 dpi (experiment), hosted, alongside 2 runs | 0 | 1 | 0 |
+| 2026-10-09 | bench tuning, label numbers kept when the folio is unknown, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, label numbers kept when the folio is unknown, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, a top number is a section where the folio is printed elsewhere, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, top number with the folio elsewhere, warm | 250 | 0 | 0 |

@@ -257,3 +257,61 @@ def test_an_answer_cut_off_by_an_interrupted_run_does_not_swallow_the_next(tmp_p
     DecisionCache(path).put("c", {"role": "page_number"})
     assert DecisionCache(path).get("c") == {"role": "page_number"}
     assert DecisionCache(path).get("a") == {"role": "body"}
+
+
+def _foliated(number: int, middle: list[Line] = ()) -> PageText:
+    """A page with a running head, body lines with `middle` set among them, and its
+    printed number (the page's number less 4) centred at the foot."""
+    body = [Line("body text " * 5, 50, 80 + 15 * i, 350, 92 + 15 * i) for i in range(20)]
+    lines = [Line("RUNNING TITLE", 150, 40, 250, 50), *body[:8], *middle, *body[8:]]
+    return PageText(number, 400, 600, lines + [Line(str(number - 4), 195, 560, 205, 570)])
+
+
+class _NumbersAsPageNumbers:
+    model = "fake"
+
+    def decide(self, state, questions):
+        if state["line"].startswith("body text"):
+            return {"role": Answer("choice", "body", 0.9, {"body": 0.9})}
+        return {"role": Answer("choice", "page_number", 0.9, {"page_number": 0.9, "body": 0.1})}
+
+
+def test_a_numeral_that_isnt_the_folio_is_no_page_number_mid_page_either(tmp_path):
+    pages = [_foliated(n) for n in range(5, 15)]
+    # Not headings: a speck in the margin, the folio's own number mid-page, a number
+    # with no text below it.
+    pages.append(_foliated(15, [Line("4", 20, 205, 26, 215)]))
+    pages.append(_foliated(16, [Line("12", 194, 205, 206, 215)]))
+    pages.append(PageText(17, 400, 600, [*_foliated(17).lines[:-1], Line("3", 195, 540, 205, 550)]))
+    # A heading: a centred section number between two paragraphs, close to the folio (14).
+    pages.append(_foliated(18, [Line("9", 196, 205, 204, 215)]))
+    roles = classify(pages, _NumbersAsPageNumbers(), DecisionCache(tmp_path / "d.jsonl"))
+    assert roles[SourceRef(18, 9)].role == "chapter_heading"
+    assert roles[SourceRef(18, 9)].rule == "section-number"
+    for ref in [SourceRef(15, 9), SourceRef(16, 9), SourceRef(17, 21), SourceRef(18, 22)]:
+        assert roles[ref].role != "chapter_heading", ref
+
+
+def test_numbered_chapter_labels_differ_when_the_folio_is_unknown():
+    # A born-digital PDF prints no page numbers, so no number can be taken for a folio
+    # after a label word; a running head's trailing number still can.
+    assert title_key("Hoofdstuk 2") != title_key("Hoofdstuk 3")
+    assert title_key("SENSE AND SENSIBILITY 23") == title_key("SENSE AND SENSIBILITY 24")
+    pages = [
+        PageText(n, 400, 600, [Line(f"Hoofdstuk {n}", 150, 60, 250, 90), *_page(n, "x").lines[1:]])
+        for n in range(1, 13)
+    ]
+    repeats = Repeats(pages)
+    assert repeats.other_pages("Hoofdstuk 5", 5) == 0
+
+
+def test_a_top_number_is_a_section_where_the_page_prints_its_folio_elsewhere(tmp_path):
+    pages = [_foliated(n) for n in range(5, 15)]
+    # Page 11 prints its folio, 7, at the foot: a "1" at the top, near 7, is a section.
+    top = Line("1", 196, 30, 204, 40)
+    pages[6] = PageText(11, 400, 600, [top, *_foliated(11).lines[1:]])
+    # Page 12 prints no folio of its own: a "6" at the top may be a misread 8.
+    pages[7] = PageText(12, 400, 600, [Line("6", 196, 30, 204, 40), *_foliated(12).lines[1:-1]])
+    roles = classify(pages, _NumbersAsPageNumbers(), DecisionCache(tmp_path / "d.jsonl"))
+    assert roles[SourceRef(11, 0)].role == "chapter_heading"
+    assert roles[SourceRef(12, 0)].role != "chapter_heading"

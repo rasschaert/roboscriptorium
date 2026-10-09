@@ -208,6 +208,33 @@ def verdict(old: dict, new: dict) -> Verdict:
     return Verdict(outcome, primary, vetoes)
 
 
+def _f1(score: dict) -> float:
+    p, r = score["paragraph_precision"], score["paragraph_recall"]
+    return 2 * p * r / (p + r) if p + r else 0.0
+
+
+def structure(old: dict, new: dict) -> list[str]:
+    """Per book, the headings found and spurious and the paragraph F1 where they changed:
+    the primary measure counts words, so a change to a book's structure shows only here."""
+    out = []
+    for name, book in new["books"].items():
+        if name not in old["books"]:
+            continue
+        a, b = old["books"][name]["score"], book["score"]
+        if (a["headings_found"], a["headings_spurious"]) != (
+            b["headings_found"],
+            b["headings_spurious"],
+        ):
+            out.append(
+                f"{name[:40]:40} headings {a['headings_found']}/{a['headings_expected']} "
+                f"(+{a['headings_spurious']}) → {b['headings_found']}/{b['headings_expected']} "
+                f"(+{b['headings_spurious']})"
+            )
+        if round(_f1(a), 3) != round(_f1(b), 3):
+            out.append(f"{name[:40]:40} paragraph F1 {_f1(a):.3f} → {_f1(b):.3f}")
+    return out
+
+
 def save(record: dict, out: Path = OUT) -> Path:
     out.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")

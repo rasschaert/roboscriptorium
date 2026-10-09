@@ -121,7 +121,7 @@ def bare_numeral(text: str) -> str:
 _DIGIT_MISREADS = str.maketrans("IlOo", "1100")
 
 
-def _reads_as_folio(word: str, folio: int | None) -> bool:
+def reads_as_folio(word: str, folio: int | None) -> bool:
     """Whether `word` is the page's printed number. With `folio` unknown, any number is.
 
     A folio of two digits or more may have one digit misread ("28" on page 23); a
@@ -146,9 +146,11 @@ def _reads_as_folio(word: str, folio: int | None) -> bool:
 def without_folio(text: str, folio: int | None) -> str:
     """The line without the page number `folio` at either end ("Animal Language II")."""
     words = text.split()
-    while words and _reads_as_folio(words[-1], folio):
+    # Unknown, the folio can't be told from a chapter's number after its label.
+    keep_last = folio is None and bool(label_number(text))
+    while words and not keep_last and reads_as_folio(words[-1], folio):
         words.pop()
-    while words and _reads_as_folio(words[0], folio):
+    while words and reads_as_folio(words[0], folio):
         words.pop(0)
     return " ".join(words)
 
@@ -251,8 +253,9 @@ class Repeats:
                     self._pages[key].add(page.number)
 
     def _key(self, text: str, page_number: int) -> tuple[str, str, str]:
+        number = label_number(text)
         text = without_folio(text, folio(page_number, self._offset))
-        return title_key(text), numeral(text), label_number(text)
+        return title_key(text), numeral(text), number
 
     def other_pages(self, text: str, page_number: int) -> int:
         key, *numbers = self._key(text, page_number)

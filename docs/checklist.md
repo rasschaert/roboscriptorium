@@ -437,6 +437,42 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
   - [x] Ollaya stripped from the code and docs: the user uninstalled it, so it went
         before the bench (winnow on Ollama is the only winnow)
 
+## 6e. Strict review of the codebase (2026-10-09)
+
+- [x] Six reviewers, every finding checked; fixes with tests in seven commits
+      (hosted client, docs, answers and typography, OCR check and trust, measuring,
+      chapter labels and text layer, detached.sh): ~2 h
+- [x] Baseline bench on the code before the review plus only the measuring fixes:
+      tuning 1.00, validation 0.81 after review (2 + 1 min)
+- [x] Read-prompt variants on reader set v1, hosted Qwen: none beats the prompt in
+      use (design.md), 4 min
+- [x] Trust data rebuilt after the fixes, Qwen via hosted; 11/22/63 pp. 15–94 fully
+      cold, its old stages kept in `stages.before-review-2026-10-09`: 63 min
+- [x] Arbiter retrained (`train_ocr_trust.py --save`), then `bench tuning` and
+      `bench validation` against the baseline: tuning better 1.00 → 0.96, validation
+      no change 0.81 → 0.75 (decisions.md), 4 min
+- [x] Report the cold slice's before and after, and what the fixes changed
+- [x] 11/22/63's numbered sections: headings 5 → 23 of 24 (a bare number off the
+      folio is a section heading mid-page too), every other book unchanged
+- [x] The bench is blind to structure: it now prints headings per book and reports
+      heading and paragraph-F1 changes beside its test (`bench.structure`)
+- [x] Crop variants on reader set v1, hosted Qwen (450/600 dpi, 2× up, contrast,
+      sharpen, margin): none reads better; Qwen's instability across them flags its
+      errors (decisions.md), 12 min
+- [x] Qwen's second reading of suspect lines at 450 dpi as a trust feature: no change
+      (tuning 0.96 → 0.99, validation 0.75 → 0.77), not merged; branch
+      `qwen-second-look`, 25 min
+- [x] Headings each book's build misses, why per book. Fixed: Villa Toscane 0/12 →
+      12/12 (a label's number taken for a folio), De cipier 3/4 → 4/4 (a section number
+      near the folio). Thief-Taker and Metro count a label and its title as two
+      headings where the build makes one heading of two parts (scoring, not text)
+- [ ] Afscheid's "1": the layer reads it as a lowercase "l" (p. 9, top line), which no
+      numeral or section rule takes; read it as the book's numbering style (digits
+      here, Roman elsewhere) from its other headings, or ask. "2": not yet located
+- [ ] Artemis's chapter numbers, drawn in a circle (0/3), and De eerlijke vinder's
+      part numerals I–IV (0/4, a spurious "de"): read from the drawing
+- [ ] You're Never Weird 5/16: bracketed sections and "- 1 -" chapter numbers
+
 ## 6d. Image-only scans
 
 - [x] tesseract's first reading of an image-only PDF (`pdf.first_reading`); Goede

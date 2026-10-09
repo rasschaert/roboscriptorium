@@ -47,6 +47,13 @@ time but gets quote marks wrong where Qwen doesn't (Goede dochter pp. 9–20: 4 
 against 0, CER 0.21% against 0.10%), and the newest open models that might
 (DeepSeek V4.1, GLM-5.3, MiMo 2.6, Step 3.7) are 200–760B, too big for this machine.
 
+Its prompt is the book's style and an instruction to transcribe exactly, nothing more.
+Five richer prompts on the reader set (hosted, 330 hard lines) each fixed about as many
+lines as they broke: "never correct or modernise" 2 against 5, the lines above and
+below 5 against 5, both 4 against 3, the layer's own reading 10 against 13 (it copies
+the layer's errors). Its misreads are visual, so prompt work there buys nothing
+(`experiments/probe_read_prompt.py`, 2026-10-09).
+
 Each crop reaches one em past the line's ends and 3 pt above and below it, but never
 into a neighbouring line's box (`crop_span`): where boxes are as tall as the line pitch
 (Metro, Dolittle, Crime, most of De tuin) the margin used to take in half the next line,
