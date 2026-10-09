@@ -42,18 +42,30 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
 
 ### Next (checklist; docs/outlook.md ranks the areas with room)
 
-1. **Put the IA files to work (checklist 6f), cheapest first:**
-   - Readers on page images: ~50 of Crime's and Dolittle's suspect lines read from JP2
-     crops instead of PDF crops (glm-ocr, Qwen), lines right against the reference, a
-     probe in `experiments/`, ~15 min. A PDF box in points maps to the JP2 by its page's
-     pixel size over the PDF page size; check the crops line up before reading.
-     If it gains, make the images a source for `pdf.render` on books that have them,
-     then `bench tuning` (both books are tuning books).
-   - ABBYY's letter confidence for the arbiter: first check the PDF layer is ABBYY's
-     reading, then whether a low confidence separates the trust data's real errors.
+1. **Put the IA files to work (checklist 6f), in this order:**
+   - **Image probe** (`experiments/probe_ia_images.py`, ~15 min). The reader set
+     `tryouts/reader-v1.json` already holds 50 Crime and 50 Dolittle lines (30 the layer
+     reads wrong, 20 it reads right, per book), with crops and printed text in
+     `work/tryout/`. Cut each of those lines again from the JP2: its PDF box in points
+     times the JP2's pixel size over the PDF page size, at the zoom the OCR check uses
+     (`ocrcheck.CROP_ZOOM`). Save a few PDF/JP2 crop pairs side by side and look that
+     they line up before reading. Then read both crops with Qwen and glm-ocr, prompts as
+     in `tryout.py run reader`, and count lines right per stratum.
+     **What it tests:** the PDF isn't low-resolution; its letters are a 1-bit JBIG2 mask
+     at the full 300 ppi (`pdfimages -list`). It lacks grey levels: every letter edge is
+     thresholded, which is where a faint comma, an accent or a quote mark goes. Expect
+     any gain in punctuation and accents, not whole words.
+     **A win:** more hard lines right, no control line broken, for both readers. Then
+     make the JP2 the image source for rendering on books that have one, rebuild Crime's
+     and Dolittle's trust data (~1.5 h each, cold) and run `bench tuning`. Otherwise
+     record the null result in docs/outlook.md's "Tried" list and stop here.
+   - **ABBYY's letter confidence** (no models, ~1 h; doesn't depend on the probe):
+     first test whether Crime's text layer is ABBYY's reading (the same words and boxes
+     on one page). If it is, see whether a low confidence or a `suspicious` mark
+     separates the real errors among the trust data's suspects.
    - `_scandata.xml` page types as page-classification labels (public on every IA
-     golden book, borrow-only ones too).
-   Record null results in docs/outlook.md's "Tried" list.
+     golden book, borrow-only ones too), and a Dutch golden book from the 6f list: only
+     once one of the two above is worth extending.
 2. Headings still lost: De eerlijke vinder's part numerals I–IV (0/4, a spurious "de",
    a validation book); You're Never Weird 4/16; Reis 10/11.
 3. Bad pages by the readers' disagreement, a label-free alarm beside `faint.py`.
@@ -76,5 +88,15 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
 - `/doctor` (2026-10-09) proposed, unanswered: move AGENTS.md's Models table, golden-books
   notes and module tour to `docs/` (~8k est. tokens a session; AGENTS.md is 66.6k chars,
   past the large-file warning), switch off 10 unused claude.ai connectors in `/mcp`, and
-  make auto mode the default in `~/.claude/settings.json`. Nothing applied. Two extra worktrees can go when convenient: `../roboscriptorium-baseline` and
+  make auto mode the default in `~/.claude/settings.json`. Nothing applied.
+- **French**, the user's idea (2026-10-09), undecided. Proposed instead for now: go
+  after the accent errors Dutch already has (De cipier's `knieén`, `hé` for `hè`, lost
+  stress accents; Stella's `scenes`; Couperus's `zoû`): count the accent errors the
+  bench leaves unasked, by book. Hilda and Extaze (checklist 6f) are a free accent
+  stress set. French brings its own typography (« », a thin space before `; : ! ?`,
+  dialogue dashes) that `quotes.py`, `typography.py` and the arbiter's training data
+  would all need, and Gallica is mostly older print unlike the target books. If French
+  comes, start with one French Wikisource book proofread page by page against its scan
+  (same edition by construction), held out as a stress set like the test set, never
+  trained on. Two extra worktrees can go when convenient: `../roboscriptorium-baseline` and
 `../roboscriptorium-qwen2`.

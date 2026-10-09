@@ -494,10 +494,12 @@ public-domain items only; a borrow-only item keeps all but `_scandata.xml` priva
 
 - [x] `golden fetch` takes them from a scan's `[scans.ia]` (item, files with sha256)
       into `work/<book>/ia/`: Crime (300 ppi) and Dolittle (500 ppi), both tuning books
-- [ ] Readers on the page images: re-read ~50 of Crime's and Dolittle's suspect lines
-      from JP2 crops instead of PDF crops (glm-ocr and Qwen) and count lines right
-      against the reference; a probe in `experiments/`, ~15 min. If it gains, the
-      images become a source for `pdf.render` on the books that have them, then bench
+- [ ] Readers on the page images (`experiments/probe_ia_images.py`, ~15 min): reader set
+      v1's 50 Crime and 50 Dolittle lines cut again from the JP2s, read by Qwen and
+      glm-ocr, lines right per stratum against the PDF crops. The PDF's letters are a
+      1-bit mask at full resolution, so this tests grey levels (punctuation, accents).
+      A win (more hard lines right, no control broken, both readers): the JP2s become
+      the image source on books that have them, trust data rebuilt, `bench tuning`
 - [ ] ABBYY's letter confidence as an arbiter feature: check first that the PDF's text
       layer is ABBYY's reading (same words, same boxes), then join its confidence and
       `suspicious` marks to the layer's letters; does a low one separate the trust
