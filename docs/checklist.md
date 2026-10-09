@@ -505,9 +505,18 @@ public-domain items only; a borrow-only item keeps all but `_scandata.xml` priva
 - [ ] `_scandata.xml` page types (Cover, Title, Copyright, Contents, Normal) as labels
       for page classification; public even on borrow-only items, so every IA golden
       book has them. ~30 min to fetch and compare with `body_pages`
-- [ ] **user:** a Dutch public-domain Scribe item with its files public, paired with a
-      reference of the same edition (Pallieter's public scan is the 30th printing in
-      post-1946 spelling; Gutenberg #11355 is an older edition in the old spelling)
+- [x] A Dutch public-domain Scribe item with its files public, paired with Gutenberg:
+      70 title matches between Gutenberg's 1,110 Dutch books and IA's 8,169 public Dutch
+      Scribe scans, compared word by word on 3,000 words (`work/probes/ia-gutenberg-nl/`).
+      Same edition, OCR slips only: Het Kindeken Jezus in Vlaanderen (Timmermans, #58311,
+      `hetkindekenjezus00timmuoft`, 26 differences), David Malan (#68192, 18), Van strak
+      gespannen snaren (#31297, 32), Hilda van Suylenburg (#65536, 45), Extaze (Couperus,
+      #12003, 56–66: the layer reads his "zoû", "weêr" without the circumflex). All 400
+      ppi with page images and ABBYY public, all pre-1934 spelling, so for the IA-file
+      probes, not the bench. Pallieter doesn't pair: the public scan is the 30th printing
+      in post-1946 spelling, Gutenberg #11355 an older edition
+- [ ] Make one of them a golden book (Het Kindeken Jezus: Flemish, Stella-like prose)
+      if the image probe above needs a Dutch book; ~30 min with `probe_candidate.py`
 - [ ] **user:** whether a borrowed item's `_jp2.zip` can be downloaded while on loan
       (Afscheid p. 20's washed-out text)
 

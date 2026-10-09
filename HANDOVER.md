@@ -37,7 +37,8 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
   `addToAccessFormats` true is a PDF page, in order (138 and 208, checked). Pillow reads
   the JP2s. No stage uses them yet. The user is hunting for more, a Dutch one above all;
   Pallieter didn't pair (the public scan is the 30th printing in post-1946 spelling,
-  Gutenberg #11355 an older edition in the old spelling).
+  Gutenberg #11355 an older edition in the old spelling). Dutch pairs that do match, with every IA file
+  public, are in checklist 6f (Het Kindeken Jezus in Vlaanderen first).
 
 ### Next (checklist; docs/outlook.md ranks the areas with room)
 
