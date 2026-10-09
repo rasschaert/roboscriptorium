@@ -77,3 +77,36 @@ def test_a_request_that_stalls_on_keep_alives_is_cut_off_and_asked_again(monkeyp
     model = "openrouter:qwen/qwen3.8-27b@deepinfra/bf16"
     assert openrouter.transcribe(b"png", model, "Read it.", 120, client) == "keek"
     assert len(calls) == 2
+
+
+@pytest.mark.parametrize(
+    "choice",
+    [
+        {"message": {"content": None}, "finish_reason": "error"},
+        {"message": {"content": None}},
+        {"message": {"content": ""}, "error": {"message": "upstream"}},
+    ],
+)
+def test_a_hosted_reading_that_failed_raises_rather_than_reading_empty(monkeypatch, choice):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "k")
+    client = httpx.Client(
+        transport=httpx.MockTransport(lambda r: httpx.Response(200, json={"choices": [choice]}))
+    )
+    with pytest.raises(RuntimeError):
+        openrouter.transcribe(b"png", "openrouter:m@p", "Read it.", 120, client)
+
+
+def test_a_timed_out_hosted_request_is_retried(monkeypatch):
+    monkeypatch.setenv("OPENROUTER_API_KEY", "k")
+    monkeypatch.setattr(openrouter.time, "sleep", lambda s: None)
+    calls = []
+
+    def answer(request):
+        calls.append(1)
+        if len(calls) == 1:
+            raise httpx.ReadTimeout("slow", request=request)
+        return httpx.Response(200, json={"choices": [{"message": {"content": "ja"}}]})
+
+    client = httpx.Client(transport=httpx.MockTransport(answer))
+    assert openrouter.transcribe(b"png", "openrouter:m@p", "Read it.", 120, client) == "ja"
+    assert len(calls) == 2

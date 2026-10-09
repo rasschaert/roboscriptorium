@@ -20,6 +20,7 @@ PREFIX = "openrouter:"
 URL = "https://openrouter.ai/api/v1/chat/completions"
 DECISIONS_URL = "https://openrouter.ai/api/alpha/decisions"
 RETRIES = 5
+_CLIENT: httpx.Client | None = None
 # Whole seconds a request may take: a stalled provider keeps the connection open with
 # keep-alive bytes, so httpx's read timeout never fires.
 DEADLINE = 120
@@ -81,15 +82,16 @@ def decision_payload(model: str, state: str, questions: dict, png: bytes | None)
 
 def _post(url: str, body: dict, client: httpx.Client | None) -> dict:
     """The response to one request; rate limits, server errors and stalls are retried."""
-    http = client or httpx.Client(timeout=300)
+    http = client or _shared()
     headers = {"Authorization": f"Bearer {os.environ['OPENROUTER_API_KEY']}"}
     for attempt in range(RETRIES):
         last = attempt == RETRIES - 1
         try:
             status, content = _within_deadline(http, url, body, headers)
-        except Stalled:
+        except (Stalled, httpx.TimeoutException):
             if last:
                 raise
+            time.sleep(2**attempt)
             continue
         if status in (429, 500, 502, 503, 504) and not last:
             time.sleep(2**attempt)
@@ -102,6 +104,14 @@ def _post(url: str, body: dict, client: httpx.Client | None) -> dict:
             )
         return json.loads(content)
     raise RuntimeError("unreachable")
+
+
+def _shared() -> httpx.Client:
+    """One client for every request, so hosted lines reuse a connection."""
+    global _CLIENT
+    if _CLIENT is None:
+        _CLIENT = httpx.Client(timeout=300)
+    return _CLIENT
 
 
 def _within_deadline(http: httpx.Client, url: str, body: dict, headers: dict) -> tuple[int, bytes]:
@@ -132,4 +142,10 @@ def transcribe(
     body = _post(URL, payload(model, prompt, png, max_tokens), client)
     if "choices" not in body:
         raise RuntimeError(f"OpenRouter: {body.get('error', body)}")
-    return body["choices"][0]["message"]["content"] or ""
+    choice = body["choices"][0]
+    content = choice.get("message", {}).get("content")
+    # A provider error can come back as a 200 with no content; caching it as an empty
+    # reading would stand for the model's reading on every later run.
+    if content is None or choice.get("finish_reason") == "error" or "error" in choice:
+        raise RuntimeError(f"OpenRouter: no reading ({choice.get('error', choice)})")
+    return content

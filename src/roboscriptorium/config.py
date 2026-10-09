@@ -4,12 +4,23 @@ import os
 from dataclasses import dataclass
 
 
+def _flag(name: str, default: bool) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    if value.lower() in ("1", "true", "yes", "on"):
+        return True
+    if value.lower() in ("0", "false", "no", "off"):
+        return False
+    raise ValueError(f"{name}={value!r}: use 1 or 0")
+
+
 @dataclass(frozen=True)
 class Settings:
     ollama_url: str = "http://127.0.0.1:11434"
     role_model: str = "clef-flash:9b"
-    # Reads OCR suspects from the sentence, not the image. Weak alone (63% right), it is
-    # kept as an alarm on the judge: clef is wrong 4% where it agrees, 22% where it
+    # Reads OCR suspects from the sentence, not the image. Weak alone (67% right), it is
+    # kept as an alarm on the judge: clef is wrong 4% where it agrees, 21% where it
     # doesn't (docs/design.md).
     check_model: str = "winnow-ollama:e4b"
     # Judges the OCR check's suspects from the crop; better than role_model at that,
@@ -38,6 +49,12 @@ class Settings:
     ocr_trust_model: str = "work/models/ocr-trust.pkl"
     ocr_questions_per_page: float = 1.0
 
+    def __post_init__(self) -> None:
+        if self.read_via and not self.read_model:
+            raise ValueError(
+                'ROBO_READ_VIA reads in read_model\'s place, but ROBO_READ_MODEL is ""'
+            )
+
     @classmethod
     def from_env(cls) -> "Settings":
         defaults = cls()
@@ -52,7 +69,7 @@ class Settings:
             alarm_model=os.environ.get("ROBO_ALARM_MODEL", defaults.alarm_model),
             llama_url=os.environ.get("ROBO_LLAMA_URL", defaults.llama_url),
             judge_via=os.environ.get("ROBO_JUDGE_VIA", defaults.judge_via),
-            ocr_trust=os.environ.get("ROBO_OCR_TRUST", "1") != "0",
+            ocr_trust=_flag("ROBO_OCR_TRUST", defaults.ocr_trust),
             ocr_trust_model=os.environ.get("ROBO_OCR_TRUST_MODEL", defaults.ocr_trust_model),
             ocr_questions_per_page=float(
                 os.environ.get("ROBO_OCR_QUESTIONS", defaults.ocr_questions_per_page)
