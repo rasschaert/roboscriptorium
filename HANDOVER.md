@@ -63,5 +63,4 @@ llama-server is stopped.
 
 ### Waiting on the user
 
-- Whether to delete the failed MoE models (qwen3.6:35b-a3b-nvfp4, gemma4:26b-nvfp4) and
-  the 2B/9B imajev copies (`imajev:2b`, the 9B GGUF); the 4B stays as the plate candidate.
+Nothing. The failed MoE models and the 2B/9B imajev copies were deleted (2026-10-09).

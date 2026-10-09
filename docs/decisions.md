@@ -1006,3 +1006,4 @@ What was learned or decided, dated, oldest first. Add a line with every change t
 - 2026-10-09: imajev-4b tells which way up a plate is (10/10 on Dolittle's plates at four turns, decisively), but the caption rule already turns every captioned plate; it waits for a book with an uncaptioned or upside-down plate.
 - 2026-10-09: Qwen's third reading stays, now on the bench: without it (its own trust data, `ROBO_TRUST_DATA`, and arbiter, `ROBO_OCR_TRUST_MODEL`) bench tuning is worse, 1.00 → 1.33 after review [+0.07, +0.75], validation 0.81 → 1.01 [+0.12, +0.27]. Short lines stay with it, unablated.
 - 2026-10-09: clef's cached answers stand for fresh ones: re-asking judge set v1's 518 questions flipped 2, both at confidence ≤ 0.1, and moved the median confidence by 0.001.
+- 2026-10-09: Deleted from Ollama, at the user's go: gemma4:26b-nvfp4 and qwen3.6:35b-a3b-nvfp4 (failed MoE candidates), imajev:2b and the 2B and 9B imajev GGUFs. The 4B stays.

@@ -509,11 +509,12 @@ schedel before choosing an OCR model.
   per start; read it from `/props` (`media_marker`).
 - imajev decision readouts and calibrations (`work/models/imajev/`, 2–4 MB each, from
   `mohit67890/imajev-{2b,4b,9b}`).
-- `imajev:2b` (Ollama, 2026-10-08): mindchain's imajev-2b (Qwen3.5-2B vision decision
-  model, `hf.co/mindchain/imajev-2b-GGUF:Q8_0`, pulled by the user; its vision projector
-  comes with it under Ollama 0.40.1) made a decision model with
-  `modelfiles/imajev-2b.Modelfile`, as winnow below. A candidate for the vision judge;
-  4B and 9B have Modelfiles too.
+- `imajev:4b` (Ollama, 2026-10-08): mindchain's imajev-4b (Qwen3.5-4B vision decision
+  model, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`, pulled by the user) made a decision model
+  with `modelfiles/imajev-4b.Modelfile`, as winnow below; llama-server runs its GGUF
+  (`experiments/llama-serve.sh 4b`). Kept as the candidate for plates without a caption.
+  The 2B and 9B were deleted on 2026-10-09 after their screen (their Modelfiles and
+  readouts remain; pull again to serve them).
 - `winnow-ollama:e4b` (Ollama, 2026-10-08): winnow:e4b's Hugging Face GGUF
   (`hf.co/EldanRing/Winnow-E4B:Q8_0`, pulled by the user) made a decision model with
   `modelfiles/winnow-ollama-e4b.Modelfile`. **A workaround:** a pulled GGUF has no
