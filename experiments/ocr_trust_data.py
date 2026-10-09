@@ -31,17 +31,17 @@ from roboscriptorium.ir import SourceRef
 from roboscriptorium.reflow import _SPACE_BEFORE_PUNCTUATION
 
 SPECS = {
-    "goede-dochter--ia-scan": "9-64:1-4",
+    "goede-dochter--ia-scan": "9-162:1-8",
     "vals-alarm--ia-scan": "11-60:1-10",
     "the-nature-of-a-crime--doubleday-1924": "",
     "the-story-of-doctor-dolittle--stokes-1920": "",
-    "reis-om-mijn-schedel--ia-scan": "11-110:1-11",
+    "reis-om-mijn-schedel--ia-scan": "11-255:1-27",
     "afscheid-van-verspilde-tijd--ia-scan": "9-70:1-11",
-    "metro-2033--ia-scan": "7-111:1-10",
-    "de-cipier--ia-scan": "9-92:1-4",
+    "metro-2033--ia-scan": "7-162:1-14",
+    "de-cipier--ia-scan": "9-174:1-6",
     "artemis--ia-scan": "13-80:1-3",
     "11-22-63--ia-scan": "15-94:1-24",
-    "de-tuin-van-de-avondnevel--ia-scan": "11-52:1-3",
+    "de-tuin-van-de-avondnevel--ia-scan": "11-122:1-8",
     "de-eerlijke-vinder--ia-scan": "",
     "youre-never-weird-on-the-internet--ia-scan": "13-94:1-16",
     # No golden reference: labelled by a human's answers in the review.

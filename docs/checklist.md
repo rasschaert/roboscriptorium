@@ -427,6 +427,11 @@ build. Each change benched on its own.
       Qwen's marks (`Charlie. ‘Waarom`), while the print, and the publisher's EPUB, set the
       wrong mark (`Charlie.’ Waarom`); the faithful line had to be typed. Count, in the
       slip review, how many quote questions sit on a mark the print itself sets wrong
+- [ ] Longer slices, each ending on a chapter (the user's go, 2026-10-09): Goede dochter
+      9–162 (ch. 1–8), Reis whole 11–255, De cipier 9–174, Metro 7–162 (ch. 1–7), and De
+      tuin 11–122 on the validation side; ~446 new pages. Trust data for the five (~7.5 h
+      cold, Qwen local), arbiter and sorter retrained, both benches as a new baseline
+- [ ] Then, the user allows it, the five whole: ~1,200 pages more, ~20 h over two nights
 - [ ] A ledger of each probe's prediction beside the bench's verdict for the same change
       (docs/outlook.md has the first): when a probe is enough and when only the bench decides
 - [ ] Qwen's readings of the bench books again locally, so the bench measures the build that
