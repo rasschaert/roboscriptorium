@@ -64,6 +64,10 @@ on the page holding most of it; questions halved by not asking what the arbiter 
 5. **The hard tail, by hand or rescan.** Washed-out pages (Afscheid's four in its slice)
    are flagged whole (`faint.py`); no model reads them, and the readers invent fluent
    text on them. A human types them, or the book is rescanned.
+6. **Better pixels.** Every reader and judge sees crops of a heavily compressed PDF
+   (Crime's is 3 MB for 138 pages). Internet Archive's page images are about 13× the
+   data and its ABBYY reading gives a confidence per letter (checklist 6f). Only the
+   public-domain books have them: Crime and Dolittle so far.
 
 ## Tried, and why it didn't help
 

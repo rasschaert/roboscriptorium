@@ -626,7 +626,13 @@ and `standard-ebooks/` (SE's text, see below).
   in `standard-ebooks/` for later style work; the SE manual of style is at
   https://standardebooks.org/manual/1.9.1/single-page.
 - Scans are never committed. `golden fetch` downloads them into
-  `work/<name>--<scan>/` and writes its `book.toml`. Borrow-only scans have no
+  `work/<name>--<scan>/` and writes its `book.toml`. A scan's `[scans.ia]` lists
+  Internet Archive's own files for it (`item`, and `files` with their sha256), fetched
+  into its `ia/` folder: the page images the PDF was compressed from (`_jp2.zip`),
+  ABBYY's OCR with per-letter confidence (`_abbyy.gz`), page types and crop boxes
+  (`_scandata.xml`) and printed page numbers (`_page_numbers.json`). A leaf with
+  `addToAccessFormats` true is a PDF page, in order. Public on public-domain items
+  (Crime, Dolittle); a borrow-only item keeps all but `_scandata.xml` private. Borrow-only scans have no
   `url`, so they have to be placed by hand and are then checked by sha256.
 - A scan of another edition than the transcription differs in spelling, quote
   style, spaced dashes, "Mrs" vs "Mrs.", and so on, so its scores include

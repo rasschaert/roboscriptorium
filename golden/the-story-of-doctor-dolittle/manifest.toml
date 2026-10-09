@@ -23,3 +23,10 @@ url = "https://archive.org/download/storyofdoctordol00loft/storyofdoctordol00lof
 sha256 = "f9cd967840877fb5f645c6197ab3704f33730c4c9f92e416c6d75a7b00c0b53d"
 cover_page = 1
 body_pages = [23, 202]
+
+# Internet Archive's own files for this scan, which the PDF was compressed from:
+# the cropped page images at 500 ppi, ABBYY's OCR with per-letter confidence, and
+# the scan's page data (page types, crop boxes, printed page numbers).
+[scans.ia]
+item = "storyofdoctordol00loft"
+files = { "storyofdoctordol00loft_jp2.zip" = "1e595ddb219f025e3a0f9d60c2f9f83f92f14e20829ee7c7fb3218bdd5d5eb61", "storyofdoctordol00loft_abbyy.gz" = "852640e236ac1a3429f7570dfefa85edf8211c8c5e1e92d66e664440add535b0", "storyofdoctordol00loft_scandata.xml" = "14537a412446b9c82028fc9c33a1e5fcfabe3afab595b2544416b1133c6edc2c", "storyofdoctordol00loft_page_numbers.json" = "12cdecdd5bfad783beea04ca53c42aca9de6500c666da51d73bd702db5593bcd" }

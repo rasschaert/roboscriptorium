@@ -485,6 +485,32 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
 - [ ] Italics on an image-only PDF: `italics.py` takes the PDF's word boxes, which
       it lacks; give it tesseract's
 
+## 6f. Internet Archive's own files
+
+A Scribe item holds more than the PDF: the page images the PDF was compressed from
+(`_jp2.zip`), ABBYY's OCR with a confidence per letter (`_abbyy.gz`) and the scan's
+page data (`_scandata.xml`: page types, crop boxes; `_page_numbers.json`). Public on
+public-domain items only; a borrow-only item keeps all but `_scandata.xml` private.
+
+- [x] `golden fetch` takes them from a scan's `[scans.ia]` (item, files with sha256)
+      into `work/<book>/ia/`: Crime (300 ppi) and Dolittle (500 ppi), both tuning books
+- [ ] Readers on the page images: re-read ~50 of Crime's and Dolittle's suspect lines
+      from JP2 crops instead of PDF crops (glm-ocr and Qwen) and count lines right
+      against the reference; a probe in `experiments/`, ~15 min. If it gains, the
+      images become a source for `pdf.render` on the books that have them, then bench
+- [ ] ABBYY's letter confidence as an arbiter feature: check first that the PDF's text
+      layer is ABBYY's reading (same words, same boxes), then join its confidence and
+      `suspicious` marks to the layer's letters; does a low one separate the trust
+      data's real errors? ~1 h, no models
+- [ ] `_scandata.xml` page types (Cover, Title, Copyright, Contents, Normal) as labels
+      for page classification; public even on borrow-only items, so every IA golden
+      book has them. ~30 min to fetch and compare with `body_pages`
+- [ ] **user:** a Dutch public-domain Scribe item with its files public, paired with a
+      reference of the same edition (Pallieter's public scan is the 30th printing in
+      post-1946 spelling; Gutenberg #11355 is an older edition in the old spelling)
+- [ ] **user:** whether a borrowed item's `_jp2.zip` can be downloaded while on loan
+      (Afscheid p. 20's washed-out text)
+
 ## 7. A real test set
 
 - [x] A new golden book, left unscored until the end: Het geluid van bananen (2b),
@@ -507,7 +533,8 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       variants on sample lines, keep the one where the independent readers agree most
       and the word list knows most; no reference needed. Null on normal pages so far,
       and no use on a washed-out page whose PDF lost the letters (Afscheid). Internet
-      Archive's original captures (`_jp2.zip`) might still hold them, if downloadable
+      Archive's page images (`_jp2.zip`) might still hold them, but on a borrow-only
+      item they are private (6f)
 - [ ] You're Never Weird p. 47: text inside a picture read into the body; picture text
       should stay in the picture
 

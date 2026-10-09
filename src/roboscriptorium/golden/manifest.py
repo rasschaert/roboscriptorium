@@ -3,7 +3,8 @@
 Each lives in `golden/<name>/` (in git): `manifest.toml`, the reference chapters
 derived from a Project Gutenberg transcription in `text/`, and `PROVENANCE.md`.
 `standard-ebooks/` holds the Standard Ebooks text, kept for later style work. Scans are fetched into
-`work/<name>--<scan id>/`, which is an ordinary book directory.
+`work/<name>--<scan id>/`, which is an ordinary book directory; Internet Archive's own
+files for a scan (page images, ABBYY's OCR, scan data) go into its `ia/` folder.
 
 A book still under copyright in the EU keeps only its manifest in git; its
 reference text, provenance and verdicts live in `work/golden/<name>/`.
@@ -30,6 +31,11 @@ class Scan:
     cover_page: int | None
     url: str | None  # None when it can only be placed by hand
     source: str | None  # where a human can get it
+    # Internet Archive's own files for the scan, by name, with their sha256: the
+    # processed page images (`_jp2.zip`), ABBYY's OCR with per-letter confidence
+    # (`_abbyy.gz`), the scan's page data (`_scandata.xml`, `_page_numbers.json`).
+    ia_files: tuple[tuple[str, str], ...] = ()
+    ia_item: str | None = None
 
 
 @dataclass(frozen=True)
@@ -118,6 +124,8 @@ class Golden:
                 cover_page=s.get("cover_page"),
                 url=s.get("url"),
                 source=s.get("source"),
+                ia_files=tuple(s.get("ia", {}).get("files", {}).items()),
+                ia_item=s.get("ia", {}).get("item"),
             )
             for s in data["scans"]
         ]
@@ -164,8 +172,24 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _download(url: str, path: Path) -> None:
+    partial = path.with_suffix(path.suffix + ".part")
+    with httpx.stream("GET", url, follow_redirects=True, timeout=120) as resp:
+        resp.raise_for_status()
+        with partial.open("wb") as f:
+            for chunk in resp.iter_bytes():
+                f.write(chunk)
+    shutil.move(partial, path)
+
+
+def _check(path: Path, expected: str) -> None:
+    if (actual := sha256(path)) != expected:
+        raise ValueError(f"{path}: sha256 {actual}, expected {expected}")
+
+
 def fetch(golden: Golden, scan: Scan, work: Path = Path("work")) -> Path:
-    """Put the scan and a book.toml in its book directory; return that directory."""
+    """Put the scan, its Internet Archive files and a book.toml in its book directory;
+    return that directory."""
     book_dir = golden.book_dir(scan, work)
     book_dir.mkdir(parents=True, exist_ok=True)
     pdf = book_dir / "source.pdf"
@@ -175,16 +199,15 @@ def fetch(golden: Golden, scan: Scan, work: Path = Path("work")) -> Path:
             raise FileNotFoundError(
                 f"{scan.id} can't be downloaded; get it from {scan.source} and save it as {pdf}"
             )
-        partial = pdf.with_suffix(".part")
-        with httpx.stream("GET", scan.url, follow_redirects=True, timeout=120) as resp:
-            resp.raise_for_status()
-            with partial.open("wb") as f:
-                for chunk in resp.iter_bytes():
-                    f.write(chunk)
-        shutil.move(partial, pdf)
+        _download(scan.url, pdf)
+    _check(pdf, scan.sha256)
 
-    if (actual := sha256(pdf)) != scan.sha256:
-        raise ValueError(f"{pdf}: sha256 {actual}, expected {scan.sha256}")
+    for name, digest in scan.ia_files:
+        path = book_dir / "ia" / name
+        if not path.exists():
+            path.parent.mkdir(exist_ok=True)
+            _download(f"https://archive.org/download/{scan.ia_item}/{name}", path)
+        _check(path, digest)
 
     first, last = scan.body_pages
     cover = f"cover_page = {scan.cover_page}\n" if scan.cover_page else ""

@@ -27,3 +27,10 @@ url = "https://archive.org/download/natureofcrime0000conr/natureofcrime0000conr.
 sha256 = "82e1ea8a2692ea1a23f313876c01fd32529f0a3e7ee248f74a04e3bde0b972da"
 cover_page = 7
 body_pages = [25, 118]
+
+# Internet Archive's own files for this scan, which the PDF was compressed from:
+# the cropped page images at 300 ppi, ABBYY's OCR with per-letter confidence, and
+# the scan's page data (page types, crop boxes, printed page numbers).
+[scans.ia]
+item = "natureofcrime0000conr"
+files = { "natureofcrime0000conr_jp2.zip" = "35b687d675dd2bdbb6ce4116a320ae9169e2ce4f58120e49684ee195b4ce43df", "natureofcrime0000conr_abbyy.gz" = "48c865f080663b1714c9333d2bafafa77fa19b7dcdd2bfe7638664b1e2537065", "natureofcrime0000conr_scandata.xml" = "7e399c586ba31a6c0fb14dbf96b1eb49afa4d4af640e636b62356af7fb42cc12", "natureofcrime0000conr_page_numbers.json" = "9145cd1454dc3975c6feabe5630412090bb17dd51cf5edf732c667e5131cabd8" }

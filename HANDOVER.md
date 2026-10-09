@@ -7,7 +7,7 @@ of each session.
 
 ## State at the end of 2026-10-09 (evening)
 
-On `main`, pushed. Lint and tests green (261 passed, 2 xfailed). No runs going.
+On `main`, pushed. Lint and tests green (264 passed, 2 xfailed). No runs going.
 Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
 
 ### Done this session
@@ -24,18 +24,40 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
 - **Artemis's drawn chapter numbers** (in a circle, absent from the layer): `missing.py`
   reads regions up to five lines tall above a sunk page's text. Headings 0/3 → 3/3.
 - Probe: Afscheid p. 20's text isn't in the PDF (the mask layer holds traced blobs), so
-  no image tuning recovers it. Internet Archive's original captures might.
+  no image tuning recovers it. Internet Archive's page images might, but they are
+  private on that borrow-only item.
 - Gemini's brief on combining models (from the user): mostly built already; two ideas
   kept in the checklist (Surya as a second spotter; block quotes, epigraphs, verse,
   ornaments).
+- **Internet Archive's own files** for Crime and Dolittle (checklist 6f): `golden fetch`
+  puts them in `work/<book>/ia/` from the manifest's `[scans.ia]`, sha256-checked. The
+  page images the PDF was compressed from (`_jp2.zip`; Crime 300 ppi, 42 MB against a
+  3 MB PDF; Dolittle 500 ppi), ABBYY's OCR with per-letter confidence (`_abbyy.gz`),
+  page types and crop boxes (`_scandata.xml`), printed page numbers. A leaf with
+  `addToAccessFormats` true is a PDF page, in order (138 and 208, checked). Pillow reads
+  the JP2s. No stage uses them yet. The user is hunting for more, a Dutch one above all;
+  Pallieter didn't pair (the public scan is the 30th printing in post-1946 spelling,
+  Gutenberg #11355 an older edition in the old spelling).
 
 ### Next (checklist; docs/outlook.md ranks the areas with room)
 
-1. Headings still lost: De eerlijke vinder's part numerals I–IV (0/4, a spurious "de",
+1. **Put the IA files to work (checklist 6f), cheapest first:**
+   - Readers on page images: ~50 of Crime's and Dolittle's suspect lines read from JP2
+     crops instead of PDF crops (glm-ocr, Qwen), lines right against the reference, a
+     probe in `experiments/`, ~15 min. A PDF box in points maps to the JP2 by its page's
+     pixel size over the PDF page size; check the crops line up before reading.
+     If it gains, make the images a source for `pdf.render` on books that have them,
+     then `bench tuning` (both books are tuning books).
+   - ABBYY's letter confidence for the arbiter: first check the PDF layer is ABBYY's
+     reading, then whether a low confidence separates the trust data's real errors.
+   - `_scandata.xml` page types as page-classification labels (public on every IA
+     golden book, borrow-only ones too).
+   Record null results in docs/outlook.md's "Tried" list.
+2. Headings still lost: De eerlijke vinder's part numerals I–IV (0/4, a spurious "de",
    a validation book); You're Never Weird 4/16; Reis 10/11.
-2. Bad pages by the readers' disagreement, a label-free alarm beside `faint.py`.
-3. You're Never Weird p. 47: picture text read into the body.
-4. Section 5: a book-quality feature for the arbiter; Vals alarm's lost full stops.
+3. Bad pages by the readers' disagreement, a label-free alarm beside `faint.py`.
+4. You're Never Weird p. 47: picture text read into the body.
+5. Section 5: a book-quality feature for the arbiter; Vals alarm's lost full stops.
 
 ### Working with the user (also in memory)
 
