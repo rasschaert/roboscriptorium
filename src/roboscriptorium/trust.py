@@ -215,21 +215,30 @@ def fingerprint(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()[:12]
 
 
+def unseen(s: Suspect) -> bool:
+    """Whether the vision judge, the first judge recorded, saw none of the versions: the
+    readings missed the print (a crop of another line, a misread line). The layer was
+    right on 17 of 23 such suspects in the trust data, too few for the trees to learn."""
+    judges = [m for m in s.votes if m != "word list"]
+    return bool(judges) and s.votes[judges[0]] == ""
+
+
 def decide(
     suspects: list[Suspect], trust: Trust, questions: int, below: float = 1.0
 ) -> list[Suspect]:
     """Copies of the suspects with the model's choices: the `questions` it is least sure
     of go to review, unless it gives their likeliest version `below` or more; the others
-    take their most likely version."""
+    take their most likely version. A suspect whose versions the vision judge saw none of
+    (`unseen`) is asked first and never takes another reading's version."""
     scored = [(probabilities(trust, s), s) for s in suspects]
-    order = sorted(range(len(scored)), key=lambda i: scored[i][0].max())
-    asked = {i for i in order[:questions] if scored[i][0].max() < below}
+    order = sorted(range(len(scored)), key=lambda i: (not unseen(scored[i][1]), scored[i][0].max()))
+    asked = {i for i in order[:questions] if unseen(scored[i][1]) or scored[i][0].max() < below}
     out = []
     for i, (p, s) in enumerate(scored):
         best = int(p.argmax())
         if i in asked:
             out.append(replace(s, choice="review", chosen=None))
-        elif best == 0:
+        elif best == 0 or unseen(s):
             out.append(replace(s, choice="ours", chosen=None))
         else:
             out.append(replace(s, choice="other", chosen=s.others[best - 1]))

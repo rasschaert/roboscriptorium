@@ -10,7 +10,6 @@ reading said about each, and which version makes the line read as printed
 
 import json
 import os
-import re
 import sys
 from dataclasses import asdict
 from pathlib import Path
@@ -53,9 +52,9 @@ OUT = Path(os.environ.get("ROBO_TRUST_DATA", "work/probes/ocr-trust"))
 def fold(text: str) -> str:
     """Text compared as the score compares it (`evaluate.normalise`: quote and dash
     glyphs, ellipses, spaced dots), with what reflow sets anyway folded too: a break
-    hyphen, spaces before punctuation, spaced quotes."""
-    text = _SPACE_BEFORE_PUNCTUATION.sub(r"\1", normalise(text.replace("¬", "-")))
-    return re.sub(r"(^|\s)(['\"]+) ", r"\1\2", re.sub(r" (['\"]+)(\s|$)", r"\1\2", text))
+    hyphen, spaces before punctuation. A space beside a quote mark stays: no stage
+    removes it, so the score counts it ("geweest. ‘" is not "geweest.’")."""
+    return _SPACE_BEFORE_PUNCTUATION.sub(r"\1", normalise(text.replace("¬", "-")))
 
 
 def answered(book: Book, suspects: list) -> dict[tuple, str]:

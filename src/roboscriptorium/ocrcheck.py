@@ -65,6 +65,8 @@ CROP_PAD = 4  # points around the suspect words
 _FOLD = str.maketrans("‘’“”¬", "''\"\"-")
 _OPENING_QUOTES = re.compile(r"(^|\s)[\"'‘’“”]+")
 _ANY_DASH = re.compile(r"\s*[—–]\s*|\s+-\s+|\s+-(?=['\"]|$)")
+# An ellipsis as a glyph, three dots or spaced dots, with or without a space before.
+_ELLIPSIS = re.compile(r" ?(?:…|\. ?\. ?\.)")
 _SPACE_BEFORE_APOSTROPHE = re.compile(r"(?<=\w) +'(?=\w)")
 LANGUAGE_NAMES = {"nld": "Dutch", "eng": "English"}
 
@@ -405,7 +407,8 @@ def differences(ours: str, theirs: str) -> list[tuple[int, int, int, int]]:
     reading without the space before an apostrophe ("uur’s" for "uur ’s"): OCR
     models miss the narrow space Dutch print sets before the article ’s, and no
     judge sees it in a crop. Nor are differences in a dash's kind or the space
-    around it: a book sets all its dashes one way (`typography.py`).
+    around it, or in how an ellipsis is set (…, ..., . . .): a book sets all its
+    dashes and ellipses one way (`typography.py`).
     """
     spans = []
     for op in Levenshtein.opcodes(ours.translate(_FOLD), theirs.translate(_FOLD)):
@@ -425,13 +428,14 @@ def differences(ours: str, theirs: str) -> list[tuple[int, int, int, int]]:
         != theirs[s[2] : s[3]].translate(_FOLD).strip()
         and _SPACE_BEFORE_APOSTROPHE.sub("'", ours[s[0] : s[1]].translate(_FOLD))
         != theirs[s[2] : s[3]].translate(_FOLD)
-        and _dashes(ours[s[0] : s[1]]) != _dashes(theirs[s[2] : s[3]])
+        and _alike(ours[s[0] : s[1]]) != _alike(theirs[s[2] : s[3]])
     ]
 
 
-def _dashes(text: str) -> str:
-    """Text with every dash between words alike: the book's dash style is set book-wide."""
-    return _ANY_DASH.sub("—", text.translate(_FOLD)).strip()
+def _alike(text: str) -> str:
+    """Text with every dash between words and every ellipsis alike, quotes straight: the
+    book's dash and ellipsis style are set book-wide (`typography.py`)."""
+    return _ELLIPSIS.sub("…", _ANY_DASH.sub("—", text.translate(_FOLD))).strip()
 
 
 def _bare(text: str) -> str:
@@ -563,7 +567,7 @@ def supports(ours: str, reading: str, a0: int, a1: int, versions: list[str]) -> 
         piece = piece[: max(0, b0 - a0)] + reading[c0:c1] + piece[max(0, b1 - a0) :]
     if _curly(ours):
         piece = _curled(piece)
-    return tuple(piece.translate(_FOLD) == v.translate(_FOLD) for v in versions)
+    return tuple(_alike(piece) == _alike(v) for v in versions)
 
 
 def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, list[str]]]:
@@ -596,11 +600,9 @@ def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, lis
                 piece = piece[: a0 - g0] + other[b0:b1] + piece[a1 - g0 :]
             if _curly(ours):
                 piece = _curled(piece)
-            # Readings that differ only in quote style are one version.
-            folded = [v.translate(_FOLD) for v in versions]
-            if piece.translate(_FOLD) != ours[g0:g1].translate(_FOLD) and (
-                piece.translate(_FOLD) not in folded
-            ):
+            # Readings that differ only in quote, dash or ellipsis style are one version.
+            folded = [_alike(v) for v in versions]
+            if _alike(piece) != _alike(ours[g0:g1]) and _alike(piece) not in folded:
                 versions.append(piece)
         if versions and (both := _combined(ours[g0:g1], versions)):
             versions.append(both)

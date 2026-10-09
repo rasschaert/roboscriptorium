@@ -7,7 +7,9 @@ dated history behind each line is in [decisions.md](decisions.md).
 Numbers marked *trust data* come from the OCR check's labelled suspects
 (`experiments/ocr_trust_data.py`, each version labelled from the aligned golden
 text, settled ones only): 5,412 over 14 books on 2026-10-09, the three validation books
-among them (counted here, never trained on).
+among them (counted here, never trained on). The relabelling of that evening (ellipsis
+style folded, a space beside a quote no longer forgiven) settled more of them, 4,275
+training suspects on the tuning books; the judges' figures below are from before it.
 
 ## The text layer is one reading, not the truth
 
@@ -62,6 +64,13 @@ and glm-ocr read it (Metro pp. 7–30: CER 1.87% on those lines, 0.29% cut short
 glm-ocr and qwen3.8 read crops cut from the layer's boxes, so they share its
 segmentation errors; only tesseract doesn't.
 
+**How an ellipsis is set is no difference.** The typography stage sets every ellipsis the
+book's way, so a glyph against three dots isn't asked or judged. It was: Reis spent 16 of
+its 83 questions on it, and in the trust data 208 suspects whose versions differed only so
+were left out as ties, 44 of them hiding a real lost ellipsis (`kra.` for `kra…`) the
+arbiter then never saw a label for. Folded (2026-10-09): Reis's questions 1.09 → 0.34 a
+page and after review 0.32 → 0.22; the set unchanged by the test.
+
 **Every body line is read, short ones too.** A dialogue line ending "keek.’" is
 where a closing quote is lost. On Goede dochter pp. 9–64, reading the lines under 12
 characters added 18 suspects. About three of them are real layer errors (`weg?` for
@@ -98,6 +107,12 @@ back a version, so these are left to trust and the bench, with no rule of their 
   it is nearly always right, but acting on it added unasked errors on two
   validation books (lost compounds, stress accents). It is shown to the reviewer
   and is a trust feature.
+
+**A version the vision judge saw none of is never applied.** Where clef answers "neither",
+the readings missed the print: Thief-Taker p. 46 has a crop of the wrong line, read as
+whole other sentences, and the arbiter applied winnow's pick of them. Such a suspect is
+asked first and otherwise keeps the layer's reading, which was right on 17 of the 23 in
+the trust data: too few for the trees to learn it (Thief-Taker 0.82 → 0.55 after review).
 
 **Learned trust decides, not a fixed rule.** The judges' confidences aren't
 probabilities of being right, and how much each signal is worth differs by kind of

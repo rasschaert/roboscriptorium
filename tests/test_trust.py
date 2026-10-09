@@ -45,6 +45,17 @@ def test_within_the_budget_a_suspect_the_model_is_sure_of_is_not_asked():
     assert [s.choice for s in out] == ["review", "review"]
 
 
+def test_a_reading_the_vision_judge_saw_none_of_is_asked_first_and_never_applied():
+    sure = _suspect("lemand", "Iemand", "Iemand", 0.95)
+    blind = _suspect("shirt.", "but he knew better than to argue.", "", 0.6)
+    blind = Suspect(**{**blind.__dict__, "votes": {"vision": "", "text": blind.others[0]}})
+    model = trust.Trust(_Model(), {})
+    out = trust.decide([sure, blind], model, questions=1, below=0.8)
+    assert [s.choice for s in out] == ["other", "review"]
+    out = trust.decide([sure, blind], model, questions=0)
+    assert [s.choice for s in out] == ["other", "ours"]
+
+
 def test_the_judges_count_by_role_whatever_the_models_are_called():
     a = _suspect("lemand", "Iemand", "Iemand", 0.95)
     b = trust.features(a, 1)

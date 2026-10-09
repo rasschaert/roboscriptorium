@@ -357,9 +357,13 @@ build. Each change benched on its own.
 - [x] A question about one place in a line catches only the errors at that place; a typed
       washed-out page counts a question per line. Tuning after review 0.48 → 0.56 by this
       alone (Afscheid 0.25 → 0.64, 11/22/63 0.83 → 0.99, Reis 0.24 → 0.32): the new baseline
-- [ ] The ellipsis glyph is no OCR difference (the typography stage sets it book-wide), and
+- [x] The ellipsis glyph is no OCR difference (the typography stage sets it book-wide), and
       the trust labels stop forgiving a space before a quote that no stage removes; trust
-      data relabelled, arbiter retrained (~45 min, done), bench
+      data relabelled (warm, 14 books: see run-times), arbiter retrained. With the next
+      step: tuning 0.56 → 0.56, validation 0.80 → 0.80; Reis 0.32 → 0.22 and its questions
+      1.09 → 0.34, Thief-Taker 0.55 → 0.46; Goede dochter 0.20 → 0.33, Artemis 0.70 → 0.75
+- [x] A version the vision judge saw none of is asked first and never applied (Thief-Taker
+      p. 46: a crop of the wrong line, whole sentences applied)
 - [ ] Paragraph starts in runs of one-line dialogue (the window's margin was the indent),
       after a blank line, and in letters spaced apart: page margin fitted from full lines
 - [ ] The bench records how much of each book's Qwen reading was the hosted build

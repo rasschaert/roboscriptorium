@@ -49,6 +49,21 @@ def test_a_dashs_kind_and_spacing_are_no_difference_but_a_lost_dash_is():
     assert _spans("een wc-bril", "een wc—bril") == [("wc-bril", "wc—bril")]
 
 
+def test_how_an_ellipsis_is_set_is_no_difference_but_a_lost_one_is():
+    assert _spans("ik weet het al… Daar", "ik weet het al... Daar") == []
+    assert _spans("ik weet het al . . . Daar", "ik weet het al… Daar") == []
+    assert _spans("ge kra. ook", "ge kra… ook") == [("kra.", "kra…")]
+
+
+def test_readings_that_differ_only_in_how_an_ellipsis_is_set_are_one_version():
+    found = ocrcheck.merged_differences("ge kra. ook", ["ge kra... ook", "ge kra… ook"])
+    assert found == [(3, 7, ["kra..."])]
+    assert ocrcheck.supports("ge kra. ook", "ge kra… ook", 3, 7, ["kra.", "kra..."]) == (
+        False,
+        True,
+    )
+
+
 def _page() -> PageText:
     lines = [
         Line("he was so tired up if they come", 10, 10, 200, 20),
@@ -104,7 +119,7 @@ def test_differences_from_several_readings_merge_into_one_span_per_place():
     ours = "said Tolly up if they come"
     glm = "said Polly up-if they come"
     tess = "said ‘Polly up—if they come"
-    found = merged_differences(ours, [glm, tess])
+    found = ocrcheck.merged_differences(ours, [glm, tess])
     assert [(ours[a0:a1], versions) for a0, a1, versions in found] == [
         ("Tolly", ["Polly", "‘Polly"]),
         ("up if", ["up-if", "up—if"]),
@@ -114,43 +129,39 @@ def test_differences_from_several_readings_merge_into_one_span_per_place():
 
 
 def test_quote_style_alone_doesnt_make_another_version():
-    from roboscriptorium.ocrcheck import merged_differences
 
     ours = "said fee-fee?' in"
-    found = merged_differences(ours, ['said fee-fee?" in', "said fee-fee?” in"])
+    found = ocrcheck.merged_differences(ours, ['said fee-fee?" in', "said fee-fee?” in"])
     assert [versions for _, _, versions in found] == [['fee-fee?"']]
 
 
 def test_a_mark_each_reading_lost_is_offered_together():
-    from roboscriptorium.ocrcheck import merged_differences
 
     ours = "‘Ga naar huis’ zei ze"
-    found = merged_differences(ours, ["‘Ga naar huis. zei ze", "'Ga naar huis.' zei ze"])
+    found = ocrcheck.merged_differences(ours, ["‘Ga naar huis. zei ze", "'Ga naar huis.' zei ze"])
     assert [versions for _, _, versions in found] == [["huis.", "huis.’"]]
-    found = merged_differences(ours, ["‘Ga naar huis. zei ze"])
+    found = ocrcheck.merged_differences(ours, ["‘Ga naar huis. zei ze"])
     assert [versions for _, _, versions in found] == [["huis.", "huis.’"]]
 
 
 def test_readings_that_disagree_on_a_mark_arent_combined():
-    from roboscriptorium.ocrcheck import merged_differences
 
     ours = "‘Ga naar huis’ zei ze"
-    found = merged_differences(ours, ["‘Ga naar huis. zei ze", "‘Ga naar huis: zei ze"])
+    found = ocrcheck.merged_differences(ours, ["‘Ga naar huis. zei ze", "‘Ga naar huis: zei ze"])
     assert [versions for _, _, versions in found] == [["huis.", "huis:"]]
     # Other letters, or one reading holding both marks, make no combination.
-    found = merged_differences("‘Ja?’ vroeg", ["‘Ja? vroeg"])
+    found = ocrcheck.merged_differences("‘Ja?’ vroeg", ["‘Ja? vroeg"])
     assert [versions for _, _, versions in found] == [["‘Ja?"]]
-    found = merged_differences("‘Nee’ zei", ["‘Neen. zei"])
+    found = ocrcheck.merged_differences("‘Nee’ zei", ["‘Neen. zei"])
     assert [versions for _, _, versions in found] == [["‘Neen."]]
 
 
 def test_straight_quotes_take_a_curly_layers_style():
-    from roboscriptorium.ocrcheck import merged_differences
 
-    found = merged_differences("‘Ja’ zei ze", ["'Ja.' zei ze"])
+    found = ocrcheck.merged_differences("‘Ja’ zei ze", ["'Ja.' zei ze"])
     assert [versions for _, _, versions in found] == [["‘Ja.’"]]
     # A straight-quoted layer keeps the readings as they are.
-    found = merged_differences("'Ja' zei ze", ["'Ja.' zei ze"])
+    found = ocrcheck.merged_differences("'Ja' zei ze", ["'Ja.' zei ze"])
     assert [versions for _, _, versions in found] == [["'Ja.'"]]
 
 
