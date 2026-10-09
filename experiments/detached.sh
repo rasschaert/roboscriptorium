@@ -10,7 +10,8 @@
 set -euo pipefail
 name=$1
 shift
-if screen -ls | grep -q "\.robo-$name[[:space:]]"; then
+# `screen -ls` exits 1 when sessions exist, which pipefail would take for no match.
+if { screen -ls || true; } | grep -q "\.robo-${name}[[:space:]]"; then
   print -u2 "robo-$name is already running"
   exit 1
 fi
