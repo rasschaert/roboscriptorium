@@ -114,7 +114,9 @@ def build_reader() -> None:
         control = [(r, t) for r, t in body if fold(line[r]) == fold(t)]
         chosen = [("hard", x) for x in rng.sample(hard, min(HARD, len(hard)))]
         chosen += [("control", x) for x in rng.sample(control, min(CONTROL, len(control)))]
-        prompt = pipeline.read_prompt(book, pages, pipeline.dash_style(book, pages))
+        prompt = pipeline.read_prompt(
+            book, pages, pipeline.dash_style(book, pages), pipeline.ellipsis_style(book, pages)
+        )
         books[book.root.name] = {"spec": spec, "prompt": prompt, "prompt_sha": sha(prompt)}
         with pymupdf.open(book.source) as doc:
             for stratum, (ref, truth) in sorted(chosen, key=lambda x: (x[1][0].page, x[1][0].line)):
@@ -134,7 +136,7 @@ def build_reader() -> None:
                         "truth": truth,
                         "crop": sha(png),
                         "truth_sha": sha(truth),
-                        "cache_key": _cache_key(page, boxes, ref.line),
+                        "cache_key": ocrcheck.line_key(page, boxes, ref.line),
                     }
                 )
         print(f"{book.root.name}: {sum(i['book'] == book.root.name for i in items)} lines")
@@ -191,17 +193,6 @@ def _shifted(layer: str, truth: str) -> bool:
     )
 
 
-def _cache_key(page, boxes, k: int) -> str:
-    """The key `ocrcheck.line_readings` caches this line's reading under."""
-    box = boxes[k]
-    text = hashlib.sha1(page.lines[k].text.encode()).hexdigest()[:10]
-    out = f"{page.number}:{k}:{text}:" + ",".join(f"{v:.0f}" for v in box)
-    top, bottom = ocrcheck.crop_span(boxes, k)
-    if (top, bottom) != (box[1] - ocrcheck.LINE_PAD, box[3] + ocrcheck.LINE_PAD):
-        out += f":{top:.1f}-{bottom:.1f}"
-    return out
-
-
 def _commit() -> str:
     return subprocess.run(
         ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
@@ -242,15 +233,15 @@ def stage_readings(items: list[dict], stage: str, prompt_of=None) -> dict[str, t
     return out
 
 
+def _readings_path(model: str) -> Path:
+    name = model.replace(":", "_").replace("/", "_")
+    return WORK / f"reader-v{READER_VERSION}" / "readings" / f"{name}.json"
+
+
 def read_all(model: str, items: list[dict], books: dict) -> dict[str, str]:
     """`model`'s reading of every item, as the pipeline would ask it (glm-ocr without a
     prompt, any other model told the book's style), cached per set and model."""
-    cache = (
-        WORK
-        / f"reader-v{READER_VERSION}"
-        / "readings"
-        / f"{model.replace(':', '_').replace('/', '_')}.json"
-    )
+    cache = _readings_path(model)
     done = json.loads(cache.read_text()) if cache.exists() else {}
     settings = Settings.from_env()
     todo = [i for i in items if i["id"] not in done]
@@ -311,13 +302,15 @@ def run_reader(model: str) -> None:
         (settings.ocr_model, "second-reading.json", None),
     ):
         seeded = stage_readings(items, stage, prompt_of)
-        cache = WORK / f"reader-v{READER_VERSION}" / "readings" / f"{label.replace(':', '_')}.json"
+        cache = _readings_path(label)
         cache.parent.mkdir(parents=True, exist_ok=True)
         done = json.loads(cache.read_text()) if cache.exists() else {}
-        done.update({k: t for k, (t, _) in seeded.items() if k not in done})
+        # Hosted readings stand for the local model in the books, not in its score here.
+        local = {k: t for k, (t, via) in seeded.items() if not via}
+        done.update({k: t for k, t in local.items() if k not in done})
         cache.write_text(json.dumps(done, ensure_ascii=False))
-        hosted = sum(v == "hosted" for _, v in seeded.values())
-        print(f"{label}: {len(seeded)} of {len(items)} from the book caches ({hosted} read hosted)")
+        hosted = len(seeded) - len(local)
+        print(f"{label}: {len(local)} of {len(items)} from the book caches ({hosted} hosted, read again)")
         incumbents[label] = read_all(label, items, books)
     candidate = read_all(model, items, books)
     layer = {i["id"]: i["layer"] for i in items}

@@ -3,10 +3,11 @@
 More readings of each body line: glm-ocr on the line's crop (best on letters
 and words), tesseract on the page (best on dashes) and, told the book's style,
 qwen3.8 on the crop (best on quote marks). Where any differs from the text layer
-(widened to whole words), the role model picks a version from the crop of the
-scan, and a text model picks the version of the line that reads right. When both
-pick the same reading and the role model is at least somewhat sure, it is
-applied; any other suspect is left to a human.
+(widened to whole words), the judge (`judge_model`) picks a version from the crop of
+the scan, and a text model (`check_model`) picks the version of the line that reads
+right. Learned trust (`trust.py`) then fixes, keeps or asks; without it, the fixed rule
+applies a pick both make with the judge at least somewhat sure, or the judge's alone on
+a typographic difference, and leaves any other suspect to a human.
 
 Fixes go into a copy of the pages, matched on the text layer's line text, so
 the line texts the review keys its answers on stay as they are. Born-digital
@@ -14,6 +15,7 @@ PDFs, whose text is exact, aren't checked.
 """
 
 import base64
+import functools
 import hashlib
 import json
 import re
@@ -51,7 +53,7 @@ MAX_LINE_TOKENS = 120
 SAVE_EVERY = 200
 TESSERACT_VERSION = 1
 TESSERACT_WORKERS = 6
-# The role model must be at least this sure, and agree with the text model.
+# The fixed rule: the judge must be at least this sure, and agree with the text model.
 SURE = 0.3
 # Where versions differ only in punctuation, dashes or spacing, the text model can't
 # tell them apart; the vision model decides alone when at least this sure.
@@ -70,8 +72,8 @@ LANGUAGE_NAMES = {"nld": "Dutch", "eng": "English"}
 @dataclass(frozen=True)
 class Suspect:
     page: int
-    line: int  # index into the text layer's lines
-    original: str  # the line as the text layer reads it
+    line: int  # index into the page's lines, after missing lines were added
+    original: str  # the line as the text layer reads it (glm-ocr's for an added line)
     start: int  # the differing words, as a span of `original`
     end: int
     ours: str
@@ -105,6 +107,11 @@ class Suspect:
 def scanned(pdf: Path, sample: int = 10) -> bool:
     """Whether the PDF is a scan: its text is invisible OCR over page images, or it has no
     text at all (an image-only PDF, which `pdf.first_reading` reads). Not born-digital."""
+    return _scanned(Path(pdf).resolve(), Path(pdf).stat().st_mtime_ns, sample)
+
+
+@functools.cache
+def _scanned(pdf: Path, mtime: int, sample: int) -> bool:
     invisible = visible = 0
     with pymupdf.open(pdf) as doc:
         step = max(1, doc.page_count // sample)
@@ -143,6 +150,18 @@ def _readings(cache: Path, model: str, prompt: str) -> dict | None:
     return None
 
 
+def line_key(page: PageText, boxes: list, k: int) -> str:
+    """The key a line's reading is cached under: the line's text and box, and the crop's
+    span where a neighbour cuts it short, so a crop that changes is read again."""
+    box = boxes[k]
+    text = hashlib.sha1(page.lines[k].text.encode()).hexdigest()[:10]
+    out = f"{page.number}:{k}:{text}:" + ",".join(f"{v:.0f}" for v in box)
+    top, bottom = crop_span(boxes, k)
+    if (top, bottom) != (box[1] - LINE_PAD, box[3] + LINE_PAD):
+        out += f":{top:.1f}-{bottom:.1f}"
+    return out
+
+
 def line_readings(
     pdf: Path,
     pages: list[PageText],
@@ -173,15 +192,7 @@ def line_readings(
         return crop_span(boxes[page.number], k)
 
     def key(page: PageText, k: int) -> str:
-        """The line's text and box, and the crop's span where a neighbour cuts it short:
-        a crop that changes is read again."""
-        box = boxes[page.number][k]
-        text = hashlib.sha1(page.lines[k].text.encode()).hexdigest()[:10]
-        out = f"{page.number}:{k}:{text}:" + ",".join(f"{v:.0f}" for v in box)
-        top, bottom = span(page, k)
-        if (top, bottom) != (box[1] - LINE_PAD, box[3] + LINE_PAD):
-            out += f":{top:.1f}-{bottom:.1f}"
-        return out
+        return line_key(page, boxes[page.number], k)
 
     wanted = {
         SourceRef(p.number, k): (p, k)
@@ -255,8 +266,8 @@ def tesseract_words(
                 read = pool.map(lambda png: _tesseract_page(png, lang), images)
                 for n, page_words in zip(batch, read, strict=True):
                     done[n] = page_words
-        blob = {"version": TESSERACT_VERSION, "lang": lang, "pages": done}
-        write_atomic(cache, json.dumps(blob, ensure_ascii=False))
+                blob = {"version": TESSERACT_VERSION, "lang": lang, "pages": done}
+                write_atomic(cache, json.dumps(blob, ensure_ascii=False))
     return {n: done[n] for n in numbers}
 
 
@@ -388,13 +399,13 @@ def _word_span(text: str, start: int, end: int) -> tuple[int, int]:
 def differences(ours: str, theirs: str) -> list[tuple[int, int, int, int]]:
     """Where two readings of a line differ, widened to whole words, as spans of each.
 
-    Curly and straight quotes count as the same. A difference only in opening
-    quote marks isn't one: OCR models read a printed “ as ‘, and no model can
-    tell them apart in a crop. Nor is a reading without the space before an
-    apostrophe ("uur’s" for "uur ’s"): OCR models miss the narrow space Dutch
-    print sets before the article ’s, and no judge sees it in a crop. Nor are
-    differences in a dash's kind or the space around it: a book sets all its dashes
-    one way (`typography.py`).
+    Curly and straight quotes count as the same. A difference only in the kind of
+    an opening quote isn't one: OCR models read a printed “ as ‘, and no model can
+    tell them apart in a crop. A lost opening quote or apostrophe is. Nor is a
+    reading without the space before an apostrophe ("uur’s" for "uur ’s"): OCR
+    models miss the narrow space Dutch print sets before the article ’s, and no
+    judge sees it in a crop. Nor are differences in a dash's kind or the space
+    around it: a book sets all its dashes one way (`typography.py`).
     """
     spans = []
     for op in Levenshtein.opcodes(ours.translate(_FOLD), theirs.translate(_FOLD)):
@@ -424,7 +435,8 @@ def _dashes(text: str) -> str:
 
 
 def _bare(text: str) -> str:
-    return _OPENING_QUOTES.sub(r"\1", text.translate(_FOLD)).strip()
+    """Text with every opening quote alike: its kind is no difference, a lost one is."""
+    return _OPENING_QUOTES.sub(r"\1'", text.translate(_FOLD)).strip()
 
 
 def _box(words: list, box, original: str, start: int, end: int):
@@ -540,14 +552,18 @@ def hyphen_only(ours: str, a1: int, versions: list[str], next_line: str) -> str:
 
 
 def supports(ours: str, reading: str, a0: int, a1: int, versions: list[str]) -> tuple[bool, ...]:
-    """Whether a reading reads each version of the span `ours[a0:a1]`: one of its own
-    versions there, or, where it doesn't differ from `ours` there, ours (the first)."""
+    """Whether a reading reads each version of the span `ours[a0:a1]`: its own differences
+    there written into the whole span, which may be wider than they are, or, where it
+    doesn't differ from `ours` there, ours (the first)."""
     if not reading:
         return tuple(False for _ in versions)
-    mine = [
-        v for b0, b1, vs in merged_differences(ours, [reading]) if b0 < a1 and a0 < b1 for v in vs
-    ]
-    return tuple(v in mine or (k == 0 and not mine) for k, v in enumerate(versions))
+    mine = [d for d in differences(ours, reading) if d[0] < a1 and a0 < d[1]]
+    piece = ours[a0:a1]
+    for b0, b1, c0, c1 in sorted(mine, key=lambda d: -d[0]):
+        piece = piece[: max(0, b0 - a0)] + reading[c0:c1] + piece[max(0, b1 - a0) :]
+    if _curly(ours):
+        piece = _curled(piece)
+    return tuple(piece.translate(_FOLD) == v.translate(_FOLD) for v in versions)
 
 
 def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, list[str]]]:
@@ -769,8 +785,8 @@ class Doubt:
     """One place in a line where the readings differ and no model settled it: one question."""
 
     page: int
-    line: int  # index into the text layer's lines
-    original: str  # the line as the text layer reads it
+    line: int  # index into the page's lines, after missing lines were added
+    original: str  # the line as the text layer reads it (glm-ocr's for an added line)
     start: int  # the place, as a span of `original`
     end: int
     box: tuple[float, float, float, float]

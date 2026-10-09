@@ -26,6 +26,7 @@ from roboscriptorium.clients import decide, llama
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.epub import write_epub
+from roboscriptorium.files import write_atomic
 from roboscriptorium.flags import treatment
 from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.lexicon import Lexicon
@@ -91,11 +92,13 @@ def run(
     if layout.available():
         regions = layout.detect(book.source, [p.number for p in body], book.stages / "layout.json")
     corrected = body
+    answers = Corrections(book.corrections_path)
     style = dash_style(book, whole)
+    dots = ellipsis_style(book, whole)
     if use_models:
         settings = settings or Settings.from_env()
         if regions is not None and ocrcheck.scanned(book.source):
-            found = missing.candidates(body, regions, _answered(book))
+            found = missing.candidates(body, regions, _answered(answers))
             readings = missing.read(
                 book.source,
                 found,
@@ -137,7 +140,7 @@ def run(
                     settings.read_model,
                     settings.ollama_url,
                     book.stages / "third-reading.json",
-                    read_prompt(book, whole, style),
+                    read_prompt(book, whole, style, dots),
                     settings.read_via,
                 )
             judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
@@ -146,7 +149,7 @@ def run(
                 alarm = llama.ReadoutClient(settings.alarm_model, settings.llama_url)
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
-                book_style(book, whole, style), alarm,
+                book_style(book, whole, style, dots), alarm,
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:
@@ -161,9 +164,10 @@ def run(
                 suspects = trust.decide(suspects, model, budget)
                 decider = f"trust {trust.fingerprint(path)}"
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
-        corrected, roles, applied = corrections.apply(
-            body, model_roles, Corrections(book.corrections_path), suspects
-        )
+        corrected, roles, applied = corrections.apply(body, model_roles, answers, suspects)
+    if not suspects:
+        # The suspects of an earlier build with the check would be taken for this one's.
+        (book.stages / "ocr-check.json").unlink(missing_ok=True)
 
     unanswered = reflow(ocrcheck.apply(body, suspects), model_roles, known)
     quote_lines = {
@@ -176,24 +180,22 @@ def run(
         faint_pages = faint.pages(book.source, body, book.stages / "contrast.json")
     quote_readings = {}
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
-        quote_readings = proposals(book, body, whole, suspects, quote_lines, style, settings)
+        quote_readings = proposals(book, body, whole, suspects, quote_lines, style, dots, settings)
     blocks = italics.mark(
         reflow(corrected, roles, known),
         body,
         italics.detect(book.source, body, book.stages / "italics.json"),
     )
-    blocks = typography.apply(blocks, style, ellipsis_style(book, whole))
+    blocks = typography.apply(blocks, style, dots)
     doc = Document(book.title, book.author, book.language, blocks)
     images = {}
     if regions is not None:
         with pymupdf.open(book.source) as pdf:
-            pictures = figures.select(
-                pdf, body, regions, Corrections(book.corrections_path), ocr.language(book.language)
-            )
+            pictures = figures.select(pdf, body, regions, answers, lang)
             images = {p.name: figures.render(pdf, p) for p in pictures}
         doc.blocks = figures.place(doc.blocks, pictures, body)
-    (book.stages / "document.json").write_text(
-        json.dumps(asdict(doc), ensure_ascii=False, indent=1)
+    write_atomic(
+        book.stages / "document.json", json.dumps(asdict(doc), ensure_ascii=False, indent=1)
     )
 
     cover = render_jpeg(book.source, book.cover_page) if book.cover_page else None
@@ -220,6 +222,7 @@ def proposals(
     suspects: list[ocrcheck.Suspect],
     lines: set[SourceRef],
     style: typography.DashStyle | None,
+    dots: typography.EllipsisStyle | None,
     settings: Settings,
 ) -> dict[SourceRef, str]:
     """Each quote-flagged line as the OCR check left it, with the quote marks and
@@ -232,39 +235,52 @@ def proposals(
         settings.read_model,
         settings.ollama_url,
         book.stages / "third-reading.json",
-        read_prompt(book, whole, style),
+        read_prompt(book, whole, style, dots),
         settings.read_via,
     )
-    dots = quotes.ellipsis(" ".join(ln.text for p in whole for ln in p.lines))
+    ellipsis = quotes.ellipsis(" ".join(ln.text for p in whole for ln in p.lines), dots)
     checked = {p.number: p for p in ocrcheck.apply(body, suspects)}
     out = {}
     for ref, reading in read.items():
         line = checked[ref.page].lines[ref.line].text
-        if (merged := quotes.proposed(line, reading, dots)) != line:
+        if (merged := quotes.proposed(line, reading, ellipsis)) != line:
             out[ref] = merged
     return out
 
 
-def read_prompt(book: Book, body: list[PageText], dash: typography.DashStyle | None) -> str:
+def _style(
+    book: Book,
+    body: list[PageText],
+    dash: typography.DashStyle | None,
+    dots: typography.EllipsisStyle | None,
+) -> tuple:
+    lines = [ln.text for p in body for ln in p.lines]
+    return (
+        book.language,
+        quotes.single_quoted_lines(lines),
+        quotes.ellipsis(" ".join(lines), dots),
+        dash.dash if dash else None,
+    )
+
+
+def read_prompt(
+    book: Book,
+    body: list[PageText],
+    dash: typography.DashStyle | None,
+    dots: typography.EllipsisStyle | None = None,
+) -> str:
     """The read model's prompt for a line of this book, telling it how the book is set."""
-    lines = [ln.text for p in body for ln in p.lines]
-    return quotes.style_prompt(
-        book.language,
-        quotes.single_quoted_lines(lines),
-        quotes.ellipsis(" ".join(lines)),
-        dash.dash if dash else None,
-    )
+    return quotes.style_prompt(*_style(book, body, dash, dots))
 
 
-def book_style(book: Book, body: list[PageText], dash: typography.DashStyle | None) -> str:
+def book_style(
+    book: Book,
+    body: list[PageText],
+    dash: typography.DashStyle | None,
+    dots: typography.EllipsisStyle | None = None,
+) -> str:
     """How the book is set, as the OCR layer's lines show it, for a model to be told."""
-    lines = [ln.text for p in body for ln in p.lines]
-    return quotes.style_note(
-        book.language,
-        quotes.single_quoted_lines(lines),
-        quotes.ellipsis(" ".join(lines)),
-        dash.dash if dash else None,
-    )
+    return quotes.style_note(*_style(book, body, dash, dots))
 
 
 def ellipsis_style(book: Book, body: list[PageText]) -> typography.EllipsisStyle | None:
@@ -311,10 +327,10 @@ def dash_style(book: Book, body: list[PageText]) -> typography.DashStyle | None:
     return guess.style
 
 
-def _answered(book: Book) -> dict[int, list[tuple[float, float, float, float]]]:
+def _answered(answers: Corrections) -> dict[int, list[tuple[float, float, float, float]]]:
     """Per page, the boxes of regions the text layer lacked that a human typed text for."""
     out: dict[int, list[tuple[float, float, float, float]]] = {}
-    for c in Corrections(book.corrections_path).by_key.values():
+    for c in answers.by_key.values():
         if c.last < c.first and c.box and c.text:
             out.setdefault(c.page, []).append(c.box)
     return out

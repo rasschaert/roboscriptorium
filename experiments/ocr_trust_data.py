@@ -23,6 +23,7 @@ from roboscriptorium.cli import _range, _verdicts
 from roboscriptorium.corrections import Corrections, place
 from roboscriptorium.disagreements import patch
 from roboscriptorium.evaluate import normalise
+from roboscriptorium.files import write_atomic
 from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
@@ -134,8 +135,7 @@ def load(name: str, rebuild: bool = False) -> list[dict]:
     if path.exists() and not rebuild:
         return json.loads(path.read_text())
     rows = build(name, SPECS[name])
-    OUT.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(rows, ensure_ascii=False))
+    write_atomic(path, json.dumps(rows, ensure_ascii=False))
     return rows
 
 

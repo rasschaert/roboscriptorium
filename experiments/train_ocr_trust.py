@@ -132,8 +132,13 @@ def usable(name: str) -> str:
     if not (OUT / f"{name}.json").exists():
         return "no data yet"
     rows = load(name)
-    if rows and not READINGS <= set(rows[0]["suspect"]["support"]):
+    if any(not READINGS <= set(r["suspect"]["support"]) for r in rows):
         return "built before the current readings"
+    # The features take the judges by position, so data without one of these settings'
+    # judges would train its slot on nothing.
+    judges = JUDGES - {"word list"}
+    if any(not judges <= set(r["suspect"]["votes"]) for r in rows):
+        return "built without one of the current judges"
     return ""
 
 
@@ -166,6 +171,8 @@ if "--save" in sys.argv:
     # scores that book with.
     tuning = [n for n in books if trainable(n) and n != "stella"]
     path = Path(Settings.from_env().ocr_trust_model)
+    # All trained before any is written, so an interrupted run leaves no mix of old and new.
+    models = []
     for without in [None, *tuning]:
         every = [
             r
@@ -176,9 +183,10 @@ if "--save" in sys.argv:
         model = trust.train(
             [r["s"] for r in every], [r["right"] for r in every], [r["book"] for r in every]
         )
-        out = trust.without(path, without) if without else path
+        models.append((trust.without(path, without) if without else path, model, len(every), without))
+    for out, model, n, without in models:
         trust.save(model, out)
-        print(f"trained on {len(every)} suspects, without {without}: {out}")
+        print(f"trained on {n} suspects, without {without}: {out}")
     sys.exit()
 
 totals: Counter = Counter()

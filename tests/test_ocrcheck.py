@@ -17,9 +17,15 @@ def test_differences_are_whole_words():
     assert _spans("say, Tolly wants", "say, ‘Polly wants") == [("Tolly", "‘Polly")]
 
 
-def test_quote_style_and_opening_quotes_alone_are_not_differences():
+def test_quote_style_and_an_opening_quotes_kind_are_not_differences():
     assert _spans('"What is it?" he said', "“What is it?” he said") == []
     assert _spans('"Now listen to me', "‘Now listen to me") == []
+
+
+def test_a_lost_opening_quote_or_apostrophe_is_a_difference():
+    assert _spans("Nee, zei hij.", "‘Nee, zei hij.") == [("Nee,", "‘Nee,")]
+    assert _spans("s avonds laat", "’s avonds laat") == [("s", "’s")]
+    assert _spans("t Is laat", "’t Is laat") == [("t", "’t")]
     assert _spans("fee-fee?' said", "fee-fee?” said") == [("fee-fee?'", "fee-fee?”")]
 
 
@@ -54,7 +60,7 @@ def _page() -> PageText:
 def _suspect(choice: str) -> Suspect:
     chosen = "up—if" if choice == "other" else None
     original = "he was so tired up if they come"
-    votes = {"clef:27b": "up if", "winnow:e4b": "up—if"}
+    votes = {"clef:27b": "up if", "winnow-ollama:e4b": "up—if"}
     return Suspect(7, 0, original, 16, 21, "up if", ("up—if",), (0, 0, 1, 1), choice, chosen, votes)
 
 
@@ -73,7 +79,7 @@ def test_doubted_lines_are_flagged_with_their_other_reading():
     assert [(f.first, f.reasons) for f in found] == [(0, ["ocr-doubt"])]
     assert found[0].readings == [
         {"text": "he was so tired up if they come", "votes": ["clef:27b"]},
-        {"text": "he was so tired up—if they come", "votes": ["winnow:e4b"]},
+        {"text": "he was so tired up—if they come", "votes": ["winnow-ollama:e4b"]},
     ]
     assert found[0].span == (16, 21)
     assert ocrcheck.doubts([_suspect("other")]) == []
@@ -479,3 +485,13 @@ def test_readings_by_another_prompt_are_kept_aside_and_come_back(monkeypatch, tm
     assert set(read("B").values()) == {"B"} and reads == []
     # The cache itself holds the prompt read last, as its readers expect.
     assert json.loads(cache.read_text())["prompt"] == "B"
+
+
+def test_a_reading_supports_its_version_of_a_span_wider_than_its_own_difference():
+    ours = "the cat sat down"
+    glm, tess = "the cot sat down", "the cotsat down"
+    [(a0, a1, versions)] = ocrcheck.merged_differences(ours, [glm, tess])
+    versions = [ours[a0:a1], *versions]
+    assert ocrcheck.supports(ours, glm, a0, a1, versions) == (False, True, False)
+    assert ocrcheck.supports(ours, tess, a0, a1, versions) == (False, False, True)
+    assert ocrcheck.supports(ours, ours, a0, a1, versions) == (True, False, False)

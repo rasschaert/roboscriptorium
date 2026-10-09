@@ -21,6 +21,7 @@ from pathlib import Path
 
 import numpy as np
 
+from roboscriptorium.files import write_atomic
 from roboscriptorium.ocrcheck import Suspect, _typographic
 
 MODEL_VERSION = 4
@@ -178,9 +179,8 @@ def train(
 
 
 def save(trust: Trust, path: Path) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(
-        pickle.dumps({"version": MODEL_VERSION, "model": trust.model, "pairs": trust.pairs})
+    write_atomic(
+        path, pickle.dumps({"version": MODEL_VERSION, "model": trust.model, "pairs": trust.pairs})
     )
 
 
