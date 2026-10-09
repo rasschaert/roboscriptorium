@@ -35,6 +35,16 @@ def test_the_least_sure_are_asked_and_the_rest_take_their_best_version():
     assert sure.choice == "review"
 
 
+def test_within_the_budget_a_suspect_the_model_is_sure_of_is_not_asked():
+    sure = _suspect("lemand", "Iemand", "Iemand", 0.95)
+    unsure = _suspect("hygiéne", "hygiëne", "hygiéne", 0.4)
+    model = trust.Trust(_Model(), {})
+    out = trust.decide([sure, unsure], model, questions=2, below=0.92)
+    assert [(s.choice, s.chosen) for s in out] == [("other", "Iemand"), ("review", None)]
+    out = trust.decide([sure, unsure], model, questions=2, below=1.0)
+    assert [s.choice for s in out] == ["review", "review"]
+
+
 def test_the_judges_count_by_role_whatever_the_models_are_called():
     a = _suspect("lemand", "Iemand", "Iemand", 0.95)
     b = trust.features(a, 1)

@@ -48,8 +48,15 @@ class Settings:
     ocr_trust: bool = True
     ocr_trust_model: str = "work/models/ocr-trust.pkl"
     ocr_questions_per_page: float = 1.0
+    # Within that budget, a suspect whose likeliest version the trust model gives at
+    # least this probability is decided, not asked (1.0: every one may be asked). 0.8
+    # about halves the questions at the same wrong words after review (docs/design.md);
+    # revisit with a new arbiter or judges.
+    ocr_ask_below: float = 0.8
 
     def __post_init__(self) -> None:
+        if not 0 < self.ocr_ask_below <= 1:
+            raise ValueError(f"ROBO_OCR_ASK_BELOW={self.ocr_ask_below}: a probability in (0, 1]")
         if self.read_via and not self.read_model:
             raise ValueError(
                 'ROBO_READ_VIA reads in read_model\'s place, but ROBO_READ_MODEL is ""'
@@ -74,4 +81,5 @@ class Settings:
             ocr_questions_per_page=float(
                 os.environ.get("ROBO_OCR_QUESTIONS", defaults.ocr_questions_per_page)
             ),
+            ocr_ask_below=float(os.environ.get("ROBO_OCR_ASK_BELOW", defaults.ocr_ask_below)),
         )

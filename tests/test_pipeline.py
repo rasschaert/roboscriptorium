@@ -284,6 +284,16 @@ def test_the_read_models_reading_of_a_line_is_checked_like_the_others(tmp_path, 
     assert "English" in prompts[0]
 
 
+def test_a_washed_out_page_is_left_to_the_reviewer_not_read_by_the_ocr_check(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
+    book, prompts = _checked_book(tmp_path, monkeypatch)
+    monkeypatch.setattr(pipeline.faint, "pages", lambda pdf, body, cache: {1})
+    stages = pipeline.run(book)
+    assert stages.faint_pages == {1}
+    assert stages.suspects == [] and prompts == []
+    assert "story" in stages.doc.blocks[0].text
+
+
 def test_the_ocr_check_stops_when_its_trust_model_is_missing(tmp_path, monkeypatch):
     monkeypatch.setenv("ROBO_OCR_TRUST_MODEL", str(tmp_path / "none.pkl"))
     book, _ = _checked_book(tmp_path, monkeypatch)

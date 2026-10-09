@@ -20,8 +20,10 @@ a human answering only what the machine can't.
 | Busy layout, pictures | 11/22/63, You're Never Weird | 0.83–0.84 | 2.2 |
 | Washed-out scan | Afscheid | 0.24 (a typed page counts as one question) | 0.5 |
 
-Bench totals: tuning 0.50, validation 0.75 wrong words a page after review (tuning
-was 0.96 until an error over a page break counted on the page holding most of it).
+Bench totals: tuning 0.48, validation 0.79 wrong words a page after review, with about
+half the questions of before (tuning was 0.96 until an error over a page break counted
+on the page holding most of it; questions halved by not asking what the arbiter is
+≥ 0.8 sure of, a figure to revisit with any new arbiter, judge or reader).
 
 **Assessment (2026-10-09):**
 - Stella coming out as a clean, valid EPUB is likely (~80–90%) and near: its kind of

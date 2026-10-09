@@ -134,6 +134,19 @@ mismatched model stops the build, because a silent fallback once ran unnoticed.
 which may be several on one bad page; a per-page cap would spend questions on
 clean pages.
 
+**A suspect the arbiter is sure of isn't asked, budget or not** (`ocr_ask_below`,
+0.8). Most books filled their budget with suspects the arbiter gave 0.9 or more
+(Crime 68 of its 94 questions, De cipier 44 of 84), and nearly all of those it had
+right. At 0.8, `bench tuning` 0.50 → 0.48 wrong words a page after review, validation
+0.75 → 0.79 (no change by the test), with questions about halved: Goede dochter 1.24 →
+0.75 a page (and 0.25 → 0.19 after review), Metro 1.31 → 0.62, De cipier 1.18 → 0.44,
+Crime 1.21 → 0.30, De eerlijke vinder 1.88 → 1.15. The loss is You're Never Weird
+0.84 → 1.03: text inside a picture (p. 47) the readers read and the arbiter now
+applies; picture text is that book's known gap. 0.9 asks more for no gain (tuning 0.49,
+validation 0.80). The bench's test counts wrong words, not the reviewer's time, so the
+user chose it (2026-10-09). **Revisit** it with a new arbiter, judge or reader: its
+probabilities move, and so does the right line.
+
 **Doubts are asked per place, not per line.** Two wrong places in one line, each
 fixed by a different reading, left no right option, and the reviewer then typed
 the line and added an error.
@@ -149,6 +162,14 @@ a page becomes one region of all its lines instead of one OCR doubt per scrap: `
 tuning` better, after review 1.02 → 1.00 [−0.04, −0.01] (Afscheid 5.07 → 4.94, its
 questions 1.58 → 0.55 a page), validation unchanged. No model reads these pages; a
 human types them or rescans.
+
+The OCR check leaves such a page out (no readings, suspects or fixes). On Afscheid
+p. 20 Qwen read near-blank crops as fluent dialogue ("‘Ik heb het niet gedaan,’ zei
+hij." five times), clef picked it, the word list knew every word, and the arbiter
+applied it: about 170 invented lines over four pages. Its scraps were also the least
+sure suspects, so they took 55 of Afscheid's 62 questions out of sight; the budget
+now counts only pages the check reads. The text isn't in the PDF to recover: Internet
+Archive's mask layer holds traced blobs, not letters, and its background only smears.
 
 **Where the body starts and ends stays in book.toml.** Asked the page-type question
 on the four pages outside each end of the body and three inside (252 pages of 18

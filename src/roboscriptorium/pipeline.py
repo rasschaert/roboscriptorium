@@ -95,6 +95,9 @@ def run(
     answers = Corrections(book.corrections_path)
     style = dash_style(book, whole)
     dots = ellipsis_style(book, whole)
+    faint_pages = set()
+    if ocrcheck.scanned(book.source):
+        faint_pages = faint.pages(book.source, body, book.stages / "contrast.json")
     if use_models:
         settings = settings or Settings.from_env()
         if regions is not None and ocrcheck.scanned(book.source):
@@ -112,9 +115,12 @@ def run(
         styles = typestyle.measure(book.source, body, book.stages / "type.json")
         model_roles = classify(body, client, cache, styles)
         if check_ocr and ocrcheck.scanned(book.source):
+            # A washed-out page is one region for the reviewer to type; on its faint crops
+            # the readers invent fluent text and the judges pick it.
             kept = {
                 SourceRef(p.number, i)
                 for p in body
+                if p.number not in faint_pages
                 for i in range(len(p.lines))
                 if treatment(model_roles.get(SourceRef(p.number, i))) != "dropped"
             }
@@ -160,8 +166,9 @@ def run(
                         f"No trust model at {path}: train one (experiments/train_ocr_trust.py "
                         "--save) or set ROBO_OCR_TRUST=0 for the fixed rule."
                     )
-                budget = round(settings.ocr_questions_per_page * len(body))
-                suspects = trust.decide(suspects, model, budget)
+                read = len(body) - len(faint_pages)
+                budget = round(settings.ocr_questions_per_page * read)
+                suspects = trust.decide(suspects, model, budget, settings.ocr_ask_below)
                 decider = f"trust {trust.fingerprint(path)}"
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
         corrected, roles, applied = corrections.apply(body, model_roles, answers, suspects)
@@ -174,10 +181,8 @@ def run(
         ref
         for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
         for ref in place.sources
+        if ref.page not in faint_pages
     }
-    faint_pages = set()
-    if ocrcheck.scanned(book.source):
-        faint_pages = faint.pages(book.source, body, book.stages / "contrast.json")
     quote_readings = {}
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, whole, suspects, quote_lines, style, dots, settings)

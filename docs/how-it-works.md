@@ -226,7 +226,12 @@ always glm-ocr's.
 With every version scored, the arbiter sorts the book's suspects by how sure it is
 of its best version. It asks the reviewer about the least sure ones, up to a budget
 of questions per page. The budget is counted over the whole book, so a bad page can
-get several questions and a clean page none.
+get several questions and a clean page none. A suspect whose best version it gives 80%
+or more is never asked, budget or not: those it nearly always gets right, and a
+question isn't free (the reviewer slips too).
+
+The OCR check leaves washed-out pages alone. On their faint crops the readers invent
+fluent text and the judges pick it; the reviewer types such a page instead.
 
 Every other suspect gets its best version. If that is the text layer's, the line
 stays as it was; if not, it is fixed.

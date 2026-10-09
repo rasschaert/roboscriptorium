@@ -488,6 +488,31 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       the `test` set
 - [ ] Score it once, at the end of the plan: `bench test --score-test`
 
+- [x] Washed-out pages left out of the OCR check (its readers invented ~170 lines on
+      Afscheid), the budget counted over the pages it reads
+- [x] Scoring: an error over a page break counts on the page holding most of it
+      (Afscheid 5.03 → 0.24 after review: its washed-out p. 38 had counted on p. 37)
+- [x] Suspects the arbiter gives ≥ 0.8 aren't asked (`ROBO_OCR_ASK_BELOW`): questions
+      about halved at the same wrong words after review, 1 h
+- [ ] **Revisit `ROBO_OCR_ASK_BELOW` (0.8)** whenever the arbiter is retrained on new
+      readers or judges, or a new arbiter model is tried: bench 0.7/0.8/0.9 (warm, ~2 min
+      each), and weigh questions against wrong words with the user
+- [ ] Bad pages by the readers' disagreement: a page whose suspects per line far exceed
+      the book's median (Afscheid p. 20: 50 against ~8) is read badly whatever the cause
+      (faint, smudged, show-through); a label-free alarm beside `faint.py`
+- [ ] Per-book image tuning when a book needs it (uniformly pale or tinted scans): try
+      variants on sample lines, keep the one where the independent readers agree most
+      and the word list knows most; no reference needed. Null on normal pages so far,
+      and no use on a washed-out page whose PDF lost the letters (Afscheid). Internet
+      Archive's original captures (`_jp2.zip`) might still hold them, if downloadable
+- [ ] You're Never Weird p. 47: text inside a picture read into the body; picture text
+      should stay in the picture
+
 ## Later
 
 - [ ] Proofreading answers with Qwen
+- [ ] Surya's layout model as a second spotter beside DocLayout-YOLO (a vote, not a
+      replacement): screen it first on the drawn numerals DocLayout-YOLO misses (Artemis,
+      De eerlijke vinder) and the figure/caption pages
+- [ ] Block quotes, epigraphs, verse, and ornaments used as scene breaks: none is handled
+      yet; find golden pages that have them before designing anything

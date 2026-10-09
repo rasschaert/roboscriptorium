@@ -5,53 +5,48 @@ docs/decisions.md the dated decisions, [docs/checklist.md](docs/checklist.md) th
 whole plan with times; this file only covers the state of play. Replace it at the end
 of each session.
 
-## State at the end of 2026-10-09 (day)
+## State at the end of 2026-10-09 (evening)
 
-On `main`, pushed. Lint and tests green (253 passed, 2 xfailed). No runs going.
+On `main`, pushed. Lint and tests green (260 passed, 2 xfailed). No runs going.
+Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
 
 ### Done this session
 
-- **A strict review of the whole codebase** (six reviewers, every finding checked
-  before fixing; checklist 6e). Fixes in eight commits: hosted errors no longer cached
-  as empty readings; settings refuse values they can't mean; `review` refuses the test
-  set; answers keep the OCR check's fixes; captions answered on lines kept; dash spacing
-  beside numbers; possessives inside quotations; the spaced-dot ellipsis told to Qwen;
-  a reader's support over the whole span (a trust feature); lost opening quotes asked;
-  chapter labels keep their numbers; tall fragments don't merge lines; the word list
-  reads curly apostrophes; scoring on the right pages, without rewriting untouched
-  paragraphs, with soft hyphens and „ folded; `detached.sh` refuses a running name.
-- **Measured.** A baseline bench on the pre-review code plus only the measuring fixes
-  (tuning 1.00, validation 0.81 after review), then trust data rebuilt (Qwen via
-  hosted; 11/22/63 pp. 15–94 fully cold, its old stages in
-  `work/11-22-63--ia-scan/stages.before-review-2026-10-09`), arbiter retrained:
-  tuning **0.96** (better), validation **0.75** (no change by the test).
-- **Headings.** The bench now prints headings and paragraph F1 per book and reports
-  their changes beside its test. Fixed: 11/22/63 slice 5 → 23 of 24, Villa Toscane
-  0 → 12 of 12, De cipier 3 → 4 of 4.
-- **Probes, all null for the build:** five read prompts and six crops for Qwen (none
-  reads better); Qwen's second look at 450 dpi as a trust feature (branch
-  `qwen-second-look`, worktree `../roboscriptorium-qwen2`): strong signal, no bench gain.
+- **Afscheid's misread chapter numbers** ("l", "e,", "UH"): kept as headings by their
+  place and size (`roles.numeral-slot`), fixed by the OCR check. Headings 8/11 → 11/11.
+- **Scoring:** an error over a page break counts on the page holding most of it.
+  Afscheid's 5.03 after review was its washed-out p. 38 counted on p. 37; it is 0.24.
+- **Washed-out pages are left out of the OCR check**: its readers invented ~170 lines of
+  fluent dialogue on Afscheid's four. The question budget counts only pages it reads.
+- **Suspects the arbiter is ≥ 0.8 sure of aren't asked** (`ROBO_OCR_ASK_BELOW`, the
+  user's choice): questions about halved at the same wrong words after review. **A
+  figure to revisit** with any new arbiter, judge or reader (checklist).
+- Probe: Afscheid p. 20's text isn't in the PDF (the mask layer holds traced blobs), so
+  no image tuning recovers it. Internet Archive's original captures might.
+- Gemini's brief on combining models (from the user): mostly built already; two ideas
+  kept in the checklist (Surya as a second spotter; block quotes, epigraphs, verse,
+  ornaments).
 
 ### Next (checklist; docs/outlook.md ranks the areas with room)
 
-1. Headings still lost: Afscheid's "1" read as "l"; Artemis's drawn chapter numbers;
-   De eerlijke vinder's part numerals I–IV (and a spurious "de"); You're Never Weird
-   5 of 16.
-2. Section 5: a book-quality feature for the arbiter; Vals alarm's lost full stops.
-3. The washed-out pages' text: a human types them or a rescan.
+1. Headings still lost: Artemis's drawn chapter numbers (0/3); De eerlijke vinder's part
+   numerals I–IV (0/4, a spurious "de"); You're Never Weird 4/16.
+2. Bad pages by the readers' disagreement, a label-free alarm beside `faint.py`.
+3. You're Never Weird p. 47: picture text read into the body.
+4. Section 5: a book-quality feature for the arbiter; Vals alarm's lost full stops.
 
 ### Working with the user (also in memory)
 
-- **Cheap experiments are encouraged**, unasked: prompts, crops, settings on the frozen
-  sets; record null results too.
-- Hosted Qwen was allowed for this session's runs and probes (2026-10-09); ask again
-  next session.
-- 1Password locks while the user is away: keep working, stage, commit when unlocked.
+- Cheap experiments are encouraged, unasked; record null results too.
+- Hosted Qwen: ask again next session (nothing hosted was used this session).
+- 1Password locked: stop and ask for it to be unlocked (global instructions).
 - The user pulls every model download themselves.
-- Long runs through `experiments/detached.sh` and `experiments/timed.sh`.
+- Long runs through `experiments/detached.sh` and `experiments/timed.sh` (its arguments:
+  label, pages, log file, command). `bench --against <record>` compares with a chosen run.
+- Questions the bench's test can't weigh (reviewer time against wrong words) are the
+  user's call: ask in one short sentence.
 
 ### Waiting on the user
 
-Nothing. Two extra worktrees can go when convenient: `../roboscriptorium-baseline`
-(the pre-review baseline) and `../roboscriptorium-qwen2` (the experiment, committed on
-its branch).
+Nothing. Two extra worktrees can go when convenient: `../roboscriptorium-baseline` and
+`../roboscriptorium-qwen2`.

@@ -123,3 +123,11 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench tuning, faint pages unchecked, ask below 0.8, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench tuning, errors over a page break on the page holding most, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench validation, errors over a page break on the page holding most, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, faint pages out of the OCR check, budget over pages read, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, faint pages out of the OCR check, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, faint out, ask below 0.9, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, faint out, ask below 0.9, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, faint out, ask below 0.8, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, faint out, ask below 0.8, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, ask below 0.8 by default, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, ask below 0.8 by default, warm | 250 | 1 | 0 |

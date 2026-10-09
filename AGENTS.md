@@ -260,7 +260,8 @@ right, then expand.
     washed-out pages): the grey levels between the paper and the ink inside the text
     layer's line boxes, at 60 dpi, cached in `stages/contrast.json`; a page with words and
     under 30 levels (printed pages measure 50 or more, washed-out ones under 10). On scans
-    only (`Stages.faint_pages`); `flags.find` makes such a page one `washed-out` region.
+    only (`Stages.faint_pages`); `flags.find` makes such a page one `washed-out` region,
+    and the OCR check leaves it out (its readers invent fluent text on faint crops).
   - `quotes.py`: places where a paragraph's curly quotes don't pair up (a lost
     opening ‘, a lost closing ’), apostrophes, Dutch `’s`, plural possessives,
     nested quotes and quotations running over paragraphs aside. Found on the
@@ -319,8 +320,9 @@ right, then expand.
     which second readings read it, the word list, the kind of difference and a prior
     for its exact substitution (`pair`: how often `|`→`I` was the print in the training
     books, pairs seen in two books or more, saved with the model);
-    the least sure suspects are asked up to `ROBO_OCR_QUESTIONS` per page, the
-    rest take their best version. The budget is book-wide (questions per page ×
+    the least sure suspects are asked up to `ROBO_OCR_QUESTIONS` per page, except
+    one whose best version it gives `ROBO_OCR_ASK_BELOW` (0.8) or more; the rest take
+    their best version. The budget is book-wide (questions per page ×
     pages), so a bad page can take more than one. On by default (`ROBO_OCR_TRUST=0`
     for the fixed rule); a missing model, or one saved for another version or
     feature width (`MODEL_VERSION`, `FEATURES`), stops the build. The model lives
@@ -381,12 +383,12 @@ so a rerun skips finished work and model calls.
 3. **Type** (`typestyle.py`) and **line roles** (`roles.py`, clef-flash plus rules
    and a style vote): body, chapter heading, page number, running head, artifact.
    A line not sure enough to be body is dropped, or kept as a heading.
-4. **OCR check** (`ocrcheck.py`, `trust.py`): more readings of each body line,
+4. **Washed-out pages** (`faint.py`, scans only), then the **OCR check**
+   (`ocrcheck.py`, `trust.py`) on the other pages: more readings of each body line,
    judges where they differ, learned trust to fix, keep or ask.
 5. **Answers** (`corrections.py`): a human's review answers, applied to copies.
 6. **Reflow** (`reflow.py`): lines into headings and paragraphs; de-hyphenation.
-7. **Washed-out pages** (`faint.py`, scans only) and **quote questions**
-   (`quotes.py`): unpaired quotes, with a proposed reading.
+7. **Quote questions** (`quotes.py`): unpaired quotes, with a proposed reading.
 8. **Italics** (`italics.py`), **dashes and ellipses** (`typography.py`), **figures**
    (`figures.py`) on the IR (`ir.py`).
 9. **EPUB** (`epub.py`), checked with epubcheck.

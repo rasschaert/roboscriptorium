@@ -215,12 +215,15 @@ def fingerprint(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()[:12]
 
 
-def decide(suspects: list[Suspect], trust: Trust, questions: int) -> list[Suspect]:
+def decide(
+    suspects: list[Suspect], trust: Trust, questions: int, below: float = 1.0
+) -> list[Suspect]:
     """Copies of the suspects with the model's choices: the `questions` it is least sure
-    of go to review, the others take their most likely version."""
+    of go to review, unless it gives their likeliest version `below` or more; the others
+    take their most likely version."""
     scored = [(probabilities(trust, s), s) for s in suspects]
     order = sorted(range(len(scored)), key=lambda i: scored[i][0].max())
-    asked = set(order[:questions])
+    asked = {i for i in order[:questions] if scored[i][0].max() < below}
     out = []
     for i, (p, s) in enumerate(scored):
         best = int(p.argmax())

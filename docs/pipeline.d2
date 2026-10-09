@@ -122,6 +122,7 @@ check: 3 · Check the OCR (scans only) {
     gbt: "the arbiter\ntrees trained on golden books" {class: code}
   }
   s.second -> m.glm {class: uses}
+  s.second -> review.m.faint: skips washed-out pages {class: uses}
   s.second -> m.tess {class: uses}
   s.second -> m.qwen {class: uses}
   s.judge -> m.clef {class: uses}
