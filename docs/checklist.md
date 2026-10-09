@@ -399,9 +399,22 @@ build. Each change benched on its own.
       (11/22/63 1.00 → 0.73, Artemis 0.76 → 0.53; Crime, De cipier, You're Never Weird lost
       body lines or kept running heads, now kept at P(body) ≥ 0.25 and repeated edge text
       made furniture), rerun pending
-- [ ] **user** Re-measure the slip rate on today's questions (picks with the difference
-      marked, typed lines checked), pick and typed apart: 32 questions on a copy of Goede
-      dochter pp. 9–64, served on http://127.0.0.1:8766/ (`robo-slipreview`), ~20 min
+- [x] **user** Re-measure the slip rate on today's questions: 32 questions on a copy of
+      Goede dochter pp. 9–64 (`experiments/score_slip_review.py`). 30 of 32 right, each
+      judged at its own place: picks 17/18, typed 6/7, roles 7/7. The two misses are one
+      choice, p. 36, where the reviewer set the right quote mark and the print (and the
+      reference) the wrong one. The old rate was 8 of 68 on Stella's typed questions
+- [ ] **user** Which slip rate the bench uses now: 2 of 32 (p. 36 counted), 0 of 32, or the
+      two samples pooled (10 of 100); then set `quality.SLIPS`/`ANSWERS` after the
+      overnight chain (changing it mid-chain would move its bench)
+- [ ] Quote questions offered no right reading on 4 of 4 (OCR questions 20 of 21): the
+      readings are the raw layer and the layer with Qwen's marks, so (a) offer the
+      OCR-checked line itself (p. 36: `Ik` with the print's `’`); (b) take only quote
+      marks from Qwen, not its dashes (p. 59: `directeursk-’` for `directeursk—’`);
+      (c) nested quotes, a quotation inside dialogue (`‘“…”’`, p. 43, p. 46): the layer
+      reads `““` and drops the outer `’`, Qwen reads `‘‘…’’`; in a single-quoted book a
+      doubled opening `““` is `‘“` and a mark one reading adds to the other's (`”` + `’`)
+      is a reading of its own. Measure on these four before the bench
 - [ ] Quote questions offer the OCR-checked line itself as a reading where it differs from
       the layer: Goede dochter p. 36 offered the layer's `Tk snap` and the checked line with
       Qwen's marks (`Charlie. ‘Waarom`), while the print, and the publisher's EPUB, set the
