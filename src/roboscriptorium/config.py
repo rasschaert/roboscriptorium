@@ -48,10 +48,10 @@ class Settings:
     ocr_trust: bool = True
     ocr_trust_model: str = "work/models/ocr-trust.pkl"
     ocr_questions_per_page: float = 1.0
-    # Within that budget, a suspect whose likeliest version the trust model gives at
-    # least this probability is decided, not asked (1.0: every one may be asked). 0.8
-    # about halves the questions at the same wrong words after review (docs/design.md);
-    # revisit with a new arbiter or judges.
+    # Within that budget, a suspect whose likeliest version is right with at least this
+    # chance (the trust model's calibrated sureness) is decided, not asked (1.0: every
+    # one may be asked). 0.8 about halves the questions at the same wrong words after
+    # review (docs/design.md).
     ocr_ask_below: float = 0.8
 
     def __post_init__(self) -> None:

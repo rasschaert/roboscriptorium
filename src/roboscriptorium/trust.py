@@ -24,7 +24,7 @@ import numpy as np
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ocrcheck import Suspect, _typographic
 
-MODEL_VERSION = 4
+MODEL_VERSION = 5
 # The length of `features`; a saved model of another width can't score them.
 FEATURES = 26
 # A substitution's prior counts only when the training books that show it number this
@@ -40,10 +40,28 @@ Pairs = dict[str, tuple[int, int]]
 
 @dataclass
 class Trust:
-    """The trees and the substitution priors they were trained with."""
+    """The trees, the substitution priors they were trained with, and the calibration of
+    their sureness: how often a suspect's likeliest version was right, by how sure the
+    trees were, on books they weren't trained on (isotonic; None leaves it raw)."""
 
     model: object
     pairs: Pairs
+    calibration: object | None = None
+
+
+def sureness(trust: Trust, p: np.ndarray) -> float:
+    """The chance that the likeliest of these version probabilities is the print."""
+    if trust.calibration is None:
+        return float(p.max())
+    return float(trust.calibration.predict([p.max()])[0])
+
+
+def calibrate(sure: list[float], right: list[bool]):
+    """An isotonic map from the trees' sureness to how often they were right."""
+    from sklearn.isotonic import IsotonicRegression
+
+    iso = IsotonicRegression(y_min=0.0, y_max=1.0, out_of_bounds="clip")
+    return iso.fit(np.array(sure), np.array(right, dtype=float))
 
 
 def _plain(text: str) -> str:
@@ -179,9 +197,13 @@ def train(
 
 
 def save(trust: Trust, path: Path) -> None:
-    write_atomic(
-        path, pickle.dumps({"version": MODEL_VERSION, "model": trust.model, "pairs": trust.pairs})
-    )
+    blob = {
+        "version": MODEL_VERSION,
+        "model": trust.model,
+        "pairs": trust.pairs,
+        "calibration": trust.calibration,
+    }
+    write_atomic(path, pickle.dumps(blob))
 
 
 class Mismatch(RuntimeError):
@@ -202,7 +224,7 @@ def load(path: Path) -> Trust | None:
             f"{FEATURES}. Retrain it (experiments/train_ocr_trust.py --save) or set "
             "ROBO_OCR_TRUST=0 for the fixed rule."
         )
-    return Trust(model, blob.get("pairs", {}))
+    return Trust(model, blob.get("pairs", {}), blob.get("calibration"))
 
 
 def without(path: Path, book: str) -> Path:
@@ -227,12 +249,18 @@ def decide(
     suspects: list[Suspect], trust: Trust, questions: int, below: float = 1.0
 ) -> list[Suspect]:
     """Copies of the suspects with the model's choices: the `questions` it is least sure
-    of go to review, unless it gives their likeliest version `below` or more; the others
+    of go to review, unless their likeliest version is right with a chance of `below` or
+    more (`sureness`); the others
     take their most likely version. A suspect whose versions the vision judge saw none of
     (`unseen`) is asked first and never takes another reading's version."""
     scored = [(probabilities(trust, s), s) for s in suspects]
-    order = sorted(range(len(scored)), key=lambda i: (not unseen(scored[i][1]), scored[i][0].max()))
-    asked = {i for i in order[:questions] if unseen(scored[i][1]) or scored[i][0].max() < below}
+    sure = [sureness(trust, p) for p, _ in scored]
+    # Calibration is a step function: the raw sureness orders a step's suspects.
+    order = sorted(
+        range(len(scored)),
+        key=lambda i: (not unseen(scored[i][1]), sure[i], scored[i][0].max()),
+    )
+    asked = {i for i in order[:questions] if unseen(scored[i][1]) or sure[i] < below}
     out = []
     for i, (p, s) in enumerate(scored):
         best = int(p.argmax())

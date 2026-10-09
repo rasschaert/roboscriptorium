@@ -370,8 +370,9 @@ build. Each change benched on its own.
 - [ ] A lost line as a question: a gap of a line inside a paragraph (Vals alarm p. 33, after
       "be-") where the spotter saw nothing, flagged as missing text
 - [ ] The bench records how much of each book's Qwen reading was the hosted build
-- [ ] The arbiter calibrated (isotonic, on its leave-one-book-out predictions), so the 0.8
-      ask threshold means 80% right whatever the retrain
+- [x] The arbiter calibrated (isotonic, on its leave-one-book-out predictions), so the 0.8
+      ask threshold means 80% right whatever the retrain. No change by the bench (raw 0.8
+      was already right 83% of the time); kept for stability. Training ~1 min
 - [ ] Italic scores marked unscored where the reference sets italics unlike the print
       (Metro's station names, You're Never Weird has none)
 - [ ] Scene breaks: "* * *" lines and blank-line gaps as a break in the IR and the EPUB
@@ -571,7 +572,7 @@ public-domain items only; a lending-library item keeps all but `_scandata.xml` p
       (Afscheid 5.03 → 0.24 after review: its washed-out p. 38 had counted on p. 37)
 - [x] Suspects the arbiter gives ≥ 0.8 aren't asked (`ROBO_OCR_ASK_BELOW`): questions
       about halved at the same wrong words after review, 1 h
-- [ ] **Revisit `ROBO_OCR_ASK_BELOW` (0.8)** whenever the arbiter is retrained on new
+- [ ] **Revisit `ROBO_OCR_ASK_BELOW` (0.8)** (now a calibrated chance, so less often) whenever the arbiter is retrained on new
       readers or judges, or a new arbiter model is tried: bench 0.7/0.8/0.9 (warm, ~2 min
       each), and weigh questions against wrong words with the user
 - [ ] Bad pages by the readers' disagreement: a page whose suspects per line far exceed

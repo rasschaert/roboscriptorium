@@ -183,6 +183,19 @@ if "--save" in sys.argv:
         model = trust.train(
             [r["s"] for r in every], [r["right"] for r in every], [r["book"] for r in every]
         )
+        # Its sureness calibrated on each of its training books scored by trees trained
+        # on the others, as a new book is scored.
+        names = [n for n in books if n != without and trainable(n)]
+        sure, hit = [], []
+        for held in names:
+            rows = books[held]
+            for r, ps in zip(rows, scored(MODELS["trees"], [n for n in names if n != held], rows), strict=True):
+                sure.append(float(ps.max()))
+                hit.append(bool(r["right"][int(ps.argmax())]))
+        model.calibration = trust.calibrate(sure, hit)
+        if without is None:
+            grid = (0.5, 0.7, 0.8, 0.9, 0.95, 0.99)
+            print("raw sureness → right:", ", ".join(f"{g} → {model.calibration.predict([g])[0]:.3f}" for g in grid))
         models.append((trust.without(path, without) if without else path, model, len(every), without))
     for out, model, n, without in models:
         trust.save(model, out)

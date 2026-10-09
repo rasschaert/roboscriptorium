@@ -159,8 +159,14 @@ Crime 1.21 → 0.30, De eerlijke vinder 1.88 → 1.15. The loss is You're Never 
 0.84 → 1.03: text inside a picture (p. 47) the readers read and the arbiter now
 applies; picture text is that book's known gap. 0.9 asks more for no gain (tuning 0.49,
 validation 0.80). The bench's test counts wrong words, not the reviewer's time, so the
-user chose it (2026-10-09). **Revisit** it with a new arbiter, judge or reader: its
-probabilities move, and so does the right line.
+user chose it (2026-10-09).
+
+**The arbiter's sureness is calibrated**, so that line holds through retrains: an isotonic
+map, fitted on each training book scored by trees trained on the others, from how sure
+the trees are of a suspect's likeliest version to how often it was the print
+(`trust.sureness`). It changed little on today's arbiter (raw 0.8 was right 83% of the
+time, 0.9 95%), and the bench saw no change (tuning 0.56 → 0.57, validation 0.80 → 0.80,
+2026-10-09); its worth is that 0.8 means four in five after the next retrain too.
 
 **Doubts are asked per place, not per line.** Two wrong places in one line, each
 fixed by a different reading, left no right option, and the reviewer then typed
