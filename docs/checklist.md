@@ -514,11 +514,12 @@ public-domain items only; a borrow-only item keeps all but `_scandata.xml` priva
       `hetkindekenjezus00timmuoft`, 26 differences), David Malan (#68192, 18), Van strak
       gespannen snaren (#31297, 32), Hilda van Suylenburg (#65536, 45), Extaze (Couperus,
       #12003, 56–66: the layer reads his "zoû", "weêr" without the circumflex). All 400
-      ppi with page images and ABBYY public, all pre-1934 spelling, so for the IA-file
-      probes, not the bench. Pallieter doesn't pair: the public scan is the 30th printing
+      ppi with page images and ABBYY public, but all pre-1934 spelling: no bench book,
+      and no help with contemporary Dutch, whose scans are borrow-only with these files
+      private. Pallieter doesn't pair: the public scan is the 30th printing
       in post-1946 spelling, Gutenberg #11355 an older edition
-- [ ] Make one of them a golden book (Het Kindeken Jezus: Flemish, Stella-like prose)
-      if the image probe above needs a Dutch book; ~30 min with `probe_candidate.py`
+- [ ] Make one of them a golden book (Het Kindeken Jezus) only if the image probe's
+      result looks language-dependent; ~30 min with `probe_candidate.py`
 - [ ] **user:** whether a borrowed item's `_jp2.zip` can be downloaded while on loan
       (Afscheid p. 20's washed-out text)
 

@@ -63,9 +63,11 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
      first test whether Crime's text layer is ABBYY's reading (the same words and boxes
      on one page). If it is, see whether a low confidence or a `suspicious` mark
      separates the real errors among the trust data's suspects.
-   - `_scandata.xml` page types as page-classification labels (public on every IA
-     golden book, borrow-only ones too), and a Dutch golden book from the 6f list: only
-     once one of the two above is worth extending.
+   - `_scandata.xml` page types as page-classification labels: public on every IA
+     golden book, the borrow-only Dutch ones too, so the one part of this that reaches
+     contemporary Dutch.
+   - The Dutch pairs in 6f are all pre-1934 spelling, so no bench book: worth one only
+     if the image probe's result looks language-dependent.
 2. Headings still lost: De eerlijke vinder's part numerals I–IV (0/4, a spurious "de",
    a validation book); You're Never Weird 4/16; Reis 10/11.
 3. Bad pages by the readers' disagreement, a label-free alarm beside `faint.py`.
@@ -91,9 +93,9 @@ Bench now: tuning 0.48, validation 0.79 wrong words a page after review.
   make auto mode the default in `~/.claude/settings.json`. Nothing applied.
 - **French**, the user's idea (2026-10-09), undecided. Proposed instead for now: go
   after the accent errors Dutch already has (De cipier's `knieén`, `hé` for `hè`, lost
-  stress accents; Stella's `scenes`; Couperus's `zoû`): count the accent errors the
-  bench leaves unasked, by book. Hilda and Extaze (checklist 6f) are a free accent
-  stress set. French brings its own typography (« », a thin space before `; : ! ?`,
+  stress accents; Stella's `scenes`): count the accent errors the bench leaves unasked,
+  by book, on the golden books we have. (Not on the old-spelling pairs in 6f: their
+  accents, Couperus's `zoû`, `weêr`, are the old spelling's.) French brings its own typography (« », a thin space before `; : ! ?`,
   dialogue dashes) that `quotes.py`, `typography.py` and the arbiter's training data
   would all need, and Gallica is mostly older print unlike the target books. If French
   comes, start with one French Wikisource book proofread page by page against its scan
