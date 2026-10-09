@@ -495,3 +495,15 @@ def test_a_reading_supports_its_version_of_a_span_wider_than_its_own_difference(
     assert ocrcheck.supports(ours, glm, a0, a1, versions) == (False, True, False)
     assert ocrcheck.supports(ours, tess, a0, a1, versions) == (False, False, True)
     assert ocrcheck.supports(ours, ours, a0, a1, versions) == (True, False, False)
+
+
+def test_a_second_look_adds_support_without_raising_suspects():
+    ours, glm = "the cat sat down", "the cot sat down"
+    [(a0, a1, others)] = ocrcheck.merged_differences(ours, [glm])
+    s = Suspect(5, 2, ours, a0, a1, ours[a0:a1], tuple(others), (0, 0, 1, 1), "review")
+    looked = {SourceRef(5, 2): "the cot sat dovvn"}
+    [again] = ocrcheck.with_support([s], "qwen2", looked)
+    assert again.support["qwen2"] == (False, True)
+    assert s.support == {}  # the input is left as it was
+    [unread] = ocrcheck.with_support([s], "qwen2", {})
+    assert unread.support["qwen2"] == (False, False)

@@ -151,6 +151,20 @@ def run(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, whole, style, dots), alarm,
             )  # fmt: skip
+            if settings.read_model:
+                # A second look at each suspect's line, rendered finer, for the arbiter.
+                second = ocrcheck.line_readings(
+                    book.source,
+                    body,
+                    {SourceRef(s.page, s.line) for s in suspects},
+                    settings.read_model,
+                    settings.ollama_url,
+                    book.stages / f"third-reading-{ocrcheck.SECOND_LOOK_DPI}dpi.json",
+                    read_prompt(book, whole, style, dots),
+                    settings.read_via,
+                    ocrcheck.SECOND_LOOK_DPI,
+                )
+                suspects = ocrcheck.with_support(suspects, "qwen2", second)
             decider = "fixed rule"
             if settings.ocr_trust:
                 path = Path(settings.ocr_trust_model)

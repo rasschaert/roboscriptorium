@@ -432,6 +432,8 @@ def run_bench(
             f"  questions {q['questions']['mean']:.2f}"
             f"  unasked {q['unasked, all questions']['mean']:.2f}"
             f"  after review {sum(v[3] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
+            f"  headings {b['score']['headings_found']}/{b['score']['headings_expected']}"
+            f" (+{b['score']['headings_spurious']})"
         )
     for name, why in signals.suspects(pairs).items():
         typer.echo(f"  suspect pair, consider retiring {name}: {'; '.join(why)}")
@@ -449,6 +451,10 @@ def run_bench(
         )
     if found.vetoes:
         typer.echo("  worse on its own: " + ", ".join(found.vetoes))
+    if changed := bench.structure(old, new):
+        typer.echo("structure (not in the test above):")
+        for line in changed:
+            typer.echo(f"   {line}")
     typer.echo("per book (diagnostics, not tests; * where the 95% interval excludes 0):")
     for c in bench.compare(old, new):
         mark = "*" if c.real else " "

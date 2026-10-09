@@ -52,6 +52,9 @@ MAX_LINE_TOKENS = 120
 # Readings are written to the cache every so many lines, so a long run keeps its progress.
 SAVE_EVERY = 200
 TESSERACT_VERSION = 1
+# The read model's second look at a suspect's line, rendered finer: where its reading
+# changes with the crop, it is mostly wrong (`with_support`).
+SECOND_LOOK_DPI = 450
 TESSERACT_WORKERS = 6
 # The fixed rule: the judge must be at least this sure, and agree with the text model.
 SURE = 0.3
@@ -171,8 +174,9 @@ def line_readings(
     cache: Path,
     prompt: str = "",
     via: str = "",
+    dpi: int = DPI,
 ) -> dict[SourceRef, str]:
-    """The OCR model's reading of each checked line's crop, cached on the line's text.
+    """The OCR model's reading of each checked line's crop at `dpi`, cached on the line's text.
 
     With a `prompt`, a generative vision model reads it (`transcribe`); without, glm-ocr
     (`read_line`). Short lines are read too: "keek.’" ends dialogue, and that is where a
@@ -216,7 +220,7 @@ def line_readings(
         for start in range(0, len(todo), SAVE_EVERY):
             batch = todo[start : start + SAVE_EVERY]
             crops = [
-                _line_crop(doc, page.number, boxes[page.number][k], span(page, k))
+                _line_crop(doc, page.number, boxes[page.number][k], span(page, k), dpi)
                 for page, k in batch
             ]
             if prompt:
@@ -308,14 +312,18 @@ def crop_span(boxes: list, k: int) -> tuple[float, float]:
 
 
 def _line_crop(
-    doc: pymupdf.Document, number: int, box, span: tuple[float, float] | None = None
+    doc: pymupdf.Document,
+    number: int,
+    box,
+    span: tuple[float, float] | None = None,
+    dpi: int = DPI,
 ) -> bytes:
     """A line's crop: one em past either end, and `span` (`crop_span`) or LINE_PAD above
     and below."""
     em = box[3] - box[1]
     top, bottom = span or (box[1] - LINE_PAD, box[3] + LINE_PAD)
     clip = pymupdf.Rect(box[0] - em, top, box[2] + em, bottom)
-    return doc[number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
+    return doc[number - 1].get_pixmap(dpi=dpi, clip=clip).tobytes("png")
 
 
 def line_boxes(pdf_page: pymupdf.Page, page: PageText) -> list[tuple[float, float, float, float]]:
@@ -564,6 +572,20 @@ def supports(ours: str, reading: str, a0: int, a1: int, versions: list[str]) -> 
     if _curly(ours):
         piece = _curled(piece)
     return tuple(piece.translate(_FOLD) == v.translate(_FOLD) for v in versions)
+
+
+def with_support(
+    suspects: list[Suspect], name: str, readings: dict[SourceRef, str]
+) -> list[Suspect]:
+    """Copies of the suspects with one more reading's support, `name`, for each version:
+    a reading that only weighs in on suspects the others raised, never raises one."""
+    out = []
+    for s in suspects:
+        reading = readings.get(SourceRef(s.page, s.line), "")
+        versions = [s.ours, *s.others]
+        support = supports(s.original, reading, s.start, s.end, versions)
+        out.append(replace(s, support={**s.support, name: support}))
+    return out
 
 
 def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, list[str]]]:

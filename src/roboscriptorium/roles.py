@@ -28,6 +28,7 @@ from roboscriptorium.page import (
     labelled,
     page_offset,
     printed_page_number,
+    reads_as_folio,
     set_apart_opening,
     sunk_pages,
     title_key,
@@ -99,19 +100,30 @@ def candidates(page: PageText, sunk: bool = False) -> list[int]:
 def _section_number(
     page: PageText, i: int, offset: int | None, page_roles: dict[int, "LineRole"], sunk: bool
 ) -> bool:
-    """A number opening the page, above body text, that isn't its printed page number.
+    """A number above body text that isn't the page's printed number: opening the page,
+    or, where the book's folios are known, centred anywhere above the text's end (11/22/63
+    numbers its sections so, below the running head or between two paragraphs).
 
     On a sunk page a short title may follow the number ("1 Later"): a page number
     with words beside it is a running head, and chapter openings carry none.
     """
     text = page.lines[i].text.strip()
-    if i != 0 or not _is_body(page_roles.get(i + 1)):
+    if not _is_body(page_roles.get(i + 1)) or (i > 0 and i + 1 >= len(page.lines)):
         return False
-    if sunk and _NUMBERED_TITLE.match(text):
+    if i == 0 and sunk and _NUMBERED_TITLE.match(text):
         return True
-    if not text.isdigit():
+    if not text.isdigit() or len(text) > 3:
         return False
-    return offset is None or abs(int(text) - (page.number - offset)) > PAGE_NUMBER_SLACK
+    if i == 0:
+        return offset is None or abs(int(text) - (page.number - offset)) > PAGE_NUMBER_SLACK
+    # Below the top the folio is printed elsewhere, so only its own number (one digit
+    # misread) is taken for it, not the slack above.
+    full, _ = geometry(page)
+    return (
+        offset is not None
+        and centred_on_page(page.lines[i], page, full)
+        and not reads_as_folio(text, folio(page.number, offset))
+    )
 
 
 # A number and a title of a few words, with no sentence ending in it.

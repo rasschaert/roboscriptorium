@@ -24,13 +24,13 @@ import numpy as np
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ocrcheck import Suspect, _typographic
 
-MODEL_VERSION = 4
+MODEL_VERSION = 5
 # The length of `features`; a saved model of another width can't score them.
-FEATURES = 26
+FEATURES = 27
 # A substitution's prior counts only when the training books that show it number this
 # many: one book's reference conventions must not teach every other book.
 MIN_BOOKS = 2
-READINGS = ("glm", "tess", "qwen")
+READINGS = ("glm", "tess", "qwen", "qwen2")
 QUOTES = "'\"‘’“”"
 
 # Per substitution (`pair`): how often the version making it was the print, and how

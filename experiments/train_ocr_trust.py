@@ -124,7 +124,7 @@ def scored(make, train_names, rows):
 
 # Every reading the OCR check makes with these settings; data built before one of them
 # lacks its support.
-READINGS = {"glm", "tess"} | ({"qwen"} if _SETTINGS.read_model else set())
+READINGS = {"glm", "tess"} | ({"qwen", "qwen2"} if _SETTINGS.read_model else set())
 
 
 def usable(name: str) -> str:

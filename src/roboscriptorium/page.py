@@ -121,7 +121,7 @@ def bare_numeral(text: str) -> str:
 _DIGIT_MISREADS = str.maketrans("IlOo", "1100")
 
 
-def _reads_as_folio(word: str, folio: int | None) -> bool:
+def reads_as_folio(word: str, folio: int | None) -> bool:
     """Whether `word` is the page's printed number. With `folio` unknown, any number is.
 
     A folio of two digits or more may have one digit misread ("28" on page 23); a
@@ -146,9 +146,9 @@ def _reads_as_folio(word: str, folio: int | None) -> bool:
 def without_folio(text: str, folio: int | None) -> str:
     """The line without the page number `folio` at either end ("Animal Language II")."""
     words = text.split()
-    while words and _reads_as_folio(words[-1], folio):
+    while words and reads_as_folio(words[-1], folio):
         words.pop()
-    while words and _reads_as_folio(words[0], folio):
+    while words and reads_as_folio(words[0], folio):
         words.pop(0)
     return " ".join(words)
 

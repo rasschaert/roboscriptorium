@@ -311,8 +311,9 @@ def _continues(previous: Block | None, line: Line, page: int) -> bool:
     """Whether a heading line belongs to the heading just before it."""
     if not isinstance(previous, Heading) or previous.sources[-1].page != page:
         return False
-    if bare_numeral(line.text):
-        # "The Nature of a Crime" above "I" is the book's title, then chapter I.
+    if bare_numeral(line.text) or line.text.strip().rstrip(".").isdigit():
+        # "The Nature of a Crime" above "I" is the book's title, then chapter I; a number
+        # under "CHAPTER 2" is the chapter's first section. Only a bare label takes it.
         words = previous.text.upper().split()
         return bool(words) and words[-1].strip(".") in NUMBERED_WORDS
     # "THE FIRST CHAPTER" under the book's title starts a heading of its own.
