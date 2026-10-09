@@ -142,3 +142,7 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench validation, ellipsis style no OCR difference, warm | 250 | 0 | 0 |
 | 2026-10-09 | bench tuning, an unseen version never applied, warm | 839 | 1 | 0 |
 | 2026-10-09 | bench validation, an unseen version never applied, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, page margin and gap paragraph starts, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, page margin and gap paragraph starts, warm | 250 | 0 | 0 |
+| 2026-10-09 | bench tuning, paragraph starts, gap not after a broken line, warm | 839 | 1 | 0 |
+| 2026-10-09 | bench validation, paragraph starts, gap not after a broken line, warm | 250 | 0 | 0 |

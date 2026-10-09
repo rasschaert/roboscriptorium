@@ -10,6 +10,7 @@ import re
 import statistics
 from collections import Counter
 from collections.abc import Callable
+from dataclasses import dataclass
 
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.page import NUMBERED_WORDS, bare_numeral
@@ -30,6 +31,14 @@ MARGIN_WINDOW = 5
 SHORT_LINE = 0.05
 JUSTIFIED_SLACK = 3.0
 JUSTIFIED_SHARE = 0.6
+# The page's margin, from the lines that reach the right margin (most are a paragraph's
+# inner lines), takes over where the local window's lines are all indented: a run of
+# one-line dialogue paragraphs. It needs this many such lines.
+PAGE_MARGIN_LINES = 4
+# A line further below the one before it than this many times the run's usual line
+# pitch, at its top and its bottom alike, starts a paragraph: a blank line set before
+# an unindented one, or letters spaced apart. Box tops alone jitter on some layers.
+PARAGRAPH_GAP = 1.5
 SENTENCE_END = tuple(".!?:'\"’”)…")
 # The footer (page number, ornaments, specks read as text) starts after a gap
 # wider than this many line spacings, in the bottom fifth of the page, and holds
@@ -82,18 +91,94 @@ def footer_start(page: PageText) -> int:
 
 
 def indented(lines: list[Line]) -> list[bool]:
-    """Whether each line starts a paragraph: right of the local left margin, or after
-    a sentence's short last line in justified text."""
+    """Whether each line starts a paragraph: right of the left margin, below a gap, or
+    after a sentence's short last line in justified text.
+
+    The margin is the lower quartile of line starts within a window, which follows skew
+    down the page, or the page's own margin where that is further left (`_page_margin`)
+    and the line before doesn't reach the right margin: in a run of short dialogue
+    paragraphs every line in the window is indented. After a full line the window's
+    margin holds, so an indented block (a hanging list, a sidebar) isn't split up.
+    """
+    page = _page_margin(lines)
+    pitch = _pitch(lines)
     flags = []
     for i, line in enumerate(lines):
         window = lines[max(0, i - MARGIN_WINDOW) : i + MARGIN_WINDOW + 1]
         starts = sorted(ln.x0 for ln in window)
         margin = starts[len(starts) // 4]
+        if page is not None and not (i and _full(lines, i - 1, page.right)):
+            margin = min(margin, page.at((line.y0 + line.y1) / 2))
         if line.starts_paragraph is not None:
             flags.append(line.starts_paragraph)
         else:
-            flags.append(line.x0 - margin > INDENT_MIN or _after_short_line(lines, i, margin))
+            flags.append(
+                line.x0 - margin > INDENT_MIN
+                or (i > 0 and _spaced(lines[i - 1], line, pitch))
+                or _after_short_line(lines, i, margin)
+            )
     return flags
+
+
+@dataclass(frozen=True)
+class _Margin:
+    base: float
+    slope: float  # points right per point down: the page's skew
+    right: float  # where full lines end
+
+    def at(self, y: float) -> float:
+        return self.base + self.slope * y
+
+
+def _page_margin(lines: list[Line]) -> _Margin | None:
+    """The left margin of the run's lines that reach the right margin, following the skew
+    their right ends show; None with too few such lines (ragged right, a short run)."""
+    # The right margin: the furthest right that enough lines end at, as dialogue may
+    # make up most of the run.
+    reached = [
+        ln.x1
+        for ln in lines
+        if sum(abs(o.x1 - ln.x1) < JUSTIFIED_SLACK for o in lines) >= PAGE_MARGIN_LINES
+    ]
+    if not reached:
+        return None
+    right = max(reached)
+    full = [ln for ln in lines if abs(right - ln.x1) < JUSTIFIED_SLACK]
+    mid = [(ln.y0 + ln.y1) / 2 for ln in full]
+    slopes = [
+        (b.x1 - a.x1) / (yb - ya)
+        for (a, ya), (b, yb) in itertools.combinations(zip(full, mid, strict=True), 2)
+        if abs(yb - ya) > 1
+    ]
+    slope = statistics.median(slopes) if slopes else 0.0
+    starts = sorted(ln.x0 - slope * y for ln, y in zip(full, mid, strict=True))
+    return _Margin(starts[len(starts) // 4], slope, right)
+
+
+def _full(lines: list[Line], k: int, right: float) -> bool:
+    """Whether line k reaches a right margin: the page's, or the one it shares with a line
+    beside it (an indented block's)."""
+    x1 = lines[k].x1
+    beside = [lines[j].x1 for j in (k - 1, k + 1) if 0 <= j < len(lines)]
+    return right - x1 < JUSTIFIED_SLACK or any(abs(x - x1) < JUSTIFIED_SLACK for x in beside)
+
+
+def _pitch(lines: list[Line]) -> float | None:
+    pitches = [b.y0 - a.y0 for a, b in itertools.pairwise(lines)]
+    return statistics.median(pitches) if len(pitches) >= 3 else None
+
+
+def _spaced(above: Line, line: Line, pitch: float | None) -> bool:
+    """White space between two lines, after one that ends in punctuation: below a line
+    stopping mid-word or mid-sentence ("be-"), the gap is a line the layer lost."""
+    end = above.text.rstrip()[-1:]
+    return (
+        pitch is not None
+        and bool(end)
+        and not end.isalnum()
+        and end not in HYPHENS
+        and min(line.y0 - above.y0, line.y1 - above.y1) > PARAGRAPH_GAP * pitch
+    )
 
 
 def _after_short_line(lines: list[Line], i: int, margin: float) -> bool:

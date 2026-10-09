@@ -366,3 +366,61 @@ def test_a_section_number_under_a_numbered_chapter_label_is_its_own_heading():
     # A label still waiting for its number takes it.
     whole = [page(1, [(100, "CHAPTER"), (130, "12"), (20, "It began."), (10, "And so on.")])]
     assert [b.text for b in reflow(whole, roles) if isinstance(b, Heading)] == ["CHAPTER 12"]
+
+
+def _lines(rows: list[tuple[float, float, str]], pitch: float = SPACING) -> PageText:
+    """Rows of (x0, x1, text) at a steady pitch."""
+    lines = [Line(t, x0, 20 + i * pitch, x1, 30 + i * pitch) for i, (x0, x1, t) in enumerate(rows)]
+    return PageText(5, 300, HEIGHT, lines)
+
+
+def test_an_indented_list_is_not_split_line_by_line():
+    # A hanging list: its letters at 30, its lines at 50, ending short of the page's
+    # right margin at 280; the page's margin, from the text above, is 10.
+    rows = [(10, 280, f"Gewone tekst die tot de rand loopt, regel {i}") for i in range(5)]
+    for letter in "ABC":
+        rows += [(30, 260, f"{letter}) Een punt van de lijst dat over")]
+        rows += [(50, 260, f"meerdere regels doorloopt, regel {i}") for i in range(3)]
+        rows += [(50, 120, "het punt.")]
+    paragraphs = reflow([_lines(rows)])
+    later = [p.text for p in paragraphs if p.text.startswith(("B)", "C)"))]
+    assert len(later) == 2 and all(t.endswith("het punt.") for t in later)
+
+
+def test_jittery_boxes_are_no_gap():
+    # Some layers' boxes differ by several points line to line; only a gap at the
+    # top and the bottom alike is white space.
+    lines = []
+    for i in range(8):
+        jitter = 6 if i % 2 else -6
+        lines.append(Line(f"regel {i} van de tekst", 10, 20 + i * 15 + jitter, 280, 32 + i * 15))
+    assert len(reflow([PageText(5, 300, HEIGHT, lines)])) == 1
+
+
+def test_a_run_of_one_line_dialogue_paragraphs_is_split():
+    # Every line in the window starts at the indent; the full lines show the margin.
+    rows = [(10, 280, f"Een lange zin die tot de rechterrand loopt, deel {i}") for i in range(4)]
+    rows += [(10, 150, "en dan stopt.")]
+    rows += [(22, 120 + 10 * i, f"‘Nee,’ zei ze {i}.") for i in range(6)]
+    paragraphs = reflow([_lines(rows)])
+    assert len(paragraphs) == 7
+
+
+def test_a_gap_after_a_line_broken_mid_word_is_a_lost_line_not_a_paragraph():
+    rows = [(10, 280, f"Tekst tot de rand, regel {i}") for i in range(4)]
+    rows += [(10, 280, "Haar intonatie geeft de woorden een andere be-")]
+    page_ = _lines(rows)
+    page_.lines.append(Line("weg? Hoewel het", 10, 30 + 6 * SPACING, 280, 40 + 6 * SPACING))
+    assert len(reflow([page_])) == 1
+
+
+def test_a_blank_line_starts_an_unindented_paragraph():
+    rows = [(10, 280, f"Tekst tot de rand, regel {i}") for i in range(4)] + [(10, 120, "Eind.")]
+    page_ = _lines(rows)
+    below = [
+        Line(f"Na de witregel {i}", 10, 30 + (6 + i) * SPACING, 280, 40 + (6 + i) * SPACING)
+        for i in range(3)
+    ]
+    page_.lines.extend(below)
+    paragraphs = reflow([page_])
+    assert [p.text[:6] for p in paragraphs] == ["Tekst ", "Na de "]

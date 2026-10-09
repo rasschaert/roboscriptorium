@@ -364,8 +364,11 @@ build. Each change benched on its own.
       1.09 → 0.34, Thief-Taker 0.55 → 0.46; Goede dochter 0.20 → 0.33, Artemis 0.70 → 0.75
 - [x] A version the vision judge saw none of is asked first and never applied (Thief-Taker
       p. 46: a crop of the wrong line, whole sentences applied)
-- [ ] Paragraph starts in runs of one-line dialogue (the window's margin was the indent),
-      after a blank line, and in letters spaced apart: page margin fitted from full lines
+- [x] Paragraph starts in runs of one-line dialogue (the window's margin was the indent),
+      after a blank line, and in letters spaced apart: page margin fitted from full lines.
+      Breaks a page: tuning 0.46 → 0.33, validation 0.32 → 0.21, words unchanged
+- [ ] A lost line as a question: a gap of a line inside a paragraph (Vals alarm p. 33, after
+      "be-") where the spotter saw nothing, flagged as missing text
 - [ ] The bench records how much of each book's Qwen reading was the hosted build
 - [ ] The arbiter calibrated (isotonic, on its leave-one-book-out predictions), so the 0.8
       ask threshold means 80% right whatever the retrain

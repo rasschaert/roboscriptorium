@@ -252,6 +252,29 @@ the arbiter fixed all three. Headings 8/11 → 11/11, no other book changed (ben
 2026-10-09). A washed-out line at the top (Afscheid p. 32) is as tall but wide and off
 centre, so it isn't taken.
 
+## Reflow: where paragraphs start
+
+**The margin was the indent in a run of dialogue.** A line starts a paragraph when it
+stands right of the margin, and the margin is the lower quartile of line starts within
+five lines either side, which follows skew down the page. In a run of one-line dialogue
+paragraphs every line in that window is indented, so none started a paragraph (Artemis
+p. 26, Reis p. 77). The page's own margin now takes over where it lies further left:
+fitted from the lines that reach the right margin (most are inner lines of paragraphs),
+following the skew their right ends show. After a full line the window's margin holds,
+so an indented block (You're Never Weird's hanging lists) isn't split line by line.
+
+**White space starts a paragraph too.** Reis sets a blank line before an unindented
+paragraph, and Artemis spaces its letters' paragraphs apart. A line further below the
+one before it than 1.5 pitches, at its top and its bottom alike (Crime's box tops jitter
+by several points), after a line ending in punctuation, starts one. Below a line ending
+mid-word (Vals alarm p. 33, "be-") the gap is a line the layer lost.
+
+Measured as paragraph breaks set wrong per page (2026-10-09): tuning 0.46 → 0.33, validation
+0.32 → 0.21, words unchanged. Goede dochter 0.31 → 0.02, Vals alarm 0.36 → 0.04, Artemis
+1.29 → 0.75. Left: Afscheid's are its EPUB's (it breaks paragraphs where the print runs
+on), Artemis's letters set without spacing, and a section break that falls on a page
+turn, where nothing on the page shows it.
+
 ## Reflow: line-end hyphens
 
 **Nothing else looks at a line-end hyphen.** The OCR check starts where readings
