@@ -214,7 +214,8 @@ def apply(
     `fixes` are the OCR check's suspects; those it settled (choice "other") change
     their place in the line too, alongside a human's answers about other places in
     it: each is a span of the line as the text layer reads it. A human's answer wins
-    where they overlap, and a line the human retyped whole takes no fixes. The
+    where they overlap, and a line the human retyped whole takes neither fixes nor
+    answers about places in it; an answer that only says what a line is keeps both. The
     copies' roles are keyed on line positions in the copied pages.
     """
     pages = [
@@ -250,7 +251,8 @@ def apply(
             places.setdefault((page.number, c.first), []).append((*c.span, place(c)))
             applied += 1
             continue
-        retyped.update((page.number, i) for i in range(c.first, c.last + 1))
+        if c.text is not None:
+            retyped.update((page.number, i) for i in range(c.first, c.last + 1))
         for i in range(c.first, c.last + 1):
             roles[SourceRef(c.page, i)] = _ROLE[c.action]
         if c.text is not None and c.action in ("text", "heading"):
@@ -270,6 +272,8 @@ def apply(
             places.setdefault((s.page, s.line), []).append((s.start, s.end, s.chosen))
     # Places in one line, right to left, so each leaves the spans before it in place.
     for (number, i), found in places.items():
+        if (number, i) in retyped:
+            continue
         line = by_number[number].lines[i]
         text = line.text
         for start, end, new in sorted(found, key=lambda f: -f[0]):

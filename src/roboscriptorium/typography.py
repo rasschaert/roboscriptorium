@@ -195,8 +195,19 @@ def _runs(flags: list[bool]) -> list[tuple[int, int]]:
     return out
 
 
-# A dash between words, with whatever spacing the layer gave it; not inside a number range.
-_DASH = re.compile(r"(?<![\d])\s*(?:[—–]|--)\s*(?![\d])|(?<=\S) +- +(?=\S)")
+# A dash with whatever spacing the layer gave it, all of it; `_kept` says which stay as read.
+_DASH = re.compile(r"\s*(?:[—–]|--)\s*|(?<=\S) +- +(?=\S)")
+
+
+def _kept(text: str, m: re.Match) -> bool:
+    """Whether a dash is part of a number rather than between words: a range, digits on
+    both sides however spaced (1914–1918, 1914 – 1918), or a dash glued to a digit (–5)."""
+    prev = text[m.start() - 1] if m.start() > 0 else ""
+    nxt = text[m.end()] if m.end() < len(text) else ""
+    found = m.group()
+    glued_left = prev.isdigit() and not found[0].isspace()
+    glued_right = nxt.isdigit() and not found[-1].isspace()
+    return (prev.isdigit() and nxt.isdigit()) or glued_left or glued_right
 
 
 def styled(text: str, style: DashStyle) -> tuple[str, list[int]]:
@@ -209,6 +220,8 @@ def styled(text: str, style: DashStyle) -> tuple[str, list[int]]:
     before, after = SPACES[style.spacing]
     out, where, pos = [], [], 0
     for m in _DASH.finditer(text):
+        if _kept(text, m):
+            continue
         for c in text[pos : m.start()]:
             where.append(len("".join(out)))
             out.append(c)

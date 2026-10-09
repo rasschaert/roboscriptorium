@@ -19,6 +19,29 @@ def test_what_isnt_a_dash_between_words_stays():
         assert styled(text, EN_WORD)[0] == text
 
 
+def test_a_number_range_or_a_minus_sign_stays_as_the_layer_reads_it():
+    for text in (
+        "de jaren 1914–1918",
+        "de jaren 1914 – 1918",
+        "de jaren 1914 — 1918",
+        "het vroor –5 graden",
+        "in 1914– en daarna",
+        "bladzijde 3 - 4",
+    ):
+        for style in (EN_WORD, EN_THIN, EM_GLUED):
+            assert styled(text, style)[0] == text
+
+
+def test_a_dash_between_a_word_and_a_number_takes_the_books_style():
+    assert styled("zei hij – 3 keer", EN_WORD)[0] == "zei hij\u00a0– 3 keer"
+    assert styled("zei hij —  3 keer", EN_WORD)[0] == "zei hij\u00a0– 3 keer"
+    assert styled("pagina 12 – dat", EM_GLUED)[0] == "pagina 12—dat"
+    assert styled("pagina 12 – dat", EN_THIN)[0] == "pagina 12\u202f–\u2009dat"
+    text, where = styled("zei hij – 3 keer", EM_GLUED)
+    assert text == "zei hij—3 keer"
+    assert len(where) == len("zei hij – 3 keer") and where[-1] == len(text) - 1
+
+
 def test_every_dash_takes_the_books_style():
     for layer in ("irriteert—een", "irriteert – een", "irriteert— een", "irriteert -- een"):
         assert styled(layer, EN_THIN)[0] == "irriteert – een"

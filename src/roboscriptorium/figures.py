@@ -17,7 +17,7 @@ import pymupdf
 from PIL import Image
 
 from roboscriptorium import ocr
-from roboscriptorium.corrections import Correction, Corrections
+from roboscriptorium.corrections import Correction, Corrections, _located
 from roboscriptorium.ir import Block, Figure
 from roboscriptorium.layout import Region
 from roboscriptorium.pdf import PageText
@@ -81,7 +81,7 @@ def select(
         if not kept:
             continue
         turn, read = _sideways(doc, page.number, found, on_page, lang)
-        given = _captions(on_page, kept)
+        given = _captions(on_page, kept, page)
         default = read if len(kept) == 1 else ""
         pictures += [Picture(page.number, b, turn, given.get(b, default)) for b in kept]
     return pictures
@@ -118,16 +118,32 @@ def _sideways(doc, number: int, found: list[Region], answers: list[Correction], 
     return (answer.turn if answer is not None and answer.turn else turn), read
 
 
-def _captions(answers: list[Correction], boxes: list) -> dict:
+def _caption_box(c: Correction, page: PageText) -> tuple[float, float, float, float] | None:
+    """Where a caption answer sits: its region's box, or else around the lines it names."""
+    if c.box:
+        return c.box
+    c = _located(page, c)
+    if c is None or c.last < c.first:
+        return None
+    lines = page.lines[c.first : c.last + 1]
+    return (
+        min(ln.x0 for ln in lines),
+        min(ln.y0 for ln in lines),
+        max(ln.x1 for ln in lines),
+        max(ln.y1 for ln in lines),
+    )
+
+
+def _captions(answers: list[Correction], boxes: list, page: PageText) -> dict:
     """Each caption a human gave on the page, with the picture whose centre is nearest."""
     out: dict = {}
     for c in answers:
-        if c.action != "caption" or not c.box:
+        if c.action != "caption" or (box := _caption_box(c, page)) is None:
             continue
         text = " ".join((c.text if c.text is not None else c.original).split())
         if not text:
             continue
-        cx, cy = (c.box[0] + c.box[2]) / 2, (c.box[1] + c.box[3]) / 2
+        cx, cy = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
         near = min(
             boxes, key=lambda b: ((b[0] + b[2]) / 2 - cx) ** 2 + ((b[1] + b[3]) / 2 - cy) ** 2
         )

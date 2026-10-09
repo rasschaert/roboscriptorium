@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.ir import Paragraph, SourceRef
+from roboscriptorium.typography import EllipsisStyle, guess_ellipsis
 
 PAIRS = {"‘": "’", "“": "”"}
 _ARTICLE = re.compile(r"’(s|t|n)\b")
@@ -66,7 +67,8 @@ def problems(text: str, continued: str = "") -> list[tuple[int, str]]:
     """
     found = []
     depth = dict.fromkeys(PAIRS, 0)
-    for i, c, kind in marks(text):
+    found_marks = marks(text)
+    for k, (i, c, kind) in enumerate(found_marks):
         if kind == "open":
             if depth[c] and _SENTENCE_BEFORE.search(text, 0, i):
                 found.append((i, "no closing"))
@@ -74,11 +76,20 @@ def problems(text: str, continued: str = "") -> list[tuple[int, str]]:
                 depth[c] += 1
             continue
         opener = next(o for o, cl in PAIRS.items() if cl == c)
-        if depth[opener]:
-            depth[opener] -= 1
-        elif c == "’" and text[i - 1 : i] in ("s", "z") and not text[i + 1 : i + 2].isalnum():
+        possessive = (
+            c == "’" and text[i - 1 : i] in ("s", "z") and not text[i + 1 : i + 2].isalnum()
+        )
+        if possessive and depth[opener]:
+            # A plural possessive inside a quotation (‘The animals’ language is hard,’) when
+            # the marks after it pair up only if it doesn't close.
+            later = [kd for _, m, kd in found_marks[k + 1 :] if m in "‘’"]
+            left = depth[opener] + later.count("open") - later.count("close")
+            possessive = left == 0
+        if possessive:
             # A plural possessive (the animals’ language, Jezus’) needs no partner.
             continue
+        if depth[opener]:
+            depth[opener] -= 1
         else:
             found.append((i, "no opening"))
     if any(depth[c] and continued != c for c in PAIRS):
@@ -140,7 +151,7 @@ def proposed(ours: str, reading: str, ellipsis: str = "…") -> str:
     quotes are taken as curly and its ellipses as the book's `ellipsis`."""
     reading = re.sub(r"(^|\s)'", r"\1‘", reading).replace("'", "’")
     reading = re.sub(r'(^|\s)"', r"\1“", reading).replace('"', "”")
-    reading = re.sub(r"…|\.\.\.", ellipsis, reading)
+    reading = re.sub(r"…|\.\.\.|\. \. \.", ellipsis, reading)
     spans: list[list[int]] = []
     for op in Levenshtein.opcodes(ours, reading):
         if op.tag == "equal":
@@ -165,8 +176,12 @@ def proposed(ours: str, reading: str, ellipsis: str = "…") -> str:
     return "".join(out) + ours[at:]
 
 
-def ellipsis(text: str) -> str:
-    """How the book prints an ellipsis: one character or three periods, by majority."""
+def ellipsis(text: str, style: EllipsisStyle | None = None) -> str:
+    """How the book prints an ellipsis: spaced dots where its style (book.toml's, else
+    as the layer reads it) says so, else one character or three periods, by majority."""
+    style = style or guess_ellipsis([text])
+    if style is not None and style.dots == ". . .":
+        return ". . ."
     return "…" if text.count("…") >= text.count("...") else "..."
 
 
@@ -179,7 +194,8 @@ def single_quoted_lines(texts: list[str]) -> bool:
 def style_note(language: str, single: bool, ellipsis: str, dash: str | None) -> str:
     """How the book is set, as a sentence for a model reading or judging its text."""
     outer, inner = ("‘ ’", "“ ”") if single else ("“ ”", "‘ ’")
-    marks = "the ellipsis as one character …" if ellipsis == "…" else "the ellipsis as ..."
+    marks = {"…": "the ellipsis as one character …", ". . .": "the ellipsis as spaced dots . . ."}
+    marks = marks.get(ellipsis, "the ellipsis as ...")
     dashes = {"–": ", en dashes –", "—": ", em dashes —"}.get(dash or "", "")
     name = {"nl": "Dutch", "en": "English"}.get(language, language)
     return (
