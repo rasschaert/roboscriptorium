@@ -49,7 +49,9 @@ prediction beside each bench verdict) and docs/decisions.md. In short:
    results (docs/design.md's Qwen section, outlook, decisions, run-times).
 2. Bench the sorter on the local readings (`ROBO_SORTER=1`, ~10 min warm); if it holds,
    make it the default. Look at Crime p. 97 and De cipier p. 49 first: a last line dropped.
-3. Score the slip review (above).
+3. Slip review scored (30 of 32 right). Set `quality.SLIPS, ANSWERS = 10, 100`, the two
+   reviews pooled (the user's choice, noted as pooled: different kinds of question), and
+   rebench as the new baseline. Then the quote-question fixes (checklist 6g).
 4. Score scene breaks: derive keeps blank-line paragraphs as a break mark.
 5. The earlier list stands: IA page images and ABBYY confidence (6f), headings still
    lost, bad pages by the readers' disagreement.

@@ -404,9 +404,14 @@ build. Each change benched on its own.
       judged at its own place: picks 17/18, typed 6/7, roles 7/7. The two misses are one
       choice, p. 36, where the reviewer set the right quote mark and the print (and the
       reference) the wrong one. The old rate was 8 of 68 on Stella's typed questions
-- [ ] **user** Which slip rate the bench uses now: 2 of 32 (p. 36 counted), 0 of 32, or the
-      two samples pooled (10 of 100); then set `quality.SLIPS`/`ANSWERS` after the
-      overnight chain (changing it mid-chain would move its bench)
+- [x] **user** Which slip rate the bench uses: the two samples pooled, 10 wrong of 100
+      (Stella's 8 of 68 and Goede dochter's 2 of 32, p. 36 counted), chosen by the user on
+      2026-10-09 with the note that it is pooled: the samples come from two kinds of
+      question (typed regions then, picks with the difference marked now), so it is a
+      middle figure, not either one's rate
+- [ ] Set `quality.SLIPS, ANSWERS = 10, 100` once the overnight chain is done (mid-chain
+      it would move that chain's bench), rerun both benches as the new baseline, and
+      update docs/design.md ("8 of 68") and AGENTS.md's bench entry
 - [ ] Quote questions offered no right reading on 4 of 4 (OCR questions 20 of 21): the
       readings are the raw layer and the layer with Qwen's marks, so (a) offer the
       OCR-checked line itself (p. 36: `Ik` with the print's `’`); (b) take only quote
