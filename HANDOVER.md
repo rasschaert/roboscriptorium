@@ -5,62 +5,53 @@ docs/decisions.md the dated decisions, [docs/checklist.md](docs/checklist.md) th
 whole plan with times; this file only covers the state of play. Replace it at the end
 of each session.
 
-## State at the end of 2026-10-09 (night)
+## State at the end of 2026-10-09 (day)
 
-On `main`, pushed. Lint and tests green (188 passed, 1 xfailed). No runs going;
-llama-server is stopped.
+On `main`, pushed. Lint and tests green (253 passed, 2 xfailed). No runs going.
 
 ### Done this session
 
-- **Ollaya gone, Ollama only.** winnow-ollama:e4b is the second judge (`check_model`);
-  code, docs and the diagram stripped of Ollaya. Trust data rebuilt for 14 books with it,
-  arbiter retrained. Bench tuning against the ellipsis run: no change (1.00 → 1.02).
-  Bench validation's first run is the baseline (after review 0.81).
-- **Metro's veto** was its spaced ellipses squashed by reflow; each book's ellipsis
-  style is read in its layer (`typography.py`). The read model's cache keeps readings
-  per prompt; the book-wide style comes from the whole body.
-- **OpenRouter requests have a 120 s deadline**: DeepInfra's Qwen went down (0% uptime
-  on OpenRouter while its status page said operational) and keep-alive bytes kept a run
-  hanging for half an hour. Stella's last lines were read by local Qwen.
-- **imajev (2B/4B/9B)**, a Qwen3.5 vision decision model, runs through llama.cpp on
-  Ollama's blobs with its trained readout (`clients/llama.py`,
-  `experiments/llama-serve.sh`). Screened for every use:
-  - vision judge in clef's place: 84% weighted against clef's 90%, no;
-  - third judge beside clef and winnow (`ROBO_ALARM_MODEL`): bench no change (tuning
-    1.02 → 1.01, validation 0.81 → 0.80), **off**;
-  - page types / the body's ends: 227 of 252 against clef-flash's 231, same misses;
-    `body_pages` stays in book.toml;
-  - which way up a plate is: 10/10, decisively, but the caption rule already turns
-    every captioned plate; the candidate for an uncaptioned or upside-down one.
-- **Washed-out pages** (`faint.py`): ink contrast inside the layer's line boxes; 31
-  pages in Afscheid, 11/22/63 and Grand Hotel Europa flagged whole. Bench tuning
-  **better** (1.02 → 1.00 [−0.04, −0.01]), validation unchanged.
-- **Qwen's third reading stays**: without it, bench tuning 1.00 → 1.33 and validation
-  0.81 → 1.01, both worse. The ablation's data and models are in
-  `work/probes/ocr-trust-no-qwen/` and `work/models/no-qwen/` (`ROBO_TRUST_DATA`,
-  `ROBO_OCR_TRUST_MODEL`); the books' stage files were rebuilt with Qwen after it.
-- **clef's answer variance**: judge set v1's 518 questions re-asked: 2 flips, both at
-  confidence ≤ 0.1. Cached answers stand for fresh ones.
+- **A strict review of the whole codebase** (six reviewers, every finding checked
+  before fixing; checklist 6e). Fixes in eight commits: hosted errors no longer cached
+  as empty readings; settings refuse values they can't mean; `review` refuses the test
+  set; answers keep the OCR check's fixes; captions answered on lines kept; dash spacing
+  beside numbers; possessives inside quotations; the spaced-dot ellipsis told to Qwen;
+  a reader's support over the whole span (a trust feature); lost opening quotes asked;
+  chapter labels keep their numbers; tall fragments don't merge lines; the word list
+  reads curly apostrophes; scoring on the right pages, without rewriting untouched
+  paragraphs, with soft hyphens and „ folded; `detached.sh` refuses a running name.
+- **Measured.** A baseline bench on the pre-review code plus only the measuring fixes
+  (tuning 1.00, validation 0.81 after review), then trust data rebuilt (Qwen via
+  hosted; 11/22/63 pp. 15–94 fully cold, its old stages in
+  `work/11-22-63--ia-scan/stages.before-review-2026-10-09`), arbiter retrained:
+  tuning **0.96** (better), validation **0.75** (no change by the test).
+- **Headings.** The bench now prints headings and paragraph F1 per book and reports
+  their changes beside its test. Fixed: 11/22/63 slice 5 → 23 of 24, Villa Toscane
+  0 → 12 of 12, De cipier 3 → 4 of 4.
+- **Probes, all null for the build:** five read prompts and six crops for Qwen (none
+  reads better); Qwen's second look at 450 dpi as a trust feature (branch
+  `qwen-second-look`, worktree `../roboscriptorium-qwen2`): strong signal, no bench gain.
 
 ### Next (checklist)
 
-1. Section 5: a book-quality feature for the arbiter; Vals alarm's lost full stops
-   (only its own answers can teach it).
-2. Section 3b: a faster line reader than Qwen, should one appear (Qwen is 70–75% of a
-   cold run and earns it, see above).
-3. The washed-out pages' text: a human types them or a rescan; the flag only says so.
+1. Headings still lost: Afscheid's "1" read as "l"; Artemis's drawn chapter numbers;
+   De eerlijke vinder's part numerals I–IV (and a spurious "de"); You're Never Weird
+   5 of 16.
+2. Section 5: a book-quality feature for the arbiter; Vals alarm's lost full stops.
+3. The washed-out pages' text: a human types them or a rescan.
 
 ### Working with the user (also in memory)
 
-- **The user pulls every model download themselves.** Give the exact command and wait.
-- Hosted Qwen only with an explicit go for that use and that night; the 2026-10-08/09
-  permission does not carry over.
-- At most three pipelines at once; be mindful of system use before starting tests.
-- Overlap hosted Qwen with local non-Qwen work when hosted is approved.
-- Every new model: can it replace one, and could adding it anywhere improve things.
-- Long runs through `experiments/detached.sh` and `experiments/timed.sh`; the progress
-  lines go to timed.sh's log, not the screen's `.out`.
+- **Cheap experiments are encouraged**, unasked: prompts, crops, settings on the frozen
+  sets; record null results too.
+- Hosted Qwen was allowed for this session's runs and probes (2026-10-09); ask again
+  next session.
+- 1Password locks while the user is away: keep working, stage, commit when unlocked.
+- The user pulls every model download themselves.
+- Long runs through `experiments/detached.sh` and `experiments/timed.sh`.
 
 ### Waiting on the user
 
-Nothing. The failed MoE models and the 2B/9B imajev copies were deleted (2026-10-09).
+Nothing. Two extra worktrees can go when convenient: `../roboscriptorium-baseline`
+(the pre-review baseline) and `../roboscriptorium-qwen2` (the experiment, committed on
+its branch).
