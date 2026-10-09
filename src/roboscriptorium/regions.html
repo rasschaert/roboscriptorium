@@ -88,6 +88,8 @@ a { color: var(--accent); }
 <main id="main"></main>
 <script>
 let state = null, queue = [], pos = 0, out = 0;
+// Counts rebuilds, so a crop asked for after one is never the browser's cached image.
+let built = 0;
 // Whether the crop shows its highlights (`h`); remembered across visits where storage works.
 let marks = true;
 try { marks = localStorage.getItem("marks") !== "off"; } catch (e) {}
@@ -97,6 +99,8 @@ const KINDS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "cap
 const CURRENT = {text: "text", heading: "heading", dropped: "drop", missing: "drop"};
 const NOW = {text: "kept as running text", heading: "made a heading", dropped: "left out of the book",
   missing: "has nothing here"};
+
+const JSON_HEADERS = {"Content-Type": "application/json"};
 
 async function load() {
   state = await (await fetch("/api/state")).json();
@@ -362,7 +366,7 @@ function marked(text, base) {
 }
 
 function cropUrl(r) {
-  const m = `&mark=${marks ? 1 : 0}`;
+  const m = `&mark=${marks ? 1 : 0}&built=${built}`;
   // A doubt's box is a place in its line: the line is tinted, the place underlined.
   const line = r.span ? `&line=${r.first}` : "";
   return r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}&out=${out}${line}${m}`
@@ -414,7 +418,7 @@ async function save() {
     text = doubt && draft.reading >= 0 ? r.readings[draft.reading].text : draft.text;
   }
   const body = {key: r.key, action: draft.kind, text, turn: r.turn || 0, confirm: !!draft.confirm};
-  const resp = await fetch("/api/verdict", {method: "POST", body: JSON.stringify(body)});
+  const resp = await fetch("/api/verdict", {method: "POST", headers: JSON_HEADERS, body: JSON.stringify(body)});
   if (!resp.ok) { alert(await resp.text()); return; }
   const result = await resp.json();
   if (result.warning) {
@@ -442,10 +446,12 @@ document.getElementById("rebuild").onclick = async () => {
   const b = document.getElementById("rebuild");
   b.disabled = true; b.textContent = "Rebuilding…";
   try {
-    const resp = await fetch("/api/rebuild", {method: "POST"});
+    const keep = queue[pos] ? queue[pos].key : null;
+    const resp = await fetch("/api/rebuild", {method: "POST", headers: JSON_HEADERS});
     if (!resp.ok) throw new Error(await resp.text());
     state = await resp.json();
-    rebuild();
+    built++;
+    rebuild(keep);
   } catch (e) { alert(e); }
   b.disabled = false; b.textContent = "Rebuild book";
 };

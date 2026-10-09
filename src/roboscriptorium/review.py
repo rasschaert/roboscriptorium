@@ -10,7 +10,6 @@
   pipeline mistake), the scan prints the output, something else, or unsure.
 """
 
-import io
 import json
 import re
 import threading
@@ -53,15 +52,6 @@ def guess_category(d: Disagreement) -> str:
     if letters(d.got) == letters(d.want):
         return "punctuation"
     return "ocr"
-
-
-def _turned(pix: pymupdf.Pixmap, turn: int) -> bytes:
-    """PNG bytes of a pixmap turned `turn` degrees clockwise."""
-    if not turn:
-        return pix.tobytes("png")
-    buf = io.BytesIO()
-    pix.pil_image().rotate(-turn, expand=True).save(buf, "PNG")
-    return buf.getvalue()
 
 
 # Highlights are drawn beside or beneath the print, never over it, so a mark the reviewer
@@ -143,14 +133,13 @@ class Scan:
             elif mark:
                 pdf_page.draw_rect(target + (-1, -1, 1, 1), color=OUTLINE, width=0.8)
             pix = pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip)
-            return _turned(pix, turn)
+            return ocr.turned(pix.tobytes("png"), turn)
 
     def turn(self, page_number: int, box: tuple[float, float, float, float], lang: str) -> int:
         """Degrees clockwise that make sideways text upright: the quarter turn that reads."""
         key = (page_number, box)
         if key not in self._turns:
-            readings = {t: self.read_box(page_number, box, lang, turn=t) for t in (90, 270)}
-            self._turns[key] = max(readings, key=lambda t: ocr.words(readings[t]))
+            self._turns[key], _ = ocr.read_sideways(self._ocr_png(page_number, box), lang)
         return self._turns[key]
 
     def read_box(
@@ -162,12 +151,15 @@ class Scan:
         turn: int = 0,
     ) -> str:
         """Tesseract's reading of a region, as a draft for the human."""
+        return ocr.tesseract(ocr.turned(self._ocr_png(page_number, box), turn), lang, single_char)
+
+    def _ocr_png(self, page_number: int, box: tuple[float, float, float, float]) -> bytes:
         with PDF_LOCK, pymupdf.open(self.pdf) as doc:
             zoom = OCR_DPI / 72
             pix = doc[page_number - 1].get_pixmap(
                 matrix=pymupdf.Matrix(zoom, zoom), clip=pymupdf.Rect(*box)
             )
-            return ocr.tesseract(_turned(pix, turn), lang, single_char)
+            return pix.tobytes("png")
 
     def full_page(self, page_number: int) -> bytes:
         with PDF_LOCK, pymupdf.open(self.pdf) as doc:
@@ -352,6 +344,19 @@ class RegionReview:
         return self.state()
 
 
+def _trusted(headers, port: int) -> bool:
+    """Whether a POST comes from this server's own pages: JSON, addressed to this server
+    by a loopback name, and from a page of it when the browser says where from. A form or
+    a page on another site can't send that, so it can't answer or rebuild in the user's name."""
+    if headers.get_content_type() != "application/json":
+        return False
+    hosts = {f"127.0.0.1:{port}", f"localhost:{port}"}
+    if headers.get("Host") not in hosts:
+        return False
+    origin = headers.get("Origin")
+    return origin is None or origin in {f"http://{h}" for h in hosts}
+
+
 def serve(review: Review | RegionReview, port: int) -> None:
     page = (Path(__file__).parent / review.html).read_bytes()
 
@@ -403,6 +408,9 @@ def serve(review: Review | RegionReview, port: int) -> None:
                 self._send(str(exc).encode(), "text/plain", 400)
 
         def do_POST(self) -> None:  # noqa: N802
+            if not _trusted(self.headers, port):
+                self._send(b"forbidden", "text/plain", 403)
+                return
             path = urlparse(self.path).path
             if path == "/api/rebuild" and isinstance(review, RegionReview):
                 self._json(review.rebuild())

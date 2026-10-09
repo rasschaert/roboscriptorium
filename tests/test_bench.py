@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -66,11 +67,20 @@ def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path):
     from roboscriptorium.config import Settings
 
     settings = Settings(ocr_trust_model=str(tmp_path / "ocr-trust.pkl"))
-    assert bench.unseen(settings, "crime") == settings
-    (tmp_path / "ocr-trust-without-crime.pkl").write_bytes(b"")
-    assert bench.unseen(settings, "crime").ocr_trust_model == str(
-        tmp_path / "ocr-trust-without-crime.pkl"
+    crime = "the-nature-of-a-crime--doubleday-1924"
+    # A tuning book was trained on: scoring it with the full model is refused.
+    with pytest.raises(FileNotFoundError):
+        bench.unseen(settings, crime)
+    off = replace(settings, ocr_trust=False)
+    assert bench.unseen(off, crime) == off
+    (tmp_path / f"ocr-trust-without-{crime}.pkl").write_bytes(b"")
+    assert bench.unseen(settings, crime).ocr_trust_model == str(
+        tmp_path / f"ocr-trust-without-{crime}.pkl"
     )
+    # A validation book, or a tuning book without trust data, was never trained on.
+    assert bench.unseen(settings, "de-eerlijke-vinder--ia-scan") == settings
+    assert bench.unseen(settings, "the-thief-takers-apprentice--ia-scan") == settings
+    assert bench.TRAINED_ON <= {s.split(":")[0] for s in bench.SETS["tuning"]}
 
 
 def test_each_book_weighs_the_same_whatever_its_pages():

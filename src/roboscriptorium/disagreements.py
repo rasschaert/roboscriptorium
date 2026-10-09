@@ -18,17 +18,18 @@ from pathlib import Path
 
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium.evaluate import normalise
+from roboscriptorium import ocr
+from roboscriptorium.evaluate import normalise, word_tokens
 from roboscriptorium.golden.reference import Chapter
 from roboscriptorium.ir import Document, SourceRef
+from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText
 
 CONTEXT_WORDS = 6
 # Differing stretches at most this many matching words apart are one disagreement.
 MERGE_GAP = 1
-WORD_LIST = Path("/usr/share/dict/words")
-# Characters a printed English book's text consists of.
-_PRINTABLE = re.compile(r"^[A-Za-zÀ-ÿœæŒÆ0-9 .,;:!?'\"—()\-&£]*$")
+# Characters a printed book's text consists of, after `normalise`.
+_PRINTABLE = re.compile(r"^[A-Za-zÀ-ÿœæŒÆ0-9 .,;:!?'\"—()\-&£€%/*]*$")
 
 # Verdict categories. The first group are pipeline mistakes (the reference is
 # right); the second are places where the scan really prints something else.
@@ -111,8 +112,10 @@ def reference_words(reference: list[Chapter]) -> list[str]:
     return [w for ch in reference for p in ch.paragraphs for w in normalise(p).split()]
 
 
-def vocabulary(reference: list[Chapter]) -> set[str]:
-    words = {w.lower() for w in WORD_LIST.read_text().split()} if WORD_LIST.exists() else set()
+def vocabulary(reference: list[Chapter], language: str) -> set[str]:
+    """The word list of the book's language (`language` as in book.toml), and the
+    reference's own words in lower case."""
+    words = set(Lexicon.load(ocr.language(language)).words)
     for ch in reference:
         for para in ch.paragraphs:
             words.update(w.lower() for w in re.findall(r"[^\W\d_]+", para))
@@ -120,15 +123,22 @@ def vocabulary(reference: list[Chapter]) -> set[str]:
 
 
 def garbled(text: str, vocab: set[str]) -> bool:
-    """Output that no printed page says: stray symbols, or a word not in the vocabulary."""
+    """Output that no printed page says: stray symbols, or a word not in the vocabulary.
+
+    Words are looked up as written or in lower case, accents and all: an accent the
+    print lacks ("dé" for "de") is a misreading here, not stress."""
     if not _PRINTABLE.match(text):
         return True
-    return any(w.lower() not in vocab for w in re.findall(r"[^\W\d_]+", text))
+    return any(w not in vocab and w.lower() not in vocab for w in re.findall(r"[^\W\d_]+", text))
 
 
 def _auto(got: str, want: str, vocab: set[str]) -> str | None:
     if got.replace(" ", "") == want.replace(" ", ""):
-        return "punctuation"
+        # Spaces only around punctuation are spacing; any other is where words break.
+        def tight(s: str) -> str:
+            return re.sub(r"\s*([^\w\s])\s*", r"\1", s)
+
+        return "punctuation" if tight(got) == tight(want) else "hyphen"
     if got and garbled(got, vocab):
         return "ocr"
     return None
@@ -151,10 +161,15 @@ def _spans(out: list[str], ref: list[str]) -> list[tuple[int, int, int, int]]:
     return [tuple(s) for s in spans]
 
 
-def find(doc: Document, reference: list[Chapter], pages: list[PageText]) -> list[Disagreement]:
+def find(
+    doc: Document, reference: list[Chapter], pages: list[PageText], language: str = "en"
+) -> list[Disagreement]:
+    """Where `doc` and `reference` differ. `pages` are the ones `doc`'s sources index
+    (`Stages.corrected`); `language` (book.toml's) picks the word list that settles
+    garbled output."""
     out, refs = _word_sources(doc, {p.number: p for p in pages})
     ref = reference_words(reference)
-    vocab = vocabulary(reference)
+    vocab = vocabulary(reference, language)
     found = []
     for s0, s1, d0, d1 in _spans(out, ref):
         before = ref[max(0, d0 - CONTEXT_WORDS) : d0]
@@ -220,24 +235,37 @@ def _find_sequence(words: list[str], seq: list[str]) -> int | None:
     return None
 
 
-def _printed(para: str) -> list[tuple[str, str]]:
-    """The paragraph's words, normalised and as printed."""
-    words, printed = normalise(para).split(), para.split()
-    return list(zip(words, printed if len(printed) == len(words) else words, strict=True))
+def _printed(
+    para: str, italic: frozenset[int]
+) -> list[tuple[str, tuple[str, ...], tuple[bool, ...]]]:
+    """The paragraph's words, normalised, each with its printed tokens and whether each
+    is italic. Where tokens and words don't line up, the normalised words stand in."""
+    words, tokens = normalise(para).split(), para.split()
+    groups = word_tokens(para)
+    if groups is None:
+        return [(w, (w,), (k in italic,)) for k, w in enumerate(words)]
+    return [
+        (w, tuple(tokens[k] for k in g), tuple(k in italic for k in g))
+        for w, g in zip(words, groups, strict=True)
+    ]
 
 
 def patch(reference: list[Chapter], verdicts: Verdicts) -> tuple[list[Chapter], int]:
     """The reference with each verdict's truth put in where the scan differs from it.
 
-    Returns the patched chapters and how many verdicts were applied.
+    Paragraphs no verdict touches are returned as they were. Returns the patched
+    chapters and how many verdicts were applied.
     """
-    # (chapter, paragraph, word, italic, printed) for every reference word, in order:
-    # verdicts match on the normalised word, the chapters keep the word as printed.
+    # (chapter, paragraph, word, printed tokens, italic per token) for every reference
+    # word, in order: verdicts match on the normalised word, the chapters keep the
+    # words as printed.
     flat = [
-        (c, p, w, k in (ch.italic[p] if p < len(ch.italic) else ()), printed)
+        (c, p, w, printed, italic)
         for c, ch in enumerate(reference)
         for p, para in enumerate(ch.paragraphs)
-        for k, (w, printed) in enumerate(_printed(para))
+        for w, printed, italic in _printed(
+            para, ch.italic[p] if p < len(ch.italic) else frozenset()
+        )
     ]
     # Each verdict's context is the unpatched reference's, so all are found before any
     # is applied: a verdict a few words from another still matches.
@@ -251,31 +279,32 @@ def patch(reference: list[Chapter], verdicts: Verdicts) -> tuple[list[Chapter], 
         if at is not None:
             found.append((at + len(before), len(want), v.truth.split()))
     applied = 0
+    touched: set[tuple[int, int]] = set()
     # Right to left, so each leaves the positions before it in place; a verdict
     # overlapping one already applied is skipped.
     taken = len(flat) + 1
     for start, size, truth in sorted(found, key=lambda f: (-f[0], -f[1])):
-        if start + size > taken:
+        if start + size > taken or not flat:
             continue
-        c, p, _, italic, _ = (
-            (flat[start] if size else flat[max(0, start - 1)]) if flat else (0, 0, "", False, "")
-        )
-        flat[start : start + size] = [(c, p, w, italic, w) for w in truth]
+        c, p, _, _, italic = flat[start] if size else flat[max(0, start - 1)]
+        touched |= {(cc, pp) for cc, pp, *_ in flat[start : start + size]} | {(c, p)}
+        flat[start : start + size] = [(c, p, w, (w,), (any(italic),)) for w in truth]
         taken = start
         applied += 1
 
+    rebuilt: dict[tuple[int, int], list[tuple[str, bool]]] = {}
+    for c, p, _, printed, italic in flat:
+        if (c, p) in touched:
+            rebuilt.setdefault((c, p), []).extend(zip(printed, italic, strict=True))
     chapters = []
     for c, ch in enumerate(reference):
-        paragraphs: dict[int, list[tuple[str, bool]]] = {}
-        for cc, p, _, italic, printed in flat:
-            if cc == c:
-                paragraphs.setdefault(p, []).append((printed, italic))
-        words = [ws for _, ws in sorted(paragraphs.items())]
-        chapters.append(
-            Chapter(
-                ch.heading,
-                [" ".join(w for w, _ in ws) for ws in words],
-                [frozenset(k for k, (_, italic) in enumerate(ws) if italic) for ws in words],
-            )
-        )
+        paragraphs, marks = [], []
+        for p, para in enumerate(ch.paragraphs):
+            if (c, p) not in touched:
+                paragraphs.append(para)
+                marks.append(ch.italic[p] if p < len(ch.italic) else frozenset())
+            elif tokens := rebuilt.get((c, p)):
+                paragraphs.append(" ".join(t for t, _ in tokens))
+                marks.append(frozenset(k for k, (_, i) in enumerate(tokens) if i))
+        chapters.append(Chapter(ch.heading, paragraphs, marks))
     return chapters, applied

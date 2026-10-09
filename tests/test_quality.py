@@ -15,8 +15,6 @@ def test_a_question_catches_errors_on_its_lines_only():
     assert quality.catches(_flag(5, 3, 4), _error(5, (4, 6)))
     assert not quality.catches(_flag(5, 3, 4), _error(5, (5, 6)))
     assert not quality.catches(_flag(6, 3, 4), _error(5, (4, 4)))
-    # Text the layer lacks: a region with no lines asks about it.
-    assert quality.catches(_flag(5, 2, 1), _error(5, None))
     assert not quality.catches(_flag(5, 2, 1), _error(5, (2, 2)))
 
 
@@ -57,3 +55,13 @@ def test_typesetting_choices_are_no_errors():
     from roboscriptorium.evaluate import normalise
 
     assert normalise("omdat…’ ‘De sheriff…’") == normalise("omdat...' 'De sheriff...'")
+
+
+def test_a_region_without_lines_catches_the_words_missing_where_it_sits():
+    missing = _flag(5, 5, 4, "missing-text")
+    # The words before and after the gap sit on the lines either side of the region.
+    assert quality.catches(missing, _error(5, (4, 5), got="", want="Hoofdstuk 1"))
+    assert quality.catches(missing, _error(5, (4, 4), got="", want="Hoofdstuk 1"))
+    assert not quality.catches(missing, _error(5, (1, 2), got="", want="Hoofdstuk 1"))
+    assert not quality.catches(missing, _error(5, (5, 6), got="", want="Hoofdstuk 1"))
+    assert not quality.catches(missing, _error(5, (4, 5)))

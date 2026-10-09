@@ -2,7 +2,8 @@
 
 An error is a stretch where the book's words differ from the golden reference
 (`disagreements.find`, after verdicts are patched in). A question is a review
-flag; it catches an error when it covers one of the error's lines. Paragraph
+flag; it catches an error when it covers one of the error's lines, or, as a region
+without lines, sits where the error's missing words go. Paragraph
 breaks and headings aren't counted here, only words.
 
 At a question budget (questions per page), the flags most likely to catch an
@@ -72,9 +73,13 @@ def size(error: Disagreement) -> int:
 def catches(flag: Flag, error: Disagreement) -> bool:
     if flag.page != error.page:
         return False
-    if error.lines is None or flag.last < flag.first:
-        # Text the layer lacks has no lines; neither has the region that asks for it.
-        return error.lines is None and flag.last < flag.first
+    if error.lines is None:
+        return False
+    if flag.last < flag.first:
+        # A region with no lines asks for text the layer lacks, between lines first - 1
+        # and first; the missing words sit between the words either side of them, whose
+        # lines may both be the one above it.
+        return not error.got and error.lines[0] < flag.first <= error.lines[1] + 1
     return flag.first <= error.lines[1] and error.lines[0] <= flag.last
 
 

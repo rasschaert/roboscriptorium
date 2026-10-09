@@ -32,3 +32,13 @@ def test_the_one_version_whose_words_are_known():
     assert WORDS.vouches(["rjen", "rijen"]) == 1
     assert WORDS.vouches(["lemand", "Iemand"]) == 1
     assert WORDS.vouches(["drijfhout.", "drijthout."]) == 0
+
+
+def test_curly_apostrophes_are_looked_up_as_the_list_writes_them():
+    english = Lexicon({"she'd", "shed", "gone", "home"})
+    assert english.knows("She’d")
+    assert english.vouches(["She’d gone home.", "Shed gone home."]) is None
+    assert Lexicon({"m'n", "moeder"}).knows("m’n")
+    # An unknown word stays unknown, apostrophe or not.
+    assert not english.knows("he’d")
+    assert english.vouches(["She’d gone home.", "Sh’ed gone home."]) == 0

@@ -33,7 +33,6 @@ from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden.manifest import Golden, PublisherEpub, fetch, sha256
 from roboscriptorium.golden.reference import Chapter, load_chapters
 from roboscriptorium.ir import Document
-from roboscriptorium.pdf import cached_text_layer
 
 app = typer.Typer(no_args_is_help=True, help="Turn books that aren't EPUBs into EPUBs.")
 
@@ -161,10 +160,17 @@ def golden_fetch(name: str, scan: str | None = None) -> None:
 
 
 def _range(value: str | None) -> tuple[int, int] | None:
+    """A range "7-45" or a single page "7"."""
     if value is None:
         return None
-    first, _, last = value.partition("-")
-    return int(first), int(last or first)
+    first, dash, last = value.replace("–", "-").partition("-")
+    try:
+        span = int(first), int(last if dash else first)
+    except ValueError:
+        raise typer.BadParameter(f"{value!r}: give a range like 7-45, or one number") from None
+    if span[0] > span[1]:
+        raise typer.BadParameter(f"{value!r}: the range runs backwards")
+    return span
 
 
 def _score_test() -> bool:
@@ -198,8 +204,8 @@ def _build_golden(
 def _scored(book: Book, stages: pipeline.Stages) -> Document:
     """The document as scored: without the scan's footnotes where the reference sets them apart."""
     found = golden_notes.load(Golden.load(book.golden).notes_path)
-    lines = golden_notes.note_lines(stages.pages, found) if found else set()
-    return golden_notes.without(stages.doc, lines, {p.number: p for p in stages.pages})
+    lines = golden_notes.note_lines(stages.corrected, found) if found else set()
+    return golden_notes.without(stages.doc, lines, {p.number: p for p in stages.corrected})
 
 
 def _verdicts(book: Book) -> Verdicts:
@@ -212,8 +218,10 @@ def review_regions(
     book_dir: Path,
     pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
     port: int = typer.Option(8765, help="Port on 127.0.0.1"),
+    score_test: bool = _score_test(),
 ) -> None:
     """Review the regions that aren't plain running text, next to the scan."""
+    _not_the_test_set(book_dir, score_test)
     book = Book.load(book_dir)
 
     def rebuild():
@@ -266,9 +274,9 @@ def review_disagreements(
 ) -> None:
     """Review where the output disagrees with the reference, next to the scan."""
     _not_the_test_set(book_dir, score_test)
-    book, _, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
-    text_layer = cached_text_layer(book.source, book.stages / "textlayer.json")
-    found = disagreements.find(doc, reference, text_layer)
+    book, stages, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
+    # The pages the paragraphs' line references point into: with added lines and answers.
+    found = disagreements.find(doc, reference, stages.corrected, book.language)
     verdicts = _verdicts(book)
     manual = [d for d in found if not d.auto]
     done = sum(d.key in verdicts.by_key for d in manual)
@@ -277,7 +285,7 @@ def review_disagreements(
         f"{len(manual)} to review ({done} already done)"
     )
     typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
-    review.serve(review.Review(book.source, text_layer, found, verdicts), port)
+    review.serve(review.Review(book.source, stages.corrected, found, verdicts), port)
 
 
 def _questions_and_errors(spec: str, settings: Settings | None = None):
@@ -304,7 +312,7 @@ def _questions_and_errors(spec: str, settings: Settings | None = None):
     if (span := _range(chapters or None)) is not None:
         reference = reference[span[0] - 1 : span[1]]
     reference, applied = disagreements.patch(reference, _verdicts(book))
-    errors = disagreements.find(_scored(book, stages), reference, stages.corrected)
+    errors = disagreements.find(_scored(book, stages), reference, stages.corrected, book.language)
     return Path(book_dir).name, book, stages, reference, errors, found, applied
 
 
@@ -318,9 +326,10 @@ def quality_report(specs: list[str], score_test: bool = _score_test()) -> None:
     Each book's questions are ranked by how often each kind of question caught an
     error in the other books given.
     """
-    books = []
     for spec in specs:
         _not_the_test_set(Path(spec.split(":")[0]), score_test)
+    books = []
+    for spec in specs:
         name, _, stages, _, errors, found, applied = _questions_and_errors(spec)
         numbers = [p.number for p in stages.pages if p.lines]
         typer.echo(
@@ -502,8 +511,8 @@ def _evaluate_book(
     book, stages, doc, reference = _build_golden(book_dir, pages, chapters, no_models, check_ocr)
     suspects = Counter(s.choice for s in stages.suspects)
     verdicts = _verdicts(book)
-    reference, applied = disagreements.patch(reference, verdicts)
-    result = evaluate.score(doc, reference)
+    patched, applied = disagreements.patch(reference, verdicts)
+    result = evaluate.score(doc, patched)
 
     typer.echo(
         f"CER {result.cer:.2%}   WER {result.wer:.2%}   paragraph F1 {result.paragraph_f1:.3f}"
@@ -532,10 +541,14 @@ def _evaluate_book(
             + ", ".join(f"{k} {o}/{r}" for k, (o, r) in folded.items())
         )
     if verdicts.by_key:
-        text_layer = cached_text_layer(book.source, book.stages / "textlayer.json")
+        # Found on the unpatched reference, as the golden review records its verdicts; a
+        # verdict that the scan prints the output settles its disagreement.
+        found = disagreements.find(doc, reference, stages.corrected, book.language)
         mistakes = Counter(
             verdicts.by_key[d.key].category if d.key in verdicts.by_key else d.auto or "unreviewed"
-            for d in disagreements.find(doc, reference, text_layer)
+            for d in found
+            if d.key not in verdicts.by_key
+            or evaluate.normalise(verdicts.by_key[d.key].truth or "") != d.got
         )
         typer.echo(
             f"  {applied} scan readings patched into the reference; remaining disagreements: "

@@ -1,5 +1,9 @@
-from roboscriptorium.disagreements import Disagreement, Verdicts, _spans, garbled, patch
+from roboscriptorium import disagreements, lexicon
+from roboscriptorium.disagreements import Disagreement, Verdicts, _auto, _spans, garbled, patch
 from roboscriptorium.golden.reference import Chapter
+from roboscriptorium.ir import Document, Paragraph, SourceRef
+from roboscriptorium.lexicon import Lexicon
+from roboscriptorium.pdf import Line, PageText
 
 
 def test_close_differences_merge_into_one():
@@ -9,10 +13,62 @@ def test_close_differences_merge_into_one():
 
 
 def test_garbled_output_needs_no_review():
-    vocab = {"nothing", "and", "their", "every", "thing"}
+    vocab = {"nothing", "and", "their", "every", "thing", "kost", "de"}
     assert garbled("nQthiri£,\\and", vocab)
     assert garbled("tlfat", vocab)
     assert not garbled("every thing", vocab)
+    # Symbols a printed page uses, in Dutch books too.
+    assert not garbled("kost € 5, 50% * /", vocab)
+    # An accent the word list lacks is a misreading.
+    assert garbled("dé", vocab)
+
+
+def test_differences_only_in_spacing_are_resolved_by_kind():
+    vocab: set[str] = set()
+    assert _auto("every thing:", "everything:", vocab) == "hyphen"
+    assert _auto("now !", "now!", vocab) == "punctuation"
+
+
+def _book(text: str) -> tuple[Document, list[PageText]]:
+    page = PageText(9, 300, 500, [Line(text, 20, 20, 280, 35)])
+    return Document("t", "a", "nl", [Paragraph(text, [SourceRef(9, 0)])]), [page]
+
+
+def test_auto_resolution_uses_the_books_language(monkeypatch):
+    lists = {"nld": {"hij", "had", "gelopen"}, "eng": {"he", "had"}}
+    monkeypatch.setattr(lexicon.Lexicon, "load", lambda lang: Lexicon(lists[lang]))
+    doc, pages = _book("Hij had gelopen")
+    reference = [Chapter("1", ["Hij had geloopen"])]
+    (found,) = disagreements.find(doc, reference, pages, language="nl")
+    assert found.auto is None
+    (found,) = disagreements.find(doc, reference, pages, language="en")
+    assert found.auto == "ocr"
+
+
+def test_dutch_low_quotes_are_folded_as_quotes(monkeypatch):
+    monkeypatch.setattr(lexicon.Lexicon, "load", lambda lang: Lexicon({"ja"}))
+    doc, pages = _book("„Ja”, zei")
+    (found,) = disagreements.find(doc, [Chapter("1", ["“Ja”, zegt"])], pages, language="nl")
+    assert found.got == "zei"
+
+
+def test_patch_leaves_paragraphs_without_verdicts_as_they_were(tmp_path):
+    reference = [Chapter("1", ["Wait . . . what now", "Then\u00a0. . . go"], [frozenset({4})])]
+    patched, applied = patch(reference, Verdicts(tmp_path / "v.jsonl"))
+    assert applied == 0
+    assert patched[0].paragraphs == reference[0].paragraphs
+    assert patched[0].italic[0] == frozenset({4})
+
+
+def test_patch_maps_printed_words_through_spaced_dots(tmp_path):
+    reference = [Chapter("1", ["Wait . . . what now", "Next."], [frozenset({4})])]
+    verdicts = Verdicts(tmp_path / "v.jsonl")
+    d = Disagreement("k", "what", "what", "Wait ...", "now Next.", 7, (1, 1))
+    verdicts.record(d, "who", "edition")
+    patched, applied = patch(reference, verdicts)
+    assert applied == 1
+    assert patched[0].paragraphs == ["Wait . . . who now", "Next."]
+    assert patched[0].italic == [frozenset({4}), frozenset()]
 
 
 def test_patch_puts_the_scan_reading_into_the_reference(tmp_path):

@@ -3,7 +3,7 @@
 Metrics:
 - CER: character edits per reference character, after folding typography the
   EPUB is free to choose (quote and dash glyphs, an ellipsis glyph or spaced
-  dots, word joiners, whitespace). `folded_reference` and `folded_output` count
+  dots, word joiners, soft hyphens, whitespace). `folded_reference` and `folded_output` count
   each kind on each side: what the fold forgave, so a pair whose EPUB and scan
   differ in convention shows it instead of hiding it.
 - WER: word edits per reference word, comparing lowercase letters and digits only,
@@ -33,33 +33,60 @@ _FOLD = str.maketrans(
         "’": "'",
         "“": '"',
         "”": '"',
-        "⁠": None,
-        "﻿": None,
-        " ": " ",
+        "„": '"',
+        "\u2060": None,
+        "\ufeff": None,
+        "\u00ad": None,
         "–": "—",
         "―": "—",
         "…": "...",
     }
 )
 _SPACED_DOTS = re.compile(r"\.(?: \.){2,}")
-# What `normalise` folds, by kind, for counting.
+# What `normalise` folds, by kind, for counting. Ellipses are counted first and taken
+# out, so the spaces inside spaced dots count as the ellipsis.
+_ELLIPSES = re.compile(r"…|\.(?:\s\.){2,}")
 _FOLD_KINDS = {
-    "quotes": re.compile("[‘’“”]"),
+    "quotes": re.compile("[‘’“”„]"),
     "dashes": re.compile("[–―]"),
-    "ellipses": re.compile(r"…|\.(?: \.){2,}"),
-    "spaces": re.compile("[\u2060\ufeff\u00a0]"),
+    "spaces": re.compile("[\u2060\ufeff\u00a0\u202f\u2009]"),
+    "soft hyphens": re.compile("\u00ad"),
 }
 
 
 def normalise(text: str) -> str:
     text = unicodedata.normalize("NFC", text).translate(_FOLD)
-    text = _SPACED_DOTS.sub(lambda m: m.group(0).replace(" ", ""), text)
-    return re.sub(r"\s+", " ", text).strip()
+    text = re.sub(r"\s+", " ", text)
+    return _SPACED_DOTS.sub(lambda m: m.group(0).replace(" ", ""), text).strip()
 
 
 def folds(texts: list[str]) -> dict[str, int]:
     """How often each kind of typography `normalise` folds occurs in `texts`."""
-    return {kind: sum(len(rx.findall(t)) for t in texts) for kind, rx in _FOLD_KINDS.items()}
+    out = {"ellipses": sum(len(_ELLIPSES.findall(t)) for t in texts)}
+    rest = [_ELLIPSES.sub("", t) for t in texts]
+    for kind, rx in _FOLD_KINDS.items():
+        out[kind] = sum(len(rx.findall(t)) for t in rest)
+    return out
+
+
+def word_tokens(text: str) -> list[range] | None:
+    """Per word of `normalise(text)`, the indices of the `text.split()` tokens it comes
+    from (". . ." is three tokens and one word); None where they don't line up."""
+    tokens = text.split()
+    out, k = [], 0
+    for word in normalise(text).split():
+        start, joined = k, ""
+        while k < len(tokens) and joined != word:
+            joined += normalise(tokens[k])
+            k += 1
+            if not word.startswith(joined):
+                return None
+        if joined != word:
+            return None
+        out.append(range(start, k))
+    while k < len(tokens) and not normalise(tokens[k]):
+        k += 1
+    return out if k == len(tokens) else None
 
 
 def _bare_words(text: str) -> list[str]:
@@ -104,23 +131,27 @@ def _words_with_breaks(paragraphs: list[str]) -> tuple[list[str], set[int]]:
 def _italic_words(paragraphs: list[str], marks: list) -> set[int]:
     """Indices into `_words_with_breaks`' words of the italic ones.
 
-    `marks` index each paragraph's `split()`; a paragraph whose word count
-    normalising changes is left out.
+    `marks` index each paragraph's `split()`; a word is italic when one of its tokens
+    is (`word_tokens`). A paragraph whose tokens don't line up with its words is left out.
     """
     out, offset = set(), 0
     for para, italic in zip(paragraphs, marks, strict=True):
-        n = len(normalise(para).split())
-        if n == len(para.split()):
-            out |= {offset + k for k in italic}
-        offset += n
+        groups = word_tokens(para)
+        if groups is not None:
+            out |= {offset + w for w, group in enumerate(groups) if any(k in italic for k in group)}
+        offset += len(normalise(para).split())
     return out
 
 
 def _heading_key(text: str) -> str:
-    return re.sub(r"[^A-Z0-9]", "", normalise(text).upper())
+    """Letters and digits, upper case, accents dropped ("Één" is "EEN")."""
+    decomposed = unicodedata.normalize("NFKD", normalise(text).upper())
+    return "".join(c for c in decomposed if c.isalnum())
 
 
 def _same_heading(a: str, b: str) -> bool:
+    if not a or not b:
+        return False
     if a == b:
         return True
     short, long = sorted((a, b), key=len)
@@ -151,6 +182,8 @@ def match_headings(found: list[str], expected: list[str]) -> int:
 
 def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     ref_words, ref_starts = _words_with_breaks([p for ch in reference for p in ch.paragraphs])
+    if not ref_words:
+        raise ValueError("the reference has no text")
     out_words, out_starts = _words_with_breaks([b.text for b in doc.paragraphs])
 
     # Align on words, then count character edits inside the differing stretches.
@@ -165,8 +198,6 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         want = " ".join(ref_words[op.dest_start : op.dest_end])
         char_edits += Levenshtein.distance(got, want) + (op.tag == "insert") + (op.tag == "delete")
         confusions[(got, want)] += 1
-    if not ref_words:
-        raise ValueError("the reference has no text")
     ref_chars = sum(len(w) + 1 for w in ref_words)
     matched = match_headings([h.text for h in doc.headings], [ch.heading for ch in reference])
 

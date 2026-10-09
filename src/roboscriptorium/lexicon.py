@@ -40,9 +40,12 @@ class Lexicon:
         """Whether the word is in the list, as written, lowercase or capitalised.
 
         Acute accents on a known word set stress (míj, háár), so they don't make it unknown.
+        The list writes most apostrophes straight (she'd, m'n), so a curly one is also
+        looked up straight.
         """
-        plain = _without_acutes(word)
-        return any(w in self.words for v in (word, plain) for w in (v, v.lower(), v.capitalize()))
+        forms = {word, _without_acutes(word)}
+        forms |= {f.translate(_STRAIGHT) for f in forms}
+        return any(w in self.words for v in forms for w in (v, v.lower(), v.capitalize()))
 
     def vouches(self, versions: list[str], continues: bool = False) -> int | None:
         """The one version whose words are all known, or None.
@@ -55,17 +58,15 @@ class Lexicon:
         """
         if len({re.sub(r"\s", "", v.translate(_STRAIGHT)) for v in versions}) == 1:
             return None
-        verdicts = [self._judge(v, continues) for v in versions]
-        good = [i for i, v in enumerate(verdicts) if v is True]
-        if len(good) == 1 and all(v is False for i, v in enumerate(verdicts) if i != good[0]):
+        known = [self.verdict(v, continues) for v in versions]
+        good = [i for i, v in enumerate(known) if v is True]
+        if len(good) == 1 and all(v is False for i, v in enumerate(known) if i != good[0]):
             return good[0]
         return None
 
     def verdict(self, version: str, continues: bool = False) -> bool | None:
-        return self._judge(version, continues)
-
-    def _judge(self, version: str, continues: bool) -> bool | None:
-        """True when every judged word is known, False when one isn't, None when none is judged."""
+        """True when every judged word is known, False when one isn't, None when none is
+        judged (`vouches` says which words are judged)."""
         tokens = _TOKEN.findall(version)
         if continues and tokens and version.lstrip()[:1].isalnum():
             tokens = tokens[1:]

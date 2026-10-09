@@ -53,6 +53,10 @@ SETS = {
     ],
 }
 TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
+# Tuning books with no trust data (`experiments/ocr_trust_data.py`'s SPECS lacks them):
+# the trust model never trains on them, so they are scored with the full model.
+NO_TRUST_DATA = frozenset({"the-thief-takers-apprentice--ia-scan"})
+TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST_DATA
 
 # Per-page counts compared between runs: (name, index into a page's counts). "After
 # review" is the unasked plus the reviewer's expected slips per question, at the mean
@@ -68,8 +72,10 @@ PAIRED = (
 # The one test that decides a change: "after review" over the set, each book weighing
 # the same, at each slip rate.
 PRIMARY = ("after review", "after review, few slips", "after review, many slips")
-# A book vetoes a change only when it gets worse by at least this much per page with
-# 99% confidence: six books at 95% would veto about one change in seven that helps all.
+# A book vetoes a change when its "after review" gets worse by at least VETO_MIN per
+# page on the mean and its 99% interval of the difference lies above zero. Eleven
+# tuning books at 95% would veto about one change in four that leaves them all as
+# they were; at 99%, about one in nineteen.
 VETO_LEVEL = 0.99
 VETO_MIN = 0.05
 
@@ -90,9 +96,22 @@ class Change:
 
 def unseen(settings: Settings, book: str) -> Settings:
     """The settings to score `book` with: each learned model's copy trained without it,
-    where there is one, so a tuning book isn't scored by a model that saw its labels."""
+    so a tuning book isn't scored by a model that saw its labels.
+
+    The trust model trains on the tuning books with trust data (`TRAINED_ON`,
+    `train_ocr_trust.py --save`), so one of them without its copy is refused; any other
+    book is scored with the full model."""
+    if not settings.ocr_trust:
+        return settings
     path = trust.without(Path(settings.ocr_trust_model), book)
-    return replace(settings, ocr_trust_model=str(path)) if path.exists() else settings
+    if path.exists():
+        return replace(settings, ocr_trust_model=str(path))
+    if book in TRAINED_ON:
+        raise FileNotFoundError(
+            f"{path} is missing: {book} is a tuning book, which the trust model trains on "
+            "(experiments/train_ocr_trust.py --save writes it)"
+        )
+    return settings
 
 
 def page_counts(
@@ -168,7 +187,7 @@ class Verdict:
 def verdict(old: dict, new: dict) -> Verdict:
     """Whether the new run is better: "after review", each book weighing the same, must
     improve at every slip rate, and no book may clearly get worse (`VETO_LEVEL`,
-    `VETO_MIN`)."""
+    `VETO_MIN` on the mean)."""
     shared = [n for n in new["books"] if n in old["books"]]
     index = dict(PAIRED)
     primary = [
