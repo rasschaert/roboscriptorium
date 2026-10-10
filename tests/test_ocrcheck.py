@@ -192,6 +192,8 @@ def test_tesseract_text_where_a_word_table_was_asked_for_is_an_error(monkeypatch
 
 
 class _WordsPage:
+    rotation = 0
+
     def __init__(self, words):
         self.words = words
 
@@ -557,3 +559,19 @@ def test_the_word_list_judges_a_break_as_its_vote_reads_it():
     read_as = [ocrcheck.across(v, joined) for v in versions]
     # "dank-" alone is a cut word the list doesn't judge; read across the break it is known.
     assert ocrcheck.known_versions(words, read_as, False) == (True, False)
+
+
+def test_a_rotated_pages_text_boxes_are_where_the_page_shows_them(tmp_path):
+    import numpy as np
+
+    doc = pymupdf.open()
+    page = doc.new_page(width=300, height=500)
+    page.set_rotation(90)  # a scan stored sideways, shown upright
+    page.insert_text(pymupdf.Point(100, 50) * page.derotation_matrix, "Hello world", rotate=90)
+    doc.save(tmp_path / "rotated.pdf")
+    (layer,) = pdf.read_text_layer(tmp_path / "rotated.pdf")
+    (line,) = layer.lines
+    assert (layer.width, layer.height) == (500, 300) and line.x1 - line.x0 > line.y1 - line.y0
+    with pymupdf.open(tmp_path / "rotated.pdf") as shown:
+        crop = shown[0].get_pixmap(clip=pymupdf.Rect(line.x0, line.y0, line.x1, line.y1))
+    assert (np.frombuffer(crop.samples, dtype=np.uint8) < 128).sum() > 50

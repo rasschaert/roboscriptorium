@@ -34,7 +34,7 @@ from roboscriptorium.clients.retry import patiently
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
-from roboscriptorium.pdf import PageText, line_words, spells
+from roboscriptorium.pdf import PageText, line_words, page_words, spells
 from roboscriptorium.reflow import HYPHENS
 from roboscriptorium.roles import DecisionCache
 
@@ -328,7 +328,7 @@ def line_boxes(pdf_page: pymupdf.Page, page: PageText) -> list[tuple[float, floa
     Some OCR layers give lines boxes far taller than the print.
     """
     out = []
-    for line, words in zip(page.lines, line_words(pdf_page.get_text("words"), page), strict=True):
+    for line, words in zip(page.lines, line_words(page_words(pdf_page), page), strict=True):
         if words and spells(words, line.text):
             out.append(_union(words))
         else:
@@ -489,7 +489,7 @@ def check(
     with pymupdf.open(pdf) as doc:
         for page in pages:
             pdf_page = doc[page.number - 1]
-            words = line_words(pdf_page.get_text("words"), page)
+            words = line_words(page_words(pdf_page), page)
             boxes = line_boxes(pdf_page, page)
             for k, line in enumerate(page.lines):
                 ours = line.text

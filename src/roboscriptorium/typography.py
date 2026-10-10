@@ -28,6 +28,7 @@ import pymupdf
 
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import Block, Paragraph
+from roboscriptorium.pdf import page_words
 
 VERSION = 1
 DPI = 300
@@ -80,7 +81,7 @@ def guess(pdf_path, numbers: list[int], cache) -> Guess | None:
             if len(found) >= ENOUGH:
                 break
             page = pdf[n - 1]
-            words = page.get_text("words")
+            words = page_words(page)
             for w in words:
                 if _is_dash(w[4]) or any(c in DASHES for c in w[4]) or "--" in w[4]:
                     line = [v for v in words if v[5] == w[5] and v[6] == w[6]]

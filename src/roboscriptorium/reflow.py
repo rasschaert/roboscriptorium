@@ -295,9 +295,7 @@ def reflow(
             role = _role(roles, SourceRef(page.number, index))
             # The IR points at the line's index on the page before answers, also on a
             # corrected copy (`Line.source`).
-            ref = SourceRef(
-                page.number, index if line.source is None else line.source, line.typed
-            )
+            ref = SourceRef(page.number, index if line.source is None else line.source, line.typed)
             if role == "body":
                 kept.append((ref, line))
                 continue

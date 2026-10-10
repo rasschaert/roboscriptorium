@@ -136,6 +136,31 @@ def _holds(line, cx: float, cy: float) -> bool:
     return line.x0 - 3 <= cx <= line.x1 + 3 and line.y0 - 2 <= cy <= line.y1 + 2
 
 
+def _shown(page: pymupdf.Page, box) -> tuple[float, float, float, float]:
+    """A text-layer box as the page is shown: PyMuPDF gives text boxes before a page's
+    /Rotate, but its page size and crops after it."""
+    if not page.rotation:
+        return tuple(box)
+    return tuple(pymupdf.Rect(box) * page.rotation_matrix)
+
+
+def page_words(page: pymupdf.Page) -> list[tuple]:
+    """`page.get_text("words")`, each box as the page is shown (`_shown`)."""
+    return [(*_shown(page, w[:4]), *w[4:]) for w in page.get_text("words")]
+
+
+def _text_dict(page: pymupdf.Page) -> dict:
+    """`page.get_text("dict")`, its lines' and spans' boxes as the page is shown."""
+    found = page.get_text("dict")
+    if page.rotation:
+        for block in found["blocks"]:
+            for line in block.get("lines", []):
+                line["bbox"] = _shown(page, line["bbox"])
+                for span in line["spans"]:
+                    span["bbox"] = _shown(page, span["bbox"])
+    return found
+
+
 def _core(line: dict) -> tuple[float, float]:
     """A text-layer line's vertical span, leaving out a large initial it opens with."""
     spans = [s for s in line["spans"] if s["text"].strip()]
@@ -154,7 +179,7 @@ def read_text_layer(pdf: Path, lang: str | None = None) -> list[PageText]:
     with pymupdf.open(pdf) as doc:
         for index, page in enumerate(doc):
             fragments, cores = [], []
-            for block in page.get_text("dict")["blocks"]:
+            for block in _text_dict(page)["blocks"]:
                 for line in block.get("lines", []):
                     text = "".join(span["text"] for span in line["spans"]).strip()
                     if text:
@@ -206,7 +231,7 @@ def _private_ligatures(doc: pymupdf.Document) -> dict[str, str]:
     """
     votes: dict[str, Counter] = defaultdict(Counter)
     for page in doc:
-        for x0, y0, x1, y1, word, *_ in page.get_text("words"):
+        for x0, y0, x1, y1, word, *_ in page_words(page):
             glyphs = [c for c in word if _private(c)]
             if len(glyphs) != 1:
                 continue

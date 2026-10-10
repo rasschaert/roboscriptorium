@@ -23,7 +23,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import Block, Paragraph, SourceRef
-from roboscriptorium.pdf import PageText, line_words, lines_digest, spells
+from roboscriptorium.pdf import PageText, line_words, lines_digest, page_words, spells
 
 VERSION = 8
 DPI = 300
@@ -103,7 +103,7 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:
     threshold = ink_threshold(img)
     out = {}
     for k, (line, words) in enumerate(
-        zip(page.lines, line_words(pdf_page.get_text("words"), page), strict=True)
+        zip(page.lines, line_words(page_words(pdf_page), page), strict=True)
     ):
         if not words or not spells(words, line.text):
             continue
