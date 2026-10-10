@@ -1,21 +1,158 @@
 # Checklist
 
-The plan, step by step, in the order it runs: what is done, what is left, who does
-it and how long it takes. Every step is the machine's unless it says **user**. A
-time is an estimate until the run is timed through `experiments/timed.sh`
-([run-times.md](run-times.md)); then the measured time replaces it. A dropped step
-stays, struck through, with why. Updated in the same change that ticks, adds or
-drops a step.
+The plan: what is left, in the order it runs, with who does it and how long it takes;
+below it, everything done or dropped, by area, as a record. Every step is the machine's
+unless it says **user**. A time is an estimate until the run is timed through
+`experiments/timed.sh` ([run-times.md](run-times.md)); then the measured time replaces
+it. A dropped step stays, struck through, with why. Updated in the same change that
+ticks, adds or drops a step: a step done moves to the record.
 
-**The plan now:** make measurement trustworthy, then let the bench decide whether
-two unmeasured changes to the OCR check stay: the third reading (Qwen, told the
-book's style) and reading short lines too (Goede dochter: +18 suspects, ~3 real
-errors). Both are in the build until the bench in 3 decides. First the trust data
-for every tuning and validation book (section 2's queue, three at a time, Qwen read
-through OpenRouter with the user's go; clef stays local, its hosted builds failed 3b's
-test); the faster readers tried in 3b didn't beat Qwen.
+## Where we are (2026-10-10)
 
-## 1. Measurement that can be trusted
+The bench can be trusted (paired, leave-one-book-out, the reviewer's slips counted) and
+measures the build that is run: every reader and judge local, Qwen included. After
+review, tuning 0.56 and validation 0.79 wrong words a page; Stella's kind of book 0.2–0.35.
+What [outlook.md](outlook.md) ranks as the room left: structure (line roles, breaks,
+headings), the errors no question asks about, and the reviewer's time.
+
+**The plan now:** more training data (longer slices tonight, whole books next), settle the
+line-role trees, then **Stella end to end with the user's review**, the target book.
+After it, the open areas below in order, and the test set scored once at the end.
+
+## Running now
+
+- [ ] Longer slices, each ending on a chapter (the user's go, 2026-10-09; `robo-next`, in
+      the `next` worktree, started 08:50): Goede dochter 9–162 (done, 2 h), Reis whole,
+      De cipier 9–174, Metro 7–162, De tuin 11–122 (validation): ~446 new pages, Qwen local,
+      ~9 h; then the arbiter and the trees retrained and both benches, rules and trees.
+      Done ~19:00–19:30. After it: record the verdicts, merge the worktree's run-times
+      rows, remove the worktree
+
+## 1. Right after the chain (~1 h)
+
+- [ ] Line roles by trees on by default if their bench holds (last run: tuning 0.56 →
+      0.52, validation 0.77 → 0.70, no change; 11/22/63 and Artemis better, Crime worse).
+      Look at Crime p. 97 and De cipier p. 49 first (last lines dropped)
+- [ ] De tuin, if it still loses after the retrain: the four questions no longer asked on
+      pp. 15, 23, 43 and 46 (local re-read, 0.77 → 0.85), what the arbiter gave them
+- [ ] `ROBO_OCR_ASK_BELOW` at 0.7, 0.8 and 0.9 on the retrained arbiter (warm, ~2 min
+      each); **user** weighs questions against wrong words
+
+## 2. More training data (~22 h, two nights)
+
+- [ ] Thief-Taker's suspects in the trust data, pp. 11–84: a tuning book the arbiter has
+      never trained on. ~1.4 h cold; first in the queue below
+- [ ] The five books whole (the user's go): Goede dochter, Reis (done tonight), De cipier,
+      Metro, De tuin. ~1,200 pages, ~20 h; arbiter and trees retrained, both benches
+
+## 3. Stella, the target book
+
+- [ ] **user** Agree what "done" means (outlook's proposal: under 0.3 wrong words a page
+      after review, under 1 question a page, headings and paragraphs right, epubcheck
+      clean). 5 min
+- [ ] Build Stella with today's build (cold for the new crops and readings, ~1 h for 67
+      pages); sample the questions before sending the reviewer (never obvious ones)
+- [ ] **user** Review Stella: its 68 old answers stand, so only new questions; ~30–60
+      at today's rate, ~30 min
+- [ ] Rebuild, epubcheck, and **user** reads the EPUB through: what the bench can't see
+      (layout, italics, front matter)
+
+## 4. The reviewer's time
+
+- [ ] The book teaches itself: after the answers, a per-book posterior per substitution
+      pair rescores the unasked suspects; on the review page, one question per pattern
+      (every `|` read as I) applied to all. Simulated: silent errors at .25/.5/1 a page
+      over nine books 50/31/11 → 47/30/11. ~half a day, then `bench`
+- [ ] The 15 line-end hyphens reflow still gets wrong, as a question on English books
+      only (a break the word list is silent on whose parts are both words: 13 right, 3
+      wrong; 0 against 44 on Dutch). ~2 h
+- [ ] A typed answer checked against Qwen's cached reading of the line where the question
+      had no readings (headings, missing text). ~1 h
+
+## 5. Errors no question asks about
+
+- [ ] De eerlijke vinder's 1.02 unasked a page, the most of any ordinary book (words 26,
+      letters 21, extra words 18): find where they come from. ~1 h, no models
+- [ ] Bad pages by the readers' disagreement: a page whose suspects per line far exceed
+      the book's (Afscheid p. 20: 50 against ~8) flagged, and as an arbiter feature.
+      ~2 h, then `bench`
+- [ ] A reader of the finished text, for errors every reading shares or reflow makes:
+      a stronger proposer (Qwen3.8 thinking, or gemma4:26b) with clef as the filter, on
+      Goede dochter's and Metro's built text. Guards: it only asks, in closed kinds; told
+      the text is a transcription; measured silent on a counterexample set first (You're
+      Never Weird's play on spelling, fragments, foreign words). The first probe found
+      ~4 real errors among 56 flags; clef's filter kept both clear catches and dropped 31
+      of 37 urges. ~2 h probe; a stage only if `bench` says so
+
+## 6. Structure
+
+- [ ] Score scene breaks: derive keeps a reference's blank-line paragraphs and ornaments
+      as a break mark, counted like paragraph breaks. ~2 h
+- [ ] Footnotes into the EPUB as notes, out of the running text: Reis has them and the
+      test set has 26, now only left out of the score (`notes.txt`). Before the test set;
+      ~half a day
+- [ ] De eerlijke vinder's part numerals I–IV (0/4): read from the drawing
+- [ ] You're Never Weird's headings (5/16: bracketed sections, "- 1 -" numbers) and p. 47's
+      picture text read into the body
+- [ ] Dolittle's captions scored: derive them into the reference, or leave caption lines
+      out of the score as footnotes are
+
+## 7. Better pixels: Internet Archive's own files
+
+Public on public-domain items only (Crime, Dolittle); private on lending-library items.
+
+- [ ] Readers on the page images (`experiments/probe_ia_images.py`, ~15 min): reader set
+      v1's Crime and Dolittle lines cut from the JP2s, read by Qwen and glm-ocr. A win
+      makes the JP2s the image source where a book has them
+- [ ] ABBYY's letter confidence as an arbiter feature: first check the PDF's layer is
+      ABBYY's reading, then does a low one separate the real errors? ~1 h, no models
+- [ ] `_scandata.xml` page types as labels for page classification (public on every IA
+      item). ~30 min
+- [ ] **user** Whether a borrowed item's `_jp2.zip` can be downloaded while on loan
+
+## 8. Beyond the golden books' kind
+
+- [ ] Page classification, so `body_pages` needn't be set in book.toml: the page-type
+      models so far miss the same pages (prefaces, blanks at the edges); start from 7's
+      scandata labels
+- [ ] An image-only scan through the whole pipeline (Goede dochter with its layer removed:
+      tesseract 0.35% CER against the layer's 0.20%): does the OCR check close the gap?
+      ~1 h cold. Then italics from tesseract's word boxes
+
+## 9. Golden books and housekeeping
+
+- [ ] **user** More golden pairs: modern English Scribe scans with the publisher's EPUB of
+      the same printing, and a second Dutch validation scan (validation has two; one more
+      would let De tuin train)
+- [ ] **user** Settle verdicts on the tuning books (`golden review`), the disagreements
+      the arbiter's labels sit on first: hours, spread out, whenever convenient
+- [ ] The pair prior's own ablation (an empty table, retrained, both benches): it shipped
+      inside the arbiter unbenched on its own. ~20 min
+- [ ] Training code for shipped models (trust, trees) into the package, with a
+      feature-count test
+
+## 10. At the end
+
+- [ ] Score the test set once: `bench test --score-test`
+
+## Later
+
+- [ ] Qwen on fewer lines (quote marks, disagreements), for speed: whole books run
+      overnight, so only if cold runs become the bottleneck
+- [ ] MiniCPM-V 4.6 as a faster reader: the readers already cover nearly every line, so
+      it pays only by speed
+- [ ] Surya's layout model as a second spotter: screen it on the drawn numerals
+      DocLayout-YOLO misses and the figure pages
+- [ ] Block quotes, epigraphs and verse: find golden pages that have them first
+- [ ] Per-book image tuning for pale or tinted scans: null on normal pages so far
+- [ ] Het Kindeken Jezus as a golden book, only if 7's image probe looks
+      language-dependent
+- [ ] `golden check <pdf> <epub>` writing a draft manifest, once a batch of candidates comes
+- [ ] ~~Proofreading answers with Qwen~~ merged into 4's check of typed answers
+
+# Record: done and dropped
+
+### 1. Measurement that can be trusted
 
 - [x] A missing or stale trust model stops the build (`trust.Mismatch`): no silent
       fallback to the fixed rule.
@@ -36,7 +173,7 @@ test); the faster readers tried in 3b didn't beat Qwen.
 - [x] Long runs timed (`experiments/timed.sh`, `docs/run-times.md`): an estimate
       before a run starts.
 
-## 2. Trust data rebuilt with the third reading and short lines
+### 2. Trust data rebuilt with the third reading and short lines
 
 One book per run, `experiments/ocr_trust_data.py --rebuild <book>`, on the fixed
 rule. About 1.1 min per page cold (Dolittle; Crime and Vals alarm ran at 0.8; Metro
@@ -58,12 +195,6 @@ short lines. Qwen's reading of every line is 70–75% of a cold run (3b).
 - [x] Metro 2033, pp. 7–111: 156 min cold, partly in Low Power Mode (917 suspects, 801
       settled, layer wrong on 204; clef right on 92%, winnow 38%)
 - [x] Metro relabelled the same way: under a minute (settled 852 → 801)
-
-The queue, in run order, before the baseline in 3 so the baseline includes every book.
-Local and hosted Qwen proved interchangeable (3b) and the user said go: Qwen reads
-through OpenRouter and three books run side by side (the GPU still does glm-ocr and
-clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted reading left):
-
 - [x] Artemis, pp. 13–80: 63 min, Qwen via hosted, beside other runs (317 suspects, 273
       settled, layer wrong on 207: its `|` for I; clef right on 87%, winnow 83%)
 - [x] 11/22/63, pp. 15–94: 14 + 35 + 46 min over three runs (Ollama stalls), Qwen via
@@ -89,7 +220,7 @@ clef for each, so ~1.3–1.5× rather than 3×; ~$1.40 for all the hosted readin
       Qwen via hosted. 317 suspects, 283 with a clear label, layer wrong on 87 (lost
       apostrophes, `Fie` for "He", missing spaces, real-word slips); clef right on 268
 
-## 2b. New golden pairs (Fable's session, ended; its steps are this session's now)
+### 2b. New golden pairs (Fable's session, ended; its steps are this session's now)
 
 Placed under `work/` like the others: the scans in `work/<book>--ia-scan/source.pdf`,
 the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
@@ -113,16 +244,10 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       place (another printing than its EPUB; 9 of 16 reference headings not on the scan)
 - [x] You're Never Weird on the Internet (Touchstone 2015, 5th printing, against the
       edition's ebook): validation, pp. 13–94 (sections 1–16), the only English one
-- [ ] Dolittle's captions scored properly: derive them into the reference, or leave
-      caption lines out of the score as footnotes are
 - [x] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
       (`golden/signals.py`: layer CER and unplaced body lines, a suspect named)
-- [ ] `golden check <pdf> <epub>`, writing a draft manifest: worth it once a batch
-      of candidates comes
-- [ ] **user** Hunt for modern English Scribe scans with the publisher's EPUB of the
-      same printing (two more unblock the line-role classifier in 6)
 
-## 3. Baseline, retrain, bench, decide
+### 3. Baseline, retrain, bench, decide
 
 - [x] Baseline bench on the fixed rule (`ROBO_OCR_TRUST=0 … bench`): 32 min warm
 - [x] Retrain trust and compare with the before-Qwen data: silent errors at 0/.25/.5/1
@@ -175,7 +300,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       was all but unsure (confidence 0.02 and 0.1); the median confidence moved 0.001.
       Cached answers stand for fresh ones
 
-## 3b. A faster line reader (Qwen is 70–75% of a cold run)
+### 3b. A faster line reader (Qwen is 70–75% of a cold run)
 
 - [x] Where the time goes, from the stage caches' times: Qwen 70–75%, clef's judging
       20–25%, everything else ~15–20 min per 100 pages
@@ -201,9 +326,6 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       it), confirmed on Metro before the switch; better but not faster: noted; faster but
       worse: out. Every candidate also goes through the crossover on Metro
 - [ ] ~~winnow:12b as the second judge~~ dropped: Ollaya, its only server, was uninstalled
-- [ ] MiniCPM-V 4.6 (May 2026, 1.3B, `minicpm-v4.6`), the last small candidate: after the
-      baseline. A new reader only pays off by speed, since the current ones already
-      cover nearly every line
 - [x] The two failed MoE models take 39 GB: **user** said remove them; deleted (2026-10-09)
 - [x] Hosted Qwen3.8 bf16 on Metro pp. 7–30 (the user's go): the same as local on 97% of
       lines, 935 exact against 934, 14× faster; reads beyond its line on 7 of 958 (local 1)
@@ -255,37 +377,17 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
         0–2%. But the readers read no better from it: glm-ocr exact on Metro 830 (box) →
         817 (ink), on 11/22/63 619 → 621; Crime's check read both ways, Qwen 774 → 752
         with the ink crop. Neither slivers nor cut tips trouble a reader; the next line did
-  - [ ] A reading far longer or shorter than its line counting as no reading, if readers
-        still stray after the fix: measured by `bench`
-- [ ] Qwen on fewer lines (dialogue, quote marks, disagreements) or smaller crops:
-      after the baseline bench, each measured by it
+  - [ ] ~~A reading far longer or shorter than its line counting as no reading~~ dropped
+        (2026-10-10): after the crop fix readers stray on 1 line in 958, and a version the
+        vision judge saw none of is never applied (6g)
 
-## 3c. A reader of the finished text
+### 3c. A reader of the finished text
 
 Every check so far starts where the OCR readings disagree; a mistake all readings
 share, or one reflow makes, is never looked at. A model reading the built text
 paragraph by paragraph can see a sentence that breaks off, a word that makes no sense,
 a running head or picture text inside a sentence, a paragraph split mid-sentence. The
 danger is that it edits the author. Guards, all of them:
-
-- **It only asks, never changes.** Its output is a place and a kind, never replacement
-  text: the reviewer sees the crop and decides.
-- **Closed options, no free text.** A decision with declared kinds (sentence broken
-  off, word that isn't one, furniture in the text, picture text, paragraph split or
-  merged, none), nothing like "could read better". Bounded answer, so a decision model.
-- **Told what the text is:** a transcription, whose spelling, grammar, dialect and style
-  are the author's and stay; only faults of reading or layout count.
-- **The counterexamples first.** A set of places where it must stay silent, written
-  before the ones where it must fire: deliberate misspellings and play (`Vidya Gamez!`,
-  `Fevah`, `Meeeeee`, `#lookit` in You're Never Weird), fragments ("Raised without
-  clocks."), dialogue that trails off, foreign words (De tuin), names. Its silence there
-  is measured, not hoped for.
-- **Measured as a question source by `bench`:** how many remaining errors its questions
-  catch against how many it costs, with the reviewer's slips. A flag where the output
-  already matches the reference is an editorial urge, and that rate is reported.
-- **Grounded where possible:** a flag counts for more where the machine touched the
-  text (a line or page join, a de-hyphenation, a word the readings disagreed on, a
-  word the word list lacks), less in untouched running text.
 
 - [x] First probe, the user's free-text prompt ("find technical flaws, not prose"),
       gemma4:latest on Goede dochter's first 200 paragraphs (`experiments/probe_text_reader.py`):
@@ -299,15 +401,10 @@ danger is that it edits the author. Guards, all of them:
       P(fault) ≥ 0.3 it keeps 9 of 45 flags and both clear catches, dropping 31 of 37
       urges; with the line's scan crop it does no better (keeps 5, drops `ALLEs $1`).
       Both drop a real lost closing quote. The weak part is now the proposer
-- [ ] Probe: a stronger proposer (Qwen3.8 with thinking on, or gemma4:26b) with clef
-      as the filter, on Goede dochter's and Metro's built text, scored against their
-      known remaining errors and the counterexample set: catches, false alarms, editorial
-      urges. After the baseline bench; roughly a tenth of the line readings' calls
-- [ ] If it earns it: a stage after reflow that emits review questions, decided by `bench`
 
-## 4. The user's part
+### 4. The user's part
 
-- [ ] **user** Slip rate per question kind: answer the review on Goede dochter
+- [x] **user** Slip rate per question kind (done in 6g, 30 of 32 right): answer the review on Goede dochter
       pp. 9–64, scored against the aligned truth. **After the retrain, with trust on**:
       tried on the fixed rule on 2026-10-08, it asked 215 questions, nearly all obvious
       (`ven eeuwigheid`, `drijthout`, words the word list and clef settle), which would
@@ -316,13 +413,11 @@ danger is that it edits the author. Guards, all of them:
 - [x] Review page: the doubt's whole line tinted, its place underlined beneath the print,
       nothing drawn over the letters (the box hid the quote marks it asked about); softer
       colours; `h` turns highlights off, remembered
-- [ ] **user** Settle verdicts on the tuning books (`golden review`), the
-      disagreements trust's labels sit on first: hours, spread out
 
-## 5. More for the trust model
+### 5. More for the trust model
 
-- [ ] A book-quality feature (winnow's alarm is worthless on clean books): after
-      the slip-rate answers in 4
+- [ ] ~~A book-quality feature~~ merged (2026-10-10) into bad pages by the readers'
+      disagreement, the same signal per page
 - [x] Per book, clef against winnow on the trust data, printed by `train_ocr_trust.py`,
       a book flagged where winnow is ahead (Lady into Fox: clef 36%, winnow 89%; every
       current book clef ahead)
@@ -330,10 +425,8 @@ danger is that it edits the author. Guards, all of them:
       (it used to start a cold build of a missing book, and Reis's pre-Qwen data would
       have taught "Qwen never backs a version"); its leave-one-out analysis no longer
       trains on validation books; `--save` refuses while tuning data is missing
-- [ ] Thief-Taker's suspects in the trust data, pp. 11–84 (chapters 1–22, its
-      `bench tuning` slice): ~1.4 h cold
 
-## 6. Other components, each scored by `bench`
+### 6. Other components, each scored by `bench`
 
 - [x] An ellipsis style in `typography.py` (`326a89d`), read in the text layer or set in
       `book.toml` (the glyph, dots or spaced dots, a space before or not), not measured on
@@ -348,15 +441,12 @@ danger is that it edits the author. Guards, all of them:
       give it P(body) ≥ 0.25): no change by the test, tuning 0.56 → 0.52, validation 0.77 →
       0.70; Artemis 0.76 → 0.53, 11/22/63 1.00 → 0.73, Villa Toscane 0.12 → 0.06, Crime
       0.43 → 0.71 (one lost line, p. 97)
-- [ ] Switch the sorter on by default: bench it again once the local re-read has settled
-      the reader (`ROBO_SORTER=1 bench tuning|validation`, ~10 min warm), and look at
-      Crime p. 97 and De cipier p. 49 (last lines dropped)
-- [ ] A crop reader on tesseract's line boxes (not the layer's)
+- [ ] ~~A crop reader on tesseract's line boxes (not the layer's)~~ dropped (2026-10-10):
+      on an image-only scan the layer is tesseract's, so its boxes are the ones read
 - [x] `quality.catches` matches by span where flags have one: a question about one place
       catches only errors sharing a word with it (6g)
-- [ ] Training code for shipped models into the package, with a feature-count test
 
-## 6g. Fable's second review (2026-10-09)
+### 6g. Fable's second review (2026-10-09)
 
 What the bench couldn't see, and leaks in the OCR check, found in a review of the whole
 build. Each change benched on its own.
@@ -392,13 +482,7 @@ build. Each change benched on its own.
 - [x] Scene breaks: "* * *" lines and blank-line gaps as a break in the IR and the EPUB
       (`Paragraph.break_before`, `<hr class="break"/>`). Reis 63, De eerlijke vinder 27;
       spot-checked right on the scan. Not scored: the references drop their blank lines
-- [ ] Score scene breaks: derive keeps a reference's blank-line paragraphs and ornaments as a
-      break mark, the score counts them like paragraph breaks
 - [x] Budget diagnostics: questions of one reason asked in a shuffled order, not page order
-- [ ] Line roles by trees on by default if the bench says so: first run no change
-      (11/22/63 1.00 → 0.73, Artemis 0.76 → 0.53; Crime, De cipier, You're Never Weird lost
-      body lines or kept running heads, now kept at P(body) ≥ 0.25 and repeated edge text
-      made furniture), rerun pending
 - [x] **user** Re-measure the slip rate on today's questions: 32 questions on a copy of
       Goede dochter pp. 9–64 (`experiments/score_slip_review.py`). 30 of 32 right, each
       judged at its own place: picks 17/18, typed 6/7, roles 7/7. The two misses are one
@@ -409,7 +493,7 @@ build. Each change benched on its own.
       2026-10-09 with the note that it is pooled: the samples come from two kinds of
       question (typed regions then, picks with the difference marked now), so it is a
       middle figure, not either one's rate
-- [ ] Set `quality.SLIPS, ANSWERS = 10, 100` once the overnight chain is done (mid-chain
+- [x] Set `quality.SLIPS, ANSWERS = 10, 100` once the overnight chain is done (mid-chain
       it would move that chain's bench), rerun both benches as the new baseline, and
       update docs/design.md ("8 of 68") and AGENTS.md's bench entry
 - [x] Quote questions offered no right reading on 4 of 4 (OCR questions 20 of 21): the
@@ -427,13 +511,8 @@ build. Each change benched on its own.
       Qwen's marks (`Charlie. ‘Waarom`), while the print, and the publisher's EPUB, set the
       wrong mark (`Charlie.’ Waarom`); the faithful line had to be typed. Count, in the
       slip review, how many quote questions sit on a mark the print itself sets wrong
-- [ ] Longer slices, each ending on a chapter (the user's go, 2026-10-09): Goede dochter
-      9–162 (ch. 1–8), Reis whole 11–255, De cipier 9–174, Metro 7–162 (ch. 1–7), and De
-      tuin 11–122 on the validation side; ~446 new pages. Trust data for the five (~7.5 h
-      cold, Qwen local), arbiter and sorter retrained, both benches as a new baseline
-- [ ] Then, the user allows it, the five whole: ~1,200 pages more, ~20 h over two nights
-- [ ] A ledger of each probe's prediction beside the bench's verdict for the same change
-      (docs/outlook.md has the first): when a probe is enough and when only the bench decides
+- [ ] ~~A ledger of each probe's prediction beside the bench's verdict~~ dropped as a step
+      (2026-10-10): it is a habit, kept in docs/outlook.md's table after each batch
 - [x] Qwen's readings of the bench books again locally, so the bench measures the build that
       is run (`experiments/reread_local.py`): 30,572 lines in about 9 h with the judges (1.2 s a line read), with
       the trust data, arbiter and both benches 10 h. Against the hosted readings: tuning
@@ -441,7 +520,7 @@ build. Each change benched on its own.
       (Goede dochter 0.58 → 0.44 a page, Reis 0.43 → 0.30), Artemis 0.76 → 0.64; De tuin
       0.77 → 0.85, its own veto
 
-## 6b. Where the labelled suspects say the errors are (Fable's review, 2026-10-08)
+### 6b. Where the labelled suspects say the errors are (Fable's review, 2026-10-08)
 
 Measured on the trust data and the golden slices, no models; the scripts and numbers
 are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py` and
@@ -452,10 +531,6 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       page). Now evidence in order (docs/design.md): the book's spelling, the word list,
       a capital (not a word in capitals), the parts beside an inner hyphen. 29 → 15; on
       warm caches Goede dochter pp. 9–64 WER 0.00211 → 0.00187, De cipier unchanged
-- [ ] The 15 breaks left as a question: on an English book, a break the list is silent on
-      whose parts are both words (13 right, 3 wrong on Metro and Artemis; 0 against 44 on
-      Dutch, so never there), asked in the joined form the OCR check already has; scored
-      by `quality` and `bench` as a question source
 - [x] The substitution-pair prior in `trust.py` (model version 3, 23 features): the exact
       (layer → reading) difference, target-encoded from the training books, a pair counted
       when seen in ≥ 2 books, each training book's priors from the other books only (Opus's
@@ -463,9 +538,6 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       silent errors summed over nine books at 0/.25/.5/1 questions a page: trees [153, 87,
       44, 23] → [110, 48, 25, 10]; at the rule's questions 7 → 7; stable to one more book
       left out (0–3). The trainer's logistic variant with the prior: [94, 43, 29, 15]
-- [ ] Its own bench step after the baseline (3): baseline, trust without the prior (an
-      empty table), trust with it. The saved model is still version 1: `--save` once the
-      tuning data is complete, then both benches
 - [x] The reviewer's answers checked before they are saved (`review.doubtful`): a typed
       line that matches none of the question's readings, or a straight quote in a book
       set with curly ones, is queried once and saved on the second Save; warned answers
@@ -473,13 +545,8 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       and after the check. No model call (Stella: transcribe-and-compare caught 9 of 9
       slips, 3 false alarms in 58). Left: comparing with Qwen's cached reading of the
       whole line for regions that carry no readings (headings, missing text)
-- [ ] The book teaches itself: after the answers, a per-book posterior per substitution
-      pair rescores the unasked suspects (`decide`, two passes). Simulated: silent errors
-      at .25/.5/1 a page over nine books 50/31/11 → 47/30/11, Vals alarm 7/6/1 → 5/5/1
-      (its lost full stop before a closing quote, 47×, is in no other book). After the
-      slip-rate review; its review-page form is one question per pattern, applied to all
 
-## 6c. Tryouts: a model screened for a role before the bench
+### 6c. Tryouts: a model screened for a role before the bench
 
 - [x] Reader set v1 frozen (`experiments/tryout.py`, `tryouts/reader-v1.json`): 550
       lines of the tuning slices, 30 the layer reads wrong and 20 it reads right a book
@@ -489,7 +556,8 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
 - [x] PP-DocLayoutV3 as the spotter, Dolittle pp. 23–88 scored downstream: worse
       (CER 1.22% → 1.71%), not adopted
 - [ ] ~~winnow:12b as the second judge~~ dropped: Ollaya, its only server, was uninstalled
-- [ ] A judge set and a sorter set like the reader set, versioned the same way
+- [x] A judge set like the reader set, versioned the same way (a sorter set dropped on
+      2026-10-10: the trees are scored leaving each golden book out, on every line)
   - [x] The judge role in `experiments/tryout.py`: settled suspects of the tuning slices,
         the vision judge's exact questions and crops, 25 it gets wrong and 25 right a book
   - [x] Build judge set v1 once the winnow trust data is in: 518 suspects
@@ -533,7 +601,7 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
   - [x] Ollaya stripped from the code and docs: the user uninstalled it, so it went
         before the bench (winnow on Ollama is the only winnow)
 
-## 6e. Strict review of the codebase (2026-10-09)
+### 6e. Strict review of the codebase (2026-10-09)
 
 - [x] Six reviewers, every finding checked; fixes with tests in seven commits
       (hosted client, docs, answers and typography, OCR check and trust, measuring,
@@ -568,20 +636,13 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
 - [x] Artemis's chapter numbers, drawn in a circle (0/3 → 3/3): DocLayout-YOLO marks
       them, glm-ocr reads them; `missing.py` now reads regions up to five lines tall
       above a sunk page's text. +3 questions, no other book changed, 20 min
-- [ ] De eerlijke vinder's part numerals I–IV (0/4, a spurious "de"): read from the
-      drawing
-- [ ] You're Never Weird 5/16: bracketed sections and "- 1 -" chapter numbers
 
-## 6d. Image-only scans
+### 6d. Image-only scans
 
 - [x] tesseract's first reading of an image-only PDF (`pdf.first_reading`); Goede
       dochter pp. 9–64 with its layer removed: CER 0.35% against the IA layer's 0.20%
-- [ ] The whole pipeline on that copy, after the retrain: does the OCR check close the
-      gap? ~1 h cold (every line read anew)
-- [ ] Italics on an image-only PDF: `italics.py` takes the PDF's word boxes, which
-      it lacks; give it tesseract's
 
-## 6f. Internet Archive's own files
+### 6f. Internet Archive's own files
 
 A Scribe item holds more than the PDF: the page images the PDF was compressed from
 (`_jp2.zip`), ABBYY's OCR with a confidence per letter (`_abbyy.gz`) and the scan's
@@ -590,19 +651,6 @@ public-domain items only; a lending-library item keeps all but `_scandata.xml` p
 
 - [x] `golden fetch` takes them from a scan's `[scans.ia]` (item, files with sha256)
       into `work/<book>/ia/`: Crime (300 ppi) and Dolittle (500 ppi), both tuning books
-- [ ] Readers on the page images (`experiments/probe_ia_images.py`, ~15 min): reader set
-      v1's 50 Crime and 50 Dolittle lines cut again from the JP2s, read by Qwen and
-      glm-ocr, lines right per stratum against the PDF crops. The PDF's letters are a
-      1-bit mask at full resolution, so this tests grey levels (punctuation, accents).
-      A win (more hard lines right, no control broken, both readers): the JP2s become
-      the image source on books that have them, trust data rebuilt, `bench tuning`
-- [ ] ABBYY's letter confidence as an arbiter feature: check first that the PDF's text
-      layer is ABBYY's reading (same words, same boxes), then join its confidence and
-      `suspicious` marks to the layer's letters; does a low one separate the trust
-      data's real errors? ~1 h, no models
-- [ ] `_scandata.xml` page types (Cover, Title, Copyright, Contents, Normal) as labels
-      for page classification; public even on lending-library items, so every IA golden
-      book has them. ~30 min to fetch and compare with `body_pages`
 - [x] A Dutch public-domain Scribe item with its files public, paired with Gutenberg:
       70 title matches between Gutenberg's 1,110 Dutch books and IA's 8,169 public Dutch
       Scribe scans, compared word by word on 3,000 words (`work/probes/ia-gutenberg-nl/`).
@@ -614,43 +662,15 @@ public-domain items only; a lending-library item keeps all but `_scandata.xml` p
       and no help with contemporary Dutch, whose scans are lending-library items with these files
       private. Pallieter doesn't pair: the public scan is the 30th printing
       in post-1946 spelling, Gutenberg #11355 an older edition
-- [ ] Make one of them a golden book (Het Kindeken Jezus) only if the image probe's
-      result looks language-dependent; ~30 min with `probe_candidate.py`
-- [ ] **user:** whether a borrowed item's `_jp2.zip` can be downloaded while on loan
-      (Afscheid p. 20's washed-out text)
 
-## 7. A real test set
+### 7. A real test set
 
 - [x] A new golden book, left unscored until the end: Het geluid van bananen (2b),
       the `test` set
-- [ ] Score it once, at the end of the plan: `bench test --score-test`
-
 - [x] Washed-out pages left out of the OCR check (its readers invented ~170 lines on
       Afscheid), the budget counted over the pages it reads
 - [x] Scoring: an error over a page break counts on the page holding most of it
       (Afscheid 5.03 → 0.24 after review: its washed-out p. 38 had counted on p. 37)
 - [x] Suspects the arbiter gives ≥ 0.8 aren't asked (`ROBO_OCR_ASK_BELOW`): questions
       about halved at the same wrong words after review, 1 h
-- [ ] **Revisit `ROBO_OCR_ASK_BELOW` (0.8)** (now a calibrated chance, so less often) whenever the arbiter is retrained on new
-      readers or judges, or a new arbiter model is tried: bench 0.7/0.8/0.9 (warm, ~2 min
-      each), and weigh questions against wrong words with the user
-- [ ] Bad pages by the readers' disagreement: a page whose suspects per line far exceed
-      the book's median (Afscheid p. 20: 50 against ~8) is read badly whatever the cause
-      (faint, smudged, show-through); a label-free alarm beside `faint.py`
-- [ ] Per-book image tuning when a book needs it (uniformly pale or tinted scans): try
-      variants on sample lines, keep the one where the independent readers agree most
-      and the word list knows most; no reference needed. Null on normal pages so far,
-      and no use on a washed-out page whose PDF lost the letters (Afscheid). Internet
-      Archive's page images (`_jp2.zip`) might still hold them, but on a lending-library
-      item they are private (6f)
-- [ ] You're Never Weird p. 47: text inside a picture read into the body; picture text
-      should stay in the picture
 
-## Later
-
-- [ ] Proofreading answers with Qwen
-- [ ] Surya's layout model as a second spotter beside DocLayout-YOLO (a vote, not a
-      replacement): screen it first on the drawn numerals DocLayout-YOLO misses (De eerlijke
-      vinder) and the figure/caption pages
-- [ ] Block quotes, epigraphs and verse: none is handled (scene breaks are, 6g)
-      yet; find golden pages that have them before designing anything
