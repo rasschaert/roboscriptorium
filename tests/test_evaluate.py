@@ -47,7 +47,7 @@ def test_an_empty_reference_is_refused():
         evaluate.score(doc, [Chapter("I", [])])
 
 
-def test_eval_locates_remaining_disagreements_on_the_corrected_pages_by_their_review_keys(
+def test_eval_locates_remaining_disagreements_on_the_layer_pages_by_their_review_keys(
     monkeypatch, tmp_path
 ):
     from types import SimpleNamespace
@@ -62,11 +62,12 @@ def test_eval_locates_remaining_disagreements_on_the_corrected_pages_by_their_re
             11, 300, 500, [Line(t, 20, 20 + 15 * i, 280, 30 + 15 * i) for i, t in enumerate(texts)]
         )
 
-    # A line the layer lacks was added on the corrected page, above the others.
+    # A human typed a line above the others on the corrected copy; the paragraph's
+    # references still point at the lines' places before the answer (`Line.source`).
     raw = page(["a b X d e f", "Y h i j k l"])
     corrected = page(["1", "a b X d e f", "Y h i j k l"])
     doc = Document(
-        "t", "a", "en", [Paragraph("a b X d e f Y h i j k l", [SourceRef(11, k) for k in (1, 2)])]
+        "t", "a", "en", [Paragraph("a b X d e f Y h i j k l", [SourceRef(11, k) for k in (0, 1)])]
     )
     reference = [Chapter("1", ["a b c d e f g h i j k l"])]
     stages = SimpleNamespace(
@@ -77,7 +78,7 @@ def test_eval_locates_remaining_disagreements_on_the_corrected_pages_by_their_re
     )
     # Verdicts as the golden review records them: keyed on the unpatched reference.
     verdicts = disagreements.Verdicts(tmp_path / "v.jsonl")
-    ocr, edition = disagreements.find(doc, reference, [corrected])
+    ocr, edition = disagreements.find(doc, reference, [raw])
     verdicts.record(ocr, "c", "ocr")
     verdicts.record(edition, "Y", "edition")
     monkeypatch.setattr(cli, "_build_golden", lambda *a: (book, stages, doc, reference))
@@ -88,3 +89,17 @@ def test_eval_locates_remaining_disagreements_on_the_corrected_pages_by_their_re
     cli._evaluate_book(tmp_path, None, None, True, False)
     remaining = next(t for t in lines if "remaining disagreements" in t)
     assert remaining.endswith("remaining disagreements: ocr 1")
+
+
+def test_a_word_split_or_merged_costs_its_letters_once():
+    from roboscriptorium.golden.reference import Chapter
+    from roboscriptorium.ir import Document, Paragraph
+
+    def cer(text):
+        doc = Document("t", "a", "nl", [Paragraph(text, [])])
+        return evaluate.score(doc, [Chapter("I", ["a b c vijf jaar d e f g h i j"])])
+
+    split = cer("a b c vijfjaar d e f g h i j")
+    letter = cer("a b c vijf jaer d e f g h i j")
+    assert split.cer == letter.cer  # one space lost, one letter wrong: one edit each
+    assert split.confusions == [("vijfjaar", "vijf jaar", 1)]

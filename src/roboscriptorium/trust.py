@@ -260,7 +260,8 @@ def decide(
         range(len(scored)),
         key=lambda i: (not unseen(scored[i][1]), sure[i], scored[i][0].max()),
     )
-    asked = {i for i in order[:questions] if unseen(scored[i][1]) or sure[i] < below}
+    # A calibrated sureness can be exactly 1.0, which `below` = 1.0 must still ask.
+    asked = {i for i in order[:questions] if unseen(scored[i][1]) or sure[i] < below or below >= 1}
     out = []
     for i, (p, s) in enumerate(scored):
         best = int(p.argmax())

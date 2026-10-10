@@ -13,7 +13,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
-from roboscriptorium.page import NUMBERED_WORDS, bare_numeral
+from roboscriptorium.page import NUMBERED_WORDS, bare_numeral, digits
 from roboscriptorium.pdf import Line, PageText
 from roboscriptorium.roles import KEEP_BODY_AT, LineRole
 
@@ -54,11 +54,11 @@ FOOTER_MAX_CHARS = 4
 
 HYPHENS = ("-", "\u00ad", "\u00ac")
 DASHES = ("\u2014", "\u2013")
-_LOWER_START = re.compile(r"^[a-zà-ÿ]")
 # What isn't part of a word, for counting spellings ("thief-taker’s," → "thief-takers").
 _WORD = re.compile(r"[^\w-]")
-# Older OCR layers keep the thin space some printers set before punctuation.
-_SPACE_BEFORE_PUNCTUATION = re.compile(r"\s+([,;:.!?])(?=\s|$)")
+# Older OCR layers keep the thin space some printers set before punctuation. A dot in
+# a spaced run (". . .") keeps its space: the typography stage sets the run book-wide.
+_SPACE_BEFORE_PUNCTUATION = re.compile(r"(?<!\.)\s+([,;:.!?])(?=\s|$)(?!\s\.)")
 
 # Typesetting ligatures ("ﬁ", "ﬀ") are glyphs, not letters.
 _LIGATURES = str.maketrans(
@@ -242,6 +242,8 @@ def join(
     if text.endswith(DASHES):
         # A spaced dash ("ziet – hoe") keeps its spaces; a closed one ("alles—en") doesn't.
         return f"{text} {nxt}" if text[:-1].endswith(" ") else text + nxt
+    if text.endswith("-") and len(text) > 1 and text[-2].isdigit() and nxt[:1].isdigit():
+        return text + nxt  # a number range broken at the line's end ("1914-" / "1918")
     return f"{text} {nxt}"
 
 
@@ -254,7 +256,7 @@ def _hyphen_stays(
         return seen[hyphenated.lower()] > seen[closed.lower()]
     if known is not None and known(hyphenated) != known(closed):
         return known(hyphenated)
-    if not _LOWER_START.match(nxt):
+    if not nxt[:1].islower():
         return not (len(rest) > 1 and rest.isupper())
     if "-" in stem or "-" in rest:
         if known is None:
@@ -406,7 +408,7 @@ def _continues(previous: Block | None, line: Line, page: int) -> bool:
     """Whether a heading line belongs to the heading just before it."""
     if not isinstance(previous, Heading) or previous.sources[-1].page != page:
         return False
-    if bare_numeral(line.text) or line.text.strip().rstrip(".").isdigit():
+    if bare_numeral(line.text) or digits(line.text.strip().rstrip(".")):
         # "The Nature of a Crime" above "I" is the book's title, then chapter I; a number
         # under "CHAPTER 2" is the chapter's first section. Only a bare label takes it.
         words = previous.text.upper().split()

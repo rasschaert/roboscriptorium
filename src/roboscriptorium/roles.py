@@ -21,6 +21,7 @@ from roboscriptorium.page import (
     Repeats,
     bare_numeral,
     centred_on_page,
+    digits,
     edge_lines,
     folio,
     garbled,
@@ -109,11 +110,12 @@ def _section_number(
     with words beside it is a running head, and chapter openings carry none.
     """
     text = page.lines[i].text.strip()
-    if not _is_body(page_roles.get(i + 1)) or (i > 0 and i + 1 >= len(page.lines)):
+    if not _is_body(page_roles.get(i + 1)):
         return False
     if i == 0 and sunk and _NUMBERED_TITLE.match(text):
         return True
-    if not text.isdigit() or len(text) > 3:
+    # A number with no line below it is above no text: a lone folio on a page.
+    if i + 1 >= len(page.lines) or not digits(text) or len(text) > 3:
         return False
     printed = folio(page.number, offset)
     if i == 0:
@@ -318,7 +320,7 @@ def _numeral_slots(
         for p in pages
         if p.lines
         and roles.get(SourceRef(p.number, 0), LineRole("body", 0, 1)).role == "chapter_heading"
-        and (p.lines[0].text.strip().isdigit() or bare_numeral(p.lines[0].text))
+        and (digits(p.lines[0].text.strip()) or bare_numeral(p.lines[0].text))
     ]
     if len(numerals) < NUMERAL_SLOT_MIN:
         return

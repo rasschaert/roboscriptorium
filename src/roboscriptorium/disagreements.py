@@ -21,6 +21,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import ocr
 from roboscriptorium.evaluate import normalise, word_tokens
+from roboscriptorium.files import append_jsonl, read_jsonl
 from roboscriptorium.golden.reference import Chapter
 from roboscriptorium.ir import Document, SourceRef
 from roboscriptorium.lexicon import Lexicon
@@ -165,9 +166,9 @@ def _spans(out: list[str], ref: list[str]) -> list[tuple[int, int, int, int]]:
 def find(
     doc: Document, reference: list[Chapter], pages: list[PageText], language: str = "en"
 ) -> list[Disagreement]:
-    """Where `doc` and `reference` differ. `pages` are the ones `doc`'s sources index
-    (`Stages.corrected`); `language` (book.toml's) picks the word list that settles
-    garbled output."""
+    """Where `doc` and `reference` differ. `pages` are the ones `doc`'s sources index:
+    the text layer before answers (`Stages.pages`, which `Line.source` points back to);
+    `language` (book.toml's) picks the word list that settles garbled output."""
     out, refs = _word_sources(doc, {p.number: p for p in pages})
     ref = reference_words(reference)
     vocab = vocabulary(reference, language)
@@ -231,11 +232,9 @@ class Verdicts:
     def __init__(self, path: Path):
         self.path = path
         self.by_key: dict[str, Verdict] = {}
-        if path.exists():
-            for line in path.read_text().splitlines():
-                if line.strip():
-                    v = Verdict(**json.loads(line))
-                    self.by_key[v.key] = v
+        for raw in read_jsonl(path):
+            v = Verdict(**raw)
+            self.by_key[v.key] = v
 
     def record(self, d: Disagreement, truth: str | None, category: str, note: str = "") -> Verdict:
         v = Verdict(
@@ -250,9 +249,7 @@ class Verdicts:
             note,
             datetime.now(UTC).isoformat(timespec="seconds"),
         )
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self.path.open("a") as f:
-            f.write(json.dumps(asdict(v), ensure_ascii=False) + "\n")
+        append_jsonl(self.path, asdict(v))
         self.by_key[v.key] = v
         return v
 

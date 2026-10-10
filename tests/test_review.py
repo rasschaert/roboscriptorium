@@ -99,6 +99,8 @@ def test_golden_review_crops_from_the_pages_the_paragraphs_point_into(tmp_path, 
     monkeypatch.setattr(cli.disagreements, "find", find)
     monkeypatch.setattr(review, "serve", lambda r, port: seen.setdefault("scan", r.scan.pages))
     cli.review_disagreements(tmp_path, None, None, True, 8765, False)
-    assert seen["find"] is corrected
-    assert seen["scan"][1] is corrected[0]
+    # The paragraphs point into the pages before answers (`Line.source`), not the
+    # corrected copy, where a typed line above would shift every crop.
+    assert seen["find"] is layer
+    assert seen["scan"][1] is layer[0]
     assert seen["language"] == "nl"

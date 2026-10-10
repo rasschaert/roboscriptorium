@@ -53,8 +53,9 @@ def geometry(page: PageText) -> tuple[float, float]:
 
 
 def edge_lines(page: PageText) -> list[int]:
+    """The indices of the page's top and bottom lines, each once on a short page."""
     n = len(page.lines)
-    return [*range(min(EDGE_LINES_TOP, n)), *range(max(0, n - EDGE_LINES_BOTTOM), n)]
+    return sorted({*range(min(EDGE_LINES_TOP, n)), *range(max(0, n - EDGE_LINES_BOTTOM), n)})
 
 
 def centred_on_page(line: Line, page: PageText, full: float) -> bool:
@@ -121,6 +122,12 @@ def bare_numeral(text: str) -> str:
 _DIGIT_MISREADS = str.maketrans("IlOo", "1100")
 
 
+def digits(word: str) -> bool:
+    """Whether `word` is a number `int` reads: `str.isdigit` also says yes to a superscript
+    footnote mark ("¹") or a circled digit, which `int` rejects."""
+    return word.isascii() and word.isdigit()
+
+
 def reads_as_folio(word: str, folio: int | None) -> bool:
     """Whether `word` is the page's printed number. With `folio` unknown, any number is.
 
@@ -129,9 +136,9 @@ def reads_as_folio(word: str, folio: int | None) -> bool:
     """
     word = word.strip(".,")
     if folio is None:
-        return word.isdigit()
+        return digits(word)
     word = word.translate(_DIGIT_MISREADS)
-    if not word.isdigit():
+    if not digits(word):
         return False
     printed = str(folio)
     if word == printed:
@@ -146,8 +153,8 @@ def reads_as_folio(word: str, folio: int | None) -> bool:
 def without_folio(text: str, folio: int | None) -> str:
     """The line without the page number `folio` at either end ("Animal Language II")."""
     words = text.split()
-    # Unknown, the folio can't be told from a chapter's number after its label.
-    keep_last = folio is None and bool(label_number(text))
+    # The number after a heading label is the chapter's, however close to the folio.
+    keep_last = bool(words) and words[-1].strip(".,»«*:") == label_number(text)
     while words and not keep_last and reads_as_folio(words[-1], folio):
         words.pop()
     while words and reads_as_folio(words[0], folio):
@@ -167,7 +174,7 @@ def label_number(text: str) -> str:
     """The number after a heading label ("CHAPTER 12", "Hoofdstuk 3"), or ""."""
     words = [w.strip(".,»«*:") for w in text.upper().split()]
     for word, nxt in itertools.pairwise(words):
-        if word in NUMBERED_WORDS and nxt.isdigit():
+        if word in NUMBERED_WORDS and digits(nxt):
             return nxt
     return ""
 
@@ -203,7 +210,7 @@ def page_number(text: str) -> int | None:
     """A number printed at the start or end of a line, as in "Puddleby 5"."""
     words = text.split()
     for word in (words[0], words[-1]) if words else ():
-        if word.isdigit():
+        if digits(word):
             return int(word)
     return None
 

@@ -169,6 +169,8 @@ def _range(value: str | None) -> tuple[int, int] | None:
         span = int(first), int(last if dash else first)
     except ValueError:
         raise typer.BadParameter(f"{value!r}: give a range like 7-45, or one number") from None
+    if span[0] < 1:
+        raise typer.BadParameter(f"{value!r}: pages and chapters count from 1")
     if span[0] > span[1]:
         raise typer.BadParameter(f"{value!r}: the range runs backwards")
     return span
@@ -296,8 +298,9 @@ def review_disagreements(
     """Review where the output disagrees with the reference, next to the scan."""
     _not_the_test_set(book_dir, score_test)
     book, stages, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
-    # The pages the paragraphs' line references point into: with added lines and answers.
-    found = disagreements.find(doc, reference, stages.corrected, book.language)
+    # The paragraphs' line references point into the pages before answers (the text
+    # layer with missing lines added), as `Line.source` does on the corrected copy.
+    found = disagreements.find(doc, reference, stages.pages, book.language)
     verdicts = _verdicts(book)
     manual = [d for d in found if not d.auto]
     done = sum(d.key in verdicts.by_key for d in manual)
@@ -306,7 +309,7 @@ def review_disagreements(
         f"{len(manual)} to review ({done} already done)"
     )
     typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
-    review.serve(review.Review(book.source, stages.corrected, found, verdicts), port)
+    review.serve(review.Review(book.source, stages.pages, found, verdicts), port)
 
 
 def _questions_and_errors(spec: str, settings: Settings | None = None):
@@ -333,7 +336,7 @@ def _questions_and_errors(spec: str, settings: Settings | None = None):
     if (span := _range(chapters or None)) is not None:
         reference = reference[span[0] - 1 : span[1]]
     reference, applied = disagreements.patch(reference, _verdicts(book))
-    errors = disagreements.find(_scored(book, stages), reference, stages.corrected, book.language)
+    errors = disagreements.find(_scored(book, stages), reference, stages.pages, book.language)
     return Path(book_dir).name, book, stages, reference, errors, found, applied
 
 
@@ -433,9 +436,7 @@ def run_bench(
                 numbers,
                 errors,
                 found,
-                breaks=disagreements.break_errors(
-                    _scored(book, stages), reference, stages.corrected
-                ),
+                breaks=disagreements.break_errors(_scored(book, stages), reference, stages.pages),
             ),
         }
     commit = subprocess.run(
@@ -589,7 +590,7 @@ def _evaluate_book(
     if verdicts.by_key:
         # Found on the unpatched reference, as the golden review records its verdicts; a
         # verdict that the scan prints the output settles its disagreement.
-        found = disagreements.find(doc, reference, stages.corrected, book.language)
+        found = disagreements.find(doc, reference, stages.pages, book.language)
         mistakes = Counter(
             verdicts.by_key[d.key].category if d.key in verdicts.by_key else d.auto or "unreviewed"
             for d in found

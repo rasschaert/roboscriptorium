@@ -115,3 +115,15 @@ def test_the_ellipsis_guess_trusts_the_reads_that_kept_their_gaps():
     assert guess_ellipsis(["en toen… ging"] * 3) is None
     # An ellipsis opening a line says nothing about the space before one.
     assert guess_ellipsis(["... en toen"] * 20) is None
+
+
+def test_four_spaced_dots_survive_reflow_in_a_spaced_dots_book():
+    from roboscriptorium import reflow
+    from roboscriptorium.pdf import Line, PageText
+    from roboscriptorium.typography import apply
+
+    page = PageText(
+        3, 300, 500, [Line("Hij wachtte . . . . Toen kwam ze . . . en zweeg.", 20, 50, 280, 60)]
+    )
+    blocks = apply(reflow.reflow([page]), None, SPACED)
+    assert blocks[0].text == "Hij wachtte . . . . Toen kwam ze . . . en zweeg."

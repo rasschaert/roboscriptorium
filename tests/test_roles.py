@@ -343,3 +343,58 @@ def test_a_misread_numeral_in_a_numeral_headings_place_is_a_heading(tmp_path):
     assert roles[SourceRef(24, 0)].rule == "numeral-slot"
     for n in (25, 26, 27):
         assert roles[SourceRef(n, 0)].role == "artifact", n
+
+
+def test_a_superscript_or_circled_digit_is_no_page_number():
+    from roboscriptorium.page import digits, page_number, page_offset
+
+    assert not digits("¹") and not digits("③") and digits("12")
+    assert page_number("¹ Zie de inleiding.") is None
+    assert page_number("Puddleby 5") == 5
+    pages = [_page(n, "¹ Zie noot") for n in range(1, 4)]
+    assert page_offset(pages) is None  # no ValueError from int("¹")
+    assert title_key("CHAPTER ¹") == "CHAPTER"
+
+
+def test_a_short_pages_edge_lines_count_once():
+    from roboscriptorium.page import edge_lines, page_offset
+
+    assert edge_lines(PageText(7, 400, 600, [Line("5 tekst", 50, 50, 300, 60)] * 3)) == [0, 1, 2]
+    # Two pages with a number each are two pages, not four: the offset stays unknown.
+    pages = [
+        PageText(
+            n,
+            400,
+            600,
+            [
+                Line(f"{n - 2} tekst" if i == 0 else "tekst", 50, 50 + 15 * i, 300, 60 + 15 * i)
+                for i in range(3)
+            ],
+        )
+        for n in (7, 8)
+    ]
+    assert page_offset(pages) is None
+
+
+def test_a_heading_labels_number_is_never_taken_for_the_folio():
+    # "Hoofdstuk 12" on printed page 15 is a digit's misread away from the folio; it is
+    # still chapter 12, so two such headings don't collide as repeated titles.
+    assert title_key("Hoofdstuk 12", 15) == "HOOFDSTUK12"
+    assert title_key("Hoofdstuk 12", 15) != title_key("Hoofdstuk 13", 17)
+    assert title_key("Hoofdstuk 12") == "HOOFDSTUK12"
+    # A folio after a label line is still a folio.
+    assert title_key("Hoofdstuk 3 41", 41) == "HOOFDSTUK3"
+
+
+def test_a_lone_number_on_a_page_is_no_section_heading():
+    from roboscriptorium.roles import _section_number
+
+    lone = PageText(6, 400, 600, [Line("12", 190, 300, 210, 310)])
+    assert not _section_number(lone, 0, None, {}, sunk=False)
+    above = PageText(
+        6, 400, 600, [Line("12", 190, 80, 210, 90), Line("tekst " * 6, 50, 110, 350, 122)]
+    )
+    assert _section_number(above, 0, None, {}, sunk=False)
+    # A numbered title alone on a sunk opening still heads it.
+    titled = PageText(6, 400, 600, [Line("1 Later", 190, 300, 240, 310)])
+    assert _section_number(titled, 0, None, {}, sunk=True)

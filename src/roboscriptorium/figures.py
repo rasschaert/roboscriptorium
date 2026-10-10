@@ -103,7 +103,8 @@ def _without(box, captions: list) -> tuple[float, float, float, float]:
             y1 = min(y1, d0 - TRIM_GAP)
         else:
             y0 = max(y0, d1 + TRIM_GAP)
-    return (x0, y0, x1, y1)
+    # A caption as large as the picture would trim it away: keep it whole.
+    return (x0, y0, x1, y1) if x0 < x1 and y0 < y1 else box
 
 
 def _sideways(doc, number: int, found: list[Region], answers: list[Correction], lang: str):

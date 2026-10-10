@@ -63,7 +63,7 @@ CROP_PAD = 4  # points around the suspect words
 # Curly quotes as straight ones, and a not sign (some OCR layers' line-end hyphen) as a
 # hyphen, one character for one, so offsets stay put.
 _FOLD = str.maketrans("‘’“”¬", "''\"\"-")
-_OPENING_QUOTES = re.compile(r"(^|\s)[\"'‘’“”]+")
+_OPENING_QUOTES = re.compile(r"(^|\s)([\"'‘’“”]+)")
 _ANY_DASH = re.compile(r"\s*[—–]\s*|\s+-\s+|\s+-(?=['\"]|$)")
 # An ellipsis as a glyph, three dots or spaced dots, with or without a space before.
 _ELLIPSIS = re.compile(r" ?(?:…|\. ?\. ?\.)")
@@ -225,11 +225,13 @@ def line_readings(
                 texts = pool.map(lambda png: transcribe(png, reader, ollama_url, prompt), crops)
             else:
                 texts = pool.map(lambda png: read_line(png, reader, ollama_url), crops)
-            for (page, k), text in zip(batch, texts, strict=True):
-                done[key(page, k)] = text
-                if via:
-                    read_by.setdefault(via, []).append(key(page, k))
-            save()
+            try:
+                for (page, k), text in zip(batch, texts, strict=True):
+                    done[key(page, k)] = text
+                    if via:
+                        read_by.setdefault(via, []).append(key(page, k))
+            finally:
+                save()  # a reading that fails loses itself, not the batch before it
     return {ref: done[key(p, k)] for ref, (p, k) in wanted.items()}
 
 
@@ -439,8 +441,11 @@ def _alike(text: str) -> str:
 
 
 def _bare(text: str) -> str:
-    """Text with every opening quote alike: its kind is no difference, a lost one is."""
-    return _OPENING_QUOTES.sub(r"\1'", text.translate(_FOLD)).strip()
+    """Text with every opening quote alike: its kind is no difference, a lost one is.
+
+    Each mark of a run folds on its own ("‘’t Is" keeps two), so a lost one is a
+    difference there too."""
+    return _OPENING_QUOTES.sub(lambda m: m[1] + "'" * len(m[2]), text.translate(_FOLD)).strip()
 
 
 def _box(words: list, box, original: str, start: int, end: int):

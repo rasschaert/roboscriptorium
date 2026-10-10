@@ -506,3 +506,42 @@ def test_a_reading_supports_its_version_of_a_span_wider_than_its_own_difference(
     assert ocrcheck.supports(ours, glm, a0, a1, versions) == (False, True, False)
     assert ocrcheck.supports(ours, tess, a0, a1, versions) == (False, False, True)
     assert ocrcheck.supports(ours, ours, a0, a1, versions) == (True, False, False)
+
+
+def test_a_lost_opening_quote_before_an_elided_word_is_a_difference():
+    assert _spans("’t Is goed,’ zei hij.", "‘’t Is goed,’ zei hij.") == [("’t", "‘’t")]
+    assert _spans("’Tis true,” he said.", "“’Tis true,” he said.") == [("’Tis", "“’Tis")]
+    # The marks' kinds still don't count.
+    assert _spans("'’t Is", "‘’t Is") == []
+
+
+def test_a_batch_of_readings_is_saved_when_one_reading_fails(tmp_path, monkeypatch):
+    import httpx
+    import pytest
+
+    from roboscriptorium import ocrcheck
+
+    pdf_path = tmp_path / "book.pdf"
+    doc = pymupdf.open()
+    page = doc.new_page(width=300, height=200)
+    for k in range(3):
+        page.insert_text((20, 40 + 20 * k), f"regel {k} van de tekst", fontsize=11)
+    doc.save(pdf_path)
+    doc.close()
+    pages = pdf.read_text_layer(pdf_path)
+    calls = []
+
+    def read(png, model, url):
+        calls.append(1)
+        if len(calls) == 2:
+            raise httpx.HTTPStatusError("500", request=None, response=httpx.Response(500))
+        return "gelezen"
+
+    monkeypatch.setattr(ocrcheck, "read_line", read)
+    monkeypatch.setattr(ocrcheck, "READ_WORKERS", 1)
+    cache = tmp_path / "second-reading.json"
+    with pytest.raises(httpx.HTTPStatusError):
+        checked = {SourceRef(1, k) for k in range(3)}
+        ocrcheck.line_readings(pdf_path, pages, checked, "glm", "http://x", cache)
+    saved = json.loads(cache.read_text())
+    assert len(saved["lines"]) == 1  # the line read before the failure is kept

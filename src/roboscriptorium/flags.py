@@ -134,7 +134,7 @@ class _Furniture:
         if P.printed_page_number(text, page, self.offset):
             return True
         stripped = text.strip()
-        if stripped.isdigit() and self.offset is not None:
+        if P.digits(stripped) and self.offset is not None:
             return abs(int(stripped) - (page.number - self.offset)) <= R.PAGE_NUMBER_SLACK
         return self.repeats.other_pages(text, page.number) >= R.HEADING_MAX_REPEATS
 

@@ -40,6 +40,10 @@ areas below in order, and the test set scored once at the end.
       each); **user** weighs questions against wrong words
 - [ ] Bench the quote-question readings (`quotes.readings`) with the pooled slip rate:
       both were set mid-chain and wait for the new baseline
+- [ ] Branch `bughunt` (2026-10-10, 22 fixes with tests, decisions.md): `bench tuning` and
+      `bench validation` against the new baseline, warm, ~5 min; merge if no book is
+      vetoed. The OCR check raises a few more suspects (a lost quote before ’t), so a
+      trust-data top-up may follow. Then decide the six findings left open (HANDOVER.md)
 
 ## 3. Stella, the target book
 

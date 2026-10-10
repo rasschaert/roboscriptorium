@@ -17,13 +17,13 @@ the review and its keys, and each copied line keeps its text-layer index.
 """
 
 import functools
-import json
 import re
 from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
 from roboscriptorium import reflow
+from roboscriptorium.files import append_jsonl, read_jsonl
 from roboscriptorium.flags import Flag
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import Line, PageText
@@ -69,14 +69,12 @@ class Corrections:
     def __init__(self, path: Path):
         self.path = path
         self.by_key: dict[str, Correction] = {}
-        if path.exists():
-            for line in path.read_text().splitlines():
-                raw = json.loads(line)
-                for k in ("box", "span"):
-                    if raw.get(k):
-                        raw[k] = tuple(raw[k])
-                c = Correction(**raw)
-                self.by_key[c.key] = c
+        for raw in read_jsonl(path):
+            for k in ("box", "span"):
+                if raw.get(k):
+                    raw[k] = tuple(raw[k])
+            c = Correction(**raw)
+            self.by_key[c.key] = c
 
     def record(self, flag: Flag, action: str, text: str | None, turn: int = 0) -> Correction:
         if action not in ACTIONS:
@@ -97,9 +95,7 @@ class Corrections:
             flag.span,
             flag.joined,
         )
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self.path.open("a") as f:
-            f.write(json.dumps(asdict(c), ensure_ascii=False) + "\n")
+        append_jsonl(self.path, asdict(c))
         self.by_key[c.key] = c
         return c
 
@@ -137,7 +133,10 @@ def place(c: Correction) -> str | None:
         if not found.endswith(c.joined):
             return None
         stem = found[: -len(c.joined)]
-        return stem.rstrip() if stem.endswith(" ") else stem + "-"
+        if stem.endswith(" "):
+            return stem.rstrip()
+        # The hyphen is the word's own ("zee-egel"): it is already there.
+        return stem if stem.endswith("-") else stem + "-"
     return found
 
 
@@ -281,8 +280,11 @@ def apply(
         by_number[number].lines[i] = replace(line, text=text)
     for page, c in initials:
         _set_initial(page, c)
-    # Bottom up, so each insertion leaves the indices above it alone.
-    for page, c in sorted(insertions, key=lambda pc: (pc[0].number, -pc[1].first)):
+    # Bottom up, so each insertion leaves the indices above it alone; two regions above
+    # the same line are inserted lower first, so they end up in page order.
+    for page, c in sorted(
+        insertions, key=lambda pc: (pc[0].number, -pc[1].first, -(pc[1].box or (0, 0))[1])
+    ):
         # A blank line in the human's text separates paragraphs.
         paragraphs = [_join_lines(p) for p in re.split(r"\n\s*\n", c.text) if p.strip()]
         for k, text in reversed(list(enumerate(paragraphs))):

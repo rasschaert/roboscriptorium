@@ -344,6 +344,12 @@ parts are words). Those are the question's: a break where the list is silent and
 parts are words fired 13 right against 3 wrong on the English slices and 0 against 44
 on the Dutch, so it can trigger a question on an English book and never decide.
 
+Two cases aren't a word's hyphen at all and skip the evidence: a line ending in a digit
+and a hyphen before a line starting with a digit is a number range broken at the end
+("1914-" / "1918"), kept closed for the typography stage's range rule; and whether the
+next line starts lowercase is asked of the letter itself (`str.islower`), not of a Latin-1
+range that took "ĳ" and "ç" for capitals and kept the hyphen.
+
 ## The reviewer's answers are checked
 
 **A question isn't free: the reviewer slips.** 8 of 68 checked answers on Stella were

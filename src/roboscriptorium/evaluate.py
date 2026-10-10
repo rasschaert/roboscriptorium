@@ -189,15 +189,26 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     # Align on words, then count character edits inside the differing stretches.
     char_edits, confusions = 0, Counter()
     out_to_ref: dict[int, int] = {}
-    for op in Levenshtein.opcodes(out_words, ref_words):
+    ops = Levenshtein.opcodes(out_words, ref_words)
+    i = 0
+    while i < len(ops):
+        op = ops[i]
         if op.tag == "equal":
             for k in range(op.src_end - op.src_start):
                 out_to_ref[op.src_start + k] = op.dest_start + k
+            i += 1
             continue
-        got = " ".join(out_words[op.src_start : op.src_end])
-        want = " ".join(ref_words[op.dest_start : op.dest_end])
-        char_edits += Levenshtein.distance(got, want) + (op.tag == "insert") + (op.tag == "delete")
+        # Consecutive edits are one differing stretch: a word split in two comes back as
+        # an insert beside a replace, and charged apart they cost ten letters' worth.
+        s0, d0, s1, d1 = op.src_start, op.dest_start, op.src_end, op.dest_end
+        while i + 1 < len(ops) and ops[i + 1].tag != "equal":
+            i += 1
+            s1, d1 = ops[i].src_end, ops[i].dest_end
+        got = " ".join(out_words[s0:s1])
+        want = " ".join(ref_words[d0:d1])
+        char_edits += Levenshtein.distance(got, want) + (s0 == s1) + (d0 == d1)
         confusions[(got, want)] += 1
+        i += 1
     ref_chars = sum(len(w) + 1 for w in ref_words)
     matched = match_headings([h.text for h in doc.headings], [ch.heading for ch in reference])
 
