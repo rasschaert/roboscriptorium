@@ -152,7 +152,12 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
 
 # Record: done and dropped
 
-### 1. Measurement that can be trusted
+By the sections of the plan they were done under. The plan grew session by session, and a
+new batch of work got a letter after the nearest number (2b, 3b, 6g) rather than
+renumbering what other notes cite, so the old numbers say nothing about order or kind.
+Each heading keeps its old number, because docs/decisions.md and older notes refer to it.
+
+### Measurement that can be trusted (old 1)
 
 - [x] A missing or stale trust model stops the build (`trust.Mismatch`): no silent
       fallback to the fixed rule.
@@ -173,7 +178,7 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
 - [x] Long runs timed (`experiments/timed.sh`, `docs/run-times.md`): an estimate
       before a run starts.
 
-### 2. Trust data rebuilt with the third reading and short lines
+### Trust data rebuilt with the third reading and short lines (old 2)
 
 One book per run, `experiments/ocr_trust_data.py --rebuild <book>`, on the fixed
 rule. About 1.1 min per page cold (Dolittle; Crime and Vals alarm ran at 0.8; Metro
@@ -220,7 +225,7 @@ short lines. Qwen's reading of every line is 70–75% of a cold run (3b).
       Qwen via hosted. 317 suspects, 283 with a clear label, layer wrong on 87 (lost
       apostrophes, `Fie` for "He", missing spaces, real-word slips); clef right on 268
 
-### 2b. New golden pairs (Fable's session, ended; its steps are this session's now)
+### New golden pairs (old 2b)
 
 Placed under `work/` like the others: the scans in `work/<book>--ia-scan/source.pdf`,
 the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
@@ -247,7 +252,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
 - [x] Retirement rule in AGENTS.md, with per-book signals in the bench diagnostics
       (`golden/signals.py`: layer CER and unplaced body lines, a suspect named)
 
-### 3. Baseline, retrain, bench, decide
+### Baseline, retrain, bench, decide (old 3)
 
 - [x] Baseline bench on the fixed rule (`ROBO_OCR_TRUST=0 … bench`): 32 min warm
 - [x] Retrain trust and compare with the before-Qwen data: silent errors at 0/.25/.5/1
@@ -300,7 +305,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
       was all but unsure (confidence 0.02 and 0.1); the median confidence moved 0.001.
       Cached answers stand for fresh ones
 
-### 3b. A faster line reader (Qwen is 70–75% of a cold run)
+### A faster line reader, the crop fix (old 3b)
 
 - [x] Where the time goes, from the stage caches' times: Qwen 70–75%, clef's judging
       20–25%, everything else ~15–20 min per 100 pages
@@ -381,7 +386,7 @@ the publisher's EPUBs in `work/.cache/publisher/<book>.epub`.
         (2026-10-10): after the crop fix readers stray on 1 line in 958, and a version the
         vision judge saw none of is never applied (6g)
 
-### 3c. A reader of the finished text
+### A reader of the finished text (old 3c)
 
 Every check so far starts where the OCR readings disagree; a mistake all readings
 share, or one reflow makes, is never looked at. A model reading the built text
@@ -402,7 +407,7 @@ danger is that it edits the author. Guards, all of them:
       urges; with the line's scan crop it does no better (keeps 5, drops `ALLEs $1`).
       Both drop a real lost closing quote. The weak part is now the proposer
 
-### 4. The user's part
+### The user's part (old 4)
 
 - [x] **user** Slip rate per question kind (done in 6g, 30 of 32 right): answer the review on Goede dochter
       pp. 9–64, scored against the aligned truth. **After the retrain, with trust on**:
@@ -414,7 +419,7 @@ danger is that it edits the author. Guards, all of them:
       nothing drawn over the letters (the box hid the quote marks it asked about); softer
       colours; `h` turns highlights off, remembered
 
-### 5. More for the trust model
+### More for the trust model (old 5)
 
 - [ ] ~~A book-quality feature~~ merged (2026-10-10) into bad pages by the readers'
       disagreement, the same signal per page
@@ -426,7 +431,7 @@ danger is that it edits the author. Guards, all of them:
       have taught "Qwen never backs a version"); its leave-one-out analysis no longer
       trains on validation books; `--save` refuses while tuning data is missing
 
-### 6. Other components, each scored by `bench`
+### Other components (old 6)
 
 - [x] An ellipsis style in `typography.py` (`326a89d`), read in the text layer or set in
       `book.toml` (the glyph, dots or spaced dots, a space before or not), not measured on
@@ -446,7 +451,7 @@ danger is that it edits the author. Guards, all of them:
 - [x] `quality.catches` matches by span where flags have one: a question about one place
       catches only errors sharing a word with it (6g)
 
-### 6g. Fable's second review (2026-10-09)
+### Fable's second review, 2026-10-09 (old 6g)
 
 What the bench couldn't see, and leaks in the OCR check, found in a review of the whole
 build. Each change benched on its own.
@@ -520,7 +525,7 @@ build. Each change benched on its own.
       (Goede dochter 0.58 → 0.44 a page, Reis 0.43 → 0.30), Artemis 0.76 → 0.64; De tuin
       0.77 → 0.85, its own veto
 
-### 6b. Where the labelled suspects say the errors are (Fable's review, 2026-10-08)
+### Where the labelled suspects say the errors are, 2026-10-08 (old 6b)
 
 Measured on the trust data and the golden slices, no models; the scripts and numbers
 are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py` and
@@ -546,7 +551,7 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       slips, 3 false alarms in 58). Left: comparing with Qwen's cached reading of the
       whole line for regions that carry no readings (headings, missing text)
 
-### 6c. Tryouts: a model screened for a role before the bench
+### Tryouts: a model screened for a role (old 6c)
 
 - [x] Reader set v1 frozen (`experiments/tryout.py`, `tryouts/reader-v1.json`): 550
       lines of the tuning slices, 30 the layer reads wrong and 20 it reads right a book
@@ -601,7 +606,7 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
   - [x] Ollaya stripped from the code and docs: the user uninstalled it, so it went
         before the bench (winnow on Ollama is the only winnow)
 
-### 6e. Strict review of the codebase (2026-10-09)
+### Strict review of the codebase, 2026-10-09 (old 6e)
 
 - [x] Six reviewers, every finding checked; fixes with tests in seven commits
       (hosted client, docs, answers and typography, OCR check and trust, measuring,
@@ -637,12 +642,12 @@ are `experiments/probe_trust_pair_prior.py`, `experiments/probe_hyphen_breaks.py
       them, glm-ocr reads them; `missing.py` now reads regions up to five lines tall
       above a sunk page's text. +3 questions, no other book changed, 20 min
 
-### 6d. Image-only scans
+### Image-only scans (old 6d)
 
 - [x] tesseract's first reading of an image-only PDF (`pdf.first_reading`); Goede
       dochter pp. 9–64 with its layer removed: CER 0.35% against the IA layer's 0.20%
 
-### 6f. Internet Archive's own files
+### Internet Archive's own files (old 6f)
 
 A Scribe item holds more than the PDF: the page images the PDF was compressed from
 (`_jp2.zip`), ABBYY's OCR with a confidence per letter (`_abbyy.gz`) and the scan's
@@ -663,7 +668,7 @@ public-domain items only; a lending-library item keeps all but `_scandata.xml` p
       private. Pallieter doesn't pair: the public scan is the 30th printing
       in post-1946 spelling, Gutenberg #11355 an older edition
 
-### 7. A real test set
+### A real test set, and pages left out of the check (old 7)
 
 - [x] A new golden book, left unscored until the end: Het geluid van bananen (2b),
       the `test` set

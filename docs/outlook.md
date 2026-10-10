@@ -26,8 +26,8 @@ Bench totals: tuning 0.56, validation 0.77 wrong words a page after review; para
 breaks set wrong 0.33 and 0.21 a page. With the line-role trees on (`ROBO_SORTER=1`):
 0.52 and 0.70, no change by the test.
 
-Every bench figure but Goede dochter's and De tuin's measures DeepInfra's hosted Qwen,
-not the local build Stella gets: the overnight re-read (checklist 6g) fixes that.
+Until 2026-10-10 every bench figure but Goede dochter's and De tuin's measured DeepInfra's hosted Qwen,
+not the local build Stella gets; read again locally on 2026-10-10, no change by the bench.
 
 **Assessment (2026-10-09):**
 - Stella coming out as a clean, valid EPUB is likely (~80–90%) and near: its kind of
@@ -48,7 +48,7 @@ not the local build Stella gets: the overnight re-read (checklist 6g) fixes that
    - Scene breaks are set but not scored: derive drops the references' blank lines.
    - Not handled: footnotes in the body, verse, tables, block quotes.
 2. **The errors no question asks about** ("unasked", by kind, in each bench record):
-   - Vals alarm: 33 unasked letter errors, its lost full stops (checklist 5): only its
+   - Vals alarm: 33 unasked letter errors, its lost full stops (checklist 4, the book teaches itself): only its
      own answers can teach the arbiter.
    - De eerlijke vinder: unasked 1.02 a page, the most of any ordinary book (words 26,
      letters 21, extra words 18). Unexamined.
@@ -69,7 +69,7 @@ not the local build Stella gets: the overnight re-read (checklist 6g) fixes that
    text on them. A human types them, or the book is rescanned.
 6. **Better pixels.** Every reader and judge sees crops of a heavily compressed PDF
    (Crime's is 3 MB for 138 pages). Internet Archive's page images are about 13× the
-   data and its ABBYY reading gives a confidence per letter (checklist 6f). Only the
+   data and its ABBYY reading gives a confidence per letter (checklist 7). Only the
    public-domain books have them: Crime and Dolittle so far.
 
 ## What the second review's ideas did (2026-10-09)

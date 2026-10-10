@@ -329,7 +329,7 @@ def test_a_hyphen_already_in_the_word_keeps_the_breaks_only_between_words():
 
 
 @pytest.mark.xfail(
-    strict=True, reason="checklist 6b: a compound the word list knows both ways is a question"
+    strict=True, reason="checklist 4: a compound the word list knows both ways is a question"
 )
 def test_a_compound_the_list_knows_both_ways_keeps_its_hyphen():
     words = {"makeup", "make-up"}
@@ -337,7 +337,7 @@ def test_a_compound_the_list_knows_both_ways_keeps_its_hyphen():
     assert join("her make-", "up", known=known) == "her make-up"
 
 
-@pytest.mark.xfail(strict=True, reason="checklist 6b: a compound the word list lacks is a question")
+@pytest.mark.xfail(strict=True, reason="checklist 4: a compound the word list lacks is a question")
 def test_a_compound_the_list_lacks_keeps_its_hyphen():
     known = lambda w: w.lower() in {"makeup", "make-up"}  # noqa: E731
     assert join("the night-", "vision", known=known) == "the night-vision"
