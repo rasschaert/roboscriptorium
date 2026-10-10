@@ -63,7 +63,7 @@ SETS = {
 TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
 # Tuning books with no trust data (`experiments/ocr_trust_data.py`'s SPECS lacks them):
 # the trust model never trains on them, so they are scored with the full model.
-NO_TRUST_DATA = frozenset({"the-thief-takers-apprentice--ia-scan"})
+NO_TRUST_DATA: frozenset[str] = frozenset()
 TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST_DATA
 # The line-role model trains on every tuning book (`experiments/train_sorter.py`).
 SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"])
