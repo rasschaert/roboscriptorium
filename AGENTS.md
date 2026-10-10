@@ -438,8 +438,8 @@ sha256, page ranges, the source and chapter range), the derived chapters in `tex
   docs/golden-books.md`, half a minute, no models, after adding, slicing or retiring a
   book). Past three times the set's median layer CER, or one body line in twenty
   unplaced, the book is suspect. **Whoever notices says so in the session's report and
-  proposes retiring it, without being asked.** Retired books go to `work/retired/`, with
-  a dated line in docs/decisions.md.
+  proposes retiring it, without being asked.** A retired book's files are deleted from
+  `work/` and its manifest from git, with a dated line in docs/decisions.md.
 
 ```sh
 uv run roboscriptorium golden derive the-nature-of-a-crime

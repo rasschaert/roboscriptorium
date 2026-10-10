@@ -5,7 +5,7 @@ known to deviate between its print and its reference. The numbers (set, pages, l
 CER, unplaced lines) are generated into [golden-books.md](golden-books.md); the rules
 for choosing, checking and retiring a pair are in AGENTS.md.
 
-Retired (in `work/retired/`, manifests in git history): Boze tongen, De dode
+Retired (files deleted, manifests in git history): Boze tongen, De dode
 kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing, and
 (2026-10-10) Lady into Fox and Grand Hotel Europa, whose references don't match their
 prints.
