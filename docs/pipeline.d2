@@ -73,18 +73,20 @@ read: 1 · Read the page {
   }
   m: {
     class: row
-    mupdf: "PyMuPDF; tesseract\nwhen image-only" {class: code}
-    yolo: "the spotter\nDocLayout-YOLO" {class: vision}
-    glm: "a reader\nglm-ocr:bf16" {class: ollama}
-    ink: ink on the page image {class: code}
+    pdftext: "the PDF's own text layer,\nread out by PyMuPDF" {class: code}
+    tess: "READER tesseract, reading the page image\nwhen the PDF has no text layer" {class: code}
+    yolo: "SPOTTER DocLayout-YOLO" {class: vision}
+    glm: "READER glm-ocr:bf16\nreads the region" {class: ollama}
+    ink: "measures each line's type size, stroke\nand letter width from its ink" {class: code}
   }
-  s.layer -> m.mupdf {class: uses}
+  s.layer -> m.pdftext {class: uses}
+  s.layer -> m.tess {class: uses}
   s.regions -> m.yolo {class: uses}
-  s.missing -> m.glm: reads the region {class: uses}
+  s.missing -> m.glm {class: uses}
   s.type -> m.ink {class: uses}
 }
 
-understand: 2 · Understand the page {
+understand: 2 · What each line is {
   class: group
   s: {
     class: row
@@ -92,13 +94,13 @@ understand: 2 · Understand the page {
   }
   m: {
     class: row
-    flash: "the sorter\nclef-flash:9b" {class: decision}
-    rules: layout rules +\nstyle-group vote {class: code}
-    tree: line-role classifier\n(gradient-boosted trees) {class: candidate}
+    pick: "rules pick the doubtful lines:\nat the page's edges, short and centred,\nlabelled, garbled; the rest is body" {class: code}
+    flash: "SORTER clef-flash:9b\nanswers for each doubtful line, told\nits place, neighbours and repeats" {class: decision}
+    fix: "rules overrule where the layout decides\n(a title on every page is a running head);\nlines set alike take the role most got" {class: code}
+    tree: "a learned SORTER: trees over all of\nthe above, re-deciding every line\n(ROBO_SORTER=1)" {class: candidate}
+    pick -> flash -> fix -> tree
   }
-  s.roles -> m.flash: doubtful lines {class: uses}
-  s.roles -> m.rules {class: uses}
-  s.roles -> m.tree {class: uses}
+  s.roles -> m.pick {class: uses}
 }
 
 check: 3 · Check the OCR (scans only) {
@@ -106,23 +108,22 @@ check: 3 · Check the OCR (scans only) {
   s: {
     class: row
     horizontal-gap: 160
-    second: More readings\nof each body line {class: stage}
+    second: More readings\nof each body line\n(washed-out pages skipped) {class: stage}
     judge: Judges\npick a version of each suspect {class: stage}
     trust: Arbiter\nfix, keep, or ask {class: stage}
     second -> judge -> trust
   }
   m: {
     class: row
-    glm: "reader\nglm-ocr:bf16" {class: ollama}
-    tess: "reader\ntesseract (the book's language)" {class: code}
-    qwen: "reader\nqwen3.8:27b, told the book's style" {class: ollama}
-    clef: "judge\nclef:27b, from the crop" {class: decision}
-    winnow: "judge\nwinnow-ollama:e4b, from the sentence" {class: decision}
-    words: "judge\nthe word list" {class: code}
-    gbt: "the arbiter\ntrees trained on golden books" {class: code}
+    glm: "READER glm-ocr:bf16" {class: ollama}
+    tess: "READER tesseract\n(the book's language)" {class: code}
+    qwen: "READER qwen3.8:27b-nvfp4,\ntold the book's style" {class: ollama}
+    clef: "JUDGE clef:27b\nfrom the crop" {class: decision}
+    winnow: "JUDGE winnow-ollama:e4b\nfrom the sentence" {class: decision}
+    words: "JUDGE the word list" {class: code}
+    gbt: "ARBITER trees trained\non golden books" {class: code}
   }
   s.second -> m.glm {class: uses}
-  s.second -> review.m.faint: skips washed-out pages {class: uses}
   s.second -> m.tess {class: uses}
   s.second -> m.qwen {class: uses}
   s.judge -> m.clef {class: uses}
@@ -142,10 +143,10 @@ review: 4 · Review {
   }
   m: {
     class: row
-    qread: "a reader, qwen3.8:27b,\nproposes an unpaired quote's marks" {class: ollama}
-    init: "the sorter, clef-flash:9b,\nguesses a drawn initial's letter" {class: decision}
+    qread: "READER qwen3.8:27b-nvfp4\nproposes an unpaired quote's marks" {class: ollama}
+    init: "SORTER clef-flash:9b\nguesses a drawn initial's letter" {class: decision}
     faint: "contrast between paper\nand ink (scans only)" {class: code}
-    you: the reviewer {class: human}
+    you: REVIEWER, you {class: human}
     slip: answer check: a typed line\nmust match a reading {class: code}
     proof: qwen3.8 proofreads\nthe answers {class: candidate}
   }
@@ -173,7 +174,7 @@ build: 5 · Assemble the book {
     words: the word list\n(which form it knows) {class: code}
     slant: stroke slant per word {class: code}
     gap: "dash length and gaps, ellipsis form\n(or book.toml), measured first,\ndashes told to the readers" {class: code}
-    regions: "the spotter's pictures;\nthe reviewer's turns" {class: code}
+    regions: "the SPOTTER's pictures;\nthe REVIEWER's turns" {class: code}
   }
   s.reflow -> m.spell {class: uses}
   s.reflow -> m.words {class: uses}
@@ -194,8 +195,9 @@ build -> epub
 
 legend: Who does the work {
   class: group
-  grid-columns: 6
+  grid-columns: 7
   horizontal-gap: 30
+  r: "A WORD IN CAPITALS is a role, a job\nhow-it-works.md explains; after it,\nwho holds the job today" {class: stage}
   v: vision model\n(not an LLM) {class: vision}
   g: generative model\n(Ollama) {class: ollama}
   d: "decision model\n(Ollama systemone)" {class: decision}
