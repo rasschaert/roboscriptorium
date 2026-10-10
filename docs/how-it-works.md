@@ -9,27 +9,50 @@ The [diagram](pipeline.svg) draws the stages with the model behind each one.
 
 ## The idea
 
-A scanned book usually comes with an OCR text layer, and that layer is good: a few
-wrong characters in every thousand. A careful edition has none, so those few are
-what this project exists to fix.
+A book comes as one of three kinds of PDF, and what matters is how much of the
+printed page the file already holds as text.
+
+- **Born-digital**: made from the typeset text, so the text *is* the page and the
+  picture only renders it. Extracting the text is exact.
+- **A scan with a text layer**: the picture is the page. Over it, invisible, lies
+  one OCR program's reading of it, which is what lets you search and copy in a
+  scanned PDF. That reading is good, a few wrong characters in every thousand, and
+  a careful edition has none. Those few are what this project exists to fix.
+- **An image-only scan**: the picture is the page and nothing has read it yet.
 
 The text layer is one reading of the book. No single OCR program fixes its
 mistakes, because every one makes mistakes of its own. So more OCR models, the
-*readers*, read the book again, chosen because they make different mistakes. Where a reader disagrees with
-the text layer, the place becomes a *suspect*, and each way of reading it is a
-*version*.
+*readers*, read the book again, chosen because they make different mistakes. Where
+a reader disagrees with the text layer, the place becomes a *suspect*, and each way
+of reading it is a *version*.
 
 Other models, the *judges*, look at each suspect and each pick a version. Then the
-*arbiter*, a model trained on books whose printed text is known, decides how far to
-believe each reader and judge. Where the arbiter is unsure, it asks the *reviewer*: you, with
-the scan beside the question.
+*arbiter* decides how far to believe each reader and judge. The arbiter is a
+*trained* model, which means it was not written as rules: it was shown thousands
+of suspects from books whose printed text is known, each with the right version
+marked, and fitted so that it reproduces those answers. It gets better as that
+labelled set grows, and it can be wrong in ways nobody wrote down. Where it is
+unsure, it asks the *reviewer*: you, with the scan beside the question.
 
 Your answers go into the next build. They also become labels the arbiter learns from.
 
 Before any of that, the *spotter* marks what is on each page, and the *sorter*
 decides what each line is: body text, a heading, a page number. After it, plain
 code joins the lines into paragraphs and sets the typography the way the book was
-printed.
+printed. A born-digital PDF skips the reading and judging: its text is exact, so
+it goes from the sorter straight to the paragraphs.
+
+Each of those italic words is a *role*, and the roles are the point. The machine
+is a set of jobs, not a set of models: whoever holds a job today, a model, a
+program or you, holds it because it scored best on the golden books (under
+*Measuring*), and a newer model that scores better takes the job over. The
+diagram writes a role in capitals before whoever holds it. A *candidate*, drawn
+dashed, is a model tried for a role and not yet in use: it stays off until the
+measurement says it earns the job.
+
+What comes out is an EPUB of the book's prose: paragraphs, headings, italics,
+scene breaks, pictures with their captions. Footnotes, verse and tables are not
+handled yet, nor any input but PDF.
 
 ## The models and their roles
 
@@ -41,6 +64,10 @@ printed.
 | judges | clef:27b, winnow-ollama:e4b, the word list | each pick a version of a suspect | decision models and plain code |
 | arbiter | the trust model (`trust.py`) | fixes, keeps, or asks about each suspect | trees trained on golden books |
 | reviewer | you | answer what the arbiter is unsure of | a person |
+
+Two candidates, off by default: trees trained on the golden books' lines for the
+sorter's job (under *What each line is*), and qwen3.8 proofreading the reviewer's
+answers (under *Checking the reviewer*).
 
 ### The readers
 
@@ -68,6 +95,12 @@ chance that the judge is right. So the arbiter takes no judge at its word. It ha
 learned, from labelled books, how far to believe each reader and judge for each
 kind of difference.
 
+It is a set of small decision trees, each a short chain of yes-or-no questions
+about a suspect, combined so that each corrects the last (gradient boosting).
+Trees suit this job: there are a few thousand labelled suspects, not millions, and
+the facts about each are few and already worked out, so a large network would have
+nothing to learn from.
+
 ### Local first
 
 Every model runs on this machine. A reader or judge runs hosted only when the
@@ -93,18 +126,22 @@ last line that was cut off. A run killed halfway resumes where it stopped.
 
 Books, scans and everything derived from them stay in `work/`, outside git.
 
-## Stage 1: the page
+## 1 · Read the page
 
-### The text layer
+### The first reading
 
-`pdf.py` takes the PDF's own text as visual lines. Each line has its box on the
-page and an identity, `SourceRef`: its page and line number.
+The first stage makes a first reading of every page: its text as visual lines, each
+with its box on the page. Who makes it depends on the kind of PDF. For a
+born-digital PDF and for a scan with a text layer, `pdf.py` reads the PDF's own
+text out with PyMuPDF; in a scan that text is invisible, drawn in a font without
+letter shapes, at the places where the OCR program read each word. An image-only
+scan has no such text, so tesseract, one of the readers, reads each page image
+first, and its words, grouped into visual lines, stand in. The rest of this page
+calls the first reading the *text layer*, whoever made it.
 
-That identity follows the line through every later stage. A fix, an answer or a
-score always refers back to the line as the text layer had it.
-
-An image-only PDF has no text layer. tesseract, one of the readers, then reads each
-page first, and its words, grouped into visual lines, stand in for the text layer.
+Each line gets an identity, `SourceRef`: its page and line number. That identity
+follows the line through every later stage. A fix, an answer or a score always
+refers back to the line as the text layer had it.
 
 ### The spotter
 
@@ -140,7 +177,7 @@ Both are measured before any reader sees a line, and the readers and judges are
 told them in a sentence. Typography belongs to the book: asked line by line, the
 readers and judges set it inconsistently.
 
-## Stage 2: the sorter
+## 2 · What each line is
 
 The sorter (`roles.py`) gives each line a role: body, heading, page number, running
 head, or a print artefact to drop.
@@ -155,9 +192,20 @@ pages, as a running head does.
 
 Rules in code then overrule the sorter where the layout decides the question. What
 is true by definition, such as a chapter heading appearing once, is enforced
-there. A group of lines set alike takes the role the sorter gave most of them.
+there. Last comes the *style vote*: a group of lines set alike, in the same size,
+weight and capitals, takes the role the sorter gave most of them, so one misjudged
+chapter title follows its siblings.
 
-## Stage 3: the OCR check
+Those rules were written one book at a time and don't carry over well: on a
+born-digital book they found none of its twelve headings. The candidate for the
+job is a set of trees trained on the golden books' lines, labelled body, heading
+or other by aligning the scan with its reference text. The trees see what the
+rules see (place on the page, width, indent, gaps, repetition across pages), the
+line's type, the spotter's regions and the sorter's answer, and give every line a
+role. `ROBO_SORTER=1` turns them on; the bench decides whether they become the
+default.
+
+## 3 · Check the OCR
 
 This stage runs on scans only, and it costs most of a build's model time.
 
@@ -168,7 +216,7 @@ Every body line is read again by the three readers, short lines included:
 | Reader | Sees | Good at | Weak at |
 | --- | --- | --- | --- |
 | glm-ocr | the line's crop | letters and words | drops quote marks and diaereses |
-| tesseract | the whole page, with its own line finding | marks the layer's boxes cut off, dashes | punctuation, opening quotes |
+| tesseract | the whole page, finding the lines itself | words at the edge of a crop, dashes | punctuation, opening quotes |
 | qwen3.8, told the book's style | the line's crop | quote marks | sometimes writes a plausible but wrong word |
 
 A crop reaches one em past each end of the line and a few points above and below
@@ -250,7 +298,7 @@ at least somewhat sure (0.3), or when clef alone picks it at 0.5 or more where t
 versions differ only in punctuation, dashes or spacing, which winnow can't tell
 apart from the sentence. Everything else goes to the reviewer.
 
-## Stage 4: the reviewer
+## 4 · Review
 
 `roboscriptorium review work/<book>` builds the book and serves the questions on a
 local web page.
@@ -273,6 +321,10 @@ local web page.
 The list is built before any answers are applied, so it doesn't change while you
 work through it.
 
+How much there is to answer depends on the book: about half a question a page on a
+clean scan of modern prose, one to three on a busy layout with pictures, and a
+washed-out scan asks for whole pages to be typed.
+
 ### Answering
 
 `review.py` shows each question beside its crop of the scan.
@@ -289,8 +341,8 @@ the word beside it a word, and the sorter picks the one the drawing shows.
 
 ### Checking the reviewer
 
-The reviewer makes mistakes too: about one answer in eight on Stella was wrong. So
-an answer is checked before it is saved.
+The reviewer makes mistakes too: about one answer in ten, pooled over the books
+reviewed so far. So an answer is checked before it is saved.
 
 A line typed for a question must match one of the readings, apart from quote
 glyphs and spacing. A straight quote in a book set with curly quotes is queried.
@@ -298,7 +350,11 @@ The page says why once, and saves when you press Save again.
 
 Answers are stored in `work/<book>/review/regions.jsonl`.
 
-## Stage 5: the book
+A candidate goes further: qwen3.8 reads the crop and compares its reading with
+the answer. On Stella's answers it caught all nine wrong ones with three false
+alarms in fifty-eight. It is not wired in yet.
+
+## 5 · Assemble the book
 
 ### The reviewer's answers
 
@@ -406,7 +462,9 @@ can't be aligned. A book past either threshold is proposed for retirement.
 
 ## How the arbiter learns
 
-The arbiter is the model that learns, in three steps.
+Two models are trained here rather than taken as they come: the arbiter, and the
+candidate sorter, which is trained the same way on labelled lines
+(`experiments/train_sorter.py`). The arbiter learns in three steps.
 
 ### 1. Trust data
 

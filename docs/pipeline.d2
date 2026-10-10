@@ -78,7 +78,7 @@ read: 1 · Read the page {
     class: row
     yolo: "SPOTTER DocLayout-YOLO" {class: vision}
     glm: "READER glm-ocr:bf16\nreads the region" {class: ollama}
-    ink: "measures each line's type size, stroke\nand letter width from its ink" {class: code}
+    ink: ink measured on\nthe page image {class: code}
   }
   s.regions -> m.yolo {class: uses}
   s.missing -> m.glm {class: uses}
