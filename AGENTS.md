@@ -295,7 +295,10 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
 ## Environment
 
 - Apple M4 Max, 64 GB RAM, macOS. Ollama drains the battery even on the charger, and Low
-  Power Mode slows runs by an unmeasured amount: ask before chaining long runs.
+  Power Mode slows runs by an unmeasured amount: ask before chaining long runs. Every
+  model run waits while the battery is under 30%, checking hourly
+  (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
+  job started another way).
 - Ollama 0.40.2 at `http://127.0.0.1:11434` (scores before 2026-10-06 were on 0.35.1).
   Ollaya was uninstalled on 2026-10-08; every model runs on Ollama.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
