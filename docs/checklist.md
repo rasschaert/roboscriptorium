@@ -44,18 +44,16 @@ areas below in order, and the test set scored once at the end.
       `work/candidates/stilte`; write its manifest, derive, choose a slice ending on a
       chapter). Then `bench validation` again for the new baseline. ~3 h cold
 - [ ] `ROBO_OCR_ASK_BELOW` at 0.7, 0.8 and 0.9 on the retrained arbiter (warm, ~2 min
-      each); **user** weighs questions against wrong words
+      each). The user gives no exchange rate (answers until tired), so choose where the
+      wrong words a question removes fall off; record the curve
 
 ## 3. Stella, the target book
 
-- [ ] **user** Agree what "done" means (outlook's proposal: under 0.3 wrong words a page
-      after review, under 1 question a page, headings and paragraphs right, epubcheck
-      clean). 5 min
 - [ ] Build Stella with today's build (cold for the new crops and readings, ~1 h for 67
       pages); sample the questions before sending the reviewer (never obvious ones)
 - [ ] **user** Review Stella: its 68 old answers stand, so only new questions; ~30–60
       at today's rate, ~30 min
-- [ ] Rebuild, epubcheck, and **user** reads the EPUB through: what the bench can't see
+- [ ] Rebuild, epubcheck, the spot-check (as for the user's books below), and **user** reads the EPUB through: what the bench can't see
       (layout, italics, front matter)
 
 ## 4. The user's books after Stella
@@ -73,7 +71,9 @@ In this order:
 
 - [ ] Each book in turn: check its front and back matter and `body_pages`, build (cold
       ~1 min a page: Ex-minnaar ~4 h, De kus ~10 h), sample the questions, **user**
-      reviews, rebuild, epubcheck, **user** reads the EPUB
+      reviews, rebuild, epubcheck, a **spot-check** (5 random pages drawn by a script,
+      the **user** marks every wrong word, break and italic against the scan, ~15–20
+      min: the book's own error estimate with its interval), **user** reads the EPUB
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
@@ -168,7 +168,8 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
 - [ ] Het Kindeken Jezus as a golden book, only if the image probe looks
       language-dependent
 - [ ] `golden check <pdf> <epub>` writing a draft manifest, once a batch of candidates comes
-- [ ] French, the user's idea (2026-10-09), undecided: it brings its own typography
+- [ ] French, the user's idea (2026-10-09); **not yet** (2026-10-10: no French books to
+      make yet). It brings its own typography
       (« », a thin space before `; : ! ?`, dialogue dashes) that `quotes.py`,
       `typography.py` and the arbiter's training data would all need, and Gallica is
       mostly older print. If it comes: one French Wikisource book proofread page by page

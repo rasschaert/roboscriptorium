@@ -105,12 +105,18 @@ Don't repeat these without a new reason (details in docs/decisions.md):
 - **Removing Qwen** (to save its 70–75% of a cold run): clearly worse.
 - **Faster readers** (gemma4, MoE models): worse on quote marks.
 
-## What would make "done" checkable
+## The goal
 
-Not yet agreed with the user; a proposal to settle before the end:
+The user's words (2026-10-10): an EPUB **as if the publisher had put it out**, faithful
+to the text and the typesetting, with minimal errors. Perfection is unattainable;
+progress toward it is the aim, so there is no finish line to agree, only the bench
+moving the right way. A build is made and then measured, never held back for a bar.
+The measures that say how close a book is:
 
-- Stella under 0.3 wrong words a page after review, under 1 question a page.
-- Headings and paragraphs right (heading recall 1.0, paragraph F1 ≥ 0.98).
-- epubcheck clean.
-- The test set (Het geluid van bananen) scored once, at the end, within reach of the
+- wrong words a page after review (the bench; a target book's spot-check);
+- questions a page: the user answers until tired, so fewer and better questions are
+  worth as much as fewer errors;
+- headings and paragraphs (heading recall, paragraph F1);
+- epubcheck clean;
+- the test set (Het geluid van bananen) scored once, at the end, within reach of the
   validation books.
