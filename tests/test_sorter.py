@@ -73,3 +73,29 @@ def test_a_heading_repeated_on_other_pages_is_a_running_head():
 
     roles = sorter.apply(sorter.Sorter(Headings()), pages, {}, {})
     assert {roles[SourceRef(n, 0)].role for n in range(5, 10)} == {"running_head"}
+
+
+def test_running_text_away_from_the_edges_is_never_dropped_unasked():
+    from roboscriptorium.layout import Region
+
+    class Drops(_Trees):
+        def predict_proba(self, X):
+            out = np.tile([0.05, 0.05, 0.9], (len(X), 1))
+            out[3] = [0.1, 0.8, 0.1]
+            return out
+
+    page = _page()
+    text = {5: [Region("plain text", 0.95, 0, 30, 300, 170)]}
+    roles = sorter.apply(sorter.Sorter(Drops()), [page], {}, {}, text)
+    # Mid-page lines in a text block stay body; a heading the trees find there still counts.
+    assert SourceRef(5, 4) not in roles
+    assert roles[SourceRef(5, 3)].role == "chapter_heading"
+    # At the edges, or asked, or outside any text block, the trees decide.
+    assert roles[SourceRef(5, 8)].role == "artifact"
+    asked = {SourceRef(5, 4): LineRole("artifact", 0.6, 0.3)}
+    assert sorter.apply(sorter.Sorter(Drops()), [page], asked, {}, text)[SourceRef(5, 4)].role == (
+        "artifact"
+    )
+    assert sorter.apply(sorter.Sorter(Drops()), [page], {}, {}, {})[SourceRef(5, 4)].role == (
+        "artifact"
+    )

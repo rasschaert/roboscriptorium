@@ -39,6 +39,11 @@ KEEP_BODY = 0.25
 # edge of this many other pages, is page furniture: of 346 such labelled lines, none was
 # body (337 furniture, 9 headings).
 FURNITURE_CHARS = 6
+# A line the role model wasn't asked about, away from the page's edges and inside a text
+# block the layout model is this sure of, stays body whatever the trees say: page furniture
+# sits at the edges. Over the labelled tuning books, body lines lost 72 → 57, errors
+# 139 → 126; no book lost more than one line (`experiments/train_sorter.py`).
+RUNNING_TEXT = 0.5
 CLASSES = ("body", "heading", "other")
 MODEL_ROLES = ("body", "running_head", "page_number", "chapter_heading", "artifact")
 LAYOUT_CLASSES = ("title", "plain text", "abandon", "figure", "figure_caption", "table")
@@ -217,6 +222,9 @@ def apply(
         if repeated and (best == "heading" or edge and f["chars"] >= FURNITURE_CHARS):
             # A heading appears once, and text repeated at the pages' edges is furniture.
             out[ref] = LineRole("running_head", float(p.max()), 0.0, "repeated")
+            continue
+        running = not edge and f["layout_plain text"] >= RUNNING_TEXT
+        if best == "other" and ref not in model_roles and running:
             continue
         if best == "other" and p_body >= KEEP_BODY:
             # Kept as text, under its other role so the review asks about it.
