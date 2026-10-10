@@ -1,0 +1,29 @@
+title = "De stilte van de hel"
+author = "Cody McFadyen"
+language = "nl"
+# McFadyen and his translator Valérie Janssen: under copyright, so only this manifest is
+# in git.
+eu_copyright_until = 2200
+
+# A.W. Bruna's own e-book ("ebook editie, september 2009"), Vuurspel's sibling: the same
+# publisher, translator and e-book house, so it validates beside Vuurspel and never
+# trains. Parts ("Deel 1", "Dromen en schaduwen") are "deeltitel", chapter numbers
+# "hoofdstukcijfer"; italics "adobegaramondproitalic"; small capitals "kleinkapitaal",
+# written in lower case ("fbi", "dna"), set in capitals as printed. Body from "Deel 1" to
+# the end of the Epiloog; the Dankwoord after.
+[reference]
+source = "De stilte van de hel, A.W. Bruna 2006, transl. Valérie Janssen, ebook editie september 2009 (EPUB)"
+sha256 = "69d0d776e5e30f854dbc065679aea5a8c531b0556ae98cd66ecf15f6852d7353"
+files = ["OEBPS/awb_-_stilte_van_de_hel_split_4.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_5.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_6.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_7.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_8.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_9.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_10.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_11.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_12.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_13.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_14.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_15.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_16.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_17.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_18.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_19.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_20.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_21.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_22.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_23.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_24.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_25.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_26.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_27.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_28.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_29.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_30.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_31.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_32.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_33.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_34.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_35.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_36.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_37.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_38.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_39.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_40.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_41.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_42.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_43.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_44.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_45.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_46.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_47.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_48.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_49.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_50.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_51.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_52.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_53.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_54.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_55.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_56.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_57.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_58.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_59.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_60.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_61.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_62.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_63.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_64.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_65.xhtml", "OEBPS/awb_-_stilte_van_de_hel_split_66.xhtml"]
+heading_prefixes = ["hoofdstukcijfer", "deeltitel"]
+italic_classes = ["adobegaramondproitalic"]
+capital_classes = ["kleinkapitaal"]
+
+# IA Scribe scan, 360 ppi MRC, GlyphLessFont layer, 368 pages. Pages 11–363: "Deel 1" to
+# the end of the Epiloog. Internet Archive lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "Internet Archive lending library (borrow, then download the PDF)"
+sha256 = "f24d842898cd647300616cffee776b6fcc7f115b27ba40390b2b2c9bda4779bc"
+cover_page = 1
+body_pages = [11, 363]

@@ -27,7 +27,7 @@ from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.ir import SourceRef
 
-EXTRA = ["monterosso-mon-amour--ia-scan", "de-aanslag--calibre-pdf"]
+EXTRA = ["de-aanslag--calibre-pdf"]
 SPECS = bench.SETS["tuning"] + bench.SETS["validation"] + EXTRA
 VALIDATION = {s.split(":")[0] for s in bench.SETS["validation"]}
 OUT = Path("work/probes/sorter")

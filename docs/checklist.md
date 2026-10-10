@@ -36,11 +36,11 @@ areas below in order, and the test set scored once at the end.
       validation's breaks from ~0.2 to 1.72
 - [ ] De tuin, if it still loses after the retrain: the four questions no longer asked on
       pp. 15, 23, 43 and 46 (local re-read, 0.77 → 0.85), what the arbiter gave them
-- [ ] Validation from 5 books to 7, after the `bughunt` verdict so tonight's baseline stays
-      comparable: Monterosso mon amour (reserve: De eerlijke vinder's CPNB sibling, so it
-      may validate but never train) and De stilte van de hel (Vuurspel's sibling, in
-      `work/candidates/stilte`; write its manifest, derive, choose a slice ending on a
-      chapter). Then `bench validation` again for the new baseline. ~3 h cold
+- [ ] Validation from 5 books to 7: Monterosso and De stilte van de hel are in
+      `bench.SETS` (manifest, derive and slice done). Left: retrain the trees without
+      Monterosso (`train_sorter.py --rebuild` then `--save`; De stilte's lines need one
+      model pass) and `bench validation` for the new validation baseline, rules and trees.
+      ~2 h cold, after the `bughunt` verdict
 - [ ] `ROBO_OCR_ASK_BELOW` at 0.7, 0.8 and 0.9 on the retrained arbiter (warm, ~2 min
       each). The user gives no exchange rate (answers until tired), so choose where the
       wrong words a question removes fall off; record the curve
