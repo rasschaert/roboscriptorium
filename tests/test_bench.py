@@ -115,7 +115,7 @@ def test_a_gain_pooled_over_books_counts_unless_one_book_gets_worse():
     assert bench.verdict(before, _run(many, c=flat, d=flat)).outcome == "no change"
 
 
-def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path):
+def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path, monkeypatch):
     from roboscriptorium.config import Settings
 
     settings = Settings(ocr_trust_model=str(tmp_path / "ocr-trust.pkl"))
@@ -131,7 +131,9 @@ def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path):
     )
     # A validation book, or a tuning book without trust data, was never trained on.
     assert bench.unseen(settings, "de-eerlijke-vinder--ia-scan") == settings
-    assert bench.unseen(settings, "the-thief-takers-apprentice--ia-scan") == settings
+    thief = "the-thief-takers-apprentice--ia-scan"
+    monkeypatch.setattr(bench, "TRAINED_ON", bench.TRAINED_ON - {thief})
+    assert bench.unseen(settings, thief) == settings
     assert bench.TRAINED_ON <= {s.split(":")[0] for s in bench.SETS["tuning"]}
 
 
