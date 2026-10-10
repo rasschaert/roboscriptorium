@@ -65,6 +65,10 @@ handled yet, nor any input but PDF.
 | arbiter | the trust model (`trust.py`) | fixes, keeps, or asks about each suspect | trees trained on golden books |
 | reviewer | you | answer what the arbiter is unsure of | a person |
 
+One model can hold several jobs. qwen3.8 is a reader in the OCR check, reads the
+line again where quotes don't pair up, and is tried as a proofreader of the
+reviewer's answers; clef-flash sorts lines and guesses a drawn initial's letter.
+
 Two candidates, off by default: trees trained on the golden books' lines for the
 sorter's job (under *What each line is*), and qwen3.8 proofreading the reviewer's
 answers (under *Checking the reviewer*).
@@ -103,10 +107,8 @@ nothing to learn from.
 
 ### Local first
 
-Every model runs on this machine. A reader or judge runs hosted only when the
-user allows it for a particular run. It is then pinned to one provider, and what
-it says is cached under the local model's name, with a note saying where it came
-from.
+Every model runs on this machine. A hosted model costs money and sends page crops
+to its provider, so one is used only when the user allows it for a particular run.
 
 ## A book on disk
 
