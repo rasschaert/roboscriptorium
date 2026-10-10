@@ -55,8 +55,9 @@ class Line:
     initial: bool = False
     # On a corrected copy of a page: the line's index on the page before answers
     # (the text layer with missing lines added). A line a human typed in has the
-    # index of the line it was inserted before.
+    # index of the line it was inserted before, and `typed`.
     source: int | None = None
+    typed: bool = False
 
 
 @dataclass(frozen=True)

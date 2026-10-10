@@ -159,7 +159,8 @@ def mark(
             continue
         source: list[tuple[str, bool]] = []
         for ref in block.sources:
-            if (line := lines.get((ref.page, ref.line))) is None:
+            # A typed line has no ink measured: its words stay upright, not its neighbour's.
+            if ref.typed or (line := lines.get((ref.page, ref.line))) is None:
                 continue
             marks = italic.get(ref, frozenset())
             source += [(w, i in marks) for i, w in enumerate(line.text.split(" "))]

@@ -292,7 +292,7 @@ def apply(
             _insert(
                 page,
                 c.first,
-                Line(text, *c.box, starts_paragraph=k > 0 or None, source=source),
+                Line(text, *c.box, starts_paragraph=k > 0 or None, source=source, typed=True),
                 _ROLE[c.action],
                 roles,
             )
