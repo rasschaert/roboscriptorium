@@ -18,11 +18,6 @@ areas below in order, and the test set scored once at the end.
 
 ## 1. Running now
 
-- [ ] Trust data for Thief-Taker and the five new golden books (`robo-newbooks`, waits for
-      `robo-next`): ~567 pages, Qwen local, ~9–10 h; Kerk and Vuurspel for the record only,
-      never trained on. Then the arbiter and trees retrained and both benches, rules and
-      trees: **a new baseline**, not comparable with earlier runs (the sets changed).
-      Check Doodskleed's unplaced lines (6.3%, likely its running heads)
 - [ ] The `bughunt` branch benched against that baseline (`robo-bughunt`, waits for
       `robo-newbooks`): its trust data rebuilt warm and its arbiter retrained apart from
       main's (`work/probes/ocr-trust-bughunt`, `work/models/bughunt/`: the arbiter's
@@ -31,11 +26,14 @@ areas below in order, and the test set scored once at the end.
 
 ## 2. Right after the chains (~1 h)
 
-- [ ] Line roles by trees on by default if their bench holds. On the longer slices: tuning
-      **better** (breaks 0.33 → 0.32, words 0.54 → 0.52), validation no change (0.75 →
-      0.68, Villa Toscane 0.12 → 0.06); 11/22/63, De cipier and Reis better, but
-      **Thief-Taker 0.47 → 0.97**: find why first, then Crime p. 97 and De cipier p. 49
-      (last lines dropped) and You're Never Weird's +3 spurious headings
+- [ ] Line roles by trees on by default if their bench holds. On the new baseline: tuning
+      0.50 → 0.48, validation 0.74 → 0.67, no change pooled; clearly better on Metro,
+      De cipier, Artemis, 11/22/63 and Villa Toscane, none clearly worse, but Thief-Taker
+      0.48 → 0.61 [−0.01, +0.38], Crime 0.42 → 0.69 and Doodskleed 0.43 → 0.51 lean
+      worse: find why on Thief-Taker and Crime first (Crime p. 97 lost a last line)
+- [ ] Vuurspel sets 7.84 paragraph breaks wrong a page (every other book under 0.8): a
+      pair or derive problem, not the build's, until shown otherwise; it lifts
+      validation's breaks from ~0.2 to 1.72
 - [ ] De tuin, if it still loses after the retrain: the four questions no longer asked on
       pp. 15, 23, 43 and 46 (local re-read, 0.77 → 0.85), what the arbiter gave them
 - [ ] Validation from 5 books to 7, after the `bughunt` verdict so tonight's baseline stays
@@ -239,6 +237,10 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
       right), so clef stays local
 
 ## Trust data and the arbiter
+
+- [x] 2026-10-11 Trust data for Thief-Taker and the five new books (567 pages, 525 min),
+      arbiter (~10,400 suspects) and trees retrained: **the new baseline**, tuning 0.50,
+      validation 0.74 wrong words a page after review; trees 0.48 / 0.67, no change
 
 One book per run, `experiments/ocr_trust_data.py --rebuild <book>`; about 1.1 min a page
 cold, Qwen's reading 70–75% of it. Per book: suspects, settled (a clear label), and how

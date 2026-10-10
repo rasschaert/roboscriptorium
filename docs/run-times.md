@@ -180,3 +180,11 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-10 | bench validation, longer slices, new baseline | 320 | 1 | 0 |
 | 2026-10-10 | bench tuning, longer slices, sorter on | 1285 | 4 | 0 |
 | 2026-10-10 | bench validation, longer slices, sorter on | 320 | 1 | 0 |
+| 2026-10-11 | trust data, Thief-Taker and five new books (~567 pages), cold, Qwen local | 567 | 525 | 0 |
+| 2026-10-11 | arbiter retrained, new sets | 0 | 5 | 0 |
+| 2026-10-11 | sorter lines rebuilt and scored, new sets | 0 | 2 | 0 |
+| 2026-10-11 | sorter retrained, new sets | 0 | 0 | 0 |
+| 2026-10-11 | bench tuning, new sets, new baseline | 1580 | 2 | 0 |
+| 2026-10-11 | bench validation, new sets, new baseline | 410 | 1 | 0 |
+| 2026-10-11 | bench tuning, new sets, sorter on | 1580 | 5 | 0 |
+| 2026-10-11 | bench validation, new sets, sorter on | 410 | 3 | 0 |

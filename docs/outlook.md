@@ -22,11 +22,15 @@ With the rules' line roles (the default), commit `dc3eb53`:
 | Busy layout, pictures | 11/22/63, You're Never Weird | 1.00–1.04 | 1.4–3.1 | 0.13–0.54 |
 | Washed-out scan | Afscheid | 0.63 (its typed pages now count) | 3.5 | 1.73 (its EPUB's paragraphing) |
 
-Bench totals (2026-10-10: Qwen read locally, the longer slices, the pooled slip rate):
-tuning 0.53, validation 0.76 wrong words a page after review; paragraph breaks set wrong
-0.34 and 0.20 a page. With the line-role trees on (`ROBO_SORTER=1`): 0.52 and 0.68, tuning
-better on breaks, but Thief-Taker 0.47 → 0.97. The sets change tonight (Kerk and Vuurspel
-validate, De tuin and three new books tune): the next bench is a new baseline.
+Bench totals, the new baseline (2026-10-11: 15 tuning books with De tuin, Het heft,
+Doodskleed and Het ijzige land; Kerk and Vuurspel validating): tuning **0.50**, validation
+**0.74** wrong words a page after review; paragraph breaks set wrong 0.26 and 1.72 a page
+(Vuurspel's 7.84, a pair problem until shown otherwise). After review is mostly the
+errors no question asks about: 0.39 of tuning's 0.50, the rest the reviewer's expected
+slips. Unasked, by kind over the tuning books: punctuation ~130, letters ~115, word
+breaks ~75, missing words ~70, quotes ~64. With the line-role trees on (`ROBO_SORTER=1`):
+0.48 and 0.67, no change pooled; four tuning books clearly better, Thief-Taker and Crime
+leaning worse.
 
 Until 2026-10-10 every bench figure but Goede dochter's and De tuin's measured DeepInfra's hosted Qwen,
 not the local build Stella gets; read again locally on 2026-10-10, no change by the bench.
