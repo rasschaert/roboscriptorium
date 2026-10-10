@@ -53,7 +53,7 @@ areas below in order, and the test set scored once at the end.
       pages); sample the questions before sending the reviewer (never obvious ones)
 - [ ] **user** Review Stella: its 68 old answers stand, so only new questions; ~30–60
       at today's rate, ~30 min
-- [ ] Rebuild, epubcheck, the spot-check (as for the user's books below), and **user** reads the EPUB through: what the bench can't see
+- [ ] Rebuild, epubcheck, and **user** reads the EPUB through, noting each error with a few words around it; no spot-check (the read covers every page). Each noted error is fixed as an answer and checked against the build's suspects: was it asked, settled wrongly, or never a suspect ("Errors no question asks about"): what the bench can't see
       (layout, italics, front matter)
 
 ## 4. The user's books after Stella
