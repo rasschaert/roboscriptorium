@@ -13,7 +13,7 @@ Where the build stands and where results can still move: [outlook.md](outlook.md
 What runs right now and what waits on the user: `HANDOVER.md`.
 
 **The plan now:** more training data from new golden books, settle the line-role trees,
-then **Stella end to end with the user's review**, the target book, then Ex-minnaar. After them, the open
+then **Stella end to end with the user's review**, the target book, then the user's four books. After them, the open
 areas below in order, and the test set scored once at the end.
 
 ## 1. Running now
@@ -53,18 +53,24 @@ areas below in order, and the test set scored once at the end.
 - [ ] Rebuild, epubcheck, and **user** reads the EPUB through: what the bench can't see
       (layout, italics, front matter)
 
-## 4. Ex-minnaar, the second book
+## 4. The user's books after Stella
 
-Herman Brusselmans, Ooievaar 1998 (sixth printing), the user's own pick, no reference
-EPUB. `work/ex-minnaar/`: the IA Scribe scan with its own hidden layer (Stella's format,
-284 pages, body 9–279) and, beside it, an OmniPage OCR of the same scan (`omnipage.pdf`,
-worse: the motto's "It's" reads "h's").
+Four Dutch books the user wants as EPUBs, none with a reference EPUB, each an IA Scribe
+scan with its own hidden layer (Stella's format), in `work/<name>/` with a `book.toml`.
+In this order:
 
-- [ ] Build it like Stella once Stella is done; sample the questions first. ~4 h cold
-      for 271 pages
-- [ ] Whether OmniPage earns a place as another reading (it fails differently from the
-      layer); only if the questions show the layer and readers stuck together
-- [ ] **user** Review, rebuild, epubcheck, **user** reads the EPUB
+| Book | Directory | Pages (body) | Scan | Watch for |
+| --- | --- | --- | --- | --- |
+| Herman Brusselmans, *Ex-minnaar* (Ooievaar 1998, 6th printing) | `ex-minnaar` | 284 (9–279) | 360 ppi | drop cap; an OmniPage OCR of the same scan beside it (`omnipage.pdf`, worse: the motto's "It's" reads "h's") |
+| Herman Brusselmans, *De kus in de nacht* (Prometheus 2002) | `de-kus-in-de-nacht` | 620 (9–616) | 300 ppi, large pages | parts ("Deel een", "Proloog"), small-capital openings |
+| Emmanuel Carrère, *Andere levens dan het mijne* (De Arbeiderspers, tr. Floor Borsboom) | `andere-levens` | 248 (9–244) | 360 ppi | library copy; French names and accents |
+| Emmanuel Carrère, *Een Russische roman* (De Arbeiderspers, tr. Marianne Kaas) | `een-russische-roman` | 276 (9–271) | 360 ppi | library copy; p. 7 and p. 272 hold something the layer reads as noise (a picture?) |
+
+- [ ] Each book in turn: check its front and back matter and `body_pages`, build (cold
+      ~1 min a page: Ex-minnaar ~4 h, De kus ~10 h), sample the questions, **user**
+      reviews, rebuild, epubcheck, **user** reads the EPUB
+- [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
+      differently from the layer); only if the questions show the readers stuck together
 
 ## 5. The reviewer's time
 
