@@ -22,11 +22,9 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 | de-tuin-van-de-avondnevel | tuning | 364 / 112 | 129776 | 2.1 h | 0.82% | 0.48% | 2.8% | 8 / 8 | none | 0.17% / 0.15% |
 | doodskleed | tuning | 276 / 84 | 72379 | 1.5 h | 0.35% | 0.64% | 6.3% | 4 / 14 | none | none yet |
 | goede-dochter | tuning | 500 / 154 | 163184 | 2.8 h | 0.27% | 0.56% | 3.0% | 8 / 8 | none | 0.14% / 0.19% |
-| grand-hotel-europa | reserve | 537 / 537 | 188700 | 9.8 h | 0.48% | 0.56% | 4.0% | 70 / 200 | none | 1.89% / 1.81% |
 | het-geluid-van-bananen | **test** | 315 / 93 | 78071 | 1.7 h | unmeasured | | | | none | untouched |
 | het-heft-in-eigen-hand | tuning | 506 / 115 | 144642 | 2.1 h | 0.51% | 0.47% | 2.9% | 6 / 6 | none | none yet |
 | het-ijzige-land | tuning | 318 / 94 | 79550 | 1.7 h | 0.42% | 0.68% | 3.5% | 11 / 11 | none | none yet |
-| lady-into-fox | reserve | 91 / 91 | 24456 | 1.7 h | 0.39% | 0.12% | 6.6% | 1 / 1 | none | 0.90% / 0.30% |
 | metro-2033 | tuning | 458 / 156 | 197756 | 2.9 h | 0.16% | 0.20% | 2.5% | 11 / 14 | hyphen_dash | none yet |
 | monterosso-mon-amour | reserve | 88 / 88 | 25640 | 1.6 h | 0.33% | 0.40% | 3.0% | 13 / 22 | none | none yet |
 | reis-om-mijn-schedel | tuning | 245 / 245 | 66738 | 4.5 h | 0.15% | 0.10% | 3.7% | 27 / 27 | none | 0.12% / 0.09% |

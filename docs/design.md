@@ -399,9 +399,10 @@ typed in, text the layer lacks) gets only the quote check.
   A whole page typed by the reviewer still counts as one question's slips, which
   flatters a washed-out book.
 - **Validation books are not a test.** Earlier choices were made on their scores. They
-  are De tuin, Villa Toscane, De eerlijke vinder and You're Never Weird on the Internet
-  (the only English one, and the hardest layout: pictures holding text). Grand Hotel Europa was one until
-  its pair failed: an EPUB of another printing, and reference headings the scan lacks.
+  are Kerk, Vuurspel, De eerlijke vinder, Villa Toscane and You're Never Weird on the
+  Internet (the only English one, and the hardest layout: pictures holding text). A pair
+  that fails (an EPUB of another printing, reference headings the scan lacks) is retired,
+  not kept: Grand Hotel Europa was.
 - **The test set is a book nothing was chosen on.** Het geluid van bananen
   (Stella's publisher and scan format) is scored once, at the end of the plan;
   no model trains on it and the CLI refuses to score it without `--score-test`.

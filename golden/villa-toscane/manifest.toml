@@ -19,9 +19,8 @@ files = [
 ]
 heading_prefixes = ["Kop_1"]
 
-# Not a scan: calibre's PDF of that same EPUB, US Letter pages. Held out, like
-# Lady into Fox: scored to check that born-digital changes carry over, never
-# tuned on.
+# Not a scan: calibre's PDF of that same EPUB, US Letter pages. Held out: scored
+# to check that born-digital changes carry over, never tuned on.
 [[scans]]
 id = "calibre-pdf"
 source = "a PDF made with calibre from the retail EPUB"

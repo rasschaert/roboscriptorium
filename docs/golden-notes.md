@@ -6,14 +6,14 @@ CER, unplaced lines) are generated into [golden-books.md](golden-books.md); the 
 for choosing, checking and retiring a pair are in AGENTS.md.
 
 Retired (in `work/retired/`, manifests in git history): Boze tongen, De dode
-kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing.
+kamer, Sense and Sensibility (all three scans), Goede dochter's eighth printing, and
+(2026-10-10) Lady into Fox and Grand Hotel Europa, whose references don't match their
+prints.
 
 | Golden book | Scan | Notes |
 | --- | --- | --- |
 | the-nature-of-a-crime | `doubleday-1924` | **The scan Gutenberg #75172 was made from**; 94 body pages, short; Times OCR layer; running heads |
 | de-aanslag | `calibre-pdf` | Dutch, Mulisch, 51st printing. **Not a scan**: calibre's PDF of the retail EPUB, so its text layer is exact. For born-digital PDFs, page joins and (later) italics. **Copyrighted**, all text in `work/golden/` |
-| lady-into-fox | `chatto-1922` | **Reserve** (in no bench set; still never trained on): retired from validation on 2026-10-08. Its reference differs from its print in typography, so its labels measure the reference more than the pipeline (docs/design.md). Its scores informed earlier choices, so it is no clean test. 1922 first edition, same as Gutenberg #10337; one continuous text, no chapters; wood engravings. **EU copyright until 2051**: only the manifest is in git, the reference and verdicts live in `work/golden/lady-into-fox/` (`eu_copyright_until` in the manifest) |
-| grand-hotel-europa | `ia-scan` | **Reserve** (in no bench set; never trained on): retired from validation on 2026-10-08. Its EPUB was made from another printing than the scan, and 9 of the old slice's 16 reference headings have no line on the scan, so its score (build 1.9% CER against the layer's 0.4%) measures the pair more than the pipeline. Dutch, 2018, Pfeijffer; IA Scribe scan of the 11th printing (2019), 537 body pages. Reference: the retail EPUB, made from the 1st printing. Chapter label, title and numbered sections. Lending-library scan; **copyrighted**, all text in `work/golden/`. Score it in slices (`--pages`/`--chapters`) |
 | de-tuin-van-de-avondnevel | `ia-scan` | **Tuning** since 2026-10-10 (validation before: Kerk and Vuurspel took its place). Dutch translation (Tan Twan Eng, Xander); IA scan of the 2014 paperback, reference the 2013 retail EPUB of the same translation and typesetter. Many italic foreign words. Pages 11–374, chapters 1–26. Bench slice pages 11–122, chapters 1–8. Lending-library scan; **copyrighted**, all text in `work/golden/` |
 | goede-dochter | `ia-scan` | Dutch translation (Slaughter, HarperCollins Holland 2017); IA scan of the first printing, reference the retail EPUB of the same translation (typeset by Mat-Zet). The cleanest Dutch reference: **tune on it**. Pages 9–508, 25 chapters (a part title, then titled chapters). Bench slice pages 9–162, sections 1–8. Lending-library scan; **copyrighted**, all text in `work/golden/` |
 | vals-alarm | `ia-scan` | Dutch, 2011, Boersma (Verbum Crime). IA scan of the 2nd printing of the first edition, reference the retail EPUB. **Tune on it**: 48 chapter headings ("Vandaag", "1 Later", "2", "Epiloog") at the top of a new page. Pages 11–302. Lending-library scan; **copyrighted**, all text in `work/golden/` |
