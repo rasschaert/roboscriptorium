@@ -93,10 +93,10 @@ understand: 2 · What each line is {
   }
   m: {
     class: row
-    pick: "rules pick the doubtful lines:\nat the page's edges, short and centred,\nlabelled, garbled; the rest is body" {class: code}
-    flash: "SORTER clef-flash:9b\nanswers for each doubtful line, told\nits place, neighbours and repeats" {class: decision}
-    fix: "rules overrule where the layout decides\n(a title on every page is a running head);\nlines set alike take the role most got" {class: code}
-    tree: "a learned SORTER: trees over all of\nthe above, re-deciding every line\n(ROBO_SORTER=1)" {class: candidate}
+    pick: rules pick\nthe doubtful lines {class: code}
+    flash: SORTER clef-flash:9b\ndecides each one {class: decision}
+    fix: rules and a style vote\ncorrect it {class: code}
+    tree: a learned SORTER\nredecides every line {class: candidate}
     pick -> flash -> fix -> tree
   }
   s.roles -> m.pick {class: uses}
