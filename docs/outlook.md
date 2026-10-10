@@ -22,9 +22,11 @@ With the rules' line roles (the default), commit `dc3eb53`:
 | Busy layout, pictures | 11/22/63, You're Never Weird | 1.00–1.04 | 1.4–3.1 | 0.13–0.54 |
 | Washed-out scan | Afscheid | 0.63 (its typed pages now count) | 3.5 | 1.73 (its EPUB's paragraphing) |
 
-Bench totals: tuning 0.56, validation 0.77 wrong words a page after review; paragraph
-breaks set wrong 0.33 and 0.21 a page. With the line-role trees on (`ROBO_SORTER=1`):
-0.52 and 0.70, no change by the test.
+Bench totals (2026-10-10: Qwen read locally, the longer slices, the pooled slip rate):
+tuning 0.53, validation 0.76 wrong words a page after review; paragraph breaks set wrong
+0.34 and 0.20 a page. With the line-role trees on (`ROBO_SORTER=1`): 0.52 and 0.68, tuning
+better on breaks, but Thief-Taker 0.47 → 0.97. The sets change tonight (Kerk and Vuurspel
+validate, De tuin and three new books tune): the next bench is a new baseline.
 
 Until 2026-10-10 every bench figure but Goede dochter's and De tuin's measured DeepInfra's hosted Qwen,
 not the local build Stella gets; read again locally on 2026-10-10, no change by the bench.
@@ -86,7 +88,7 @@ start of a ledger of when a probe is enough.
 | Arbiter calibrated | raw already near calibrated | no change | yes, for the threshold's meaning |
 | Lost lines asked | 2 of 13 questions catch | −0.01 / −0.03, no change | yes |
 | Scene breaks | — | unscored | yes |
-| Line roles by trees | role errors 406 → 152 | −0.04 / −0.07, no change; three books better, Crime worse | off, pending |
+| Line roles by trees | role errors 406 → 152 | −0.04 / −0.07, no change; on the longer slices tuning better on breaks, four books better, Thief-Taker 0.47 → 0.97 | off, pending Thief-Taker |
 
 ## Tried, and why it didn't help
 

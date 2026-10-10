@@ -18,28 +18,28 @@ areas below in order, and the test set scored once at the end.
 
 ## 1. Running now
 
-- [ ] Longer tuning slices, each ending on a chapter (the user's go, 2026-10-09;
-      `robo-next` in the `next` worktree): Goede dochter 9–162 (done, 2 h), Reis whole,
-      De cipier 9–174, Metro 7–162, De tuin 11–122; ~446 new pages, Qwen local, ~9 h. Then
-      the arbiter and the trees retrained and both benches, rules and trees. After it:
-      record the verdicts, merge the worktree's run-times rows, remove the worktree
 - [ ] Trust data for Thief-Taker and the five new golden books (`robo-newbooks`, waits for
       `robo-next`): ~567 pages, Qwen local, ~9–10 h; Kerk and Vuurspel for the record only,
       never trained on. Then the arbiter and trees retrained and both benches, rules and
       trees: **a new baseline**, not comparable with earlier runs (the sets changed).
       Check Doodskleed's unplaced lines (6.3%, likely its running heads)
+- [ ] The `bughunt` branch benched against that baseline (`robo-bughunt`, waits for
+      `robo-newbooks`): its trust data rebuilt warm and its arbiter retrained apart from
+      main's (`work/probes/ocr-trust-bughunt`, `work/models/bughunt/`: the arbiter's
+      `known` feature changed meaning), both benches with the rules' line roles. ~1 h.
+      Merge if no book is vetoed
 
 ## 2. Right after the chains (~1 h)
 
-- [ ] Line roles by trees on by default if their bench holds (last run: tuning 0.56 →
-      0.52, validation 0.77 → 0.70, no change; 11/22/63 and Artemis better, Crime worse).
-      Look at Crime p. 97 and De cipier p. 49 first (last lines dropped)
+- [ ] Line roles by trees on by default if their bench holds. On the longer slices: tuning
+      **better** (breaks 0.33 → 0.32, words 0.54 → 0.52), validation no change (0.75 →
+      0.68, Villa Toscane 0.12 → 0.06); 11/22/63, De cipier and Reis better, but
+      **Thief-Taker 0.47 → 0.97**: find why first, then Crime p. 97 and De cipier p. 49
+      (last lines dropped) and You're Never Weird's +3 spurious headings
 - [ ] De tuin, if it still loses after the retrain: the four questions no longer asked on
       pp. 15, 23, 43 and 46 (local re-read, 0.77 → 0.85), what the arbiter gave them
 - [ ] `ROBO_OCR_ASK_BELOW` at 0.7, 0.8 and 0.9 on the retrained arbiter (warm, ~2 min
       each); **user** weighs questions against wrong words
-- [ ] Bench the quote-question readings (`quotes.readings`) with the pooled slip rate:
-      both were set mid-chain and wait for the new baseline
 
 ## 3. Stella, the target book
 
@@ -159,6 +159,11 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Measurement
 
+- [x] 2026-10-10 Longer tuning slices, each ending on a chapter (Goede dochter 9–162, Reis
+      whole, De cipier 9–174, Metro 7–162, De tuin 11–122): 446 new pages in 7.5 h, arbiter
+      and trees retrained; tuning 0.53 → 0.53, validation 0.77 → 0.76, no change. The
+      pooled slip rate lowered "after review" a little everywhere (a measure, not a build
+      change); the quote questions' new readings changed nothing the bench counts
 - [x] 2026-10-10 The bench books read again by the local Qwen (30,572 lines, ~9 h), trust
       data and arbiter rebuilt: tuning 0.56 → 0.56, validation 0.77 → 0.79, no change; the
       bench now measures the build Stella gets

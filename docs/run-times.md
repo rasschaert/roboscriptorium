@@ -168,3 +168,15 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-10 | arbiter retrained on local Qwen readings | 0 | 1 | 0 |
 | 2026-10-10 | bench tuning, Qwen read locally, Thief-Taker read during it | 839 | 45 | 0 |
 | 2026-10-10 | bench validation, Qwen read locally | 250 | 0 | 0 |
+| 2026-10-10 | bench tuning, slip rate pooled 10 of 100, warm | 839 | 1 | 0 |
+| 2026-10-10 | bench validation, slip rate pooled 10 of 100, warm | 250 | 0 | 0 |
+| 2026-10-10 | bench tuning, quote questions with three readings | 839 | 1 | 0 |
+| 2026-10-10 | bench validation, quote questions with three readings | 250 | 0 | 0 |
+| 2026-10-10 | trust data, five books lengthened (~446 new pages), cold, Qwen local | 446 | 447 | 0 |
+| 2026-10-10 | arbiter retrained on the longer slices | 0 | 1 | 0 |
+| 2026-10-10 | sorter lines rebuilt and scored, longer slices | 0 | 1 | 0 |
+| 2026-10-10 | sorter retrained, longer slices | 0 | 0 | 0 |
+| 2026-10-10 | bench tuning, longer slices, new baseline | 1285 | 2 | 0 |
+| 2026-10-10 | bench validation, longer slices, new baseline | 320 | 1 | 0 |
+| 2026-10-10 | bench tuning, longer slices, sorter on | 1285 | 4 | 0 |
+| 2026-10-10 | bench validation, longer slices, sorter on | 320 | 1 | 0 |
