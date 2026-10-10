@@ -164,3 +164,7 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-09 | bench validation, line roles by trees, repeated headings, warm | 250 | 0 | 0 |
 | 2026-10-09 | bench tuning, trees keep doubtful lines, edge repeats are furniture | 839 | 3 | 0 |
 | 2026-10-09 | bench validation, trees keep doubtful lines, edge repeats are furniture | 250 | 1 | 0 |
+| 2026-10-10 | trust data, all books, Qwen read locally where it was hosted (~30.6k lines) | 0 | 542 | 0 |
+| 2026-10-10 | arbiter retrained on local Qwen readings | 0 | 1 | 0 |
+| 2026-10-10 | bench tuning, Qwen read locally, Thief-Taker read during it | 839 | 45 | 0 |
+| 2026-10-10 | bench validation, Qwen read locally | 250 | 0 | 0 |

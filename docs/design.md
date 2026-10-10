@@ -44,6 +44,10 @@ page after review [+0.07, +0.75] and `bench validation` from 0.81 to 1.01 [+0.12
 +0.27]; 11/22/63, Artemis, Vals alarm and De tuin lose most (2026-10-09). Without it 867
 of 6,145 suspects are never raised, and the ones that are leave more unasked errors.
 
+Every reading in the trust data and the bench is the local build's (2026-10-10), as
+Stella's are. Re-read locally where DeepInfra's bf16 had read: tuning 0.56 → 0.56,
+validation 0.77 → 0.79, no change; De tuin alone worse (0.77 → 0.85).
+
 No faster reader matches qwen3.8 yet: gemma4 8B reads a line in a quarter of the
 time but gets quote marks wrong where Qwen doesn't (Goede dochter pp. 9–20: 4 lines
 against 0, CER 0.21% against 0.10%), and the newest open models that might
