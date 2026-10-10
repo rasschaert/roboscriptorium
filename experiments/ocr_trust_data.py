@@ -44,6 +44,12 @@ SPECS = {
     "de-tuin-van-de-avondnevel--ia-scan": "11-122:1-8",
     "de-eerlijke-vinder--ia-scan": "",
     "youre-never-weird-on-the-internet--ia-scan": "13-94:1-16",
+    "the-thief-takers-apprentice--ia-scan": "11-84:1-22",
+    "het-heft-in-eigen-hand--ia-scan": "9-123:1-6",
+    "doodskleed--ia-scan": "13-96:1-14",
+    "het-ijzige-land--ia-scan": "11-104:1-11",
+    "de-kerk-van-de-dode-meisjes--ia-scan": "11-107:1-13",
+    "vuurspel--ia-scan": "9-111:1-6",
     # No golden reference: labelled by a human's answers in the review.
     "stella": "answers",
 }

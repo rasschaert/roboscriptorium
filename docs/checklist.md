@@ -42,12 +42,20 @@ After it, the open areas below in order, and the test set scored once at the end
 
 - [ ] Thief-Taker's suspects in the trust data, pp. 11–84: a tuning book the arbiter has
       never trained on. ~1.4 h cold
-- [ ] New golden pairs (the user's hunt, 2026-10-10), each checked with
-      `probe_candidate.py` first: Vuurspel (Bruna 2004, layer 0.41%) into validation and
-      De tuin into tuning; Het heft in eigen hand (HarperCollins/Mat-Zet 2015, 0.55%) and
-      Doodskleed (Karakter/ZetSpiegel 2015, 0.39%, De Bezige Bij's EPUB of the same text)
-      into tuning. Manifest and derive ~30 min each (Vuurspel's EPUB sets dashes as `--`),
-      trust data for ~100 pages of each new tuning book ~2 h each, retrain, both benches
+- [x] New golden pairs (the user's hunt, 2026-10-10), each checked with
+      `probe_candidate.py`: manifests, derive (two additions: `capital_classes` for small
+      capitals written in lower case, a spaced `--` as the print's dash) and scans placed,
+      ~1.5 h. Validation: De kerk van de dode meisjes (Ambo|Anthos, layer 0.15%) and
+      Vuurspel (Bruna, 0.46%) in place of De tuin, which trains now. Tuning: Het heft in
+      eigen hand (9–123), Doodskleed (13–96), Het ijzige land (11–104). The trainer's
+      held-out books now come from the bench's sets. Rejected: Cavendon Hall, Alsof het
+      niets is, Het spel van de engel (EPUBs made through Word or OCR); De stilte van de hel
+      kept unused (Vuurspel's sibling)
+- [ ] Tonight, after the chain: trust data for Thief-Taker, Het heft, Doodskleed, Het
+      ijzige land, Kerk and Vuurspel (~600 pages, Qwen local, ~9–10 h; the two validation
+      books for the record, never trained on); then the arbiter and trees retrained and both
+      benches: **a new baseline**, not comparable with earlier runs (the sets changed).
+      Check Doodskleed's unplaced lines (6.3%, likely its running heads)
 - [ ] ~~The five books whole~~ dropped (2026-10-10, the user): more pages of books already
       trained on add the same errors again; new books, and the areas below, move accuracy more
 

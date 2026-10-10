@@ -34,12 +34,15 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from roboscriptorium import trust
+from roboscriptorium import bench, trust
 from roboscriptorium.book import Book
 from roboscriptorium.cli import _range
 from roboscriptorium.config import Settings
 
-HELD_OUT = {"lady-into-fox", "grand-hotel-europa", "de-tuin-van-de-avondnevel", "de-eerlijke-vinder", "youre-never-weird-on-the-internet"}
+# Never trained on: the validation and test books, and the reserve books retired from validation.
+HELD_OUT = {
+    spec.split("--")[0] for spec in bench.SETS["validation"] + bench.SETS["test"]
+} | {"lady-into-fox", "grand-hotel-europa"}
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
 MODELS = {
     "logistic": lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)),

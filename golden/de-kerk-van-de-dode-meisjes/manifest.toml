@@ -1,0 +1,29 @@
+title = "De kerk van de dode meisjes"
+author = "Stephen Dobyns"
+language = "nl"
+# Dobyns and his translator Theo Horsten: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Ambo|Anthos's own e-book ("Deze digitale editie is gemaakt naar de vijfde druk, 2012",
+# made by Formaat), the scan's printing. Chapter numbers and the Proloog are "wp-kop",
+# the three parts "wp-deel"; italics "wpt-cursief" and "wpt-vetcursief"; small capitals
+# "wpt-kleinkap", written in lower case ("vnr", "fbi"), set in capitals as printed.
+[reference]
+source = "De kerk van de dode meisjes, Ambo|Anthos 2012 (5th printing), transl. Theo Horsten, ISBN 978 90 414 2217 0 (EPUB)"
+sha256 = "7d6003f2ab5df5eee4ce4f50af08afadd8030e45232313d36e84f9a6543d24bd"
+files = [
+  "Text/x9789041422170.html7.xhtml", "Text/x9789041422170.html8.xhtml", "Text/x9789041422170.html9.xhtml", "Text/x9789041422170.html10.xhtml", "Text/x9789041422170.html11.xhtml", "Text/x9789041422170.html12.xhtml", "Text/x9789041422170.html13.xhtml", "Text/x9789041422170.html14.xhtml", "Text/x9789041422170.html15.xhtml", "Text/x9789041422170.html16.xhtml", "Text/x9789041422170.html17.xhtml", "Text/x9789041422170.html18.xhtml", "Text/x9789041422170.html19.xhtml", "Text/x9789041422170.html20.xhtml", "Text/x9789041422170.html21.xhtml", "Text/x9789041422170.html22.xhtml", "Text/x9789041422170.html23.xhtml", "Text/x9789041422170.html24.xhtml", "Text/x9789041422170.html25.xhtml", "Text/x9789041422170.html26.xhtml", "Text/x9789041422170.html27.xhtml", "Text/x9789041422170.html28.xhtml", "Text/x9789041422170.html29.xhtml", "Text/x9789041422170.html30.xhtml", "Text/x9789041422170.html31.xhtml", "Text/x9789041422170.html32.xhtml", "Text/x9789041422170.html33.xhtml", "Text/x9789041422170.html34.xhtml", "Text/x9789041422170.html35.xhtml", "Text/x9789041422170.html36.xhtml", "Text/x9789041422170.html37.xhtml", "Text/x9789041422170.html38.xhtml", "Text/x9789041422170.html39.xhtml", "Text/x9789041422170.html40.xhtml", "Text/x9789041422170.html41.xhtml", "Text/x9789041422170.html42.xhtml", "Text/x9789041422170.html43.xhtml", "Text/x9789041422170.html44.xhtml", "Text/x9789041422170.html45.xhtml", "Text/x9789041422170.html46.xhtml", "Text/x9789041422170.html47.xhtml", "Text/x9789041422170.html48.xhtml", "Text/x9789041422170.html49.xhtml", "Text/x9789041422170.html50.xhtml", "Text/x9789041422170.html51.xhtml", "Text/x9789041422170.html52.xhtml", "Text/x9789041422170.html53.xhtml", "Text/x9789041422170.html54.xhtml"
+]
+heading_prefixes = ["wp-kop", "wp-deel"]
+italic_classes = ["wpt-cursief", "wpt-vetcursief"]
+capital_classes = ["wpt-kleinkap"]
+
+# The fifth printing (2012, ISBN 978 90 414 2096 1), IA Scribe scan, 360 ppi MRC,
+# GlyphLessFont layer. Pages 11–424: the Proloog to the end of chapter 44. Internet
+# Archive lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/isbn_9789041420961 (borrow, then download the PDF)"
+sha256 = "99ab256aefb51b2139bf1b0e64f119b11d3b21fb0dec95e181e3b5f4679ba387"
+cover_page = 1
+body_pages = [11, 424]

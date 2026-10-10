@@ -1,0 +1,29 @@
+title = "Het ijzige land"
+author = "John Flanagan"
+language = "nl"
+# Flanagan and his translator Laurent Corneille: under copyright, so only this manifest
+# is in git.
+eu_copyright_until = 2200
+
+# Gottmer's own e-book (ISBN 978 90 257 4704 6), made from the sixth printing (2009);
+# the scan is the thirteenth (2011), and the layer's differences from it are reading
+# slips only. Headings "chapter-title" ("HOOFDSTUK 1"–"37", "EPILOOG"); the e-book
+# numbers chapter 6 "HOOFDSTUK 5" again, a verdict. Italics "calibre5".
+[reference]
+source = "Het ijzige land, Gottmer 2008 (e-book after the 6th printing, 2009), transl. Laurent Corneille, ISBN 978 90 257 4704 6 (EPUB)"
+sha256 = "a526a125a2ad8390e03a0ca45592c63ddba2b71ab3661b01a59d8eeb23bba097"
+files = [
+  "ch007.xhtml", "ch008.xhtml", "ch009.xhtml", "ch010.xhtml", "ch011.xhtml", "ch012.xhtml", "ch013.xhtml", "ch014.xhtml", "ch015.xhtml", "ch016.xhtml", "ch017.xhtml", "ch018.xhtml", "ch019.xhtml", "ch020.xhtml", "ch021.xhtml", "ch022.xhtml", "ch023.xhtml", "ch024.xhtml", "ch025.xhtml", "ch026.xhtml", "ch027.xhtml", "ch028.xhtml", "ch029.xhtml", "ch030.xhtml", "ch031.xhtml", "ch032.xhtml", "ch033.xhtml", "ch034.xhtml", "ch035.xhtml", "ch036.xhtml", "ch037.xhtml", "ch038.xhtml", "ch039.xhtml", "ch040.xhtml", "ch041.xhtml", "ch042.xhtml", "ch043.xhtml", "ch044.xhtml"
+]
+heading_prefixes = ["chapter-title"]
+italic_classes = ["calibre5"]
+
+# The thirteenth printing (2011, ISBN 978 90 257 4394 9, paperback), IA Scribe scan,
+# 360 ppi MRC, GlyphLessFont layer, a large page (476×789 pt) with large type.
+# Internet Archive lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/hetijzigelanddeg0000john (borrow, then download the PDF)"
+sha256 = "e4a68e221a62d7b9055322d8050bb80ebbda06874ab40575517bb1d50d0bb70f"
+cover_page = 1
+body_pages = [11, 328]

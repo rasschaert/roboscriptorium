@@ -1,0 +1,30 @@
+title = "Doodskleed"
+author = "Corine Hartman"
+language = "nl"
+# Hartman is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# De Bezige Bij's e-book of 2017 (ISBN 978 90 234 8927 6): the same text as Karakter's
+# e-book of the scan's edition, line for line from the first chapter on, in cleaner
+# markup. Chapter numbers "hoofdstuk"; italics "times-italic"; small capitals "times-sc"
+# (in lower case), set in capitals as printed. The series recap before chapter 1 (print
+# pp. 7–12) has no heading, so it is left out with its pages.
+[reference]
+source = "Doodskleed, De Bezige Bij 2017 (the text of Karakter 2015), ISBN 978 90 234 8927 6 (EPUB)"
+sha256 = "e53c78c24db224cb131b45c65b97e54a8bb3d3aa2ce6fb86b31cbc297f2ec10a"
+files = [
+  "Text/Section0005.xhtml", "Text/Section0006.xhtml", "Text/Section0007.xhtml", "Text/Section0008.xhtml", "Text/Section0009.xhtml", "Text/Section0010.xhtml", "Text/Section0011.xhtml", "Text/Section0012.xhtml", "Text/Section0013.xhtml", "Text/Section0014.xhtml", "Text/Section0015.xhtml", "Text/Section0016.xhtml", "Text/Section0017.xhtml", "Text/Section0018.xhtml", "Text/Section0019.xhtml", "Text/Section0020.xhtml", "Text/Section0021.xhtml", "Text/Section0022.xhtml", "Text/Section0023.xhtml", "Text/Section0024.xhtml", "Text/Section0025.xhtml", "Text/Section0026.xhtml", "Text/Section0027.xhtml", "Text/Section0028.xhtml", "Text/Section0029.xhtml", "Text/Section0030.xhtml", "Text/Section0031.xhtml", "Text/Section0032.xhtml", "Text/Section0033.xhtml", "Text/Section0034.xhtml", "Text/Section0035.xhtml", "Text/Section0036.xhtml", "Text/Section0037.xhtml", "Text/Section0038.xhtml", "Text/Section0039.xhtml", "Text/Section0040.xhtml", "Text/Section0041.xhtml", "Text/Section0042.xhtml", "Text/Section0043.xhtml", "Text/Section0044.xhtml", "Text/Section0045.xhtml", "Text/Section0046.xhtml", "Text/Section0047.xhtml", "Text/Section0048.xhtml", "Text/Section0049.xhtml"
+]
+heading_prefixes = ["hoofdstuk"]
+italic_classes = ["times-italic"]
+capital_classes = ["times-sc"]
+
+# Karakter's 2015 edition (ISBN 978 90 452 0852 7), typeset by ZetSpiegel like De cipier;
+# IA Scribe scan, 360 ppi MRC, GlyphLessFont layer. Pages 13–288: chapter 1 to the end
+# of chapter 45. Internet Archive lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/isbn_9789045208527 (borrow, then download the PDF)"
+sha256 = "28be3c12cd3819a0332e2d1e8b732f470e901c9a1471f02181b5055b8a332196"
+cover_page = 1
+body_pages = [13, 288]

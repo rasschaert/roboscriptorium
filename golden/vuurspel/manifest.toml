@@ -1,0 +1,33 @@
+title = "Vuurspel"
+author = "Peter Robinson"
+language = "nl"
+# Robinson's estate and his translator Valérie Janssen: under copyright, so only this
+# manifest is in git.
+eu_copyright_until = 2200
+
+# A.W. Bruna's own e-book ("ebook editie, oktober 2009"), its colophon the print's line
+# for line; neither names a later printing. Chapter numbers and the dated opening and
+# closing sections ("19 juli", "18 januari") are "hoofdstukcijfer"; italics
+# "adobegaramondproitalic"; small capitals "kleinkapitaal", written in lower case
+# ("bmw", "dna"), set in capitals as printed. The print's spaced dash is a spaced "--"
+# or "–" in the e-book (`hyphen_dash`).
+[reference]
+source = "Vuurspel, A.W. Bruna 2004, transl. Valérie Janssen, ebook editie oktober 2009 (EPUB)"
+sha256 = "5122a5dea2a8dbbfc5d679b8a1ffc4fc2e12e5984f4baeceb0376eb31fc2ff42"
+files = [
+  "Text/Vuurspel_split_5.xhtml", "Text/Vuurspel_split_6.xhtml", "Text/Vuurspel_split_7.xhtml", "Text/Vuurspel_split_8.xhtml", "Text/Vuurspel_split_9.xhtml", "Text/Vuurspel_split_10.xhtml", "Text/Vuurspel_split_11.xhtml", "Text/Vuurspel_split_12.xhtml", "Text/Vuurspel_split_13.xhtml", "Text/Vuurspel_split_14.xhtml", "Text/Vuurspel_split_15.xhtml", "Text/Vuurspel_split_16.xhtml", "Text/Vuurspel_split_17.xhtml", "Text/Vuurspel_split_18.xhtml", "Text/Vuurspel_split_19.xhtml", "Text/Vuurspel_split_20.xhtml", "Text/Vuurspel_split_21.xhtml", "Text/Vuurspel_split_22.xhtml", "Text/Vuurspel_split_23.xhtml", "Text/Vuurspel_split_24.xhtml"
+]
+heading_prefixes = ["hoofdstukcijfer"]
+italic_classes = ["adobegaramondproitalic"]
+capital_classes = ["kleinkapitaal"]
+hyphen_dash = "–"
+
+# The 2004 edition (ISBN 90 229 8872 4), IA Scribe scan, 360 ppi MRC, GlyphLessFont
+# layer. Pages 9–362: "19 juli" to the end of "18 januari"; the Dankbetuiging after.
+# Internet Archive lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/vuurspeldcibanks0000robi (borrow, then download the PDF)"
+sha256 = "3213a62cd32599ba3182fd8a5c20ac48a9c3af94bcc8f3bd0ec2423a1aa13c81"
+cover_page = 1
+body_pages = [9, 362]

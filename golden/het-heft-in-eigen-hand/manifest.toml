@@ -1,0 +1,28 @@
+title = "Het heft in eigen hand"
+author = "Stephanie Laurens"
+language = "nl"
+# Laurens and her translator Renée Olsthoorn: under copyright, so only this manifest is
+# in git.
+eu_copyright_until = 2200
+
+# HarperCollins Holland's own e-book ("Zetwerk e-book: Mat-Zet", ISBN 978 94 027 5018 8),
+# typeset by the print's typesetter. Headings "P_kop" (Proloog, "Hoofdstuk 1"–"21",
+# Epiloog); italics <i> and the "…__And__Italic" classes.
+[reference]
+source = "Het heft in eigen hand, HarperCollins Holland 2015, transl. Renée Olsthoorn, ISBN 978 94 027 5018 8 (EPUB)"
+sha256 = "24ca8ab592b4ed6b643aa711b24178f60e4445e724584d5c4eff506c5f63cb53"
+files = [
+  "Text/section-0002.html", "Text/section-0003.html", "Text/section-0004.html", "Text/section-0005.html", "Text/section-0006.html", "Text/section-0007.html", "Text/section-0008.html", "Text/section-0009.html", "Text/section-0010.html", "Text/section-0011.html", "Text/section-0012.html", "Text/section-0013.html", "Text/section-0014.html", "Text/section-0015.html", "Text/section-0016.html", "Text/section-0017.html", "Text/section-0018.html", "Text/section-0019.html", "Text/section-0020.html", "Text/section-0021.html", "Text/section-0022.html", "Text/section-0023.html", "Text/section-0024.html"
+]
+heading_prefixes = ["P_kop"]
+italic_classes = ["P_plat__And__Italic", "P_plat2__And__Italic"]
+
+# The first printing (2015, ISBN 978 94 027 0430 3), typeset by Mat-Zet like Goede
+# dochter; IA Scribe scan, 360 ppi MRC, GlyphLessFont layer. Pages 9–514: the Proloog
+# to the end of the Epiloog. Internet Archive lends it only, so it is placed by hand.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/hetheftineigenha0000step (borrow, then download the PDF)"
+sha256 = "fff6f86b25d710e9b6baa03ff59377b77a7188e9c196ebbb89cd4c6c8cf3fec1"
+cover_page = 1
+body_pages = [9, 514]

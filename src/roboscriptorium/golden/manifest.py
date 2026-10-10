@@ -65,6 +65,8 @@ class PublisherEpub:
     # Why the EPUB's italics aren't the print's, when they aren't: its italic words are
     # then not scored ("" scores them).
     italics_unlike_print: str = ""
+    # Classes whose text the print sets in capitals (small capitals written in lower case).
+    capital_classes: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -153,6 +155,7 @@ class Golden:
                 ref.get("hyphen_dash", ""),
                 ref.get("image_heading", ""),
                 ref.get("italics_unlike_print", ""),
+                frozenset(ref.get("capital_classes", ())),
             )
         )
         se = data.get("standard_ebooks")

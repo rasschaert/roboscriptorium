@@ -133,6 +133,33 @@ def test_spaced_hyphens_become_the_prints_dash(tmp_path):
     ]
 
 
+def test_doubled_hyphens_become_the_prints_dash(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                "<h1>1</h1><p>Toen -- heel terloops -- zei hij: ex-vrouw.</p><p>Maar --</p>"
+            ),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], hyphen_dash="–")
+    assert section.paragraphs == ["Toen – heel terloops – zei hij: ex-vrouw.", "Maar –"]
+
+
+def test_capital_classes_are_set_in_capitals(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<h1>1</h1><p>De <span class="kk">fbi</span> en de <span class="kk">b '
+                "<i>&amp;</i> b</span> bleven, de vnr niet.</p>"
+            ),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], capitals=frozenset({"kk"}))
+    assert unmarked(section.paragraphs[0]) == "De FBI en de B & B bleven, de vnr niet."
+
+
 def test_an_ornament_set_as_a_heading_is_no_chapter(tmp_path):
     epub = tmp_path / "book.epub"
     with zipfile.ZipFile(epub, "w") as z:
