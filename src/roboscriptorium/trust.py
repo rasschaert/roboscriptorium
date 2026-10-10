@@ -24,7 +24,7 @@ import numpy as np
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ocrcheck import Suspect, _typographic
 
-MODEL_VERSION = 5
+MODEL_VERSION = 6
 # The length of `features`; a saved model of another width can't score them.
 FEATURES = 26
 # A substitution's prior counts only when the training books that show it number this

@@ -545,3 +545,15 @@ def test_a_batch_of_readings_is_saved_when_one_reading_fails(tmp_path, monkeypat
         ocrcheck.line_readings(pdf_path, pages, checked, "glm", "http://x", cache)
     saved = json.loads(cache.read_text())
     assert len(saved["lines"]) == 1  # the line read before the failure is kept
+
+
+def test_the_word_list_judges_a_break_as_its_vote_reads_it():
+    from roboscriptorium.lexicon import Lexicon
+
+    words = Lexicon({"dankbaar", "dank", "baar"})
+    versions = ["dank-", "dauk-"]
+    joined = ocrcheck.hyphen_only("hij was dank-", 13, ["dank-", "dank"], "baar.")
+    assert joined == "baar"
+    read_as = [ocrcheck.across(v, joined) for v in versions]
+    # "dank-" alone is a cut word the list doesn't judge; read across the break it is known.
+    assert ocrcheck.known_versions(words, read_as, False) == (True, False)

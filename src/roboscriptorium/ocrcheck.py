@@ -514,9 +514,7 @@ def check(
                     support = {
                         n: supports(ours, other, a0, a1, versions) for n, other in others.items()
                     }
-                    known = (
-                        tuple(lexicon.verdict(v, continues) for v in versions) if lexicon else ()
-                    )
+                    known = known_versions(lexicon, read_as, continues) if lexicon else ()
                     suspects.append(
                         Suspect(
                             page.number,
@@ -537,6 +535,13 @@ def check(
                         )  # fmt: skip
                     )
     return suspects
+
+
+def known_versions(lexicon, read_as: list[str], continues: bool) -> tuple[bool | None, ...]:
+    """Whether the word list knows each version, read as the word-list vote reads it:
+    across a break hyphen with the next line's first word (`across`), so "dank-" is
+    judged as "dankbaar", not left unjudged as a cut word."""
+    return tuple(lexicon.verdict(v, continues) for v in read_as)
 
 
 def across(version: str, joined: str) -> str:
