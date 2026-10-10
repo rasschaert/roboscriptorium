@@ -270,13 +270,16 @@ where layout settles the question. The rules don't carry over to unseen books
 (Villa Toscane headings 0/12). Trees over layout, type, repetition and clef's answer
 (`sorter.py`, `ROBO_SORTER=1`) make 152 role errors to the rules' 406 on the tuning
 books and 29 to 77 on validation, leaving one book out (five English books now, where
-three made them unstable). Two things are enforced in code, being true by definition or
+three made them unstable). Three things are enforced in code, being true by definition or
 by every label: text repeated at the pages' edges is furniture (346 labelled lines, none
-body), and a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
-line costs ten words, a stray folio one or two). Bench (2026-10-09): no change by the
-test, tuning 0.56 → 0.52, validation 0.77 → 0.70; Artemis 0.76 → 0.53, 11/22/63 1.00 →
-0.73, Villa Toscane 0.12 → 0.06; Crime 0.43 → 0.71, one body line dropped. Off by
-default until a bench on the local Qwen readings confirms it.
+body); a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
+line costs ten words, a stray folio one or two); and a line the role model wasn't asked
+about, away from the edges and inside a text block the layout model is sure of, stays
+body: the trees dropped such full-width prose (Crime pp. 36, 42 and 98, a whole line
+each), and the guard takes the tuning books' lost body lines from 72 to 57. On the new
+baseline (2026-10-11), before the guard: no change by the test, tuning 0.50 → 0.48,
+validation 0.74 → 0.67; Metro, De cipier, Artemis, 11/22/63 and Villa Toscane clearly
+better, Thief-Taker and Crime leaning worse. Off by default until the bench holds.
 
 A chapter number the text layer misreads ("l" for 1, "e," for 2, "UH" for 11 on
 Afscheid) matches no numeral rule, and clef-flash calls it a page number or an
