@@ -435,7 +435,7 @@ build. Each change benched on its own.
 - [ ] A ledger of each probe's prediction beside the bench's verdict for the same change
       (docs/outlook.md has the first): when a probe is enough and when only the bench decides
 - [x] Qwen's readings of the bench books again locally, so the bench measures the build that
-      is run (`experiments/reread_local.py`): 30,572 lines in about 8 h at 1.2 s a line, with
+      is run (`experiments/reread_local.py`): 30,572 lines in about 9 h with the judges (1.2 s a line read), with
       the trust data, arbiter and both benches 10 h. Against the hosted readings: tuning
       0.56 → 0.56, validation 0.77 → 0.79, no change; questions fewer on five tuning books
       (Goede dochter 0.58 → 0.44 a page, Reis 0.43 → 0.30), Artemis 0.76 → 0.64; De tuin
