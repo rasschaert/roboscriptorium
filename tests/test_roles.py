@@ -398,3 +398,30 @@ def test_a_lone_number_on_a_page_is_no_section_heading():
     # A numbered title alone on a sunk opening still heads it.
     titled = PageText(6, 400, 600, [Line("1 Later", 190, 300, 240, 310)])
     assert _section_number(titled, 0, None, {}, sunk=True)
+
+
+def test_a_title_recurring_on_a_chapter_opening_stays_a_heading(tmp_path):
+    pages = [_page(n, f"Running head {n}") for n in range(1, 10)]
+    # The title alone opens two chapters, sunk below the running heads' height.
+    for n in (10, 20):
+        opening = [Line("THE THIEF-TAKER", 130, 170, 270, 182)]
+        pages.append(PageText(n, 400, 600, opening + _page(n, "x").lines[3:]))
+    # On an ordinary page, the title at a running head's height is a running head.
+    pages.append(_page(15, "THE THIEF-TAKER"))
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            if state["line"].startswith("body text"):
+                return {"role": Answer("choice", "body", 0.9, {"body": 0.9})}
+            return {
+                "role": Answer(
+                    "choice", "chapter_heading", 0.9, {"chapter_heading": 0.9, "body": 0.1}
+                )
+            }
+
+    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
+    assert roles[SourceRef(10, 0)].role == "chapter_heading"
+    assert roles[SourceRef(20, 0)].role == "chapter_heading"
+    assert roles[SourceRef(15, 0)].role == "running_head"

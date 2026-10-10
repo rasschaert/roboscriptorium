@@ -32,6 +32,7 @@ from roboscriptorium.page import (
     printed_page_number,
     reads_as_folio,
     set_apart_opening,
+    sunk_first_lines,
     sunk_pages,
     title_key,
 )
@@ -225,6 +226,7 @@ def classify(
     roles = {}
     repeats = Repeats(pages)
     sunk = sunk_pages(pages)
+    first_sunk = sunk_first_lines(pages)
     offset = page_offset(pages)
     answers: dict[SourceRef, LineRole] = {}
     repeated: dict[SourceRef, int] = {}
@@ -279,7 +281,13 @@ def classify(
                     page_roles[i] = LineRole(
                         "running_head", role.confidence, role.p_body, "printed-page-number"
                     )
-                elif len(key) >= RUNNING_TITLE_MIN_LETTERS and key in heading_lines:
+                elif (
+                    len(key) >= RUNNING_TITLE_MIN_LETTERS
+                    and key in heading_lines
+                    # On a chapter opening, below where a running head sits, a title may
+                    # recur (Thief-Taker's part and chapter "THE THIEF-TAKER").
+                    and not (page.number in sunk and (i > 0 or page.number in first_sunk))
+                ):
                     page_roles[i] = LineRole(
                         "running_head", role.confidence, role.p_body, "repeated-title"
                     )

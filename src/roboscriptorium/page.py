@@ -193,6 +193,16 @@ def sunk_pages(pages: list[PageText]) -> set[int]:
     return sunk
 
 
+def sunk_first_lines(pages: list[PageText]) -> set[int]:
+    """Pages whose first line itself starts well below the usual place: nothing sits at
+    the height of a running head."""
+    tops = {p.number: t for p in pages if (t := _first_line_top(p)) is not None}
+    if not tops:
+        return set()
+    usual = statistics.median(tops.values())
+    return {n for n, t in tops.items() if t > usual + SUNK_PAGE_DROP}
+
+
 def _first_line_top(page: PageText) -> float | None:
     return page.lines[0].y0 / page.height if page.lines else None
 
