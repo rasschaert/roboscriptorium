@@ -5,7 +5,7 @@ llama:<imajev name>@<port> for llama-server)
 
 `book.toml`'s `body_pages` is the label: the pages around each end of the range (four
 outside, three inside) of every scanned golden book but the test set, asked the
-page-type question of `probe_page_types.py` (copied); "body" and "chapter_start" count as inside.
+page-type question below; "body" and "chapter_start" count as inside.
 Results in work/probes/body-range-<model>.json.
 """
 
@@ -20,7 +20,6 @@ from roboscriptorium.pdf import render_png
 
 TEST = "het-geluid-van-bananen"
 INSIDE = {"body", "chapter_start"}
-# As in probe_page_types.py.
 Q = {"page": decide.choice("This is a scanned page of a printed book. What kind of page is it?", {
     "cover": "The front cover",
     "back_cover": "The back cover or binding",
