@@ -23,6 +23,9 @@ class Paragraph:
     initial: bool = False
     # Indices of its italic words in `text.split()`, ascending.
     italic: tuple[int, ...] = ()
+    # Of those, the ones italic only in part, joined to an upright word by an unspaced
+    # dash ("Ulysses—een"): (word index, start, end) of the italic characters in the word.
+    italic_parts: tuple[tuple[int, int, int], ...] = ()
     # A scene break comes before it: white space or an ornament ("* * *") in the print.
     break_before: bool = False
 

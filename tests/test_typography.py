@@ -127,3 +127,19 @@ def test_four_spaced_dots_survive_reflow_in_a_spaced_dots_book():
     )
     blocks = apply(reflow.reflow([page]), None, SPACED)
     assert blocks[0].text == "Hij wachtte . . . . Toen kwam ze . . . en zweeg."
+
+
+def test_an_unspaced_dash_keeps_an_italic_word_from_swallowing_its_neighbour():
+    from roboscriptorium import epub
+
+    para = Paragraph("Hij las Ulysses — een boek, en sliep.", italic=(2,))
+    (styled,) = apply([para], EM_GLUED)
+    assert styled.text == "Hij las Ulysses—een boek, en sliep."
+    assert styled.italic == (2,) and styled.italic_parts == ((2, 0, 7),)
+    assert "<i>Ulysses</i>—een" in epub._inline(
+        styled.text, set(styled.italic), {k: (a, b) for k, a, b in styled.italic_parts}
+    )
+    # Whole italic words keep one run across punctuation.
+    assert (
+        epub._inline("Ze zei: ‘wat nu, vriend?’", {2, 3, 4}) == "Ze zei: ‘<i>wat nu, vriend</i>?’"
+    )
