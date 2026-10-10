@@ -65,16 +65,16 @@ read: 1 · Read the page {
   class: group
   s: {
     class: row
-    layer: Text layer\nvisual lines with boxes {class: stage}
+    layer: First reading\nvisual lines with boxes {class: stage}
     regions: Layout regions\nfigures, captions, titles {class: stage}
-    missing: Missing lines\nprinted lines the layer lacks {class: stage}
+    missing: Missing lines\nprinted lines the first reading lacks {class: stage}
     type: Type style\nsize, weight, capitals {class: stage}
     layer -> regions -> missing -> type
   }
   m: {
     class: row
-    pdftext: "the PDF's own text layer,\nread out by PyMuPDF" {class: code}
-    tess: "READER tesseract, reading the page image\nwhen the PDF has no text layer" {class: code}
+    pdftext: "the PDF's text layer: invisible OCR text\nover the scan, or a born-digital PDF's\nown text, read out by PyMuPDF" {class: code}
+    tess: "the page image, read by\nREADER tesseract, when the PDF\nhas no text layer" {class: code}
     yolo: "SPOTTER DocLayout-YOLO" {class: vision}
     glm: "READER glm-ocr:bf16\nreads the region" {class: ollama}
     ink: "measures each line's type size, stroke\nand letter width from its ink" {class: code}
