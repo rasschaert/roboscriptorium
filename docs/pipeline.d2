@@ -59,7 +59,10 @@ classes: {
   }
 }
 
-pdf: source.pdf\n(scan or born-digital) {class: file}
+# source.pdf, three kinds, left to right by what the file already holds of the printed page.
+digital: "born-digital PDF\nthe text is the page;\nthe picture only renders it" {class: file}
+layered: "scan with a text layer\nthe picture is the page; over it, invisible,\none machine's reading of it" {class: file}
+bare: "image-only scan\nthe picture is the page,\nand nothing has read it" {class: file}
 
 read: 1 · Read the page {
   class: group
@@ -73,14 +76,10 @@ read: 1 · Read the page {
   }
   m: {
     class: row
-    pdftext: "the PDF's text layer: invisible OCR text\nover the scan, or a born-digital PDF's\nown text, read out by PyMuPDF" {class: code}
-    tess: "the page image, read by\nREADER tesseract, when the PDF\nhas no text layer" {class: code}
     yolo: "SPOTTER DocLayout-YOLO" {class: vision}
     glm: "READER glm-ocr:bf16\nreads the region" {class: ollama}
     ink: "measures each line's type size, stroke\nand letter width from its ink" {class: code}
   }
-  s.layer -> m.pdftext {class: uses}
-  s.layer -> m.tess {class: uses}
   s.regions -> m.yolo {class: uses}
   s.missing -> m.glm {class: uses}
   s.type -> m.ink {class: uses}
@@ -185,12 +184,15 @@ build: 5 · Assemble the book {
 
 epub: book.epub\nEPUB 3, checked by epubcheck {class: file}
 
-pdf -> read
+digital -> read: PyMuPDF extracts\nthe text, exact
+layered -> read: PyMuPDF reads the\nlayer's words out
+bare -> read: READER tesseract\nreads the picture
 read -> understand: lines
 understand -> check: lines with roles
 check -> review: undecided places
 review -> build: answers, on the next build
 check -> build: fixes applied {style.stroke-dash: 0}
+understand -> build: born-digital: its text\nis exact, no check
 build -> epub
 
 legend: Who does the work {
