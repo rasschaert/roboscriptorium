@@ -103,3 +103,16 @@ def test_a_word_split_or_merged_costs_its_letters_once():
     letter = cer("a b c vijf jaer d e f g h i j")
     assert split.cer == letter.cer  # one space lost, one letter wrong: one edit each
     assert split.confusions == [("vijfjaar", "vijf jaar", 1)]
+
+
+def test_a_heading_with_another_number_is_not_found():
+    assert evaluate.match_headings(["CHAPTER 2"], ["CHAPTER 3"]) == 0
+    assert evaluate.match_headings(["CHAPTER XXV."], ["CHAPTER XXVI."]) == 0
+    assert evaluate.match_headings(["CHAPTER 1", "CHAPTER 2"], ["CHAPTER 1", "CHAPTER 3"]) == 1
+    # The layer's look-alikes in a number still match.
+    assert (
+        evaluate.match_headings(
+            ["4I", "HOOFDSTUK 1O", "CHAPTER IL"], ["41", "HOOFDSTUK 10", "CHAPTER II."]
+        )
+        == 3
+    )

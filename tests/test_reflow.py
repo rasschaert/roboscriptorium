@@ -130,7 +130,8 @@ def test_headings_match_in_order_and_split_subtitles_count():
 
     expected = ["CHAPTER I.", "CHAPTER II.", "THE FIRST CHAPTER PUDDLEBY", "I", "II"]
     found = ["CHAPTER I.", "Animal Language", "CHAPTER IL", "THE FIRST CHAPTER", "I", "Il"]
-    assert match_headings(found, expected) == 4
+    # "Il" is the layer's II, as "CHAPTER IL" is CHAPTER II.
+    assert match_headings(found, expected) == 5
 
 
 def test_a_missing_heading_does_not_shift_later_matches():
