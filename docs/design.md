@@ -143,7 +143,7 @@ the prior repeats the label and the trees lean on it: 76 / 48 / 28 at 0.25 / 0.5
 worse than none; with only the suspect's own label left out a signature common in
 its book still looks surer than it will on a new one, 117 / 50 / 31 / 11. What the prior can't know is a signature in no other book: Vals
 alarm loses the full stop before a closing quote 47 times (`word’` for `word.’`), and
-only that book's own answers can teach it (checklist 4, the book teaches itself). The bench decides whether
+only that book's own answers can teach it (checklist: the book teaches itself). The bench decides whether
 the gain carries into a build. The fixed rule (both judges
 agree, clef ≥ 0.3) asks about 35% of suspects because it needs winnow's
 agreement; it is only an explicit fallback (`ROBO_OCR_TRUST=0`). A missing or

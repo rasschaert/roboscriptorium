@@ -4,7 +4,7 @@ This page follows a book from its PDF to its EPUB, then explains how the machine
 is measured and how it learns.
 
 Three other documents go with it. [design.md](design.md) gives the reason for each
-part and the measurements behind it. [AGENTS.md](../AGENTS.md) lists the modules.
+part and the measurements behind it. [modules.md](modules.md) lists the modules.
 The [diagram](pipeline.svg) draws the stages with the model behind each one.
 
 ## The idea
