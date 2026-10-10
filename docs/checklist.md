@@ -412,19 +412,26 @@ build. Each change benched on its own.
 - [ ] Set `quality.SLIPS, ANSWERS = 10, 100` once the overnight chain is done (mid-chain
       it would move that chain's bench), rerun both benches as the new baseline, and
       update docs/design.md ("8 of 68") and AGENTS.md's bench entry
-- [ ] Quote questions offered no right reading on 4 of 4 (OCR questions 20 of 21): the
+- [x] Quote questions offered no right reading on 4 of 4 (OCR questions 20 of 21): the
       readings are the raw layer and the layer with Qwen's marks, so (a) offer the
       OCR-checked line itself (p. 36: `Ik` with the print's `’`); (b) take only quote
       marks from Qwen, not its dashes (p. 59: `directeursk-’` for `directeursk—’`);
       (c) nested quotes, a quotation inside dialogue (`‘“…”’`, p. 43, p. 46): the layer
       reads `““` and drops the outer `’`, Qwen reads `‘‘…’’`; in a single-quoted book a
       doubled opening `““` is `‘“` and a mark one reading adds to the other's (`”` + `’`)
-      is a reading of its own. Measure on these four before the bench
-- [ ] Quote questions offer the OCR-checked line itself as a reading where it differs from
+      is a reading of its own. Done (`quotes.readings`): 3 of 4 now offer the right line;
+      p. 43 also lost the outer ‘ at its first line's start, which no reader saw. Bench
+      with the pooled slip rate after the overnight chain
+- [x] Quote questions offer the OCR-checked line itself as a reading where it differs from
       the layer: Goede dochter p. 36 offered the layer's `Tk snap` and the checked line with
       Qwen's marks (`Charlie. ‘Waarom`), while the print, and the publisher's EPUB, set the
       wrong mark (`Charlie.’ Waarom`); the faithful line had to be typed. Count, in the
       slip review, how many quote questions sit on a mark the print itself sets wrong
+- [ ] Longer slices, each ending on a chapter (the user's go, 2026-10-09): Goede dochter
+      9–162 (ch. 1–8), Reis whole 11–255, De cipier 9–174, Metro 7–162 (ch. 1–7), and De
+      tuin 11–122 on the validation side; ~446 new pages. Trust data for the five (~7.5 h
+      cold, Qwen local), arbiter and sorter retrained, both benches as a new baseline
+- [ ] Then, the user allows it, the five whole: ~1,200 pages more, ~20 h over two nights
 - [ ] A ledger of each probe's prediction beside the bench's verdict for the same change
       (docs/outlook.md has the first): when a probe is enough and when only the bench decides
 - [x] Qwen's readings of the bench books again locally, so the bench measures the build that

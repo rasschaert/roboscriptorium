@@ -234,6 +234,15 @@ the punctuation beside them on the OCR-checked letters: its letters slip too oft
 to take (`krimpachtig`, a Cyrillic word), its quote marks rarely do (Reis right on
 51 lines where the line is wrong, wrong on none where it is right).
 
+**A quote question offers up to three readings beside the layer's** (`quotes.readings`):
+the line as the OCR check left it, its letters fixed and the print's marks kept, which may
+be wrong in print too (Goede dochter p. 36 sets `Charlie.’ Waarom`, and so does the
+publisher's EPUB); the line with the read model's quote marks and the punctuation beside
+them, never its dashes or letters (Qwen read `directeursk-’` for `—’`); and, for a
+quotation inside dialogue (`‘“…”’`), the two readings' marks combined, a doubled `““`
+read as `‘“` in a single-quoted book. In the slip review the quote questions offered a
+right reading on 0 of 4; with these, 3 of 4 (2026-10-09).
+
 ## Missing lines
 
 A layout region with no text-layer line in it is read by glm-ocr only when it is about
@@ -338,7 +347,10 @@ on the Dutch, so it can trigger a question on an English book and never decide.
 ## The reviewer's answers are checked
 
 **A question isn't free: the reviewer slips.** 8 of 68 checked answers on Stella were
-wrong (`quality.slip_rates`), and at one question a page that is about 0.12 wrong
+wrong, and 2 of 32 on Goede dochter's questions of today (one choice: the right quote
+mark where the print sets the wrong one); the bench pools them, 10 of 100
+(`quality.slip_rates`, the user's choice, 2026-10-09), a middle figure over two kinds of
+question. On Stella's rate, at one question a page that is about 0.12 wrong
 words a page, more than trust leaves silent at that budget and more than the hyphen
 breaks. Transcribing the crop and comparing in code caught 9 of 9 slips there with
 3 false alarms in 58; the readings every question already carries are the same
@@ -363,8 +375,8 @@ typed in, text the layer lacks) gets only the quote check.
   zero (at 95% the eleven tuning books would veto about one change in four that
   leaves them all as they were; at 99%, one in nineteen): 24 separate intervals
   would star about one by chance each run.
-- **"After review" counts the reviewer's slips.** 8 of 68 checked answers on
-  Stella were wrong (Beta posterior 0.06–0.21), so a question isn't free.
+- **"After review" counts the reviewer's slips.** 10 of 100 checked answers over two
+  reviews were wrong (Beta posterior 0.06–0.18), so a question isn't free.
 - **Paragraph breaks count.** A break in the wrong place is as visible in an edition as
   a wrong word, and no question asks about it, so the bench counts them per page
   (`disagreements.break_errors`: a reference paragraph starting mid-paragraph in the

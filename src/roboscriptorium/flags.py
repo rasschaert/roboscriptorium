@@ -23,6 +23,7 @@ from roboscriptorium.ir import SourceRef
 from roboscriptorium.layout import Region
 from roboscriptorium.ocrcheck import Doubt
 from roboscriptorium.pdf import PageText
+from roboscriptorium.quotes import KINDS
 from roboscriptorium.roles import KEEP_BODY_AT, LineRole
 
 # A dropped line the model gave at least this P(body) is worth a look; running
@@ -193,20 +194,36 @@ def _doubt(page: PageText, d: Doubt, roles: dict[SourceRef, LineRole]) -> Flag:
 
 
 def _region(
-    page: PageText, run: list[tuple[int, str, list[str]]], proposed: dict[SourceRef, str]
+    page: PageText,
+    run: list[tuple[int, str, list[str]]],
+    proposed: dict[SourceRef, dict[str, str]],
 ) -> Flag:
-    """A run of flagged lines; with `proposed` lines in it, the region as the text layer
-    reads it and as proposed are its two readings."""
+    """A run of flagged lines; with `proposed` lines in it (other readings by kind,
+    `quotes.readings`), the region as the text layer reads it and as each kind reads it
+    are its readings: a line without a kind reads as the OCR check left it, else the
+    layer."""
     first, last = run[0][0], run[-1][0]
     text = "\n".join(page.lines[k].text for k in range(first, last + 1))
     reasons = list(dict.fromkeys(r for _, _, rs in run for r in rs))
     flag = Flag(region_key(page.number, text), page.number, first, last, text, run[0][1], reasons)
     refs = [SourceRef(page.number, k) for k in range(first, last + 1)]
     if any(r in proposed for r in refs):
-        other = "\n".join(proposed.get(r, page.lines[r.line].text) for r in refs)
-        flag = replace(
-            flag, readings=[{"text": text, "votes": []}, {"text": other, "votes": ["scan reading"]}]
-        )
+        readings = [{"text": text, "votes": []}]
+        for kind in KINDS:
+            if not any(kind in proposed.get(r, {}) for r in refs):
+                continue
+            other = "\n".join(
+                proposed.get(r, {}).get(kind)
+                or proposed.get(r, {}).get("OCR check")
+                or page.lines[r.line].text
+                for r in refs
+            )
+            same = next((g for g in readings if g["text"] == other), None)
+            if same is None:
+                readings.append({"text": other, "votes": [kind]})
+            else:
+                same["votes"].append(kind)
+        flag = replace(flag, readings=readings)
     return flag
 
 
@@ -349,7 +366,7 @@ def find(
     layout: dict[int, list[Region]] | None = None,
     doubts: list[Doubt] | None = None,
     quotes: set[SourceRef] | None = None,
-    proposed: dict[SourceRef, str] | None = None,
+    proposed: dict[SourceRef, dict[str, str]] | None = None,
     faint: set[int] | None = None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.

@@ -21,8 +21,10 @@ from roboscriptorium.flags import Flag
 
 BUDGETS = (0.25, 0.5, 1.0)
 BOOTSTRAP_SAMPLES = 1000
-# Answers a reviewer got wrong, of answers checked: Stella, by proofreading.
-SLIPS, ANSWERS = 8, 68
+# Answers a reviewer got wrong, of answers checked, two reviews pooled: Stella's typed
+# regions (8 of 68) and Goede dochter's picks with the difference marked (2 of 32).
+# Different kinds of question, so a middle figure; today's alone may be lower.
+SLIPS, ANSWERS = 10, 100
 
 
 def slip_rates(slips: int = SLIPS, answers: int = ANSWERS) -> tuple[float, float, float]:

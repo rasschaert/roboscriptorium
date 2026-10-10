@@ -26,25 +26,27 @@ BOOTSTRAP_SAMPLES = 2000
 # with models trained without them (`unseen`); validation books have been consulted
 # for choices before, so they validate, not test. Long books are sliced at a chapter
 # boundary (a run costs about 1.1 min per cold page): Dolittle's slice holds its
-# plates and drawn initials, Reis's the Voorwoord and ten chapters. The test set is scored once, at
+# plates and drawn initials. Reis is scored whole; Goede dochter, De cipier, Metro and De
+# tuin were lengthened to about 110–150 pages (2026-10-09), as page noise decided too
+# few changes. The test set is scored once, at
 # the end: nothing is chosen on it, no model trains on it, and the CLI refuses to
 # score it without `--score-test`.
 SETS = {
     "tuning": [
-        "goede-dochter--ia-scan:9-64:1-4",
+        "goede-dochter--ia-scan:9-162:1-8",
         "vals-alarm--ia-scan:11-60:1-10",
-        "reis-om-mijn-schedel--ia-scan:11-110:1-11",
+        "reis-om-mijn-schedel--ia-scan:11-255:1-27",
         "the-nature-of-a-crime--doubleday-1924",
         "the-story-of-doctor-dolittle--stokes-1920:23-88:1-7",
         "the-thief-takers-apprentice--ia-scan:11-84:1-22",
         "afscheid-van-verspilde-tijd--ia-scan:9-70:1-11",
-        "metro-2033--ia-scan:7-111:1-10",
-        "de-cipier--ia-scan:9-92:1-4",
+        "metro-2033--ia-scan:7-162:1-14",
+        "de-cipier--ia-scan:9-174:1-6",
         "artemis--ia-scan:13-80:1-3",
         "11-22-63--ia-scan:15-94:1-24",
     ],
     "validation": [
-        "de-tuin-van-de-avondnevel--ia-scan:11-52:1-3",
+        "de-tuin-van-de-avondnevel--ia-scan:11-122:1-8",
         "de-eerlijke-vinder--ia-scan",
         "youre-never-weird-on-the-internet--ia-scan:13-94:1-16",
         "villa-toscane--calibre-pdf::1-12",

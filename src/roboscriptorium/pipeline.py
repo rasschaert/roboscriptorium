@@ -56,9 +56,9 @@ class Stages:
     # Lines of `pages` where a paragraph's quotes don't pair up, found before a
     # human's answers so the review's questions stay put.
     quote_lines: set[SourceRef]
-    # Per quote-flagged line: the line as the OCR check left it, with the marks a vision
-    # model reads (`quotes.proposed`), where they differ.
-    quote_readings: dict[SourceRef, str] = field(default_factory=dict)
+    # Per quote-flagged line, its readings other than the layer's, by kind
+    # (`quotes.readings`).
+    quote_readings: dict[SourceRef, dict[str, str]] = field(default_factory=dict)
     # What settled the OCR check's suspects: "fixed rule", "trust <model hash>", or ""
     # when there was no check.
     ocr_decider: str = ""
@@ -233,10 +233,10 @@ def proposals(
     style: typography.DashStyle | None,
     dots: typography.EllipsisStyle | None,
     settings: Settings,
-) -> dict[SourceRef, str]:
-    """Each quote-flagged line as the OCR check left it, with the quote marks and
-    punctuation the read model sees on the scan, where they differ. Short lines are read
-    too: "‘Nee." is where a closing quote is most often lost."""
+) -> dict[SourceRef, dict[str, str]]:
+    """Each quote-flagged line's other readings, by kind (`quotes.readings`): as the OCR
+    check left it, with the marks the read model sees on the scan, and those combined.
+    Short lines are read too: "‘Nee." is where a closing quote is most often lost."""
     read = ocrcheck.line_readings(
         book.source,
         body,
@@ -247,13 +247,19 @@ def proposals(
         read_prompt(book, whole, style, dots),
         settings.read_via,
     )
-    ellipsis = quotes.ellipsis(" ".join(ln.text for p in whole for ln in p.lines), dots)
+    texts = [ln.text for p in whole for ln in p.lines]
+    ellipsis = quotes.ellipsis(" ".join(texts), dots)
+    single = quotes.single_quoted_lines(texts)
+    layer = {p.number: p for p in body}
     checked = {p.number: p for p in ocrcheck.apply(body, suspects)}
     out = {}
     for ref, reading in read.items():
         line = checked[ref.page].lines[ref.line].text
-        if (merged := quotes.proposed(line, reading, ellipsis)) != line:
-            out[ref] = merged
+        found = quotes.readings(
+            layer[ref.page].lines[ref.line].text, line, reading, ellipsis, single
+        )
+        if found:
+            out[ref] = found
     return out
 
 
