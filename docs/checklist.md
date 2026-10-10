@@ -40,10 +40,12 @@ areas below in order, and the test set scored once at the end.
       each); **user** weighs questions against wrong words
 - [ ] Bench the quote-question readings (`quotes.readings`) with the pooled slip rate:
       both were set mid-chain and wait for the new baseline
-- [ ] Branch `bughunt` (2026-10-10, 22 fixes with tests, decisions.md): `bench tuning` and
-      `bench validation` against the new baseline, warm, ~5 min; merge if no book is
-      vetoed. The OCR check raises a few more suspects (a lost quote before ’t), so a
-      trust-data top-up may follow. Then decide the six findings left open (HANDOVER.md)
+- [ ] Branch `bughunt` (2026-10-10: 22 fixes, then the seven findings left open fixed too,
+      the user's go; every one with a test failing on the old code): rebase onto main,
+      rebuild the trust data warm (the arbiter's `known` feature changed, MODEL_VERSION 6,
+      and the OCR check raises a lost quote before ’t), retrain the arbiter, then `bench
+      tuning` and `bench validation` against the new baseline; merge if no book is vetoed.
+      ~1–1.5 h
 
 ## 3. Stella, the target book
 

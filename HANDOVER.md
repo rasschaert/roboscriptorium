@@ -29,27 +29,13 @@ Bench before the chains (rules' line roles, the local Qwen readings, slip rate 8
 (10 of 100) and the new quote-question readings were set mid-chain and show up first in
 the new baseline.
 
-**Branch `bughunt`** (worktree `../roboscriptorium-bughunt`): 22 bug fixes with tests
-from a four-reviewer hunt, kept off `main` so the chains run unchanged code. Bench it
-against the new baseline, then merge (checklist). Six findings were left for a decision,
-each verified on synthetic input:
-
-- A typed line gets its neighbour's `Line.source`, so `italics.mark` can set it in the
-  neighbour's italics and `figures.place` takes the neighbour's height. A fix needs typed
-  lines to carry an identity of their own, read by every consumer of `source`.
-- `roles.py`'s repeated-title rule demotes a chapter title that recurs (Thief-Taker's
-  second "THE THIEF-TAKER"); exempting sunk pages risks keeping a running head on a
-  chapter opening. Needs the bench.
-- `evaluate.match_headings` counts "CHAPTER 2" found for "CHAPTER 3" when a heading is
-  missing (a numeral misread is not a lost heading, but the alignment can slide).
-- `typography.styled` with dash spacing "none" merges two tokens, so an italic word
-  swallows its neighbour (`<i>Ulysses—een</i>`): italics as word indices can't say it.
-- `trust` feature `known` is computed on the raw versions ("dank-"), the word-list vote
-  on the joined ones ("dankbaar"); fixing it changes a feature and needs a retrain.
-- A disagreement's key takes its context from the sliced reference, so a verdict on a
-  chapter's first six words is "unreviewed" under another slice (it still applies).
-- Latent: PDF pages with `/Rotate` would be cropped in the wrong place everywhere. No
-  book has one.
+**Branch `bughunt`** (worktree `../roboscriptorium-bughunt`): the hunt's 22 fixes, then
+the seven findings it left open (typed lines' italics, a recurring chapter title, heading
+numbers, a dash joining an italic word, the arbiter's `known` feature, slice-edge verdict
+keys, rotated pages), each with a test failing on the old code; docs/decisions.md has the
+list. Kept off `main` so the chains run unchanged code. `known` changed meaning
+(MODEL_VERSION 6): rebase, rebuild the trust data warm, retrain, bench against the new
+baseline, merge if no book is vetoed (checklist).
 
 ## Next
 
