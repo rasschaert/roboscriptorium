@@ -27,3 +27,16 @@ def test_the_ask_threshold_must_be_a_probability(monkeypatch, value):
     monkeypatch.setenv("ROBO_OCR_ASK_BELOW", value)
     with pytest.raises(ValueError):
         Settings.from_env()
+
+
+def test_a_question_budget_below_zero_is_refused(monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_QUESTIONS", "-1")
+    with pytest.raises(ValueError):
+        Settings.from_env()
+
+
+def test_two_judges_by_one_name_are_refused(monkeypatch):
+    monkeypatch.setenv("ROBO_JUDGE_MODEL", "clef:27b")
+    monkeypatch.setenv("ROBO_CHECK_MODEL", "clef:27b")
+    with pytest.raises(ValueError):
+        Settings.from_env()

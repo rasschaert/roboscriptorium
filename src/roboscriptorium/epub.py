@@ -126,20 +126,29 @@ def _nav(doc: Document, sections: list[_Section]) -> str:
     return _xhtml(doc.title, doc.language, body)
 
 
-def _inline(text: str, italic: set[int]) -> str:
-    """Escaped text with each run of italic words in `<i>`, punctuation around a run outside."""
-    out, pos, run = [], 0, None
-    words = list(re.finditer(r"\S+", text))
-    for k, m in enumerate(words):
-        if k in italic and run is None:
-            run = k
-        if run is not None and (k + 1 not in italic or k + 1 == len(words)):
-            start = words[run].start() + _lead(words[run].group())
-            end = m.end() - _trail(m.group())
-            if start < end:
-                out += [escape(text[pos:start]), "<i>", escape(text[start:end]), "</i>"]
-                pos = end
-            run = None
+def _inline(text: str, italic: set[int], parts: dict[int, tuple[int, int]] | None = None) -> str:
+    """Escaped text with each run of italic words in `<i>`, punctuation around a run outside.
+    `parts` are the words italic only in part: their italic characters' start and end."""
+    parts = parts or {}
+    spans = []
+    for k, m in enumerate(re.finditer(r"\S+", text)):
+        if k not in italic:
+            continue
+        if k in parts:
+            a, b = m.start() + parts[k][0], m.start() + parts[k][1]
+        else:
+            a = m.start() + _lead(m.group())
+            b = m.end() - _trail(m.group())
+        # Consecutive italic words are one run, unless one is italic only in part.
+        if spans and k - 1 in italic and k - 1 not in parts and k not in parts:
+            spans[-1][1] = b
+        else:
+            spans.append([a, b])
+    out, pos = [], 0
+    for a, b in spans:
+        if a < b:
+            out += [escape(text[pos:a]), "<i>", escape(text[a:b]), "</i>"]
+            pos = b
     out.append(escape(text[pos:]))
     return "".join(out)
 
@@ -168,9 +177,15 @@ def _block(block: Block) -> str:
         # The letter may have been a word of its own ("A" before "LONG"), shifting the rest.
         shift = len(block.text.split()) - len(rest.split())
         italic = {k - shift for k in block.italic if k >= shift}
-        text = f'<span class="initial">{escape(block.text[0])}</span>{_inline(rest, italic)}'
+        # Without a shift the first word lost its first letter to the initial.
+        parts = {
+            k - shift: (a - (k == 0 and not shift), b - (k == 0 and not shift))
+            for k, a, b in block.italic_parts
+            if k >= shift
+        }
+        text = f'<span class="initial">{escape(block.text[0])}</span>{_inline(rest, italic, parts)}'
     else:
-        text = _inline(block.text, set(block.italic))
+        text = _inline(block.text, set(block.italic), {k: (a, b) for k, a, b in block.italic_parts})
     scene = '<hr class="break"/>\n' if block.break_before else ""
     if block.opening or block.initial:
         return f'{scene}<p class="opening">{text}</p>'

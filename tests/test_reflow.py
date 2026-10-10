@@ -130,7 +130,8 @@ def test_headings_match_in_order_and_split_subtitles_count():
 
     expected = ["CHAPTER I.", "CHAPTER II.", "THE FIRST CHAPTER PUDDLEBY", "I", "II"]
     found = ["CHAPTER I.", "Animal Language", "CHAPTER IL", "THE FIRST CHAPTER", "I", "Il"]
-    assert match_headings(found, expected) == 4
+    # "Il" is the layer's II, as "CHAPTER IL" is CHAPTER II.
+    assert match_headings(found, expected) == 5
 
 
 def test_a_missing_heading_does_not_shift_later_matches():
@@ -456,3 +457,22 @@ def test_an_ornament_line_or_two_blank_lines_set_a_scene_break():
         ("Na een gro", True),
     ]
     assert "* * *" not in " ".join(p.text for p in paragraphs)
+
+
+def test_a_number_range_broken_at_the_lines_end_keeps_its_hyphen():
+    assert join("in de jaren 1914-", "1918 was het") == "in de jaren 1914-1918 was het"
+    assert join("op bladzijde 12-", "14 staat") == "op bladzijde 12-14 staat"
+    assert join("nummer 7-", "a") == "nummer 7- a"  # not a range: as the layer has it
+
+
+def test_a_lowercase_letter_beyond_latin_1_continues_the_word():
+    assert join("ver-", "ĳzeren") == "verĳzeren"
+    assert join("Tun-", "ç") == "Tunç"
+    assert join("Noord-", "Šumava") == "Noord-Šumava"
+
+
+def test_tidy_keeps_the_spaces_of_a_dotted_run():
+    # The typography stage sets ellipses book-wide; four spaced dots stay as printed.
+    assert tidy("Hij wachtte . . . en zweeg.") == "Hij wachtte . . . en zweeg."
+    assert tidy("Hij wachtte . . . . Toen") == "Hij wachtte . . . . Toen"
+    assert tidy("Hij kwam . Toen") == "Hij kwam. Toen"

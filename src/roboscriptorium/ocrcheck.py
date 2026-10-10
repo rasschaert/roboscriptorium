@@ -34,7 +34,7 @@ from roboscriptorium.clients.retry import patiently
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
-from roboscriptorium.pdf import PageText, line_words, spells
+from roboscriptorium.pdf import PageText, line_words, page_words, spells
 from roboscriptorium.reflow import HYPHENS
 from roboscriptorium.roles import DecisionCache
 
@@ -63,7 +63,7 @@ CROP_PAD = 4  # points around the suspect words
 # Curly quotes as straight ones, and a not sign (some OCR layers' line-end hyphen) as a
 # hyphen, one character for one, so offsets stay put.
 _FOLD = str.maketrans("‘’“”¬", "''\"\"-")
-_OPENING_QUOTES = re.compile(r"(^|\s)[\"'‘’“”]+")
+_OPENING_QUOTES = re.compile(r"(^|\s)([\"'‘’“”]+)")
 _ANY_DASH = re.compile(r"\s*[—–]\s*|\s+-\s+|\s+-(?=['\"]|$)")
 # An ellipsis as a glyph, three dots or spaced dots, with or without a space before.
 _ELLIPSIS = re.compile(r" ?(?:…|\. ?\. ?\.)")
@@ -225,11 +225,13 @@ def line_readings(
                 texts = pool.map(lambda png: transcribe(png, reader, ollama_url, prompt), crops)
             else:
                 texts = pool.map(lambda png: read_line(png, reader, ollama_url), crops)
-            for (page, k), text in zip(batch, texts, strict=True):
-                done[key(page, k)] = text
-                if via:
-                    read_by.setdefault(via, []).append(key(page, k))
-            save()
+            try:
+                for (page, k), text in zip(batch, texts, strict=True):
+                    done[key(page, k)] = text
+                    if via:
+                        read_by.setdefault(via, []).append(key(page, k))
+            finally:
+                save()  # a reading that fails loses itself, not the batch before it
     return {ref: done[key(p, k)] for ref, (p, k) in wanted.items()}
 
 
@@ -326,7 +328,7 @@ def line_boxes(pdf_page: pymupdf.Page, page: PageText) -> list[tuple[float, floa
     Some OCR layers give lines boxes far taller than the print.
     """
     out = []
-    for line, words in zip(page.lines, line_words(pdf_page.get_text("words"), page), strict=True):
+    for line, words in zip(page.lines, line_words(page_words(pdf_page), page), strict=True):
         if words and spells(words, line.text):
             out.append(_union(words))
         else:
@@ -439,8 +441,11 @@ def _alike(text: str) -> str:
 
 
 def _bare(text: str) -> str:
-    """Text with every opening quote alike: its kind is no difference, a lost one is."""
-    return _OPENING_QUOTES.sub(r"\1'", text.translate(_FOLD)).strip()
+    """Text with every opening quote alike: its kind is no difference, a lost one is.
+
+    Each mark of a run folds on its own ("‘’t Is" keeps two), so a lost one is a
+    difference there too."""
+    return _OPENING_QUOTES.sub(lambda m: m[1] + "'" * len(m[2]), text.translate(_FOLD)).strip()
 
 
 def _box(words: list, box, original: str, start: int, end: int):
@@ -484,7 +489,7 @@ def check(
     with pymupdf.open(pdf) as doc:
         for page in pages:
             pdf_page = doc[page.number - 1]
-            words = line_words(pdf_page.get_text("words"), page)
+            words = line_words(page_words(pdf_page), page)
             boxes = line_boxes(pdf_page, page)
             for k, line in enumerate(page.lines):
                 ours = line.text
@@ -509,9 +514,7 @@ def check(
                     support = {
                         n: supports(ours, other, a0, a1, versions) for n, other in others.items()
                     }
-                    known = (
-                        tuple(lexicon.verdict(v, continues) for v in versions) if lexicon else ()
-                    )
+                    known = known_versions(lexicon, read_as, continues) if lexicon else ()
                     suspects.append(
                         Suspect(
                             page.number,
@@ -532,6 +535,13 @@ def check(
                         )  # fmt: skip
                     )
     return suspects
+
+
+def known_versions(lexicon, read_as: list[str], continues: bool) -> tuple[bool | None, ...]:
+    """Whether the word list knows each version, read as the word-list vote reads it:
+    across a break hyphen with the next line's first word (`across`), so "dank-" is
+    judged as "dankbaar", not left unjudged as a cut word."""
+    return tuple(lexicon.verdict(v, continues) for v in read_as)
 
 
 def across(version: str, joined: str) -> str:

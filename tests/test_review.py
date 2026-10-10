@@ -88,10 +88,10 @@ def test_golden_review_crops_from_the_pages_the_paragraphs_point_into(tmp_path, 
     book = SimpleNamespace(source=tmp_path / "source.pdf", stages=tmp_path, language="nl")
     seen = {}
     monkeypatch.setattr(cli, "_not_the_test_set", lambda *a: None)
-    monkeypatch.setattr(cli, "_build_golden", lambda *a: (book, stages, "doc", []))
+    monkeypatch.setattr(cli, "_build_golden", lambda *a: (book, stages, "doc", [], ([], [])))
     monkeypatch.setattr(cli, "_verdicts", lambda b: Verdicts(tmp_path / "v.jsonl"))
 
-    def find(doc, reference, pages, language):
+    def find(doc, reference, pages, language, around=([], [])):
         seen["find"] = pages
         seen["language"] = language
         return []
@@ -99,6 +99,8 @@ def test_golden_review_crops_from_the_pages_the_paragraphs_point_into(tmp_path, 
     monkeypatch.setattr(cli.disagreements, "find", find)
     monkeypatch.setattr(review, "serve", lambda r, port: seen.setdefault("scan", r.scan.pages))
     cli.review_disagreements(tmp_path, None, None, True, 8765, False)
-    assert seen["find"] is corrected
-    assert seen["scan"][1] is corrected[0]
+    # The paragraphs point into the pages before answers (`Line.source`), not the
+    # corrected copy, where a typed line above would shift every crop.
+    assert seen["find"] is layer
+    assert seen["scan"][1] is layer[0]
     assert seen["language"] == "nl"

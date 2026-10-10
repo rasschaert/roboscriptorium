@@ -41,3 +41,22 @@ def test_the_ink_threshold_follows_a_pale_scan():
     page = np.full((100, 100), 225, dtype=np.uint8)
     page[40:60, 20:80] = 135  # grey print on a light page
     assert 135 <= ink_threshold(page) < 225
+
+
+def test_a_typed_line_does_not_take_its_neighbours_italics():
+    from roboscriptorium.reflow import reflow
+
+    layer = PageText(1, 400, 600, [Line("Odyssee van Homerus", 50, 100, 350, 112)])
+    # A human typed "en de" where the layer lost it, before the italic line.
+    corrected = PageText(
+        1,
+        400,
+        600,
+        [
+            Line("en de", 50, 85, 120, 97, source=0, typed=True),
+            Line("Odyssee van Homerus", 50, 100, 350, 112, source=0),
+        ],
+    )
+    (para,) = italics.mark(reflow([corrected]), [layer], {SourceRef(1, 0): frozenset({0, 1, 2})})
+    assert para.text == "en de Odyssee van Homerus"
+    assert para.italic == (2, 3, 4)

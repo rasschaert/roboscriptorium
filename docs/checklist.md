@@ -16,15 +16,7 @@ What runs right now and what waits on the user: `HANDOVER.md`.
 then **Stella end to end with the user's review**, the target book, then the user's four books. After them, the open
 areas below in order, and the test set scored once at the end.
 
-## 1. Running now
-
-- [ ] The `bughunt` branch benched against that baseline (`robo-bughunt`, waits for
-      `robo-newbooks`): its trust data rebuilt warm and its arbiter retrained apart from
-      main's (`work/probes/ocr-trust-bughunt`, `work/models/bughunt/`: the arbiter's
-      `known` feature changed meaning), both benches with the rules' line roles. ~1 h.
-      Merge if no book is vetoed
-
-## 2. Right after the chains (~1 h)
+## 1. Right after the chains (~1 h)
 
 - [ ] Line roles by trees on by default if their bench holds. On the new baseline: tuning
       0.50 → 0.48, validation 0.74 → 0.67, no change pooled; clearly better on Metro,
@@ -45,7 +37,7 @@ areas below in order, and the test set scored once at the end.
       each). The user gives no exchange rate (answers until tired), so choose where the
       wrong words a question removes fall off; record the curve
 
-## 3. Stella, the target book
+## 2. Stella, the target book
 
 - [ ] Build Stella with today's build (cold for the new crops and readings, ~1 h for 67
       pages); sample the questions before sending the reviewer (never obvious ones)
@@ -54,7 +46,7 @@ areas below in order, and the test set scored once at the end.
 - [ ] Rebuild, epubcheck, and **user** reads the EPUB through, noting each error with a few words around it; no spot-check (the read covers every page). Each noted error is fixed as an answer and checked against the build's suspects: was it asked, settled wrongly, or never a suspect ("Errors no question asks about"): what the bench can't see
       (layout, italics, front matter)
 
-## 4. The user's books after Stella
+## 3. The user's books after Stella
 
 Four Dutch books the user wants as EPUBs, none with a reference EPUB, each an IA Scribe
 scan with its own hidden layer (Stella's format), in `work/<name>/` with a `book.toml`.
@@ -75,7 +67,7 @@ In this order:
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
-## 5. The reviewer's time
+## 4. The reviewer's time
 
 - [ ] The book teaches itself: after the answers, a per-book posterior per substitution
       pair rescores the unasked suspects; on the review page, one question per pattern
@@ -87,7 +79,7 @@ In this order:
 - [ ] A typed answer checked against Qwen's cached reading of the line where the question
       had no readings (headings, missing text). ~1 h
 
-## 6. Errors no question asks about
+## 5. Errors no question asks about
 
 - [ ] De eerlijke vinder's 1.02 unasked a page, the most of any ordinary book (words 26,
       letters 21, extra words 18): find where they come from. ~1 h, no models
@@ -102,7 +94,7 @@ In this order:
       ~4 real errors among 56 flags; clef's filter kept both clear catches and dropped 31
       of 37 urges. ~2 h probe; a stage only if `bench` says so
 
-## 7. Structure
+## 6. Structure
 
 - [ ] Score scene breaks: derive keeps a reference's blank-line paragraphs and ornaments
       as a break mark, counted like paragraph breaks. ~2 h
@@ -115,7 +107,7 @@ In this order:
 - [ ] Dolittle's captions scored: derive them into the reference, or leave caption lines
       out of the score as footnotes are
 
-## 8. Better pixels: Internet Archive's own files
+## 7. Better pixels: Internet Archive's own files
 
 Public on public-domain items only (Crime, Dolittle); private on lending-library items.
 
@@ -128,7 +120,7 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
       item). ~30 min
 - [ ] **user** Whether a borrowed item's `_jp2.zip` can be downloaded while on loan
 
-## 9. Beyond the golden books' kind
+## 8. Beyond the golden books' kind
 
 - [ ] Page classification, so `body_pages` needn't be set in book.toml: the page-type
       models so far miss the same pages (prefaces, blanks at the edges); start from the
@@ -137,7 +129,7 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
       tesseract 0.35% CER against the layer's 0.20%): does the OCR check close the gap?
       ~1 h cold. Then italics from tesseract's word boxes
 
-## 10. Golden books and housekeeping
+## 9. Golden books and housekeeping
 
 - [ ] **user** More golden pairs: modern English Scribe scans with the publisher's EPUB of
       the same printing, and a third Dutch validation scan
@@ -149,7 +141,7 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
       feature-count test
 - [ ] Remove the `baseline` and `qwen2` worktrees when convenient
 
-## 11. At the end
+## 10. At the end
 
 - [ ] Score the test set once: `bench test --score-test`
 
@@ -237,6 +229,10 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
       right), so clef stays local
 
 ## Trust data and the arbiter
+
+- [x] 2026-10-11 Branch `bughunt` merged: the hunt's 22 fixes and its seven open
+      findings, trust data rebuilt warm (MODEL_VERSION 6), arbiter retrained; tuning
+      **better** 0.50 → 0.48, six books clearly better, none worse; validation no change
 
 - [x] 2026-10-11 Trust data for Thief-Taker and the five new books (567 pages, 525 min),
       arbiter (~10,400 suspects) and trees retrained: **the new baseline**, tuning 0.50,

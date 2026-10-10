@@ -21,6 +21,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import ocr
 from roboscriptorium.evaluate import normalise, word_tokens
+from roboscriptorium.files import append_jsonl, read_jsonl
 from roboscriptorium.golden.reference import Chapter
 from roboscriptorium.ir import Document, SourceRef
 from roboscriptorium.lexicon import Lexicon
@@ -113,6 +114,23 @@ def reference_words(reference: list[Chapter]) -> list[str]:
     return [w for ch in reference for p in ch.paragraphs for w in normalise(p).split()]
 
 
+# The reference words just before and after a slice of chapters, so a disagreement at a
+# slice's edge has the context it has in the whole book.
+Around = tuple[list[str], list[str]]
+
+
+def slice_reference(
+    reference: list[Chapter], span: tuple[int, int] | None
+) -> tuple[list[Chapter], Around]:
+    """Chapters `span` (1-based, inclusive; None for all) and the words around them."""
+    if span is None:
+        return reference, ([], [])
+    first, last = span[0] - 1, span[1]
+    before = reference_words(reference[:first])[-CONTEXT_WORDS:]
+    after = reference_words(reference[last:])[:CONTEXT_WORDS]
+    return reference[first:last], (before, after)
+
+
 def vocabulary(reference: list[Chapter], language: str) -> set[str]:
     """The word list of the book's language (`language` as in book.toml), and the
     reference's own words in lower case."""
@@ -163,19 +181,26 @@ def _spans(out: list[str], ref: list[str]) -> list[tuple[int, int, int, int]]:
 
 
 def find(
-    doc: Document, reference: list[Chapter], pages: list[PageText], language: str = "en"
+    doc: Document,
+    reference: list[Chapter],
+    pages: list[PageText],
+    language: str = "en",
+    around: Around = ([], []),
 ) -> list[Disagreement]:
-    """Where `doc` and `reference` differ. `pages` are the ones `doc`'s sources index
-    (`Stages.corrected`); `language` (book.toml's) picks the word list that settles
-    garbled output."""
+    """Where `doc` and `reference` differ. `pages` are the ones `doc`'s sources index:
+    the text layer before answers (`Stages.pages`, which `Line.source` points back to);
+    `language` (book.toml's) picks the word list that settles garbled output; `around`
+    are the words beside a slice of chapters (`slice_reference`), the context of its edges."""
     out, refs = _word_sources(doc, {p.number: p for p in pages})
     ref = reference_words(reference)
+    context = around[0] + ref + around[1]
+    shift = len(around[0])
     vocab = vocabulary(reference, language)
     found = []
     for s0, s1, d0, d1 in _spans(out, ref):
-        before = ref[max(0, d0 - CONTEXT_WORDS) : d0]
+        before = context[max(0, shift + d0 - CONTEXT_WORDS) : shift + d0]
         want = ref[d0:d1]
-        after = ref[d1 : d1 + CONTEXT_WORDS]
+        after = context[shift + d1 : shift + d1 + CONTEXT_WORDS]
         got = " ".join(out[s0:s1])
         span = [r for r in refs[s0:s1] if r is not None]
         if not span:
@@ -231,11 +256,9 @@ class Verdicts:
     def __init__(self, path: Path):
         self.path = path
         self.by_key: dict[str, Verdict] = {}
-        if path.exists():
-            for line in path.read_text().splitlines():
-                if line.strip():
-                    v = Verdict(**json.loads(line))
-                    self.by_key[v.key] = v
+        for raw in read_jsonl(path):
+            v = Verdict(**raw)
+            self.by_key[v.key] = v
 
     def record(self, d: Disagreement, truth: str | None, category: str, note: str = "") -> Verdict:
         v = Verdict(
@@ -250,9 +273,7 @@ class Verdicts:
             note,
             datetime.now(UTC).isoformat(timespec="seconds"),
         )
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        with self.path.open("a") as f:
-            f.write(json.dumps(asdict(v), ensure_ascii=False) + "\n")
+        append_jsonl(self.path, asdict(v))
         self.by_key[v.key] = v
         return v
 
@@ -280,11 +301,14 @@ def _printed(
     ]
 
 
-def patch(reference: list[Chapter], verdicts: Verdicts) -> tuple[list[Chapter], int]:
+def patch(
+    reference: list[Chapter], verdicts: Verdicts, around: Around = ([], [])
+) -> tuple[list[Chapter], int]:
     """The reference with each verdict's truth put in where the scan differs from it.
 
     Paragraphs no verdict touches are returned as they were. Returns the patched
-    chapters and how many verdicts were applied.
+    chapters and how many verdicts were applied. `around` are the words beside a slice
+    of chapters, so a verdict at a slice's edge is found by its whole context.
     """
     # (chapter, paragraph, word, printed tokens, italic per token) for every reference
     # word, in order: verdicts match on the normalised word, the chapters keep the
@@ -299,15 +323,19 @@ def patch(reference: list[Chapter], verdicts: Verdicts) -> tuple[list[Chapter], 
     ]
     # Each verdict's context is the unpatched reference's, so all are found before any
     # is applied: a verdict a few words from another still matches.
-    words = [w for _, _, w, _, _ in flat]
+    words = around[0] + [w for _, _, w, _, _ in flat] + around[1]
+    shift = len(around[0])
     found = []
     for v in verdicts.by_key.values():
         if v.truth is None or v.truth == v.want:
             continue
         before, want, after = v.before.split(), v.want.split(), v.after.split()
         at = _find_sequence(words, before + want + after)
-        if at is not None:
-            found.append((at + len(before), len(want), v.truth.split()))
+        if at is None:
+            continue
+        start = at + len(before) - shift
+        if 0 <= start and start + len(want) <= len(flat):
+            found.append((start, len(want), v.truth.split()))
     applied = 0
     touched: set[tuple[int, int]] = set()
     # Right to left, so each leaves the positions before it in place; a verdict

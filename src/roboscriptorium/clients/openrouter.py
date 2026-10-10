@@ -12,6 +12,7 @@ image inside the state and bills the model's whole context on every call.
 import base64
 import json
 import os
+import threading
 import time
 
 import httpx
@@ -21,6 +22,7 @@ URL = "https://openrouter.ai/api/v1/chat/completions"
 DECISIONS_URL = "https://openrouter.ai/api/alpha/decisions"
 RETRIES = 5
 _CLIENT: httpx.Client | None = None
+_CLIENT_LOCK = threading.Lock()
 # Whole seconds a request may take: a stalled provider keeps the connection open with
 # keep-alive bytes, so httpx's read timeout never fires.
 DEADLINE = 120
@@ -109,9 +111,10 @@ def _post(url: str, body: dict, client: httpx.Client | None) -> dict:
 def _shared() -> httpx.Client:
     """One client for every request, so hosted lines reuse a connection."""
     global _CLIENT
-    if _CLIENT is None:
-        _CLIENT = httpx.Client(timeout=300)
-    return _CLIENT
+    with _CLIENT_LOCK:
+        if _CLIENT is None:
+            _CLIENT = httpx.Client(timeout=300)
+        return _CLIENT
 
 
 def _within_deadline(http: httpx.Client, url: str, body: dict, headers: dict) -> tuple[int, bytes]:

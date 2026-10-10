@@ -192,6 +192,8 @@ def test_tesseract_text_where_a_word_table_was_asked_for_is_an_error(monkeypatch
 
 
 class _WordsPage:
+    rotation = 0
+
     def __init__(self, words):
         self.words = words
 
@@ -506,3 +508,70 @@ def test_a_reading_supports_its_version_of_a_span_wider_than_its_own_difference(
     assert ocrcheck.supports(ours, glm, a0, a1, versions) == (False, True, False)
     assert ocrcheck.supports(ours, tess, a0, a1, versions) == (False, False, True)
     assert ocrcheck.supports(ours, ours, a0, a1, versions) == (True, False, False)
+
+
+def test_a_lost_opening_quote_before_an_elided_word_is_a_difference():
+    assert _spans("’t Is goed,’ zei hij.", "‘’t Is goed,’ zei hij.") == [("’t", "‘’t")]
+    assert _spans("’Tis true,” he said.", "“’Tis true,” he said.") == [("’Tis", "“’Tis")]
+    # The marks' kinds still don't count.
+    assert _spans("'’t Is", "‘’t Is") == []
+
+
+def test_a_batch_of_readings_is_saved_when_one_reading_fails(tmp_path, monkeypatch):
+    import httpx
+    import pytest
+
+    from roboscriptorium import ocrcheck
+
+    pdf_path = tmp_path / "book.pdf"
+    doc = pymupdf.open()
+    page = doc.new_page(width=300, height=200)
+    for k in range(3):
+        page.insert_text((20, 40 + 20 * k), f"regel {k} van de tekst", fontsize=11)
+    doc.save(pdf_path)
+    doc.close()
+    pages = pdf.read_text_layer(pdf_path)
+    calls = []
+
+    def read(png, model, url):
+        calls.append(1)
+        if len(calls) == 2:
+            raise httpx.HTTPStatusError("500", request=None, response=httpx.Response(500))
+        return "gelezen"
+
+    monkeypatch.setattr(ocrcheck, "read_line", read)
+    monkeypatch.setattr(ocrcheck, "READ_WORKERS", 1)
+    cache = tmp_path / "second-reading.json"
+    with pytest.raises(httpx.HTTPStatusError):
+        checked = {SourceRef(1, k) for k in range(3)}
+        ocrcheck.line_readings(pdf_path, pages, checked, "glm", "http://x", cache)
+    saved = json.loads(cache.read_text())
+    assert len(saved["lines"]) == 1  # the line read before the failure is kept
+
+
+def test_the_word_list_judges_a_break_as_its_vote_reads_it():
+    from roboscriptorium.lexicon import Lexicon
+
+    words = Lexicon({"dankbaar", "dank", "baar"})
+    versions = ["dank-", "dauk-"]
+    joined = ocrcheck.hyphen_only("hij was dank-", 13, ["dank-", "dank"], "baar.")
+    assert joined == "baar"
+    read_as = [ocrcheck.across(v, joined) for v in versions]
+    # "dank-" alone is a cut word the list doesn't judge; read across the break it is known.
+    assert ocrcheck.known_versions(words, read_as, False) == (True, False)
+
+
+def test_a_rotated_pages_text_boxes_are_where_the_page_shows_them(tmp_path):
+    import numpy as np
+
+    doc = pymupdf.open()
+    page = doc.new_page(width=300, height=500)
+    page.set_rotation(90)  # a scan stored sideways, shown upright
+    page.insert_text(pymupdf.Point(100, 50) * page.derotation_matrix, "Hello world", rotate=90)
+    doc.save(tmp_path / "rotated.pdf")
+    (layer,) = pdf.read_text_layer(tmp_path / "rotated.pdf")
+    (line,) = layer.lines
+    assert (layer.width, layer.height) == (500, 300) and line.x1 - line.x0 > line.y1 - line.y0
+    with pymupdf.open(tmp_path / "rotated.pdf") as shown:
+        crop = shown[0].get_pixmap(clip=pymupdf.Rect(line.x0, line.y0, line.x1, line.y1))
+    assert (np.frombuffer(crop.samples, dtype=np.uint8) < 128).sum() > 50

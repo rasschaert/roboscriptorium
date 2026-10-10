@@ -11,6 +11,9 @@ from dataclasses import dataclass, field
 class SourceRef:
     page: int  # 1-based
     line: int  # index into that page's visual lines
+    # A line a human typed in, which the text layer lacks: `line` is where it was inserted
+    # (the line it went before), so its italics and ink are not that line's.
+    typed: bool = False
 
 
 @dataclass
@@ -23,6 +26,9 @@ class Paragraph:
     initial: bool = False
     # Indices of its italic words in `text.split()`, ascending.
     italic: tuple[int, ...] = ()
+    # Of those, the ones italic only in part, joined to an upright word by an unspaced
+    # dash ("Ulysses—een"): (word index, start, end) of the italic characters in the word.
+    italic_parts: tuple[tuple[int, int, int], ...] = ()
     # A scene break comes before it: white space or an ornament ("* * *") in the print.
     break_before: bool = False
 

@@ -149,11 +149,39 @@ def _heading_key(text: str) -> str:
     return "".join(c for c in decomposed if c.isalnum())
 
 
-def _same_heading(a: str, b: str) -> bool:
+_ROMAN = re.compile(r"M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})")
+# Letters a layer reads for digits inside a number ("4I" for 41, "1O" for 10).
+_LOOKALIKE_DIGITS = str.maketrans({"I": "1", "L": "1", "|": "1", "O": "0"})
+
+
+def _numbers(text: str) -> tuple[list[str], str]:
+    """The heading's chapter numbers, arabic or roman, with the layer's look-alikes folded
+    ("CHAPTER 4I" holds "41", "CHAPTER IL" holds "II": an L where no numeral has one), and
+    the key of the words around them ("CHAPTER")."""
+    numbers, words = [], []
+    for token in re.findall(r"[^\W_]+|\|", normalise(text).upper()):
+        if any(c.isdigit() for c in token):
+            numbers.append(token.translate(_LOOKALIKE_DIGITS))
+        elif _ROMAN.fullmatch(token) or _ROMAN.fullmatch(token.replace("L", "I")):
+            numbers.append(token if _ROMAN.fullmatch(token) else token.replace("L", "I"))
+        else:
+            words.append(token)
+    return numbers, _heading_key(" ".join(words))
+
+
+def _same_heading(
+    a: str, b: str, numbered: tuple[tuple[list[str], str], tuple[list[str], str]] | None = None
+) -> bool:
     if not a or not b:
         return False
     if a == b:
         return True
+    if numbered and numbered[0][0] and numbered[1][0]:
+        (na, wa), (nb, wb) = numbered
+        if na != nb:
+            return False  # "CHAPTER 2" isn't "CHAPTER 3", however alike the letters
+        if wa == wb:
+            return True  # the same number under the same words ("4I" is "41")
     short, long = sorted((a, b), key=len)
     # A heading split from its subtitle still counts ("THE FIRST CHAPTER" for
     # "THE FIRST CHAPTER PUDDLEBY"), but "I" is not "II".
@@ -168,12 +196,14 @@ def match_headings(found: list[str], expected: list[str]) -> int:
     """
     fk = [_heading_key(t) for t in found]
     ek = [_heading_key(t) for t in expected]
+    fn = [_numbers(t) for t in found]
+    en = [_numbers(t) for t in expected]
     # best[i][j]: (similarity, matches) aligning found[:i] with expected[:j]
     best = [[(0.0, 0)] * (len(ek) + 1) for _ in range(len(fk) + 1)]
     for i in range(1, len(fk) + 1):
         for j in range(1, len(ek) + 1):
             options = [best[i - 1][j], best[i][j - 1]]
-            if _same_heading(fk[i - 1], ek[j - 1]):
+            if _same_heading(fk[i - 1], ek[j - 1], (fn[i - 1], en[j - 1])):
                 sim, n = best[i - 1][j - 1]
                 options.append((sim + fuzz.ratio(fk[i - 1], ek[j - 1]) / 100, n + 1))
             best[i][j] = max(options)
@@ -189,15 +219,26 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     # Align on words, then count character edits inside the differing stretches.
     char_edits, confusions = 0, Counter()
     out_to_ref: dict[int, int] = {}
-    for op in Levenshtein.opcodes(out_words, ref_words):
+    ops = Levenshtein.opcodes(out_words, ref_words)
+    i = 0
+    while i < len(ops):
+        op = ops[i]
         if op.tag == "equal":
             for k in range(op.src_end - op.src_start):
                 out_to_ref[op.src_start + k] = op.dest_start + k
+            i += 1
             continue
-        got = " ".join(out_words[op.src_start : op.src_end])
-        want = " ".join(ref_words[op.dest_start : op.dest_end])
-        char_edits += Levenshtein.distance(got, want) + (op.tag == "insert") + (op.tag == "delete")
+        # Consecutive edits are one differing stretch: a word split in two comes back as
+        # an insert beside a replace, and charged apart they cost ten letters' worth.
+        s0, d0, s1, d1 = op.src_start, op.dest_start, op.src_end, op.dest_end
+        while i + 1 < len(ops) and ops[i + 1].tag != "equal":
+            i += 1
+            s1, d1 = ops[i].src_end, ops[i].dest_end
+        got = " ".join(out_words[s0:s1])
+        want = " ".join(ref_words[d0:d1])
+        char_edits += Levenshtein.distance(got, want) + (s0 == s1) + (d0 == d1)
         confusions[(got, want)] += 1
+        i += 1
     ref_chars = sum(len(w) + 1 for w in ref_words)
     matched = match_headings([h.text for h in doc.headings], [ch.heading for ch in reference])
 

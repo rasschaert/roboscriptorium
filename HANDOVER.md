@@ -29,6 +29,14 @@ Bench before the chains (rules' line roles, the local Qwen readings, slip rate 8
 (10 of 100) and the new quote-question readings were set mid-chain and show up first in
 the new baseline.
 
+**Branch `bughunt`** (worktree `../roboscriptorium-bughunt`): the hunt's 22 fixes, then
+the seven findings it left open (typed lines' italics, a recurring chapter title, heading
+numbers, a dash joining an italic word, the arbiter's `known` feature, slice-edge verdict
+keys, rotated pages), each with a test failing on the old code; docs/decisions.md has the
+list. Kept off `main` so the chains run unchanged code. `known` changed meaning
+(MODEL_VERSION 6): rebase, rebuild the trust data warm, retrain, bench against the new
+baseline, merge if no book is vetoed (checklist).
+
 ## Next
 
 The open steps, in order, are in docs/checklist.md; the first ones:

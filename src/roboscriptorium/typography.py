@@ -28,6 +28,7 @@ import pymupdf
 
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import Block, Paragraph
+from roboscriptorium.pdf import page_words
 
 VERSION = 1
 DPI = 300
@@ -80,7 +81,7 @@ def guess(pdf_path, numbers: list[int], cache) -> Guess | None:
             if len(found) >= ENOUGH:
                 break
             page = pdf[n - 1]
-            words = page.get_text("words")
+            words = page_words(page)
             for w in words:
                 if _is_dash(w[4]) or any(c in DASHES for c in w[4]) or "--" in w[4]:
                     line = [v for v in words if v[5] == w[5] and v[6] == w[6]]
@@ -328,16 +329,32 @@ def _restyled(block: Paragraph, change: tuple[str, list[int]]) -> Paragraph:
         return block
     new_words = [(m.start(), m.end()) for m in re.finditer(r"\S+", text)]
     token = {i: k for k, (a, b) in enumerate(new_words) for i in range(a, b)}
-    old_words = [m for m in re.finditer(r"\S+", block.text)]
-    # A bare dash or dot isn't an italic word, though it came from one ("Ulysses—een").
-    italic = sorted(
-        t
-        for t in {
-            token[where[i]]
-            for k in block.italic
-            for i in range(*old_words[k].span())
-            if where[i] in token
-        }
-        if any(c.isalnum() for c in text[slice(*new_words[t])])
-    )
-    return replace(block, text=text, italic=tuple(italic))
+    old_words = [m.span() for m in re.finditer(r"\S+", block.text)]
+    parts = {k: (a, b) for k, a, b in block.italic_parts}
+    # Where the old italic characters went: a word's whole span, or its italic part.
+    moved = {
+        where[i]
+        for k in block.italic
+        for i in range(
+            *(
+                (old_words[k][0] + parts[k][0], old_words[k][0] + parts[k][1])
+                if k in parts
+                else old_words[k]
+            )
+        )
+        if where[i] in token
+    }
+    italic, italic_parts = [], []
+    for t in sorted({token[i] for i in moved}):
+        a, b = new_words[t]
+        # A bare dash or dot isn't an italic word, though it came from one.
+        if not any(c.isalnum() for c in text[a:b]):
+            continue
+        italic.append(t)
+        # A word joined to an upright one by an unspaced dash ("Ulysses—een") is italic
+        # only in part: from its first italic letter to its last.
+        upright = [i for i in range(a, b) if text[i].isalnum() and i not in moved]
+        if upright:
+            inside = [i for i in range(a, b) if i in moved and text[i].isalnum()]
+            italic_parts.append((t, inside[0] - a, inside[-1] + 1 - a))
+    return replace(block, text=text, italic=tuple(italic), italic_parts=tuple(italic_parts))

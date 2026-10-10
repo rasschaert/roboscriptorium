@@ -41,8 +41,9 @@ def measure(
             ref = SourceRef(p.number, k)
             if counted is not None and ref not in counted:
                 continue
-            truth = labels[ref]
-            if truth.role == "other":
+            truth = labels.get(ref)
+            # A line with no words (a soft hyphen alone) is aligned to nothing.
+            if truth is None or truth.role == "other":
                 other += 1
                 continue
             headings += truth.role == "heading"

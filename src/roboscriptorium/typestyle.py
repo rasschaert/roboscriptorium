@@ -20,7 +20,7 @@ from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.italics import ink_threshold
 from roboscriptorium.page import geometry
-from roboscriptorium.pdf import PageText, line_words, lines_digest
+from roboscriptorium.pdf import PageText, line_words, lines_digest, page_words
 
 VERSION = 2
 DPI = 300
@@ -135,7 +135,7 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, dict]:
     threshold = ink_threshold(img)
     out = {}
     for k, (line, words) in enumerate(
-        zip(page.lines, line_words(pdf_page.get_text("words"), page), strict=True)
+        zip(page.lines, line_words(page_words(pdf_page), page), strict=True)
     ):
         # A line the text layer lacks (read from the scan) has only its own box.
         pieces = [(w[:4], w[4]) for w in words] or [

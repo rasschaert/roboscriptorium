@@ -34,3 +34,16 @@ def test_other_errors_are_not_retried(monkeypatch):
     with pytest.raises(ValueError):
         retry.patiently(broken)
     assert len(tries) == 1
+
+
+def test_a_dropped_connection_is_tried_again_like_a_timeout(monkeypatch):
+    monkeypatch.setattr(retry.time, "sleep", lambda s: None)
+    tries = []
+
+    def dropped_once():
+        tries.append(1)
+        if len(tries) == 1:
+            raise httpx.RemoteProtocolError("Server disconnected")
+        return "answer"
+
+    assert retry.patiently(dropped_once) == "answer" and len(tries) == 2

@@ -21,6 +21,7 @@ from roboscriptorium.page import (
     Repeats,
     bare_numeral,
     centred_on_page,
+    digits,
     edge_lines,
     folio,
     garbled,
@@ -31,6 +32,7 @@ from roboscriptorium.page import (
     printed_page_number,
     reads_as_folio,
     set_apart_opening,
+    sunk_first_lines,
     sunk_pages,
     title_key,
 )
@@ -109,11 +111,12 @@ def _section_number(
     with words beside it is a running head, and chapter openings carry none.
     """
     text = page.lines[i].text.strip()
-    if not _is_body(page_roles.get(i + 1)) or (i > 0 and i + 1 >= len(page.lines)):
+    if not _is_body(page_roles.get(i + 1)):
         return False
     if i == 0 and sunk and _NUMBERED_TITLE.match(text):
         return True
-    if not text.isdigit() or len(text) > 3:
+    # A number with no line below it is above no text: a lone folio on a page.
+    if i + 1 >= len(page.lines) or not digits(text) or len(text) > 3:
         return False
     printed = folio(page.number, offset)
     if i == 0:
@@ -223,6 +226,7 @@ def classify(
     roles = {}
     repeats = Repeats(pages)
     sunk = sunk_pages(pages)
+    first_sunk = sunk_first_lines(pages)
     offset = page_offset(pages)
     answers: dict[SourceRef, LineRole] = {}
     repeated: dict[SourceRef, int] = {}
@@ -277,7 +281,13 @@ def classify(
                     page_roles[i] = LineRole(
                         "running_head", role.confidence, role.p_body, "printed-page-number"
                     )
-                elif len(key) >= RUNNING_TITLE_MIN_LETTERS and key in heading_lines:
+                elif (
+                    len(key) >= RUNNING_TITLE_MIN_LETTERS
+                    and key in heading_lines
+                    # On a chapter opening, below where a running head sits, a title may
+                    # recur (Thief-Taker's part and chapter "THE THIEF-TAKER").
+                    and not (page.number in sunk and (i > 0 or page.number in first_sunk))
+                ):
                     page_roles[i] = LineRole(
                         "running_head", role.confidence, role.p_body, "repeated-title"
                     )
@@ -318,7 +328,7 @@ def _numeral_slots(
         for p in pages
         if p.lines
         and roles.get(SourceRef(p.number, 0), LineRole("body", 0, 1)).role == "chapter_heading"
-        and (p.lines[0].text.strip().isdigit() or bare_numeral(p.lines[0].text))
+        and (digits(p.lines[0].text.strip()) or bare_numeral(p.lines[0].text))
     ]
     if len(numerals) < NUMERAL_SLOT_MIN:
         return

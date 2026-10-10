@@ -24,7 +24,7 @@ import numpy as np
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ocrcheck import Suspect, _typographic
 
-MODEL_VERSION = 5
+MODEL_VERSION = 6
 # The length of `features`; a saved model of another width can't score them.
 FEATURES = 26
 # A substitution's prior counts only when the training books that show it number this
@@ -260,7 +260,8 @@ def decide(
         range(len(scored)),
         key=lambda i: (not unseen(scored[i][1]), sure[i], scored[i][0].max()),
     )
-    asked = {i for i in order[:questions] if unseen(scored[i][1]) or sure[i] < below}
+    # A calibrated sureness can be exactly 1.0, which `below` = 1.0 must still ask.
+    asked = {i for i in order[:questions] if unseen(scored[i][1]) or sure[i] < below or below >= 1}
     out = []
     for i, (p, s) in enumerate(scored):
         best = int(p.argmax())

@@ -32,3 +32,13 @@ def test_a_caption_answer_whose_lines_are_gone_gives_no_caption(tmp_path):
     answers.record(flags.Flag("k", 36, 0, 1, "Some other\nlines", "dropped", []), "caption", None)
     (picture,) = figures.select(None, [page], _figure(), answers, "eng")
     assert picture.caption == ""
+
+
+def test_a_caption_as_large_as_its_picture_leaves_the_picture_whole():
+    from roboscriptorium.figures import _without
+
+    box = (10.0, 10.0, 300.0, 400.0)
+    assert _without(box, [box]) == box
+    # An ordinary caption below still trims.
+    trimmed = _without(box, [(10.0, 380.0, 300.0, 400.0)])
+    assert trimmed[1] == 10.0 and trimmed[3] < 380.0

@@ -34,3 +34,9 @@ def test_a_book_is_suspect_far_from_the_sets_usual_rate_or_with_lines_unplaced()
     found = signals.suspects(books)
     assert set(found) == {"far", "lost"}
     assert "unplaced" in found["lost"][0]
+
+
+def test_a_line_without_words_is_unplaced_not_a_crash():
+    pages = [_page(11, ["Charlie liep naar de", "­", "verder gelegen school."])]
+    measured = signals.measure(pages, REFERENCE)
+    assert measured.cer == 0 and measured.unplaced == 1 / 3

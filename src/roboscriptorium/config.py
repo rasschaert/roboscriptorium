@@ -61,6 +61,12 @@ class Settings:
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
             raise ValueError(f"ROBO_OCR_ASK_BELOW={self.ocr_ask_below}: a probability in (0, 1]")
+        if self.ocr_questions_per_page < 0:
+            raise ValueError(f"ROBO_OCR_QUESTIONS={self.ocr_questions_per_page}: not below 0")
+        judges = [m for m in (self.judge_model, self.check_model, self.alarm_model) if m]
+        if len(set(judges)) < len(judges):
+            # Votes are kept by model name, so two judges by one name would be one vote.
+            raise ValueError(f"the judges must be different models, not {judges}")
         if self.read_via and not self.read_model:
             raise ValueError(
                 'ROBO_READ_VIA reads in read_model\'s place, but ROBO_READ_MODEL is ""'

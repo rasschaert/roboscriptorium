@@ -124,3 +124,15 @@ def test_a_second_vision_judge_has_its_own_features_and_none_reads_as_absent():
     # Everything else is the same with or without it.
     assert f0[:-6] == f1[:-6] and f0[-3:] == f1[-3:]
     assert f0[-6:-3] == [0.0, 0.0, 0.0] and f1[-6:-3] == [1.0, 0.6, 0.0]
+
+
+def test_a_threshold_of_one_asks_within_the_budget_even_a_calibrated_certainty():
+    class _Certain:
+        def predict(self, raw):
+            return np.ones_like(raw)
+
+    sure = _suspect("lemand", "Iemand", "Iemand", 0.95)
+    out = trust.decide(
+        [sure], trust.Trust(_Model(), {}, calibration=_Certain()), questions=1, below=1.0
+    )
+    assert [s.choice for s in out] == ["review"]
