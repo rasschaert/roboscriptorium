@@ -81,7 +81,7 @@ def test_eval_locates_remaining_disagreements_on_the_layer_pages_by_their_review
     ocr, edition = disagreements.find(doc, reference, [raw])
     verdicts.record(ocr, "c", "ocr")
     verdicts.record(edition, "Y", "edition")
-    monkeypatch.setattr(cli, "_build_golden", lambda *a: (book, stages, doc, reference))
+    monkeypatch.setattr(cli, "_build_golden", lambda *a: (book, stages, doc, reference, ([], [])))
     monkeypatch.setattr(cli, "_verdicts", lambda book: verdicts)
     monkeypatch.setattr(cli, "_italics_unlike", lambda book: "")
     lines = []

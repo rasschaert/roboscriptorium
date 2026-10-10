@@ -198,10 +198,10 @@ def _build_golden(
         raise typer.BadParameter(f"{book_dir}/book.toml names no golden book")
     stages = pipeline.run(book, pages=_range(pages), use_models=not no_models, check_ocr=check_ocr)
     doc = _scored(book, stages)
-    reference = load_chapters(Golden.load(book.golden).text_dir)
-    if (span := _range(chapters)) is not None:
-        reference = reference[span[0] - 1 : span[1]]
-    return book, stages, doc, reference
+    reference, around = disagreements.slice_reference(
+        load_chapters(Golden.load(book.golden).text_dir), _range(chapters)
+    )
+    return book, stages, doc, reference, around
 
 
 def _italics_unlike(book: Book) -> str:
@@ -297,10 +297,10 @@ def review_disagreements(
 ) -> None:
     """Review where the output disagrees with the reference, next to the scan."""
     _not_the_test_set(book_dir, score_test)
-    book, stages, doc, reference = _build_golden(book_dir, pages, chapters, no_models)
+    book, stages, doc, reference, around = _build_golden(book_dir, pages, chapters, no_models)
     # The paragraphs' line references point into the pages before answers (the text
     # layer with missing lines added), as `Line.source` does on the corrected copy.
-    found = disagreements.find(doc, reference, stages.pages, book.language)
+    found = disagreements.find(doc, reference, stages.pages, book.language, around)
     verdicts = _verdicts(book)
     manual = [d for d in found if not d.auto]
     done = sum(d.key in verdicts.by_key for d in manual)
@@ -332,11 +332,13 @@ def _questions_and_errors(spec: str, settings: Settings | None = None):
         stages.quote_readings,
         stages.faint_pages,
     )
-    reference = load_chapters(Golden.load(book.golden).text_dir)
-    if (span := _range(chapters or None)) is not None:
-        reference = reference[span[0] - 1 : span[1]]
-    reference, applied = disagreements.patch(reference, _verdicts(book))
-    errors = disagreements.find(_scored(book, stages), reference, stages.pages, book.language)
+    reference, around = disagreements.slice_reference(
+        load_chapters(Golden.load(book.golden).text_dir), _range(chapters or None)
+    )
+    reference, applied = disagreements.patch(reference, _verdicts(book), around)
+    errors = disagreements.find(
+        _scored(book, stages), reference, stages.pages, book.language, around
+    )
     return Path(book_dir).name, book, stages, reference, errors, found, applied
 
 
@@ -551,10 +553,12 @@ def _model_versions(settings: Settings) -> dict[str, str]:
 def _evaluate_book(
     book_dir: Path, pages: str | None, chapters: str | None, no_models: bool, check_ocr: bool
 ) -> evaluate.Score:
-    book, stages, doc, reference = _build_golden(book_dir, pages, chapters, no_models, check_ocr)
+    book, stages, doc, reference, around = _build_golden(
+        book_dir, pages, chapters, no_models, check_ocr
+    )
     suspects = Counter(s.choice for s in stages.suspects)
     verdicts = _verdicts(book)
-    patched, applied = disagreements.patch(reference, verdicts)
+    patched, applied = disagreements.patch(reference, verdicts, around)
     result = evaluate.score(doc, patched)
 
     typer.echo(
@@ -590,7 +594,7 @@ def _evaluate_book(
     if verdicts.by_key:
         # Found on the unpatched reference, as the golden review records its verdicts; a
         # verdict that the scan prints the output settles its disagreement.
-        found = disagreements.find(doc, reference, stages.pages, book.language)
+        found = disagreements.find(doc, reference, stages.pages, book.language, around)
         mistakes = Counter(
             verdicts.by_key[d.key].category if d.key in verdicts.by_key else d.auto or "unreviewed"
             for d in found

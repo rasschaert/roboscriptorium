@@ -88,10 +88,10 @@ def test_golden_review_crops_from_the_pages_the_paragraphs_point_into(tmp_path, 
     book = SimpleNamespace(source=tmp_path / "source.pdf", stages=tmp_path, language="nl")
     seen = {}
     monkeypatch.setattr(cli, "_not_the_test_set", lambda *a: None)
-    monkeypatch.setattr(cli, "_build_golden", lambda *a: (book, stages, "doc", []))
+    monkeypatch.setattr(cli, "_build_golden", lambda *a: (book, stages, "doc", [], ([], [])))
     monkeypatch.setattr(cli, "_verdicts", lambda b: Verdicts(tmp_path / "v.jsonl"))
 
-    def find(doc, reference, pages, language):
+    def find(doc, reference, pages, language, around=([], [])):
         seen["find"] = pages
         seen["language"] = language
         return []

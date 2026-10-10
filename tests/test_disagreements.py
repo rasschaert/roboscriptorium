@@ -137,3 +137,22 @@ def test_an_error_over_a_page_break_belongs_to_the_page_holding_most_of_it():
     ref = [Chapter("1", ["de man liep naar huis en sliep daar die hele lange nacht"])]
     (found,) = disagreements.find(doc, ref, pages)
     assert found.page == 38
+
+
+def test_a_disagreement_at_a_slices_edge_keeps_its_whole_book_key(monkeypatch, tmp_path):
+    monkeypatch.setattr(lexicon.Lexicon, "load", lambda lang: Lexicon(set()))
+    whole = [
+        Chapter("1", ["Het eerste hoofdstuk eindigt hier rustig."]),
+        Chapter("2", ["Daarna kwam de storm over het land."]),
+    ]
+    doc, pages = _book("Daarna kwam de starm over het land.")
+    (in_whole,) = [d for d in disagreements.find(doc, whole, pages, "nl") if d.want == "storm"]
+    sliced, around = disagreements.slice_reference(whole, (2, 2))
+    (in_slice,) = disagreements.find(doc, sliced, pages, "nl", around)
+    assert in_slice.key == in_whole.key
+    assert in_slice.before == "eindigt hier rustig. Daarna kwam de"
+    # A verdict recorded on the whole book applies to the slice.
+    verdicts = Verdicts(tmp_path / "v.jsonl")
+    verdicts.record(in_whole, "starm", "edition")
+    patched, applied = patch(sliced, verdicts, around)
+    assert applied == 1 and patched[0].paragraphs == ["Daarna kwam de starm over het land."]
