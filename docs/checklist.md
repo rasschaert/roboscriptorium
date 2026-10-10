@@ -143,8 +143,8 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
 
 ## Later
 
-- [ ] Qwen on fewer lines (quote marks, disagreements), for speed: whole books run
-      overnight, so only if cold runs become the bottleneck
+- [ ] Qwen on fewer lines (quote marks, disagreements), for speed: only if cold runs
+      become the bottleneck (a new book's ~100 pages take ~2 h)
 - [ ] MiniCPM-V 4.6 as a faster reader: the readers already cover nearly every line, so
       it pays only by speed
 - [ ] Surya's layout model as a second spotter: screen it on the drawn numerals
