@@ -13,7 +13,7 @@ Where the build stands and where results can still move: [outlook.md](outlook.md
 What runs right now and what waits on the user: `HANDOVER.md`.
 
 **The plan now:** more training data from new golden books, settle the line-role trees,
-then **Stella end to end with the user's review**, the target book. After it, the open
+then **Stella end to end with the user's review**, the target book, then Ex-minnaar. After them, the open
 areas below in order, and the test set scored once at the end.
 
 ## 1. Running now
@@ -53,7 +53,20 @@ areas below in order, and the test set scored once at the end.
 - [ ] Rebuild, epubcheck, and **user** reads the EPUB through: what the bench can't see
       (layout, italics, front matter)
 
-## 4. The reviewer's time
+## 4. Ex-minnaar, the second book
+
+Herman Brusselmans, Ooievaar 1998 (sixth printing), the user's own pick, no reference
+EPUB. `work/ex-minnaar/`: the IA Scribe scan with its own hidden layer (Stella's format,
+284 pages, body 9–279) and, beside it, an OmniPage OCR of the same scan (`omnipage.pdf`,
+worse: the motto's "It's" reads "h's").
+
+- [ ] Build it like Stella once Stella is done; sample the questions first. ~4 h cold
+      for 271 pages
+- [ ] Whether OmniPage earns a place as another reading (it fails differently from the
+      layer); only if the questions show the layer and readers stuck together
+- [ ] **user** Review, rebuild, epubcheck, **user** reads the EPUB
+
+## 5. The reviewer's time
 
 - [ ] The book teaches itself: after the answers, a per-book posterior per substitution
       pair rescores the unasked suspects; on the review page, one question per pattern
@@ -65,7 +78,7 @@ areas below in order, and the test set scored once at the end.
 - [ ] A typed answer checked against Qwen's cached reading of the line where the question
       had no readings (headings, missing text). ~1 h
 
-## 5. Errors no question asks about
+## 6. Errors no question asks about
 
 - [ ] De eerlijke vinder's 1.02 unasked a page, the most of any ordinary book (words 26,
       letters 21, extra words 18): find where they come from. ~1 h, no models
@@ -80,7 +93,7 @@ areas below in order, and the test set scored once at the end.
       ~4 real errors among 56 flags; clef's filter kept both clear catches and dropped 31
       of 37 urges. ~2 h probe; a stage only if `bench` says so
 
-## 6. Structure
+## 7. Structure
 
 - [ ] Score scene breaks: derive keeps a reference's blank-line paragraphs and ornaments
       as a break mark, counted like paragraph breaks. ~2 h
@@ -93,7 +106,7 @@ areas below in order, and the test set scored once at the end.
 - [ ] Dolittle's captions scored: derive them into the reference, or leave caption lines
       out of the score as footnotes are
 
-## 7. Better pixels: Internet Archive's own files
+## 8. Better pixels: Internet Archive's own files
 
 Public on public-domain items only (Crime, Dolittle); private on lending-library items.
 
@@ -106,7 +119,7 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
       item). ~30 min
 - [ ] **user** Whether a borrowed item's `_jp2.zip` can be downloaded while on loan
 
-## 8. Beyond the golden books' kind
+## 9. Beyond the golden books' kind
 
 - [ ] Page classification, so `body_pages` needn't be set in book.toml: the page-type
       models so far miss the same pages (prefaces, blanks at the edges); start from the
@@ -115,7 +128,7 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
       tesseract 0.35% CER against the layer's 0.20%): does the OCR check close the gap?
       ~1 h cold. Then italics from tesseract's word boxes
 
-## 9. Golden books and housekeeping
+## 10. Golden books and housekeeping
 
 - [ ] **user** More golden pairs: modern English Scribe scans with the publisher's EPUB of
       the same printing, and a third Dutch validation scan
@@ -127,7 +140,7 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
       feature-count test
 - [ ] Remove the `baseline` and `qwen2` worktrees when convenient
 
-## 10. At the end
+## 11. At the end
 
 - [ ] Score the test set once: `bench test --score-test`
 
