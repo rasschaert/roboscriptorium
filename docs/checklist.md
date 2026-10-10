@@ -15,7 +15,7 @@ review, tuning 0.56 and validation 0.79 wrong words a page; Stella's kind of boo
 What [outlook.md](outlook.md) ranks as the room left: structure (line roles, breaks,
 headings), the errors no question asks about, and the reviewer's time.
 
-**The plan now:** more training data (longer slices tonight, whole books next), settle the
+**The plan now:** more training data (longer slices tonight, then new books), settle the
 line-role trees, then **Stella end to end with the user's review**, the target book.
 After it, the open areas below in order, and the test set scored once at the end.
 
@@ -38,12 +38,18 @@ After it, the open areas below in order, and the test set scored once at the end
 - [ ] `ROBO_OCR_ASK_BELOW` at 0.7, 0.8 and 0.9 on the retrained arbiter (warm, ~2 min
       each); **user** weighs questions against wrong words
 
-## 2. More training data (~22 h, two nights)
+## 2. More training data: new books rather than more pages (~8 h)
 
 - [ ] Thief-Taker's suspects in the trust data, pp. 11–84: a tuning book the arbiter has
-      never trained on. ~1.4 h cold; first in the queue below
-- [ ] The five books whole (the user's go): Goede dochter, Reis (done tonight), De cipier,
-      Metro, De tuin. ~1,200 pages, ~20 h; arbiter and trees retrained, both benches
+      never trained on. ~1.4 h cold
+- [ ] New golden pairs (the user's hunt, 2026-10-10), each checked with
+      `probe_candidate.py` first: Vuurspel (Bruna 2004, layer 0.41%) into validation and
+      De tuin into tuning; Het heft in eigen hand (HarperCollins/Mat-Zet 2015, 0.55%) and
+      Doodskleed (Karakter/ZetSpiegel 2015, 0.39%, De Bezige Bij's EPUB of the same text)
+      into tuning. Manifest and derive ~30 min each (Vuurspel's EPUB sets dashes as `--`),
+      trust data for ~100 pages of each new tuning book ~2 h each, retrain, both benches
+- [ ] ~~The five books whole~~ dropped (2026-10-10, the user): more pages of books already
+      trained on add the same errors again; new books, and the areas below, move accuracy more
 
 ## 3. Stella, the target book
 
