@@ -35,3 +35,21 @@ def test_a_scene_break_is_set_before_its_paragraph():
 
     html = _block(Paragraph("Een nieuwe scène.", opening=True, break_before=True))
     assert html == '<hr class="break"/>\n<p class="opening">Een nieuwe scène.</p>'
+
+
+def test_a_linked_note_links_both_ways_and_an_unlinked_one_still_follows_its_paragraph():
+    from roboscriptorium.epub import _block
+    from roboscriptorium.ir import Note
+
+    notes = [
+        Note("*", Paragraph("Een berg bij de stad."), linked=True),
+        Note("**", Paragraph("Een trein."), linked=False),
+    ]
+    html = _block(Paragraph("Op de berg*. Met 2*3 erbij.", notes=[0, 1]), notes)
+    assert html == (
+        '<p>Op de berg<a class="noteref" epub:type="noteref" href="#note-1" id="noteref-1">*'
+        "</a>. Met 2*3 erbij.</p>"
+        '\n<aside class="footnote" epub:type="footnote" id="note-1"><p><a href="#noteref-1">*</a>'
+        " Een berg bij de stad.</p></aside>"
+        '\n<aside class="footnote" epub:type="footnote" id="note-2"><p>** Een trein.</p></aside>'
+    )

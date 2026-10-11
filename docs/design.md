@@ -408,6 +408,21 @@ letter and a hyphen continues the paragraph, however it is set. Bench (2026-10-1
 tuning **better** 0.32 → 0.31, validation **better** 0.74 → 0.70 (You're never weird
 0.94 → 0.77, Monterosso 0.64 → 0.50), paragraph F1 up on every book that moved.
 
+## Footnotes
+
+**A footnote leaves the running text.** Printed at a page's foot, a note read as body
+became a paragraph in the middle of the story, or ran into the next page's (Reis p. 167).
+`footnotes.py` takes the block of lines below the page's last line in body type when
+they are small (under 0.78 of body type: Reis sets notes at 0.7, folios at 0.8, text at
+1.0) and the first opens on a mark. Two guards came from false notes on the benches:
+a picture or smudge read as small type has heavy strokes (Afscheid's 1.6–2.6 against
+Reis's notes' 0.7–0.8; limit 1.2), and most of a note's words must be in the word list
+(which alone was too lenient: the Dutch list knows "hd" and "vip"). A note keeps its OCR
+check, then is set apart and linked to its mark; where the mark wasn't read the note
+follows its page's last paragraph. Bench (2026-10-11): Reis 7 of 8 found, all linked
+(the eighth's mark read "ie"), paragraph breaks 0.07 → 0.06 (tuning BETTER), no notes
+in any other book; Reis's EPUB passes epubcheck.
+
 ## Reflow: line-end hyphens
 
 **Nothing else looks at a line-end hyphen.** The OCR check starts where readings

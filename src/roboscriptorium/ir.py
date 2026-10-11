@@ -31,6 +31,8 @@ class Paragraph:
     italic_parts: tuple[tuple[int, int, int], ...] = ()
     # A scene break comes before it: white space or an ornament ("* * *") in the print.
     break_before: bool = False
+    # Indices into `Document.notes` of the footnotes it carries, in order.
+    notes: list[int] = field(default_factory=list)
 
 
 @dataclass
@@ -56,11 +58,21 @@ Block = Paragraph | Heading | Figure
 
 
 @dataclass
+class Note:
+    """A footnote, out of the running text."""
+
+    mark: str  # as printed: "*", "†", "3"
+    paragraph: Paragraph  # the note's text without its mark; its sources are its lines
+    linked: bool = False  # whether its mark was found in the paragraph that carries it
+
+
+@dataclass
 class Document:
     title: str
     author: str
     language: str
     blocks: list[Block] = field(default_factory=list)
+    notes: list[Note] = field(default_factory=list)
 
     @property
     def paragraphs(self) -> list[Paragraph]:

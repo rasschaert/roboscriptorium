@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 from html import escape
 from pathlib import Path
 
-from roboscriptorium.ir import Block, Document, Figure, Heading
+from roboscriptorium.ir import Block, Document, Figure, Heading, Note
 
 CSS = """\
 body { margin: 0 5%; }
@@ -21,6 +21,8 @@ img.cover { display: block; max-width: 100%; max-height: 100vh; margin: 0 auto; 
 figure { margin: 1.5em 0; text-align: center; page-break-inside: avoid; break-inside: avoid; }
 figure img { max-width: 100%; max-height: 85vh; }
 figcaption { font-style: italic; margin-top: 0.5em; }
+aside.footnote p { font-size: 0.85em; text-indent: 0; margin: 0.5em 0; }
+a.noteref { text-decoration: none; }
 """
 
 CONTAINER = """\
@@ -161,7 +163,42 @@ def _trail(word: str) -> int:
     return len(word) - len(word.rstrip("\"”’'.,;:!?)]»—–-"))
 
 
-def _block(block: Block) -> str:
+def _noterefs(html: str, block_notes: list[int], notes: list[Note]) -> str:
+    """The paragraph's markup with each linked note's mark made a link to the note, the
+    first unlinked occurrence after the one before, set after a word or its
+    punctuation, outside any tag."""
+    at = 0
+    for n in block_notes:
+        note = notes[n]
+        if not note.linked:
+            continue
+        mark = re.escape(escape(note.mark, quote=False))
+        m = re.compile(rf"(?<=[^\s>\d]){mark}(?![\w*†‡§])(?![^<]*>)").search(html, at)
+        if m is None:
+            continue
+        link = f'<a class="noteref" epub:type="noteref" href="#note-{n + 1}" id="noteref-{n + 1}">'
+        html = f"{html[: m.start()]}{link}{m.group()}</a>{html[m.end() :]}"
+        at = m.start() + len(link) + len(m.group()) + 4
+    return html
+
+
+def _asides(block_notes: list[int], notes: list[Note]) -> str:
+    """The notes a paragraph carries, after it; a linked one leads back to its mark."""
+    out = []
+    for n in block_notes:
+        note = notes[n]
+        mark = escape(note.mark, quote=False)
+        if note.linked:
+            mark = f'<a href="#noteref-{n + 1}">{mark}</a>'
+        body = _inline(note.paragraph.text, set(note.paragraph.italic))
+        out.append(
+            f'\n<aside class="footnote" epub:type="footnote" id="note-{n + 1}">'
+            f"<p>{mark} {body}</p></aside>"
+        )
+    return "".join(out)
+
+
+def _block(block: Block, notes: list[Note] = ()) -> str:
     if isinstance(block, Figure):
         alt = escape(block.caption or "Illustration", quote=True)
         caption = (
@@ -187,13 +224,15 @@ def _block(block: Block) -> str:
     else:
         text = _inline(block.text, set(block.italic), {k: (a, b) for k, a, b in block.italic_parts})
     scene = '<hr class="break"/>\n' if block.break_before else ""
+    text = _noterefs(text, block.notes, notes)
+    asides = _asides(block.notes, notes)
     if block.opening or block.initial:
-        return f'{scene}<p class="opening">{text}</p>'
-    return f"{scene}<p>{text}</p>"
+        return f'{scene}<p class="opening">{text}</p>{asides}'
+    return f"{scene}<p>{text}</p>{asides}"
 
 
 def _section(doc: Document, section: _Section) -> str:
-    body = "\n".join(_block(b) for b in section.blocks)
+    body = "\n".join(_block(b, doc.notes) for b in section.blocks)
     return _xhtml(
         section.title, doc.language, f'<section epub:type="bodymatter">\n{body}\n</section>'
     )

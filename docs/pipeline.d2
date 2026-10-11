@@ -161,14 +161,16 @@ build: 5 · Assemble the book {
   class: group
   s: {
     class: row
+    notes: Footnotes\nout of the running text {class: stage}
     reflow: Reflow\nparagraphs, line-end hyphens {class: stage}
     italics: Italics {class: stage}
     dash: Typography\none dash and ellipsis style per book {class: stage}
     figures: Figures\npictures and captions {class: stage}
-    reflow -> italics -> dash -> figures
+    notes -> reflow -> italics -> dash -> figures
   }
   m: {
     class: row
+    small: "small, light type at a page's foot,\nopening on a mark; linked to\nthe mark in the text" {class: code}
     spell: the book's own spellings {class: code}
     words: the word list\n(which form it knows) {class: code}
     compound: "JUDGE clef:27b\nspells an English compound\nnothing else decides" {class: decision}
@@ -176,6 +178,7 @@ build: 5 · Assemble the book {
     gap: "dash length and gaps, ellipsis form\n(or book.toml), measured first,\ndashes told to the readers" {class: code}
     regions: "the SPOTTER's pictures;\nthe REVIEWER's turns" {class: code}
   }
+  s.notes -> m.small {class: uses}
   s.reflow -> m.spell {class: uses}
   s.reflow -> m.words {class: uses}
   s.reflow -> m.compound {class: uses}

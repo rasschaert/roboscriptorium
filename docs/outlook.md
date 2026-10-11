@@ -62,7 +62,8 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
    - Scene breaks, scored since 2026-10-11 in the ten references that record them: 272 of
      295 found, few extra; the rest are page turns geometry can't tell from a paragraph
      running on.
-   - Not handled: footnotes in the body, verse, tables, block quotes.
+   - Footnotes are taken out of the text (2026-10-11; Reis 7 of 8). Not handled: verse,
+     tables, block quotes, epigraphs.
 2. **The errors no question asks about** ("unasked", by kind, in each bench record):
    - Vals alarm: 33 unasked letter errors, its lost full stops (checklist 4, the book teaches itself): only its
      own answers can teach the arbiter.

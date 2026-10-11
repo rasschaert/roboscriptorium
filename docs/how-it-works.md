@@ -367,6 +367,15 @@ picture, or insert a line where the spotter saw one.
 An answer about one place in a line changes only that place. Several answers in
 one line, and the arbiter's own fixes there, all apply together.
 
+### Footnotes
+
+Plain code (`footnotes.py`) takes a page's footnotes out of the running text. A note
+is a block of lines at the foot of the page, below the text, in type smaller and
+lighter than the body's, opening on its mark (`*`, `†`, a number). Its lines are read
+and checked like any other line; then the note is set apart from the paragraphs and
+linked to the paragraph that carries its mark, both ways in the EPUB. A note whose
+mark wasn't read in the text follows the last paragraph of its page, unlinked.
+
 ### Paragraphs
 
 Plain code (`reflow.py`) joins lines into paragraphs and headings, using

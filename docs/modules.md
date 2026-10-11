@@ -228,6 +228,12 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   OCR check's own fixes elsewhere in it, combine (`apply(..., fixes)`). A break
   hyphen's place is asked across the break (`Flag.joined`: "dankbaar" or "dank
   baar") and answered back as the hyphen or none.
+- `footnotes.py`: the footnotes at a page's foot (`lines`: below the text, in type under
+  0.78 of the body's and lighter than 1.2 of its strokes, opening on a mark, mostly
+  words), given a role reflow leaves out (`with_notes`, by `Line.source` on corrected
+  pages), collected into `ir.Note`s from the checked and answered pages (`collect`), and
+  linked to the paragraph carrying the mark on their page (`link`, `Paragraph.notes`).
+  `epub.py` sets the mark as a noteref and the note as an `aside` after the paragraph.
 - `review.py` + `regions.html` / `review.html`: the local review pages (stdlib
   HTTP server on 127.0.0.1), with scan crops: regions for any book, and
   disagreements for golden books.

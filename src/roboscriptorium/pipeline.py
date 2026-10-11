@@ -11,6 +11,7 @@ from roboscriptorium import (
     corrections,
     faint,
     figures,
+    footnotes,
     hyphens,
     italics,
     layout,
@@ -98,6 +99,8 @@ def run(
     style = dash_style(book, whole)
     dots = ellipsis_style(book, whole)
     faint_pages = set()
+    # Lines printing footnotes, by position in `body` (`footnotes.lines`).
+    note_lines: set[SourceRef] = set()
     if ocrcheck.scanned(book.source):
         faint_pages = faint.pages(book.source, body, book.stages / "contrast.json")
     if use_models:
@@ -121,6 +124,7 @@ def run(
         if settings.sorter:
             trees = sorter.load(Path(settings.sorter_model))
             model_roles = sorter.apply(trees, body, model_roles, styles, regions)
+        note_lines = footnotes.lines(body, model_roles, styles, known)
         if check_ocr and ocrcheck.scanned(book.source):
             # A washed-out page is one region for the reviewer to type; on its faint crops
             # the readers invent fluent text and the judges pick it.
@@ -189,7 +193,10 @@ def run(
         compound = hyphens.Compounds(
             client, settings.judge_model, book.language, book.stages / "compounds.json"
         )
-    unanswered = reflow(ocrcheck.apply(body, suspects), model_roles, known, compound)
+    checked = ocrcheck.apply(body, suspects)
+    unanswered = reflow(
+        checked, footnotes.with_notes(checked, model_roles, note_lines), known, compound
+    )
     quote_lines = {
         ref
         for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
@@ -200,20 +207,26 @@ def run(
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, whole, suspects, quote_lines, style, dots, settings)
     blocks = italics.mark(
-        reflow(corrected, roles, known, compound),
+        reflow(corrected, footnotes.with_notes(corrected, roles, note_lines), known, compound),
         body,
         italics.detect(book.source, body, book.stages / "italics.json"),
     )
     if compound is not None:
         compound.save()
     blocks = typography.apply(blocks, style, dots)
-    doc = Document(book.title, book.author, book.language, blocks)
+    notes = footnotes.collect(corrected, note_lines)
+    for note, typeset in zip(
+        notes, typography.apply([n.paragraph for n in notes], style, dots), strict=True
+    ):
+        note.paragraph = typeset
+    doc = Document(book.title, book.author, book.language, blocks, notes)
     images = {}
     if regions is not None:
         with pymupdf.open(book.source) as pdf:
             pictures = figures.select(pdf, body, regions, answers, lang)
             images = {p.name: figures.render(pdf, p) for p in pictures}
         doc.blocks = figures.place(doc.blocks, pictures, body)
+    doc.blocks = footnotes.link(doc.blocks, doc.notes)
     write_atomic(
         book.stages / "document.json", json.dumps(asdict(doc), ensure_ascii=False, indent=1)
     )

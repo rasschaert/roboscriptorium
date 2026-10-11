@@ -392,3 +392,42 @@ def test_an_undecided_line_end_hyphen_is_the_judges_once_and_cached(tmp_path, mo
         doc = pipeline.run(_book(tmp_path, lines=lines), check_ocr=False).doc
         assert "the zib-zorp went on" in doc.blocks[0].text
     assert asked == ["zib-zorp"]
+
+
+def test_a_footnote_leaves_the_running_text_and_follows_the_paragraph_with_its_mark(
+    tmp_path, monkeypatch
+):
+    _everything_is_body(monkeypatch)
+    _no_layout(monkeypatch)
+    from roboscriptorium.lexicon import Lexicon
+
+    words = {"hill", "near", "the", "town", "with", "railway", "up", "to", "top", "of", "it"}
+    monkeypatch.setattr(pipeline.Lexicon, "load", lambda lang: Lexicon(words))
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=600)
+    lines = [f"Line {i} of the story goes on and on across the page" for i in range(10)]
+    lines[4] = "Line 4 of the story goes on up the hill* and on"
+    for i, text in enumerate(lines):
+        page.insert_text((40, 60 + 18 * i), text, fontsize=11)
+    page.insert_text((40, 520), "* A hill near the town, with a railway up", fontsize=7)
+    page.insert_text((40, 530), "to the top of it.", fontsize=7)
+    doc.save(tmp_path / "source.pdf")
+    (tmp_path / "book.toml").write_text(
+        'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, 1]\n'
+    )
+    book = Book.load(tmp_path)
+    stages = pipeline.run(book)
+    text = " ".join(p.text for p in stages.doc.paragraphs)
+    assert "railway" not in text
+    (note,) = stages.doc.notes
+    assert (note.mark, note.paragraph.text, note.linked) == (
+        "*",
+        "A hill near the town, with a railway up to the top of it.",
+        True,
+    )
+    assert [p.notes for p in stages.doc.paragraphs] == [[0]]
+    import zipfile
+
+    with zipfile.ZipFile(book.epub_path) as z:
+        html = z.read("OEBPS/text-001.xhtml").decode()
+    assert 'href="#note-1"' in html and 'id="note-1"' in html

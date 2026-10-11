@@ -247,3 +247,9 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, row slivers don't split runs | 590 | 1 | 0 |
 | 2026-10-11 | bench tuning, narrow row slivers don't split runs | 1580 | 3 | 0 |
 | 2026-10-11 | bench validation, narrow row slivers don't split runs | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, footnotes out of the text | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, footnotes out of the text | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, footnotes, words checked | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, footnotes, words checked | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, footnotes, light strokes | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, footnotes, light strokes | 590 | 1 | 0 |

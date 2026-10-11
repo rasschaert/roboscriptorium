@@ -81,9 +81,6 @@ In this order:
       only the text can tell (a sorter question, "a new scene?", for later). Het heft
       (`P_plat`), Villa (`Tekst_6-Na-witregel`), Artemis (`noindent_topspace1`)
       undeclared, unsure on the scan
-- [ ] Footnotes into the EPUB as notes, out of the running text: Reis has them and the
-      test set has 26, now only left out of the score (`notes.txt`). Before the test set;
-      ~half a day
 - [ ] De eerlijke vinder's part numerals I–IV (0/4): read from the drawing
 - [ ] You're Never Weird's headings (5/16: bracketed sections, "- 1 -" numbers) and p. 47's
       picture text read into the body
@@ -334,6 +331,9 @@ many the layer had wrong.
 
 ## Structure and line roles
 
+- [x] 2026-10-11 Footnotes out of the running text, linked to their marks (`footnotes.py`):
+      Reis 7 of 8 found and linked (the eighth's mark read "ie"), no false ones on the
+      benches after a stroke-weight limit; Reis paragraph breaks 0.07 → 0.06, BETTER
 - [x] 2026-10-11 Paragraph breaks in unindented books (Bruna's): justification judged on
       lines that stop mid-sentence, a page's short last sentence carried over; validation
       breaks 1.97 → 0.21 a page (Vuurspel 7.91 → 0.44), tuning 0.26 → 0.22, no book worse
