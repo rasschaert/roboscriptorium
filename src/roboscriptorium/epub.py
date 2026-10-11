@@ -101,7 +101,7 @@ xml:lang="{doc.language}">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
     <dc:identifier id="book-id">{_book_id(doc)}</dc:identifier>
     <dc:title>{escape(doc.title)}</dc:title>
-    <dc:creator>{escape(doc.author)}</dc:creator>
+    <dc:creator>{escape(doc.author)}</dc:creator>{_translator(doc)}
     <dc:language>{doc.language}</dc:language>
     <meta property="dcterms:modified">{modified}</meta>
   </metadata>
@@ -236,6 +236,16 @@ def _block(block: Block, notes: list[Note] = ()) -> str:
 def _epigraph(lines: list[str]) -> str:
     """A motto's lines, set apart as one block."""
     return '<blockquote class="epigraph" epub:type="epigraph">' + "".join(lines) + "</blockquote>"
+
+
+def _translator(doc: Document) -> str:
+    """The translator as a contributor in the translator's role, or nothing."""
+    if not doc.translator:
+        return ""
+    return (
+        f'\n    <dc:contributor id="translator">{escape(doc.translator)}</dc:contributor>'
+        '\n    <meta refines="#translator" property="role" scheme="marc:relators">trl</meta>'
+    )
 
 
 def _section(doc: Document, section: _Section) -> str:

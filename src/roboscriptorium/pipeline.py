@@ -223,7 +223,7 @@ def run(
         notes, typography.apply([n.paragraph for n in notes], style, dots), strict=True
     ):
         note.paragraph = typeset
-    doc = Document(book.title, book.author, book.language, blocks, notes)
+    doc = Document(book.title, book.author, book.language, blocks, notes, book.translator)
     images = {}
     if regions is not None:
         with pymupdf.open(book.source) as pdf:

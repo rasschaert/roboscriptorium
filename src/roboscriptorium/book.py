@@ -35,6 +35,8 @@ class Book:
     # Unset, the pipeline counts it in the text layer (`typography.py`).
     ellipsis: str | None = None
     ellipsis_space: bool | None = None
+    # Who translated it, as the colophon names them ("" when it isn't a translation).
+    translator: str = ""
 
     @classmethod
     def load(cls, root: Path) -> "Book":
@@ -54,6 +56,7 @@ class Book:
             dash_spacing=data.get("dash_spacing"),
             ellipsis=data.get("ellipsis"),
             ellipsis_space=data.get("ellipsis_space"),
+            translator=data.get("translator", ""),
         )
 
     @property

@@ -70,3 +70,15 @@ def test_a_mottos_lines_are_set_apart_as_one_block(tmp_path):
         "<p>(Leonard Cohen)</p></blockquote>\n"
         '<p class="opening">Ik zou mijn haar.</p>'
     ) in html
+
+
+def test_a_translator_is_named_in_the_translators_role(tmp_path):
+    out = tmp_path / "book.epub"
+    write_epub(Document("T", "A", "nl", [Paragraph("Een.")], translator="Ria van Hengel"), out)
+    with zipfile.ZipFile(out) as z:
+        opf = z.read("OEBPS/content.opf").decode()
+    assert '<dc:contributor id="translator">Ria van Hengel</dc:contributor>' in opf
+    assert 'refines="#translator" property="role" scheme="marc:relators">trl<' in opf
+    write_epub(Document("T", "A", "nl", [Paragraph("Een.")]), out)
+    with zipfile.ZipFile(out) as z:
+        assert "contributor" not in z.read("OEBPS/content.opf").decode()

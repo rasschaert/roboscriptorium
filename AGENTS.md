@@ -346,6 +346,7 @@ A book lives in `work/<book>/` with `source.pdf` and a `book.toml`:
 title = "Wij doden Stella"
 author = "Marlen Haushofer"
 language = "nl"
+translator = "Ria van Hengel"   # optional: as the colophon names them
 cover_page = 1
 body_pages = [5, 71]   # inclusive; page classification replaces this later
 dash = "–"             # optional: how the book prints dashes ("–" or "—") …

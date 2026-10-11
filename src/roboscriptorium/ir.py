@@ -75,6 +75,7 @@ class Document:
     language: str
     blocks: list[Block] = field(default_factory=list)
     notes: list[Note] = field(default_factory=list)
+    translator: str = ""
 
     @property
     def paragraphs(self) -> list[Paragraph]:
