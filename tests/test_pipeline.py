@@ -431,3 +431,26 @@ def test_a_footnote_leaves_the_running_text_and_follows_the_paragraph_with_its_m
     with zipfile.ZipFile(book.epub_path) as z:
         html = z.read("OEBPS/text-001.xhtml").decode()
     assert 'href="#note-1"' in html and 'id="note-1"' in html
+
+
+def test_a_motto_on_a_page_of_its_own_is_set_apart_before_the_text(tmp_path, monkeypatch):
+    _everything_is_body(monkeypatch)
+    _no_layout(monkeypatch)
+    doc = pymupdf.open()
+    motto = doc.new_page(width=400, height=600)
+    motto.insert_text((160, 120), "'It's closing time'", fontsize=11)
+    motto.insert_text((140, 136), "(Leonard Cohen, The Future)", fontsize=11)
+    for _ in range(2):
+        page = doc.new_page(width=400, height=600)
+        for i, text in enumerate(LINES):
+            page.insert_text((40, 60 + 18 * i), text, fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    (tmp_path / "book.toml").write_text(
+        'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, 3]\n'
+    )
+    book = Book.load(tmp_path)
+    stages = pipeline.run(book)
+    first, second, third = stages.doc.paragraphs[:3]
+    assert (first.text, first.epigraph) == ("'It's closing time'", True)
+    assert (second.text, second.epigraph) == ("(Leonard Cohen, The Future)", True)
+    assert not third.epigraph and third.text.startswith("Line 0")

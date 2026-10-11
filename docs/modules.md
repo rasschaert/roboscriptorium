@@ -234,6 +234,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   pages), collected into `ir.Note`s from the checked and answered pages (`collect`), and
   linked to the paragraph carrying the mark on their page (`link`, `Paragraph.notes`).
   `epub.py` sets the mark as a noteref and the note as an `aside` after the paragraph.
+- `epigraphs.py`: a motto on a page of its own (`lines`: at most six short lines set in
+  at least 0.15 of a full line from the book's margin, read on full pages nearby, three
+  words or more, none garbled, not all capitals, no heading on the page). Reflow makes
+  each line a paragraph marked `epigraph`; `epub.py` sets a run of them as one
+  `blockquote epub:type="epigraph"`. The words stay in the scored paragraphs.
 - `review.py` + `regions.html` / `review.html`: the local review pages (stdlib
   HTTP server on 127.0.0.1), with scan crops: regions for any book, and
   disagreements for golden books.

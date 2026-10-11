@@ -462,3 +462,22 @@ def running_text(
             if (last and not _ENDS.search(last)) or text.startswith(_OPENING_QUOTES):
                 out[ref] = LineRole(role.role, role.confidence, KEEP_BODY_AT, "running-text")
     return out
+
+
+def with_role(
+    pages: list[PageText],
+    roles: dict[SourceRef, LineRole] | None,
+    lines: set[SourceRef],
+    role: LineRole,
+) -> dict[SourceRef, LineRole] | None:
+    """A copy of `roles` (keyed on positions in `pages`) with `lines` given `role`, found
+    by their original position (`Line.source`, or the index where that is None)."""
+    if not lines:
+        return roles
+    out = dict(roles or {})
+    for page in pages:
+        for i, line in enumerate(page.lines):
+            source = i if line.source is None else line.source
+            if SourceRef(page.number, source) in lines:
+                out[SourceRef(page.number, i)] = role
+    return out

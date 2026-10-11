@@ -145,19 +145,3 @@ def link(blocks: list[Block], notes: list[Note]) -> list[Block]:
             if candidates:
                 blocks[candidates[-1]].notes.append(n)
     return blocks
-
-
-def with_notes(
-    pages: list[PageText], roles: dict[SourceRef, LineRole] | None, note_lines: set[SourceRef]
-) -> dict[SourceRef, LineRole] | None:
-    """A copy of `roles` (keyed on positions in `pages`) with the note lines given `ROLE`,
-    found by their original position (`Line.source`, or the index)."""
-    if not note_lines:
-        return roles
-    out = dict(roles or {})
-    for page in pages:
-        for i, line in enumerate(page.lines):
-            source = i if line.source is None else line.source
-            if SourceRef(page.number, source) in note_lines:
-                out[SourceRef(page.number, i)] = ROLE
-    return out

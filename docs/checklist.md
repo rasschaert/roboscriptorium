@@ -46,7 +46,7 @@ In this order:
 
 | Book | Directory | Pages (body) | Scan | Watch for |
 | --- | --- | --- | --- | --- |
-| Herman Brusselmans, *Ex-minnaar* (Ooievaar 1998, 6th printing) | `ex-minnaar` | 284 (9–279) | 360 ppi | motto on p. 7 ("It's closing time", Leonard Cohen) outside the body, not in the EPUB yet; drop cap; an OmniPage OCR of the same scan beside it (`omnipage.pdf`, worse: the motto's "It's" reads "h's") |
+| Herman Brusselmans, *Ex-minnaar* (Ooievaar 1998, 6th printing) | `ex-minnaar` | 284 (7–279) | 360 ppi | motto on p. 7 ("It's closing time", Leonard Cohen), set as an epigraph; drop cap; an OmniPage OCR of the same scan beside it (`omnipage.pdf`, worse: the motto's "It's" reads "h's") |
 | Herman Brusselmans, *De kus in de nacht* (Prometheus 2002) | `de-kus-in-de-nacht` | 620 (7–616) | 300 ppi, large pages | parts ("Deel een", "Proloog" on p. 7), small-capital openings |
 | Emmanuel Carrère, *Andere levens dan het mijne* (De Arbeiderspers, tr. Floor Borsboom) | `andere-levens` | 248 (9–244) | 360 ppi | library copy; French names and accents |
 | Emmanuel Carrère, *Een Russische roman* (De Arbeiderspers, tr. Marianne Kaas) | `een-russische-roman` | 276 (7–271) | 360 ppi | library copy; seven parts, each a small number atop its own page (pp. 7, 47, 131, 169, 233, 259, …) with pencil marks the layer reads as noise; p. 272 show-through only |
@@ -132,7 +132,9 @@ reading shares: many are specks and faint marks.
       it pays only by speed
 - [ ] Surya's layout model as a second spotter: screen it on the drawn numerals
       DocLayout-YOLO misses and the figure pages
-- [ ] Block quotes, epigraphs and verse: find golden pages that have them first
+- [ ] Block quotes and verse: find golden pages that have them first (epigraphs on a
+      page of their own done 2026-10-11; De eerlijke vinder's mottos at its part
+      openings, beside a drawn numeral, are not caught)
 - [ ] Per-book image tuning for pale or tinted scans: null on normal pages so far
 - [ ] Het Kindeken Jezus as a golden book, only if the image probe looks
       language-dependent

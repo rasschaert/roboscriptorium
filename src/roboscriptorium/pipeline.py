@@ -9,6 +9,7 @@ import pymupdf
 
 from roboscriptorium import (
     corrections,
+    epigraphs,
     faint,
     figures,
     footnotes,
@@ -35,7 +36,7 @@ from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, cached_text_layer, render_jpeg
 from roboscriptorium.reflow import reflow
-from roboscriptorium.roles import DecisionCache, LineRole, classify, running_text
+from roboscriptorium.roles import DecisionCache, LineRole, classify, running_text, with_role
 
 
 @dataclass
@@ -101,6 +102,8 @@ def run(
     faint_pages = set()
     # Lines printing footnotes, by position in `body` (`footnotes.lines`).
     note_lines: set[SourceRef] = set()
+    # Lines of a motto set on a page of its own (`epigraphs.lines`), likewise.
+    epigraph_lines: set[SourceRef] = set()
     if ocrcheck.scanned(book.source):
         faint_pages = faint.pages(book.source, body, book.stages / "contrast.json")
     if use_models:
@@ -125,6 +128,7 @@ def run(
             trees = sorter.load(Path(settings.sorter_model))
             model_roles = sorter.apply(trees, body, model_roles, styles, regions)
         note_lines = footnotes.lines(body, model_roles, styles, known)
+        epigraph_lines = epigraphs.lines(body, model_roles)
         if check_ocr and ocrcheck.scanned(book.source):
             # A washed-out page is one region for the reviewer to type; on its faint crops
             # the readers invent fluent text and the judges pick it.
@@ -195,7 +199,7 @@ def run(
         )
     checked = ocrcheck.apply(body, suspects)
     unanswered = reflow(
-        checked, footnotes.with_notes(checked, model_roles, note_lines), known, compound
+        checked, _apart(checked, model_roles, note_lines, epigraph_lines), known, compound
     )
     quote_lines = {
         ref
@@ -207,7 +211,7 @@ def run(
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, whole, suspects, quote_lines, style, dots, settings)
     blocks = italics.mark(
-        reflow(corrected, footnotes.with_notes(corrected, roles, note_lines), known, compound),
+        reflow(corrected, _apart(corrected, roles, note_lines, epigraph_lines), known, compound),
         body,
         italics.detect(book.source, body, book.stages / "italics.json"),
     )
@@ -246,6 +250,18 @@ def run(
         decider,
         faint_pages,
     )
+
+
+def _apart(
+    pages: list[PageText],
+    roles: dict[SourceRef, LineRole] | None,
+    note_lines: set[SourceRef],
+    epigraph_lines: set[SourceRef],
+) -> dict[SourceRef, LineRole] | None:
+    """`roles` for reflow, keyed on positions in `pages`: footnotes and epigraphs set
+    apart from the running text."""
+    roles = with_role(pages, roles, note_lines, footnotes.ROLE)
+    return with_role(pages, roles, epigraph_lines, epigraphs.ROLE)
 
 
 def proposals(

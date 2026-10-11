@@ -423,6 +423,19 @@ follows its page's last paragraph. Bench (2026-10-11): Reis 7 of 8 found, all li
 (the eighth's mark read "ie"), paragraph breaks 0.07 → 0.06 (tuning BETTER), no notes
 in any other book; Reis's EPUB passes epubcheck.
 
+## Epigraphs
+
+**A motto on a page of its own is set apart.** Ex-minnaar opens on "‘It’s closing time’
+(Leonard Cohen, The Future)" alone on p. 7: read as body it became the book's first
+paragraph and the sorter dropped the attribution. A page of at most six short lines, all
+set at least 0.15 of a full line in from the book's margin (measured on full pages
+nearby, as crops move it), with no heading, is a motto; a chapter's last lines start at
+the margin. On the benches the first version also took pictures' garbled readings, a
+title "11/22/63" and an unrecognised "DEEL EEN" (six books); it now needs three words of
+two letters or more, no garbled line and some lower case, and finds none in any bench
+slice (both NO CHANGE). The word list isn't asked: mottos are often in another
+language, as this one is.
+
 ## Reflow: line-end hyphens
 
 **Nothing else looks at a line-end hyphen.** The OCR check starts where readings

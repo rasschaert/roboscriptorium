@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 from html import escape
 from pathlib import Path
 
-from roboscriptorium.ir import Block, Document, Figure, Heading, Note
+from roboscriptorium.ir import Block, Document, Figure, Heading, Note, Paragraph
 
 CSS = """\
 body { margin: 0 5%; }
@@ -23,6 +23,8 @@ figure img { max-width: 100%; max-height: 85vh; }
 figcaption { font-style: italic; margin-top: 0.5em; }
 aside.footnote p { font-size: 0.85em; text-indent: 0; margin: 0.5em 0; }
 a.noteref { text-decoration: none; }
+blockquote.epigraph { margin: 3em 0 3em 30%; }
+blockquote.epigraph p { text-indent: 0; text-align: left; }
 """
 
 CONTAINER = """\
@@ -231,8 +233,24 @@ def _block(block: Block, notes: list[Note] = ()) -> str:
     return f"{scene}<p>{text}</p>{asides}"
 
 
+def _epigraph(lines: list[str]) -> str:
+    """A motto's lines, set apart as one block."""
+    return '<blockquote class="epigraph" epub:type="epigraph">' + "".join(lines) + "</blockquote>"
+
+
 def _section(doc: Document, section: _Section) -> str:
-    body = "\n".join(_block(b, doc.notes) for b in section.blocks)
+    parts, motto = [], []
+    for b in section.blocks:
+        if isinstance(b, Paragraph) and b.epigraph:
+            motto.append(f"<p>{_inline(b.text, set(b.italic))}</p>")
+            continue
+        if motto:
+            parts.append(_epigraph(motto))
+            motto = []
+        parts.append(_block(b, doc.notes))
+    if motto:
+        parts.append(_epigraph(motto))
+    body = "\n".join(parts)
     return _xhtml(
         section.title, doc.language, f'<section epub:type="bodymatter">\n{body}\n</section>'
     )

@@ -253,3 +253,7 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, footnotes, words checked | 590 | 1 | 0 |
 | 2026-10-11 | bench tuning, footnotes, light strokes | 1580 | 3 | 0 |
 | 2026-10-11 | bench validation, footnotes, light strokes | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, epigraphs | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, epigraphs | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, epigraphs with reading guards | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, epigraphs with reading guards | 590 | 1 | 0 |

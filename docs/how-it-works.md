@@ -376,6 +376,10 @@ and checked like any other line; then the note is set apart from the paragraphs 
 linked to the paragraph that carries its mark, both ways in the EPUB. A note whose
 mark wasn't read in the text follows the last paragraph of its page, unlinked.
 
+A page holding only a few short lines set well in from the margin, of real words and
+not all capitals, is a motto (`epigraphs.py`): "‘It’s closing time’ (Leonard Cohen,
+The Future)". Its lines are set apart as one epigraph block before the text.
+
 ### Paragraphs
 
 Plain code (`reflow.py`) joins lines into paragraphs and headings, using

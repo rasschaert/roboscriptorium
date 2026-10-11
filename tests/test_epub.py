@@ -53,3 +53,20 @@ def test_a_linked_note_links_both_ways_and_an_unlinked_one_still_follows_its_par
         " Een berg bij de stad.</p></aside>"
         '\n<aside class="footnote" epub:type="footnote" id="note-2"><p>** Een trein.</p></aside>'
     )
+
+
+def test_a_mottos_lines_are_set_apart_as_one_block(tmp_path):
+    doc = Document("T", "A", "nl", [
+        Paragraph("‘It’s closing time’", epigraph=True),
+        Paragraph("(Leonard Cohen)", epigraph=True),
+        Paragraph("Ik zou mijn haar.", opening=True),
+    ])  # fmt: skip
+    out = tmp_path / "book.epub"
+    write_epub(doc, out)
+    with zipfile.ZipFile(out) as z:
+        html = z.read("OEBPS/text-001.xhtml").decode()
+    assert (
+        '<blockquote class="epigraph" epub:type="epigraph"><p>‘It’s closing time’</p>'
+        "<p>(Leonard Cohen)</p></blockquote>\n"
+        '<p class="opening">Ik zou mijn haar.</p>'
+    ) in html
