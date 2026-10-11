@@ -119,6 +119,66 @@ Don't repeat these without a new reason (details in docs/decisions.md):
 - **imajev-4b as a third judge**, as the vision judge, or for page types: no change.
 - **Removing Qwen** (to save its 70–75% of a cold run): clearly worse.
 - **Faster readers** (gemma4, MoE models): worse on quote marks.
+- **Speeding Qwen on the server** (concurrency, crop size, context, pooled decision
+  calls): nothing; see the next section before measuring any of it again.
+
+## Inference speed: what a cold page costs, and what's been tried
+
+Measured 2026-10-11 on an idle machine (docs/decisions.md of that date; the probes
+`experiments/probe_qwen_speed.py`, `probe_glm_parallel.py`, `probe_decide_parallel.py`,
+their results under `work/probes/`). Rerun a probe only when the server, a runner or a
+model changes.
+
+**A cold page, about 48 s** (the run-times table's 0.8–1.1 min a page): Qwen ~36 s
+(30 lines at 1.2 s), the judges ~5 s (clef 1.25 s a call), the sorter ~3 s (5.4 calls a
+page at 0.55 s), glm-ocr ~3 s (0.09 s a line), tesseract and layout ~2 s. Qwen is three
+quarters; a trust-data rebuild of the 20 books (2,188 pages) is ~28 h, Qwen ~22 h of it.
+
+**Qwen's 1.2 s a line**, the nvfp4 build on Ollama's MLX runner: 0.8 s prefill (the
+vision tower ~0.3 s, the ~135 instruction and template tokens ~0.5 s) and 0.35 s
+writing the ~20 output tokens. The image is ~45 of the 182 prompt tokens at any
+resolution. The runner caches whole prompts (a repeat prefills in 0.05 s, still after
+five others), so a rerun of cached lines is free even without the pipeline's cache.
+
+**Tried, no effect, don't repeat:**
+
+- **Requests in parallel to Qwen.** 1, 2, 4, 8 and 16 at a time: 1.16–1.21 s a line
+  alike, with and without `OLLAMA_NUM_PARALLEL=4`. The MLX runner takes one request at
+  a time; the pipeline's four reader threads only queue on it. Readings identical.
+- **Crop resolution for speed.** 300, 200 and 150 dpi: 182, 168 and 166 prompt tokens,
+  the same prefill time.
+- **Context length.** 128k against 8k: the same speed; 128k only held memory.
+- **Parallel calls to the decision models.** clef-flash (llama.cpp, four slots) 0.55 s
+  a call and clef:27b (nvfp4, the MLX runner) 1.25 s, one or four at a time alike;
+  choices and confidences identical. Their calls stay one after another.
+
+**Done, in place:** `OLLAMA_NUM_PARALLEL=4` (AGENTS.md Environment) halves glm-ocr's
+time a line (0.19 → 0.09 at four at a time, readings identical); the pipeline's four
+threads already send that many.
+
+**Would speed Qwen but changes what it reads**, so each is a reader change through the
+tryout, never a setting: the instructions as the system turn ahead of the image (the
+prefix is reused: 0.80 s a line, but 4 of 64 readings change, one wrong); a shorter
+instruction (untested); a GGUF build of the same model on Ollama's llama.cpp runner,
+which batches four requests (untested; the q8_0 is 30 GB); the "mtp" builds (nothing
+on Ollama's library says the runner uses the MTP head, and it could speed only the
+0.35 s of output).
+
+**What a faster reader must pass.** `experiments/tryout.py run reader <model>` on reader
+set v1 (`tryouts/reader-v1.json`: 550 body lines from the tuning books' slices, 330
+hard and 220 easy; crops regenerate under `work/tryout/`, ~11 min of Qwen a candidate).
+The reader in use, qwen3.8:27b-nvfp4, reads the hard lines at CER 0.26% and the easy
+ones 217 of 220 exact (0.03%); a candidate must match both, quote marks and accents
+included (docs/models.md has the ones that didn't: gemma4, a ~1-bit Qwen3.8-Flash-Next,
+MoE readers). What makes one fast here: served by llama.cpp (a GGUF), so four requests
+batch; small enough to stay loaded beside clef:27b and the small models in 64 GB;
+thinking off; one line of output. A winner then needs the trust data rebuilt and the
+arbiter retrained before it reads for the arbiter: cheapest while a rebuild is due anyway.
+
+**The lever that changes the machine** (for the bench, not a setting): Qwen reading
+only where the layer, glm-ocr and tesseract disagree, several times fewer calls.
+Measurable offline once the trust data is rebuilt: how often Qwen alone is right where
+the other three agree.
 
 ## The goal
 
