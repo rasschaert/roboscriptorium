@@ -44,7 +44,7 @@ COLOPHON = re.compile(r"©|\bisbn\b|\bnur\b|copyright|oorspronkelijke titel|orig
 
 # What becomes of each kind of page (docs/decisions.md, 2026-10-11, What goes into the EPUB).
 IN = {"dedication", "motto", "dramatis-personae", "foreword", "part-title", "text",
-      "afterword", "notes", "appendix", "acknowledgements", "about-author", "index"}
+      "afterword", "notes", "appendix", "acknowledgements", "about-author", "index", "plate"}
 DETAILS = {"cover", "half-title", "title", "colophon", "contents", "back-cover"}
 
 
