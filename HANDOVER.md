@@ -17,8 +17,11 @@ On `main`, pushed. Lint and tests green.
   motto ("It's closing time", Leonard Cohen) outside the body, not in the EPUB yet.
 ### Next, queued
 
-- Scene breaks are scored in 10 references (255 of 295 found, 20 extra); the misses are
-  the next checklist step.
+- Scene breaks are scored in 10 references; a page-top rule raised them 255 → 272 of 295
+  (5c07fa2). Ex-minnaar's build started before it: rebuild it (cached, minutes) before
+  sampling its questions.
+- Next without models: IA `_scandata.xml` page types against each golden book's
+  `body_pages` (checklist, Better pixels), toward setting body pages automatically.
 - The pair-prior ablation is done (worse without it, 0.31 → 0.34; decisions).
 - Reis's footnote marks done (`note_mark`; Reis after review 0.20 → 0.17, set 0.31).
 - **Python 3.15**: blocked on PyTorch (no stable cp315 wheel; tracking
