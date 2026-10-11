@@ -1,3 +1,5 @@
+from collections import Counter
+
 import pytest
 
 from roboscriptorium.ir import Heading, Paragraph, SourceRef
@@ -317,7 +319,6 @@ def test_an_opening_double_quote_closed_by_a_single_one_was_misread():
 
 
 def test_a_break_hyphen_stays_where_the_book_prints_the_word_with_it():
-    from collections import Counter
 
     seen = Counter({"thief-taker": 5, "thieftaker": 0, "dankbaar": 3})
     assert join("the thief-", "taker came", seen) == "the thief-taker came"
@@ -348,7 +349,6 @@ def test_a_word_set_in_capitals_is_not_a_proper_noun_at_a_break():
 
 
 def test_the_word_list_settles_a_break_the_book_does_not():
-    from collections import Counter
 
     words = {"wc-rol", "twenty-four", "anti-piracy", "afstormde", "homebrew", "makeup", "make-up"}
     known = lambda w: w.lower() in words  # noqa: E731
@@ -401,13 +401,33 @@ def test_a_compound_the_list_knows_both_ways_keeps_its_hyphen():
     assert join("her make-", "up", known=known) == "her make-up"
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="open step, hyphens as a question: a compound the word list lacks is a question",
-)
-def test_a_compound_the_list_lacks_keeps_its_hyphen():
-    known = lambda w: w.lower() in {"makeup", "make-up"}  # noqa: E731
-    assert join("the night-", "vision", known=known) == "the night-vision"
+def test_the_compound_judge_is_asked_only_where_the_book_and_the_list_are_silent():
+    asked = []
+
+    def compound(stem, rest, context):
+        asked.append(context)
+        return True
+
+    known = lambda w: w.lower() in {"wc-rol", "makeup", "make-up"}  # noqa: E731
+    seen = Counter({"thieftaker": 2})
+    assert join("the thief-", "taker came", seen, known, compound) == "the thieftaker came"
+    assert join("een wc-", "rol", known=known, compound=compound) == "een wc-rol"
+    assert join("in Noord-", "Holland", known=known, compound=compound) == "in Noord-Holland"
+    assert asked == []
+
+
+def test_a_compound_the_list_lacks_takes_the_judges_call():
+    known = lambda w: w.lower() in {"night", "vision"}  # noqa: E731
+    keep = lambda stem, rest, context: stem == "night"  # noqa: E731
+    assert join("the night-", "vision", known=known, compound=keep) == "the night-vision"
+    assert join("the dark-", "ness fell", known=known, compound=keep) == "the darkness fell"
+    assert join("the night-", "vision", known=known) == "the nightvision"
+
+
+def test_the_compound_judge_sees_the_break_in_its_sentence():
+    seen = []
+    join("He wore night-", "vision goggles", compound=lambda s, r, c: seen.append(c) or False)
+    assert seen == ["He wore night-|vision goggles"]
 
 
 def test_the_word_list_settles_a_hyphen_in_a_pages_last_run_of_body_lines():

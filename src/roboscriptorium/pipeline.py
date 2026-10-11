@@ -11,6 +11,7 @@ from roboscriptorium import (
     corrections,
     faint,
     figures,
+    hyphens,
     italics,
     layout,
     missing,
@@ -182,7 +183,13 @@ def run(
         # The suspects of an earlier build with the check would be taken for this one's.
         (book.stages / "ocr-check.json").unlink(missing_ok=True)
 
-    unanswered = reflow(ocrcheck.apply(body, suspects), model_roles, known)
+    compound = None
+    if use_models and hyphens.asked(book.language):
+        client = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
+        compound = hyphens.Compounds(
+            client, settings.judge_model, book.language, book.stages / "compounds.json"
+        )
+    unanswered = reflow(ocrcheck.apply(body, suspects), model_roles, known, compound)
     quote_lines = {
         ref
         for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
@@ -193,10 +200,12 @@ def run(
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, whole, suspects, quote_lines, style, dots, settings)
     blocks = italics.mark(
-        reflow(corrected, roles, known),
+        reflow(corrected, roles, known, compound),
         body,
         italics.detect(book.source, body, book.stages / "italics.json"),
     )
+    if compound is not None:
+        compound.save()
     blocks = typography.apply(blocks, style, dots)
     doc = Document(book.title, book.author, book.language, blocks)
     images = {}

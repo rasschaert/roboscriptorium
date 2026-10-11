@@ -56,6 +56,9 @@ FOOTER_GAP = 1.5
 FOOTER_MAX_CHARS = 4
 
 HYPHENS = ("-", "\u00ad", "\u00ac")
+# Whether an undecided line-end hyphen is the word's own: (stem, rest, the text around the
+# break, marked with |) → keep it.
+Compound = Callable[[str, str, str], bool]
 DASHES = ("\u2014", "\u2013")
 # What isn't part of a word, for counting spellings ("thief-taker’s," → "thief-takers").
 _WORD = re.compile(r"[^\w-]")
@@ -236,7 +239,11 @@ def spellings(pages: list[PageText]) -> Counter:
 
 
 def join(
-    text: str, nxt: str, seen: Counter | None = None, known: Callable[[str], bool] | None = None
+    text: str,
+    nxt: str,
+    seen: Counter | None = None,
+    known: Callable[[str], bool] | None = None,
+    compound: Compound | None = None,
 ) -> str:
     """Append the next line, undoing hyphenation where the word continues.
 
@@ -247,12 +254,14 @@ def join(
     "wc-rol" and not "wcrol"); a capital after the break ("Noord-Holland"; a word set
     in capitals isn't one); and, with a hyphen already in the word, whether the parts
     beside the break are both words ("Mens-erger-je-niet" keeps it) or one word broken
-    ("Zuid-Lon-den" doesn't; without a word list the hyphen stays). Otherwise the hyphen
-    was the break's.
+    ("Zuid-Lon-den" doesn't; without a word list the hyphen stays). Otherwise `compound`
+    decides, a judge of the language (`hyphens.Compounds`), or else the hyphen was the
+    break's.
     """
     if text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha():
         last, first = text.split()[-1][:-1], nxt.split()[0] if nxt.split() else ""
-        if _hyphen_stays(nxt, _WORD.sub("", last), _WORD.sub("", first), seen, known):
+        stem, rest = _WORD.sub("", last), _WORD.sub("", first)
+        if _hyphen_stays(nxt, stem, rest, seen, known, compound, f"{text[-120:]}|{nxt}"):
             return text.rstrip("".join(HYPHENS)) + "-" + nxt
         return text[:-1] + nxt
     if text.endswith(DASHES):
@@ -264,7 +273,13 @@ def join(
 
 
 def _hyphen_stays(
-    nxt: str, stem: str, rest: str, seen: Counter | None, known: Callable[[str], bool] | None
+    nxt: str,
+    stem: str,
+    rest: str,
+    seen: Counter | None,
+    known: Callable[[str], bool] | None,
+    compound: Compound | None = None,
+    context: str = "",
 ) -> bool:
     """Whether the hyphen between `stem` and `rest` is the word's own (see `join`)."""
     closed, hyphenated = stem + rest, f"{stem}-{rest}"
@@ -283,7 +298,7 @@ def _hyphen_stays(
         if known(before + after):
             return False
         return min(len(before), len(after)) >= 3 and known(before) and known(after)
-    return False
+    return compound is not None and bool(stem) and bool(rest) and compound(stem, rest, context)
 
 
 def _role(roles: dict[SourceRef, LineRole] | None, ref: SourceRef) -> str:
@@ -296,9 +311,11 @@ def reflow(
     pages: list[PageText],
     roles: dict[SourceRef, LineRole] | None = None,
     known: Callable[[str], bool] | None = None,
+    compound: Compound | None = None,
 ) -> list[Block]:
     """Lines into blocks. `known` says whether the language's word list has a word
-    (`Lexicon.knows`), evidence for the hyphens at line ends (`join`)."""
+    (`Lexicon.knows`), and `compound` whether an undecided hyphen is the word's own:
+    evidence for the hyphens at line ends (`join`)."""
     seen = spellings(pages)
     blocks: list[Block] = []
     opening = True
@@ -318,7 +335,7 @@ def reflow(
                 kept.append((ref, line))
                 continue
             # Indents are measured within each run of body lines.
-            opening = _add_body(blocks, kept, opening, seen, known, scene, short_end)
+            opening = _add_body(blocks, kept, opening, seen, known, scene, short_end, compound)
             kept = []
             if _ornament(line):
                 scene[0] = True
@@ -340,7 +357,7 @@ def reflow(
                     text = bare_numeral(line.text) or line.text
                     blocks.append(Heading(text, [ref], [text]))
                 opening = True
-        opening = _add_body(blocks, kept, opening, seen, known, scene, short_end)
+        opening = _add_body(blocks, kept, opening, seen, known, scene, short_end, compound)
     for block in blocks:
         block.text = tidy(block.text)
         if isinstance(block, Paragraph):
@@ -450,6 +467,7 @@ def _add_body(
     known: Callable[[str], bool] | None,
     scene: list[bool] | None = None,
     short_end: list[bool] | None = None,
+    compound: Compound | None = None,
 ) -> bool:
     """Append a run of body lines to `blocks`; whether the next block still opens a section.
 
@@ -488,7 +506,7 @@ def _add_body(
         ):
             blocks.append(Paragraph(line.text, [ref], initial=line.initial))
         else:
-            current.text = join(current.text, line.text, seen, known)
+            current.text = join(current.text, line.text, seen, known, compound)
             current.sources.append(ref)
     if lines:
         k = len(lines) - 1

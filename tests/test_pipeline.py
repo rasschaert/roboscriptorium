@@ -1,5 +1,6 @@
 """The stages together, from a PDF to the document, with a mock model server."""
 
+import json
 from dataclasses import replace
 
 import httpx
@@ -14,11 +15,11 @@ from roboscriptorium.corrections import Corrections
 LINES = [f"Line {i} of the story goes on and on across the page" for i in range(12)]
 
 
-def _book(tmp_path, indented: tuple[int, ...] = ()) -> Book:
-    """A one-page book of LINES; the `indented` lines open paragraphs."""
+def _book(tmp_path, indented: tuple[int, ...] = (), lines: list[str] = LINES) -> Book:
+    """A one-page book of `lines`; the `indented` lines open paragraphs."""
     doc = pymupdf.open()
     page = doc.new_page(width=400, height=600)
-    for i, text in enumerate(LINES):
+    for i, text in enumerate(lines):
         page.insert_text((60 if i in indented else 40, 60 + 18 * i), text, fontsize=11)
     doc.save(tmp_path / "source.pdf")
     (tmp_path / "book.toml").write_text(
@@ -364,3 +365,30 @@ def test_a_washed_out_scan_page_reaches_the_review_as_one_region(tmp_path, monke
     assert stages.faint_pages == {1}
     found = flags.find(stages.pages, {}, faint=stages.faint_pages)
     assert [(f.first, f.last, f.reasons) for f in found] == [(0, len(LINES) - 1, ["washed-out"])]
+
+
+def test_an_undecided_line_end_hyphen_is_the_judges_once_and_cached(tmp_path, monkeypatch):
+    _no_layout(monkeypatch)
+    asked = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        questions = json.loads(request.content)["questions"]
+        if "spelling" in questions:
+            asked.append(questions["spelling"]["criteria"]["hyphenated"])
+            answer = {"type": "choice", "choice": "hyphenated", "confidence": 0.8}
+            answer["probabilities"] = {"hyphenated": 0.8, "closed": 0.2}
+            return httpx.Response(200, json={"answers": {"spelling": answer}})
+        answer = {"type": "choice", "choice": "body", "confidence": 0.9}
+        answer["probabilities"] = {"body": 0.9, "page_number": 0.1}
+        return httpx.Response(200, json={"answers": {"role": answer}})
+
+    def client(model, *_):
+        http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+        return DecisionClient("http://test", model, client=http)
+
+    monkeypatch.setattr(pipeline.decide, "for_model", client)
+    lines = [*LINES[:5], "and the zib-", "zorp went on", *LINES[7:]]
+    for _ in range(2):
+        doc = pipeline.run(_book(tmp_path, lines=lines), check_ocr=False).doc
+        assert "the zib-zorp went on" in doc.blocks[0].text
+    assert asked == ["zib-zorp"]
