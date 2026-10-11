@@ -18,9 +18,8 @@ areas below in order, and the test set scored once at the end.
 
 ## 1. Right after the chains (~1 h)
 
-- [ ] Next accuracy step from the data (pick by size): Dutch stress accents settled
-      wrongly (~25 unasked), drawn initials lost (7), De eerlijke vinder's unasked 1.0
-      a page, unexamined
+- [ ] Next accuracy step from the data (pick by size): drawn initials lost (7), the
+      remaining unasked punctuation (~150 words, the largest kind), unexamined by place
 
 ## 2. Stella, the target book
 
