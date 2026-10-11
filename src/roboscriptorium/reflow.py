@@ -62,6 +62,8 @@ Compound = Callable[[str, str, str], bool]
 DASHES = ("\u2014", "\u2013")
 # What isn't part of a word, for counting spellings ("thief-taker’s," → "thief-takers").
 _WORD = re.compile(r"[^\w-]")
+_BESIDE_END = re.compile(r"[\w'’-]*$")
+_BESIDE_START = re.compile(r"[\w'’-]*")
 # Older OCR layers keep the thin space some printers set before punctuation. A dot in
 # a spaced run (". . .") keeps its space: the typography stage sets the run book-wide.
 _SPACE_BEFORE_PUNCTUATION = re.compile(r"(?<!\.)\s+([,;:.!?])(?=\s|$)(?!\s\.)")
@@ -260,7 +262,9 @@ def join(
     """
     if text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha():
         last, first = text.split()[-1][:-1], nxt.split()[0] if nxt.split() else ""
-        stem, rest = _WORD.sub("", last), _WORD.sub("", first)
+        # The letters beside the break only: "pus—that's" continues "cam-" with "pus".
+        stem = _WORD.sub("", _BESIDE_END.search(last).group())
+        rest = _WORD.sub("", _BESIDE_START.match(first).group() or first)
         if _hyphen_stays(nxt, stem, rest, seen, known, compound, f"{text[-120:]}|{nxt}"):
             return text.rstrip("".join(HYPHENS)) + "-" + nxt
         return text[:-1] + nxt

@@ -424,6 +424,13 @@ def test_a_compound_the_list_lacks_takes_the_judges_call():
     assert join("the night-", "vision", known=known) == "the nightvision"
 
 
+def test_a_dash_after_the_break_ends_the_words_rest():
+    asked = []
+    keep = lambda stem, rest, context: asked.append(stem + "-" + rest) or False  # noqa: E731
+    assert join("the cam-", "pus—that's", compound=keep) == "the campus—that's"
+    assert asked == ["cam-pus"]
+
+
 def test_the_compound_judge_sees_the_break_in_its_sentence():
     seen = []
     join("He wore night-", "vision goggles", compound=lambda s, r, c: seen.append(c) or False)
