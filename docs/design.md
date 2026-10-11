@@ -340,6 +340,12 @@ the arbiter fixed all three. Headings 8/11 → 11/11, no other book changed (ben
 2026-10-09). A washed-out line at the top (Afscheid p. 32) is as tall but wide and off
 centre, so it isn't taken.
 
+**A word line called a page number above a heading is its label.** De kus in de nacht
+opens on "Deel een" over "Proloog", set right; the sorter called "Deel een" a page number
+(at 0.06) and it was dropped. A page number holds a number; a line of words without one,
+right above a chapter heading, is the heading's label and joins it (`heading-label`), as
+"CHAPTER" over "I." does. Bench (2026-10-11): no change on either set.
+
 ## Reflow: where paragraphs start
 
 **The margin was the indent in a run of dialogue.** A line starts a paragraph when it

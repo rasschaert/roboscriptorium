@@ -292,6 +292,8 @@ def classify(
                     page_roles[i] = LineRole(
                         "running_head", role.confidence, role.p_body, "repeated-title"
                     )
+            elif role.role == "page_number" and _heading_label(page, i, page_roles):
+                page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0, "heading-label")
             elif _section_number(page, i, offset, page_roles, page.number in sunk):
                 page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0, "section-number")
             elif not _is_body(role) and _finishes_sentence(page, i, page_roles):
@@ -305,6 +307,22 @@ def classify(
         roles.update({SourceRef(page.number, i): r for i, r in page_roles.items()})
     _numeral_slots(pages, roles, repeated)
     return roles
+
+
+def _heading_label(page: PageText, i: int, page_roles: dict[int, LineRole]) -> bool:
+    """Whether a line the model calls a page number is the label of the heading right
+    below it ("Deel een" over "Proloog"): it holds words and no number, as no page
+    number does."""
+    text = page.lines[i].text
+    below = page_roles.get(i + 1)
+    return (
+        below is not None
+        and below.role == "chapter_heading"
+        and re.search(r"[^\W\d_]{2,}", text) is not None
+        and not re.search(r"\d", text)
+        and not bare_numeral(text)
+        and not garbled(page.lines[i])
+    )
 
 
 # The book's numerals heading their pages ("3", "IV") must number at least this many

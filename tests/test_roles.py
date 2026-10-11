@@ -481,3 +481,28 @@ def test_a_one_word_line_of_speech_at_a_pages_foot_is_kept():
     pages = [PageText(30, 300, 600, lines)]
     roles = {SourceRef(30, 1): LineRole("artifact", 0.4, 0.2)}
     assert running_text(pages, roles, known)[SourceRef(30, 1)].p_body == KEEP_BODY_AT
+
+
+def test_a_wordy_line_called_a_page_number_above_a_heading_is_its_label(tmp_path):
+    # Real page numbers stay page numbers, beside a heading too ("12" over "Proloog").
+    pages = [_page(n, f"Running head {n}") for n in range(1, 10)]
+    top = [Line("Deel een", 262, 60, 365, 72), Line("Proloog", 275, 76, 367, 88)]
+    pages.append(PageText(10, 400, 600, top + _page(10, "x").lines[3:]))
+    numbered = [Line("12", 262, 60, 290, 72), Line("Proloog", 275, 76, 367, 88)]
+    pages.append(PageText(11, 400, 600, numbered + _page(11, "x").lines[3:]))
+
+    class Client:
+        model = "fake"
+
+        def decide(self, state, questions):
+            if state["line"] == "Proloog":
+                probabilities = {"chapter_heading": 0.6, "body": 0.1}
+                return {"role": Answer("choice", "chapter_heading", 0.6, probabilities)}
+            if state["line"].startswith("body text"):
+                return {"role": Answer("choice", "body", 0.9, {"body": 0.9})}
+            return {"role": Answer("choice", "page_number", 0.5, {"page_number": 0.5, "body": 0.1})}
+
+    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
+    assert roles[SourceRef(11, 0)].role == "page_number"
+    assert roles[SourceRef(10, 0)].role == "chapter_heading"
+    assert roles[SourceRef(10, 0)].rule == "heading-label"
