@@ -111,10 +111,10 @@ reading shares: many are specks and faint marks.
       or library stamp, half title, title page, colophon, contents, dedication, motto,
       foreword or introduction, dramatis personae, text, epilogue or afterword, notes,
       appendix, bibliography, index, acknowledgements, about the author, also by / ads,
-      back cover) and a fixed rule from kind to *in the EPUB*, *metadata* (title,
-      colophon: author, translator, ISBN) or *left out*; the text proper is all the
-      author's parts, not only the narrative, and non-fiction adds notes, appendices,
-      bibliography and index. (2) Labels: every golden scan's pages by kind (the old
+      back cover) and a fixed rule from kind to *in the EPUB*, *metadata* or *left out*
+      (the list in decisions.md, 2026-10-11, What goes into the EPUB: everything but
+      what it leaves out); the contents page read for the book's structure and its
+      chapters' names. (2) Labels: every golden scan's pages by kind (the old
       body ranges follow the references, which leave forewords and afterwords out, so
       they aren't labels for this). (3) Signals without models first (words on the page,
       page number, short centred lines, ©/ISBN, headings like "Woord vooraf", "Proloog",
