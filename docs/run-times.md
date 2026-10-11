@@ -203,3 +203,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, running-text kept and flagged | 590 | 2 | 0 |
 | 2026-10-11 | bench tuning, paragraph breaks in unindented books | 1580 | 2 | 0 |
 | 2026-10-11 | bench validation, paragraph breaks in unindented books | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, ask below 0.9 | 1580 | 2 | 0 |
+| 2026-10-11 | bench tuning, ask below 0.7 | 1580 | 2 | 0 |

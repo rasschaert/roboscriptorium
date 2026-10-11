@@ -18,9 +18,9 @@ areas below in order, and the test set scored once at the end.
 
 ## 1. Right after the chains (~1 h)
 
-- [ ] `ROBO_OCR_ASK_BELOW` at 0.7, 0.8 and 0.9 on the retrained arbiter (warm, ~2 min
-      each). The user gives no exchange rate (answers until tired), so choose where the
-      wrong words a question removes fall off; record the curve
+- [ ] Next accuracy step from the data (pick by size): Dutch stress accents settled
+      wrongly (~25 unasked), drawn initials lost (7), De eerlijke vinder's unasked 1.0
+      a page, unexamined
 
 ## 2. Stella, the target book
 
@@ -217,6 +217,8 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Trust data and the arbiter
 
+- [x] 2026-10-11 Ask threshold 0.7 / 0.8 / 0.9 on tuning: 0.74 / 0.92 / 1.11 questions
+      a page for 0.351 / 0.344 / 0.343 after review; stays at 0.8 (yield falls off past it)
 - [x] 2026-10-11 ~~De tuin's four questions no longer asked~~ dropped: it no longer loses
       (0.64 → 0.59 with `bughunt`)
 - [x] 2026-10-11 Branch `bughunt` merged: the hunt's 22 fixes and its seven open
