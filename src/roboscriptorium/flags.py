@@ -98,6 +98,9 @@ class Flag:
     span: tuple[int, int] | None = None
     # For a break hyphen: the next line's first word, which the readings end with.
     joined: str = ""
+    # For a question about one place: the line's other changed or asked places
+    # (`ocrcheck.Doubt.elsewhere`), which the review page shows in the rest of the line.
+    elsewhere: list[tuple[int, int, str, str]] = field(default_factory=list)
 
 
 def region_key(page: int, text: str) -> str:
@@ -213,6 +216,7 @@ def _doubt(page: PageText, d: Doubt, roles: dict[SourceRef, LineRole]) -> Flag:
         [{"text": text, "votes": list(votes)} for text, votes in d.readings],
         (d.start, d.end),
         d.joined,
+        list(d.elsewhere),
     )
 
 

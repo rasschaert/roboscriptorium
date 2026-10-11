@@ -338,6 +338,13 @@ def test_each_doubted_place_is_its_own_question_and_answers_combine(tmp_path):
     found = flags.find([page], {}, None, ocrcheck.doubts([first, second, fixed]))
     assert [(f.span, f.box[0]) for f in found] == [((7, 11), 7), ((12, 22), 12)]
     assert len({f.key for f in found}) == 2
+    # Each shows the line's other places: asked ones as most models read them (a tie
+    # keeps the text layer's), the machine's fix as made.
+    assert found[0].elsewhere == [(12, 22, "rondhangt,", "asked"), (26, 29, "dan.", "fixed")]
+    assert found[1].elsewhere == [(7, 11, "uit,", "asked"), (26, 29, "dan.", "fixed")]
+    leaning = Suspect(9, 0, line, 7, 11, "uit,", ("uit,’",), (7, 0, 11, 1), "review", None,
+                      {"clef": "uit,’", "winnow": "uit,’", "glm": "uit,"})  # fmt: skip
+    assert ocrcheck.doubts([leaning, second])[1].elsewhere == ((7, 11, "uit,’", "asked"),)
 
     answers = Corrections(tmp_path / "regions.jsonl")
     for f in found:
