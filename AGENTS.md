@@ -54,6 +54,10 @@ get renumbered. Don't add a file to this table without a job no other file has.
   Run lint and tests before every commit.
 - **This file is the single source of agent instructions.** Claude Code reads AGENTS.md
   natively; don't add a `CLAUDE.md`.
+- **Remind the user of the daily backup of `work/`** at the start of every session and
+  before any long run: it holds what git doesn't (books, caches, review answers), and git
+  deleted it once (2026-10-11). Never symlink, copy or move it into a worktree or branch;
+  stage files by name, never `git add -A`.
 - **Read `HANDOVER.md` at the start of a session** and rewrite it at the end of one.
   Choose what to work on from docs/checklist.md (the order) and docs/outlook.md (the
   room left).
