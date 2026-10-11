@@ -99,15 +99,14 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
 Sharper pixels lower the readers' errors at the source, the other way at the errors every
 reading shares: many are specks and faint marks.
 
-- [ ] JP2s as the image source where a book has them: on Crime's 50 reader-set lines
+- [ ] JP2s as the image source for public-domain books (a borrowed item offers no
+      downloads, so not for Stella or the user's books): on Crime's 50 reader-set lines
       both readers err about a fifth less (glm-ocr hard CER 1.57% → 1.26%, Qwen 1.78% →
-      1.36%; `experiments/probe_ia_images.py`, 2026-10-11). Worth building only if the
-      user's books can have them (the next step); else for public-domain books only
+      1.36%; `experiments/probe_ia_images.py`, 2026-10-11). Later, with public-domain books
 - [ ] ABBYY's letter confidence as an arbiter feature: first check the PDF's layer is
       ABBYY's reading, then does a low one separate the real errors? ~1 h, no models
 - [ ] `_scandata.xml` page types as labels for page classification (public on every IA
       item). ~30 min
-- [ ] **user** Whether a borrowed item's `_jp2.zip` can be downloaded while on loan
 
 ## 8. Beyond the golden books' kind
 
@@ -221,6 +220,8 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Trust data and the arbiter
 
+- [x] 2026-10-11 Whether a borrowed item's JP2s can be had: no, its download options are
+      empty while on loan (the user, on Stella)
 - [x] ~~2026-10-11 The book's own consistency as new suspects~~: 13 catches against 17
       false alarms, 10 of them in one bad scan; dropped
 - [x] 2026-10-11 Ask threshold 0.7 / 0.8 / 0.9 on tuning: 0.74 / 0.92 / 1.11 questions
