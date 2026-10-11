@@ -263,3 +263,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, after the move, models retrained | 398 | 1 | 0 |
 | 2026-10-11 | build, Ex-minnaar, cold | 271 | 306 | 0 |
 | 2026-10-11 | build, Ex-minnaar, cached, today's code, from p. 7 | 273 | 1 | 0 |
+| 2026-10-11 | bench tuning, lost lines only under a full line | 1772 | 3 | 0 |

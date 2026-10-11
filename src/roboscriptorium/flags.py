@@ -24,6 +24,7 @@ from roboscriptorium.layout import Region
 from roboscriptorium.ocrcheck import Doubt
 from roboscriptorium.pdf import PageText
 from roboscriptorium.quotes import KINDS
+from roboscriptorium.reflow import JUSTIFIED_SLACK, _page_margin
 from roboscriptorium.roles import KEEP_BODY_AT, LineRole
 
 # A dropped line the model gave at least this P(body) is worth a look; running
@@ -311,7 +312,10 @@ def _lost_lines(
 ) -> list[Region]:
     """The gaps where a line of running text is missing: a line's height or more of white
     space between two adjacent running-text lines, below one that stops mid-word or
-    mid-sentence (a paragraph ends in punctuation), with no picture in it."""
+    mid-sentence (a paragraph ends in punctuation) at the right margin, with no picture in
+    it. Justified prose stops mid-sentence only on a full line; a short one is verse or
+    a list, its white space the stanza's, and a page without a shared right margin is
+    no prose to lose a line from."""
     text = [
         treatment(roles.get(SourceRef(page.number, i))) == "text" for i in range(len(page.lines))
     ]
@@ -323,11 +327,16 @@ def _lost_lines(
     if len(pitches) < 3:
         return []
     pitch = statistics.median(pitches)
+    margin = _page_margin([ln for ln, t in zip(page.lines, text, strict=True) if t])
+    if margin is None:
+        return []
     pictures = [r for r in regions if r.label == "figure"]
     out = []
     for k, (a, b) in enumerate(zip(page.lines, page.lines[1:], strict=False)):
         end = a.text.rstrip()[-1:]
         if not (text[k] and text[k + 1] and end and (end.isalnum() or end in "-\u00ad\u00ac")):
+            continue
+        if margin.right - a.x1 >= JUSTIFIED_SLACK:
             continue
         # A speck at the foot read as a scrap ("ae"), or a footnote ("*Een met was…").
         start = b.text.lstrip()[:1]

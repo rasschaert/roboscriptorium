@@ -244,6 +244,20 @@ def test_white_space_after_a_sentence_or_around_a_picture_is_no_lost_line():
     assert [f.reasons for f in flags.find([page], {}, regions)] == [["picture"]]
 
 
+def test_verse_with_white_space_between_its_stanzas_is_no_lost_line():
+    # Short lines stopping mid-sentence, white space between them: a song, not a gap.
+    verse = ["Ik vertel geen", "herinneringen", "En bij het tellen", "van je ogen",
+             "En dat je nu pas", "huilt", "Dat kan ik je", "eindelijk vergeven"]  # fmt: skip
+    # Stanzas of two lines 15 apart, a blank line between them.
+    ys = [80 + 15 * i + 15 * (i // 2) for i in range(len(verse))]
+    lines = [Line(t, 50, y, 50 + 9 * len(t), y + 12) for t, y in zip(verse, ys, strict=True)]
+    assert flags.find([PageText(1, 400, 600, lines)], {}) == []
+    # A short line inside prose isn't one either: a mid-sentence line there is full.
+    page, _ = _gapped("en toen liep hij naar de")
+    page.lines[4] = Line("en toen liep hij naar de", 50, 140, 220, 152)
+    assert flags.find([page], {}) == []
+
+
 def test_a_section_opening_in_lower_case_asks_for_its_drawn_initial():
     lines = [
         Line("HOOFDSTUK 9", 150, 60, 250, 75),
