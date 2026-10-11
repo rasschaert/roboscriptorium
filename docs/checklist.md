@@ -75,9 +75,11 @@ In this order:
 
 ## 6. Structure
 
-- [ ] Scene breaks the build still misses: 23 of 295 (Reis 14, De eerlijke vinder 7),
-      mostly no paragraph break at all there (`experiments/probe_missed_breaks.py`). And
-      Het heft (`P_plat`), Villa (`Tekst_6-Na-witregel`), Artemis (`noindent_topspace1`)
+- [ ] Scene breaks the build still misses: 23 of 295 (Reis 14, De eerlijke vinder 7).
+      Reis's are page tops after a full page whose last line ends a sentence at the
+      margin, the next opening flush: the same geometry as a paragraph running on, so
+      only the text can tell (a sorter question, "a new scene?", for later). Het heft
+      (`P_plat`), Villa (`Tekst_6-Na-witregel`), Artemis (`noindent_topspace1`)
       undeclared, unsure on the scan
 - [ ] Footnotes into the EPUB as notes, out of the running text: Reis has them and the
       test set has 26, now only left out of the score (`notes.txt`). Before the test set;
