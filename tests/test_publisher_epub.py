@@ -310,3 +310,21 @@ def test_a_drawn_initial_gets_its_letter_and_a_text_without_headings_is_one_chap
     ]
     # Without the option, text before any heading belongs to no chapter.
     assert publisher_epub.read(epub, ["Text/a.html"], ()) == []
+
+
+def test_a_blockquote_holding_no_paragraphs_is_a_paragraph(tmp_path):
+    # calibre sets a Mobipocket e-book's paragraphs as blockquotes; a quotation that
+    # holds paragraphs is read through them, as before.
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<blockquote class="kop"><span>1</span></blockquote>'
+                "<blockquote>‘Wat doe jij hier?’</blockquote>"
+                "<blockquote><p>Een citaat.</p><p>Nog een.</p></blockquote>"
+            ),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], ("kop",))
+    assert section.heading == "1"
+    assert section.paragraphs == ["‘Wat doe jij hier?’", "Een citaat.", "Nog een."]

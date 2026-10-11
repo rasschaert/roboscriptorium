@@ -114,17 +114,18 @@ reading shares: many are specks and faint marks.
 
 ## 9. Golden books and housekeeping
 
-- [ ] **user** More golden pairs: one or two Dutch validation books (validation is down to
-      five, three Dutch scans): an IA Scribe scan and the publisher's own EPUB of the same
-      printing, best from De Arbeiderspers, Prometheus/Ooievaar, Manteau or Vrijdag
-      (publishers not yet used); a Kosmos book for later, beyond prose
+- [ ] **user** More golden pairs when convenient: Koning Wilders (Atlas Contact) and Het
+      laatste bevel (Manteau) came in 2026-10-11; De Arbeiderspers, Prometheus/Ooievaar or
+      Vrijdag next; a Kosmos book for later, beyond prose
 - [ ] **user** Settle verdicts on the tuning books (`golden review`), the disagreements
       the arbiter's labels sit on first: hours, spread out, whenever convenient
 - [ ] Remove the `baseline` and `qwen2` worktrees when convenient
 
 ## 10. At the end
 
-- [ ] Score the test set once: `bench test --score-test`
+- [ ] Rederive the test set's reference with the derive of the day (it was left out of the
+      2026-10-11 rederive: ornament paragraphs and blockquotes now read differently), then
+      score it once: `bench test --score-test`
 
 ## Later
 

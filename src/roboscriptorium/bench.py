@@ -58,6 +58,7 @@ SETS = {
         "villa-toscane--calibre-pdf::1-12",
         "de-stilte-van-de-hel--ia-scan:11-101:1-15",
         "koning-wilders--ia-scan",
+        "het-laatste-bevel--ia-scan:9-100:1-5",
     ],
     "test": [
         "het-geluid-van-bananen--ia-scan:9-101:1-14",

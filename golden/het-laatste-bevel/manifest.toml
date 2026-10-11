@@ -1,0 +1,31 @@
+title = "Het laatste bevel"
+author = "Pieter Aspe"
+language = "nl"
+# Aspe is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Manteau's e-book (its colophon that of the first printing, April 2013, ISBN
+# 9022328252), as calibre 2.20 converted it from Mobipocket: every paragraph a
+# `blockquote`, chapter numbers "1"–"16" in `calibre18`, italics the `italic` class.
+# Front matter, contents and back flap are left out.
+[reference]
+source = "Het laatste bevel, Manteau 2013, ISBN 9022328252 (e-book, calibre's EPUB of the Mobipocket)"
+sha256 = "a1cacba4c4a0b4df7eb538f1228958d0ee9093aed4cfd124ae56c89325def731"
+files = [
+  "text_part0004.html", "text_part0005.html", "text_part0006.html", "text_part0007.html",
+  "text_part0008.html", "text_part0009.html", "text_part0010.html", "text_part0011.html",
+  "text_part0012.html", "text_part0013.html", "text_part0014.html", "text_part0015.html",
+  "text_part0016.html", "text_part0017.html", "text_part0018.html", "text_part0019.html",
+]
+heading_prefixes = ["calibre18"]
+italic_classes = ["italic"]
+
+# The first printing (April 2013, typeset by Ready2Print), a copy of the Amsterdam public
+# library. Internet Archive lends it only, so it is placed by hand (sourced by the user,
+# 2026-10-11). Pages 9–312: chapter 1 to the end; series advertising after.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org (Het laatste bevel, Manteau 2013; borrow, then download the PDF)"
+sha256 = "f93919cf2d61fdc68b6af9948d2d16874ef47122aa744ff7bc9c5c93ec6b2704"
+cover_page = 1
+body_pages = [9, 312]

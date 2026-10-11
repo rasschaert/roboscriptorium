@@ -2,17 +2,18 @@
 
 For books with no Gutenberg transcription: a retail EPUB of the same printing, or an
 omnibus holding the scanned book as one part. The manifest names the content files to
-read, in order. Paragraphs are `p`, or `div` holding no `p` or `div` (some EPUBs set
-every paragraph as one). Paragraphs of the manifest's blank classes stand for blank
-lines (a ".." to keep the line open). Headings are `h1`–`h6`, or paragraphs whose class
-starts with one of the manifest's heading prefixes; each heading starts a chapter, even
-when no text follows it ("Eerste episode 1945" above "1"), unless it holds no letter or
-digit (an ornament, "******"). Empty paragraphs (blank lines) are left out. Paragraphs
-of the note classes are footnotes: they go to a notes file, not the text, and the text's
-links to them ("railbus[*]") read as printed ("railbus*"); where the EPUB numbers its
-notes ("*", "**", …) and the print sets one mark for each, every link and note reads
-that mark (`note_mark`). An element of the break classes holding no letter or digit, or
-a paragraph of ornaments alone ("* * *"), is a scene break before the next paragraph; so
+read, in order. Paragraphs are `p`, or a `div` or `blockquote` holding none (some EPUBs
+set every paragraph as one; calibre's conversion of a Mobipocket e-book as
+`blockquote`). Paragraphs of the manifest's blank classes stand for blank lines (a ".."
+to keep the line open). Headings are `h1`–`h6`, or paragraphs whose class starts with
+one of the manifest's heading prefixes; each heading starts a chapter, even when no text
+follows it ("Eerste episode 1945" above "1"), unless it holds no letter or digit (an
+ornament, "******"). Empty paragraphs (blank lines) are left out. Paragraphs of the note
+classes are footnotes: they go to a notes file, not the text, and the text's links to
+them ("railbus[*]") read as printed ("railbus*"); where the EPUB numbers its notes ("*",
+"**", …) and the print sets one mark for each, every link and note reads that mark
+(`note_mark`). An element of the break classes holding no letter or digit, or a
+paragraph of ornaments alone ("* * *"), is a scene break before the next paragraph; so
 is a paragraph of the opening classes (the unindented first one of a scene) before
 itself, and one of the closing classes after itself. An EPUB that sets its dashes as a
 spaced hyphen-minus, or a spaced double one ("--"), gets the print's dash instead
@@ -36,7 +37,7 @@ from roboscriptorium.golden.reference import ITALIC_END, ITALIC_START, ITALIC_TA
 XHTML = "{http://www.w3.org/1999/xhtml}"
 Classes = frozenset[str]
 HEADING_TAGS = {f"{XHTML}h{n}" for n in range(1, 7)}
-BLOCK_TAGS = {f"{XHTML}p", f"{XHTML}div"}
+BLOCK_TAGS = {f"{XHTML}p", f"{XHTML}div", f"{XHTML}blockquote"}
 
 
 # A note's link back to the text, after its marker: "* – [terug]", "[1.] – [terug]".
@@ -137,7 +138,9 @@ def _image_heading(el: ET.Element, pattern: str) -> str:
 def _is_paragraph(el: ET.Element) -> bool:
     if el.tag == f"{XHTML}p":
         return True
-    return el.tag == f"{XHTML}div" and not any(
+    # A div or blockquote holding no paragraphs is one: some EPUBs set every paragraph so
+    # (calibre's conversion of a Mobipocket e-book sets them as blockquotes).
+    return el.tag in (f"{XHTML}div", f"{XHTML}blockquote") and not any(
         d.tag in BLOCK_TAGS for d in el.iter() if d is not el
     )
 
