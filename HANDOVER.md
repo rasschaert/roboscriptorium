@@ -4,6 +4,16 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
+## Running now: the rebuild (started 2026-10-11 ~21:45, the user's go)
+
+`experiments/rebuild-trust.sh` in screen `robo-rebuild`: trust data for the 20 books of
+`ocr_trust_data.SPECS` (2,188 pages, cold, Qwen local, ~34 h), one book at a time, then
+the arbiter retrained (`train_ocr_trust.py --save`) and `bench tuning` as the new
+baseline. Progress, a line per step: `work/runs/rebuild/progress.txt`; logs beside it. A
+rerun resumes from the stage caches. After it: the line-role trees
+(`train_sorter.py --save`), `bench validation`, Verminkt's slice, then Stella.
+Report each book to the user as it finishes.
+
 ## Recovery, 2026-10-11 ~20:35: work/ was deleted
 
 A worktree's `work` symlink was committed (`git add -A`) and the merge replaced the
