@@ -130,7 +130,7 @@ def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path, monk
         tmp_path / f"ocr-trust-without-{crime}.pkl"
     )
     # A validation book, or a tuning book without trust data, was never trained on.
-    assert bench.unseen(settings, "de-eerlijke-vinder--ia-scan") == settings
+    assert bench.unseen(settings, "vuurspel--ia-scan") == settings
     thief = "the-thief-takers-apprentice--ia-scan"
     monkeypatch.setattr(bench, "TRAINED_ON", bench.TRAINED_ON - {thief})
     assert bench.unseen(settings, thief) == settings
