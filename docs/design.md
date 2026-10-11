@@ -259,6 +259,13 @@ layer lost before speech that follows; the golden references run a quote over in
 (2026-10-11): tuning 0.37 → 0.36 [−0.02, −0.00] (De tuin's unasked 0.24 → 0.16 for 0.35
 more questions a page), validation 0.75 → 0.75, no book worse.
 
+**An open mark right after a word is asked where it stands.** "Open at end" points the
+question at the paragraph's last lines, which is where speech loses its closing mark; a
+speck read as an opening mark mid-sentence ("zich ‘schrap zette") can sit many lines
+above, out of view. A mark left open right after a word is asked at the mark instead.
+Bench (2026-10-11): tuning **better** 0.33 → 0.32 [−0.03, −0.00] for no more questions
+(Afscheid 0.58 → 0.45), validation no change.
+
 ## Missing lines
 
 A layout region with no text-layer line in it is read by glm-ocr only when it is about

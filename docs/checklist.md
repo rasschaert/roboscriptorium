@@ -18,7 +18,7 @@ areas below in order, and the test set scored once at the end.
 
 ## 1. Right after the chains (~1 h)
 
-- [ ] Next accuracy step from the data (pick by size): unasked quotes (47 words) and
+- [ ] Next accuracy step from the data (pick by size): unasked quotes (~40 words) and
       word breaks (69, scattered); small capitals read in lower case (7, visual)
 
 ## 2. Stella, the target book
@@ -284,6 +284,8 @@ many the layer had wrong.
       question: tuning **better** 0.36 → 0.34 (Dolittle 0.52 → 0.44, Metro 0.26 → 0.22)
 - [x] 2026-10-11 A quote left open at a paragraph's end asked whatever follows: tuning
       0.37 → 0.36, De tuin's unasked 0.24 → 0.16, no book worse
+- [x] 2026-10-11 A quote mark left open right after a word asked where it stands, not at
+      the paragraph's end: tuning **better** 0.33 → 0.32, no more questions
 - [x] 2026-10-11 A section opening on a word in capitals flagged as a lost drawn initial
       too: Dolittle 0.44 → 0.40, pooled no change
 - [x] 2026-10-11 A section opening in lower case below a heading flagged as a lost drawn
