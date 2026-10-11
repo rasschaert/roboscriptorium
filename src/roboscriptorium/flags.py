@@ -53,7 +53,7 @@ REASONS = {
     "quotes": "its paragraph's quote marks don't pair up: one may be lost or misread",
     "washed-out": "the scan is too faint to read: the text layer here is guesswork",
     "lost-line": "white space inside a sentence: the text layer may have lost a line",
-    "initial-lost": "a section opens in lower case: its drawn initial may be lost",
+    "initial-lost": "a section opens in lower case or capitals: its drawn initial may be lost",
 }
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
@@ -109,13 +109,18 @@ def treatment(role: LineRole | None) -> str:
     return "heading" if role.role == "chapter_heading" else "dropped"
 
 
+_QUOTES = "‘’“”\"'"
+
+
 def _initial_lost(page: PageText, i: int, roles: dict[SourceRef, LineRole]) -> bool:
-    """Whether a text line opens a section in lower case: the first text below a heading,
-    where a drawn initial the layer can't read leaves its word without a first letter
-    ("asteel Araluen", "et wolvenschip")."""
+    """Whether a text line opens a section in lower case, or on a word set in capitals: the
+    first text below a heading, where a drawn initial the layer can't read leaves its word
+    without a first letter ("asteel Araluen", "et wolvenschip", "HAT was the end")."""
     if treatment(roles.get(SourceRef(page.number, i))) != "text":
         return False
-    if not page.lines[i].text.lstrip()[:1].islower():
+    text = page.lines[i].text.lstrip()
+    word = text.split()[0].strip(_QUOTES + ".,;:!?") if text.split() else ""
+    if not (text[:1].islower() or (len(word) >= 2 and word.isalpha() and word.isupper())):
         return False
     above = [
         treatment(roles.get(SourceRef(page.number, j)))

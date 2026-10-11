@@ -266,3 +266,10 @@ def test_a_section_opening_in_lower_case_asks_for_its_drawn_initial():
     speck_roles = heading | {SourceRef(79, 1): LineRole("artifact", 0.9, 0.01)}
     assert [f.first for f in flags.find([speck], speck_roles) if "initial-lost" in f.reasons] == [2]
     assert lost(heading) == [1]
+    # A section opening on a word set in capitals: its first letter may be the drawing.
+    caps = PageText(79, 400, 600, [lines[0], Line("HAT was the end of it.", 50, 100, 350, 112)])
+    assert [f.first for f in flags.find([caps], heading) if "initial-lost" in f.reasons] == [1]
+    # A single capital ("I") or a numeral is no such word.
+    for opening in ("I was there.", "1914 was a year."):
+        page_i = PageText(79, 400, 600, [lines[0], Line(opening, 50, 100, 350, 112)])
+        assert [f for f in flags.find([page_i], heading) if "initial-lost" in f.reasons] == []
