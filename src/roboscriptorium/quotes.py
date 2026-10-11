@@ -4,6 +4,8 @@ Curly quotes only: an opening ‘ or “ at a word's start, a closing ’ or ”
 end. A ’ inside a word (zo’n, auto’s) or opening a Dutch article (’s avonds, ’t)
 is an apostrophe. A quote left open at a paragraph's end is fine when the next
 paragraph opens with the same mark, as a quotation running over paragraphs does.
+Speech closed right after a letter at a paragraph's end has lost its stop: some books
+kern it under the closing mark, and the layer misses it there.
 
 A vision model's reading of such a line, told how the book is set (`style_prompt`),
 proposes the line with its marks (`proposed`); the letters stay the text layer's.
@@ -20,6 +22,9 @@ from roboscriptorium.typography import EllipsisStyle, guess_ellipsis
 PAIRS = {"‘": "’", "“": "”"}
 _ARTICLE = re.compile(r"’(s|t|n)\b")
 _SENTENCE_BEFORE = re.compile(r"[.!?…]\s+$")
+# A quoted term or title ("het ‘invoelend’", "‘Le mie prigioni’") runs to this many words
+# inside a sentence; a longer quotation, or one that opens a sentence, is speech.
+TERM_WORDS = 3
 
 
 @dataclass(frozen=True)
@@ -94,7 +99,32 @@ def problems(text: str, continued: str = "") -> list[tuple[int, str]]:
             found.append((i, "no opening"))
     if any(depth[c] and continued != c for c in PAIRS):
         found.append((len(text) - 1, "open at end"))
+    elif stop := _unstopped(text, found_marks):
+        found.append((stop, "no stop at end"))
     return sorted(found)
+
+
+def _unstopped(text: str, found_marks: list[tuple[int, str, str]]) -> int | None:
+    """The offset of a closing mark right after a letter at the paragraph's end, when it
+    closes speech: printed speech ends on a stop, and some books kern it under the mark,
+    where the layer loses it. None for a quoted term or title (`TERM_WORDS`)."""
+    end = len(text.rstrip()) - 1
+    if not found_marks or found_marks[-1][0] != end or found_marks[-1][2] != "close":
+        return None
+    if not text[end - 1 : end].isalpha():
+        return None
+    closing = found_marks[-1][1]
+    opener = next(
+        (i for i, c, kind in reversed(found_marks) if kind == "open" and PAIRS.get(c) == closing),
+        None,
+    )
+    if opener is None:
+        return None
+    before = text[:opener].rstrip()
+    inside_sentence = bool(before) and not before.endswith(tuple(".!?…:"))
+    if inside_sentence and len(text[opener + 1 : end].split()) <= TERM_WORDS:
+        return None
+    return end
 
 
 def unbalanced(paragraphs: list[Paragraph]) -> list[Place]:

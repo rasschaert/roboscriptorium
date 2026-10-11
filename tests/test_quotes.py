@@ -181,3 +181,18 @@ def test_quote_readings_offer_the_checked_line_and_combine_a_nested_quotation():
     line = "had Charlie gelezen. ““Wanneer je tot stilstand komt"
     found = readings(line, line, "had Charlie gelezen. “Wanneer je tot stilstand komt", "…", True)
     assert found["marks combined"] == "had Charlie gelezen. ‘“Wanneer je tot stilstand komt"
+
+
+def test_a_quotation_closed_on_a_letter_at_a_paragraphs_end_lost_its_stop():
+    # Not a lost stop: a short quoted term or title, punctuation before the mark, a
+    # plural possessive, a closing mark mid-paragraph.
+    assert problems("Ik vrees vooral het ‘invoelend’") == []
+    assert problems("Hij las ‘Le mie prigioni’") == []
+    assert problems("‘Alsjeblieft, Frederik.’") == []
+    assert problems("‘Waar was je?’") == []
+    assert problems("Dat waren de schoenen van Jezus’") == []
+    assert problems("‘Kom mee,’ zei hij. Ze kwam") == []
+    # A dialogue's last word right before its closing mark: the print's kerned stop.
+    assert problems("‘Alsjeblieft, Frederik’") == [(22, "no stop at end")]
+    assert problems("Hij keek op. ‘Vermoord door de CT’") == [(33, "no stop at end")]
+    assert problems("“Then you turn it on, Ew”") == [(24, "no stop at end")]
