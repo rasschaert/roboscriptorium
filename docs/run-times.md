@@ -274,3 +274,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | tryout: build reader set v2, 17 tuning books, no models | 0 | 8 | 0 |
 | 2026-10-12 | tryout: reader v2, qwen3.8:27b-q8_0 on llama.cpp, incumbents read again (work/tryout lost) | 0 | 49 | 0 |
 | 2026-10-12 | probe: qwen3.8:27b-q8_0 (llama.cpp, 4 slots) throughput at 1-16 requests at a time, idle machine | 0 | 14 | 0 |
+| 2026-10-12 | tryout: reader v2, qwen3.8:27b-mxfp8 | 850 | 0 | 1 |

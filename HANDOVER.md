@@ -4,6 +4,16 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
+## Running now, 2026-10-12 00:40: the rebuild on nvfp4 (the user's choice)
+
+`experiments/rebuild-trust.sh` in screen `robo-rebuild`, reader `qwen3.8:27b-nvfp4`
+(the user: stick with it; they test other builds themselves on 2026-10-12). Progress a
+line per book in `work/runs/rebuild/progress.txt` (its first line, Goede dochter exit
+143, is the stop at 22:12). `qwen3.8:27b-mxfp8` is **not** pulled (Ollama lists only
+nvfp4 and q8_0); the mxfp8 tryout of 00:35 failed on a 404. The worktree hazard below
+is gone: `../roboscriptorium-review` and branch `review-display` were removed,
+`work/` untouched.
+
 ## State, 2026-10-12 ~00:40, session end: nothing runs; the reader question is half answered
 
 **Remind the user of the daily backup of `work/`** before any long run. Nothing runs: no
