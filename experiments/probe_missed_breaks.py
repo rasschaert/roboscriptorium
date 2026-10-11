@@ -1,60 +1,81 @@
-"""Paragraph breaks the reference has and a build's EPUB lacks, with their context.
+"""The reference's scene breaks the build doesn't set, where they fall on the scan, and
+the breaks the build sets that the reference doesn't have.
 
-    uv run python experiments/probe_missed_breaks.py <golden-name> <build.epub> [chapters]
+For each tuning or validation book named (default: those whose reference records
+breaks), as the bench builds it: every reference break with no output break at the same
+word, with the output paragraph it falls in or before, and whether that paragraph's first
+line opens a page (a break at a page's end shows no white space) or whether the break
+falls inside an output paragraph (no paragraph break there at all).
 
-`chapters` (as "1-15") limits the reference to those chapters. Prints each missed
-break as "…last words ¶ first words…" and counts how the paragraph before it ends.
+    uv run python experiments/probe_missed_breaks.py [book …]
 """
 
-import difflib
-import html
-import re
 import sys
-import zipfile
-from collections import Counter
-from pathlib import Path
 
+from rapidfuzz.distance import Levenshtein
 
+from roboscriptorium import bench, evaluate
+from roboscriptorium.cli import _questions_and_errors, _scored
+from roboscriptorium.config import Settings
 
-def paragraphs(xhtml: str) -> list[str]:
-    found = re.findall(r"<p\b[^>]*>(.*?)</p>", xhtml, flags=re.S)
-    texts = [" ".join(html.unescape(re.sub(r"<[^>]+>", "", p)).split()) for p in found]
-    return [t for t in texts if t]
-
-
-def words_and_breaks(paras: list[str]) -> tuple[list[str], set[int]]:
-    words, breaks = [], set()
-    for p in paras:
-        breaks.add(len(words))
-        words += [re.sub(r"\W", "", w.lower()) or w for w in p.split()]
-    return words, breaks
-
-
-name, epub = sys.argv[1], sys.argv[2]
-chapters = sorted(Path("work/golden", name, "text").glob("chapter-*.xhtml"), key=lambda p: int(p.stem.split("-")[1]))
-if len(sys.argv) > 3:
-    a, b = map(int, sys.argv[3].split("-"))
-    chapters = [c for c in chapters if a <= int(c.stem.split("-")[1]) <= b]
-ref = [p for c in chapters for p in paragraphs(c.read_text())]
-with zipfile.ZipFile(epub) as z:
-    out = [p for n in sorted(z.namelist()) if n.endswith(".xhtml") and "nav" not in n for p in paragraphs(z.read(n).decode())]
-
-rw, rb = words_and_breaks(ref)
-ow, ob = words_and_breaks(out)
-sm = difflib.SequenceMatcher(None, rw, ow, autojunk=False)
-to_out = {}
-for i, j, n in sm.get_matching_blocks():
-    for k in range(n):
-        to_out[i + k] = j + k
-missed, ends = [], Counter()
-flat = [w for p in ref for w in p.split()]
-for i in sorted(rb):
-    if i == 0 or i not in to_out or to_out[i] in ob:
-        continue
-    before, after = " ".join(flat[max(0, i - 6):i]), " ".join(flat[i:i + 6])
-    missed.append(f"…{before} ¶ {after}…")
-    ends[flat[i - 1][-1]] += 1
-print(f"reference breaks {len(rb)}, output breaks {len(ob)}, missed {len(missed)}")
-print("previous paragraph ends with:", ends.most_common(8))
-for m in missed[:40]:
-    print(" ", m)
+BOOKS = ["reis-om-mijn-schedel", "de-eerlijke-vinder", "de-cipier", "de-tuin-van-de-avondnevel",
+         "doodskleed", "de-kerk-van-de-dode-meisjes", "artemis"]  # fmt: skip
+names = sys.argv[1:] or BOOKS
+specs = [s for s in bench.SETS["tuning"] + bench.SETS["validation"]
+         if s.split("--")[0] in names]  # fmt: skip
+for spec in specs:
+    name = spec.split(":")[0]
+    _, book, stages, reference, _, _, _ = _questions_and_errors(
+        f"work/{spec}", bench.unseen(Settings.from_env(), name)
+    )
+    doc = _scored(book, stages)
+    paras = doc.paragraphs
+    out_words, starts, owner = [], [], []
+    for k, p in enumerate(paras):
+        starts.append(len(out_words))
+        words = evaluate.normalise(p.text).split()
+        out_words += words
+        owner += [k] * len(words)
+    ref_paras = [p for ch in reference for p in ch.paragraphs]
+    flags = [k in ch.breaks for ch in reference for k in range(len(ch.paragraphs))]
+    ref_words, ref_breaks = [], []
+    for para, scene in zip(ref_paras, flags, strict=True):
+        if scene:
+            ref_breaks.append(len(ref_words))
+        ref_words += evaluate.normalise(para).split()
+    ref_to_out = {}
+    for op in Levenshtein.opcodes(out_words, ref_words):
+        if op.tag == "equal":
+            for i in range(op.src_end - op.src_start):
+                ref_to_out[op.dest_start + i] = op.src_start + i
+    kinds = {"page top": 0, "inside a paragraph": 0, "elsewhere": 0, "unaligned": 0}
+    print(f"== {name}")
+    for r in ref_breaks:
+        o = ref_to_out.get(r)
+        if o is None:
+            kinds["unaligned"] += 1
+            continue
+        k = owner[o]
+        if starts[k] == o and paras[k].break_before:
+            continue
+        p = paras[k]
+        if starts[k] != o:
+            kind = "inside a paragraph"
+        elif p.sources and p.sources[0].line == 0:
+            kind = "page top"
+        else:
+            kind = "elsewhere"
+        kinds[kind] += 1
+        where = f"p{p.sources[0].page}" if p.sources else "?"
+        print(f"  {kind:18} {where:5} …{' '.join(out_words[max(0, o - 6) : o])} ¶ "
+              f"{' '.join(out_words[o : o + 6])}")  # fmt: skip
+    print("  " + ", ".join(f"{k} {n}" for k, n in kinds.items()))
+    # The output's breaks the reference doesn't have.
+    out_to_ref = {o: r for r, o in ref_to_out.items()}
+    recorded = set(ref_breaks)
+    for k, p in enumerate(paras):
+        if p.break_before and out_to_ref.get(starts[k]) not in recorded:
+            o = starts[k]
+            top = "page top" if p.sources and p.sources[0].line == 0 else ""
+            print(f"  extra {top:8} p{p.sources[0].page if p.sources else '?'} "
+                  f"…{' '.join(out_words[max(0, o - 6) : o])} ¶ {' '.join(out_words[o : o + 6])}")

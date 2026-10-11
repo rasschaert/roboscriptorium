@@ -20,6 +20,12 @@ from roboscriptorium.roles import KEEP_BODY_AT, LineRole
 # A paragraph-opening indent is ~10pt on the target scans; line-start jitter
 # from skew stays under ~3pt.
 INDENT_MIN = 5.0
+# A paragraph indent is at most this wide; a line starting further right is centred.
+MAX_INDENT = 30.0
+# A line set flush starts at most this far left of the margin: further left, the
+# layer's box has slipped (De tuin's indented page tops at -1.8 to -6.6 points; Reis's
+# flush ones from -1.0).
+FLUSH_SLACK = 1.5
 # The local left margin is the lower quartile of line starts within this many
 # lines either side: it follows skew drift down the page, and stays on the
 # margin even when only two lines are left and one of them is indented.
@@ -223,6 +229,17 @@ def _broken_word(text: str, line: Line) -> bool:
     however the line is set (beside a picture or an initial its margin moves)."""
     return (
         text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha() and line.text[:1].islower()
+    )
+
+
+def _flush_where_paragraphs_indent(lines: list[Line], k: int) -> bool:
+    """Whether line k sits on the run's left margin while the run indents its paragraphs
+    (a line starts an indent's width right of the margin; a centred one, further right,
+    doesn't count). A box left of the margin is the layer's slip, not a flush line."""
+    starts = sorted(ln.x0 for ln in lines)
+    margin = starts[len(starts) // 4]
+    return -FLUSH_SLACK <= lines[k].x0 - margin <= INDENT_MIN and any(
+        INDENT_MIN < ln.x0 - margin < MAX_INDENT for ln in lines
     )
 
 
@@ -484,7 +501,8 @@ def _add_body(
     """Append a run of body lines to `blocks`; whether the next block still opens a section.
 
     `scene` holds whether a scene break waits for the next paragraph: an ornament line
-    sets it, and white space of `SCENE_GAP` pitches after a sentence is one too.
+    sets it, and white space of `SCENE_GAP` pitches after a sentence is one too, as is a
+    page that opens flush left after a finished paragraph where paragraphs indent.
     `short_end` holds whether the last run ended on a sentence's short last line, which
     starts a paragraph at the top of the next page as it does within a page."""
     scene = scene if scene is not None else [False]
@@ -499,6 +517,21 @@ def _add_body(
         if k and pitch is not None and _spaced(lines[k - 1], line, pitch, SCENE_GAP):
             scene[0] = True
         current = blocks[-1] if blocks else None
+        if (
+            k == 0
+            and short_end[0]
+            and not starts_paragraph
+            and line.starts_paragraph is None
+            and _may_open(line)
+            and isinstance(current, Paragraph)
+            and current.sources
+            and current.sources[-1].page != ref.page
+            and _flush_where_paragraphs_indent(lines, 0)
+        ):
+            # A page that opens flush left after a finished paragraph, in a book that
+            # indents its paragraphs: a scene's first paragraph, its white space lost
+            # at the foot of the page before.
+            scene[0] = True
         if not isinstance(current, Paragraph) or (k == 0 and opening) or scene[0]:
             first = opening and k == 0
             blocks.append(

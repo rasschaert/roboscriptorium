@@ -586,3 +586,61 @@ def test_a_word_broken_at_a_lines_end_continues_its_paragraph_whatever_the_inden
     # A dash ending speech before a new paragraph is no broken word.
     pages = [page(1, [(10, "'Ik moet-"), (40, "'Wat?'")])]
     assert len(reflow(pages)) == 2
+
+
+def _book_page(number: int, rows: list[tuple[float, float, str]]) -> PageText:
+    p = _lines(rows)
+    return PageText(number, p.width, p.height, p.lines)
+
+
+# A page of indented paragraphs ending on a sentence's short last line.
+_INDENTED_END = [
+    (22, 280, "Een alinea die inspringt en tot"),
+    (10, 280, "de rand loopt, regel twee"),
+    (22, 280, "Nog een alinea die inspringt en"),
+    (10, 280, "doorloopt tot de rand hier"),
+    (10, 120, "en eindigt."),
+]
+
+
+def test_a_page_top_line_set_as_the_book_sets_paragraphs_is_no_scene_break():
+    # Indented, as the book's paragraphs are: a new paragraph only.
+    nxt = [(22, 280, "Een nieuwe alinea, ingesprongen"), (10, 280, "en verder tot de rand"),
+           (22, 280, "Weer een alinea die inspringt"), (10, 120, "en eindigt.")]  # fmt: skip
+    paragraphs = reflow([_book_page(5, _INDENTED_END), _book_page(6, nxt)])
+    assert [p.text[:10] for p in paragraphs][-3:] == ["Nog een al", "Een nieuwe", "Weer een a"]
+    assert not any(p.break_before for p in paragraphs)
+    # A book without indents: every paragraph opens flush, so a flush one says nothing.
+    flush = [(10, 280, "Een alinea zonder inspringing"), (10, 280, "loopt tot de rand hier"),
+             (10, 120, "en eindigt."), (10, 280, "De volgende alinea ook zonder"),
+             (10, 120, "en eindigt.")]  # fmt: skip
+    paragraphs = reflow([_book_page(5, flush), _book_page(6, flush)])
+    assert not any(p.break_before for p in paragraphs)
+
+
+def test_a_page_top_line_continuing_a_paragraph_is_no_scene_break():
+    full_end = _INDENTED_END[:-1] + [(10, 280, "en loopt door tot de rand en")]
+    nxt = [(10, 280, "verder op de volgende pagina,"), (10, 120, "tot het eind."),
+           (22, 280, "Een alinea die inspringt en"), (10, 120, "eindigt.")]  # fmt: skip
+    paragraphs = reflow([_book_page(5, full_end), _book_page(6, nxt)])
+    assert not any(p.break_before for p in paragraphs)
+    assert paragraphs[1].text.endswith("tot het eind.")
+
+
+def test_a_flush_page_top_after_a_finished_paragraph_in_an_indented_book_is_a_scene_break():
+    nxt = [(10, 280, "Een nieuwe scène begint vlak"), (10, 280, "tegen de marge aan, regel"),
+           (22, 280, "Dan een gewone alinea die"), (10, 120, "inspringt.")]  # fmt: skip
+    paragraphs = reflow([_book_page(5, _INDENTED_END), _book_page(6, nxt)])
+    assert [(p.text[:10], p.break_before) for p in paragraphs][-2:] == [
+        ("Een nieuwe", True),
+        ("Dan een ge", False),
+    ]
+
+
+def test_a_page_top_line_whose_box_starts_left_of_the_margin_is_no_scene_break():
+    # The layer's box for a page's first line can start left of the margin, though
+    # the print indents it: that isn't a line set flush.
+    nxt = [(4, 280, "'Neem die mee,' zei ik, 'en die"), (10, 280, "doos met gebak ook. Geen"),
+           (22, 280, "'Ik weet het. Dat zegt u altijd.'"), (10, 120, "en eindigt.")]  # fmt: skip
+    paragraphs = reflow([_book_page(5, _INDENTED_END), _book_page(6, nxt)])
+    assert not any(p.break_before for p in paragraphs)

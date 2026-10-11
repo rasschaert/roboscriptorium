@@ -75,10 +75,10 @@ In this order:
 
 ## 6. Structure
 
-- [ ] Scene breaks the build misses: 40 of the 295 the references record (Reis 26,
-      De eerlijke vinder 8); first see whether they fall at a page's end, where no white
-      space shows. And Het heft (`P_plat`), Villa (`Tekst_6-Na-witregel`), Artemis
-      (`noindent_topspace1`) undeclared, unsure on the scan
+- [ ] Scene breaks the build still misses: 23 of 295 (Reis 14, De eerlijke vinder 7),
+      mostly no paragraph break at all there (`experiments/probe_missed_breaks.py`). And
+      Het heft (`P_plat`), Villa (`Tekst_6-Na-witregel`), Artemis (`noindent_topspace1`)
+      undeclared, unsure on the scan
 - [ ] Footnotes into the EPUB as notes, out of the running text: Reis has them and the
       test set has 26, now only left out of the score (`notes.txt`). Before the test set;
       ~half a day
@@ -161,6 +161,8 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 - [x] 2026-10-11 Scene breaks scored: derive reads them (thought breaks, ornaments,
       break, opening and closing classes, each checked on the scan) in 10 references;
       the build finds 255 of 295 and sets 20 more where they are recorded
+- [x] 2026-10-11 A page opening flush left after a finished paragraph is a scene break
+      where paragraphs indent: found 255 → 272 of 295, 2 more set; words unchanged
 - [x] 2026-10-10 Longer tuning slices, each ending on a chapter (Goede dochter 9–162, Reis
       whole, De cipier 9–174, Metro 7–162, De tuin 11–122): 446 new pages in 7.5 h, arbiter
       and trees retrained; tuning 0.53 → 0.53, validation 0.77 → 0.76, no change. The

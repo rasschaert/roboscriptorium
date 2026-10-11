@@ -381,8 +381,16 @@ worse, words unchanged. Left on De stilte, 3.5% of its breaks: sentences that en
 **A scene break is white space of two lines, or an ornament line.** Over 1.8 pitches
 after a sentence (one blank line is two pitches), or a line of three ornament marks or
 more ("* * *"; one or two are a speck), puts a break before the next paragraph, set
-unindented after an `<hr class="break"/>`. Reis has 63 in its slice, spot-checked right
-on the scan. The score doesn't see them yet: derive drops a reference's blank lines.
+unindented after an `<hr class="break"/>`. Scored since 2026-10-11 where a reference
+records its breaks (ten books, 295 breaks): the white space and ornaments alone found 255.
+
+**A page that opens flush left after a finished paragraph opens a scene**, where the book
+indents its paragraphs: a break at the foot of a page leaves no white space to see, and
+half the breaks missed fell there (20 of 40). The line must sit on the margin, not left
+of it: the layer's box for a page's first line can slip left of an indented line (De
+tuin's at −1.8 to −6.6 points; Reis's flush ones from −1.0), so 1.5 points is the slack.
+Bench (2026-10-11): breaks found 255 → 272 of 295 (Reis 156 → 168), 2 more set where the
+reference has none; words and paragraph breaks unchanged on both sets.
 
 **No paragraph starts inside a broken word.** Beside a picture or a drawn initial the
 margin moves, and a line continuing "seen her hus-" read as indented: the word was split
