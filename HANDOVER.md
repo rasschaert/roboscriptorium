@@ -17,6 +17,12 @@ On `main`, pushed. Lint and tests green.
   motto ("It's closing time", Leonard Cohen) outside the body, not in the EPUB yet.
 ### Next, queued
 
+- De eerlijke vinder and Monterosso moved to tuning (user's go); arbiter and trees
+  retrained, validation 0.67 → 0.64. Validation is five books: the user looks for one or
+  two Dutch pairs (De Arbeiderspers, Prometheus/Ooievaar, Manteau, Vrijdag preferred).
+- Every build now keeps a dated EPUB in `work/<book>/epubs/`; Stella's 2026-10-07 and
+  2026-10-11 are filed. Ex-minnaar's goes there with its rebuild.
+- Stale processes (Goede dochter review on 8766, llama-server) stopped.
 - Done this afternoon, each in decisions with its numbers: the pair-prior ablation (it
   stays), Reis's note marks, scene breaks scored (references rederived; Villa's colophon
   out) and a page-top rule (272 of 295 found), dropped slivers no longer split runs
