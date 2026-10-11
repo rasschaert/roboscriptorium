@@ -465,3 +465,19 @@ def test_a_dropped_line_that_reads_as_running_text_is_kept_and_flagged():
     assert out[SourceRef(11, 1)] == LineRole("artifact", 0.4, KEEP_BODY_AT, "running-text")
     assert out[SourceRef(11, 2)].p_body == KEEP_BODY_AT
     assert roles[SourceRef(11, 1)] is dropped  # the input is not changed
+
+
+def test_a_one_word_line_of_speech_at_a_pages_foot_is_kept():
+    from roboscriptorium.roles import KEEP_BODY_AT, LineRole, running_text
+
+    # The word list, like the real one, doesn't know a word with its quote attached.
+    def known(w):
+        return w in {"Gamma", "Het", "zou", "niemand", "meer", "uitmaken"}
+
+    lines = [
+        Line("Het zou niemand meer uitmaken.", 20, 20, 280, 30),
+        Line("‘Gamma.’", 20, 35, 60, 45),
+    ]
+    pages = [PageText(30, 300, 600, lines)]
+    roles = {SourceRef(30, 1): LineRole("artifact", 0.4, 0.2)}
+    assert running_text(pages, roles, known)[SourceRef(30, 1)].p_body == KEEP_BODY_AT

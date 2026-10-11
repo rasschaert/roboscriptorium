@@ -427,7 +427,10 @@ def _reads_as_text(text: str, known: Callable[[str], bool]) -> bool:
     tokens = text.split()
     if not tokens or sum(len(_LETTER.findall(t)) for t in tokens) < 3 * len(tokens):
         return False
-    words = [w for t in tokens if len(_LETTER.findall(w := re.sub(r"[^\w'’-]", "", t))) >= 2]
+    # A closing quote stays on its word ("‘Gamma.’" → "Gamma’") unless stripped.
+    words = [
+        w for t in tokens if len(_LETTER.findall(w := re.sub(r"[^\w'’-]", "", t).strip("'’"))) >= 2
+    ]
     if not (len(words) >= 2 or (words and len(_LETTER.findall(words[0])) >= 5)):
         return False
     return sum(map(known, words)) * 2 >= len(words)
