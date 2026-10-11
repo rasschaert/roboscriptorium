@@ -46,10 +46,10 @@ In this order:
 
 | Book | Directory | Pages (body) | Scan | Watch for |
 | --- | --- | --- | --- | --- |
-| Herman Brusselmans, *Ex-minnaar* (Ooievaar 1998, 6th printing) | `ex-minnaar` | 284 (9–279) | 360 ppi | drop cap; an OmniPage OCR of the same scan beside it (`omnipage.pdf`, worse: the motto's "It's" reads "h's") |
-| Herman Brusselmans, *De kus in de nacht* (Prometheus 2002) | `de-kus-in-de-nacht` | 620 (9–616) | 300 ppi, large pages | parts ("Deel een", "Proloog"), small-capital openings |
+| Herman Brusselmans, *Ex-minnaar* (Ooievaar 1998, 6th printing) | `ex-minnaar` | 284 (9–279) | 360 ppi | motto on p. 7 ("It's closing time", Leonard Cohen) outside the body, not in the EPUB yet; drop cap; an OmniPage OCR of the same scan beside it (`omnipage.pdf`, worse: the motto's "It's" reads "h's") |
+| Herman Brusselmans, *De kus in de nacht* (Prometheus 2002) | `de-kus-in-de-nacht` | 620 (7–616) | 300 ppi, large pages | parts ("Deel een", "Proloog" on p. 7), small-capital openings |
 | Emmanuel Carrère, *Andere levens dan het mijne* (De Arbeiderspers, tr. Floor Borsboom) | `andere-levens` | 248 (9–244) | 360 ppi | library copy; French names and accents |
-| Emmanuel Carrère, *Een Russische roman* (De Arbeiderspers, tr. Marianne Kaas) | `een-russische-roman` | 276 (9–271) | 360 ppi | library copy; p. 7 and p. 272 hold something the layer reads as noise (a picture?) |
+| Emmanuel Carrère, *Een Russische roman* (De Arbeiderspers, tr. Marianne Kaas) | `een-russische-roman` | 276 (7–271) | 360 ppi | library copy; seven parts, each a small number atop its own page (pp. 7, 47, 131, 169, 233, 259, …) with pencil marks the layer reads as noise; p. 272 show-through only |
 
 - [ ] Each book in turn: check its front and back matter and `body_pages`, build (cold
       ~1 min a page: Ex-minnaar ~4 h, De kus ~10 h), sample the questions, **user**
