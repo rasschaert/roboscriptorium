@@ -192,3 +192,6 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | arbiter retrained, bughunt fixes | 0 | 6 | 0 |
 | 2026-10-11 | bench tuning, bughunt fixes, against the new baseline | 1580 | 2 | 0 |
 | 2026-10-11 | bench validation, bughunt fixes, against the new baseline | 410 | 1 | 0 |
+| 2026-10-11 | sorter lines rebuilt, validation of 7 books, bughunt merged | 0 | 11 | 0 |
+| 2026-10-11 | sorter retrained, without Monterosso | 0 | 0 | 0 |
+| 2026-10-11 | bench tuning, sorter on with the running-text guard | 1580 | 3 | 0 |

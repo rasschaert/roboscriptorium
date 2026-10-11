@@ -14,6 +14,7 @@ sha256 = "6ed60bd0db12f4d1be2466bf787cce830d75ab0258c828d69819b2deb2a89416"
 files = ["text/part0006.html", "text/part0007.html", "text/part0008.html", "text/part0009.html", "text/part0010.html", "text/part0011.html", "text/part0012.html", "text/part0013.html", "text/part0014.html", "text/part0015.html", "text/part0016.html", "text/part0017.html", "text/part0018.html", "text/part0019.html", "text/part0020.html", "text/part0021.html", "text/part0022.html", "text/part0023.html", "text/part0024.html", "text/part0025.html", "text/part0026.html", "text/part0027.html", "text/part0028.html", "text/part0029.html", "text/part0030.html", "text/part0031.html"]
 heading_prefixes = ["kop"]
 italic_classes = ["cs"]
+capital_classes = ["kk", "kk1"]
 blank_classes = ["witregel"]
 
 # The paperback, "Eerste druk 2014" (ISBN 9789401602457): the same translation

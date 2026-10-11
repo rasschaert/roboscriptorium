@@ -25,6 +25,7 @@ files = [
 ]
 heading_prefixes = ["kop"]
 italic_classes = ["cs", "sanscs"]
+capital_classes = ["kk", "sanskk"]
 
 # The second printing (December 2011) of the first edition. Internet Archive
 # lends it only, so it is placed by hand. Pages 11–302: the prologue to the

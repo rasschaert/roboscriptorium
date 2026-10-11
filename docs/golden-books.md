@@ -32,7 +32,7 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 | the-nature-of-a-crime | tuning | 94 / 94 | 14712 | 1.7 h | 0.85% | 0.77% | 7.7% | 8 / 8 | none | 0.34% / 0.29% |
 | the-story-of-doctor-dolittle | tuning | 180 / 66 | 24667 | 1.2 h | 0.93% | 0.79% | 11.8% | 14 / 7 | none | 1.22% / 1.31% |
 | the-thief-takers-apprentice | tuning | 282 / 74 | 83490 | 1.4 h | 0.28% | 0.35% | 3.3% | 22 / 22 | none | 0.26% / 0.14% |
-| vals-alarm | tuning | 292 / 50 | 87748 | 0.9 h | 0.68% | 0.45% | 3.0% | 4 / 10 | none | 0.36% / 0.16% |
+| vals-alarm | tuning | 292 / 50 | 87748 | 0.9 h | 0.53% | 0.45% | 3.0% | 4 / 10 | none | 0.36% / 0.16% |
 | villa-toscane | validation | 186 / 186 | 49902 | minutes | 0.00% | 0.00% | 0.0% | 12 / 12 | none | 0.04% / 0.04% |
 | vuurspel | validation | 354 / 103 | 136948 | 1.9 h | 0.46% | 0.60% | 2.5% | 2 / 6 | hyphen_dash | none yet |
 | youre-never-weird-on-the-internet | validation | 260 / 82 | 66184 | 1.5 h | 0.52% | 0.61% | 6.4% | 17 / 16 | none | none yet |
