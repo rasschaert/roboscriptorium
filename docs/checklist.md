@@ -76,9 +76,6 @@ In this order:
 
 - [ ] De eerlijke vinder's 1.02 unasked a page, the most of any ordinary book (words 26,
       letters 21, extra words 18): find where they come from. ~1 h, no models
-- [ ] Bad pages by the readers' disagreement: a page whose suspects per line far exceed
-      the book's (Afscheid p. 20: 50 against ~8) flagged, and as an arbiter feature.
-      ~2 h, then `bench`
 
 ## 6. Structure
 
@@ -220,6 +217,8 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Trust data and the arbiter
 
+- [x] ~~2026-10-11 Bad pages by the readers' disagreement~~: the 5% densest pages hold
+      32 of 319 unasked words; dropped
 - [x] 2026-10-11 Whether a borrowed item's JP2s can be had: no, its download options are
       empty while on loan (the user, on Stella)
 - [x] ~~2026-10-11 The book's own consistency as new suspects~~: 13 catches against 17

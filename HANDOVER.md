@@ -4,7 +4,7 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## State, 2026-10-11 midday
+## State, 2026-10-11, session end
 
 On `main`, pushed, clean. Lint and tests green. Nothing runs in `screen`.
 
@@ -51,11 +51,9 @@ quoted one-word line kept, an ellipsis after ? or ! spaced as read.
 
 The open steps, in order, are in docs/checklist.md; the first ones:
 
-1. Bad pages by the readers' disagreement ("Errors no question asks about"): a page with
-   far more suspects a line than its book flagged whole, and as an arbiter feature.
-2. Stella end to end: build, sample the questions, the user reviews, the user reads the
-   EPUB.
-3. The user's four books (Ex-minnaar, De kus in de nacht, Andere levens, Een Russische
+1. Stella end to end: build, sample the questions, the user reviews, the user reads the
+   EPUB. The accuracy probes before it are done (bad pages by disagreement was null too).
+2. The user's four books (Ex-minnaar, De kus in de nacht, Andere levens, Een Russische
    roman).
 
 ## Waiting on the user
