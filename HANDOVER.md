@@ -52,14 +52,13 @@ quoted one-word line kept, an ellipsis after ? or ! spaced as read.
 The open steps, in order, are in docs/checklist.md; the first ones:
 
 1. Stella end to end: built (every stage cached) and sampled: 4 new questions, one real
-   (p. 19 "féts"). Waiting on the user to review them (`uv run roboscriptorium review
-   work/stella`, ~2 min), then rebuild, epubcheck, and the user reads the EPUB through.
+   (p. 19 "féts"). Reviewed and rebuilt (epubcheck clean); the user reads the EPUB through.
 2. The user's four books (Ex-minnaar, De kus in de nacht, Andere levens, Een Russische
    roman).
 
 ## Waiting on the user
 
-- Stella's 4 new questions, then reading the rebuilt EPUB through.
+- Reading Stella's EPUB through (`work/stella/stella.epub`), noting each error.
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`.
 - **French**: undecided (under "Later" in the checklist).

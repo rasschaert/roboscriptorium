@@ -35,9 +35,7 @@ don't yet give at a price worth the reviewer's time.
 
 ## 2. Stella, the target book
 
-- [ ] **user** Review Stella: 4 new questions (`experiments/sample_questions.py`), one
-      that matters (p. 19 "féts"); the other three the arbiter's text already has right. ~2 min
-- [ ] Rebuild, epubcheck, and **user** reads the EPUB through, noting each error with a few words around it; no spot-check (the read covers every page). Each noted error is fixed as an answer and checked against the build's suspects: was it asked, settled wrongly, or never a suspect ("Errors no question asks about"): what the bench can't see
+- [ ] **user** reads the EPUB through, noting each error with a few words around it; no spot-check (the read covers every page). Each noted error is fixed as an answer and checked against the build's suspects: was it asked, settled wrongly, or never a suspect ("Errors no question asks about"): what the bench can't see
       (layout, italics, front matter)
 
 ## 3. The user's books after Stella
@@ -291,6 +289,8 @@ many the layer had wrong.
 - [x] 2026-10-11 Stella built with today's build (every stage cached, under a minute,
       epubcheck clean): 7 questions, 3 answered before, 80 of 83 old answers applied (the
       other 3 lie inside a line another answer retyped whole)
+- [x] 2026-10-11 Stella's 4 new questions reviewed (p. 19 "íéts", the other three as
+      the text had them), rebuilt, epubcheck clean
 - [x] 2026-10-11 English line-end hyphens nothing else decides settled by the judge, not a
       question: tuning **better** 0.36 → 0.34 (Dolittle 0.52 → 0.44, Metro 0.26 → 0.22)
 - [x] 2026-10-11 A quote left open at a paragraph's end asked whatever follows: tuning
