@@ -644,3 +644,24 @@ def test_a_page_top_line_whose_box_starts_left_of_the_margin_is_no_scene_break()
            (22, 280, "'Ik weet het. Dat zegt u altijd.'"), (10, 120, "en eindigt.")]  # fmt: skip
     paragraphs = reflow([_book_page(5, _INDENTED_END), _book_page(6, nxt)])
     assert not any(p.break_before for p in paragraphs)
+
+
+def test_a_dropped_sliver_on_a_text_lines_row_doesnt_split_the_run():
+    # Short dialogue lines, each its own paragraph, below text that sets the margin; the
+    # layer split a closing quote off one line, and the roles dropped it.
+    rows = [(10, 280, f"Tekst die tot de rechtermarge loopt, regel {i}") for i in range(5)]
+    rows += [(22, 280, "Een alinea die inspringt en loopt"), (10, 120, "en eindigt.")]
+    rows += [(22, 150, "“Eén regel.”"), (22, 140, "“Nog een regel."), (22, 160, "“En nog een.”")]
+    rows += [(22, 130, "Hij knikte."), (22, 170, "“Dan gaan we.”")]
+    page_ = _lines(rows)
+    y = page_.lines[7]
+    page_.lines.insert(8, Line("”", 152, y.y0 + 1, 155, y.y1))
+    roles = {SourceRef(5, 8): LineRole("artifact", 0.4, 0.1)}
+    paragraphs = reflow([page_], roles)
+    assert [p.text[:6] for p in paragraphs][-5:] == [
+        "“Eén r",
+        "“Nog e",
+        "“En no",
+        "Hij kn",
+        "“Dan g",
+    ]

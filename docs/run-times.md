@@ -243,3 +243,7 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, page-top scene breaks, flush at the margin | 590 | 1 | 0 |
 | 2026-10-11 | bench tuning, page-top scene breaks, flush within 1.5 pt | 1580 | 3 | 0 |
 | 2026-10-11 | bench validation, page-top scene breaks, flush within 1.5 pt | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, row slivers don't split runs | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, row slivers don't split runs | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, narrow row slivers don't split runs | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, narrow row slivers don't split runs | 590 | 1 | 0 |

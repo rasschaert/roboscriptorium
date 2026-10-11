@@ -392,6 +392,15 @@ tuin's at −1.8 to −6.6 points; Reis's flush ones from −1.0), so 1.5 points
 Bench (2026-10-11): breaks found 255 → 272 of 295 (Reis 156 → 168), 2 more set where the
 reference has none; words and paragraph breaks unchanged on both sets.
 
+**A dropped sliver doesn't end a run of text.** Indents are measured per run of body
+lines, and a run of short dialogue lines alone can't find the page's margin. The layer
+sometimes splits a mark off a line onto its row (Artemis p. 47: a word, a closing quote);
+the roles drop it, and it used to cut the run, so a page of one-line paragraphs became
+one. A dropped line of one or two marks, narrower than 8 points, on a neighbour's row is
+passed over; a picture's garbled reading, wide, still ends the run (letting those through
+too made Dolittle and 11/22/63 worse). Bench (2026-10-11): Artemis paragraph F1 0.975 →
+0.980, tuning breaks 0.22 → 0.21, words unchanged.
+
 **No paragraph starts inside a broken word.** Beside a picture or a drawn initial the
 margin moves, and a line continuing "seen her hus-" read as indented: the word was split
 over two paragraphs ("hus- band"). A line starting in lower case after one ending in a

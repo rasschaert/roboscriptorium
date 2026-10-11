@@ -20,6 +20,8 @@ from roboscriptorium.roles import KEEP_BODY_AT, LineRole
 # A paragraph-opening indent is ~10pt on the target scans; line-start jitter
 # from skew stays under ~3pt.
 INDENT_MIN = 5.0
+# A line narrower than this (points) on a text line's row is a mark split off it.
+SLIVER_WIDTH = 8.0
 # A paragraph indent is at most this wide; a line starting further right is centred.
 MAX_INDENT = 30.0
 # A line set flush starts at most this far left of the margin: further left, the
@@ -243,6 +245,26 @@ def _flush_where_paragraphs_indent(lines: list[Line], k: int) -> bool:
     )
 
 
+def _sliver(lines: list[Line], i: int) -> bool:
+    """Whether line i is a mark or two, narrower than `SLIVER_WIDTH`, sharing a row with
+    the line before or after it: they overlap over most of the shorter one's height. A
+    picture's garbled reading, wide, isn't one."""
+    line = lines[i]
+    if (
+        line.x1 - line.x0 >= SLIVER_WIDTH
+        or len(line.text.split()) != 1
+        or len(line.text.strip()) > 2
+    ):
+        return False
+    for j in (i - 1, i + 1):
+        if 0 <= j < len(lines):
+            other = lines[j]
+            overlap = min(line.y1, other.y1) - max(line.y0, other.y0)
+            if overlap > 0.5 * min(line.y1 - line.y0, other.y1 - other.y0):
+                return True
+    return False
+
+
 def _may_open(line: Line) -> bool:
     """Whether a line can start a paragraph: not in lower case or on punctuation."""
     text = line.text.lstrip()
@@ -362,6 +384,10 @@ def reflow(
             ref = SourceRef(page.number, index if line.source is None else line.source, line.typed)
             if role == "body":
                 kept.append((ref, line))
+                continue
+            if role == "artifact" and _sliver(lines, index):
+                # A sliver the layer split off a text line (a closing quote): dropped, it
+                # shouldn't cut the run its row belongs to.
                 continue
             # Indents are measured within each run of body lines.
             opening = _add_body(blocks, kept, opening, seen, known, scene, short_end, compound)
