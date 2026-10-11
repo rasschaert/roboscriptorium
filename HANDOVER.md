@@ -10,6 +10,17 @@ On `main`, pushed, clean. Lint and tests green (370). **Nothing runs**: no scree
 unloaded. **Ask the user before starting any Ollama or llama job**: they asked for none
 for now.
 
+### Running now (2026-10-11 evening)
+
+- **Reader tryout of Qwen3.8-Flash-Next (UD-IQ1_S)**, which the user runs in Unsloth Studio
+  (OpenAI-compatible server on 127.0.0.1:8888, partly offloaded to SSD; too big for RAM).
+  Screen `robo-tryout-flash`, log `work/runs/tryout-flash.log`; readings cached in
+  `work/tryout/reader-v1/readings/openai-local_unsloth_Qwen3.8-Flash-Next-GGUF.json`, so a
+  rerun resumes. `experiments/tryout.py` reads through it with the `openai-local:` prefix
+  (thinking off; on, it spends its whole budget thinking). Three sample crops beforehand:
+  every full line right, accents included (`níet`, `áls`), quotes straight. ~1–3 s a line.
+  Don't load Ollama models while it runs: memory is the user's experiment.
+
 ### Waiting, in this order
 
 1. **Agreed, not started: the review display fix.** A place question (one OCR doubt in

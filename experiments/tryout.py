@@ -248,6 +248,8 @@ def read_all(model: str, items: list[dict], books: dict) -> dict[str, str]:
     for n, i in enumerate(todo, 1):
         if model.startswith("glm-ocr"):
             text = ocrcheck.read_line(i["png"], model, settings.ollama_url)
+        elif model.startswith(OPENAI_LOCAL):
+            text = read_openai_local(i["png"], model, books[i["book"]]["prompt"])
         else:
             text = ocrcheck.transcribe(
                 i["png"], model, settings.ollama_url, books[i["book"]]["prompt"]
@@ -258,6 +260,38 @@ def read_all(model: str, items: list[dict], books: dict) -> dict[str, str]:
             cache.write_text(json.dumps(done, ensure_ascii=False))
             print(f"  {model}: {n}/{len(todo)}", flush=True)
     return done
+
+
+OPENAI_LOCAL = "openai-local:"
+OPENAI_LOCAL_URL = "http://127.0.0.1:8888/v1/chat/completions"  # Unsloth Studio's server
+
+
+def read_openai_local(png: bytes, model: str, prompt: str) -> str:
+    """A reading by a model on a local OpenAI-compatible server (`openai-local:<id>`),
+    asked as `ocrcheck.transcribe` asks Ollama: the image first, temperature 0, thinking
+    off, the first line of the answer."""
+    body = {
+        "model": model.removeprefix(OPENAI_LOCAL),
+        "messages": [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": "data:image/png;base64," + base64.b64encode(png).decode()},
+                    },
+                    {"type": "text", "text": prompt},
+                ],
+            }
+        ],
+        "temperature": 0,
+        "max_tokens": ocrcheck.MAX_LINE_TOKENS,
+        "chat_template_kwargs": {"enable_thinking": False},
+    }
+    resp = httpx.post(OPENAI_LOCAL_URL, json=body, timeout=600)
+    resp.raise_for_status()
+    text = resp.json()["choices"][0]["message"]["content"] or ""
+    return text.strip().split("\n")[0].strip()
 
 
 def quotes_differ(a: str, b: str) -> bool:
@@ -348,6 +382,7 @@ def run_reader(model: str) -> None:
 
 def _digests(models: list[str]) -> dict[str, str]:
     """Each Ollama model's digest, so a result says which build of a tag it scored."""
+    models = [m for m in models if not m.startswith(OPENAI_LOCAL)]
     tags = httpx.get(f"{Settings.from_env().ollama_url}/api/tags", timeout=30).json()["models"]
     digests = {t["name"]: t["digest"][:12] for t in tags}
     return {m: digests.get(m, "") for m in models}
