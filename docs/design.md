@@ -144,7 +144,9 @@ worse than none; with only the suspect's own label left out a signature common i
 its book still looks surer than it will on a new one, 117 / 50 / 31 / 11. What the prior can't know is a signature in no other book: Vals
 alarm loses the full stop before a closing quote 47 times (`word’` for `word.’`), and
 only that book's own answers can teach it (checklist: the book teaches itself). The bench decides whether
-the gain carries into a build. The fixed rule (both judges
+the gain carries into a build. It does: the arbiter retrained with an empty pair table (2026-10-11) is worse on both
+benches, tuning 0.31 → 0.34 and validation 0.70 → 0.73 wrong words a page after review,
+each interval clear of zero. The fixed rule (both judges
 agree, clef ≥ 0.3) asks about 35% of suspects because it needs winnow's
 agreement; it is only an explicit fallback (`ROBO_OCR_TRUST=0`). A missing or
 mismatched model stops the build, because a silent fallback once ran unnoticed.

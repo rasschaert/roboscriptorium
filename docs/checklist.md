@@ -116,8 +116,6 @@ reading shares: many are specks and faint marks.
       the same printing, and a third Dutch validation scan
 - [ ] **user** Settle verdicts on the tuning books (`golden review`), the disagreements
       the arbiter's labels sit on first: hours, spread out, whenever convenient
-- [ ] The pair prior's own ablation (an empty table, retrained, both benches): it shipped
-      inside the arbiter unbenched on its own. ~20 min
 - [ ] Training code for shipped models (trust, trees) into the package, with a
       feature-count test
 - [ ] Remove the `baseline` and `qwen2` worktrees when convenient
@@ -216,6 +214,8 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Trust data and the arbiter
 
+- [x] 2026-10-11 The pair prior's own ablation (an empty table, retrained): without it
+      tuning 0.31 → 0.34, validation 0.70 → 0.73, both worse; it stays
 - [x] ~~2026-10-11 Bad pages by the readers' disagreement~~: the 5% densest pages hold
       32 of 319 unasked words; dropped
 - [x] 2026-10-11 Whether a borrowed item's JP2s can be had: no, its download options are
