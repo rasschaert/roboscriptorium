@@ -10,10 +10,12 @@ set again at the widest setting and, with the instructions as the system turn, t
 readings that differ from the one-at-a-time pass. Results in work/probes/qwen-speed.json.
 
     uv run python experiments/probe_qwen_speed.py decompose|scale [lines per set] [--no-layout]
+    ROBO_PROBE_MODEL=qwen3.8:27b-q8_0 uv run python experiments/probe_qwen_speed.py scale 64 --no-layout
 """
 
 import base64
 import json
+import os
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor
@@ -26,10 +28,11 @@ from roboscriptorium import ocrcheck, quotes
 from roboscriptorium.pdf import cached_text_layer
 
 URL = "http://127.0.0.1:11434/api/generate"
-MODEL = "qwen3.8:27b-nvfp4"
+# Another build of the reader: ROBO_PROBE_MODEL=qwen3.8:27b-q8_0
+MODEL = os.environ.get("ROBO_PROBE_MODEL", "qwen3.8:27b-nvfp4")
 BOOK = Path("work/goede-dochter--ia-scan")
 PROMPT = quotes.style_prompt("nl", True, "...", "–")
-OUT = Path("work/probes/qwen-speed.json")
+OUT = Path("work/probes") / f"qwen-speed-{MODEL.replace(':', '_').replace('/', '_')}.json"
 
 
 def crops_from(first_page: int, want: int) -> list[tuple[str, bytes]]:
@@ -139,7 +142,7 @@ def scale(per_set: int, layout: bool = True) -> None:
         differ = sum(a != b for a, b in zip(base, wide, strict=True))
         print(f"set 1 again, {widest} at a time: {differ} of {per_set} differ from 1 at a time")
         OUT.parent.mkdir(parents=True, exist_ok=True)
-        OUT.with_name("qwen-speed-parallel.json").write_text(json.dumps(results, ensure_ascii=False, indent=1))
+        OUT.with_name(OUT.stem + "-parallel.json").write_text(json.dumps(results, ensure_ascii=False, indent=1))
         return
     # The system layout on a fresh set (its prefill is real), then the same set in the
     # pipeline's layout (its images now cached, so only its readings count).

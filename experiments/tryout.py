@@ -54,7 +54,7 @@ from roboscriptorium.reflow import HYPHENS
 sys.path.insert(0, str(Path(__file__).parent))
 from ocr_trust_data import fold  # noqa: E402  the trust data's labels compare lines the same way
 
-READER_VERSION = 1
+READER_VERSION = 2
 HARD, CONTROL = 30, 20
 JUDGE_VERSION = 1
 JUDGE_HARD, JUDGE_CONTROL = 25, 25
@@ -245,6 +245,7 @@ def read_all(model: str, items: list[dict], books: dict) -> dict[str, str]:
     done = json.loads(cache.read_text()) if cache.exists() else {}
     settings = Settings.from_env()
     todo = [i for i in items if i["id"] not in done]
+    start = datetime.now(UTC)
     for n, i in enumerate(todo, 1):
         if model.startswith("glm-ocr"):
             text = ocrcheck.read_line(i["png"], model, settings.ollama_url)
@@ -259,7 +260,15 @@ def read_all(model: str, items: list[dict], books: dict) -> dict[str, str]:
             cache.parent.mkdir(parents=True, exist_ok=True)
             cache.write_text(json.dumps(done, ensure_ascii=False))
             print(f"  {model}: {n}/{len(todo)}", flush=True)
+    if todo:
+        # One request at a time, so this is the model's own pace, not the pipeline's.
+        SECONDS[model] = (datetime.now(UTC) - start).total_seconds() / len(todo)
+        print(f"  {model}: {SECONDS[model]:.2f} s a line, one at a time", flush=True)
     return done
+
+
+# Seconds a line of each model read in this run (`read_all`), for the result.
+SECONDS: dict[str, float] = {}
 
 
 OPENAI_LOCAL = "openai-local:"
@@ -374,6 +383,7 @@ def run_reader(model: str) -> None:
         "commit": _commit(),
         "candidate": model,
         "digests": _digests([model, *incumbents]),
+        "seconds_a_line": SECONDS,
         "rows": rows,
     }
     with (GIT / "results.jsonl").open("a") as f:
