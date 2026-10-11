@@ -265,3 +265,9 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | build, Ex-minnaar, cached, today's code, from p. 7 | 273 | 1 | 0 |
 | 2026-10-11 | bench tuning, lost lines only under a full line | 1772 | 3 | 0 |
 | 2026-10-11 | tryout: reader v1, Qwen3.8-Flash-Next UD-IQ1_S via Unsloth Studio (SSD offload) | 550 | 10 | 0 |
+| 2026-10-11 | probe: page kinds by clef-flash, labelled set v1, alongside the validation bench | 1034 | 9 | 1 |
+| 2026-10-11 | probe: reader readings at 128k vs 8k context, 1 and 4 at a time, alongside the rebuild | 0 | 25 | 0 |
+| 2026-10-11 | probe: Qwen throughput at 1-16 requests at a time, and the instructions as system turn, idle machine | 0 | 10 | 0 |
+| 2026-10-11 | probe: Qwen throughput at 1-16 requests at a time, OLLAMA_NUM_PARALLEL=4, idle machine | 0 | 8 | 0 |
+| 2026-10-11 | probe: glm-ocr throughput at 1, 4, 8 requests at a time, OLLAMA_NUM_PARALLEL=4, idle machine | 0 | 1 | 0 |
+| 2026-10-11 | probe: decision models one at a time vs four, OLLAMA_NUM_PARALLEL=4, idle machine | 0 | 2 | 0 |

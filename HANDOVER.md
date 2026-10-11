@@ -4,15 +4,37 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running now: the rebuild (started 2026-10-11 ~21:45, the user's go)
+## State, 2026-10-11 ~22:50: nothing runs; the rebuild waits on the user's choice of reader
 
-`experiments/rebuild-trust.sh` in screen `robo-rebuild`: trust data for the 20 books of
-`ocr_trust_data.SPECS` (2,188 pages, cold, Qwen local, ~34 h), one book at a time, then
-the arbiter retrained (`train_ocr_trust.py --save`) and `bench tuning` as the new
-baseline. Progress, a line per step: `work/runs/rebuild/progress.txt`; logs beside it. A
-rerun resumes from the stage caches. After it: the line-role trees
-(`train_sorter.py --save`), `bench validation`, Verminkt's slice, then Stella.
-Report each book to the user as it finishes.
+**Nothing runs.** The rebuild chain (`experiments/rebuild-trust.sh`, screen `robo-rebuild`)
+was stopped at 22:12 in Goede dochter's Qwen stage, with the user's go, to measure the
+model server with nothing else on it. Its caches stand: Goede dochter's layout, roles
+(825 decisions), glm-ocr readings (4,200 lines) and tesseract; no Qwen reading was saved.
+`experiments/detached.sh rebuild experiments/rebuild-trust.sh` resumes from them. **Don't
+restart it before the user has chosen the reader** (below): the Qwen stage is three
+quarters of the chain and is where the choice bites, and since the trust data is being
+rebuilt from nothing anyway, a reader change costs no extra rebuild now and a full one
+later. Remind the user of the daily backup of `work/` before it restarts.
+
+**Measured tonight** (docs/decisions.md 2026-10-11, the last three lines; the probes
+`experiments/probe_qwen_speed.py`, `probe_glm_parallel.py`, `probe_decide_parallel.py`,
+results under `work/probes/`): Qwen 1.2 s a line, one request at a time whatever the
+concurrency (its MLX runner doesn't batch); glm-ocr doubled by `OLLAMA_NUM_PARALLEL=4`
+(set, AGENTS.md Environment; Ollama updated itself to 0.40.3); the decision models
+unchanged by it; 8k context changed no speed. At these rates the trust-data stage is
+~28 h (2,188 pages × ~48 s), Qwen ~22 h of it.
+
+**Waiting on the user: the reader.** Nothing on the server makes Qwen faster without
+changing what it reads. Each candidate is a reader change to screen on the frozen reader
+set (`tryouts/reader-v1.json`, 550 lines; `experiments/tryout.py run reader`, crops
+regenerate under `work/tryout/`, ~11 min of Qwen a candidate), picked by score first and
+speed second: (1) the instructions as the system turn, 0.80 s a line, 4 of 64 readings
+change (needs a layout setting in `ocrcheck.transcribe`, not written); (2) a shorter
+instruction; (3) a GGUF build of qwen3.8:27b on Ollama's llama.cpp runner, which batches
+four at a time (q8_0, 30 GB, the user pulls); the MTP build's benefit is unverified
+(Ollama's library says nothing about it, and it could speed only the 0.35 s of decode).
+Reading with Qwen only where the other readings disagree is the big lever (several ×) but
+a machine change for the bench, not a setting.
 
 ## Recovery, 2026-10-11 ~20:35: work/ was deleted
 
@@ -55,10 +77,12 @@ path for the next model served that way.
 
 ### Waiting, in this order
 
-1. **Done, on branch `review-display` (worktree `../roboscriptorium-review`), not yet on
-   main: the review display fix.** Merge it (`git merge --ff-only review-display`) once
-   the validation bench ends, so the bench's record names the code it ran; then remove
-   the worktree. Checked on Ex-minnaar (54 of 390 questions show other places).
+1. **Hazard: the worktree `../roboscriptorium-review` still holds the committed `work`
+   symlink** (pointing at the real `work/`), and branch `review-display` (merged in
+   1f41e1a) still tracks it, locally and on origin. Nothing may write into, check out
+   over or delete through it. With the user's go: `git worktree remove --force
+   ../roboscriptorium-review` (git unlinks the symlink rather than following it), then
+   `git branch -D review-display` and `git push origin --delete review-display`.
 2. **Agreed, in progress: `roboscriptorium init <pdf>`** (checklist, Beyond the golden
    books' kind; what goes in the EPUB is decisions.md 2026-10-11). Labels done:
    `tryouts/page-kinds-v1.json` (31 books, 1,034 pages; per-book files and notes in

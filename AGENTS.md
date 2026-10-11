@@ -80,6 +80,9 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.
+- **A probe beside a running chain sends the chain's model options** (no `num_ctx` of its
+  own): Ollama reloads a model whenever the requested context differs, so two clients at
+  different contexts reload it on every switch and throttle both.
 - **Questions the bench can't weigh** (the reviewer's time against wrong words, say) are
   the user's call: ask in one short sentence.
 
@@ -311,8 +314,14 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   model run waits while the battery is under 30%, checking hourly
   (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
   job started another way).
-- Ollama 0.40.2 at `http://127.0.0.1:11434`, context length 8k in the app's settings (128k
-  held memory for nothing and slowed glm-ocr ~6×; readings are the same either way) (scores before 2026-10-06 were on 0.35.1).
+- Ollama 0.40.3 at `http://127.0.0.1:11434` (scores before 2026-10-06 were on 0.35.1).
+  Context length 8k in the app's settings: 128k only held memory for KV caches, and
+  readings are the same either way. `OLLAMA_NUM_PARALLEL=4`, set with `launchctl setenv`
+  (the app reads it when it starts; `launchctl unsetenv` removes it): the llama.cpp-served
+  models (glm-ocr, clef-flash, winnow) get four slots, which doubles glm-ocr's throughput
+  and changes no reading; the MLX runner behind the nvfp4 builds (qwen3.8, clef:27b)
+  serves one request at a time whatever the setting, and the decision models gain
+  nothing either way.
   Ollaya was uninstalled on 2026-10-08; every model runs on Ollama.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
   `pdftotext`, `pdfimages`), epubcheck, d2 (all Homebrew where applicable).
