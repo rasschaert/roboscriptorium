@@ -105,9 +105,23 @@ reading shares: many are specks and faint marks.
 
 ## 8. Beyond the golden books' kind
 
-- [ ] Page classification, so `body_pages` needn't be set in book.toml: the page-type
-      models so far miss the same pages (prefaces, blanks at the edges); IA's scandata
-      labels are too coarse to start from (below, Done)
+- [ ] **`roboscriptorium init <pdf>`** (agreed 2026-10-11): drafts book.toml and asks the
+      user only what it can't settle, on the review page; `build` and `review` run it first
+      when book.toml is missing. Steps: (1) each page's **kind** (cover, blank, scan noise
+      or library stamp, half title, title page, colophon, contents, dedication, motto,
+      foreword or introduction, dramatis personae, text, epilogue or afterword, notes,
+      appendix, bibliography, index, acknowledgements, about the author, also by / ads,
+      back cover) and a fixed rule from kind to *in the EPUB*, *metadata* (title,
+      colophon: author, translator, ISBN) or *left out*; the text proper is all the
+      author's parts, not only the narrative, and non-fiction adds notes, appendices,
+      bibliography and index. (2) Labels: every golden scan's pages by kind (the old
+      body ranges follow the references, which leave forewords and afterwords out, so
+      they aren't labels for this). (3) Signals without models first (words on the page,
+      page number, short centred lines, ©/ISBN, headings like "Woord vooraf", "Proloog",
+      "Inhoud"), clef-flash's page-kind question on the doubtful pages. (4) Title,
+      author, translator, language from the title page and colophon. The earlier screen
+      put 227–231 of 252 edge pages on the right side, missing forewords and afterwords
+      that the ranges of then left out (design.md, Where the body starts and ends).
 - [ ] An image-only scan through the whole pipeline (Goede dochter with its layer removed:
       tesseract 0.35% CER against the layer's 0.20%): does the OCR check close the gap?
       ~1 h cold. Then italics from tesseract's word boxes
