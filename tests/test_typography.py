@@ -143,3 +143,10 @@ def test_an_unspaced_dash_keeps_an_italic_word_from_swallowing_its_neighbour():
     assert (
         epub._inline("Ze zei: ‘wat nu, vriend?’", {2, 3, 4}) == "Ze zei: ‘<i>wat nu, vriend</i>?’"
     )
+
+
+def test_after_a_question_mark_an_ellipsis_keeps_the_layers_space():
+    assert ellipsised("Waar? … Ik zocht", GLYPH)[0] == "Waar? … Ik zocht"
+    assert ellipsised("Waar?… Ik zocht", GLYPH)[0] == "Waar?… Ik zocht"
+    # After a word the book's style still decides.
+    assert ellipsised("Waar … Ik zocht", GLYPH)[0] == "Waar… Ik zocht"

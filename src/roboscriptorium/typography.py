@@ -284,7 +284,8 @@ def ellipsised(text: str, style: EllipsisStyle) -> tuple[str, list[int]]:
     text's characters went in it.
 
     The space before is set only after a word or closing punctuation, as a no-break
-    space, and spaced dots are held together; what follows the ellipsis is left as it is.
+    space (after "?" or "!" as the layer has it), and spaced dots are held together; what
+    follows the ellipsis is left as it is.
     Four dots (a full stop and an ellipsis) are left alone.
     """
     dots = style.dots.replace(" ", "\u00a0")
@@ -295,7 +296,11 @@ def ellipsised(text: str, style: EllipsisStyle) -> tuple[str, list[int]]:
             out.append(c)
         prev = text[m.start() - 1] if m.start() > 0 else ""
         lead = m.group(1)
-        if prev and prev not in _OPENING:
+        if prev in "?!":
+            # After a question or exclamation mark books space it their own way, mostly
+            # with a space even where a word's ellipsis has none: as the layer reads it.
+            lead = "\u00a0" if lead else ""
+        elif prev and prev not in _OPENING:
             lead = "\u00a0" if style.space_before else ""
         at = len("".join(out)) + len(lead)
         where += [at] * (m.end() - m.start())
