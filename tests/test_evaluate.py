@@ -86,7 +86,7 @@ def test_eval_locates_remaining_disagreements_on_the_layer_pages_by_their_review
     monkeypatch.setattr(cli, "_italics_unlike", lambda book: "")
     lines = []
     monkeypatch.setattr(cli.typer, "echo", lambda text="": lines.append(text))
-    cli._evaluate_book(tmp_path, None, None, True, False)
+    cli._evaluate_book(tmp_path, None, None, True, False, "abc1234")
     remaining = next(t for t in lines if "remaining disagreements" in t)
     assert remaining.endswith("remaining disagreements: ocr 1")
 

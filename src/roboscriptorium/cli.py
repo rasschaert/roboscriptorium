@@ -384,6 +384,18 @@ def quality_report(specs: list[str], score_test: bool = _score_test()) -> None:
         )
 
 
+def _commit() -> str:
+    """The checkout's commit, "-dirty" with uncommitted changes. Read when a run starts:
+    the code a run executes is what was there when Python imported it."""
+    commit = subprocess.run(
+        ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
+    ).stdout.strip()
+    dirty = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=no"], capture_output=True, text=True
+    ).stdout.strip()
+    return commit + ("-dirty" if dirty else "")
+
+
 @app.command("bench")
 def run_bench(
     set_name: str = typer.Argument("tuning", help=f"One of {', '.join(bench.SETS)}"),
@@ -396,6 +408,7 @@ def run_bench(
     if set_name == "test" and not score_test:
         raise typer.BadParameter("the test set is scored once, at the end: pass --score-test")
     settings = Settings.from_env()
+    commit = _commit()
     built = []
     for spec in bench.SETS[set_name]:
         typer.echo(f"== {spec}")
@@ -441,16 +454,10 @@ def run_bench(
                 breaks=disagreements.break_errors(_scored(book, stages), reference, stages.pages),
             ),
         }
-    commit = subprocess.run(
-        ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
-    ).stdout.strip()
-    dirty = subprocess.run(
-        ["git", "status", "--porcelain", "--untracked-files=no"], capture_output=True, text=True
-    ).stdout.strip()
     record = {
         "set": set_name,
         "at": datetime.now(UTC).isoformat(timespec="seconds"),
-        "commit": commit + ("-dirty" if dirty else ""),
+        "commit": commit,
         "settings": {k: v for k, v in asdict(settings).items() if not k.endswith("_url")},
         "model_versions": _model_versions(settings),
         "books": books,
@@ -515,10 +522,11 @@ def evaluate_books(
     """Build golden books' scans and score each against its reference text, one by one."""
     for book_dir in book_dirs:
         _not_the_test_set(book_dir, score_test)
+    commit = _commit()
     summary = []
     for book_dir in book_dirs:
         typer.echo(f"== {book_dir.name}")
-        result = _evaluate_book(book_dir, pages, chapters, no_models, check_ocr)
+        result = _evaluate_book(book_dir, pages, chapters, no_models, check_ocr, commit)
         summary.append(
             f"{book_dir.name[:40]:40} CER {result.cer:6.2%}  WER {result.wer:6.2%}  "
             f"paragraphs P {result.paragraph_precision:.3f} R {result.paragraph_recall:.3f}  "
@@ -551,7 +559,12 @@ def _model_versions(settings: Settings) -> dict[str, str]:
 
 
 def _evaluate_book(
-    book_dir: Path, pages: str | None, chapters: str | None, no_models: bool, check_ocr: bool
+    book_dir: Path,
+    pages: str | None,
+    chapters: str | None,
+    no_models: bool,
+    check_ocr: bool,
+    commit: str,
 ) -> evaluate.Score:
     book, stages, doc, reference, around = _build_golden(
         book_dir, pages, chapters, no_models, check_ocr
@@ -617,9 +630,7 @@ def _evaluate_book(
     settings = Settings.from_env()
     record = {
         "at": datetime.now(UTC).isoformat(timespec="seconds"),
-        "commit": subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True
-        ).stdout.strip(),
+        "commit": commit,
         "pages": pages,
         "chapters": chapters,
         "models": not no_models,
