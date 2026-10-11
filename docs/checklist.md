@@ -21,17 +21,14 @@ areas below in order, and the test set scored once at the end.
 
 About 85% of the wrong words left after review were never suspects: every reading agreed
 on them, so no judge and no question saw them. The rules have taken the groups with one
-cause; what is left needs new suspects where the readings agree.
+cause; what is left needs new suspects where the readings agree, which today's models
+don't yet give at a price worth the reviewer's time.
 
-- [ ] A reader of the finished text (the proofreader), for errors every reading shares
-      or reflow makes ("check" for "cheek", "effanol" for "ethanol"): a proposer
-      (Qwen3.8 thinking, or gemma4:26b) with clef as the filter. Measured first on the
-      unasked list (`experiments/unasked.py`, 319 words over the tuning books): how many
-      of those lines it flags, and its false alarms a page on the rest. Guards: it only
-      asks, in closed kinds; told the text is a transcription; silent on a counterexample
-      set first (You're Never Weird's play on spelling, fragments, foreign words). The
-      first probe found ~4 real errors among 56 flags; clef's filter kept both clear
-      catches and dropped 31 of 37 urges. ~2 h probe; a stage only if `bench` says so
+- [ ] A reader of the finished text (the proofreader), for errors every reading shares:
+      probed twice, about one catch per 100 paragraphs against as many false questions
+      (2026-10-11, qwen3.8 proposing, clef filtering): rerun the probe
+      (`experiments/probe_text_reader.py`, ~25 min) whenever a stronger text model comes,
+      build it only if the catches outnumber the false questions
 - [ ] Smaller groups, by size, only where one cause covers several: quotes (~35 words;
       nested quotes need the book's own habit, De tuin sets “ alone 147 times), word breaks
       (~70, scattered), small capitals read in lower case (7, visual)
