@@ -22,8 +22,8 @@ On `main`, pushed. Lint and tests green.
   out) and a page-top rule (272 of 295 found), dropped slivers no longer split runs
   (Artemis), footnotes out of the running text (Reis 7 of 8), IA scandata (null), the
   user's other books' body pages (De kus and Russische roman open on p. 7).
-- Ex-minnaar's motto (p. 7) and epigraphs in general aren't handled; De eerlijke
-  vinder (validation) has a `motto` class to check against later.
+- Epigraphs on a page of their own are set apart (d9d00d3); Ex-minnaar's `body_pages`
+  now start on p. 7 for its motto, so its rebuild after the cold build picks it up.
 - **Python 3.15**: blocked on PyTorch (no stable cp315 wheel; tracking
   pytorch/pytorch#184352, nightlies have it). Tried in worktree
   `../roboscriptorium-py315` (branch `py315`, own `.venv` with nightly torch 2.16.dev):
