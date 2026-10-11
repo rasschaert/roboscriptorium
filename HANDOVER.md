@@ -10,7 +10,11 @@ On `main`, pushed, clean. Lint and tests green (370). **Nothing runs**: no scree
 unloaded. **Ask the user before starting any Ollama or llama job**: they asked for none
 for now.
 
-Nothing runs. Qwen3.8-Flash-Next (~1 bit, the user's Unsloth Studio) was screened as a
+**Running: the validation bench** (started ~19:00, user's go): screen `robo-validation`,
+log `work/runs/validation.log`. Koning Wilders' Qwen reading resumes at 600/2,439, then
+Het laatste bevel's slice cold; ~3 h. The other five books are cached. A rerun resumes.
+
+Qwen3.8-Flash-Next (~1 bit, the user's Unsloth Studio) was screened as a
 reader and rejected (docs/models.md); `experiments/tryout.py` keeps its `openai-local:`
 path for the next model served that way.
 
