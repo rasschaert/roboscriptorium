@@ -218,6 +218,14 @@ def _short_end(lines: list[Line], k: int, margin: float) -> bool:
     )
 
 
+def _broken_word(text: str, line: Line) -> bool:
+    """Whether `line` continues a word `text` broke with a hyphen: no paragraph starts there,
+    however the line is set (beside a picture or an initial its margin moves)."""
+    return (
+        text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha() and line.text[:1].islower()
+    )
+
+
 def _may_open(line: Line) -> bool:
     """Whether a line can start a paragraph: not in lower case or on punctuation."""
     text = line.text.lstrip()
@@ -503,10 +511,12 @@ def _add_body(
                 )
             )
             scene[0] = False
-        elif (
-            starts_paragraph
-            or line.initial
-            or (k == 0 and line.starts_paragraph is None and short_end[0] and _may_open(line))
+        elif line.initial or (
+            (
+                starts_paragraph
+                or (k == 0 and line.starts_paragraph is None and short_end[0] and _may_open(line))
+            )
+            and not _broken_word(current.text, line)
         ):
             blocks.append(Paragraph(line.text, [ref], initial=line.initial))
         else:

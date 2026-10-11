@@ -565,3 +565,24 @@ def test_tidy_keeps_the_spaces_of_a_dotted_run():
     assert tidy("Hij wachtte . . . en zweeg.") == "Hij wachtte . . . en zweeg."
     assert tidy("Hij wachtte . . . . Toen") == "Hij wachtte . . . . Toen"
     assert tidy("Hij kwam . Toen") == "Hij kwam. Toen"
+
+
+def test_a_word_broken_at_a_lines_end_continues_its_paragraph_whatever_the_indent():
+    pages = [
+        page(
+            1,
+            [
+                (10, "She had never in her life seen her hus-"),
+                (40, "band so angry."),
+                (40, "The next day was calm."),
+            ],
+        )
+    ]
+    blocks = reflow(pages)
+    assert [b.text for b in blocks] == [
+        "She had never in her life seen her husband so angry.",
+        "The next day was calm.",
+    ]
+    # A dash ending speech before a new paragraph is no broken word.
+    pages = [page(1, [(10, "'Ik moet-"), (40, "'Wat?'")])]
+    assert len(reflow(pages)) == 2
