@@ -252,6 +252,13 @@ words or fewer opening inside a sentence (`quotes.TERM_WORDS`), isn't asked. Ben
 (2026-10-11): tuning **better** 0.37 → 0.37 (De tuin 0.46 → 0.41 for 0.08 more
 questions a page), validation unchanged.
 
+**A quote left open at a paragraph's end is asked whatever follows.** A quotation that
+runs on into a paragraph opening with a quote looks exactly like a closing quote the
+layer lost before speech that follows; the golden references run a quote over in 56 of
+~58,000 paragraphs, and De tuin alone loses about 40 closing quotes there. Bench
+(2026-10-11): tuning 0.37 → 0.36 [−0.02, −0.00] (De tuin's unasked 0.24 → 0.16 for 0.35
+more questions a page), validation 0.75 → 0.75, no book worse.
+
 ## Missing lines
 
 A layout region with no text-layer line in it is read by glm-ocr only when it is about

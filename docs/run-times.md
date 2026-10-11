@@ -209,3 +209,7 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, lost stops before a closing quote asked | 590 | 1 | 0 |
 | 2026-10-11 | bench tuning, lost drawn initials flagged | 1580 | 2 | 0 |
 | 2026-10-11 | bench validation, lost drawn initials flagged | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, open quotes at a paragraph's end always asked | 1580 | 5 | 0 |
+| 2026-10-11 | bench tuning, open quotes at a paragraph's end always asked | 1580 | 5 | 0 |
+| 2026-10-11 | bench validation, open quotes at a paragraph's end always asked | 590 | 2 | 0 |
+| 2026-10-11 | bench validation, open quotes at a paragraph's end always asked | 590 | 2 | 0 |

@@ -283,6 +283,8 @@ many the layer had wrong.
 
 ## The reviewer
 
+- [x] 2026-10-11 A quote left open at a paragraph's end asked whatever follows: tuning
+      0.37 → 0.36, De tuin's unasked 0.24 → 0.16, no book worse
 - [x] 2026-10-11 A section opening in lower case below a heading flagged as a lost drawn
       initial: Het ijzige land 0.25 → 0.20, pooled no change, no book worse
 - [x] 2026-10-11 Speech closed on a letter at a paragraph's end asked as a quote question
