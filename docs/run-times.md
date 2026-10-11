@@ -259,3 +259,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, epigraphs with reading guards | 590 | 1 | 0 |
 | 2026-10-11 | bench tuning, heading labels called page numbers | 1580 | 3 | 0 |
 | 2026-10-11 | bench validation, heading labels called page numbers | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, De eerlijke vinder and Monterosso moved to tuning, models retrained | 1772 | 3 | 0 |
+| 2026-10-11 | bench validation, after the move, models retrained | 398 | 1 | 0 |

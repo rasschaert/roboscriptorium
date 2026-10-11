@@ -48,14 +48,14 @@ SETS = {
         "het-heft-in-eigen-hand--ia-scan:9-123:1-6",
         "doodskleed--ia-scan:13-96:1-14",
         "het-ijzige-land--ia-scan:11-104:1-11",
+        "de-eerlijke-vinder--ia-scan",
+        "monterosso-mon-amour--ia-scan",
     ],
     "validation": [
         "de-kerk-van-de-dode-meisjes--ia-scan:11-107:1-13",
         "vuurspel--ia-scan:9-111:1-6",
-        "de-eerlijke-vinder--ia-scan",
         "youre-never-weird-on-the-internet--ia-scan:13-94:1-16",
         "villa-toscane--calibre-pdf::1-12",
-        "monterosso-mon-amour--ia-scan",
         "de-stilte-van-de-hel--ia-scan:11-101:1-15",
     ],
     "test": [

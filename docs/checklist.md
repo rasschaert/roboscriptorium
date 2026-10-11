@@ -72,8 +72,8 @@ In this order:
 
 ## 5. Errors no question asks about
 
-- [ ] De eerlijke vinder's 1.02 unasked a page, the most of any ordinary book (words 26,
-      letters 21, extra words 18): find where they come from. ~1 h, no models
+- [ ] De eerlijke vinder's unasked errors (0.88 a page, the most of any ordinary book;
+      tuning since 2026-10-11): find where they come from. ~1 h, no models
 
 ## 6. Structure
 
@@ -113,8 +113,10 @@ reading shares: many are specks and faint marks.
 
 ## 9. Golden books and housekeeping
 
-- [ ] **user** More golden pairs: modern English Scribe scans with the publisher's EPUB of
-      the same printing, and a third Dutch validation scan
+- [ ] **user** More golden pairs: one or two Dutch validation books (validation is down to
+      five, three Dutch scans): an IA Scribe scan and the publisher's own EPUB of the same
+      printing, best from De Arbeiderspers, Prometheus/Ooievaar, Manteau or Vrijdag
+      (publishers not yet used); a Kosmos book for later, beyond prose
 - [ ] **user** Settle verdicts on the tuning books (`golden review`), the disagreements
       the arbiter's labels sit on first: hours, spread out, whenever convenient
 - [ ] Remove the `baseline` and `qwen2` worktrees when convenient
