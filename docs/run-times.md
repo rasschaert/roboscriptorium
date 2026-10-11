@@ -195,3 +195,11 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | sorter lines rebuilt, validation of 7 books, bughunt merged | 0 | 11 | 0 |
 | 2026-10-11 | sorter retrained, without Monterosso | 0 | 0 | 0 |
 | 2026-10-11 | bench tuning, sorter on with the running-text guard | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, 7 books, new baseline (Monterosso and De stilte cold) | 590 | 173 | 0 |
+| 2026-10-11 | bench validation, 7 books, sorter on with the guard | 590 | 2 | 0 |
+| 2026-10-11 | bench tuning, before running-text, small capitals declared | 1580 | 3 | 0 |
+| 2026-10-11 | bench tuning, running-text kept and flagged | 1580 | 4 | 0 |
+| 2026-10-11 | bench tuning, running-text, sorter on with the guard | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, running-text kept and flagged | 590 | 2 | 0 |
+| 2026-10-11 | bench tuning, paragraph breaks in unindented books | 1580 | 2 | 0 |
+| 2026-10-11 | bench validation, paragraph breaks in unindented books | 590 | 1 | 0 |

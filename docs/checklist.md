@@ -12,27 +12,12 @@ positions and get renumbered.
 Where the build stands and where results can still move: [outlook.md](outlook.md).
 What runs right now and what waits on the user: `HANDOVER.md`.
 
-**The plan now:** more training data from new golden books, settle the line-role trees,
-then **Stella end to end with the user's review**, the target book, then the user's four books. After them, the open
+**The plan now:** accuracy from what the bench data shows (the user: improve before
+building), then **Stella end to end with the user's review**, the target book, then the user's four books. After them, the open
 areas below in order, and the test set scored once at the end.
 
 ## 1. Right after the chains (~1 h)
 
-- [ ] Line roles by trees on by default if their bench holds. On the new baseline: tuning
-      0.50 → 0.48, validation 0.74 → 0.67, no change pooled; clearly better on Metro,
-      De cipier, Artemis, 11/22/63 and Villa Toscane, none clearly worse, but Thief-Taker
-      0.48 → 0.61 [−0.01, +0.38], Crime 0.42 → 0.69 and Doodskleed 0.43 → 0.51 lean
-      worse: find why on Thief-Taker and Crime first (Crime p. 97 lost a last line)
-- [ ] Vuurspel sets 7.84 paragraph breaks wrong a page (every other book under 0.8): a
-      pair or derive problem, not the build's, until shown otherwise; it lifts
-      validation's breaks from ~0.2 to 1.72
-- [ ] De tuin, if it still loses after the retrain: the four questions no longer asked on
-      pp. 15, 23, 43 and 46 (local re-read, 0.77 → 0.85), what the arbiter gave them
-- [ ] Validation from 5 books to 7: Monterosso and De stilte van de hel are in
-      `bench.SETS` (manifest, derive and slice done). Left: retrain the trees without
-      Monterosso (`train_sorter.py --rebuild` then `--save`; De stilte's lines need one
-      model pass) and `bench validation` for the new validation baseline, rules and trees.
-      ~2 h cold, after the `bughunt` verdict
 - [ ] `ROBO_OCR_ASK_BELOW` at 0.7, 0.8 and 0.9 on the retrained arbiter (warm, ~2 min
       each). The user gives no exchange rate (answers until tired), so choose where the
       wrong words a question removes fall off; record the curve
@@ -208,6 +193,8 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Golden books
 
+- [x] 2026-10-11 Validation from 5 books to 7 (Monterosso and De stilte van de hel, cold):
+      **0.76** wrong words a page after review by the rules
 - [x] 2026-10-10 Sets changed (the user's go): De kerk van de dode meisjes and Vuurspel
       validate; De tuin, Het heft in eigen hand, Doodskleed and Het ijzige land tune.
       Derive learns `capital_classes` and a spaced `--` as the print's dash. Rejected:
@@ -230,6 +217,8 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Trust data and the arbiter
 
+- [x] 2026-10-11 ~~De tuin's four questions no longer asked~~ dropped: it no longer loses
+      (0.64 → 0.59 with `bughunt`)
 - [x] 2026-10-11 Branch `bughunt` merged: the hunt's 22 fixes and its seven open
       findings, trust data rebuilt warm (MODEL_VERSION 6), arbiter retrained; tuning
       **better** 0.50 → 0.48, six books clearly better, none worse; validation no change
@@ -308,6 +297,13 @@ many the layer had wrong.
 
 ## Structure and line roles
 
+- [x] 2026-10-11 Paragraph breaks in unindented books (Bruna's): justification judged on
+      lines that stop mid-sentence, a page's short last sentence carried over; validation
+      breaks 1.97 → 0.21 a page (Vuurspel 7.91 → 0.44), tuning 0.26 → 0.22, no book worse
+- [x] 2026-10-11 A dropped line that reads as running text kept and flagged
+      (`roles.running_text`): tuning **better** 0.43 → 0.37, validation **better** 0.82 →
+      0.76. The trees on top of it: no change (0.37 → 0.40, 0.76 → 0.72), Thief-Taker and
+      Vuurspel clearly worse; ~~trees on by default~~ dropped, they stay off
 - [x] 2026-10-09 Line roles by trees (`sorter.py`, `ROBO_SORTER=1`, off): role errors
       406 → 152 tuning, 77 → 29 validation leaving one book out; bench no change, three
       books clearly better, Crime one lost line

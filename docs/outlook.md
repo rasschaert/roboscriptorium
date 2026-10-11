@@ -22,15 +22,15 @@ With the rules' line roles (the default), commit `dc3eb53`:
 | Busy layout, pictures | 11/22/63, You're Never Weird | 1.00–1.04 | 1.4–3.1 | 0.13–0.54 |
 | Washed-out scan | Afscheid | 0.63 (its typed pages now count) | 3.5 | 1.73 (its EPUB's paragraphing) |
 
-Bench totals, the new baseline (2026-10-11: 15 tuning books with De tuin, Het heft,
-Doodskleed and Het ijzige land; Kerk and Vuurspel validating): tuning **0.50**, validation
-**0.74** wrong words a page after review; paragraph breaks set wrong 0.26 and 1.72 a page
-(Vuurspel's 7.84, a pair problem until shown otherwise). After review is mostly the
-errors no question asks about: 0.39 of tuning's 0.50, the rest the reviewer's expected
-slips. Unasked, by kind over the tuning books: punctuation ~130, letters ~115, word
-breaks ~75, missing words ~70, quotes ~64. With the line-role trees on (`ROBO_SORTER=1`):
-0.48 and 0.67, no change pooled; four tuning books clearly better, Thief-Taker and Crime
-leaning worse.
+Bench totals (2026-10-11, after the `bughunt` merge, the running-text rule and the
+breaks fix; 15 tuning books, 7 validating with Monterosso and De stilte): tuning **0.37**,
+validation **0.75** wrong words a page after review; paragraph breaks set wrong 0.22 and
+0.21 a page. After review is mostly the errors no question asks about: the arbiter
+settles only ~0.06 suspects a page wrongly, ~85% of the unasked errors were never
+suspects. Unasked, by kind over the tuning books: punctuation ~150, letters ~115, word
+breaks ~75, missing words ~70 (fewer since running-text), quotes ~57. The line-role trees
+(`ROBO_SORTER=1`) no longer help on top of the running-text rule: 0.37 → 0.40 and 0.76 →
+0.72, no change, Thief-Taker and Vuurspel worse; they stay off.
 
 Until 2026-10-10 every bench figure but Goede dochter's and De tuin's measured DeepInfra's hosted Qwen,
 not the local build Stella gets; read again locally on 2026-10-10, no change by the bench.
@@ -45,10 +45,11 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
 ## Where there is room, by expected gain
 
 1. **Structure.** The bench now counts paragraph breaks per page and prints headings.
-   - Line roles: the trees (`sorter.py`) halve role errors and improve three books
-     clearly; Crime loses a last line. Bench them on the local readings, then switch.
-   - Breaks left: Afscheid's are its EPUB's; Artemis 0.74 (its letters, set without
-     spacing), Dolittle 0.42, Thief-Taker 0.36, a section break at a page turn.
+   - Line roles: the trees (`sorter.py`) halve role errors but no longer move the bench
+     once the rules keep lost running text (`roles.running_text`).
+   - Breaks left: Afscheid's are its EPUB's; Artemis 0.46 (its letters, set without
+     spacing), Dolittle 0.42, Vuurspel 0.44, De stilte 0.36 (sentences ending at the
+     margin in unindented text), a section break at a page turn.
    - Headings still lost: De eerlijke vinder 0/4 (part numerals), You're Never Weird 4/16.
      Thief-Taker 9/22 and Metro 5/10 are a scoring convention (label and title as two).
    - Scene breaks are set but not scored: derive drops the references' blank lines.

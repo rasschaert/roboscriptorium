@@ -325,6 +325,21 @@ Measured as paragraph breaks set wrong per page (2026-10-09): tuning 0.46 → 0.
 on), Artemis's letters set without spacing, and a section break that falls on a page
 turn, where nothing on the page shows it.
 
+**In unindented text a short sentence end starts a paragraph, if the text is justified.**
+A.W. Bruna sets Vuurspel and De stilte van de hel without indents, so a break shows
+only as a line ending a sentence short of the right margin. That only means something
+in justified text, which was judged on all eleven lines around the line: dialogue's short
+lines made a justified page look ragged, and about half the breaks were lost (De
+stilte's recall 0.54). Only lines that stop mid-sentence judge it now: in justified text
+they reach the margin whatever the dialogue does, in ragged text they don't (the
+counterexample in `tests/test_reflow.py`). A line is short from 2% of the line width (a
+justified line ends within 3 pt; lines 7–16 pt short were real ends), and a page that
+ends on a short sentence starts a paragraph on the next page's first line, unless that
+opens in lower case. Bench (2026-10-11): validation breaks 1.97 → 0.21 a page (Vuurspel
+7.91 → 0.44, De stilte 4.90 → 0.36), tuning 0.26 → 0.22 (Artemis 0.75 → 0.46), no book
+worse, words unchanged. Left on De stilte, 3.5% of its breaks: sentences that end within
+3 pt of the margin, which the print doesn't show either.
+
 **A scene break is white space of two lines, or an ornament line.** Over 1.8 pitches
 after a sentence (one blank line is two pitches), or a line of three ornament marks or
 more ("* * *"; one or two are a speck), puts a break before the next paragraph, set
