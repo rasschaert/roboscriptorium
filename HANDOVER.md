@@ -4,6 +4,24 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
+## Recovery, 2026-10-11 ~20:35: work/ was deleted
+
+A worktree's `work` symlink was committed (`git add -A`) and the merge replaced the
+ignored `work/` folder with it (fixed in afd6dd2; `.gitignore` says `/work`; never
+symlink data into a worktree, stage by name: the user's global CLAUDE.md). Restored
+from the user's Downloads, fingerprint-checked against the manifests: every golden
+scan and publisher EPUB, `golden fetch` (book.toml, IA files) and `golden derive` for
+all 25 copyrighted references; the user's five books (source.pdf from Downloads,
+book.toml rewritten from the docs; Ex-minnaar is the 11 MB PDF); Stella's two dated
+EPUBs of 2026-10-07; `work/tessdata/nld.traineddata` and the word lists.
+
+**Still lost** unless the user's backup of ~2026-10-07 has them: every stage cache
+(days of model time), Stella's review answers, all golden verdicts (none were in git;
+Koning Wilders' "wàs" ×2 is in decisions.md), the arbiter and line-role trees
+(`work/models/`), the trust data, bench results (`work/bench/`), tryout crops and
+readings (`work/tryout/`), the page-kind label files (the frozen set is in git), and
+every probe. Nothing runs; start no model job without the user's go.
+
 ## State, 2026-10-11 ~18:30, session end (the user is about to run a memory-heavy job)
 
 On `main`, pushed, clean. Lint and tests green (370). **Nothing runs**: no screen, Ollama
