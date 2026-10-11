@@ -51,6 +51,9 @@ mark.swap { background: var(--swap-bg); color: var(--swap); border-bottom: 2px d
 mark.lacks { background: var(--lacks-bg); color: var(--lacks); text-decoration: line-through 2px; }
 mark.lacks::before { content: "‸"; text-decoration: none; display: inline-block; margin-right: 1px; }
 mark .space { opacity: 0.7; font-weight: 400; }
+mark.fixed, mark.asked { background: none; color: inherit; font-weight: 400; padding: 0; border-radius: 0; }
+mark.fixed { border-bottom: 1px solid var(--muted); }
+mark.asked { border-bottom: 2px dashed var(--muted); }
 mark sub.dash { font: 600 9px system-ui, sans-serif; opacity: 0.8; margin-left: 1px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--muted); margin: 2px 0 8px; }
 .legend mark { font-size: 14px; }
@@ -242,9 +245,12 @@ function textBlock(r, doubt) {
       <textarea id="text" rows="${Math.min(16, draft.text.split("\n").length + 1)}">${esc(draft.text)}</textarea>${charPad()}${after}`;
   }
   const base = central(r.readings.map(g => g.text));
+  const parts = placeParts(r);
   const rows = r.readings.map((g, k) => {
     const who = [k === 0 ? "text layer" : "", ...g.votes].filter(Boolean).join(" · ");
-    const text = k === base ? esc(g.text) : marked(g.text, r.readings[base].text);
+    const text = parts
+      ? parts.before + (k === base ? esc(parts.mids[k]) : marked(parts.mids[k], parts.mids[base])) + parts.after
+      : k === base ? esc(g.text) : marked(g.text, r.readings[base].text);
     return `<label class="option reading-option ${draft.reading === k ? "on" : ""} ${k === base ? "base" : ""}"><input type="radio" name="reading" value="${k}" ${draft.reading === k ? "checked" : ""}>
       <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${text}</span>
       <span class="votes">${esc(who)}</span></label>`;
@@ -254,12 +260,45 @@ function textBlock(r, doubt) {
       <span><mark class="has">x</mark> only this one has it</span>
       <span><mark class="lacks">x</mark> this one lacks it</span>
       <span><mark class="swap">x</mark> this one has something else</span>
-      <span><mark class="has"><span class="space">␣</span></mark> a space</span></div>${before}
+      <span><mark class="has"><span class="space">␣</span></mark> a space</span>
+      ${parts && parts.asked ? `<span><mark class="asked">x</mark> asked in a question of its own</span>` : ""}
+      ${parts && parts.fixed ? `<span><mark class="fixed">x</mark> already corrected</span>` : ""}</div>${before}
     <div class="options">${rows}
       <label class="option reading-option ${draft.reading === -1 ? "on" : ""}"><input type="radio" name="reading" value="-1" ${draft.reading === -1 ? "checked" : ""}>
         <kbd>e</kbd><span class="reading muted">Something else…</span></label>
     </div>
     ${draft.reading === -1 ? `<textarea id="text" rows="2">${esc(draft.text)}</textarea>${charPad()}` : ""}${after}`;
+}
+
+// For a question about one place in a line: the rest of the line, shown with its
+// other places as corrected or as their own questions most likely read, and each
+// reading's own version of the place. Null when a reading changes the line elsewhere.
+function placeParts(r) {
+  if (!r.span) return null;
+  const [start, end] = r.span, line = r.text, tail = line.length - end;
+  if (!r.readings.every(g => g.text.startsWith(line.slice(0, start)) && g.text.endsWith(line.slice(end))
+      && g.text.length >= start + tail)) return null;
+  const others = r.elsewhere || [];
+  const show = (from, to) => {
+    let out = "", at = from;
+    for (const [s, e, text, kind] of others) {
+      if (s < from || e > to) continue;
+      const was = line.slice(s, e);
+      const title = kind === "asked"
+        ? `asked in a question of its own; the text layer reads “${was}”`
+        : `corrected; the text layer reads “${was}”`;
+      out += esc(line.slice(at, s)) + `<mark class="${kind}" title="${esc(title)}">${esc(text)}</mark>`;
+      at = e;
+    }
+    return out + esc(line.slice(at, to));
+  };
+  return {
+    before: show(0, start),
+    after: show(end, line.length),
+    mids: r.readings.map(g => g.text.slice(start, g.text.length - tail)),
+    asked: others.some(o => o[3] === "asked"),
+    fixed: others.some(o => o[3] === "fixed"),
+  };
 }
 
 // Characters a keyboard lacks, inserted into the text box at the cursor.

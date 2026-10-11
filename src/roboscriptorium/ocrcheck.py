@@ -19,6 +19,7 @@ import functools
 import hashlib
 import json
 import re
+from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
@@ -807,6 +808,33 @@ class Doubt:
     readings: list[tuple[str, list[str]]]
     # For a break hyphen: the next line's first word, which the readings end with.
     joined: str = ""
+    # The line's other places the OCR check changed or asks about, as spans of
+    # `original`: (start, end, text, "fixed" or "asked"), the text an asked place's
+    # likeliest version. Shown beside the readings only; an answer keeps to its place.
+    elsewhere: tuple[tuple[int, int, str, str], ...] = ()
+
+
+def _likeliest(s: Suspect) -> str:
+    """The version of a suspect most models picked, the text layer's on a tie."""
+    versions = [s.ours, *s.others]
+    picks = Counter(v for v in s.votes.values() if v in versions)
+    return max(versions, key=lambda v: (picks[v], v == s.ours))
+
+
+def _elsewhere(s: Suspect, suspects: list[Suspect]) -> tuple[tuple[int, int, str, str], ...]:
+    """The other places in `s`'s line that a reader of its question should see settled."""
+    out = []
+    for o in suspects:
+        if (o.page, o.line, o.original) != (s.page, s.line, s.original) or o is s:
+            continue
+        if o.end <= s.start or o.start >= s.end:
+            if o.choice == "review":
+                out.append((o.start, o.end, _likeliest(o), "asked"))
+            elif o.choice == "other" and o.chosen is not None:
+                out.append((o.start, o.end, o.chosen, "fixed"))
+    out.sort()
+    # Places that overlap each other can't both be shown in one line.
+    return tuple(p for k, p in enumerate(out) if k == 0 or p[0] >= out[k - 1][1])
 
 
 def doubts(suspects: list[Suspect]) -> list[Doubt]:
@@ -824,7 +852,19 @@ def doubts(suspects: list[Suspect]) -> list[Doubt]:
                 readings.append((line, voters))
             else:
                 known[1].extend(v for v in voters if v not in known[1])
-        out.append(Doubt(s.page, s.line, s.original, s.start, s.end, s.box, readings, s.joined))
+        out.append(
+            Doubt(
+                s.page,
+                s.line,
+                s.original,
+                s.start,
+                s.end,
+                s.box,
+                readings,
+                s.joined,
+                _elsewhere(s, suspects),
+            )
+        )
     return out
 
 
