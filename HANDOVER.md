@@ -4,9 +4,44 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## State, 2026-10-11, session end
+## State, 2026-10-11 midday (session running; the user is away, work continues)
 
-On `main`, pushed, clean. Lint and tests green. Nothing runs in `screen`.
+On `main`, pushed. Lint and tests green.
+
+### In flight (check each before starting anything that touches it)
+
+- **Ex-minnaar, cold build** in screen `robo-exminnaar-build` (started ~12:30, ~4½ h
+  for 271 pages; log `work/runs/exminnaar-build.log`, timed into run-times.md). When it
+  ends: epubcheck, then `uv run python experiments/sample_questions.py work/ex-minnaar`
+  and look at the crops before the user reviews. Body 9–279 checked; p. 7 holds a
+  motto ("It's closing time", Leonard Cohen) outside the body, not in the EPUB yet.
+- **Pair-prior ablation** in screen `robo-nopairs` (`work/runs/nopairs-chain.zsh`):
+  the arbiter retrained with an empty pair table into `work/models/ablate-nopairs/`,
+  then bench tuning and validation against the latest. Its bench JSONs are moved to
+  `work/bench/ablations/` so they never become a baseline; if the chain dies midway,
+  check `work/bench/` for a stray ablation file before the next `--against`. Logs
+  `work/runs/nopairs-{train,tuning,validation}.log`. Record the verdict in decisions
+  and design.md (the pair prior's paragraph), and tick the checklist step.
+- **Don't edit `src/` until the ablation chain ends** (its validation bench loads the
+  code when it starts).
+
+### Next, queued
+
+- **Reis's footnote marks**: the print sets one `*` per note, the reference EPUB
+  `*`…`********` cumulatively (scan checked on pp. 89 and 167), so 8 of Reis's unasked
+  "errors" are the EPUB's. Plan: a `[reference]` key (e.g. `note_mark = "*"`) that
+  derive (`golden/epub.py`, `_NOTE_LINK`) uses for every link, listed in PROVENANCE,
+  with a test; rederive Reis; bench tuning. After the ablation chain.
+- **Python 3.15**: blocked on PyTorch (no stable cp315 wheel; tracking
+  pytorch/pytorch#184352, nightlies have it). Tried in worktree
+  `../roboscriptorium-py315` (branch `py315`, own `.venv` with nightly torch 2.16.dev):
+  all tests pass, DocLayout-YOLO's regions on 7 pages byte-identical to 3.13
+  (`work/probes/py315/`), the arbiter's pickle loads. When torch ships cp315: bump
+  `.python-version`, `uv lock`, rerun. The worktree can go once recorded.
+- Leftovers from older sessions, left for the user: a Goede dochter review server on
+  port 8766 and `llama-server` (imajev 4B) on 8092, both days old.
+
+### Where the bench stands
 
 Bench (15 tuning books, 7 validating): tuning **0.31**, validation **0.70** wrong words
 a page after review (0.43 and 0.82 at midnight); paragraph breaks 0.22 and 0.21 a page.

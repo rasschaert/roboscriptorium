@@ -128,6 +128,9 @@ reading shares: many are specks and faint marks.
 
 ## Later
 
+- [ ] Python 3.15 once PyTorch publishes cp315 wheels (pytorch/pytorch#184352): with
+      nightly torch every test passes and the spotter's regions match 3.13 exactly
+      (2026-10-11); bump `.python-version`, `uv lock`, bench once
 - [ ] Qwen on fewer lines (quote marks, disagreements), for speed: only if cold runs
       become the bottleneck (a new book's ~100 pages take ~2 h)
 - [ ] MiniCPM-V 4.6 as a faster reader: the readers already cover nearly every line, so
