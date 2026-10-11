@@ -100,14 +100,12 @@ reading shares: many are specks and faint marks.
       1.36%; `experiments/probe_ia_images.py`, 2026-10-11). Later, with public-domain books
 - [ ] ABBYY's letter confidence as an arbiter feature: first check the PDF's layer is
       ABBYY's reading, then does a low one separate the real errors? ~1 h, no models
-- [ ] `_scandata.xml` page types as labels for page classification (public on every IA
-      item). ~30 min
 
 ## 8. Beyond the golden books' kind
 
 - [ ] Page classification, so `body_pages` needn't be set in book.toml: the page-type
-      models so far miss the same pages (prefaces, blanks at the edges); start from the
-      scandata labels above
+      models so far miss the same pages (prefaces, blanks at the edges); IA's scandata
+      labels are too coarse to start from (below, Done)
 - [ ] An image-only scan through the whole pipeline (Goede dochter with its layer removed:
       tesseract 0.35% CER against the layer's 0.20%): does the OCR check close the gap?
       ~1 h cold. Then italics from tesseract's word boxes
@@ -158,6 +156,9 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Measurement
 
+- [x] ~~2026-10-11 `_scandata.xml` page types as labels for page classification~~:
+      dropped, they mark the cover and title page (Dolittle also contents and
+      copyright) and call every other page Normal, colophon, motto and ads included
 - [x] 2026-10-11 Scene breaks scored: derive reads them (thought breaks, ornaments,
       break, opening and closing classes, each checked on the scan) in 10 references;
       the build finds 255 of 295 and sets 20 more where they are recorded
