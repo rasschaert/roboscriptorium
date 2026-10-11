@@ -272,6 +272,17 @@ footnote or a speck at the foot, which made most of a first version's false ques
 13 questions over 15 books caught 2 errors at first; with those left out, `bench` no
 change (tuning 0.57 → 0.56, validation 0.80 → 0.77; De eerlijke vinder 1.28 → 1.14).
 
+## Lost drawn initials
+
+A drawn initial is a picture to the text layer, which leaves its word without a first
+letter below the chapter heading ("asteel Araluen", "et wolvenschip"; Het ijzige land
+opens every chapter so). When a section's first text line opens in lower case below a
+heading, the line is flagged (`flags._initial_lost`) and the reviewer types it with its
+letter. Lower case mid-section, or below no heading, isn't flagged. Bench (2026-10-11):
+Het ijzige land 0.25 → 0.20 after review for 0.05 more questions a page, pooled no
+change, no book worse. Dolittle's initials leave a capitalised word ("HAT" for "THAT")
+and aren't caught by it.
+
 ## Line roles
 
 clef-flash:9b answers the doubtful lines, and rules in `roles.py` override it

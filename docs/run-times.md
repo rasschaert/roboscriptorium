@@ -207,3 +207,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench tuning, ask below 0.7 | 1580 | 2 | 0 |
 | 2026-10-11 | bench tuning, lost stops before a closing quote asked | 1580 | 2 | 0 |
 | 2026-10-11 | bench validation, lost stops before a closing quote asked | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, lost drawn initials flagged | 1580 | 2 | 0 |
+| 2026-10-11 | bench validation, lost drawn initials flagged | 590 | 1 | 0 |

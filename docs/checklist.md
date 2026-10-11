@@ -18,8 +18,8 @@ areas below in order, and the test set scored once at the end.
 
 ## 1. Right after the chains (~1 h)
 
-- [ ] Next accuracy step from the data (pick by size): drawn initials lost (7), the
-      remaining unasked punctuation (~150 words, the largest kind), unexamined by place
+- [ ] Next accuracy step from the data (pick by size): unasked quotes (~59 words) and
+      word breaks (~71, scattered); small capitals read in lower case (7, visual)
 
 ## 2. Stella, the target book
 
@@ -283,6 +283,8 @@ many the layer had wrong.
 
 ## The reviewer
 
+- [x] 2026-10-11 A section opening in lower case below a heading flagged as a lost drawn
+      initial: Het ijzige land 0.25 → 0.20, pooled no change, no book worse
 - [x] 2026-10-11 Speech closed on a letter at a paragraph's end asked as a quote question
       (De tuin kerns the stop under the mark): tuning **better**, De tuin 0.46 → 0.41
 - [x] 2026-10-09 Quote questions offer the OCR-checked line, Qwen's marks on it (quote
