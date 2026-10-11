@@ -27,6 +27,7 @@ from roboscriptorium.clients.ollama import OllamaClient
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.disagreements import Verdicts
+from roboscriptorium.epub import keep_dated
 from roboscriptorium.golden import epub as publisher_epub
 from roboscriptorium.golden import gutenberg, se, signals
 from roboscriptorium.golden import notes as golden_notes
@@ -91,6 +92,8 @@ def build(book_dir: Path) -> None:
     book = Book.load(book_dir)
     doc = pipeline.build(book)
     typer.echo(f"{len(doc.blocks)} paragraphs → {book.epub_path}")
+    if kept := keep_dated(book.epub_path, book.epubs):
+        typer.echo(f"kept as {kept}")
 
 
 golden_app = typer.Typer(no_args_is_help=True, help="Golden reference books.")
@@ -253,6 +256,8 @@ def review_regions(
 
     def rebuild():
         stages = pipeline.run(book, pages=_range(pages))
+        if pages is None:
+            keep_dated(book.epub_path, book.epubs)
         regions = None
         if layout.available():
             numbers = [p.number for p in stages.pages]

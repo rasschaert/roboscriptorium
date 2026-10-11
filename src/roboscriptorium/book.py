@@ -72,3 +72,8 @@ class Book:
     @property
     def epub_path(self) -> Path:
         return self.root / f"{self.root.name}.epub"
+
+    @property
+    def epubs(self) -> Path:
+        """Where each build's EPUB is kept, dated (`epub.keep_dated`)."""
+        return self.root / "epubs"

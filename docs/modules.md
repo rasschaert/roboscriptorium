@@ -63,7 +63,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   else the quarter turn in which the caption reads); captions from the
   human, else a sideways caption's reading. Each goes after the last block
   that starts above it; JPEG at 300 dpi, at most 1600 px.
-- `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib).
+- `epub.py`: IR → EPUB 3, hand-written with zipfile (no ebooklib). `keep_dated` keeps each
+  build's EPUB in `work/<book>/epubs/` (`<book>-YYYY-MM-DD.epub`, the time added for a
+  second that day) unless it holds the same book as the latest copy (`build` and the
+  review's rebuild call it), so an earlier build stays to compare against.
 - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`:
   the text layer in `textlayer.json`, the finished IR in `document.json`, and each
   stage's own cache named under its module.

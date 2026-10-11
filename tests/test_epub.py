@@ -82,3 +82,21 @@ def test_a_translator_is_named_in_the_translators_role(tmp_path):
     write_epub(Document("T", "A", "nl", [Paragraph("Een.")]), out)
     with zipfile.ZipFile(out) as z:
         assert "contributor" not in z.read("OEBPS/content.opf").decode()
+
+
+def test_each_build_is_kept_dated_unless_it_holds_the_same_book(tmp_path):
+    from datetime import datetime
+
+    from roboscriptorium.epub import keep_dated
+
+    out, kept = tmp_path / "stella.epub", tmp_path / "epubs"
+    write_epub(Document("T", "A", "nl", [Paragraph("Een.")]), out)
+    first = keep_dated(out, kept, datetime(2026, 10, 7, 12, 21))
+    assert first.name == "stella-2026-10-07.epub"
+    # Built again, the same book: only the package's date differs, nothing is kept.
+    write_epub(Document("T", "A", "nl", [Paragraph("Een.")]), out)
+    assert keep_dated(out, kept, datetime(2026, 10, 7, 15, 0)) is None
+    write_epub(Document("T", "A", "nl", [Paragraph("Twee.")]), out)
+    assert keep_dated(out, kept, datetime(2026, 10, 7, 15, 5)).name == "stella-2026-10-07-1505.epub"
+    write_epub(Document("T", "A", "nl", [Paragraph("Drie.")]), out)
+    assert keep_dated(out, kept, datetime(2026, 10, 11, 9, 0)).name == "stella-2026-10-11.epub"

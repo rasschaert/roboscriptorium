@@ -1,6 +1,8 @@
 """Write a Document as an EPUB 3 file."""
 
+import hashlib
 import re
+import shutil
 import uuid
 import zipfile
 from dataclasses import dataclass
@@ -294,3 +296,29 @@ def write_epub(
             z.writestr(
                 "OEBPS/cover.xhtml", _xhtml(doc.title, doc.language, cover), compress_type=deflate
             )
+
+
+def _fingerprint(path: Path) -> str:
+    """A hash of the EPUB's files but its package document, which dates every build."""
+    digest = hashlib.sha256()
+    with zipfile.ZipFile(path) as z:
+        for name in sorted(z.namelist()):
+            if not name.endswith("content.opf"):
+                digest.update(name.encode() + b"\0" + z.read(name))
+    return digest.hexdigest()
+
+
+def keep_dated(path: Path, folder: Path, now: datetime | None = None) -> Path | None:
+    """A dated copy of the EPUB in `folder` (`<name>-YYYY-MM-DD.epub`, the time added for
+    a second build that day), so earlier builds stay to compare against; None when the
+    latest copy holds the same book."""
+    now = now or datetime.now()
+    folder.mkdir(parents=True, exist_ok=True)
+    kept = sorted(folder.glob(f"{path.stem}-*.epub"), key=lambda p: p.stat().st_mtime)
+    if kept and _fingerprint(kept[-1]) == _fingerprint(path):
+        return None
+    out = folder / f"{path.stem}-{now:%Y-%m-%d}.epub"
+    if out.exists():
+        out = folder / f"{path.stem}-{now:%Y-%m-%d-%H%M}.epub"
+    shutil.copy2(path, out)
+    return out

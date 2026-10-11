@@ -357,7 +357,7 @@ ellipsis_space = false # … and a space before it; else read in the text layer
 
 ```sh
 uv run roboscriptorium doctor            # is Ollama up, and do its decision models answer?
-uv run roboscriptorium build work/stella # → work/stella/stella.epub
+uv run roboscriptorium build work/stella # → work/stella/stella.epub, kept dated in work/stella/epubs/
 epubcheck work/stella/stella.epub        # must report 0 errors / 0 warnings
 uv run ruff format . && uv run ruff check . && uv run pytest
 ```
