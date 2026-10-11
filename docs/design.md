@@ -243,6 +243,15 @@ quotation inside dialogue (`‘“…”’`), the two readings' marks combined,
 read as `‘“` in a single-quoted book. In the slip review the quote questions offered a
 right reading on 0 of 4; with these, 3 of 4 (2026-10-09).
 
+**Speech closed on a letter at a paragraph's end is asked too.** De tuin kerns a
+paragraph's last full stop under the closing quote (`Frederik.’`), and the layer and the
+vision judge both miss it there. Of about 33,000 quote-ending paragraphs in the golden
+references 6 end on a letter, half of them a quoted term (`het ‘invoelend’`); in the
+tuning books' output 17 did, about 15 of them a lost stop. A quoted term or title, three
+words or fewer opening inside a sentence (`quotes.TERM_WORDS`), isn't asked. Bench
+(2026-10-11): tuning **better** 0.37 → 0.37 (De tuin 0.46 → 0.41 for 0.08 more
+questions a page), validation unchanged.
+
 ## Missing lines
 
 A layout region with no text-layer line in it is read by glm-ocr only when it is about

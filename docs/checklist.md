@@ -283,6 +283,8 @@ many the layer had wrong.
 
 ## The reviewer
 
+- [x] 2026-10-11 Speech closed on a letter at a paragraph's end asked as a quote question
+      (De tuin kerns the stop under the mark): tuning **better**, De tuin 0.46 → 0.41
 - [x] 2026-10-09 Quote questions offer the OCR-checked line, Qwen's marks on it (quote
       marks only, no dashes) and the nested-quote combination: 3 of 4 now offer the right
       line, where none did
