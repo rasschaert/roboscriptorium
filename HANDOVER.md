@@ -10,10 +10,10 @@ On `main`, pushed. Lint and tests green.
 
 ### In flight (check each before starting anything that touches it)
 
-- **Validation bench** in screen `robo-validation-kw` (started ~17:55): Koning Wilders'
-  first, cold build (90 pages, ~1½–2 h) plus the other validation books cached; log
-  `work/runs/kw-validation.log`. Het laatste bevel joined the set after it started, so
-  the next validation bench builds its slice (pages 9–100) cold, another ~1¾ h.
+- **Validation bench stopped** at the user's request (18:25): Koning Wilders' Qwen reading
+  is cached at 600 of 2,439 lines; the next `bench validation` resumes it (~45 min Qwen,
+  ~25 min judges) and builds Het laatste bevel's slice cold (~1¾ h). Ask before
+  starting it: the user wants no heavy Ollama jobs for now.
 - **Ex-minnaar** is built (cold 306 min, rebuilt with today's code), epubcheck clean,
   dated copy in `work/ex-minnaar/epubs/`. 390 questions wait for the user's review
   (`uv run roboscriptorium review work/ex-minnaar`): 242 OCR doubts (mostly 70–80% sure),
