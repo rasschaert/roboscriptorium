@@ -30,7 +30,7 @@ validation **0.70** wrong words a page after review; paragraph breaks set wrong 
 0.21 a page. After review is mostly the errors no question asks about: the arbiter
 settles only ~0.06 suspects a page wrongly, ~85% of the unasked errors were never
 suspects. So accuracy now moves by finding suspects where the readings agree (a reader of
-the finished text, the book's own consistency), by readers that err less or differently
+the finished text; the book's own consistency was null), by readers that err less or differently
 (newer models, Internet Archive's sharper page images), and by measurement that can be
 trusted (more golden pairs of other kinds, verdicts on the references); new rules buy
 ~0.01 each. Unasked, by kind over the tuning books (362 words before the hyphen judge):

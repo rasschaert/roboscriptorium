@@ -32,10 +32,6 @@ cause; what is left needs new suspects where the readings agree.
       set first (You're Never Weird's play on spelling, fragments, foreign words). The
       first probe found ~4 real errors among 56 flags; clef's filter kept both clear
       catches and dropped 31 of 37 urges. ~2 h probe; a stage only if `bench` says so
-- [ ] The book's own consistency, no models: a word or name spelled one way once and
-      another way many times in the same book ("Bérrén" against "Berren", "aIs"), asked as
-      a question with the common spelling proposed. Measured on the unasked list and the
-      false alarms first. ~1 h probe
 - [ ] Smaller groups, by size, only where one cause covers several: quotes (~35 words;
       nested quotes need the book's own habit, De tuin sets “ alone 147 times), word breaks
       (~70, scattered), small capitals read in lower case (7, visual)
@@ -227,6 +223,8 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Trust data and the arbiter
 
+- [x] ~~2026-10-11 The book's own consistency as new suspects~~: 13 catches against 17
+      false alarms, 10 of them in one bad scan; dropped
 - [x] 2026-10-11 Ask threshold 0.7 / 0.8 / 0.9 on tuning: 0.74 / 0.92 / 1.11 questions
       a page for 0.351 / 0.344 / 0.343 after review; stays at 0.8 (yield falls off past it)
 - [x] 2026-10-11 ~~De tuin's four questions no longer asked~~ dropped: it no longer loses
