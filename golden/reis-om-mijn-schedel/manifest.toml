@@ -18,6 +18,9 @@ files = [
   "Text/Section0005.xhtml", "Text/Section0006.xhtml", "Text/Section0007.xhtml", "Text/Section0008.xhtml", "Text/Section0009.xhtml", "Text/Section0010.xhtml", "Text/Section0011.xhtml", "Text/Section0012.xhtml", "Text/Section0013.xhtml", "Text/Section0014.xhtml", "Text/Section0015.xhtml", "Text/Section0016.xhtml", "Text/Section0017.xhtml", "Text/Section0018.xhtml", "Text/Section0019.xhtml", "Text/Section0020.xhtml", "Text/Section0021.xhtml", "Text/Section0022.xhtml", "Text/Section0023.xhtml", "Text/Section0024.xhtml", "Text/Section0025.xhtml", "Text/Section0026.xhtml", "Text/Section0027.xhtml", "Text/Section0028.xhtml", "Text/Section0029.xhtml", "Text/Section0030.xhtml", "Text/Section0031.xhtml"
 ]
 heading_prefixes = ["kop"]
+# A scene break comes after each "body1rgl" paragraph (checked on the scan,
+# experiments/probe_break_classes.py).
+opening_classes = ["body1rgl"]
 italic_classes = ["italic"]
 blank_classes = ["bodybefore"]
 note_classes = ["noten"]

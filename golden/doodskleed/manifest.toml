@@ -16,6 +16,9 @@ files = [
   "Text/Section0005.xhtml", "Text/Section0006.xhtml", "Text/Section0007.xhtml", "Text/Section0008.xhtml", "Text/Section0009.xhtml", "Text/Section0010.xhtml", "Text/Section0011.xhtml", "Text/Section0012.xhtml", "Text/Section0013.xhtml", "Text/Section0014.xhtml", "Text/Section0015.xhtml", "Text/Section0016.xhtml", "Text/Section0017.xhtml", "Text/Section0018.xhtml", "Text/Section0019.xhtml", "Text/Section0020.xhtml", "Text/Section0021.xhtml", "Text/Section0022.xhtml", "Text/Section0023.xhtml", "Text/Section0024.xhtml", "Text/Section0025.xhtml", "Text/Section0026.xhtml", "Text/Section0027.xhtml", "Text/Section0028.xhtml", "Text/Section0029.xhtml", "Text/Section0030.xhtml", "Text/Section0031.xhtml", "Text/Section0032.xhtml", "Text/Section0033.xhtml", "Text/Section0034.xhtml", "Text/Section0035.xhtml", "Text/Section0036.xhtml", "Text/Section0037.xhtml", "Text/Section0038.xhtml", "Text/Section0039.xhtml", "Text/Section0040.xhtml", "Text/Section0041.xhtml", "Text/Section0042.xhtml", "Text/Section0043.xhtml", "Text/Section0044.xhtml", "Text/Section0045.xhtml", "Text/Section0046.xhtml", "Text/Section0047.xhtml", "Text/Section0048.xhtml", "Text/Section0049.xhtml"
 ]
 heading_prefixes = ["hoofdstuk"]
+# A scene break comes before each "einde-links-ingesprongen" paragraph (checked on the scan,
+# experiments/probe_break_classes.py).
+closing_classes = ["einde-links-ingesprongen"]
 italic_classes = ["times-italic"]
 capital_classes = ["times-sc"]
 

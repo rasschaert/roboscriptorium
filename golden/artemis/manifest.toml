@@ -16,6 +16,9 @@ sha256 = "8a31de2af3318e90fbce612f72c71fe9dfe61c990efa72aa0e90f2f48961a7ab"
 files = [
   "xhtml/chapter01.xhtml", "xhtml/chapter02.xhtml", "xhtml/chapter03.xhtml", "xhtml/chapter04.xhtml", "xhtml/chapter05.xhtml", "xhtml/chapter06.xhtml", "xhtml/chapter07.xhtml", "xhtml/chapter08.xhtml", "xhtml/chapter09.xhtml", "xhtml/chapter10.xhtml", "xhtml/chapter11.xhtml", "xhtml/chapter12.xhtml", "xhtml/chapter13.xhtml", "xhtml/chapter14.xhtml", "xhtml/chapter15.xhtml", "xhtml/chapter16.xhtml", "xhtml/chapter17.xhtml"
 ]
+# A scene break comes before each "space_after" paragraph (checked on the scan,
+# experiments/probe_break_classes.py).
+closing_classes = ["space_after"]
 image_heading = "Chapter Header, Chapter (\\d+)"
 
 # The Del Rey (Ebury) UK paperback, 2018 edition, second printing (ISBN

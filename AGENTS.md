@@ -422,7 +422,9 @@ sha256, page ranges, the source and chapter range), the derived chapters in `tex
   `hyphen_dash = "–"` in `[reference]`; one that writes small capitals in lower case with
   a class gets `capital_classes`; one that numbers its notes in growing marks (`*`, `**`,
   …) where the print sets one gets `note_mark`; one whose scene breaks are empty paragraphs
-  of a class gets `break_classes`; a Gutenberg transcription that drops the space its
+  of a class gets `break_classes`, and one that marks them on the paragraph after or before
+  gets `opening_classes` or `closing_classes` (check each on the scan:
+  `experiments/probe_break_classes.py`); a Gutenberg transcription that drops the space its
   print sets before an ellipsis gets `ellipsis_space = true`.
   `experiments/chapter_pages.py` gives the scan page each derived chapter starts on, to
   end a bench slice on a chapter.

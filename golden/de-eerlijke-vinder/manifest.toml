@@ -17,6 +17,9 @@ files = [
   "OEBPS/Text/640c89c3258fd10.xhtml", "OEBPS/Text/640c89c3258fd11.xhtml",
   "OEBPS/Text/640c89c3258fd12.xhtml", "OEBPS/Text/640c89c3258fd13.xhtml",
 ]
+# A scene break comes after each "firstline" paragraph (checked on the scan,
+# experiments/probe_break_classes.py).
+opening_classes = ["firstline"]
 italic_classes = ["italic", "smallcaps-italic"]
 
 # The print edition (ISBN 978 90 5965 732 8; design Frank August, printed by

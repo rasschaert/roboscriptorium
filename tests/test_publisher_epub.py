@@ -269,3 +269,21 @@ def test_a_break_class_that_also_sets_text_breaks_only_where_empty(tmp_path):
     (section,) = publisher_epub.read(epub, ["Text/a.html"], ("kop",), breaks=frozenset({"plat"}))
     assert section.paragraphs == ["Een.", "Twee.", "Drie."]
     assert section.breaks == {2}
+
+
+def test_opening_and_closing_classes_set_a_break_beside_their_paragraph(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<p class="kop">1</p><p class="eerste">Een.</p><p>Twee.</p>'
+                '<p class="eerste">Drie.</p><p class="einde">Vier.</p><p>Vijf.</p>'
+                '<p class="einde">Zes.</p><p class="kop">2</p><p>Zeven.</p>'
+            ),
+        )
+    s1, s2 = publisher_epub.read(epub, ["Text/a.html"], ("kop",), opening=frozenset({"eerste"}),
+                                 closing=frozenset({"einde"}))  # fmt: skip
+    # None before a chapter's first paragraph, none carried into the next chapter.
+    assert s1.breaks == {2, 4}
+    assert s2.breaks == set()

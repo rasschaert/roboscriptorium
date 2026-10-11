@@ -235,3 +235,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench tuning, Reis's note marks as printed | 1580 | 3 | 0 |
 | 2026-10-11 | bench tuning, scene breaks scored, references rederived | 1580 | 3 | 0 |
 | 2026-10-11 | bench validation, scene breaks scored, references rederived | 590 | 2 | 0 |
+| 2026-10-11 | bench tuning, scene breaks with opening and closing classes | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, scene breaks with opening and closing classes | 590 | 1 | 0 |

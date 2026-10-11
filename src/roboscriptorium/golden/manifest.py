@@ -71,6 +71,9 @@ class PublisherEpub:
     note_mark: str = ""
     # Classes of the elements that stand for a scene break (an empty "witregel" paragraph).
     break_classes: frozenset[str] = frozenset()
+    # Classes of the paragraphs a scene break comes before ("standaard-eerste"), or after.
+    opening_classes: frozenset[str] = frozenset()
+    closing_classes: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -162,6 +165,8 @@ class Golden:
                 frozenset(ref.get("capital_classes", ())),
                 ref.get("note_mark", ""),
                 frozenset(ref.get("break_classes", ())),
+                frozenset(ref.get("opening_classes", ())),
+                frozenset(ref.get("closing_classes", ())),
             )
         )
         se = data.get("standard_ebooks")

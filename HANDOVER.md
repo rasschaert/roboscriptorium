@@ -17,10 +17,8 @@ On `main`, pushed. Lint and tests green.
   motto ("It's closing time", Leonard Cohen) outside the body, not in the EPUB yet.
 ### Next, queued
 
-- **Scene breaks, opening and closing classes** (being done): scoring is in (9f527b7);
-  the checklist step "Scene breaks in every reference" lists the classes to check on
-  the scans. Probe crops in `work/probes/scene-breaks/`, the references before the
-  rederive in `work/probes/scene-breaks/before/`.
+- Scene breaks are scored in 10 references (255 of 295 found, 20 extra); the misses are
+  the next checklist step.
 - The pair-prior ablation is done (worse without it, 0.31 → 0.34; decisions).
 - Reis's footnote marks done (`note_mark`; Reis after review 0.20 → 0.17, set 0.31).
 - **Python 3.15**: blocked on PyTorch (no stable cp315 wheel; tracking
