@@ -229,3 +229,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, ellipsis after ? or ! spaced as read | 590 | 1 | 0 |
 | 2026-10-11 | probe text reader qwen3.8 + clef crop, Metro 200 paragraphs | 40 | 3 | 0 |
 | 2026-10-11 | probe text reader qwen3.8 + clef crop, Goede dochter 200 paragraphs | 40 | 2 | 0 |
+| 2026-10-11 | build, Stella, today's build, every stage cached | 67 | 0 | 0 |
