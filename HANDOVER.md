@@ -10,11 +10,15 @@ On `main`, pushed. Lint and tests green.
 
 ### In flight (check each before starting anything that touches it)
 
-- **Ex-minnaar, cold build** in screen `robo-exminnaar-build` (started ~12:30, ~4½ h
-  for 271 pages; log `work/runs/exminnaar-build.log`, timed into run-times.md). When it
-  ends: epubcheck, then `uv run python experiments/sample_questions.py work/ex-minnaar`
-  and look at the crops before the user reviews. Body 9–279 checked; p. 7 holds a
-  motto ("It's closing time", Leonard Cohen) outside the body, not in the EPUB yet.
+- **Validation bench** in screen `robo-validation-kw` (started ~17:55): Koning Wilders'
+  first, cold build (90 pages, ~1½–2 h) plus the other validation books cached; log
+  `work/runs/kw-validation.log`. Het laatste bevel joined the set after it started, so
+  the next validation bench builds its slice (pages 9–100) cold, another ~1¾ h.
+- **Ex-minnaar** is built (cold 306 min, rebuilt with today's code), epubcheck clean,
+  dated copy in `work/ex-minnaar/epubs/`. 390 questions wait for the user's review
+  (`uv run roboscriptorium review work/ex-minnaar`): 242 OCR doubts (mostly 70–80% sure),
+  109 quotes (63 without readings), 7 lost lines, ~30 layout.
+
 ### Next, queued
 
 - De eerlijke vinder and Monterosso moved to tuning (user's go); arbiter and trees
