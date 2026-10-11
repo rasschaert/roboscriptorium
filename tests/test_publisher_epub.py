@@ -189,6 +189,29 @@ def test_a_bracketed_note_marker_and_its_back_link_are_stripped(tmp_path):
     assert notes == ["1 Een van de eerste."]
 
 
+def test_notes_numbered_in_asterisks_read_as_the_prints_one_mark(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<p class="kop">5</p><p>De railbus<a href="#n1">[*]</a> en de wasplaat'
+                '<a href="#n2">[**]</a>.</p>'
+                '<p class="noten"><a id="n2">[**] – [<span>terug</span>]</a> Een plaat.</p>'
+            ),
+        )
+    for mark, text, note in (
+        ("", "De railbus* en de wasplaat**.", "** Een plaat."),
+        ("*", "De railbus* en de wasplaat*.", "* Een plaat."),
+    ):
+        notes: list[str] = []
+        (section,) = publisher_epub.read(epub, ["Text/a.html"], ("kop",),
+                                         notes=frozenset({"noten"}), found_notes=notes,
+                                         note_mark=mark)  # fmt: skip
+        assert [unmarked(p) for p in section.paragraphs] == [text]
+        assert notes == [note]
+
+
 def test_a_heading_set_as_an_image_reads_its_alt_text(tmp_path):
     epub = tmp_path / "book.epub"
     with zipfile.ZipFile(epub, "w") as z:

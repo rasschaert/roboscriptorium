@@ -67,6 +67,8 @@ class PublisherEpub:
     italics_unlike_print: str = ""
     # Classes whose text the print sets in capitals (small capitals written in lower case).
     capital_classes: frozenset[str] = frozenset()
+    # The print's one mark for every note where the EPUB numbers them ("*", "**", …).
+    note_mark: str = ""
 
 
 @dataclass(frozen=True)
@@ -156,6 +158,7 @@ class Golden:
                 ref.get("image_heading", ""),
                 ref.get("italics_unlike_print", ""),
                 frozenset(ref.get("capital_classes", ())),
+                ref.get("note_mark", ""),
             )
         )
         se = data.get("standard_ebooks")
