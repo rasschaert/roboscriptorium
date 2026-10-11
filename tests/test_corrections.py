@@ -61,6 +61,53 @@ def test_a_line_retyped_with_text_takes_no_fixes(tmp_path):
     assert out[0].lines[0].text == "HOOFDSTUK TIEN"
 
 
+def _retyped(tmp_path, original: str, typed: str) -> str:
+    page = _page(*original.split("\n"))
+    answers = Corrections(tmp_path / "regions.jsonl")
+    flag = flags.Flag(flags.region_key(3, original), 3, 0, original.count("\n"), original,
+                      "text", ["centred"])  # fmt: skip
+    answers.record(flag, "text", typed)
+    out, _, _ = apply([page], {}, Corrections(tmp_path / "regions.jsonl"))
+    return out[0].lines[0].text
+
+
+def test_lines_retyped_together_keep_a_hyphen_that_is_the_words(tmp_path):
+    typed = "ze woonde in Noord-\nHolland, niet ver"
+    assert _retyped(tmp_path, typed.replace("ze", "zc"), typed) == (
+        "ze woonde in Noord-Holland, niet ver"
+    )
+    typed = "een zee-egel op\nhet strand"
+    assert _retyped(tmp_path, typed.replace("op", "0p"), typed) == "een zee-egel op het strand"
+
+
+def test_lines_retyped_together_lose_the_breaks_hyphen(tmp_path):
+    typed = "al helemáál geen hulp te ver-\nwachten. Voor hem"
+    assert _retyped(tmp_path, typed.replace("á", "a"), typed) == (
+        "al helemáál geen hulp te verwachten. Voor hem"
+    )
+
+
+def test_lines_merged_into_a_retyped_region_stay_merged_under_a_later_answer(tmp_path):
+    lines = ("Ik glimlachte. ‘Lief van je, zei ik, ‘maar", "niet, ze zag er echt", "uit.")
+    page = _page(*lines, "Later ging ik zitten.")
+    answers = Corrections(tmp_path / "regions.jsonl")
+    whole = "\n".join(lines)
+    answers.record(flags.Flag(flags.region_key(3, whole), 3, 0, 2, whole, "text", []), "text",
+                   whole.replace("je,", "je,’"))  # fmt: skip
+    part = "\n".join(lines[1:])
+    answers.record(flags.Flag(flags.region_key(3, part), 3, 1, 2, part, "text", []), "text", None)
+    later = "Later ging ik zitten."
+    answers.record(flags.Flag(flags.region_key(3, later), 3, 3, 3, later, "drop", []), "text",
+                   None)  # fmt: skip
+    out, roles, _ = apply([page], {}, Corrections(tmp_path / "regions.jsonl"))
+    assert (
+        out[0].lines[0].text
+        == "Ik glimlachte. ‘Lief van je,’ zei ik, ‘maar niet, ze zag er echt uit."
+    )
+    assert roles[SourceRef(3, 1)].role == roles[SourceRef(3, 2)].role == "artifact"
+    assert roles[SourceRef(3, 3)].role == "body"
+
+
 def test_a_typed_compound_keeps_one_hyphen_across_the_break():
     from roboscriptorium.corrections import Correction, place
 

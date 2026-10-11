@@ -214,7 +214,9 @@ def apply(
     their place in the line too, alongside a human's answers about other places in
     it: each is a span of the line as the text layer reads it. A human's answer wins
     where they overlap, and a line the human retyped whole takes neither fixes nor
-    answers about places in it; an answer that only says what a line is keeps both. The
+    answers about places in it; an answer that only says what a line is keeps both. A
+    line a retyped region took into its first line stays dropped, whatever else answers
+    it. The
     copies' roles are keyed on line positions in the copied pages.
     """
     pages = [
@@ -228,6 +230,8 @@ def apply(
     # Per line: (start, end, text) spans of the text layer's line to replace.
     places: dict[tuple[int, int], list[tuple[int, int, str]]] = {}
     retyped: set[tuple[int, int]] = set()
+    # Lines whose text a retyped region took into its first line.
+    merged: set[SourceRef] = set()
     for c in corrections.by_key.values():
         page = by_number.get(c.page)
         if page is None:
@@ -256,10 +260,12 @@ def apply(
             roles[SourceRef(c.page, i)] = _ROLE[c.action]
         if c.text is not None and c.action in ("text", "heading"):
             first = page.lines[c.first]
-            page.lines[c.first] = replace(first, text=" ".join(c.text.split()))
-            for i in range(c.first + 1, c.last + 1):
-                roles[SourceRef(c.page, i)] = _ROLE["drop"]
+            page.lines[c.first] = replace(first, text=_join_lines(c.text))
+            merged.update(SourceRef(c.page, i) for i in range(c.first + 1, c.last + 1))
         applied += 1
+    # Another answer about such a line, whenever given, would print its text twice.
+    for ref in merged:
+        roles[ref] = _ROLE["drop"]
     for s in fixes:
         page = by_number.get(s.page)
         if s.choice != "other" or page is None or (s.page, s.line) in retyped:
