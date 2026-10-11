@@ -29,7 +29,11 @@ with Monterosso and De stilte): tuning **0.31**,
 validation **0.70** wrong words a page after review; paragraph breaks set wrong 0.22 and
 0.21 a page. After review is mostly the errors no question asks about: the arbiter
 settles only ~0.06 suspects a page wrongly, ~85% of the unasked errors were never
-suspects. Unasked, by kind over the tuning books (362 words before the hyphen judge):
+suspects. So accuracy now moves by finding suspects where the readings agree (a reader of
+the finished text, the book's own consistency), by readers that err less or differently
+(newer models, Internet Archive's sharper page images), and by measurement that can be
+trusted (more golden pairs of other kinds, verdicts on the references); new rules buy
+~0.01 each. Unasked, by kind over the tuning books (362 words before the hyphen judge):
 punctuation 136 (52 of them English compounds' line-end hyphens, which the judge now
 settles), letters 69, word breaks 69, quotes 47, missing words 20, extra words 19. The line-role trees
 (`ROBO_SORTER=1`) no longer help on top of the running-text rule: 0.37 → 0.40 and 0.76 →

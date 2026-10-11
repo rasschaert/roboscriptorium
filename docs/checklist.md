@@ -13,13 +13,32 @@ Where the build stands and where results can still move: [outlook.md](outlook.md
 What runs right now and what waits on the user: `HANDOVER.md`.
 
 **The plan now:** accuracy from what the bench data shows (the user: improve before
-building), then **Stella end to end with the user's review**, the target book, then the user's four books. After them, the open
+building), new suspects where the readings agree first, then **Stella end to end with
+the user's review**, the target book, then the user's four books. After them, the open
 areas below in order, and the test set scored once at the end.
 
-## 1. Right after the chains (~1 h)
+## 1. Accuracy before Stella (~half a day)
 
-- [ ] Next accuracy step from the data (pick by size): unasked quotes (~40 words) and
-      word breaks (69, scattered); small capitals read in lower case (7, visual)
+About 85% of the wrong words left after review were never suspects: every reading agreed
+on them, so no judge and no question saw them. The rules have taken the groups with one
+cause; what is left needs new suspects where the readings agree.
+
+- [ ] A reader of the finished text (the proofreader), for errors every reading shares
+      or reflow makes ("check" for "cheek", "effanol" for "ethanol"): a proposer
+      (Qwen3.8 thinking, or gemma4:26b) with clef as the filter. Measured first on the
+      unasked list (`experiments/unasked.py`, 319 words over the tuning books): how many
+      of those lines it flags, and its false alarms a page on the rest. Guards: it only
+      asks, in closed kinds; told the text is a transcription; silent on a counterexample
+      set first (You're Never Weird's play on spelling, fragments, foreign words). The
+      first probe found ~4 real errors among 56 flags; clef's filter kept both clear
+      catches and dropped 31 of 37 urges. ~2 h probe; a stage only if `bench` says so
+- [ ] The book's own consistency, no models: a word or name spelled one way once and
+      another way many times in the same book ("Bérrén" against "Berren", "aIs"), asked as
+      a question with the common spelling proposed. Measured on the unasked list and the
+      false alarms first. ~1 h probe
+- [ ] Smaller groups, by size, only where one cause covers several: quotes (~35 words;
+      nested quotes need the book's own habit, De tuin sets “ alone 147 times), word breaks
+      (~70, scattered), small capitals read in lower case (7, visual)
 
 ## 2. Stella, the target book
 
@@ -67,13 +86,6 @@ In this order:
 - [ ] Bad pages by the readers' disagreement: a page whose suspects per line far exceed
       the book's (Afscheid p. 20: 50 against ~8) flagged, and as an arbiter feature.
       ~2 h, then `bench`
-- [ ] A reader of the finished text, for errors every reading shares or reflow makes:
-      a stronger proposer (Qwen3.8 thinking, or gemma4:26b) with clef as the filter, on
-      Goede dochter's and Metro's built text. Guards: it only asks, in closed kinds; told
-      the text is a transcription; measured silent on a counterexample set first (You're
-      Never Weird's play on spelling, fragments, foreign words). The first probe found
-      ~4 real errors among 56 flags; clef's filter kept both clear catches and dropped 31
-      of 37 urges. ~2 h probe; a stage only if `bench` says so
 
 ## 6. Structure
 
@@ -91,6 +103,8 @@ In this order:
 ## 7. Better pixels: Internet Archive's own files
 
 Public on public-domain items only (Crime, Dolittle); private on lending-library items.
+Sharper pixels lower the readers' errors at the source, the other way at the errors every
+reading shares: many are specks and faint marks.
 
 - [ ] Readers on the page images (`experiments/probe_ia_images.py`, ~15 min): reader set
       v1's Crime and Dolittle lines cut from the JP2s, read by Qwen and glm-ocr. A win
