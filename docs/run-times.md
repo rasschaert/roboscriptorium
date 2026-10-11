@@ -213,3 +213,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench tuning, open quotes at a paragraph's end always asked | 1580 | 5 | 0 |
 | 2026-10-11 | bench validation, open quotes at a paragraph's end always asked | 590 | 2 | 0 |
 | 2026-10-11 | bench validation, open quotes at a paragraph's end always asked | 590 | 2 | 0 |
+| 2026-10-11 | bench tuning, English compounds judged | 1580 | 4 | 0 |
+| 2026-10-11 | bench validation, English compounds judged | 590 | 1 | 0 |

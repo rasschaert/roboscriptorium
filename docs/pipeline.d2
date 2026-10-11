@@ -171,12 +171,14 @@ build: 5 · Assemble the book {
     class: row
     spell: the book's own spellings {class: code}
     words: the word list\n(which form it knows) {class: code}
+    compound: "JUDGE clef:27b\nspells an English compound\nnothing else decides" {class: decision}
     slant: stroke slant per word {class: code}
     gap: "dash length and gaps, ellipsis form\n(or book.toml), measured first,\ndashes told to the readers" {class: code}
     regions: "the SPOTTER's pictures;\nthe REVIEWER's turns" {class: code}
   }
   s.reflow -> m.spell {class: uses}
   s.reflow -> m.words {class: uses}
+  s.reflow -> m.compound {class: uses}
   s.italics -> m.slant {class: uses}
   s.dash -> m.gap {class: uses}
   s.figures -> m.regions {class: uses}

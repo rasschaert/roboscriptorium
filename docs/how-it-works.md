@@ -383,7 +383,9 @@ A hyphen at the end of a line stays or goes by evidence, strongest first:
 1. how the book spells the word elsewhere, inside a line;
 2. which of the two forms the word list knows;
 3. a capital after the break, as in `Noord-Holland`;
-4. whether the parts beside a hyphen already in the word are words themselves.
+4. whether the parts beside a hyphen already in the word are words themselves;
+5. in an English book, the judge (clef:27b), asked how the word is spelled in its
+   sentence (`hyphens.py`): English compounds keep their hyphen about as often as not.
 
 ### Italics, dashes, ellipses and figures
 

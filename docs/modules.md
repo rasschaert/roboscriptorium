@@ -50,7 +50,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `reflow.py`: lines → blocks (headings, paragraphs; indents, de-hyphenation,
   punctuation spacing). A line-end hyphen stays or goes by evidence in order: the
   book's own spelling, the word list, a capital after the break, the parts beside an
-  inner hyphen (docs/design.md). Without roles it falls back to a footer heuristic.
+  inner hyphen, then `compound`, a judge of the language (docs/design.md). Without
+  roles it falls back to a footer heuristic.
+- `hyphens.py`: `Compounds`, the judge (`judge_model`) asked whether an English line-end
+  hyphen nothing else decides is the word's own; answers cached by the hyphenated word
+  in `stages/compounds.json`. Only English books ask it (`asked`).
 - `ir.py`: the IR (`Document`; `Paragraph` and `Heading` with `SourceRef`s back
   to page lines, a paragraph marking a scene break before it; `Figure` with its image file, page box and caption).
 - `figures.py`: the pictures in the book. The layout model's figures on body

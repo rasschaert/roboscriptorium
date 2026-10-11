@@ -391,14 +391,22 @@ where the stronger ones are silent:
 | the word list knows exactly one of the two forms | fixes 7 wrong calls, breaks none where the book is silent | knows a closed form the print hyphenates (`faceplate`, `northernmost`: 3); knows both (`make-up`, `makeup`) |
 | a capital after the break (`Noord-Holland`) | right on every true capital | a word set in capitals (`WE-` + `RELDGESCHIEDENIS`), 0 of 3: so it no longer counts as one |
 | a hyphen already in the word | `Mens-erger-je-niet`, `good-for-nothing` | kept as a rule it was wrong 8 of 10 (`Zuid-Lon-den`, `Majuba-theeplan-tage`): now only where the parts beside the break are both words and don't make one |
+| in an English book, the judge (clef:27b) asked how the word is spelled in its sentence (`hyphens.Compounds`) | where the rest is silent English compounds keep the hyphen 34 times in 77: the judge is right on 63, joining on 43 | a hyphenated form the reference closes (`timeout`, `bleedthrough`); 13 compounds it still joins |
 
 After the change 15 of the 1,574 are wrong (Vals alarm 0, De cipier 1, Goede dochter 2,
 De tuin 2, Artemis 2, Metro 8). What is left is English compounds the list lacks or
 knows closed (`night-vision`, `semi-erased`, `slate-black`), `make-up` with both forms
 known, and one Dutch compound (`heen-en-weerbewegingen`, closed in print though both
-parts are words). Those are the question's: a break where the list is silent and both
-parts are words fired 13 right against 3 wrong on the English slices and 0 against 44
-on the Dutch, so it can trigger a question on an English book and never decide.
+parts are words). Both parts being words is no rule for them: it fired 13 right against
+3 wrong on the English slices and 0 against 44 on the Dutch.
+
+**The judge settles the English ones, not a question.** The scan can't show
+whether a broken word keeps its hyphen; that is the language's spelling, which a
+reviewer reading the crop knows no better than a model. Over the tuning books 438
+breaks are left undecided by the rest with a one-way reference
+(`experiments/probe_hyphen_judge.py`): in Dutch 355 of 361 close and the judge is no
+better than joining (353 right at 0.5); in English 43 of 77 close, and clef:27b picks
+right on 63 (clef-flash 59, winnow 46). So only English books ask it.
 
 Two cases aren't a word's hyphen at all and skip the evidence: a line ending in a digit
 and a hyphen before a line starting with a digit is a number range broken at the end

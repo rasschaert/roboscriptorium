@@ -18,8 +18,8 @@ areas below in order, and the test set scored once at the end.
 
 ## 1. Right after the chains (~1 h)
 
-- [ ] Next accuracy step from the data (pick by size): unasked quotes (~59 words) and
-      word breaks (~71, scattered); small capitals read in lower case (7, visual)
+- [ ] Next accuracy step from the data (pick by size): unasked quotes (47 words) and
+      word breaks (69, scattered); small capitals read in lower case (7, visual)
 
 ## 2. Stella, the target book
 
@@ -57,9 +57,6 @@ In this order:
       pair rescores the unasked suspects; on the review page, one question per pattern
       (every `|` read as I) applied to all. Simulated: silent errors at .25/.5/1 a page
       over nine books 50/31/11 → 47/30/11. ~half a day, then `bench`
-- [ ] The 15 line-end hyphens reflow still gets wrong, as a question on English books
-      only (a break the word list is silent on whose parts are both words: 13 right, 3
-      wrong; 0 against 44 on Dutch). ~2 h
 - [ ] A typed answer checked against Qwen's cached reading of the line where the question
       had no readings (headings, missing text). ~1 h
 
@@ -283,6 +280,8 @@ many the layer had wrong.
 
 ## The reviewer
 
+- [x] 2026-10-11 English line-end hyphens nothing else decides settled by the judge, not a
+      question: tuning **better** 0.36 → 0.34 (Dolittle 0.52 → 0.44, Metro 0.26 → 0.22)
 - [x] 2026-10-11 A quote left open at a paragraph's end asked whatever follows: tuning
       0.37 → 0.36, De tuin's unasked 0.24 → 0.16, no book worse
 - [x] 2026-10-11 A section opening in lower case below a heading flagged as a lost drawn

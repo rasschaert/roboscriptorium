@@ -186,7 +186,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `roles.py`, `sorter.py` | line roles: a decision model plus rules; the trees behind `ROBO_SORTER=1` |
 | `ocrcheck.py`, `trust.py`, `lexicon.py` | more readings of each body line, judges where they differ, the learned trust that fixes, keeps or asks; the word list |
 | `corrections.py`, `quotes.py` | the reviewer's answers applied; unpaired quotes as questions with a proposed reading |
-| `reflow.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |
+| `reflow.py`, `hyphens.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; English line-end hyphens nothing else decides, by the judge; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |
 | `ir.py`, `epub.py` | the document model with references back to page lines; EPUB 3 by hand |
 | `pipeline.py` | the stages for one book, each cached under `work/<book>/stages/` |
 | `flags.py`, `review.py` | what a human should check; the local review pages |
@@ -211,7 +211,8 @@ rerun skips finished work and model calls.
    `trust.py`) on the other pages: more readings of each body line, judges where they
    differ, learned trust to fix, keep or ask.
 5. **Answers** (`corrections.py`): a human's review answers, applied to copies.
-6. **Reflow** (`reflow.py`): lines into headings and paragraphs; de-hyphenation.
+6. **Reflow** (`reflow.py`): lines into headings and paragraphs; de-hyphenation, with
+   the judge on an English book's undecided hyphens (`hyphens.py`).
 7. **Quote questions** (`quotes.py`): unpaired quotes, with a proposed reading.
 8. **Italics** (`italics.py`), **dashes and ellipses** (`typography.py`), **figures**
    (`figures.py`) on the IR (`ir.py`).

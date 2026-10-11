@@ -22,13 +22,15 @@ With the rules' line roles (the default), commit `dc3eb53`:
 | Busy layout, pictures | 11/22/63, You're Never Weird | 1.00–1.04 | 1.4–3.1 | 0.13–0.54 |
 | Washed-out scan | Afscheid | 0.63 (its typed pages now count) | 3.5 | 1.73 (its EPUB's paragraphing) |
 
-Bench totals (2026-10-11, after the `bughunt` merge, the running-text rule and the
-breaks fix; 15 tuning books, 7 validating with Monterosso and De stilte): tuning **0.37**,
+Bench totals (2026-10-11, after the `bughunt` merge, the running-text rule, the breaks
+fix, the quote and initial questions and the hyphen judge; 15 tuning books, 7 validating
+with Monterosso and De stilte): tuning **0.34**,
 validation **0.75** wrong words a page after review; paragraph breaks set wrong 0.22 and
 0.21 a page. After review is mostly the errors no question asks about: the arbiter
 settles only ~0.06 suspects a page wrongly, ~85% of the unasked errors were never
-suspects. Unasked, by kind over the tuning books: punctuation ~150, letters ~115, word
-breaks ~75, missing words ~70 (fewer since running-text), quotes ~57. The line-role trees
+suspects. Unasked, by kind over the tuning books (362 words before the hyphen judge):
+punctuation 136 (52 of them English compounds' line-end hyphens, which the judge now
+settles), letters 69, word breaks 69, quotes 47, missing words 20, extra words 19. The line-role trees
 (`ROBO_SORTER=1`) no longer help on top of the running-text rule: 0.37 → 0.40 and 0.76 →
 0.72, no change, Thief-Taker and Vuurspel worse; they stay off.
 
