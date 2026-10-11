@@ -382,6 +382,13 @@ more ("* * *"; one or two are a speck), puts a break before the next paragraph, 
 unindented after an `<hr class="break"/>`. Reis has 63 in its slice, spot-checked right
 on the scan. The score doesn't see them yet: derive drops a reference's blank lines.
 
+**No paragraph starts inside a broken word.** Beside a picture or a drawn initial the
+margin moves, and a line continuing "seen her hus-" read as indented: the word was split
+over two paragraphs ("hus- band"). A line starting in lower case after one ending in a
+letter and a hyphen continues the paragraph, however it is set. Bench (2026-10-11):
+tuning **better** 0.32 → 0.31, validation **better** 0.74 → 0.70 (You're never weird
+0.94 → 0.77, Monterosso 0.64 → 0.50), paragraph F1 up on every book that moved.
+
 ## Reflow: line-end hyphens
 
 **Nothing else looks at a line-end hyphen.** The OCR check starts where readings

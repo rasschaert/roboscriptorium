@@ -23,9 +23,10 @@ With the rules' line roles (the default), commit `dc3eb53`:
 | Washed-out scan | Afscheid | 0.63 (its typed pages now count) | 3.5 | 1.73 (its EPUB's paragraphing) |
 
 Bench totals (2026-10-11, after the `bughunt` merge, the running-text rule, the breaks
-fix, the quote and initial questions and the hyphen judge; 15 tuning books, 7 validating
-with Monterosso and De stilte): tuning **0.34**,
-validation **0.75** wrong words a page after review; paragraph breaks set wrong 0.22 and
+fix, the quote and initial questions, the hyphen judge and no paragraph inside a broken
+word; 15 tuning books, 7 validating
+with Monterosso and De stilte): tuning **0.31**,
+validation **0.70** wrong words a page after review; paragraph breaks set wrong 0.22 and
 0.21 a page. After review is mostly the errors no question asks about: the arbiter
 settles only ~0.06 suspects a page wrongly, ~85% of the unasked errors were never
 suspects. Unasked, by kind over the tuning books (362 words before the hyphen judge):
