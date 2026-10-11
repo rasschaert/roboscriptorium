@@ -24,14 +24,13 @@ path for the next model served that way.
    main: the review display fix.** Merge it (`git merge --ff-only review-display`) once
    the validation bench ends, so the bench's record names the code it ran; then remove
    the worktree. Checked on Ex-minnaar (54 of 390 questions show other places).
-2. **Proposed, awaiting the user's yes: `roboscriptorium init <pdf>`.** The user's goal:
-   anyone runs this locally without a subscription, so setting up a book must not need
-   an agent. Draft `book.toml` (title/author from PDF metadata or the title page, the
-   language from the word lists, `body_pages` guessed) and ask the user only what it
-   can't decide, on the review page (e.g. "does the text start on p. 7 'Deel een /
-   Proloog' or p. 9?"). Page classification is the hard part (checklist, Beyond the
-   golden books' kind). The user's books need only `book.toml`; manifests are for golden
-   pairs.
+2. **Agreed, in progress: `roboscriptorium init <pdf>`** (checklist, Beyond the golden
+   books' kind; what goes in the EPUB is decisions.md 2026-10-11). Step now: page-kind
+   labels for 31 books (not the test set), by four helper agents from contact sheets
+   (`experiments/page_sheets.py`, brief `work/probes/page-kinds/BRIEF.md`), written to
+   `work/probes/page-kinds/<book>/labels.json`; spot-check them, then freeze them as a
+   labelled set (ids and kinds only in git) and measure model-free signals on it.
+   Verminkt joins validation as a slice (~90 pages, the user agreed) once the bench ends.
 3. **Verminkt: checked, fit, asked the user whether it joins a set.** Its two printings
    print the same text (docs/golden-notes.md, `probe_printing.py`). Proposed: validation,
    with a slice of ~90 pages like Het laatste bevel (the whole book is ~7½ h cold). Its
