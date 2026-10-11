@@ -225,3 +225,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, no paragraph inside a broken word | 590 | 1 | 0 |
 | 2026-10-11 | bench tuning, quoted word read without its marks | 1580 | 2 | 0 |
 | 2026-10-11 | bench validation, quoted word read without its marks | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, ellipsis after ? or ! spaced as read | 1580 | 2 | 0 |
+| 2026-10-11 | bench validation, ellipsis after ? or ! spaced as read | 590 | 1 | 0 |
