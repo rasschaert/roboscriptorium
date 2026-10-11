@@ -287,8 +287,10 @@ opens every chapter so). When a section's first text line opens in lower case be
 heading, the line is flagged (`flags._initial_lost`) and the reviewer types it with its
 letter. Lower case mid-section, or below no heading, isn't flagged. Bench (2026-10-11):
 Het ijzige land 0.25 → 0.20 after review for 0.05 more questions a page, pooled no
-change, no book worse. Dolittle's initials leave a capitalised word ("HAT" for "THAT")
-and aren't caught by it.
+change, no book worse. A first word set in capitals, two letters or more, is flagged the
+same way: Dolittle sets a chapter's first word so after its initial and loses the letter
+("HAT" for "THAT"); among the built books only Crime's "YOU" opens so with nothing lost.
+Bench: Dolittle 0.44 → 0.40 for 0.08 more questions a page, pooled no change.
 
 ## Line roles
 

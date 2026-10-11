@@ -217,3 +217,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-11 | bench validation, English compounds judged | 590 | 1 | 0 |
 | 2026-10-11 | bench tuning, break parts beside the hyphen only | 1580 | 3 | 0 |
 | 2026-10-11 | bench validation, break parts beside the hyphen only | 590 | 1 | 0 |
+| 2026-10-11 | bench tuning, initial lost before a word in capitals | 1580 | 3 | 0 |
+| 2026-10-11 | bench validation, initial lost before a word in capitals | 590 | 1 | 0 |
