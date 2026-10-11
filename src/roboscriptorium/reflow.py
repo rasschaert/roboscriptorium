@@ -26,11 +26,14 @@ INDENT_MIN = 5.0
 MARGIN_WINDOW = 5
 # Where paragraphs aren't indented, a paragraph starts after a line that ends a
 # sentence this far short of the right margin, as a share of the line width.
-# Only in justified text: most lines in the window end within JUSTIFIED_SLACK
-# points of the margin.
-SHORT_LINE = 0.05
+# Only in justified text: most of the window's lines that end mid-sentence end within
+# JUSTIFIED_SLACK points of the margin.
+SHORT_LINE = 0.02
 JUSTIFIED_SLACK = 3.0
 JUSTIFIED_SHARE = 0.6
+# Lines ending mid-sentence needed to tell; the page's run stands in for a window
+# with fewer.
+JUSTIFIED_INNER = 3
 # The page's margin, from the lines that reach the right margin (most are a paragraph's
 # inner lines), takes over where the local window's lines are all indented: a run of
 # one-line dialogue paragraphs. It needs this many such lines.
@@ -187,20 +190,33 @@ def _spaced(above: Line, line: Line, pitch: float | None, times: float = PARAGRA
 
 
 def _after_short_line(lines: list[Line], i: int, margin: float) -> bool:
-    if i == 0:
+    return i > 0 and _short_end(lines, i - 1, margin) and _may_open(lines[i])
+
+
+def _short_end(lines: list[Line], k: int, margin: float) -> bool:
+    """Whether line k ends a sentence short of the right margin in justified text."""
+    window = lines[max(0, k + 1 - MARGIN_WINDOW) : k + MARGIN_WINDOW + 2]
+    # Lines that stop mid-sentence show whether the text is justified: dialogue's
+    # short last lines don't count against it.
+    inner = [ln for ln in window if not ln.text.rstrip().endswith(SENTENCE_END)]
+    if len(inner) < JUSTIFIED_INNER:
+        inner = [ln for ln in lines if not ln.text.rstrip().endswith(SENTENCE_END)]
+    if len(inner) < JUSTIFIED_INNER:
         return False
-    previous = lines[i - 1]
-    window = lines[max(0, i - MARGIN_WINDOW) : i + MARGIN_WINDOW + 1]
-    ends = sorted(ln.x1 for ln in window)
-    right = ends[3 * len(ends) // 4]
-    justified = sum(right - ln.x1 < JUSTIFIED_SLACK for ln in window)
+    ends = sorted(ln.x1 for ln in inner)
+    right = ends[len(ends) // 2]
+    justified = sum(abs(right - ln.x1) < JUSTIFIED_SLACK for ln in inner)
     return (
-        justified >= JUSTIFIED_SHARE * len(window)
-        and right - previous.x1 > SHORT_LINE * (right - margin)
-        and previous.text.rstrip().endswith(SENTENCE_END)
-        and not lines[i].text.lstrip()[:1].islower()
-        and not lines[i].text.lstrip().startswith(tuple(".,;:!?"))
+        justified >= JUSTIFIED_SHARE * len(inner)
+        and right - lines[k].x1 > SHORT_LINE * (right - margin)
+        and lines[k].text.rstrip().endswith(SENTENCE_END)
     )
+
+
+def _may_open(line: Line) -> bool:
+    """Whether a line can start a paragraph: not in lower case or on punctuation."""
+    text = line.text.lstrip()
+    return not text[:1].islower() and not text.startswith(tuple(".,;:!?"))
 
 
 def spellings(pages: list[PageText]) -> Counter:
@@ -288,6 +304,8 @@ def reflow(
     opening = True
     # Whether a scene break waits for the next paragraph.
     scene = [False]
+    # Whether the last run of body lines ended on a sentence's short last line.
+    short_end = [False]
     for page in pages:
         lines = page.lines if roles is not None else page.lines[: footer_start(page)]
         kept = []
@@ -300,7 +318,7 @@ def reflow(
                 kept.append((ref, line))
                 continue
             # Indents are measured within each run of body lines.
-            opening = _add_body(blocks, kept, opening, seen, known, scene)
+            opening = _add_body(blocks, kept, opening, seen, known, scene, short_end)
             kept = []
             if _ornament(line):
                 scene[0] = True
@@ -322,7 +340,7 @@ def reflow(
                     text = bare_numeral(line.text) or line.text
                     blocks.append(Heading(text, [ref], [text]))
                 opening = True
-        opening = _add_body(blocks, kept, opening, seen, known, scene)
+        opening = _add_body(blocks, kept, opening, seen, known, scene, short_end)
     for block in blocks:
         block.text = tidy(block.text)
         if isinstance(block, Paragraph):
@@ -431,12 +449,16 @@ def _add_body(
     seen: Counter,
     known: Callable[[str], bool] | None,
     scene: list[bool] | None = None,
+    short_end: list[bool] | None = None,
 ) -> bool:
     """Append a run of body lines to `blocks`; whether the next block still opens a section.
 
     `scene` holds whether a scene break waits for the next paragraph: an ornament line
-    sets it, and white space of `SCENE_GAP` pitches after a sentence is one too."""
+    sets it, and white space of `SCENE_GAP` pitches after a sentence is one too.
+    `short_end` holds whether the last run ended on a sentence's short last line, which
+    starts a paragraph at the top of the next page as it does within a page."""
     scene = scene if scene is not None else [False]
+    short_end = short_end if short_end is not None else [False]
     lines = [ln for _, ln in kept]
     flags = indented(lines)
     pitch = _pitch(lines)
@@ -459,9 +481,17 @@ def _add_body(
                 )
             )
             scene[0] = False
-        elif starts_paragraph or line.initial:
+        elif (
+            starts_paragraph
+            or line.initial
+            or (k == 0 and line.starts_paragraph is None and short_end[0] and _may_open(line))
+        ):
             blocks.append(Paragraph(line.text, [ref], initial=line.initial))
         else:
             current.text = join(current.text, line.text, seen, known)
             current.sources.append(ref)
+    if lines:
+        k = len(lines) - 1
+        starts = sorted(ln.x0 for ln in lines[max(0, k - MARGIN_WINDOW) :])
+        short_end[0] = _short_end(lines, k, starts[len(starts) // 4])
     return opening and not kept

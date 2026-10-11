@@ -207,6 +207,68 @@ def test_ragged_right_text_has_no_paragraphs_by_line_length():
     assert len(reflow([PageText(5, 280, HEIGHT, lines)])) == 1
 
 
+def _justified(number: int, rows: list[tuple[str, float]]) -> PageText:
+    """Unindented rows of (text, x1) from x 10, the margin at 250."""
+    lines = [Line(t, 10, 20 + i * SPACING, x1, 30 + i * SPACING) for i, (t, x1) in enumerate(rows)]
+    return PageText(number, 280, HEIGHT, lines)
+
+
+def test_a_sentence_ending_at_the_margin_or_inside_its_slack_continues_the_paragraph():
+    rows = [
+        ("Ze zweeg en keek uit het raam naar", 250),
+        ("de tuin, waar de regen viel. Het", 249),
+        ("was laat. Ze wist dat hij kwam.", 248),
+        ("Morgen zou ze het hem zeggen, wat", 250),
+        ("er ook gebeurde in de tussentijd", 250),
+    ]
+    assert len(reflow([_justified(5, rows)])) == 1
+
+
+def test_dialogue_short_lines_dont_hide_that_the_text_is_justified():
+    # Most lines end short, but every line that stops mid-sentence reaches the margin.
+    rows = [
+        ("‘Ik wil een pakje sigaretten,’ zei ik nog", 250),
+        ("hijgend tegen de eigenaar.", 150),
+        ("‘Welk merk?’", 80),
+        ("‘Marlboro.’", 70),
+        ("Hij haalde een pakje van de plank en", 250),
+        ("sloeg het bedrag aan.", 130),
+        ("‘Dank je.’", 60),
+        ("‘Graag gedaan.’", 90),
+        ("Ik liep naar buiten en stak er een", 250),
+        ("op, daar op de stoep voor de deur,", 250),
+        ("en rookte hem helemaal op.", 160),
+    ]
+    paragraphs = reflow([_justified(5, rows)])
+    assert [p.text[:8] for p in paragraphs] == [
+        "‘Ik wil ",
+        "‘Welk me",
+        "‘Marlbor",
+        "Hij haal",
+        "‘Dank je",
+        "‘Graag g",
+        "Ik liep ",
+    ]
+
+
+def test_a_page_ending_on_a_short_sentence_starts_a_paragraph_on_the_next():
+    body = [
+        ("Ze zweeg en keek uit het raam naar", 250),
+        ("de tuin, waar de regen viel op het", 250),
+        ("gras en de bloemen en de paden die", 250),
+    ]
+    short = _justified(5, [*body, ("ze had aangelegd.", 120)])
+    full = _justified(5, [*body, ("ze had aangelegd met haar man en", 250)])
+    upper = _justified(6, [("Hij kwam pas laat thuis die avond,", 250), ("en at niets.", 90)])
+    lower = _justified(
+        6, [("toen hij kwam pas laat thuis die", 250), ("avond, at hij niets.", 120)]
+    )
+    assert len(reflow([short, upper])) == 2
+    # A full last line, or a next page that opens in lower case, carries on.
+    assert len(reflow([full, upper])) == 1
+    assert len(reflow([short, lower])) == 1
+
+
 def test_a_closing_double_quote_read_as_single_is_mended():
     from roboscriptorium.reflow import close_quotes
 
