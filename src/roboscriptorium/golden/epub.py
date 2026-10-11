@@ -11,12 +11,14 @@ digit (an ornament, "******"). Empty paragraphs (blank lines) are left out. Para
 of the note classes are footnotes: they go to a notes file, not the text, and the text's
 links to them ("railbus[*]") read as printed ("railbus*"); where the EPUB numbers its
 notes ("*", "**", …) and the print sets one mark for each, every link and note reads
-that mark (`note_mark`). An EPUB that sets its dashes as a spaced hyphen-minus, or a
-spaced double one ("--"), gets the print's dash instead (`hyphen_dash`); hyphens inside
-words and numbers stay. Text of the capital classes (small capitals the EPUB writes in
-lower case, "vnr") is set in capitals, as the print shows it and a reader reads it. A
-heading set as an image (a drawn chapter number) gets its text from the image's alt text
-through `image_heading`, a regex whose group 1 is the heading as printed.
+that mark (`note_mark`). An element of the break classes holding no letter or digit, or
+a paragraph of ornaments alone ("* * *"), is a scene break before the next paragraph. An
+EPUB that sets its dashes as a spaced hyphen-minus, or a spaced double one ("--"), gets
+the print's dash instead (`hyphen_dash`); hyphens inside words and numbers stay. Text of
+the capital classes (small capitals the EPUB writes in lower case, "vnr") is set in
+capitals, as the print shows it and a reader reads it. A heading set as an image (a
+drawn chapter number) gets its text from the image's alt text through `image_heading`, a
+regex whose group 1 is the heading as printed.
 """
 
 import hashlib
@@ -38,6 +40,8 @@ BLOCK_TAGS = {f"{XHTML}p", f"{XHTML}div"}
 # A note's link back to the text, after its marker: "* – [terug]", "[1.] – [terug]".
 _BACK_LINK = re.compile(r"^\[?(\*+|\d+)\.?\]?\s*–\s*\[[^\]]*\]")
 _NOTE_LINK = re.compile(r"\[(\*+|\d+)\]")
+# A paragraph of ornaments alone ("* * *", "•  •  •") is a scene break, not text.
+_ORNAMENT = re.compile(r"^[\s*•·⁂◆◇❖✻✽✦○●#~]+$")
 # Between words, at a paragraph's end ("kwam -", an interruption) or at its start ("- Denk na!"),
 # single or doubled ("kwam -- en").
 _SPACED_HYPHEN = re.compile(r"(?<=\S) --?(?= |$)|^--? (?=\S)")
@@ -141,6 +145,7 @@ def read(
     image_heading: str = "",
     capitals: Classes = frozenset(),
     note_mark: str = "",
+    breaks: Classes = frozenset(),
 ) -> list[Section]:
     """The chapters; with `found_notes`, the note paragraphs' text is added to it."""
 
@@ -153,9 +158,15 @@ def read(
             body = _parse(z.read(_member(z, name))).find(f"{XHTML}body")
             _capitalise(body, capitals)
             for el in body.iter():
+                classes = set((el.get("class") or "").split())
+                # Of the break classes, only an element without letters or digits is a
+                # break: a class may set an unindented paragraph of text as well.
+                if breaks & classes and not any(c.isalnum() for c in "".join(el.itertext())):
+                    if sections:
+                        sections[-1].scene_break()
+                    continue
                 if el.tag not in HEADING_TAGS and not _is_paragraph(el):
                     continue
-                classes = set((el.get("class") or "").split())
                 if notes & classes and found_notes is not None:
                     note = _clean(unmarked("".join(_text(el))))
                     found_notes.append(_BACK_LINK.sub(mark, note))
@@ -178,12 +189,16 @@ def read(
                     text = _image_heading(el, image_heading)
                 if not unmarked(text).strip():
                     continue
+                if _ORNAMENT.match(unmarked(text)):
+                    if sections:
+                        sections[-1].scene_break()
+                    continue
                 if _is_heading(el, heading_prefixes):
                     if not any(c.isalnum() for c in unmarked(text)):
-                        continue  # an ornament set as a heading ("******")
+                        continue  # a heading of marks alone is no chapter
                     sections.append(Section(unmarked(text), unmarked(text)))
                 elif sections:
-                    sections[-1].paragraphs.append(text)
+                    sections[-1].add(text)
     return sections
 
 
@@ -201,6 +216,7 @@ def write_reference(
     image_heading: str = "",
     capitals: Classes = frozenset(),
     note_mark: str = "",
+    breaks: Classes = frozenset(),
 ) -> list[Section]:
     found_notes: list[str] = []
     sections = read(
@@ -216,6 +232,7 @@ def write_reference(
         image_heading,
         capitals,
         note_mark,
+        breaks,
     )
     text_dir = out / "text"
     text_dir.mkdir(parents=True, exist_ok=True)
@@ -227,6 +244,7 @@ def write_reference(
         (text_dir / f"chapter-{i}.xhtml").write_text(_chapter_xhtml(section))
 
     digest = hashlib.sha256(epub.read_bytes()).hexdigest()
+    scenes = sum(len(s.breaks) for s in sections)
     (out / "PROVENANCE.md").write_text(f"""\
 # Provenance
 
@@ -243,6 +261,7 @@ Generated by `roboscriptorium golden derive`; don't edit by hand.
 - Image headings: {image_heading or "none"}
 - Note classes: {", ".join(sorted(notes)) or "none"} ({len(found_notes)} notes in notes.txt)
 - Note marks set as: {note_mark or "numbered, as the EPUB sets them"}
+- Scene-break classes: {", ".join(sorted(breaks)) or "none"} ({scenes} breaks, ornaments included)
 - {len(sections)} chapters, {sum(len(s.paragraphs) for s in sections)} paragraphs
 - Left out: blank lines, everything outside the listed files.
 """)

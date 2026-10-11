@@ -84,7 +84,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `note_classes`: the scan's footnote lines are left out of every score),
   `align.py` (labels a golden scan's text-layer lines with the reference words they
   hold, and their role: heading, body or furniture).
-- `evaluate.py`: CER, WER and paragraph F1 against a golden reference. Typography
+- `evaluate.py`: CER, WER, paragraph F1 and scene breaks (found where the reference has
+  one, and set elsewhere) against a golden reference. Typography
   the EPUB may set differently (quote and dash glyphs, an ellipsis glyph or spaced
   dots, joiners) is folded on both sides and counted per side (`folded_*`, printed
   by `eval`), so a pair's convention gap is visible, not silent.

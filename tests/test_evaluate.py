@@ -116,3 +116,17 @@ def test_a_heading_with_another_number_is_not_found():
         )
         == 3
     )
+
+
+def test_scene_breaks_count_where_they_fall_on_the_words():
+    from roboscriptorium.golden.reference import Chapter
+    from roboscriptorium.ir import Document, Paragraph
+
+    reference = [Chapter("1", ["Een twee.", "Drie vier.", "Vijf zes."], breaks=frozenset({1}))]
+    doc = Document("t", "a", "nl", [
+        Paragraph("Een twee."), Paragraph("Drie vier.", break_before=True),
+        Paragraph("Vijf zes.", break_before=True),
+    ])  # fmt: skip
+    score = evaluate.score(doc, reference)
+    assert (score.scene_breaks_expected, score.scene_breaks_output) == (1, 2)
+    assert score.scene_breaks_found == 1

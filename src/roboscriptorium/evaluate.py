@@ -9,6 +9,8 @@ Metrics:
 - WER: word edits per reference word, comparing lowercase letters and digits only,
   so it measures reading errors and ignores punctuation.
 - Paragraph F1: whether paragraph breaks fall where the reference has them.
+- Scene breaks: how many of the reference's the output sets at the same word, and how
+  many it sets elsewhere.
 - Headings: how many reference chapter headings the output has (matched in order,
   fuzzily), and how many output headings match none.
 - Italics: precision and recall of italic words, over the words that align.
@@ -108,6 +110,9 @@ class Score:
     italic_output: int = 0
     italic_precision: float = 0.0
     italic_recall: float = 0.0
+    scene_breaks_expected: int = 0
+    scene_breaks_output: int = 0
+    scene_breaks_found: int = 0
     confusions: list[tuple[str, str, int]] = field(default_factory=list)
     # Per kind, how much typography the fold forgave on each side.
     folded_reference: dict[str, int] = field(default_factory=dict)
@@ -117,6 +122,17 @@ class Score:
     def paragraph_f1(self) -> float:
         p, r = self.paragraph_precision, self.paragraph_recall
         return 2 * p * r / (p + r) if p + r else 0.0
+
+
+def _scene_starts(paragraphs: list[str], breaks: list[bool]) -> set[int]:
+    """The word indices (as `_words_with_breaks` counts them) of the paragraphs a scene
+    break comes before."""
+    starts, n = set(), 0
+    for para, scene in zip(paragraphs, breaks, strict=True):
+        if scene:
+            starts.add(n)
+        n += len(normalise(para).split())
+    return starts
 
 
 def _words_with_breaks(paragraphs: list[str]) -> tuple[list[str], set[int]]:
@@ -259,6 +275,13 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     # A break counts when it starts a word that aligns with a reference break.
     mapped = {out_to_ref[i] for i in out_starts if i in out_to_ref}
     hits = len(mapped & ref_starts)
+    ref_scenes = _scene_starts(
+        ref_paragraphs, [k in ch.breaks for ch in reference for k in range(len(ch.paragraphs))]
+    )
+    out_scenes = _scene_starts(
+        [b.text for b in doc.paragraphs], [b.break_before for b in doc.paragraphs]
+    )
+    scenes_hit = {out_to_ref[i] for i in out_scenes if i in out_to_ref} & ref_scenes
 
     return Score(
         cer=char_edits / ref_chars,
@@ -274,6 +297,9 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         italic_output=len(out_italic),
         italic_precision=len(hit_italic) / len(out_italic) if out_italic else 0.0,
         italic_recall=len(hit_italic) / len(ref_italic) if ref_italic else 0.0,
+        scene_breaks_expected=len(ref_scenes),
+        scene_breaks_output=len(out_scenes),
+        scene_breaks_found=len(scenes_hit),
         confusions=[(got, want, n) for (got, want), n in confusions.most_common(top)],
         folded_reference=folds(ref_paragraphs),
         folded_output=folds([b.text for b in doc.paragraphs]),

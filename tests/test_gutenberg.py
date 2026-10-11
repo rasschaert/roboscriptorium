@@ -48,3 +48,18 @@ def test_space_ellipses_puts_back_the_space_the_print_sets_and_nothing_else():
     assert space_ellipses("others?...”") == "others? ...”"
     marked = f"{ITALIC_START}Ulysses{ITALIC_END}... toen"
     assert space_ellipses(marked) == f"{ITALIC_START}Ulysses{ITALIC_END} ... toen"
+
+
+def test_a_thought_break_is_a_scene_break_and_a_chapter_rule_is_not(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/x_501-h-1.htm.html",
+            PAGE.format(
+                '<hr class="chap"/><h2>I</h2><hr class="tb"/><p>One.</p><p>Two.</p>'
+                '<hr class="tb"/><p>Three.</p><hr class="chap"/><p>Four.</p>'
+            ),
+        )
+    (section,) = gutenberg.read_epub(epub)[0]
+    assert section.paragraphs == ["One.", "Two.", "Three.", "Four."]
+    assert section.breaks == {2}

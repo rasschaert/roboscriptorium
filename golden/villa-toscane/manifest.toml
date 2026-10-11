@@ -5,9 +5,10 @@ language = "nl"
 eu_copyright_until = 2200
 
 # The retail EPUB (Uitgeverij Marmer, 2014). Chapter headings are "Kop_1"
-# paragraphs; the colophon follows an invisible "Kop_1-Onzichtbaar" heading, so
-# it is chapter 13 and the novel is chapters 1–12. Only the headings are set in
-# italics.
+# paragraphs; the novel is chapters 1–12. The colophon follows chapter 12 in its
+# file, under an invisible "Kop_1-Onzichtbaar" heading of a lone "*" (a mark, not a
+# chapter, to derive); it and its "Tekst_7" paragraphs, used nowhere else, are left
+# out. Only the headings are set in italics.
 [reference]
 source = "Villa Toscane, Uitgeverij Marmer 2014, ISBN 9789460688966 (retail EPUB)"
 sha256 = "941c73702dcd5a5183193186216ff8b10a21a63ff18f45ba01efe2d2bf2049f9"
@@ -18,6 +19,7 @@ files = [
   "Text/9789460688966-11.html", "Text/9789460688966-12.html", "Text/9789460688966-13.html",
 ]
 heading_prefixes = ["Kop_1"]
+blank_classes = ["Kop_1-Onzichtbaar", "Tekst_7", "Tekst_7-Na-witregel"]
 
 # Not a scan: calibre's PDF of that same EPUB, US Letter pages. Held out: scored
 # to check that born-digital changes carry over, never tuned on.

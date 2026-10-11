@@ -23,6 +23,9 @@ files = [
   "Text/section-0027.xhtml",
 ]
 heading_prefixes = ["P_kop", "P_deeltitel"]
+# Its empty "P_plat" paragraphs are the print's scene breaks (the class also sets
+# unindented text, which stays text).
+break_classes = ["P_plat"]
 italic_classes = ["P_plat_2__And__Italic", "C_Current__And__Italic", "C_SMS_2f_Mail"]
 
 # The first printing (June 2017) of the same translation. Internet Archive

@@ -75,8 +75,13 @@ In this order:
 
 ## 6. Structure
 
-- [ ] Score scene breaks: derive keeps a reference's blank-line paragraphs and ornaments
-      as a break mark, counted like paragraph breaks. ~2 h
+- [ ] Scene breaks in every reference: scoring works (2026-10-11), but most EPUBs mark
+      a break by a class on the paragraph after it (De tuin `standaard-eerste`, De kerk
+      `wp-platmetwit`, Monterosso `ff-platmetwit`, De eerlijke vinder `firstline`) or
+      before it (De cipier, Doodskleed `einde-links-ingesprongen`, Artemis
+      `space_after`); add opening and closing classes to derive, check each on its scan,
+      declare, rederive. Until then the bench's "+N" breaks are mostly unrecorded, not
+      false (De tuin's checked: real). ~1 h
 - [ ] Footnotes into the EPUB as notes, out of the running text: Reis has them and the
       test set has 26, now only left out of the score (`notes.txt`). Before the test set;
       ~half a day

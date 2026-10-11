@@ -254,9 +254,18 @@ def _f1(score: dict) -> float:
     return 2 * p * r / (p + r) if p + r else 0.0
 
 
+def scenes(score: dict) -> str:
+    """Scene breaks found of those expected, and how many more the output sets (a score
+    saved before they were counted reads 0/0)."""
+    found = score.get("scene_breaks_found", 0)
+    extra = score.get("scene_breaks_output", 0) - found
+    return f"{found}/{score.get('scene_breaks_expected', 0)} (+{extra})"
+
+
 def structure(old: dict, new: dict) -> list[str]:
-    """Per book, the headings found and spurious and the paragraph F1 where they changed:
-    the primary measure counts words, so a change to a book's structure shows only here."""
+    """Per book, the headings and scene breaks found and spurious and the paragraph F1
+    where they changed: the primary measure counts words, so a change to a book's
+    structure shows only here."""
     out = []
     for name, book in new["books"].items():
         if name not in old["books"]:
@@ -271,6 +280,8 @@ def structure(old: dict, new: dict) -> list[str]:
                 f"(+{a['headings_spurious']}) → {b['headings_found']}/{b['headings_expected']} "
                 f"(+{b['headings_spurious']})"
             )
+        if scenes(a) != scenes(b):
+            out.append(f"{name[:40]:40} scene breaks {scenes(a)} → {scenes(b)}")
         if round(_f1(a), 3) != round(_f1(b), 3):
             out.append(f"{name[:40]:40} paragraph F1 {_f1(a):.3f} → {_f1(b):.3f}")
     return out

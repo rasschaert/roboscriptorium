@@ -156,3 +156,16 @@ def test_a_disagreement_at_a_slices_edge_keeps_its_whole_book_key(monkeypatch, t
     verdicts.record(in_whole, "starm", "edition")
     patched, applied = patch(sliced, verdicts, around)
     assert applied == 1 and patched[0].paragraphs == ["Daarna kwam de starm over het land."]
+
+
+def test_patch_keeps_a_scene_break_past_a_paragraph_a_verdict_empties(tmp_path):
+    reference = [
+        Chapter("I", ["She left.", "Gone.", "He stayed.", "Then."], breaks=frozenset({1, 3}))
+    ]
+    verdicts = Verdicts(tmp_path / "v.jsonl")
+    d = Disagreement("k", "", "Gone.", "She left.", "He stayed.", 7, (1, 1))
+    verdicts.record(d, "", "edition")
+    patched, applied = patch(reference, verdicts)
+    assert applied == 1
+    assert patched[0].paragraphs == ["She left.", "He stayed.", "Then."]
+    assert patched[0].breaks == {1, 2}

@@ -4,7 +4,8 @@ Gutenberg's transcriptions keep the printed edition's wording and spelling, so
 the text is used as it stands. Each `h2` starts a chapter; the manifest names
 the first and last chapter by the first line of their heading. Page numbers,
 illustrations, captions and transcriber's notes are left out. Consecutive verse
-lines become one paragraph.
+lines become one paragraph. A thought break (`<hr class="tb">`) is a scene break before
+the next paragraph.
 """
 
 import hashlib
@@ -42,6 +43,19 @@ class Section:
     full_heading: str
     # Italic parts marked (see `reference.marked_text`).
     paragraphs: list[str] = field(default_factory=list)
+    # Indices of the paragraphs a scene break comes before.
+    breaks: set[int] = field(default_factory=set)
+    _pending: bool = field(default=False, repr=False)
+
+    def scene_break(self) -> None:
+        """A scene break before the next paragraph; none before the first."""
+        self._pending = bool(self.paragraphs)
+
+    def add(self, text: str) -> None:
+        if self._pending:
+            self.breaks.add(len(self.paragraphs))
+            self._pending = False
+        self.paragraphs.append(text)
 
 
 def _clean(text: str) -> str:
@@ -73,7 +87,7 @@ class _Walker:
 
     def _flush_verse(self) -> None:
         if self._verse and self.sections:
-            self.sections[-1].paragraphs.append(" ".join(self._verse))
+            self.sections[-1].add(" ".join(self._verse))
         self._verse = []
 
     def walk(self, el: ET.Element) -> None:
@@ -87,6 +101,11 @@ class _Walker:
             self._flush_verse()
             self.sections.append(Section(_first_line(el), _clean(" ".join(el.itertext()))))
             return
+        if el.tag == f"{XHTML}hr" and "tb" in classes:
+            self._flush_verse()
+            if self.sections:
+                self.sections[-1].scene_break()
+            return
         if "verse" in classes:
             if line := _clean("".join(el.itertext())):
                 self._verse.append(line)
@@ -95,7 +114,7 @@ class _Walker:
             self._flush_verse()
             text = _clean("".join(marked_text(el, _kept)))
             if self.sections and unmarked(text).strip():
-                self.sections[-1].paragraphs.append(text)
+                self.sections[-1].add(text)
             return
         for child in el:
             self.walk(child)
@@ -144,7 +163,9 @@ def _chapter_xhtml(section: Section) -> str:
     html = ET.Element("html", xmlns="http://www.w3.org/1999/xhtml")
     body = ET.SubElement(ET.SubElement(html, "body"), "section")
     ET.SubElement(body, "h2").text = section.full_heading
-    for text in section.paragraphs:
+    for i, text in enumerate(section.paragraphs):
+        if i in section.breaks:
+            ET.SubElement(body, "hr")
         append_marked(ET.SubElement(body, "p"), text)
     ET.indent(html)
     return '<?xml version="1.0" encoding="utf-8"?>\n' + ET.tostring(html, encoding="unicode") + "\n"

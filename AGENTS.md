@@ -421,7 +421,8 @@ sha256, page ranges, the source and chapter range), the derived chapters in `tex
   edits. An EPUB that sets its dashes as spaced hyphens or a spaced `--` gets
   `hyphen_dash = "–"` in `[reference]`; one that writes small capitals in lower case with
   a class gets `capital_classes`; one that numbers its notes in growing marks (`*`, `**`,
-  …) where the print sets one gets `note_mark`; a Gutenberg transcription that drops the space its
+  …) where the print sets one gets `note_mark`; one whose scene breaks are empty paragraphs
+  of a class gets `break_classes`; a Gutenberg transcription that drops the space its
   print sets before an ellipsis gets `ellipsis_space = true`.
   `experiments/chapter_pages.py` gives the scan page each derived chapter starts on, to
   end a bench slice on a chapter.

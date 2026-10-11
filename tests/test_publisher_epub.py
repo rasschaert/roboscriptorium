@@ -230,3 +230,42 @@ def test_a_heading_set_as_an_image_reads_its_alt_text(tmp_path):
         ["Armstrong sucks.", "Still chapter 2."],
     )
     assert publisher_epub.read(epub, ["Text/a.html"]) == []
+
+
+def test_break_classes_and_ornaments_are_scene_breaks_that_survive_the_files(tmp_path):
+    from roboscriptorium.golden.reference import load_chapters
+
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<p class="kop">1</p><p class="witregel"> </p><p>Een.</p><p>Twee.</p>'
+                '<p class="witregel"> </p><p>Drie.</p><p class="sec">•  •  •</p>'
+                "<p>Vier.</p><p>‘…’</p><p>* * *</p>"
+            ),
+        )
+    sections = publisher_epub.write_reference(
+        epub, "test", ["Text/a.html"], ("kop",), tmp_path, breaks=frozenset({"witregel"})
+    )
+    # No break before a chapter's first paragraph; a line of dots in quotes is text.
+    assert sections[0].paragraphs == ["Een.", "Twee.", "Drie.", "Vier.", "‘…’"]
+    assert sections[0].breaks == {2, 3}
+    (chapter,) = load_chapters(tmp_path / "text")
+    assert chapter.paragraphs == ["Een.", "Twee.", "Drie.", "Vier.", "‘…’"]
+    assert chapter.breaks == {2, 3}
+
+
+def test_a_break_class_that_also_sets_text_breaks_only_where_empty(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<p class="kop">1</p><p class="plat">Een.</p><p>Twee.</p>'
+                '<p class="plat"> </p><p class="plat">Drie.</p>'
+            ),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], ("kop",), breaks=frozenset({"plat"}))
+    assert section.paragraphs == ["Een.", "Twee.", "Drie."]
+    assert section.breaks == {2}

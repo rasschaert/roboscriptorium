@@ -21,6 +21,8 @@ class Chapter:
     paragraphs: list[str]
     # Per paragraph, the indices of its italic words in `paragraph.split()`.
     italic: list[frozenset[int]] = field(default_factory=list)
+    # Indices of the paragraphs a scene break (an `<hr/>` in the file) comes before.
+    breaks: frozenset[int] = frozenset()
 
 
 def _text(el: ET.Element) -> str:
@@ -106,7 +108,15 @@ def load_chapters(text_dir: Path) -> list[Chapter]:
         group = body.find(f".//{XHTML}hgroup")
         heading = group if group is not None else body.find(f".//{XHTML}h2")
         in_heading = set(heading.iter()) if heading is not None else set()
-        marked = ["".join(marked_text(p)) for p in body.iter(f"{XHTML}p") if p not in in_heading]
+        marked, breaks, rule = [], set(), False
+        for el in body.iter():
+            if el.tag == f"{XHTML}hr":
+                rule = True
+            elif el.tag == f"{XHTML}p" and el not in in_heading:
+                if rule:
+                    breaks.add(len(marked))
+                    rule = False
+                marked.append("".join(marked_text(el)))
         paragraphs = [re.sub(r"\s+", " ", unmarked(m)).strip() for m in marked]
         title = " ".join(_text(el) for el in heading) if group is not None else None
         chapters.append(
@@ -114,6 +124,7 @@ def load_chapters(text_dir: Path) -> list[Chapter]:
                 title or (_text(heading) if heading is not None else ""),
                 paragraphs,
                 [italic_words(m) for m in marked],
+                frozenset(breaks),
             )
         )
     return chapters

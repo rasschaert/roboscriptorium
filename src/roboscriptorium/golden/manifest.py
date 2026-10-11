@@ -69,6 +69,8 @@ class PublisherEpub:
     capital_classes: frozenset[str] = frozenset()
     # The print's one mark for every note where the EPUB numbers them ("*", "**", …).
     note_mark: str = ""
+    # Classes of the elements that stand for a scene break (an empty "witregel" paragraph).
+    break_classes: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -159,6 +161,7 @@ class Golden:
                 ref.get("italics_unlike_print", ""),
                 frozenset(ref.get("capital_classes", ())),
                 ref.get("note_mark", ""),
+                frozenset(ref.get("break_classes", ())),
             )
         )
         se = data.get("standard_ebooks")

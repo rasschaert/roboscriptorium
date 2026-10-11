@@ -122,6 +122,7 @@ def golden_derive(name: str, epub: Path | None = None) -> None:
             image_heading=ref.image_heading,
             capitals=ref.capital_classes,
             note_mark=ref.note_mark,
+            breaks=ref.break_classes,
         )
     else:
         epub = epub or gutenberg.download(
@@ -476,6 +477,7 @@ def run_bench(
             f"  breaks {sum(v[6] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
             f"  headings {b['score']['headings_found']}/{b['score']['headings_expected']}"
             f" (+{b['score']['headings_spurious']})"
+            f"  scenes {bench.scenes(b['score'])}"
         )
     for name, why in signals.suspects(pairs).items():
         typer.echo(f"  suspect pair, consider retiring {name}: {'; '.join(why)}")
@@ -532,7 +534,7 @@ def evaluate_books(
             f"{book_dir.name[:40]:40} CER {result.cer:6.2%}  WER {result.wer:6.2%}  "
             f"paragraphs P {result.paragraph_precision:.3f} R {result.paragraph_recall:.3f}  "
             f"headings {result.headings_found}/{result.headings_expected}"
-            f" (+{result.headings_spurious})"
+            f" (+{result.headings_spurious})  scenes {bench.scenes(asdict(result))}"
         )
     if len(book_dirs) > 1:
         typer.echo("\n" + "\n".join(summary))
@@ -578,7 +580,7 @@ def _evaluate_book(
     typer.echo(
         f"CER {result.cer:.2%}   WER {result.wer:.2%}   paragraph F1 {result.paragraph_f1:.3f}"
         f"   headings {result.headings_found}/{result.headings_expected}"
-        f" (+{result.headings_spurious} spurious)"
+        f" (+{result.headings_spurious} spurious)   scene breaks {bench.scenes(asdict(result))}"
     )
     typer.echo(
         f"  paragraphs: precision {result.paragraph_precision:.3f}, "

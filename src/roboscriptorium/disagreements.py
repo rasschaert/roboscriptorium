@@ -356,13 +356,22 @@ def patch(
             rebuilt.setdefault((c, p), []).extend(zip(printed, italic, strict=True))
     chapters = []
     for c, ch in enumerate(reference):
-        paragraphs, marks = [], []
+        paragraphs, marks, breaks = [], [], set()
+        # A scene break before a paragraph a verdict emptied moves to the next one kept.
+        pending = False
         for p, para in enumerate(ch.paragraphs):
+            pending = pending or p in ch.breaks
             if (c, p) not in touched:
-                paragraphs.append(para)
+                kept = para
                 marks.append(ch.italic[p] if p < len(ch.italic) else frozenset())
             elif tokens := rebuilt.get((c, p)):
-                paragraphs.append(" ".join(t for t, _ in tokens))
+                kept = " ".join(t for t, _ in tokens)
                 marks.append(frozenset(k for k, (_, i) in enumerate(tokens) if i))
-        chapters.append(Chapter(ch.heading, paragraphs, marks))
+            else:
+                continue
+            if pending:
+                breaks.add(len(paragraphs))
+                pending = False
+            paragraphs.append(kept)
+        chapters.append(Chapter(ch.heading, paragraphs, marks, frozenset(breaks)))
     return chapters, applied
