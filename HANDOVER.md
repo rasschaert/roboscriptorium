@@ -4,101 +4,101 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## State, 2026-10-11 midday (session running; the user is away, work continues)
+## State, 2026-10-11 ~18:30, session end (the user is about to run a memory-heavy job)
 
-On `main`, pushed. Lint and tests green.
+On `main`, pushed, clean. Lint and tests green (370). **Nothing runs**: no screen, Ollama
+unloaded. **Ask the user before starting any Ollama or llama job**: they asked for none
+for now.
 
-### In flight (check each before starting anything that touches it)
+### Waiting, in this order
 
-- **Validation bench stopped** at the user's request (18:25): Koning Wilders' Qwen reading
-  is cached at 600 of 2,439 lines; the next `bench validation` resumes it (~45 min Qwen,
-  ~25 min judges) and builds Het laatste bevel's slice cold (~1¾ h). Ask before
-  starting it: the user wants no heavy Ollama jobs for now.
-- **Ex-minnaar** is built (cold 306 min, rebuilt with today's code), epubcheck clean,
-  dated copy in `work/ex-minnaar/epubs/`. 390 questions wait for the user's review
-  (`uv run roboscriptorium review work/ex-minnaar`): 242 OCR doubts (mostly 70–80% sure),
-  109 quotes (63 without readings), 7 lost lines, ~30 layout.
+1. **Agreed, not started: the review display fix.** A place question (one OCR doubt in
+   a line) shows its readings with the rest of the line as the text layer reads it, so
+   other errors there look missed though each has its own question (three sampled
+   Ex-minnaar questions, checked by subagents and by eye: "4ls"→"áls" and "1m"→"1 m" are
+   separate questions; "40.’" is under the quote question). Show the rest of the line
+   with its other questioned places marked (or their likeliest reading). `review.py`,
+   `regions.html`; test on `work/probes/questions/ex-minnaar/sample3/`. Under an hour.
+2. **Proposed, awaiting the user's yes: `roboscriptorium init <pdf>`.** The user's goal:
+   anyone runs this locally without a subscription, so setting up a book must not need
+   an agent. Draft `book.toml` (title/author from PDF metadata or the title page, the
+   language from the word lists, `body_pages` guessed) and ask the user only what it
+   can't decide, on the review page (e.g. "does the text start on p. 7 'Deel een /
+   Proloog' or p. 9?"). Page classification is the hard part (checklist, Beyond the
+   golden books' kind). The user's books need only `book.toml`; manifests are for golden
+   pairs.
+3. **Verminkt (Manteau 2004), a new pair from the user, undecided.** Manifest written
+   (`golden/verminkt/`), reference derived (one chapter, `one_chapter`), scan in
+   `work/verminkt--ia-scan/`, but **not in any bench set**. The scan is the 1st printing
+   (2004, ISBN 90 223 1795 1, D 2004/0034/182), the e-book is made from the **5th**
+   (2007): the project's rule skips other printings. The text layer reads ij as y
+   ("hy", "zyn": an older OCR), 1.63% CER, word counts within 0.2% (110,543 / 110,719).
+   Next: fold y→ij in the layer and list what still differs; real-word differences mean
+   the printings differ (skip it); only OCR slips mean it can join validation. Tell the
+   user either way.
+4. **Validation bench, stopped at the user's request** (18:25): Koning Wilders' Qwen
+   reading is cached at 600 of 2,439 lines; resuming costs ~45 min Qwen + ~25 min judges,
+   and Het laatste bevel's slice (pages 9–100) ~1¾ h cold. Only with the user's go.
+5. **Ex-minnaar's review, the user, not soon**: 390 questions, all of them (the user's
+   choice): `uv run roboscriptorium review work/ex-minnaar`. Built, epubcheck clean,
+   dated copy in `work/ex-minnaar/epubs/`. Do the display fix (1) first.
+6. **Stella, the user, not today**: read `work/stella/stella.epub` through, note errors.
 
-### Next, queued
+### The bench (after today's set changes)
 
-- De eerlijke vinder and Monterosso moved to tuning (user's go); arbiter and trees
-  retrained, validation 0.67 → 0.64. Validation is five books: the user looks for one or
-  two Dutch pairs (De Arbeiderspers, Prometheus/Ooievaar, Manteau, Vrijdag preferred).
-- Every build now keeps a dated EPUB in `work/<book>/epubs/`; Stella's 2026-10-07 and
-  2026-10-11 are filed. Ex-minnaar's goes there with its rebuild.
-- Stale processes (Goede dochter review on 8766, llama-server) stopped.
-- Done this afternoon, each in decisions with its numbers: the pair-prior ablation (it
-  stays), Reis's note marks, scene breaks scored (references rederived; Villa's colophon
-  out) and a page-top rule (272 of 295 found), dropped slivers no longer split runs
-  (Artemis), footnotes out of the running text (Reis 7 of 8), IA scandata (null), the
-  user's other books' body pages (De kus and Russische roman open on p. 7).
-- Epigraphs on a page of their own are set apart (d9d00d3); Ex-minnaar's `body_pages`
-  now start on p. 7 for its motto, so its rebuild after the cold build picks it up.
-- **Python 3.15**: blocked on PyTorch (no stable cp315 wheel; tracking
-  pytorch/pytorch#184352, nightlies have it). Tried in worktree
-  `../roboscriptorium-py315` (branch `py315`, own `.venv` with nightly torch 2.16.dev):
-  all tests pass, DocLayout-YOLO's regions on 7 pages byte-identical to 3.13
-  (`work/probes/py315/`), the arbiter's pickle loads. When torch ships cp315: bump
-  `.python-version`, `uv lock`, rerun. The worktree can go once recorded.
-- Leftovers from older sessions, left for the user: a Goede dochter review server on
-  port 8766 and `llama-server` (imajev 4B) on 8092, both days old.
+Tuning is 17 books (De eerlijke vinder and Monterosso moved in today, arbiter and trees
+retrained): **0.36** wrong words a page after review over all 17 (0.31 over the 15 it
+shares with this morning's set; De eerlijke vinder 0.99, Monterosso 0.50). Validation
+was 0.64 on its 5 books before Koning Wilders (Atlas Contact) and Het laatste bevel
+(Manteau, slice 9–100) joined; neither is benched yet (see 4). Paragraph breaks ~0.2 a
+page on both.
 
-### Where the bench stands
+## What today taught (read before choosing work)
 
-Bench (15 tuning books, 7 validating): tuning **0.31**, validation **0.70** wrong words
-a page after review (0.43 and 0.82 at midnight); paragraph breaks 0.22 and 0.21 a page.
-Each change of the night is in docs/decisions.md with its numbers: the running-text
-rule, Bruna's unindented paragraphs, quote questions (a lost stop, an open quote always
-asked, a stray mark asked where it stands), lost drawn initials (lower case and
-capitals), the judge on English line-end hyphens, no paragraph inside a broken word, a
-quoted one-word line kept, an ellipsis after ? or ! spaced as read.
+- **The print is canonical** (the user). The output keeps the print's words, accents,
+  italics, paragraphs and its own typography (dash and spacing, ellipsis, quote marks);
+  no house style (AGENTS.md, Fidelity). Where a reference EPUB differs from its print:
+  a systematic gap is undone in derive (manifest settings), a glyph choice is folded in
+  scoring, a one-off is a verdict (the user gave "wàs" for Koning Wilders).
+- **An old EPUB copy found two regressions** (Stella's 2026-10-07 build): every build
+  now keeps a dated copy in `work/<book>/epubs/` (`epub.keep_dated`). Diff them.
+- **Pre-check a user book's front matter before its cold build** (a probe copy, pages
+  around the start, `check_ocr=False`, minutes): De kus's part label was dropped as a
+  page number (fixed: `heading-label`), Ex-minnaar's motto became the first paragraph
+  (fixed: epigraphs), Een Russische roman's part number "1" is dropped and its library
+  pencil marks read as text (left for its full build to show what it asks).
+- **Sample the questions on their crops before sending the user**: Ex-minnaar's
+  lost-line questions were a song's stanza breaks (fixed); 390 remain, mostly real.
+- **Quote styles at hand**: all 25 books are ‘-dialogue or “-dialogue; « » „ ‚ appear
+  only as misreads. Nested (inner) quotes are assumed, not learned (checklist).
+- **Most errors left after review were never suspects** (all readings agree): the
+  rule-sized groups are done; the proofreader, the book's own consistency and the book
+  teaching itself (simulated again today: gain concentrated in De kerk and Vuurspel)
+  don't pay yet. Accuracy moves by better readers, trustworthy measurement and review.
+- **Gate commits on the test run**: `uv run pytest -q && git commit`, never a filtered
+  run (a failing test went in once today, fixed in the next commit).
+- **The user wants plain English** in reports: say what a thing does before its name.
 
-## What the night taught (read before choosing work)
+## How to run things
 
-- **About 85% of the wrong words left after review were never suspects**: every reading
-  agreed, so no judge and no question saw them. The rule-sized groups are taken; each new
-  rule now buys ~0.01 a page. The rest is listed per book by `experiments/unasked.py`
-  (`work/probes/unasked/`, 2 min warm; 319 words over the tuning books at the last count).
-- Three ways at those errors were probed on 2026-10-11, all recorded in decisions:
-  a reader of the finished text (qwen3.8 proposing, clef filtering) catches about one
-  error per 100 paragraphs for as many false questions, not worth building until a
-  stronger text model comes (rerun `experiments/probe_text_reader.py`, ~25 min, with the
-  bench's slice as the spec, e.g. `metro-2033--ia-scan:7-162:1-14`); the book's own
-  spelling consistency is null (`experiments/probe_consistency.py`); Internet Archive's
-  own page images cut the readers' errors by about a fifth on Crime
-  (`experiments/probe_ia_images.py`) but a borrowed item offers no downloads, so not for
-  Stella or the user's books.
-- So accuracy moves now by readers that err less (a new model: screen it with
-  `experiments/tryout.py run reader`), by measurement that can be trusted (more golden
-  pairs of other kinds, verdicts), and by the reviewer.
+- Long runs through `experiments/timed.sh` inside `experiments/detached.sh` (a screen);
+  never a background shell command (it times out). Say the estimate first
+  (docs/run-times.md: a cold build ~1.1 min a page; Ex-minnaar took 306 min).
+- Don't edit `src/` while a bench chain runs; park a change as a patch.
+- A probe or eval on a golden book takes the bench's slice, never the bare directory.
+- Nothing reads the test set (Het geluid van bananen) until its single scoring; its
+  reference must be rederived first (it missed today's derive changes).
+- Killing a chain: quit its screen and `pkill -f` the step; `ollama stop <model>` frees
+  the memory.
 
-## How to run things (learned the hard way)
+## Waiting on the user, besides the above
 
-- A pair of benches as one detached chain: `work/runs/compounds-chain.zsh` (edit its
-  labels and log names, then `experiments/detached.sh <name> zsh <it>`); a cached pair
-  takes ~10 min. Name the screen without "robo-" (detached.sh adds it).
-- Don't edit `src/` while a chain runs: its second bench loads the code when it starts.
-  Park a change as a patch (`git diff > work/runs/x.patch`, `git checkout`) meanwhile.
-- A probe or eval on a golden book takes the bench's slice (`bench.SETS`), never the bare
-  book directory: that builds the uncached pages cold.
-- Probes never read the test set (Het geluid van bananen); loop over `bench.SETS["tuning"]`.
-- Killing a chain's screen leaves its current step running: `pkill -f` the step too.
-
-## Next
-
-The open steps, in order, are in docs/checklist.md; the first ones:
-
-1. Stella end to end: built (every stage cached) and sampled: 4 new questions, one real
-   (p. 19 "féts"). Reviewed and rebuilt (epubcheck clean); the user reads the EPUB through.
-2. The user's four books (Ex-minnaar, De kus in de nacht, Andere levens, Een Russische
-   roman).
-
-## Waiting on the user
-
-- Reading Stella's EPUB through (`work/stella/stella.epub`), noting each error.
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`.
-- **French**: undecided (under "Later" in the checklist).
-- A stale worktree entry from an old session's scratchpad (`git worktree list`); the
-  branch `qwen-second-look` holds the second-look probe. The remote `origin/bughunt` is
-  merged and can go.
+- More golden pairs when convenient: De Arbeiderspers, Prometheus/Ooievaar or Vrijdag
+  preferred (publishers already used are listed in docs/checklist.md); a Kosmos book
+  for later, beyond prose.
+- **French**: undecided (checklist, Later).
+- The worktree `../roboscriptorium-py315` (branch `py315`) waits for a PyTorch release
+  with cp315 wheels (pytorch/pytorch#184352); a stale worktree entry from an old
+  scratchpad (`git worktree list`); the remote `origin/bughunt` is merged and can go.

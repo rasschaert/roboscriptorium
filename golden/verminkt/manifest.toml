@@ -1,0 +1,26 @@
+title = "Verminkt"
+author = "Patrick De Bruyn"
+language = "nl"
+# De Bruyn is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Manteau's e-book (2010), made from the fifth printing (September 2007, ISBN 978 90 223
+# 1795 2); the scan is the first (2004): checked on the text before use. One text
+# without headings over four files, "***" between scenes, whole italic paragraphs in
+# the "sgc-1" class. Acknowledgements and back matter left out.
+[reference]
+source = "Verminkt, Manteau 2004, e-book of the fifth printing (2007), ISBN 978 90 223 1795 2 (EPUB)"
+sha256 = "90f7109724206ccc08dabe5ec803c60a5ec7fb472b86e561e7beda1bfcd345f5"
+files = ["Text/verminkt_1.html", "Text/verminkt_2.html", "Text/verminkt_3.html", "Text/verminkt_4.html"]
+italic_classes = ["sgc-1"]
+one_chapter = true
+
+# The first printing (2004, ISBN 90 223 1795 1), a copy of the Lede public library.
+# Internet Archive lends it only, so it is placed by hand (sourced by the user,
+# 2026-10-11). Pages 7–423: the motto to the end; acknowledgements after.
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org (Verminkt, Manteau 2004; borrow, then download the PDF)"
+sha256 = "589860846bd872593c73ea0f9b003f47c403812766baa32e4d093ebcb0ae1ba8"
+cover_page = 1
+body_pages = [7, 423]
