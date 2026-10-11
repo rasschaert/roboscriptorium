@@ -32,15 +32,10 @@ path for the next model served that way.
    Proloog' or p. 9?"). Page classification is the hard part (checklist, Beyond the
    golden books' kind). The user's books need only `book.toml`; manifests are for golden
    pairs.
-3. **Verminkt (Manteau 2004), a new pair from the user, undecided.** Manifest written
-   (`golden/verminkt/`), reference derived (one chapter, `one_chapter`), scan in
-   `work/verminkt--ia-scan/`, but **not in any bench set**. The scan is the 1st printing
-   (2004, ISBN 90 223 1795 1, D 2004/0034/182), the e-book is made from the **5th**
-   (2007): the project's rule skips other printings. The text layer reads ij as y
-   ("hy", "zyn": an older OCR), 1.63% CER, word counts within 0.2% (110,543 / 110,719).
-   Next: fold y→ij in the layer and list what still differs; real-word differences mean
-   the printings differ (skip it); only OCR slips mean it can join validation. Tell the
-   user either way.
+3. **Verminkt: checked, fit, asked the user whether it joins a set.** Its two printings
+   print the same text (docs/golden-notes.md, `probe_printing.py`). Proposed: validation,
+   with a slice of ~90 pages like Het laatste bevel (the whole book is ~7½ h cold). Its
+   layer writes ij as y throughout, which no other pair tests.
 4. **Validation bench, stopped at the user's request** (18:25): Koning Wilders' Qwen
    reading is cached at 600 of 2,439 lines; resuming costs ~45 min Qwen + ~25 min judges,
    and Het laatste bevel's slice (pages 9–100) ~1¾ h cold. Only with the user's go.
