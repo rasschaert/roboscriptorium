@@ -15,7 +15,12 @@ all 25 copyrighted references; the user's five books (source.pdf from Downloads,
 book.toml rewritten from the docs; Ex-minnaar is the 11 MB PDF); Stella's two dated
 EPUBs of 2026-10-07; `work/tessdata/nld.traineddata` and the word lists.
 
-**Still lost** unless the user's backup of ~2026-10-07 has them: every stage cache
+From the user's backup of 2026-10-07 13:34 (a full copy of the project then): Goede
+dochter's 23 verdicts and Dolittle's 30 review answers, copied into `work/`. Its stage
+caches were left out (older formats and code). **Human work lost for good**: Stella's 83
+review answers (given after the backup), Goede dochter's 32 slip-review answers
+(`slip-review--goede-dochter`, the bench's slip rate), Koning Wilders' verdict ("wàs" ×2).
+**Machine work lost**, to recompute: every stage cache
 (days of model time), Stella's review answers, all golden verdicts (none were in git;
 Koning Wilders' "wàs" ×2 is in decisions.md), the arbiter and line-role trees
 (`work/models/`), the trust data, bench results (`work/bench/`), tryout crops and
