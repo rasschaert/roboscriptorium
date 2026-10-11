@@ -30,7 +30,8 @@ don't yet give at a price worth the reviewer's time.
       (`experiments/probe_text_reader.py`, ~25 min) whenever a stronger text model comes,
       build it only if the catches outnumber the false questions
 - [ ] Smaller groups, by size, only where one cause covers several: quotes (~35 words;
-      nested quotes need the book's own habit, De tuin sets “ alone 147 times), word breaks
+      nested quotes need the book's own habit, learned from the book rather than assumed
+      as the outer mark's opposite; De tuin sets “ alone 147 times), word breaks
       (~70, scattered), small capitals read in lower case (7, visual)
 
 ## 2. Stella, the target book

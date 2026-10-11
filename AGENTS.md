@@ -138,9 +138,11 @@ because the machine does.
   HTML, …).
 - **Content order:** prose/fiction first; footnotes, figures, tables, verse later.
 - **Book languages:** Dutch and English.
-- **Fidelity:** exact wording and spelling, original paragraphs, italics and scene breaks.
-  Drop print artefacts (page numbers, running heads, line-end hyphens). Fix only clear
-  OCR errors; never "improve" the author's text.
+- **Fidelity:** exact wording and spelling, original paragraphs, italics and scene breaks,
+  and the print's own typography: its dash and spacing, its ellipsis, its quote marks. No
+  house style (Standard Ebooks restyles; this project doesn't). Drop print artefacts (page
+  numbers, running heads, line-end hyphens). Fix only clear OCR errors; never "improve"
+  the author's text.
 - **Non-goals (for now):** loose photo folders, dewarping phone photos, cloud models,
   non-Latin scripts.
 
