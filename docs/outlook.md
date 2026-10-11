@@ -59,7 +59,9 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
      margin in unindented text), a section break at a page turn.
    - Headings still lost: De eerlijke vinder 0/4 (part numerals), You're Never Weird 4/16.
      Thief-Taker 9/22 and Metro 5/10 are a scoring convention (label and title as two).
-   - Scene breaks are set but not scored: derive drops the references' blank lines.
+   - Scene breaks, scored since 2026-10-11 in the ten references that record them: 272 of
+     295 found, few extra; the rest are page turns geometry can't tell from a paragraph
+     running on.
    - Not handled: footnotes in the body, verse, tables, block quotes.
 2. **The errors no question asks about** ("unasked", by kind, in each bench record):
    - Vals alarm: 33 unasked letter errors, its lost full stops (checklist 4, the book teaches itself): only its
