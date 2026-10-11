@@ -99,9 +99,10 @@ Public on public-domain items only (Crime, Dolittle); private on lending-library
 Sharper pixels lower the readers' errors at the source, the other way at the errors every
 reading shares: many are specks and faint marks.
 
-- [ ] Readers on the page images (`experiments/probe_ia_images.py`, ~15 min): reader set
-      v1's Crime and Dolittle lines cut from the JP2s, read by Qwen and glm-ocr. A win
-      makes the JP2s the image source where a book has them
+- [ ] JP2s as the image source where a book has them: on Crime's 50 reader-set lines
+      both readers err about a fifth less (glm-ocr hard CER 1.57% → 1.26%, Qwen 1.78% →
+      1.36%; `experiments/probe_ia_images.py`, 2026-10-11). Worth building only if the
+      user's books can have them (the next step); else for public-domain books only
 - [ ] ABBYY's letter confidence as an arbiter feature: first check the PDF's layer is
       ABBYY's reading, then does a low one separate the real errors? ~1 h, no models
 - [ ] `_scandata.xml` page types as labels for page classification (public on every IA
