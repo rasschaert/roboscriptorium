@@ -57,6 +57,7 @@ SETS = {
         "youre-never-weird-on-the-internet--ia-scan:13-94:1-16",
         "villa-toscane--calibre-pdf::1-12",
         "de-stilte-van-de-hel--ia-scan:11-101:1-15",
+        "koning-wilders--ia-scan",
     ],
     "test": [
         "het-geluid-van-bananen--ia-scan:9-101:1-14",

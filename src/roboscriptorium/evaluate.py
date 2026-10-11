@@ -256,7 +256,9 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         confusions[(got, want)] += 1
         i += 1
     ref_chars = sum(len(w) + 1 for w in ref_words)
-    matched = match_headings([h.text for h in doc.headings], [ch.heading for ch in reference])
+    # An untitled chapter (a text without headings) expects none.
+    titled = [ch.heading for ch in reference if ch.heading]
+    matched = match_headings([h.text for h in doc.headings], titled)
 
     ref_paragraphs = [p for ch in reference for p in ch.paragraphs]
     ref_marks = [
@@ -291,7 +293,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         reference_words=len(ref_words),
         output_words=len(out_words),
         headings_found=matched,
-        headings_expected=len(reference),
+        headings_expected=len(titled),
         headings_spurious=len(doc.headings) - matched,
         italic_expected=len(ref_italic),
         italic_output=len(out_italic),

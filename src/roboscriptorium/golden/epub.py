@@ -118,6 +118,14 @@ def _is_heading(el: ET.Element, prefixes: tuple[str, ...]) -> bool:
     return _is_paragraph(el) and any(c.startswith(prefixes) for c in classes)
 
 
+def _initial_letters(body: ET.Element, pattern: str) -> None:
+    """Gives each drawn initial its letter, in place: group 1 of `pattern` on the image's
+    file name ("letter_D.jpg" is "D"), read before the word it begins."""
+    for img in body.iter(f"{XHTML}img"):
+        if m := re.search(pattern, (img.get("src") or "").rsplit("/", 1)[-1]):
+            img.text = m.group(1)
+
+
 def _image_heading(el: ET.Element, pattern: str) -> str:
     """The heading an image inside `el` stands for: group 1 of `pattern` on its alt text."""
     for img in el.iter(f"{XHTML}img"):
@@ -150,6 +158,8 @@ def read(
     breaks: Classes = frozenset(),
     opening: Classes = frozenset(),
     closing: Classes = frozenset(),
+    initial_images: str = "",
+    one_chapter: bool = False,
 ) -> list[Section]:
     """The chapters; with `found_notes`, the note paragraphs' text is added to it."""
 
@@ -161,6 +171,8 @@ def read(
         for name in files:
             body = _parse(z.read(_member(z, name))).find(f"{XHTML}body")
             _capitalise(body, capitals)
+            if initial_images:
+                _initial_letters(body, initial_images)
             for el in body.iter():
                 classes = set((el.get("class") or "").split())
                 # Of the break classes, only an element without letters or digits is a
@@ -201,7 +213,9 @@ def read(
                     if not any(c.isalnum() for c in unmarked(text)):
                         continue  # a heading of marks alone is no chapter
                     sections.append(Section(unmarked(text), unmarked(text)))
-                elif sections:
+                elif sections or one_chapter:
+                    if not sections:
+                        sections.append(Section("", ""))
                     if opening & classes:
                         sections[-1].scene_break()
                     sections[-1].add(text)
@@ -227,6 +241,8 @@ def write_reference(
     breaks: Classes = frozenset(),
     opening: Classes = frozenset(),
     closing: Classes = frozenset(),
+    initial_images: str = "",
+    one_chapter: bool = False,
 ) -> list[Section]:
     found_notes: list[str] = []
     sections = read(
@@ -245,6 +261,8 @@ def write_reference(
         breaks,
         opening,
         closing,
+        initial_images,
+        one_chapter,
     )
     text_dir = out / "text"
     text_dir.mkdir(parents=True, exist_ok=True)

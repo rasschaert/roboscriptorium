@@ -287,3 +287,26 @@ def test_opening_and_closing_classes_set_a_break_beside_their_paragraph(tmp_path
     # None before a chapter's first paragraph, none carried into the next chapter.
     assert s1.breaks == {2, 4}
     assert s2.breaks == set()
+
+
+def test_a_drawn_initial_gets_its_letter_and_a_text_without_headings_is_one_chapter(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<p><img src="../Images/letter_D.jpg" alt=""/>e jaarwisseling was stil.</p>'
+                "<p>Vijftienduizend gasten.</p>"
+                '<p><img src="../Images/kaart.jpg" alt=""/>Een kaart.</p>'
+            ),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], (), initial_images=r"letter_(\w)\.",
+                                     one_chapter=True)  # fmt: skip
+    assert section.heading == ""
+    assert section.paragraphs == [
+        "De jaarwisseling was stil.",
+        "Vijftienduizend gasten.",
+        "Een kaart.",
+    ]
+    # Without the option, text before any heading belongs to no chapter.
+    assert publisher_epub.read(epub, ["Text/a.html"], ()) == []

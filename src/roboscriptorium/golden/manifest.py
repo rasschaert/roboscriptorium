@@ -74,6 +74,11 @@ class PublisherEpub:
     # Classes of the paragraphs a scene break comes before ("standaard-eerste"), or after.
     opening_classes: frozenset[str] = frozenset()
     closing_classes: frozenset[str] = frozenset()
+    # Drawn initials set as images: a regex on the image's file name whose group 1 is the
+    # letter ("letter_(\\w)\\." reads "letter_D.jpg" as "D").
+    initial_images: str = ""
+    # A text without chapter headings: the paragraphs form one untitled chapter.
+    one_chapter: bool = False
 
 
 @dataclass(frozen=True)
@@ -167,6 +172,8 @@ class Golden:
                 frozenset(ref.get("break_classes", ())),
                 frozenset(ref.get("opening_classes", ())),
                 frozenset(ref.get("closing_classes", ())),
+                ref.get("initial_images", ""),
+                ref.get("one_chapter", False),
             )
         )
         se = data.get("standard_ebooks")
