@@ -122,8 +122,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   only (`Stages.faint_pages`); `flags.find` makes such a page one `washed-out` region,
   and the OCR check leaves it out (its readers invent fluent text on faint crops).
 - `quotes.py`: places where a paragraph's curly quotes don't pair up (a lost
-  opening ‘, a lost closing ’), apostrophes, Dutch `’s`, plural possessives,
-  nested quotes and quotations running over paragraphs aside. Found on the
+  opening ‘, a lost closing ’, also at a paragraph's end before one that opens with a
+  quote), apostrophes, Dutch `’s`, plural possessives and nested quotes aside; and
+  speech closed on a letter at a paragraph's end (a lost stop). Found on the
   text before a human's answers (`Stages.quote_lines`) and flagged as `quotes`.
   Each such line (short ones too) is read by `read_model` (qwen3.8) with the book's
   typesetting in the prompt (`style_prompt`: quote marks, ellipsis, dashes); its

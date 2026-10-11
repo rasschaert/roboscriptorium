@@ -18,7 +18,6 @@ def test_a_closing_quote_after_an_s_still_closes():
     assert problems("‘Hij zei ja tegen Jans’ en ging.") == []
     assert problems("‘Ja, Jans’ zei hij. ‘Kom.’") == []
     assert problems("‘Ik zei ‘arme Jans’ in het Hongaars!’") == []
-    assert problems("‘Hij zei ja tegen Jans’ en ging.", continued="H") == []
 
 
 def test_a_plural_possessive_inside_a_quotation_doesnt_close_it():
@@ -35,9 +34,10 @@ def test_quotes_nest_in_the_same_mark():
     assert problems("Hij schreef: ‘Mijn vingers zeggen ‘nee’.’") == []
 
 
-def test_a_quote_running_on_into_the_next_paragraph_is_open_at_its_end():
-    assert problems("‘Het begon in Boedapest.", continued="‘") == []
-    assert problems("‘Het begon in Boedapest.", continued="H") == [(23, "open at end")]
+def test_a_quote_open_at_a_paragraphs_end_is_asked_whatever_follows():
+    # A quotation running over into the next paragraph looks the same as a closing
+    # mark lost at the end, and is the rarer of the two.
+    assert problems("‘Het begon in Boedapest.") == [(23, "open at end")]
 
 
 def test_a_lost_mark_is_found():

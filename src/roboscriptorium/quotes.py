@@ -2,8 +2,9 @@
 
 Curly quotes only: an opening ‘ or “ at a word's start, a closing ’ or ” at its
 end. A ’ inside a word (zo’n, auto’s) or opening a Dutch article (’s avonds, ’t)
-is an apostrophe. A quote left open at a paragraph's end is fine when the next
-paragraph opens with the same mark, as a quotation running over paragraphs does.
+is an apostrophe. A quote left open at a paragraph's end is asked about even when the
+next paragraph opens with the same mark: a quotation running over paragraphs is rare
+(56 in ~58,000 golden paragraphs), a closing mark lost at the end isn't.
 Speech closed right after a letter at a paragraph's end has lost its stop: some books
 kern it under the closing mark, and the layer misses it there.
 
@@ -63,12 +64,12 @@ def marks(text: str) -> list[tuple[int, str, str]]:
     return out
 
 
-def problems(text: str, continued: str = "") -> list[tuple[int, str]]:
+def problems(text: str) -> list[tuple[int, str]]:
     """Offsets in `text` where a quote mark has no partner, and what is missing.
 
     Quotes nest in the same mark (‘Ik zei ‘arme kerel’ in het Hongaars!’), so an
     opening mark inside an open quote is a lost closing one only where it starts
-    a new sentence. `continued` is the next paragraph's first character.
+    a new sentence.
     """
     found = []
     depth = dict.fromkeys(PAIRS, 0)
@@ -97,7 +98,7 @@ def problems(text: str, continued: str = "") -> list[tuple[int, str]]:
             depth[opener] -= 1
         else:
             found.append((i, "no opening"))
-    if any(depth[c] and continued != c for c in PAIRS):
+    if any(depth.values()):
         found.append((len(text) - 1, "open at end"))
     elif stop := _unstopped(text, found_marks):
         found.append((stop, "no stop at end"))
@@ -130,11 +131,10 @@ def _unstopped(text: str, found_marks: list[tuple[int, str, str]]) -> int | None
 def unbalanced(paragraphs: list[Paragraph]) -> list[Place]:
     """Each place where a paragraph's quotes don't pair up, with the lines it falls on."""
     out = []
-    for k, p in enumerate(paragraphs):
+    for p in paragraphs:
         if not any(c in p.text for c in "‘’“”"):
             continue
-        following = paragraphs[k + 1].text[:1] if k + 1 < len(paragraphs) else ""
-        for offset, why in problems(p.text, following):
+        for offset, why in problems(p.text):
             out.append(Place(_around(p, offset, why), why, _excerpt(p.text, offset)))
     return out
 
