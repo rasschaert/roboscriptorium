@@ -196,3 +196,11 @@ def test_a_quotation_closed_on_a_letter_at_a_paragraphs_end_lost_its_stop():
     assert problems("‘Alsjeblieft, Frederik’") == [(22, "no stop at end")]
     assert problems("Hij keek op. ‘Vermoord door de CT’") == [(33, "no stop at end")]
     assert problems("“Then you turn it on, Ew”") == [(24, "no stop at end")]
+
+
+def test_an_open_mark_after_a_word_is_asked_where_it_stands():
+    text = "Als ‘het nog geen moordzaak is, wordt het een zaak voor de wijkagent."
+    assert problems(text) == [(4, "no closing")]
+    # Speech opened after a comma or a colon lost its closing mark at the end.
+    assert problems("Hij zei: ‘Kom hier.") == [(18, "open at end")]
+    assert problems("Toen zei ze, ‘Ga weg.") == [(20, "open at end")]

@@ -4,7 +4,9 @@ Curly quotes only: an opening ‘ or “ at a word's start, a closing ’ or ”
 end. A ’ inside a word (zo’n, auto’s) or opening a Dutch article (’s avonds, ’t)
 is an apostrophe. A quote left open at a paragraph's end is asked about even when the
 next paragraph opens with the same mark: a quotation running over paragraphs is rare
-(56 in ~58,000 golden paragraphs), a closing mark lost at the end isn't.
+(56 in ~58,000 golden paragraphs), a closing mark lost at the end isn't. One left open
+right after a word ("zich ‘schrap zette") is asked where it stands: a speck, or a term
+whose closing mark was lost beside it.
 Speech closed right after a letter at a paragraph's end has lost its stop: some books
 kern it under the closing mark, and the layer misses it there.
 
@@ -73,6 +75,8 @@ def problems(text: str) -> list[tuple[int, str]]:
     """
     found = []
     depth = dict.fromkeys(PAIRS, 0)
+    # The offsets of the marks still open, innermost last.
+    opened: dict[str, list[int]] = {c: [] for c in PAIRS}
     found_marks = marks(text)
     for k, (i, c, kind) in enumerate(found_marks):
         if kind == "open":
@@ -80,6 +84,7 @@ def problems(text: str) -> list[tuple[int, str]]:
                 found.append((i, "no closing"))
             else:
                 depth[c] += 1
+                opened[c].append(i)
             continue
         opener = next(o for o, cl in PAIRS.items() if cl == c)
         possessive = (
@@ -96,9 +101,15 @@ def problems(text: str) -> list[tuple[int, str]]:
             continue
         if depth[opener]:
             depth[opener] -= 1
+            opened[opener].pop()
         else:
             found.append((i, "no opening"))
-    if any(depth.values()):
+    left = [i for offsets in opened.values() for i in offsets]
+    # An open mark right after a word ("zich ‘schrap zette") is a speck or a term whose
+    # close was lost beside it: asked where it stands, not at the paragraph's end.
+    stray = [i for i in left if text[:i].rstrip()[-1:].isalpha()]
+    found += [(i, "no closing") for i in stray]
+    if len(stray) < len(left):
         found.append((len(text) - 1, "open at end"))
     elif stop := _unstopped(text, found_marks):
         found.append((stop, "no stop at end"))
