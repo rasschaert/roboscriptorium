@@ -1,5 +1,5 @@
 # Books, page images, OCR output and golden pages (copyrighted)
-work/
+/work
 
 # Python
 __pycache__/
