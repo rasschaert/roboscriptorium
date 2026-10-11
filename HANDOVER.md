@@ -25,11 +25,13 @@ path for the next model served that way.
    the validation bench ends, so the bench's record names the code it ran; then remove
    the worktree. Checked on Ex-minnaar (54 of 390 questions show other places).
 2. **Agreed, in progress: `roboscriptorium init <pdf>`** (checklist, Beyond the golden
-   books' kind; what goes in the EPUB is decisions.md 2026-10-11). Step now: page-kind
-   labels for 31 books (not the test set), by four helper agents from contact sheets
-   (`experiments/page_sheets.py`, brief `work/probes/page-kinds/BRIEF.md`), written to
-   `work/probes/page-kinds/<book>/labels.json`; spot-check them, then freeze them as a
-   labelled set (ids and kinds only in git) and measure model-free signals on it.
+   books' kind; what goes in the EPUB is decisions.md 2026-10-11). Labels done:
+   `tryouts/page-kinds-v1.json` (31 books, 1,034 pages; per-book files and notes in
+   `work/probes/page-kinds/`). Text-layer clues alone don't find the edges
+   (`experiments/probe_page_signals.py --score`). Next, after the bench: clef-flash's
+   page-kind question with the page image on the labelled pages (~1,000 × ~4 s ≈ 1 h).
+   `init` must give front and back pages a kind each, not one range: a dedication or
+   motto sits after the title page and colophon.
    Verminkt joins validation as a slice (~90 pages, the user agreed) once the bench ends.
 3. **Verminkt: checked, fit, asked the user whether it joins a set.** Its two printings
    print the same text (docs/golden-notes.md, `probe_printing.py`). Proposed: validation,
