@@ -53,6 +53,7 @@ REASONS = {
     "quotes": "its paragraph's quote marks don't pair up: one may be lost or misread",
     "washed-out": "the scan is too faint to read: the text layer here is guesswork",
     "lost-line": "white space inside a sentence: the text layer may have lost a line",
+    "initial-lost": "a section opens in lower case: its drawn initial may be lost",
 }
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
@@ -106,6 +107,22 @@ def treatment(role: LineRole | None) -> str:
     if role is None or role.p_body >= KEEP_BODY_AT:
         return "text"
     return "heading" if role.role == "chapter_heading" else "dropped"
+
+
+def _initial_lost(page: PageText, i: int, roles: dict[SourceRef, LineRole]) -> bool:
+    """Whether a text line opens a section in lower case: the first text below a heading,
+    where a drawn initial the layer can't read leaves its word without a first letter
+    ("asteel Araluen", "et wolvenschip")."""
+    if treatment(roles.get(SourceRef(page.number, i))) != "text":
+        return False
+    if not page.lines[i].text.lstrip()[:1].islower():
+        return False
+    above = [
+        treatment(roles.get(SourceRef(page.number, j)))
+        for j in range(i)
+        if treatment(roles.get(SourceRef(page.number, j))) != "dropped"
+    ]
+    return bool(above) and above[-1] == "heading"
 
 
 def _set_apart(page: PageText, i: int) -> bool:
@@ -390,6 +407,8 @@ def find(
         for i in range(len(page.lines)):
             if SourceRef(page.number, i) in (quotes or set()):
                 line_reasons.setdefault(i, []).append("quotes")
+            if _initial_lost(page, i, roles):
+                line_reasons.setdefault(i, []).append("initial-lost")
         if any(r.turned for r in regions) or sideways(page):
             if not any(r.turned for r in regions):
                 boxes = [f for f in boxes if "picture" in f.reasons] + [_sideways_flag(page, roles)]

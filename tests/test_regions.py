@@ -242,3 +242,27 @@ def test_white_space_after_a_sentence_or_around_a_picture_is_no_lost_line():
     assert flags.find([page], {}) == []
     page, regions = _gapped("en toen liep hij naar de", picture=True)
     assert [f.reasons for f in flags.find([page], {}, regions)] == [["picture"]]
+
+
+def test_a_section_opening_in_lower_case_asks_for_its_drawn_initial():
+    lines = [
+        Line("HOOFDSTUK 9", 150, 60, 250, 75),
+        Line("et wolvenschip had duidelijk problemen.", 50, 100, 350, 112),
+        Line("het zeil hing slap en de roeiers waren moe.", 50, 115, 350, 127),
+        Line("Het water was koud.", 50, 130, 350, 142),
+    ]
+    page = PageText(79, 400, 600, lines)
+    heading = {SourceRef(79, 0): LineRole("chapter_heading", 0.9, 0.05)}
+
+    def lost(roles):
+        return [f.first for f in flags.find([page], roles) if "initial-lost" in f.reasons]
+
+    # Lower case mid-section, or text below no heading, is no lost initial.
+    assert lost({}) == []
+    capital = PageText(79, 400, 600, [lines[0], lines[3], lines[2]])
+    assert [f for f in flags.find([capital], heading) if "initial-lost" in f.reasons] == []
+    # A dropped speck between the heading and the text doesn't hide it.
+    speck = PageText(79, 400, 600, [lines[0], Line("~", 200, 85, 205, 90), *lines[1:]])
+    speck_roles = heading | {SourceRef(79, 1): LineRole("artifact", 0.9, 0.01)}
+    assert [f.first for f in flags.find([speck], speck_roles) if "initial-lost" in f.reasons] == [2]
+    assert lost(heading) == [1]
