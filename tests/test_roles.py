@@ -425,3 +425,43 @@ def test_a_title_recurring_on_a_chapter_opening_stays_a_heading(tmp_path):
     assert roles[SourceRef(10, 0)].role == "chapter_heading"
     assert roles[SourceRef(20, 0)].role == "chapter_heading"
     assert roles[SourceRef(15, 0)].role == "running_head"
+
+
+def test_a_dropped_line_that_reads_as_running_text_is_kept_and_flagged():
+    from roboscriptorium.roles import KEEP_BODY_AT, LineRole, running_text
+
+    words = set("de het een en hij zei dat ze niet meer naar huis ging over storm stond".split())
+    words |= {"recherche", "inspecteur", "corrigan", "green", "was", "geweest"}
+
+    def known(w):
+        return w.lower().strip("‘’.,") in words
+
+    def page(n, texts):
+        lines = [Line(t, 20, 20 + 15 * i, 280, 30 + 15 * i) for i, t in enumerate(texts)]
+        return PageText(n, 300, 600, lines)
+
+    head = "De storm over het land"
+    pages = [
+        page(10, [head, "Hij zei dat ze niet meer naar", "huis ging en", "42"]),
+        page(11, [head, "Green was geweest.", "‘Recherche. Inspecteur Corrigan.’", "Eh"]),
+        page(12, [head, "Hij zei dat ze niet meer naar", "cles ee a in sn", "SL"]),
+        page(13, [head, "Hij zei dat ze niet meer naar", "Hij zei dat ze niet"]),
+    ]
+    dropped = LineRole("artifact", 0.4, 0.2)
+    roles = {SourceRef(p.number, i): dropped for p in pages for i in (0, len(p.lines) - 1)}
+    roles |= {SourceRef(11, 1): dropped, SourceRef(11, 2): dropped, SourceRef(12, 2): dropped}
+    out = running_text(pages, roles, known)
+    # Never kept: a running head repeated on other pages, a page number, a scrap, noise,
+    # though each follows an open sentence.
+    for ref in [SourceRef(n, 0) for n in (11, 12, 13)] + [
+        SourceRef(10, 3),
+        SourceRef(11, 3),
+        SourceRef(12, 2),
+        SourceRef(12, 3),
+    ]:
+        assert out[ref] == roles[ref], ref
+    # Kept, flagged by its role: a line continuing the sentence across the page turn,
+    # and one opening with a quotation mark.
+    assert out[SourceRef(11, 1)] == LineRole("artifact", 0.4, KEEP_BODY_AT, "running-text")
+    assert out[SourceRef(11, 2)].p_body == KEEP_BODY_AT
+    assert roles[SourceRef(11, 1)] is dropped  # the input is not changed

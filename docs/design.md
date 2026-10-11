@@ -281,6 +281,17 @@ baseline (2026-10-11), before the guard: no change by the test, tuning 0.50 → 
 validation 0.74 → 0.67; Metro, De cipier, Artemis, 11/22/63 and Villa Toscane clearly
 better, Thief-Taker and Crime leaning worse. Off by default until the bench holds.
 
+A line the role model drops that reads as running text is kept, and flagged as kept
+unsure (`roles.running_text`): it continues a sentence the last text line left open, or
+opens with a quotation mark, and its words are words (three letters a token, half in
+the word list) and no furniture repeated on other pages. The role model calls a page's
+first line a running head ("‘Recherche. Inspecteur Corrigan…" on De cipier p. 47,
+"stupid. Marriage is august" on Crime p. 83) and a short last line an artifact
+("‘Gamma.’", "Green was geweest."); no question asked about them, as page furniture
+isn't asked about. Over the tuning books 22 such lines were body and 3 not (a footnote,
+a speech bubble, a noise line), `experiments/probe_continuations.py`. It runs before the
+trees, which learn from these roles. Bench pending.
+
 A chapter number the text layer misreads ("l" for 1, "e," for 2, "UH" for 11 on
 Afscheid) matches no numeral rule, and clef-flash calls it a page number or an
 artifact, so it was dropped before any reader saw it. Its box gives it away: at the

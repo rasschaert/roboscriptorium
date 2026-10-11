@@ -33,7 +33,7 @@ from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, cached_text_layer, render_jpeg
 from roboscriptorium.reflow import reflow
-from roboscriptorium.roles import DecisionCache, LineRole, classify
+from roboscriptorium.roles import DecisionCache, LineRole, classify, running_text
 
 
 @dataclass
@@ -115,6 +115,8 @@ def run(
         cache = DecisionCache(book.stages / "decisions.jsonl")
         styles = typestyle.measure(book.source, body, book.stages / "type.json")
         model_roles = classify(body, client, cache, styles)
+        if known is not None:
+            model_roles = running_text(body, model_roles, known)
         if settings.sorter:
             trees = sorter.load(Path(settings.sorter_model))
             model_roles = sorter.apply(trees, body, model_roles, styles, regions)

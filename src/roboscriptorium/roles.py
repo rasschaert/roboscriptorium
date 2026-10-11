@@ -9,6 +9,7 @@ import hashlib
 import json
 import re
 import statistics
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -412,3 +413,49 @@ def _subtitles(page: PageText, page_roles: dict[int, LineRole], offset: int | No
             and not printed_page_number(page.lines[i].text, page, offset)
         ):
             page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0, "subtitle")
+
+
+# A line ends a sentence on a stop or a closing mark; anything else leaves it open.
+_ENDS = re.compile(r"[.!?…:;][’'”\"»)]*$|[’”»]$")
+_OPENING_QUOTES = ("‘", "“", "„", "«")
+_LETTER = re.compile(r"[^\W\d_]")
+
+
+def _reads_as_text(text: str, known: Callable[[str], bool]) -> bool:
+    """Words, not a scrap or noise: at least three letters a token, two words or one of
+    five letters, and half of them in the word list ("Eh", "SL" and "cles ee a in" fail)."""
+    tokens = text.split()
+    if not tokens or sum(len(_LETTER.findall(t)) for t in tokens) < 3 * len(tokens):
+        return False
+    words = [w for t in tokens if len(_LETTER.findall(w := re.sub(r"[^\w'’-]", "", t))) >= 2]
+    if not (len(words) >= 2 or (words and len(_LETTER.findall(words[0])) >= 5)):
+        return False
+    return sum(map(known, words)) * 2 >= len(words)
+
+
+def running_text(
+    pages: list[PageText], roles: dict[SourceRef, LineRole], known: Callable[[str], bool]
+) -> dict[SourceRef, LineRole]:
+    """A copy of `roles` keeping as text, and flagged, a dropped line that reads as running
+    text: it continues a sentence the last text line left open, or opens with a quotation
+    mark, and its words are no page furniture repeated on other pages. Over the tuning
+    books, 22 such lines were body and 3 not (`experiments/probe_continuations.py`):
+    a first line under a page turn called a running head, a short last line an artifact."""
+    out = dict(roles)
+    repeats = Repeats(pages)
+    last = ""
+    for page in pages:
+        for i, line in enumerate(page.lines):
+            ref = SourceRef(page.number, i)
+            role = roles.get(ref)
+            text = line.text.strip()
+            if _is_body(role):
+                last = text
+                continue
+            if role.role == "chapter_heading" or garbled(line) or not _reads_as_text(text, known):
+                continue
+            if repeats.other_pages(text, page.number):
+                continue
+            if (last and not _ENDS.search(last)) or text.startswith(_OPENING_QUOTES):
+                out[ref] = LineRole(role.role, role.confidence, KEEP_BODY_AT, "running-text")
+    return out
