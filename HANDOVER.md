@@ -17,13 +17,13 @@ On `main`, pushed. Lint and tests green.
   motto ("It's closing time", Leonard Cohen) outside the body, not in the EPUB yet.
 ### Next, queued
 
-- Scene breaks are scored in 10 references; a page-top rule raised them 255 → 272 of 295
-  (5c07fa2). Ex-minnaar's build started before it: rebuild it (cached, minutes) before
-  sampling its questions.
-- Next without models: IA `_scandata.xml` page types against each golden book's
-  `body_pages` (checklist, Better pixels), toward setting body pages automatically.
-- The pair-prior ablation is done (worse without it, 0.31 → 0.34; decisions).
-- Reis's footnote marks done (`note_mark`; Reis after review 0.20 → 0.17, set 0.31).
+- Done this afternoon, each in decisions with its numbers: the pair-prior ablation (it
+  stays), Reis's note marks, scene breaks scored (references rederived; Villa's colophon
+  out) and a page-top rule (272 of 295 found), dropped slivers no longer split runs
+  (Artemis), footnotes out of the running text (Reis 7 of 8), IA scandata (null), the
+  user's other books' body pages (De kus and Russische roman open on p. 7).
+- Ex-minnaar's motto (p. 7) and epigraphs in general aren't handled; De eerlijke
+  vinder (validation) has a `motto` class to check against later.
 - **Python 3.15**: blocked on PyTorch (no stable cp315 wheel; tracking
   pytorch/pytorch#184352, nightlies have it). Tried in worktree
   `../roboscriptorium-py315` (branch `py315`, own `.venv` with nightly torch 2.16.dev):
