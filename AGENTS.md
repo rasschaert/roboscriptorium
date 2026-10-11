@@ -311,7 +311,8 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   model run waits while the battery is under 30%, checking hourly
   (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
   job started another way).
-- Ollama 0.40.2 at `http://127.0.0.1:11434` (scores before 2026-10-06 were on 0.35.1).
+- Ollama 0.40.2 at `http://127.0.0.1:11434`, context length 8k in the app's settings (128k
+  held memory for nothing and slowed glm-ocr ~6×; readings are the same either way) (scores before 2026-10-06 were on 0.35.1).
   Ollaya was uninstalled on 2026-10-08; every model runs on Ollama.
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
   `pdftotext`, `pdfimages`), epubcheck, d2 (all Homebrew where applicable).
