@@ -121,6 +121,9 @@ Don't repeat these without a new reason (details in docs/decisions.md):
 - **Faster readers** (gemma4, MoE models): worse on quote marks.
 - **Speeding Qwen on the server** (concurrency, crop size, context, pooled decision
   calls): nothing; see the next section before measuring any of it again.
+- **qwen3.8:27b-q8_0 as the reader** (the same model as a GGUF on Ollama's llama.cpp
+  runner): no more accurate on reader set v2 (hard 458 against 463 of 510, control 333
+  against 338 of 340), 2.2 s a line at any concurrency: the runner doesn't batch it.
 
 ## Inference speed: what a cold page costs, and what's been tried
 
@@ -154,26 +157,31 @@ five others), so a rerun of cached lines is free even without the pipeline's cac
 
 **Done, in place:** `OLLAMA_NUM_PARALLEL=4` (AGENTS.md Environment) halves glm-ocr's
 time a line (0.19 → 0.09 at four at a time, readings identical); the pipeline's four
-threads already send that many.
+threads already send that many. The same four slots did nothing for a 27B GGUF
+(qwen3.8:27b-q8_0, 2.2 s a line at 1 to 16 at a time), so batching is a property to
+measure per model, not a promise of the runner.
 
 **Would speed Qwen but changes what it reads**, so each is a reader change through the
 tryout, never a setting: the instructions as the system turn ahead of the image (the
 prefix is reused: 0.80 s a line, but 4 of 64 readings change, one wrong); a shorter
-instruction (untested); a GGUF build of the same model on Ollama's llama.cpp runner,
-which batches four requests (untested; the q8_0 is 30 GB); the "mtp" builds (nothing
-on Ollama's library says the runner uses the MTP head, and it could speed only the
-0.35 s of output).
+instruction (untested); another build of the same model (the q8_0 GGUF was tried and
+rejected, above: slower and no more accurate; the mxfp8 and Unsloth's UD-Q6_K_XL and
+UD-Q8_K_XL are pulled and unscreened); the "mtp" builds (nothing on Ollama's library
+says the runner uses the MTP head, and it could speed only the 0.35 s of output).
 
 **What a faster reader must pass.** `experiments/tryout.py run reader <model>` on reader
-set v1 (`tryouts/reader-v1.json`: 550 body lines from the tuning books' slices, 330
-hard and 220 easy; crops regenerate under `work/tryout/`, ~11 min of Qwen a candidate).
-The reader in use, qwen3.8:27b-nvfp4, reads the hard lines at CER 0.26% and the easy
-ones 217 of 220 exact (0.03%); a candidate must match both, quote marks and accents
-included (docs/models.md has the ones that didn't: gemma4, a ~1-bit Qwen3.8-Flash-Next,
-MoE readers). What makes one fast here: served by llama.cpp (a GGUF), so four requests
-batch; small enough to stay loaded beside clef:27b and the small models in 64 GB;
-thinking off; one line of output. A winner then needs the trust data rebuilt and the
-arbiter retrained before it reads for the arbiter: cheapest while a rebuild is due anyway.
+set v2 (`tryouts/reader-v2.json`: 850 body lines from the 17 tuning books' slices, 510
+the text layer reads wrong and 340 it reads right; the incumbents' readings are cached
+under `work/tryout/reader-v2/readings/`, so a run costs the candidate's own 850 lines,
+and reports seconds a line). The reader in use, qwen3.8:27b-nvfp4, reads 463 of the 510
+hard lines right (CER 0.74%) and 338 of the 340 control lines (0.01%), quote marks wrong
+on 26 and 5, at 1.20 s a line; a candidate must match both strata, quote marks and
+accents included, and be right alone on lines the others miss (docs/models.md has the
+ones that didn't: the q8_0 build, gemma4, a ~1-bit Qwen3.8-Flash-Next, MoE readers).
+Speed is its own pace one request at a time, since neither runner batches a model this
+size; it must also fit beside clef:27b and the small models in 64 GB, think nothing and
+write one line. A winner then needs the trust data rebuilt and the arbiter retrained
+before it reads for the arbiter: cheapest while a rebuild is due anyway.
 
 **The lever that changes the machine** (for the bench, not a setting): Qwen reading
 only where the layer, glm-ocr and tesseract disagree, several times fewer calls.

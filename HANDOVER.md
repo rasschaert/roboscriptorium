@@ -4,37 +4,44 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## State, 2026-10-11 ~22:50: nothing runs; the rebuild waits on the user's choice of reader
+## State, 2026-10-12 ~00:40, session end: nothing runs; the reader question is half answered
 
-**Nothing runs.** The rebuild chain (`experiments/rebuild-trust.sh`, screen `robo-rebuild`)
-was stopped at 22:12 in Goede dochter's Qwen stage, with the user's go, to measure the
-model server with nothing else on it. Its caches stand: Goede dochter's layout, roles
-(825 decisions), glm-ocr readings (4,200 lines) and tesseract; no Qwen reading was saved.
-`experiments/detached.sh rebuild experiments/rebuild-trust.sh` resumes from them. **Don't
-restart it before the user has chosen the reader** (below): the Qwen stage is three
-quarters of the chain and is where the choice bites, and since the trust data is being
-rebuilt from nothing anyway, a reader change costs no extra rebuild now and a full one
-later. Remind the user of the daily backup of `work/` before it restarts.
+**Remind the user of the daily backup of `work/`** before any long run. Nothing runs: no
+screen, Ollama idle (0.40.3; 8k context in the app; `OLLAMA_NUM_PARALLEL=4` by
+`launchctl setenv`, which doubled glm-ocr and changed nothing else: AGENTS.md Environment).
+Lint and tests green (370).
 
-**Measured tonight** (docs/decisions.md 2026-10-11, the last three lines; the probes
-`experiments/probe_qwen_speed.py`, `probe_glm_parallel.py`, `probe_decide_parallel.py`,
-results under `work/probes/`): Qwen 1.2 s a line, one request at a time whatever the
-concurrency (its MLX runner doesn't batch); glm-ocr doubled by `OLLAMA_NUM_PARALLEL=4`
-(set, AGENTS.md Environment; Ollama updated itself to 0.40.3); the decision models
-unchanged by it; 8k context changed no speed. At these rates the trust-data stage is
-~28 h (2,188 pages × ~48 s), Qwen ~22 h of it.
+**The rebuild chain is stopped**, at Goede dochter's Qwen stage (22:12, the user's go),
+and waits on the reader choice below. Its caches stand (Goede dochter's layout, roles,
+glm-ocr and tesseract readings); `experiments/detached.sh rebuild
+experiments/rebuild-trust.sh` resumes from them: ~28 h of trust data at the measured rates
+(2,188 pages × ~48 s, Qwen ~22 h of it), then the arbiter and `bench tuning`
+(docs/outlook.md, "Inference speed"). The user is unhappy with two days of fan noise:
+run it in nights if that's their wish (the chain does one book a step, so stop it between
+books with `screen -S robo-rebuild -X quit` and `pkill -f ocr_trust_data.py`, restart later).
 
-**Waiting on the user: the reader.** Nothing on the server makes Qwen faster without
-changing what it reads. Each candidate is a reader change to screen on the frozen reader
-set (`tryouts/reader-v1.json`, 550 lines; `experiments/tryout.py run reader`, crops
-regenerate under `work/tryout/`, ~11 min of Qwen a candidate), picked by score first and
-speed second: (1) the instructions as the system turn, 0.80 s a line, 4 of 64 readings
-change (needs a layout setting in `ocrcheck.transcribe`, not written); (2) a shorter
-instruction; (3) a GGUF build of qwen3.8:27b on Ollama's llama.cpp runner, which batches
-four at a time (q8_0, 30 GB, the user pulls); the MTP build's benefit is unverified
-(Ollama's library says nothing about it, and it could speed only the 0.35 s of decode).
-Reading with Qwen only where the other readings disagree is the big lever (several ×) but
-a machine change for the bench, not a setting.
+**The reader (docs/decisions.md 2026-10-12).** Nothing on the server makes Qwen faster
+without changing what it reads, so the only lever is a different build of the reader,
+screened on reader set v2 (`tryouts/reader-v2.json`, 850 lines; the incumbents' readings
+are cached under `work/tryout/reader-v2/readings/`, so a candidate costs its own 850
+lines, ~17 min at Qwen's pace, through `experiments/timed.sh` in `detached.sh`; the
+result goes to `tryouts/results.jsonl` with seconds a line). Done: **`qwen3.8:27b-q8_0`
+rejected** (no more accurate, 2.2 s a line at any concurrency: the llama.cpp runner
+doesn't batch a 27B). Pulled by the user, **not yet
+screened**: `qwen3.8:27b-mxfp8` (Ollama, MLX, so one request at a time: a precision
+candidate, not a speed one) and Unsloth's UD-Q6_K_XL and UD-Q8_K_XL through Unsloth
+Studio's server on port 8888 (`uv run python experiments/tryout.py run reader
+openai-local:<id as Studio names it>`; one model loaded at a time, never beside a build
+or bench: memory). Score first, speed second; if none beats the nvfp4 build on both
+strata, keep it and restart the rebuild as it is. A winner is pinned in `config.py`
+(`read_model`), then the rebuild runs on it; record it in docs/models.md and the roles
+table in AGENTS.md.
+
+**What's measured and need not be measured again** is in docs/outlook.md under
+"Inference speed": Qwen's 1.2 s a line and its split, no gain from concurrency, crop
+size, context or pooled decision calls, the system-turn layout (30% faster, 4 of 64
+readings change: a tryout candidate if someone adds a layout setting to
+`ocrcheck.transcribe`), what a faster reader must pass.
 
 ## Recovery, 2026-10-11 ~20:35: work/ was deleted
 
