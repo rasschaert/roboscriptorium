@@ -99,3 +99,15 @@ def test_running_text_away_from_the_edges_is_never_dropped_unasked():
     assert sorter.apply(sorter.Sorter(Drops()), [page], {}, {}, {})[SourceRef(5, 4)].role == (
         "artifact"
     )
+
+
+def test_every_lines_features_are_the_ones_the_trees_were_trained_on():
+    from roboscriptorium.layout import Region
+    from roboscriptorium.typestyle import Style
+
+    page = _page()
+    regions = {5: [Region("plain text", 0.9, 0, 0, 300, 500), Region("figure", 0.7, 0, 0, 50, 50)]}
+    styles = {SourceRef(5, 0): Style(1.1, 1.0, 1.0, False)}
+    roles = {SourceRef(5, 0): LineRole("page_number", 0.9, 0.1)}
+    found = sorter.features([page], roles, styles, regions)
+    assert all(tuple(f) == sorter.FEATURES for f in found.values())
