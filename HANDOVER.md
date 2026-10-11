@@ -20,13 +20,10 @@ path for the next model served that way.
 
 ### Waiting, in this order
 
-1. **Agreed, not started: the review display fix.** A place question (one OCR doubt in
-   a line) shows its readings with the rest of the line as the text layer reads it, so
-   other errors there look missed though each has its own question (three sampled
-   Ex-minnaar questions, checked by subagents and by eye: "4ls"→"áls" and "1m"→"1 m" are
-   separate questions; "40.’" is under the quote question). Show the rest of the line
-   with its other questioned places marked (or their likeliest reading). `review.py`,
-   `regions.html`; test on `work/probes/questions/ex-minnaar/sample3/`. Under an hour.
+1. **Done, on branch `review-display` (worktree `../roboscriptorium-review`), not yet on
+   main: the review display fix.** Merge it (`git merge --ff-only review-display`) once
+   the validation bench ends, so the bench's record names the code it ran; then remove
+   the worktree. Checked on Ex-minnaar (54 of 390 questions show other places).
 2. **Proposed, awaiting the user's yes: `roboscriptorium init <pdf>`.** The user's goal:
    anyone runs this locally without a subscription, so setting up a book must not need
    an agent. Draft `book.toml` (title/author from PDF metadata or the title page, the
