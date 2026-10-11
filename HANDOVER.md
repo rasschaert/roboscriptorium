@@ -15,17 +15,10 @@ On `main`, pushed. Lint and tests green.
   ends: epubcheck, then `uv run python experiments/sample_questions.py work/ex-minnaar`
   and look at the crops before the user reviews. Body 9–279 checked; p. 7 holds a
   motto ("It's closing time", Leonard Cohen) outside the body, not in the EPUB yet.
-- **Reis's footnote marks** (below), being done now; then rederive Reis and bench tuning
-  (~5 min cached).
-
 ### Next, queued
 
 - The pair-prior ablation is done (worse without it, 0.31 → 0.34; decisions).
-- **Reis's footnote marks**: the print sets one `*` per note, the reference EPUB
-  `*`…`********` cumulatively (scan checked on pp. 89 and 167), so 8 of Reis's unasked
-  "errors" are the EPUB's. Plan: a `[reference]` key (e.g. `note_mark = "*"`) that
-  derive (`golden/epub.py`, `_NOTE_LINK`) uses for every link, listed in PROVENANCE,
-  with a test; rederive Reis; bench tuning.
+- Reis's footnote marks done (`note_mark`; Reis after review 0.20 → 0.17, set 0.31).
 - **Python 3.15**: blocked on PyTorch (no stable cp315 wheel; tracking
   pytorch/pytorch#184352, nightlies have it). Tried in worktree
   `../roboscriptorium-py315` (branch `py315`, own `.venv` with nightly torch 2.16.dev):

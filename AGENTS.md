@@ -420,14 +420,15 @@ sha256, page ranges, the source and chapter range), the derived chapters in `tex
   classes, an ABBYY generator, a colophon naming only the print): it carries its maker's
   edits. An EPUB that sets its dashes as spaced hyphens or a spaced `--` gets
   `hyphen_dash = "–"` in `[reference]`; one that writes small capitals in lower case with
-  a class gets `capital_classes`; a Gutenberg transcription that drops the space its
+  a class gets `capital_classes`; one that numbers its notes in growing marks (`*`, `**`,
+  …) where the print sets one gets `note_mark`; a Gutenberg transcription that drops the space its
   print sets before an ellipsis gets `ellipsis_space = true`.
   `experiments/chapter_pages.py` gives the scan page each derived chapter starts on, to
   end a bench slice on a chapter.
 - **Known deviations.** No publisher's EPUB matches its print in every convention. Each
   known deviation of a pair is handled in one of three places, and nowhere else: a gap
   derive can undo is declared in the manifest's `[reference]` (`hyphen_dash`,
-  `capital_classes`) and listed in PROVENANCE.md; a glyph choice the output may make
+  `capital_classes`, `note_mark`) and listed in PROVENANCE.md; a glyph choice the output may make
   differently is folded by `evaluate.normalise` and counted per side, so `eval` prints
   how much it forgave; what neither covers (a corrected word, a later impression) is
   settled by a verdict. A deviation that lives only in a comment or a note is untracked:
