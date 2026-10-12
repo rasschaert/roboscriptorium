@@ -27,7 +27,8 @@ machine's work is recomputed in this order before anything below.
       `bench tuning` (`experiments/rebuild-trust.sh`, ~28 h in all; 5 books done
       2026-10-12, the 15 left ~20 h, running)
 - [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
-      validation` with Verminkt joining as a slice (~90 pages)
+      validation` with Verminkt joining as a slice (~90 pages) and The Stranger's Child
+      as its slice, pages 121–208 (88 pages)
 - [ ] Stella rebuilt and diffed against its dated copies in `work/stella/epubs/`
 - [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
       before the user's full review

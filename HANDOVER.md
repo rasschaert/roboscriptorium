@@ -14,7 +14,8 @@ end of every session.
 `work/probes/ocr-trust/<book>.json`, one book at a time; a line per finished book in
 `work/runs/rebuild/progress.txt`, each book's log in `work/runs/rebuild/<book>.log`.
 Done before this restart: Goede dochter, Vals alarm, Crime, Dolittle, Reis. Started 11:08
-with Afscheid; the 15 left take ~20 h at the measured rates (docs/run-times.md, "trust
+with Afscheid; its screen vanished ~11:46 with no exit line (cause unknown), restarted
+12:50 on the stage caches; the 15 left take ~20 h at the measured rates (docs/run-times.md, "trust
 data … cold"). When every book has succeeded the chain trains the arbiter
 (`work/models/ocr-trust.pkl`) and runs `bench tuning`, the new baseline.
 
@@ -46,6 +47,9 @@ backup) and 2026-10-11 1202 (the user's Calibre copy, our build before that even
 fixes). Diff the next build against them.
 
 ### Next, in order (after the chain's bench)
+
+Regenerate docs/golden-books.md after the bench: its last-bench column says "none yet"
+for every book since the loss.
 
 1. Correct anything the bench shows; then the line-role trees (`experiments/train_sorter.py
    --save`), then `bench validation`, with Verminkt joining validation as a slice (~90
