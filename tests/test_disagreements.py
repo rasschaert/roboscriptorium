@@ -139,6 +139,21 @@ def test_an_error_over_a_page_break_belongs_to_the_page_holding_most_of_it():
     assert found.page == 38
 
 
+def test_a_place_at_a_page_break_names_the_other_page():
+    # The last words of page 37 differ; the words after them lie on page 38.
+    doc, pages = _two_pages("de man liep naar huis xq", "en sliep daar")
+    (found,) = disagreements.find(
+        doc, [Chapter("1", ["de man liep naar huis en sliep daar"])], pages
+    )
+    assert (found.page, found.across) == (37, (38, 0))
+    # Inside a page it names none.
+    doc, pages = _two_pages("de man xq liep naar huis", "en sliep daar")
+    (found,) = disagreements.find(
+        doc, [Chapter("1", ["de man liep naar huis en sliep daar"])], pages
+    )
+    assert found.across is None
+
+
 def test_a_disagreement_at_a_slices_edge_keeps_its_whole_book_key(monkeypatch, tmp_path):
     monkeypatch.setattr(lexicon.Lexicon, "load", lambda lang: Lexicon(set()))
     whole = [

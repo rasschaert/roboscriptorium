@@ -131,9 +131,8 @@ In this order:
       several of the user's verdicts, 2026-10-12): find where it goes (reader, reflow
       or `typography.py`'s ellipsis step) and fix it, with a closing quote that really
       isn't there as the counterexample (~1 h)
-- [ ] Verdict page: a place at a page break crops both pages' edges, and a place where
-      one side has something the print lacks (Metro p. 61's stray `>` in the e-book) says
-      so in words (agent, ~30 min)
+- [ ] Verdict page: a place where one side has something the print lacks (Metro p. 61's
+      stray `>` in the e-book) says so in words (agent, ~30 min)
 - [ ] Monterosso's capital T read as an opening quote ("‘Toen", "‘Titi", "‘Tiziana",
       "‘Terwijl"; the user's verdicts, 2026-10-12): the typeface's T has an overhanging
       left arm, and the text layer and every reader agree on the quote, so nothing asks.

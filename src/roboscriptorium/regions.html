@@ -60,6 +60,7 @@ mark sub.dash { font: 600 9px system-ui, sans-serif; opacity: 0.8; margin-left: 
 .turnbar { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
 .turnbar button { padding: 4px 10px; }
 .crop { max-width: 100%; max-height: 75vh; margin: 0 auto; border: 1px solid var(--line); border-radius: 6px; background: #fff; display: block; min-height: 60px; }
+.pagebreak { text-align: center; color: var(--muted); font-size: 12px; margin: 6px 0; }
 .why { margin: 12px 0 4px; color: var(--muted); font-size: 13px; }
 .why span { display: inline-block; background: var(--line); color: var(--ink); border-radius: 4px; padding: 0 6px; margin: 0 4px 4px 0; }
 .now { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
@@ -189,7 +190,10 @@ function render() {
       <span>${pos + 1} of ${queue.length}${a ? " · answered" : ""}</span>
       <span>page ${r.page}${r.last >= r.first ? `, line ${r.first + 1}${r.last > r.first ? "–" + (r.last + 1) : ""}` : ""} · <a href="/page?page=${r.page}" target="_blank">full page</a></span>
     </div>
+    ${r.across && r.across.page < r.page ? acrossCrop(r) : ""}
+    ${r.across ? `<div class="pagebreak">page ${r.page}</div>` : ""}
     <img class="crop" id="crop" src="${cropUrl(r)}" alt="Scan crop">
+    ${r.across && r.across.page > r.page ? acrossCrop(r) : ""}
     <div class="turnbar">
       <button id="zoomOut" title="Show more of the page around it"><kbd>-</kbd>Zoom out</button>
       <button id="zoomIn" title="Back towards the region" ${out ? "" : "disabled"}><kbd>+</kbd>Zoom in</button>
@@ -420,6 +424,13 @@ function cropUrl(r) {
   const line = r.span ? `&line=${r.first}` : "";
   return r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}&out=${out}${line}${m}`
     : `/crop?page=${r.page}&first=${r.first}&last=${r.last}&out=${out}${m}`;
+}
+
+// The other side of a page break the place runs over, in page order with the crop.
+function acrossCrop(r) {
+  const a = r.across;
+  return `<div class="pagebreak">page ${a.page}</div>
+    <img class="crop" src="/crop?page=${a.page}&first=${a.first}&last=${a.last}&out=${out}&mark=${marks ? 1 : 0}&built=${built}" alt="Scan crop, page ${a.page}">`;
 }
 
 function toggleMarks() {

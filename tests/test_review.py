@@ -147,3 +147,19 @@ def test_a_place_one_side_lacks_reads_without_a_double_space(tmp_path):
     ours, theirs = _verdicts(tmp_path, _place("16", "")).state()["items"][0]["readings"]
     assert ours["text"] == "Hij was zo stom geweest zijn 16 niet op een"
     assert theirs["text"] == "Hij was zo stom geweest zijn niet op een"
+
+
+def test_a_place_across_a_page_break_shows_the_other_page(tmp_path):
+    d = Disagreement(
+        "k",
+        "saying ...'",
+        "saying ...'>",
+        "That's what you're",
+        "'OK, so",
+        61,
+        (40, 40),
+        across=(62, 0),
+    )
+    item = _verdicts(tmp_path, d).state()["items"][0]
+    assert item["across"] == {"page": 62, "first": 0, "last": 0}
+    assert _verdicts(tmp_path, _place("geld", "geId")).state()["items"][0]["across"] is None

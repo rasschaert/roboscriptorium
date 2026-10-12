@@ -61,6 +61,9 @@ class Disagreement:
     lines: tuple[int, int] | None  # first and last line index on that page
     # A pipeline mistake category when the output is clearly garbled and needs no review.
     auto: str | None = None
+    # Where the place runs onto another page (the words beside it lie there): that page
+    # and its line, so a reviewer sees both sides of the page break.
+    across: tuple[int, int] | None = None
 
 
 @dataclass(frozen=True)
@@ -210,6 +213,10 @@ def find(
         # washed-out page read as scraps is one error that starts on the page before.
         page = Counter(r.page for r in span).most_common(1)[0][0] if span else None
         on_page = [r.line for r in span if r.page == page]
+        # The other side of a page break, from the place's own words or those beside it.
+        beside = [refs[i] for i in (s0 - 1, s1) if 0 <= i < len(refs)]
+        other = [r for r in span + beside if r is not None and r.page != page]
+        across = (other[0].page, other[0].line) if page is not None and other else None
         found.append(
             Disagreement(
                 key=_key(before, want, after),
@@ -220,6 +227,7 @@ def find(
                 page=page,
                 lines=(min(on_page), max(on_page)) if on_page else None,
                 auto=_auto(got, " ".join(want), vocab),
+                across=across,
             )
         )
     return found

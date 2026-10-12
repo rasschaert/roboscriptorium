@@ -218,6 +218,11 @@ class VerdictReview:
                     "page": d.page,
                     "first": d.lines[0],
                     "last": d.lines[1],
+                    "across": (
+                        {"page": d.across[0], "first": d.across[1], "last": d.across[1]}
+                        if d.across
+                        else None
+                    ),
                     "box": None,
                     "reasons": [],
                     "text": ours,
