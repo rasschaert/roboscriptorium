@@ -36,6 +36,12 @@ machine's work is recomputed in this order before anything below.
       warning is a false alarm on a footnote book: count note lines apart. Fix, then
       its trust data (SPECS gets `fka-usa--ia-scan: 11-22:1-5`, out of
       `bench.NO_TRUST_DATA`), retrain, bench (~30 min)
+- [ ] No fixed test set or reserve (proposed, the user agreed to do it later, 2026-10-12):
+      every new pair gets one untouched first-look score before anything is chosen or
+      trained on it, then joins tuning or validation. Het geluid van bananen gets its
+      first look (~5 h of models) and joins; De aanslag joins validation; Verminkt joins
+      validation whole. Update design.md's test-set reason, `bench.SETS` and the CLI's
+      `--score-test` guard (agent, ~1 h plus the run)
 - [ ] One review for a golden book: its places that differ from the e-book become more
       questions in the ordinary region review (`roboscriptorium review`), the e-book's
       reading one more labelled row, answers stored as verdicts behind the scenes; no
