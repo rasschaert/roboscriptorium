@@ -4,36 +4,35 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running, 2026-10-12 ~11:10: the trust-data rebuild on nvfp4, 15 books to go
+## Running, 2026-10-12 ~20:00: Monterosso whole, then the arbiter and `bench tuning`
 
 **Remind the user of the daily backup of `work/`** at session start and before long runs
-(they back up with Duplicati, ~9 min; last run just before this restart).
+(they back up with Duplicati, ~9 min).
 
-**What runs:** screen `robo-rebuild`, `experiments/rebuild-trust.sh`, reader
-`qwen3.8:27b-nvfp4` (final: the user). Trust data for each of the 20 books in
-`work/probes/ocr-trust/<book>.json`, one book at a time; a line per finished book in
-`work/runs/rebuild/progress.txt`, each book's log in `work/runs/rebuild/<book>.log`.
-Done: Vals alarm, Crime, Dolittle, Afscheid (its screen vanished ~11:46 with no exit
-line, cause unknown; restarted 12:50 on the stage caches). At ~13:30 the slices were
-capped at ~90 pages, and at ~14:50 the books not yet done were cut to their first
-chapter (10–27 pages; the user, for a result tonight; decisions.md 2026-10-12): Goede
-dochter, Vals alarm, Crime, Dolittle, Afscheid, Reis, Metro and De eerlijke vinder (the book with the most unasked errors) keep
-their full slices; the 12 others are short, ~290 pages in all, ~5 h, the bench after it ~30 min. The run-times rows
-for those books carry the old page counts (the chain counted them at its start): fix
-them from the slices in `experiments/ocr_trust_data.py`, and the bench's to the new total.
-When every book has succeeded the chain trains the arbiter
-(`work/models/ocr-trust.pkl`) and runs `bench tuning`, the new baseline.
+**Done today:** trust data for all 20 books on `qwen3.8:27b-nvfp4` (the chain
+`experiments/rebuild-trust.sh`, a line a book in `work/runs/rebuild/progress.txt`). Its
+training step refused to save (Stella's data, from review answers, was lost with
+`work/`) and progress.txt hid it as exit 0; fixed (`--partial`, real exit codes). First
+bench after the rebuild (`work/bench/tuning-20261012T174144-…json`): **0.31** wrong
+words a page after review over 16 books; Monterosso broken by its 9-page slice (its
+chapters run on, so it is scored whole again), FKA USA unchecked (its findings are in
+the checklist: LaTeX note marks, dropped epigraphs, the false suspect-pair alarm from
+its footnotes). Afscheid has four pages of ~300 wrong words each (20, 32, 38, 70), all
+asked: look at what they are. 11/22/63 is a suspect pair (6.7% unplaced), as before.
+
+**Running:** screen `robo-rebuild3`: Monterosso's trust data on its whole book (~75 min,
+from ~19:50), then training (`--partial`) and `bench tuning`; each step's line goes to
+progress.txt, logs in `work/runs/rebuild/`. Restart by hand if it dies: the same three
+commands (see the chain script's end).
+
+**Next tonight (agent, no models):** report that bench per book;
+`experiments/probe_train_pages.py` on the full data (does the arbiter learn more from more
+pages a book; first sign on 16 books: 10 pages leave about twice the silent errors);
+regenerate docs/golden-books.md; outlook and decisions with the numbers.
 
 - **Check on it:** `tail work/runs/rebuild/progress.txt`; `screen -ls`.
-- **Pause after the book under way:** `touch work/runs/rebuild/STOP` (delete it before
-  restarting). **Stop now:** `experiments/stop-run.sh rebuild` (quitting the screen
-  leaves the step running). **Restart:** `experiments/detached.sh rebuild
-  experiments/rebuild-trust.sh`; it skips books whose trust data exists, and a stopped
-  book's stage caches stand.
-- A failed book is logged and the chain goes on, but then trains nothing: rerun the
-  chain once the cause is fixed.
-- Keep other model work off Ollama meanwhile; a probe beside it sends the chain's
-  options (AGENTS.md).
+- **Stop:** `experiments/stop-run.sh rebuild3`.
+- Keep other model work off Ollama meanwhile.
 
 **The reader is settled** (docs/models.md, decisions.md 2026-10-12): the nvfp4 build on
 MLX stays. Screened on reader set v2 (850 lines) against its 463/510 hard and 338/340
