@@ -36,6 +36,10 @@ machine's work is recomputed in this order before anything below.
       warning is a false alarm on a footnote book: count note lines apart. Fix, then
       its trust data (SPECS gets `fka-usa--ia-scan: 11-22:1-5`, out of
       `bench.NO_TRUST_DATA`), retrain, bench (~30 min)
+- [ ] The verdict page shows each side's words as written, not folded: today it shows
+      every dash as an em dash and every quote as straight (`evaluate.normalise`), so a
+      print's `moet –’` reads as `moet —'` on both rows (the user, 2026-10-12). Carry the
+      unfolded words in `Disagreement` and show those (agent, ~30 min)
 - [ ] How many pages a book: `experiments/probe_train_pages.py` (the arbiter trained on
       each book's first 10, 20, 45 pages or all; first sign on 16 books: 10 pages leave
       about twice the silent errors) and `experiments/probe_bench_pages.py` (a bench run
