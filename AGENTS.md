@@ -443,8 +443,8 @@ sha256, page ranges, the source and chapter range), the derived chapters in `tex
   (Stella's format); skip calibre-made PDFs, other printings, DRM and pre-1934 spelling.
   Skip an EPUB that isn't the publisher's own (made through Word or OCR: `MsoNormal`
   classes, an ABBYY generator, a colophon naming only the print): it carries its maker's
-  edits. An EPUB that sets its dashes as spaced hyphens or a spaced `--` gets
-  `hyphen_dash = "–"` in `[reference]`; one that writes small capitals in lower case with
+  edits. An EPUB that sets its dashes as spaced hyphens, a spaced `--` or
+  minus signs gets `hyphen_dash = "–"` in `[reference]`; one that writes small capitals in lower case with
   a class gets `capital_classes`; one that numbers its notes in growing marks (`*`, `**`,
   …) where the print sets one gets `note_mark`; one whose scene breaks are empty paragraphs
   of a class gets `break_classes`, and one that marks them on the paragraph after or before

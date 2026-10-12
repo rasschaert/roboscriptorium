@@ -20,6 +20,8 @@ files = [
 # A scene break comes after each "firstline" paragraph (checked on the scan,
 # experiments/probe_break_classes.py).
 opening_classes = ["firstline"]
+# Its e-book sets 20 of its dashes as minus signs; the print's are spaced en dashes.
+hyphen_dash = "–"
 italic_classes = ["italic", "smallcaps-italic"]
 
 # The print edition (ISBN 978 90 5965 732 8; design Frank August, printed by

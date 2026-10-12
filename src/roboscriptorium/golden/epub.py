@@ -16,8 +16,9 @@ them ("railbus[*]") read as printed ("railbus*"); where the EPUB numbers its not
 paragraph of ornaments alone ("* * *"), is a scene break before the next paragraph; so
 is a paragraph of the opening classes (the unindented first one of a scene) before
 itself, and one of the closing classes after itself. An EPUB that sets its dashes as a
-spaced hyphen-minus, or a spaced double one ("--"), gets the print's dash instead
-(`hyphen_dash`); hyphens inside words and numbers stay. Text of the capital classes
+spaced hyphen-minus, a spaced double one ("--") or a minus sign ("−"), gets the print's
+dash instead (`hyphen_dash`); hyphens inside words and numbers, and a number's minus
+sign, stay. Text of the capital classes
 (small capitals the EPUB writes in lower case, "vnr") is set in capitals, as the print
 shows it and a reader reads it. A heading set as an image (a drawn chapter number) gets
 its text from the image's alt text through `image_heading`, a regex whose group 1 is the
@@ -48,6 +49,8 @@ _ORNAMENT = re.compile(r"^[\s*•·⁂◆◇❖✻✽✦○●#~]+$")
 # Between words, at a paragraph's end ("kwam -", an interruption) or at its start ("- Denk na!"),
 # single or doubled ("kwam -- en").
 _SPACED_HYPHEN = re.compile(r"(?<=\S) --?(?= |$)|^--? (?=\S)")
+# A minus sign set as a dash: any but a number's sign.
+_MINUS_DASH = re.compile("\u2212(?!\\d)")
 _XML_ENTITIES = {"amp", "lt", "gt", "quot", "apos"}
 
 
@@ -202,6 +205,7 @@ def read(
                     text = _SPACED_HYPHEN.sub(
                         lambda m: m.group(0).replace("--", "-").replace("-", hyphen_dash), text
                     )
+                    text = _MINUS_DASH.sub(hyphen_dash, text)
                 if notes:
                     text = _NOTE_LINK.sub(mark, text)
                 if not unmarked(text).strip() and image_heading and el.tag in HEADING_TAGS:

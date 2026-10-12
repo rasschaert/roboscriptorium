@@ -146,6 +146,17 @@ def test_doubled_hyphens_become_the_prints_dash(tmp_path):
     assert section.paragraphs == ["Toen – heel terloops – zei hij: ex-vrouw.", "Maar –"]
 
 
+def test_minus_signs_set_as_dashes_become_the_prints_dash(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format("<h1>1</h1><p>Het moest \u2212 zoals nu \u2212, bij \u22125 graden.</p>"),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], hyphen_dash="–")
+    assert section.paragraphs == ["Het moest – zoals nu –, bij \u22125 graden."]
+
+
 def test_capital_classes_are_set_in_capitals(tmp_path):
     epub = tmp_path / "book.epub"
     with zipfile.ZipFile(epub, "w") as z:
