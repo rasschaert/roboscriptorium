@@ -302,3 +302,8 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-12 | trust data, monterosso-mon-amour--ia-scan, cold after work/ was lost, Qwen local | 9 | 8 | 0 |
 | 2026-10-12 | train arbiter after the rebuild (refused: no Stella data, needed --partial) | 0 | 0 | 1 |
 | 2026-10-12 | bench tuning, new baseline after the rebuild (no arbiter saved: failed at once) | 789 | 0 | 1 |
+| 2026-10-12 | train arbiter after the rebuild (--partial: no Stella answers since the loss) | 0 | 4 | 0 |
+| 2026-10-12 | bench tuning, new baseline after the rebuild (warm but FKA cold) | 789 | 8 | 0 |
+| 2026-10-12 | trust data, monterosso-mon-amour--ia-scan, whole book, first 9 pages warm | 88 | 69 | 0 |
+| 2026-10-12 | train arbiter (--partial: no Stella answers since the loss) | 0 | 5 | 0 |
+| 2026-10-12 | bench tuning, Monterosso whole, warm | 868 | 3 | 0 |

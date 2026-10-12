@@ -4,35 +4,39 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running, 2026-10-12 ~20:00: Monterosso whole, then the arbiter and `bench tuning`
+## Running, 2026-10-12 21:45: `bench validation`, cold, overnight
 
 **Remind the user of the daily backup of `work/`** at session start and before long runs
-(they back up with Duplicati, ~9 min).
+(they back up with Duplicati, ~9 min; last run 2026-10-12 21:40).
 
-**Done today:** trust data for all 20 books on `qwen3.8:27b-nvfp4` (the chain
-`experiments/rebuild-trust.sh`, a line a book in `work/runs/rebuild/progress.txt`). Its
-training step refused to save (Stella's data, from review answers, was lost with
-`work/`) and progress.txt hid it as exit 0; fixed (`--partial`, real exit codes). First
-bench after the rebuild (`work/bench/tuning-20261012T174144-…json`): **0.31** wrong
-words a page after review over 16 books; Monterosso broken by its 9-page slice (its
-chapters run on, so it is scored whole again), FKA USA unchecked (its findings are in
-the checklist: LaTeX note marks, dropped epigraphs, the false suspect-pair alarm from
-its footnotes). Afscheid has four pages of ~300 wrong words each (20, 32, 38, 70), all
-asked: look at what they are. 11/22/63 is a suspect pair (6.7% unplaced), as before.
+**Running:** screen `robo-bench-validation`: `bench validation` on the 9 validation
+books, The Stranger's Child and Normal People newly joined, ~916 pages nearly all cold,
+~13 h (done ~10:30 on 2026-10-13); output in `work/runs/bench-validation.log`, its time
+in docs/run-times.md. The user may take the laptop to the office, which stops it: rerun
+the same command (`experiments/detached.sh bench-validation experiments/timed.sh "bench
+validation, …" 916 work/runs/bench-validation.log uv run roboscriptorium bench
+validation`); finished books and stages are cached, at most one reading pass of one book
+is lost. Keep other model work off Ollama meanwhile.
 
-**Running:** screen `robo-rebuild3`: Monterosso's trust data on its whole book (~75 min,
-from ~19:50), then training (`--partial`) and `bench tuning`; each step's line goes to
-progress.txt, logs in `work/runs/rebuild/`. Restart by hand if it dies: the same three
-commands (see the chain script's end).
+**Tuning baseline (2026-10-12, `work/bench/tuning-20261012T190056-…json`): 0.31** wrong
+words a page after review over 17 books (FKA USA left out till its fixes). Since then:
+the user's verdicts (Goede dochter 46, Metro 24, Monterosso 19, De eerlijke vinder 14,
+Dolittle 3) and De eerlijke vinder's minus-sign dashes undone in its reference; a warm
+`bench tuning` (~3 min) after the validation run shows what they move.
 
-**Next tonight (agent, no models):** report that bench per book;
-`experiments/probe_train_pages.py` on the full data (does the arbiter learn more from more
-pages a book; first sign on 16 books: 10 pages leave about twice the silent errors);
-regenerate docs/golden-books.md; outlook and decisions with the numbers.
+**Slice size, measured:** more pages a book teach the arbiter little (about 0.01 wrong
+words a page from 10 pages to all) and narrow the bench some; short slices stay short
+(decisions.md 2026-10-12).
 
-- **Check on it:** `tail work/runs/rebuild/progress.txt`; `screen -ls`.
-- **Stop:** `experiments/stop-run.sh rebuild3`.
-- Keep other model work off Ollama meanwhile.
+**Verdict rounds are stopped** until the single review exists (checklist, "One review for
+a golden book"): the user stopped the round after the verdict page kept missing what the
+region review has (kinds, a caption's words, a decorated initial). Never serve them a
+reduced page again (memory: one review UI). Dolittle, Crime and De tuin are unanswered.
+
+**Wednesday, in order:** the single review; De eerlijke vinder's 25 page numbers kept in
+the running text (rules and sorter model, Stella's scan format); its error analysis;
+Monterosso's T read as a quote; Metro's lost quote after an ellipsis; FKA USA's fixes and
+trust data; then the checklist.
 
 **The reader is settled** (docs/models.md, decisions.md 2026-10-12): the nvfp4 build on
 MLX stays. Screened on reader set v2 (850 lines) against its 463/510 hard and 338/340
@@ -50,10 +54,7 @@ command line instead.
 backup) and 2026-10-11 1202 (the user's Calibre copy, our build before that evening's
 fixes). Diff the next build against them.
 
-### Next, in order (after the chain's bench)
-
-Regenerate docs/golden-books.md after the bench: its last-bench column says "none yet"
-for every book since the loss.
+### Next, in order
 
 1. Correct anything the bench shows; then the line-role trees (`experiments/train_sorter.py
    --save`), then `bench validation`, with Verminkt joining validation as a slice (~90
