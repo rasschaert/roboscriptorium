@@ -49,6 +49,7 @@ SETS = {
         "het-ijzige-land--ia-scan:11-104:1-11",
         "de-eerlijke-vinder--ia-scan",
         "monterosso-mon-amour--ia-scan",
+        "fka-usa--ia-scan:11-100:1-15",
     ],
     "validation": [
         "de-kerk-van-de-dode-meisjes--ia-scan:11-107:1-13",
@@ -66,7 +67,7 @@ SETS = {
 TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
 # Tuning books with no trust data (`experiments/ocr_trust_data.py`'s SPECS lacks them):
 # the trust model never trains on them, so they are scored with the full model.
-NO_TRUST_DATA: frozenset[str] = frozenset()
+NO_TRUST_DATA: frozenset[str] = frozenset({"fka-usa--ia-scan"})
 TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST_DATA
 # The line-role model trains on every tuning book (`experiments/train_sorter.py`).
 SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"])

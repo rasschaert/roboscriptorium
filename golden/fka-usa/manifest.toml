@@ -1,0 +1,56 @@
+title = "FKA USA"
+author = "Reed King"
+language = "en"
+# The author is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Flatiron's e-book (ISBN 978 1 250 10890 6, the e-book of the first edition).
+# Each part a file with two <h1>: its number ("Part I") and its title, over a map;
+# each chapter a file, its number an <h1>, then a motto of a few paragraphs
+# ("Chap-Epigraph-non-verse-cepi", read as text) with its source. The footnotes
+# (145) sit in one file at the end, numbered from 1 in each chapter as the print
+# numbers them; each opens on its number ("1. A kind of cold war"). The editor's
+# note and the six appendices are read; acknowledgments and ads are left out.
+[reference]
+source = "FKA USA, Flatiron Books 2019, e-book ISBN 978 1 250 10890 6 (EPUB)"
+sha256 = "2954b54b0cf9cba10469f2f19e97787796c3a36b2203d82e0ef07be1a1b832da"
+files = [
+  "OEBPS/xhtml/fm01.xhtml", "OEBPS/xhtml/prologue.xhtml", "OEBPS/xhtml/part1.xhtml",
+  "OEBPS/xhtml/chapter1.xhtml", "OEBPS/xhtml/chapter2.xhtml", "OEBPS/xhtml/chapter3.xhtml",
+  "OEBPS/xhtml/chapter4.xhtml", "OEBPS/xhtml/chapter5.xhtml", "OEBPS/xhtml/chapter6.xhtml",
+  "OEBPS/xhtml/chapter7.xhtml", "OEBPS/xhtml/part2.xhtml", "OEBPS/xhtml/chapter8.xhtml",
+  "OEBPS/xhtml/chapter9.xhtml", "OEBPS/xhtml/chapter10.xhtml", "OEBPS/xhtml/chapter11.xhtml",
+  "OEBPS/xhtml/chapter12.xhtml", "OEBPS/xhtml/chapter13.xhtml", "OEBPS/xhtml/chapter14.xhtml",
+  "OEBPS/xhtml/chapter15.xhtml", "OEBPS/xhtml/chapter16.xhtml", "OEBPS/xhtml/chapter17.xhtml",
+  "OEBPS/xhtml/chapter18.xhtml", "OEBPS/xhtml/chapter19.xhtml", "OEBPS/xhtml/chapter20.xhtml",
+  "OEBPS/xhtml/chapter21.xhtml", "OEBPS/xhtml/chapter22.xhtml", "OEBPS/xhtml/chapter23.xhtml",
+  "OEBPS/xhtml/part3.xhtml", "OEBPS/xhtml/chapter24.xhtml", "OEBPS/xhtml/chapter25.xhtml",
+  "OEBPS/xhtml/chapter26.xhtml", "OEBPS/xhtml/chapter27.xhtml", "OEBPS/xhtml/chapter28.xhtml",
+  "OEBPS/xhtml/chapter29.xhtml", "OEBPS/xhtml/part4.xhtml", "OEBPS/xhtml/chapter30.xhtml",
+  "OEBPS/xhtml/chapter31.xhtml", "OEBPS/xhtml/chapter32.xhtml", "OEBPS/xhtml/chapter33.xhtml",
+  "OEBPS/xhtml/chapter34.xhtml", "OEBPS/xhtml/chapter35.xhtml", "OEBPS/xhtml/chapter36.xhtml",
+  "OEBPS/xhtml/chapter37.xhtml", "OEBPS/xhtml/chapter38.xhtml", "OEBPS/xhtml/part5.xhtml",
+  "OEBPS/xhtml/chapter39.xhtml", "OEBPS/xhtml/chapter40.xhtml", "OEBPS/xhtml/chapter41.xhtml",
+  "OEBPS/xhtml/chapter42.xhtml", "OEBPS/xhtml/chapter43.xhtml", "OEBPS/xhtml/chapter44.xhtml",
+  "OEBPS/xhtml/part6.xhtml", "OEBPS/xhtml/chapter45.xhtml", "OEBPS/xhtml/chapter46.xhtml",
+  "OEBPS/xhtml/chapter47.xhtml", "OEBPS/xhtml/chapter48.xhtml", "OEBPS/xhtml/chapter49.xhtml",
+  "OEBPS/xhtml/chapter50.xhtml", "OEBPS/xhtml/chapter51.xhtml", "OEBPS/xhtml/chapter52.xhtml",
+  "OEBPS/xhtml/chapter53.xhtml", "OEBPS/xhtml/app01.xhtml", "OEBPS/xhtml/app02.xhtml",
+  "OEBPS/xhtml/app03.xhtml", "OEBPS/xhtml/app04.xhtml", "OEBPS/xhtml/app05.xhtml",
+  "OEBPS/xhtml/app06.xhtml", "OEBPS/xhtml/footnotes.xhtml",
+]
+italic_classes = ["eSANS_Akzidenz-Grotesk_BQ_Medium_Italic_BI_11"]
+note_classes = ["Footnote-Text-fn"]
+
+# The first edition (Flatiron, June 2019, hardcover ISBN 978 1 250 10889 0,
+# designed by Steven Seighman); IA Scribe scan, 360 ppi MRC, GlyphLessFont layer,
+# ~398×641 pt. Footnotes at the foot of the page in smaller type, long ones running
+# over several lines. Pages 11–477: the editor's note to the last appendix.
+# Internet Archive lends it only, so it is placed by hand (sourced by the user,
+# 2026-10-12).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/fkausanovel0000king (borrow, then download the PDF)"
+sha256 = "216f30abc46dc61fcf60ee204c594707a77888993aa02e13388fc03cf0af626b"
+cover_page = 1
+body_pages = [11, 477]

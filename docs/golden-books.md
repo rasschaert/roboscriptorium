@@ -22,6 +22,7 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 | de-stilte-van-de-hel | validation | 353 / 91 | 136423 | 1.7 h | 0.36% | 0.50% | 2.8% | 5 / 15 | none | none yet |
 | de-tuin-van-de-avondnevel | tuning | 364 / 87 | 129769 | 1.6 h | 0.81% | 0.45% | 2.8% | 6 / 6 | none | none yet |
 | doodskleed | tuning | 276 / 84 | 72379 | 1.5 h | 0.35% | 0.64% | 6.3% | 4 / 14 | none | none yet |
+| fka-usa | tuning | 467 / 90 | 132070 | 1.7 h | 0.34% | 0.80% | 13.5% | 3 / 15 | none | none yet |
 | goede-dochter | tuning | 500 / 91 | 163183 | 1.7 h | 0.24% | 0.50% | 2.8% | 6 / 6 | none | none yet |
 | het-geluid-van-bananen | **test** | 315 / 93 | 77984 | 1.7 h | unmeasured | | | | none | untouched |
 | het-heft-in-eigen-hand | tuning | 506 / 84 | 144642 | 1.5 h | 0.55% | 0.47% | 2.9% | 5 / 5 | none | none yet |

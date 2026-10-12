@@ -19,7 +19,9 @@ capped at ~90 pages (the user; decisions.md 2026-10-12): the chain was stopped m
 and restarted, so Goede dochter and Reis are redone on their new slices from cache
 (minutes; their long-slice data kept as `*.long-slice.json`) and Metro goes on with its
 new slice. The 14 left take ~17 h. Its bench step's timing label still says 1792 pages
-(the running script wasn't edited): correct that line in docs/run-times.md to 1365. When every book has succeeded the chain trains the arbiter
+(the running script wasn't edited): correct that line in docs/run-times.md to 1455, as
+the bench also scores FKA USA, the new footnote book (90 pages cold, ~1.7 h more, with
+the full arbiter; its trust data comes after, checklist). When every book has succeeded the chain trains the arbiter
 (`work/models/ocr-trust.pkl`) and runs `bench tuning`, the new baseline.
 
 - **Check on it:** `tail work/runs/rebuild/progress.txt`; `screen -ls`.
