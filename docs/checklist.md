@@ -49,6 +49,15 @@ on them, so no judge and no question saw them. The rules have taken the groups w
 cause; what is left needs new suspects where the readings agree, which today's models
 don't yet give at a price worth the reviewer's time.
 
+- [ ] A detector for errors every reading shares (the user, 2026-10-12): a small model
+      over every word, trained leave-one-out on the golden books' silent errors (word
+      list, letter confidence of tesseract and IA's ABBYY, a smudge on the crop, the
+      book's other spellings), raising suspects where the readings agree. Guarded
+      against regressions: its suspects are only asked at first, never fixed
+      unasked; it ships only when `bench tuning` improves with no book's veto and
+      `bench validation` doesn't worsen, and the questions it adds are counted
+      against the errors they catch. Labels first, from tonight's trust data (agent,
+      ~half a day)
 - [ ] A reader of the finished text (the proofreader), for errors every reading shares:
       probed twice, about one catch per 100 paragraphs against as many false questions
       (2026-10-11, qwen3.8 proposing, clef filtering): rerun the probe
