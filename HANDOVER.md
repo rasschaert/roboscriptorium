@@ -59,9 +59,11 @@ for every book since the loss.
 1. Correct anything the bench shows; then the line-role trees (`experiments/train_sorter.py
    --save`), then `bench validation`, with Verminkt joining validation as a slice (~90
    pages, agreed).
-2. Stella: rebuild, diff against the dated copies, then the user reads it through.
-3. A sampled Ex-minnaar review, 10–20 questions, to find lessons with wide effect before
+2. A sampled Ex-minnaar review, 10–20 questions, to find lessons with wide effect before
    the user faces its full ~390 (the user asked for it; blocked by the loss).
+3. The user's Ex-minnaar review, then the fixes it teaches; only then Stella: rebuild
+   with those fixes, diff against the dated copies, the user reads it through (the
+   user, 2026-10-12).
 4. `roboscriptorium init <pdf>` (agreed; checklist, "Beyond the golden books"): each
    page a kind; what goes in the EPUB is decisions.md 2026-10-11 (a list of what's left
    out); runs on its own when `book.toml` is missing. Labels: `tryouts/page-kinds-v1.json`.

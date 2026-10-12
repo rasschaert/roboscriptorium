@@ -36,9 +36,11 @@ machine's work is recomputed in this order before anything below.
       Stranger's Child (pages 121–208) and Normal People (pages 146–232)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
-- [ ] Stella rebuilt and diffed against its dated copies in `work/stella/epubs/`
 - [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
       before the user's full review
+- [ ] Ex-minnaar's review by the user, then the fixes it teaches
+- [ ] Stella rebuilt with those fixes and diffed against its dated copies in
+      `work/stella/epubs/` (the user, 2026-10-12: not before the Ex-minnaar review)
 
 ## 1. Accuracy before Stella (~half a day)
 
