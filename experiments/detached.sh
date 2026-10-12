@@ -1,7 +1,8 @@
 #!/usr/bin/env zsh
 # Runs a command in a detached screen session, so it outlives the terminal and the agent
 # that started it. Its output goes to work/runs/<name>.out; `screen -ls` lists the runs,
-# `screen -r robo-<name>` watches one (ctrl-a d leaves it running).
+# `screen -r robo-<name>` watches one (ctrl-a d leaves it running), and
+# `experiments/stop-run.sh <name>` stops one with everything it started.
 # An agent pairs it with a watcher it can lose: a background
 #   while screen -ls | grep -q "\.robo-<name>[[:space:]]"; do sleep 30; done
 # which ends, and so notifies, when the run does. The pattern matches the whole name:

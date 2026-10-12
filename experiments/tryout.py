@@ -276,11 +276,12 @@ OPENAI_LOCAL_URL = "http://127.0.0.1:8888/v1/chat/completions"  # Unsloth Studio
 
 
 def read_openai_local(png: bytes, model: str, prompt: str) -> str:
-    """A reading by a model on a local OpenAI-compatible server (`openai-local:<id>`),
+    """A reading by a model on a local OpenAI-compatible server (`openai-local:<id>`, or
+    `openai-local:<id>#<label>` to keep apart builds the server names alike),
     asked as `ocrcheck.transcribe` asks Ollama: the image first, temperature 0, thinking
     off, the first line of the answer."""
     body = {
-        "model": model.removeprefix(OPENAI_LOCAL),
+        "model": model.removeprefix(OPENAI_LOCAL).split("#")[0],
         "messages": [
             {
                 "role": "user",

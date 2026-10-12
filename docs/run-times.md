@@ -280,3 +280,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-12 | trust data, the-nature-of-a-crime--doubleday-1924, cold after work/ was lost, Qwen local | 94 | 58 | 0 |
 | 2026-10-12 | trust data, the-story-of-doctor-dolittle--stokes-1920, cold after work/ was lost, Qwen local | 180 | 100 | 0 |
 | 2026-10-12 | trust data, reis-om-mijn-schedel--ia-scan, cold after work/ was lost, Qwen local | 245 | 190 | 0 |
+| 2026-10-12 | tryout: reader v2, Qwen3.8-27B UD-Q6_K_XL via Unsloth Studio | 850 | 24 | 0 |
+| 2026-10-12 | probe: Studio Q6 at 8k, no speculation, 1/2/4 requests at once | 321 | 11 | 0 |

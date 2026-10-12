@@ -76,7 +76,8 @@ get renumbered. Don't add a file to this table without a job no other file has.
   Start it detached, through `experiments/detached.sh <name> <command…>` (a `screen`
   session, output in `work/runs/<name>.out`), so it outlives the terminal and the agent
   session. `screen -ls` lists the runs; watch one with a background loop that ends when
-  its screen does.
+  its screen does. Stop one with `experiments/stop-run.sh <name>`: quitting the screen
+  leaves its command running.
 - **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.
