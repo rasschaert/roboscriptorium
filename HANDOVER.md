@@ -33,7 +33,7 @@ a golden book"): the user stopped the round after the verdict page kept missing 
 region review has (kinds, a caption's words, a decorated initial). Never serve them a
 reduced page again (memory: one review UI). Dolittle, Crime and De tuin are unanswered.
 
-**Wednesday, in order:** the single review; De eerlijke vinder's 25 page numbers kept in
+**Next session (Tuesday evening or Wednesday), in order:** the single review; De eerlijke vinder's 25 page numbers kept in
 the running text (rules and sorter model, Stella's scan format); its error analysis;
 Monterosso's T read as a quote; Metro's lost quote after an ellipsis; FKA USA's fixes and
 trust data; then the checklist.
