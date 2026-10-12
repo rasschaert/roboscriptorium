@@ -40,11 +40,6 @@ machine's work is recomputed in this order before anything below.
       every dash as an em dash and every quote as straight (`evaluate.normalise`), so a
       print's `moet –’` reads as `moet —'` on both rows (the user, 2026-10-12). Carry the
       unfolded words in `Disagreement` and show those (agent, ~30 min)
-- [ ] How many pages a book: `experiments/probe_train_pages.py` (the arbiter trained on
-      each book's first 10, 20, 45 pages or all; first sign on 16 books: 10 pages leave
-      about twice the silent errors) and `experiments/probe_bench_pages.py` (a bench run
-      rescored on its first N pages: how wide the interval gets). Set the slice size
-      from both and grow the short slices to it (agent, minutes, no models; then models)
 - [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
       validation` with three books joining, each as a slice: Verminkt (~90 pages), The
       Stranger's Child (pages 121–208) and Normal People (pages 146–232)
