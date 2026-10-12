@@ -28,6 +28,8 @@ machine's work is recomputed in this order before anything below.
       capped at ~90 pages the same day, the 14 left ~17 h, running)
 - [ ] FKA USA's trust data (`ocr_trust_data.py` SPECS gets `fka-usa--ia-scan: 11-100:1-15`,
       out of `bench.NO_TRUST_DATA`), the arbiter retrained, `bench tuning` again (~2 h)
+- [ ] Rescore that bench pair on the first 20, 45 and 90 pages of each slice: which
+      verdicts hold (agent, minutes, no models); set the slice size from it
 - [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
       validation` with three books joining, each as a slice: Verminkt (~90 pages), The
       Stranger's Child (pages 121–208) and Normal People (pages 146–232)

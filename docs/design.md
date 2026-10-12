@@ -554,6 +554,19 @@ typed in, text the layer lacks) gets only the quote check.
   and names a book past 3× the set's median layer CER, or with one body line in twenty
   unplaced, as a suspect pair. Over body lines, because page furniture is unplaced by
   design: counted over all lines, seven books pass 5%.
+- **Picks not yet measured** (audit of 2026-10-12): each of these was set without a
+  measurement behind its value, so treat it as a default to test, not a finding.
+  *Slice size* (~90 pages): the rescoring of a bench pair on 20, 45 and 90 pages a book
+  is in the checklist. *The veto's size* (0.05 wrong words a page): its 99% level is
+  argued above, its size isn't. *The suspect-pair thresholds* (3× the median layer CER,
+  one body line in twenty): never checked against the pairs they flagged. *The question
+  budget* (1 a page): set with the first trust run; `ocr_ask_below` was swept, the
+  budget wasn't. *Headings outside the primary test*: the bench reports headings found
+  and spurious but no verdict rests on them. *Footnotes outside the score*
+  (`golden/notes.py`): left out because the pipeline didn't place notes; it has since
+  2026-10-11, so the reason has expired. *Quote and dash glyphs folded in the score*
+  (`evaluate.normalise`): right for EPUBs that set them unlike the print, but it leaves
+  the bench blind to a wrong quote glyph or dash, which the fidelity goal counts.
 - **Tuning books are scored by models trained without them**
   (`*-without-<book>.pkl`).
 - **The reference isn't the truth either.** Two groups of suspects lack a clean
