@@ -62,6 +62,8 @@ SETS = {
         "de-stilte-van-de-hel--ia-scan:11-101:1-15",
         "koning-wilders--ia-scan",
         "het-laatste-bevel--ia-scan:9-100:1-5",
+        "the-strangers-child--ia-scan:121-208:15-23",
+        "normal-people--ia-scan:146-232:22-30",
     ],
     "test": [
         "het-geluid-van-bananen--ia-scan:9-101:1-14",
