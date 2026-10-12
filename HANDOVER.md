@@ -4,54 +4,59 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Paused, 2026-10-12 09:23: the rebuild on nvfp4, after Reis (the user)
+## Running, 2026-10-12 ~11:10: the trust-data rebuild on nvfp4, 15 books to go
 
-Trust data done for 5 of 20 books: Goede dochter, Vals alarm, Crime, Dolittle, Reis
-(`work/probes/ocr-trust/`; progress in `work/runs/rebuild/progress.txt`). Restart with
-`experiments/detached.sh rebuild experiments/rebuild-trust.sh`: it skips books whose
-trust data exists. To pause after the book under way: `touch work/runs/rebuild/STOP`
-(delete it before restarting). Reader `qwen3.8:27b-nvfp4` (the user: stick with it; they
-test other builds themselves). `qwen3.8:27b-mxfp8` is **not** pulled. The worktree
-hazard below is gone (`../roboscriptorium-review` and branch `review-display` removed).
+**Remind the user of the daily backup of `work/`** at session start and before long runs
+(they back up with Duplicati, ~9 min; last run just before this restart).
 
-## State, 2026-10-12 ~00:40, session end: nothing runs; the reader question is half answered
+**What runs:** screen `robo-rebuild`, `experiments/rebuild-trust.sh`, reader
+`qwen3.8:27b-nvfp4` (final: the user). Trust data for each of the 20 books in
+`work/probes/ocr-trust/<book>.json`, one book at a time; a line per finished book in
+`work/runs/rebuild/progress.txt`, each book's log in `work/runs/rebuild/<book>.log`.
+Done before this restart: Goede dochter, Vals alarm, Crime, Dolittle, Reis. Started 11:08
+with Afscheid; the 15 left take ~20 h at the measured rates (docs/run-times.md, "trust
+data … cold"). When every book has succeeded the chain trains the arbiter
+(`work/models/ocr-trust.pkl`) and runs `bench tuning`, the new baseline.
 
-**Remind the user of the daily backup of `work/`** before any long run. Nothing runs: no
-screen, Ollama idle (0.40.3; 8k context in the app; `OLLAMA_NUM_PARALLEL=4` by
-`launchctl setenv`, which doubled glm-ocr and changed nothing else: AGENTS.md Environment).
-Lint and tests green (370).
+- **Check on it:** `tail work/runs/rebuild/progress.txt`; `screen -ls`.
+- **Pause after the book under way:** `touch work/runs/rebuild/STOP` (delete it before
+  restarting). **Stop now:** `experiments/stop-run.sh rebuild` (quitting the screen
+  leaves the step running). **Restart:** `experiments/detached.sh rebuild
+  experiments/rebuild-trust.sh`; it skips books whose trust data exists, and a stopped
+  book's stage caches stand.
+- A failed book is logged and the chain goes on, but then trains nothing: rerun the
+  chain once the cause is fixed.
+- Keep other model work off Ollama meanwhile; a probe beside it sends the chain's
+  options (AGENTS.md).
 
-**The rebuild chain is stopped**, at Goede dochter's Qwen stage (22:12, the user's go),
-and waits on the reader choice below. Its caches stand (Goede dochter's layout, roles,
-glm-ocr and tesseract readings); `experiments/detached.sh rebuild
-experiments/rebuild-trust.sh` resumes from them: ~28 h of trust data at the measured rates
-(2,188 pages × ~48 s, Qwen ~22 h of it), then the arbiter and `bench tuning`
-(docs/outlook.md, "Inference speed"). The user is unhappy with two days of fan noise:
-run it in nights if that's their wish (the chain does one book a step, so stop it between
-books with `screen -S robo-rebuild -X quit` and `pkill -f ocr_trust_data.py`, restart later).
+**The reader is settled** (docs/models.md, decisions.md 2026-10-12): the nvfp4 build on
+MLX stays. Screened on reader set v2 (850 lines) against its 463/510 hard and 338/340
+control at 1.20 s a line: Ollama's q8_0 458/333 at 2.06 s; Unsloth's UD-Q6_K_XL 457/334
+at 1.71 s and UD-Q8_K_XL 460/334 at 1.76 s (both through Unsloth Studio). The three GGUF
+builds make the same control-line errors word for word, which the nvfp4 doesn't: the
+llama.cpp runtime, not precision, sets them apart. More precision is worth testing only
+as an MLX build (`qwen3.8:27b-mxfp8`, not pulled). Unsloth Studio passes requests to its
+llama-server one at a time, so its slots don't speed anything; it switches quant when a
+request names one (`unsloth/Qwen3.8-27B-GGUF:UD-Q8_K_XL`). Its run settings' Extra
+Arguments box shows example text that isn't passed: read the running `llama-server`
+command line instead.
 
-**The reader (docs/decisions.md 2026-10-12).** Nothing on the server makes Qwen faster
-without changing what it reads, so the only lever is a different build of the reader,
-screened on reader set v2 (`tryouts/reader-v2.json`, 850 lines; the incumbents' readings
-are cached under `work/tryout/reader-v2/readings/`, so a candidate costs its own 850
-lines, ~17 min at Qwen's pace, through `experiments/timed.sh` in `detached.sh`; the
-result goes to `tryouts/results.jsonl` with seconds a line). Done: **`qwen3.8:27b-q8_0`
-rejected** (no more accurate, 2.2 s a line at any concurrency: the llama.cpp runner
-doesn't batch a 27B). Pulled by the user, **not yet
-screened**: `qwen3.8:27b-mxfp8` (Ollama, MLX, so one request at a time: a precision
-candidate, not a speed one) and Unsloth's UD-Q6_K_XL and UD-Q8_K_XL through Unsloth
-Studio's server on port 8888 (`uv run python experiments/tryout.py run reader
-openai-local:<id as Studio names it>`; one model loaded at a time, never beside a build
-or bench: memory). Score first, speed second; if none beats the nvfp4 build on both
-strata, keep it and restart the rebuild as it is. A winner is pinned in `config.py`
-(`read_model`), then the rebuild runs on it; record it in docs/models.md and the roles
-table in AGENTS.md.
+**Stella's dated EPUBs** (`work/stella/epubs/`): 2026-10-07 1221 and 1547 (from the
+backup) and 2026-10-11 1202 (the user's Calibre copy, our build before that evening's
+fixes). Diff the next build against them.
 
-**What's measured and need not be measured again** is in docs/outlook.md under
-"Inference speed": Qwen's 1.2 s a line and its split, no gain from concurrency, crop
-size, context or pooled decision calls, the system-turn layout (30% faster, 4 of 64
-readings change: a tryout candidate if someone adds a layout setting to
-`ocrcheck.transcribe`), what a faster reader must pass.
+### Next, in order (after the chain's bench)
+
+1. Correct anything the bench shows; then the line-role trees (`experiments/train_sorter.py
+   --save`), then `bench validation`, with Verminkt joining validation as a slice (~90
+   pages, agreed).
+2. Stella: rebuild, diff against the dated copies, then the user reads it through.
+3. A sampled Ex-minnaar review, 10–20 questions, to find lessons with wide effect before
+   the user faces its full ~390 (the user asked for it; blocked by the loss).
+4. `roboscriptorium init <pdf>` (agreed; checklist, "Beyond the golden books"): each
+   page a kind; what goes in the EPUB is decisions.md 2026-10-11 (a list of what's left
+   out); runs on its own when `book.toml` is missing. Labels: `tryouts/page-kinds-v1.json`.
+   Next is clef-flash's page-kind question with the page image (~1 h), then the build.
 
 ## Recovery, 2026-10-11 ~20:35: work/ was deleted
 
@@ -74,60 +79,15 @@ review answers (given after the backup), Goede dochter's 32 slip-review answers
 Koning Wilders' "wàs" ×2 is in decisions.md), the arbiter and line-role trees
 (`work/models/`), the trust data, bench results (`work/bench/`), tryout crops and
 readings (`work/tryout/`), the page-kind label files (the frozen set is in git), and
-every probe. Nothing runs; start no model job without the user's go.
+every probe.
 
-## State, 2026-10-11 ~18:30, session end (the user is about to run a memory-heavy job)
+## The bench before the loss (2026-10-11), to compare the rebuilt one against
 
-On `main`, pushed, clean. Lint and tests green (370). **Nothing runs**: no screen, Ollama
-unloaded. **Ask the user before starting any Ollama or llama job**: they asked for none
-for now.
-
-**Running: the page-kind probe** (clef-flash on the labelled pages, ~75 min, screen
-`robo-pagekinds`, log `work/runs/pagekinds.log`; answers cached, a rerun resumes).
-**The validation bench was stopped again** (memory: 14% free with Qwen and clef-flash
-both loaded, swap full). Koning Wilders is done in the cache; Het laatste bevel's Qwen
-reading stands at 800 lines. Restart `bench validation` after the probe.
-
-Qwen3.8-Flash-Next (~1 bit, the user's Unsloth Studio) was screened as a
-reader and rejected (docs/models.md); `experiments/tryout.py` keeps its `openai-local:`
-path for the next model served that way.
-
-### Waiting, in this order
-
-1. **Hazard: the worktree `../roboscriptorium-review` still holds the committed `work`
-   symlink** (pointing at the real `work/`), and branch `review-display` (merged in
-   1f41e1a) still tracks it, locally and on origin. Nothing may write into, check out
-   over or delete through it. With the user's go: `git worktree remove --force
-   ../roboscriptorium-review` (git unlinks the symlink rather than following it), then
-   `git branch -D review-display` and `git push origin --delete review-display`.
-2. **Agreed, in progress: `roboscriptorium init <pdf>`** (checklist, Beyond the golden
-   books' kind; what goes in the EPUB is decisions.md 2026-10-11). Labels done:
-   `tryouts/page-kinds-v1.json` (31 books, 1,034 pages; per-book files and notes in
-   `work/probes/page-kinds/`). Text-layer clues alone don't find the edges
-   (`experiments/probe_page_signals.py --score`). Next, after the bench: clef-flash's
-   page-kind question with the page image on the labelled pages (~1,000 × ~4 s ≈ 1 h).
-   `init` must give front and back pages a kind each, not one range: a dedication or
-   motto sits after the title page and colophon.
-   Verminkt joins validation as a slice (~90 pages, the user agreed) once the bench ends.
-3. **Verminkt: checked, fit, asked the user whether it joins a set.** Its two printings
-   print the same text (docs/golden-notes.md, `probe_printing.py`). Proposed: validation,
-   with a slice of ~90 pages like Het laatste bevel (the whole book is ~7½ h cold). Its
-   layer writes ij as y throughout, which no other pair tests.
-4. **Validation bench, stopped at the user's request** (18:25): Koning Wilders' Qwen
-   reading is cached at 600 of 2,439 lines; resuming costs ~45 min Qwen + ~25 min judges,
-   and Het laatste bevel's slice (pages 9–100) ~1¾ h cold. Only with the user's go.
-5. **Ex-minnaar's review, the user, not soon**: 390 questions, all of them (the user's
-   choice): `uv run roboscriptorium review work/ex-minnaar`. Built, epubcheck clean,
-   dated copy in `work/ex-minnaar/epubs/`. Do the display fix (1) first.
-6. **Stella, the user, not today**: read `work/stella/stella.epub` through, note errors.
-
-### The bench (after today's set changes)
-
-Tuning is 17 books (De eerlijke vinder and Monterosso moved in today, arbiter and trees
+Tuning is 17 books (De eerlijke vinder and Monterosso had just moved in, arbiter and trees
 retrained): **0.36** wrong words a page after review over all 17 (0.31 over the 15 it
-shares with this morning's set; De eerlijke vinder 0.99, Monterosso 0.50). Validation
+shares with the set before; De eerlijke vinder 0.99, Monterosso 0.50). Validation
 was 0.64 on its 5 books before Koning Wilders (Atlas Contact) and Het laatste bevel
-(Manteau, slice 9–100) joined; neither is benched yet (see 4). Paragraph breaks ~0.2 a
+(Manteau, slice 9–100) joined; neither was benched. Paragraph breaks ~0.2 a
 page on both.
 
 ## What today taught (read before choosing work)
@@ -165,8 +125,8 @@ page on both.
 - A probe or eval on a golden book takes the bench's slice, never the bare directory.
 - Nothing reads the test set (Het geluid van bananen) until its single scoring; its
   reference must be rederived first (it missed today's derive changes).
-- Killing a chain: quit its screen and `pkill -f` the step; `ollama stop <model>` frees
-  the memory.
+- Stopping a run: `experiments/stop-run.sh <name>` (quitting its screen leaves the step
+  running); `ollama stop <model>` frees the memory.
 
 ## Waiting on the user, besides the above
 

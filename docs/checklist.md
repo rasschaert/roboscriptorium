@@ -17,6 +17,20 @@ building), new suspects where the readings agree first, then **Stella end to end
 the user's review**, the target book, then the user's four books. After them, the open
 areas below in order, and the test set scored once at the end.
 
+## Recovering what work/ lost (first)
+
+Git deleted `work/` on 2026-10-11 (docs/decisions.md); the sources are restored, the
+machine's work is recomputed in this order before anything below.
+
+- [ ] Trust data for the 20 tuning books on qwen3.8:27b-nvfp4, then the arbiter and
+      `bench tuning` (`experiments/rebuild-trust.sh`, ~28 h in all; 5 books done
+      2026-10-12, the 15 left ~20 h, running)
+- [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
+      validation` with Verminkt joining as a slice (~90 pages)
+- [ ] Stella rebuilt and diffed against its dated copies in `work/stella/epubs/`
+- [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
+      before the user's full review
+
 ## 1. Accuracy before Stella (~half a day)
 
 About 85% of the wrong words left after review were never suspects: every reading agreed

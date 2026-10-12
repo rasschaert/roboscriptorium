@@ -124,6 +124,10 @@ Don't repeat these without a new reason (details in docs/decisions.md):
 - **qwen3.8:27b-q8_0 as the reader** (the same model as a GGUF on Ollama's llama.cpp
   runner): no more accurate on reader set v2 (hard 458 against 463 of 510, control 333
   against 338 of 340), 2.2 s a line at any concurrency: the runner doesn't batch it.
+- **Unsloth's UD-Q6_K_XL and UD-Q8_K_XL as the reader** (through Unsloth Studio): 457
+  and 460 of 510 hard, 334 of 340 control each, ~1.7 s a line. With the q8_0 they make
+  the same control-line errors word for word: the llama.cpp runtime, not precision,
+  parts the GGUF builds from the nvfp4 on MLX.
 
 ## Inference speed: what a cold page costs, and what's been tried
 
@@ -165,8 +169,8 @@ measure per model, not a promise of the runner.
 tryout, never a setting: the instructions as the system turn ahead of the image (the
 prefix is reused: 0.80 s a line, but 4 of 64 readings change, one wrong); a shorter
 instruction (untested); another build of the same model (the q8_0 GGUF was tried and
-rejected, above: slower and no more accurate; the mxfp8 and Unsloth's UD-Q6_K_XL and
-UD-Q8_K_XL are pulled and unscreened); the "mtp" builds (nothing on Ollama's library
+rejected, and so were Unsloth's UD-Q6_K_XL and UD-Q8_K_XL, above: slower and no more
+accurate; an MLX build at higher precision, mxfp8, is untested and not pulled); the "mtp" builds (nothing on Ollama's library
 says the runner uses the MTP head, and it could speed only the 0.35 s of output).
 
 **What a faster reader must pass.** `experiments/tryout.py run reader <model>` on reader
@@ -177,9 +181,9 @@ and reports seconds a line). The reader in use, qwen3.8:27b-nvfp4, reads 463 of 
 hard lines right (CER 0.74%) and 338 of the 340 control lines (0.01%), quote marks wrong
 on 26 and 5, at 1.20 s a line; a candidate must match both strata, quote marks and
 accents included, and be right alone on lines the others miss (docs/models.md has the
-ones that didn't: the q8_0 build, gemma4, a ~1-bit Qwen3.8-Flash-Next, MoE readers).
-Speed is its own pace one request at a time, since neither runner batches a model this
-size; it must also fit beside clef:27b and the small models in 64 GB, think nothing and
+ones that didn't: the q8_0, UD-Q6_K_XL and UD-Q8_K_XL builds, gemma4, a ~1-bit Qwen3.8-Flash-Next, MoE readers).
+Speed is its own pace one request at a time, since no runner tried batches a model this
+size (Unsloth Studio queues requests ahead of its llama-server); it must also fit beside clef:27b and the small models in 64 GB, think nothing and
 write one line. A winner then needs the trust data rebuilt and the arbiter retrained
 before it reads for the arbiter: cheapest while a rebuild is due anyway.
 
