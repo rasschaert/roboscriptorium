@@ -36,7 +36,7 @@ control at 1.20 s a line: Ollama's q8_0 458/333 at 2.06 s; Unsloth's UD-Q6_K_XL 
 at 1.71 s and UD-Q8_K_XL 460/334 at 1.76 s (both through Unsloth Studio). The three GGUF
 builds make the same control-line errors word for word, which the nvfp4 doesn't: the
 llama.cpp runtime, not precision, sets them apart. More precision is worth testing only
-as an MLX build (`qwen3.8:27b-mxfp8`, not pulled). Unsloth Studio passes requests to its
+as an MLX build (`qwen3.8:27b-mxfp8`, pulled; screen it after the chain). Unsloth Studio passes requests to its
 llama-server one at a time, so its slots don't speed anything; it switches quant when a
 request names one (`unsloth/Qwen3.8-27B-GGUF:UD-Q8_K_XL`). Its run settings' Extra
 Arguments box shows example text that isn't passed: read the running `llama-server`
