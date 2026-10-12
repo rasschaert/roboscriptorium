@@ -185,7 +185,7 @@ class VerdictReview:
     OURS = "our text"
     THEIRS = "the publisher's e-book"
     # What a place is when it isn't running text, as the region review asks it, and the
-    # verdict category it records (the kind itself goes in the verdict's note).
+    # verdict category it records; the kind and any words typed go in the verdict's note.
     KINDS = {
         "heading": "heading",
         "caption": "caption",
@@ -218,8 +218,9 @@ class VerdictReview:
             ours, theirs = self._line(d, d.got), self._line(d, d.want)
             v = self.verdicts.by_key.get(d.key)
             answer = None
-            if v is not None and v.note in self.KINDS:
-                answer = {"action": v.note, "text": None}
+            kind, _, typed = (v.note if v else "").partition(": ")
+            if v is not None and kind in self.KINDS:
+                answer = {"action": kind, "text": typed or None}
             elif v is not None and v.category != UNSURE:
                 text = ours if v.truth == d.got else theirs if v.truth == d.want else None
                 answer = {"action": "text", "text": text or self._line(d, v.truth or "")}
@@ -237,6 +238,7 @@ class VerdictReview:
                     "box": None,
                     "reasons": [],
                     "text": ours,
+                    "got": d.got,
                     "span": [len(before), len(ours) - len(after)] if d.got else None,
                     "readings": [
                         {"text": ours, "votes": [self.OURS]},
@@ -256,8 +258,11 @@ class VerdictReview:
         kind = body.get("action", "text")
         if kind in self.KINDS:
             # Not running text: the reference, which holds running text only, is right.
-            self.verdicts.record(d, d.want, self.KINDS[kind], kind)
-            return {"action": kind, "text": None}
+            # A caption's or heading's words as printed go with the kind in the note.
+            typed = (body.get("text") or "").strip()
+            note = f"{kind}: {typed}" if typed else kind
+            self.verdicts.record(d, d.want, self.KINDS[kind], note)
+            return {"action": kind, "text": typed or None}
         text = body.get("text") or ""
         before, after = self._parts(d)
         if text == self._line(d, d.got):

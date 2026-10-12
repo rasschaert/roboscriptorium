@@ -166,9 +166,10 @@ function startDraft(r) {
 
 // Kinds whose answer carries text.
 const WITH_TEXT = new Set(["text", "heading", "caption"]);
-// Kinds whose answer carries text here: for a verdict only running text's words are
-// compared, so a caption or heading answer is the kind alone.
-const withText = kind => verdicts() ? kind === "text" : WITH_TEXT.has(kind);
+const withText = kind => WITH_TEXT.has(kind);
+// A choice between readings: for a verdict only as running text, whose words the e-book
+// holds; a caption or heading is typed as printed, starting from our reading of it.
+const isDoubt = (r, kind) => r && r.readings && r.readings.length > 1 && (!verdicts() || kind === "text");
 
 function render() {
   counts();
@@ -180,7 +181,7 @@ function render() {
   const a = r.answer;
   if (!draft || draft.key !== r.key) draft = startDraft(r);
   const drawing = picture(r);
-  const doubt = r.readings && r.readings.length > 1;
+  const doubt = isDoubt(r, draft.kind);
   const kinds = Object.entries(KINDS).filter(([, kind]) => kind !== "initial" || drawing);
   const kindRows = kinds.map(([k, kind]) => {
     const note = a && a.action === kind ? "your answer" : !a && CURRENT[r.treatment] === kind && !drawing ? "the pipeline's call" : "";
@@ -255,7 +256,8 @@ function textBlock(r, doubt) {
   const before = r.before ? `<div class="context">${esc(r.before)}</div>` : "";
   const after = r.after ? `<div class="context">${esc(r.after)}</div>` : "";
   if (!doubt) {
-    const prompt = r.text ? "As printed (edit if the scan says otherwise):"
+    const prompt = verdicts() ? "As printed (edit if the page says otherwise):"
+      : r.text ? "As printed (edit if the scan says otherwise):"
       : r.draft ? "Tesseract's draft of the highlighted area; correct it:" : "Type the text, as printed:";
     return `<div class="question">${prompt}</div>${before}
       <textarea id="text" rows="${Math.min(16, draft.text.split("\n").length + 1)}">${esc(draft.text)}</textarea>${charPad()}${after}`;
@@ -348,7 +350,7 @@ function saveHint(r, doubt) {
 }
 
 function refreshSave() {
-  const r = queue[pos], doubt = r.readings && r.readings.length > 1;
+  const r = queue[pos], doubt = isDoubt(r, draft.kind);
   document.getElementById("save").disabled = !canSave(r, doubt);
   const hint = document.querySelector(".saverow .hint");
   hint.textContent = saveHint(r, doubt);
@@ -356,6 +358,9 @@ function refreshSave() {
 }
 
 function setKind(kind) {
+  const r = queue[pos];
+  // A verdict's caption or heading starts from our reading of its words alone.
+  if (verdicts() && kind !== "text" && withText(kind) && draft.text === r.text) draft.text = r.got || "";
   draft.kind = kind;
   render();
   if (kind === "initial") document.getElementById("letter")?.focus();
@@ -473,7 +478,7 @@ async function reread() {
 }
 
 async function save() {
-  const r = queue[pos], doubt = r.readings && r.readings.length > 1;
+  const r = queue[pos], doubt = isDoubt(r, draft.kind);
   if (!canSave(r, doubt)) return;
   let text = r.text;
   if (draft.kind === "initial") text = draft.letter;
@@ -529,7 +534,7 @@ document.addEventListener("keydown", e => {
     return;
   }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
-  const r = queue[pos], doubt = r && r.readings && r.readings.length > 1;
+  const r = queue[pos], doubt = isDoubt(r, draft && draft.kind);
   if (KINDS[e.key] && (KINDS[e.key] !== "initial" || picture(r))) setKind(KINDS[e.key]);
   else if (e.key === "Enter") { e.preventDefault(); save(); }
   else if (e.key === "e" && doubt && withText(draft.kind)) { e.preventDefault(); setReading(-1); }

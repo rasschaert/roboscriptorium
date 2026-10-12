@@ -36,6 +36,11 @@ machine's work is recomputed in this order before anything below.
       warning is a false alarm on a footnote book: count note lines apart. Fix, then
       its trust data (SPECS gets `fka-usa--ia-scan: 11-22:1-5`, out of
       `bench.NO_TRUST_DATA`), retrain, bench (~30 min)
+- [ ] One review for a golden book: its places that differ from the e-book become more
+      questions in the ordinary region review (`roboscriptorium review`), the e-book's
+      reading one more labelled row, answers stored as verdicts behind the scenes; no
+      verdict mode, no second command (the user, 2026-10-12: "why is it any different at
+      all?"). Walk every kind of question in it before the user sees it (agent, ~2 h)
 - [ ] The verdict page shows each side's words as written, not folded: today it shows
       every dash as an em dash and every quote as straight (`evaluate.normalise`), so a
       print's `moet –’` reads as `moet —'` on both rows (the user, 2026-10-12). Carry the

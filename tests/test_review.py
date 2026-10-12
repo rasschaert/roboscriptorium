@@ -165,14 +165,17 @@ def test_a_place_across_a_page_break_shows_the_other_page(tmp_path):
     assert _verdicts(tmp_path, _place("geld", "geId")).state()["items"][0]["across"] is None
 
 
-def test_a_caption_is_answered_as_what_it_is(tmp_path):
+def test_a_caption_is_answered_as_what_it_is_with_its_words(tmp_path):
     d = _place('"One evening when the Doctor was asleep in his chair"', "")
     r = _verdicts(tmp_path, d)
-    r.record({"key": "k", "action": "caption", "text": None})
+    text = "\u201cOne evening when the Doctor was asleep in his chair\u201d"
+    r.record({"key": "k", "action": "caption", "text": text})
     v = Verdicts(tmp_path / "v.jsonl").by_key["k"]
-    # The running text has no such words: the reference is right, and it was a caption.
-    assert (v.truth, v.category, v.note) == ("", "caption", "caption")
-    assert _verdicts(tmp_path, d).state()["items"][0]["answer"] == {
-        "action": "caption",
-        "text": None,
-    }
+    # The running text has no such words: the reference is right, and it was a caption,
+    # whose words as printed are kept.
+    assert (v.truth, v.category, v.note) == ("", "caption", f"caption: {text}")
+    answer = _verdicts(tmp_path, d).state()["items"][0]["answer"]
+    assert answer == {"action": "caption", "text": text}
+    # Without words, the kind alone.
+    r.record({"key": "k", "action": "drop", "text": ""})
+    assert Verdicts(tmp_path / "v.jsonl").by_key["k"].note == "drop"
