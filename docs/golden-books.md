@@ -30,6 +30,7 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 | koning-wilders | validation | 90 / 90 | 18172 | 1.7 h | 0.85% | 1.47% | 3.4% | 0 / 1 | none | none yet |
 | metro-2033 | tuning | 458 / 156 | 197756 | 2.9 h | 0.16% | 0.20% | 2.5% | 11 / 14 | hyphen_dash | none yet |
 | monterosso-mon-amour | tuning | 88 / 88 | 25640 | 1.6 h | 0.33% | 0.40% | 3.0% | 13 / 22 | none | none yet |
+| normal-people | reserve | 266 / 266 | 72611 | 4.9 h | 0.04% | 0.07% | 3.3% | 35 / 35 | none | none yet |
 | reis-om-mijn-schedel | tuning | 245 / 245 | 66738 | 4.5 h | 0.15% | 0.10% | 3.7% | 27 / 27 | none | none yet |
 | the-nature-of-a-crime | tuning | 94 / 94 | 14712 | 1.7 h | 0.85% | 0.77% | 7.7% | 8 / 8 | none | none yet |
 | the-story-of-doctor-dolittle | tuning | 180 / 66 | 24667 | 1.2 h | 0.93% | 0.79% | 11.8% | 14 / 7 | none | none yet |

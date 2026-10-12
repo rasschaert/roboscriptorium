@@ -1,0 +1,45 @@
+title = "Normal People"
+author = "Sally Rooney"
+language = "en"
+# Rooney is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Faber's e-book ("This ebook edition first published in 2018", ISBN 978 0 571
+# 33466 7; its source the first edition, ISBN 978 0 571 33464 3). Dialogue has no
+# quote marks. Each chapter a file, its heading an <h1> ("Three Weeks Later") with
+# the date below it a "title-sub" paragraph ("(FEBRUARY 2011)"), read as a heading
+# of its own. Scene breaks are "*" paragraphs; emails are "block extract" divs and a
+# questionnaire "paras hanging", both plain paragraphs here. Italics are <i>. The
+# epigraph (Eliot) is listed but derive drops text before the first heading, so the
+# scan starts after it; the acknowledgements and the front and back matter are left
+# out.
+[reference]
+source = "Normal People, Faber & Faber 2018, e-book ISBN 978 0 571 33466 7 (EPUB)"
+sha256 = "ebc36fce4050b5a66a25311c97c9dec240ba3ec78e3b03f7719d3a831df6e814"
+files = [
+  "OPS/9780571334667_epigraph.html",
+  "OPS/9780571334667_chapter_01.html", "OPS/9780571334667_chapter_02.html",
+  "OPS/9780571334667_chapter_03.html", "OPS/9780571334667_chapter_04.html",
+  "OPS/9780571334667_chapter_05.html", "OPS/9780571334667_chapter_06.html",
+  "OPS/9780571334667_chapter_07.html", "OPS/9780571334667_chapter_08.html",
+  "OPS/9780571334667_chapter_09.html", "OPS/9780571334667_chapter_10.html",
+  "OPS/9780571334667_chapter_11.html", "OPS/9780571334667_chapter_12.html",
+  "OPS/9780571334667_chapter_13.html", "OPS/9780571334667_chapter_14.html",
+  "OPS/9780571334667_chapter_15.html", "OPS/9780571334667_chapter_16.html",
+  "OPS/9780571334667_chapter_17.html", "OPS/9780571334667_chapter_18.html",
+]
+heading_prefixes = ["title-sub"]  # the date below a chapter heading
+
+# The first edition (Faber & Faber 2018, ISBN 978 0 571 33464 3, typeset by
+# Typo•glyphix, printed by CPI), a Lancashire library copy; IA Scribe scan (2021),
+# 360 ppi MRC, GlyphLessFont layer, ~341×589 pt. Curly single quotes only inside
+# the narration ('Scandinavian looking'), spaced en dashes. Pages 11–276: the
+# first chapter to the novel's end (p. 9 the epigraph, p. 277 a blank page whose
+# layer reads show-through). Internet Archive lends it only, so it is placed by hand (sourced
+# by the user, 2026-10-12).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/normalpeople0000roon (borrow, then download the PDF)"
+sha256 = "8319a31b8ecee5f96815ae00d2e0e162fc161c20dff664adc2ff0dbfd4e011ef"
+cover_page = 1
+body_pages = [11, 276]

@@ -27,8 +27,10 @@ machine's work is recomputed in this order before anything below.
       `bench tuning` (`experiments/rebuild-trust.sh`, ~28 h in all; 5 books done
       2026-10-12, the 15 left ~20 h, running)
 - [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
-      validation` with Verminkt joining as a slice (~90 pages) and The Stranger's Child
-      as its slice, pages 121–208 (88 pages)
+      validation` with three books joining, each as a slice: Verminkt (~90 pages), The
+      Stranger's Child (pages 121–208) and Normal People (pages 146–232)
+- [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
+      People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
 - [ ] Stella rebuilt and diffed against its dated copies in `work/stella/epubs/`
 - [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
       before the user's full review
