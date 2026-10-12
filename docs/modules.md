@@ -242,6 +242,6 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   words or more, none garbled, not all capitals, no heading on the page). Reflow makes
   each line a paragraph marked `epigraph`; `epub.py` sets a run of them as one
   `blockquote epub:type="epigraph"`. The words stay in the scored paragraphs.
-- `review.py` + `regions.html` / `review.html`: the local review pages (stdlib
-  HTTP server on 127.0.0.1), with scan crops: regions for any book, and
-  disagreements for golden books.
+- `review.py` + `regions.html`: the local review page (stdlib HTTP server on
+  127.0.0.1), with scan crops: regions for any book, and disagreements for golden books
+  (`VerdictReview`: each a doubt between our text and the reference's, on the same page).

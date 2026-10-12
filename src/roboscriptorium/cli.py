@@ -320,7 +320,7 @@ def review_disagreements(
         f"{len(manual)} to review ({done} already done)"
     )
     typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
-    review.serve(review.Review(book.source, stages.pages, found, verdicts), port)
+    review.serve(review.VerdictReview(book.source, stages.pages, manual, verdicts), port)
 
 
 def _questions_and_errors(spec: str, settings: Settings | None = None):

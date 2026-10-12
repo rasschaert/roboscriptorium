@@ -105,8 +105,17 @@ const NOW = {text: "kept as running text", heading: "made a heading", dropped: "
 
 const JSON_HEADERS = {"Content-Type": "application/json"};
 
+// "verdicts": a golden book's places where our text and the publisher's e-book differ, each
+// a doubt between the two; nothing to classify and nothing to rebuild.
+const verdicts = () => state.mode === "verdicts";
+
 async function load() {
   state = await (await fetch("/api/state")).json();
+  if (verdicts()) {
+    document.getElementById("rebuild").remove();
+    document.querySelector("header h1").textContent = "Where our text and the e-book differ";
+    document.title = "Our text against the e-book";
+  }
   queue = state.items;
   pos = Math.max(0, queue.findIndex(r => !r.answer));
   render();
@@ -191,9 +200,9 @@ function render() {
       <span>turned ${r.turn || 0}°</span>
       <button id="reread" title="Read the area again as it is turned now"><kbd>o</kbd>Read again</button>` : ""}
     </div>
-    <div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>
+    ${verdicts() ? "" : `<div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>
     <div class="question">What is this?</div>
-    <div class="options">${kindRows}</div>
+    <div class="options">${kindRows}</div>`}
     ${draft.kind === "initial" ? `<div class="question">The letter it shows</div>
       <input id="letter" class="letter" size="2" maxlength="3" value="${esc(draft.letter)}">`
     : WITH_TEXT.has(draft.kind) ? textBlock(r, doubt) : ""}
@@ -201,7 +210,7 @@ function render() {
       <button id="save" class="primary" ${canSave(r, doubt) ? "" : "disabled"}>Save <kbd>↵</kbd></button>
       <span class="hint">${saveHint(r, doubt)}</span>
     </div>
-    ${a ? `<div class="answer">Your answer: ${esc(state.actions[a.action])}${a.action === "initial" ? ` “${esc(a.text || "")}”` : a.text != null ? " · with your wording" : ""}. Save again to change it.</div>` : ""}
+    ${a && verdicts() ? `<div class="answer">Answered. Save again to change it.</div>` : a ? `<div class="answer">Your answer: ${esc(state.actions[a.action])}${a.action === "initial" ? ` “${esc(a.text || "")}”` : a.text != null ? " · with your wording" : ""}. Save again to change it.</div>` : ""}
     <div class="nav">
       <span>${pos > 0 ? "<kbd>←</kbd>previous" : "first region"}</span>
       <span>${pos < queue.length - 1 ? "<kbd>→</kbd>next" : "last region"}</span>
@@ -247,7 +256,7 @@ function textBlock(r, doubt) {
   const base = central(r.readings.map(g => g.text));
   const parts = placeParts(r);
   const rows = r.readings.map((g, k) => {
-    const who = [k === 0 ? "text layer" : "", ...g.votes].filter(Boolean).join(" · ");
+    const who = [k === 0 && !verdicts() ? "text layer" : "", ...g.votes].filter(Boolean).join(" · ");
     const text = parts
       ? parts.before + (k === base ? esc(parts.mids[k]) : marked(parts.mids[k], parts.mids[base])) + parts.after
       : k === base ? esc(g.text) : marked(g.text, r.readings[base].text);
@@ -255,7 +264,7 @@ function textBlock(r, doubt) {
       <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${text}</span>
       <span class="votes">${esc(who)}</span></label>`;
   }).join("");
-  return `<div class="question">Which reading matches the scan?</div>
+  return `<div class="question">${verdicts() ? "Which one does the page say?" : "Which reading matches the scan?"}</div>
     <div class="legend">Marked where a reading differs from reading ${READING_KEYS[base]}, the one the others are closest to:
       <span><mark class="has">x</mark> only this one has it</span>
       <span><mark class="lacks">x</mark> this one lacks it</span>
@@ -326,8 +335,9 @@ function canSave(r, doubt) {
 
 function saveHint(r, doubt) {
   if (draft.kind === "initial" && !draft.letter.trim()) return "Type the letter first.";
-  if (WITH_TEXT.has(draft.kind) && doubt && draft.reading === null) return "Choose the reading that matches the scan.";
-  return "Numbers choose what it is, letters the reading; Enter saves.";
+  if (WITH_TEXT.has(draft.kind) && doubt && draft.reading === null) return verdicts() ? "Choose the one the page says." : "Choose the reading that matches the scan.";
+  return verdicts() ? "Letters choose the reading, e something else; Enter saves."
+    : "Numbers choose what it is, letters the reading; Enter saves.";
 }
 
 function refreshSave() {
@@ -506,7 +516,7 @@ document.addEventListener("keydown", e => {
   }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const r = queue[pos], doubt = r && r.readings && r.readings.length > 1;
-  if (KINDS[e.key] && (KINDS[e.key] !== "initial" || picture(r))) setKind(KINDS[e.key]);
+  if (KINDS[e.key] && !verdicts() && (KINDS[e.key] !== "initial" || picture(r))) setKind(KINDS[e.key]);
   else if (e.key === "Enter") { e.preventDefault(); save(); }
   else if (e.key === "e" && doubt && WITH_TEXT.has(draft.kind)) { e.preventDefault(); setReading(-1); }
   else if (e.key === "e" && textBox()) { e.preventDefault(); textBox().focus(); }

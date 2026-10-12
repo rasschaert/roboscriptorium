@@ -501,9 +501,10 @@ output disagrees with it a human decides what the scan prints:
 uv run roboscriptorium golden review work/the-nature-of-a-crime--doubleday-1924  # → http://127.0.0.1:8765/
 ```
 
-Keys: `1` the reference is right (pick the pipeline mistake), `2` the scan prints the
-output (edition difference or transcriber change), `3` type what the scan prints, `0`
-unsure, arrows to move. Verdicts go to `golden/<name>/verdicts/<scan>.jsonl` (in git),
+It is the region review's page: each place shows its words twice, with our text's
+words and the reference's, labelled by who claims them; choose the one the page says
+(`a`, `b`) or type it (`e`), Save (`↵`) moves on, arrows move through all. The kind of
+mistake follows from the answer. Verdicts go to `golden/<name>/verdicts/<scan>.jsonl` (in git),
 keyed on the reference words and six words of context either side, so they survive
 pipeline changes. `eval` patches them into the reference for that scan and reports the
 remaining disagreements by mistake category.

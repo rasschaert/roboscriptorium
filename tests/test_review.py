@@ -1,4 +1,5 @@
-"""The review server: who may post to it, and which pages its crops are cut from."""
+"""The review server: who may post to it, which pages its crops are cut from, and golden
+verdicts asked as a doubt between our text and the reference's."""
 
 import http.client
 import json
@@ -9,11 +10,11 @@ from types import SimpleNamespace
 import pytest
 
 from roboscriptorium import cli, review
-from roboscriptorium.disagreements import Verdicts
+from roboscriptorium.disagreements import Disagreement, Verdicts
 
 
 class _Recorder:
-    html = "review.html"
+    html = "regions.html"
 
     def __init__(self):
         self.recorded = []
@@ -104,3 +105,45 @@ def test_golden_review_crops_from_the_pages_the_paragraphs_point_into(tmp_path, 
     assert seen["find"] is layer
     assert seen["scan"][1] is layer[0]
     assert seen["language"] == "nl"
+
+
+def _place(got: str, want: str) -> Disagreement:
+    return Disagreement("k", got, want, "Hij was zo stom geweest zijn", "niet op een", 17, (24, 24))
+
+
+def _verdicts(tmp_path, d: Disagreement) -> review.VerdictReview:
+    return review.VerdictReview(tmp_path / "s.pdf", [], [d], Verdicts(tmp_path / "v.jsonl"))
+
+
+def test_a_verdict_is_asked_as_two_readings_labelled_by_who_claims_them(tmp_path):
+    item = _verdicts(tmp_path, _place("geld", "geId")).state()["items"][0]
+    ours, theirs = item["readings"]
+    assert ours == {"text": "Hij was zo stom geweest zijn geld niet op een", "votes": ["our text"]}
+    assert theirs["text"] == "Hij was zo stom geweest zijn geId niet op een"
+    assert theirs["votes"] == ["the publisher's e-book"]
+    # The place in the line, which the page marks in each reading.
+    start, end = item["span"]
+    assert ours["text"][start:end] == "geld"
+    assert item["answer"] is None
+
+
+def test_the_reading_chosen_is_the_verdict(tmp_path):
+    d = _place("geld", "geId")
+    r = _verdicts(tmp_path, d)
+    r.record({"key": "k", "text": "Hij was zo stom geweest zijn geld niet op een"})
+    v = Verdicts(tmp_path / "v.jsonl").by_key["k"]
+    assert (v.truth, v.category) == ("geld", "edition")
+    r.record({"key": "k", "text": "Hij was zo stom geweest zijn geId niet op een"})
+    v = Verdicts(tmp_path / "v.jsonl").by_key["k"]
+    assert (v.truth, v.category) == ("geId", "ocr")
+    # Typed: the words between the context, and the page shows the answer again.
+    r.record({"key": "k", "text": "Hij was zo stom geweest zijn gold niet op een"})
+    r = _verdicts(tmp_path, d)
+    assert r.verdicts.by_key["k"].truth == "gold"
+    assert r.state()["items"][0]["answer"]["text"].endswith("zijn gold niet op een")
+
+
+def test_a_place_one_side_lacks_reads_without_a_double_space(tmp_path):
+    ours, theirs = _verdicts(tmp_path, _place("16", "")).state()["items"][0]["readings"]
+    assert ours["text"] == "Hij was zo stom geweest zijn 16 niet op een"
+    assert theirs["text"] == "Hij was zo stom geweest zijn niet op een"

@@ -6,8 +6,8 @@
   printed. A region with a box can be turned and read again. Answers apply on
   the next build, which the page can start.
 - Disagreements (`roboscriptorium golden review <book>`): where a golden book's
-  output and reference differ. Each takes a verdict: the reference is right (a
-  pipeline mistake), the scan prints the output, something else, or unsure.
+  output and reference differ, on the same page as a doubt between two readings,
+  ours and the reference's; what the page prints is the verdict.
 """
 
 import json
@@ -26,7 +26,7 @@ import pymupdf
 from roboscriptorium import corrections, ocr
 from roboscriptorium import flags as F
 from roboscriptorium.corrections import ACTIONS, Corrections
-from roboscriptorium.disagreements import PIPELINE, SCAN, UNSURE, Disagreement, Verdicts
+from roboscriptorium.disagreements import UNSURE, Disagreement, Verdicts
 from roboscriptorium.pdf import PDF_LOCK, PageText
 
 # Crops show this many lines around the disagreement, at this zoom (PDF points → pixels).
@@ -38,8 +38,12 @@ PAGE_ZOOM = 1.5
 OCR_DPI = 300
 
 
+# The verdict category when the page prints the output: the reference differs from its print.
+SCAN_EDITION = "edition"
+
+
 def guess_category(d: Disagreement) -> str:
-    """The likeliest pipeline mistake, preselected in the page."""
+    """The likeliest pipeline mistake, recorded with a verdict for the reference."""
     if d.auto:
         return d.auto
     letters = lambda s: re.sub(r"[^\w]", "", s).lower()  # noqa: E731
@@ -170,39 +174,85 @@ class Scan:
             )
 
 
-class Review:
-    html = "review.html"
+class VerdictReview:
+    """Where a golden book's output and reference differ, asked on the region review's
+    page as a doubt: the words around the place, read once with the output's words and
+    once with the reference's, and what the page prints is the verdict. The kind of
+    mistake follows from the answer: the output's likeliest slip when the reference is
+    chosen or something else typed, an edition difference when the output is chosen."""
+
+    html = "regions.html"
+    OURS = "our text"
+    THEIRS = "the publisher's e-book"
 
     def __init__(
         self, pdf: Path, pages: list[PageText], items: list[Disagreement], verdicts: Verdicts
     ):
         self.scan = Scan(pdf, pages)
-        self.items = {d.key: d for d in items}
-        self.order = [d.key for d in items]
+        # A disagreement with no place on a page has no crop to answer from.
+        self.items = {d.key: d for d in items if d.page is not None and d.lines is not None}
         self.verdicts = verdicts
+
+    @staticmethod
+    def _parts(d: Disagreement) -> tuple[str, str]:
+        """The words before and after the place, each with the space that joins it."""
+        return (d.before + " " if d.before else ""), (" " + d.after if d.after else "")
+
+    def _line(self, d: Disagreement, words: str) -> str:
+        before, after = self._parts(d)
+        return before + words + after if words else (before + after.lstrip()).rstrip()
 
     def state(self) -> dict:
         items = []
-        for key in self.order:
-            d = self.items[key]
-            v = self.verdicts.by_key.get(key)
+        for d in self.items.values():
+            before, after = self._parts(d)
+            ours, theirs = self._line(d, d.got), self._line(d, d.want)
+            v = self.verdicts.by_key.get(d.key)
+            answer = None
+            if v is not None and v.category != UNSURE:
+                text = ours if v.truth == d.got else theirs if v.truth == d.want else None
+                answer = {"action": "text", "text": text or self._line(d, v.truth or "")}
             items.append(
-                {**asdict(d), "guess": guess_category(d), "verdict": asdict(v) if v else None}
+                {
+                    "key": d.key,
+                    "page": d.page,
+                    "first": d.lines[0],
+                    "last": d.lines[1],
+                    "box": None,
+                    "reasons": [],
+                    "text": ours,
+                    "span": [len(before), len(ours) - len(after)] if d.got else None,
+                    "readings": [
+                        {"text": ours, "votes": [self.OURS]},
+                        {"text": theirs, "votes": [self.THEIRS]},
+                    ],
+                    "before": "",
+                    "after": "",
+                    "answer": answer,
+                    "draft": None,
+                    "turn": 0,
+                }
             )
-        return {"items": items, "pipeline": PIPELINE, "scan": SCAN}
+        return {"mode": "verdicts", "items": items, "actions": ACTIONS, "applied": None}
 
     def record(self, body: dict) -> dict:
         d = self.items[body["key"]]
-        kind = body["kind"]
-        if kind == "reference":
-            truth, category = d.want, body["category"]
-        elif kind == "output":
-            truth, category = d.got, body["category"]
-        elif kind == "other":
-            truth, category = body["truth"], body["category"]
+        text = body.get("text") or ""
+        before, after = self._parts(d)
+        if text == self._line(d, d.got):
+            truth, category = d.got, SCAN_EDITION
+        elif text == self._line(d, d.want):
+            truth, category = d.want, guess_category(d)
         else:
-            truth, category = None, UNSURE
-        return asdict(self.verdicts.record(d, truth, category, body.get("note", "")))
+            # Typed: the words between the unchanged context, else the whole line.
+            inner = text
+            if before and inner.startswith(before.rstrip()):
+                inner = inner[len(before.rstrip()) :]
+            if after and inner.endswith(after.lstrip()):
+                inner = inner[: len(inner) - len(after.lstrip())]
+            truth, category = inner.strip(), guess_category(d)
+        self.verdicts.record(d, truth, category)
+        return {"action": "text", "text": text}
 
 
 _CURLY = "‘’“”"
@@ -357,7 +407,7 @@ def _trusted(headers, port: int) -> bool:
     return origin is None or origin in {f"http://{h}" for h in hosts}
 
 
-def serve(review: Review | RegionReview, port: int) -> None:
+def serve(review: VerdictReview | RegionReview, port: int) -> None:
     page = (Path(__file__).parent / review.html).read_bytes()
 
     class Handler(BaseHTTPRequestHandler):
