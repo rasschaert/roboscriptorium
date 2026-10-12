@@ -24,8 +24,8 @@ An agent destroyed `work/` on 2026-10-11 by committing a `work` symlink and merg
 machine's work is recomputed in this order before anything below.
 
 - [ ] Trust data for the 20 tuning books on qwen3.8:27b-nvfp4, then the arbiter and
-      `bench tuning` (`experiments/rebuild-trust.sh`, ~28 h in all; 5 books done
-      2026-10-12, the 15 left ~20 h, running)
+      `bench tuning` (`experiments/rebuild-trust.sh`; 6 books done 2026-10-12, slices
+      capped at ~90 pages the same day, the 14 left ~17 h, running)
 - [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
       validation` with three books joining, each as a slice: Verminkt (~90 pages), The
       Stranger's Child (pages 121–208) and Normal People (pages 146–232)

@@ -16,22 +16,22 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 | afscheid-van-verspilde-tijd | tuning | 116 / 62 | 37430 | 1.1 h | 0.17% | 0.12% | 11.2% | 9 / 11 | hyphen_dash | none yet |
 | artemis | tuning | 305 / 68 | 87544 | 1.2 h | 0.37% | 0.97% | 3.1% | 0 / 3 | none | none yet |
 | de-aanslag | reserve | 169 / 169 | 55723 | minutes | 0.17% | 0.43% | 0.0% | 31 / 26 | none | none yet |
-| de-cipier | tuning | 474 / 166 | 158385 | 3.0 h | 0.20% | 0.39% | 2.8% | 2 / 6 | none | none yet |
+| de-cipier | tuning | 474 / 84 | 158385 | 1.5 h | 0.19% | 0.34% | 2.7% | 2 / 4 | none | none yet |
 | de-eerlijke-vinder | tuning | 84 / 84 | 23802 | 1.5 h | 0.32% | 0.34% | 0.3% | 0 / 4 | none | none yet |
 | de-kerk-van-de-dode-meisjes | validation | 414 / 97 | 145925 | 1.8 h | 0.15% | 0.33% | 2.6% | 7 / 13 | none | none yet |
 | de-stilte-van-de-hel | validation | 353 / 91 | 136423 | 1.7 h | 0.36% | 0.50% | 2.8% | 5 / 15 | none | none yet |
-| de-tuin-van-de-avondnevel | tuning | 364 / 112 | 129769 | 2.1 h | 0.82% | 0.48% | 2.8% | 8 / 8 | none | none yet |
+| de-tuin-van-de-avondnevel | tuning | 364 / 87 | 129769 | 1.6 h | 0.81% | 0.45% | 2.8% | 6 / 6 | none | none yet |
 | doodskleed | tuning | 276 / 84 | 72379 | 1.5 h | 0.35% | 0.64% | 6.3% | 4 / 14 | none | none yet |
-| goede-dochter | tuning | 500 / 154 | 163183 | 2.8 h | 0.27% | 0.56% | 3.0% | 8 / 8 | none | none yet |
+| goede-dochter | tuning | 500 / 91 | 163183 | 1.7 h | 0.24% | 0.50% | 2.8% | 6 / 6 | none | none yet |
 | het-geluid-van-bananen | **test** | 315 / 93 | 77984 | 1.7 h | unmeasured | | | | none | untouched |
-| het-heft-in-eigen-hand | tuning | 506 / 115 | 144642 | 2.1 h | 0.51% | 0.47% | 2.9% | 6 / 6 | none | none yet |
+| het-heft-in-eigen-hand | tuning | 506 / 84 | 144642 | 1.5 h | 0.55% | 0.47% | 2.9% | 5 / 5 | none | none yet |
 | het-ijzige-land | tuning | 318 / 94 | 79550 | 1.7 h | 0.42% | 0.68% | 3.5% | 11 / 11 | none | none yet |
 | het-laatste-bevel | validation | 304 / 92 | 86225 | 1.7 h | 0.42% | 1.21% | 2.8% | 1 / 5 | none | none yet |
 | koning-wilders | validation | 90 / 90 | 18172 | 1.7 h | 0.85% | 1.47% | 3.4% | 0 / 1 | none | none yet |
-| metro-2033 | tuning | 458 / 156 | 197756 | 2.9 h | 0.16% | 0.20% | 2.5% | 11 / 14 | hyphen_dash | none yet |
+| metro-2033 | tuning | 458 / 86 | 197756 | 1.6 h | 0.17% | 0.21% | 2.4% | 7 / 8 | hyphen_dash | none yet |
 | monterosso-mon-amour | tuning | 88 / 88 | 25640 | 1.6 h | 0.33% | 0.40% | 3.0% | 13 / 22 | none | none yet |
 | normal-people | reserve | 266 / 266 | 72611 | 4.9 h | 0.04% | 0.07% | 3.3% | 35 / 35 | none | none yet |
-| reis-om-mijn-schedel | tuning | 245 / 245 | 66738 | 4.5 h | 0.15% | 0.10% | 3.7% | 27 / 27 | none | none yet |
+| reis-om-mijn-schedel | tuning | 245 / 89 | 66738 | 1.6 h | 0.14% | 0.09% | 3.9% | 10 / 10 | none | none yet |
 | the-nature-of-a-crime | tuning | 94 / 94 | 14712 | 1.7 h | 0.85% | 0.77% | 7.7% | 8 / 8 | none | none yet |
 | the-story-of-doctor-dolittle | tuning | 180 / 66 | 24667 | 1.2 h | 0.93% | 0.79% | 11.8% | 14 / 7 | none | none yet |
 | the-strangers-child | reserve | 564 / 564 | 180095 | 10.3 h | 0.29% | 0.26% | 5.8% | 23 / 50 | none | none yet |

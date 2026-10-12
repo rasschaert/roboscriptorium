@@ -25,27 +25,26 @@ BOOTSTRAP_SAMPLES = 2000
 # Golden scans and the pages:chapters scored. Tuning books are tuned on, and scored
 # with models trained without them (`unseen`); validation books have been consulted
 # for choices before, so they validate, not test. Long books are sliced at a chapter
-# boundary (a run costs about 1.1 min per cold page): Dolittle's slice holds its
-# plates and drawn initials. Reis is scored whole; Goede dochter, De cipier, Metro and De
-# tuin were lengthened to about 110–150 pages (2026-10-09), as page noise decided too
-# few changes. The test set is scored once, at
-# the end: nothing is chosen on it, no model trains on it, and the CLI refuses to
-# score it without `--score-test`.
+# boundary (a run costs about 1.1 min per cold page), about 90 pages at most: the
+# bootstrap's power comes from the pages in all, so more books of fewer pages decide as
+# surely and vary more. Dolittle's slice holds its plates and drawn initials. The test
+# set is scored once, at the end: nothing is chosen on it, no model trains on it, and the
+# CLI refuses to score it without `--score-test`.
 SETS = {
     "tuning": [
-        "goede-dochter--ia-scan:9-162:1-8",
+        "goede-dochter--ia-scan:9-99:1-6",
         "vals-alarm--ia-scan:11-60:1-10",
-        "reis-om-mijn-schedel--ia-scan:11-255:1-27",
+        "reis-om-mijn-schedel--ia-scan:11-99:1-10",
         "the-nature-of-a-crime--doubleday-1924",
         "the-story-of-doctor-dolittle--stokes-1920:23-88:1-7",
         "the-thief-takers-apprentice--ia-scan:11-84:1-22",
         "afscheid-van-verspilde-tijd--ia-scan:9-70:1-11",
-        "metro-2033--ia-scan:7-162:1-14",
-        "de-cipier--ia-scan:9-174:1-6",
+        "metro-2033--ia-scan:7-92:1-8",
+        "de-cipier--ia-scan:9-92:1-4",
         "artemis--ia-scan:13-80:1-3",
         "11-22-63--ia-scan:15-94:1-24",
-        "de-tuin-van-de-avondnevel--ia-scan:11-122:1-8",
-        "het-heft-in-eigen-hand--ia-scan:9-123:1-6",
+        "de-tuin-van-de-avondnevel--ia-scan:11-97:1-6",
+        "het-heft-in-eigen-hand--ia-scan:9-92:1-5",
         "doodskleed--ia-scan:13-96:1-14",
         "het-ijzige-land--ia-scan:11-104:1-11",
         "de-eerlijke-vinder--ia-scan",

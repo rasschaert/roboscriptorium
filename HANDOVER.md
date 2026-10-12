@@ -13,10 +13,13 @@ end of every session.
 `qwen3.8:27b-nvfp4` (final: the user). Trust data for each of the 20 books in
 `work/probes/ocr-trust/<book>.json`, one book at a time; a line per finished book in
 `work/runs/rebuild/progress.txt`, each book's log in `work/runs/rebuild/<book>.log`.
-Done before this restart: Goede dochter, Vals alarm, Crime, Dolittle, Reis. Started 11:08
-with Afscheid; its screen vanished ~11:46 with no exit line (cause unknown), restarted
-12:50 on the stage caches; the 15 left take ~20 h at the measured rates (docs/run-times.md, "trust
-data … cold"). When every book has succeeded the chain trains the arbiter
+Done: Vals alarm, Crime, Dolittle, Afscheid (its screen vanished ~11:46 with no exit
+line, cause unknown; restarted 12:50 on the stage caches). At ~13:30 the slices were
+capped at ~90 pages (the user; decisions.md 2026-10-12): the chain was stopped mid-Metro
+and restarted, so Goede dochter and Reis are redone on their new slices from cache
+(minutes; their long-slice data kept as `*.long-slice.json`) and Metro goes on with its
+new slice. The 14 left take ~17 h. Its bench step's timing label still says 1792 pages
+(the running script wasn't edited): correct that line in docs/run-times.md to 1365. When every book has succeeded the chain trains the arbiter
 (`work/models/ocr-trust.pkl`) and runs `bench tuning`, the new baseline.
 
 - **Check on it:** `tail work/runs/rebuild/progress.txt`; `screen -ls`.
