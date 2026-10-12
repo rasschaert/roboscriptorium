@@ -275,3 +275,8 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-12 | tryout: reader v2, qwen3.8:27b-q8_0 on llama.cpp, incumbents read again (work/tryout lost) | 0 | 49 | 0 |
 | 2026-10-12 | probe: qwen3.8:27b-q8_0 (llama.cpp, 4 slots) throughput at 1-16 requests at a time, idle machine | 0 | 14 | 0 |
 | 2026-10-12 | tryout: reader v2, qwen3.8:27b-mxfp8 | 850 | 0 | 1 |
+| 2026-10-12 | trust data, goede-dochter--ia-scan, cold after work/ was lost, Qwen local | 154 | 136 | 0 |
+| 2026-10-12 | trust data, vals-alarm--ia-scan, cold after work/ was lost, Qwen local | 50 | 45 | 0 |
+| 2026-10-12 | trust data, the-nature-of-a-crime--doubleday-1924, cold after work/ was lost, Qwen local | 94 | 58 | 0 |
+| 2026-10-12 | trust data, the-story-of-doctor-dolittle--stokes-1920, cold after work/ was lost, Qwen local | 180 | 100 | 0 |
+| 2026-10-12 | trust data, reis-om-mijn-schedel--ia-scan, cold after work/ was lost, Qwen local | 245 | 190 | 0 |

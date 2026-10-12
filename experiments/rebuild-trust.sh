@@ -3,7 +3,9 @@
 # arbiter and runs the tuning bench. Each step is timed (timed.sh, which also waits for
 # the battery) and logged in work/runs/rebuild/<step>.log; a line per finished step goes
 # to work/runs/rebuild/progress.txt. A step that fails is recorded and the chain goes on
-# to the next book; training and the bench run only when every book succeeded.
+# to the next book; training and the bench run only when every book succeeded. To pause
+# after the book under way, create work/runs/rebuild/STOP; delete it before restarting.
+# Books whose trust data exists are skipped, so a restart goes on where it stopped.
 #   experiments/detached.sh rebuild experiments/rebuild-trust.sh
 set -uo pipefail
 mkdir -p work/runs/rebuild
@@ -22,6 +24,11 @@ for b, spec in SPECS.items():
 failed=0
 for row in $books; do
   book=${row% *} pages=${row#* }
+  if [[ -e work/runs/rebuild/STOP ]]; then
+    print "$(date '+%F %H:%M') paused before $book (STOP file)" >> $progress
+    exit 0
+  fi
+  [[ -s work/probes/ocr-trust/$book.json ]] && continue
   experiments/timed.sh "trust data, $book, cold after work/ was lost, Qwen local" $pages \
     work/runs/rebuild/$book.log uv run python experiments/ocr_trust_data.py --rebuild $book
   code=$?
