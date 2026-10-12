@@ -109,7 +109,13 @@ In this order:
 ## 5. Errors no question asks about
 
 - [ ] De eerlijke vinder's unasked errors (0.88 a page, the most of any ordinary book;
-      tuning since 2026-10-11): find where they come from. ~1 h, no models
+      tuning since 2026-10-11): find where they come from. ~1 h, no models; then a
+      sampled verdict round for the user (~15 min) if the analysis needs one. The book
+      to learn the most from: its pair is clean (0.3% unplaced, layer CER 0.32%, about
+      the median), so its errors are the pipeline's, and its scan is Stella's format.
+      Its layer is ordinary; the models agreeing on wrong words are what make it worst.
+      Monterosso (same CPNB grid, lighter type) is the control: a fix that helps one and
+      not the other is about the typeface. Any fix ships only through the whole bench.
 
 ## 6. Structure
 
