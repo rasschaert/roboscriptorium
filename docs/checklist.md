@@ -19,7 +19,8 @@ areas below in order, and the test set scored once at the end.
 
 ## Recovering what work/ lost (first)
 
-Git deleted `work/` on 2026-10-11 (docs/decisions.md); the sources are restored, the
+An agent destroyed `work/` on 2026-10-11 by committing a `work` symlink and merging it
+(docs/decisions.md); the sources are restored, the
 machine's work is recomputed in this order before anything below.
 
 - [ ] Trust data for the 20 tuning books on qwen3.8:27b-nvfp4, then the arbiter and

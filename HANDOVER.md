@@ -58,9 +58,9 @@ fixes). Diff the next build against them.
    out); runs on its own when `book.toml` is missing. Labels: `tryouts/page-kinds-v1.json`.
    Next is clef-flash's page-kind question with the page image (~1 h), then the build.
 
-## Recovery, 2026-10-11 ~20:35: work/ was deleted
+## Recovery, 2026-10-11 ~20:35: an agent destroyed work/
 
-A worktree's `work` symlink was committed (`git add -A`) and the merge replaced the
+The agent symlinked `work` into a worktree, committed the link (`git add -A`) and merged it, which replaced the
 ignored `work/` folder with it (fixed in afd6dd2; `.gitignore` says `/work`; never
 symlink data into a worktree, stage by name: the user's global CLAUDE.md). Restored
 from the user's Downloads, fingerprint-checked against the manifests: every golden
