@@ -24,14 +24,23 @@ An agent destroyed `work/` on 2026-10-11 by committing a `work` symlink and merg
 machine's work is recomputed in this order before anything below.
 
 - [ ] Trust data for the 20 books on qwen3.8:27b-nvfp4, then the arbiter and `bench
-      tuning` (`experiments/rebuild-trust.sh`; 7 done 2026-10-12, the 13 left on their
-      first chapters but De eerlijke vinder whole, ~290 pages, ~5.5 h with the bench,
-      running)
-- [ ] FKA USA's trust data (`ocr_trust_data.py` SPECS gets `fka-usa--ia-scan: 11-22:1-5`,
-      out of `bench.NO_TRUST_DATA`), the arbiter retrained, `bench tuning` again (~2 h)
-- [ ] A bench pair on warm caches (a cheap change, minutes), rescored on the first 10, 20,
-      45 and 90 pages of the seven books with full slices: which verdicts hold (agent,
-      minutes, no models); set the slice size from it and grow the short slices to it
+      tuning` (`experiments/rebuild-trust.sh`): all read 2026-10-12, first bench 0.31
+      after review over 16 books; Monterosso read again whole (its 9-page slice cut a
+      chapter), then retrain and bench (running, ~21:15)
+- [ ] FKA USA, what its first bench showed (no models, from cache): note marks come out
+      as LaTeX (`illegal, $ ^{1} $` for `illegal,1`), so a reader's superscript markup
+      reaches the text; a chapter's epigraph and its credit line are dropped (p. 19,
+      and `—Reed King`); the part heading "Part I / CRUNCHTOWN 407…" is missing; single
+      words lost at a page top ("up", "almost every", "border"). Its 30% unplaced lines
+      are its footnotes (the reference keeps notes apart), so the bench's suspect-pair
+      warning is a false alarm on a footnote book: count note lines apart. Fix, then
+      its trust data (SPECS gets `fka-usa--ia-scan: 11-22:1-5`, out of
+      `bench.NO_TRUST_DATA`), retrain, bench (~30 min)
+- [ ] How many pages a book: `experiments/probe_train_pages.py` (the arbiter trained on
+      each book's first 10, 20, 45 pages or all; first sign on 16 books: 10 pages leave
+      about twice the silent errors) and `experiments/probe_bench_pages.py` (a bench run
+      rescored on its first N pages: how wide the interval gets). Set the slice size
+      from both and grow the short slices to it (agent, minutes, no models; then models)
 - [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
       validation` with three books joining, each as a slice: Verminkt (~90 pages), The
       Stranger's Child (pages 121–208) and Normal People (pages 146–232)
