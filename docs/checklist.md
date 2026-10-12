@@ -23,13 +23,14 @@ An agent destroyed `work/` on 2026-10-11 by committing a `work` symlink and merg
 (docs/decisions.md); the sources are restored, the
 machine's work is recomputed in this order before anything below.
 
-- [ ] Trust data for the 20 tuning books on qwen3.8:27b-nvfp4, then the arbiter and
-      `bench tuning` (`experiments/rebuild-trust.sh`; 6 books done 2026-10-12, slices
-      capped at ~90 pages the same day, the 14 left ~17 h, running)
-- [ ] FKA USA's trust data (`ocr_trust_data.py` SPECS gets `fka-usa--ia-scan: 11-100:1-15`,
+- [ ] Trust data for the 20 books on qwen3.8:27b-nvfp4, then the arbiter and `bench
+      tuning` (`experiments/rebuild-trust.sh`; 7 done 2026-10-12, the 13 left on their
+      first chapters, ~233 pages, ~4.5 h with the bench, running)
+- [ ] FKA USA's trust data (`ocr_trust_data.py` SPECS gets `fka-usa--ia-scan: 11-22:1-5`,
       out of `bench.NO_TRUST_DATA`), the arbiter retrained, `bench tuning` again (~2 h)
-- [ ] Rescore that bench pair on the first 20, 45 and 90 pages of each slice: which
-      verdicts hold (agent, minutes, no models); set the slice size from it
+- [ ] A bench pair on warm caches (a cheap change, minutes), rescored on the first 10, 20,
+      45 and 90 pages of the seven books with full slices: which verdicts hold (agent,
+      minutes, no models); set the slice size from it and grow the short slices to it
 - [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
       validation` with three books joining, each as a slice: Verminkt (~90 pages), The
       Stranger's Child (pages 121–208) and Normal People (pages 146–232)

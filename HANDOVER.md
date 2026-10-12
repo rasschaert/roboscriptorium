@@ -15,13 +15,13 @@ end of every session.
 `work/runs/rebuild/progress.txt`, each book's log in `work/runs/rebuild/<book>.log`.
 Done: Vals alarm, Crime, Dolittle, Afscheid (its screen vanished ~11:46 with no exit
 line, cause unknown; restarted 12:50 on the stage caches). At ~13:30 the slices were
-capped at ~90 pages (the user; decisions.md 2026-10-12): the chain was stopped mid-Metro
-and restarted, so Goede dochter and Reis are redone on their new slices from cache
-(minutes; their long-slice data kept as `*.long-slice.json`) and Metro goes on with its
-new slice. The 14 left take ~17 h. Its bench step's timing label still says 1792 pages
-(the running script wasn't edited): correct that line in docs/run-times.md to 1455, as
-the bench also scores FKA USA, the new footnote book (90 pages cold, ~1.7 h more, with
-the full arbiter; its trust data comes after, checklist). When every book has succeeded the chain trains the arbiter
+capped at ~90 pages, and at ~14:50 the books not yet done were cut to their first
+chapter (10–27 pages; the user, for a result tonight; decisions.md 2026-10-12): Goede
+dochter, Vals alarm, Crime, Dolittle, Afscheid, Reis and Metro keep their full slices,
+the 13 others (~233 pages) take ~4 h, the bench after it ~30 min. The run-times rows
+for those books carry the old page counts (the chain counted them at its start): fix
+them from the slices in `experiments/ocr_trust_data.py`, and the bench's to the new total.
+When every book has succeeded the chain trains the arbiter
 (`work/models/ocr-trust.pkl`) and runs `bench tuning`, the new baseline.
 
 - **Check on it:** `tail work/runs/rebuild/progress.txt`; `screen -ls`.

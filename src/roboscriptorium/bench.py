@@ -27,7 +27,9 @@ BOOTSTRAP_SAMPLES = 2000
 # for choices before, so they validate, not test. Long books are sliced at a chapter
 # boundary (a run costs about 1.1 min per cold page), about 90 pages at most: the
 # bootstrap's power comes from the pages in all, so more books of fewer pages decide as
-# surely and vary more. Dolittle's slice holds its plates and drawn initials. The test
+# surely and vary more. The books whose trust data wasn't built yet on 2026-10-12 hold
+# only their first chapters (10–27 pages) until a rescoring of 20, 45 and 90 pages a
+# book sets the size. Dolittle's slice holds its plates and drawn initials. The test
 # set is scored once, at the end: nothing is chosen on it, no model trains on it, and the
 # CLI refuses to score it without `--score-test`.
 SETS = {
@@ -37,19 +39,19 @@ SETS = {
         "reis-om-mijn-schedel--ia-scan:11-99:1-10",
         "the-nature-of-a-crime--doubleday-1924",
         "the-story-of-doctor-dolittle--stokes-1920:23-88:1-7",
-        "the-thief-takers-apprentice--ia-scan:11-84:1-22",
+        "the-thief-takers-apprentice--ia-scan:11-26:1-6",
         "afscheid-van-verspilde-tijd--ia-scan:9-70:1-11",
         "metro-2033--ia-scan:7-92:1-8",
-        "de-cipier--ia-scan:9-92:1-4",
-        "artemis--ia-scan:13-80:1-3",
-        "11-22-63--ia-scan:15-94:1-24",
-        "de-tuin-van-de-avondnevel--ia-scan:11-97:1-6",
-        "het-heft-in-eigen-hand--ia-scan:9-92:1-5",
-        "doodskleed--ia-scan:13-96:1-14",
-        "het-ijzige-land--ia-scan:11-104:1-11",
-        "de-eerlijke-vinder--ia-scan",
-        "monterosso-mon-amour--ia-scan",
-        "fka-usa--ia-scan:11-100:1-15",
+        "de-cipier--ia-scan:9-33:1-2",
+        "artemis--ia-scan:13-34:1-1",
+        "11-22-63--ia-scan:15-32:1-6",
+        "de-tuin-van-de-avondnevel--ia-scan:11-29:1-1",
+        "het-heft-in-eigen-hand--ia-scan:9-33:1-2",
+        "doodskleed--ia-scan:13-22:1-2",
+        "het-ijzige-land--ia-scan:11-21:1-1",
+        "de-eerlijke-vinder--ia-scan:12-38:1-1",
+        "monterosso-mon-amour--ia-scan:9-17:1-3",
+        "fka-usa--ia-scan:11-22:1-5",
     ],
     "validation": [
         "de-kerk-van-de-dode-meisjes--ia-scan:11-107:1-13",
