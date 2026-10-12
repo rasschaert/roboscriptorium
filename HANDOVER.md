@@ -17,8 +17,8 @@ Done: Vals alarm, Crime, Dolittle, Afscheid (its screen vanished ~11:46 with no 
 line, cause unknown; restarted 12:50 on the stage caches). At ~13:30 the slices were
 capped at ~90 pages, and at ~14:50 the books not yet done were cut to their first
 chapter (10–27 pages; the user, for a result tonight; decisions.md 2026-10-12): Goede
-dochter, Vals alarm, Crime, Dolittle, Afscheid, Reis and Metro keep their full slices,
-the 13 others (~233 pages) take ~4 h, the bench after it ~30 min. The run-times rows
+dochter, Vals alarm, Crime, Dolittle, Afscheid, Reis, Metro and De eerlijke vinder (the book with the most unasked errors) keep
+their full slices; the 12 others are short, ~290 pages in all, ~5 h, the bench after it ~30 min. The run-times rows
 for those books carry the old page counts (the chain counted them at its start): fix
 them from the slices in `experiments/ocr_trust_data.py`, and the bench's to the new total.
 When every book has succeeded the chain trains the arbiter

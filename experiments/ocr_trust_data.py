@@ -42,7 +42,7 @@ SPECS = {
     "artemis--ia-scan": "13-34:1-1",
     "11-22-63--ia-scan": "15-32:1-6",
     "de-tuin-van-de-avondnevel--ia-scan": "11-29:1-1",
-    "de-eerlijke-vinder--ia-scan": "12-38:1-1",
+    "de-eerlijke-vinder--ia-scan": "",
     "youre-never-weird-on-the-internet--ia-scan": "13-26:1-2",
     "the-thief-takers-apprentice--ia-scan": "11-26:1-6",
     "het-heft-in-eigen-hand--ia-scan": "9-33:1-2",

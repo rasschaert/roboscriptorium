@@ -25,7 +25,8 @@ machine's work is recomputed in this order before anything below.
 
 - [ ] Trust data for the 20 books on qwen3.8:27b-nvfp4, then the arbiter and `bench
       tuning` (`experiments/rebuild-trust.sh`; 7 done 2026-10-12, the 13 left on their
-      first chapters, ~233 pages, ~4.5 h with the bench, running)
+      first chapters but De eerlijke vinder whole, ~290 pages, ~5.5 h with the bench,
+      running)
 - [ ] FKA USA's trust data (`ocr_trust_data.py` SPECS gets `fka-usa--ia-scan: 11-22:1-5`,
       out of `bench.NO_TRUST_DATA`), the arbiter retrained, `bench tuning` again (~2 h)
 - [ ] A bench pair on warm caches (a cheap change, minutes), rescored on the first 10, 20,

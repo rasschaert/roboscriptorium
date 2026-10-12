@@ -49,7 +49,7 @@ SETS = {
         "het-heft-in-eigen-hand--ia-scan:9-33:1-2",
         "doodskleed--ia-scan:13-22:1-2",
         "het-ijzige-land--ia-scan:11-21:1-1",
-        "de-eerlijke-vinder--ia-scan:12-38:1-1",
+        "de-eerlijke-vinder--ia-scan",
         "monterosso-mon-amour--ia-scan:9-17:1-3",
         "fka-usa--ia-scan:11-22:1-5",
     ],
