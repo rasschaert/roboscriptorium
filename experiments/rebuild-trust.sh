@@ -39,9 +39,25 @@ if (( failed )); then
   print "$(date '+%F %H:%M') stopped: a book failed, no training" >> $progress
   exit 1
 fi
+# --partial: Stella's data comes from its review answers, which this loop doesn't build.
 experiments/timed.sh "train arbiter after the rebuild" 0 work/runs/rebuild/train.log \
-  env PYTHONPATH=experiments uv run python experiments/train_ocr_trust.py --save
-print "$(date '+%F %H:%M') train exit $?" >> $progress
-experiments/timed.sh "bench tuning, new baseline after the rebuild" 1792 \
+  env PYTHONPATH=experiments uv run python experiments/train_ocr_trust.py --save --partial
+code=$?
+print "$(date '+%F %H:%M') train exit $code" >> $progress
+(( code )) && exit 1
+# The bench's own slices, which differ from the trust data's for some books.
+bench_pages=$(uv run python -c '
+from pathlib import Path
+from roboscriptorium import bench
+from roboscriptorium.book import Book
+total = 0
+for spec in bench.SETS["tuning"]:
+    name, *rest = spec.split(":")
+    first, last = map(int, rest[0].split("-")) if rest else Book.load(Path("work") / name).body_pages
+    total += last - first + 1
+print(total)
+')
+experiments/timed.sh "bench tuning, new baseline after the rebuild" $bench_pages \
   work/runs/rebuild/bench-tuning.log uv run roboscriptorium bench tuning
-print "$(date '+%F %H:%M') bench tuning exit $?" >> $progress
+code=$?
+print "$(date '+%F %H:%M') bench tuning exit $code" >> $progress

@@ -286,3 +286,19 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-12 | trust data, afscheid-van-verspilde-tijd--ia-scan, resumed on a stopped run's caches, Qwen local | 62 | 21 | 0 |
 | 2026-10-12 | trust data, goede-dochter--ia-scan, a shorter slice from its caches | 91 | 0 | 0 |
 | 2026-10-12 | trust data, reis-om-mijn-schedel--ia-scan, a shorter slice from its caches | 89 | 0 | 0 |
+| 2026-10-12 | trust data, metro-2033--ia-scan, cold after work/ was lost, Qwen local | 86 | 99 | 0 |
+| 2026-10-12 | trust data, de-cipier--ia-scan, cold after work/ was lost, Qwen local | 25 | 23 | 0 |
+| 2026-10-12 | trust data, artemis--ia-scan, cold after work/ was lost, Qwen local | 22 | 18 | 0 |
+| 2026-10-12 | trust data, 11-22-63--ia-scan, cold after work/ was lost, Qwen local | 18 | 12 | 0 |
+| 2026-10-12 | trust data, de-tuin-van-de-avondnevel--ia-scan, cold after work/ was lost, Qwen local | 19 | 21 | 0 |
+| 2026-10-12 | trust data, de-eerlijke-vinder--ia-scan, cold after work/ was lost, Qwen local | 84 | 86 | 0 |
+| 2026-10-12 | trust data, youre-never-weird-on-the-internet--ia-scan, cold after work/ was lost, Qwen local | 14 | 13 | 0 |
+| 2026-10-12 | trust data, the-thief-takers-apprentice--ia-scan, cold after work/ was lost, Qwen local | 16 | 13 | 0 |
+| 2026-10-12 | trust data, het-heft-in-eigen-hand--ia-scan, cold after work/ was lost, Qwen local | 25 | 23 | 0 |
+| 2026-10-12 | trust data, doodskleed--ia-scan, cold after work/ was lost, Qwen local | 10 | 7 | 0 |
+| 2026-10-12 | trust data, het-ijzige-land--ia-scan, cold after work/ was lost, Qwen local | 11 | 12 | 0 |
+| 2026-10-12 | trust data, de-kerk-van-de-dode-meisjes--ia-scan, cold after work/ was lost, Qwen local | 17 | 17 | 0 |
+| 2026-10-12 | trust data, vuurspel--ia-scan, cold after work/ was lost, Qwen local | 21 | 26 | 0 |
+| 2026-10-12 | trust data, monterosso-mon-amour--ia-scan, cold after work/ was lost, Qwen local | 9 | 8 | 0 |
+| 2026-10-12 | train arbiter after the rebuild (refused: no Stella data, needed --partial) | 0 | 0 | 1 |
+| 2026-10-12 | bench tuning, new baseline after the rebuild (no arbiter saved: failed at once) | 789 | 0 | 1 |
