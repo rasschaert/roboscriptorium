@@ -29,9 +29,10 @@ BOOTSTRAP_SAMPLES = 2000
 # bootstrap's power comes from the pages in all, so more books of fewer pages decide as
 # surely and vary more. The books whose trust data wasn't built yet on 2026-10-12 hold
 # only their first chapters (10–27 pages) until a rescoring of 20, 45 and 90 pages a
-# book sets the size. Dolittle's slice holds its plates and drawn initials. The test
-# set is scored once, at the end: nothing is chosen on it, no model trains on it, and the
-# CLI refuses to score it without `--score-test`.
+# book sets the size. Monterosso runs its chapters on without a page break, so no slice
+# short of the whole book ends on one. Dolittle's slice holds its plates and drawn
+# initials. The test set is scored once, at the end: nothing is chosen on it, no model
+# trains on it, and the CLI refuses to score it without `--score-test`.
 SETS = {
     "tuning": [
         "goede-dochter--ia-scan:9-99:1-6",
@@ -50,7 +51,7 @@ SETS = {
         "doodskleed--ia-scan:13-22:1-2",
         "het-ijzige-land--ia-scan:11-21:1-1",
         "de-eerlijke-vinder--ia-scan",
-        "monterosso-mon-amour--ia-scan:9-17:1-3",
+        "monterosso-mon-amour--ia-scan",
         "fka-usa--ia-scan:11-22:1-5",
     ],
     "validation": [

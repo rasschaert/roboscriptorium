@@ -50,7 +50,7 @@ SPECS = {
     "het-ijzige-land--ia-scan": "11-21:1-1",
     "de-kerk-van-de-dode-meisjes--ia-scan": "11-27:1-3",
     "vuurspel--ia-scan": "9-29:1-2",
-    "monterosso-mon-amour--ia-scan": "9-17:1-3",
+    "monterosso-mon-amour--ia-scan": "",
     # No golden reference: labelled by a human's answers in the review.
     "stella": "answers",
 }
