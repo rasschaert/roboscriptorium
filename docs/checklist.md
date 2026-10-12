@@ -127,6 +127,12 @@ In this order:
 
 ## 6. Structure
 
+- [ ] Monterosso's capital T read as an opening quote ("‘Toen", "‘Titi", "‘Tiziana",
+      "‘Terwijl"; the user's verdicts, 2026-10-12): the typeface's T has an overhanging
+      left arm, and the text layer and every reader agree on the quote, so nothing asks.
+      Why doesn't the unpaired-quote check (`quotes.py`) catch a quote that opens
+      mid-sentence and never closes? A first case for the detector of errors every
+      reading shares, with "‘Terre" (a real quote) as its counterexample (~1 h)
 - [ ] Scene breaks the build still misses: 23 of 295 (Reis 14, De eerlijke vinder 7).
       Reis's are page tops after a full page whose last line ends a sentence at the
       margin, the next opening flush: the same geometry as a paragraph running on, so
