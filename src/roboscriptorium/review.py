@@ -184,6 +184,15 @@ class VerdictReview:
     html = "regions.html"
     OURS = "our text"
     THEIRS = "the publisher's e-book"
+    # What a place is when it isn't running text, as the region review asks it, and the
+    # verdict category it records (the kind itself goes in the verdict's note).
+    KINDS = {
+        "heading": "heading",
+        "caption": "caption",
+        "drop": "artefact",
+        "image": "artefact",
+        "initial": "other",
+    }
 
     def __init__(
         self, pdf: Path, pages: list[PageText], items: list[Disagreement], verdicts: Verdicts
@@ -209,7 +218,9 @@ class VerdictReview:
             ours, theirs = self._line(d, d.got), self._line(d, d.want)
             v = self.verdicts.by_key.get(d.key)
             answer = None
-            if v is not None and v.category != UNSURE:
+            if v is not None and v.note in self.KINDS:
+                answer = {"action": v.note, "text": None}
+            elif v is not None and v.category != UNSURE:
                 text = ours if v.truth == d.got else theirs if v.truth == d.want else None
                 answer = {"action": "text", "text": text or self._line(d, v.truth or "")}
             items.append(
@@ -242,6 +253,11 @@ class VerdictReview:
 
     def record(self, body: dict) -> dict:
         d = self.items[body["key"]]
+        kind = body.get("action", "text")
+        if kind in self.KINDS:
+            # Not running text: the reference, which holds running text only, is right.
+            self.verdicts.record(d, d.want, self.KINDS[kind], kind)
+            return {"action": kind, "text": None}
         text = body.get("text") or ""
         before, after = self._parts(d)
         if text == self._line(d, d.got):

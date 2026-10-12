@@ -41,6 +41,8 @@ PIPELINE = {
     "lost": "Body text lost",
     "hyphen": "Hyphenation or word joining",
     "punctuation": "Punctuation or spacing",
+    "heading": "A heading kept as running text",
+    "caption": "A caption kept as running text",
     "other": "Other pipeline mistake",
 }
 SCAN = {

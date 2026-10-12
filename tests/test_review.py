@@ -163,3 +163,16 @@ def test_a_place_across_a_page_break_shows_the_other_page(tmp_path):
     item = _verdicts(tmp_path, d).state()["items"][0]
     assert item["across"] == {"page": 62, "first": 0, "last": 0}
     assert _verdicts(tmp_path, _place("geld", "geId")).state()["items"][0]["across"] is None
+
+
+def test_a_caption_is_answered_as_what_it_is(tmp_path):
+    d = _place('"One evening when the Doctor was asleep in his chair"', "")
+    r = _verdicts(tmp_path, d)
+    r.record({"key": "k", "action": "caption", "text": None})
+    v = Verdicts(tmp_path / "v.jsonl").by_key["k"]
+    # The running text has no such words: the reference is right, and it was a caption.
+    assert (v.truth, v.category, v.note) == ("", "caption", "caption")
+    assert _verdicts(tmp_path, d).state()["items"][0]["answer"] == {
+        "action": "caption",
+        "text": None,
+    }

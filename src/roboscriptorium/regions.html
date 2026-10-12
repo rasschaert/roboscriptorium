@@ -166,6 +166,9 @@ function startDraft(r) {
 
 // Kinds whose answer carries text.
 const WITH_TEXT = new Set(["text", "heading", "caption"]);
+// Kinds whose answer carries text here: for a verdict only running text's words are
+// compared, so a caption or heading answer is the kind alone.
+const withText = kind => verdicts() ? kind === "text" : WITH_TEXT.has(kind);
 
 function render() {
   counts();
@@ -204,12 +207,12 @@ function render() {
       <span>turned ${r.turn || 0}°</span>
       <button id="reread" title="Read the area again as it is turned now"><kbd>o</kbd>Read again</button>` : ""}
     </div>
-    ${verdicts() ? "" : `<div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>
+    ${verdicts() ? "" : `<div class="why">Flagged: ${r.reasons.map(x => `<span>${esc(x)}</span>`).join("")}</div>`}
     <div class="question">What is this?</div>
-    <div class="options">${kindRows}</div>`}
+    <div class="options">${kindRows}</div>
     ${draft.kind === "initial" ? `<div class="question">The letter it shows</div>
       <input id="letter" class="letter" size="2" maxlength="3" value="${esc(draft.letter)}">`
-    : WITH_TEXT.has(draft.kind) ? textBlock(r, doubt) : ""}
+    : withText(draft.kind) ? textBlock(r, doubt) : ""}
     <div class="saverow">
       <button id="save" class="primary" ${canSave(r, doubt) ? "" : "disabled"}>Save <kbd>↵</kbd></button>
       <span class="hint">${saveHint(r, doubt)}</span>
@@ -333,14 +336,14 @@ function insertChar(c) {
 
 function canSave(r, doubt) {
   if (draft.kind === "initial") return draft.letter.trim() !== "";
-  if (WITH_TEXT.has(draft.kind) && doubt) return draft.reading !== null;
+  if (withText(draft.kind) && doubt) return draft.reading !== null;
   return true;
 }
 
 function saveHint(r, doubt) {
   if (draft.kind === "initial" && !draft.letter.trim()) return "Type the letter first.";
-  if (WITH_TEXT.has(draft.kind) && doubt && draft.reading === null) return verdicts() ? "Choose the one the page says." : "Choose the reading that matches the scan.";
-  return verdicts() ? "Letters choose the reading, e something else; Enter saves."
+  if (withText(draft.kind) && doubt && draft.reading === null) return verdicts() ? "Choose the one the page says." : "Choose the reading that matches the scan.";
+  return verdicts() ? "Numbers choose what it is, letters the reading, e something else; Enter saves."
     : "Numbers choose what it is, letters the reading; Enter saves.";
 }
 
@@ -474,7 +477,7 @@ async function save() {
   if (!canSave(r, doubt)) return;
   let text = r.text;
   if (draft.kind === "initial") text = draft.letter;
-  else if (WITH_TEXT.has(draft.kind)) {
+  else if (withText(draft.kind)) {
     text = doubt && draft.reading >= 0 ? r.readings[draft.reading].text : draft.text;
   }
   const body = {key: r.key, action: draft.kind, text, turn: r.turn || 0, confirm: !!draft.confirm};
@@ -527,11 +530,11 @@ document.addEventListener("keydown", e => {
   }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const r = queue[pos], doubt = r && r.readings && r.readings.length > 1;
-  if (KINDS[e.key] && !verdicts() && (KINDS[e.key] !== "initial" || picture(r))) setKind(KINDS[e.key]);
+  if (KINDS[e.key] && (KINDS[e.key] !== "initial" || picture(r))) setKind(KINDS[e.key]);
   else if (e.key === "Enter") { e.preventDefault(); save(); }
-  else if (e.key === "e" && doubt && WITH_TEXT.has(draft.kind)) { e.preventDefault(); setReading(-1); }
+  else if (e.key === "e" && doubt && withText(draft.kind)) { e.preventDefault(); setReading(-1); }
   else if (e.key === "e" && textBox()) { e.preventDefault(); textBox().focus(); }
-  else if (doubt && WITH_TEXT.has(draft.kind) && e.key.length === 1 && READING_KEYS.includes(e.key)
+  else if (doubt && withText(draft.kind) && e.key.length === 1 && READING_KEYS.includes(e.key)
     && READING_KEYS.indexOf(e.key) < r.readings.length) setReading(READING_KEYS.indexOf(e.key));
   else if (e.key === "r") turn(90);
   else if (e.key === "o") reread();
