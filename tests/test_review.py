@@ -218,3 +218,25 @@ def test_a_caption_is_answered_as_what_it_is_with_its_words(tmp_path):
     # Without words, the kind alone.
     r.record({"key": "k", "action": "drop", "text": ""})
     assert Verdicts(tmp_path / "v.jsonl").by_key["k"].note == "drop"
+
+
+def test_a_place_shows_each_sides_dashes_and_quotes_as_written(tmp_path):
+    folded = Disagreement(
+        "k",
+        "nu'",
+        "dan'",
+        "Ik moet —",
+        "zei hij",
+        17,
+        (24, 24),
+        written=("nu\u2019", "dan'", "Ik moet \u2013", "zei hij"),
+    )
+    r = _verdicts(tmp_path, folded)
+    ours, theirs = r.state()["items"][0]["readings"]
+    assert ours["text"] == "Ik moet \u2013 nu\u2019 zei hij"
+    assert theirs["text"] == "Ik moet \u2013 dan' zei hij"
+    # Choosing our reading records our words as printed; it reads back as chosen.
+    r.record({"key": "k", "text": ours["text"]})
+    assert r.golden.verdicts.by_key["k"].truth == "nu\u2019"
+    assert r.golden.verdicts.by_key["k"].category == "edition"
+    assert r.state()["items"][0]["answer"]["text"] == ours["text"]

@@ -42,15 +42,8 @@ machine's work is recomputed in this order before anything below.
       first look (~5 h of models) and joins; De aanslag joins validation; Verminkt joins
       validation whole. Update design.md's test-set reason, `bench.SETS` and the CLI's
       `--score-test` guard (agent, ~1 h plus the run)
-- [ ] One review for a golden book: its places that differ from the e-book become more
-      questions in the ordinary region review (`roboscriptorium review`), the e-book's
-      reading one more labelled row, answers stored as verdicts behind the scenes; no
-      verdict mode, no second command (the user, 2026-10-12: "why is it any different at
-      all?"). Walk every kind of question in it before the user sees it (agent, ~2 h)
-- [ ] The verdict page shows each side's words as written, not folded: today it shows
-      every dash as an em dash and every quote as straight (`evaluate.normalise`), so a
-      print's `moet –’` reads as `moet —'` on both rows (the user, 2026-10-12). Carry the
-      unfolded words in `Disagreement` and show those (agent, ~30 min)
+- [ ] Walk every kind of question in a golden book's single review (built 2026-10-13)
+      on a warm tuning book before the user sees it (agent, ~1 h)
 - [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
       validation` with three books joining, each as a slice: Verminkt (~90 pages), The
       Stranger's Child (pages 121–208) and Normal People (pages 146–232)
@@ -391,6 +384,9 @@ many the layer had wrong.
 
 ## The reviewer
 
+- [x] 2026-10-13 One review for a golden book: its places that differ from the e-book
+      are questions in `roboscriptorium review`, answers stored as verdicts; `golden
+      review` and the page's verdict mode are gone. Each side's words shown as written
 - [x] 2026-10-11 Stella built with today's build (every stage cached, under a minute,
       epubcheck clean): 7 questions, 3 answered before, 80 of 83 old answers applied (the
       other 3 lie inside a line another answer retyped whole)

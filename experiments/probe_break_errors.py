@@ -28,7 +28,7 @@ _, book, stages, reference, _, _, _ = _questions_and_errors(
 )
 doc = _scored(book, stages)
 pages = {p.number: p for p in stages.pages}
-out, refs = _word_sources(doc, pages)
+out, _, refs = _word_sources(doc, pages)
 starts, k = set(), 0
 for para in doc.paragraphs:
     if words := normalise(para.text).split():

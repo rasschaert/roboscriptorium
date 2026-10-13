@@ -184,3 +184,20 @@ def test_patch_keeps_a_scene_break_past_a_paragraph_a_verdict_empties(tmp_path):
     assert applied == 1
     assert patched[0].paragraphs == ["She left.", "He stayed.", "Then."]
     assert patched[0].breaks == {1, 2}
+
+
+def test_a_place_keeps_each_sides_words_as_written(monkeypatch):
+    monkeypatch.setattr(lexicon.Lexicon, "load", lambda lang: Lexicon({"kom", "nu", "dan", "zei"}))
+    doc, pages = _book("‘Kom nu’, zei hij – en")
+    (found,) = disagreements.find(doc, [Chapter("1", ["'Kom dan', zei hij — en"])], pages, "nl")
+    # Matched and keyed folded, shown as each side prints it.
+    assert (found.got, found.want) == ("nu',", "dan',")
+    assert found.written == ("nu’,", "dan',", "'Kom", "zei hij — en")
+
+
+def test_a_verdict_for_the_reference_as_written_patches_nothing(tmp_path):
+    reference = [Chapter("1", ["'Kom dan', zei"])]
+    verdicts = Verdicts(tmp_path / "v.jsonl")
+    d = Disagreement("k", "nu’,", "dan',", "'Kom", "zei", 9, (0, 0))
+    verdicts.record(d, "dan’,", "ocr")
+    assert patch(reference, verdicts)[1] == 0

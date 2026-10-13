@@ -26,6 +26,7 @@ from roboscriptorium import corrections, ocr
 from roboscriptorium import flags as F
 from roboscriptorium.corrections import ACTIONS, Corrections
 from roboscriptorium.disagreements import UNSURE, Disagreement, Verdicts
+from roboscriptorium.evaluate import normalise
 from roboscriptorium.pdf import PDF_LOCK, PageText
 
 # Crops show this many lines around the disagreement, at this zoom (PDF points → pixels).
@@ -199,13 +200,24 @@ class GoldenQuestions:
         self.verdicts = verdicts
 
     @staticmethod
-    def _parts(d: Disagreement) -> tuple[str, str]:
+    def _shown(d: Disagreement) -> tuple[str, str, str, str]:
+        """Our words, the reference's, and the reference's words before and after the
+        place, as each side writes them."""
+        return d.written or (d.got, d.want, d.before, d.after)
+
+    def _parts(self, d: Disagreement) -> tuple[str, str]:
         """The words before and after the place, each with the space that joins it."""
-        return (d.before + " " if d.before else ""), (" " + d.after if d.after else "")
+        _, _, before, after = self._shown(d)
+        return (before + " " if before else ""), (" " + after if after else "")
 
     def _line(self, d: Disagreement, words: str) -> str:
         before, after = self._parts(d)
         return before + words + after if words else (before + after.lstrip()).rstrip()
+
+    def _readings(self, d: Disagreement) -> tuple[str, str]:
+        """The line with our words at the place, and with the reference's."""
+        got, want, _, _ = self._shown(d)
+        return self._line(d, got), self._line(d, want)
 
     def state(self) -> list[dict]:
         """Each place in the shape of a flagged region (`RegionReview.state`), with `got`,
@@ -213,14 +225,15 @@ class GoldenQuestions:
         items = []
         for d in self.items.values():
             before, after = self._parts(d)
-            ours, theirs = self._line(d, d.got), self._line(d, d.want)
+            ours, theirs = self._readings(d)
             v = self.verdicts.by_key.get(d.key)
             answer = None
             kind, _, typed = (v.note if v else "").partition(": ")
             if v is not None and kind in self.KINDS:
                 answer = {"action": kind, "text": typed or None}
             elif v is not None and v.category != UNSURE:
-                text = ours if v.truth == d.got else theirs if v.truth == d.want else None
+                truth = normalise(v.truth or "")
+                text = ours if truth == d.got else theirs if truth == d.want else None
                 answer = {"action": "text", "text": text or self._line(d, v.truth or "")}
             items.append(
                 {
@@ -237,7 +250,7 @@ class GoldenQuestions:
                     "treatment": "text",
                     "reasons": [self.REASON],
                     "text": ours,
-                    "got": d.got,
+                    "got": self._shown(d)[0],
                     "span": [len(before), len(ours) - len(after)] if d.got else None,
                     "readings": [
                         {"text": ours, "votes": [self.OURS]},
@@ -256,8 +269,7 @@ class GoldenQuestions:
 
     def lines(self, key: str) -> tuple[str, list[dict]]:
         """A place's line as our text has it and its two readings, for `doubtful`."""
-        d = self.items[key]
-        ours, theirs = self._line(d, d.got), self._line(d, d.want)
+        ours, theirs = self._readings(self.items[key])
         return ours, [{"text": ours}, {"text": theirs}]
 
     def record(self, body: dict) -> dict:
@@ -272,10 +284,12 @@ class GoldenQuestions:
             return {"action": kind, "text": typed or None}
         text = body.get("text") or ""
         before, after = self._parts(d)
-        if text == self._line(d, d.got):
-            truth, category = d.got, SCAN_EDITION
-        elif text == self._line(d, d.want):
-            truth, category = d.want, guess_category(d)
+        got, want, _, _ = self._shown(d)
+        ours, theirs = self._readings(d)
+        if text == ours:
+            truth, category = got, SCAN_EDITION
+        elif text == theirs:
+            truth, category = want, guess_category(d)
         else:
             # Typed: the words between the unchanged context, else the whole line.
             inner = text

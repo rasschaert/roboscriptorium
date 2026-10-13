@@ -66,6 +66,9 @@ class Disagreement:
     # Where the place runs onto another page (the words beside it lie there): that page
     # and its line, so a reviewer sees both sides of the page break.
     across: tuple[int, int] | None = None
+    # got, want, before and after as each side writes them, its dashes and quotes
+    # unfolded, for a reviewer to compare; the fields above are `normalise`d.
+    written: tuple[str, str, str, str] | None = None
 
 
 @dataclass(frozen=True)
@@ -87,13 +90,17 @@ def _key(before: list[str], want: list[str], after: list[str]) -> str:
     return hashlib.sha256(blob.encode()).hexdigest()[:16]
 
 
-def _word_sources(doc: Document, pages: dict[int, PageText]) -> tuple[list[str], list[SourceRef]]:
-    """Output words, each with the source line it most likely came from."""
-    words, refs = [], []
+def _word_sources(
+    doc: Document, pages: dict[int, PageText]
+) -> tuple[list[str], list[str], list[SourceRef]]:
+    """Output words, `normalise`d and as written, each with the source line it most
+    likely came from."""
+    words, written, refs = [], [], []
     for para in doc.paragraphs:
         para_words = normalise(para.text).split()
         if not para_words:
             continue
+        written.extend(_as_written(para.text))
         sources = para.sources or [None]
         counts = [
             max(1, len(normalise(pages[s.page].lines[s.line].text).split())) if s else 1
@@ -112,11 +119,25 @@ def _word_sources(doc: Document, pages: dict[int, PageText]) -> tuple[list[str],
                 k += 1
             words.append(w)
             refs.append(sources[k])
-    return words, refs
+    return words, written, refs
+
+
+def _as_written(text: str) -> list[str]:
+    """Per word of `normalise(text)`, its tokens as written; the folded word where the
+    two don't line up."""
+    tokens, groups = text.split(), word_tokens(text)
+    if groups is None:
+        return normalise(text).split()
+    return [" ".join(tokens[k] for k in g) for g in groups]
 
 
 def reference_words(reference: list[Chapter]) -> list[str]:
     return [w for ch in reference for p in ch.paragraphs for w in normalise(p).split()]
+
+
+def _reference_written(reference: list[Chapter]) -> list[str]:
+    """`reference_words` as the reference writes them."""
+    return [w for ch in reference for p in ch.paragraphs for w in _as_written(p)]
 
 
 # The reference words just before and after a slice of chapters, so a disagreement at a
@@ -196,17 +217,26 @@ def find(
     the text layer before answers (`Stages.pages`, which `Line.source` points back to);
     `language` (book.toml's) picks the word list that settles garbled output; `around`
     are the words beside a slice of chapters (`slice_reference`), the context of its edges."""
-    out, refs = _word_sources(doc, {p.number: p for p in pages})
+    out, out_written, refs = _word_sources(doc, {p.number: p for p in pages})
     ref = reference_words(reference)
     context = around[0] + ref + around[1]
+    # The words beside a slice stand in folded: only the slice is at hand as written.
+    context_written = around[0] + _reference_written(reference) + around[1]
     shift = len(around[0])
     vocab = vocabulary(reference, language)
     found = []
     for s0, s1, d0, d1 in _spans(out, ref):
-        before = context[max(0, shift + d0 - CONTEXT_WORDS) : shift + d0]
+        lo, hi = max(0, shift + d0 - CONTEXT_WORDS), shift + d1 + CONTEXT_WORDS
+        before = context[lo : shift + d0]
         want = ref[d0:d1]
-        after = context[shift + d1 : shift + d1 + CONTEXT_WORDS]
+        after = context[shift + d1 : hi]
         got = " ".join(out[s0:s1])
+        written = (
+            " ".join(out_written[s0:s1]),
+            " ".join(context_written[shift + d0 : shift + d1]),
+            " ".join(context_written[lo : shift + d0]),
+            " ".join(context_written[shift + d1 : hi]),
+        )
         span = [r for r in refs[s0:s1] if r is not None]
         if not span:
             near = [refs[i] for i in (s0 - 1, s0) if 0 <= i < len(refs)]
@@ -230,6 +260,7 @@ def find(
                 lines=(min(on_page), max(on_page)) if on_page else None,
                 auto=_auto(got, " ".join(want), vocab),
                 across=across,
+                written=written,
             )
         )
     return found
@@ -240,7 +271,7 @@ def break_errors(doc: Document, reference: list[Chapter], pages: list[PageText])
     starts mid-paragraph in the output, or an output paragraph starting mid-paragraph in
     the reference. Only where the words on both sides align: garbled text isn't a break
     error as well as a word error. `pages` are the ones `doc`'s sources index."""
-    out, refs = _word_sources(doc, {p.number: p for p in pages})
+    out, _, refs = _word_sources(doc, {p.number: p for p in pages})
     starts, k = set(), 0
     for para in doc.paragraphs:
         if words := normalise(para.text).split():
@@ -337,7 +368,7 @@ def patch(
     shift = len(around[0])
     found = []
     for v in verdicts.by_key.values():
-        if v.truth is None or v.truth == v.want:
+        if v.truth is None or normalise(v.truth) == v.want:
             continue
         before, want, after = v.before.split(), v.want.split(), v.after.split()
         at = _find_sequence(words, before + want + after)
