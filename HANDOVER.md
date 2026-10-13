@@ -4,12 +4,13 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running: line-role trees against the rules (screen `robo-sorter-compare`, started 20:10)
+## Running: `bench tuning` with the line-role trees on (screen `robo-bench-sorter-tuning`, started ~20:25)
 
-`experiments/train_sorter.py` without `--save`: rebuilds `work/probes/sorter/` and scores
-trees against rules leaving one book out; log `work/runs/sorter-compare.log`. De aanslag
-builds cold (layout, roles), the rest warm; 10–40 min. Then `--save` and a warm bench
-with ROBO_SORTER=1.
+`ROBO_SORTER=1`, warm; log `work/runs/bench-sorter-tuning.log`. The trees beat the rules
+on role errors (tuning 304 → 179, validation 116 → 65; decisions.md 2026-10-13); watch
+Dolittle's headings, Vuurspel's and Crime's body lines. If tuning is no worse, run
+validation the same way, then the trees as the decision and retire the rules they make
+redundant (checklist).
 
 ## Before it
 
