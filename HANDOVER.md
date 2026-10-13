@@ -4,7 +4,27 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Nothing running
+## Running: cold A/A `bench tuning` (screen `robo-bench-tuning-cold`, started 2026-10-13 ~20:55)
+
+The noise floor when caches change (checklist, "From the codebase review"). The 16 tuning
+books' warm caches were renamed `work/<book>/stages` → `stages.warm` (nothing deleted);
+the run builds fresh `stages/`. ~15 h cold, so it spans two nights; the user agreed to
+stop it in the morning. Log `work/runs/bench-tuning-cold.log`; compared `--against`
+`tuning-20261013T183737-b891650-dirty.json` (the warm run, same settings).
+
+- **Morning pause:** `experiments/stop-run.sh bench-tuning-cold`, then per tuning book
+  rename `stages` → `stages.cold` and `stages.warm` → `stages`, so daytime benches are
+  warm. **Evening resume:** swap back (`stages` → `stages.warm`, `stages.cold` →
+  `stages`) and restart the same command (it resumes from the cold caches):
+
+```sh
+experiments/detached.sh bench-tuning-cold experiments/timed.sh "bench tuning, cold A/A rerun, resumed" 790 work/runs/bench-tuning-cold.log uv run roboscriptorium bench tuning --against work/bench/tuning-20261013T183737-b891650-dirty.json
+```
+
+- **When done:** the paired verdict is the A/A noise floor; record it in decisions.md and
+  the checklist; keep both cache sets until the user says which to drop.
+
+## Before it
 
 **This session (2026-10-13 evening), all pushed:**
 - `bench validation` finished: BETTER 1.10 → 0.59, mostly The Stranger's Child.
