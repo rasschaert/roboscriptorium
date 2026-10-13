@@ -21,6 +21,12 @@ stop it in the morning. Log `work/runs/bench-tuning-cold.log`; compared `--again
 experiments/detached.sh bench-tuning-cold experiments/timed.sh "bench tuning, cold A/A rerun, resumed" 790 work/runs/bench-tuning-cold.log uv run roboscriptorium bench tuning --against work/bench/tuning-20261013T183737-b891650-dirty.json
 ```
 
+- **Queued for the morning pause, after the swap:** De tunnels' line roles (a training-only
+  pair, decisions.md 2026-10-13): `uv run python experiments/train_sorter.py --rebuild`
+  builds its chapter 12 (pp. 238–270, roles and layout, ~10 min) and compares trees and
+  rules; then `--save` and warm benches with ROBO_SORTER=1, each `--against` the rules'
+  run (tuning `tuning-20261013T183737-b891650-dirty.json`, validation
+  `validation-20261013T183941-b891650-dirty.json`). Watch Dolittle and Vuurspel.
 - **When done:** the paired verdict is the A/A noise floor; record it in decisions.md and
   the checklist; keep both cache sets until the user says which to drop.
 
