@@ -11,9 +11,9 @@ end of every session.
 - Afscheid stays (its retirement misread the all-lines overview); the three retired
   books' files are deleted from `work/` (the user's yes; in their backups).
 - Line-role trees: the labeller called specks body (fixed, 70bc154); on fixed labels the
-  trees beat the rules on tuning books (275 → 196) but not validation (90 → 111, Vuurspel's
-  short lines dropped). They stay off; `work/models/line-roles*.pkl` are old-label trees,
-  unused. Next for them: the checklist's line-role step.
+  trees benched NO CHANGE on tuning, WORSE on validation (Vuurspel vetoes). They stay off;
+  `work/models/line-roles*.pkl` are the fixed-label trees, unused. They need a tuning
+  book with plates (checklist's line-role step).
 - Fine-tuning a reader: ruled out for now by `probe_reader_ceiling.py` (29% of what's left
   after review is undoubted misreading, under the agreed half).
 - A dash a fix puts before a line widens its box (6a63a2e): Dolittle 0.40 → 0.31; tuning

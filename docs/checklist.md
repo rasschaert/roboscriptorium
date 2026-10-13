@@ -43,10 +43,10 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       day (agent, ~2 h)
 - [ ] Line roles learned, not hand-written (the user, 2026-10-13): the trees retrained on
       fixed labels beat the rules on tuning books (275 → 196 role errors) but not on
-      validation (90 → 111: Vuurspel's short lines dropped as body; decisions.md
-      2026-10-13). Next, on tuning books only: weigh a lost body line above a kept speck,
-      and a type size the trees can trust on a short line; compare again, bench on top of
-      the rules (warm), then as the decision with the rules only as features, and retire
+      validation (90 → 111); benched, tuning NO CHANGE but validation WORSE (Vuurspel
+      vetoes; decisions.md 2026-10-13). They lack coverage: a tuning book with plates
+      (Dolittle's are the only ones), short dialogue lines. Next, a golden pair with
+      pictures into tuning, then retrain and bench on top of the rules (warm), then as the decision with the rules only as features, and retire
       each rule the trees make redundant (agent, ~half a day)
 
 ## Recovering what work/ lost
