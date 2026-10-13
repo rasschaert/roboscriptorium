@@ -19,8 +19,8 @@ under the new prompt; the other eight are warm. Compare against
 0.52 → 0.50 [−0.03, −0.01] after review over all 17 (0.29 over the 16 without FKA USA,
 against 0.31): De eerlijke vinder 0.91 → 0.68 (its minus-sign dashes undone), Goede dochter
 0.28 → 0.24 (the user's verdicts), Monterosso 0.50 → 0.47. FKA USA is named a suspect pair
-(30% of its body lines unplaced). Koning Wilders too (validation, layer CER 2.45%):
-proposed to the user for retiring, not yet answered.
+(30% of its body lines unplaced). Koning Wilders too (validation, layer CER 2.45%).
+Whether to retire them is parked by the user, but must be decided (checklist).
 
 **The single review is in** (merged 2026-10-13): `roboscriptorium review` on a golden
 book asks its places that differ from the e-book in the same list as its flagged regions,

@@ -44,8 +44,10 @@ machine's work is recomputed in this order before anything below.
       `--score-test` guard (agent, ~1 h plus the run)
 - [ ] Bench the ellipsis measured on the scan: a warm `bench tuning` (~3 min), then
       `bench validation` (The Stranger's Child read again, ~45 min)
-- [ ] **user** Retire Koning Wilders? The bench names it a suspect pair: text layer CER
-      2.45%, past three times the validation median (0.55%); after review 0.92
+- [ ] **user** Retire the two suspect pairs, or keep them? Parked by the user 2026-10-13,
+      to be decided. Koning Wilders (validation): text layer CER 2.45%, past three times
+      the set's median (0.55%), after review 0.92. FKA USA (tuning, waiting on its fixes):
+      30% of its body lines unplaced in its reference, after review 4.11
 - [ ] The line-role trees (`experiments/train_sorter.py --save`)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
