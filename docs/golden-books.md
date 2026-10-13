@@ -13,30 +13,31 @@ scan. *Eval* is the latest full run (models on), CER and WER.
 
 | Book | Set | Pages body / scored | Words | Cold | Layer CER | Bare-word | Unplaced | Headings | Declared | Eval CER / WER |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| afscheid-van-verspilde-tijd | tuning | 116 / 62 | 37430 | 1.1 h | 0.17% | 0.12% | 11.2% | 9 / 11 | hyphen_dash | none yet |
+| afscheid-van-verspilde-tijd | tuning | 116 / 62 | 37430 | 1.1 h | 0.17% | 0.12% | 11.3% | 9 / 11 | hyphen_dash | none yet |
 | artemis | tuning | 305 / 22 | 87544 | 0.4 h | 0.31% | 0.78% | 3.1% | 0 / 1 | none | none yet |
 | de-aanslag | reserve | 169 / 169 | 55723 | minutes | 0.17% | 0.43% | 0.0% | 31 / 26 | none | none yet |
 | de-cipier | tuning | 474 / 25 | 158385 | 0.5 h | 0.18% | 0.28% | 2.4% | 1 / 2 | none | none yet |
-| de-eerlijke-vinder | tuning | 84 / 84 | 23802 | 1.5 h | 0.30% | 0.34% | 0.3% | 0 / 4 | hyphen_dash | none yet |
-| de-kerk-van-de-dode-meisjes | validation | 414 / 97 | 145925 | 1.8 h | 0.15% | 0.33% | 2.6% | 7 / 13 | none | none yet |
-| de-stilte-van-de-hel | validation | 353 / 91 | 136423 | 1.7 h | 0.36% | 0.50% | 2.8% | 5 / 15 | none | none yet |
+| de-eerlijke-vinder | tuning | 84 / 84 | 23802 | 1.5 h | 0.30% | 0.34% | 0.4% | 0 / 4 | hyphen_dash | none yet |
+| de-kerk-van-de-dode-meisjes | validation | 414 / 97 | 145925 | 1.8 h | 0.15% | 0.33% | 2.7% | 7 / 13 | none | none yet |
+| de-stilte-van-de-hel | validation | 353 / 91 | 136423 | 1.7 h | 0.36% | 0.50% | 2.9% | 5 / 15 | none | none yet |
 | de-tuin-van-de-avondnevel | tuning | 364 / 19 | 129769 | 0.3 h | 0.64% | 0.47% | 2.6% | 1 / 1 | none | none yet |
-| doodskleed | tuning | 276 / 10 | 72379 | 0.2 h | 0.23% | 0.46% | 4.4% | 0 / 2 | none | none yet |
+| de-tunnels | reserve | 409 / 409 | 126092 | 7.5 h | 0.63% | 1.25% | 3.8% | 17 / 21 | none | none yet |
+| doodskleed | tuning | 276 / 10 | 72379 | 0.2 h | 0.20% | 0.46% | 5.6% | 0 / 2 | none | none yet |
 | goede-dochter | tuning | 500 / 91 | 163183 | 1.7 h | 0.24% | 0.50% | 2.8% | 6 / 6 | none | none yet |
 | het-geluid-van-bananen | **test** | 315 / 93 | 77984 | 1.7 h | unmeasured | | | | none | untouched |
-| het-heft-in-eigen-hand | tuning | 506 / 25 | 144642 | 0.5 h | 0.50% | 0.42% | 1.9% | 2 / 2 | none | none yet |
-| het-ijzige-land | tuning | 318 / 11 | 79550 | 0.2 h | 0.32% | 0.50% | 3.2% | 1 / 1 | none | none yet |
+| het-heft-in-eigen-hand | tuning | 506 / 25 | 144642 | 0.5 h | 0.50% | 0.42% | 2.0% | 2 / 2 | none | none yet |
+| het-ijzige-land | tuning | 318 / 11 | 79550 | 0.2 h | 0.31% | 0.50% | 3.6% | 1 / 1 | none | none yet |
 | het-laatste-bevel | validation | 304 / 92 | 86225 | 1.7 h | 0.42% | 1.21% | 2.8% | 1 / 5 | none | none yet |
-| metro-2033 | tuning | 458 / 86 | 197756 | 1.6 h | 0.17% | 0.21% | 2.4% | 7 / 8 | hyphen_dash | none yet |
-| monterosso-mon-amour | tuning | 88 / 88 | 25640 | 1.6 h | 0.33% | 0.40% | 3.0% | 13 / 22 | none | none yet |
+| metro-2033 | tuning | 458 / 86 | 197756 | 1.6 h | 0.17% | 0.21% | 2.5% | 7 / 8 | hyphen_dash | none yet |
+| monterosso-mon-amour | tuning | 88 / 88 | 25640 | 1.6 h | 0.33% | 0.40% | 3.1% | 13 / 22 | none | none yet |
 | normal-people | validation | 266 / 87 | 72611 | 1.6 h | 0.06% | 0.10% | 3.4% | 8 / 9 | none | none yet |
 | reis-om-mijn-schedel | tuning | 245 / 89 | 66738 | 1.6 h | 0.14% | 0.09% | 3.9% | 10 / 10 | none | none yet |
 | the-nature-of-a-crime | tuning | 94 / 94 | 14712 | 1.7 h | 0.85% | 0.77% | 7.7% | 8 / 8 | none | none yet |
-| the-story-of-doctor-dolittle | tuning | 180 / 66 | 24667 | 1.2 h | 0.93% | 0.79% | 11.8% | 14 / 7 | none | none yet |
-| the-strangers-child | validation | 564 / 88 | 180095 | 1.6 h | 0.34% | 0.33% | 5.7% | 4 / 9 | none | 0.17% / 0.05% |
-| the-thief-takers-apprentice | tuning | 282 / 16 | 83490 | 0.3 h | 0.25% | 0.21% | 3.6% | 6 / 6 | none | none yet |
+| the-story-of-doctor-dolittle | tuning | 180 / 66 | 24667 | 1.2 h | 0.88% | 0.79% | 12.6% | 14 / 7 | none | none yet |
+| the-strangers-child | validation | 564 / 88 | 180095 | 1.6 h | 0.34% | 0.33% | 5.8% | 4 / 9 | none | 0.17% / 0.05% |
+| the-thief-takers-apprentice | tuning | 282 / 16 | 83490 | 0.3 h | 0.23% | 0.21% | 4.5% | 6 / 6 | none | none yet |
 | vals-alarm | tuning | 292 / 50 | 87748 | 0.9 h | 0.53% | 0.45% | 3.0% | 4 / 10 | none | none yet |
 | verminkt | reserve | 417 / 417 | 110719 | 7.6 h | 1.68% | 5.18% | 3.8% | 0 / 1 | none | none yet |
 | villa-toscane | validation | 186 / 186 | 49813 | minutes | 0.00% | 0.00% | 0.0% | 12 / 12 | none | none yet |
 | vuurspel | validation | 354 / 103 | 136948 | 1.9 h | 0.46% | 0.60% | 2.5% | 2 / 6 | hyphen_dash | none yet |
-| youre-never-weird-on-the-internet | validation | 260 / 82 | 66181 | 1.5 h | 0.52% | 0.61% | 6.4% | 17 / 16 | none | none yet |
+| youre-never-weird-on-the-internet | validation | 260 / 82 | 66181 | 1.5 h | 0.49% | 0.61% | 7.3% | 17 / 16 | none | none yet |
