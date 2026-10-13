@@ -43,3 +43,21 @@ def test_capitals_numerals_and_spaced_dots_are_still_the_reference():
     reference = [Chapter("III", ["Zorg dat je thuis bent. never sinned..."])]
     labels = align(pages, reference)
     assert [labels[SourceRef(9, k)].role for k in range(4)] == ["heading", "body", "body", "other"]
+
+
+def test_a_line_of_marks_the_reference_has_is_body():
+    pages = [_page(9, ["‘Ja,’ zei ze.", "...", "‘Nee.’"])]
+    labels = align(pages, [Chapter("", ["‘Ja,’ zei ze.", "...", "‘Nee.’"])])
+    assert [labels[SourceRef(9, k)].role for k in range(3)] == ["body", "body", "body"]
+
+
+def test_a_line_of_marks_the_reference_lacks_is_other():
+    pages = [_page(9, ["&", "Charlie liep naar de", "»", "verder gelegen school.", "..."])]
+    labels = align(pages, [Chapter("", ["Charlie liep naar de verder gelegen school."])])
+    assert [labels[SourceRef(9, k)].role for k in range(5)] == [
+        "other",
+        "body",
+        "other",
+        "body",
+        "other",
+    ]

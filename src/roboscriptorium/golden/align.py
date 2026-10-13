@@ -4,7 +4,8 @@ The text layer's words, line by line in page order, are aligned with the
 reference's words (headings and paragraphs, in order). A line gets the reference
 words aligned to its own words: its true text, typos of the layer corrected. Its
 role follows: a heading when its words align with a chapter heading, other (page
-furniture, stamps, noise) when most of its words align with nothing, else body.
+furniture, stamps, noise) when most of its words align with nothing, or when it
+holds only marks ("...", "»") the reference doesn't print there; else body.
 Labels come from the text layer as read, so they key on its line positions.
 """
 
@@ -51,6 +52,8 @@ def align(pages: list[PageText], reference: list[Chapter]) -> dict[SourceRef, Li
     # and how many of its own words matched.
     held: dict[SourceRef, list[tuple[int, str]]] = {ref: [] for ref in dict.fromkeys(out_lines)}
     matched: dict[SourceRef, int] = dict.fromkeys(held, 0)
+    # Marks without letters or digits ("...", "»") the reference has as they stand.
+    marks: dict[SourceRef, int] = dict.fromkeys(held, 0)
     for (o0, o1), (r0, r1) in _blocks(out_words, ref_words):
         if r0 == r1:
             continue
@@ -81,13 +84,16 @@ def align(pages: list[PageText], reference: list[Chapter]) -> dict[SourceRef, Li
             held[out_lines[i]].append((j, ref_print[j]))
             if _wordy(out_words[i]) and _similarity(out_words[i], ref_words[j]) >= SIMILAR:
                 matched[out_lines[i]] += 1
+            elif out_words[i] == ref_words[j]:
+                marks[out_lines[i]] += 1
 
     total = dict.fromkeys(held, 0)
     for word, ref in zip(out_words, out_lines, strict=True):
         total[ref] += _wordy(word)
     labels = {}
     for ref, indices in held.items():
-        if matched[ref] < BODY_SHARE * total[ref]:
+        if matched[ref] < BODY_SHARE * total[ref] or not (total[ref] or marks[ref]):
+            # A line of marks alone is a speck unless the reference prints them there.
             role = "other"
         elif indices and sum(in_heading[j] for j, _ in indices) * 2 > len(indices):
             role = "heading"

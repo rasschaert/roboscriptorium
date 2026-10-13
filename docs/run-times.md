@@ -316,3 +316,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-13 | bench tuning, warm, three pairs retired, arbiter retrained | 790 | 2 | 0 |
 | 2026-10-13 | bench validation, after retiring three pairs (Stranger's Child re-read finishing) | 790 | 34 | 0 |
 | 2026-10-13 | line-role trees against the rules, leave one book out (De aanslag cold, the rest warm) | 1000 | 10 | 0 |
+| 2026-10-13 | bench tuning, line-role trees on (retrained 2026-10-13), warm | 790 | 5 | 0 |
