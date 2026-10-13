@@ -4,7 +4,9 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Nothing running. `bench validation` halted 2026-10-13 07:56, on its last book
+## Running: `bench validation` restarted 2026-10-13 09:49 (screen `robo-bench-validation`), ~45 min
+
+It had halted 2026-10-13 07:56, on its last book.
 
 **Remind the user of the daily backup of `work/`** at session start and before long runs
 (they back up with Duplicati, ~9 min; last run 2026-10-12 21:40, before the bench).
