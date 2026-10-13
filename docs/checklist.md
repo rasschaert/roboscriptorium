@@ -78,9 +78,12 @@ machine's work is recomputed in this order before anything below.
 - [ ] The line-role trees (`experiments/train_sorter.py --save`)
 - [ ] What a perfect reader could still gain: over the tuning books' warm builds, count the
       wrong words left where every reader agrees (no suspect raised), against all wrong
-      words left. Decides whether fine-tuning a reader on the golden books (LoRA on MLX,
-      tuning pages only, validation kept clean) is worth an afternoon (agent, ~10 min,
-      no models)
+      words left (agent, ~10 min, no models). The rule, agreed with the user 2026-10-13:
+      if about half or more were never doubted, a LoRA fine-tune of glm-ocr on the tuning
+      pages (MLX, validation kept clean) is the next step, an afternoon plus a cold bench
+      overnight; if the share is small, the gain is in the questions and in more readers
+      that fail differently, and fine-tuning is dropped here with the number.
+      Reinforcement learning is out either way (decisions.md 2026-10-13)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
 - [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
