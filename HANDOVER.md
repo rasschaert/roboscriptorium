@@ -4,7 +4,25 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Nothing running. Last warm `bench tuning`: 2026-10-13 17:25, NO CHANGE (0.33 → 0.32), three pairs retired
+## Running: `bench validation` (screen `robo-bench-validation`, started 2026-10-13 ~17:35, ~30 min)
+
+It finishes The Stranger's Child's re-reading, halted this morning, and makes the
+validation books warm for the line-role trainer. Its log is `work/runs/bench-validation.log`.
+Compare against `work/bench/validation-20261013T082508-d4c197e.json`, then record it in
+docs/decisions.md and commit docs/run-times.md.
+
+Last warm `bench tuning`: 2026-10-13 17:25, NO CHANGE (0.33 → 0.32), three pairs retired.
+De tuin van de avondnevel got significantly worse under the retrained arbiter (0.38 → 0.43;
+questions 1.05 → 1.37 a page); worth a look once Stella's trust data is rebuilt.
+
+**Asked of the user, unanswered:** (1) delete the three retired books' files from `work/`
+(`11-22-63--ia-scan`, `fka-usa--ia-scan`, `koning-wilders--ia-scan`, and their
+`work/golden/` folders, ~87 MB, backup only)? (2) retire Afscheid van verspilde tijd too?
+11.2% of its body lines are unplaced (threshold 5%) and it has the highest after-review
+score (0.61); proposed, as the retiring rule asks.
+
+**Line roles:** `work/probes/sorter/` was lost with `work/`, so `train_sorter.py` rebuilds
+its lines from warm builds (ROBO_SORTER=0 is the default) once the validation bench is done.
 
 After the codebase review (2026-10-13): the user put its fixes first and said building
 Ex-minnaar or Stella has no urgency. Done and pushed: eight bugs fixed with tests
@@ -14,8 +32,7 @@ first run found straight quotes kept from the layer in curly books, now curled (
 the rest of the checklist's "From the codebase review" section (the cold A/A rerun goes
 overnight), then what is below.
 
-`bench validation` is still unfinished: halted 2026-10-13 ~11:35 (battery) on The
-Stranger's Child's re-reading under the scan-measured ellipsis (~30 min; saved in part):
+If the validation bench above was cut off, restart it with:
 
 ```sh
 experiments/detached.sh bench-validation experiments/timed.sh "bench validation, ellipsis measured on the scan, after a halt" 916 work/runs/bench-validation.log uv run roboscriptorium bench validation
