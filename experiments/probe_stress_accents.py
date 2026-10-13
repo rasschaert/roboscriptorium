@@ -10,7 +10,7 @@ import unicodedata
 from collections import Counter
 
 from roboscriptorium import bench
-from roboscriptorium.cli import _questions_and_errors
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 
 
@@ -22,7 +22,7 @@ specs = [s for s in bench.SETS["tuning"] if not sys.argv[1:] or s.split(":")[0] 
 for spec in specs:
     name = spec.split(":")[0]
     settings = bench.unseen(Settings.from_env(), name)
-    _, _, _, _, errors, _, _ = _questions_and_errors(f"work/{spec}", settings)
+    _, _, _, _, errors, _, _ = scoring.build(f"work/{spec}", settings)
     sides: Counter = Counter()
     shown = []
     for e in errors:

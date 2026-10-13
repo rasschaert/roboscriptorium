@@ -107,13 +107,12 @@ def test_a_golden_books_places_join_the_review_cropped_from_the_layer(tmp_path, 
     seen = {}
     monkeypatch.setattr(cli, "_not_the_test_set", lambda *a: None)
     monkeypatch.setattr(cli.Book, "load", lambda d: book)
-    monkeypatch.setattr(cli.Golden, "load", lambda g: SimpleNamespace(text_dir=tmp_path))
-    monkeypatch.setattr(cli, "load_chapters", lambda d: [])
+    monkeypatch.setattr(cli.scoring, "reference", lambda b, chapters: ([], ([], [])))
     monkeypatch.setattr(cli.pipeline, "run", lambda b, pages=None: stages)
     monkeypatch.setattr(cli, "keep_dated", lambda *a: None)
-    monkeypatch.setattr(cli.layout, "available", lambda: False)
-    monkeypatch.setattr(cli, "_scored", lambda b, s: "doc")
-    monkeypatch.setattr(cli, "_verdicts", lambda b: Verdicts(tmp_path / "v.jsonl"))
+    monkeypatch.setattr(cli.scoring.layout, "available", lambda: False)
+    monkeypatch.setattr(cli.scoring, "scored", lambda b, s: "doc")
+    monkeypatch.setattr(cli.scoring, "verdicts", lambda b: Verdicts(tmp_path / "v.jsonl"))
     monkeypatch.setattr(cli.initials, "vocabulary", lambda *a: set())
 
     def find(doc, reference, pages, language, around=([], [])):

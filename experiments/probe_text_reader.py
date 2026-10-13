@@ -21,7 +21,7 @@ import httpx
 import pymupdf
 
 from roboscriptorium import ocrcheck
-from roboscriptorium.cli import _questions_and_errors
+from roboscriptorium.golden import scoring
 from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
 from roboscriptorium.golden.reference import unmarked
@@ -49,7 +49,7 @@ are no flaws, answer: none
 
 {text}"""
 
-name, book, stages, reference, errors, found, applied = _questions_and_errors(f"work/{spec}")
+name, book, stages, reference, errors, found, applied = scoring.build(f"work/{spec}")
 blocks = [b for b in stages.doc.blocks if isinstance(b, Paragraph)]
 paragraphs = [unmarked(b.text) for b in blocks]
 settings = Settings.from_env()

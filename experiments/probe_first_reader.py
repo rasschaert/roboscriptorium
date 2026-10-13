@@ -16,7 +16,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import disagreements, ocr
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.evaluate import normalise
 from roboscriptorium.golden import signals
 from roboscriptorium.golden.align import align
@@ -30,7 +30,7 @@ copy = Book.load(Path("work/image-only") / original.root.name)
 first, last = map(int, sys.argv[2].split("-"))
 c0, c1 = map(int, sys.argv[3].split("-"))
 reference = load_chapters(Golden.load(original.golden).text_dir)[c0 - 1 : c1]
-reference, applied = disagreements.patch(reference, _verdicts(original))
+reference, applied = disagreements.patch(reference, scoring.verdicts(original))
 lang = ocr.language(original.language)
 
 layers = {}

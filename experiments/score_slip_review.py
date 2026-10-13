@@ -16,7 +16,7 @@ from ocr_trust_data import fold
 
 from roboscriptorium import layout, missing
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range, _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import place
 from roboscriptorium.disagreements import patch
@@ -32,7 +32,7 @@ def main() -> None:
     book_dir, golden_dir, pages, chapters = sys.argv[1:5]
     port = sys.argv[5] if len(sys.argv) > 5 else "8766"
     book = Book.load(Path(book_dir))
-    first, last = _range(pages)
+    first, last = scoring.page_range(pages)
     layer = cached_text_layer(book.source, book.stages / "textlayer.json")
     body = [p for p in layer if first <= p.number <= last]
     regions = layout.detect(book.source, [p.number for p in body], book.stages / "layout.json")
@@ -40,9 +40,9 @@ def main() -> None:
     s = Settings.from_env()
     read = missing.read(book.source, found, s.ocr_model, s.ollama_url, book.stages / "missing-lines.json")
     body = missing.add(body, found, read)
-    a, b = _range(chapters)
+    a, b = scoring.page_range(chapters)
     reference = load_chapters(Golden.load(book.golden).text_dir)[a - 1 : b]
-    reference, _ = patch(reference, _verdicts(Book.load(Path(golden_dir))))
+    reference, _ = patch(reference, scoring.verdicts(Book.load(Path(golden_dir))))
     truth = align(body, reference)
     lines = {p.number: p.lines for p in body}
 

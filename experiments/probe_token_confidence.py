@@ -22,7 +22,7 @@ import pymupdf
 
 from roboscriptorium import disagreements, flags, layout, ocrcheck, pipeline, quality
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 from roboscriptorium.files import write_atomic
 from roboscriptorium.golden.manifest import Golden
@@ -99,7 +99,7 @@ def word_minima(tokens: list[dict]) -> list[tuple[str, float, list]]:
 
 
 reference = load_chapters(Golden.load(book.golden).text_dir)[chapters[0] - 1 : chapters[1]]
-reference, applied = disagreements.patch(reference, _verdicts(book))
+reference, applied = disagreements.patch(reference, scoring.verdicts(book))
 errors = disagreements.find(stages.doc, reference, stages.corrected)
 regions = layout.detect(book.source, [p.number for p in pages], book.stages / "layout.json")
 asked = flags.find(pages, stages.model_roles, regions, ocrcheck.doubts(stages.suspects))

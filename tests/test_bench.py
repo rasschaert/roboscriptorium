@@ -8,6 +8,7 @@ import typer
 from typer.testing import CliRunner
 
 from roboscriptorium import bench, cli, evaluate, quality
+from roboscriptorium.golden import scoring
 from roboscriptorium.golden.reference import Chapter
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import Line, PageText
@@ -218,18 +219,19 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
             pages=[p], corrected=[p], model_roles=roles, suspects=[], ocr_decider="fixed rule"
         )
         name = spec.split(":")[0].split("/")[-1]
-        return name, f"book {name}", stages, reference, [], [], 0
+        return scoring.Scored(name, f"book {name}", stages, reference, [], [], 0)
 
     monkeypatch.setitem(bench.SETS, "probe", ["a", "b", "garbled"])
-    monkeypatch.setattr(cli, "_questions_and_errors", build)
-    monkeypatch.setattr(cli, "_scored", lambda book, stages: None)
+    monkeypatch.setattr(scoring, "build", build)
+    monkeypatch.setattr(scoring, "scored", lambda book, stages: None)
     monkeypatch.setattr(
         evaluate, "score", lambda doc, ref: evaluate.Score(0, 0, 1, 1, 7, 7, 0, 0, 0)
     )
     monkeypatch.setattr(cli, "_model_versions", lambda settings: {})
     monkeypatch.setattr(cli.disagreements, "break_errors", lambda doc, ref, pages: [])
-    monkeypatch.setattr(cli, "_read_via", lambda book, pages: {book: 1.0})
-    monkeypatch.setattr(cli, "_italics_unlike", lambda book: "")
+    monkeypatch.setattr(cli.disagreements, "glyph_kinds", lambda ref: set())
+    monkeypatch.setattr(scoring, "read_via", lambda book, pages: {book: 1.0})
+    monkeypatch.setattr(scoring, "italics_unlike", lambda book: "")
     monkeypatch.setattr(bench, "OUT", tmp_path)
     monkeypatch.setattr(bench.save, "__defaults__", (tmp_path,))
     result = CliRunner().invoke(cli.app, ["bench", "probe"])

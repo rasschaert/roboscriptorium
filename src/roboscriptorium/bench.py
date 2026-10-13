@@ -12,12 +12,14 @@ the noise worth measuring.
 import json
 import random
 from collections import Counter
-from dataclasses import dataclass, replace
+from collections.abc import Callable
+from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
-from roboscriptorium import quality, sorter, trust
+from roboscriptorium import disagreements, evaluate, quality, sorter, trust
 from roboscriptorium.config import Settings
+from roboscriptorium.golden import scoring, signals
 
 OUT = Path("work/bench")
 BOOTSTRAP_SAMPLES = 2000
@@ -144,6 +146,84 @@ def unseen(settings: Settings, book: str) -> Settings:
             "(experiments/train_ocr_trust.py --save writes it)"
         )
     return settings
+
+
+def run(
+    set_name: str,
+    settings: Settings,
+    commit: str,
+    model_versions: dict[str, str],
+    on_book: Callable[[str], None] = lambda spec: None,
+) -> dict:
+    """Build and score every slice of a set, each with the learned models trained
+    without it (`unseen`): the record `save` writes and `verdict` compares. A book's
+    questions are ranked by how often each kind caught an error in the set's other
+    books."""
+    built = []
+    for spec in SETS[set_name]:
+        on_book(spec)
+        own = unseen(settings, spec.split(":")[0])
+        run = scoring.build(f"work/{spec}", own)
+        built.append((spec, run, own))
+    books = {}
+    for spec, run, own in built:
+        rates: dict[str, tuple[int, int]] = {}
+        for _, other, _ in built:
+            if other.name != run.name:
+                for r, (h, n) in quality.hit_rates(other.found, other.errors).items():
+                    h0, n0 = rates.get(r, (0, 0))
+                    rates[r] = (h0 + h, n0 + n)
+        books[run.name] = _book_record(spec, run, own, rates)
+    return {
+        "set": set_name,
+        "at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "commit": commit,
+        "settings": {k: v for k, v in asdict(settings).items() if not k.endswith("_url")},
+        "model_versions": model_versions,
+        "books": books,
+    }
+
+
+def _book_record(
+    spec: str, run: scoring.Scored, own: Settings, rates: dict[str, tuple[int, int]]
+) -> dict:
+    book, stages, reference, errors, found = (
+        run.book,
+        run.stages,
+        run.reference,
+        run.errors,
+        run.found,
+    )
+    numbers = [p.number for p in stages.pages if p.lines]
+    body = (
+        None
+        if stages.model_roles is None
+        else {r for r, role in stages.model_roles.items() if role.role == "body"}
+    )
+    scored = scoring.scored(book, stages)
+    score = evaluate.score(scored, reference)
+    kinds = disagreements.glyph_kinds(reference)
+    return {
+        "spec": spec,
+        "pair": asdict(signals.measure(stages.pages, reference, body)),
+        "ocr_decider": stages.ocr_decider,
+        "ocr_trust_model": own.ocr_trust_model,
+        "ocr_suspects": dict(Counter(s.choice for s in stages.suspects)),
+        "read_via": scoring.read_via(book, {p.number for p in stages.pages}),
+        "italics_scored": not scoring.italics_unlike(book),
+        "verdicts_applied": run.applied,
+        "score": {k: v for k, v in asdict(score).items() if k != "confusions"},
+        "quality": {k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()},
+        "unasked_by_kind": quality.unasked_by_category(errors, found),
+        "typography_kinds": sorted(kinds),
+        "pages": page_counts(
+            numbers,
+            errors,
+            found,
+            breaks=disagreements.break_errors(scored, reference, stages.pages),
+            glyphs=disagreements.glyph_errors(scored, reference, stages.pages, kinds),
+        ),
+    }
 
 
 def page_counts(

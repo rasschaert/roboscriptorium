@@ -12,11 +12,8 @@ from roboscriptorium import (
     bench,
     disagreements,
     evaluate,
-    flags,
     initials,
-    layout,
     ocr,
-    ocrcheck,
     pipeline,
     quality,
     review,
@@ -26,13 +23,11 @@ from roboscriptorium.clients import decide, llama
 from roboscriptorium.clients.ollama import OllamaClient
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
-from roboscriptorium.disagreements import Verdicts
 from roboscriptorium.epub import keep_dated
 from roboscriptorium.golden import epub as publisher_epub
-from roboscriptorium.golden import gutenberg, se, signals
-from roboscriptorium.golden import notes as golden_notes
+from roboscriptorium.golden import gutenberg, scoring, se, signals
 from roboscriptorium.golden.manifest import Golden, PublisherEpub, fetch, sha256
-from roboscriptorium.golden.reference import Chapter, load_chapters
+from roboscriptorium.golden.reference import Chapter
 from roboscriptorium.ir import Document
 
 app = typer.Typer(no_args_is_help=True, help="Turn books that aren't EPUBs into EPUBs.")
@@ -170,19 +165,11 @@ def golden_fetch(name: str, scan: str | None = None) -> None:
 
 
 def _range(value: str | None) -> tuple[int, int] | None:
-    """A range "7-45" or a single page "7"."""
-    if value is None:
-        return None
-    first, dash, last = value.replace("–", "-").partition("-")
+    """A range "7-45" or a single page "7", as an option gives it."""
     try:
-        span = int(first), int(last if dash else first)
-    except ValueError:
-        raise typer.BadParameter(f"{value!r}: give a range like 7-45, or one number") from None
-    if span[0] < 1:
-        raise typer.BadParameter(f"{value!r}: pages and chapters count from 1")
-    if span[0] > span[1]:
-        raise typer.BadParameter(f"{value!r}: the range runs backwards")
-    return span
+        return scoring.page_range(value)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from None
 
 
 def _score_test() -> bool:
@@ -201,47 +188,13 @@ def _not_the_test_set(book_dir: Path, score_test: bool) -> None:
 
 def _build_golden(
     book_dir: Path, pages: str | None, chapters: str | None, no_models: bool, check_ocr: bool = True
-) -> tuple[Book, pipeline.Stages, Document, list[Chapter]]:
+) -> tuple[Book, pipeline.Stages, Document, list[Chapter], disagreements.Around]:
     book = Book.load(book_dir)
     if book.golden is None:
         raise typer.BadParameter(f"{book_dir}/book.toml names no golden book")
     stages = pipeline.run(book, pages=_range(pages), use_models=not no_models, check_ocr=check_ocr)
-    doc = _scored(book, stages)
-    reference, around = disagreements.slice_reference(
-        load_chapters(Golden.load(book.golden).text_dir), _range(chapters)
-    )
-    return book, stages, doc, reference, around
-
-
-def _italics_unlike(book: Book) -> str:
-    """Why the book's reference sets italics unlike its print, or "" when it doesn't."""
-    return getattr(Golden.load(book.golden).reference, "italics_unlike_print", "")
-
-
-def _read_via(book: Book, pages: set[int]) -> dict[str, float]:
-    """Of the read model's cached readings of these pages, the share each hosted build
-    read in its place (`ROBO_READ_VIA`): a bench run says which reader it measured."""
-    path = book.stages / "third-reading.json"
-    if not path.exists():
-        return {}
-    raw = json.loads(path.read_text())
-    keys = {k for k in raw.get("lines", {}) if int(k.split(":")[0]) in pages}
-    return {
-        via: round(len(keys & set(read)) / len(keys), 3)
-        for via, read in raw.get("via", {}).items()
-        if keys
-    }
-
-
-def _scored(book: Book, stages: pipeline.Stages) -> Document:
-    """The document as scored: without the scan's footnotes where the reference sets them apart."""
-    found = golden_notes.load(Golden.load(book.golden).notes_path)
-    return golden_notes.scored(stages.doc, stages.pages, found)
-
-
-def _verdicts(book: Book) -> Verdicts:
-    scan_id = book.root.name.split("--", 1)[-1]
-    return Verdicts(Golden.load(book.golden).verdicts_dir / f"{scan_id}.jsonl")
+    reference, around = scoring.reference(book, _range(chapters))
+    return book, stages, scoring.scored(book, stages), reference, around
 
 
 @app.command("review")
@@ -259,33 +212,18 @@ def review_regions(
     _not_the_test_set(book_dir, score_test)
     book = Book.load(book_dir)
     if book.golden is not None:
-        reference, around = disagreements.slice_reference(
-            load_chapters(Golden.load(book.golden).text_dir), _range(chapters)
-        )
+        reference, around = scoring.reference(book, _range(chapters))
 
     def rebuild():
         stages = pipeline.run(book, pages=_range(pages))
         if pages is None:
             keep_dated(book.epub_path, book.epubs)
-        regions = None
-        if layout.available():
-            numbers = [p.number for p in stages.pages]
-            regions = layout.detect(book.source, numbers, book.stages / "layout.json")
-        doubts = ocrcheck.doubts(stages.suspects)
-        found = flags.find(
-            stages.pages,
-            stages.model_roles,
-            regions,
-            doubts,
-            stages.quote_lines,
-            stages.quote_readings,
-            stages.faint_pages,
-        )
+        found = scoring.questions(book, stages)
         places = []
         if book.golden is not None:
             # The paragraphs' line references point into the pages before answers (the
             # text layer with missing lines added), as `Line.source` does on the corrected copy.
-            doc = _scored(book, stages)
+            doc = scoring.scored(book, stages)
             differ = disagreements.find(doc, reference, stages.pages, book.language, around)
             places = [d for d in differ if not d.auto]
         return stages.pages, found, stages.corrections_applied, places
@@ -296,7 +234,7 @@ def review_regions(
     typer.echo(f"{len(regions)} regions to look at ({done} already answered, {applied} applied)")
     golden = None
     if book.golden is not None:
-        golden = review.GoldenQuestions(places, _verdicts(book))
+        golden = review.GoldenQuestions(places, scoring.verdicts(book))
         done = sum(d.key in golden.verdicts.by_key for d in golden.items.values())
         typer.echo(
             f"{len(golden.items)} places where the text and the reference differ "
@@ -320,36 +258,6 @@ def review_regions(
     review.serve(page, port)
 
 
-def _questions_and_errors(spec: str, settings: Settings | None = None):
-    """For a golden spec (book dir[:pages[:chapters]]): its name, the book, the build, the
-    reference with verdicts applied, the remaining differences from it, the review's
-    questions, and the number of verdicts applied."""
-    book_dir, pages, chapters = (spec.split(":") + [None, None])[:3]
-    book = Book.load(Path(book_dir))
-    stages = pipeline.run(book, pages=_range(pages or None), settings=settings)
-    regions = None
-    if layout.available():
-        numbers = [p.number for p in stages.pages]
-        regions = layout.detect(book.source, numbers, book.stages / "layout.json")
-    found = flags.find(
-        stages.pages,
-        stages.model_roles,
-        regions,
-        ocrcheck.doubts(stages.suspects),
-        stages.quote_lines,
-        stages.quote_readings,
-        stages.faint_pages,
-    )
-    reference, around = disagreements.slice_reference(
-        load_chapters(Golden.load(book.golden).text_dir), _range(chapters or None)
-    )
-    reference, applied = disagreements.patch(reference, _verdicts(book), around)
-    errors = disagreements.find(
-        _scored(book, stages), reference, stages.pages, book.language, around
-    )
-    return Path(book_dir).name, book, stages, reference, errors, found, applied
-
-
 @app.command("quality")
 def quality_report(specs: list[str], score_test: bool = _score_test()) -> None:
     """Wrong words a reviewer is left with per page, at several question budgets.
@@ -361,10 +269,14 @@ def quality_report(specs: list[str], score_test: bool = _score_test()) -> None:
     error in the other books given.
     """
     for spec in specs:
-        _not_the_test_set(Path(spec.split(":")[0]), score_test)
+        try:
+            book_dir, _, _ = scoring.parse_spec(spec)
+        except ValueError as exc:
+            raise typer.BadParameter(str(exc)) from None
+        _not_the_test_set(book_dir, score_test)
     books = []
     for spec in specs:
-        name, _, stages, _, errors, found, applied = _questions_and_errors(spec)
+        name, _, stages, _, errors, found, applied = scoring.build(spec)
         numbers = [p.number for p in stages.pages if p.lines]
         typer.echo(
             f"{name}: {len(numbers)} pages, {len(errors)} differing stretches, "
@@ -416,64 +328,14 @@ def run_bench(
     if set_name == "test" and not score_test:
         raise typer.BadParameter("the test set is scored once, at the end: pass --score-test")
     settings = Settings.from_env()
-    commit = _commit()
-    built = []
-    for spec in bench.SETS[set_name]:
-        typer.echo(f"== {spec}")
-        own = bench.unseen(settings, spec.split(":")[0])
-        name, book, stages, reference, errors, found, applied = _questions_and_errors(
-            f"work/{spec}", own
-        )
-        score = evaluate.score(_scored(book, stages), reference)
-        built.append((spec, name, book, stages, reference, errors, found, applied, score, own))
-    books, pairs = {}, {}
-    for spec, name, book, stages, reference, errors, found, applied, score, own in built:
-        rates: dict[str, tuple[int, int]] = {}
-        for other in built:
-            if other[1] != name:
-                for r, (h, n) in quality.hit_rates(other[6], other[5]).items():
-                    h0, n0 = rates.get(r, (0, 0))
-                    rates[r] = (h0 + h, n0 + n)
-        numbers = [p.number for p in stages.pages if p.lines]
-        body = (
-            None
-            if stages.model_roles is None
-            else {r for r, role in stages.model_roles.items() if role.role == "body"}
-        )
-        pairs[name] = signals.measure(stages.pages, reference, body)
-        scored = _scored(book, stages)
-        kinds = disagreements.glyph_kinds(reference)
-        books[name] = {
-            "spec": spec,
-            "pair": asdict(pairs[name]),
-            "ocr_decider": stages.ocr_decider,
-            "ocr_trust_model": own.ocr_trust_model,
-            "ocr_suspects": dict(Counter(s.choice for s in stages.suspects)),
-            "read_via": _read_via(book, {p.number for p in stages.pages}),
-            "italics_scored": not _italics_unlike(book),
-            "verdicts_applied": applied,
-            "score": {k: v for k, v in asdict(score).items() if k != "confusions"},
-            "quality": {
-                k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()
-            },
-            "unasked_by_kind": quality.unasked_by_category(errors, found),
-            "typography_kinds": sorted(kinds),
-            "pages": bench.page_counts(
-                numbers,
-                errors,
-                found,
-                breaks=disagreements.break_errors(scored, reference, stages.pages),
-                glyphs=disagreements.glyph_errors(scored, reference, stages.pages, kinds),
-            ),
-        }
-    record = {
-        "set": set_name,
-        "at": datetime.now(UTC).isoformat(timespec="seconds"),
-        "commit": commit,
-        "settings": {k: v for k, v in asdict(settings).items() if not k.endswith("_url")},
-        "model_versions": _model_versions(settings),
-        "books": books,
-    }
+    record = bench.run(
+        set_name,
+        settings,
+        _commit(),
+        _model_versions(settings),
+        on_book=lambda spec: typer.echo(f"== {spec}"),
+    )
+    books = record["books"]
     path = bench.save(record)
     typer.echo(f"\nsaved {path}")
     for name, b in books.items():
@@ -491,6 +353,7 @@ def run_bench(
             f" (+{b['score']['headings_spurious']})"
             f"  scenes {bench.scenes(b['score'])}"
         )
+    pairs = {name: signals.Signals(**b["pair"]) for name, b in books.items()}
     for name, why in signals.suspects(pairs).items():
         typer.echo(f"  suspect pair, consider retiring {name}: {'; '.join(why)}")
     old_path = Path(against) if against else bench.previous(set_name, path)
@@ -585,7 +448,7 @@ def _evaluate_book(
         book_dir, pages, chapters, no_models, check_ocr
     )
     suspects = Counter(s.choice for s in stages.suspects)
-    verdicts = _verdicts(book)
+    verdicts = scoring.verdicts(book)
     patched, applied = disagreements.patch(reference, verdicts, around)
     result = evaluate.score(doc, patched)
 
@@ -599,7 +462,7 @@ def _evaluate_book(
         f"recall {result.paragraph_recall:.3f}; "
         f"words: {result.output_words} out / {result.reference_words} reference"
     )
-    if unlike := _italics_unlike(book):
+    if unlike := scoring.italics_unlike(book):
         typer.echo(
             f"  italic words: not scored, the reference's italics aren't the print's ({unlike})"
         )

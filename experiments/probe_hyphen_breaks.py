@@ -25,7 +25,7 @@ from pathlib import Path
 
 from roboscriptorium import pdf, reflow
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.disagreements import patch
 from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
@@ -91,7 +91,7 @@ for spec in sys.argv[1:]:
     if chapters_spec:
         a, b = map(int, chapters_spec.split("-"))
         reference = reference[a - 1 : b]
-    reference, _ = patch(reference, _verdicts(book))
+    reference, _ = patch(reference, scoring.verdicts(book))
     vocab = Counter(
         core(w) for ch in reference for par in ch.paragraphs for w in unmarked(par).split()
     )

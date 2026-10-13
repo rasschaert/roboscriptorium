@@ -28,10 +28,8 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
 - [ ] Book-wide statistics (repeats for line roles, type, line height for missing lines)
       measured on the whole body, not the slice, as the dash and ellipsis already are;
       roles' caches change, so a cold-ish bench (agent, ~1 h plus an overnight run)
-- [ ] The measurement code out of `cli.py` into a public API (`bench`, `golden`), which
-      experiments and tests use instead of private helpers; the trust and sorter trainers
-      into `src/` with a test, their book list derived from `bench.SETS` (agent, ~half a
-      day)
+- [ ] The trust and sorter trainers into `src/` with a test, their book list derived
+      from `bench.SETS` (agent, ~2 h)
 - [ ] One cache helper (identity, version, atomic write) for the nine copies; the judges'
       crop settings and the second vision judge's readout in their cache keys (agent,
       ~2 h)
@@ -502,6 +500,9 @@ many the layer had wrong.
       morning's tuning run stays better, 0.57 → 0.55
 - [x] 2026-10-13 The bench counts typography where the words agree, a measure of its own:
       0.0–2.0 words a page, Dolittle 8.7, nearly all straight quotes kept from the layer
+- [x] 2026-10-13 The measurement code out of `cli.py`: `golden.scoring` (a golden slice
+      built and scored) and `bench.run`; 25 experiments and the tests use them, not the
+      CLI's private helpers
 - [x] 2026-10-13 Straight quotes and apostrophes left from the layer curled
       (`quotes.curl`): typography 0.00–0.09 a page on every tuning book, the verdict
       unchanged

@@ -29,7 +29,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 
 from roboscriptorium import trust
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range
+from roboscriptorium.golden import scoring
 
 HELD_OUT = {"lady-into-fox", "grand-hotel-europa", "de-tuin-van-de-avondnevel", "de-eerlijke-vinder", "youre-never-weird-on-the-internet"}
 READINGS = {"glm", "tess", "qwen"}
@@ -68,7 +68,7 @@ def trainable(name: str) -> bool:
 def pages_of(name: str) -> int:
     spec = SPECS[name]
     ranged = spec and spec != "answers"
-    first, last = _range(spec.split(":")[0]) if ranged else Book.load(Path("work") / name).body_pages
+    first, last = scoring.page_range(spec.split(":")[0]) if ranged else Book.load(Path("work") / name).body_pages
     return last - first + 1
 
 

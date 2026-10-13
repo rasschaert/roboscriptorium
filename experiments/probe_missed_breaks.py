@@ -15,7 +15,7 @@ import sys
 from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import bench, evaluate
-from roboscriptorium.cli import _questions_and_errors, _scored
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 
 BOOKS = ["reis-om-mijn-schedel", "de-eerlijke-vinder", "de-cipier", "de-tuin-van-de-avondnevel",
@@ -25,10 +25,10 @@ specs = [s for s in bench.SETS["tuning"] + bench.SETS["validation"]
          if s.split("--")[0] in names]  # fmt: skip
 for spec in specs:
     name = spec.split(":")[0]
-    _, book, stages, reference, _, _, _ = _questions_and_errors(
+    _, book, stages, reference, _, _, _ = scoring.build(
         f"work/{spec}", bench.unseen(Settings.from_env(), name)
     )
-    doc = _scored(book, stages)
+    doc = scoring.scored(book, stages)
     paras = doc.paragraphs
     out_words, starts, owner = [], [], []
     for k, p in enumerate(paras):

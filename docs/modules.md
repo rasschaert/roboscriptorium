@@ -74,7 +74,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   stage's own cache named under its module.
 - `docs/pipeline.d2`: the README's diagram of the stages and the model behind
   each; kept current under the standing rules.
-- `experiments/`: throwaway probes for comparing models (line roles, page types).
+- `experiments/`: probes for comparing models and settings, the trainers of the trust
+  and line-role models (`train_ocr_trust.py`, `train_sorter.py`), the bench's tools
+  (`golden_overview.py`, `chapter_pages.py`) and the run helpers (`detached.sh`,
+  `timed.sh`). They use `golden.scoring`, never the CLI's private helpers.
 - `experiments/tryout.py`: a candidate model tried for a role (reader, judge) on a frozen,
   versioned set (`tryouts/<role>-v<N>.json` in git, crops in `work/tryout/`), against
   the model playing the role; results in `tryouts/results.jsonl`. The screen before a
@@ -88,7 +91,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   lines against the reference, printed by `bench`), `notes.py` (a reference's footnotes, `notes.txt` from the manifest's
   `note_classes`: the scan's footnote lines are left out of every score),
   `align.py` (labels a golden scan's text-layer lines with the reference words they
-  hold, and their role: heading, body or furniture).
+  hold, and their role: heading, body or furniture), `scoring.py` (a golden spec
+  `work/<book>[:pages[:chapters]]` built and scored: `build` gives the build, the
+  reference with verdicts applied, the remaining differences and the review's
+  questions; `scored`, `verdicts`, `reference`, `questions`, `page_range`; what `eval`,
+  `quality`, `review`, `bench` and the experiments share).
 - `evaluate.py`: CER, WER, paragraph F1 and scene breaks (found where the reference has
   one, and set elsewhere) against a golden reference. Typography
   the EPUB may set differently (quote and dash glyphs, an ellipsis glyph or spaced

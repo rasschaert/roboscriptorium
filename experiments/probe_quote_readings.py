@@ -14,7 +14,7 @@ from pathlib import Path
 
 from roboscriptorium import disagreements, ocrcheck, pipeline
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range, _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
@@ -24,12 +24,12 @@ FOLD = str.maketrans({"–": "-", "—": "-", "¬": "-"})
 args = [a for a in sys.argv if not a.startswith("--")]
 book = Book.load(Path(args[1]))
 pages_arg = args[2] if len(args) > 2 else None
-chapters = _range(args[3]) if len(args) > 3 else None
-stages = pipeline.run(book, pages=_range(pages_arg))
+chapters = scoring.page_range(args[3]) if len(args) > 3 else None
+stages = pipeline.run(book, pages=scoring.page_range(pages_arg))
 reference = load_chapters(Golden.load(book.golden).text_dir)
 if chapters:
     reference = reference[chapters[0] - 1 : chapters[1]]
-reference, _ = disagreements.patch(reference, _verdicts(book))
+reference, _ = disagreements.patch(reference, scoring.verdicts(book))
 truth = align(stages.pages, reference)
 lines = sorted(
     (r for r in stages.quote_lines if (t := truth.get(r)) and t.role == "body" and t.truth),

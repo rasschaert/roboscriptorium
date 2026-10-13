@@ -21,7 +21,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 
 from roboscriptorium import bench, trust
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 
 HELD_OUT = {spec.split("--")[0] for spec in bench.SETS["validation"] + bench.SETS["test"]}
@@ -33,7 +33,7 @@ JUDGES = {_SETTINGS.judge_model, _SETTINGS.check_model, _SETTINGS.alarm_model, "
 def first_page(name: str) -> tuple[int, int]:
     spec = SPECS[name]
     if spec and spec != "answers":
-        return _range(spec.split(":")[0])
+        return scoring.page_range(spec.split(":")[0])
     return Book.load(Path("work") / name).body_pages
 
 

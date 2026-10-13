@@ -15,7 +15,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 from roboscriptorium import bench, quality
-from roboscriptorium.cli import _questions_and_errors
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 
 OUT = Path("work/probes/unasked")
@@ -26,7 +26,7 @@ sizes = Counter()
 for spec in specs:
     name = spec.split(":")[0]
     settings = bench.unseen(Settings.from_env(), name)
-    _, book, stages, reference, errors, found, _ = _questions_and_errors(f"work/{spec}", settings)
+    _, book, stages, reference, errors, found, _ = scoring.build(f"work/{spec}", settings)
     suspect_lines = {(s.page, s.line) for s in stages.suspects}
     rows = []
     for e in errors:

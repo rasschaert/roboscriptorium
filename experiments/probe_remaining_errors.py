@@ -17,13 +17,13 @@ from pathlib import Path
 
 from roboscriptorium import disagreements, flags, layout, ocrcheck, pipeline, quality
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range, _scored, _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.evaluate import normalise
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 
 book = Book.load(Path(sys.argv[1]))
-stages = pipeline.run(book, pages=_range(sys.argv[2]))
+stages = pipeline.run(book, pages=scoring.page_range(sys.argv[2]))
 reading = json.loads(Path(sys.argv[4]).read_text())
 regions = None
 if layout.available():
@@ -34,10 +34,10 @@ found = flags.find(
     stages.pages, stages.model_roles, regions, ocrcheck.doubts(stages.suspects),
     stages.quote_lines, stages.quote_readings,
 )  # fmt: skip
-span = _range(sys.argv[3])
+span = scoring.page_range(sys.argv[3])
 reference = load_chapters(Golden.load(book.golden).text_dir)[span[0] - 1 : span[1]]
-reference, _ = disagreements.patch(reference, _verdicts(book))
-errors = disagreements.find(_scored(book, stages), reference, stages.corrected)
+reference, _ = disagreements.patch(reference, scoring.verdicts(book))
+errors = disagreements.find(scoring.scored(book, stages), reference, stages.corrected)
 
 
 def squash(text: str) -> str:

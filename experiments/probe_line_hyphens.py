@@ -11,7 +11,7 @@ from pathlib import Path
 
 from roboscriptorium import bench, ocr, reflow
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range
+from roboscriptorium.golden import scoring
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.lexicon import Lexicon
@@ -60,7 +60,7 @@ score = {}
 for spec in bench.SETS["tuning"]:
     name, pages, chapters = (spec.split(":") + ["", ""])[:3]
     book = Book.load(Path("work") / name)
-    first, last = _range(pages or None) or book.body_pages
+    first, last = scoring.page_range(pages or None) or book.body_pages
     lang = ocr.language(book.language)
     layer = cached_text_layer(book.source, book.stages / "textlayer.json", lang)
     layer = [p for p in layer if first <= p.number <= last]

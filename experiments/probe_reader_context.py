@@ -12,6 +12,7 @@ import sys
 
 from roboscriptorium import ocrcheck
 from roboscriptorium.cli import app
+from roboscriptorium.golden import scoring
 
 real_ask = ocrcheck._ask
 rows = []

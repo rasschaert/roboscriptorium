@@ -12,7 +12,7 @@ from pathlib import Path
 from roboscriptorium import bench, disagreements, ocr, pipeline
 from roboscriptorium import page as P
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range, _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 from roboscriptorium.flags import treatment
 from roboscriptorium.golden.align import align
@@ -41,11 +41,11 @@ score = {"continues": Counter(), "opens": Counter()}
 for spec in bench.SETS["tuning"]:
     name, pages, chapters = (spec.split(":") + ["", ""])[:3]
     book = Book.load(Path("work") / name)
-    st = pipeline.run(book, pages=_range(pages or None), settings=bench.unseen(Settings.from_env(), name))
+    st = pipeline.run(book, pages=scoring.page_range(pages or None), settings=bench.unseen(Settings.from_env(), name))
     reference = load_chapters(Golden.load(book.golden).text_dir)
-    if span := _range(chapters or None):
+    if span := scoring.page_range(chapters or None):
         reference = reference[span[0] - 1 : span[1]]
-    reference, _ = disagreements.patch(reference, _verdicts(book))
+    reference, _ = disagreements.patch(reference, scoring.verdicts(book))
     labels = align(st.pages, reference)
     known = Lexicon.load(ocr.language(book.language)).knows
     repeats = P.Repeats(st.pages)

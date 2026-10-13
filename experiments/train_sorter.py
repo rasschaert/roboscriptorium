@@ -18,7 +18,7 @@ from pathlib import Path
 
 from roboscriptorium import bench, disagreements, layout, pipeline, sorter, typestyle
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range, _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 from roboscriptorium.files import write_atomic
 from roboscriptorium.flags import treatment
@@ -41,11 +41,11 @@ def lines(spec: str, rebuild: bool) -> list[dict]:
         return json.loads(path.read_text())
     os.environ["ROBO_SORTER"] = "0"
     book = Book.load(Path("work") / name)
-    stages = pipeline.run(book, pages=_range(pages or None), check_ocr=False)
+    stages = pipeline.run(book, pages=scoring.page_range(pages or None), check_ocr=False)
     reference = load_chapters(Golden.load(book.golden).text_dir)
-    if span := _range(chapters or None):
+    if span := scoring.page_range(chapters or None):
         reference = reference[span[0] - 1 : span[1]]
-    reference, _ = disagreements.patch(reference, _verdicts(book))
+    reference, _ = disagreements.patch(reference, scoring.verdicts(book))
     labels = align(stages.pages, reference)
     styles = typestyle.measure(book.source, stages.pages, book.stages / "type.json")
     regions = None

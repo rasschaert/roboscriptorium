@@ -28,7 +28,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import disagreements, ocr, ocrcheck, pipeline
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 from roboscriptorium.evaluate import normalise
 from roboscriptorium.flags import treatment
@@ -44,7 +44,7 @@ settings = Settings.from_env()
 stages = pipeline.run(book, pages=(first, last))
 pages = stages.pages
 reference = load_chapters(Golden.load(book.golden).text_dir)[c0 - 1 : c1]
-reference, applied = disagreements.patch(reference, _verdicts(book))
+reference, applied = disagreements.patch(reference, scoring.verdicts(book))
 labels = align(pages, reference)
 kept = {
     SourceRef(p.number, i)

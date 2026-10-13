@@ -43,7 +43,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import bench, disagreements, ocrcheck, pipeline
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
@@ -94,7 +94,7 @@ def build_reader() -> None:
         reference = load_chapters(Golden.load(book.golden).text_dir)
         if chapters:
             reference = reference[chapters[0] - 1 : chapters[1]]
-        reference, _ = disagreements.patch(reference, _verdicts(book))
+        reference, _ = disagreements.patch(reference, scoring.verdicts(book))
         labels = align(pages, reference)
         by_number = {p.number: p for p in pages}
         body = [

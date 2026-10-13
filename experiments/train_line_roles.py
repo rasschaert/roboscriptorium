@@ -22,7 +22,7 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 
 from roboscriptorium import disagreements, layout, page as P, pipeline, typestyle
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range, _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.flags import treatment
 from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
@@ -143,11 +143,11 @@ def dataset(spec: str, rebuild: bool) -> list[dict]:
     if path.exists() and not rebuild:
         return json.loads(path.read_text())
     book = Book.load(Path(book_dir))
-    stages = pipeline.run(book, pages=_range(pages or None), check_ocr=False)
+    stages = pipeline.run(book, pages=scoring.page_range(pages or None), check_ocr=False)
     reference = load_chapters(Golden.load(book.golden).text_dir)
-    if span := _range(chapters or None):
+    if span := scoring.page_range(chapters or None):
         reference = reference[span[0] - 1 : span[1]]
-    reference, _ = disagreements.patch(reference, _verdicts(book))
+    reference, _ = disagreements.patch(reference, scoring.verdicts(book))
     labels = align(stages.pages, reference)
     styles = typestyle.measure(book.source, stages.pages, book.stages / "type.json")
     numbers = [p.number for p in stages.pages]

@@ -18,7 +18,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import ocrcheck, pipeline
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range, _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.corrections import Corrections, place
 from roboscriptorium.disagreements import patch
 from roboscriptorium.evaluate import normalise
@@ -87,14 +87,14 @@ def build(name: str, spec: str) -> list[dict]:
     book = Book.load(Path("work") / name)
     # The fixed rule's choices are the baseline the trust model is scored against.
     os.environ["ROBO_OCR_TRUST"] = "0"
-    stages = pipeline.run(book, pages=_range(None if spec == "answers" else pages_arg or None))
+    stages = pipeline.run(book, pages=scoring.page_range(None if spec == "answers" else pages_arg or None))
     if spec == "answers":
         return rows_from(stages.suspects, answered(book, stages.suspects))
     golden = Golden.load(book.golden)
     reference = load_chapters(golden.text_dir)
-    if span := _range(chapters or None):
+    if span := scoring.page_range(chapters or None):
         reference = reference[span[0] - 1 : span[1]]
-    reference, _ = patch(reference, _verdicts(book))
+    reference, _ = patch(reference, scoring.verdicts(book))
     truth = align(stages.pages, reference)
     in_notes = golden_notes.note_lines(stages.pages, golden_notes.load(golden.notes_path))
     lines = {

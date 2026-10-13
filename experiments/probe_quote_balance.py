@@ -11,7 +11,7 @@ from pathlib import Path
 
 from roboscriptorium import disagreements, pipeline, quality
 from roboscriptorium.book import Book
-from roboscriptorium.cli import _range, _verdicts
+from roboscriptorium.golden import scoring
 from roboscriptorium.flags import Flag
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
@@ -23,11 +23,11 @@ def main(specs: list[str]) -> None:
     for spec in specs:
         book_dir, pages, chapters = (spec.split(":") + [None, None])[:3]
         book = Book.load(Path(book_dir))
-        stages = pipeline.run(book, pages=_range(pages or None))
+        stages = pipeline.run(book, pages=scoring.page_range(pages or None))
         reference = load_chapters(Golden.load(book.golden).text_dir)
-        if (span := _range(chapters or None)) is not None:
+        if (span := scoring.page_range(chapters or None)) is not None:
             reference = reference[span[0] - 1 : span[1]]
-        reference, _ = disagreements.patch(reference, _verdicts(book))
+        reference, _ = disagreements.patch(reference, scoring.verdicts(book))
         errors = disagreements.find(stages.doc, reference, stages.corrected)
         paragraphs = [b for b in stages.doc.blocks if isinstance(b, Paragraph)]
         places = unbalanced(paragraphs)

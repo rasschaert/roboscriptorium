@@ -14,7 +14,7 @@ from collections import Counter
 from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import bench
-from roboscriptorium.cli import _questions_and_errors, _scored
+from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 from roboscriptorium.disagreements import _word_sources
 from roboscriptorium.evaluate import normalise
@@ -23,10 +23,10 @@ name = sys.argv[1]
 limit = int(sys.argv[2]) if len(sys.argv) > 2 else 40
 spec = next(s for s in bench.SETS["tuning"] if s.startswith(name))
 book_name = spec.split(":")[0]
-_, book, stages, reference, _, _, _ = _questions_and_errors(
+_, book, stages, reference, _, _, _ = scoring.build(
     f"work/{spec}", bench.unseen(Settings.from_env(), book_name)
 )
-doc = _scored(book, stages)
+doc = scoring.scored(book, stages)
 pages = {p.number: p for p in stages.pages}
 out, _, refs = _word_sources(doc, pages)
 starts, k = set(), 0
