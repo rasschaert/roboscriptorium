@@ -4,15 +4,14 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running: `bench tuning` with the line-role trees on (screen `robo-bench-sorter-tuning`, started ~20:25)
+## Nothing running
 
-`ROBO_SORTER=1`, warm; log `work/runs/bench-sorter-tuning.log`. The trees beat the rules
-on role errors (tuning 304 → 179, validation 116 → 65; decisions.md 2026-10-13); watch
-Dolittle's headings, Vuurspel's and Crime's body lines. If tuning is no worse, run
-validation the same way, then the trees as the decision and retire the rules they make
-redundant (checklist).
+Line-role trees, 2026-10-13 evening: the bench with them on was WORSE (0.32 → 0.34). The
+cause was the labeller calling specks body (fixed, 70bc154); on fixed labels the trees beat
+the rules on tuning books (275 → 196) but not on validation (90 → 111; Vuurspel's short
+lines dropped). The trees stay off; `work/models/line-roles*.pkl` are still the old-label
+trees, unused. Next is the checklist's line-role step.
 
-## Before it
 
 `bench validation` finished 2026-10-13 20:02: BETTER 1.10 → 0.59 (decisions.md), mostly
 The Stranger's Child. Its builds are warm for the line-role trainer.

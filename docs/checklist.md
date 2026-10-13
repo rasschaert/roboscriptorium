@@ -75,7 +75,10 @@ machine's work is recomputed in this order before anything below.
       bench tier of each tuning book's first chapter or two (~10–20 pages, ending on a
       chapter), and check once overnight that it ranks changes as the full bench does
       (agent, ~1 h plus the run)
-- [ ] The line-role trees (`experiments/train_sorter.py --save`)
+- [ ] The line-role trees don't carry over yet (2026-10-13: tuning 275 → 196 role errors,
+      validation 90 → 111, Vuurspel's short lines dropped as body; decisions.md). Next, on
+      tuning books only: weigh a lost body line above a kept speck in training, and a type
+      size the trees can trust on a short line; then compare again (agent, ~1 h)
 - [ ] What a perfect reader could still gain: over the tuning books' warm builds, count the
       wrong words left where every reader agrees (no suspect raised), against all wrong
       words left (agent, ~10 min, no models). The rule, agreed with the user 2026-10-13:
