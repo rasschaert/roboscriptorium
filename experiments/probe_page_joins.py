@@ -15,8 +15,13 @@ out: glm-ocr invents text on near-empty pages. Needs Ollama's context at 32k for
 glm-ocr at full size (GLM_PIXELS=1600000).
 
     GLM_PIXELS=1600000 uv run python experiments/probe_page_joins.py [clean sample]
+
+With SECOND=<model> (Qwen, say), a second page reader reads the same pages, and the
+tally adds the places where both page readers are right against the pipeline (caught
+together) and where both are wrong alike where the pipeline is right (false together).
 """
 
+import os
 import random
 import sys
 from collections import Counter
@@ -33,6 +38,7 @@ from roboscriptorium.config import Settings  # noqa: E402
 from roboscriptorium.golden import scoring  # noqa: E402
 
 MODEL = "glm-ocr:bf16"
+SECOND = os.environ.get("SECOND", "")
 MIN_WORDS = 60
 
 
@@ -96,18 +102,34 @@ if __name__ == "__main__":
 
     tally: Counter = Counter()
     examples: dict[str, list[str]] = {}
-    for source, name, page, want, got in chosen:
-        folder = MODEL.replace(":", "_") + f"@{ppr.GLM_PIXELS}"
+    def reading(model: str, source, name: str, page: int) -> list[str]:
+        glm = model.startswith("glm-ocr")
+        pixels = ppr.GLM_PIXELS if glm else 1_600_000
+        folder = model.replace(":", "_") + (f"@{pixels}" if glm else "")
         cache = ppr.OUT / folder / f"{name}-{page}.txt"
         if cache.exists():
             text = cache.read_text()
         else:
-            png = pdf.render_png(source, page, max_pixels=ppr.GLM_PIXELS)
-            text, _ = ppr.read_page(MODEL, png, settings.ollama_url)
+            png = pdf.render_png(source, page, max_pixels=pixels)
+            text, _ = ppr.read_page(model, png, settings.ollama_url)
             cache.parent.mkdir(parents=True, exist_ok=True)
             cache.write_text(text)
-        glm = ppr.trim(ppr.tokens_of_markdown(text))
+        return ppr.trim(ppr.tokens_of_markdown(text))
+
+    for source, name, page, want, got in chosen:
+        glm = reading(MODEL, source, name, page)
         ours, theirs = places(got, want), places(glm, want)
+        if SECOND:
+            other = places(reading(SECOND, source, name, page), want)
+            for a, b, g, w in ours:
+                k = kind(g, w)
+                hit = lambda errs: any(overlaps((a, b), (c, d)) for c, d, _, _ in errs)  # noqa: E731
+                if not hit(theirs) and not hit(other):
+                    tally["caught together", k] += 1
+            for c, d, g, w in theirs:
+                same = any((c, d, g) == (e, f, h) for e, f, h, _ in other)
+                if same and not any(overlaps((a, b), (c, d)) for a, b, _, _ in ours):
+                    tally["false together", kind(g, w)] += 1
         for a, b, g, w in ours:
             k = kind(g, w)
             if any(overlaps((a, b), (c, d)) for c, d, _, _ in theirs):
@@ -122,7 +144,7 @@ if __name__ == "__main__":
 
     n = len(chosen)
     print(f"\nover {n} pages ({len(erring)} with a pipeline error, {n - len(erring)} clean):")
-    for what in ("caught", "both wrong", "false alarm"):
+    for what in ("caught", "both wrong", "false alarm", "caught together", "false together"):
         total = sum(v for (w, _), v in tally.items() if w == what)
         kinds = ", ".join(f"{k} {v}" for (w, k), v in tally.most_common() if w == what)
         print(f"  {what:12} {total:4}   {kinds}")

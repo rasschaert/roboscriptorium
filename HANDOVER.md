@@ -4,13 +4,16 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running: glm-ocr whole pages as a reader (screen `robo-page-joins`, started 2026-10-13 ~22:50)
+## Running: tonight's chain (screen `robo-chain-tonight`, started 2026-10-13 ~23:30)
 
-`experiments/probe_page_joins.py`, ~30 min, log `work/runs/page-joins.log`. Needs Ollama's
-context at 32k (the user raised it). **The cold A/A below is paused**: the tuning books'
-warm caches are in `stages/`, the cold ones in `stages.cold/`; before resuming it, swap
-(`stages` → `stages.warm`, `stages.cold` → `stages`) and ask the user to set the context
-back to 8k, as the warm run it's compared with had.
+`work/runs/chain-20261013.sh`, at Ollama context 32k (the user's choice): (1) the
+two-reader probe (`probe_page_joins.py` with `SECOND=qwen3.8:27b-nvfp4`, ~1 h, log
+`work/runs/page-joins2.log`) on the warm caches; (2) swaps the tuning books' caches
+(warm → `stages.warm`, cold → `stages`); (3) resumes the cold A/A tuning bench
+`--against tuning-20261013T210052-1cc82e3-dirty.json` (trees on, the same settings).
+**Where the caches are:** during (1) warm in `stages/`, cold in `stages.cold/`; from (3)
+cold in `stages/`, warm in `stages.warm/`. Stopping it mid-way: check which before
+swapping. The morning pause and evening resume are below.
 
 ## Paused: cold A/A `bench tuning` (screen `robo-bench-tuning-cold`, started 2026-10-13 ~20:55)
 
