@@ -34,8 +34,11 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [x] glm-ocr's page reading as a reader (2026-10-13): right on 226 of 473 pipeline error
       places, but wrong on 910 where the pipeline is right: alone, four false questions a
       catch
-- [ ] Two page readers agreeing against the pipeline (glm-ocr and Qwen on the same 306
-      pages, ~1 h of Qwen): is their agreement precise enough to raise a suspect?
+- [x] Two page readers agreeing against the pipeline (2026-10-14): outside paragraph
+      breaks, right 152 times to 65 (70%), about 0.7 places a page; breaks not trustworthy
+- [ ] The two readers' agreement on the errors left after review: how many of the 152
+      the review doesn't already ask, and what a suspect raised there would cost in
+      questions (no models: the readings are cached)
 - [ ] Whole-page reading by the bigger build (`qwen3.8:27b-mxfp8`, pulled) and with
       the page before as context, for paragraphs that cross a page
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,

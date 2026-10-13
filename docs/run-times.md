@@ -330,3 +330,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-13 | bench tuning, warm, line-role trees with photo slices, body weight 10 | 790 | 3 | 0 |
 | 2026-10-13 | bench validation, warm, line-role trees with photo slices, body weight 10 | 790 | 2 | 0 |
 | 2026-10-13 | probe: glm-ocr whole pages as a reader, tuning pages with a pipeline error plus 40 clean | 306 | 28 | 0 |
+| 2026-10-14 | probe: glm-ocr and Qwen whole pages, two readers against the pipeline, 306 tuning pages | 306 | 82 | 0 |
