@@ -390,8 +390,9 @@ def test_an_undecided_line_end_hyphen_is_the_judges_once_and_cached(tmp_path, mo
 
     monkeypatch.setattr(pipeline.decide, "for_model", client)
     lines = [*LINES[:5], "and the zib-", "zorp went on", *LINES[7:]]
+    book = _book(tmp_path, lines=lines)
     for _ in range(2):
-        doc = pipeline.run(_book(tmp_path, lines=lines), check_ocr=False).doc
+        doc = pipeline.run(book, check_ocr=False).doc
         assert "the zib-zorp went on" in doc.blocks[0].text
     assert asked == ["zib-zorp"]
 

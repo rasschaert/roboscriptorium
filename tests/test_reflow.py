@@ -548,6 +548,20 @@ def test_an_ornament_line_or_two_blank_lines_set_a_scene_break():
     assert "* * *" not in " ".join(p.text for p in paragraphs)
 
 
+def test_a_word_left_open_before_a_conjunction_keeps_its_hyphen_and_space():
+    knows = {"Toronto", "voor", "nadelen", "uitvoer"}.__contains__
+    # Not left open: a word that goes on with the letters of a conjunction is joined.
+    assert join("in", "to the house") == "in to the house"
+    assert join("Toron-", "to was koud", known=knows) == "Toronto was koud"
+    assert join("ge-", "en", known=knows) == "geen"
+    assert join("bo-", "en meer", seen=Counter({"boen": 2}), known=knows) == "boen meer"
+    # Left open, its ending shared with the next word.
+    assert join("de voor-", "en nadelen", known=knows) == "de voor- en nadelen"
+    assert join("in-", "of uitvoer", known=knows) == "in- of uitvoer"
+    assert join("zes-", "tot achtjarigen") == "zes- tot achtjarigen"
+    assert join("pre-", "and post-war") == "pre- and post-war"
+
+
 def test_a_number_range_broken_at_the_lines_end_keeps_its_hyphen():
     assert join("in de jaren 1914-", "1918 was het") == "in de jaren 1914-1918 was het"
     assert join("op bladzijde 12-", "14 staat") == "op bladzijde 12-14 staat"

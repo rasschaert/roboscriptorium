@@ -37,3 +37,15 @@ def test_the_scored_copy_drops_note_words_and_leaves_the_document_alone():
     )
     assert scored.paragraphs[0].italic == (7,)
     assert doc.paragraphs[0].text == text
+
+
+def test_a_line_typed_in_above_a_note_leaves_the_right_words_out():
+    # The document's sources are positions before answers; a typed line (inserted at
+    # the top of the corrected copy) shifts every line below it there, not here.
+    page = _page()
+    typed = Paragraph("Een getypte regel.", [SourceRef(5, 0, typed=True)])
+    para = Paragraph(" ".join(ln.text for ln in page.lines), [SourceRef(5, i) for i in range(5)])
+    doc = Document("T", "A", "nl", [typed, para])
+    out = notes.scored(doc, [page], [NOTE])
+    assert out.paragraphs[0].text == "Een getypte regel."
+    assert out.paragraphs[1].text.endswith("Wenen vertrekt. (vert.)")

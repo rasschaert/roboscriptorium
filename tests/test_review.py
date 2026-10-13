@@ -182,6 +182,24 @@ def test_the_reading_chosen_is_the_verdict(tmp_path):
     assert r.state()["items"][0]["answer"]["text"].endswith("zijn gold niet op een")
 
 
+def test_a_typed_answer_that_changes_the_words_around_the_place_is_refused(tmp_path):
+    r = _verdicts(tmp_path, _place("geld", "geId"))
+    for text in (
+        "Hij was zo stom geweest zijn gold niet op één",
+        "Hij was zo DOM geweest zijn gold niet op een",
+        "Hij was zo stom geweest zijnx gold niet op een",
+    ):
+        answer = {"key": "k", "text": text, "confirm": True}
+        assert r.record(answer) == {
+            "warning": review.GoldenQuestions.CONTEXT_CHANGED,
+            "refused": True,
+        }
+    assert "k" not in Verdicts(tmp_path / "v.jsonl").by_key
+    # Only the place's words changed, a word dropped there included: saved.
+    r.record({"key": "k", "text": "Hij was zo stom geweest zijn niet op een", "confirm": True})
+    assert Verdicts(tmp_path / "v.jsonl").by_key["k"].truth == ""
+
+
 def test_a_place_one_side_lacks_reads_without_a_double_space(tmp_path):
     ours, theirs = _verdicts(tmp_path, _place("16", "")).state()["items"][0]["readings"]
     assert ours["text"] == "Hij was zo stom geweest zijn 16 niet op een"
@@ -240,3 +258,17 @@ def test_a_place_shows_each_sides_dashes_and_quotes_as_written(tmp_path):
     assert r.golden.verdicts.by_key["k"].truth == "nu\u2019"
     assert r.golden.verdicts.by_key["k"].category == "edition"
     assert r.state()["items"][0]["answer"]["text"] == ours["text"]
+
+
+def test_answers_saved_at_once_each_keep_their_line(tmp_path):
+    r = _verdicts(tmp_path, _place("geld", "geId"))
+    answer = {"key": "k", "text": "Hij was zo stom geweest zijn geld niet op een"}
+    threads = [
+        threading.Thread(target=lambda: [r.record(answer) for _ in range(50)]) for _ in range(8)
+    ]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    lines = (tmp_path / "v.jsonl").read_text().splitlines()
+    assert len(lines) == 400 and all(json.loads(line)["key"] == "k" for line in lines)

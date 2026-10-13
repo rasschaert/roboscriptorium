@@ -98,9 +98,10 @@ def collect(pages: list[PageText], note_lines: set[SourceRef]) -> list[Note]:
     for page in pages:
         for i, line in enumerate(page.lines):
             source = i if line.source is None else line.source
-            if SourceRef(page.number, source) not in note_lines:
-                continue
+            # A typed line shares its `source` with the line it went before.
             ref = SourceRef(page.number, source, line.typed)
+            if ref not in note_lines:
+                continue
             mark = _MARK.match(line.text)
             if mark or not notes or notes[-1].paragraph.sources[-1].page != page.number:
                 text = line.text[mark.end() :] if mark else line.text

@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import numpy as np
 import pytest
 
@@ -136,3 +138,16 @@ def test_a_threshold_of_one_asks_within_the_budget_even_a_calibrated_certainty()
         [sure], trust.Trust(_Model(), {}, calibration=_Certain()), questions=1, below=1.0
     )
     assert [s.choice for s in out] == ["review"]
+
+
+def test_the_judges_are_read_by_role_not_by_the_order_of_their_votes():
+    s = Suspect(
+        5, 0, "het boek", 0, 3, "het", ("hct",), (0, 0, 1, 1), "review",
+        votes={"text": "hct", "vision": "het"},
+        confidence={"text": 0.9, "vision": 0.6},
+        judges=("vision", "text"),
+    )  # fmt: skip
+    flipped = replace(s, votes={"vision": "het", "text": "hct"})
+    assert trust.features(s, 0) == trust.features(flipped, 0)
+    assert not trust.unseen(s)
+    assert trust.unseen(replace(s, votes={"text": "hct", "vision": ""}))

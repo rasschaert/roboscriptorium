@@ -63,6 +63,7 @@ def rows_of(name: str) -> list[dict]:
         r["s"] = replace(
             s,
             votes={m: v for m, v in s.votes.items() if m in JUDGES},
+            judges=tuple(m for m in s.judges if m in JUDGES),
             confidence={m: c for m, c in s.confidence.items() if m in JUDGES},
         )
         r["book"] = name

@@ -95,6 +95,15 @@ class Suspect:
     # Where the versions end the line and differ only in a break hyphen: the next
     # line's first word, which the place is read with ("dank-" + "baar").
     joined: str = ""
+    # The judges' models by role: the vision judge, the text judge, then the second
+    # vision judge where one was asked. Empty in suspects saved before it was recorded.
+    judges: tuple[str, ...] = ()
+
+    @property
+    def judged_by(self) -> list[str]:
+        """The judges' models by role (`judges`), else in the order their votes were
+        recorded, which was that order."""
+        return list(self.judges) or [m for m in self.votes if m != "word list"]
 
     @property
     def across(self) -> list[str]:
@@ -533,6 +542,7 @@ def check(
                             support,
                             known,
                             joined,
+                            tuple(m.model for m in (vision, reader, alarm) if m is not None),
                         )  # fmt: skip
                     )
     return suspects

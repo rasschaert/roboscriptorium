@@ -136,9 +136,7 @@ def features(s: Suspect, k: int, pairs: Pairs | None = None) -> list[float]:
         float(len(v) - len(ours)),
     ]
     picks = []
-    # The judges by role, as `ocrcheck` records them: the vision judge, the text judge,
-    # then the second vision judge (`alarm`) where one was asked.
-    judges = [m for m in s.votes if m != "word list"][:3]
+    judges = s.judged_by[:3]
     for model in judges + [""] * (3 - len(judges)):
         picked = s.votes.get(model) == v
         c = s.confidence.get(model, 0.0)
@@ -238,11 +236,11 @@ def fingerprint(path: Path) -> str:
 
 
 def unseen(s: Suspect) -> bool:
-    """Whether the vision judge, the first judge recorded, saw none of the versions: the
+    """Whether the vision judge saw none of the versions: the
     readings missed the print (a crop of another line, a misread line). The layer was
     right on 17 of 23 such suspects in the trust data, too few for the trees to learn."""
-    judges = [m for m in s.votes if m != "word list"]
-    return bool(judges) and s.votes[judges[0]] == ""
+    judges = s.judged_by
+    return bool(judges) and s.votes.get(judges[0]) == ""
 
 
 def decide(

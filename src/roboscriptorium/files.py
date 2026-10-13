@@ -1,5 +1,6 @@
 """Writing the per-book caches."""
 
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -47,3 +48,34 @@ def append_jsonl(path: Path, entry: dict) -> None:
             f.seek(0)
             f.truncate(data.rfind(b"\n") + 1)
         f.write((json.dumps(entry, ensure_ascii=False) + "\n").encode())
+
+
+class SourceChanged(Exception):
+    """The book's source file isn't the one its caches were built from."""
+
+
+def check_source(source: Path, stamp: Path) -> None:
+    """Refuse a source that differs from the one `stamp` records, the first time it
+    records it. No cache names the file it was built from, so a replaced source would
+    otherwise be read from the old one's caches. Size and mtime spare the hash when
+    nothing was touched."""
+    stat = source.stat()
+    seen = json.loads(stamp.read_text()) if stamp.exists() else None
+    if seen and (seen["size"], seen["mtime"]) == (stat.st_size, stat.st_mtime):
+        return
+    digest = _sha256(source)
+    if seen and seen["sha256"] != digest:
+        raise SourceChanged(
+            f"{source} isn't the file the caches in {stamp.parent} were built from: "
+            "move that folder aside to build from the new one"
+        )
+    entry = {"sha256": digest, "size": stat.st_size, "mtime": stat.st_mtime}
+    write_atomic(stamp, json.dumps(entry))
+
+
+def _sha256(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        while chunk := f.read(1 << 20):
+            h.update(chunk)
+    return h.hexdigest()

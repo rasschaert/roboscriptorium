@@ -1,4 +1,8 @@
-from roboscriptorium.files import write_atomic
+import os
+
+import pytest
+
+from roboscriptorium.files import SourceChanged, check_source, write_atomic
 
 
 def test_a_cache_written_into_a_book_without_stages_makes_the_directory(tmp_path):
@@ -35,3 +39,18 @@ def test_a_broken_line_before_the_end_is_an_error(tmp_path):
     log.write_text('{"n": 1\n{"n": 2}\n')
     with pytest.raises(json.JSONDecodeError):
         read_jsonl(log)
+
+
+def test_a_replaced_source_is_refused_until_its_caches_are_moved_aside(tmp_path):
+    source, stamp = tmp_path / "source.pdf", tmp_path / "stages" / "source.json"
+    source.write_bytes(b"scan one")
+    check_source(source, stamp)
+    check_source(source, stamp)
+    # Touched but the same file: still accepted.
+    os.utime(source, (1, 1))
+    check_source(source, stamp)
+    source.write_bytes(b"scan two")
+    with pytest.raises(SourceChanged):
+        check_source(source, stamp)
+    stamp.unlink()
+    check_source(source, stamp)

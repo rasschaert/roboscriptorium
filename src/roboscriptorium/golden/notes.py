@@ -41,6 +41,13 @@ def note_lines(pages: list[PageText], notes: list[str]) -> set[SourceRef]:
     return found
 
 
+def scored(doc: Document, pages: list[PageText], notes: list[str]) -> Document:
+    """`doc` without the scan's lines that print one of `notes`. `pages` is the layer as
+    read, before answers (`Stages.pages`): the positions the document's sources name."""
+    lines = note_lines(pages, notes) if notes else set()
+    return without(doc, lines, {p.number: p for p in pages})
+
+
 def without(doc: Document, lines: set[SourceRef], pages: dict[int, PageText]) -> Document:
     """A copy of `doc` without the words that came from `lines`.
 

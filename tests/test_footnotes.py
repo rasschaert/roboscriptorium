@@ -1,6 +1,7 @@
 """Footnotes found at a page's foot, collected into notes, linked to their marks."""
 
 from roboscriptorium import footnotes
+from roboscriptorium import roles as roles_module
 from roboscriptorium.ir import Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText
 from roboscriptorium.roles import LineRole
@@ -83,3 +84,18 @@ def test_heavy_small_marks_from_a_picture_are_no_note():
     heavy = Style(0.4, 2.2, 0.5, False)
     page, styles = _page([("Tekst van het boek.", BODY), ("8 : 5 hd Eed Ld", heavy)])
     assert footnotes.lines([page], {}, styles) == set()
+
+
+def test_a_line_typed_above_a_note_is_no_part_of_it():
+    # A corrected copy: a typed line went before the note's first line (source 1).
+    lines = [
+        Line("Tekst tot de berg*.", 10, 20, 280, 30, source=0),
+        Line("Een regel die de laag miste.", 10, 32, 280, 42, source=1, typed=True),
+        Line("*_Een berg bij de stad.", 10, 44, 280, 54, source=1),
+    ]
+    notes = footnotes.collect([PageText(5, 300, 500, lines)], {SourceRef(5, 1)})
+    assert [(n.mark, n.paragraph.text) for n in notes] == [("*", "Een berg bij de stad.")]
+    roles = roles_module.with_role(
+        [PageText(5, 300, 500, lines)], {}, {SourceRef(5, 1)}, LineRole("note", 1.0, 0.0)
+    )
+    assert set(roles) == {SourceRef(5, 2)}

@@ -30,7 +30,7 @@ from roboscriptorium.clients import decide, llama
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.epub import write_epub
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import check_source, write_atomic
 from roboscriptorium.flags import treatment
 from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.lexicon import Lexicon
@@ -78,6 +78,7 @@ def run(
 ) -> Stages:
     """Build the book's EPUB. `pages` narrows the body range for quick experiments;
     `settings` default to the environment's."""
+    check_source(book.source, book.stages / "source.json")
     first, last = pages or book.body_pages
     lang = ocr.language(book.language)
     lexicon = Lexicon.load(lang)

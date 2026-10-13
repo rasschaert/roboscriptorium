@@ -488,7 +488,10 @@ breaks are left undecided by the rest with a one-way reference
 better than joining (353 right at 0.5); in English 43 of 77 close, and clef:27b picks
 right on 63 (clef-flash 59, winnow 46). So only English books ask it.
 
-Two cases aren't a word's hyphen at all and skip the evidence: a line ending in a digit
+Three cases aren't a word's hyphen at all and skip the evidence: a word left open before
+a conjunction ("in-" / "en uitvoer", "pre-" / "and post-war") keeps its hyphen and the
+space after it, unless the book or the word list knows the closed form ("Toron-" / "to");
+a line ending in a digit
 and a hyphen before a line starting with a digit is a number range broken at the end
 ("1914-" / "1918"), kept closed for the typography stage's range rule; and whether the
 next line starts lowercase is asked of the letter itself (`str.islower`), not of a Latin-1

@@ -5,8 +5,9 @@ reference, located on the scan through the paragraph's source lines. A verdict
 records what the scan actually prints there. It is keyed on the reference words
 and their context, so it still applies after the pipeline changes.
 
-Verdicts live in git, one JSON object per line, in
-`golden/<name>/verdicts/<scan id>.jsonl`; a later line overrides an earlier one.
+Verdicts live one JSON object per line in `verdicts/<scan id>.jsonl` under the book's
+data folder (`Golden.data_root`: in git for a public-domain book, else under `work/`);
+a later line overrides an earlier one.
 """
 
 import hashlib

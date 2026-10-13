@@ -12,12 +12,48 @@ positions and get renumbered.
 Where the build stands and where results can still move: [outlook.md](outlook.md).
 What runs right now and what waits on the user: `HANDOVER.md`.
 
-**The plan now:** accuracy from what the bench data shows (the user: improve before
-building), new suspects where the readings agree first, then **Stella end to end with
-the user's review**, the target book, then the user's four books. After them, the open
+**The plan now:** the codebase review's steps first (the user, 2026-10-13: bug fixes
+first, no urgency in building books), then accuracy from what the bench data shows,
+new suspects where the readings agree first, then **Stella end to end with the user's
+review**, the target book, then the user's four books. After them, the open
 areas below in order, and the test set scored once at the end.
 
-## Recovering what work/ lost (first)
+## From the codebase review (2026-10-13, first)
+
+The user, 2026-10-13: the review's bug fixes come first, then its bench and structure
+steps; building Ex-minnaar and Stella has no urgency. The findings are in decisions.md.
+
+- [ ] The bench weighs the reviewer's time: one wrong word is worth 20 questions (the
+      user, 2026-10-13), so a question costs 1/20 of a wrong word on top of the chance
+      it is answered wrong; `quality.per_page` and the bench's after-review measure
+      (agent, ~1 h, then a warm `bench tuning` to restate the baseline)
+- [ ] The bench sees typography: a count of quote, dash and ellipsis glyphs set wrong
+      over aligned words, unfolded, as a measure of its own (agent, ~2 h)
+- [ ] The bench's verdict rule symmetric: worse when any word measure is worse, a veto
+      on paragraph breaks too; one cold A/A rerun overnight for the noise floor (agent,
+      ~30 min plus the run)
+- [ ] Book-wide statistics (repeats for line roles, type, line height for missing lines)
+      measured on the whole body, not the slice, as the dash and ellipsis already are;
+      roles' caches change, so a cold-ish bench (agent, ~1 h plus an overnight run)
+- [ ] The measurement code out of `cli.py` into a public API (`bench`, `golden`), which
+      experiments and tests use instead of private helpers; the trust and sorter trainers
+      into `src/` with a test, their book list derived from `bench.SETS` (agent, ~half a
+      day)
+- [ ] One cache helper (identity, version, atomic write) for the nine copies; the judges'
+      crop settings and the second vision judge's readout in their cache keys (agent,
+      ~2 h)
+- [ ] Split `ocrcheck.py` (readers, line differences, judging), `reflow.py` (hyphens and
+      quote mending out) and `typography.py` (the scan measurements and one ink module
+      beside `italics`' threshold); one `roles.is_body` for its five copies (agent, ~half
+      a day, behaviour unchanged, tests before and after)
+- [ ] Prune `experiments/`: the 24 scripts nothing names, `probe_orientation.py` broken;
+      AGENTS.md cut to rules and the map (manifest keys to golden-notes.md, environment
+      detail to models.md, the review page to how-it-works.md); decisions.md a heading a
+      day (agent, ~2 h)
+- [ ] **user** Which line roles are the product, the rules or the trees? Both run; the
+      trees are off, the rules name the books they were tuned on
+
+## Recovering what work/ lost
 
 An agent destroyed `work/` on 2026-10-11 by committing a `work` symlink and merging it
 (docs/decisions.md); the sources are restored, the
@@ -459,6 +495,14 @@ many the layer had wrong.
       Goede dochter without its layer 0.35% CER against 0.20%
 
 ## Reviews of the build
+
+- [x] 2026-10-13 Third review of the codebase, four reviewers: eight bugs fixed with tests
+      (a typed verdict could write its context into the reference twice, a word left
+      open before "en" lost its hyphen, a typed line took the identity of the one below
+      it, notes scored on the wrong version of the pages, answers saved at once could cut
+      each other, no cache knew its source PDF, the arbiter read its judges by the order
+      of their votes, the docs put copyrighted books' verdicts in git); the rest planned
+      above
 
 - [x] 2026-10-09 Fable's second review: what the bench couldn't see and leaks in the OCR
       check, each change benched alone; the ledger of probe against verdict is in

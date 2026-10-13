@@ -27,6 +27,7 @@ from roboscriptorium import flags as F
 from roboscriptorium.corrections import ACTIONS, Corrections
 from roboscriptorium.disagreements import UNSURE, Disagreement, Verdicts
 from roboscriptorium.evaluate import normalise
+from roboscriptorium.files import append_jsonl
 from roboscriptorium.pdf import PDF_LOCK, PageText
 
 # Crops show this many lines around the disagreement, at this zoom (PDF points → pixels).
@@ -283,23 +284,45 @@ class GoldenQuestions:
             self.verdicts.record(d, d.want, self.KINDS[kind], note)
             return {"action": kind, "text": typed or None}
         text = body.get("text") or ""
-        before, after = self._parts(d)
         got, want, _, _ = self._shown(d)
         ours, theirs = self._readings(d)
         if text == ours:
             truth, category = got, SCAN_EDITION
         elif text == theirs:
             truth, category = want, guess_category(d)
+        elif (inner := self._typed(d, text)) is not None:
+            truth, category = inner, guess_category(d)
         else:
-            # Typed: the words between the unchanged context, else the whole line.
-            inner = text
-            if before and inner.startswith(before.rstrip()):
-                inner = inner[len(before.rstrip()) :]
-            if after and inner.endswith(after.lstrip()):
-                inner = inner[: len(inner) - len(after.lstrip())]
-            truth, category = inner.strip(), guess_category(d)
+            raise ValueError(self.CONTEXT_CHANGED)
         self.verdicts.record(d, truth, category)
         return {"action": "text", "text": text}
+
+    CONTEXT_CHANGED = (
+        "Change only the marked words: a word around them that differs is a place of its own."
+    )
+
+    def _typed(self, d: Disagreement, text: str) -> str | None:
+        """The words a typed line sets at the place, or None when it changes the words
+        around it too: the verdict replaces the place's words only, so a changed context
+        would be written into the reference beside the original."""
+        line = " ".join(text.split())
+        before, after = (" ".join(s.split()) for s in self._shown(d)[2:])
+        if not (line.startswith(before) and line.endswith(after)):
+            return None
+        inner = line[len(before) : len(line) - len(after)]
+        if len(line) < len(before) + len(after):
+            return None
+        # The context is whole words: a letter typed onto its edge word changes it.
+        if (before and inner[:1] not in ("", " ")) or (after and inner[-1:] not in ("", " ")):
+            return None
+        return inner.strip()
+
+    def refused(self, key: str, action: str, text: str | None) -> str:
+        """Why an answer can't be saved at all, or "" when it can."""
+        d = self.items[key]
+        if action != "text" or text is None or text in self._readings(d):
+            return ""
+        return "" if self._typed(d, text) is not None else self.CONTEXT_CHANGED
 
 
 _CURLY = "‘’“”"
@@ -427,7 +450,12 @@ class RegionReview:
         """The answer saved, or, the first time an answer looks like a slip (`doubtful`),
         a warning instead; the page sends it again with `confirm` to save it anyway.
         Warned answers are logged beside the answers, so the slip rate can be measured
-        before and after the check."""
+        before and after the check. One answer is recorded at a time: the page's requests
+        are served on threads, and two appends at once could cut each other's line."""
+        with self._lock:
+            return self._record(body)
+
+    def _record(self, body: dict) -> dict:
         place = self.golden is not None and body["key"] in self.golden.items
         action = body.get("action", "text")
         if place:
@@ -440,18 +468,17 @@ class RegionReview:
             line, readings, page = flag.text, flag.readings, flag.page
         turn = int(body.get("turn") or 0)
         text = body.get("text")
+        if place and (why := self.golden.refused(body["key"], action, text)):
+            return {"warning": why, "refused": True}
         if not body.get("confirm") and (why := doubtful(line, readings, action, text)):
-            path = self.corrections.path.with_name("warnings.jsonl")
-            path.parent.mkdir(parents=True, exist_ok=True)
-            with path.open("a") as f:
-                entry = {
-                    "key": body["key"],
-                    "page": page,
-                    "text": text,
-                    "why": why,
-                    "at": datetime.now(UTC).isoformat(timespec="seconds"),
-                }
-                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+            entry = {
+                "key": body["key"],
+                "page": page,
+                "text": text,
+                "why": why,
+                "at": datetime.now(UTC).isoformat(timespec="seconds"),
+            }
+            append_jsonl(self.corrections.path.with_name("warnings.jsonl"), entry)
             return {"warning": why}
         if place:
             return self.golden.record(body)
@@ -535,7 +562,10 @@ def serve(review: RegionReview, port: int) -> None:
                 return
             path = urlparse(self.path).path
             if path == "/api/rebuild":
-                self._json(review.rebuild())
+                try:
+                    self._json(review.rebuild())
+                except Exception as exc:  # noqa: BLE001 - the page says why, the server stays up
+                    self._send(f"rebuild failed: {exc!r}".encode(), "text/plain", 500)
                 return
             if path != "/api/verdict":
                 self._send(b"not found", "text/plain", 404)

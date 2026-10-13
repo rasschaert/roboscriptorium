@@ -72,6 +72,9 @@ DASHES = ("\u2014", "\u2013")
 _WORD = re.compile(r"[^\w-]")
 _BESIDE_END = re.compile(r"[\w'’-]*$")
 _BESIDE_START = re.compile(r"[\w'’-]*")
+# The words that open the second half of a word left open at a hyphen, its ending shared
+# with a word further on: "in- en uitvoer", "zes- tot achtjarigen", "pre- and post-war".
+_SUSPENDED_BY = frozenset({"en", "of", "noch", "tot", "and", "or", "nor"})
 # Older OCR layers keep the thin space some printers set before punctuation. A dot in
 # a spaced run (". . .") keeps its space: the typography stage sets the run book-wide.
 _SPACE_BEFORE_PUNCTUATION = re.compile(r"(?<!\.)\s+([,;:.!?])(?=\s|$)(?!\s\.)")
@@ -312,6 +315,8 @@ def join(
         # The letters beside the break only: "pus—that's" continues "cam-" with "pus".
         stem = _WORD.sub("", _BESIDE_END.search(last).group())
         rest = _WORD.sub("", _BESIDE_START.match(first).group() or first)
+        if _suspended(nxt, stem, rest, seen, known):
+            return text.rstrip("".join(HYPHENS)) + "- " + nxt
         if _hyphen_stays(nxt, stem, rest, seen, known, compound, f"{text[-120:]}|{nxt}"):
             return text.rstrip("".join(HYPHENS)) + "-" + nxt
         return text[:-1] + nxt
@@ -321,6 +326,24 @@ def join(
     if text.endswith("-") and len(text) > 1 and text[-2].isdigit() and nxt[:1].isdigit():
         return text + nxt  # a number range broken at the line's end ("1914-" / "1918")
     return f"{text} {nxt}"
+
+
+def _suspended(
+    nxt: str,
+    stem: str,
+    rest: str,
+    seen: Counter | None,
+    known: Callable[[str], bool] | None,
+) -> bool:
+    """Whether the hyphen leaves `stem` open before a conjunction ("voor-" / "en
+    nadelen"), not breaking a word that happens to go on with one ("Toron-" / "to")."""
+    words = nxt.split()
+    if len(words) < 2 or words[0] not in _SUSPENDED_BY or rest != words[0]:
+        return False
+    closed = (stem + rest).lower()
+    if seen and seen[closed]:
+        return False
+    return known is None or not known(stem + rest)
 
 
 def _hyphen_stays(

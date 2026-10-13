@@ -236,8 +236,7 @@ def _read_via(book: Book, pages: set[int]) -> dict[str, float]:
 def _scored(book: Book, stages: pipeline.Stages) -> Document:
     """The document as scored: without the scan's footnotes where the reference sets them apart."""
     found = golden_notes.load(Golden.load(book.golden).notes_path)
-    lines = golden_notes.note_lines(stages.corrected, found) if found else set()
-    return golden_notes.without(stages.doc, lines, {p.number: p for p in stages.corrected})
+    return golden_notes.scored(stages.doc, stages.pages, found)
 
 
 def _verdicts(book: Book) -> Verdicts:

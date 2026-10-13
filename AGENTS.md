@@ -55,7 +55,8 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **This file is the single source of agent instructions.** Claude Code reads AGENTS.md
   natively; don't add a `CLAUDE.md`.
 - **Remind the user of the daily backup of `work/`** at the start of every session and
-  before any long run: it holds what git doesn't (books, caches, review answers), and an
+  before any long run: it holds what git doesn't (books, caches, review answers, the
+  verdicts on every golden book in copyright), and an
   agent destroyed it once (2026-10-11) by committing a symlink in its place and merging it. Never symlink, copy or move it into a worktree or branch;
   stage files by name, never `git add -A`.
 - **Read `HANDOVER.md` at the start of a session** and rewrite it at the end of one.
@@ -404,8 +405,12 @@ Public-domain or lending-library scans paired with a human-checked reference tex
 is what every change gets measured against. [docs/golden-notes.md](docs/golden-notes.md)
 describes every pair; [docs/golden-books.md](docs/golden-books.md) has their numbers.
 Each lives in `golden/<name>/` **in git**: `manifest.toml` (the scans with URL and
-sha256, page ranges, the source and chapter range), the derived chapters in `text/` with
-`PROVENANCE.md`, and `standard-ebooks/` (SE's text, see below).
+sha256, page ranges, the source and chapter range), and for a public-domain book the
+derived chapters in `text/` with `PROVENANCE.md`, its verdicts and `standard-ebooks/`
+(SE's text, see below). A book still in copyright (`eu_copyright_until` in its manifest)
+keeps its text and **its verdicts in `work/golden/<name>/`**, out of git: they quote the
+book. Those verdicts are human answers that exist nowhere else; only the backup of
+`work/` keeps them.
 
 - The reference text is a **Project Gutenberg** transcription (`golden derive`) or the
   publisher's own EPUB of the same edition, taken as it stands. Gutenberg rebuilds its
@@ -505,7 +510,7 @@ uv run roboscriptorium review work/goede-dochter--ia-scan --pages 9-64 --chapter
 Each place is an ordinary question: its line twice, with our text's words and the
 reference's, labelled by who claims them (`a`, `b`; `e` to type), and a kind for what
 isn't running text. The answer is a verdict, not a correction: it settles the reference,
-and the kind of mistake follows from it. Verdicts go to `golden/<name>/verdicts/<scan>.jsonl` (in git),
-keyed on the reference words and six words of context either side, so they survive
+and the kind of mistake follows from it. Verdicts go to `verdicts/<scan>.jsonl` under the book's data folder
+(`golden/<name>/` in git for a public-domain book, else `work/golden/<name>/`), keyed on the reference words and six words of context either side, so they survive
 pipeline changes. `eval` patches them into the reference for that scan and reports the
 remaining disagreements by mistake category.

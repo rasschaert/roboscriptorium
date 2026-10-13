@@ -480,10 +480,11 @@ async function save() {
   if (!resp.ok) { alert(await resp.text()); return; }
   const result = await resp.json();
   if (result.warning) {
-    // A likely slip: say so once; Save again keeps the answer as it is.
-    draft.confirm = true;
+    // A likely slip: say so once; Save again keeps the answer as it is. A refused
+    // answer can't be kept: it is said again until the answer changes.
+    draft.confirm = !result.refused;
     const hint = document.querySelector(".saverow .hint");
-    hint.textContent = `${result.warning} Save again to keep it.`;
+    hint.textContent = result.refused ? result.warning : `${result.warning} Save again to keep it.`;
     hint.classList.add("warn");
     return;
   }
