@@ -239,6 +239,11 @@ reading shares: many are specks and faint marks.
 
 ## Later
 
+- [ ] A page-level screen, when a local model reads a whole page into structured text
+      (paragraphs, headings, captions, pictures left out): score it on whole golden pages
+      by words, paragraph breaks and line roles against the pipeline, since 71% of what's
+      left after review isn't misreading (decisions.md 2026-10-13). Only when such a model
+      appears (agent, ~half a day)
 - [ ] Python 3.15 once PyTorch publishes cp315 wheels (pytorch/pytorch#184352): with
       nightly torch every test passes and the spotter's regions match 3.13 exactly
       (2026-10-11); bump `.python-version`, `uv lock`, bench once
