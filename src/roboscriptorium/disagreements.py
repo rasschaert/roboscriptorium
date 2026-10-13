@@ -307,14 +307,16 @@ def glyph_kinds(reference: list[Chapter]) -> set[str]:
     """The kinds of typography a reference can be scored on: those it sets in its own
     glyphs. Quotes count where curly ones outnumber straight ones ten to one (a text in
     straight quotes says nothing of the print's), dashes where it sets an en or em dash,
-    ellipses where it sets one."""
+    ellipses where it sets spaced dots somewhere (the only setting that differs on paper:
+    a transcription that sets every ellipsis tight says nothing of the print's)."""
     text = " ".join(p for ch in reference for p in ch.paragraphs)
     kinds = set()
     if len(re.findall("[‘’“”„‚]", text)) > 10 * len(re.findall("['\"]", text)):
         kinds.add("quotes")
-    for kind in ("dashes", "ellipses"):
-        if _GLYPHS[kind].search(text):
-            kinds.add(kind)
+    if _GLYPHS["dashes"].search(text):
+        kinds.add("dashes")
+    if re.search(r"\.\s\.\s\.", text):
+        kinds.add("ellipses")
     return kinds
 
 

@@ -215,6 +215,9 @@ def test_a_straight_mark_that_says_neither_way_stays_straight():
     assert quotes.curled("'s Morgens zag hij 't huis") == "’s Morgens zag hij ’t huis"
     assert quotes.curled("give 'em hell, back in the '60s") == "give ’em hell, back in the ’60s"
     assert quotes.curled("'Tis true") == "’Tis true"
+    # Speech broken off by a dash closes after it.
+    assert quotes.curled("van een minderjarige –'") == "van een minderjarige –’"
+    assert quotes.curled('he said—" and stopped') == "he said—” and stopped"
 
 
 def test_straight_quotes_and_apostrophes_curl_by_their_place():

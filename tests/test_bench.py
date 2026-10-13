@@ -267,7 +267,8 @@ def test_typography_counts_glyphs_set_wrong_where_the_words_agree():
 
     text = "‘Kom je?’ vroeg ze – en toen… niets."
     page = PageText(4, 300, 500, [Line(text, 0, 0, 1, 1)])
-    reference = [Chapter("", [text])]
+    # The reference sets spaced dots elsewhere, so it can speak for them.
+    reference = [Chapter("", [text, "Dus. . . ja."])]
     assert glyph_kinds(reference) == {"quotes", "dashes", "ellipses"}
 
     def errors(ours: str, kinds=None) -> list[int]:
@@ -285,5 +286,7 @@ def test_typography_counts_glyphs_set_wrong_where_the_words_agree():
     assert errors("’Kom je?’ vroeg ze — en toen. . . niets.", {"dashes"}) == [4]
     # A word that differs is a wrong word, not typography.
     assert errors("‘Kom je?’ vroeg hij – en toen… niets.") == []
+    # A reference that sets every ellipsis tight says nothing of spaced dots.
+    assert "ellipses" not in glyph_kinds([Chapter("", [text])])
     # A reference in straight quotes says nothing of the print's quotes.
     assert "quotes" not in glyph_kinds([Chapter("", ["'Kom je?' vroeg ze."])])

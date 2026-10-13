@@ -372,7 +372,9 @@ def curled(text: str, opening: str = "“") -> str:
         after = text[i + 1] if i + 1 < len(text) else " "
         if before.isdigit() or (before.isspace() and after.isspace()):
             continue
-        opens = before.isspace() or before in _OPENS_AFTER
+        # An opening mark is followed by its word: after a dash ("minderjarige –'") a
+        # mark with nothing after it closes the speech the dash broke off.
+        opens = (before.isspace() or before in _OPENS_AFTER) and not after.isspace()
         if c == '"':
             chars[i] = opening if opens else "”"
         elif opens and not _ELISION.match(text, i):

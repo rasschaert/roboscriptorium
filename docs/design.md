@@ -243,8 +243,10 @@ Straight quotes and apostrophes are the layer's, never the print's: a printed bo
 curly ones. `quotes.curl` curls what is left of them after the answers, by place: opening
 after a space, bracket, dash or opening mark, closing elsewhere, `’` inside a word and
 where it elides letters (`’s`, `’t`, `’n`, `’em`, `’tis`, `’60s`), a double quote opening
-as the book's own (“ or „, by majority). A mark right after a digit (a foot, an inch) or
-spaced on both sides says neither way and stays. Every golden book had some: Metro 124 in
+as the book's own (“ or „, by majority). An opening mark is followed by its word, so a
+mark after a dash with nothing after it closes the speech the dash broke off (Goede
+dochter's `minderjarige –’`). A mark right after a digit (a foot, an inch) or spaced on
+both sides says neither way and stays. Every golden book had some: Metro 124 in
 its slice, Dolittle's layer straight throughout (541 words); the bench saw none of it
 until it counted typography apart (2026-10-13), since `normalise` folds quote marks.
 
@@ -560,8 +562,9 @@ typed in, text the layer lacks) gets only the quote check.
   blind to them. `disagreements.glyph_errors` counts, per page, the words whose quote
   marks, dashes or ellipsis differ from the reference's where the folded words align;
   a kind counts only where the reference sets it in its own glyphs (curly quotes ten to
-  one over straight, an en or em dash, an ellipsis), and "…" and "..." are alike, as on
-  paper. Its first run (2026-10-13, warm tuning) found what no measure could: the output
+  one over straight, an en or em dash, spaced dots somewhere: Crime's transcription and
+  Artemis's e-book set every ellipsis tight where the print spaces them), and "…" and
+  "..." are alike, as on paper. Its first run (2026-10-13, warm tuning) found what no measure could: the output
   keeps the text layer's straight quotes and apostrophes in curly books (Metro 124 `'`
   for `’`, Dolittle 541 words, every book some). A measure of its own, not yet in the
   verdict.
