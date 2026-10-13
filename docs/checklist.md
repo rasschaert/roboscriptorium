@@ -42,8 +42,13 @@ machine's work is recomputed in this order before anything below.
       first look (~5 h of models) and joins; De aanslag joins validation; Verminkt joins
       validation whole. Update design.md's test-set reason, `bench.SETS` and the CLI's
       `--score-test` guard (agent, ~1 h plus the run)
-- [ ] Bench the ellipsis measured on the scan: a warm `bench tuning` (~3 min), then
-      `bench validation` (The Stranger's Child read again, ~45 min)
+- [ ] Finish `bench validation` with the ellipsis measured on the scan (halted on The
+      Stranger's Child's re-reading; ~30 min). Tuning is done: BETTER 0.52 → 0.50
+- [ ] A lighter feedback loop (agreed 2026-10-13): write into AGENTS.md that upstream
+      changes are decided on the frozen line sets and cold runs go overnight; build a quick
+      bench tier of each tuning book's first chapter or two (~10–20 pages, ending on a
+      chapter), and check once overnight that it ranks changes as the full bench does
+      (agent, ~1 h plus the run)
 - [ ] **user** Retire the two suspect pairs, or keep them? Parked by the user 2026-10-13,
       to be decided. Koning Wilders (validation): text layer CER 2.45%, past three times
       the set's median (0.55%), after review 0.92. FKA USA (tuning, waiting on its fixes):

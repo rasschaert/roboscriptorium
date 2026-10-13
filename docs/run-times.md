@@ -308,3 +308,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-12 | train arbiter (--partial: no Stella answers since the loss) | 0 | 5 | 0 |
 | 2026-10-12 | bench tuning, Monterosso whole, warm | 868 | 3 | 0 |
 | 2026-10-13 | bench validation, finishing after a halt (8 of 9 books warm) | 916 | 35 | 0 |
+| 2026-10-13 | bench tuning, warm, after verdicts and minus-dash fix | 868 | 3 | 0 |

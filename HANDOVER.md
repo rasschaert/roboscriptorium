@@ -4,13 +4,29 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running: `bench validation` started 2026-10-13 10:52 (screen `robo-bench-validation`), ~45 min
+## Nothing running. `bench validation` halted 2026-10-13 ~11:35 (battery at 9%), on its last but one book
 
 It measures the ellipsis's gaps on the scan (d9c7a13): only The Stranger's Child changes
 ("..." glued → ". . ." with a space, as its print sets it), and its third reading is redone
-under the new prompt; the other eight are warm. Compare against
-`work/bench/validation-20261013T082508-d4c197e.json` (The Stranger's Child 4.57; set mean
-1.06, 0.62 without it).
+under the new prompt (saved in part; the rerun keeps what was read). Seven books were done
+warm. **First thing next session, once the battery allows** (~30 min):
+
+```sh
+experiments/detached.sh bench-validation experiments/timed.sh "bench validation, ellipsis measured on the scan, after a halt" 916 work/runs/bench-validation.log uv run roboscriptorium bench validation
+```
+
+Compare against `work/bench/validation-20261013T082508-d4c197e.json` (The Stranger's Child
+4.57; set mean 1.06, 0.62 without it).
+
+**The feedback loop, agreed with the user 2026-10-13:** (1) a change upstream of the
+caches (a prompt, a crop, a model, the arbiter) is decided on the frozen line sets
+(`experiments/tryout.py`), the bench only confirms; (2) a quick bench tier: each tuning
+book's first chapter or two (~10–20 pages, ending on a chapter so the reference lines
+up; tuning books only, as it is chosen on), ~5 h cold, checked once overnight that it
+ranks changes as the full bench does; `experiments/chapter_pages.py <golden> <scan>` gives
+the chapters' pages (was being run over the tuning books when halted); (3) cold runs only
+overnight or while the user is away. Rules (1) and (3) still to be written into AGENTS.md;
+(2) still to be built (checklist).
 
 **Remind the user of the daily backup of `work/`** at session start and before long runs
 (they back up with Duplicati, ~9 min; last run 2026-10-13 morning, before this session).
