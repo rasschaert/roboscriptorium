@@ -116,10 +116,21 @@ def _member(z: zipfile.ZipFile, name: str) -> str:
 
 
 def _is_heading(el: ET.Element, prefixes: tuple[str, ...]) -> bool:
+    """A heading tag, or a paragraph of a heading class, or one whose whole text sits in
+    a span of a heading class (calibre's conversions mark headings only so)."""
     if el.tag in HEADING_TAGS:
         return True
-    classes = (el.get("class") or "").split()
-    return _is_paragraph(el) and any(c.startswith(prefixes) for c in classes)
+    if not _is_paragraph(el) or not prefixes:
+        return False
+    if any(c.startswith(prefixes) for c in (el.get("class") or "").split()):
+        return True
+    text = "".join(el.itertext()).strip()
+    return bool(text) and any(
+        any(c.startswith(prefixes) for c in (d.get("class") or "").split())
+        and "".join(d.itertext()).strip() == text
+        for d in el.iter()
+        if d is not el
+    )
 
 
 def _initial_letters(body: ET.Element, pattern: str) -> None:

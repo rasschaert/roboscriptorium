@@ -27,7 +27,9 @@ from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.ir import SourceRef
 
-EXTRA = ["de-aanslag--calibre-pdf"]
+# Training-only books, never scored: De aanslag's exact text; De tunnels' chapter 12, its
+# photos and captions (an OCR-made reference, close enough for role labels).
+EXTRA = ["de-aanslag--calibre-pdf", "de-tunnels--ia-scan:238-270:14-14"]
 SPECS = bench.SETS["tuning"] + bench.SETS["validation"] + EXTRA
 VALIDATION = {s.split(":")[0] for s in bench.SETS["validation"]}
 OUT = Path("work/probes/sorter")

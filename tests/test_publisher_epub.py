@@ -339,3 +339,19 @@ def test_a_blockquote_holding_no_paragraphs_is_a_paragraph(tmp_path):
     (section,) = publisher_epub.read(epub, ["Text/a.html"], ("kop",))
     assert section.heading == "1"
     assert section.paragraphs == ["‘Wat doe jij hier?’", "Een citaat.", "Nog een."]
+
+
+def test_a_paragraph_wholly_in_a_heading_class_span_is_a_heading(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/a.html",
+            PAGE.format(
+                '<p class="c"><span class="bold"><span class="c2">Hoofdstuk 1</span></span></p>'
+                '<p class="c"><span class="c2">De wielrenner hield van actie.</span></p>'
+                '<p class="c"><span class="bold">Let op:</span> dit blijft tekst.</p>'
+            ),
+        )
+    sections = publisher_epub.read(epub, ["a.html"], ("bold",))
+    assert [s.full_heading for s in sections] == ["Hoofdstuk 1"]
+    assert sections[0].paragraphs == ["De wielrenner hield van actie.", "Let op: dit blijft tekst."]

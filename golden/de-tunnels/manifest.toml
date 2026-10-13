@@ -1,0 +1,38 @@
+title = "De tunnels"
+author = "Greg Mitchell"
+language = "nl"
+# Mitchell and his translators are alive: under copyright, so only this manifest is
+# in git.
+eu_copyright_until = 2200
+
+# Line-role training only, never scored: this EPUB isn't the publisher's own but an
+# OCR of a print passed through calibre and Sigil (line-end hyphens left in, small
+# capitals read as "jfk" and "BrD", "i/nUr 320" in its colophon). Its words are close
+# enough to label which scan lines are text, not to score them. Headings are bold
+# spans in paragraphs that carry no class of their own; the photo captions are
+# paragraphs of the photo section's file.
+[reference]
+source = "De tunnels, De Arbeiderspers 2017, translated by Auke van den Berg and Olaf Brenninkmeijer, ISBN 9789029514781 (an OCR-made EPUB, not the retail one)"
+sha256 = "ab87e30766cb8ab43a7021e981fd680292b89fa8bba24e50a6f9a1b4bdedd5d4"
+files = [
+  "index_split_003.html", "index_split_004.html", "index_split_005.html",
+  "index_split_006.html", "index_split_007.html", "index_split_008.html",
+  "index_split_009.html", "index_split_010.html", "index_split_011.html",
+  "index_split_012.html", "index_split_013.html", "index_split_014.html",
+  "index_split_015.html", "index_split_016.html", "index_split_017.html",
+  "index_split_018.html", "index_split_019.html", "index_split_020.html",
+  "index_split_021.html", "index_split_022.html", "index_split_023.html",
+  "index_split_024.html", "index_split_025.html", "index_split_026.html",
+  "index_split_027.html",
+]
+heading_prefixes = ["bold"]
+
+# An Internet Archive Scribe scan, lent only, so it is placed by hand. Pages 11–419:
+# the foreword to the end of the epilogue; a map on 12–13, photos with captions on
+# 259–270.
+[[scans]]
+id = "ia-scan"
+source = "an Internet Archive lending-library scan (Scribe 5.8), placed by hand"
+sha256 = "33dbdc9ab89fc55f09357fbf2b917c345f4616eb3ad016f86e19151fedd10a83"
+cover_page = 1
+body_pages = [11, 419]
