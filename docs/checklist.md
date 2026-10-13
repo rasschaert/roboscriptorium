@@ -31,10 +31,11 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [x] glm-ocr whole pages at full resolution (2026-10-13): 103 wrong words over 18 text
       pages against the pipeline's 27, but right on 5 of the pipeline's 9 error places,
       nearly all line joins; it invents text on near-empty pages
-- [ ] glm-ocr's page reading as a reader at line joins: where it and the pipeline differ
-      in spacing, punctuation or a paragraph break across a line end, a suspect for the
-      arbiter; probe first how many of the tuning books' unasked join errors it would
-      raise, and how many false ones (agent, ~1 h, warm caches plus ~6 s a page)
+- [x] glm-ocr's page reading as a reader (2026-10-13): right on 226 of 473 pipeline error
+      places, but wrong on 910 where the pipeline is right: alone, four false questions a
+      catch
+- [ ] Two page readers agreeing against the pipeline (glm-ocr and Qwen on the same 306
+      pages, ~1 h of Qwen): is their agreement precise enough to raise a suspect?
 - [ ] Whole-page reading by the bigger build (`qwen3.8:27b-mxfp8`, pulled) and with
       the page before as context, for paragraphs that cross a page
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,
