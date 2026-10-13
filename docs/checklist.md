@@ -41,10 +41,13 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       AGENTS.md cut to rules and the map (manifest keys to golden-notes.md, environment
       detail to models.md, the review page to how-it-works.md); decisions.md a heading a
       day (agent, ~2 h)
-- [ ] Line roles learned, not hand-written (the user, 2026-10-13): train the line-role
-      trees again on the tuning books (`experiments/train_sorter.py --save`), bench
-      them on top of the rules (warm), then as the decision with the rules only as
-      features, and retire each rule the trees make redundant (agent, ~half a day)
+- [ ] Line roles learned, not hand-written (the user, 2026-10-13): the trees retrained on
+      fixed labels beat the rules on tuning books (275 → 196 role errors) but not on
+      validation (90 → 111: Vuurspel's short lines dropped as body; decisions.md
+      2026-10-13). Next, on tuning books only: weigh a lost body line above a kept speck,
+      and a type size the trees can trust on a short line; compare again, bench on top of
+      the rules (warm), then as the decision with the rules only as features, and retire
+      each rule the trees make redundant (agent, ~half a day)
 
 ## Recovering what work/ lost
 
@@ -75,10 +78,6 @@ machine's work is recomputed in this order before anything below.
       bench tier of each tuning book's first chapter or two (~10–20 pages, ending on a
       chapter), and check once overnight that it ranks changes as the full bench does
       (agent, ~1 h plus the run)
-- [ ] The line-role trees don't carry over yet (2026-10-13: tuning 275 → 196 role errors,
-      validation 90 → 111, Vuurspel's short lines dropped as body; decisions.md). Next, on
-      tuning books only: weigh a lost body line above a kept speck in training, and a type
-      size the trees can trust on a short line; then compare again (agent, ~1 h)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
 - [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
