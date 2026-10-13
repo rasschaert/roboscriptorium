@@ -249,12 +249,20 @@ def _verdicts(book: Book) -> Verdicts:
 def review_regions(
     book_dir: Path,
     pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
+    chapters: str | None = typer.Option(
+        None, help="A golden book's reference chapters to compare, e.g. 1-9"
+    ),
     port: int = typer.Option(8765, help="Port on 127.0.0.1"),
     score_test: bool = _score_test(),
 ) -> None:
-    """Review the regions that aren't plain running text, next to the scan."""
+    """Review the regions that aren't plain running text, next to the scan; for a golden
+    book also where its text and the reference differ, whose answers are verdicts."""
     _not_the_test_set(book_dir, score_test)
     book = Book.load(book_dir)
+    if book.golden is not None:
+        reference, around = disagreements.slice_reference(
+            load_chapters(Golden.load(book.golden).text_dir), _range(chapters)
+        )
 
     def rebuild():
         stages = pipeline.run(book, pages=_range(pages))
@@ -274,12 +282,27 @@ def review_regions(
             stages.quote_readings,
             stages.faint_pages,
         )
-        return stages.pages, found, stages.corrections_applied
+        places = []
+        if book.golden is not None:
+            # The paragraphs' line references point into the pages before answers (the
+            # text layer with missing lines added), as `Line.source` does on the corrected copy.
+            doc = _scored(book, stages)
+            differ = disagreements.find(doc, reference, stages.pages, book.language, around)
+            places = [d for d in differ if not d.auto]
+        return stages.pages, found, stages.corrections_applied, places
 
-    body, regions, applied = rebuild()
+    body, regions, applied, places = rebuild()
     corrections = Corrections(book.corrections_path)
     done = sum(f.key in corrections.by_key for f in regions)
     typer.echo(f"{len(regions)} regions to look at ({done} already answered, {applied} applied)")
+    golden = None
+    if book.golden is not None:
+        golden = review.GoldenQuestions(places, _verdicts(book))
+        done = sum(d.key in golden.verdicts.by_key for d in golden.items.values())
+        typer.echo(
+            f"{len(golden.items)} places where the text and the reference differ "
+            f"({done} already answered)"
+        )
     typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
     settings = Settings.from_env()
     decider = decide.for_model(settings.role_model, settings.ollama_url)
@@ -292,35 +315,10 @@ def review_regions(
         rebuild,
         ocr.language(book.language),
         lambda png, line: initials.guess(decider, vocab, png, line),
+        golden,
     )
     page.applied = applied
     review.serve(page, port)
-
-
-@golden_app.command("review")
-def review_disagreements(
-    book_dir: Path,
-    pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
-    chapters: str | None = typer.Option(None, help="Reference chapters to compare, e.g. 1-9"),
-    no_models: bool = typer.Option(False, help="Skip decision models (heuristics only)"),
-    port: int = typer.Option(8765, help="Port on 127.0.0.1"),
-    score_test: bool = _score_test(),
-) -> None:
-    """Review where the output disagrees with the reference, next to the scan."""
-    _not_the_test_set(book_dir, score_test)
-    book, stages, doc, reference, around = _build_golden(book_dir, pages, chapters, no_models)
-    # The paragraphs' line references point into the pages before answers (the text
-    # layer with missing lines added), as `Line.source` does on the corrected copy.
-    found = disagreements.find(doc, reference, stages.pages, book.language, around)
-    verdicts = _verdicts(book)
-    manual = [d for d in found if not d.auto]
-    done = sum(d.key in verdicts.by_key for d in manual)
-    typer.echo(
-        f"{len(found)} disagreements: {len(found) - len(manual)} auto-resolved, "
-        f"{len(manual)} to review ({done} already done)"
-    )
-    typer.echo(f"Reviewing on http://127.0.0.1:{port}/ (Ctrl-C to stop)")
-    review.serve(review.VerdictReview(book.source, stages.pages, manual, verdicts), port)
 
 
 def _questions_and_errors(spec: str, settings: Settings | None = None):
@@ -617,7 +615,7 @@ def _evaluate_book(
             + ", ".join(f"{k} {o}/{r}" for k, (o, r) in folded.items())
         )
     if verdicts.by_key:
-        # Found on the unpatched reference, as the golden review records its verdicts; a
+        # Found on the unpatched reference, as the review records its verdicts; a
         # verdict that the scan prints the output settles its disagreement.
         found = disagreements.find(doc, reference, stages.pages, book.language, around)
         mistakes = Counter(

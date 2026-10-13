@@ -203,7 +203,7 @@ reading shares: many are specks and faint marks.
 - [ ] **user** More golden pairs when convenient: Koning Wilders (Atlas Contact) and Het
       laatste bevel (Manteau) came in 2026-10-11; De Arbeiderspers, Prometheus/Ooievaar or
       Vrijdag next; a Kosmos book for later, beyond prose
-- [ ] **user** Settle verdicts on the tuning books (`golden review`), the disagreements
+- [ ] **user** Settle verdicts on the tuning books (`review` on each), the disagreements
       the arbiter's labels sit on first: hours, spread out, whenever convenient
 - [ ] Remove the `baseline` and `qwen2` worktrees when convenient
 

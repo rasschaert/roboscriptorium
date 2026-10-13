@@ -1,13 +1,12 @@
-"""Local web pages for reviewing a book next to its scan, served on 127.0.0.1.
+"""The local review page for a book next to its scan, served on 127.0.0.1
+(`roboscriptorium review <book>`).
 
-- Regions (`roboscriptorium review <book>`): what the pipeline flagged as not
-  plain running text. Each shows a crop of the scan and takes an answer: running
-  text, heading, drop, image, initial or caption, optionally with the text as
-  printed. A region with a box can be turned and read again. Answers apply on
-  the next build, which the page can start.
-- Disagreements (`roboscriptorium golden review <book>`): where a golden book's
-  output and reference differ, on the same page as a doubt between two readings,
-  ours and the reference's; what the page prints is the verdict.
+It asks about what the pipeline flagged as not plain running text. Each question shows
+a crop of the scan and takes an answer: running text, heading, drop, image, initial or
+caption, optionally with the text as printed. A region with a box can be turned and
+read again. Answers apply on the next build, which the page can start. A golden book's
+places where our text and the publisher's e-book differ are more questions in the same
+list, each a doubt between the two; their answers are verdicts on the reference.
 """
 
 import json
@@ -174,14 +173,14 @@ class Scan:
             )
 
 
-class VerdictReview:
-    """Where a golden book's output and reference differ, asked on the region review's
-    page as a doubt: the words around the place, read once with the output's words and
-    once with the reference's, and what the page prints is the verdict. The kind of
-    mistake follows from the answer: the output's likeliest slip when the reference is
-    chosen or something else typed, an edition difference when the output is chosen."""
+class GoldenQuestions:
+    """Where a golden book's output and reference differ, as questions in the region
+    review: the words around the place, read once with the output's words and once with
+    the reference's, and what the page prints is the verdict. The kind of mistake follows
+    from the answer: the output's likeliest slip when the reference is chosen or
+    something else typed, an edition difference when the output is chosen."""
 
-    html = "regions.html"
+    REASON = "our text and the publisher's e-book differ here"
     OURS = "our text"
     THEIRS = "the publisher's e-book"
     # What a place is when it isn't running text, as the region review asks it, and the
@@ -194,10 +193,7 @@ class VerdictReview:
         "initial": "other",
     }
 
-    def __init__(
-        self, pdf: Path, pages: list[PageText], items: list[Disagreement], verdicts: Verdicts
-    ):
-        self.scan = Scan(pdf, pages)
+    def __init__(self, items: list[Disagreement], verdicts: Verdicts):
         # A disagreement with no place on a page has no crop to answer from.
         self.items = {d.key: d for d in items if d.page is not None and d.lines is not None}
         self.verdicts = verdicts
@@ -211,7 +207,9 @@ class VerdictReview:
         before, after = self._parts(d)
         return before + words + after if words else (before + after.lstrip()).rstrip()
 
-    def state(self) -> dict:
+    def state(self) -> list[dict]:
+        """Each place in the shape of a flagged region (`RegionReview.state`), with `got`,
+        our words at the place, which a heading or caption answer starts from."""
         items = []
         for d in self.items.values():
             before, after = self._parts(d)
@@ -236,7 +234,8 @@ class VerdictReview:
                         else None
                     ),
                     "box": None,
-                    "reasons": [],
+                    "treatment": "text",
+                    "reasons": [self.REASON],
                     "text": ours,
                     "got": d.got,
                     "span": [len(before), len(ours) - len(after)] if d.got else None,
@@ -244,6 +243,8 @@ class VerdictReview:
                         {"text": ours, "votes": [self.OURS]},
                         {"text": theirs, "votes": [self.THEIRS]},
                     ],
+                    "joined": "",
+                    "elsewhere": [],
                     "before": "",
                     "after": "",
                     "answer": answer,
@@ -251,7 +252,13 @@ class VerdictReview:
                     "turn": 0,
                 }
             )
-        return {"mode": "verdicts", "items": items, "actions": ACTIONS, "applied": None}
+        return items
+
+    def lines(self, key: str) -> tuple[str, list[dict]]:
+        """A place's line as our text has it and its two readings, for `doubtful`."""
+        d = self.items[key]
+        ours, theirs = self._line(d, d.got), self._line(d, d.want)
+        return ours, [{"text": ours}, {"text": theirs}]
 
     def record(self, body: dict) -> dict:
         d = self.items[body["key"]]
@@ -289,7 +296,7 @@ def _fold(text: str) -> str:
     return " ".join(unicodedata.normalize("NFC", text).translate(_STRAIGHT).split())
 
 
-def doubtful(flag: F.Flag, action: str, text: str | None) -> str:
+def doubtful(line: str, readings: list[dict], action: str, text: str | None) -> str:
     """Why an answer deserves a second look before it is saved, or "" when it doesn't.
 
     A reviewer's typed answer is wrong about one time in eight (`quality.slip_rates`),
@@ -299,16 +306,17 @@ def doubtful(flag: F.Flag, action: str, text: str | None) -> str:
     """
     if text is None or action not in ("text", "heading", "caption"):
         return ""
-    lines = [flag.text, *(g["text"] for g in flag.readings)]
+    lines = [line, *(g["text"] for g in readings)]
     if any(c in line for line in lines for c in _CURLY) and any(c in text for c in "'\""):
         return "That has a straight quote where the book sets curly ones."
-    if len(flag.readings) > 1 and _fold(text) not in {_fold(g["text"]) for g in flag.readings}:
+    if len(readings) > 1 and _fold(text) not in {_fold(g["text"]) for g in readings}:
         return "That matches none of the readings of this line. Check the scan once more."
     return ""
 
 
 class RegionReview:
-    """Flagged regions of a book; `rebuild` reruns the pipeline and returns new flags."""
+    """Flagged regions of a book and, for a golden book, its places that differ from the
+    reference (`golden`); `rebuild` reruns the pipeline and returns new flags and places."""
 
     html = "regions.html"
 
@@ -318,9 +326,10 @@ class RegionReview:
         pages: list[PageText],
         regions: list[F.Flag],
         corrections: Corrections,
-        rebuild: Callable[[], tuple[list[PageText], list[F.Flag], int]],
+        rebuild: Callable[[], tuple[list[PageText], list[F.Flag], int, list[Disagreement]]],
         lang: str,
         guess_letter: Callable[[bytes, str], str] | None = None,
+        golden: GoldenQuestions | None = None,
     ):
         self.scan = Scan(pdf, pages)
         self.lang = lang
@@ -331,6 +340,7 @@ class RegionReview:
         self._rebuild = rebuild
         self._lock = threading.Lock()
         self.applied = None
+        self.golden = golden
 
     def state(self) -> dict:
         items = []
@@ -339,9 +349,13 @@ class RegionReview:
             c = self.corrections.for_flag(f)
             # Around sideways text the neighbouring lines are scraps too.
             context = "rotated" not in f.reasons
+            item = asdict(f)
+            if item["readings"]:
+                first = item["readings"][0]
+                item["readings"][0] = {**first, "votes": ["text layer", *first["votes"]]}
             items.append(
                 {
-                    **asdict(f),
+                    **item,
                     "reasons": [F.REASONS[r] for r in f.reasons],
                     "before": page.lines[f.first - 1].text
                     if context and 0 < f.first <= len(page.lines)
@@ -354,6 +368,11 @@ class RegionReview:
                     "turn": self._turn(f),
                 }
             )
+        if self.golden is not None:
+            # Each place after the flags on its line, so a doubt there is asked first.
+            both = [(0, i) for i in items] + [(1, i) for i in self.golden.state()]
+            both.sort(key=lambda k_i: (k_i[1]["page"], k_i[1]["first"], k_i[0]))
+            items = [i for _, i in both]
         return {"items": items, "actions": ACTIONS, "applied": self.applied}
 
     def _turn(self, f: F.Flag) -> int:
@@ -395,28 +414,41 @@ class RegionReview:
         a warning instead; the page sends it again with `confirm` to save it anyway.
         Warned answers are logged beside the answers, so the slip rate can be measured
         before and after the check."""
-        flag = next(f for f in self.regions if f.key == body["key"])
+        place = self.golden is not None and body["key"] in self.golden.items
+        action = body.get("action", "text")
+        if place:
+            line, readings = self.golden.lines(body["key"])
+            page = self.golden.items[body["key"]].page
+            # The readings are of running text; a heading or caption there is typed.
+            readings = readings if action == "text" else []
+        else:
+            flag = next(f for f in self.regions if f.key == body["key"])
+            line, readings, page = flag.text, flag.readings, flag.page
         turn = int(body.get("turn") or 0)
         text = body.get("text")
-        if not body.get("confirm") and (why := doubtful(flag, body["action"], text)):
+        if not body.get("confirm") and (why := doubtful(line, readings, action, text)):
             path = self.corrections.path.with_name("warnings.jsonl")
             path.parent.mkdir(parents=True, exist_ok=True)
             with path.open("a") as f:
                 entry = {
-                    "key": flag.key,
-                    "page": flag.page,
+                    "key": body["key"],
+                    "page": page,
                     "text": text,
                     "why": why,
                     "at": datetime.now(UTC).isoformat(timespec="seconds"),
                 }
                 f.write(json.dumps(entry, ensure_ascii=False) + "\n")
             return {"warning": why}
-        return asdict(self.corrections.record(flag, body["action"], text, turn))
+        if place:
+            return self.golden.record(body)
+        return asdict(self.corrections.record(flag, action, text, turn))
 
     def rebuild(self) -> dict:
         with self._lock, PDF_LOCK:
-            pages, self.regions, self.applied = self._rebuild()
+            pages, self.regions, self.applied, places = self._rebuild()
             self.scan = Scan(self.scan.pdf, pages)
+            if self.golden is not None:
+                self.golden = GoldenQuestions(places, self.golden.verdicts)
         return self.state()
 
 
@@ -433,7 +465,7 @@ def _trusted(headers, port: int) -> bool:
     return origin is None or origin in {f"http://{h}" for h in hosts}
 
 
-def serve(review: VerdictReview | RegionReview, port: int) -> None:
+def serve(review: RegionReview, port: int) -> None:
     page = (Path(__file__).parent / review.html).read_bytes()
 
     class Handler(BaseHTTPRequestHandler):
@@ -470,9 +502,9 @@ def serve(review: VerdictReview | RegionReview, port: int) -> None:
                     first, last = int(q["first"]), int(q["last"])
                     png = review.scan.crop(int(q["page"]), first, last, out, mark)
                     self._send(png, "image/png")
-                elif url.path == "/api/initial" and isinstance(review, RegionReview):
+                elif url.path == "/api/initial":
                     self._json({"letter": review.guess_initial(q["key"])})
-                elif url.path == "/api/read" and isinstance(review, RegionReview):
+                elif url.path == "/api/read":
                     self._json({"text": review.read(q["key"], int(q.get("turn", 0)))})
                 elif url.path == "/favicon.ico":
                     self._send(b"", "image/x-icon", 204)
@@ -488,7 +520,7 @@ def serve(review: VerdictReview | RegionReview, port: int) -> None:
                 self._send(b"forbidden", "text/plain", 403)
                 return
             path = urlparse(self.path).path
-            if path == "/api/rebuild" and isinstance(review, RegionReview):
+            if path == "/api/rebuild":
                 self._json(review.rebuild())
                 return
             if path != "/api/verdict":

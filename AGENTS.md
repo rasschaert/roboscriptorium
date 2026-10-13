@@ -430,7 +430,7 @@ sha256, page ranges, the source and chapter range), the derived chapters in `tex
   consulted before, so they check that a change carries over; the **test set** (Het
   geluid van bananen) is scored **once, at the end of the plan, and touched by nothing
   else**: no eval, quality, review or bench run, no trust data, no probe. `eval`,
-  `quality`, `golden review` and `bench test` refuse it without `--score-test`. A
+  `quality`, `review` and `bench test` refuse it without `--score-test`. A
   validation book's sibling (same publisher, translator and e-book house) never trains
   while it validates.
 - **Checking a candidate pair** (scan PDF plus the publisher's EPUB) before writing its
@@ -495,16 +495,17 @@ digest. Given several books it scores them
 one after another and ends with a line per book.
 
 **Disagreements and verdicts.** Gutenberg is a transcription, not the scan, so where the
-output disagrees with it a human decides what the scan prints:
+output disagrees with it a human decides what the scan prints. A golden book's review
+asks it, in the same list as its flagged regions (pass the bench's slice):
 
 ```sh
-uv run roboscriptorium golden review work/the-nature-of-a-crime--doubleday-1924  # → http://127.0.0.1:8765/
+uv run roboscriptorium review work/goede-dochter--ia-scan --pages 9-64 --chapters 1-4  # → http://127.0.0.1:8765/
 ```
 
-It is the region review's page: each place shows its words twice, with our text's
-words and the reference's, labelled by who claims them; choose the one the page says
-(`a`, `b`) or type it (`e`), Save (`↵`) moves on, arrows move through all. The kind of
-mistake follows from the answer. Verdicts go to `golden/<name>/verdicts/<scan>.jsonl` (in git),
+Each place is an ordinary question: its line twice, with our text's words and the
+reference's, labelled by who claims them (`a`, `b`; `e` to type), and a kind for what
+isn't running text. The answer is a verdict, not a correction: it settles the reference,
+and the kind of mistake follows from it. Verdicts go to `golden/<name>/verdicts/<scan>.jsonl` (in git),
 keyed on the reference words and six words of context either side, so they survive
 pipeline changes. `eval` patches them into the reference for that scan and reports the
 remaining disagreements by mistake category.

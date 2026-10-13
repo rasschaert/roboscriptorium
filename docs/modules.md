@@ -243,5 +243,6 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   each line a paragraph marked `epigraph`; `epub.py` sets a run of them as one
   `blockquote epub:type="epigraph"`. The words stay in the scored paragraphs.
 - `review.py` + `regions.html`: the local review page (stdlib HTTP server on
-  127.0.0.1), with scan crops: regions for any book, and disagreements for golden books
-  (`VerdictReview`: each a doubt between our text and the reference's, on the same page).
+  127.0.0.1), with scan crops: the flagged regions of any book and, for a golden book,
+  its places where our text and the reference differ (`GoldenQuestions`), in the same
+  list as a doubt between the two, answered as verdicts.

@@ -1,5 +1,5 @@
-"""The review server: who may post to it, which pages its crops are cut from, and golden
-verdicts asked as a doubt between our text and the reference's."""
+"""The review server: who may post to it, which pages its crops are cut from, and a golden
+book's places asked in the same list as a doubt between our text and the reference's."""
 
 import http.client
 import json
@@ -82,37 +82,74 @@ def test_the_servers_own_page_may_post(server):
     assert len(target.recorded) == 4
 
 
-def test_golden_review_crops_from_the_pages_the_paragraphs_point_into(tmp_path, monkeypatch):
-    layer = [SimpleNamespace(number=1, name="layer")]
-    corrected = [SimpleNamespace(number=1, name="corrected")]
-    stages = SimpleNamespace(pages=layer, corrected=corrected)
-    book = SimpleNamespace(source=tmp_path / "source.pdf", stages=tmp_path, language="nl")
+def test_a_golden_books_places_join_the_review_cropped_from_the_layer(tmp_path, monkeypatch):
+    layer = [SimpleNamespace(number=1, name="layer", lines=[])]
+    corrected = [SimpleNamespace(number=1, name="corrected", lines=[])]
+    stages = SimpleNamespace(
+        pages=layer,
+        corrected=corrected,
+        model_roles={},
+        suspects=[],
+        quote_lines=[],
+        quote_readings={},
+        faint_pages=set(),
+        corrections_applied=0,
+    )
+    book = SimpleNamespace(
+        source=tmp_path / "source.pdf",
+        stages=tmp_path,
+        language="nl",
+        golden="g",
+        corrections_path=tmp_path / "review" / "answers.jsonl",
+        epub_path=tmp_path / "b.epub",
+        epubs=tmp_path / "epubs",
+    )
     seen = {}
     monkeypatch.setattr(cli, "_not_the_test_set", lambda *a: None)
-    monkeypatch.setattr(cli, "_build_golden", lambda *a: (book, stages, "doc", [], ([], [])))
+    monkeypatch.setattr(cli.Book, "load", lambda d: book)
+    monkeypatch.setattr(cli.Golden, "load", lambda g: SimpleNamespace(text_dir=tmp_path))
+    monkeypatch.setattr(cli, "load_chapters", lambda d: [])
+    monkeypatch.setattr(cli.pipeline, "run", lambda b, pages=None: stages)
+    monkeypatch.setattr(cli, "keep_dated", lambda *a: None)
+    monkeypatch.setattr(cli.layout, "available", lambda: False)
+    monkeypatch.setattr(cli, "_scored", lambda b, s: "doc")
     monkeypatch.setattr(cli, "_verdicts", lambda b: Verdicts(tmp_path / "v.jsonl"))
+    monkeypatch.setattr(cli.initials, "vocabulary", lambda *a: set())
 
     def find(doc, reference, pages, language, around=([], [])):
         seen["find"] = pages
         seen["language"] = language
-        return []
+        return [_place("geld", "geId"), Disagreement("auto", "x#", "x", "", "", 1, (0, 0), "ocr")]
 
     monkeypatch.setattr(cli.disagreements, "find", find)
-    monkeypatch.setattr(review, "serve", lambda r, port: seen.setdefault("scan", r.scan.pages))
-    cli.review_disagreements(tmp_path, None, None, True, 8765, False)
+    monkeypatch.setattr(review, "serve", lambda r, port: seen.setdefault("review", r))
+    cli.review_regions(tmp_path, None, None, 8765, False)
     # The paragraphs point into the pages before answers (`Line.source`), not the
     # corrected copy, where a typed line above would shift every crop.
     assert seen["find"] is layer
-    assert seen["scan"][1] is layer[0]
+    assert seen["review"].scan.pages[1] is layer[0]
     assert seen["language"] == "nl"
+    # One list: the place a human must settle, not the one settled without review.
+    items = seen["review"].state()["items"]
+    assert [i["key"] for i in items] == ["k"]
+    assert items[0]["reasons"] == [review.GoldenQuestions.REASON]
 
 
 def _place(got: str, want: str) -> Disagreement:
     return Disagreement("k", got, want, "Hij was zo stom geweest zijn", "niet op een", 17, (24, 24))
 
 
-def _verdicts(tmp_path, d: Disagreement) -> review.VerdictReview:
-    return review.VerdictReview(tmp_path / "s.pdf", [], [d], Verdicts(tmp_path / "v.jsonl"))
+def _verdicts(tmp_path, d: Disagreement) -> review.RegionReview:
+    """A review of a golden book whose one question is the place `d`."""
+    return review.RegionReview(
+        tmp_path / "s.pdf",
+        [],
+        [],
+        review.Corrections(tmp_path / "answers.jsonl"),
+        lambda: None,
+        "nld",
+        golden=review.GoldenQuestions([d], Verdicts(tmp_path / "v.jsonl")),
+    )
 
 
 def test_a_verdict_is_asked_as_two_readings_labelled_by_who_claims_them(tmp_path):
@@ -137,9 +174,11 @@ def test_the_reading_chosen_is_the_verdict(tmp_path):
     v = Verdicts(tmp_path / "v.jsonl").by_key["k"]
     assert (v.truth, v.category) == ("geId", "ocr")
     # Typed: the words between the context, and the page shows the answer again.
-    r.record({"key": "k", "text": "Hij was zo stom geweest zijn gold niet op een"})
+    typed = {"key": "k", "text": "Hij was zo stom geweest zijn gold niet op een"}
+    assert "none of the readings" in r.record(typed)["warning"]
+    r.record({**typed, "confirm": True})
     r = _verdicts(tmp_path, d)
-    assert r.verdicts.by_key["k"].truth == "gold"
+    assert r.golden.verdicts.by_key["k"].truth == "gold"
     assert r.state()["items"][0]["answer"]["text"].endswith("zijn gold niet op een")
 
 

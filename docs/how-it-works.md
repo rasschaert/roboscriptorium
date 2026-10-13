@@ -435,7 +435,8 @@ on the scan.
 
 The reference isn't identical to the scan either: an EPUB may correct a word or
 set a dash differently. Where output and reference differ, a person can say what
-the scan prints, with `golden review`. These verdicts are kept in git and patched
+the scan prints, in the book's review: those places are more questions in the
+same list as its flagged regions. These verdicts are kept in git and patched
 into the reference.
 
 Typography an EPUB may set differently, such as quote glyphs and ellipses, is

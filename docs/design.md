@@ -576,7 +576,7 @@ typed in, text the layer lacks) gets only the quote check.
   the 2,669 settled ones (15%) have no version equal to the truth, and are trained
   on with the closest version marked right: 286 of them one character off, 108
   more. How much of that is alignment noise and how much a wrong label is
-  unmeasured. Verdicts (`golden review`) settle the reference's side. A
+  unmeasured. Verdicts (the review's questions on a golden book) settle the reference's side. A
   version is labelled by comparing the line as the score compares it, with what reflow
   sets anyway folded too (spaced dots, a space before punctuation): before that, Crime's
   and Dolittle's faithful `you. . . .` and `listen :` were labelled wrong and the
