@@ -90,6 +90,7 @@ PAIRED = (
     ("after review, few slips", 4),
     ("after review, many slips", 5),
     ("paragraph breaks", 6),
+    ("typography", 7),
 )
 # The one test that decides a change: "after review" over the set, each book weighing
 # the same, at each slip rate.
@@ -151,14 +152,16 @@ def page_counts(
     found,
     slips: tuple[float, float, float] | None = None,
     breaks: list[int] = (),
+    glyphs: list[int] = (),
 ) -> dict[int, list[float]]:
     """Per page: wrong words, wrong words no question catches, questions, wrong words
     after the reviewer answers every question (`after_review`) at the mean slip rate, the
-    low end and the high end (`quality.slip_rates`), and paragraph breaks set wrong
-    (`disagreements.break_errors`, no question asks about them)."""
+    low end and the high end (`quality.slip_rates`), paragraph breaks set wrong
+    (`disagreements.break_errors`, no question asks about them), and words whose quote
+    marks, dashes or ellipsis are set wrong (`disagreements.glyph_errors`)."""
     rates = slips or quality.slip_rates()
     counts = quality.per_page(pages, errors, found)
-    wrong = Counter(breaks)
+    wrong, glyph = Counter(breaks), Counter(glyphs)
     return {
         p: [
             w,
@@ -166,6 +169,7 @@ def page_counts(
             q,
             *(after_review(u, q, rate) for rate in (rates[1], rates[0], rates[2])),
             wrong[p],
+            glyph[p],
         ]
         for p, (w, u, q) in counts.items()
     }

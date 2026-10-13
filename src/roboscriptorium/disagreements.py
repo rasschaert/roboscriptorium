@@ -294,6 +294,57 @@ def break_errors(doc: Document, reference: list[Chapter], pages: list[PageText])
     return sorted(refs[o].page for o in wrong if refs[o] is not None)
 
 
+# The glyphs `normalise` folds, by kind: where the words agree folded, which of them each
+# side sets is the typography the bench otherwise can't see.
+_GLYPHS = {
+    "quotes": re.compile(r"[‘’“”„‚«»'\"]"),
+    "dashes": re.compile(r"[–—―]"),
+    "ellipses": re.compile(r"…|\.(?:\s?\.){2}"),
+}
+
+
+def glyph_kinds(reference: list[Chapter]) -> set[str]:
+    """The kinds of typography a reference can be scored on: those it sets in its own
+    glyphs. Quotes count where curly ones outnumber straight ones ten to one (a text in
+    straight quotes says nothing of the print's), dashes where it sets an en or em dash,
+    ellipses where it sets one."""
+    text = " ".join(p for ch in reference for p in ch.paragraphs)
+    kinds = set()
+    if len(re.findall("[‘’“”„‚]", text)) > 10 * len(re.findall("['\"]", text)):
+        kinds.add("quotes")
+    for kind in ("dashes", "ellipses"):
+        if _GLYPHS[kind].search(text):
+            kinds.add(kind)
+    return kinds
+
+
+def glyph_errors(
+    doc: Document, reference: list[Chapter], pages: list[PageText], kinds: set[str]
+) -> list[int]:
+    """The page of each word whose quote marks, dashes or ellipsis (of `kinds`) differ
+    from the reference's where the words agree once those are folded (`normalise`): a
+    closing quote set as an opening one, an en dash for an em dash, "..." for "…".
+    `pages` are the ones `doc`'s sources index."""
+    if not kinds:
+        return []
+    out, out_written, refs = _word_sources(doc, {p.number: p for p in pages})
+    ref, ref_written = reference_words(reference), _reference_written(reference)
+    rx = [_GLYPHS[k] for k in sorted(kinds)]
+
+    def glyphs(word: str) -> list[list[str]]:
+        return [r.findall(word) for r in rx]
+
+    wrong = []
+    for op in Levenshtein.opcodes(out, ref):
+        if op.tag != "equal":
+            continue
+        for i in range(op.src_end - op.src_start):
+            o, r = op.src_start + i, op.dest_start + i
+            if refs[o] is not None and glyphs(out_written[o]) != glyphs(ref_written[r]):
+                wrong.append(refs[o].page)
+    return sorted(wrong)
+
+
 class Verdicts:
     def __init__(self, path: Path):
         self.path = path

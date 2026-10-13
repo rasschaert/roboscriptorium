@@ -441,6 +441,8 @@ def run_bench(
             else {r for r, role in stages.model_roles.items() if role.role == "body"}
         )
         pairs[name] = signals.measure(stages.pages, reference, body)
+        scored = _scored(book, stages)
+        kinds = disagreements.glyph_kinds(reference)
         books[name] = {
             "spec": spec,
             "pair": asdict(pairs[name]),
@@ -455,11 +457,13 @@ def run_bench(
                 k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()
             },
             "unasked_by_kind": quality.unasked_by_category(errors, found),
+            "typography_kinds": sorted(kinds),
             "pages": bench.page_counts(
                 numbers,
                 errors,
                 found,
-                breaks=disagreements.break_errors(_scored(book, stages), reference, stages.pages),
+                breaks=disagreements.break_errors(scored, reference, stages.pages),
+                glyphs=disagreements.glyph_errors(scored, reference, stages.pages, kinds),
             ),
         }
     record = {
@@ -481,6 +485,8 @@ def run_bench(
             f"  unasked {q['unasked, all questions']['mean']:.2f}"
             f"  after review {sum(v[3] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
             f"  breaks {sum(v[6] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
+            f"  typography {sum(v[7] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
+            f" ({', '.join(b['typography_kinds']) or 'none'})"
             f"  headings {b['score']['headings_found']}/{b['score']['headings_expected']}"
             f" (+{b['score']['headings_spurious']})"
             f"  scenes {bench.scenes(b['score'])}"

@@ -20,7 +20,7 @@ def _run(pages: dict[int, list[float]], **books: dict[int, list[float]]) -> dict
     Through JSON, as saved runs are read back: page numbers become strings."""
     every = {"b": pages, **books}
     padded = {
-        n: {p: c if len(c) == 7 else (c + [c[-1]] * 6)[:6] for p, c in pg.items()}
+        n: {p: c if len(c) >= 7 else (c + [c[-1]] * 6)[:6] for p, c in pg.items()}
         for n, pg in every.items()
     }
     return json.loads(json.dumps({"books": {n: {"pages": pg} for n, pg in padded.items()}}))
@@ -47,9 +47,9 @@ def test_after_review_counts_the_reviewers_slips_and_time_on_each_question():
     asked = [SimpleNamespace(page=1, first=0, last=0, reasons=["x"])] * 2
     counts = bench.page_counts([1, 2], [], asked, slips=(0.1, 0.25, 0.5))
     # Each question: its chance of a wrong answer, plus 1/20 of a wrong word for the time.
-    assert counts[1][:3] == [0, 0, 2] and counts[1][6] == 0
+    assert counts[1][:3] == [0, 0, 2] and counts[1][6:] == [0, 0]
     assert counts[1][3:6] == pytest.approx([0.6, 0.3, 1.1])
-    assert counts[2] == [0, 0, 0, 0.0, 0.0, 0.0, 0]
+    assert counts[2] == [0, 0, 0, 0.0, 0.0, 0.0, 0, 0]
 
 
 def test_twenty_questions_that_catch_one_error_cost_more_than_they_save():
@@ -259,3 +259,27 @@ def test_a_change_to_a_books_structure_is_reported_beside_the_test():
     lines = bench.structure(old, new)
     assert len(lines) == 1 and "5/24 (+4) → 23/24 (+1)" in lines[0]
     assert bench.structure(old, old) == []
+
+
+def test_typography_counts_glyphs_set_wrong_where_the_words_agree():
+    from roboscriptorium.disagreements import glyph_errors, glyph_kinds
+    from roboscriptorium.ir import Document, Paragraph
+
+    text = "‘Kom je?’ vroeg ze – en toen… niets."
+    page = PageText(4, 300, 500, [Line(text, 0, 0, 1, 1)])
+    reference = [Chapter("", [text])]
+    assert glyph_kinds(reference) == {"quotes", "dashes", "ellipses"}
+
+    def errors(ours: str, kinds=None) -> list[int]:
+        doc = Document("", "", "", [Paragraph(ours, [SourceRef(4, 0)])])
+        return glyph_errors(doc, reference, [page], kinds or glyph_kinds(reference))
+
+    assert errors(text) == []
+    # The quote turned the wrong way, the dash's kind, the ellipsis's glyph: one each.
+    assert errors("’Kom je?’ vroeg ze — en toen... niets.") == [4, 4, 4]
+    # A kind the reference can't speak for isn't scored.
+    assert errors("’Kom je?’ vroeg ze — en toen... niets.", {"dashes"}) == [4]
+    # A word that differs is a wrong word, not typography.
+    assert errors("‘Kom je?’ vroeg hij – en toen… niets.") == []
+    # A reference in straight quotes says nothing of the print's quotes.
+    assert "quotes" not in glyph_kinds([Chapter("", ["'Kom je?' vroeg ze."])])
