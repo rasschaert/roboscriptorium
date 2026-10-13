@@ -20,7 +20,7 @@ end of every session.
   and validation NO CHANGE overall.
 - `bench` now names settings that differ from its baseline. **Baselines today:** tuning
   `tuning-20261013T183737-b891650-dirty.json` (0.32), validation
-  `validation-20261013T…` (the latest, 0.59), both with the rules (ROBO_SORTER=0).
+  `validation-20261013T183941-b891650-dirty.json` (0.59), both with the rules (ROBO_SORTER=0).
 
 Last warm `bench tuning`: 2026-10-13 17:25, NO CHANGE (0.33 → 0.32), three pairs retired.
 De tuin van de avondnevel got significantly worse under the retrained arbiter (0.38 → 0.43;
