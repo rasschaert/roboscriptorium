@@ -52,9 +52,12 @@ experiments/detached.sh bench-tuning-cold experiments/timed.sh "bench tuning, co
   after review is undoubted misreading, under the agreed half).
 - A dash a fix puts before a line widens its box (6a63a2e): Dolittle 0.40 → 0.31; tuning
   and validation NO CHANGE overall.
-- `bench` now names settings that differ from its baseline. **Baselines today:** tuning
-  `tuning-20261013T183737-b891650-dirty.json` (0.32), validation
-  `validation-20261013T183941-b891650-dirty.json` (0.59), both with the rules (ROBO_SORTER=0).
+- `bench` now names settings that differ from its baseline.
+- **Line-role trees on by default** (trained with De tunnels' and Steve Jobs' photo
+  slices, body weight 10): tuning NO CHANGE, validation 0.59 → 0.50, no book worse.
+  **Baselines now (trees on):** the last `tuning-…` and `validation-…` runs of 2026-10-13
+  in `work/bench/` (0.32, 0.50). The rules' runs: `tuning-20261013T183737-b891650-dirty`,
+  `validation-20261013T183941-b891650-dirty`.
 
 Last warm `bench tuning`: 2026-10-13 17:25, NO CHANGE (0.33 → 0.32), three pairs retired.
 De tuin van de avondnevel got significantly worse under the retrained arbiter (0.38 → 0.43;

@@ -85,8 +85,12 @@ def errors(truth: list[str], pred: list[str]) -> str:
     )
 
 
+# How much more a body line weighs than its class's balanced share (SORTER_BODY_WEIGHT).
+BODY_WEIGHT = float(os.environ.get("SORTER_BODY_WEIGHT", "10"))
+
+
 def fit(rows: list[dict]) -> sorter.Sorter:
-    return sorter.train([r["f"] for r in rows], [r["label"] for r in rows])
+    return sorter.train([r["f"] for r in rows], [r["label"] for r in rows], BODY_WEIGHT)
 
 
 def predict(model: sorter.Sorter, rows: list[dict]) -> list[str]:

@@ -339,7 +339,19 @@ body: the trees dropped such full-width prose (Crime pp. 36, 42 and 98, a whole 
 each), and the guard takes the tuning books' lost body lines from 72 to 57. On the new
 baseline (2026-10-11), before the guard: no change by the test, tuning 0.50 → 0.48,
 validation 0.74 → 0.67; Metro, De cipier, Artemis, 11/22/63 and Villa Toscane clearly
-better, Thief-Taker and Crime leaning worse. Off by default until the bench holds.
+better, Thief-Taker and Crime leaning worse.
+
+**On by default since 2026-10-13.** Two things made them hold. Their labels called a line
+of bare marks (a speck, a lone quote) body, so they kept specks as text; fixed in the
+aligner. And they had seen one book with pictures: two photo slices joined their training
+only (De tunnels' chapter 12, Steve Jobs' photo insert), and a body line now weighs ten
+times its class's share, because a body line dropped loses text unasked where a speck kept
+is asked about (weight 1 dropped 38 of Steve Jobs' caption lines, 10 drops 3). Warm
+benches against the rules: tuning no change 0.32 → 0.32 (Goede dochter, Metro, Monterosso
+better), validation no change 0.59 → 0.50 [−0.23, +0.00] (Normal People 0.20 → 0.13), no
+book worse. Left: Dolittle's text set around its drawings (short lines beside a picture,
+their type measured small), which the trees still drop when trained without it; a book
+with text wrapped around pictures would teach it.
 
 A line the role model drops that reads as running text is kept, and flagged as kept
 unsure (`roles.running_text`): it continues a sentence the last text line left open, or

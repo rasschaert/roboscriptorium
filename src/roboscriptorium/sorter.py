@@ -148,18 +148,22 @@ class Mismatch(RuntimeError):
     """The saved model was trained on other features than these."""
 
 
-def train(rows: list[dict[str, float]], labels: list[str]) -> Sorter:
-    """Trees over labelled lines' features (`features`), labels from `CLASSES`."""
+def train(rows: list[dict[str, float]], labels: list[str], body_weight: float = 1.0) -> Sorter:
+    """Trees over labelled lines' features (`features`), labels from `CLASSES`. Classes
+    weigh alike whatever their size; a body line weighs `body_weight` times that, since
+    a body line dropped loses text unasked where a speck kept is asked about."""
     from sklearn.ensemble import HistGradientBoostingClassifier
 
     model = HistGradientBoostingClassifier(
-        class_weight="balanced",
         max_depth=4,
         min_samples_leaf=20,
         l2_regularization=1.0,
         random_state=0,
     )
-    return Sorter(model.fit(_matrix(rows), labels))
+    counts = {c: labels.count(c) for c in set(labels)}
+    weight = {c: len(labels) / (len(counts) * n) for c, n in counts.items()}
+    weight["body"] = weight.get("body", 1.0) * body_weight
+    return Sorter(model.fit(_matrix(rows), labels, sample_weight=[weight[c] for c in labels]))
 
 
 def _matrix(rows: list[dict[str, float]]) -> np.ndarray:

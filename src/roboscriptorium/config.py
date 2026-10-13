@@ -54,8 +54,8 @@ class Settings:
     # review (docs/design.md).
     ocr_ask_below: float = 0.8
     # Line roles from trees over layout, type and the role model's answer (`sorter.py`)
-    # instead of the rules in `roles.py`.
-    sorter: bool = False
+    # on top of the rules in `roles.py` (docs/design.md, "Line roles").
+    sorter: bool = True
     sorter_model: str = "work/models/line-roles.pkl"
 
     def __post_init__(self) -> None:

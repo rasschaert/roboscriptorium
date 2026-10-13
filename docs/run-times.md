@@ -324,3 +324,8 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-13 | bench validation, warm, line-role trees on, labels fixed | 790 | 3 | 0 |
 | 2026-10-13 | probe: whole-page reading, Qwen and glm-ocr, 19 tuning pages | 19 | 1 | 1 |
 | 2026-10-13 | probe: whole-page reading, Qwen and glm-ocr, 19 tuning pages (glm-ocr's image smaller) | 19 | 6 | 0 |
+| 2026-10-13 | line-role trees against the rules, with De tunnels' and Steve Jobs' photo slices (those cold) | 1050 | 8 | 0 |
+| 2026-10-13 | bench tuning, warm, line-role trees with the photo slices | 790 | 2 | 0 |
+| 2026-10-13 | bench validation, warm, line-role trees with the photo slices | 790 | 2 | 0 |
+| 2026-10-13 | bench tuning, warm, line-role trees with photo slices, body weight 10 | 790 | 3 | 0 |
+| 2026-10-13 | bench validation, warm, line-role trees with photo slices, body weight 10 | 790 | 2 | 0 |

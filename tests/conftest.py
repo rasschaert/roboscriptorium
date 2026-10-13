@@ -21,3 +21,6 @@ def _default_settings(monkeypatch):
     for name in list(os.environ):
         if name.startswith("ROBO_") or name == "OPENROUTER_API_KEY":
             monkeypatch.delenv(name)
+    # The line-role trees are trained on the books in work/, which a test can't depend
+    # on: tests run on the rules, and a test of the trees switches them on itself.
+    monkeypatch.setenv("ROBO_SORTER", "0")

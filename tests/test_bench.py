@@ -156,7 +156,7 @@ def test_a_gain_pooled_over_books_counts_unless_one_book_gets_worse():
 def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path, monkeypatch):
     from roboscriptorium.config import Settings
 
-    settings = Settings(ocr_trust_model=str(tmp_path / "ocr-trust.pkl"))
+    settings = Settings(ocr_trust_model=str(tmp_path / "ocr-trust.pkl"), sorter=False)
     crime = "the-nature-of-a-crime--doubleday-1924"
     # A tuning book was trained on: scoring it with the full model is refused.
     with pytest.raises(FileNotFoundError):
