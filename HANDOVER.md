@@ -4,7 +4,14 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Nothing running
+## Running: line-role trees against the rules (screen `robo-sorter-compare`, started 20:10)
+
+`experiments/train_sorter.py` without `--save`: rebuilds `work/probes/sorter/` and scores
+trees against rules leaving one book out; log `work/runs/sorter-compare.log`. De aanslag
+builds cold (layout, roles), the rest warm; 10–40 min. Then `--save` and a warm bench
+with ROBO_SORTER=1.
+
+## Before it
 
 `bench validation` finished 2026-10-13 20:02: BETTER 1.10 → 0.59 (decisions.md), mostly
 The Stranger's Child. Its builds are warm for the line-role trainer.
