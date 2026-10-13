@@ -307,3 +307,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-12 | trust data, monterosso-mon-amour--ia-scan, whole book, first 9 pages warm | 88 | 69 | 0 |
 | 2026-10-12 | train arbiter (--partial: no Stella answers since the loss) | 0 | 5 | 0 |
 | 2026-10-12 | bench tuning, Monterosso whole, warm | 868 | 3 | 0 |
+| 2026-10-13 | bench validation, finishing after a halt (8 of 9 books warm) | 916 | 35 | 0 |

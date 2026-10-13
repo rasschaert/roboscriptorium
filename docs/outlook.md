@@ -27,7 +27,10 @@ fix, the quote and initial questions, the hyphen judge and no paragraph inside a
 word; 15 tuning books, 7 validating
 with Monterosso and De stilte): tuning **0.31**,
 validation **0.70** wrong words a page after review; paragraph breaks set wrong 0.22 and
-0.21 a page. After review is mostly the errors no question asks about: the arbiter
+0.21 a page. Validation rebuilt after the loss (2026-10-13, nine books, The Stranger's Child
+and Normal People new): **1.06** a book on average, **0.62** without The Stranger's Child,
+whose 4.57 is one mistake of ours (the space its print sets before an ellipsis, lost).
+After review is mostly the errors no question asks about: the arbiter
 settles only ~0.06 suspects a page wrongly, ~85% of the unasked errors were never
 suspects. So accuracy now moves by finding suspects where the readings agree (a reader of
 the finished text; the book's own consistency was null), by readers that err less or differently

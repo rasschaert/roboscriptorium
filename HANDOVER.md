@@ -4,28 +4,33 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running: `bench validation` restarted 2026-10-13 09:49 (screen `robo-bench-validation`), ~45 min
-
-It had halted 2026-10-13 07:56, on its last book.
+## Nothing running. `bench validation` finished 2026-10-13 10:25
 
 **Remind the user of the daily backup of `work/`** at session start and before long runs
-(they back up with Duplicati, ~9 min; last run 2026-10-12 21:40, before the bench).
+(they back up with Duplicati, ~9 min; last run 2026-10-13 morning, before this session).
 
-**First thing next session:** finish `bench validation` (started 2026-10-12 21:45, halted
-by the user to pack up the laptop). Eight of its nine books are built and cached; Normal
-People had its tesseract and second readings done and was about two-thirds through the
-qwen3.8 third reading (saved in part). The rerun redoes nothing finished: Normal People's
-rest (~25 min reading, ~13 min judges, going by The Stranger's Child), then the other
-eight warm (minutes). Say ~45 min, then:
+**Validation, rebuilt after the loss** (`work/bench/validation-20261013T082508-d4c197e.json`):
+wrong words a page after review De kerk 0.31, Vuurspel 0.91, You're Never Weird 0.75,
+Villa Toscane 0.07, De stilte 1.29, Koning Wilders 0.92, Het laatste bevel 0.45, The
+Stranger's Child **4.57**, Normal People 0.23; mean 1.06, 0.62 without The Stranger's
+Child. Its 4.57 is one mistake of ours: the print sets a space before its spaced ellipsis
+(`Ka . . .’`, p. 134), the text layer drops it (`Ka...`), and the build takes the
+book's ellipsis style from the layer. 370 of its 389 unasked errors; fixed it should
+come to ~0.3. Koning Wilders is named a suspect pair (layer CER 2.45%, over three times
+the median): proposed to the user for retiring, not yet answered.
 
-```sh
-experiments/detached.sh bench-validation experiments/timed.sh "bench validation, finishing after a halt (8 of 9 books warm)" 916 work/runs/bench-validation.log uv run roboscriptorium bench validation
-```
+**First thing next session:** measure the ellipsis on the scan as the dash is (checklist,
+top of "Recovering what work/ lost"), then a warm `bench tuning` (~3 min; the verdicts
+and De eerlijke vinder's minus-dash fix are still unmeasured on it) and a warm `bench
+validation`.
 
-Then report each book and the set against tuning's 0.31, and run a warm `bench tuning`
-(~3 min) for the effect of the verdicts and the minus-dash fix. No timing row was written
-for the halted run (timed.sh only appends on exit); the overnight part took ~10 h for
-eight books, ~830 pages cold.
+**The single review is in** (merged 2026-10-13): `roboscriptorium review` on a golden
+book asks its places that differ from the e-book in the same list as its flagged regions,
+answers stored as verdicts; `golden review` is gone; each side's words shown as written.
+Walked on Dolittle (89 questions, 15 places). Verdict rounds can resume on it: Dolittle,
+Crime and De tuin are unanswered; pass the bench's slice (`--pages`, `--chapters`). A
+place on a line with an OCR doubt is still its own question right after the doubt, not one
+more row in it (decisions.md 2026-10-13).
 
 **Tuning baseline (2026-10-12, `work/bench/tuning-20261012T190056-…json`): 0.31** wrong
 words a page after review over 17 books (FKA USA left out till its fixes). Since then:
@@ -37,15 +42,10 @@ Dolittle 3) and De eerlijke vinder's minus-sign dashes undone in its reference; 
 words a page from 10 pages to all) and narrow the bench some; short slices stay short
 (decisions.md 2026-10-12).
 
-**Verdict rounds are stopped** until the single review exists (checklist, "One review for
-a golden book"): the user stopped the round after the verdict page kept missing what the
-region review has (kinds, a caption's words, a decorated initial). Never serve them a
-reduced page again (memory: one review UI). Dolittle, Crime and De tuin are unanswered.
-
-**Next session (Tuesday evening or Wednesday), in order:** the single review; De eerlijke vinder's 25 page numbers kept in
-the running text (rules and sorter model, Stella's scan format); its error analysis;
-Monterosso's T read as a quote; Metro's lost quote after an ellipsis; FKA USA's fixes and
-trust data; then the checklist.
+**Then, in order:** De eerlijke vinder's 25 page numbers kept in the running text (rules
+and sorter model, Stella's scan format); its error analysis; Monterosso's T read as a
+quote; Metro's lost quote after an ellipsis; FKA USA's fixes and trust data; then the
+checklist.
 
 **The reader is settled** (docs/models.md, decisions.md 2026-10-12): the nvfp4 build on
 MLX stays. Screened on reader set v2 (850 lines) against its 463/510 hard and 338/340
@@ -65,9 +65,9 @@ fixes). Diff the next build against them.
 
 ### Next, in order
 
-1. Correct anything the bench shows; then the line-role trees (`experiments/train_sorter.py
-   --save`), then `bench validation`, with Verminkt joining validation as a slice (~90
-   pages, agreed).
+1. The ellipsis fix and both benches warm; then the line-role trees
+   (`experiments/train_sorter.py --save`); Verminkt joins validation whole with the first
+   looks (checklist).
 2. A sampled Ex-minnaar review, 10–20 questions, to find lessons with wide effect before
    the user faces its full ~390 (the user asked for it; blocked by the loss).
 3. The user's Ex-minnaar review, then the fixes it teaches; only then Stella: rebuild

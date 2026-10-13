@@ -42,9 +42,13 @@ machine's work is recomputed in this order before anything below.
       first look (~5 h of models) and joins; De aanslag joins validation; Verminkt joins
       validation whole. Update design.md's test-set reason, `bench.SETS` and the CLI's
       `--score-test` guard (agent, ~1 h plus the run)
-- [ ] The line-role trees (`experiments/train_sorter.py --save`), then `bench
-      validation` with three books joining, each as a slice: Verminkt (~90 pages), The
-      Stranger's Child (pages 121–208) and Normal People (pages 146–232)
+- [ ] The book's ellipsis measured on the scan, as the dash is, not read in the text
+      layer: The Stranger's Child prints `Ka . . .’` (space before, spaced dots), its layer
+      reads `Ka...`, and the build follows the layer; 370 of its 389 unasked errors, 4.57 →
+      ~0.3 a page. Then a warm `bench tuning` and `bench validation` (agent, ~1 h)
+- [ ] **user** Retire Koning Wilders? The bench names it a suspect pair: text layer CER
+      2.45%, past three times the validation median (0.55%); after review 0.92
+- [ ] The line-role trees (`experiments/train_sorter.py --save`)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
 - [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
