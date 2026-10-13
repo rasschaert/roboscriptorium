@@ -79,14 +79,6 @@ machine's work is recomputed in this order before anything below.
       validation 90 → 111, Vuurspel's short lines dropped as body; decisions.md). Next, on
       tuning books only: weigh a lost body line above a kept speck in training, and a type
       size the trees can trust on a short line; then compare again (agent, ~1 h)
-- [ ] What a perfect reader could still gain: over the tuning books' warm builds, count the
-      wrong words left where every reader agrees (no suspect raised), against all wrong
-      words left (agent, ~10 min, no models). The rule, agreed with the user 2026-10-13:
-      if about half or more were never doubted, a LoRA fine-tune of glm-ocr on the tuning
-      pages (MLX, validation kept clean) is the next step, an afternoon plus a cold bench
-      overnight; if the share is small, the gain is in the questions and in more readers
-      that fail differently, and fine-tuning is dropped here with the number.
-      Reinforcement learning is out either way (decisions.md 2026-10-13)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
 - [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
@@ -280,6 +272,9 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Measurement
 
+- [x] 2026-10-13 What a perfect reader could still gain (`probe_reader_ceiling.py`): 53
+      of 186 wrong words left after review (29%) are undoubted reading errors, under the
+      half agreed as the bar; fine-tuning a reader dropped for now
 - [x] 2026-10-13 `bench validation` finished with the ellipsis measured on the scan: BETTER
       1.10 → 0.59 after review (The Stranger's Child 4.59 → 0.53); tuning BETTER 0.52 → 0.50
 - [x] ~~2026-10-11 `_scandata.xml` page types as labels for page classification~~:

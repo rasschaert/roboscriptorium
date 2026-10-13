@@ -131,6 +131,10 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   and 460 of 510 hard, 334 of 340 control each, ~1.7 s a line. With the q8_0 they make
   the same control-line errors word for word: the llama.cpp runtime, not precision,
   parts the GGUF builds from the nvfp4 on MLX.
+- **Fine-tuning a reader** (not tried, ruled out by measurement, 2026-10-13): of the 186
+  wrong words the tuning books keep after a perfect review, only 53 (29%) are reading
+  errors no reader doubted, the only ones a better reader alone would fix, and 31 of
+  those are punctuation. Below the half agreed with the user as the bar.
 
 ## Inference speed: what a cold page costs, and what's been tried
 
