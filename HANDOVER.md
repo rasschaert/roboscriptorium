@@ -6,15 +6,21 @@ end of every session.
 
 ## Nothing running
 
-Line-role trees, 2026-10-13 evening: the bench with them on was WORSE (0.32 → 0.34). The
-cause was the labeller calling specks body (fixed, 70bc154); on fixed labels the trees beat
-the rules on tuning books (275 → 196) but not on validation (90 → 111; Vuurspel's short
-lines dropped). The trees stay off; `work/models/line-roles*.pkl` are still the old-label
-trees, unused. Next is the checklist's line-role step.
-
-
-`bench validation` finished 2026-10-13 20:02: BETTER 1.10 → 0.59 (decisions.md), mostly
-The Stranger's Child. Its builds are warm for the line-role trainer.
+**This session (2026-10-13 evening), all pushed:**
+- `bench validation` finished: BETTER 1.10 → 0.59, mostly The Stranger's Child.
+- Afscheid stays (its retirement misread the all-lines overview); the three retired
+  books' files are deleted from `work/` (the user's yes; in their backups).
+- Line-role trees: the labeller called specks body (fixed, 70bc154); on fixed labels the
+  trees beat the rules on tuning books (275 → 196) but not validation (90 → 111, Vuurspel's
+  short lines dropped). They stay off; `work/models/line-roles*.pkl` are old-label trees,
+  unused. Next for them: the checklist's line-role step.
+- Fine-tuning a reader: ruled out for now by `probe_reader_ceiling.py` (29% of what's left
+  after review is undoubted misreading, under the agreed half).
+- A dash a fix puts before a line widens its box (6a63a2e): Dolittle 0.40 → 0.31; tuning
+  and validation NO CHANGE overall.
+- `bench` now names settings that differ from its baseline. **Baselines today:** tuning
+  `tuning-20261013T183737-b891650-dirty.json` (0.32), validation
+  `validation-20261013T…` (the latest, 0.59), both with the rules (ROBO_SORTER=0).
 
 Last warm `bench tuning`: 2026-10-13 17:25, NO CHANGE (0.33 → 0.32), three pairs retired.
 De tuin van de avondnevel got significantly worse under the retrained arbiter (0.38 → 0.43;
