@@ -279,7 +279,8 @@ of its best version. It asks the reviewer about the least sure ones, up to a bud
 of questions per page. The budget is counted over the whole book, so a bad page can
 get several questions and a clean page none. A suspect whose best version it gives 80%
 or more is never asked, budget or not: those it nearly always gets right, and a
-question isn't free (the reviewer slips too).
+question isn't free: the reviewer slips too, and their time counts (the bench prices
+20 questions at one wrong word).
 
 The OCR check leaves washed-out pages alone. On their faint crops the readers invent
 fluent text and the judges pick it; the reviewer types such a page instead.

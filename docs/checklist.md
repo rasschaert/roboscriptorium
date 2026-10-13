@@ -23,15 +23,10 @@ areas below in order, and the test set scored once at the end.
 The user, 2026-10-13: the review's bug fixes come first, then its bench and structure
 steps; building Ex-minnaar and Stella has no urgency. The findings are in decisions.md.
 
-- [ ] The bench weighs the reviewer's time: one wrong word is worth 20 questions (the
-      user, 2026-10-13), so a question costs 1/20 of a wrong word on top of the chance
-      it is answered wrong; `quality.per_page` and the bench's after-review measure
-      (agent, ~1 h, then a warm `bench tuning` to restate the baseline)
 - [ ] The bench sees typography: a count of quote, dash and ellipsis glyphs set wrong
       over aligned words, unfolded, as a measure of its own (agent, ~2 h)
-- [ ] The bench's verdict rule symmetric: worse when any word measure is worse, a veto
-      on paragraph breaks too; one cold A/A rerun overnight for the noise floor (agent,
-      ~30 min plus the run)
+- [ ] One cold A/A rerun of `bench tuning` overnight, for the noise floor when caches
+      change (overnight)
 - [ ] Book-wide statistics (repeats for line roles, type, line height for missing lines)
       measured on the whole body, not the slice, as the dash and ellipsis already are;
       roles' caches change, so a cold-ish bench (agent, ~1 h plus an overnight run)
@@ -503,6 +498,9 @@ many the layer had wrong.
       each other, no cache knew its source PDF, the arbiter read its judges by the order
       of their votes, the docs put copyrighted books' verdicts in git); the rest planned
       above
+- [x] 2026-10-13 The bench prices the reviewer's time (20 questions = one wrong word, the
+      user) and its verdict is worse when any slip rate is, a veto on breaks too: this
+      morning's tuning run stays better, 0.57 → 0.55
 
 - [x] 2026-10-09 Fable's second review: what the bench couldn't see and leaks in the OCR
       check, each change benched alone; the ledger of probe against verdict is in

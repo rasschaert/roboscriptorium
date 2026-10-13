@@ -104,13 +104,15 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   per-page counts, paragraph breaks set wrong among them) and compared with the
   previous run page by page. One test decides: "after review", each book of the set
   weighing the same, must improve at the low, mean and high slip rate, or the
-  paragraph breaks set wrong must fall, neither clearly rising, and no book may get
-  worse by ≥ 0.05 wrong words per page on the mean with its 99% interval above zero
-  (a veto); the per-book intervals are diagnostics, and so are the heading and paragraph-F1 changes it prints beside the test (`bench.structure`), which the word counts can't see. A tuning book is
+  paragraph breaks set wrong must fall, with neither clearly worse at any slip rate,
+  and no book may get worse by ≥ 0.05 wrong words or breaks per page on the mean with
+  its 99% interval above zero (a veto); the per-book intervals are diagnostics, and so are the heading and paragraph-F1 changes it prints beside the test (`bench.structure`), which the word counts can't see. A tuning book is
   scored with the trust model trained without it
   (`ocr-trust-without-<book>.pkl`, written by `train_ocr_trust.py --save`). "After review"
-  adds the reviewer's own slips per question asked (`quality.slip_rates`, a Beta
-  posterior from 10 wrong of 100 checked answers, Stella's and Goede dochter's reviews pooled). Run it before and after a change; cite its
+  adds, per question asked, the reviewer's own slips (`quality.slip_rates`, a Beta
+  posterior from 10 wrong of 100 checked answers, Stella's and Goede dochter's reviews
+  pooled) and the reviewer's time (`quality.QUESTION_COST`, 1/20 of a wrong word),
+  recomputed from the saved counts when two runs are compared (`bench.after_review`). Run it before and after a change; cite its
   starred lines, not single CER figures.
 - `quality.py` (`roboscriptorium quality book[:pages[:chapters]] …`): what a
   reviewer is left with. Wrong words per page before review and left unasked,

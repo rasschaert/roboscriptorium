@@ -78,8 +78,10 @@ TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST
 SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"])
 
 # Per-page counts compared between runs: (name, index into a page's counts). "After
-# review" is the unasked plus the reviewer's expected slips per question, at the mean
-# slip rate and at either end of its interval.
+# review" is the unasked plus, per question, the reviewer's expected slips and the cost
+# of the reviewer's time (`quality.QUESTION_COST`), at the mean slip rate and at either
+# end of its interval. A comparison computes it from the unasked and the questions, not
+# from the figure a run saved, so runs saved under another cost or slip rate compare.
 PAIRED = (
     ("wrong words", 0),
     ("unasked", 1),
@@ -92,10 +94,10 @@ PAIRED = (
 # The one test that decides a change: "after review" over the set, each book weighing
 # the same, at each slip rate.
 PRIMARY = ("after review", "after review, few slips", "after review, many slips")
-# A book vetoes a change when its "after review" gets worse by at least VETO_MIN per
-# page on the mean and its 99% interval of the difference lies above zero. Eleven
-# tuning books at 95% would veto about one change in four that leaves them all as
-# they were; at 99%, about one in nineteen.
+# A book vetoes a change when its "after review", or its paragraph breaks set wrong, get
+# worse by at least VETO_MIN per page on the mean and its 99% interval of the difference
+# lies above zero. Eleven tuning books at 95% would veto about one change in four that
+# leaves them all as they were; at 99%, about one in nineteen.
 VETO_LEVEL = 0.99
 VETO_MIN = 0.05
 
@@ -151,16 +153,28 @@ def page_counts(
     breaks: list[int] = (),
 ) -> dict[int, list[float]]:
     """Per page: wrong words, wrong words no question catches, questions, wrong words
-    after the reviewer answers every question (the unasked plus expected slips) at the
-    mean slip rate, the low end and the high end (`quality.slip_rates`), and paragraph
-    breaks set wrong (`disagreements.break_errors`, no question asks about them)."""
-    low, mean, high = slips or quality.slip_rates()
+    after the reviewer answers every question (`after_review`) at the mean slip rate, the
+    low end and the high end (`quality.slip_rates`), and paragraph breaks set wrong
+    (`disagreements.break_errors`, no question asks about them)."""
+    rates = slips or quality.slip_rates()
     counts = quality.per_page(pages, errors, found)
     wrong = Counter(breaks)
     return {
-        p: [w, u, q, u + mean * q, u + low * q, u + high * q, wrong[p]]
+        p: [
+            w,
+            u,
+            q,
+            *(after_review(u, q, rate) for rate in (rates[1], rates[0], rates[2])),
+            wrong[p],
+        ]
         for p, (w, u, q) in counts.items()
     }
+
+
+def after_review(unasked: float, questions: float, slip: float) -> float:
+    """Wrong words a page once every question is answered: the unasked, the answers
+    expected wrong, and the reviewer's time, each question at `quality.QUESTION_COST`."""
+    return unasked + (slip + quality.QUESTION_COST) * questions
 
 
 def paired(
@@ -194,15 +208,25 @@ def pooled(
     )
 
 
-def _pairs(old: dict, new: dict, i: int, books: list[str]) -> list[tuple[float, float]]:
+def _pairs(
+    old: dict, new: dict, i: int, books: list[str], slips: tuple[float, float, float] | None = None
+) -> list[tuple[float, float]]:
+    """Each page's (before, after) of the measure at `i` in `PAIRED`; the after-review
+    measures computed from the unasked and the questions."""
+    rates = slips or quality.slip_rates()
+    after = {3: rates[1], 4: rates[0], 5: rates[2]}
+
+    def value(row: list[float]) -> float:
+        return after_review(row[1], row[2], after[i]) if i in after else row[i]
+
     out = []
     for name in books:
-        before, after = old["books"][name]["pages"], new["books"][name]["pages"]
+        before, later = old["books"][name]["pages"], new["books"][name]["pages"]
         # A run saved before a measure existed has no count for it.
         out += [
-            (before[p][i], after[p][i])
-            for p in sorted(set(before) & set(after))
-            if len(before[p]) > i and len(after[p]) > i
+            (value(before[p]), value(later[p]))
+            for p in sorted(set(before) & set(later))
+            if len(before[p]) > i and len(later[p]) > i
         ]
     return out
 
@@ -227,10 +251,11 @@ class Verdict:
 
 
 def verdict(old: dict, new: dict) -> Verdict:
-    """Whether the new run is better: "after review", each book weighing the same, must
-    improve at every slip rate, or the paragraph breaks set wrong must fall, with neither
-    clearly worse; and no book may clearly get worse in words (`VETO_LEVEL`, `VETO_MIN`
-    on the mean)."""
+    """Whether the new run is better. Worse when "after review", each book weighing the
+    same, is clearly worse at any slip rate, or the paragraph breaks set wrong clearly
+    rise; better when it improves at every slip rate, or the breaks clearly fall, and
+    neither is worse; vetoed when better but a book clearly gets worse in words or in
+    breaks (`VETO_LEVEL`, `VETO_MIN` on the mean)."""
     shared = [n for n in new["books"] if n in old["books"]]
     index = dict(PAIRED)
     primary = [
@@ -239,12 +264,18 @@ def verdict(old: dict, new: dict) -> Verdict:
     ]
     vetoes = []
     for n in shared:
-        before, after, low, _ = paired(_pairs(old, new, index[PRIMARY[0]], [n]), level=VETO_LEVEL)
-        if low > 0 and after - before >= VETO_MIN:
-            vetoes.append(n)
+        for m in (PRIMARY[0], "paragraph breaks"):
+            pairs = _pairs(old, new, index[m], [n])
+            if not pairs:
+                continue
+            before, after, low, _ = paired(pairs, level=VETO_LEVEL)
+            if low > 0 and after - before >= VETO_MIN:
+                vetoes.append(n)
+                break
     pairs = [_pairs(old, new, index["paragraph breaks"], [n]) for n in shared]
     breaks = Change("all", "paragraph breaks", *pooled(pairs)) if any(pairs) else None
-    words_better, words_worse = all(c.high < 0 for c in primary), all(c.low > 0 for c in primary)
+    words_better = all(c.high < 0 for c in primary)
+    words_worse = any(c.low > 0 for c in primary)
     breaks_better = breaks is not None and breaks.high < 0
     breaks_worse = breaks is not None and breaks.low > 0
     if words_worse or breaks_worse:

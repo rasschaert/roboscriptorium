@@ -524,12 +524,21 @@ typed in, text the layer lacks) gets only the quote check.
   page, with one primary test ("after review" averaged over the set's books, each
   weighing the same, at the low, mean and high slip rate; pooling pages would let
   the three longest books, 78% of the pages, decide) and a veto when a book alone
-  gets worse by ≥ 0.05 wrong words per page on the mean with its 99% interval above
-  zero (at 95% the eleven tuning books would veto about one change in four that
-  leaves them all as they were; at 99%, one in nineteen): 24 separate intervals
-  would star about one by chance each run.
-- **"After review" counts the reviewer's slips.** 10 of 100 checked answers over two
-  reviews were wrong (Beta posterior 0.06–0.18), so a question isn't free.
+  gets worse by ≥ 0.05 wrong words, or paragraph breaks set wrong, per page on the
+  mean with its 99% interval above zero (at 95% the eleven tuning books would veto
+  about one change in four that leaves them all as they were; at 99%, one in
+  nineteen): 24 separate intervals would star about one by chance each run. A change
+  clearly worse at any slip rate is worse, whatever the breaks did: a change that adds
+  questions can look better at a low slip rate and worse at a high one.
+- **"After review" counts the reviewer's slips and time.** 10 of 100 checked answers
+  over two reviews were wrong (Beta posterior 0.06–0.18), so a question isn't free;
+  and the reviewer's time is worth something too: one wrong word left is worth 20
+  questions (the user, 2026-10-13), so each question adds 1/20 of a wrong word
+  (`quality.QUESTION_COST`). With slips alone, a question catching an error one time
+  in nine paid for itself however many were added. A comparison recomputes the measure
+  from each page's unasked errors and questions, so runs saved before a price changed
+  compare at today's; this morning's tuning run stays better at the new price
+  (0.57 → 0.55 [−0.03, −0.01]).
 - **Paragraph breaks count.** A break in the wrong place is as visible in an edition as
   a wrong word, and no question asks about it, so the bench counts them per page
   (`disagreements.break_errors`: a reference paragraph starting mid-paragraph in the

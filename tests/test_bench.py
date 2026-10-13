@@ -43,10 +43,30 @@ def test_only_pages_both_runs_scored_are_compared():
     assert (wrong.before, wrong.after) == (1.0, 1.0)
 
 
-def test_after_review_counts_the_reviewers_slips_on_each_question():
+def test_after_review_counts_the_reviewers_slips_and_time_on_each_question():
     asked = [SimpleNamespace(page=1, first=0, last=0, reasons=["x"])] * 2
     counts = bench.page_counts([1, 2], [], asked, slips=(0.1, 0.25, 0.5))
-    assert counts == {1: [0, 0, 2, 0.5, 0.2, 1.0, 0], 2: [0, 0, 0, 0.0, 0.0, 0.0, 0]}
+    # Each question: its chance of a wrong answer, plus 1/20 of a wrong word for the time.
+    assert counts[1][:3] == [0, 0, 2] and counts[1][6] == 0
+    assert counts[1][3:6] == pytest.approx([0.6, 0.3, 1.1])
+    assert counts[2] == [0, 0, 0, 0.0, 0.0, 0.0, 0]
+
+
+def test_twenty_questions_that_catch_one_error_cost_more_than_they_save():
+    # Before: one error a page, unasked. After: twenty questions a page catch it.
+    before = _run({p: [1, 1, 0] for p in range(30)}, c={p: [1, 1, 0] for p in range(30)})
+    after = _run({p: [1, 0, 20] for p in range(30)}, c={p: [1, 0, 20] for p in range(30)})
+    assert bench.verdict(before, after).outcome == "worse"
+    few = _run({p: [1, 0, 2] for p in range(30)}, c={p: [1, 0, 2] for p in range(30)})
+    assert bench.verdict(before, few).outcome == "better"
+
+
+def test_a_run_saved_under_another_question_cost_is_compared_at_todays():
+    # The after-review figure saved (9.0) is not what is compared: unasked 1, 1 question.
+    old = _run({p: [1, 1, 1, 9.0] for p in range(30)})
+    new = _run({p: [1, 1, 1] for p in range(30)})
+    change = {c.measure: c for c in bench.compare(old, new)}["after review"]
+    assert change.before == change.after
 
 
 def test_a_washed_out_page_is_a_question_per_line_typed():
@@ -76,6 +96,23 @@ def test_paragraph_breaks_set_wrong_count_and_decide_a_change():
     found = bench.verdict(_run(flat, c=flat), _run(fewer, c=fewer))
     assert found.outcome == "better" and found.breaks.after == 0
     assert bench.verdict(_run(fewer, c=fewer), _run(flat, c=flat)).outcome == "worse"
+
+
+def test_fewer_breaks_set_wrong_dont_carry_words_worse_at_one_slip_rate():
+    # More questions, fewer unasked: better at a low slip rate, worse at a high one.
+    flat = {p: [2, 1, 1, 0, 0, 0, 2] for p in range(30)}
+    mixed = {p: [2, 0.75, 3, 0, 0, 0, 0] for p in range(30)}
+    found = bench.verdict(_run(flat, c=flat), _run(mixed, c=mixed))
+    assert found.breaks.high < 0 and any(c.low > 0 for c in found.pooled)
+    assert found.outcome == "worse"
+
+
+def test_a_book_whose_breaks_go_clearly_wrong_vetoes():
+    flat = {p: [2, 1, 1, 0, 0, 0, 2] for p in range(30)}
+    fewer = {p: [2, 0, 1, 0, 0, 0, 0] for p in range(30)}
+    broken = {p: [2, 0, 1, 0, 0, 0, 4] for p in range(30)}
+    found = bench.verdict(_run(flat, c=flat, d=flat), _run(fewer, c=fewer, d=broken))
+    assert (found.outcome, found.vetoes) == ("vetoed", ["d"])
 
 
 def test_where_breaks_go_wrong():
@@ -147,7 +184,7 @@ def test_each_book_weighs_the_same_whatever_its_pages():
 def test_a_book_slightly_worse_does_not_veto():
     flat = {p: [2, 1, 1, 1.0] for p in range(30)}
     fewer = {p: [2, 0, 1, 0.0] for p in range(30)}
-    slightly = {p: [2, 1, 1, 1.02] for p in range(30)}
+    slightly = {p: [2, 1.02, 1] for p in range(30)}
     found = bench.verdict(_run(flat, c=flat), _run(fewer, c=slightly))
     assert (found.outcome, found.vetoes) == ("better", [])
 

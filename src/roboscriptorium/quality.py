@@ -25,6 +25,11 @@ BOOTSTRAP_SAMPLES = 1000
 # regions (8 of 68) and Goede dochter's picks with the difference marked (2 of 32).
 # Different kinds of question, so a middle figure; today's alone may be lower.
 SLIPS, ANSWERS = 10, 100
+# What a question costs in the reviewer's time, in wrong words, besides the chance it is
+# answered wrong: one wrong word left in a book is worth 20 questions (the user,
+# 2026-10-13). A question pays for itself only when it catches an error more often than
+# its slip rate plus this.
+QUESTION_COST = 1 / 20
 
 
 def slip_rates(slips: int = SLIPS, answers: int = ANSWERS) -> tuple[float, float, float]:
