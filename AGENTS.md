@@ -369,7 +369,7 @@ body_pages = [5, 71]   # inclusive; page classification replaces this later
 dash = "–"             # optional: how the book prints dashes ("–" or "—") …
 dash_spacing = "thin"  # … and their gaps ("none", "thin", "word"); else measured
 ellipsis = "..."       # optional: "…", "..." or ". . ." …
-ellipsis_space = false # … and a space before it; else read in the text layer
+ellipsis_space = false # … and a space before it; else measured on the scan
 ```
 
 ```sh

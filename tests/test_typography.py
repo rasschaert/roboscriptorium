@@ -150,3 +150,80 @@ def test_after_a_question_mark_an_ellipsis_keeps_the_layers_space():
     assert ellipsised("Waar?… Ik zocht", GLYPH)[0] == "Waar?… Ik zocht"
     # After a word the book's style still decides.
     assert ellipsised("Waar … Ik zocht", GLYPH)[0] == "Waar… Ik zocht"
+
+
+def _scan(tmp_path, printed: str, layer: str):
+    """A one-page scan of `printed` lines (an image, as a scan is) under an invisible text
+    layer reading `layer` on the same lines."""
+    import pymupdf
+
+    src = pymupdf.open()
+    page = src.new_page(width=400, height=60 + 20 * 30)
+    for k, line in enumerate(printed.splitlines()):
+        page.insert_text((20, 40 + 20 * k), line, fontsize=14, fontname="tiro")
+    png = page.get_pixmap(dpi=300).tobytes("png")
+    out = pymupdf.open()
+    scan = out.new_page(width=page.rect.width, height=page.rect.height)
+    scan.insert_image(scan.rect, stream=png)
+    for k, line in enumerate(layer.splitlines()):
+        scan.insert_text((20, 40 + 20 * k), line, fontsize=14, fontname="tiro", render_mode=3)
+    path = tmp_path / "scan.pdf"
+    out.save(path)
+    return path
+
+
+def test_the_scan_shows_the_space_the_layer_drops_before_spaced_dots(tmp_path):
+    from roboscriptorium.typography import measure_ellipses
+
+    lines = ["the other people said Kate . . . and then", "she was there again . . . quite"]
+    layer = ["the other people said Kate... and then", "she was there again... quite"]
+    pdf = _scan(tmp_path, "\n".join(lines * 3), "\n".join(layer * 3))
+    found = measure_ellipses(pdf, [1], tmp_path / "ellipsis.json")
+    assert found is not None and found.ellipses == 6
+    assert found.spaced and found.space_before
+    # Cached: read back without the scan.
+    pdf.unlink()
+    assert measure_ellipses(pdf, [1], tmp_path / "ellipsis.json") == found
+
+
+def test_the_scan_shows_tight_dots_glued_to_their_word(tmp_path):
+    from roboscriptorium.typography import measure_ellipses
+
+    lines = ["the other people said Kate... and then", "she was there again... quite"]
+    pdf = _scan(tmp_path, "\n".join(lines * 3), "\n".join(lines * 3))
+    found = measure_ellipses(pdf, [1], tmp_path / "ellipsis.json")
+    assert found is not None
+    assert not found.spaced and not found.space_before
+
+
+def test_the_scan_sets_the_gaps_and_the_layer_the_glyph_or_dots():
+    from roboscriptorium.typography import EllipsisMeasure, scanned_style
+
+    spaced = EllipsisMeasure(60, 0.84, 0.93, 0.95)
+    tight = EllipsisMeasure(60, 0.21, 0.35, 0.75)
+    assert scanned_style(EllipsisStyle("...", False), spaced) == SPACED
+    assert scanned_style(GLYPH, tight) == GLYPH
+    assert scanned_style(EllipsisStyle(". . .", True), tight) == EllipsisStyle("...", False)
+    assert scanned_style(None, tight) == EllipsisStyle("...", False)
+    # Too few on the scan to tell: the layer's reading stands.
+    assert scanned_style(GLYPH, None) == GLYPH
+
+
+def test_a_scanned_books_ellipsis_style_comes_from_the_scan(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    from roboscriptorium import pipeline
+    from roboscriptorium.pdf import Line, PageText
+
+    lines = ["the other people said Kate . . . and then", "she was there again . . . quite"]
+    layer = ["the other people said Kate... and then", "she was there again... quite"] * 6
+    pdf = _scan(tmp_path, "\n".join(lines * 3), "\n".join(layer[:6]))
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda source: True)
+    book = SimpleNamespace(source=pdf, stages=tmp_path, ellipsis=None, ellipsis_space=None)
+    body = [PageText(1, 400, 660, [Line(t, 20, 20, 380, 35) for t in layer])]
+    # The layer alone reads tight dots glued to their word; the scan shows the gaps.
+    assert guess_ellipsis(layer) == EllipsisStyle("...", False)
+    assert pipeline.ellipsis_style(book, body) == SPACED
+    # book.toml settles it.
+    book.ellipsis, book.ellipsis_space = "…", False
+    assert pipeline.ellipsis_style(book, body) == GLYPH

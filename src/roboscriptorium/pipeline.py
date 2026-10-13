@@ -339,20 +339,26 @@ def book_style(
 
 
 def ellipsis_style(book: Book, body: list[PageText]) -> typography.EllipsisStyle | None:
-    """The book's ellipsis style: as book.toml sets it, else as a scan's layer reads it
-    (said aloud). A born-digital PDF's ellipses are exact, so they are left as they are.
+    """The book's ellipsis style: as book.toml sets it, else its gaps as measured on a scan
+    and the glyph or dots as its layer reads them (said aloud). A born-digital PDF's
+    ellipses are exact, so they are left as they are.
     """
     if book.ellipsis and book.ellipsis_space is not None:
         return typography.EllipsisStyle(book.ellipsis, book.ellipsis_space)
     if not ocrcheck.scanned(book.source):
         return None
     lines = [ln.text for p in body for ln in p.lines]
-    guess = typography.guess_ellipsis(lines)
+    layer = typography.guess_ellipsis(lines)
+    scan = typography.measure_ellipses(
+        book.source, [p.number for p in body], book.stages / "ellipsis.json"
+    )
+    guess = typography.scanned_style(layer, scan)
     if guess is None:
         return None
     space = "true" if guess.space_before else "false"
+    found = f"measured on the scan: {scan.describe()}" if scan else "read in the text layer"
     print(
-        f"Ellipsis style read in the text layer: {guess.dots!r}, "
+        f"Ellipsis style {found}: {guess.dots!r}, "
         f"{'a' if guess.space_before else 'no'} space before. To settle it, put "
         f'ellipsis = "{guess.dots}" and ellipsis_space = {space} in book.toml.',
         file=sys.stderr,

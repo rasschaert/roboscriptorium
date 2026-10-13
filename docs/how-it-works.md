@@ -173,7 +173,8 @@ all the chapter titles of a book.
 Plain code also measures the book's dash on the scan: an en or an em dash, and how
 wide the gaps around it are (`typography.py`). `book.toml` can set it instead. The
 quote style (single or double quotes) comes from the text layer's own marks, and so
-does the ellipsis style (`…`, `...` or `. . .`) unless `book.toml` sets it.
+does the ellipsis's form (`…` or `...`); whether its dots are spaced (`. . .`) and a space
+comes before it is measured on the scan, unless `book.toml` sets it.
 
 Both are measured before any reader sees a line, and the readers and judges are
 told them in a sentence. Typography belongs to the book: asked line by line, the
@@ -404,9 +405,9 @@ A hyphen at the end of a line stays or goes by evidence, strongest first:
 
 Plain code finds italic words from the slant of each word's strokes on the page
 image (`italics.py`), and sets every dash between words and every ellipsis in the
-book's one style (`typography.py`): the dash measured on the scan, the ellipsis read
-in the text layer (`word . . .` or `word...`), either one settled in `book.toml`
-when it sets it.
+book's one style (`typography.py`): the dash measured on the scan, the ellipsis's gaps
+measured there too (`word . . .` or `word...`) and its glyph read in the text layer,
+either one settled in `book.toml` when it sets it.
 
 `figures.py` takes the pictures the spotter marked on body pages. It trims a
 picture where a caption overlaps it, turns it upright if it was printed sideways,

@@ -205,8 +205,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `ROBO_TRUST_DATA` for the data folder, `ROBO_OCR_TRUST_MODEL` for the model, whose
   leave-one-out copies sit beside it.
 - `typography.py`: the book's ellipsis style (`…`, `...` or `. . .`, with or without a
-  space before), read in a scan's text layer or set in `book.toml` (`ellipsis`,
-  `ellipsis_space`), and set on every three-dot ellipsis in the output (no-break
+  space before): its gaps measured on a scan (`measure_ellipses`, cached in
+  `stages/ellipsis.json`; the dots and the blanks before and between them against the
+  line's word gaps), its glyph or dots read in the text layer (`guess_ellipsis`, alone
+  when too few ellipses can be measured), combined by `scanned_style`; or set in
+  `book.toml` (`ellipsis`, `ellipsis_space`). It is set on every three-dot ellipsis in the output (no-break
   spaces); four dots and an ellipsis opening a quote are left alone. And the
   book's dash style (en or em; no, thin or word spacing),
   from `book.toml` (`dash`, `dash_spacing`) or, on a scan, measured on the page
