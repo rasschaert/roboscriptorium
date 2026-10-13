@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from ocr_trust_data import load, suspect
+from roboscriptorium.trustdata import load, suspect
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 from roboscriptorium import ocrcheck, trust

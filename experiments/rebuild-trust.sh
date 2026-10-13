@@ -12,7 +12,7 @@ mkdir -p work/runs/rebuild
 progress=work/runs/rebuild/progress.txt
 books=(${(f)"$(uv run python -c '
 import sys; sys.path.insert(0, "experiments")
-from ocr_trust_data import SPECS
+from roboscriptorium.trustdata import SPECS
 from roboscriptorium.book import Book
 from pathlib import Path
 for b, spec in SPECS.items():

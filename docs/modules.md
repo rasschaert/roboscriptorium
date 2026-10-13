@@ -201,6 +201,14 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   of. Word breaks, line-end fragments, stress accents and words without a
   vowel get no verdict. The OCR check records its pick as a vote ("word list",
   shown in the review) but doesn't act on it.
+- `trustdata.py`: the arbiter's training data and saved models. `SPECS` are the golden
+  books and slices it is built from (a tuning book left out is in `bench.NO_TRUST_DATA`,
+  which a test keeps in step); `load` builds or reads a book's rows, each suspect's
+  versions labelled by the aligned reference (Stella's by the user's answers);
+  `usable`, `rows_of` and `trainable` pick what trains, the validation and test books
+  never; `models_to_save` trains the model the pipeline uses and a copy without each
+  tuning book. Run by `experiments/ocr_trust_data.py` and
+  `experiments/train_ocr_trust.py`, which also scores the model leaving each book out.
 - `trust.py`: learned trust for the OCR check. A model (shallow gradient-boosted
   trees) scores each version of a suspect from the judges' picks and confidence,
   which second readings read it, the word list, the kind of difference and a prior

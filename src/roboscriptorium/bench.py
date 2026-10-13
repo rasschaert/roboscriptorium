@@ -72,7 +72,7 @@ SETS = {
     ],
 }
 TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
-# Tuning books with no trust data (`experiments/ocr_trust_data.py`'s SPECS lacks them):
+# Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
 NO_TRUST_DATA: frozenset[str] = frozenset({"fka-usa--ia-scan"})
 TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST_DATA

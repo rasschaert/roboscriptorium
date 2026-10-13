@@ -24,7 +24,7 @@ from collections import Counter
 from pathlib import Path
 
 import numpy as np
-from ocr_trust_data import OUT, SPECS, load, suspect
+from roboscriptorium.trustdata import OUT, SPECS, load, suspect
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 from roboscriptorium import trust

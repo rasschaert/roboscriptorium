@@ -16,7 +16,7 @@ from collections import Counter
 from dataclasses import replace
 from pathlib import Path
 
-from ocr_trust_data import SPECS, load, suspect
+from roboscriptorium.trustdata import SPECS, load, suspect
 from sklearn.ensemble import HistGradientBoostingClassifier
 
 from roboscriptorium import bench, trust

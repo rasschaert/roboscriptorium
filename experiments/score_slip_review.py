@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 import httpx
-from ocr_trust_data import fold
+from roboscriptorium.trustdata import fold
 
 from roboscriptorium import layout, missing
 from roboscriptorium.book import Book

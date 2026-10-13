@@ -195,7 +195,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `layout.py`, `typestyle.py`, `faint.py` | DocLayout-YOLO regions; each line's type against the body; washed-out pages |
 | `missing.py` | printed lines the layer lacks, read by glm-ocr |
 | `roles.py`, `sorter.py` | line roles: a decision model plus rules; the trees behind `ROBO_SORTER=1` |
-| `ocrcheck.py`, `trust.py`, `lexicon.py` | more readings of each body line, judges where they differ, the learned trust that fixes, keeps or asks; the word list |
+| `ocrcheck.py`, `trust.py`, `trustdata.py`, `lexicon.py` | more readings of each body line, judges where they differ, the learned trust that fixes, keeps or asks, and its training data; the word list |
 | `corrections.py`, `quotes.py` | the reviewer's answers applied; unpaired quotes as questions with a proposed reading |
 | `footnotes.py`, `epigraphs.py` | footnotes at a page's foot taken out of the running text and linked to their marks; a motto on a page of its own set apart |
 | `reflow.py`, `hyphens.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; English line-end hyphens nothing else decides, by the judge; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |

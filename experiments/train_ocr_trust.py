@@ -24,23 +24,20 @@ clef, which reads the crop, has a reference more standard than its print.
 
 import sys
 from collections import Counter
-from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
-from ocr_trust_data import OUT, SPECS, load, suspect
 from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
-from roboscriptorium import bench, trust
+from roboscriptorium import trust
 from roboscriptorium.book import Book
 from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
+from roboscriptorium.trustdata import HELD_OUT, SPECS, models_to_save, rows_of, trainable, usable
 
-# Never trained on: the validation and test books.
-HELD_OUT = {spec.split("--")[0] for spec in bench.SETS["validation"] + bench.SETS["test"]}
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
 MODELS = {
     "logistic": lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)),
@@ -50,24 +47,7 @@ MODELS = {
 }
 
 
-# The judges a build asks: votes of any other model in the data (an alarm tried and left
-# off) would train the arbiter on a vote it never gets.
 _SETTINGS = Settings.from_env()
-JUDGES = {_SETTINGS.judge_model, _SETTINGS.check_model, _SETTINGS.alarm_model, "word list"} - {""}
-
-
-def rows_of(name: str) -> list[dict]:
-    rows = [r for r in load(name) if r["settled"]]
-    for r in rows:
-        s = suspect(r)
-        r["s"] = replace(
-            s,
-            votes={m: v for m, v in s.votes.items() if m in JUDGES},
-            judges=tuple(m for m in s.judges if m in JUDGES),
-            confidence={m: c for m, c in s.confidence.items() if m in JUDGES},
-        )
-        r["book"] = name
-    return rows
 
 
 def matrix(rows: list[dict], pairs: trust.Pairs) -> tuple[np.ndarray, list[int]]:
@@ -124,32 +104,8 @@ def scored(make, train_names, rows):
     return per_suspect(rows, make().fit(X, y).predict_proba(Xt)[:, 1], owner)
 
 
-# Every reading the OCR check makes with these settings; data built before one of them
-# lacks its support.
-READINGS = {"glm", "tess"} | ({"qwen"} if _SETTINGS.read_model else set())
-
-
-def usable(name: str) -> str:
-    """Why a book's data can't be used, or "" when it can."""
-    if not (OUT / f"{name}.json").exists():
-        return "no data yet"
-    rows = load(name)
-    if any(not READINGS <= set(r["suspect"]["support"]) for r in rows):
-        return "built before the current readings"
-    # The features take the judges by position, so data without one of these settings'
-    # judges would train its slot on nothing.
-    judges = JUDGES - {"word list"}
-    if any(not judges <= set(r["suspect"]["votes"]) for r in rows):
-        return "built without one of the current judges"
-    return ""
-
-
-def trainable(name: str) -> bool:
-    return name.split("--")[0] not in HELD_OUT
-
-
-skipped = {name: why for name in SPECS if (why := usable(name))}
-books = {name: rows_of(name) for name in SPECS if name not in skipped}
+skipped = {name: why for name in SPECS if (why := usable(name, _SETTINGS))}
+books = {name: rows_of(name, _SETTINGS) for name in SPECS if name not in skipped}
 for name, why in skipped.items():
     print(f"skipped {name}: {why}")
 
@@ -169,36 +125,11 @@ if "--save" in sys.argv:
     missing = [n for n in skipped if trainable(n)]
     if missing and "--partial" not in sys.argv:
         sys.exit(f"not saving: tuning data missing or stale for {', '.join(missing)} (--partial to save anyway)")
-    # The model the pipeline uses, and one without each tuning book, which `bench`
-    # scores that book with.
-    tuning = [n for n in books if trainable(n) and n != "stella"]
-    path = Path(Settings.from_env().ocr_trust_model)
-    # All trained before any is written, so an interrupted run leaves no mix of old and new.
-    models = []
-    for without in [None, *tuning]:
-        every = [
-            r
-            for name, rows in books.items()
-            if name != without and trainable(name)
-            for r in rows
-        ]
-        model = trust.train(
-            [r["s"] for r in every], [r["right"] for r in every], [r["book"] for r in every]
-        )
-        # Its sureness calibrated on each of its training books scored by trees trained
-        # on the others, as a new book is scored.
-        names = [n for n in books if n != without and trainable(n)]
-        sure, hit = [], []
-        for held in names:
-            rows = books[held]
-            for r, ps in zip(rows, scored(MODELS["trees"], [n for n in names if n != held], rows), strict=True):
-                sure.append(float(ps.max()))
-                hit.append(bool(r["right"][int(ps.argmax())]))
-        model.calibration = trust.calibrate(sure, hit)
-        if without is None:
-            grid = (0.5, 0.7, 0.8, 0.9, 0.95, 0.99)
-            print("raw sureness → right:", ", ".join(f"{g} → {model.calibration.predict([g])[0]:.3f}" for g in grid))
-        models.append((trust.without(path, without) if without else path, model, len(every), without))
+    path = Path(_SETTINGS.ocr_trust_model)
+    models = models_to_save(books, path, lambda names, rows: scored(MODELS["trees"], names, rows))
+    calibration = models[0][1].calibration
+    grid = (0.5, 0.7, 0.8, 0.9, 0.95, 0.99)
+    print("raw sureness → right:", ", ".join(f"{g} → {calibration.predict([g])[0]:.3f}" for g in grid))
     for out, model, n, without in models:
         trust.save(model, out)
         print(f"trained on {n} suspects, without {without}: {out}")

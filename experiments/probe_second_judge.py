@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-import ocr_trust_data  # noqa: E402
+from roboscriptorium import trustdata as ocr_trust_data  # noqa: E402
 
 from roboscriptorium import ocrcheck  # noqa: E402
 from roboscriptorium.clients import decide  # noqa: E402

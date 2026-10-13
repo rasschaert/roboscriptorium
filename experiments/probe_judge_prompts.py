@@ -21,7 +21,7 @@ from collections import Counter
 from pathlib import Path
 
 import pymupdf
-from ocr_trust_data import load, suspect
+from roboscriptorium.trustdata import load, suspect
 
 from roboscriptorium import ocrcheck, quotes
 from roboscriptorium.book import Book

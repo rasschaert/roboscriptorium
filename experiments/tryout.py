@@ -52,7 +52,7 @@ from roboscriptorium.pdf import cached_text_layer
 from roboscriptorium.reflow import HYPHENS
 
 sys.path.insert(0, str(Path(__file__).parent))
-from ocr_trust_data import fold  # noqa: E402  the trust data's labels compare lines the same way
+from roboscriptorium.trustdata import fold  # noqa: E402  the trust data's labels compare lines the same way
 
 READER_VERSION = 2
 HARD, CONTROL = 30, 20
@@ -400,7 +400,7 @@ def _digests(models: list[str]) -> dict[str, str]:
 
 
 def build_judge() -> None:
-    import ocr_trust_data
+    from roboscriptorium import trustdata as ocr_trust_data
 
     root = WORK / f"judge-v{JUDGE_VERSION}"
     manifest_path = GIT / f"judge-v{JUDGE_VERSION}.json"
