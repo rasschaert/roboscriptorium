@@ -311,3 +311,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-13 | bench tuning, warm, after verdicts and minus-dash fix | 868 | 3 | 0 |
 | 2026-10-13 | bench tuning, warm, review fixes, question price and typography | 868 | 3 | 0 |
 | 2026-10-13 | bench tuning, warm, straight quotes curled | 868 | 2 | 0 |
+| 2026-10-13 | bench tuning, warm, quote after a dash closes | 868 | 2 | 0 |

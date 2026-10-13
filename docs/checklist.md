@@ -23,10 +23,6 @@ areas below in order, and the test set scored once at the end.
 The user, 2026-10-13: the review's bug fixes come first, then its bench and structure
 steps; building Ex-minnaar and Stella has no urgency. The findings are in decisions.md.
 
-- [ ] Straight quotes and apostrophes left from the text layer curled in a curly book,
-      in the typography stage (the new typography count's first finding: Metro 124 in
-      its slice, Dolittle 541 words); counterexamples first (`’t`, `’s`, primes after a
-      digit), then `bench tuning` (agent, ~2 h)
 - [ ] One cold A/A rerun of `bench tuning` overnight, for the noise floor when caches
       change (overnight)
 - [ ] Book-wide statistics (repeats for line roles, type, line height for missing lines)
@@ -506,6 +502,9 @@ many the layer had wrong.
       morning's tuning run stays better, 0.57 → 0.55
 - [x] 2026-10-13 The bench counts typography where the words agree, a measure of its own:
       0.0–2.0 words a page, Dolittle 8.7, nearly all straight quotes kept from the layer
+- [x] 2026-10-13 Straight quotes and apostrophes left from the layer curled
+      (`quotes.curl`): typography 0.00–0.09 a page on every tuning book, the verdict
+      unchanged
 
 - [x] 2026-10-09 Fable's second review: what the bench couldn't see and leaks in the OCR
       check, each change benched alone; the ledger of probe against verdict is in
