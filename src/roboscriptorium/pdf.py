@@ -60,6 +60,22 @@ class Line:
     typed: bool = False
 
 
+def spliced(line: Line, places: list[tuple[int, int, str]]) -> Line:
+    """A copy of `line` with each (start, end, text) span of its text replaced, right to
+    left so each leaves the spans before it in place. Marks a place puts before the line's
+    first word (a dash, a quote the layer missed) widen its box by their width: the box
+    began after them, so the line looked indented."""
+    text, x0 = line.text, line.x0
+    letter = (line.x1 - line.x0) / max(1, len(line.text))
+    for start, end, new in sorted(places, key=lambda p: -p[0]):
+        old = text[start:end]
+        if start == 0 and new != old and new.endswith(old) and old:
+            # An em dash is two letters wide, any other mark one.
+            x0 -= letter * sum(2 if c == "—" else 1 for c in new[: len(new) - len(old)])
+        text = text[:start] + new + text[end:]
+    return replace(line, text=text, x0=x0) if text != line.text else line
+
+
 @dataclass(frozen=True)
 class PageText:
     number: int  # 1-based

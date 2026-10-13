@@ -35,7 +35,7 @@ from roboscriptorium.clients.retry import patiently
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
-from roboscriptorium.pdf import PageText, line_words, page_words, spells
+from roboscriptorium.pdf import PageText, line_words, page_words, spells, spliced
 from roboscriptorium.reflow import HYPHENS
 from roboscriptorium.roles import DecisionCache
 
@@ -795,10 +795,7 @@ def apply(pages: list[PageText], suspects: list[Suspect]) -> list[PageText]:
         for i, line in enumerate(page.lines):
             text = line.text
             here = [s for s in fixes.get((page.number, i), []) if s.original == text]
-            # Right to left, so each fix leaves the spans before it in place.
-            for s in sorted(here, key=lambda s: -s.start):
-                text = text[: s.start] + s.chosen + text[s.end :]
-            lines.append(replace(line, text=text) if text != line.text else line)
+            lines.append(spliced(line, [(s.start, s.end, s.chosen) for s in here]))
         out.append(replace(page, lines=lines))
     return out
 

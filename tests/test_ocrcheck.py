@@ -582,3 +582,59 @@ def test_a_rotated_pages_text_boxes_are_where_the_page_shows_them(tmp_path):
     with pymupdf.open(tmp_path / "rotated.pdf") as shown:
         crop = shown[0].get_pixmap(clip=pymupdf.Rect(line.x0, line.y0, line.x1, line.y1))
     assert (np.frombuffer(crop.samples, dtype=np.uint8) < 128).sum() > 50
+
+
+def _start_fix(original: str, ours: str, chosen: str) -> Suspect:
+    return Suspect(7, 1, original, 0, len(ours), ours, (chosen,), (0, 0, 1, 1), "other", chosen)
+
+
+def _dash_page(second: str) -> PageText:
+    lines = [
+        Line("still ran up and followed him through the town", 25, 10, 276, 20),
+        Line(second, 37, 22, 37 + 10 * len(second), 32),
+        Line("but he had no money left at all to pay with", 25, 34, 276, 44),
+    ]
+    return PageText(7, 300, 400, lines)
+
+
+def test_a_fix_that_replaces_letters_at_a_line_start_keeps_its_box():
+    page = _dash_page("Tbe same as they had done")
+    fixed = ocrcheck.apply([page], [_start_fix("Tbe same as they had done", "Tbe", "The")])
+    assert fixed[0].lines[1].text == "The same as they had done"
+    assert fixed[0].lines[1].x0 == 37
+
+
+def test_a_fix_within_a_line_keeps_its_box():
+    fixed = ocrcheck.apply([_page()], [_suspect("other")])
+    assert fixed[0].lines[0].x0 == 10
+
+
+def test_marks_a_fix_puts_before_a_line_widen_its_box_by_their_width():
+    page = _dash_page("the same as they had done")
+    em = ocrcheck.apply([page], [_start_fix("the same as they had done", "the", "—the")])
+    assert em[0].lines[1].text == "—the same as they had done"
+    assert em[0].lines[1].x0 == 17  # an em dash is two letters wide; a letter is 10 here
+    assert page.lines[1].x0 == 37
+    en = ocrcheck.apply([page], [_start_fix("the same as they had done", "the", "‘the")])
+    assert en[0].lines[1].x0 == 27
+
+
+def test_a_dash_the_layer_missed_at_a_line_start_continues_the_paragraph():
+    from roboscriptorium.reflow import indented
+
+    page = _dash_page("the same as they had done")
+    fixed = ocrcheck.apply([page], [_start_fix("the same as they had done", "the", "—the")])
+    assert indented(page.lines)[1]
+    assert not indented(fixed[0].lines)[1]
+
+
+def test_the_answered_copy_widens_a_box_for_a_dash_the_fix_put_before_it(tmp_path):
+    from roboscriptorium.corrections import Corrections, apply
+    from roboscriptorium.reflow import indented
+
+    page = _dash_page("the same as they had done")
+    fix = _start_fix("the same as they had done", "the", "—the")
+    out, _, _ = apply([page], {}, Corrections(tmp_path / "regions.jsonl"), [fix])
+    assert out[0].lines[1].text == "—the same as they had done"
+    assert out[0].lines[1].x0 == 17
+    assert not indented(out[0].lines)[1]

@@ -318,3 +318,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-13 | line-role trees against the rules, leave one book out (De aanslag cold, the rest warm) | 1000 | 10 | 0 |
 | 2026-10-13 | bench tuning, line-role trees on (retrained 2026-10-13), warm | 790 | 5 | 0 |
 | 2026-10-13 | line-role trees against the rules, labels without bare-mark lines as body, warm | 1000 | 1 | 0 |
+| 2026-10-13 | bench tuning, warm, a fix's leading dash widens the line's box | 790 | 1 | 0 |
+| 2026-10-13 | bench validation, warm, a fix's leading dash widens the line's box | 790 | 1 | 0 |
