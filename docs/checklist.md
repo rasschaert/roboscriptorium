@@ -76,6 +76,11 @@ machine's work is recomputed in this order before anything below.
       chapter), and check once overnight that it ranks changes as the full bench does
       (agent, ~1 h plus the run)
 - [ ] The line-role trees (`experiments/train_sorter.py --save`)
+- [ ] What a perfect reader could still gain: over the tuning books' warm builds, count the
+      wrong words left where every reader agrees (no suspect raised), against all wrong
+      words left. Decides whether fine-tuning a reader on the golden books (LoRA on MLX,
+      tuning pages only, validation kept clean) is worth an afternoon (agent, ~10 min,
+      no models)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
 - [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
