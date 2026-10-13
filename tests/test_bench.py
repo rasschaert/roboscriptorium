@@ -292,3 +292,14 @@ def test_typography_counts_glyphs_set_wrong_where_the_words_agree():
     assert "ellipses" not in glyph_kinds([Chapter("", [text])])
     # A reference in straight quotes says nothing of the print's quotes.
     assert "quotes" not in glyph_kinds([Chapter("", ["'Kom je?' vroeg ze."])])
+
+
+def test_settings_that_differ_between_two_runs_are_named():
+    old = {"settings": {"sorter": True, "judge_model": "clef:27b", "ocr_trust": True}}
+    assert bench.settings_changed(old, old) == []
+    new = {"settings": {"sorter": False, "judge_model": "clef:27b", "ocr_ask_below": 0.6}}
+    assert bench.settings_changed(old, new) == [
+        "ocr_ask_below: None → 0.6",
+        "ocr_trust: True → None",
+        "sorter: True → False",
+    ]

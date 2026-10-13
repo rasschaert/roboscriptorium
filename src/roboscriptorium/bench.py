@@ -414,6 +414,15 @@ def save(record: dict, out: Path = OUT) -> Path:
     return path
 
 
+def settings_changed(old: dict, new: dict) -> list[str]:
+    """Each setting the two runs were made with that differs, as "name: old → new". A
+    paired comparison measures every one of them, not only the change in hand."""
+    a, b = old.get("settings", {}), new.get("settings", {})
+    return [
+        f"{k}: {a.get(k)} → {b.get(k)}" for k in sorted(set(a) | set(b)) if a.get(k) != b.get(k)
+    ]
+
+
 def previous(set_name: str, before: Path, out: Path = OUT) -> Path | None:
     """The last run of the set saved before `before`."""
     runs = sorted(p for p in out.glob(f"{set_name}-*.json") if p.name < before.name)

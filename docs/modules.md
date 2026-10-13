@@ -112,7 +112,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   change. Pinned golden slices per set, scored with `evaluate` and `quality`,
   saved whole to `work/bench/` (commit, settings, decider, model versions,
   per-page counts, paragraph breaks set wrong among them) and compared with the
-  previous run page by page. One test decides: "after review", each book of the set
+  previous run page by page (or `--against` a named one), naming any setting the two
+  were made with differently (`bench.settings_changed`): an experiment's run with
+  other settings is the next run's default baseline. One test decides: "after review", each book of the set
   weighing the same, must improve at the low, mean and high slip rate, or the
   paragraph breaks set wrong must fall, with neither clearly worse at any slip rate,
   and no book may get worse by ≥ 0.05 wrong words or breaks per page on the mean with

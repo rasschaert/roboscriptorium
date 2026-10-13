@@ -363,6 +363,8 @@ def run_bench(
     new = json.loads(path.read_text())
     found = bench.verdict(old, new)
     typer.echo(f"\nagainst {old_path.name}: {found.outcome.upper()}")
+    for change in bench.settings_changed(old, new):
+        typer.echo(f"  made with other settings, {change}")
     for c in found.pooled:
         typer.echo(
             f"  all pages, {c.measure:26} {c.before:6.2f} → {c.after:6.2f}"
