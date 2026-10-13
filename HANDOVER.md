@@ -4,13 +4,13 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Nothing running. Last warm `bench tuning`: 2026-10-13 13:25, NO CHANGE (0.55), typography ~0
+## Nothing running. Last warm `bench tuning`: 2026-10-13 17:25, NO CHANGE (0.33 → 0.32), three pairs retired
 
 After the codebase review (2026-10-13): the user put its fixes first and said building
 Ex-minnaar or Stella has no urgency. Done and pushed: eight bugs fixed with tests
 (9e67c24); the bench prices the reviewer's time, 20 questions = one wrong word (the user),
 and its verdict rule is symmetric (99ed76a); a typography count of its own (034bc7c), whose
-first run found straight quotes kept from the layer in curly books, now curled (45aeca0, 3782e7e). **Next, in order:**
+first run found straight quotes kept from the layer in curly books, now curled (45aeca0, 3782e7e). Then 11/22/63, FKA USA and Koning Wilders were retired (the user) and the arbiter retrained without them (3371ddc; bench NO CHANGE). Their files in `work/` wait on the user's yes to delete. The user's direction: learned decisions, not hand-written rules (AGENTS.md). **Next, in order:** line roles by the trees (retrain, bench on top of the rules), then
 the rest of the checklist's "From the codebase review" section (the cold A/A rerun goes
 overnight), then what is below.
 
