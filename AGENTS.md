@@ -143,6 +143,13 @@ labels that improve the weights. Every job keeps a labelled set, so a newly rele
 model is benchmarked and, where it wins, plugged in. The target book comes out right
 because the machine does.
 
+**Learned, not hand-written** (the user, 2026-10-13: "let's not continue with
+hand-written anything, if we can help it"). A decision is made by a model trained on
+labels (the golden books, the reviewer's answers), not by a rule written for it. No new
+hand-written rule where a learned one can do the job; an existing rule is replaced by a
+learned decision once the bench says the learned one is at least as good. What is true
+by definition (a chapter heading appears once, an apostrophe is `’`) may stay code.
+
 - **Order of attack:** scanned PDF → born-digital PDF → other formats (MOBI/AZW3, DOCX,
   HTML, …).
 - **Content order:** prose/fiction first; footnotes, figures, tables, verse later.

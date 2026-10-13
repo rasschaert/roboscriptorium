@@ -47,14 +47,12 @@ SETS = {
         "metro-2033--ia-scan:7-92:1-8",
         "de-cipier--ia-scan:9-33:1-2",
         "artemis--ia-scan:13-34:1-1",
-        "11-22-63--ia-scan:15-32:1-6",
         "de-tuin-van-de-avondnevel--ia-scan:11-29:1-1",
         "het-heft-in-eigen-hand--ia-scan:9-33:1-2",
         "doodskleed--ia-scan:13-22:1-2",
         "het-ijzige-land--ia-scan:11-21:1-1",
         "de-eerlijke-vinder--ia-scan",
         "monterosso-mon-amour--ia-scan",
-        "fka-usa--ia-scan:11-22:1-5",
     ],
     "validation": [
         "de-kerk-van-de-dode-meisjes--ia-scan:11-107:1-13",
@@ -62,7 +60,6 @@ SETS = {
         "youre-never-weird-on-the-internet--ia-scan:13-94:1-16",
         "villa-toscane--calibre-pdf::1-12",
         "de-stilte-van-de-hel--ia-scan:11-101:1-15",
-        "koning-wilders--ia-scan",
         "het-laatste-bevel--ia-scan:9-100:1-5",
         "the-strangers-child--ia-scan:121-208:15-23",
         "normal-people--ia-scan:146-232:22-30",
@@ -74,7 +71,7 @@ SETS = {
 TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
-NO_TRUST_DATA: frozenset[str] = frozenset({"fka-usa--ia-scan"})
+NO_TRUST_DATA: frozenset[str] = frozenset()
 TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST_DATA
 # The line-role model trains on every tuning book (`experiments/train_sorter.py`).
 SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"])

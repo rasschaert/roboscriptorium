@@ -41,8 +41,10 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       AGENTS.md cut to rules and the map (manifest keys to golden-notes.md, environment
       detail to models.md, the review page to how-it-works.md); decisions.md a heading a
       day (agent, ~2 h)
-- [ ] **user** Which line roles are the product, the rules or the trees? Both run; the
-      trees are off, the rules name the books they were tuned on
+- [ ] Line roles learned, not hand-written (the user, 2026-10-13): train the line-role
+      trees again on the tuning books (`experiments/train_sorter.py --save`), bench
+      them on top of the rules (warm), then as the decision with the rules only as
+      features, and retire each rule the trees make redundant (agent, ~half a day)
 
 ## Recovering what work/ lost
 
@@ -76,11 +78,6 @@ machine's work is recomputed in this order before anything below.
       bench tier of each tuning book's first chapter or two (~10–20 pages, ending on a
       chapter), and check once overnight that it ranks changes as the full bench does
       (agent, ~1 h plus the run)
-- [ ] **user** Retire the suspect pairs, or keep them? Parked by the user 2026-10-13,
-      to be decided. Koning Wilders (validation): text layer CER 2.45%, past three times
-      the set's median (0.55%), after review 0.92. FKA USA (tuning, waiting on its fixes):
-      30% of its body lines unplaced in its reference, after review 4.11. 11/22/63
-      (tuning, named again 2026-10-13): 6.7% of its body lines unplaced, after review 0.46
 - [ ] The line-role trees (`experiments/train_sorter.py --save`)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
@@ -495,6 +492,8 @@ many the layer had wrong.
       each other, no cache knew its source PDF, the arbiter read its judges by the order
       of their votes, the docs put copyrighted books' verdicts in git); the rest planned
       above
+- [x] 2026-10-13 Three suspect pairs retired (the user): 11/22/63, FKA USA, Koning
+      Wilders; the arbiter retrained without 11/22/63
 - [x] 2026-10-13 The bench prices the reviewer's time (20 questions = one wrong word, the
       user) and its verdict is worse when any slip rate is, a veto on breaks too: this
       morning's tuning run stays better, 0.57 → 0.55

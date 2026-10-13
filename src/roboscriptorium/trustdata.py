@@ -42,7 +42,6 @@ SPECS = {
     "metro-2033--ia-scan": "7-92:1-8",
     "de-cipier--ia-scan": "9-33:1-2",
     "artemis--ia-scan": "13-34:1-1",
-    "11-22-63--ia-scan": "15-32:1-6",
     "de-tuin-van-de-avondnevel--ia-scan": "11-29:1-1",
     "de-eerlijke-vinder--ia-scan": "",
     "youre-never-weird-on-the-internet--ia-scan": "13-26:1-2",
