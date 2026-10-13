@@ -322,3 +322,5 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-13 | bench validation, warm, a fix's leading dash widens the line's box | 790 | 1 | 0 |
 | 2026-10-13 | bench tuning, warm, line-role trees on, labels fixed | 790 | 2 | 0 |
 | 2026-10-13 | bench validation, warm, line-role trees on, labels fixed | 790 | 3 | 0 |
+| 2026-10-13 | probe: whole-page reading, Qwen and glm-ocr, 19 tuning pages | 19 | 1 | 1 |
+| 2026-10-13 | probe: whole-page reading, Qwen and glm-ocr, 19 tuning pages (glm-ocr's image smaller) | 19 | 6 | 0 |

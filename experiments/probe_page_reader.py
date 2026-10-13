@@ -80,7 +80,9 @@ def read_page(model: str, png: bytes, url: str) -> tuple[str, float]:
         "images": [base64.b64encode(png).decode()],
         "stream": False,
         "think": False,
-        "options": {"temperature": 0, "num_predict": 1500},
+        # glm-ocr runs on llama.cpp's four slots, which share the app's 8k context: a
+        # smaller image and output keep one request inside its ~2k.
+        "options": {"temperature": 0, "num_predict": 900 if glm else 1500},
     }
     if glm:
         payload.pop("think")
@@ -229,13 +231,18 @@ if __name__ == "__main__":
                 totals["pipeline"][1] += b
                 totals["pipeline"][3] += 1
                 row.append(f"pipeline {w:3}w {b:2}b")
-            png = pdf.render_png(run.book.source, page, max_pixels=1_600_000)
             for m in models:
+                pixels = 700_000 if m.startswith("glm-ocr") else 1_600_000
+                png = pdf.render_png(run.book.source, page, max_pixels=pixels)
                 cache = OUT / m.replace(":", "_") / f"{name}-{page}.txt"
                 if cache.exists():
                     text, secs = cache.read_text(), 0.0
                 else:
-                    text, secs = read_page(m, png, settings.ollama_url)
+                    try:
+                        text, secs = read_page(m, png, settings.ollama_url)
+                    except httpx.HTTPError as e:
+                        row.append(f"{m.split(':')[0]} failed ({e.__class__.__name__})")
+                        continue
                     cache.parent.mkdir(parents=True, exist_ok=True)
                     cache.write_text(text)
                 w, b = score(trim(tokens_of_markdown(text)), want)

@@ -24,8 +24,13 @@ The pipeline reads lines and joins them by hand-built geometry because that was 
 models could do. Each probe below asks whether that's still true, on a few golden pages
 (tuning books), before any building. Record each result, null ones too.
 
-- [ ] Whole-page reading (`probe_page_reader.py`, running 2026-10-13): Qwen and glm-ocr
-      read 19 pages whole, scored on words and paragraph breaks beside the pipeline
+- [x] Whole-page reading (`probe_page_reader.py`, 2026-10-13): Qwen 76 wrong words and
+      32 breaks over 19 pages against the pipeline's 27 and 7 (letters doubled at page
+      resolution, dialogue paragraphs merged); glm-ocr near-exact on plain text pages at a
+      third of the size, but invents text on near-empty and picture pages
+- [ ] glm-ocr whole pages at full resolution (needs Ollama's context raised: its four
+      slots share it), plain text pages only, the layout detector's pictures masked out;
+      if it beats the line readers on letters, it joins as a page-level reader
 - [ ] Whole-page reading by the bigger build (`qwen3.8:27b-mxfp8`, pulled) and with
       the page before as context, for paragraphs that cross a page
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,
