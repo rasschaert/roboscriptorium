@@ -314,3 +314,4 @@ estimate: it runs slower by an unmeasured amount.
 | 2026-10-13 | bench tuning, warm, quote after a dash closes | 868 | 2 | 0 |
 | 2026-10-13 | bench tuning, warm, measurement out of the CLI (should be identical) | 868 | 2 | 0 |
 | 2026-10-13 | bench tuning, warm, three pairs retired, arbiter retrained | 790 | 2 | 0 |
+| 2026-10-13 | bench validation, after retiring three pairs (Stranger's Child re-read finishing) | 790 | 34 | 0 |

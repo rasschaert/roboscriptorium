@@ -71,8 +71,6 @@ machine's work is recomputed in this order before anything below.
       first look (~5 h of models) and joins; De aanslag joins validation; Verminkt joins
       validation whole. Update design.md's test-set reason, `bench.SETS` and the CLI's
       `--score-test` guard (agent, ~1 h plus the run)
-- [ ] Finish `bench validation` with the ellipsis measured on the scan (halted on The
-      Stranger's Child's re-reading; ~30 min). Tuning is done: BETTER 0.52 → 0.50
 - [ ] A lighter feedback loop (agreed 2026-10-13; its two rules are in AGENTS.md): build a quick
       bench tier of each tuning book's first chapter or two (~10–20 pages, ending on a
       chapter), and check once overnight that it ranks changes as the full bench does
@@ -271,6 +269,8 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Measurement
 
+- [x] 2026-10-13 `bench validation` finished with the ellipsis measured on the scan: BETTER
+      1.10 → 0.59 after review (The Stranger's Child 4.59 → 0.53); tuning BETTER 0.52 → 0.50
 - [x] ~~2026-10-11 `_scandata.xml` page types as labels for page classification~~:
       dropped, they mark the cover and title page (Dolittle also contents and
       copyright) and call every other page Normal, colophon, motto and ads included

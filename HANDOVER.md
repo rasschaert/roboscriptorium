@@ -4,12 +4,10 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running: `bench validation` (screen `robo-bench-validation`, started 2026-10-13 ~17:35, ~30 min)
+## Nothing running
 
-It finishes The Stranger's Child's re-reading, halted this morning, and makes the
-validation books warm for the line-role trainer. Its log is `work/runs/bench-validation.log`.
-Compare against `work/bench/validation-20261013T082508-d4c197e.json`, then record it in
-docs/decisions.md and commit docs/run-times.md.
+`bench validation` finished 2026-10-13 20:02: BETTER 1.10 → 0.59 (decisions.md), mostly
+The Stranger's Child. Its builds are warm for the line-role trainer.
 
 Last warm `bench tuning`: 2026-10-13 17:25, NO CHANGE (0.33 → 0.32), three pairs retired.
 De tuin van de avondnevel got significantly worse under the retrained arbiter (0.38 → 0.43;
