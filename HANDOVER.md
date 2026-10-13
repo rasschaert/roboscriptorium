@@ -4,25 +4,23 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Nothing running. `bench validation` finished 2026-10-13 10:25
+## Running: `bench validation` started 2026-10-13 10:52 (screen `robo-bench-validation`), ~45 min
+
+It measures the ellipsis's gaps on the scan (d9c7a13): only The Stranger's Child changes
+("..." glued → ". . ." with a space, as its print sets it), and its third reading is redone
+under the new prompt; the other eight are warm. Compare against
+`work/bench/validation-20261013T082508-d4c197e.json` (The Stranger's Child 4.57; set mean
+1.06, 0.62 without it).
 
 **Remind the user of the daily backup of `work/`** at session start and before long runs
 (they back up with Duplicati, ~9 min; last run 2026-10-13 morning, before this session).
 
-**Validation, rebuilt after the loss** (`work/bench/validation-20261013T082508-d4c197e.json`):
-wrong words a page after review De kerk 0.31, Vuurspel 0.91, You're Never Weird 0.75,
-Villa Toscane 0.07, De stilte 1.29, Koning Wilders 0.92, Het laatste bevel 0.45, The
-Stranger's Child **4.57**, Normal People 0.23; mean 1.06, 0.62 without The Stranger's
-Child. Its 4.57 is one mistake of ours: the print sets a space before its spaced ellipsis
-(`Ka . . .’`, p. 134), the text layer drops it (`Ka...`), and the build takes the
-book's ellipsis style from the layer. 370 of its 389 unasked errors; fixed it should
-come to ~0.3. Koning Wilders is named a suspect pair (layer CER 2.45%, over three times
-the median): proposed to the user for retiring, not yet answered.
-
-**First thing next session:** measure the ellipsis on the scan as the dash is (checklist,
-top of "Recovering what work/ lost"), then a warm `bench tuning` (~3 min; the verdicts
-and De eerlijke vinder's minus-dash fix are still unmeasured on it) and a warm `bench
-validation`.
+**Tuning, warm, 2026-10-13** (`work/bench/tuning-20261013T085119-e8ff4b4.json`): BETTER,
+0.52 → 0.50 [−0.03, −0.01] after review over all 17 (0.29 over the 16 without FKA USA,
+against 0.31): De eerlijke vinder 0.91 → 0.68 (its minus-sign dashes undone), Goede dochter
+0.28 → 0.24 (the user's verdicts), Monterosso 0.50 → 0.47. FKA USA is named a suspect pair
+(30% of its body lines unplaced). Koning Wilders too (validation, layer CER 2.45%):
+proposed to the user for retiring, not yet answered.
 
 **The single review is in** (merged 2026-10-13): `roboscriptorium review` on a golden
 book asks its places that differ from the e-book in the same list as its flagged regions,
