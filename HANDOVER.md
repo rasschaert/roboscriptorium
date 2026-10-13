@@ -4,19 +4,26 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running, 2026-10-12 21:45: `bench validation`, cold, overnight
+## Nothing running. `bench validation` halted 2026-10-13 07:56, on its last book
 
 **Remind the user of the daily backup of `work/`** at session start and before long runs
-(they back up with Duplicati, ~9 min; last run 2026-10-12 21:40).
+(they back up with Duplicati, ~9 min; last run 2026-10-12 21:40, before the bench).
 
-**Running:** screen `robo-bench-validation`: `bench validation` on the 9 validation
-books, The Stranger's Child and Normal People newly joined, ~916 pages nearly all cold,
-~13 h (done ~10:30 on 2026-10-13); output in `work/runs/bench-validation.log`, its time
-in docs/run-times.md. The user may take the laptop to the office, which stops it: rerun
-the same command (`experiments/detached.sh bench-validation experiments/timed.sh "bench
-validation, …" 916 work/runs/bench-validation.log uv run roboscriptorium bench
-validation`); finished books and stages are cached, at most one reading pass of one book
-is lost. Keep other model work off Ollama meanwhile.
+**First thing next session:** finish `bench validation` (started 2026-10-12 21:45, halted
+by the user to pack up the laptop). Eight of its nine books are built and cached; Normal
+People had its tesseract and second readings done and was about two-thirds through the
+qwen3.8 third reading (saved in part). The rerun redoes nothing finished: Normal People's
+rest (~25 min reading, ~13 min judges, going by The Stranger's Child), then the other
+eight warm (minutes). Say ~45 min, then:
+
+```sh
+experiments/detached.sh bench-validation experiments/timed.sh "bench validation, finishing after a halt (8 of 9 books warm)" 916 work/runs/bench-validation.log uv run roboscriptorium bench validation
+```
+
+Then report each book and the set against tuning's 0.31, and run a warm `bench tuning`
+(~3 min) for the effect of the verdicts and the minus-dash fix. No timing row was written
+for the halted run (timed.sh only appends on exit); the overnight part took ~10 h for
+eight books, ~830 pages cold.
 
 **Tuning baseline (2026-10-12, `work/bench/tuning-20261012T190056-…json`): 0.31** wrong
 words a page after review over 17 books (FKA USA left out till its fixes). Since then:
