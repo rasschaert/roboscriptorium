@@ -491,7 +491,9 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   (regenerate it with `uv run python experiments/golden_overview.py >
   docs/golden-books.md`, half a minute, no models, after adding, slicing or retiring a
   book). Past three times the set's median layer CER, or one body line in twenty
-  unplaced, the book is suspect. **Whoever notices says so in the session's report and
+  unplaced, the book is suspect. Judge by the bench's figures, over body lines: the
+  overview's unplaced share counts page furniture too, so a book with running heads
+  or washed-out pages tops it without being suspect. **Whoever notices says so in the session's report and
   proposes retiring it, without being asked.** A retired book's files are deleted from
   `work/` and its manifest from git, with a dated line in docs/decisions.md.
 

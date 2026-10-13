@@ -7,7 +7,8 @@ with nothing cached (1.1 min per page). *Layer CER* and *bare-word* are the text
 against the reference without any model; bare words ignore punctuation, so CER well
 above bare-word means typography the two sides set differently. *Unplaced* is the
 share of lines the aligner can't match to the reference (page furniture, specks,
-text the reference lacks). *Headings* counts reference headings with a line on the
+text the reference lacks), over all lines, so it isn't the retirement signal: the bench
+measures that over body lines. *Headings* counts reference headings with a line on the
 scan. *Eval* is the latest full run (models on), CER and WER.
 
 | Book | Set | Pages body / scored | Words | Cold | Layer CER | Bare-word | Unplaced | Headings | Declared | Eval CER / WER |

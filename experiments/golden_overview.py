@@ -47,7 +47,8 @@ print(
     "against the reference without any model; bare words ignore punctuation, so CER well\n"
     "above bare-word means typography the two sides set differently. *Unplaced* is the\n"
     "share of lines the aligner can't match to the reference (page furniture, specks,\n"
-    "text the reference lacks). *Headings* counts reference headings with a line on the\n"
+    "text the reference lacks), over all lines, so it isn't the retirement signal: the bench\n"
+    "measures that over body lines. *Headings* counts reference headings with a line on the\n"
     "scan. *Eval* is the latest full run (models on), CER and WER.\n"
 )
 print("| Book | Set | Pages body / scored | Words | Cold | Layer CER | Bare-word | Unplaced | Headings | Declared | Eval CER / WER |")

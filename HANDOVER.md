@@ -15,11 +15,10 @@ Last warm `bench tuning`: 2026-10-13 17:25, NO CHANGE (0.33 → 0.32), three pai
 De tuin van de avondnevel got significantly worse under the retrained arbiter (0.38 → 0.43;
 questions 1.05 → 1.37 a page); worth a look once Stella's trust data is rebuilt.
 
-**Asked of the user, unanswered:** (1) delete the three retired books' files from `work/`
+**Asked of the user, unanswered:** delete the three retired books' files from `work/`
 (`11-22-63--ia-scan`, `fka-usa--ia-scan`, `koning-wilders--ia-scan`, and their
-`work/golden/` folders, ~87 MB, backup only)? (2) retire Afscheid van verspilde tijd too?
-11.2% of its body lines are unplaced (threshold 5%) and it has the highest after-review
-score (0.61); proposed, as the retiring rule asks.
+`work/golden/` folders, ~87 MB, backup only)? Afscheid van verspilde tijd stays: its
+proposed retirement misread the all-lines overview (decisions.md 2026-10-13).
 
 **Line roles:** `work/probes/sorter/` was lost with `work/`, so `train_sorter.py` rebuilds
 its lines from warm builds (ROBO_SORTER=0 is the default) once the validation bench is done.
