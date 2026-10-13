@@ -4,7 +4,15 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running: cold A/A `bench tuning` (screen `robo-bench-tuning-cold`, started 2026-10-13 ~20:55)
+## Running: glm-ocr whole pages as a reader (screen `robo-page-joins`, started 2026-10-13 ~22:50)
+
+`experiments/probe_page_joins.py`, ~30 min, log `work/runs/page-joins.log`. Needs Ollama's
+context at 32k (the user raised it). **The cold A/A below is paused**: the tuning books'
+warm caches are in `stages/`, the cold ones in `stages.cold/`; before resuming it, swap
+(`stages` → `stages.warm`, `stages.cold` → `stages`) and ask the user to set the context
+back to 8k, as the warm run it's compared with had.
+
+## Paused: cold A/A `bench tuning` (screen `robo-bench-tuning-cold`, started 2026-10-13 ~20:55)
 
 The noise floor when caches change (checklist, "From the codebase review"). The 16 tuning
 books' warm caches were renamed `work/<book>/stages` → `stages.warm` (nothing deleted);
