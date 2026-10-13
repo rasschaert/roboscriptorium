@@ -218,10 +218,12 @@ def run(
     )
     if compound is not None:
         compound.save()
-    blocks = typography.apply(blocks, style, dots)
+    blocks = typography.apply(quotes.curl(blocks), style, dots)
     notes = footnotes.collect(corrected, note_lines)
     for note, typeset in zip(
-        notes, typography.apply([n.paragraph for n in notes], style, dots), strict=True
+        notes,
+        typography.apply(quotes.curl([n.paragraph for n in notes]), style, dots),
+        strict=True,
     ):
         note.paragraph = typeset
     doc = Document(book.title, book.author, book.language, blocks, notes, book.translator)

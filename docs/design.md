@@ -239,6 +239,15 @@ apart when tight, 0.91–1.21 when spaced. The scan sets the gaps; the layer sti
 between the glyph and three tight dots, which look alike on paper. Of the 26 golden
 books only The Stranger's Child changed.
 
+Straight quotes and apostrophes are the layer's, never the print's: a printed book sets
+curly ones. `quotes.curl` curls what is left of them after the answers, by place: opening
+after a space, bracket, dash or opening mark, closing elsewhere, `’` inside a word and
+where it elides letters (`’s`, `’t`, `’n`, `’em`, `’tis`, `’60s`), a double quote opening
+as the book's own (“ or „, by majority). A mark right after a digit (a foot, an inch) or
+spaced on both sides says neither way and stays. Every golden book had some: Metro 124 in
+its slice, Dolittle's layer straight throughout (541 words); the bench saw none of it
+until it counted typography apart (2026-10-13), since `normalise` folds quote marks.
+
 ## Quote questions
 
 A paragraph whose quotes don't pair up is flagged where the mark is missing, and

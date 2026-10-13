@@ -402,13 +402,15 @@ A hyphen at the end of a line stays or goes by evidence, strongest first:
 5. in an English book, the judge (clef:27b), asked how the word is spelled in its
    sentence (`hyphens.py`): English compounds keep their hyphen about as often as not.
 
-### Italics, dashes, ellipses and figures
+### Italics, quotes, dashes, ellipses and figures
 
 Plain code finds italic words from the slant of each word's strokes on the page
 image (`italics.py`), and sets every dash between words and every ellipsis in the
 book's one style (`typography.py`): the dash measured on the scan, the ellipsis's gaps
 measured there too (`word . . .` or `word...`) and its glyph read in the text layer,
-either one settled in `book.toml` when it sets it.
+either one settled in `book.toml` when it sets it. A straight quote or apostrophe left
+from the text layer is curled by its place (`quotes.curl`): a printed book sets curly
+ones.
 
 `figures.py` takes the pictures the spotter marked on body pages. It trims a
 picture where a caption overlaps it, turns it upright if it was printed sideways,
@@ -438,11 +440,15 @@ on the scan.
 The reference isn't identical to the scan either: an EPUB may correct a word or
 set a dash differently. Where output and reference differ, a person can say what
 the scan prints, in the book's review: those places are more questions in the
-same list as its flagged regions. These verdicts are kept in git and patched
-into the reference.
+same list as its flagged regions. These verdicts are kept beside the reference (in
+git for a public-domain book, under `work/` for one in copyright) and patched into
+it.
 
 Typography an EPUB may set differently, such as quote glyphs and ellipses, is
-folded to one form on both sides and counted, so the gap stays visible.
+folded to one form on both sides and counted, so the gap stays visible. Where the
+words agree once folded, the bench counts apart the words whose quote marks, dashes
+or ellipsis differ from the reference's, for the kinds the reference sets in its
+own glyphs.
 
 ### The scores
 

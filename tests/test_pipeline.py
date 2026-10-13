@@ -454,6 +454,6 @@ def test_a_motto_on_a_page_of_its_own_is_set_apart_before_the_text(tmp_path, mon
     book = Book.load(tmp_path)
     stages = pipeline.run(book)
     first, second, third = stages.doc.paragraphs[:3]
-    assert (first.text, first.epigraph) == ("'It's closing time'", True)
+    assert (first.text, first.epigraph) == ("‘It’s closing time’", True)
     assert (second.text, second.epigraph) == ("(Leonard Cohen, The Future)", True)
     assert not third.epigraph and third.text.startswith("Line 0")

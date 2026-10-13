@@ -15,11 +15,11 @@ proposes the line with its marks (`proposed`); the letters stay the text layer's
 """
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium.ir import Paragraph, SourceRef
+from roboscriptorium.ir import Block, Paragraph, SourceRef
 from roboscriptorium.typography import EllipsisStyle, guess_ellipsis
 
 PAIRS = {"‘": "’", "“": "”"}
@@ -334,3 +334,49 @@ def style_prompt(language: str, single: bool, ellipsis: str, dash: str | None) -
         "Transcribe the printed text in this image exactly as printed: every letter, accent, "
         "quote mark, dash and punctuation mark. It is one line of a book. Output only the text."
     )
+
+
+# A straight ' opening a word that elides letters, not a quotation: Dutch ’s, ’t, ’n and
+# English ’em, ’tis, ’twas, ’cause, ’til, ’round, a decade (’60s).
+_ELISION = re.compile(r"'(?:[stn]|em|tis|twas|cause|til|round|\d\ds?)\b", re.IGNORECASE)
+# What opens a quotation before it: the paragraph's start, a space, a bracket, a dash or
+# another opening mark.
+_OPENS_AFTER = "([{—–-‘“„"
+
+
+def curl(blocks: list[Block]) -> list[Block]:
+    """Copies of the paragraphs with straight quotes and apostrophes curled. A printed
+    book sets curly ones; a straight one in the text is the text layer's. A double quote
+    opens as the book's own opening mark does (“ or „, by majority)."""
+    text = " ".join(b.text for b in blocks if isinstance(b, Paragraph))
+    opening = "„" if text.count("„") > text.count("“") else "“"
+    out = []
+    for block in blocks:
+        if isinstance(block, Paragraph) and ("'" in block.text or '"' in block.text):
+            block = replace(block, text=curled(block.text, opening))
+        out.append(block)
+    return out
+
+
+def curled(text: str, opening: str = "“") -> str:
+    """`text` with its straight quotes curled by their place, letter for letter (so
+    offsets and italics stay). Opening after a space, bracket, dash or opening mark;
+    closing elsewhere; an apostrophe inside a word or eliding letters is ’. A mark right
+    after a digit is a foot or an inch, and a mark with spaces on both sides says neither
+    way: both stay straight."""
+    chars = list(text)
+    for i, c in enumerate(chars):
+        if c not in "'\"":
+            continue
+        before = text[i - 1] if i else " "
+        after = text[i + 1] if i + 1 < len(text) else " "
+        if before.isdigit() or (before.isspace() and after.isspace()):
+            continue
+        opens = before.isspace() or before in _OPENS_AFTER
+        if c == '"':
+            chars[i] = opening if opens else "”"
+        elif opens and not _ELISION.match(text, i):
+            chars[i] = "‘"
+        else:
+            chars[i] = "’"
+    return "".join(chars)

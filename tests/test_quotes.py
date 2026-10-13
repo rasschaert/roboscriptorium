@@ -1,3 +1,4 @@
+from roboscriptorium import quotes
 from roboscriptorium.ir import Paragraph, SourceRef
 from roboscriptorium.quotes import problems, unbalanced
 
@@ -204,3 +205,35 @@ def test_an_open_mark_after_a_word_is_asked_where_it_stands():
     # Speech opened after a comma or a colon lost its closing mark at the end.
     assert problems("Hij zei: ‘Kom hier.") == [(18, "open at end")]
     assert problems("Toen zei ze, ‘Ga weg.") == [(20, "open at end")]
+
+
+def test_a_straight_mark_that_says_neither_way_stays_straight():
+    # A foot and an inch, a decade's apostrophe kept as such, a mark spaced on both sides.
+    assert quotes.curled("hij was 6' 2\" lang") == "hij was 6' 2\" lang"
+    assert quotes.curled("een ' los teken") == "een ' los teken"
+    # Elisions opening a word are apostrophes, not opening quotes.
+    assert quotes.curled("'s Morgens zag hij 't huis") == "’s Morgens zag hij ’t huis"
+    assert quotes.curled("give 'em hell, back in the '60s") == "give ’em hell, back in the ’60s"
+    assert quotes.curled("'Tis true") == "’Tis true"
+
+
+def test_straight_quotes_and_apostrophes_curl_by_their_place():
+    assert quotes.curled("'Kom je?' vroeg ze. 'Zo'n dag!'") == "‘Kom je?’ vroeg ze. ‘Zo’n dag!’"
+    assert quotes.curled("\"Who said 'no'?\" he asked.") == "“Who said ‘no’?” he asked."
+    assert quotes.curled('the animals\' language ("so")') == "the animals’ language (“so”)"
+    assert quotes.curled('"Ja," zei ze', opening="„") == "„Ja,” zei ze"
+    assert quotes.curled("—'Nee'") == "—‘Nee’"
+
+
+def test_a_book_curls_its_straight_quotes_as_it_opens_its_own():
+    from roboscriptorium.ir import Heading, Paragraph
+
+    blocks = [
+        Paragraph("„Ja,” zei ze.", []),
+        Paragraph('"Nee," zei hij, \'t was laat.', []),
+        Heading("'Titel'", [], ["'Titel'"]),
+    ]
+    out = quotes.curl(blocks)
+    assert out[1].text == "„Nee,” zei hij, ’t was laat."
+    assert out[2] is blocks[2]  # headings keep what the reviewer or the layer gave
+    assert blocks[1].text.startswith('"')  # the input is left alone

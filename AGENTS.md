@@ -229,7 +229,8 @@ rerun skips finished work and model calls.
    and paragraphs; de-hyphenation, with the judge on an English book's undecided hyphens
    (`hyphens.py`).
 7. **Quote questions** (`quotes.py`): unpaired quotes, with a proposed reading.
-8. **Italics** (`italics.py`), **dashes and ellipses** (`typography.py`), **figures**
+8. **Italics** (`italics.py`), **straight quotes curled** (`quotes.py`), **dashes and
+   ellipses** (`typography.py`), **figures**
    (`figures.py`) on the IR (`ir.py`).
 9. **EPUB** (`epub.py`), footnotes as `aside` beside their paragraph, checked with
    epubcheck.
