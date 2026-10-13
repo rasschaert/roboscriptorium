@@ -82,6 +82,12 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.
+- **Decide upstream changes on the frozen sets; the bench confirms.** A change upstream
+  of the stage caches (a prompt, a crop, a model, the arbiter) invalidates them, so a
+  bench of it runs cold for hours. Choose it on the frozen line sets
+  (`experiments/tryout.py`) in minutes, then bench the winner once.
+- **Cold runs go overnight or while the user is away.** A cold bench holds Ollama and the
+  battery for hours; during the day run warm benches and probes only.
 - **A probe beside a running chain sends the chain's model options** (no `num_ctx` of its
   own): Ollama reloads a model whenever the requested context differs, so two clients at
   different contexts reload it on every switch and throttle both.

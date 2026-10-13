@@ -73,8 +73,7 @@ machine's work is recomputed in this order before anything below.
       `--score-test` guard (agent, ~1 h plus the run)
 - [ ] Finish `bench validation` with the ellipsis measured on the scan (halted on The
       Stranger's Child's re-reading; ~30 min). Tuning is done: BETTER 0.52 → 0.50
-- [ ] A lighter feedback loop (agreed 2026-10-13): write into AGENTS.md that upstream
-      changes are decided on the frozen line sets and cold runs go overnight; build a quick
+- [ ] A lighter feedback loop (agreed 2026-10-13; its two rules are in AGENTS.md): build a quick
       bench tier of each tuning book's first chapter or two (~10–20 pages, ending on a
       chapter), and check once overnight that it ranks changes as the full bench does
       (agent, ~1 h plus the run)
