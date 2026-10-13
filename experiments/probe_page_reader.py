@@ -14,6 +14,7 @@ Readings cached in work/probes/page-reader/<model>/<book>-<page>.txt.
 """
 
 import base64
+import json
 import os
 import re
 import sys
@@ -43,6 +44,8 @@ PAGES = {
     "de-eerlijke-vinder--ia-scan:1-84:1-4": [30],
 }
 OUT = Path("work/probes/page-reader")
+# glm-ocr's page size in pixels: 700 000 fits Ollama's 8k context, more needs it raised.
+GLM_PIXELS = int(os.environ.get("GLM_PIXELS", "700000"))
 BREAK = "¶"
 
 PROMPT = (
@@ -80,16 +83,29 @@ def read_page(model: str, png: bytes, url: str) -> tuple[str, float]:
         "images": [base64.b64encode(png).decode()],
         "stream": False,
         "think": False,
-        # glm-ocr runs on llama.cpp's four slots, which share the app's 8k context: a
-        # smaller image and output keep one request inside its ~2k.
-        "options": {"temperature": 0, "num_predict": 900 if glm else 1500},
+        # glm-ocr runs on llama.cpp's four slots, which share the app's context: at 8k a
+        # smaller image and output keep one request inside its ~2k (GLM_PIXELS).
+        "options": {"temperature": 0, "num_predict": 900 if glm and GLM_PIXELS < 1e6 else 1500},
     }
     if glm:
         payload.pop("think")
     start = time.time()
-    resp = httpx.post(f"{url}/api/generate", json=payload, timeout=900)
-    resp.raise_for_status()
-    return resp.json()["response"], time.time() - start
+    if not glm:
+        resp = httpx.post(f"{url}/api/generate", json=payload, timeout=900)
+        resp.raise_for_status()
+        return resp.json()["response"], time.time() - start
+    # glm-ocr has no stop token: it reads the page again until Ollama aborts on the
+    # repeats ("token repeat limit reached"). Streamed, what it read first is kept.
+    payload["stream"] = True
+    out = ""
+    with httpx.stream("POST", f"{url}/api/generate", json=payload, timeout=900) as resp:
+        for chunk in resp.iter_lines():
+            if chunk:
+                part = json.loads(chunk)
+                out += part.get("response", "")
+                if part.get("error"):
+                    break
+    return out, time.time() - start
 
 
 def once(text: str) -> str:
@@ -232,9 +248,12 @@ if __name__ == "__main__":
                 totals["pipeline"][3] += 1
                 row.append(f"pipeline {w:3}w {b:2}b")
             for m in models:
-                pixels = 700_000 if m.startswith("glm-ocr") else 1_600_000
+                glm = m.startswith("glm-ocr")
+                pixels = GLM_PIXELS if glm else 1_600_000
                 png = pdf.render_png(run.book.source, page, max_pixels=pixels)
-                cache = OUT / m.replace(":", "_") / f"{name}-{page}.txt"
+                size = f"@{GLM_PIXELS}" if glm and GLM_PIXELS != 700_000 else ""
+                folder = m.replace(":", "_") + size
+                cache = OUT / folder / f"{name}-{page}.txt"
                 if cache.exists():
                     text, secs = cache.read_text(), 0.0
                 else:

@@ -28,9 +28,13 @@ models could do. Each probe below asks whether that's still true, on a few golde
       32 breaks over 19 pages against the pipeline's 27 and 7 (letters doubled at page
       resolution, dialogue paragraphs merged); glm-ocr near-exact on plain text pages at a
       third of the size, but invents text on near-empty and picture pages
-- [ ] glm-ocr whole pages at full resolution (needs Ollama's context raised: its four
-      slots share it), plain text pages only, the layout detector's pictures masked out;
-      if it beats the line readers on letters, it joins as a page-level reader
+- [x] glm-ocr whole pages at full resolution (2026-10-13): 103 wrong words over 18 text
+      pages against the pipeline's 27, but right on 5 of the pipeline's 9 error places,
+      nearly all line joins; it invents text on near-empty pages
+- [ ] glm-ocr's page reading as a reader at line joins: where it and the pipeline differ
+      in spacing, punctuation or a paragraph break across a line end, a suspect for the
+      arbiter; probe first how many of the tuning books' unasked join errors it would
+      raise, and how many false ones (agent, ~1 h, warm caches plus ~6 s a page)
 - [ ] Whole-page reading by the bigger build (`qwen3.8:27b-mxfp8`, pulled) and with
       the page before as context, for paragraphs that cross a page
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,
