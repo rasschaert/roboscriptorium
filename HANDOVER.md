@@ -4,12 +4,18 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Nothing running. `bench validation` halted 2026-10-13 ~11:35 (battery at 9%), on its last but one book
+## Running: a warm `bench tuning` (started 2026-10-13 ~13:40, ~3 min, screen `robo-bench-tuning`)
 
-It measures the ellipsis's gaps on the scan (d9c7a13): only The Stranger's Child changes
-("..." glued → ". . ." with a space, as its print sets it), and its third reading is redone
-under the new prompt (saved in part; the rerun keeps what was read). Seven books were done
-warm. **First thing next session, once the battery allows** (~30 min):
+After the codebase review (2026-10-13): the user put its fixes first and said building
+Ex-minnaar or Stella has no urgency. Done and pushed: eight bugs fixed with tests
+(9e67c24); the bench prices the reviewer's time, 20 questions = one wrong word (the user),
+and its verdict rule is symmetric (99ed76a); a typography count of its own (034bc7c). This
+run measures those together against `tuning-20261013T085119-e8ff4b4`. **Next, in order:**
+the rest of the checklist's "From the codebase review" section (the cold A/A rerun goes
+overnight), then what is below.
+
+`bench validation` is still unfinished: halted 2026-10-13 ~11:35 (battery) on The
+Stranger's Child's re-reading under the scan-measured ellipsis (~30 min; saved in part):
 
 ```sh
 experiments/detached.sh bench-validation experiments/timed.sh "bench validation, ellipsis measured on the scan, after a halt" 916 work/runs/bench-validation.log uv run roboscriptorium bench validation
