@@ -275,10 +275,14 @@ def test_typography_counts_glyphs_set_wrong_where_the_words_agree():
         return glyph_errors(doc, reference, [page], kinds or glyph_kinds(reference))
 
     assert errors(text) == []
-    # The quote turned the wrong way, the dash's kind, the ellipsis's glyph: one each.
-    assert errors("’Kom je?’ vroeg ze — en toen... niets.") == [4, 4, 4]
+    # The quote turned the wrong way, the dash's kind, the dots spaced: one each.
+    assert errors("’Kom je?’ vroeg ze — en toen. . . niets.") == [4, 4, 4]
+    # A straight quote where the reference sets a curly one.
+    assert errors("‘Kom je?' vroeg ze – en toen… niets.") == [4]
+    # The ellipsis glyph and three tight dots look alike on paper.
+    assert errors("‘Kom je?’ vroeg ze – en toen... niets.") == []
     # A kind the reference can't speak for isn't scored.
-    assert errors("’Kom je?’ vroeg ze — en toen... niets.", {"dashes"}) == [4]
+    assert errors("’Kom je?’ vroeg ze — en toen. . . niets.", {"dashes"}) == [4]
     # A word that differs is a wrong word, not typography.
     assert errors("‘Kom je?’ vroeg hij – en toen… niets.") == []
     # A reference in straight quotes says nothing of the print's quotes.

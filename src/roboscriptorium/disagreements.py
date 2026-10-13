@@ -323,7 +323,8 @@ def glyph_errors(
 ) -> list[int]:
     """The page of each word whose quote marks, dashes or ellipsis (of `kinds`) differ
     from the reference's where the words agree once those are folded (`normalise`): a
-    closing quote set as an opening one, an en dash for an em dash, "..." for "…".
+    straight quote for a curly one, a closing quote set as an opening one, an en dash for
+    an em dash, ". . ." for "...".
     `pages` are the ones `doc`'s sources index."""
     if not kinds:
         return []
@@ -332,7 +333,9 @@ def glyph_errors(
     rx = [_GLYPHS[k] for k in sorted(kinds)]
 
     def glyphs(word: str) -> list[list[str]]:
-        return [r.findall(word) for r in rx]
+        # The ellipsis glyph and three tight dots look alike on paper: only spaced dots
+        # are another setting.
+        return [[g.replace("…", "...") for g in r.findall(word)] for r in rx]
 
     wrong = []
     for op in Levenshtein.opcodes(out, ref):

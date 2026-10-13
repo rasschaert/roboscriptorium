@@ -4,13 +4,13 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session.
 
-## Running: a warm `bench tuning` (started 2026-10-13 ~13:40, ~3 min, screen `robo-bench-tuning`)
+## Nothing running. The warm `bench tuning` of 2026-10-13 13:04 came back NO CHANGE (0.55 → 0.55)
 
 After the codebase review (2026-10-13): the user put its fixes first and said building
 Ex-minnaar or Stella has no urgency. Done and pushed: eight bugs fixed with tests
 (9e67c24); the bench prices the reviewer's time, 20 questions = one wrong word (the user),
-and its verdict rule is symmetric (99ed76a); a typography count of its own (034bc7c). This
-run measures those together against `tuning-20261013T085119-e8ff4b4`. **Next, in order:**
+and its verdict rule is symmetric (99ed76a); a typography count of its own (034bc7c), whose
+first run found straight quotes kept from the layer in curly books (next to fix). **Next, in order:**
 the rest of the checklist's "From the codebase review" section (the cold A/A rerun goes
 overnight), then what is below.
 

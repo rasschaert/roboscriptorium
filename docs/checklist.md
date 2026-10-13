@@ -23,8 +23,10 @@ areas below in order, and the test set scored once at the end.
 The user, 2026-10-13: the review's bug fixes come first, then its bench and structure
 steps; building Ex-minnaar and Stella has no urgency. The findings are in decisions.md.
 
-- [ ] The bench sees typography: a count of quote, dash and ellipsis glyphs set wrong
-      over aligned words, unfolded, as a measure of its own (agent, ~2 h)
+- [ ] Straight quotes and apostrophes left from the text layer curled in a curly book,
+      in the typography stage (the new typography count's first finding: Metro 124 in
+      its slice, Dolittle 541 words); counterexamples first (`’t`, `’s`, primes after a
+      digit), then `bench tuning` (agent, ~2 h)
 - [ ] One cold A/A rerun of `bench tuning` overnight, for the noise floor when caches
       change (overnight)
 - [ ] Book-wide statistics (repeats for line roles, type, line height for missing lines)
@@ -80,10 +82,11 @@ machine's work is recomputed in this order before anything below.
       bench tier of each tuning book's first chapter or two (~10–20 pages, ending on a
       chapter), and check once overnight that it ranks changes as the full bench does
       (agent, ~1 h plus the run)
-- [ ] **user** Retire the two suspect pairs, or keep them? Parked by the user 2026-10-13,
+- [ ] **user** Retire the suspect pairs, or keep them? Parked by the user 2026-10-13,
       to be decided. Koning Wilders (validation): text layer CER 2.45%, past three times
       the set's median (0.55%), after review 0.92. FKA USA (tuning, waiting on its fixes):
-      30% of its body lines unplaced in its reference, after review 4.11
+      30% of its body lines unplaced in its reference, after review 4.11. 11/22/63
+      (tuning, named again 2026-10-13): 6.7% of its body lines unplaced, after review 0.46
 - [ ] The line-role trees (`experiments/train_sorter.py --save`)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
@@ -501,6 +504,8 @@ many the layer had wrong.
 - [x] 2026-10-13 The bench prices the reviewer's time (20 questions = one wrong word, the
       user) and its verdict is worse when any slip rate is, a veto on breaks too: this
       morning's tuning run stays better, 0.57 → 0.55
+- [x] 2026-10-13 The bench counts typography where the words agree, a measure of its own:
+      0.0–2.0 words a page, Dolittle 8.7, nearly all straight quotes kept from the layer
 
 - [x] 2026-10-09 Fable's second review: what the bench couldn't see and leaks in the OCR
       check, each change benched alone; the ledger of probe against verdict is in

@@ -546,6 +546,16 @@ typed in, text the layer lacks) gets only the quote check.
   them decides like the words. On the tuning books they ran 0.01–0.42 a page beside
   0.19–0.99 wrong words after review, Artemis 1.29 and Afscheid 1.73 (most of those its
   EPUB's: it breaks paragraphs where the print runs on).
+- **Typography counts, apart.** `normalise` folds quote marks, dashes and ellipses so
+  that an edition's glyph choices don't count as wrong words, which left the bench
+  blind to them. `disagreements.glyph_errors` counts, per page, the words whose quote
+  marks, dashes or ellipsis differ from the reference's where the folded words align;
+  a kind counts only where the reference sets it in its own glyphs (curly quotes ten to
+  one over straight, an en or em dash, an ellipsis), and "…" and "..." are alike, as on
+  paper. Its first run (2026-10-13, warm tuning) found what no measure could: the output
+  keeps the text layer's straight quotes and apostrophes in curly books (Metro 124 `'`
+  for `’`, Dolittle 541 words, every book some). A measure of its own, not yet in the
+  verdict.
 - **A question catches the error at its place.** A question about one place in a line
   counted any error on its line as caught, though the reviewer looks at the marked
   place: Reis 0.08 of its 0.24 wrong words after review, Metro 0.09 of 0.34. It now
