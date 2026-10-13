@@ -18,6 +18,27 @@ new suspects where the readings agree first, then **Stella end to end with the u
 review**, the target book, then the user's four books. After them, the open
 areas below in order, and the test set scored once at the end.
 
+## Assumptions to test (quick probes, minutes to an hour each)
+
+The pipeline reads lines and joins them by hand-built geometry because that was what
+models could do. Each probe below asks whether that's still true, on a few golden pages
+(tuning books), before any building. Record each result, null ones too.
+
+- [ ] Whole-page reading (`probe_page_reader.py`, running 2026-10-13): Qwen and glm-ocr
+      read 19 pages whole, scored on words and paragraph breaks beside the pipeline
+- [ ] Whole-page reading by the bigger build (`qwen3.8:27b-mxfp8`, pulled) and with
+      the page before as context, for paragraphs that cross a page
+- [ ] The whole-page reading as one more reader: where it and the line readers differ,
+      a suspect for the arbiter; how many of the undoubted errors it would have raised
+- [ ] Paragraph breaks by a model: the page image plus the pipeline's lines, "which lines
+      start a paragraph?", against `reflow.indented`
+- [ ] Line roles by Qwen from the page image (text, heading, running head, page number,
+      caption, picture), against the rules and the trees
+- [ ] The text layer as a second reader only: the page built from the whole-page reading,
+      the layer and the line readers judging where they differ
+- [ ] Page kinds for `init` (cover, front matter, body, back matter) by Qwen from the page
+      image, on `tryouts/page-kinds-v1.json`
+
 ## From the codebase review (2026-10-13, first)
 
 The user, 2026-10-13: the review's bug fixes come first, then its bench and structure
@@ -239,11 +260,6 @@ reading shares: many are specks and faint marks.
 
 ## Later
 
-- [ ] A page-level screen, when a local model reads a whole page into structured text
-      (paragraphs, headings, captions, pictures left out): score it on whole golden pages
-      by words, paragraph breaks and line roles against the pipeline, since 71% of what's
-      left after review isn't misreading (decisions.md 2026-10-13). Only when such a model
-      appears (agent, ~half a day)
 - [ ] Python 3.15 once PyTorch publishes cp315 wheels (pytorch/pytorch#184352): with
       nightly torch every test passes and the spotter's regions match 3.13 exactly
       (2026-10-11); bump `.python-version`, `uv lock`, bench once

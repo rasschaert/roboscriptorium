@@ -79,6 +79,12 @@ get renumbered. Don't add a file to this table without a job no other file has.
   session. `screen -ls` lists the runs; watch one with a background loop that ends when
   its screen does. Stop one with `experiments/stop-run.sh <name>`: quitting the screen
   leaves its command running.
+- **Test the architecture, not only its settings** (the user, 2026-10-13: "we're too stuck
+  in our way of thinking … fine tuning has diminishing returns"). Before saying a model
+  can't do something, or parking an idea under Later, try it on a few golden pages: a
+  model reading a whole page, a model doing a stage's job, a stage left out. The
+  checklist keeps the list ("Assumptions to test"); work through it between fixes, and
+  pause a long run for it (runs resume).
 - **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.
