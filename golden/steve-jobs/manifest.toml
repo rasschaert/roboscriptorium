@@ -1,0 +1,98 @@
+title = "Steve Jobs"
+author = "Walter Isaacson"
+language = "nl"
+# Isaacson and his translator are alive: under copyright, so only this manifest is in
+# git.
+eu_copyright_until = 2200
+
+# The retail EPUB of Rob de Ridder's translation (Spectrum 2011, typeset by Elgraphic,
+# "gemaakt naar de eerste druk"); calibre only re-split its files. "HOOFDSTUK n" labels
+# are "el2" paragraphs above an h1 title; captions are "el-bijschrift"; "el-witregel"
+# paragraphs ("==") are spacing around letters and block quotes, not scene breaks.
+# The photo insert ("Fotokatern") follows chapter 20 here but is bound in chapter 23 of
+# the print (scan pp. 387–402).
+[reference]
+source = "Steve Jobs. De biografie, Spectrum 2011, translated by Rob de Ridder, ISBN 9789000302734 (retail EPUB of the first printing)"
+sha256 = "6cc457c4e9a124b865cfcd1ed14fddd8af72a3cb9727e4b9258e0e8937646281"
+files = [
+  "Steve Jobs de biografie_split_004.xhtml",
+  "Steve Jobs de biografie_split_005.xhtml",
+  "Steve Jobs de biografie_split_006.xhtml",
+  "Steve Jobs de biografie_split_007.xhtml",
+  "Steve Jobs de biografie_split_008.xhtml",
+  "Steve Jobs de biografie_split_009.xhtml",
+  "Steve Jobs de biografie_split_010.xhtml",
+  "Steve Jobs de biografie_split_011.xhtml",
+  "Steve Jobs de biografie_split_012.xhtml",
+  "Steve Jobs de biografie_split_013.xhtml",
+  "Steve Jobs de biografie_split_014.xhtml",
+  "Steve Jobs de biografie_split_015.xhtml",
+  "Steve Jobs de biografie_split_016.xhtml",
+  "Steve Jobs de biografie_split_017.xhtml",
+  "Steve Jobs de biografie_split_018.xhtml",
+  "Steve Jobs de biografie_split_019.xhtml",
+  "Steve Jobs de biografie_split_020.xhtml",
+  "Steve Jobs de biografie_split_021.xhtml",
+  "Steve Jobs de biografie_split_022.xhtml",
+  "Steve Jobs de biografie_split_023.xhtml",
+  "Steve Jobs de biografie_split_024.xhtml",
+  "Steve Jobs de biografie_split_025.xhtml",
+  "Steve Jobs de biografie_split_026.xhtml",
+  "Steve Jobs de biografie_split_027.xhtml",
+  "Steve Jobs de biografie_split_028.xhtml",
+  "Steve Jobs de biografie_split_029.xhtml",
+  "Steve Jobs de biografie_split_030.xhtml",
+  "Steve Jobs de biografie_split_031.xhtml",
+  "Steve Jobs de biografie_split_032.xhtml",
+  "Steve Jobs de biografie_split_033.xhtml",
+  "Steve Jobs de biografie_split_034.xhtml",
+  "Steve Jobs de biografie_split_035.xhtml",
+  "Steve Jobs de biografie_split_036.xhtml",
+  "Steve Jobs de biografie_split_037.xhtml",
+  "Steve Jobs de biografie_split_038.xhtml",
+  "Steve Jobs de biografie_split_039.xhtml",
+  "Steve Jobs de biografie_split_040.xhtml",
+  "Steve Jobs de biografie_split_041.xhtml",
+  "Steve Jobs de biografie_split_042.xhtml",
+  "Steve Jobs de biografie_split_043.xhtml",
+  "Steve Jobs de biografie_split_044.xhtml",
+  "Steve Jobs de biografie_split_045.xhtml",
+  "Steve Jobs de biografie_split_046.xhtml",
+  "Steve Jobs de biografie_split_047.xhtml",
+  "Steve Jobs de biografie_split_048.xhtml",
+  "Steve Jobs de biografie_split_049.xhtml",
+  "Steve Jobs de biografie_split_050.xhtml",
+  "Steve Jobs de biografie_split_051.xhtml",
+  "Steve Jobs de biografie_split_052.xhtml",
+  "Steve Jobs de biografie_split_053.xhtml",
+  "Steve Jobs de biografie_split_054.xhtml",
+  "Steve Jobs de biografie_split_055.xhtml",
+  "Steve Jobs de biografie_split_056.xhtml",
+  "Steve Jobs de biografie_split_057.xhtml",
+  "Steve Jobs de biografie_split_058.xhtml",
+  "Steve Jobs de biografie_split_059.xhtml",
+  "Steve Jobs de biografie_split_060.xhtml",
+  "Steve Jobs de biografie_split_061.xhtml",
+  "Steve Jobs de biografie_split_062.xhtml",
+  "Steve Jobs de biografie_split_063.xhtml",
+  "Steve Jobs de biografie_split_064.xhtml",
+  "Steve Jobs de biografie_split_065.xhtml",
+  "Steve Jobs de biografie_split_066.xhtml",
+  "Steve Jobs de biografie_split_067.xhtml",
+  "Steve Jobs de biografie_split_068.xhtml",
+  "Steve Jobs de biografie_split_069.xhtml",
+  "Steve Jobs de biografie_split_070.xhtml",
+]
+heading_prefixes = ["el2"]
+italic_classes = ["elts-cursief"]
+blank_classes = ["el-witregel"]
+
+# The fifth printing (December 2011) of the same translation, lent by Internet Archive
+# and placed by hand. Pages 9–696: the cast list to the end of chapter 41; sources,
+# notes, acknowledgements and index are left out.
+[[scans]]
+id = "ia-scan"
+source = "an Internet Archive lending-library scan (Scribe 6.4) of the fifth printing, placed by hand"
+sha256 = "9470fe2737da46d62bc68fa777c70ed3fbe132243cee7390d991543e16e1571a"
+cover_page = 1
+body_pages = [9, 696]
