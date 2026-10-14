@@ -51,27 +51,24 @@ and how-it-works follow (checklist). Expect much less than the probe's 60: of th
 sit within a line; line-end hyphens, page numbers and joins can't be carried (design.md,
 "Page readers"); those need the page reading in `hyphens.py` and the line-role trees.
 
-## Queued: `robo-after-chain`, the cold A/A behind the chain (~4 h, to ~08:00)
+## Queued: `robo-queue`, behind the chain, short jobs first
 
-`work/runs/after-chain-20261014.sh` waits for `robo-page-readers` to end and, only if its
-validation bench finished with exit 0, swaps the cold caches into `stages/` (warm to
-`stages.warm/`), resumes the cold A/A below, and swaps them back. **If it is stopped
-mid-run, the tuning books' `stages/` hold the cold caches**: swap back by hand
-(`stages` → `stages.cold`, `stages.warm` → `stages`) before anything else. Output in
-`work/runs/after-chain.out`. Behind it, `robo-page-kinds` (`work/runs/page-kinds-20261014.sh`,
-~70 min): clef-flash's page-kind question on the 1,034 hand-labelled pages, for `init`
-(`experiments/probe_page_kinds_model.py`; on Monterosso alone 24 of 28 right, both ends
-of the text proper found). Last, `robo-ablation` (`work/runs/ablation-20261014.sh`, ~10
-min, no models): `experiments/probe_reader_ablation.py` on the page readers' trust data,
-output in `work/runs/ablation.log`. Without page readers every line reader earns its
-place (decisions.md); the question is whether Qwen's page reading can stand in for its
-line reading.
-After it, `robo-ornith` (`work/runs/ornith-20261014.sh`): the user pulled ornith-1.5:9b
-and :35b (vision, Qwen architecture); `experiments/tryout.py run reader` on reader set v2
-for each that is pulled (~20 min the 9b, ~1 h the 35b). Ten lines of the 9b beside the
-chain: 5 right, two whole lines read as one mark ("‘", ","), straight quotes despite the
-style prompt; ~1 s a line. Record the verdict in docs/models.md, both questions (replace
-a reader, or add one).
+`work/runs/queue-20261014.sh` waits for `robo-page-readers`, then runs, each even if one
+before it failed, a line each in `work/runs/queue-20261014.txt`:
+
+1. the reader ablation with the page readers (`probe_reader_ablation.py`, ~10 min, no
+   models; `work/runs/ablation.log`): can Qwen's page reading stand in for its line
+   reading? Without page readers every line reader earns its place (decisions.md);
+2. page kinds by clef-flash on the 1,034 hand-labelled pages, for `init`
+   (`probe_page_kinds_model.py`, ~70 min; Monterosso alone 24 of 28 right);
+3. ornith-1.5:9b, then :35b if pulled (the user pulled them: vision, Qwen
+   architecture), `tryout.py run reader` on reader set v2 (~20 min, ~1 h). Ten lines of
+   the 9b beside the chain: 5 right, two whole lines read as one mark ("‘", ","),
+   straight quotes despite the style prompt, ~1 s a line. Record the verdict in
+   docs/models.md, both questions (replace a reader, or add one);
+4. the cold A/A below (~4 h), only if the chain finished. It swaps the cold caches into
+   `stages/` and back when it ends **or is stopped** (`experiments/stop-run.sh queue`;
+   tested on dummy folders). Stopped, it resumes another night from the books built.
 
 ## Paused: the cold A/A tuning bench (the noise floor when caches change)
 
