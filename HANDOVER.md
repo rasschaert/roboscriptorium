@@ -5,7 +5,7 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-14 ~12:00, during the session of 2026-10-14
 morning (until ~13:00).
 
-## Paused: tonight's chain (`page-readers`), in chunks
+## Running: tonight's chain (`page-readers`), resumed 2026-10-14 20:27 on a 140 W charger
 
 First chunk 2026-10-14 16:00–16:32, stopped for the battery (100% → 52% on a low-power
 charger; the user can't give it one long stretch). Read so far: Goede dochter and Vals
