@@ -206,6 +206,31 @@ page at its first page, an afterword just past it. Those are as much the range's
 convention as the models' errors, and one wrong end cuts or pads a book, so a model
 would need a human to confirm both ends anyway.
 
+## Page readers
+
+**Two more readers that see the whole page** (`pagereader.py`, `ROBO_PAGE_READERS`,
+off until the arbiter is trained with them). glm-ocr and qwen3.8 each read a body page
+whole, at 1.6 million pixels. Where both read a place right that the build got wrong,
+they point at 60 errors over the tuning books that no question asks, about a quarter of
+what is left after review; where they agree against a right build, 68 places
+(decisions.md, 2026-10-14). Alone each is wrong far more often than right (glm-ocr four
+false places a catch), so neither raises a question by itself: each reading is split
+back into the layer's lines and joins the line readers, and the arbiter learns per kind
+of error how far to believe it.
+
+The split aligns the reading's words to the layer's page-wide on their letters, then
+gives each line the words that align to it. A word the layer breaks over a line end is
+cut where the layer cuts it, its hyphen kept, and a word is cut after a dash that runs
+into the next one, so a dash one side lost costs one word, not two lines' worth. A run
+of more than two words the layer lacks (a running head, a caption, invented text) is
+dropped; a page whose reading matches fewer than half the layer's words reads no line
+(glm-ocr invents text on near-empty pages).
+
+**What it can't carry.** A line reading only says what a line's words are. A compound
+hyphen at a line end ("night-" + "vision") splits back to what the layer has, and a
+kept page number has no words to vote with, so the join errors among the 60 need the
+page reading as evidence in the hyphen and line-role decisions instead.
+
 ## Book-wide style
 
 Dash kind and spacing, the ellipsis, and the quote style, are a property of the book,

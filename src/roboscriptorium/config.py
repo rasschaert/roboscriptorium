@@ -43,6 +43,9 @@ class Settings:
     # when the user asks): its readings are cached under read_model's name, each line
     # marked with the build that read it. "" reads with read_model itself.
     read_via: str = ""
+    # ocr_model and read_model also read each body page whole (`pagereader.py`): two more
+    # readers for the OCR check, which the arbiter must be trained with.
+    page_readers: bool = False
     # Learned trust (`trust.py`) chooses the OCR check's fixes and questions instead of
     # the fixed rule, asking at most this many questions per page.
     ocr_trust: bool = True
@@ -82,6 +85,7 @@ class Settings:
             ocr_model=os.environ.get("ROBO_OCR_MODEL", defaults.ocr_model),
             read_model=os.environ.get("ROBO_READ_MODEL", defaults.read_model),
             read_via=os.environ.get("ROBO_READ_VIA", defaults.read_via),
+            page_readers=_flag("ROBO_PAGE_READERS", defaults.page_readers),
             judge_model=os.environ.get("ROBO_JUDGE_MODEL", defaults.judge_model),
             alarm_model=os.environ.get("ROBO_ALARM_MODEL", defaults.alarm_model),
             llama_url=os.environ.get("ROBO_LLAMA_URL", defaults.llama_url),

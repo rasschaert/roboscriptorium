@@ -165,7 +165,13 @@ def judges(settings: Settings) -> set[str]:
 def readings(settings: Settings) -> set[str]:
     """Every reading the OCR check makes with these settings; data built before one of
     them lacks its support."""
-    return {"glm", "tess"} | ({"qwen"} if settings.read_model else set())
+    pages = set(trust.PAGE_READINGS) if settings.page_readers else set()
+    return {"glm", "tess"} | ({"qwen"} if settings.read_model else set()) | pages
+
+
+def weighed(settings: Settings) -> tuple[str, ...]:
+    """The readings an arbiter trained with these settings weighs, in feature order."""
+    return trust.READINGS + (trust.PAGE_READINGS if settings.page_readers else ())
 
 
 def rows_of(name: str, settings: Settings) -> list[dict]:
@@ -203,7 +209,12 @@ def trainable(name: str) -> bool:
     return name.split("--")[0] not in HELD_OUT
 
 
-def models_to_save(books: dict[str, list[dict]], path: Path, score) -> list[tuple]:
+def models_to_save(
+    books: dict[str, list[dict]],
+    path: Path,
+    score,
+    readings: tuple[str, ...] = trust.READINGS,
+) -> list[tuple]:
     """The arbiter the pipeline uses, trained on every trainable book but Stella, and a
     copy without each tuning book, which `bench` scores that book with: (path, model,
     suspects trained on, book left out). Each one's sureness is calibrated on its
@@ -216,7 +227,10 @@ def models_to_save(books: dict[str, list[dict]], path: Path, score) -> list[tupl
         names = [n for n in books if n != without and trainable(n)]
         every = [r for name in names for r in books[name]]
         model = trust.train(
-            [r["s"] for r in every], [r["right"] for r in every], [r["book"] for r in every]
+            [r["s"] for r in every],
+            [r["right"] for r in every],
+            [r["book"] for r in every],
+            readings,
         )
         sure, hit = [], []
         for held in names:

@@ -457,3 +457,38 @@ def test_a_motto_on_a_page_of_its_own_is_set_apart_before_the_text(tmp_path, mon
     assert (first.text, first.epigraph) == ("‘It’s closing time’", True)
     assert (second.text, second.epigraph) == ("(Leonard Cohen, The Future)", True)
     assert not third.epigraph and third.text.startswith("Line 0")
+
+
+def test_the_page_readers_reading_reaches_the_ocr_check_as_two_more_readers(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
+    monkeypatch.setenv("ROBO_PAGE_READERS", "1")
+    book, _ = _checked_book(tmp_path, monkeypatch)
+    page = "\n".join(LINES).replace("Line 7 of the story", "Line 7 of the stary")
+    monkeypatch.setattr(pipeline.pagereader, "read_page", lambda png, model, url: page)
+    stages = pipeline.run(book)
+    seven = [s for s in stages.suspects if s.line == 7]
+    assert [(s.ours, s.others) for s in seven] == [("story", ("stary",))]
+    assert seven[0].support["glm-page"] == seven[0].support["qwen-page"] == (False, True)
+    assert seven[0].support["glm"] == (True, False)
+
+
+def test_a_trust_model_without_the_page_readers_refuses_a_build_with_them(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_PAGE_READERS", "1")
+    path = tmp_path / "trust.pkl"
+    monkeypatch.setenv("ROBO_OCR_TRUST_MODEL", str(path))
+    suspects = [ocrcheck_suspect(k) for k in range(40)]
+    trust.save(trust.train(suspects, [[k % 2 == 0, k % 2 == 1] for k in range(40)]), path)
+    book, _ = _checked_book(tmp_path, monkeypatch)
+    monkeypatch.setattr(pipeline.pagereader, "read_page", lambda png, model, url: "\n".join(LINES))
+    with pytest.raises(trust.Mismatch, match="ROBO_PAGE_READERS"):
+        pipeline.run(book)
+
+
+def ocrcheck_suspect(k: int):
+    from roboscriptorium.ocrcheck import Suspect
+
+    return Suspect(
+        1, k, "the story", 4, 9, "story", ("stony",), (0, 0, 1, 1), "review",
+        votes={"clef:27b": "story"}, confidence={"clef:27b": 0.9},
+        support={"glm": (k % 2 == 0, k % 2 == 1)}, known=(True, False),
+    )  # fmt: skip

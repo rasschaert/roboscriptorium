@@ -151,3 +151,16 @@ def test_the_judges_are_read_by_role_not_by_the_order_of_their_votes():
     assert trust.features(s, 0) == trust.features(flipped, 0)
     assert not trust.unseen(s)
     assert trust.unseen(replace(s, votes={"text": "hct", "vision": ""}))
+
+
+def test_a_model_trained_with_more_readings_weighs_them_and_loads_with_them(tmp_path):
+    readings = trust.READINGS + trust.PAGE_READINGS
+    s = replace(_suspect("lemand", "Iemand", "Iemand", 0.9), support={"glm-page": (False, True)})
+    assert len(trust.features(s, 1, readings=readings)) == trust.width(readings)
+    # After the three counts, one slot a reading: glm-page reads it, qwen-page is absent.
+    assert trust.features(s, 1, readings=readings)[3 + 3 : 3 + 5] == [1.0, 0.0]
+    model = trust.train([s] * 30, [[False, True]] * 30, readings=readings)
+    trust.save(model, tmp_path / "m.pkl")
+    loaded = trust.load(tmp_path / "m.pkl")
+    assert loaded.readings == readings
+    assert trust.probabilities(loaded, s).shape == (2,)

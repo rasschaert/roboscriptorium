@@ -225,6 +225,10 @@ Every body line is read again by the three readers, short lines included:
 A crop reaches one em past each end of the line and a few points above and below
 it. It stops at the next line's box, so a reader never sees part of another line.
 
+Two more readers are built but not yet on: glm-ocr and qwen3.8 reading the whole page,
+each reading split back into the page's lines. Seeing the page, they catch what a
+line's crop hides; they go on once the arbiter has learned how far to believe them.
+
 ### Suspects
 
 Where a reader disagrees with the text layer, the differing stretch, widened to

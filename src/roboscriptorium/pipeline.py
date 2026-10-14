@@ -19,6 +19,7 @@ from roboscriptorium import (
     missing,
     ocr,
     ocrcheck,
+    pagereader,
     quotes,
     sorter,
     trust,
@@ -165,6 +166,16 @@ def run(
                     read_prompt(book, whole, style, dots),
                     settings.read_via,
                 )
+            if settings.page_readers:
+                for name, model in (
+                    ("glm-page", settings.ocr_model),
+                    ("qwen-page", settings.read_model),
+                ):
+                    if model:
+                        readings[name] = pagereader.line_readings(
+                            book.source, body, kept, model, settings.ollama_url,
+                            book.stages / f"page-reading-{name}.json",
+                        )  # fmt: skip
             judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
             alarm = None
             if settings.alarm_model:
@@ -181,6 +192,13 @@ def run(
                     raise trust.Mismatch(
                         f"No trust model at {path}: train one (experiments/train_ocr_trust.py "
                         "--save) or set ROBO_OCR_TRUST=0 for the fixed rule."
+                    )
+                paged = {r for r in readings if r in trust.PAGE_READINGS}
+                if paged != {r for r in model.readings if r in trust.PAGE_READINGS}:
+                    raise trust.Mismatch(
+                        f"The trust model {path} weighs {', '.join(model.readings)}; this build "
+                        f"reads {', '.join(readings)}. Train one with these readers or set "
+                        "ROBO_PAGE_READERS to match it."
                     )
                 read = len(body) - len(faint_pages)
                 budget = round(settings.ocr_questions_per_page * read)

@@ -39,11 +39,19 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [x] The two readers' agreement on the errors left after review (2026-10-14): 60 errors
       no question catches (+21 unmatched), 71 asked already, 68 false: about a quarter of
       what's left after review, for ~0.3 questions a page
-- [ ] **Build it (the user chose this way, 2026-10-14):** a page-reader stage (glm-ocr and
-      Qwen read each body page whole, cached per page), each reading aligned back to the
-      layer's lines and fed to the OCR check as two more readers; trust data rebuilt and
-      the arbiter retrained so it learns how far to trust each per kind of error; then the
-      benches (agent, ~a day plus an overnight run; the readings ~18 s a page)
+- [x] Build it (the user chose this way, 2026-10-14): `pagereader.py`, two more readers
+      for the OCR check behind `ROBO_PAGE_READERS`, the arbiter keeping which readings
+      it was trained on
+- [ ] Read the pages and train with them, overnight: the tuning and validation books'
+      body pages read (~18 s a page, ~4–6 h; `experiments/seed_page_readings.py` first
+      fills what the probes read), trust data rebuilt apart (`ROBO_TRUST_DATA`), the
+      arbiter retrained (`ROBO_OCR_TRUST_MODEL`), then warm benches against the
+      baselines (agent, overnight)
+- [ ] If the bench agrees: on by default, the diagram (`docs/pipeline.d2`), README and
+      how-it-works updated (agent, ~30 min)
+- [ ] The page readings where a line can't carry them: a compound hyphen at a line end
+      for `hyphens.py`, a line no page reader has words for (a kept page number) for the
+      line-role trees (agent, ~half a day each, after the bench)
 - [ ] Whole-page reading by the bigger build (`qwen3.8:27b-mxfp8`, pulled) and with
       the page before as context, for paragraphs that cross a page
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,

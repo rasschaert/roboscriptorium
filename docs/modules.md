@@ -197,6 +197,13 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   model; it is told the book's typesetting (`quotes.style_note`) and sees the
   versions set off by ⟨ ⟩. Suspects are saved to
   `stages/ocr-check.json`; `eval --no-check-ocr` skips the stage.
+- `pagereader.py`: glm-ocr (`ocr_model`) and Qwen (`read_model`) read each body page
+  whole (`read_page`, glm-ocr streamed and cut where it starts over), cached per page in
+  `stages/page-reading-<reader>.json` under the model, prompt and size. `split_lines`
+  aligns a reading's words to the layer's page-wide and gives each line its words, a word
+  broken over a line end cut where the layer cuts it. With `ROBO_PAGE_READERS=1` the
+  OCR check gets them as the readings `glm-page` and `qwen-page`; the arbiter must be
+  trained with them (`trust.Trust.readings`), or the build stops.
 - `lexicon.py`: a language's word list, unpacked from tesseract's own model
   (`<lang>.traineddata`'s LSTM word DAWG: Dutch 478k words, English 338k) into
   `work/lexicon/`, and which one of several readings it knows all the words
