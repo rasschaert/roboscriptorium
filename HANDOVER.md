@@ -5,11 +5,11 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-14 ~12:00, during the session of 2026-10-14
 morning (until ~13:00).
 
-## Running: a trial of tonight's chain on Het ijzige land
+## Nothing running. Ollama's context is at 32k.
 
-`robo-trial-ijzige` (screen): the trust data of one small book with the page readers on,
-into `work/probes/ocr-trust-page/` (apart from the current data). It checks the path
-before tonight; its result goes into this file when it ends. Ollama's context is at 32k.
+The trial of tonight's chain on Het ijzige land ran clean (3 min): its trust data with the
+page readers is in `work/probes/ocr-trust-page/` (the chain skips it), 70 suspects
+against 56 without them, 14 raised by the page readers alone.
 
 ## Built, to run tonight: the page readers as two more readers for the arbiter
 

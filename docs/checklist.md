@@ -50,9 +50,11 @@ models could do. Each probe below asks whether that's still true, on a few golde
       baselines (agent, overnight)
 - [ ] If the bench agrees: on by default, the diagram (`docs/pipeline.d2`), README and
       how-it-works updated (agent, ~30 min)
-- [ ] The page readings where a line can't carry them: a compound hyphen at a line end
-      for `hyphens.py`, a line no page reader has words for (a kept page number) for the
-      line-role trees (agent, ~half a day each, after the bench)
+- [ ] The page readings where a line can't carry them: a line no page reader has words
+      for as a feature of the line-role trees (250 such lines aren't text, 4 are:
+      `probe_page_unread.py`), and both page readers' spelling of a line-end compound as
+      evidence for a learned hyphen decision (fixes 11, breaks 5 on 40% of the pages:
+      `probe_page_hyphens.py`) (agent, ~half a day each, after the bench)
 - [ ] Whole-page reading by the bigger build (`qwen3.8:27b-mxfp8`, pulled) and with
       the page before as context, for paragraphs that cross a page
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,
