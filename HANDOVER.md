@@ -56,6 +56,19 @@ AGENTS.md records readings as the same either way; say so beside the result. Whe
 the paired verdict is the noise floor: record it, then swap the warm caches back and
 keep both sets until the user says which to drop.
 
+## What the session of 2026-10-14 morning did (numbers in docs/decisions.md)
+
+- **Page readers built** (`pagereader.py`, off): whole-page readings split into the
+  layer's lines as two more readers for the arbiter; the arbiter records the readings it
+  was trained on. Tests through `pipeline.run`. Seeded from the probes; a trial of
+  tonight's chain on one book ran clean.
+- **What it can carry**: of the probe's 40 listed catches only about 9 sit within a
+  line. The rest need the page reading elsewhere, and both were probed (no models):
+  a line no page reader reads isn't text 250 times in 254 (a role-tree feature), and
+  both page readers' spelling of a line-end compound fixes 11 of reflow's 34 wrong
+  hyphens and breaks 5 (a vote for a learned hyphen decision).
+- **Qwen mxfp8 reading pages**: no clear gain over the nvfp4, 60% slower; not taken.
+
 ## What the session of 2026-10-13 evening did (numbers in docs/decisions.md)
 
 - **Line-role trees on by default**: validation 0.59 → 0.50, tuning no change, no book
@@ -94,7 +107,14 @@ keep both sets until the user says which to drop.
    review, then Stella (the user: no urgency), `roboscriptorium init`.
 
 **Remind the user of the daily backup of `work/`** at session start and before long
-runs. Last one 2026-10-14 ~09:30, after this session's work.
+runs. Last one 2026-10-14 ~09:30; remind again before tonight's chain.
+
+## What the session of 2026-10-14 morning taught
+
+- **Check what an integration can carry before building on a probe's count.** The
+  probe counted errors in a page-wide token stream; split into lines, most of them
+  (line-end hyphens, page numbers, joins) vanish. A ten-minute look at the examples
+  would have shaped the design from the start.
 
 ## What the session of 2026-10-13 taught
 
