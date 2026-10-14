@@ -66,6 +66,12 @@ min, no models): `experiments/probe_reader_ablation.py` on the page readers' tru
 output in `work/runs/ablation.log`. Without page readers every line reader earns its
 place (decisions.md); the question is whether Qwen's page reading can stand in for its
 line reading.
+After it, `robo-ornith` (`work/runs/ornith-20261014.sh`): the user pulled ornith-1.5:9b
+and :35b (vision, Qwen architecture); `experiments/tryout.py run reader` on reader set v2
+for each that is pulled (~20 min the 9b, ~1 h the 35b). Ten lines of the 9b beside the
+chain: 5 right, two whole lines read as one mark ("‘", ","), straight quotes despite the
+style prompt; ~1 s a line. Record the verdict in docs/models.md, both questions (replace
+a reader, or add one).
 
 ## Paused: the cold A/A tuning bench (the noise floor when caches change)
 
