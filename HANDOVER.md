@@ -9,9 +9,11 @@ morning (until ~13:00).
 
 Qwen's bigger build (mxfp8) read the probe's 19 pages: no clear gain (65 wrong words
 against 76, mostly one page), 60% slower; the page reader stays on the nvfp4.
-The trial of tonight's chain on Het ijzige land ran clean (3 min): its trust data with the
-page readers is in `work/probes/ocr-trust-page/` (the chain skips it), 70 suspects
-against 56 without them, 14 raised by the page readers alone.
+The trial of tonight's chain on Het ijzige land and Doodskleed ran clean (3 min each):
+their trust data with the page readers is in `work/probes/ocr-trust-page/` (the chain
+skips them); Het ijzige land has 70 suspects against 56 without them, 14 raised by the
+page readers alone. The trainer fits the wider features on them; its leave-out and
+calibration steps need more than two books, so `--save` was not tried end to end.
 
 ## Built, to run tonight: the page readers as two more readers for the arbiter
 
