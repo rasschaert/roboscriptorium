@@ -42,10 +42,11 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [x] Build it (the user chose this way, 2026-10-14): `pagereader.py`, two more readers
       for the OCR check behind `ROBO_PAGE_READERS`, the arbiter keeping which readings
       it was trained on
-- [ ] Read the pages and train with them, overnight: the tuning and validation books'
-      body pages read (~18 s a page, ~4–6 h; `experiments/seed_page_readings.py` first
-      fills what the probes read), trust data rebuilt apart (`ROBO_TRUST_DATA`), the
-      arbiter retrained (`ROBO_OCR_TRUST_MODEL`), then warm benches against the
+- [ ] Read the pages and train with them, overnight (`work/runs/chain-20261014.sh`):
+      ~1,000 pages left after the probes' readings were seeded
+      (`experiments/seed_page_readings.py`), read by `experiments/read_pages.py` (glm-ocr
+      9 s, Qwen 15 s a page: ~7 h), the trust data rebuilt apart (`ROBO_TRUST_DATA`),
+      the arbiter retrained (`ROBO_OCR_TRUST_MODEL`), then both warm benches against the
       baselines (agent, overnight)
 - [ ] If the bench agrees: on by default, the diagram (`docs/pipeline.d2`), README and
       how-it-works updated (agent, ~30 min)

@@ -6,10 +6,15 @@
 # to the next book; training and the bench run only when every book succeeded. To pause
 # after the book under way, create work/runs/rebuild/STOP; delete it before restarting.
 # Books whose trust data exists are skipped, so a restart goes on where it stopped.
+# ROBO_TRUST_DATA keeps another reader set's data apart (logs then in <it>/runs), and
+# BENCH_AGAINST names the bench run to compare with.
 #   experiments/detached.sh rebuild experiments/rebuild-trust.sh
 set -uo pipefail
-mkdir -p work/runs/rebuild
-progress=work/runs/rebuild/progress.txt
+data=${ROBO_TRUST_DATA:-work/probes/ocr-trust}
+runs=work/runs/rebuild
+[[ -n ${ROBO_TRUST_DATA:-} ]] && runs=$data/runs
+mkdir -p $runs
+progress=$runs/progress.txt
 books=(${(f)"$(uv run python -c '
 import sys; sys.path.insert(0, "experiments")
 from roboscriptorium.trustdata import SPECS
@@ -24,13 +29,13 @@ for b, spec in SPECS.items():
 failed=0
 for row in $books; do
   book=${row% *} pages=${row#* }
-  if [[ -e work/runs/rebuild/STOP ]]; then
+  if [[ -e $runs/STOP ]]; then
     print "$(date '+%F %H:%M') paused before $book (STOP file)" >> $progress
     exit 0
   fi
-  [[ -s work/probes/ocr-trust/$book.json ]] && continue
-  experiments/timed.sh "trust data, $book, cold after work/ was lost, Qwen local" $pages \
-    work/runs/rebuild/$book.log uv run python experiments/ocr_trust_data.py --rebuild $book
+  [[ -s $data/$book.json ]] && continue
+  experiments/timed.sh "trust data, $book${ROBO_PAGE_READERS:+, page readers}" $pages \
+    $runs/$book.log uv run python experiments/ocr_trust_data.py --rebuild $book
   code=$?
   print "$(date '+%F %H:%M') $book $pages pages exit $code" >> $progress
   (( code )) && failed=1
@@ -40,7 +45,7 @@ if (( failed )); then
   exit 1
 fi
 # --partial: Stella's data comes from its review answers, which this loop doesn't build.
-experiments/timed.sh "train arbiter after the rebuild" 0 work/runs/rebuild/train.log \
+experiments/timed.sh "train arbiter after the rebuild" 0 $runs/train.log \
   env PYTHONPATH=experiments uv run python experiments/train_ocr_trust.py --save --partial
 code=$?
 print "$(date '+%F %H:%M') train exit $code" >> $progress
@@ -57,7 +62,9 @@ for spec in bench.SETS["tuning"]:
     total += last - first + 1
 print(total)
 ')
-experiments/timed.sh "bench tuning, new baseline after the rebuild" $bench_pages \
-  work/runs/rebuild/bench-tuning.log uv run roboscriptorium bench tuning
+against=()
+[[ -n ${BENCH_AGAINST:-} ]] && against=(--against $BENCH_AGAINST)
+experiments/timed.sh "bench tuning after the rebuild${ROBO_PAGE_READERS:+, page readers}" $bench_pages \
+  $runs/bench-tuning.log uv run roboscriptorium bench tuning "${against[@]}"
 code=$?
 print "$(date '+%F %H:%M') bench tuning exit $code" >> $progress
