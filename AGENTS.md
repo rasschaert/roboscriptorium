@@ -127,6 +127,11 @@ mistake it prevents; check a change against them before committing.
   more than most changes did; only the bench's paired comparison says whether a change is
   real. Choose on `bench tuning`; `bench validation` checks that it carries over, and a
   choice made on validation scores makes them tuning.
+- **Sort a probe's catches by where they sit before building on its total.** Two page
+  readers "caught 60 errors"; split into lines, as the design chosen on that count
+  feeds them, about a quarter were reachable: the rest sat at line joins (end hyphens,
+  page numbers, glued words), where the pipeline's errors cluster. Read the examples,
+  then check which of them the planned integration can carry.
 - **Measure on every golden book, not the one you're fixing.** A line-grouping change
   that helped Dolittle doubled Sense's CER.
 - **Shared resources are shared deliberately.** PyMuPDF isn't thread-safe: hold
