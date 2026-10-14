@@ -7,20 +7,19 @@ evening and night.
 
 ## Nothing running. Ollama's context is at 32k (the user, for glm-ocr's whole pages).
 
-## Waiting on the user: how to build the page readers (one question)
+## Decided, to build next: the page readers as two more readers for the arbiter (option B)
 
 The session's best finding (decisions.md 2026-10-14, outlook item 0): glm-ocr and Qwen
 each read every page whole; where both agree against the build, paragraph breaks aside,
 they point at 60 errors over the tuning books that no question asks (about a quarter of
-the 0.32 wrong words a page left after review), for ~0.3 more questions a page. Asked
-of the user, unanswered when the session ended:
-
-- **A.** A question of its own wherever both page readers agree against the book. About
-  half a day; a hand-written trigger.
-- **B. (recommended)** Each page reading split back into its lines and fed to the OCR
-  check as two more readers, so the arbiter learns how far to trust each per kind of
-  error, and the review, answers and bench work unchanged. About a day, plus rebuilding
-  the trust data and retraining the arbiter overnight. Fits "learned, not hand-written".
+the 0.32 wrong words a page left after review), for ~0.3 more questions a page. **The
+user chose B (2026-10-14):** each page reading is split back into its lines and fed to
+the OCR check as two more readers, so the arbiter learns how far to trust each per kind
+of error, and the review, answers and bench work unchanged. Not A (a question wherever
+both agree: a hand-written trigger). About a day of building (a cached page-reading
+stage; aligning each page reading to the layer's lines, splitting a word the layer breaks
+over a line end as `golden/align.py` does), then the trust data rebuilt and the arbiter
+retrained overnight, then the benches.
 
 The probes and their cached readings: `experiments/probe_page_reader.py`,
 `probe_page_joins.py` (with `SECOND=`), `probe_page_agreement.py`;
@@ -73,8 +72,8 @@ keep both sets until the user says which to drop.
 
 ## Next, in order
 
-1. The user's answer on the page readers, then building it, then a bench (the readings
-   are new: ~18 s a page, ~4 h for tuning; overnight).
+1. Build the page readers into the OCR check (option B, above), then the trust data, the
+   arbiter and the benches (the readings are new: ~18 s a page, ~4 h for tuning; overnight).
 2. Finish the cold A/A (above).
 3. The rest of the checklist's "Assumptions to test": paragraph breaks and line roles
    asked of a model with the page image; page kinds for `init` by Qwen.
@@ -84,9 +83,7 @@ keep both sets until the user says which to drop.
    review, then Stella (the user: no urgency), `roboscriptorium init`.
 
 **Remind the user of the daily backup of `work/`** at session start and before long
-runs. Last one 2026-10-13 ~19:40; since then `work/` gained the trained line-role trees,
-two new pairs' files (De tunnels, Steve Jobs), the cold caches, the page readings and
-the bench runs.
+runs. Last one 2026-10-14 ~09:30, after this session's work.
 
 ## What this session taught
 
