@@ -32,8 +32,8 @@ experiments/detached.sh page-readers work/runs/chain-20261014.sh
 ```
 
 Then: if both benches agree, the page readers go on by default and the diagram, README
-and how-it-works follow (checklist). Expect less than the probe's 60: split into lines,
-a compound hyphen at a line end and a kept page number can't be carried (design.md,
+and how-it-works follow (checklist). Expect much less than the probe's 60: of the 40 it lists only about 9
+sit within a line; line-end hyphens, page numbers and joins can't be carried (design.md,
 "Page readers"); those need the page reading in `hyphens.py` and the line-role trees.
 
 ## Paused: the cold A/A tuning bench (the noise floor when caches change)

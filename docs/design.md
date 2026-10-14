@@ -228,8 +228,9 @@ dropped; a page whose reading matches fewer than half the layer's words reads no
 
 **What it can't carry.** A line reading only says what a line's words are. A compound
 hyphen at a line end ("night-" + "vision") splits back to what the layer has, and a
-kept page number has no words to vote with, so the join errors among the 60 need the
-page reading as evidence in the hyphen and line-role decisions instead.
+kept page number has no words to vote with. Of the 40 errors the probe lists, about 9
+sit within a line; the rest (line-end hyphens, page numbers, words glued across a join)
+need the page reading as evidence in the hyphen and line-role decisions instead.
 
 ## Book-wide style
 
