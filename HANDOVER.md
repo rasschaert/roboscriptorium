@@ -53,6 +53,10 @@ sit within a line; line-end hyphens, page numbers and joins can't be carried (de
 
 ## Queued: `robo-queue`, behind the chain, short jobs first
 
+At 23:35, after a stretch in Low Power Mode: Qwen 921 pages read, ~670 left; reading done
+~03:00, the chain ~05:00–05:30, then the queue: ablation ~05:40, page kinds ~06:50,
+ornith ~08:15, the cold A/A after.
+
 `work/runs/queue-20261014.sh` waits for `robo-page-readers`, then runs, each even if one
 before it failed, a line each in `work/runs/queue-20261014.txt`:
 
