@@ -61,8 +61,11 @@ mid-run, the tuning books' `stages/` hold the cold caches**: swap back by hand
 `work/runs/after-chain.out`. Behind it, `robo-page-kinds` (`work/runs/page-kinds-20261014.sh`,
 ~70 min): clef-flash's page-kind question on the 1,034 hand-labelled pages, for `init`
 (`experiments/probe_page_kinds_model.py`; on Monterosso alone 24 of 28 right, both ends
-of the text proper found). Then, in the morning: the reader ablation on the page-reader
-trust data, no models.
+of the text proper found). Last, `robo-ablation` (`work/runs/ablation-20261014.sh`, ~10
+min, no models): `experiments/probe_reader_ablation.py` on the page readers' trust data,
+output in `work/runs/ablation.log`. Without page readers every line reader earns its
+place (decisions.md); the question is whether Qwen's page reading can stand in for its
+line reading.
 
 ## Paused: the cold A/A tuning bench (the noise floor when caches change)
 
