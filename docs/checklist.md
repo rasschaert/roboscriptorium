@@ -55,8 +55,9 @@ models could do. Each probe below asks whether that's still true, on a few golde
       `probe_page_unread.py`), and both page readers' spelling of a line-end compound as
       evidence for a learned hyphen decision (fixes 11, breaks 5 on 40% of the pages:
       `probe_page_hyphens.py`) (agent, ~half a day each, after the bench)
-- [ ] Whole-page reading by the bigger build (`qwen3.8:27b-mxfp8`, pulled) and with
-      the page before as context, for paragraphs that cross a page
+- [x] Whole-page reading by the bigger build (2026-10-14): `qwen3.8:27b-mxfp8` 65 wrong
+      words over 19 pages against the nvfp4's 76, mostly one page; 60% slower; not taken
+- [ ] Whole-page reading with the page before as context, for paragraphs that cross a page
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,
       a suspect for the arbiter; how many of the undoubted errors it would have raised
 - [ ] Paragraph breaks by a model: the page image plus the pipeline's lines, "which lines

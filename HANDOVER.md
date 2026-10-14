@@ -5,13 +5,10 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-14 ~12:00, during the session of 2026-10-14
 morning (until ~13:00).
 
-## Running: `robo-page-mxfp8`, Qwen's bigger build reading whole pages
+## Nothing running. Ollama's context is at 32k.
 
-`experiments/probe_page_reader.py qwen3.8:27b-mxfp8 qwen3.8:27b-nvfp4` on the probe's 19
-pages (output `work/runs/page-mxfp8.out`): if mxfp8 reads pages cleaner than nvfp4 (76
-wrong words), tonight's chain should read with it (`ROBO_READ_MODEL` covers the line
-reader too, so a page-only model setting would be needed). Ollama's context is at 32k.
-
+Qwen's bigger build (mxfp8) read the probe's 19 pages: no clear gain (65 wrong words
+against 76, mostly one page), 60% slower; the page reader stays on the nvfp4.
 The trial of tonight's chain on Het ijzige land ran clean (3 min): its trust data with the
 page readers is in `work/probes/ocr-trust-page/` (the chain skips it), 70 suspects
 against 56 without them, 14 raised by the page readers alone.
