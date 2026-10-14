@@ -2,167 +2,107 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session.
+end of every session. Written 2026-10-14 ~09:10, at the end of the session of 2026-10-13
+evening and night.
 
-## Running: tonight's chain (screen `robo-chain-tonight`, started 2026-10-13 ~23:30)
+## Nothing running. Ollama's context is at 32k (the user, for glm-ocr's whole pages).
 
-`work/runs/chain-20261013.sh`, at Ollama context 32k (the user's choice): (1) the
-two-reader probe (`probe_page_joins.py` with `SECOND=qwen3.8:27b-nvfp4`, ~1 h, log
-`work/runs/page-joins2.log`) on the warm caches; (2) swaps the tuning books' caches
-(warm → `stages.warm`, cold → `stages`); (3) resumes the cold A/A tuning bench
-`--against tuning-20261013T210052-1cc82e3-dirty.json` (trees on, the same settings).
-**Where the caches are:** during (1) warm in `stages/`, cold in `stages.cold/`; from (3)
-cold in `stages/`, warm in `stages.warm/`. Stopping it mid-way: check which before
-swapping. The morning pause and evening resume are below.
+## Waiting on the user: how to build the page readers (one question)
 
-## Paused: cold A/A `bench tuning` (screen `robo-bench-tuning-cold`, started 2026-10-13 ~20:55)
+The session's best finding (decisions.md 2026-10-14, outlook item 0): glm-ocr and Qwen
+each read every page whole; where both agree against the build, paragraph breaks aside,
+they point at 60 errors over the tuning books that no question asks (about a quarter of
+the 0.32 wrong words a page left after review), for ~0.3 more questions a page. Asked
+of the user, unanswered when the session ended:
 
-The noise floor when caches change (checklist, "From the codebase review"). The 16 tuning
-books' warm caches were renamed `work/<book>/stages` → `stages.warm` (nothing deleted);
-the run builds fresh `stages/`. ~15 h cold, so it spans two nights; the user agreed to
-stop it in the morning. Log `work/runs/bench-tuning-cold.log`; compared `--against`
-`tuning-20261013T183737-b891650-dirty.json` (the warm run, same settings).
+- **A.** A question of its own wherever both page readers agree against the book. About
+  half a day; a hand-written trigger.
+- **B. (recommended)** Each page reading split back into its lines and fed to the OCR
+  check as two more readers, so the arbiter learns how far to trust each per kind of
+  error, and the review, answers and bench work unchanged. About a day, plus rebuilding
+  the trust data and retraining the arbiter overnight. Fits "learned, not hand-written".
 
-- **Morning pause:** `experiments/stop-run.sh bench-tuning-cold`, then per tuning book
-  rename `stages` → `stages.cold` and `stages.warm` → `stages`, so daytime benches are
-  warm. **Evening resume:** swap back (`stages` → `stages.warm`, `stages.cold` →
-  `stages`) and restart the same command (it resumes from the cold caches):
+The probes and their cached readings: `experiments/probe_page_reader.py`,
+`probe_page_joins.py` (with `SECOND=`), `probe_page_agreement.py`;
+`work/probes/page-reader/` (glm-ocr at full size in `glm-ocr_bf16@1600000/`, Qwen in
+`qwen3.8_27b-nvfp4/`). glm-ocr must be streamed: it has no stop token, and Ollama
+aborts its repeats with "token repeat limit reached".
 
-```sh
-experiments/detached.sh bench-tuning-cold experiments/timed.sh "bench tuning, cold A/A rerun, resumed" 790 work/runs/bench-tuning-cold.log uv run roboscriptorium bench tuning --against work/bench/tuning-20261013T183737-b891650-dirty.json
-```
+## Paused: the cold A/A tuning bench (the noise floor when caches change)
 
-- **Queued for the morning pause, after the swap:** De tunnels' line roles (a training-only
-  pair, decisions.md 2026-10-13): `uv run python experiments/train_sorter.py --rebuild`
-  builds its chapter 12 (pp. 238–270, roles and layout, ~10 min) and compares trees and
-  rules; then `--save` and warm benches with ROBO_SORTER=1, each `--against` the rules'
-  run (tuning `tuning-20261013T183737-b891650-dirty.json`, validation
-  `validation-20261013T183941-b891650-dirty.json`). Watch Dolittle and Vuurspel.
-- **When done:** the paired verdict is the A/A noise floor; record it in decisions.md and
-  the checklist; keep both cache sets until the user says which to drop.
-
-## Before it
-
-**This session (2026-10-13 evening), all pushed:**
-- `bench validation` finished: BETTER 1.10 → 0.59, mostly The Stranger's Child.
-- Afscheid stays (its retirement misread the all-lines overview); the three retired
-  books' files are deleted from `work/` (the user's yes; in their backups).
-- Line-role trees: the labeller called specks body (fixed, 70bc154); on fixed labels the
-  trees benched NO CHANGE on tuning, WORSE on validation (Vuurspel vetoes). They stay off;
-  `work/models/line-roles*.pkl` are the fixed-label trees, unused. They need a tuning
-  book with plates (checklist's line-role step).
-- Fine-tuning a reader: ruled out for now by `probe_reader_ceiling.py` (29% of what's left
-  after review is undoubted misreading, under the agreed half).
-- A dash a fix puts before a line widens its box (6a63a2e): Dolittle 0.40 → 0.31; tuning
-  and validation NO CHANGE overall.
-- `bench` now names settings that differ from its baseline.
-- **Line-role trees on by default** (trained with De tunnels' and Steve Jobs' photo
-  slices, body weight 10): tuning NO CHANGE, validation 0.59 → 0.50, no book worse.
-  **Baselines now (trees on):** the last `tuning-…` and `validation-…` runs of 2026-10-13
-  in `work/bench/` (0.32, 0.50). The rules' runs: `tuning-20261013T183737-b891650-dirty`,
-  `validation-20261013T183941-b891650-dirty`.
-
-Last warm `bench tuning`: 2026-10-13 17:25, NO CHANGE (0.33 → 0.32), three pairs retired.
-De tuin van de avondnevel got significantly worse under the retrained arbiter (0.38 → 0.43;
-questions 1.05 → 1.37 a page); worth a look once Stella's trust data is rebuilt.
-
-The three retired books' files are deleted from `work/` (in the user's backups).
-Afscheid van verspilde tijd stays: its proposed retirement misread the all-lines
-overview (decisions.md 2026-10-13).
-
-**Line roles:** `work/probes/sorter/` was lost with `work/`, so `train_sorter.py` rebuilds
-its lines from warm builds (ROBO_SORTER=0 is the default) once the validation bench is done.
-
-After the codebase review (2026-10-13): the user put its fixes first and said building
-Ex-minnaar or Stella has no urgency. Done and pushed: eight bugs fixed with tests
-(9e67c24); the bench prices the reviewer's time, 20 questions = one wrong word (the user),
-and its verdict rule is symmetric (99ed76a); a typography count of its own (034bc7c), whose
-first run found straight quotes kept from the layer in curly books, now curled (45aeca0, 3782e7e). Then 11/22/63, FKA USA and Koning Wilders were retired (the user) and the arbiter retrained without them (3371ddc; bench NO CHANGE). Their files in `work/` wait on the user's yes to delete. The user's direction: learned decisions, not hand-written rules (AGENTS.md). **Next, in order:** line roles by the trees (retrain, bench on top of the rules), then
-the rest of the checklist's "From the codebase review" section (the cold A/A rerun goes
-overnight), then what is below.
-
-If the validation bench above was cut off, restart it with:
+11 of 16 tuning books are built cold (Goede dochter to De tuin van de avondnevel); left:
+Het heft in eigen hand, Doodskleed, Het ijzige land, De eerlijke vinder, Monterosso
+(~4 h). **The caches now:** warm in `work/<book>/stages/`, cold in `stages.cold/` for the
+16 tuning books (list in `work/runs/tuning-books.txt`). To resume (evening or while the
+user is away): per book `stages` → `stages.warm`, `stages.cold` → `stages`, then
 
 ```sh
-experiments/detached.sh bench-validation experiments/timed.sh "bench validation, ellipsis measured on the scan, after a halt" 916 work/runs/bench-validation.log uv run roboscriptorium bench validation
+experiments/detached.sh bench-tuning-cold experiments/timed.sh "bench tuning, cold A/A rerun, resumed" 790 work/runs/bench-tuning-cold.log uv run roboscriptorium bench tuning --against work/bench/tuning-20261013T210052-1cc82e3-dirty.json
 ```
 
-Compare against `work/bench/validation-20261013T082508-d4c197e.json` (The Stranger's Child
-4.57; set mean 1.06, 0.62 without it).
+`work/runs/chain-20261013.sh` has a `swap` function that does the renames with guards.
+The cold part ran first at 8k context, overnight at 32k; its warm baseline ran at 8k.
+AGENTS.md records readings as the same either way; say so beside the result. When done,
+the paired verdict is the noise floor: record it, then swap the warm caches back and
+keep both sets until the user says which to drop.
 
-**The feedback loop, agreed with the user 2026-10-13:** (1) a change upstream of the
-caches (a prompt, a crop, a model, the arbiter) is decided on the frozen line sets
-(`experiments/tryout.py`), the bench only confirms; (2) a quick bench tier: each tuning
-book's first chapter or two (~10–20 pages, ending on a chapter so the reference lines
-up; tuning books only, as it is chosen on), ~5 h cold, checked once overnight that it
-ranks changes as the full bench does; `experiments/chapter_pages.py <golden> <scan>` gives
-the chapters' pages (was being run over the tuning books when halted); (3) cold runs only
-overnight or while the user is away. Rules (1) and (3) still to be written into AGENTS.md;
-(2) still to be built (checklist).
+## What this session did (all pushed; numbers in docs/decisions.md 2026-10-13/14)
 
-**Remind the user of the daily backup of `work/`** at session start and before long runs
-(they back up with Duplicati, ~9 min; last run 2026-10-13 morning, before this session).
+- **Line-role trees on by default**: validation 0.59 → 0.50, tuning no change, no book
+  worse. Three things got them there: the labeller called specks body (fixed in
+  `golden/align.py`), two picture slices joined their training (De tunnels ch. 12, a
+  training-only pair with an OCR-made EPUB; Steve Jobs' photo insert pp. 387–402), and a
+  body line weighs ten times its share. Left: Dolittle's text set around its drawings
+  (wants a book with text wrapped around pictures). Next: retire each `roles.py` rule the
+  trees make redundant, one bench each.
+- **Bugs fixed with tests**: a dash a fix puts before a line now widens the line's box
+  (Dolittle 0.40 → 0.31); derive takes a paragraph wholly inside a heading-class span as a
+  heading; `bench` names settings that differ from its baseline (a run had compared
+  itself with an experiment's run and read BETTER).
+- **Steve Jobs** is a full pair (retail EPUB of the first printing, IA scan of the fifth;
+  layer CER 0.47%, OCR slips only); for now only its photo insert is used.
+- **Fine-tuning a reader is off**: 29% of what's left after review is misreading no
+  reader doubted, under the half agreed as the bar.
+- **Afscheid stays** (its retirement misread an all-lines figure; the rule is now
+  explicit in AGENTS.md); the three retired books' files are deleted from `work/`.
+- **New standing rule** (AGENTS.md): test the pipeline's assumptions, not only its
+  settings; the checklist opens with "Assumptions to test".
 
-**Tuning, warm, 2026-10-13** (`work/bench/tuning-20261013T085119-e8ff4b4.json`): BETTER,
-0.52 → 0.50 [−0.03, −0.01] after review over all 17 (0.29 over the 16 without FKA USA,
-against 0.31): De eerlijke vinder 0.91 → 0.68 (its minus-sign dashes undone), Goede dochter
-0.28 → 0.24 (the user's verdicts), Monterosso 0.50 → 0.47. FKA USA is named a suspect pair
-(30% of its body lines unplaced). Koning Wilders too (validation, layer CER 2.45%).
-Whether to retire them is parked by the user, but must be decided (checklist).
+**Baselines (trees on):** tuning `work/bench/tuning-20261013T210052-1cc82e3-dirty.json`
+(0.32), validation `validation-20261013T210233-1cc82e3-dirty.json` (0.50).
 
-**The single review is in** (merged 2026-10-13): `roboscriptorium review` on a golden
-book asks its places that differ from the e-book in the same list as its flagged regions,
-answers stored as verdicts; `golden review` is gone; each side's words shown as written.
-Walked on Dolittle (89 questions, 15 places). Verdict rounds can resume on it: Dolittle,
-Crime and De tuin are unanswered; pass the bench's slice (`--pages`, `--chapters`). A
-place on a line with an OCR doubt is still its own question right after the doubt, not one
-more row in it (decisions.md 2026-10-13).
+## Next, in order
 
-**Tuning baseline (2026-10-12, `work/bench/tuning-20261012T190056-…json`): 0.31** wrong
-words a page after review over 17 books (FKA USA left out till its fixes). Since then:
-the user's verdicts (Goede dochter 46, Metro 24, Monterosso 19, De eerlijke vinder 14,
-Dolittle 3) and De eerlijke vinder's minus-sign dashes undone in its reference; a warm
-`bench tuning` (~3 min) after the validation run shows what they move.
+1. The user's answer on the page readers, then building it, then a bench (the readings
+   are new: ~18 s a page, ~4 h for tuning; overnight).
+2. Finish the cold A/A (above).
+3. The rest of the checklist's "Assumptions to test": paragraph breaks and line roles
+   asked of a model with the page image; page kinds for `init` by Qwen.
+4. Retire `roles.py` rules the trees make redundant; Dolittle's wrapped text.
+5. From before this session, still open: the quick bench tier (checklist), De eerlijke
+   vinder's page numbers kept (the page readers catch 13 of them), a sampled Ex-minnaar
+   review, then Stella (the user: no urgency), `roboscriptorium init`.
 
-**Slice size, measured:** more pages a book teach the arbiter little (about 0.01 wrong
-words a page from 10 pages to all) and narrow the bench some; short slices stay short
-(decisions.md 2026-10-12).
+**Remind the user of the daily backup of `work/`** at session start and before long
+runs. Last one 2026-10-13 ~19:40; since then `work/` gained the trained line-role trees,
+two new pairs' files (De tunnels, Steve Jobs), the cold caches, the page readings and
+the bench runs.
 
-**Then, in order:** De eerlijke vinder's 25 page numbers kept in the running text (rules
-and sorter model, Stella's scan format); its error analysis; Monterosso's T read as a
-quote; Metro's lost quote after an ellipsis; FKA USA's fixes and trust data; then the
-checklist.
+## What this session taught
 
-**The reader is settled** (docs/models.md, decisions.md 2026-10-12): the nvfp4 build on
-MLX stays. Screened on reader set v2 (850 lines) against its 463/510 hard and 338/340
-control at 1.20 s a line: Ollama's q8_0 458/333 at 2.06 s; Unsloth's UD-Q6_K_XL 457/334
-at 1.71 s and UD-Q8_K_XL 460/334 at 1.76 s (both through Unsloth Studio). The three GGUF
-builds make the same control-line errors word for word, which the nvfp4 doesn't: the
-llama.cpp runtime, not precision, sets them apart. More precision is worth testing only
-as an MLX build (`qwen3.8:27b-mxfp8`, pulled; screen it after the chain). Unsloth Studio passes requests to its
-llama-server one at a time, so its slots don't speed anything; it switches quant when a
-request names one (`unsloth/Qwen3.8-27B-GGUF:UD-Q8_K_XL`). Its run settings' Extra
-Arguments box shows example text that isn't passed: read the running `llama-server`
-command line instead.
-
-**Stella's dated EPUBs** (`work/stella/epubs/`): 2026-10-07 1221 and 1547 (from the
-backup) and 2026-10-11 1202 (the user's Calibre copy, our build before that evening's
-fixes). Diff the next build against them.
-
-### Next, in order
-
-1. The ellipsis fix and both benches warm; then the line-role trees
-   (`experiments/train_sorter.py --save`); Verminkt joins validation whole with the first
-   looks (checklist).
-2. A sampled Ex-minnaar review, 10–20 questions, to find lessons with wide effect before
-   the user faces its full ~390 (the user asked for it; blocked by the loss).
-3. The user's Ex-minnaar review, then the fixes it teaches; only then Stella: rebuild
-   with those fixes, diff against the dated copies, the user reads it through (the
-   user, 2026-10-12).
-4. `roboscriptorium init <pdf>` (agreed; checklist, "Beyond the golden books"): each
-   page a kind; what goes in the EPUB is decisions.md 2026-10-11 (a list of what's left
-   out); runs on its own when `book.toml` is missing. Labels: `tryouts/page-kinds-v1.json`.
-   Next is clef-flash's page-kind question with the page image (~1 h), then the build.
+- **Test the assumption before tuning around it** (the user, twice). "Local models can't
+  read a whole page" took a 30-second test to overturn, and led to the largest gain in
+  sight. Fine-tuning and threshold tweaks have diminishing returns.
+- **A role error count isn't the bench.** The trees cut raw role errors by a third and
+  still made the bench worse until the labels and the weighting were right: which line
+  is wrong matters (a dropped caption loses text unasked; a kept speck is asked).
+- **Check a bench's baseline**: by default it compares with the last saved run, whatever
+  its settings (now printed).
+- **A reference made by OCR** (calibre, Sigil, hyphens left in, small capitals as "jfk")
+  can still label line roles, but never score words.
+- **glm-ocr has no stop token**; on llama.cpp its four slots share Ollama's context.
+- **The user wants the what and the why of every run in plain English**, one sentence
+  each, before it starts (confirmed 2026-10-14).
 
 ## Recovery, 2026-10-11 ~20:35: an agent destroyed work/
 
@@ -187,41 +127,6 @@ Koning Wilders' "wàs" ×2 is in decisions.md), the arbiter and line-role trees
 readings (`work/tryout/`), the page-kind label files (the frozen set is in git), and
 every probe.
 
-## The bench before the loss (2026-10-11), to compare the rebuilt one against
-
-Tuning is 17 books (De eerlijke vinder and Monterosso had just moved in, arbiter and trees
-retrained): **0.36** wrong words a page after review over all 17 (0.31 over the 15 it
-shares with the set before; De eerlijke vinder 0.99, Monterosso 0.50). Validation
-was 0.64 on its 5 books before Koning Wilders (Atlas Contact) and Het laatste bevel
-(Manteau, slice 9–100) joined; neither was benched. Paragraph breaks ~0.2 a
-page on both.
-
-## What today taught (read before choosing work)
-
-- **The print is canonical** (the user). The output keeps the print's words, accents,
-  italics, paragraphs and its own typography (dash and spacing, ellipsis, quote marks);
-  no house style (AGENTS.md, Fidelity). Where a reference EPUB differs from its print:
-  a systematic gap is undone in derive (manifest settings), a glyph choice is folded in
-  scoring, a one-off is a verdict (the user gave "wàs" for Koning Wilders).
-- **An old EPUB copy found two regressions** (Stella's 2026-10-07 build): every build
-  now keeps a dated copy in `work/<book>/epubs/` (`epub.keep_dated`). Diff them.
-- **Pre-check a user book's front matter before its cold build** (a probe copy, pages
-  around the start, `check_ocr=False`, minutes): De kus's part label was dropped as a
-  page number (fixed: `heading-label`), Ex-minnaar's motto became the first paragraph
-  (fixed: epigraphs), Een Russische roman's part number "1" is dropped and its library
-  pencil marks read as text (left for its full build to show what it asks).
-- **Sample the questions on their crops before sending the user**: Ex-minnaar's
-  lost-line questions were a song's stanza breaks (fixed); 390 remain, mostly real.
-- **Quote styles at hand**: all 25 books are ‘-dialogue or “-dialogue; « » „ ‚ appear
-  only as misreads. Nested (inner) quotes are assumed, not learned (checklist).
-- **Most errors left after review were never suspects** (all readings agree): the
-  rule-sized groups are done; the proofreader, the book's own consistency and the book
-  teaching itself (simulated again today: gain concentrated in De kerk and Vuurspel)
-  don't pay yet. Accuracy moves by better readers, trustworthy measurement and review.
-- **Gate commits on the test run**: `uv run pytest -q && git commit`, never a filtered
-  run (a failing test went in once today, fixed in the next commit).
-- **The user wants plain English** in reports: say what a thing does before its name.
-
 ## How to run things
 
 - Long runs through `experiments/timed.sh` inside `experiments/detached.sh` (a screen);
@@ -240,7 +145,9 @@ page on both.
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`.
 - More golden pairs when convenient: De Arbeiderspers, Prometheus/Ooievaar or Vrijdag
   preferred (publishers already used are listed in docs/checklist.md); a Kosmos book
-  for later, beyond prose.
+  for later, beyond prose. Wanted now: a book with text wrapped around its pictures
+  (Dolittle's case), and a retail-EPUB pair with pictures to replace De tunnels' OCR-made
+  reference (the user was looking).
 - **French**: undecided (checklist, Later).
 - The worktree `../roboscriptorium-py315` (branch `py315`) waits for a PyTorch release
   with cp315 wheels (pytorch/pytorch#184352); a stale worktree entry from an old

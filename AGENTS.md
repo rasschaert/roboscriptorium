@@ -337,8 +337,9 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
   job started another way).
 - Ollama 0.40.3 at `http://127.0.0.1:11434` (scores before 2026-10-06 were on 0.35.1).
-  Context length 8k in the app's settings: 128k only held memory for KV caches, and
-  readings are the same either way. `OLLAMA_NUM_PARALLEL=4`, set with `launchctl setenv`
+  Context length 32k in the app's settings since 2026-10-13 (the user), for glm-ocr reading
+  whole pages: llama.cpp's four slots share the context, so 8k left each request ~2k, too
+  little for a page. 128k only held memory for KV caches; readings are the same either way. `OLLAMA_NUM_PARALLEL=4`, set with `launchctl setenv`
   (the app reads it when it starts; `launchctl unsetenv` removes it): the llama.cpp-served
   models (glm-ocr, clef-flash, winnow) get four slots, which doubles glm-ocr's throughput
   and changes no reading; the MLX runner behind the nvfp4 builds (qwen3.8, clef:27b)

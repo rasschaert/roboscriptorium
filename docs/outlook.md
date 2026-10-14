@@ -54,9 +54,17 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
 
 ## Where there is room, by expected gain
 
+0. **Two page readers against the build (measured 2026-10-14, not built).** glm-ocr and
+   Qwen each read every page whole; where they agree against the build (paragraph breaks
+   aside) they point at 60 errors over the tuning books that no question asks, about
+   0.08 of the 0.32 wrong words a page left after review, for ~0.3 more questions a
+   page: line joins (compound hyphens dropped, words glued), page numbers kept,
+   punctuation across a join. The largest single gain in sight; how to build it is the
+   user's call (HANDOVER.md). Reading them is ~18 s a page.
 1. **Structure.** The bench now counts paragraph breaks per page and prints headings.
-   - Line roles: the trees (`sorter.py`) halve role errors but no longer move the bench
-     once the rules keep lost running text (`roles.running_text`).
+   - Line roles: the trees (`sorter.py`) are on by default since 2026-10-13 (validation
+     0.59 → 0.50, no book worse); Dolittle's text wrapped around drawings is what they
+     still drop.
    - Breaks left: Afscheid's are its EPUB's; Artemis 0.46 (its letters, set without
      spacing), Dolittle 0.42, Vuurspel 0.44, De stilte 0.36 (sentences ending at the
      margin in unindented text), a section break at a page turn.
@@ -81,6 +89,8 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
    the same question across pages (one answer for every "|" read as "I"), and
    ranking questions by expected errors removed per second of the reviewer's time.
 4. **New models.** The judges and arbiter are near what these models can do (below).
+   A better reader alone moves little: 29% of what's left after review is misreading no
+   reader doubted (2026-10-13), so fine-tuning a reader is off for now.
    A better vision reader or judge is the likeliest source of a step change. Screen
    each new model on the frozen sets (`tryout.py run reader|judge`) for every role
    (AGENTS.md: every new model gets two questions).
