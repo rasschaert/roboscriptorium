@@ -51,6 +51,16 @@ and how-it-works follow (checklist). Expect much less than the probe's 60: of th
 sit within a line; line-end hyphens, page numbers and joins can't be carried (design.md,
 "Page readers"); those need the page reading in `hyphens.py` and the line-role trees.
 
+## Queued: `robo-after-chain`, the cold A/A behind the chain (~4 h, to ~08:00)
+
+`work/runs/after-chain-20261014.sh` waits for `robo-page-readers` to end and, only if its
+validation bench finished with exit 0, swaps the cold caches into `stages/` (warm to
+`stages.warm/`), resumes the cold A/A below, and swaps them back. **If it is stopped
+mid-run, the tuning books' `stages/` hold the cold caches**: swap back by hand
+(`stages` → `stages.cold`, `stages.warm` → `stages`) before anything else. Output in
+`work/runs/after-chain.out`. Then, in the morning: the reader ablation on the page-reader
+trust data (checklist), no models.
+
 ## Paused: the cold A/A tuning bench (the noise floor when caches change)
 
 11 of 16 tuning books are built cold (Goede dochter to De tuin van de avondnevel); left:
