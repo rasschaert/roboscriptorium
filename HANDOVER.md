@@ -7,11 +7,13 @@ morning (until ~13:00).
 
 ## Running: `robo-page-readers`, tonight's chain, in chunks
 
-Started 2026-10-14 ~12:15 after the user's backup of `work/`, for an hour or two now and
+Started 2026-10-14 16:00 after the user's backup of `work/`, for an hour or two now and
 the rest later (the user can't give it one long stretch). Stop with
 `experiments/stop-run.sh page-readers`; the same start command resumes (every step skips
 finished work): `experiments/detached.sh page-readers work/runs/chain-20261014.sh`.
 Progress: `work/runs/read-pages.log`, then `work/probes/ocr-trust-page/runs/progress.txt`.
+Pace measured in its first 14 min: glm-ocr ~3 s a page (four at once), Qwen ~17 s; about
+200 pages an hour of both, ~5 h of reading left at 16:15, then 1–2 h of trust data.
 Ollama's context is at 32k.
 
 
