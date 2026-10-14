@@ -36,9 +36,13 @@ models could do. Each probe below asks whether that's still true, on a few golde
       catch
 - [x] Two page readers agreeing against the pipeline (2026-10-14): outside paragraph
       breaks, right 152 times to 65 (70%), about 0.7 places a page; breaks not trustworthy
-- [ ] The two readers' agreement on the errors left after review: how many of the 152
-      the review doesn't already ask, and what a suspect raised there would cost in
-      questions (no models: the readings are cached)
+- [x] The two readers' agreement on the errors left after review (2026-10-14): 60 errors
+      no question catches (+21 unmatched), 71 asked already, 68 false: about a quarter of
+      what's left after review, for ~0.3 questions a page
+- [ ] **Build it:** a page-reader stage (glm-ocr and Qwen read each body page whole,
+      cached per page) whose agreement against the build, paragraph breaks aside, becomes a
+      question on the review page with both readings; then a cold-ish bench (the readings
+      are new: ~18 s a page, ~4 h for tuning) (agent, ~half a day plus the run)
 - [ ] Whole-page reading by the bigger build (`qwen3.8:27b-mxfp8`, pulled) and with
       the page before as context, for paragraphs that cross a page
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,
