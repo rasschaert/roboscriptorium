@@ -58,8 +58,11 @@ validation bench finished with exit 0, swaps the cold caches into `stages/` (war
 `stages.warm/`), resumes the cold A/A below, and swaps them back. **If it is stopped
 mid-run, the tuning books' `stages/` hold the cold caches**: swap back by hand
 (`stages` → `stages.cold`, `stages.warm` → `stages`) before anything else. Output in
-`work/runs/after-chain.out`. Then, in the morning: the reader ablation on the page-reader
-trust data (checklist), no models.
+`work/runs/after-chain.out`. Behind it, `robo-page-kinds` (`work/runs/page-kinds-20261014.sh`,
+~70 min): clef-flash's page-kind question on the 1,034 hand-labelled pages, for `init`
+(`experiments/probe_page_kinds_model.py`; on Monterosso alone 24 of 28 right, both ends
+of the text proper found). Then, in the morning: the reader ablation on the page-reader
+trust data, no models.
 
 ## Paused: the cold A/A tuning bench (the noise floor when caches change)
 
