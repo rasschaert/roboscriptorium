@@ -8,7 +8,8 @@ with nothing cached costs **0.8–1.1 min per page** for a trust-data rebuild
 
 A run made partly or wholly in macOS Low Power Mode (the battery can't keep up with
 Ollama even on the charger) says so in its label and doesn't count towards the
-estimate: it runs slower by an unmeasured amount.
+estimate. It slows model runs by half or more: Qwen's page reading went from about 200
+pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 
 | Date | Run | Pages | Minutes | Exit |
 | --- | --- | --- | --- | --- |
