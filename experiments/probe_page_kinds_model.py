@@ -23,6 +23,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from probe_page_signals import clues, ends, fate, layer  # noqa: E402
 
 from roboscriptorium.clients import decide  # noqa: E402
+from roboscriptorium.files import write_atomic  # noqa: E402
 from roboscriptorium.pdf import render_png  # noqa: E402
 
 KINDS = {
@@ -106,7 +107,7 @@ def main() -> None:
                 cache[key] = [answer.value, round(answer.confidence, 3)]
                 asked += 1
                 if asked % 25 == 0:
-                    cache_path.write_text(json.dumps(cache))
+                    write_atomic(cache_path, json.dumps(cache))
                     rate = (time.time() - started) / asked
                     print(f"  {asked} asked, {rate:.1f} s a page", flush=True)
             got[n] = cache[key][0]
@@ -122,7 +123,7 @@ def main() -> None:
         ends_right["books"] += 1
         if w != g:
             print(f"  {name}: text proper {w[0]}–{w[1]}, asked {g[0]}–{g[1]}")
-    cache_path.write_text(json.dumps(cache))
+    write_atomic(cache_path, json.dumps(cache))
     print(f"{model}: kind right {kinds_right[True]}/{sum(kinds_right.values())}")
     print("fate (labelled, answered):", dict(fates))
     print("ends right:", dict(ends_right))
