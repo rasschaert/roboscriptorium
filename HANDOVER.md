@@ -2,30 +2,39 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-14 ~09:10, at the end of the session of 2026-10-13
-evening and night.
+end of every session. Written 2026-10-14 ~12:00, during the session of 2026-10-14
+morning (until ~13:00).
 
-## Nothing running. Ollama's context is at 32k (the user, for glm-ocr's whole pages).
+## Running: a trial of tonight's chain on Het ijzige land
 
-## Decided, to build next: the page readers as two more readers for the arbiter (option B)
+`robo-trial-ijzige` (screen): the trust data of one small book with the page readers on,
+into `work/probes/ocr-trust-page/` (apart from the current data). It checks the path
+before tonight; its result goes into this file when it ends. Ollama's context is at 32k.
 
-The session's best finding (decisions.md 2026-10-14, outlook item 0): glm-ocr and Qwen
-each read every page whole; where both agree against the build, paragraph breaks aside,
-they point at 60 errors over the tuning books that no question asks (about a quarter of
-the 0.32 wrong words a page left after review), for ~0.3 more questions a page. **The
-user chose B (2026-10-14):** each page reading is split back into its lines and fed to
-the OCR check as two more readers, so the arbiter learns how far to trust each per kind
-of error, and the review, answers and bench work unchanged. Not A (a question wherever
-both agree: a hand-written trigger). About a day of building (a cached page-reading
-stage; aligning each page reading to the layer's lines, splitting a word the layer breaks
-over a line end as `golden/align.py` does), then the trust data rebuilt and the arbiter
-retrained overnight, then the benches.
+## Built, to run tonight: the page readers as two more readers for the arbiter
 
-The probes and their cached readings: `experiments/probe_page_reader.py`,
-`probe_page_joins.py` (with `SECOND=`), `probe_page_agreement.py`;
-`work/probes/page-reader/` (glm-ocr at full size in `glm-ocr_bf16@1600000/`, Qwen in
-`qwen3.8_27b-nvfp4/`). glm-ocr must be streamed: it has no stop token, and Ollama
-aborts its repeats with "token repeat limit reached".
+`pagereader.py` (committed, tests through `pipeline.run`): glm-ocr and Qwen read each
+body page whole, cached in `stages/page-reading-{glm,qwen}-page.json`; each reading is
+split back into the layer's lines and joins the OCR check as the readers `glm-page` and
+`qwen-page`. **Off** (`ROBO_PAGE_READERS=0`) until an arbiter trained with them wins the
+bench; the arbiter now records which readers it weighs, and a build whose page readers
+don't match its arbiter stops. The probes' readings are seeded into the warm stage
+caches (`experiments/seed_page_readings.py`, ~350 pages a reader).
+
+**Tonight's chain** (`work/runs/chain-20261014.sh`, nothing in it touches the current
+arbiter or trust data): read the ~1,000 pages left (`experiments/read_pages.py`; glm-ocr
+9 s, Qwen 15 s a page, ~5–7 h), rebuild the trust data with the page readers into
+`work/probes/ocr-trust-page/`, train `work/models/ocr-trust-page.pkl`, then `bench
+tuning` and `bench validation` against the 2026-10-13 baselines. Start it with
+
+```sh
+experiments/detached.sh page-readers work/runs/chain-20261014.sh
+```
+
+Then: if both benches agree, the page readers go on by default and the diagram, README
+and how-it-works follow (checklist). Expect less than the probe's 60: split into lines,
+a compound hyphen at a line end and a kept page number can't be carried (design.md,
+"Page readers"); those need the page reading in `hyphens.py` and the line-role trees.
 
 ## Paused: the cold A/A tuning bench (the noise floor when caches change)
 
@@ -45,7 +54,7 @@ AGENTS.md records readings as the same either way; say so beside the result. Whe
 the paired verdict is the noise floor: record it, then swap the warm caches back and
 keep both sets until the user says which to drop.
 
-## What this session did (all pushed; numbers in docs/decisions.md 2026-10-13/14)
+## What the session of 2026-10-13 evening did (numbers in docs/decisions.md)
 
 - **Line-role trees on by default**: validation 0.59 → 0.50, tuning no change, no book
   worse. Three things got them there: the labeller called specks body (fixed in
@@ -72,20 +81,20 @@ keep both sets until the user says which to drop.
 
 ## Next, in order
 
-1. Build the page readers into the OCR check (option B, above), then the trust data, the
-   arbiter and the benches (the readings are new: ~18 s a page, ~4 h for tuning; overnight).
-2. Finish the cold A/A (above).
-3. The rest of the checklist's "Assumptions to test": paragraph breaks and line roles
+1. Tonight's chain (above), then the benches' verdict on the page readers.
+2. Finish the cold A/A (above); not the same night as the chain (both hold Ollama).
+3. The page readings where a line can't carry them: line-end compound hyphens for
+   `hyphens.py`, lines no page reader has words for (page numbers) for the role trees.
+4. The rest of the checklist's "Assumptions to test": paragraph breaks and line roles
    asked of a model with the page image; page kinds for `init` by Qwen.
-4. Retire `roles.py` rules the trees make redundant; Dolittle's wrapped text.
-5. From before this session, still open: the quick bench tier (checklist), De eerlijke
-   vinder's page numbers kept (the page readers catch 13 of them), a sampled Ex-minnaar
+5. Retire `roles.py` rules the trees make redundant; Dolittle's wrapped text.
+6. From before, still open: the quick bench tier (checklist), a sampled Ex-minnaar
    review, then Stella (the user: no urgency), `roboscriptorium init`.
 
 **Remind the user of the daily backup of `work/`** at session start and before long
 runs. Last one 2026-10-14 ~09:30, after this session's work.
 
-## What this session taught
+## What the session of 2026-10-13 taught
 
 - **Test the assumption before tuning around it** (the user, twice). "Local models can't
   read a whole page" took a 30-second test to overturn, and led to the largest gain in
