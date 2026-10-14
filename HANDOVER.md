@@ -5,7 +5,15 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-14 ~12:00, during the session of 2026-10-14
 morning (until ~13:00).
 
-## Nothing running. Ollama's context is at 32k.
+## Running: `robo-page-readers`, tonight's chain, in chunks
+
+Started 2026-10-14 ~12:15 after the user's backup of `work/`, for an hour or two now and
+the rest later (the user can't give it one long stretch). Stop with
+`experiments/stop-run.sh page-readers`; the same start command resumes (every step skips
+finished work): `experiments/detached.sh page-readers work/runs/chain-20261014.sh`.
+Progress: `work/runs/read-pages.log`, then `work/probes/ocr-trust-page/runs/progress.txt`.
+Ollama's context is at 32k.
+
 
 Qwen's bigger build (mxfp8) read the probe's 19 pages: no clear gain (65 wrong words
 against 76, mostly one page), 60% slower; the page reader stays on the nvfp4.
