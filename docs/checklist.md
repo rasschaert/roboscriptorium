@@ -90,9 +90,9 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       detail to models.md, the review page to how-it-works.md); decisions.md a heading a
       day (agent, ~2 h)
 - [x] Line roles learned (2026-10-13): the trees are on by default after warm benches no
-      worse on both sets (decisions.md); next, retire each rule in `roles.py` the trees make
-      redundant, one at a time with a bench, and a book with text wrapped around pictures
-      for Dolittle's case
+      worse on both sets (decisions.md); running-text and numeral-slot retired (2026-10-16,
+      `probe_retire_rules.py`, bench no change); the other rules still earn their place.
+      Next: a book with text wrapped around pictures for Dolittle's case
 - [ ] Trust data for the 20 books on qwen3.8:27b-nvfp4, then the arbiter and `bench
       tuning` (`experiments/rebuild-trust.sh`): all read 2026-10-12, first bench 0.31
       after review over 16 books; Monterosso read again whole (its 9-page slice cut a

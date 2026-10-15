@@ -28,7 +28,11 @@ OFF = {
     "heading-style": [(roles, "_heading_styles", lambda *a: None)],
     "running-text": [(pipeline, "running_text", lambda pages, model_roles, known: model_roles)],
 }
-os.environ.setdefault("ROBO_OLLAMA_URL", "http://127.0.0.1:9")
+
+
+# Several rules off at once: "rule+rule".
+def off(rule: str | None) -> list:
+    return [p for r in (rule or "").split("+") if r for p in OFF[r]]
 
 
 def score(books: dict[str, list[dict]]) -> Counter:
@@ -47,7 +51,7 @@ def score(books: dict[str, list[dict]]) -> Counter:
 
 def run(rule: str | None) -> Counter:
     saved = []
-    for module, name, replacement in OFF.get(rule, []):
+    for module, name, replacement in off(rule):
         saved.append((module, name, getattr(module, name)))
         setattr(module, name, replacement)
     T.OUT = Path("work/probes/retire-rules") / (rule or "baseline")

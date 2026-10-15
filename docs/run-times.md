@@ -367,3 +367,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-15 | bench tuning, page numbers split beside full lines (text layer v8) | 790 | 5 | 0 |
 | 2026-10-16 | build stella, cold (text layer v8) | 67 | 50 | 0 |
 | 2026-10-16 | bench tuning, readings keyed without line positions (reading cache v3) | 790 | 2 | 0 |
+| 2026-10-16 | probe: retire line-role rules one at a time (warm builds, no OCR check) | 0 | 12 | 1 |
+| 2026-10-16 | probe: retire line-role rules one at a time (warm builds, no OCR check, live) | 0 | 7 | 0 |
+| 2026-10-16 | train line-role trees, running-text and numeral-slot retired | 0 | 1 | 0 |
+| 2026-10-16 | bench tuning, running-text and numeral-slot retired, trees retrained | 790 | 2 | 0 |
+| 2026-10-16 | bench validation, running-text and numeral-slot retired, trees retrained | 790 | 2 | 0 |

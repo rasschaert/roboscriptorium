@@ -393,26 +393,13 @@ book worse. Left: Dolittle's text set around its drawings (short lines beside a 
 their type measured small), which the trees still drop when trained without it; a book
 with text wrapped around pictures would teach it.
 
-A line the role model drops that reads as running text is kept, and flagged as kept
-unsure (`roles.running_text`): it continues a sentence the last text line left open, or
-opens with a quotation mark, and its words are words (three letters a token, half in
-the word list) and no furniture repeated on other pages. The role model calls a page's
-first line a running head ("‘Recherche. Inspecteur Corrigan…" on De cipier p. 47,
-"stupid. Marriage is august" on Crime p. 83) and a short last line an artifact
-("‘Gamma.’", "Green was geweest."); no question asked about them, as page furniture
-isn't asked about. Over the tuning books 22 such lines were body and 3 not (a footnote,
-a speech bubble, a noise line), `experiments/probe_continuations.py`. It runs before the
-trees, which learn from these roles. Bench pending.
-
-A chapter number the text layer misreads ("l" for 1, "e," for 2, "UH" for 11 on
-Afscheid) matches no numeral rule, and clef-flash calls it a page number or an
-artifact, so it was dropped before any reader saw it. Its box gives it away: at the
-top, centred, as tall as the numerals the book's other chapters open with (21–22 pt on
-every Afscheid chapter page). `numeral-slot` keeps such a line as a heading, and the
-OCR check then reads its crop: glm-ocr, tesseract and Qwen read all three right, and
-the arbiter fixed all three. Headings 8/11 → 11/11, no other book changed (bench,
-2026-10-09). A washed-out line at the top (Afscheid p. 32) is as tall but wide and off
-centre, so it isn't taken.
+The trees also take two cases rules once did: a line the role model drops that goes on
+with running text (a page's first line called a running head, a short last line an
+artifact), and a chapter numeral the layer misreads at a page's top ("l" for 1, "UH" for
+11 on Afscheid). Switched off one at a time for the trees' features, each rule cost
+more errors than it saved (`experiments/probe_retire_rules.py`: both off, line-role
+errors 200 → 180 on tuning and 57 → 55 on validation); the rules left in `roles.py` each
+cost errors when switched off.
 
 **A word line called a page number above a heading is its label.** De kus in de nacht
 opens on "Deel een" over "Proloog", set right; the sorter called "Deel een" a page number

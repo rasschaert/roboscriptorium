@@ -317,34 +317,6 @@ def test_a_top_number_is_a_section_where_the_page_prints_its_folio_elsewhere(tmp
     assert roles[SourceRef(12, 0)].role != "chapter_heading"
 
 
-def test_a_misread_numeral_in_a_numeral_headings_place_is_a_heading(tmp_path):
-    def opening(number: int, top: Line) -> PageText:
-        return PageText(number, 400, 600, [top] + _page(number, "x").lines[1:])
-
-    pages = [opening(n, Line(str(k), 190, 40, 210, 62)) for k, n in enumerate((11, 15, 19), 1)]
-    pages += [
-        opening(24, Line("l", 192, 41, 208, 63)),  # the "1" of a later part, misread
-        opening(25, Line("peeters bent och kane eg u.", 60, 40, 340, 62)),  # a washed-out line
-        opening(26, Line("e,", 60, 41, 80, 63)),  # boxed alike, but off-centre
-        opening(27, Line("°", 196, 50, 204, 56)),  # a speck, not a numeral's height
-    ]
-
-    class Client:
-        model = "fake"
-
-        def decide(self, state, questions):
-            if state["line"].startswith("body text"):
-                return {"role": Answer("choice", "body", 0.9, {"body": 0.9})}
-            return {"role": Answer("choice", "artifact", 0.5, {"artifact": 0.5, "body": 0.05})}
-
-    roles = classify(pages, Client(), DecisionCache(tmp_path / "decisions.jsonl"))
-    assert [roles[SourceRef(n, 0)].rule for n in (11, 15, 19)] == ["section-number"] * 3
-    assert roles[SourceRef(24, 0)].role == "chapter_heading"
-    assert roles[SourceRef(24, 0)].rule == "numeral-slot"
-    for n in (25, 26, 27):
-        assert roles[SourceRef(n, 0)].role == "artifact", n
-
-
 def test_a_superscript_or_circled_digit_is_no_page_number():
     from roboscriptorium.page import digits, page_number, page_offset
 
@@ -425,62 +397,6 @@ def test_a_title_recurring_on_a_chapter_opening_stays_a_heading(tmp_path):
     assert roles[SourceRef(10, 0)].role == "chapter_heading"
     assert roles[SourceRef(20, 0)].role == "chapter_heading"
     assert roles[SourceRef(15, 0)].role == "running_head"
-
-
-def test_a_dropped_line_that_reads_as_running_text_is_kept_and_flagged():
-    from roboscriptorium.roles import KEEP_BODY_AT, LineRole, running_text
-
-    words = set("de het een en hij zei dat ze niet meer naar huis ging over storm stond".split())
-    words |= {"recherche", "inspecteur", "corrigan", "green", "was", "geweest"}
-
-    def known(w):
-        return w.lower().strip("‘’.,") in words
-
-    def page(n, texts):
-        lines = [Line(t, 20, 20 + 15 * i, 280, 30 + 15 * i) for i, t in enumerate(texts)]
-        return PageText(n, 300, 600, lines)
-
-    head = "De storm over het land"
-    pages = [
-        page(10, [head, "Hij zei dat ze niet meer naar", "huis ging en", "42"]),
-        page(11, [head, "Green was geweest.", "‘Recherche. Inspecteur Corrigan.’", "Eh"]),
-        page(12, [head, "Hij zei dat ze niet meer naar", "cles ee a in sn", "SL"]),
-        page(13, [head, "Hij zei dat ze niet meer naar", "Hij zei dat ze niet"]),
-    ]
-    dropped = LineRole("artifact", 0.4, 0.2)
-    roles = {SourceRef(p.number, i): dropped for p in pages for i in (0, len(p.lines) - 1)}
-    roles |= {SourceRef(11, 1): dropped, SourceRef(11, 2): dropped, SourceRef(12, 2): dropped}
-    out = running_text(pages, roles, known)
-    # Never kept: a running head repeated on other pages, a page number, a scrap, noise,
-    # though each follows an open sentence.
-    for ref in [SourceRef(n, 0) for n in (11, 12, 13)] + [
-        SourceRef(10, 3),
-        SourceRef(11, 3),
-        SourceRef(12, 2),
-        SourceRef(12, 3),
-    ]:
-        assert out[ref] == roles[ref], ref
-    # Kept, flagged by its role: a line continuing the sentence across the page turn,
-    # and one opening with a quotation mark.
-    assert out[SourceRef(11, 1)] == LineRole("artifact", 0.4, KEEP_BODY_AT, "running-text")
-    assert out[SourceRef(11, 2)].p_body == KEEP_BODY_AT
-    assert roles[SourceRef(11, 1)] is dropped  # the input is not changed
-
-
-def test_a_one_word_line_of_speech_at_a_pages_foot_is_kept():
-    from roboscriptorium.roles import KEEP_BODY_AT, LineRole, running_text
-
-    # The word list, like the real one, doesn't know a word with its quote attached.
-    def known(w):
-        return w in {"Gamma", "Het", "zou", "niemand", "meer", "uitmaken"}
-
-    lines = [
-        Line("Het zou niemand meer uitmaken.", 20, 20, 280, 30),
-        Line("‘Gamma.’", 20, 35, 60, 45),
-    ]
-    pages = [PageText(30, 300, 600, lines)]
-    roles = {SourceRef(30, 1): LineRole("artifact", 0.4, 0.2)}
-    assert running_text(pages, roles, known)[SourceRef(30, 1)].p_body == KEEP_BODY_AT
 
 
 def test_a_wordy_line_called_a_page_number_above_a_heading_is_its_label(tmp_path):

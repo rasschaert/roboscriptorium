@@ -8,8 +8,6 @@ lines anywhere, go to a decision model with their position and neighbours.
 import hashlib
 import json
 import re
-import statistics
-from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -305,7 +303,6 @@ def classify(
             if r.role == "chapter_heading"
         }
         roles.update({SourceRef(page.number, i): r for i, r in page_roles.items()})
-    _numeral_slots(pages, roles, repeated)
     return roles
 
 
@@ -323,51 +320,6 @@ def _heading_label(page: PageText, i: int, page_roles: dict[int, LineRole]) -> b
         and not bare_numeral(text)
         and not garbled(page.lines[i])
     )
-
-
-# The book's numerals heading their pages ("3", "IV") must number at least this many
-# for their place and size to mark a misread one.
-NUMERAL_SLOT_MIN = 2
-# A line opening its page in a numeral heading's place is boxed within this share of
-# their median height, and no wider than this many times the widest of them.
-NUMERAL_SLOT_HEIGHT = 0.1
-NUMERAL_SLOT_WIDTH = 2.0
-
-
-def _numeral_slots(
-    pages: list[PageText], roles: dict[SourceRef, LineRole], repeated: dict[SourceRef, int]
-) -> None:
-    """A line dropped at the top of a page, centred and boxed like the book's numerals
-    heading their pages, is a numeral the text layer misread ("l" for 1, "UH" for 11).
-
-    It becomes a heading, so the OCR check reads its crop and fixes or asks about it.
-    """
-    numerals = [
-        p.lines[0]
-        for p in pages
-        if p.lines
-        and roles.get(SourceRef(p.number, 0), LineRole("body", 0, 1)).role == "chapter_heading"
-        and (digits(p.lines[0].text.strip()) or bare_numeral(p.lines[0].text))
-    ]
-    if len(numerals) < NUMERAL_SLOT_MIN:
-        return
-    height = statistics.median(ln.y1 - ln.y0 for ln in numerals)
-    width = max(ln.x1 - ln.x0 for ln in numerals)
-    for page in pages:
-        ref = SourceRef(page.number, 0)
-        role = roles.get(ref)
-        if len(page.lines) < 2 or _is_body(role) or role.role == "chapter_heading":
-            continue
-        line = page.lines[0]
-        full, _ = geometry(page)
-        if (
-            abs(line.y1 - line.y0 - height) <= NUMERAL_SLOT_HEIGHT * height
-            and line.x1 - line.x0 <= NUMERAL_SLOT_WIDTH * width
-            and centred_on_page(line, page, full)
-            and _is_body(roles.get(SourceRef(page.number, 1)))
-            and repeated.get(ref, 0) < HEADING_MAX_REPEATS
-        ):
-            roles[ref] = LineRole("chapter_heading", role.confidence, 0.0, "numeral-slot")
 
 
 def _heading_styles(
@@ -431,55 +383,6 @@ def _subtitles(page: PageText, page_roles: dict[int, LineRole], offset: int | No
             and not printed_page_number(page.lines[i].text, page, offset)
         ):
             page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0, "subtitle")
-
-
-# A line ends a sentence on a stop or a closing mark; anything else leaves it open.
-_ENDS = re.compile(r"[.!?…:;][’'”\"»)]*$|[’”»]$")
-_OPENING_QUOTES = ("‘", "“", "„", "«")
-_LETTER = re.compile(r"[^\W\d_]")
-
-
-def _reads_as_text(text: str, known: Callable[[str], bool]) -> bool:
-    """Words, not a scrap or noise: at least three letters a token, two words or one of
-    five letters, and half of them in the word list ("Eh", "SL" and "cles ee a in" fail)."""
-    tokens = text.split()
-    if not tokens or sum(len(_LETTER.findall(t)) for t in tokens) < 3 * len(tokens):
-        return False
-    # A closing quote stays on its word ("‘Gamma.’" → "Gamma’") unless stripped.
-    words = [
-        w for t in tokens if len(_LETTER.findall(w := re.sub(r"[^\w'’-]", "", t).strip("'’"))) >= 2
-    ]
-    if not (len(words) >= 2 or (words and len(_LETTER.findall(words[0])) >= 5)):
-        return False
-    return sum(map(known, words)) * 2 >= len(words)
-
-
-def running_text(
-    pages: list[PageText], roles: dict[SourceRef, LineRole], known: Callable[[str], bool]
-) -> dict[SourceRef, LineRole]:
-    """A copy of `roles` keeping as text, and flagged, a dropped line that reads as running
-    text: it continues a sentence the last text line left open, or opens with a quotation
-    mark, and its words are no page furniture repeated on other pages. Over the tuning
-    books, 22 such lines were body and 3 not (`experiments/probe_continuations.py`):
-    a first line under a page turn called a running head, a short last line an artifact."""
-    out = dict(roles)
-    repeats = Repeats(pages)
-    last = ""
-    for page in pages:
-        for i, line in enumerate(page.lines):
-            ref = SourceRef(page.number, i)
-            role = roles.get(ref)
-            text = line.text.strip()
-            if _is_body(role):
-                last = text
-                continue
-            if role.role == "chapter_heading" or garbled(line) or not _reads_as_text(text, known):
-                continue
-            if repeats.other_pages(text, page.number):
-                continue
-            if (last and not _ENDS.search(last)) or text.startswith(_OPENING_QUOTES):
-                out[ref] = LineRole(role.role, role.confidence, KEEP_BODY_AT, "running-text")
-    return out
 
 
 def with_role(
