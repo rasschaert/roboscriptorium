@@ -153,6 +153,10 @@ don't yet give at a price worth the reviewer's time.
 
 ## 2. Stella, the target book
 
+- [x] Stella's errors estimated against Claude's reading (2026-10-16): 4 wrong words in
+      67 pages before review, 2 asked; 6 questions. Unasked: two words joined after a
+      tight f ("grofwerk", "trofik")
+
 - [ ] **user** reads the EPUB through, noting each error with a few words around it; no spot-check (the read covers every page). Each noted error is fixed as an answer and checked against the build's suspects: was it asked, settled wrongly, or never a suspect ("Errors no question asks about"): what the bench can't see
       (layout, italics, front matter)
 
@@ -192,7 +196,7 @@ In this order:
 
 - [x] De eerlijke vinder's unasked errors (2026-10-15): 28 of 38 were page numbers the
       layer joins to a body line; split off (`pdf._apart`), wrong words 0.88 → 0.42 a page
-      on the short test; the full bench runs tonight as the regression guard
+      on the short test; `bench tuning` 0.32 → 0.30 after review, no book worse
 
 ## 6. Structure
 
