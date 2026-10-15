@@ -335,3 +335,28 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-14 | trust data, het-ijzige-land, page readers (trial of tonight's chain) | 11 | 3 | 0 |
 | 2026-10-14 | probe: whole-page reading by qwen3.8:27b-mxfp8 against nvfp4, 19 pages | 19 | 7 | 0 |
 | 2026-10-14 | trust data, doodskleed, page readers (trial of tonight's chain) | 10 | 3 | 0 |
+| 2026-10-15 | page readers read ahead, tuning and validation books | 1000 | 404 | 0 |
+| 2026-10-15 | trust data, goede-dochter--ia-scan, page readers | 91 | 12 | 0 |
+| 2026-10-15 | trust data, vals-alarm--ia-scan, page readers | 50 | 3 | 0 |
+| 2026-10-15 | trust data, the-nature-of-a-crime--doubleday-1924, page readers | 94 | 2 | 0 |
+| 2026-10-15 | trust data, the-story-of-doctor-dolittle--stokes-1920, page readers | 180 | 4 | 0 |
+| 2026-10-15 | trust data, reis-om-mijn-schedel--ia-scan, page readers | 89 | 6 | 0 |
+| 2026-10-15 | trust data, afscheid-van-verspilde-tijd--ia-scan, page readers | 62 | 5 | 0 |
+| 2026-10-15 | trust data, metro-2033--ia-scan, page readers | 86 | 4 | 0 |
+| 2026-10-15 | trust data, de-cipier--ia-scan, page readers | 25 | 2 | 0 |
+| 2026-10-15 | trust data, artemis--ia-scan, page readers | 22 | 0 | 0 |
+| 2026-10-15 | trust data, de-tuin-van-de-avondnevel--ia-scan, page readers | 19 | 3 | 0 |
+| 2026-10-15 | trust data, de-eerlijke-vinder--ia-scan, page readers | 84 | 7 | 0 |
+| 2026-10-15 | trust data, youre-never-weird-on-the-internet--ia-scan, page readers | 14 | 2 | 0 |
+| 2026-10-15 | trust data, the-thief-takers-apprentice--ia-scan, page readers | 16 | 0 | 0 |
+| 2026-10-15 | trust data, het-heft-in-eigen-hand--ia-scan, page readers | 25 | 3 | 0 |
+| 2026-10-15 | trust data, de-kerk-van-de-dode-meisjes--ia-scan, page readers | 17 | 1 | 0 |
+| 2026-10-15 | trust data, vuurspel--ia-scan, page readers | 21 | 3 | 0 |
+| 2026-10-15 | trust data, monterosso-mon-amour--ia-scan, page readers | 88 | 11 | 0 |
+| 2026-10-15 | train arbiter after the rebuild | 0 | 4 | 0 |
+| 2026-10-15 | bench tuning after the rebuild, page readers | 838 | 2 | 0 |
+| 2026-10-15 | bench validation, page readers | 790 | 48 | 0 |
+| 2026-10-15 | probe: reader ablation with the page readers | 0 | 7 | 0 |
+| 2026-10-15 | probe: page kinds by clef-flash, the hand-labelled set | 1034 | 0 | 1 |
+| 2026-10-15 | tryout reader ornith-1.5:9b, reader set v2 | 850 | 6 | 1 |
+| 2026-10-15 | tryout reader ornith-1.5:35b, reader set v2 | 850 | 7 | 0 |

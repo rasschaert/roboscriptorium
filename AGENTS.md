@@ -85,6 +85,12 @@ get renumbered. Don't add a file to this table without a job no other file has.
   model reading a whole page, a model doing a stage's job, a stage left out. The
   checklist keeps the list ("Assumptions to test"); work through it between fixes, and
   pause a long run for it (runs resume).
+- **Check every input before queuing a run, not a sample.** The user's compute time is
+  scarce; a run that fails on an input costs its whole slot. Before a run goes into a
+  queue, check without models that everything it reads exists for every item it will
+  touch (each book's scan and caches, each model pulled), and that books retired since
+  a set was made are left out. A test on one book tests that book only: the page-kinds
+  probe passed on Monterosso and failed overnight on 11/22/63, retired two days before.
 - **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.

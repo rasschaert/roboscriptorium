@@ -82,6 +82,11 @@ def main() -> None:
     if "--books" in sys.argv:
         only = set(sys.argv[sys.argv.index("--books") + 1].split(","))
     labels = json.loads(Path("tryouts/page-kinds-v1.json").read_text())["books"]
+    # A retired pair's scan is deleted from work/ (decisions.md); its labels stay valid.
+    gone = [n for n in labels if not (Path("work") / n / "source.pdf").exists()]
+    for name in gone:
+        print(f"skipped {name}: no work/{name}/source.pdf")
+    labels = {n: e for n, e in labels.items() if n not in gone}
     cache_path = Path("work/probes/page-kinds") / f"answers-{model.replace(':', '_')}-{TAG}.json"
     cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
     client = decide.for_model(model, "http://127.0.0.1:11434")
