@@ -5,11 +5,11 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-15 ~09:15, at the end of the session of
 2026-10-14/15 (morning, evening and the night's queue).
 
-## Running now (2026-10-16, night): `experiments/probe_retire_rules.py` in screen `robo-retire-rules`
+## Running now (2026-10-16, from ~02:00): Ex-minnaar's cold build in screen `robo-ex-minnaar`
 
-The night's queue finished (results in docs/decisions.md, 2026-10-16). Now: which
-line-role rules the trees still need, one switched off at a time, no models
-(log `work/runs/retire-rules.log`).
+~5 h (306 min on 2026-10-11), log `work/runs/ex-minnaar-build.log`; its caches went with
+`work/` on 2026-10-11. For the sampled review of 10–20 of its questions (checklist).
+Safe to stop (`experiments/stop-run.sh ex-minnaar`): it resumes from its caches.
 
 ## Before tonight: nothing running. Ollama's context is at 32k.
 
