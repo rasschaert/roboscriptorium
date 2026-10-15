@@ -54,13 +54,15 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
 
 ## Where there is room, by expected gain
 
-0. **Two page readers against the build (measured 2026-10-14, not built).** glm-ocr and
-   Qwen each read every page whole; where they agree against the build (paragraph breaks
-   aside) they point at 60 errors over the tuning books that no question asks, about
-   0.08 of the 0.32 wrong words a page left after review, for ~0.3 more questions a
-   page: line joins (compound hyphens dropped, words glued), page numbers kept,
-   punctuation across a join. The largest single gain in sight; how to build it is the
-   user's call (HANDOVER.md). Reading them is ~18 s a page.
+0. **The page readings where they can reach the gain (readings cached, not built).**
+   glm-ocr and Qwen agreeing against the build point at 60 errors no question asks,
+   about a quarter of what's left after review, mostly at line joins and page numbers.
+   Fed in as two more line readers they reached few of them: `bench tuning` no change
+   (0.32 → 0.32), validation 0.50 → 0.43 after review but worse before it on two books
+   (2026-10-15). What should reach them: a line no page reader reads as a feature of
+   the line-role trees (not text 250 times in 254) and both readers' spelling of a
+   line-end compound for a learned hyphen decision. Every tuning and validation page's
+   two readings are cached, so neither needs a reading run.
 1. **Structure.** The bench now counts paragraph breaks per page and prints headings.
    - Line roles: the trees (`sorter.py`) are on by default since 2026-10-13 (validation
      0.59 → 0.50, no book worse); Dolittle's text wrapped around drawings is what they
@@ -121,6 +123,11 @@ start of a ledger of when a probe is enough.
 ## Tried, and why it didn't help
 
 Don't repeat these without a new reason (details in docs/decisions.md):
+
+- **The page readers as two more line readers for the arbiter** (2026-10-14/15, a night
+  of compute): tuning no change, validation mixed. Split into lines, a page reading
+  can't carry the join errors it catches; the arbiter takes its versions wrongly on
+  unseen books. The readings stay cached for the uses above.
 
 - **Qwen's read prompt.** Five variants (copy exactly, neighbouring lines, both, the
   layer's reading): each fixed as many lines as it broke. Its misreads are visual.

@@ -138,6 +138,11 @@ mistake it prevents; check a change against them before committing.
   feeds them, about a quarter were reachable: the rest sat at line joins (end hyphens,
   page numbers, glued words), where the pipeline's errors cluster. Read the examples,
   then check which of them the planned integration can carry.
+- **When a probe moves where the gain is, change the plan before the long run.** On
+  2026-10-14 two cheap probes showed the page readers' gain sat at line joins and in
+  page numbers, not inside lines; the night still went to the line-reader design they
+  had just shown couldn't reach it (no change on tuning). Before spending a night, ask
+  whether today's findings still point at the run queued yesterday.
 - **Measure on every golden book, not the one you're fixing.** A line-grouping change
   that helped Dolittle doubled Sense's CER.
 - **Shared resources are shared deliberately.** PyMuPDF isn't thread-safe: hold

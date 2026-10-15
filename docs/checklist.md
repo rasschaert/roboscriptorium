@@ -42,19 +42,16 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [x] Build it (the user chose this way, 2026-10-14): `pagereader.py`, two more readers
       for the OCR check behind `ROBO_PAGE_READERS`, the arbiter keeping which readings
       it was trained on
-- [ ] Read the pages and train with them, overnight (`work/runs/chain-20261014.sh`):
-      ~1,000 pages left after the probes' readings were seeded
-      (`experiments/seed_page_readings.py`), read by `experiments/read_pages.py` (glm-ocr
-      9 s, Qwen 15 s a page: ~7 h), the trust data rebuilt apart (`ROBO_TRUST_DATA`),
-      the arbiter retrained (`ROBO_OCR_TRUST_MODEL`), then both warm benches against the
-      baselines (agent, overnight)
-- [ ] If the bench agrees: on by default, the diagram (`docs/pipeline.d2`), README and
-      how-it-works updated (agent, ~30 min)
-- [ ] The page readings where a line can't carry them: a line no page reader has words
-      for as a feature of the line-role trees (250 such lines aren't text, 4 are:
-      `probe_page_unread.py`), and both page readers' spelling of a line-end compound as
-      evidence for a learned hyphen decision (fixes 11, breaks 5 on 40% of the pages:
-      `probe_page_hyphens.py`) (agent, ~half a day each, after the bench)
+- [x] Read the pages and train with them (2026-10-15, a night): `bench tuning` no change
+      0.32 → 0.32, validation 0.50 → 0.43 after review but worse before it on two
+      books; the page readers stay off as line readers
+- [ ] **Next:** a line no page reader has words for as a feature of the line-role
+      trees (250 such lines aren't text, 4 are: `probe_page_unread.py`); the readings
+      are cached for every tuning and validation page, so a warm bench (agent, ~half a
+      day)
+- [ ] Both page readers' spelling of a line-end compound as evidence for a learned
+      hyphen decision (fixes 11, breaks 5 on 40% of the pages; rerun
+      `probe_page_hyphens.py` on all pages first, no models) (agent, ~half a day)
 - [x] Whole-page reading by the bigger build (2026-10-14): `qwen3.8:27b-mxfp8` 65 wrong
       words over 19 pages against the nvfp4's 76, mostly one page; 60% slower; not taken
 - [ ] Whole-page reading with the page before as context, for paragraphs that cross a page
