@@ -119,6 +119,12 @@ start of a ledger of when a probe is enough.
 | Scene breaks | — | unscored | yes |
 | Line roles by trees | role errors 406 → 152 | −0.04 / −0.07, no change; on the longer slices tuning better on breaks, four books better, Thief-Taker 0.47 → 0.97 | off, pending Thief-Taker |
 
+**A ceiling for whole-page reading** (2026-10-15): Claude Opus 5.5 read 17 probe pages
+with one real error, right at every place the pipeline still errs (line joins, drawn
+initials, text around pictures). Whole-page reading is the architecture to aim for; the
+gap is the local readers (Qwen 76 wrong words on the same pages). Rerun the probe on
+each new local vision model.
+
 ## Tried, and why it didn't help
 
 Don't repeat these without a new reason (details in docs/decisions.md):
