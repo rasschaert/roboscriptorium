@@ -45,10 +45,9 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [x] Read the pages and train with them (2026-10-15, a night): `bench tuning` no change
       0.32 → 0.32, validation 0.50 → 0.43 after review but worse before it on two
       books; the page readers stay off as line readers
-- [ ] **Next:** a line no page reader has words for as a feature of the line-role
-      trees (250 such lines aren't text, 4 are: `probe_page_unread.py`); the readings
-      are cached for every tuning and validation page, so a warm bench (agent, ~half a
-      day)
+- [x] ~~A line no page reader has words for as a feature of the line-role trees~~
+      (2026-10-16, dropped): the trees get the unread lines right but for 5 of 657; the
+      line-role mistakes left (49 of 25,555) are on lines both readers read
 - [x] ~~Both page readers' spelling of a line-end compound as evidence for a learned
       hyphen decision~~ (2026-10-15, dropped): with the judge's answers, as the build runs,
       the build is wrong on 19 of 3,184 line-end hyphens; the readers agreeing fix 9 and

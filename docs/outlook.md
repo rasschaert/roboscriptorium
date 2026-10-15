@@ -59,9 +59,8 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
    about a quarter of what's left after review, mostly at line joins and page numbers.
    Fed in as two more line readers they reached few of them: `bench tuning` no change
    (0.32 → 0.32), validation 0.50 → 0.43 after review but worse before it on two books
-   (2026-10-15). What should reach them: a line no page reader reads as a feature of
-   the line-role trees (not text 250 times in 254). Every tuning and validation page's
-   two readings are cached, so it needs no reading run.
+   (2026-10-15). The line-role feature they suggested found little left to fix
+   (2026-10-16: 5 of 657 unread lines wrong), and the hyphen votes were a null too.
 1. **Structure.** The bench now counts paragraph breaks per page and prints headings.
    - Line roles: the trees (`sorter.py`) are on by default since 2026-10-13 (validation
      0.59 → 0.50, no book worse); Dolittle's text wrapped around drawings is what they
@@ -136,6 +135,8 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   of compute): tuning no change, validation mixed. Split into lines, a page reading
   can't carry the join errors it catches; the arbiter takes its versions wrongly on
   unseen books. The readings stay cached for the uses above.
+- **"No page reader reads it" as a line-role feature** (2026-10-16, a probe): the trees
+  already get those lines right but for 5 of 657.
 - **The page readers' spelling of a line-end compound** (2026-10-15, a probe): with the
   hyphen judge in, the build is wrong on 19 of 3,184 line-end hyphens; the readers
   agreeing fix 9 and break about 6. Too few to build on.
