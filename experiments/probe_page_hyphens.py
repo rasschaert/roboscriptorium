@@ -5,7 +5,8 @@ For each decidable line-end hyphen (`probe_hyphen_breaks.breaks`: the reference 
 the word one way only), the word a page reading aligns to the layer's broken word is a
 vote: hyphen kept or joined, counted only where the reader wrote the word whole on one
 line (glm-ocr mostly keeps the print's line breaks, so its broken words say nothing).
-Each vote is crossed with reflow's call: a vote that would fix a wrong call against one
+Each vote is crossed with reflow's call (with the judge's cached answers on an English
+book, as the build makes it): a vote that would fix a wrong call against one
 that would break a right one.
 
     uv run python experiments/probe_page_hyphens.py <book>[:pages[:chapters]] ...
@@ -19,7 +20,7 @@ from pathlib import Path
 
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium import pagereader, pdf, reflow
+from roboscriptorium import hyphens, pagereader, pdf, reflow
 from roboscriptorium.book import Book
 from roboscriptorium.disagreements import patch
 from roboscriptorium.golden import scoring
@@ -96,12 +97,21 @@ for spec in sys.argv[1:]:
     truth = align(pages, reference)
     seen = reflow.spellings(pages)
     lexicon = Lexicon.load("nld" if book.language == "nl" else "eng")
+    compound = None
+    if hyphens.asked(book.language):
+        cached = folder / "stages" / "compounds.json"
+        answers = json.loads(cached.read_text())["answers"] if cached.exists() else {}
+
+        def compound(stem, rest, context, answers=answers):
+            key = f"{stem}-{rest}".lower()
+            tally["all", "judge cached" if key in answers else "judge NOT cached"] += 1
+            return answers.get(key, 0.0) >= 0.5
     readings = {}
     for reader in ("glm-page", "qwen-page"):
         cache = folder / "stages" / f"page-reading-{reader}.json"
         readings[reader] = json.loads(cache.read_text())["pages"] if cache.exists() else {}
     for page, i, text, nxt, stem, rest, printed in breaks(pages, truth, vocab):
-        joined = reflow.join(text, nxt, seen, lexicon.knows)
+        joined = reflow.join(text, nxt, seen, lexicon.knows, compound)
         word = joined[len(text) - len(text.split()[-1]) :].split()[0]
         reflow_right = (core(word) == f"{stem}-{rest}") == printed
         votes = {}

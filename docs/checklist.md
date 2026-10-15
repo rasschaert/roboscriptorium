@@ -49,9 +49,10 @@ models could do. Each probe below asks whether that's still true, on a few golde
       trees (250 such lines aren't text, 4 are: `probe_page_unread.py`); the readings
       are cached for every tuning and validation page, so a warm bench (agent, ~half a
       day)
-- [ ] Both page readers' spelling of a line-end compound as evidence for a learned
-      hyphen decision (fixes 11, breaks 5 on 40% of the pages; rerun
-      `probe_page_hyphens.py` on all pages first, no models) (agent, ~half a day)
+- [x] ~~Both page readers' spelling of a line-end compound as evidence for a learned
+      hyphen decision~~ (2026-10-15, dropped): with the judge's answers, as the build runs,
+      the build is wrong on 19 of 3,184 line-end hyphens; the readers agreeing fix 9 and
+      break about 6, under the bench's noise
 - [x] Whole-page reading by the bigger build (2026-10-14): `qwen3.8:27b-mxfp8` 65 wrong
       words over 19 pages against the nvfp4's 76, mostly one page; 60% slower; not taken
 - [ ] Whole-page reading with the page before as context, for paragraphs that cross a page
