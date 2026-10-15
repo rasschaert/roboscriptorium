@@ -34,7 +34,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `book.py`: a book directory (`work/<book>/`) and its `book.toml`.
 - `pdf.py`: reads the PDF text layer as visual lines with boxes; renders pages. An
   image-only PDF, given the book's language, is read by tesseract instead
-  (`first_reading`), its words grouped into lines as an OCR layer's are.
+  (`first_reading`), its words grouped into lines as an OCR layer's are. A bare
+  number far from the rest of its line becomes a line of its own (`_apart`).
 - `page.py`: what a page's layout says without a model, shared by roles,
   flags and reflow: geometry, edge lines, text repeated across pages, sunk
   pages, printed page numbers, heading labels and numerals, garbled lines.

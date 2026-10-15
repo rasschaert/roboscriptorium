@@ -26,6 +26,20 @@ against 0.20%, bare-word 0.57% against 0.44%, unplaced lines 2.4% against 2.7%. 
 extra errors are mostly quote marks (a `’` dropped 83 times), which qwen3.8 reads best;
 whether the OCR check closes the gap is not measured yet.
 
+**A number printed apart from its line is a line of its own** (`pdf._apart`). Some
+layers join a page number in the outer margin to the body line at its height ("16
+Daarna stapte hij op"), so no stage sees a page number: De eerlijke vinder kept 28 of
+them in its text, 28 of its 38 errors no question asked about, six inside a word broken
+across the page ("moes- 15 ten"). A bare number more than 1.5 line heights from the
+rest of its line is split off in front of it, and the line roles judge it as any other
+line; a word space or a heading's own number ("Chapter 3") is far closer. Only beside a
+line of at least 0.8 of the page's full width: split off a running head ("Puddleby
+… 5"), the title left alone read as a chapter heading on 33 Dolittle pages and its
+paragraph breaks went from 0.39 to 0.68 wrong a page. On the bench slices it splits De
+eerlijke vinder's 31 page numbers beside full lines (wrong words 0.88 → 0.42 a page,
+unasked 0.59 → 0.16) and a few specks read as digits; three numbers beside a short
+last line stay joined.
+
 ## OCR check
 
 **Several readings that fail differently.** A reading only helps where it is

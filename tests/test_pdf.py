@@ -71,3 +71,46 @@ def test_ascenders_descenders_and_superscripts_still_join_their_line():
         pdf.Line("next", 40, 116, 70, 128),
     ]
     assert [ln.text for ln in pdf._visual_lines(words)] == ["Then gypsy 1 hold", "next"]
+
+
+def test_a_page_number_beside_a_line_is_a_line_of_its_own():
+    words = [
+        pdf.Line("16", 6, 30, 15, 40),  # in the margin, at the first line's height
+        pdf.Line("Daarna stapte hij op", 34, 29, 278, 42),
+        pdf.Line("netjes in de schappen moes-", 34, 44, 250, 55),
+        pdf.Line("15", 274, 44, 283, 54),
+        pdf.Line("ten worden.", 34, 58, 120, 69),
+    ]
+    assert [ln.text for ln in pdf._visual_lines(words)] == [
+        "16",
+        "Daarna stapte hij op",
+        "15",
+        "netjes in de schappen moes-",
+        "ten worden.",
+    ]
+
+
+def test_a_number_inside_the_text_or_close_to_it_stays_in_its_line():
+    words = [
+        pdf.Line("In", 40, 100, 52, 112),
+        pdf.Line("1924", 56, 100, 84, 112),  # a word space away
+        pdf.Line("he left", 88, 100, 130, 112),
+        pdf.Line("Chapter", 40, 120, 90, 132),
+        pdf.Line("3", 94, 120, 100, 132),  # a heading's own number
+        pdf.Line("next", 40, 140, 70, 152),
+    ]
+    assert [ln.text for ln in pdf._visual_lines(words)] == [
+        "In 1924 he left",
+        "Chapter 3",
+        "next",
+    ]
+
+
+def test_a_running_head_keeps_its_page_number():
+    words = [
+        pdf.Line("THE STORY OF DOCTOR DOLITTLE", 80, 10, 220, 20),
+        pdf.Line("23", 270, 10, 280, 20),
+        pdf.Line("The Doctor went into the garden and he", 34, 30, 278, 41),
+        pdf.Line("sat down under the tree to think it over.", 34, 44, 276, 55),
+    ]
+    assert [ln.text for ln in pdf._visual_lines(words)][0] == "THE STORY OF DOCTOR DOLITTLE 23"

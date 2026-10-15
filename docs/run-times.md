@@ -361,3 +361,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-15 | tryout reader ornith-1.5:9b, reader set v2 | 850 | 6 | 1 |
 | 2026-10-15 | tryout reader ornith-1.5:35b, reader set v2 | 850 | 7 | 0 |
 | 2026-10-15 | bench tuning, cold A/A rerun, resumed (32k context) | 790 | 201 | 0 |
+| 2026-10-15 | bench tuning, page numbers apart from their line (text layer v7) | 790 | 1 | 1 |
+| 2026-10-15 | bench tuning, page numbers apart from their line (text layer v7) | 790 | 64 | 0 |

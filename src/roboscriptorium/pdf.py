@@ -26,11 +26,17 @@ SAME_LINE_OVERLAP = 0.5
 # A line's first glyph this many times taller than the rest is a large initial
 # (a drop cap): its height says nothing about which printed line the text is on.
 INITIAL_HEIGHT = 1.6
+# A number this many line heights from the rest of its line is printed apart from it (a
+# page number in the margin beside the first line); the layer may still join them. It is
+# split off only beside a line this share of the page's full width: a running head keeps
+# its number, as the roles expect.
+NUMBER_APART = 1.5
+NUMBER_BESIDE_FULL = 0.8
 # PyMuPDF isn't thread-safe. A program that uses it from several threads (the
 # review server) holds this lock around every use.
 PDF_LOCK = threading.Lock()
 # Bumped whenever line extraction changes, so cached text layers are rebuilt.
-TEXT_LAYER_VERSION = 6
+TEXT_LAYER_VERSION = 8
 # Ligatures a font may put in the Unicode private-use area, where the text layer
 # then holds a code that means nothing outside that font.
 PRIVATE_LIGATURES = {"ff", "fi", "fl", "ffi", "ffl", "fj", "ft", "st", "ct", "Th", "ch", "ck", "tt"}
@@ -90,13 +96,15 @@ def _visual_lines(
     """Merge fragments that share a baseline, ordered top to bottom.
 
     `cores` is each fragment's vertical span without a large initial, which is what
-    decides its line; the lines' boxes still hold the whole fragments.
+    decides its line; the lines' boxes still hold the whole fragments. A bare number far
+    from the text line it is joined to becomes a line of its own, just before it (`_apart`).
     """
     if cores is None:
         cores = [(f.y0, f.y1) for f in fragments]
     if not cores:
         return []
-    tall = INITIAL_HEIGHT * statistics.median(y1 - y0 for y0, y1 in cores)
+    height = statistics.median(y1 - y0 for y0, y1 in cores)
+    tall = INITIAL_HEIGHT * height
     merged: list[list[tuple[Line, tuple[float, float]]]] = []
     order = sorted(zip(fragments, cores, strict=True), key=lambda fc: (sum(fc[1]) / 2, fc[0].x0))
     for frag, (y0, y1) in order:
@@ -111,19 +119,40 @@ def _visual_lines(
                 merged[-1].append((frag, (y0, y1)))
                 continue
         merged.append([(frag, (y0, y1))])
+    groups = [sorted((f for f, _ in members), key=lambda f: f.x0) for members in merged]
+    rests = [_apart(g, NUMBER_APART * height)[-1] for g in groups]
+    widths = sorted(r[-1].x1 - r[0].x0 for r in rests)
+    full = NUMBER_BESIDE_FULL * widths[int(0.9 * (len(widths) - 1))]
     lines = []
-    for members in merged:
-        group = sorted((f for f, _ in members), key=lambda f: f.x0)
-        lines.append(
-            Line(
-                text=" ".join(f.text for f in group),
-                x0=group[0].x0,
-                y0=min(f.y0 for f in group),
-                x1=group[-1].x1,
-                y1=max(f.y1 for f in group),
+    for group in groups:
+        parts = _apart(group, NUMBER_APART * height)
+        beside_text = parts[-1][-1].x1 - parts[-1][0].x0 >= full
+        for part in parts if beside_text else [group]:
+            lines.append(
+                Line(
+                    text=" ".join(f.text for f in part),
+                    x0=part[0].x0,
+                    y0=min(f.y0 for f in part),
+                    x1=part[-1].x1,
+                    y1=max(f.y1 for f in part),
+                )
             )
-        )
     return lines
+
+
+def _apart(group: list[Line], gap: float) -> list[list[Line]]:
+    """One line's fragments, left to right, with a bare number at either end more than
+    `gap` from its neighbour split off in front."""
+    numbers = []
+    for end, inner in ((0, 1), (-1, -2)):
+        if len(group) < 2:
+            break
+        edge, near = group[end], group[inner]
+        if edge.text.strip(".,").isascii() and edge.text.strip(".,").isdigit():
+            if (near.x0 - edge.x1 if end == 0 else edge.x0 - near.x1) > gap:
+                numbers.append([edge])
+                group = group[1:] if end == 0 else group[:-1]
+    return [*numbers, group]
 
 
 def lines_digest(page: PageText) -> str:

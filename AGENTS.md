@@ -94,6 +94,11 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.
+- **The shortest test that answers the question** (the user, 2026-10-15). Whether an
+  idea or fix works is shown on the pages it touches (a targeted build of those pages,
+  their errors fixed against broken), in minutes, not by a full bench. The full bench
+  guards against regressions elsewhere: run it once a change has passed its short test,
+  several changes batched, cold ones overnight.
 - **Decide upstream changes on the frozen sets; the bench confirms.** A change upstream
   of the stage caches (a prompt, a crop, a model, the arbiter) invalidates them, so a
   bench of it runs cold for hours. Choose it on the frozen line sets
@@ -353,6 +358,13 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
   job started another way).
 - Ollama 0.40.3 at `http://127.0.0.1:11434` (scores before 2026-10-06 were on 0.35.1).
+  **Stay on 0.40.3:** 0.40.4 refuses `winnow-ollama:e4b` ("a format that is no longer
+  supported"): since ollama/ollama#18917 a decision model needs llama.cpp's decision
+  metadata (`decision.type`) in the GGUF itself, which `CAPABILITY decision` in a
+  Modelfile can't add. Keep the app's automatic updates off until winnow's makers
+  publish such a GGUF or ollama/ollama#18882 (migrating old GGUFs on load) ships. `clef-flash:9b` was pulled again on 2026-10-15
+  (digest `0a2a05d6`): it answers the cached line-role questions as the old build did
+  (`experiments/probe_decider_drift.py`).
   Context length 32k in the app's settings since 2026-10-13 (the user), for glm-ocr reading
   whole pages: llama.cpp's four slots share the context, so 8k left each request ~2k, too
   little for a page. 128k only held memory for KV caches; readings are the same either way. `OLLAMA_NUM_PARALLEL=4`, set with `launchctl setenv`
