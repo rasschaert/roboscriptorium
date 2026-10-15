@@ -5,14 +5,11 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-15 ~09:15, at the end of the session of
 2026-10-14/15 (morning, evening and the night's queue).
 
-## Running tonight (2026-10-15/16): `work/runs/queue-20261015.sh` in screen `robo-queue`
+## Running now (2026-10-16, night): `experiments/probe_retire_rules.py` in screen `robo-retire-rules`
 
-Started ~23:55, log `work/runs/queue-20261015.txt`. In order: `bench validation` and
-`bench tuning` as the regression guard for the page-number split (text layer v8, commit
-e386ee2; its short test already passed), then Stella's cold build (~75 min) for the
-comparison with Claude's whole-page reading of its 67 body pages
-(`work/probes/claude-stella/readings/`, notes on doubtful places in `notes.txt`).
-Ollama is back on 0.40.3 (0.40.4 breaks winnow: AGENTS.md, Environment).
+The night's queue finished (results in docs/decisions.md, 2026-10-16). Now: which
+line-role rules the trees still need, one switched off at a time, no models
+(log `work/runs/retire-rules.log`).
 
 ## Before tonight: nothing running. Ollama's context is at 32k.
 
