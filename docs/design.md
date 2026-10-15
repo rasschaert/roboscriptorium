@@ -569,7 +569,10 @@ typed in, text the layer lacks) gets only the quote check.
 ## Measuring
 
 - **`bench`, not single runs.** Warm caches replay themselves, so reruns agree;
-  the noise is which pages a book happens to have. Runs are compared page by
+  the noise is which pages a book happens to have. Rebuilding every cache cold moves
+  `bench tuning` by 0.01 a page at most (A/A, 2026-10-15: 0.32 → 0.33 after review
+  [+0.00, +0.01], no book apart), so a change upstream of the caches needs no wider
+  margin than a warm one. Runs are compared page by
   page, with one primary test ("after review" averaged over the set's books, each
   weighing the same, at the low, mean and high slip rate; pooling pages would let
   the three longest books, 78% of the pages, decide) and a veto when a book alone

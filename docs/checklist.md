@@ -71,8 +71,8 @@ models could do. Each probe below asks whether that's still true, on a few golde
 The user, 2026-10-13: the review's bug fixes come first, then its bench and structure
 steps; building Ex-minnaar and Stella has no urgency. The findings are in decisions.md.
 
-- [ ] One cold A/A rerun of `bench tuning` overnight, for the noise floor when caches
-      change (overnight)
+- [x] One cold A/A rerun of `bench tuning` (2026-10-15): 0.32 → 0.33 after review
+      [+0.00, +0.01], no book apart; rebuilding the caches moves the score 0.01 at most
 - [ ] Book-wide statistics (repeats for line roles, type, line height for missing lines)
       measured on the whole body, not the slice, as the dash and ellipsis already are;
       roles' caches change, so a cold-ish bench (agent, ~1 h plus an overnight run)
