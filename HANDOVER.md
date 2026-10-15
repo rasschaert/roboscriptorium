@@ -5,74 +5,24 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-14 ~12:00, during the session of 2026-10-14
 morning (until ~13:00).
 
-## Running: tonight's chain (`page-readers`), resumed 2026-10-14 20:27 on a 140 W charger
+## The night of 2026-10-14/15: what came of it
 
-First chunk 2026-10-14 16:00–16:32, stopped for the battery (100% → 52% on a low-power
-charger; the user can't give it one long stretch). Read so far: Goede dochter and Vals
-alarm in full; glm-ocr 461 pages, Qwen 428 in all, about 900 a reader left. Pace: glm-ocr
-~3 s a page (four at once), Qwen ~17 s: about 200 pages an hour, ~4.5 h of reading
-left, then 1–2 h of trust data, then the benches. Resume (every step skips finished
-work), on a full charger or overnight:
-`experiments/detached.sh page-readers work/runs/chain-20261014.sh`; stop with
-`experiments/stop-run.sh page-readers`. Progress: `work/runs/read-pages.log`, then
-`work/probes/ocr-trust-page/runs/progress.txt`. Ollama's context is at 32k.
+Results in docs/decisions.md (2026-10-15). The page readers as two more line readers:
+`bench tuning` no change, validation better after review but worse before it on two
+books; they stay off. Mostly the wrong run: the evening's probes had already shown the
+gain sits at line joins and page numbers, which the line split can't carry (AGENTS.md
+now has a rule for that). What it left: both page readings of every tuning and
+validation page, cached in `stages/page-reading-*.json`. Tesseract adds nothing once the
+page readers are in. ornith-1.5 rejected as a reader. The page-kinds probe failed on a
+retired book (fixed, not rerun: the user has no compute for it now).
 
+## Running: `robo-queue`'s last step, the cold A/A (since 05:33, ~to 09:30)
 
-Qwen's bigger build (mxfp8) read the probe's 19 pages: no clear gain (65 wrong words
-against 76, mostly one page), 60% slower; the page reader stays on the nvfp4.
-The trial of tonight's chain on Het ijzige land and Doodskleed ran clean (3 min each):
-their trust data with the page readers is in `work/probes/ocr-trust-page/` (the chain
-skips them); Het ijzige land has 70 suspects against 56 without them, 14 raised by the
-page readers alone. The trainer fits the wider features on them; its leave-out and
-calibration steps need more than two books, so `--save` was not tried end to end.
+It swaps the warm caches back when it ends or is stopped (`experiments/stop-run.sh
+queue`). When it ends, record its paired verdict as the noise floor.
 
-## Built, to run tonight: the page readers as two more readers for the arbiter
-
-`pagereader.py` (committed, tests through `pipeline.run`): glm-ocr and Qwen read each
-body page whole, cached in `stages/page-reading-{glm,qwen}-page.json`; each reading is
-split back into the layer's lines and joins the OCR check as the readers `glm-page` and
-`qwen-page`. **Off** (`ROBO_PAGE_READERS=0`) until an arbiter trained with them wins the
-bench; the arbiter now records which readers it weighs, and a build whose page readers
-don't match its arbiter stops. The probes' readings are seeded into the warm stage
-caches (`experiments/seed_page_readings.py`, ~350 pages a reader).
-
-**Tonight's chain** (`work/runs/chain-20261014.sh`, nothing in it touches the current
-arbiter or trust data): read the ~1,000 pages left (`experiments/read_pages.py`; glm-ocr
-9 s, Qwen 15 s a page, ~5–7 h), rebuild the trust data with the page readers into
-`work/probes/ocr-trust-page/`, train `work/models/ocr-trust-page.pkl`, then `bench
-tuning` and `bench validation` against the 2026-10-13 baselines. Start it with
-
-```sh
-experiments/detached.sh page-readers work/runs/chain-20261014.sh
-```
-
-Then: if both benches agree, the page readers go on by default and the diagram, README
-and how-it-works follow (checklist). Expect much less than the probe's 60: of the 40 it lists only about 9
-sit within a line; line-end hyphens, page numbers and joins can't be carried (design.md,
-"Page readers"); those need the page reading in `hyphens.py` and the line-role trees.
-
-## Queued: `robo-queue`, behind the chain, short jobs first
-
-At 23:35, after a stretch in Low Power Mode: Qwen 921 pages read, ~670 left; reading done
-~03:00, the chain ~05:00–05:30, then the queue: ablation ~05:40, page kinds ~06:50,
-ornith ~08:15, the cold A/A after.
-
-`work/runs/queue-20261014.sh` waits for `robo-page-readers`, then runs, each even if one
-before it failed, a line each in `work/runs/queue-20261014.txt`:
-
-1. the reader ablation with the page readers (`probe_reader_ablation.py`, ~10 min, no
-   models; `work/runs/ablation.log`): can Qwen's page reading stand in for its line
-   reading? Without page readers every line reader earns its place (decisions.md);
-2. page kinds by clef-flash on the 1,034 hand-labelled pages, for `init`
-   (`probe_page_kinds_model.py`, ~70 min; Monterosso alone 24 of 28 right);
-3. ornith-1.5:9b, then :35b if pulled (the user pulled them: vision, Qwen
-   architecture), `tryout.py run reader` on reader set v2 (~20 min, ~1 h). Ten lines of
-   the 9b beside the chain: 5 right, two whole lines read as one mark ("‘", ","),
-   straight quotes despite the style prompt, ~1 s a line. Record the verdict in
-   docs/models.md, both questions (replace a reader, or add one);
-4. the cold A/A below (~4 h), only if the chain finished. It swaps the cold caches into
-   `stages/` and back when it ends **or is stopped** (`experiments/stop-run.sh queue`;
-   tested on dummy folders). Stopped, it resumes another night from the books built.
+**Next:** the line-role trees with "no page reader read this line" as a feature, on
+the cached readings (checklist).
 
 ## Paused: the cold A/A tuning bench (the noise floor when caches change)
 
