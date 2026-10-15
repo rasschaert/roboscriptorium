@@ -45,6 +45,10 @@ and validation page are cached in `stages/page-reading-{glm,qwen}-page.json`.
 
 ## Next, in order
 
+**Ask the user at the start of the session** which cache set the 16 tuning books keep:
+the warm one in `stages/` only, or the cold one in `stages.cold/` too (and whether the
+unused Ollama models listed under "Waiting on the user" can go).
+
 1. **The line-role trees with "no page reader read this line" as a feature**, on the
    cached readings: a warm bench (checklist, "Assumptions to test").
 2. Both page readers' spelling of a line-end compound in a learned hyphen decision
