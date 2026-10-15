@@ -481,8 +481,53 @@ def test_only_a_crop_cut_short_is_read_again(monkeypatch, tmp_path):
         cache = sub / "third-reading.json"
         ocrcheck.line_readings(sub / "source.pdf", pages, checked, "m", "", cache, "Read.")
         blob = json.loads(cache.read_text())
-        cut = [k for k in blob["lines"] if k.count(":") == 4]
+        cut = [k for k in blob["lines"] if k.count(":") == 3]
         assert bool(cut) == first_line_read_again
+
+
+def test_a_line_inserted_above_leaves_the_readings_below_in_place(monkeypatch, tmp_path):
+    reads = []
+    monkeypatch.setattr(ocrcheck, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
+    doc, boxes = _page_of(tmp_path, 30)
+    pages = pdf.read_text_layer(tmp_path / "source.pdf")
+    cache = tmp_path / "third-reading.json"
+    checked = {SourceRef(1, k) for k in range(len(pages[0].lines))}
+    ocrcheck.line_readings(tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
+    reads.clear()
+    # A page number split off in the margin, in front of the first line.
+    first = pages[0].lines[0]
+    number = Line("16", 2, first.y0, 8, first.y1)
+    moved = [PageText(1, pages[0].width, pages[0].height, [number, *pages[0].lines])]
+    checked = {SourceRef(1, k) for k in range(1, len(moved[0].lines))}
+    ocrcheck.line_readings(tmp_path / "source.pdf", moved, checked, "m", "", cache, "Read.")
+    assert reads == []
+
+
+def test_a_cache_keyed_on_line_positions_is_converted_whole(monkeypatch, tmp_path):
+    reads = []
+    monkeypatch.setattr(ocrcheck, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
+    doc, boxes = _page_of(tmp_path, 30)
+    pages = pdf.read_text_layer(tmp_path / "source.pdf")
+    cache = tmp_path / "third-reading.json"
+    checked = {SourceRef(1, k) for k in range(len(pages[0].lines))}
+    ocrcheck.line_readings(tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
+    blob = json.loads(cache.read_text())
+    old = {}
+    for key, text in blob["lines"].items():
+        page, rest = key.split(":", 1)
+        k = next(
+            i
+            for i in range(len(pages[0].lines))
+            if ocrcheck.line_key(
+                pages[0], ocrcheck.line_boxes(pymupdf.open(tmp_path / "source.pdf")[0], pages[0]), i
+            )
+            == key
+        )
+        old[f"{page}:{k}:{rest}"] = text
+    cache.write_text(json.dumps({**blob, "version": 2, "lines": old}))
+    reads.clear()
+    got = ocrcheck.line_readings(tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
+    assert reads == [] and set(got.values()) == {"r"}
 
 
 def test_readings_by_another_prompt_are_kept_aside_and_come_back(monkeypatch, tmp_path):

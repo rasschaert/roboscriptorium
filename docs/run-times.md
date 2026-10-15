@@ -363,3 +363,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-15 | bench tuning, cold A/A rerun, resumed (32k context) | 790 | 201 | 0 |
 | 2026-10-15 | bench tuning, page numbers apart from their line (text layer v7) | 790 | 1 | 1 |
 | 2026-10-15 | bench tuning, page numbers apart from their line (text layer v7) | 790 | 64 | 0 |
+| 2026-10-15 | bench validation, page numbers split beside full lines (text layer v8) | 790 | 4 | 0 |
+| 2026-10-15 | bench tuning, page numbers split beside full lines (text layer v8) | 790 | 5 | 0 |
+| 2026-10-16 | build stella, cold (text layer v8) | 67 | 50 | 0 |
+| 2026-10-16 | bench tuning, readings keyed without line positions (reading cache v3) | 790 | 2 | 0 |

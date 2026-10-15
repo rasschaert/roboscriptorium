@@ -40,7 +40,9 @@ from roboscriptorium.reflow import HYPHENS
 from roboscriptorium.roles import DecisionCache
 
 DPI = 300
-READING_VERSION = 2
+# Readings are keyed on a line's page, text and box (`line_key`); version 2 keys also held
+# its position on the page, and are converted on load (`_current`).
+READING_VERSION = 3
 READ_WORKERS = 4
 # A hosted model serves many requests at once.
 HOSTED_WORKERS = 16
@@ -148,26 +150,44 @@ def _readings(cache: Path, model: str, prompt: str) -> dict | None:
     back from it when asked for again (a slice and its whole book may differ)."""
     if not cache.exists():
         return None
-    raw = json.loads(cache.read_text())
-    if raw.get("version") != READING_VERSION:
+    raw = _current(json.loads(cache.read_text()))
+    if raw is None:
         return None
     if raw.get("model") == model and raw.get("prompt", "") == prompt:
         return raw
-    write_atomic(_shelf(cache, raw.get("model", ""), raw.get("prompt", "")), cache.read_text())
+    shelved = _shelf(cache, raw.get("model", ""), raw.get("prompt", ""))
+    write_atomic(shelved, json.dumps(raw, ensure_ascii=False))
     shelf = _shelf(cache, model, prompt)
     if shelf.exists():
-        kept = json.loads(shelf.read_text())
-        if kept.get("version") == READING_VERSION:
-            return kept
+        return _current(json.loads(shelf.read_text()))
     return None
 
 
+def _current(raw: dict) -> dict | None:
+    """A readings cache in the current format: a version 2 one with its keys' line
+    positions taken out, anything older None."""
+    if raw.get("version") == READING_VERSION:
+        return raw
+    if raw.get("version") != 2:
+        return None
+
+    def key(old: str) -> str:
+        page, _, rest = old.split(":", 2)
+        return f"{page}:{rest}"
+
+    out = {**raw, "version": READING_VERSION, "lines": {key(k): v for k, v in raw["lines"].items()}}
+    if "via" in raw:
+        out["via"] = {m: [key(k) for k in keys] for m, keys in raw["via"].items()}
+    return out
+
+
 def line_key(page: PageText, boxes: list, k: int) -> str:
-    """The key a line's reading is cached under: the line's text and box, and the crop's
-    span where a neighbour cuts it short, so a crop that changes is read again."""
+    """The key a line's reading is cached under: its page, text and box, and the crop's
+    span where a neighbour cuts it short, so a crop that changes is read again. Not its
+    position: a line inserted above it leaves its reading in place."""
     box = boxes[k]
     text = hashlib.sha1(page.lines[k].text.encode()).hexdigest()[:10]
-    out = f"{page.number}:{k}:{text}:" + ",".join(f"{v:.0f}" for v in box)
+    out = f"{page.number}:{text}:" + ",".join(f"{v:.0f}" for v in box)
     top, bottom = crop_span(boxes, k)
     if (top, bottom) != (box[1] - LINE_PAD, box[3] + LINE_PAD):
         out += f":{top:.1f}-{bottom:.1f}"
