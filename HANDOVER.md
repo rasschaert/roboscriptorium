@@ -5,7 +5,16 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-15 ~09:15, at the end of the session of
 2026-10-14/15 (morning, evening and the night's queue).
 
-## Nothing running. Ollama's context is at 32k.
+## Running tonight (2026-10-15/16): `work/runs/queue-20261015.sh` in screen `robo-queue`
+
+Started ~23:55, log `work/runs/queue-20261015.txt`. In order: `bench validation` and
+`bench tuning` as the regression guard for the page-number split (text layer v8, commit
+e386ee2; its short test already passed), then Stella's cold build (~75 min) for the
+comparison with Claude's whole-page reading of its 67 body pages
+(`work/probes/claude-stella/readings/`, notes on doubtful places in `notes.txt`).
+Ollama is back on 0.40.3 (0.40.4 breaks winnow: AGENTS.md, Environment).
+
+## Before tonight: nothing running. Ollama's context is at 32k.
 
 **The caches:** warm in `work/<book>/stages/`, as every build expects. The 16 tuning
 books (`work/runs/tuning-books.txt`) also keep a cold set in `stages.cold/`, from the
