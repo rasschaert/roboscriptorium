@@ -269,19 +269,23 @@ function textBlock(r, doubt) {
     return `<div class="question">${prompt}</div>${before}
       <textarea id="text" rows="${Math.min(16, draft.text.split("\n").length + 1)}">${esc(draft.text)}</textarea>${charPad()}${after}`;
   }
-  const base = central(r.readings.map(g => g.text));
+  const texts = r.readings.map(g => g.text);
+  const base = central(texts);
+  // The base reading is marked against the reading nearest it, so what only it has shows
+  // on it, not only as a lack on the others.
+  const near = nearest(texts, base);
   const parts = placeParts(r);
   const rows = r.readings.map((g, k) => {
     const who = g.votes.join(" · ");
     const text = parts
-      ? parts.before + (k === base ? esc(parts.mids[k]) : marked(parts.mids[k], parts.mids[base])) + parts.after
-      : k === base ? esc(g.text) : marked(g.text, r.readings[base].text);
+      ? parts.before + marked(parts.mids[k], parts.mids[k === base ? near : base]) + parts.after
+      : marked(g.text, texts[k === base ? near : base]);
     return `<label class="option reading-option ${draft.reading === k ? "on" : ""} ${k === base ? "base" : ""}"><input type="radio" name="reading" value="${k}" ${draft.reading === k ? "checked" : ""}>
       <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${text}<span class="who">${esc(who)}</span></span>
       <span class="from" data-k="${k}" title="Edit from this reading">✎</span></label>`;
   }).join("");
   return `<div class="question">Which reading matches the scan?</div>
-    <div class="legend">Marked where a reading differs from reading ${READING_KEYS[base]}, the one the others are closest to:
+    <div class="legend">Marked where a reading differs from reading ${READING_KEYS[base]}, the one the others are closest to, and ${READING_KEYS[base]} where it differs from ${READING_KEYS[near]}:
       <span><mark class="has">x</mark> only this one has it</span>
       <span><mark class="lacks">x</mark> this one lacks it</span>
       <span><mark class="swap">x</mark> this one has something else</span>
@@ -443,6 +447,16 @@ function lcs(a, b) {
 function central(texts) {
   const cost = texts.map(a => texts.reduce((sum, b) => sum + a.length + b.length - 2 * lcs(a, b)[0][0], 0));
   return cost.indexOf(Math.min(...cost));
+}
+
+// The reading nearest reading k, other than k.
+function nearest(texts, k) {
+  let best = -1, cost = Infinity;
+  texts.forEach((t, j) => {
+    const c = j === k ? Infinity : t.length + texts[k].length - 2 * lcs(t, texts[k])[0][0];
+    if (c < cost) { best = j; cost = c; }
+  });
+  return best;
 }
 
 // `text` with every place it differs from `base` marked: what only it has, what it
