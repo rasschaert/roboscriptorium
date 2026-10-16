@@ -73,9 +73,9 @@ What Ex-minnaar's first review questions showed. The user reviews only after the
 
 - [x] Elision spaces (2026-10-16): our curling made glm's "nog 's" an opening ‘; now ’.
       Ex-minnaar glued elisions 9 → 3, apostrophe-only doubts 40 → 25; benches no change
-- [ ] Small capitals read in lower case ("Citroën xm" for XM, the section titles): find
-      them on the scan (letter heights against the line's x-height), set them as capitals
-      in the text; Ex-minnaar uses them throughout (agent, ~half a day)
+- [x] ~~Small capitals read in lower case~~ (2026-10-16, dropped): cut at x-height in
+      Ex-minnaar, and already read as capitals but for three "xm"; a reader hint for every
+      book breaks more than it fixes
 - [x] One OCR question per line (2026-10-16): whole-line options from every source,
       "Something else" from any option; benches better, questions fewer
 - [ ] Then sample Ex-minnaar's questions again and hand its review back to the user
