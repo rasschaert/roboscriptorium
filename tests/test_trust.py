@@ -176,3 +176,31 @@ def test_a_books_answers_join_its_substitution_table_and_unsettled_ones_dont():
     assert adapted.pairs["'e'→'c'"] == (4, 23)
     assert base.pairs["'e'→'c'"] == (1, 20)  # the arbiter itself is left as it was
     assert trust.with_answers(base, []).pairs == base.pairs
+
+
+def test_a_change_its_readers_were_right_about_in_the_books_answers_settles_its_questions():
+    def accent(ours: str, other: str, tess: bool) -> Suspect:
+        return Suspect(
+            3, 0, f"zat {ours} daar", 4, 4 + len(ours), ours, (other,), (0, 0, 1, 1), "review",
+            votes={"vision": other, "text": ours}, confidence={"vision": 0.5, "text": 0.5},
+            support={"glm": (True, False), "tess": (False, tess)},
+        )  # fmt: skip
+
+    answered = [accent("niet", "níet", True) for _ in range(5)]
+    rows = trust.rows_from(answered, {(3, 0, 4): "zat níet daar"})
+    buckets = trust.book_buckets(rows)
+    assert buckets[("accent", ("tess",))] == (5, 5)
+    asked = accent("wie", "wíe", True)
+    kept = replace(asked, choice="ours")
+    alone = accent("wie", "wíe", False)  # no reader reads the accent: another bucket
+    out = trust.by_book([asked, kept, alone], buckets, 0.8)
+    assert [(s.choice, s.chosen) for s in out] == [
+        ("other", "wíe"),
+        ("ours", None),
+        ("review", None),
+    ]
+    # Four answers are too few; and a change of "letters" never settles, however often right.
+    assert trust.by_book([asked], trust.book_buckets(rows[:4]), 0.8)[0].choice == "review"
+    letters = replace(accent("cen", "een", True))
+    many = trust.rows_from([letters] * 9, {(3, 0, 4): "zat een daar"})
+    assert trust.by_book([letters], trust.book_buckets(many), 0.8)[0].choice == "review"

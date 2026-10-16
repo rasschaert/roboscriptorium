@@ -208,6 +208,10 @@ def run(
                 own = trust.rows_from(suspects, corrections.answered(answers, suspects))
                 model = trust.with_answers(model, own)
                 suspects = trust.decide(suspects, model, budget, settings.ocr_ask_below)
+                # A change its readers have been right about in the book's answers is
+                # taken where it is asked again.
+                buckets = trust.book_buckets(own)
+                suspects = trust.by_book(suspects, buckets, settings.ocr_ask_below)
                 decider = f"trust {trust.fingerprint(path)}"
                 if settled := sum(r["settled"] for r in own):
                     decider += f", {settled} of the book's answers"

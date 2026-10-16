@@ -189,7 +189,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   in `third-reading.<hash>.json` and come back when asked for). Where a line's readings differ, clef picks from
   the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence. The learned trust
   (`trust.py`, on by default) then fixes, keeps or asks, its substitution table
-  extended with the book's own answers (`corrections.answered`, `trust.with_answers`). The fixed rule
+  extended with the book's own answers (`corrections.answered`, `trust.with_answers`);
+  an asked place whose kind of change its readers were reliably right about in those
+  answers is decided (`trust.book_buckets`, `by_book`). The fixed rule
   (`ROBO_OCR_TRUST=0`, `_choose`) applies a version when both judges pick it with clef
   ≥ 0.3 (`SURE`), or clef alone picks it with ≥ 0.5 (`SURE_ALONE`) where the versions
   differ only in punctuation, dashes or spacing; anything else becomes an `ocr-doubt`

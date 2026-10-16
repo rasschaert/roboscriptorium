@@ -34,6 +34,12 @@ MIN_BOOKS = 2
 # How many golden suspects one of a book's own answered suspects counts as in its
 # substitution table (`with_answers`).
 ANSWER_WEIGHT = 3
+# How many of a book's answers a kind of change, read by the same readers, needs before
+# they settle its other places (`by_book`).
+BUCKET_MIN = 5
+# The kinds of change whose answers settle other places: each one change of one sort.
+# "letters" holds every other change, too unlike each other to stand for one another.
+SETTLING = ("accent", "space", "case", "quote")
 READINGS = ("glm", "tess", "qwen")
 # The page readers' readings (`pagereader.py`), when a build makes them.
 PAGE_READINGS = ("glm-page", "qwen-page")
@@ -47,6 +53,7 @@ def width(readings: tuple[str, ...] = READINGS) -> int:
 
 FEATURES = width()
 QUOTES = "'\"‘’“”"
+_NO_QUOTES = str.maketrans("", "", QUOTES + "„")
 
 # Per substitution (`pair`): how often the version making it was the print, and how
 # often it was seen, over the training suspects.
@@ -145,6 +152,68 @@ def with_answers(trust: Trust, rows: list[dict], weight: int = ANSWER_WEIGHT) ->
             a, n = pairs.get(key, (0, 0))
             pairs[key] = (a + weight * int(r["right"][k]), n + weight)
     return replace(trust, pairs=pairs)
+
+
+def kind(ours: str, other: str) -> str:
+    """What a version changes in the layer's: "accent", "space", "case", "quote" (marks
+    only) or "letters"."""
+    if _plain(ours) == _plain(other):
+        return "accent"
+    if ours.replace(" ", "") == other.replace(" ", ""):
+        return "space"
+    if ours.lower() == other.lower():
+        return "case"
+    if ours.translate(_NO_QUOTES) == other.translate(_NO_QUOTES):
+        return "quote"
+    return "letters"
+
+
+def _bucket(s: dict, k: int) -> tuple[str, tuple[str, ...]]:
+    """Version k of a suspect (as `asdict` has it) by kind of change and its readers."""
+    support = s["support"]
+    readers = tuple(r for r in sorted(support) if support[r] and support[r][k])
+    return kind(s["ours"], ([s["ours"], *s["others"]])[k]), readers
+
+
+def book_buckets(rows: list[dict]) -> dict[tuple, tuple[int, int]]:
+    """Per kind of change and the readers reading it, how often a book's answers said the
+    version was the print: (right, seen), over its settled answered suspects."""
+    out: dict[tuple, list[int]] = defaultdict(lambda: [0, 0])
+    for r in rows:
+        if not r["settled"]:
+            continue
+        for k in range(1, 1 + len(r["suspect"]["others"])):
+            b = out[_bucket(r["suspect"], k)]
+            b[0] += r["right"][k]
+            b[1] += 1
+    return {key: (a, n) for key, (a, n) in out.items()}
+
+
+def by_book(
+    suspects: list[Suspect], buckets: dict[tuple, tuple[int, int]], below: float
+) -> list[Suspect]:
+    """Copies of the suspects with the asked ones the book's answers settle decided: a
+    version whose kind of change, read by the same readers, the book's reviewer found
+    the print in `BUCKET_MIN` answers or more, with a chance of `below` or more
+    (Laplace-smoothed), for the kinds in `SETTLING`. The rest are as they came."""
+    out = []
+    for s in suspects:
+        if s.choice != "review":
+            out.append(s)
+            continue
+        d = asdict(s)
+        chance = {}
+        for k in range(1, 1 + len(s.others)):
+            key = _bucket(d, k)
+            a, n = buckets.get(key, (0, 0))
+            if key[0] in SETTLING and n >= BUCKET_MIN and (a + 1) / (n + 2) >= below:
+                chance[k] = (a + 1) / (n + 2)
+        if not chance or unseen(s):
+            out.append(s)
+        else:
+            best = max(chance, key=chance.get)
+            out.append(replace(s, choice="other", chosen=s.others[best - 1]))
+    return out
 
 
 def pairs_table(suspects: list[Suspect], right: list[list[bool]], books: list[str]) -> Pairs:
