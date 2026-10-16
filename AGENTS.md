@@ -441,10 +441,10 @@ http://127.0.0.1:8765/ next to scan crops. Each region asks what it is (radio bu
 `1` running text, `2` heading, `3` drop, `4` image, `5` caption, `6` decorated initial,
 with its letter guessed from the word it begins), with the pipeline's call preselected,
 and takes the text as printed in a text box. Where OCR readings differ it asks which one
-matches the scan instead: each reading on its own row, the differing part marked, with
-the models that picked it (`a`, `b`, …; `e` for something else); a question about one
-place shows the rest of its line with the places already corrected underlined and those
-asked in their own question dashed. One Save button (`↵`;
+matches the scan instead, once per line: the whole line as the text layer, each reader
+and each judge has it, the likeliest at each place and as built, each on its own row with
+the differing parts marked and who has it (`a`, `b`, …; `e` for something else, starting
+from the option chosen, or from any option with its ✎). One Save button (`↵`;
 `⌘↵` in the text box) records the answer and moves to the next unanswered region; a
 typed line that matches none of the readings, or a straight quote in a curly-quoted
 book, is queried once and saved on the second Save (`review.doubtful`; warned answers in

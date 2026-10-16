@@ -899,5 +899,81 @@ def doubts(suspects: list[Suspect]) -> list[Doubt]:
     return out
 
 
+# The second readings' names in `Suspect.support`, as the review shows them.
+READER_NAMES = {"glm": "glm-ocr", "qwen": "Qwen", "tess": "tesseract"}
+
+
+def line_doubts(suspects: list[Suspect]) -> list[Doubt]:
+    """A question per line a human should settle, however many places in it are in
+    doubt: the whole line as the text layer reads it, as each reader and each judge has
+    it at every doubtful place, with each place as most models read it, and as the build
+    has it, alike ones merged. A line
+    ending in a break hyphen keeps its own last word, not the one read across the break.
+    """
+    by_line: dict[tuple[int, int], list[Suspect]] = {}
+    for s in suspects:
+        by_line.setdefault((s.page, s.line), []).append(s)
+    out = []
+    for (page, line), here in sorted(by_line.items()):
+        if not any(s.choice == "review" for s in here):
+            continue
+        readers = dict.fromkeys(n for s in here for n in s.support)
+        judges = dict.fromkeys(m for s in here for m in s.votes)
+        # Where a source has no say, its line is as built.
+        built = [s.chosen if s.choice == "other" else s.ours for s in here]
+        sources = [("text layer", [s.ours for s in here])]
+        sources += [
+            (READER_NAMES.get(n, n), [_read_by(s, n, b) for s, b in zip(here, built, strict=True)])
+            for n in readers
+        ]
+        sources += [
+            (m, [s.votes.get(m) or b for s, b in zip(here, built, strict=True)]) for m in judges
+        ]
+        # Each doubtful place as most models read it: the line no single reader may have.
+        sources.append(
+            (
+                "likeliest",
+                [
+                    _likeliest(s) if s.choice == "review" else b
+                    for s, b in zip(here, built, strict=True)
+                ],
+            )
+        )
+        sources.append(("as built", built))
+        readings: list[tuple[str, list[str]]] = []
+        for label, versions in sources:
+            text = _with_versions(here, versions)
+            known = next((r for r in readings if r[0] == text), None)
+            if known is None:
+                readings.append((text, [label]))
+            elif label not in known[1]:
+                known[1].append(label)
+        if len(readings) < 2:
+            continue
+        boxes = [s.box for s in here]
+        box = (
+            min(b[0] for b in boxes),
+            min(b[1] for b in boxes),
+            max(b[2] for b in boxes),
+            max(b[3] for b in boxes),
+        )
+        out.append(Doubt(page, line, here[0].original, 0, len(here[0].original), box, readings))
+    return out
+
+
+def _read_by(s: Suspect, reader: str, otherwise: str) -> str:
+    """The version of a suspect `reader` reads, `otherwise` where it reads none."""
+    reads = s.support.get(reader, ())
+    return next((v for v, r in zip([s.ours, *s.others], reads, strict=False) if r), otherwise)
+
+
+def _with_versions(here: list[Suspect], versions: list[str]) -> str:
+    """The line with each suspect's span set to its version (one suspect each)."""
+    text = here[0].original
+    for s, v in sorted(zip(here, versions, strict=True), key=lambda sv: -sv[0].start):
+        text = text[: s.start] + v + text[s.end :]
+    return text
+
+
 def save(suspects: list[Suspect], path: Path) -> None:
     write_atomic(path, json.dumps([asdict(s) for s in suspects], ensure_ascii=False, indent=1))

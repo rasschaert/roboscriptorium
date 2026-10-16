@@ -68,7 +68,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         stages.pages,
         stages.model_roles,
         regions,
-        ocrcheck.doubts(stages.suspects),
+        ocrcheck.line_doubts(stages.suspects),
         stages.quote_lines,
         stages.quote_readings,
         stages.faint_pages,

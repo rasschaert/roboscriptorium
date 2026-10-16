@@ -41,6 +41,8 @@ main { max-width: 980px; margin: 0 auto; padding: 16px; }
 .option input { margin: 0; }
 .reading-option .reading { flex: 1; font: 18px/1.45 Georgia, "Iowan Old Style", serif; }
 .option .votes { margin-left: auto; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.option .from { margin-left: 10px; padding: 0 6px; font-size: 13px; color: var(--muted); border: 1px solid transparent; border-radius: 4px; cursor: pointer; }
+.option .from:hover { color: var(--fg, inherit); border-color: var(--muted); }
 input.letter { font: 24px Georgia, serif; width: 2.2em; text-align: center; padding: 2px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
 .saverow { display: flex; gap: 12px; align-items: center; margin-top: 14px; }
 button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; padding: 9px 22px; }
@@ -152,6 +154,8 @@ function startDraft(r) {
     reading: !doubt ? null : chosen == null ? null : r.readings.findIndex(g => g.text === chosen),
     text: a && a.text != null && a.action !== "initial" ? a.text : (r.draft || r.text || ""),
     letter: a && a.action === "initial" ? (a.text || "") : "",
+    // The human's own typed text, which choosing another reading never overwrites.
+    typed: !!(doubt && a && a.text != null && !r.readings.some(g => g.text === a.text)),
   };
 }
 
@@ -218,6 +222,9 @@ function render() {
   </div>`;
   main.querySelectorAll("input[name=kind]").forEach(b => b.onchange = () => setKind(b.value));
   main.querySelectorAll("input[name=reading]").forEach(b => b.onchange = () => setReading(+b.value));
+  main.querySelectorAll(".from").forEach(b => b.onclick = e => {
+    e.preventDefault(); e.stopPropagation(); editFrom(+b.dataset.k);
+  });
   document.getElementById("save").onclick = save;
   document.getElementById("zoomOut").onclick = () => zoom(1);
   document.getElementById("zoomIn").onclick = () => zoom(-1);
@@ -228,7 +235,7 @@ function render() {
     document.getElementById("reread").onclick = reread;
   }
   const box = textBox();
-  if (box) box.oninput = () => { draft.text = box.value; draft.confirm = false; refreshSave(); };
+  if (box) box.oninput = () => { draft.text = box.value; draft.typed = true; draft.confirm = false; refreshSave(); };
   main.querySelectorAll(".pad button").forEach(b => {
     b.onmousedown = e => e.preventDefault();  // keep the cursor in the text box
     b.onclick = () => insertChar(PAD[+b.dataset.k][0]);
@@ -262,7 +269,7 @@ function textBlock(r, doubt) {
       : k === base ? esc(g.text) : marked(g.text, r.readings[base].text);
     return `<label class="option reading-option ${draft.reading === k ? "on" : ""} ${k === base ? "base" : ""}"><input type="radio" name="reading" value="${k}" ${draft.reading === k ? "checked" : ""}>
       <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${text}</span>
-      <span class="votes">${esc(who)}</span></label>`;
+      <span class="votes">${esc(who)}</span><span class="from" data-k="${k}" title="Edit from this reading">✎</span></label>`;
   }).join("");
   return `<div class="question">Which reading matches the scan?</div>
     <div class="legend">Marked where a reading differs from reading ${READING_KEYS[base]}, the one the others are closest to:
@@ -357,10 +364,27 @@ function setKind(kind) {
 }
 
 function setReading(k) {
+  const r = queue[pos];
+  // "Something else" starts from the reading chosen before it, or the one the others are
+  // closest to, unless the human has already typed their own.
+  if (k === -1 && !draft.typed && r.readings && r.readings.length) {
+    const from = draft.reading >= 0 ? draft.reading : central(r.readings.map(g => g.text));
+    draft.text = r.readings[from].text;
+  }
   draft.reading = k;
   draft.confirm = false;
   render();
   if (k === -1) textBox()?.focus();
+}
+
+// "Something else", starting from reading k.
+function editFrom(k) {
+  draft.text = queue[pos].readings[k].text;
+  draft.typed = false;
+  draft.reading = -1;
+  draft.confirm = false;
+  render();
+  textBox()?.focus();
 }
 
 // Keys for the readings; e (something else), o (read again) and r (turn) are taken.

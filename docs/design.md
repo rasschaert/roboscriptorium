@@ -188,9 +188,17 @@ the trees are of a suspect's likeliest version to how often it was the print
 time, 0.9 95%), and the bench saw no change (tuning 0.56 → 0.57, validation 0.80 → 0.80,
 2026-10-09); its worth is that 0.8 means four in five after the next retrain too.
 
-**Doubts are asked per place, not per line.** Two wrong places in one line, each
-fixed by a different reading, left no right option, and the reviewer then typed
-the line and added an error.
+**Doubts are asked per line** (the user, 2026-10-16: "you ask me what the line says …
+don't ask me twice"). One question per line, however many places in it are in doubt;
+its options are the whole line as the text layer reads it, as each reader and each
+judge has it, with each place as most models read it ("likeliest"), and as built
+(`ocrcheck.line_doubts`); the answer is the line. Asked per place before, a line with
+two places got two questions, and a line where each place was right in a different
+reading had no right option, so the reviewer typed it and added an error: the
+"likeliest" line combines them, and "Something else" starts from any option (✎) rather
+than from the text layer. A line question catches any error on its line, the whole line
+being in front of the reviewer. Benched: tuning 0.29 → 0.29 [−0.01, −0.00], validation
+0.51 → 0.49 [−0.03, −0.01], questions 1,106 → 1,082, no book worse.
 
 **A washed-out page is one question, from the scan's contrast** (`faint.py`). Some
 scans have pages too faint to read (Afscheid 9, 11/22/63 13, Grand Hotel Europa 9), yet
@@ -611,10 +619,8 @@ typed in, text the layer lacks) gets only the quote check.
   for `’`, Dolittle 541 words, every book some). A measure of its own, not yet in the
   verdict.
 - **A question catches the error at its place.** A question about one place in a line
-  counted any error on its line as caught, though the reviewer looks at the marked
-  place: Reis 0.08 of its 0.24 wrong words after review, Metro 0.09 of 0.34. It now
-  catches an error only when they share a word (an error of no words, a lost dash, still
-  by line).
+  catches an error only when they share a word; a question about a whole line (the OCR
+  doubts since 2026-10-16) catches any error on it.
 - **A typed washed-out page is a question per line.** Counted as one question, its
   three hundred typed words cost one answer's slips: Afscheid 0.25 after review where it
   is 0.64.

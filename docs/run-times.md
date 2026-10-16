@@ -380,3 +380,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | bench validation, elisions curled as apostrophes in the OCR check | 790 | 2 | 0 |
 | 2026-10-16 | bench tuning, a ’ before an elision's short word is an apostrophe | 790 | 2 | 0 |
 | 2026-10-16 | bench validation, a ’ before an elision's short word is an apostrophe | 790 | 1 | 0 |
+| 2026-10-16 | bench tuning, one OCR question per line | 790 | 2 | 0 |
+| 2026-10-16 | bench validation, one OCR question per line | 790 | 2 | 0 |

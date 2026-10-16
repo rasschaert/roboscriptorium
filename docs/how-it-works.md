@@ -315,7 +315,7 @@ local web page.
 
 `flags.py` collects what the reviewer should look at:
 
-- the suspects the arbiter chose to ask about, one question per place;
+- the lines where the arbiter left a suspect for a human, one question per line;
 - headings;
 - lines the sorter dropped, or kept without being sure;
 - garbled text;

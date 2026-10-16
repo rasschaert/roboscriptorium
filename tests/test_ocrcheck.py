@@ -2,7 +2,8 @@ import json
 
 import pymupdf
 
-from roboscriptorium import flags, ocrcheck, pdf
+from roboscriptorium import corrections, flags, ocrcheck, pdf
+from roboscriptorium.corrections import Corrections
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.ocrcheck import Suspect, differences
 from roboscriptorium.pdf import Line, PageText
@@ -689,3 +690,52 @@ def test_a_readers_straight_elision_is_curled_as_an_apostrophe_not_a_quote():
     assert ocrcheck._curled("nog 's opdrachten") == "nog ’s opdrachten"
     assert ocrcheck._curled("'Wil je 'm 's de") == "‘Wil je ’m ’s de"
     assert ocrcheck._curled("zei hij, 'kom hier'") == "zei hij, ‘kom hier’"
+
+
+def _line_with_two_places() -> tuple[PageText, list[Suspect]]:
+    original = "een Citroén xm en een Mazda mx5"
+    page = PageText(15, 400, 600, [Line(original, 10, 10, 300, 20)])
+    fixed = Suspect(
+        15, 0, original, 4, 11, "Citroén", ("Citroën",), (40, 10, 90, 20), "other", "Citroën",
+        {"clef:27b": "Citroën"}, support={"glm": (False, True), "qwen": (False, True)},
+    )  # fmt: skip
+    first = Suspect(
+        15, 0, original, 12, 14, "xm", ("xM",), (90, 10, 110, 20), "review", None,
+        {"clef:27b": "xM", "winnow-ollama:e4b": "xm"},
+        support={"glm": (False, True), "qwen": (True, False)},
+    )  # fmt: skip
+    second = Suspect(
+        15, 0, original, 28, 31, "mx5", ("MX5",), (250, 10, 290, 20), "review", None,
+        {"clef:27b": "MX5"}, support={"glm": (True, False), "qwen": (False, True)},
+    )  # fmt: skip
+    return page, [fixed, first, second]
+
+
+def test_a_line_with_two_doubtful_places_is_one_question_of_whole_lines():
+    page, suspects = _line_with_two_places()
+    (question,) = flags.find([page], {}, None, ocrcheck.line_doubts(suspects))
+    assert question.span is None
+    texts = {r["text"]: r["votes"] for r in question.readings}
+    assert texts["een Citroén xm en een Mazda mx5"] == ["text layer"]
+    assert texts["een Citroën xM en een Mazda mx5"] == ["glm-ocr"]
+    assert texts["een Citroën xm en een Mazda MX5"] == ["Qwen", "likeliest"]
+    assert texts["een Citroën xM en een Mazda MX5"] == ["clef:27b"]
+    assert "as built" in texts["een Citroën xm en een Mazda mx5"]
+
+
+def test_a_line_question_counts_an_answer_given_about_a_place_in_it(tmp_path):
+    page, suspects = _line_with_two_places()
+    per_place = flags.find([page], {}, None, ocrcheck.doubts(suspects))[0]
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(per_place, "text", "een Citroën XM en een Mazda mx5")
+    (question,) = flags.find([page], {}, None, ocrcheck.line_doubts(suspects))
+    assert Corrections(tmp_path / "regions.jsonl").for_flag(question) is not None
+
+
+def test_choosing_the_text_layers_line_keeps_it_over_the_fixes(tmp_path):
+    page, suspects = _line_with_two_places()
+    (question,) = flags.find([page], {}, None, ocrcheck.line_doubts(suspects))
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(question, "text", page.lines[0].text)
+    out, _, _ = corrections.apply([page], {}, Corrections(tmp_path / "regions.jsonl"), suspects)
+    assert out[0].lines[0].text == "een Citroén xm en een Mazda mx5"

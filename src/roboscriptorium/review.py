@@ -387,7 +387,7 @@ class RegionReview:
             # Around sideways text the neighbouring lines are scraps too.
             context = "rotated" not in f.reasons
             item = asdict(f)
-            if item["readings"]:
+            if item["readings"] and "text layer" not in item["readings"][0]["votes"]:
                 first = item["readings"][0]
                 item["readings"][0] = {**first, "votes": ["text layer", *first["votes"]]}
             items.append(

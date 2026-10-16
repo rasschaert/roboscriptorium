@@ -203,7 +203,9 @@ def _reasons(
 
 
 def _doubt(page: PageText, d: Doubt, roles: dict[SourceRef, LineRole]) -> Flag:
-    """The question about one place in a line: its readings as whole lines, its crop the place."""
+    """The question about a line's readings: its versions as whole lines, its crop the
+    places in doubt. One about the whole line (`ocrcheck.line_doubts`) has no span: its
+    answer is the line."""
     return Flag(
         region_key(page.number, f"{d.original}\n{d.start}:{d.end}"),
         page.number,
@@ -214,7 +216,7 @@ def _doubt(page: PageText, d: Doubt, roles: dict[SourceRef, LineRole]) -> Flag:
         ["ocr-doubt"],
         d.box,
         [{"text": text, "votes": list(votes)} for text, votes in d.readings],
-        (d.start, d.end),
+        None if (d.start, d.end) == (0, len(d.original)) else (d.start, d.end),
         d.joined,
         list(d.elsewhere),
     )

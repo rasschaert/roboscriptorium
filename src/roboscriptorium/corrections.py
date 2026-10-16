@@ -81,6 +81,9 @@ class Corrections:
             raise KeyError(action)
         if turn not in (0, 90, 180, 270):
             raise KeyError(f"turn {turn}")
+        # A line's readings answered with the text layer's own line still says what the
+        # line is: kept, so the OCR check's fixes don't change it after all.
+        whole_line = flag.span is None and "ocr-doubt" in flag.reasons and action == "text"
         c = Correction(
             flag.key,
             flag.page,
@@ -88,7 +91,7 @@ class Corrections:
             flag.last,
             flag.text,
             action,
-            text if text and text != flag.text else None,
+            text if text and (text != flag.text or whole_line) else None,
             datetime.now(UTC).isoformat(timespec="seconds"),
             flag.box,
             turn,
@@ -100,10 +103,22 @@ class Corrections:
         return c
 
     def for_flag(self, flag: Flag) -> Correction | None:
-        """The answer to a question: its own, or for a place in a line, an earlier answer
-        that retyped that whole line."""
-        if (c := self.by_key.get(flag.key)) is not None or flag.span is None:
+        """The answer to a question: its own; for a place in a line, an earlier answer
+        that retyped that whole line; for a line's readings, any earlier answer about
+        the line or a place in it (asked before questions were per line)."""
+        if (c := self.by_key.get(flag.key)) is not None:
             return c
+        if flag.span is None and "ocr-doubt" in flag.reasons:
+            return next(
+                (
+                    c
+                    for c in self.by_key.values()
+                    if c.page == flag.page and c.first == flag.first and c.original == flag.text
+                ),
+                None,
+            )
+        if flag.span is None:
+            return None
         return next(
             (
                 c
