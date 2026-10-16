@@ -118,6 +118,11 @@ start of a ledger of when a probe is enough.
 | Scene breaks | — | unscored | yes |
 | Line roles by trees | role errors 406 → 152 | −0.04 / −0.07, no change; on the longer slices tuning better on breaks, four books better, Thief-Taker 0.47 → 0.97 | off, pending Thief-Taker |
 
+**The errors every reading shares** (2026-10-16): three cheap features tried (the word
+list on glued words, tesseract's confidence, accent variants), none separates them; they
+are mostly stress accents and one-offs. The lever is a stronger reader, not a detector
+over today's readings.
+
 **Stella, estimated** (2026-10-16, against Claude's reading): 4 wrong words in 67 pages
 before review, 2 of them asked, 6 questions; quotes, dashes and italics not compared.
 
