@@ -132,6 +132,25 @@ class Corrections:
         )
 
 
+def answered(answers: Corrections, suspects: list) -> dict[tuple, str]:
+    """Per OCR check suspect (page, line, start), the line as a human answered it: a
+    whole line retyped or chosen labels every place in it; an answer about one place,
+    only that place."""
+    out = {}
+    for s in suspects:
+        for c in answers.by_key.values():
+            if c.page != s.page or c.action != "text":
+                continue
+            if c.span is not None:
+                if c.original == s.original and c.span == (s.start, s.end) and place(c) is not None:
+                    out[(s.page, s.line, s.start)] = (
+                        s.original[: s.start] + place(c) + s.original[s.end :]
+                    )
+            elif c.first == c.last == s.line and c.original == s.original:
+                out[(s.page, s.line, s.start)] = c.text if c.text is not None else c.original
+    return out
+
+
 def place(c: Correction) -> str | None:
     """What an answer about one place says is printed there, or None if the human
     changed the line outside it (then the whole line is taken)."""

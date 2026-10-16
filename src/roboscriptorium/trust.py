@@ -16,18 +16,24 @@ import math
 import pickle
 import unicodedata
 from collections import defaultdict
-from dataclasses import dataclass, replace
+from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 
 import numpy as np
+from rapidfuzz.distance import Levenshtein
 
+from roboscriptorium.evaluate import normalise
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ocrcheck import Suspect, _typographic
+from roboscriptorium.reflow import _SPACE_BEFORE_PUNCTUATION
 
 MODEL_VERSION = 6
 # A substitution's prior counts only when the training books that show it number this
 # many: one book's reference conventions must not teach every other book.
 MIN_BOOKS = 2
+# How many golden suspects one of a book's own answered suspects counts as in its
+# substitution table (`with_answers`).
+ANSWER_WEIGHT = 3
 READINGS = ("glm", "tess", "qwen")
 # The page readers' readings (`pagereader.py`), when a build makes them.
 PAGE_READINGS = ("glm-page", "qwen-page")
@@ -93,6 +99,52 @@ def pair(ours: str, other: str) -> str:
         if tag != "equal"
     ]
     return "|".join(parts) or "="
+
+
+def fold(text: str) -> str:
+    """Text compared as the score compares it (`evaluate.normalise`: quote and dash
+    glyphs, ellipses, spaced dots), with what reflow sets anyway folded too: a break
+    hyphen, spaces before punctuation. A space beside a quote mark stays: no stage
+    removes it, so the score counts it ("geweest. ‘" is not "geweest.’")."""
+    return _SPACE_BEFORE_PUNCTUATION.sub(r"\1", normalise(text.replace("¬", "-")))
+
+
+def rows_from(suspects: list, truths: dict[tuple, str]) -> list[dict]:
+    """Each suspect with a true line, its versions labelled by which comes closest to it."""
+    rows = []
+    for s in suspects:
+        if (truth := truths.get((s.page, s.line, s.start))) is None:
+            continue
+        versions = [s.ours, *s.others]
+        lines = [s.original[: s.start] + v + s.original[s.end :] for v in versions]
+        distance = [Levenshtein.distance(fold(line), fold(truth)) for line in lines]
+        best = min(distance)
+        right = [d == best for d in distance]
+        rows.append(
+            {
+                "suspect": asdict(s),
+                "truth": truth,
+                "right": right,
+                "settled": right.count(True) == 1 and best <= max(2, len(s.ours) // 3),
+            }
+        )
+    return rows
+
+
+def with_answers(trust: Trust, rows: list[dict], weight: int = ANSWER_WEIGHT) -> Trust:
+    """The arbiter with a book's answered suspects (`rows_from`, settled ones) counted
+    `weight` times each in its substitution table: a book repeats its own substitutions
+    ("we" → "wc", a stress accent), and its reviewer's answers say how they go there."""
+    pairs = dict(trust.pairs)
+    for r in rows:
+        if not r["settled"]:
+            continue
+        ours = r["suspect"]["ours"]
+        for k, v in enumerate(r["suspect"]["others"], 1):
+            key = pair(ours, v)
+            a, n = pairs.get(key, (0, 0))
+            pairs[key] = (a + weight * int(r["right"][k]), n + weight)
+    return replace(trust, pairs=pairs)
 
 
 def pairs_table(suspects: list[Suspect], right: list[list[bool]], books: list[str]) -> Pairs:

@@ -149,3 +149,22 @@ def test_two_regions_typed_above_one_line_land_in_page_order(tmp_path):
             "Derde regel.",
             "Vierde regel.",
         ]
+
+
+def test_an_answered_line_labels_every_ocr_suspect_in_it_and_no_other_line():
+    from pathlib import Path
+
+    from roboscriptorium import corrections
+    from roboscriptorium.corrections import Correction
+
+    answers = Corrections(Path("/nonexistent") / "regions.jsonl")
+    flag = flags.Flag("k", 4, 2, 2, "Ik dronk m’n we op", "text", ["ocr-doubt"])
+    answers.by_key["k"] = Correction("k", 4, 2, 2, flag.text, "text", "Ik dronk m’n wc op", "now")
+
+    def suspect(line: int, start: int) -> Suspect:
+        return Suspect(
+            4, line, "Ik dronk m’n we op", start, start + 2, "we", ("wc",), (0, 0, 1, 1), "review"
+        )
+
+    got = corrections.answered(answers, [suspect(2, 13), suspect(3, 13)])
+    assert got == {(4, 2, 13): "Ik dronk m’n wc op"}

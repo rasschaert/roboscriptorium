@@ -157,7 +157,10 @@ the prior repeats the label and the trees lean on it: 76 / 48 / 28 at 0.25 / 0.5
 worse than none; with only the suspect's own label left out a signature common in
 its book still looks surer than it will on a new one, 117 / 50 / 31 / 11. What the prior can't know is a signature in no other book: Vals
 alarm loses the full stop before a closing quote 47 times (`word’` for `word.’`), and
-only that book's own answers can teach it (checklist: the book teaches itself). The bench decides whether
+only that book's own answers can teach it: they join its arbiter's table, each counted
+three golden suspects' worth (`trust.with_answers`). Ex-minnaar's answers settle "we" →
+"wc" and its stress accents that way: of its answered suspects, held out a line at a
+time, the arbiter asks 75 → 42 with no more wrong (decisions.md, 2026-10-16). The bench decides whether
 the gain carries into a build. It does: the arbiter retrained with an empty pair table (2026-10-11) is worse on both
 benches, tuning 0.31 → 0.34 and validation 0.70 → 0.73 wrong words a page after review,
 each interval clear of zero. The fixed rule (both judges

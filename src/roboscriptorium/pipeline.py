@@ -204,8 +204,13 @@ def run(
                     )
                 read = len(body) - len(faint_pages)
                 budget = round(settings.ocr_questions_per_page * read)
+                # The book's own answers join the substitution table it decides with.
+                own = trust.rows_from(suspects, corrections.answered(answers, suspects))
+                model = trust.with_answers(model, own)
                 suspects = trust.decide(suspects, model, budget, settings.ocr_ask_below)
                 decider = f"trust {trust.fingerprint(path)}"
+                if settled := sum(r["settled"] for r in own):
+                    decider += f", {settled} of the book's answers"
             ocrcheck.save(suspects, book.stages / "ocr-check.json")
         corrected, roles, applied = corrections.apply(body, model_roles, answers, suspects)
     if not suspects:

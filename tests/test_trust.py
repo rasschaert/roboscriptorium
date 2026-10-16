@@ -164,3 +164,15 @@ def test_a_model_trained_with_more_readings_weighs_them_and_loads_with_them(tmp_
     loaded = trust.load(tmp_path / "m.pkl")
     assert loaded.readings == readings
     assert trust.probabilities(loaded, s).shape == (2,)
+
+
+def test_a_books_answers_join_its_substitution_table_and_unsettled_ones_dont():
+    base = trust.Trust(_Model(), {"'e'→'c'": (1, 20)})
+    wc = _suspect("we", "wc", "we", 0.6)
+    rows = trust.rows_from([wc], {(3, 0, 4): "zat wc daar"})
+    assert rows[0]["right"] == [False, True] and rows[0]["settled"]
+    adapted = trust.with_answers(base, rows + [{**rows[0], "settled": False}], weight=3)
+    # One settled answer, counted three times: the table's "e → c" now 4 right of 23.
+    assert adapted.pairs["'e'→'c'"] == (4, 23)
+    assert base.pairs["'e'→'c'"] == (1, 20)  # the arbiter itself is left as it was
+    assert trust.with_answers(base, []).pairs == base.pairs

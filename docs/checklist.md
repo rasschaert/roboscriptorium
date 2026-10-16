@@ -209,12 +209,11 @@ In this order:
 
 ## 4. The reviewer's time
 
-- [ ] The book teaches itself: after the answers, a per-book posterior per substitution
-      pair rescores the unasked suspects; on the review page, one question per pattern
-      (every `|` read as I) applied to all. Simulated again 2026-10-11 on 20 books:
-      silent errors at .25/.5/1 a page 168/106/58 → 159/103/50, nearly all in De kerk
-      (36/30/23 → 33/27/15) and Vuurspel; tuning books 3 in all. Worth it for a book
-      with its own signature: build it if a user book's review shows one. ~half a day
+- [x] The book teaches itself, first half (2026-10-16): a book's answers join its
+      arbiter's substitution table (`trust.with_answers`); Ex-minnaar's review showed the
+      signature (wc, stress accents, ’s)
+- [ ] The book teaches itself, second half: on the review page, one question per pattern
+      (every "we" read for "wc", every `|` read as I) applied to all its places. ~half a day
 - [ ] A typed answer checked against Qwen's cached reading of the line where the question
       had no readings (headings, missing text). ~1 h
 

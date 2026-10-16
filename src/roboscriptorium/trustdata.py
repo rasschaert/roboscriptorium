@@ -9,17 +9,14 @@ trained on by `experiments/train_ocr_trust.py` (`save`).
 
 import json
 import os
-from dataclasses import asdict, replace
+from dataclasses import replace
 from pathlib import Path
 
-from rapidfuzz.distance import Levenshtein
-
-from roboscriptorium import bench, ocrcheck, pipeline, trust
+from roboscriptorium import bench, corrections, ocrcheck, pipeline, trust
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
-from roboscriptorium.corrections import Corrections, place
+from roboscriptorium.corrections import Corrections
 from roboscriptorium.disagreements import patch
-from roboscriptorium.evaluate import normalise
 from roboscriptorium.files import write_atomic
 from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden import scoring
@@ -27,7 +24,7 @@ from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.ir import SourceRef
-from roboscriptorium.reflow import _SPACE_BEFORE_PUNCTUATION
+from roboscriptorium.trust import fold, rows_from  # noqa: F401 - read by the experiments
 
 # The books and slices the trust data is built from, apart from the bench's sets: some
 # slices are longer or whole, and validation books have data the trainer never trains
@@ -59,32 +56,9 @@ SPECS = {
 OUT = Path(os.environ.get("ROBO_TRUST_DATA", "work/probes/ocr-trust"))
 
 
-def fold(text: str) -> str:
-    """Text compared as the score compares it (`evaluate.normalise`: quote and dash
-    glyphs, ellipses, spaced dots), with what reflow sets anyway folded too: a break
-    hyphen, spaces before punctuation. A space beside a quote mark stays: no stage
-    removes it, so the score counts it ("geweest. ‘" is not "geweest.’")."""
-    return _SPACE_BEFORE_PUNCTUATION.sub(r"\1", normalise(text.replace("¬", "-")))
-
-
 def answered(book: Book, suspects: list) -> dict[tuple, str]:
-    """Per suspect (page, line, start), the line as a human answered it: a whole line
-    retyped or chosen labels every place in it; an answer about one place, only that
-    place."""
-    out = {}
-    answers = Corrections(book.corrections_path)
-    for s in suspects:
-        for c in answers.by_key.values():
-            if c.page != s.page or c.action != "text":
-                continue
-            if c.span is not None:
-                if c.original == s.original and c.span == (s.start, s.end) and place(c) is not None:
-                    out[(s.page, s.line, s.start)] = (
-                        s.original[: s.start] + place(c) + s.original[s.end :]
-                    )
-            elif c.first == c.last == s.line and c.original == s.original:
-                out[(s.page, s.line, s.start)] = c.text if c.text is not None else c.original
-    return out
+    """Per suspect (page, line, start), the line as the book's reviewer answered it."""
+    return corrections.answered(Corrections(book.corrections_path), suspects)
 
 
 def build(name: str, spec: str) -> list[dict]:
@@ -111,28 +85,6 @@ def build(name: str, spec: str) -> list[dict]:
         and SourceRef(s.page, s.line) not in in_notes
     }
     return rows_from(stages.suspects, lines)
-
-
-def rows_from(suspects: list, truths: dict[tuple, str]) -> list[dict]:
-    """Each suspect with a true line, its versions labelled by which comes closest to it."""
-    rows = []
-    for s in suspects:
-        if (truth := truths.get((s.page, s.line, s.start))) is None:
-            continue
-        versions = [s.ours, *s.others]
-        lines = [s.original[: s.start] + v + s.original[s.end :] for v in versions]
-        distance = [Levenshtein.distance(fold(line), fold(truth)) for line in lines]
-        best = min(distance)
-        right = [d == best for d in distance]
-        rows.append(
-            {
-                "suspect": asdict(s),
-                "truth": truth,
-                "right": right,
-                "settled": right.count(True) == 1 and best <= max(2, len(s.ours) // 3),
-            }
-        )
-    return rows
 
 
 def suspect(row: dict) -> ocrcheck.Suspect:
