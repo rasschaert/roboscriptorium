@@ -18,6 +18,7 @@ starts the server on Ollama's own blobs. The readout and calibration live in
 """
 
 import base64
+import hashlib
 import json
 import struct
 from pathlib import Path
@@ -75,8 +76,14 @@ class ReadoutClient:
     def __init__(self, model: str, url: str, client: httpx.Client | None = None):
         self.model = model
         size = model.removeprefix("imajev-")
-        self.readout = _safetensor(READOUTS / f"{size}-decision_readout.safetensors")
-        calibration = json.loads((READOUTS / f"{size}-calibration.json").read_text())
+        readout = READOUTS / f"{size}-decision_readout.safetensors"
+        self.readout = _safetensor(readout)
+        calibration_text = (READOUTS / f"{size}-calibration.json").read_text()
+        calibration = json.loads(calibration_text)
+        # Which readout and calibration answered, for the answers' cache key.
+        self.fingerprint = hashlib.sha256(
+            readout.read_bytes() + calibration_text.encode()
+        ).hexdigest()[:12]
         self.temperature = float(calibration["fit"]["temperature"])
         self._http = client or httpx.Client(base_url=url, timeout=300)
         self._marker: str | None = None

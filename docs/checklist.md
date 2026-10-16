@@ -95,8 +95,9 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
 - [x] The line-role trainer's data and saving into `src/` (`sorterdata.py`, 2026-10-16)
 - [x] One cache helper (`files.read_cache`, `write_cache`) for the nine copies
       (2026-10-16): formats unchanged on disk, benches identical and warm
-- [ ] The judges' crop settings and the second vision judge's readout in their cache
-      keys: every book's judging runs again cold (agent, ~1 h plus a planned night)
+- [x] The judges' crop settings and the second vision judge's readout in their cache
+      keys (2026-10-16): older answers stand for the crop they were made at, so nothing
+      ran cold; benches identical
 - [x] `ocrcheck.py` split into `readers.py` and `ocrdoubts.py`; one `roles.is_body`
       (2026-10-16, benches identical)
 - [x] `reflow.py` split: joins and hyphens into `hyphens.py`, quote mending into

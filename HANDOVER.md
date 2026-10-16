@@ -29,7 +29,7 @@ asked whole, specks unasked, questions shown as their difference with combinatio
 
 1. Ex-minnaar's 6 new questions by the user (rebuild first: the role trees were
    retrained since), then its read-through.
-2. Checklist: the judges' crop settings and readout in their cache keys (cold: a night).
+2. Checklist: the next open step (docs/checklist.md).
 3. Stella's read-through by the user (checklist).
 
 **Remind the user of the daily backup of `work/`** at session start and before long

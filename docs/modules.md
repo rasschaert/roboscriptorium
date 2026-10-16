@@ -214,7 +214,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   readings are cached in `stages/tesseract.json`.
   The judge is `judge_model` (clef:27b, `ROBO_JUDGE_MODEL`), not the role
   model; it is told the book's typesetting (`quotes.style_note`) and sees the
-  versions set off by ⟨ ⟩. Suspects are saved to
+  versions set off by ⟨ ⟩. Its answers are cached in `stages/decisions.jsonl`, keyed on
+  the crop's zoom and padding too (and a readout model's readout). Suspects are saved to
   `stages/ocr-check.json`; `eval --no-check-ocr` skips the stage.
 - `pagereader.py`: glm-ocr (`ocr_model`) and Qwen (`read_model`) read each body page
   whole (`read_page`, glm-ocr streamed and cut where it starts over), cached per page in

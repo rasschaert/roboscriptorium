@@ -41,6 +41,9 @@ SURE = 0.3
 SURE_ALONE = 0.5
 CROP_ZOOM = 4
 CROP_PAD = 4  # points around the suspect words
+# A judge's answer on a crop is cached with the crop's settings. Answers cached without
+# them were all made at this zoom and padding, and stand for that crop.
+UNKEYED_CROP = {"zoom": 4, "pad": 4}
 # Curly quotes as straight ones, and a not sign (some OCR layers' line-end hyphen) as a
 # hyphen, one character for one, so offsets stay put.
 _FOLD = str.maketrans("‘’“”¬", "''\"\"-")
@@ -483,7 +486,15 @@ def _ask(
     image=None,
 ):
     key = DecisionCache.key(client.model, questions, state)
-    answer = cache.get(key)
+    if image is not None:
+        crop = {"zoom": CROP_ZOOM, "pad": CROP_PAD}
+        readout = getattr(client, "fingerprint", "")
+        keyed = {**state, "crop": crop, **({"readout": readout} if readout else {})}
+        unkeyed = key if crop == UNKEYED_CROP and not readout else None
+        key = DecisionCache.key(client.model, questions, keyed)
+        answer = cache.get(key) or (cache.get(unkeyed) if unkeyed else None)
+    else:
+        answer = cache.get(key)
     if answer is None:
         a = client.decide(state, questions, image_png=image() if image else None)["reading"]
         answer = {"value": a.value, "confidence": a.confidence}

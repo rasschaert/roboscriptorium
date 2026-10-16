@@ -758,3 +758,33 @@ def test_a_reading_spelt_partly_in_cyrillic_comes_back_in_latin_letters(monkeypa
         tmp_path / "source.pdf", pages, {SourceRef(1, 0)}, "m", "", tmp_path / "c.json", "Read."
     )
     assert got == {SourceRef(1, 0): "plooide dubbel en doodgedrukt, onnozelheid"}
+
+
+def test_a_judges_answer_on_a_crop_is_cached_with_the_crops_settings(tmp_path, monkeypatch):
+    from roboscriptorium.clients.decide import Answer
+    from roboscriptorium.roles import DecisionCache
+
+    class Judge:
+        model = "clef:27b"
+        fingerprint = ""
+        asked = 0
+
+        def decide(self, state, questions, image_png=None):
+            Judge.asked += 1
+            return {"reading": Answer("choice", "b", 0.9, {})}
+
+    cache = DecisionCache(tmp_path / "decisions.jsonl")
+    state, question = {"readings": ["we", "wc"]}, {"reading": {"type": "choice"}}
+    # An answer cached before the crop joined the key stands for the crop it was made at.
+    cache.put(DecisionCache.key("clef:27b", question, state), {"value": "a", "confidence": 1})
+    crop = lambda: b"png"  # noqa: E731
+    assert ocrcheck._ask(Judge(), cache, state, question, image=crop)["value"] == "a"
+    assert Judge.asked == 0
+    monkeypatch.setattr(ocrcheck, "CROP_PAD", 6)
+    assert ocrcheck._ask(Judge(), cache, state, question, image=crop)["value"] == "b"
+    assert Judge.asked == 1
+    # Another readout of the same model is another judge.
+    monkeypatch.setattr(ocrcheck, "CROP_PAD", 4)
+    Judge.fingerprint = "f00"
+    assert ocrcheck._ask(Judge(), cache, state, question, image=crop)["value"] == "b"
+    assert Judge.asked == 2
