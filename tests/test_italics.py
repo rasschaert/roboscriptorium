@@ -36,7 +36,7 @@ def test_italic_words_are_scored_over_aligned_words():
 def test_the_ink_threshold_follows_a_pale_scan():
     import numpy as np
 
-    from roboscriptorium.italics import ink_threshold
+    from roboscriptorium.ink import threshold as ink_threshold
 
     page = np.full((100, 100), 225, dtype=np.uint8)
     page[40:60, 20:80] = 135  # grey print on a light page

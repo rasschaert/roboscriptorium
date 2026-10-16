@@ -1,8 +1,8 @@
 from roboscriptorium.ir import Paragraph
+from roboscriptorium.scanstyle import _decide
 from roboscriptorium.typography import (
     DashStyle,
     EllipsisStyle,
-    _decide,
     apply,
     ellipsised,
     guess_ellipsis,
@@ -173,7 +173,7 @@ def _scan(tmp_path, printed: str, layer: str):
 
 
 def test_the_scan_shows_the_space_the_layer_drops_before_spaced_dots(tmp_path):
-    from roboscriptorium.typography import measure_ellipses
+    from roboscriptorium.scanstyle import measure_ellipses
 
     lines = ["the other people said Kate . . . and then", "she was there again . . . quite"]
     layer = ["the other people said Kate... and then", "she was there again... quite"]
@@ -187,7 +187,7 @@ def test_the_scan_shows_the_space_the_layer_drops_before_spaced_dots(tmp_path):
 
 
 def test_the_scan_shows_tight_dots_glued_to_their_word(tmp_path):
-    from roboscriptorium.typography import measure_ellipses
+    from roboscriptorium.scanstyle import measure_ellipses
 
     lines = ["the other people said Kate... and then", "she was there again... quite"]
     pdf = _scan(tmp_path, "\n".join(lines * 3), "\n".join(lines * 3))
@@ -197,7 +197,7 @@ def test_the_scan_shows_tight_dots_glued_to_their_word(tmp_path):
 
 
 def test_the_scan_sets_the_gaps_and_the_layer_the_glyph_or_dots():
-    from roboscriptorium.typography import EllipsisMeasure, scanned_style
+    from roboscriptorium.scanstyle import EllipsisMeasure, scanned_style
 
     spaced = EllipsisMeasure(60, 0.84, 0.93, 0.95)
     tight = EllipsisMeasure(60, 0.21, 0.35, 0.75)

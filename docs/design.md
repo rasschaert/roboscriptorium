@@ -282,7 +282,7 @@ typography are told the style; this halved Qwen's wrong quote proposals on Reis.
 A layer can drop every gap, though: The Stranger's Child prints `Ka . . .’`, its layer
 reads `Ka...` throughout, and the vote set it tight with no space (4.57 wrong words a page
 after review, 370 of its 389 unasked errors). So the gaps are measured on the scan too
-(`typography.measure_ellipses`): three dots are short runs of ink near the baseline, and
+(`scanstyle.measure_ellipses`): three dots are short runs of ink near the baseline, and
 the blank before the first and between them is weighed against the line's word gaps. On
 every golden scan the two kinds part widely: before the first dot at most 0.62 of the
 word gap where no space is printed, at least 0.86 where one is; dots 0.28–0.63 letters

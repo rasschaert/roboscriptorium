@@ -58,6 +58,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `reflow.py`: lines → blocks (headings, paragraphs; indents, punctuation spacing),
   lines joined by `hyphens.join`, a single-quoted book's misread openings and an old
   layer's closings mended by `quotes`. Without roles it falls back to a footer heuristic.
+- `scanstyle.py`: the book's dash and ellipsis as measured on the scan (`guess`,
+  `measure_ellipses`, cached); `typography.py` sets the text in the style found.
+- `ink.py`: `threshold`, the grey level between ink and paper (Otsu), for the italics,
+  type and scan measurements.
 - `hyphens.py`: lines joined across their ends (`join`). A line-end hyphen stays or goes
   by evidence in order: the book's own spelling (`spellings`), the word list, a capital
   after the break, the parts beside an inner hyphen, then `Compounds`, the judge

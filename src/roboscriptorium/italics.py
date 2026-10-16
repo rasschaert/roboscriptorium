@@ -20,6 +20,7 @@ import numpy as np
 import pymupdf
 from rapidfuzz.distance import Levenshtein
 
+from roboscriptorium import ink
 from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.ir import Block, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText, line_words, lines_digest, page_words, spells
@@ -31,18 +32,6 @@ ITALIC_AT = 8  # degrees of slant
 # Upright stems per letter, in roman and italic alike.
 STEMS = {c: 1 for c in "bdfijklpqrtBDEFIJKLPRT"} | {c: 2 for c in "hnuHNU"} | {"m": 3, "M": 2}
 DIAGONALS = set("kvwxyzAKVWXYZ")
-
-
-def ink_threshold(gray: np.ndarray) -> int:
-    """The grey level that best splits a page into ink and paper (Otsu)."""
-    hist = np.bincount(gray.ravel(), minlength=256).astype(float)
-    levels = np.arange(256)
-    weight = np.cumsum(hist)
-    mean = np.cumsum(hist * levels)
-    total, total_mean = weight[-1], mean[-1]
-    with np.errstate(divide="ignore", invalid="ignore"):
-        between = (total_mean * weight - mean * total) ** 2 / (weight * (total - weight))
-    return int(np.nanargmax(between[:-1]))
 
 
 def slant(gray: np.ndarray, threshold: int = 128) -> float:
@@ -96,7 +85,7 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:
     pix = pdf_page.get_pixmap(dpi=DPI, colorspace=pymupdf.csGRAY)
     img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width)
     scale = DPI / 72
-    threshold = ink_threshold(img)
+    threshold = ink.threshold(img)
     out = {}
     for k, (line, words) in enumerate(
         zip(page.lines, line_words(page_words(pdf_page), page), strict=True)

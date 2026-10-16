@@ -16,8 +16,8 @@ import numpy as np
 import pymupdf
 
 from roboscriptorium.files import read_cache, write_cache
+from roboscriptorium.ink import threshold as ink_threshold
 from roboscriptorium.ir import SourceRef
-from roboscriptorium.italics import ink_threshold
 from roboscriptorium.page import geometry
 from roboscriptorium.pdf import PageText, line_words, lines_digest, page_words
 

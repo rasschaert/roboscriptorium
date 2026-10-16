@@ -101,8 +101,8 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       (2026-10-16, benches identical)
 - [x] `reflow.py` split: joins and hyphens into `hyphens.py`, quote mending into
       `quotes.py` (2026-10-16, benches identical)
-- [ ] Split `typography.py` (the scan measurements and one ink module beside `italics`'
-      threshold) (agent, ~1 h, behaviour unchanged, tests before and after)
+- [x] `typography.py` split: scan measurements into `scanstyle.py`, one `ink.threshold`
+      (2026-10-16, benches identical)
 - [ ] Prune `experiments/`: 53 scripts named only in the logs deleted (2026-10-16, the
       user: results recorded, git keeps them); left: `probe_orientation.py` broken;
       AGENTS.md cut to rules and the map (manifest keys to golden-notes.md, environment
