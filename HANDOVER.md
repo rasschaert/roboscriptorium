@@ -4,7 +4,13 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session. Written 2026-10-16 ~17:40, during the session of 2026-10-16.
 
-## Nothing running.
+## Running
+
+- `robo-whole-body` (screen; `work/runs/whole-body.log`): the line-role trees retrained
+  with a slice's statistics counted over the book's whole body (`Stages.whole`; repeats,
+  page numbers, type, missing-line height), then `bench tuning` and `bench validation`
+  against the 65484e3 runs. Uncommitted until the benches say keep; the old trees are
+  `work/models/line-roles.before-whole-body.pkl`.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment).
