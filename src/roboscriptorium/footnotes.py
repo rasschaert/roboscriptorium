@@ -16,7 +16,7 @@ from dataclasses import replace
 from roboscriptorium.ir import Block, Note, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText
 from roboscriptorium.reflow import join
-from roboscriptorium.roles import KEEP_BODY_AT, LineRole
+from roboscriptorium.roles import LineRole, is_body
 from roboscriptorium.typestyle import Style
 
 # A note's type is at most this size relative to the body's: Reis sets its notes at 0.7,
@@ -36,7 +36,7 @@ _MARK = re.compile(r"^\s*([*†‡§]+|\d{1,3})(?:[\s_.)]+|(?=[A-ZÀ-Þ]))")
 
 def _body(role: LineRole | None) -> bool:
     """Whether reflow takes the line for running text."""
-    return role is None or role.p_body >= KEEP_BODY_AT
+    return is_body(role)
 
 
 def lines(

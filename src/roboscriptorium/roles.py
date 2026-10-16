@@ -110,7 +110,7 @@ def _section_number(
     with words beside it is a running head, and chapter openings carry none.
     """
     text = page.lines[i].text.strip()
-    if not _is_body(page_roles.get(i + 1)):
+    if not is_body(page_roles.get(i + 1)):
         return False
     if i == 0 and sunk and _NUMBERED_TITLE.match(text):
         return True
@@ -146,7 +146,7 @@ _LOWER_START = re.compile(r"^[‘’'\"“]*[a-zà-ÿ]{2,}\b")
 
 def _finishes_sentence(page: PageText, i: int, page_roles: dict[int, "LineRole"]) -> bool:
     """A lowercase line under a body line that stops mid-sentence: "kijken." ends it."""
-    if i == 0 or not _is_body(page_roles.get(i - 1)) or garbled(page.lines[i]):
+    if i == 0 or not is_body(page_roles.get(i - 1)) or garbled(page.lines[i]):
         return False
     return bool(
         _OPEN_END.search(page.lines[i - 1].text.rstrip())
@@ -154,7 +154,8 @@ def _finishes_sentence(page: PageText, i: int, page_roles: dict[int, "LineRole"]
     )
 
 
-def _is_body(role: "LineRole | None") -> bool:
+def is_body(role: "LineRole | None") -> bool:
+    """Whether a line is taken for running text: no role, or sure enough of body."""
     return role is None or role.p_body >= KEEP_BODY_AT
 
 
@@ -267,7 +268,7 @@ def classify(
                 page.number in sunk
                 and i == 0
                 and role.role != "chapter_heading"
-                and not _is_body(role)
+                and not is_body(role)
                 and set_apart_opening(page)
                 and not garbled(page.lines[0])
                 and repeated[SourceRef(page.number, i)] < HEADING_MAX_REPEATS
@@ -297,7 +298,7 @@ def classify(
                 page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0, "heading-label")
             elif _section_number(page, i, offset, page_roles, page.number in sunk):
                 page_roles[i] = LineRole("chapter_heading", role.confidence, 0.0, "section-number")
-            elif not _is_body(role) and _finishes_sentence(page, i, page_roles):
+            elif not is_body(role) and _finishes_sentence(page, i, page_roles):
                 page_roles[i] = LineRole("body", role.confidence, 1.0, "finishes-sentence")
         _subtitles(page, page_roles, offset)
         heading_lines |= {
@@ -352,7 +353,7 @@ def _heading_styles(
         ref: styles[ref]
         for ref, role in answers.items()
         if display(styles.get(ref))
-        and not _is_body(role)
+        and not is_body(role)
         and not garbled(lines[ref])
         and repeated[ref] < HEADING_MAX_REPEATS
     }
@@ -376,7 +377,7 @@ def _subtitles(page: PageText, page_roles: dict[int, LineRole], offset: int | No
     heading = False
     for i in range(len(page.lines)):
         role = page_roles.get(i)
-        if _is_body(role):
+        if is_body(role):
             return
         if role.role == "chapter_heading":
             heading = True

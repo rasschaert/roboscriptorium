@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.page import NUMBERED_WORDS, bare_numeral, digits
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.roles import KEEP_BODY_AT, LineRole
+from roboscriptorium.roles import LineRole, is_body
 
 # A paragraph-opening indent is ~10pt on the target scans; line-start jitter
 # from skew stays under ~3pt.
@@ -376,9 +376,8 @@ def _hyphen_stays(
 
 
 def _role(roles: dict[SourceRef, LineRole] | None, ref: SourceRef) -> str:
-    if roles is None or (r := roles.get(ref)) is None or r.p_body >= KEEP_BODY_AT:
-        return "body"
-    return r.role
+    r = roles.get(ref) if roles is not None else None
+    return "body" if is_body(r) else r.role
 
 
 def reflow(

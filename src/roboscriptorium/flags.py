@@ -26,7 +26,7 @@ from roboscriptorium.ocrcheck import Doubt
 from roboscriptorium.pdf import PageText
 from roboscriptorium.quotes import KINDS
 from roboscriptorium.reflow import JUSTIFIED_SLACK, _page_margin
-from roboscriptorium.roles import KEEP_BODY_AT, LineRole
+from roboscriptorium.roles import LineRole, is_body
 
 # A dropped line the model gave at least this P(body) is worth a look; running
 # heads and page numbers score far below it.
@@ -121,7 +121,7 @@ def region_key(page: int, text: str) -> str:
 
 
 def treatment(role: LineRole | None) -> str:
-    if role is None or role.p_body >= KEEP_BODY_AT:
+    if is_body(role):
         return "text"
     return "heading" if role.role == "chapter_heading" else "dropped"
 

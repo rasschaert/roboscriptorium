@@ -15,7 +15,7 @@ import statistics
 from roboscriptorium import page as P
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import Line, PageText
-from roboscriptorium.roles import KEEP_BODY_AT, LineRole
+from roboscriptorium.roles import LineRole, is_body
 
 # An epigraph page holds at most this many lines.
 MAX_LINES = 6
@@ -76,6 +76,6 @@ def _reads(lines: list[Line]) -> bool:
 
 def _kind(role: LineRole | None) -> str:
     """The line's role as reflow and the furniture checks see it."""
-    if role is None or role.p_body >= KEEP_BODY_AT:
+    if is_body(role):
         return "body"
     return role.role
