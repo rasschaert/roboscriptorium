@@ -4,12 +4,7 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session. Written 2026-10-16 ~23:00, at the end of the session of 2026-10-16.
 
-## Running: `robo-curl-lines` (started ~23:10, ~30–45 min)
-
-Benches of an uncommitted change in `ocrcheck.py` (readers' straight quotes curled by the
-book's style on lines without quotes, and closed at a line's end; Metro's lost `. . .’`).
-If the session ended before it was committed: the change is in the working tree; the
-verdicts are in `work/runs/curl-lines.log`.
+## Nothing running.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment).

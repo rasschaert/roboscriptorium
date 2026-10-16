@@ -411,3 +411,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | bench tuning+validation, typography split and one ink threshold (should be identical and warm) | 1580 | 3 | 0 |
 | 2026-10-16 | role trees retrained on slice statistics again (whole-body reverted), then bench tuning+validation | 1580 | 4 | 0 |
 | 2026-10-16 | bench tuning+validation, crop settings in the judges' cache key (should be identical and warm) | 1580 | 3 | 0 |
+| 2026-10-16 | bench tuning+validation, readers' quotes curled by the book's style and closed at a line's end (new judge questions) | 1580 | 11 | 0 |

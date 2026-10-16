@@ -213,6 +213,7 @@ def check(
     `alarm`, a second vision judge, is asked the vision judge's question; its pick is a
     vote for the arbiter, not part of the fixed rule."""
     suspects = []
+    curly = curly_book(pages)
     with pymupdf.open(pdf) as doc:
         for page in pages:
             pdf_page = doc[page.number - 1]
@@ -222,7 +223,7 @@ def check(
                 ours = line.text
                 others = {n: r.get(SourceRef(page.number, k), "") for n, r in readings.items()}
                 read = [o for o in others.values() if o]
-                for a0, a1, alternatives in merged_differences(ours, read):
+                for a0, a1, alternatives in merged_differences(ours, read, curly):
                     versions = [ours[a0:a1], *alternatives]
                     box = _box(words[k], boxes[k], ours, a0, a1)
                     around = (
@@ -239,7 +240,8 @@ def check(
                         joined, style, alarm,
                     )  # fmt: skip
                     support = {
-                        n: supports(ours, other, a0, a1, versions) for n, other in others.items()
+                        n: supports(ours, other, a0, a1, versions, curly)
+                        for n, other in others.items()
                     }
                     known = known_versions(lexicon, read_as, continues) if lexicon else ()
                     suspects.append(
@@ -293,26 +295,32 @@ def hyphen_only(ours: str, a1: int, versions: list[str], next_line: str) -> str:
     return words[0].rstrip(".,;:!?’”'\"") if len(stems) == 1 and len(hyphened) == 2 else ""
 
 
-def supports(ours: str, reading: str, a0: int, a1: int, versions: list[str]) -> tuple[bool, ...]:
+def supports(
+    ours: str, reading: str, a0: int, a1: int, versions: list[str], curly: bool | None = None
+) -> tuple[bool, ...]:
     """Whether a reading reads each version of the span `ours[a0:a1]`: its own differences
     there written into the whole span, which may be wider than they are, or, where it
-    doesn't differ from `ours` there, ours (the first)."""
+    doesn't differ from `ours` there, ours (the first). `curly` is as `merged_differences`
+    takes it."""
     if not reading:
         return tuple(False for _ in versions)
     mine = [d for d in differences(ours, reading) if d[0] < a1 and a0 < d[1]]
     piece = ours[a0:a1]
     for b0, b1, c0, c1 in sorted(mine, key=lambda d: -d[0]):
         piece = piece[: max(0, b0 - a0)] + reading[c0:c1] + piece[max(0, b1 - a0) :]
-    if _curly(ours):
-        piece = _curled(piece)
+    if _curly(ours) or (curly and not _quoted(ours)):
+        piece = _curled(piece, not ours[a1:].strip())
     return tuple(_alike(piece) == _alike(v) for v in versions)
 
 
-def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, list[str]]]:
+def merged_differences(
+    ours: str, others: list[str], curly: bool | None = None
+) -> list[tuple[int, int, list[str]]]:
     """Spans of `ours` where any other reading differs, with each distinct other version.
 
     Overlapping differences from different readings become one span; a reading
-    that agrees with `ours` there has no version of its own.
+    that agrees with `ours` there has no version of its own. A reading's straight quotes
+    are curled where `ours` sets curly ones, or sets none in a book that does (`curly`).
     """
     found = [
         (a0, a1, b0, b1, r)
@@ -336,8 +344,8 @@ def merged_differences(ours: str, others: list[str]) -> list[tuple[int, int, lis
             piece = ours[g0:g1]
             for a0, a1, b0, b1, _ in mine:
                 piece = piece[: a0 - g0] + other[b0:b1] + piece[a1 - g0 :]
-            if _curly(ours):
-                piece = _curled(piece)
+            if _curly(ours) or (curly and not _quoted(ours)):
+                piece = _curled(piece, not ours[g1:].strip())
             # Readings that differ only in quote, dash or ellipsis style are one version.
             folded = [_alike(v) for v in versions]
             if _alike(piece) != _alike(ours[g0:g1]) and _alike(piece) not in folded:
@@ -353,9 +361,25 @@ def _curly(text: str) -> bool:
     return any(c in text for c in "‘’“”") and not any(c in text for c in "'\"")
 
 
-def _curled(text: str) -> str:
+def _quoted(text: str) -> bool:
+    return any(c in text for c in "‘’“”'\"")
+
+
+def curly_book(pages: list[PageText]) -> bool:
+    """Whether the layer sets more curly quote marks than straight ones."""
+    text = "".join(ln.text for p in pages for ln in p.lines)
+    return sum(text.count(c) for c in "‘’“”") > sum(text.count(c) for c in "'\"")
+
+
+def _curled(text: str, ends_line: bool = False) -> str:
     """Straight quotes as curly ones: opening at a word's start, closing elsewhere; an
-    apostrophe eliding letters ("nog 's", "je 'm") is ’ wherever it stands."""
+    apostrophe eliding letters ("nog 's", "je 'm") is ’ wherever it stands. Where `text`
+    ends its line, a quote with nothing after it closes, against the word before it
+    (a reader's "up . . . '" is "up . . .’")."""
+    if ends_line:
+        text = re.sub(r"\s*(['\"])(\s*)$", r"\1\2", text)
+        text = re.sub(r"(\S)'(\s*)$", r"\1’\2", text)
+        text = re.sub(r'(\S)"(\s*)$', r"\1”\2", text)
     text = re.sub(
         r"(^|\s)'", lambda m: m[1] + ("’" if ELISION.match(text, m.end() - 1) else "‘"), text
     )

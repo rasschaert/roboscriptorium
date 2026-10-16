@@ -228,10 +228,9 @@ In this order:
 
 ## 6. Structure
 
-- [ ] Metro loses the closing quote after a spaced ellipsis (`. . .’` comes out as `...`;
-      several of the user's verdicts, 2026-10-12): find where it goes (reader, reflow
-      or `typography.py`'s ellipsis step) and fix it, with a closing quote that really
-      isn't there as the counterexample (~1 h)
+- [x] Metro's lost closing quote after a spaced ellipsis (2026-10-16): the layer drops
+      it, the readers write `. . . '`, curled as opening or not at all; now closed at a
+      line's end and curled by the book's style, Metro 0.42 → 0.33 wrong words a page
 - [ ] Verdict page: a place where one side has something the print lacks (Metro p. 61's
       stray `>` in the e-book) says so in words (agent, ~30 min)
 - [ ] Monterosso's capital T read as an opening quote ("‘Toen", "‘Titi", "‘Tiziana",

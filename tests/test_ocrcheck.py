@@ -788,3 +788,43 @@ def test_a_judges_answer_on_a_crop_is_cached_with_the_crops_settings(tmp_path, m
     Judge.fingerprint = "f00"
     assert ocrcheck._ask(Judge(), cache, state, question, image=crop)["value"] == "b"
     assert Judge.asked == 2
+
+
+def test_a_straight_quote_ending_a_line_closes_it():
+    curled = ocrcheck._curled
+    # Not at a line's end, a quote before a word opens and a lone one is left to the rule.
+    assert curled("zei hij. 'Kom", ends_line=True) == "zei hij. ‘Kom"
+    assert curled("there . . . ' Come", ends_line=False) == "there . . . ‘ Come"
+    assert curled("up . . . '") == "up . . . ‘"
+    assert curled("nog 's", ends_line=True) == "nog ’s"
+    # At its end, nothing follows: it closes, against the word or the dots before it.
+    assert curled("up . . . '", ends_line=True) == "up . . .’"
+    assert curled("there...'", ends_line=True) == "there...’"
+    assert curled('said . . . "', ends_line=True) == "said . . .”"
+
+
+def test_a_readers_line_end_quote_after_spaced_dots_is_a_closing_version():
+    ours = "the whole station woke up .. .”"
+    found = ocrcheck.merged_differences(ours, ["the whole station woke up . . . '"])
+    versions = [v for *_, vs in found for v in vs]
+    assert versions[-1].endswith(".’") and not any("‘" in v for v in versions)
+
+
+def test_a_line_without_quotes_takes_the_books_quote_style():
+    ours = "customs and passport controls there. . ."
+    reading = ["customs and passport controls there . . . '"]
+
+    def last(curly):
+        return [v for *_, vs in ocrcheck.merged_differences(ours, reading, curly) for v in vs][-1]
+
+    # A straight-quoted book keeps the reader's straight quote.
+    assert last(False).endswith(" '")
+    assert last(True).endswith(".’")
+
+
+def test_a_book_quotes_curly_when_its_layer_sets_more_curly_marks():
+    def pages(*texts):
+        return [PageText(1, 400, 600, [Line(t, 0, 0, 10, 10) for t in texts])]
+
+    assert ocrcheck.curly_book(pages("‘Ja,’ zei ze.", "Hij zei: 'nee'", "‘Nooit.’"))
+    assert not ocrcheck.curly_book(pages("'Yes,' she said.", "He's ‘gone'"))
