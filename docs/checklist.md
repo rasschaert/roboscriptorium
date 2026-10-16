@@ -90,9 +90,8 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
 
 - [x] One cold A/A rerun of `bench tuning` (2026-10-15): 0.32 → 0.33 after review
       [+0.00, +0.01], no book apart; rebuilding the caches moves the score 0.01 at most
-- [ ] Book-wide statistics (repeats for line roles, type, line height for missing lines)
-      measured on the whole body, not the slice, as the dash and ellipsis already are;
-      roles' caches change, so a cold-ish bench (agent, ~1 h plus an overnight run)
+- [x] Book-wide statistics on the whole body (2026-10-16): repeats, page numbers, type,
+      missing-line height; trees retrained; benches no change
 - [ ] The line-role trainer (`experiments/train_sorter.py`) into `src/` as the trust
       one went (agent, ~1 h)
 - [ ] One cache helper (identity, version, atomic write) for the nine copies; the judges'

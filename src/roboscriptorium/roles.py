@@ -219,14 +219,17 @@ def classify(
     client: DecisionClient,
     cache: DecisionCache,
     styles: dict[SourceRef, Style] | None = None,
+    context: list[PageText] | None = None,
 ) -> dict[SourceRef, LineRole]:
     """Roles for the candidate lines. `styles`, keyed on positions in `pages`, lets
-    lines set in one display type share the role most of them got."""
+    lines set in one display type share the role most of them got. Repetition and the
+    printed page numbers are counted over `context` (the book's whole body; else
+    `pages`)."""
     roles = {}
-    repeats = Repeats(pages)
+    repeats = Repeats(context or pages)
     sunk = sunk_pages(pages)
     first_sunk = sunk_first_lines(pages)
-    offset = page_offset(pages)
+    offset = page_offset(context or pages)
     answers: dict[SourceRef, LineRole] = {}
     repeated: dict[SourceRef, int] = {}
     for page in pages:

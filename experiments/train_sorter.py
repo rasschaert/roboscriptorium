@@ -54,12 +54,12 @@ def lines(spec: str, rebuild: bool) -> list[dict]:
         reference = reference[span[0] - 1 : span[1]]
     reference, _ = disagreements.patch(reference, scoring.verdicts(book))
     labels = align(stages.pages, reference)
-    styles = typestyle.measure(book.source, stages.pages, book.stages / "type.json")
+    styles = typestyle.measure(book.source, stages.pages, book.stages / "type.json", stages.whole)
     regions = None
     if layout.available():
         numbers = [p.number for p in stages.pages]
         regions = layout.detect(book.source, numbers, book.stages / "layout.json")
-    found = sorter.features(stages.pages, stages.model_roles, styles, regions)
+    found = sorter.features(stages.pages, stages.model_roles, styles, regions, stages.whole)
     rows = [
         {
             "page": ref.page,

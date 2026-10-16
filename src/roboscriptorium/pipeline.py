@@ -72,6 +72,9 @@ class Stages:
     # Lines of `pages` set apart as an epigraph (`epigraphs.lines`): the review asks
     # nothing about what they are.
     epigraph_lines: set[SourceRef] = field(default_factory=set)
+    # The book's whole body as the text layer reads it, which a slice's statistics are
+    # counted over (repeats, page numbers, type): `pages` is the slice.
+    whole: list[PageText] = field(default_factory=list)
 
 
 def run(
@@ -118,7 +121,7 @@ def run(
     if use_models:
         settings = settings or Settings.from_env()
         if regions is not None and ocrcheck.scanned(book.source):
-            found = missing.candidates(body, regions, _answered(answers))
+            found = missing.candidates(body, regions, _answered(answers), whole)
             readings = missing.read(
                 book.source,
                 found,
@@ -129,11 +132,11 @@ def run(
             body = missing.add(body, found, readings)
         client = decide.for_model(settings.role_model, settings.ollama_url)
         cache = DecisionCache(book.stages / "decisions.jsonl")
-        styles = typestyle.measure(book.source, body, book.stages / "type.json")
-        model_roles = classify(body, client, cache, styles)
+        styles = typestyle.measure(book.source, body, book.stages / "type.json", whole)
+        model_roles = classify(body, client, cache, styles, whole)
         if settings.sorter:
             trees = sorter.load(Path(settings.sorter_model))
-            model_roles = sorter.apply(trees, body, model_roles, styles, regions)
+            model_roles = sorter.apply(trees, body, model_roles, styles, regions, whole)
         note_lines = footnotes.lines(body, model_roles, styles, known)
         epigraph_lines = epigraphs.lines(body, model_roles)
         if check_ocr and ocrcheck.scanned(book.source):
@@ -315,6 +318,7 @@ def run(
         decider,
         faint_pages,
         epigraph_lines,
+        whole,
     )
 
 

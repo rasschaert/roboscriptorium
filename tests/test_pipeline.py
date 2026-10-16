@@ -346,6 +346,7 @@ def test_a_slice_is_read_with_the_whole_books_style(tmp_path, monkeypatch):
     # The scan has one page; the styles measured on it would look for page 2.
     monkeypatch.setattr(pipeline, "dash_style", lambda book, body: None)
     monkeypatch.setattr(pipeline.typography, "measure_ellipses", lambda *a: None)
+    monkeypatch.setattr(pipeline.typestyle, "measure", lambda *a: {})
     pipeline.run(book, pages=(1, 1))
     pages = layer(book.source, book.stages / "textlayer.json")
     whole = pipeline.read_prompt(book, pages, None)

@@ -404,3 +404,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | train the arbiter, Ex-minnaar's and Stella's answers in | 0 | 5 | 0 |
 | 2026-10-16 | bench tuning+validation, arbiter retrained with Ex-minnaar's and Stella's answers | 1580 | 3 | 0 |
 | 2026-10-16 | Ex-minnaar's questions, arbiter retrained | 273 | 2 | 0 |
+| 2026-10-16 | role trees retrained on whole-body statistics, then bench tuning+validation | 1580 | 24 | 0 |

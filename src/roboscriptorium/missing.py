@@ -48,13 +48,15 @@ def candidates(
     pages: list[PageText],
     regions: dict[int, list[Region]],
     answered: dict[int, list[tuple[float, float, float, float]]],
+    context: list[PageText] | None = None,
 ) -> list[tuple[int, Region]]:
     """Line-sized regions holding no text-layer line and not part of one, one per spot
     (the surest); above the text of a sunk page, regions up to a few lines tall.
 
-    `answered` holds, per page, the boxes of regions a human typed text for.
+    `answered` holds, per page, the boxes of regions a human typed text for. A line's
+    height is the median over `context` (the book's whole body; else `pages`).
     """
-    heights = [ln.y1 - ln.y0 for p in pages for ln in p.lines]
+    heights = [ln.y1 - ln.y0 for p in context or pages for ln in p.lines]
     if not heights:
         return []
     tallest = MAX_HEIGHT * median(heights)

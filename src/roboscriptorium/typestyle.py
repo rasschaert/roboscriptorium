@@ -44,8 +44,11 @@ class Style:
     capitals: bool
 
 
-def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, Style]:
-    """Every line's style, relative to the full-width lines of `pages`.
+def measure(
+    pdf: Path, pages: list[PageText], cache: Path, context: list[PageText] | None = None
+) -> dict[SourceRef, Style]:
+    """Every line's style, relative to the full-width lines of `context` (the book's
+    whole body; else `pages`), so a slice is measured against the book's own type.
 
     Raw measurements are cached per page with the page's lines, so a page whose
     lines change is measured again.
@@ -55,7 +58,10 @@ def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, St
         raw = json.loads(cache.read_text())
         if raw.get("version") == VERSION:
             done = raw["pages"]
-    todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != lines_digest(p)]
+    norm_pages = context or pages
+    # A page of `pages` is measured as it is there (with lines added, say), not as in `context`.
+    every = list({p.number: p for p in [*norm_pages, *pages]}.values())
+    todo = [p for p in every if done.get(str(p.number), {}).get("lines") != lines_digest(p)]
     if todo:
         with pymupdf.open(pdf) as doc:
             for page in todo:
@@ -65,22 +71,24 @@ def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, St
                 }
         write_atomic(cache, json.dumps({"version": VERSION, "pages": done}))
 
-    measured = {
+    measured_all = {
         SourceRef(p.number, int(k)): m
-        for p in pages
+        for p in every
         for k, m in done[str(p.number)]["measured"].items()
     }
     body = {
         SourceRef(p.number, i)
-        for p in pages
+        for p in every
         if p.lines
         for i, ln in enumerate(p.lines)
         if (ln.x1 - ln.x0) >= BODY_WIDTH * geometry(p)[0]
     }
     norm = {
-        k: _median([m[k] for ref, m in measured.items() if ref in body])
+        k: _median([m[k] for ref, m in measured_all.items() if ref in body])
         for k in ("height", "stroke", "pitch")
     }
+    numbers = {p.number for p in pages}
+    measured = {ref: m for ref, m in measured_all.items() if ref.page in numbers}
     return {
         ref: Style(
             size=_ratio(m["height"], norm["height"]),
