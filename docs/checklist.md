@@ -233,12 +233,9 @@ In this order:
       line's end and curled by the book's style, Metro 0.42 → 0.33 wrong words a page
 - [ ] Verdict page: a place where one side has something the print lacks (Metro p. 61's
       stray `>` in the e-book) says so in words (agent, ~30 min)
-- [ ] Monterosso's capital T read as an opening quote ("‘Toen", "‘Titi", "‘Tiziana",
-      "‘Terwijl"; the user's verdicts, 2026-10-12): the typeface's T has an overhanging
-      left arm, and the text layer and every reader agree on the quote, so nothing asks.
-      Why doesn't the unpaired-quote check (`quotes.py`) catch a quote that opens
-      mid-sentence and never closes? A first case for the detector of errors every
-      reading shares, with "‘Terre" (a real quote) as its counterexample (~1 h)
+- [x] Monterosso's capital T read as an opening quote (2026-10-16): one case left in the
+      build ("‘Lieve ‘Tiziana,’ zegt"), asked at the paragraph's end ("open at end"), not
+      where the ‘ stands, since quotes nest in their own mark; not worth a rule for one
 - [ ] Scene breaks the build still misses: 23 of 295 (Reis 14, De eerlijke vinder 7).
       Reis's are page tops after a full page whose last line ends a sentence at the
       margin, the next opening flush: the same geometry as a paragraph running on, so
