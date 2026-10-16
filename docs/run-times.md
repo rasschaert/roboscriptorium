@@ -395,3 +395,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | probe: reader told to keep the author's spelling, reader set | 850 | 19 | 0 |
 | 2026-10-16 | bench tuning+validation and Ex-minnaar's questions, lines set alike join a question | 1853 | 4 | 0 |
 | 2026-10-16 | bench tuning+validation and Ex-minnaar's questions, like-heading and narrow specks | 1853 | 4 | 0 |
+| 2026-10-16 | Ex-minnaar's questions, answered lines keep theirs | 273 | 1 | 0 |
+| 2026-10-16 | bench tuning+validation, scraps in the margin are specks | 1580 | 3 | 0 |

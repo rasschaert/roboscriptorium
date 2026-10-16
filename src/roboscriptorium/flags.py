@@ -69,6 +69,8 @@ SIDEWAYS_PAD = 60
 # the page's usual line height (a stroke of a quote mark, a dot of ink).
 SPECK_MAX_CHARS = 2
 SPECK_HEIGHT = 0.5
+# Lines at least this share of the page's width make out its text column (`_in_margin`).
+COLUMN_SHARE = 0.5
 # A gap between two running-text lines this many times the page's line pitch, below a
 # line stopping mid-word or mid-sentence, is a line the text layer lost.
 LOST_LINE_GAP = 1.5
@@ -213,10 +215,23 @@ def _speck(page: PageText, i: int) -> bool:
     line = page.lines[i]
     usual = statistics.median(ln.y1 - ln.y0 for ln in page.lines)
     # A short line too narrow for even two of the body's letters is a speck, whatever
-    # the layer read in it ("ee s ba a" in 5 points).
-    return line.y1 - line.y0 < SPECK_HEIGHT * usual and (
-        len(line.text.replace(" ", "")) <= SPECK_MAX_CHARS or line.x1 - line.x0 < usual
-    )
+    # the layer read in it ("ee s ba a" in 5 points); so is a scrap wholly outside the
+    # text column, in the margin ("ee = 8 a").
+    narrow = line.x1 - line.x0 < usual
+    return (
+        line.y1 - line.y0 < SPECK_HEIGHT * usual
+        and (len(line.text.replace(" ", "")) <= SPECK_MAX_CHARS or narrow)
+    ) or (narrow and _in_margin(page, line))
+
+
+def _in_margin(page: PageText, line) -> bool:
+    """Whether a line lies wholly outside the page's text column, left or right of it."""
+    wide = [ln for ln in page.lines if ln.x1 - ln.x0 >= COLUMN_SHARE * page.width]
+    if not wide:
+        return False
+    left = statistics.median(ln.x0 for ln in wide)
+    right = max(ln.x1 for ln in wide)
+    return line.x0 >= right or line.x1 <= left
 
 
 def _reasons(

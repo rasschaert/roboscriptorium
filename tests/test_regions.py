@@ -401,3 +401,13 @@ def test_a_line_set_like_an_answered_heading_is_asked_and_shouting_in_a_paragrap
     asked = [(f.page, f.first) for f in found if "like-heading" in f.reasons]
     # The answered line stays asked too, so its answer stays in the review.
     assert asked == [(1, 4), (2, 4)]
+
+
+def test_a_scrap_wholly_in_the_margin_is_a_speck_but_a_short_line_in_the_column_is_not():
+    lines = [Line("body text " * 5, 24, 11 + 12 * i, 274, 20 + 12 * i) for i in range(8)]
+    lines.insert(2, Line("ee = 8 a", 292.4, 31.1, 300.9, 35.6))  # 4.5 points: not short
+    page = PageText(1, 320, 500, lines)
+    roles = {SourceRef(1, 2): LineRole("artifact", 0.9, 0.05)}
+    assert flags.find([page], roles) == []
+    page.lines[2] = Line("ee = 8 a", 120, 31.1, 128.5, 35.6)  # inside the column: asked
+    assert [f.reasons for f in flags.find([page], roles)] == [["dropped-mid-page"]]
