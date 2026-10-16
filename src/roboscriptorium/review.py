@@ -435,6 +435,7 @@ class RegionReview:
             # Around sideways text the neighbouring lines are scraps too.
             context = "rotated" not in f.reasons
             item = asdict(f)
+            item["readings"] = merged(item["readings"])
             if item["readings"] and "text layer" not in item["readings"][0]["votes"]:
                 first = item["readings"][0]
                 item["readings"][0] = {**first, "votes": ["text layer", *first["votes"]]}
@@ -572,6 +573,32 @@ class RegionReview:
             if self.golden is not None:
                 self.golden = GoldenQuestions(places, self.golden.verdicts)
         return self.state()
+
+
+# A double quote set as two single ones ("‘‘Een nachtwaker’’"); two closing marks before
+# a letter are an apostrophe read twice ("’’m"), not a quote.
+_DOUBLED = [(re.compile("‘‘"), "“"), (re.compile("’’(?![^\\W\\d_])"), "”")]
+
+
+def _undoubled(text: str) -> str:
+    for pattern, mark in _DOUBLED:
+        text = pattern.sub(mark, text)
+    return text
+
+
+def merged(readings: list[dict]) -> list[dict]:
+    """The readings with those that differ only in a double quote set as two single ones
+    made one option, under the first one's text, with everyone's votes."""
+    out: list[dict] = []
+    seen: dict[str, dict] = {}
+    for g in readings:
+        key = _undoubled(g["text"])
+        if key in seen:
+            seen[key]["votes"] = [*seen[key]["votes"], *g["votes"]]
+        else:
+            seen[key] = {**g}
+            out.append(seen[key])
+    return out
 
 
 def _errata_of(f: F.Flag, c: Correction | None, noted: list[errata.Erratum]) -> list[dict]:

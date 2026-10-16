@@ -315,3 +315,24 @@ def test_a_lost_lines_draft_is_read_below_the_descenders_of_the_line_above(tmp_p
         "zijn moderne cilindervormige kop, en dan"
     )
     assert tops[0] == 382.0 and len(tops) == len(review.GAP_STEPS)
+
+
+def test_readings_differing_only_in_a_double_quote_set_as_two_singles_are_one_option():
+    line = "echt waar! {} Ze was"
+    got = review.merged(
+        [
+            {"text": line.format("“Een nachtwaker’’!’"), "votes": ["text layer"]},
+            {"text": line.format("‘‘Een nachtwaker’’!’"), "votes": ["OCR check"]},
+            {"text": line.format("“Een nachtwaker”’!"), "votes": ["Qwen"]},
+            # Two closing marks before a letter are an apostrophe read twice: kept apart.
+            {"text": "zei ’’m", "votes": ["glm-ocr"]},
+            {"text": "zei ”m", "votes": ["tesseract"]},
+        ]
+    )
+    assert [g["votes"] for g in got] == [
+        ["text layer", "OCR check"],
+        ["Qwen"],
+        ["glm-ocr"],
+        ["tesseract"],
+    ]
+    assert got[0]["text"] == line.format("“Een nachtwaker’’!’")

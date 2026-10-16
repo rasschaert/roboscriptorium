@@ -79,6 +79,7 @@ button { font: inherit; padding: 8px 12px; border-radius: 6px; border: 1px solid
 button:hover { border-color: var(--accent); }
 button:disabled { opacity: .5; cursor: progress; }
 kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 5px; margin-right: 6px; color: var(--muted); }
+.glyphs { font-size: 1.35em; letter-spacing: .25em; padding: 0 .2em; margin: 0 .1em; border-radius: 4px; border: 1px solid var(--accent); }
 .noted { margin-top: 8px; color: var(--ok); font: 16px/1.4 Georgia, "Iowan Old Style", serif; }
 .answer { margin-top: 12px; padding: 8px 10px; border-radius: 6px; background: var(--ok-bg); color: var(--ok); }
 .hint { color: var(--muted); font-size: 13px; margin-top: 10px; }
@@ -279,23 +280,24 @@ function textBlock(r, doubt) {
   // on it, not only as a lack on the others.
   const near = nearest(texts, base);
   const parts = placeParts(r);
+  const glyphs = parts && marksOnly(parts.mids);
   const rows = r.readings.map((g, k) => {
     const who = g.votes.join(" · ");
     const text = parts
-      ? parts.before + marked(parts.mids[k], parts.mids[k === base ? near : base]) + parts.after
+      ? parts.before + (glyphs ? plainly(parts.mids[k], glyphs) : marked(parts.mids[k], parts.mids[k === base ? near : base])) + parts.after
       : marked(g.text, texts[k === base ? near : base]);
     return `<label class="option reading-option ${draft.reading === k ? "on" : ""} ${k === base ? "base" : ""}"><input type="radio" name="reading" value="${k}" ${draft.reading === k ? "checked" : ""}>
       <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${text}<span class="who">${esc(who)}</span></span>
       <span class="from" data-k="${k}" title="Edit from this reading">✎</span></label>`;
   }).join("");
   return `<div class="question">Which reading matches the scan?</div>
-    <div class="legend">Marked where a reading differs from reading ${READING_KEYS[base]}, the one the others are closest to, and ${READING_KEYS[base]} where it differs from ${READING_KEYS[near]}:
+    ${glyphs ? `<div class="legend">The readings differ only in the marks shown large.</div>${before}` : `<div class="legend">Marked where a reading differs from reading ${READING_KEYS[base]}, the one the others are closest to, and ${READING_KEYS[base]} where it differs from ${READING_KEYS[near]}:
       <span><mark class="has">x</mark> only this one has it</span>
       <span><mark class="lacks">x</mark> this one lacks it</span>
       <span><mark class="swap">x</mark> this one has something else</span>
       <span><mark class="has"><span class="space">␣</span></mark> a space</span>
       ${parts && parts.asked ? `<span><mark class="asked">x</mark> asked in a question of its own</span>` : ""}
-      ${parts && parts.fixed ? `<span><mark class="fixed">x</mark> already corrected</span>` : ""}</div>${before}
+      ${parts && parts.fixed ? `<span><mark class="fixed">x</mark> already corrected</span>` : ""}</div>${before}`}
     <div class="options">${rows}
       <label class="option reading-option ${draft.reading === -1 ? "on" : ""}"><input type="radio" name="reading" value="-1" ${draft.reading === -1 ? "checked" : ""}>
         <kbd>e</kbd><span class="reading muted">Something else…</span></label>
@@ -338,7 +340,7 @@ function toggleMisprint() {
 // other places as corrected or as their own questions most likely read, and each
 // reading's own version of the place. Null when a reading changes the line elsewhere.
 function placeParts(r) {
-  if (!r.span) return null;
+  if (!r.span) return sharedParts(r);
   const [start, end] = r.span, line = r.text, tail = line.length - end;
   if (!r.readings.every(g => g.text.startsWith(line.slice(0, start)) && g.text.endsWith(line.slice(end))
       && g.text.length >= start + tail)) return null;
@@ -364,6 +366,52 @@ function placeParts(r) {
     fixed: others.some(o => o[3] === "fixed"),
   };
 }
+
+// For a question about whole lines: the words every reading shares at its start and end
+// shown once, cut to a few words beside the place they differ, so each option is the
+// difference with a little context. Null when the readings share too little.
+function sharedParts(r) {
+  const texts = r.readings.map(g => g.text);
+  let pre = 0;
+  while (texts.every(t => pre < t.length && t[pre] === texts[0][pre])) pre++;
+  let suf = 0;
+  while (texts.every(t => suf < t.length - pre && t[t.length - 1 - suf] === texts[0][texts[0].length - 1 - suf])) suf++;
+  // Whole words only on either side.
+  pre = texts[0].lastIndexOf(" ", pre - 1) + 1;
+  const end0 = texts[0].length - suf, next = texts[0].indexOf(" ", end0);
+  suf = next < 0 ? 0 : texts[0].length - next;
+  if (pre + suf < SHARED_MIN) return null;
+  const head = texts[0].slice(0, pre), tail = texts[0].slice(texts[0].length - suf);
+  const words = (s, n, fromEnd) => {
+    const w = s.split(" ");
+    if (w.length <= n + 1) return s;
+    return fromEnd ? "… " + w.slice(-n - 1).join(" ") : w.slice(0, n + 1).join(" ") + " …";
+  };
+  return {
+    before: esc(words(head, CONTEXT_WORDS, true)),
+    after: esc(words(tail, CONTEXT_WORDS, false)),
+    mids: texts.map(t => t.slice(pre, t.length - suf)),
+  };
+}
+// Where the places differ only in marks (quotes, punctuation): the letters every place
+// shares at its start and end, [head, tail]; else null.
+function marksOnly(mids) {
+  let head = 0, tail = 0;
+  while (mids.every(m => head < m.length && m[head] === mids[0][head])) head++;
+  while (mids.every(m => tail < m.length - head && m[m.length - 1 - tail] === mids[0][mids[0].length - 1 - tail])) tail++;
+  const cores = mids.map(m => m.slice(head, m.length - tail));
+  return cores.every(c => c.length <= 8 && !/[\p{L}\p{N}\s]/u.test(c)) ? [head, tail] : null;
+}
+
+// A place that differs only in marks, its marks shown large and apart, unmarked.
+function plainly(mid, [head, tail]) {
+  const core = mid.slice(head, mid.length - tail);
+  return esc(mid.slice(0, head)) + `<span class="glyphs">${core ? esc(core) : "∅"}</span>` + esc(mid.slice(mid.length - tail));
+}
+
+// Characters the readings must share before only their difference is shown, and how
+// many words of the shared text stay beside it.
+const SHARED_MIN = 30, CONTEXT_WORDS = 4;
 
 // Characters a keyboard lacks, inserted into the text box at the cursor.
 const PAD = [["—", "em dash (⌥⇧-)"], ["–", "en dash (⌥-)"], ["‘", "opening single quote (⌥])"],
