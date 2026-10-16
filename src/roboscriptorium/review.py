@@ -68,6 +68,9 @@ OUTLINE = (0.85, 0.65, 0.2)
 # How far below a line's box (which ends at the baseline) its descenders reach, as a share
 # of the box's height.
 DESCENT = 0.4
+# Where a lost line's draft is read from: the crop's top, as shares of the line above's
+# height below its baseline.
+GAP_STEPS = (0.0, 0.1, 0.2, 0.3, 0.4)
 UNDERLINE = (0.25, 0.45, 0.95)
 
 
@@ -178,6 +181,26 @@ class Scan:
     ) -> str:
         """Tesseract's reading of a region, as a draft for the human."""
         return ocr.tesseract(ocr.turned(self._ocr_png(page_number, box), turn), lang, single_char)
+
+    def read_gap(self, page_number: int, box: tuple[float, float, float, float], lang: str) -> str:
+        """Tesseract's reading of a line that may be lost in white space between lines.
+
+        The gap starts at the line above's baseline, so its descenders hang into it, and
+        a lost line's ascenders may reach up among them: the crop's top is tried a few
+        steps down from the baseline, and the line read with the most words is kept.
+        """
+        x0, y0, x1, y1 = box
+        above = [ln for ln in self.pages[page_number].lines if ln.y1 <= y0 + 1]
+        last = max(above, key=lambda ln: ln.y1, default=None)
+        height = last.y1 - last.y0 if last else 0
+        readings = [
+            self.read_box(page_number, (x0, y0 + step * height, x1, y1), lang)
+            for step in GAP_STEPS
+            if y0 + step * height < y1 - 2
+        ]
+        # One line is lost at most: a scrap of a neighbour read beside it is left out.
+        lines = [max(r.splitlines() or [""], key=ocr.words) for r in readings]
+        return max(lines, key=ocr.words, default="")
 
     def _ocr_png(self, page_number: int, box: tuple[float, float, float, float]) -> bytes:
         with PDF_LOCK, pymupdf.open(self.pdf) as doc:
@@ -455,7 +478,11 @@ class RegionReview:
         if not {"missing-text", "lost-line", "rotated"} & set(f.reasons) or f.box is None:
             return None
         if f.key not in self._drafts:
-            self._drafts[f.key] = self.scan.read_box(f.page, f.box, self.lang, turn=self._turn(f))
+            if "lost-line" in f.reasons:
+                self._drafts[f.key] = self.scan.read_gap(f.page, f.box, self.lang)
+            else:
+                turn = self._turn(f)
+                self._drafts[f.key] = self.scan.read_box(f.page, f.box, self.lang, turn=turn)
         return self._drafts[f.key]
 
     def guess_initial(self, key: str) -> str:

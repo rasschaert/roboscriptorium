@@ -291,3 +291,27 @@ def test_a_lost_lines_white_space_is_outlined_clear_of_the_lines_around_it(tmp_p
     gap = scan._gap(1, (40, 205.3, 200, 221.3))
     # Below the descenders of the line above (its box ends at the baseline), above the next.
     assert gap.y0 >= 205.3 + 0.35 * 8.8 and gap.y1 < 221.3
+
+
+def test_a_lost_lines_draft_is_read_below_the_descenders_of_the_line_above(tmp_path, monkeypatch):
+    import pymupdf
+
+    from roboscriptorium.pdf import Line, PageText
+
+    doc = pymupdf.open()
+    doc.new_page(width=300, height=300)
+    doc.save(tmp_path / "s.pdf")
+    lines = [Line("retrohelmpje op", 40, 372.8, 280, 382.0), Line("wel op", 40, 397.6, 280, 407.0)]
+    scan = review.Scan(tmp_path / "s.pdf", [PageText(1, 300, 300, lines)])
+    tops = []
+
+    def read(page, box, lang, **_):
+        tops.append(round(box[1], 2))
+        # The crop from the baseline takes in the descenders above and reads as noise.
+        return "es + u u ee" if box[1] < 383 else "en\n\nzijn moderne cilindervormige kop, en dan"
+
+    monkeypatch.setattr(scan, "read_box", read)
+    assert scan.read_gap(1, (40, 382.0, 280, 397.6), "nld") == (
+        "zijn moderne cilindervormige kop, en dan"
+    )
+    assert tops[0] == 382.0 and len(tops) == len(review.GAP_STEPS)

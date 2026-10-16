@@ -135,6 +135,8 @@ function nextUnanswered(from) {
 const picture = r => r.box && r.reasons.some(x => x.startsWith("a picture"));
 // The text box, which a picture region doesn't have.
 const textBox = () => document.getElementById("text");
+// How many tokens look like ordinary words (as `ocr.words` counts them).
+const words = text => (text || "").split(/\s+/).filter(t => /^[A-Za-z][a-z]+[.,;:!?'’”"]*$/.test(t)).length;
 
 function counts() {
   const answered = state.items.filter(r => r.answer).length;
@@ -152,7 +154,9 @@ function startDraft(r) {
   const chosen = a && a.action !== "initial" ? (a.text != null ? a.text : r.text) : null;
   return {
     key: r.key,
-    kind: a ? a.action : picture(r) ? "image" : CURRENT[r.treatment] || "text",
+    // White space where a line may be lost holds running text when its draft reads words.
+    kind: a ? a.action : picture(r) ? "image" : r.white_space && words(r.draft) >= 3 ? "text"
+      : CURRENT[r.treatment] || "text",
     // For a doubt: the chosen reading's index, -1 for typed text, null for none yet.
     reading: !doubt ? null : chosen == null ? null : r.readings.findIndex(g => g.text === chosen),
     text: a && a.text != null && a.action !== "initial" ? a.text : (r.draft || r.text || ""),
