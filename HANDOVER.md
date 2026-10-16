@@ -4,12 +4,19 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session. Written 2026-10-17 ~00:45, at the end of the session of 2026-10-16.
 
-## Running: `robo-break-judge` (started 2026-10-17 ~00:50, ~3 h 20 min)
+## Running: `robo-break-judge` (started 2026-10-17 ~00:12, ~3 h 20 min)
 
 The vision judge (clef:27b) asked, line by line on 192 bench pages (every page with a
 paragraph-break error and as many without), whether each line starts a paragraph
 (`experiments/probe_break_judge.py`; answers in `work/probes/break-judge/answers.jsonl`,
 resumable with `ask`; `score` compares it with the pipeline). No src change depends on it.
+
+Queued after it: `robo-queue` (`work/runs/queue-20261017.sh`, notes in
+`queue-20261017.txt`): the seven short tuning slices grown back to their pre-2026-10-12
+ranges by `eval` (Artemis 13–80, Thief-Taker 11–84, De cipier 9–92, Het heft 9–92, De tuin
+11–97, Doodskleed 13–96, Het ijzige land 11–104; ~450 pages cold, ~7.5 h), then the
+page-kinds probe (~1 h). The bench's SETS still hold the short slices: change them once
+the pages are read, then rebuild trust data and the trees on them, and bench.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment).
