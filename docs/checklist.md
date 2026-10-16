@@ -58,7 +58,9 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,
       a suspect for the arbiter; how many of the undoubted errors it would have raised
 - [ ] Paragraph breaks by a model: the page image plus the pipeline's lines, "which lines
-      start a paragraph?", against `reflow.indented`
+      start a paragraph?", against `reflow.indented`. A learned text table (quote after quote at
+      the margin: 87 of 88 starts) did nothing, the tuning books having no unindented
+      book (2026-10-16, `work/probes/parastarts.patch`); an unindented tuning pair first
 - [ ] Line roles by Qwen from the page image (text, heading, running head, page number,
       caption, picture), against the rules and the trees
 - [ ] The text layer as a second reader only: the page built from the whole-page reading,
