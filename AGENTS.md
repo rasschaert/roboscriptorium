@@ -108,6 +108,11 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **A probe beside a running chain sends the chain's model options** (no `num_ctx` of its
   own): Ollama reloads a model whenever the requested context differs, so two clients at
   different contexts reload it on every switch and throttle both.
+- **The user's review comes last** (the user, 2026-10-16: "why not just do that and build a
+  better pipeline?"). Their time is the scarcest resource: before sending them to review
+  or read a book, finish every checklist step that would change that book's text or
+  questions. A review of a build the agent knows how to improve spends them on errors
+  the machine could have caught.
 - **Questions the bench can't weigh** (the reviewer's time against wrong words, say) are
   the user's call: ask in one short sentence.
 

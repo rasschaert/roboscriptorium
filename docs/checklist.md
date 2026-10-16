@@ -66,6 +66,26 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [ ] Page kinds for `init` (cover, front matter, body, back matter) by Qwen from the page
       image, on `tryouts/page-kinds-v1.json`
 
+## Before the user reviews another book (2026-10-16)
+
+What Ex-minnaar's first review questions showed. The user reviews only after these
+(AGENTS.md, "The user's review comes last"); Ex-minnaar's review is paused.
+
+- [ ] Elision spaces: the text layer glues ’s, ’m to the word before ("maar’s", "kom’s");
+      the readers see the space, but glm-ocr's straight apostrophe parts it from Qwen's
+      curly one and the arbiter keeps the layer (9 left in Ex-minnaar, 40 of its OCR
+      doubts are apostrophe-only). Fold glm's straight marks when comparing; recount;
+      benches (agent, ~2 h)
+- [ ] Small capitals read in lower case ("Citroën xm" for XM, the section titles): find
+      them on the scan (letter heights against the line's x-height), set them as capitals
+      in the text; Ex-minnaar uses them throughout (agent, ~half a day)
+- [ ] One OCR question per line, not per place: every whole-line version as an option
+      (the text layer as read, each reader, the arbiter's), the differing places marked
+      as an aid only; "Something else" starts from any option; the answer is the line,
+      nothing about it asked again. Walk every kind of question before handing back
+      (agent, ~half a day)
+- [ ] Then sample Ex-minnaar's questions again and hand its review back to the user
+
 ## From the codebase review (2026-10-13, first)
 
 The user, 2026-10-13: the review's bug fixes come first, then its bench and structure
