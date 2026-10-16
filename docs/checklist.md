@@ -118,8 +118,9 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       (agent, ~1 h plus the run)
 - [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
       People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
-- [ ] A sampled review of Ex-minnaar, 10–20 questions, for lessons with wide effect
-      before the user's full review
+- [x] A sampled review of Ex-minnaar (2026-10-16): false quote questions on Flemish
+      ’m fixed (308 → 261 questions); its blanked place names ("het __plein") need one
+      setting for the book (the user)
 - [ ] Ex-minnaar's review by the user, then the fixes it teaches
 - [ ] Stella rebuilt with those fixes and diffed against its dated copies in
       `work/stella/epubs/` (the user, 2026-10-12: not before the Ex-minnaar review)

@@ -2,14 +2,10 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-16 ~02:30, during the session of 2026-10-15/16
-(the user away overnight, the agent working on its own).
+end of every session. Written 2026-10-16 ~06:35, at the end of the session of
+2026-10-15/16 (the user away overnight, the agent working on its own).
 
-## Running now (from ~02:00): Ex-minnaar's cold build in screen `robo-ex-minnaar`
-
-~5 h (306 min on 2026-10-11), log `work/runs/ex-minnaar-build.log`; its caches went with
-`work/` on 2026-10-11. For the sampled review of 10–20 of its questions (checklist).
-Safe to stop (`experiments/stop-run.sh ex-minnaar`): it resumes from its caches.
+## Nothing running.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment). clef-flash was pulled again (new digest, checked
@@ -41,6 +37,9 @@ load). Both page readings of every tuning and validation page and Claude's readi
 - **Stella estimated** against Claude's reading: 4 wrong words in 67 pages before review,
   2 of them asked; 6 questions in all, sampled and sound. Expect ~2 wrong words after
   review (quotes, dashes, italics not compared).
+- **Ex-minnaar built cold** (283 min, epubcheck clean) and its questions sampled: 105
+  unpaired-quote questions were mostly Flemish ’m counted as a quote, now an elision
+  (308 → 261 questions; no golden book affected). The rest sound (decisions.md).
 - **Nulls, recorded:** page readers' hyphen votes (the judge already settles them); "no
   page reader reads it" as a line-role feature (the trees already handle those lines);
   joins after a tight f (Stella's typeface only).
@@ -53,8 +52,8 @@ load). Both page readings of every tuning and validation page and Claude's readi
 
 1. **Stella's review by the user**: 6 questions, about five minutes
    (`uv run roboscriptorium review work/stella`), then the read-through (checklist).
-2. **Ex-minnaar's sampled review**: when its build is done, sample 10–20 questions for
-   lessons with wide effect, then the user's full review.
+2. **Ex-minnaar's review by the user**: 261 questions (~1 a page), after the user settles
+   how its blanked place names are set (below).
 3. From the codebase review (checklist): the line-role trainer into `src/`, one cache
    helper, the module splits; book-wide statistics on the whole body.
 4. The checklist's remaining "Assumptions to test"; Dolittle's wrapped text (wants a
@@ -64,6 +63,10 @@ load). Both page readings of every tuning and validation page and Claude's readi
 runs. Last ones: 2026-10-15 09:34 and that evening.
 
 ## Waiting on the user
+
+- **Ex-minnaar's blanked place names**: the print sets a short rule on the baseline
+  before a name it withholds ("het __plein", "de __straat", ~25 times); the output has
+  "_", "__" or "____". Which one mark should the book use?
 
 - **Prune `experiments/`?** 54 scripts are named only in docs/decisions.md and
   docs/run-times.md, as the evidence behind a decision (list in the session's scratch:
