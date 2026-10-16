@@ -652,6 +652,25 @@ def test_a_flush_page_top_after_a_finished_paragraph_in_an_indented_book_is_a_sc
     ]
 
 
+def test_a_page_top_line_the_judge_says_starts_a_paragraph_still_opens_a_scene():
+    # The vision judge sets `starts_paragraph` (`parabreaks.py`); a flush page top after a
+    # finished paragraph is a scene break all the same, and one it says carries on isn't.
+    from dataclasses import replace
+
+    nxt = [(10, 280, "Een nieuwe scène begint vlak"), (10, 280, "tegen de marge aan, regel"),
+           (22, 280, "Dan een gewone alinea die"), (10, 120, "inspringt.")]  # fmt: skip
+    page = _book_page(6, nxt)
+    judged = [replace(page.lines[0], starts_paragraph=True), *page.lines[1:]]
+    paragraphs = reflow([_book_page(5, _INDENTED_END), replace(page, lines=judged)])
+    assert [(p.text[:10], p.break_before) for p in paragraphs][-2:] == [
+        ("Een nieuwe", True),
+        ("Dan een ge", False),
+    ]
+    judged = [replace(page.lines[0], starts_paragraph=False), *page.lines[1:]]
+    paragraphs = reflow([_book_page(5, _INDENTED_END), replace(page, lines=judged)])
+    assert not any(p.break_before for p in paragraphs)
+
+
 def test_a_page_top_line_whose_box_starts_left_of_the_margin_is_no_scene_break():
     # The layer's box for a page's first line can start left of the margin, though
     # the print indents it: that isn't a line set flush.

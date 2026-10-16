@@ -399,8 +399,7 @@ def _add_body(
         if (
             k == 0
             and short_end[0]
-            and not starts_paragraph
-            and line.starts_paragraph is None
+            and line.starts_paragraph is not False
             and _may_open(line)
             and isinstance(current, Paragraph)
             and current.sources
