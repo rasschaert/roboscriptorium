@@ -486,6 +486,21 @@ letter and a hyphen continues the paragraph, however it is set. Bench (2026-10-1
 tuning **better** 0.32 → 0.31, validation **better** 0.74 → 0.70 (You're never weird
 0.94 → 0.77, Monterosso 0.64 → 0.50), paragraph F1 up on every book that moved.
 
+**Where the geometry can't tell, the vision judge does** (`parabreaks.py`). After all the
+rules above, the breaks set wrong were of two kinds: starts no geometry shows (Vuurspel's
+dialogue at the margin, Artemis's letters set flush and unspaced) and lines set apart
+that carry a paragraph on (Dolittle's verse and the lines beside its drawn initials,
+Normal People's emails, You're Never Weird's lists). A text table learned from the tuning
+books (a quote after a closing quote at the margin starts a paragraph 87 times in 88) did
+nothing: the one book that needs it validates. The judge (clef:27b) sees the line between
+its neighbours, cropped across the text block, with their text, and says whether it
+starts a paragraph; where it is at least 0.7 sure, its answer stands. On 1,488 lines of
+tuning pages (every page with a break error and as many without), the reflow had 56
+starts wrong; with the judge's sure answers 19, and none it had right made wrong
+(`experiments/probe_break_judge.py`, 2026-10-17). A body line that begins in lower case
+after a line that doesn't end a sentence carries on, unasked: of 3,800 such lines two
+started a paragraph, both after a scrap. That leaves about a third of the lines to ask.
+
 ## Footnotes
 
 **A footnote leaves the running text.** Printed at a page's foot, a note read as body
