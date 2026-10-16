@@ -55,14 +55,15 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `sorterdata.py`: the trees' labelled lines (golden alignment on the bench's slices and
   a few training-only ones, cached in `work/probes/sorter/`) and the models to save;
   scored and saved by `experiments/train_sorter.py [--save]`.
-- `reflow.py`: lines → blocks (headings, paragraphs; indents, de-hyphenation,
-  punctuation spacing). A line-end hyphen stays or goes by evidence in order: the
-  book's own spelling, the word list, a capital after the break, the parts beside an
-  inner hyphen, then `compound`, a judge of the language (docs/design.md). Without
-  roles it falls back to a footer heuristic.
-- `hyphens.py`: `Compounds`, the judge (`judge_model`) asked whether an English line-end
-  hyphen nothing else decides is the word's own; answers cached by the hyphenated word
-  in `stages/compounds.json`. Only English books ask it (`asked`).
+- `reflow.py`: lines → blocks (headings, paragraphs; indents, punctuation spacing),
+  lines joined by `hyphens.join`, a single-quoted book's misread openings and an old
+  layer's closings mended by `quotes`. Without roles it falls back to a footer heuristic.
+- `hyphens.py`: lines joined across their ends (`join`). A line-end hyphen stays or goes
+  by evidence in order: the book's own spelling (`spellings`), the word list, a capital
+  after the break, the parts beside an inner hyphen, then `Compounds`, the judge
+  (`judge_model`) asked whether an English hyphen nothing else decides is the word's
+  own, its answers cached by the hyphenated word in `stages/compounds.json` (only
+  English books ask it, `asked`; docs/design.md).
 - `ir.py`: the IR (`Document`; `Paragraph` and `Heading` with `SourceRef`s back
   to page lines, a paragraph marking a scene break before it; `Figure` with its image file, page box and caption).
 - `figures.py`: the pictures in the book. The layout model's figures on body
@@ -151,7 +152,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   under 30 levels (printed pages measure 50 or more, washed-out ones under 10). On scans
   only (`Stages.faint_pages`); `flags.find` makes such a page one `washed-out` region,
   and the OCR check leaves it out (its readers invent fluent text on faint crops).
-- `quotes.py`: `curl`, the straight quotes and apostrophes left from the text layer
+- `quotes.py`: in a single-quoted book (`single_quoted`) a “ no ” closes is a misread ‘
+  (`open_single`); an old layer's `'` closing a `"` is mended (`close_quotes`). `curl`, the straight quotes and apostrophes left from the text layer
   curled by their place after the answers (feet, inches and marks spaced on both sides
   stay); places where a paragraph's curly quotes don't pair up (a lost
   opening ‘, a lost closing ’, also at a paragraph's end before one that opens with a

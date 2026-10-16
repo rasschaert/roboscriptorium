@@ -22,7 +22,7 @@ from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
-from roboscriptorium import reflow
+from roboscriptorium import hyphens
 from roboscriptorium.files import append_jsonl, read_jsonl
 from roboscriptorium.flags import Flag
 from roboscriptorium.ir import SourceRef
@@ -198,7 +198,7 @@ def _set_initial(page: PageText, c: Correction) -> None:
 def _join_lines(text: str) -> str:
     """One paragraph from typed lines, undoing line-end hyphens as reflow does."""
     lines = [" ".join(ln.split()) for ln in text.splitlines() if ln.strip()]
-    return functools.reduce(reflow.join, lines) if lines else ""
+    return functools.reduce(hyphens.join, lines) if lines else ""
 
 
 def _insert(

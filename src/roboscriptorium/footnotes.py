@@ -13,9 +13,9 @@ import re
 from collections.abc import Callable
 from dataclasses import replace
 
+from roboscriptorium.hyphens import join
 from roboscriptorium.ir import Block, Note, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText
-from roboscriptorium.reflow import join
 from roboscriptorium.roles import LineRole, is_body
 from roboscriptorium.typestyle import Style
 

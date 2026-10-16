@@ -49,7 +49,7 @@ from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.pdf import cached_text_layer
-from roboscriptorium.reflow import HYPHENS
+from roboscriptorium.hyphens import HYPHENS
 
 sys.path.insert(0, str(Path(__file__).parent))
 from roboscriptorium.trustdata import fold  # noqa: E402  the trust data's labels compare lines the same way

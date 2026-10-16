@@ -2,9 +2,10 @@ from collections import Counter
 
 import pytest
 
+from roboscriptorium.hyphens import join
 from roboscriptorium.ir import Heading, Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText, _core, _visual_lines
-from roboscriptorium.reflow import join, reflow, tidy
+from roboscriptorium.reflow import reflow, tidy
 from roboscriptorium.roles import LineRole
 
 SPACING = 15.0

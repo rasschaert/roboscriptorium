@@ -20,9 +20,9 @@ from rapidfuzz.distance import Levenshtein
 from roboscriptorium import ocr
 from roboscriptorium.clients.retry import patiently
 from roboscriptorium.files import read_cache, write_cache
+from roboscriptorium.hyphens import HYPHENS
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PDF_LOCK, PageText
-from roboscriptorium.reflow import HYPHENS
 
 VERSION = 1
 # A page rendered at this many pixels: glm-ocr reads it near-exactly, and it fits

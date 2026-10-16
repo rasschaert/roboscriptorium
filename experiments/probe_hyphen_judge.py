@@ -1,7 +1,7 @@
 """Line-end hyphens the book and the word list leave undecided, asked of decision
 models: is the hyphen the word's own ("half-cooked") or the break's ("halfcooked")?
 Scored against the tuning books' references where they spell the word one way only,
-beside `reflow.join`'s default (the break's).
+beside `hyphens.join`'s default (the break's).
 
     uv run python experiments/probe_hyphen_judge.py [model …]
 
@@ -14,7 +14,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from roboscriptorium import bench, ocr, reflow
+from roboscriptorium import bench, hyphens, ocr
 from roboscriptorium.book import Book
 from roboscriptorium.golden import scoring
 from roboscriptorium.clients.decide import DecisionClient, choice
@@ -37,7 +37,7 @@ for spec in bench.SETS["tuning"]:
     lang = ocr.language(book.language)
     layer = cached_text_layer(book.source, book.stages / "textlayer.json", lang)
     layer = [p for p in layer if first <= p.number <= last]
-    seen = reflow.spellings(layer)
+    seen = hyphens.spellings(layer)
     lex = Lexicon.load(lang)
     ref = load_chapters(Golden.load(book.golden).text_dir)
     words = Counter(
@@ -45,7 +45,7 @@ for spec in bench.SETS["tuning"]:
     )
     lines = [line.text for p in layer for line in p.lines]
     for i, (text, nxt) in enumerate(zip(lines, lines[1:])):
-        if not (text.endswith(reflow.HYPHENS) and len(text) > 1 and text[-2].isalpha()):
+        if not (text.endswith(hyphens.HYPHENS) and len(text) > 1 and text[-2].isalpha()):
             continue
         stem = W.sub("", text.split()[-1][:-1])
         rest = W.sub("", nxt.split()[0]) if nxt.split() else ""

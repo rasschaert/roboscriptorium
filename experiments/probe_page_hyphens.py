@@ -20,7 +20,7 @@ from pathlib import Path
 
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium import hyphens, pagereader, pdf, reflow
+from roboscriptorium import hyphens, pagereader, pdf
 from roboscriptorium.book import Book
 from roboscriptorium.disagreements import patch
 from roboscriptorium.golden import scoring
@@ -95,7 +95,7 @@ for spec in sys.argv[1:]:
     reference, _ = patch(reference, scoring.verdicts(book))
     vocab = Counter(core(w) for ch in reference for par in ch.paragraphs for w in unmarked(par).split())
     truth = align(pages, reference)
-    seen = reflow.spellings(pages)
+    seen = hyphens.spellings(pages)
     lexicon = Lexicon.load("nld" if book.language == "nl" else "eng")
     compound = None
     if hyphens.asked(book.language):
@@ -111,7 +111,7 @@ for spec in sys.argv[1:]:
         cache = folder / "stages" / f"page-reading-{reader}.json"
         readings[reader] = json.loads(cache.read_text())["pages"] if cache.exists() else {}
     for page, i, text, nxt, stem, rest, printed in breaks(pages, truth, vocab):
-        joined = reflow.join(text, nxt, seen, lexicon.knows, compound)
+        joined = hyphens.join(text, nxt, seen, lexicon.knows, compound)
         word = joined[len(text) - len(text.split()[-1]) :].split()[0]
         reflow_right = (core(word) == f"{stem}-{rest}") == printed
         votes = {}

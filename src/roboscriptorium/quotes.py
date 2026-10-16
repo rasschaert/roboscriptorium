@@ -391,3 +391,66 @@ def curled(text: str, opening: str = "“") -> str:
         else:
             chars[i] = "’"
     return "".join(chars)
+
+
+def single_quoted(blocks: list[Block]) -> bool:
+    """Whether the book opens its dialogue with ‘ rather than “, as Dutch print does.
+
+    Counted on the book's own text: an OCR layer misreads some ‘ as “, not most.
+    """
+    text = " ".join(b.text for b in blocks if isinstance(b, Paragraph))
+    return text.count("‘") > 2 * text.count("“")
+
+
+def open_single(text: str) -> str:
+    """In single-quoted text, a “ that no ” closes is a ‘ the OCR layer misread.
+
+    What closes it is the next quote mark after it, apostrophes (zo’n, ’s) aside.
+    A real “ (a quote within the dialogue, a title) closes with ”, or with ’’ in
+    some typesetting, so it stays.
+    """
+    chars = list(text)
+    for i, c in enumerate(chars):
+        if c != "“":
+            continue
+        closer = None
+        for k in range(i + 1, len(chars)):
+            if chars[k] not in "‘“’”":
+                continue
+            after = chars[k + 1] if k + 1 < len(chars) else " "
+            if chars[k] == "’" and after.isalpha():
+                continue
+            closer = "”" if "".join(chars[k : k + 2]) == "’’" else chars[k]
+            break
+        if closer != "”":
+            chars[i] = "‘"
+    return "".join(chars)
+
+
+def close_quotes(text: str) -> str:
+    """Mend a closing double quote that an old OCR layer read as a single one.
+
+    Only in straight-quoted text: a `'` while a `"` is open and no `'` is closes
+    the `"`, when it follows punctuation ("before.' said he") or ends the
+    paragraph ("asleep in his chair'"). After a letter and before more text it may
+    be a plural possessive ("the animals' language"), so it stays.
+    """
+    if any(q in text for q in "“”‘’"):
+        return text
+    chars = list(text)
+    double = single = False
+    for i, c in enumerate(chars):
+        before = chars[i - 1] if i else " "
+        after = chars[i + 1] if i + 1 < len(chars) else " "
+        if c == '"':
+            double = not double
+        elif c != "'" or (before.isalnum() and after.isalnum()):
+            continue
+        elif not before.isspace() and (after.isspace() or after in ".,;:!?—-"):
+            if single:
+                single = False
+            elif double and (before in ".,;:!?—-" or i == len(chars) - 1):
+                chars[i], double = '"', False
+        elif before.isspace() or before in '"(':
+            single = True
+    return "".join(chars)

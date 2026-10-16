@@ -3,10 +3,10 @@
 For each body line ending in a hyphen, the aligned truth gives the printed word's head
 and tail, and the reference's own vocabulary says whether the book prints the word
 closed ("geluid") or with the hyphen ("wc-rol"); a break where it prints both, or
-neither, isn't decidable and is skipped. `reflow.join` is then compared with that, and
+neither, isn't decidable and is skipped. `hyphens.join` is then compared with that, and
 so is each piece of evidence it could use:
 
-- the rules in `reflow.join` (a capital after the break, a hyphen already in the word,
+- the rules in `hyphens.join` (a capital after the break, a hyphen already in the word,
   the book printing the word with a hyphen elsewhere), how often each fires and is right;
 - the word list (`lexicon.py`): where it knows exactly one of the two forms, its vote,
   crossed with reflow's call, so a vote that would fix a wrong call is told apart from
@@ -23,7 +23,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from roboscriptorium import pdf, reflow
+from roboscriptorium import hyphens, pdf, reflow
 from roboscriptorium.book import Book
 from roboscriptorium.golden import scoring
 from roboscriptorium.disagreements import patch
@@ -69,8 +69,8 @@ def breaks(pages, truth, vocab):
 
 
 def made_hyphen(text: str, nxt: str, seen, known, stem: str, rest: str) -> bool:
-    """Whether `reflow.join` keeps the hyphen at this break."""
-    joined = reflow.join(text, nxt, seen, known)
+    """Whether `hyphens.join` keeps the hyphen at this break."""
+    joined = hyphens.join(text, nxt, seen, known)
     word = joined[len(text) - len(text.split()[-1]) :].split()[0]
     return core(word) == f"{stem}-{rest}"
 
@@ -96,7 +96,7 @@ for spec in sys.argv[1:]:
         core(w) for ch in reference for par in ch.paragraphs for w in unmarked(par).split()
     )
     truth = align(pages, reference)
-    seen = reflow.spellings(pages)
+    seen = hyphens.spellings(pages)
     lexicon = Lexicon.load("nld" if book.language == "nl" else "eng")
 
     tally: Counter = Counter()
@@ -109,7 +109,7 @@ for spec in sys.argv[1:]:
         right = made == print_hyphen
         tally["reflow right" if right else "reflow wrong"] += 1
 
-        # The rules, as `reflow.join` applies them.
+        # The rules, as `hyphens.join` applies them.
         first_word = nxt.split()[0] if nxt.split() else ""
         last_word = text.split()[-1][:-1]
         capital = not reflow._LOWER_START.match(nxt)

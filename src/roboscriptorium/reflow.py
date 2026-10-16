@@ -12,9 +12,11 @@ from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from roboscriptorium.hyphens import HYPHENS, Compound, join, spellings
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.page import NUMBERED_WORDS, bare_numeral, digits
 from roboscriptorium.pdf import Line, PageText
+from roboscriptorium.quotes import close_quotes, open_single, single_quoted
 from roboscriptorium.roles import LineRole, is_body
 
 # A paragraph-opening indent is ~10pt on the target scans; line-start jitter
@@ -63,18 +65,6 @@ FOOTER_ZONE = 0.8
 FOOTER_GAP = 1.5
 FOOTER_MAX_CHARS = 4
 
-HYPHENS = ("-", "\u00ad", "\u00ac")
-# Whether an undecided line-end hyphen is the word's own: (stem, rest, the text around the
-# break, marked with |) → keep it.
-Compound = Callable[[str, str, str], bool]
-DASHES = ("\u2014", "\u2013")
-# What isn't part of a word, for counting spellings ("thief-taker’s," → "thief-takers").
-_WORD = re.compile(r"[^\w-]")
-_BESIDE_END = re.compile(r"[\w'’-]*$")
-_BESIDE_START = re.compile(r"[\w'’-]*")
-# The words that open the second half of a word left open at a hyphen, its ending shared
-# with a word further on: "in- en uitvoer", "zes- tot achtjarigen", "pre- and post-war".
-_SUSPENDED_BY = frozenset({"en", "of", "noch", "tot", "and", "or", "nor"})
 # Older OCR layers keep the thin space some printers set before punctuation. A dot in
 # a spaced run (". . .") keeps its space: the typography stage sets the run book-wide.
 _SPACE_BEFORE_PUNCTUATION = re.compile(r"(?<!\.)\s+([,;:.!?])(?=\s|$)(?!\s\.)")
@@ -274,107 +264,6 @@ def _may_open(line: Line) -> bool:
     return not text[:1].islower() and not text.startswith(tuple(".,;:!?"))
 
 
-def spellings(pages: list[PageText]) -> Counter:
-    """How often the book prints each word where no line break decides its spelling: all
-    but a line's last word cut by a hyphen and the next line's first word, its rest."""
-    seen: Counter = Counter()
-    for page in pages:
-        cut = False
-        for line in page.lines:
-            words = line.text.split()
-            whole = words[1:] if cut else words
-            cut = bool(words) and words[-1].endswith(HYPHENS)
-            for word in whole[:-1] if cut else whole:
-                if key := _WORD.sub("", word).lower():
-                    seen[key] += 1
-    return seen
-
-
-def join(
-    text: str,
-    nxt: str,
-    seen: Counter | None = None,
-    known: Callable[[str], bool] | None = None,
-    compound: Compound | None = None,
-) -> str:
-    """Append the next line, undoing hyphenation where the word continues.
-
-    Whether a hyphen at the line's end is the word's own is settled by evidence, the
-    strongest first: how the book spells the word inside lines (`seen`, from
-    `spellings`: "thief-taker" elsewhere keeps it, "thieftaker" drops it); which of the
-    two forms the language's word list knows (`known`, such as `Lexicon.knows`: it has
-    "wc-rol" and not "wcrol"); a capital after the break ("Noord-Holland"; a word set
-    in capitals isn't one); and, with a hyphen already in the word, whether the parts
-    beside the break are both words ("Mens-erger-je-niet" keeps it) or one word broken
-    ("Zuid-Lon-den" doesn't; without a word list the hyphen stays). Otherwise `compound`
-    decides, a judge of the language (`hyphens.Compounds`), or else the hyphen was the
-    break's.
-    """
-    if text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha():
-        last, first = text.split()[-1][:-1], nxt.split()[0] if nxt.split() else ""
-        # The letters beside the break only: "pus—that's" continues "cam-" with "pus".
-        stem = _WORD.sub("", _BESIDE_END.search(last).group())
-        rest = _WORD.sub("", _BESIDE_START.match(first).group() or first)
-        if _suspended(nxt, stem, rest, seen, known):
-            return text.rstrip("".join(HYPHENS)) + "- " + nxt
-        if _hyphen_stays(nxt, stem, rest, seen, known, compound, f"{text[-120:]}|{nxt}"):
-            return text.rstrip("".join(HYPHENS)) + "-" + nxt
-        return text[:-1] + nxt
-    if text.endswith(DASHES):
-        # A spaced dash ("ziet – hoe") keeps its spaces; a closed one ("alles—en") doesn't.
-        return f"{text} {nxt}" if text[:-1].endswith(" ") else text + nxt
-    if text.endswith("-") and len(text) > 1 and text[-2].isdigit() and nxt[:1].isdigit():
-        return text + nxt  # a number range broken at the line's end ("1914-" / "1918")
-    return f"{text} {nxt}"
-
-
-def _suspended(
-    nxt: str,
-    stem: str,
-    rest: str,
-    seen: Counter | None,
-    known: Callable[[str], bool] | None,
-) -> bool:
-    """Whether the hyphen leaves `stem` open before a conjunction ("voor-" / "en
-    nadelen"), not breaking a word that happens to go on with one ("Toron-" / "to")."""
-    words = nxt.split()
-    if len(words) < 2 or words[0] not in _SUSPENDED_BY or rest != words[0]:
-        return False
-    closed = (stem + rest).lower()
-    if seen and seen[closed]:
-        return False
-    return known is None or not known(stem + rest)
-
-
-def _hyphen_stays(
-    nxt: str,
-    stem: str,
-    rest: str,
-    seen: Counter | None,
-    known: Callable[[str], bool] | None,
-    compound: Compound | None = None,
-    context: str = "",
-) -> bool:
-    """Whether the hyphen between `stem` and `rest` is the word's own (see `join`)."""
-    closed, hyphenated = stem + rest, f"{stem}-{rest}"
-    if seen and seen[hyphenated.lower()] != seen[closed.lower()]:
-        return seen[hyphenated.lower()] > seen[closed.lower()]
-    if known is not None and known(hyphenated) != known(closed):
-        return known(hyphenated)
-    if not nxt[:1].islower():
-        return not (len(rest) > 1 and rest.isupper())
-    if "-" in stem or "-" in rest:
-        if known is None:
-            return True
-        # The parts beside the break: a word of their own ("Lon" + "den") was broken
-        # there; two words ("erger" + "je") were joined by the hyphen.
-        before, after = stem.rsplit("-", 1)[-1], rest.split("-", 1)[0]
-        if known(before + after):
-            return False
-        return min(len(before), len(after)) >= 3 and known(before) and known(after)
-    return compound is not None and bool(stem) and bool(rest) and compound(stem, rest, context)
-
-
 def _role(roles: dict[SourceRef, LineRole] | None, ref: SourceRef) -> str:
     r = roles.get(ref) if roles is not None else None
     return "body" if is_body(r) else r.role
@@ -451,69 +340,6 @@ def reflow(
             if isinstance(block, Paragraph):
                 block.text = open_single(block.text)
     return blocks
-
-
-def single_quoted(blocks: list[Block]) -> bool:
-    """Whether the book opens its dialogue with ‘ rather than “, as Dutch print does.
-
-    Counted on the book's own text: an OCR layer misreads some ‘ as “, not most.
-    """
-    text = " ".join(b.text for b in blocks if isinstance(b, Paragraph))
-    return text.count("‘") > 2 * text.count("“")
-
-
-def open_single(text: str) -> str:
-    """In single-quoted text, a “ that no ” closes is a ‘ the OCR layer misread.
-
-    What closes it is the next quote mark after it, apostrophes (zo’n, ’s) aside.
-    A real “ (a quote within the dialogue, a title) closes with ”, or with ’’ in
-    some typesetting, so it stays.
-    """
-    chars = list(text)
-    for i, c in enumerate(chars):
-        if c != "“":
-            continue
-        closer = None
-        for k in range(i + 1, len(chars)):
-            if chars[k] not in "‘“’”":
-                continue
-            after = chars[k + 1] if k + 1 < len(chars) else " "
-            if chars[k] == "’" and after.isalpha():
-                continue
-            closer = "”" if "".join(chars[k : k + 2]) == "’’" else chars[k]
-            break
-        if closer != "”":
-            chars[i] = "‘"
-    return "".join(chars)
-
-
-def close_quotes(text: str) -> str:
-    """Mend a closing double quote that an old OCR layer read as a single one.
-
-    Only in straight-quoted text: a `'` while a `"` is open and no `'` is closes
-    the `"`, when it follows punctuation ("before.' said he") or ends the
-    paragraph ("asleep in his chair'"). After a letter and before more text it may
-    be a plural possessive ("the animals' language"), so it stays.
-    """
-    if any(q in text for q in "“”‘’"):
-        return text
-    chars = list(text)
-    double = single = False
-    for i, c in enumerate(chars):
-        before = chars[i - 1] if i else " "
-        after = chars[i + 1] if i + 1 < len(chars) else " "
-        if c == '"':
-            double = not double
-        elif c != "'" or (before.isalnum() and after.isalnum()):
-            continue
-        elif not before.isspace() and (after.isspace() or after in ".,;:!?—-"):
-            if single:
-                single = False
-            elif double and (before in ".,;:!?—-" or i == len(chars) - 1):
-                chars[i], double = '"', False
-        elif before.isspace() or before in '"(':
-            single = True
-    return "".join(chars)
 
 
 def _labels(text: str) -> bool:

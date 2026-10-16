@@ -99,9 +99,10 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       keys: every book's judging runs again cold (agent, ~1 h plus a planned night)
 - [x] `ocrcheck.py` split into `readers.py` and `ocrdoubts.py`; one `roles.is_body`
       (2026-10-16, benches identical)
-- [ ] Split `reflow.py` (hyphens and quote mending out) and `typography.py` (the scan
-      measurements and one ink module beside `italics`' threshold) (agent, ~2 h,
-      behaviour unchanged, tests before and after)
+- [x] `reflow.py` split: joins and hyphens into `hyphens.py`, quote mending into
+      `quotes.py` (2026-10-16, benches identical)
+- [ ] Split `typography.py` (the scan measurements and one ink module beside `italics`'
+      threshold) (agent, ~1 h, behaviour unchanged, tests before and after)
 - [ ] Prune `experiments/`: 53 scripts named only in the logs deleted (2026-10-16, the
       user: results recorded, git keeps them); left: `probe_orientation.py` broken;
       AGENTS.md cut to rules and the map (manifest keys to golden-notes.md, environment

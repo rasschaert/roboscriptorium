@@ -27,11 +27,11 @@ from roboscriptorium import readers
 from roboscriptorium.clients import decide
 from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.files import write_atomic
+from roboscriptorium.hyphens import HYPHENS
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, line_words, page_words, spells, spliced
 from roboscriptorium.quotes import ELISION
-from roboscriptorium.reflow import HYPHENS
 from roboscriptorium.roles import DecisionCache
 
 # The fixed rule: the judge must be at least this sure, and agree with the text model.
