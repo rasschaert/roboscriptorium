@@ -141,7 +141,8 @@ don't yet give at a price worth the reviewer's time.
       unasked; it ships only when `bench tuning` improves with no book's veto and
       `bench validation` doesn't worsen, and the questions it adds are counted
       against the errors they catch. Labels first, from tonight's trust data (agent,
-      ~half a day)
+      ~half a day). Lost spaces: the word list alone is useless (9 errors to 4,417 right
+      compounds, 2026-10-16); the gap at the split, measured on the scan, is the feature
 - [ ] A reader of the finished text (the proofreader), for errors every reading shares:
       probed twice, about one catch per 100 paragraphs against as many false questions
       (2026-10-11, qwen3.8 proposing, clef filtering): rerun the probe
