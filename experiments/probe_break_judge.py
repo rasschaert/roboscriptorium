@@ -14,8 +14,11 @@ work/probes/break-judge/answers.jsonl, so a stopped run resumes.
 and the judge where the pipeline is wrong and where it is right.
 
     uv run python experiments/probe_break_judge.py prepare
-    uv run python experiments/probe_break_judge.py ask [limit]
-    uv run python experiments/probe_break_judge.py score
+    uv run python experiments/probe_break_judge.py ask [limit] [--model m] [--workers n]
+    uv run python experiments/probe_break_judge.py score [--model m] [--sure 0.7]
+
+Another model's answers go to answers-<model>.jsonl; `--workers` asks several at once (the
+llama.cpp-served models answer four at a time, the MLX ones one).
 """
 
 import json
@@ -134,7 +137,13 @@ def _crop(doc, page, k: int) -> bytes:
     return doc[page.number - 1].get_pixmap(dpi=150, clip=clip).tobytes("png")
 
 
-def ask(limit: int | None) -> None:
+def _answers(model: str) -> Path:
+    return OUT / ("answers.jsonl" if model == JUDGE else f"answers-{model.replace(':', '_')}.jsonl")
+
+
+def ask(limit: int | None, model: str = JUDGE, workers: int = 1) -> None:
+    from concurrent.futures import ThreadPoolExecutor
+
     import pymupdf
 
     from roboscriptorium import ocr
@@ -144,7 +153,7 @@ def ask(limit: int | None) -> None:
     from roboscriptorium.pdf import cached_text_layer
 
     rows = json.loads((OUT / "lines.json").read_text())
-    path = OUT / "answers.jsonl"
+    path = _answers(model)
     done = set()
     if path.exists():
         for ln in path.read_text().splitlines():
@@ -156,30 +165,40 @@ def ask(limit: int | None) -> None:
     todo = [r for r in rows if (r["book"], r["page"], r["line"]) not in done]
     if limit is not None:
         todo = todo[:limit]
-    client = decide.for_model(JUDGE, Settings.from_env().ollama_url)
+    client = decide.for_model(model, Settings.from_env().ollama_url)
     layers: dict[str, dict] = {}
     docs: dict[str, pymupdf.Document] = {}
     start = time.time()
-    with path.open("a") as f:
-        for n, r in enumerate(todo, 1):
-            book = r["book"]
-            if book not in layers:
-                b = Book.load(Path("work") / book)
-                layer = cached_text_layer(
-                    b.source, b.stages / "textlayer.json", ocr.language(b.language)
-                )
-                layers[book] = {p.number: p for p in layer}
-                docs[book] = pymupdf.open(b.source)
-            page = layers[book][r["page"]]
-            png = _crop(docs[book], page, r["line"])
-            state = {
-                "line above"
-                + (" (the last line of the page before)" if r["page_top"] else ""): r["above"],
-                "line in question": r["text"],
-                "line below": r["below"],
-            }
-            answer = client.decide(state, QUESTION, image_png=png)["start"]
-            f.write(
+
+    def crop(r):
+        book = r["book"]
+        if book not in layers:
+            b = Book.load(Path("work") / book)
+            layer = cached_text_layer(b.source, b.stages / "textlayer.json", ocr.language(b.language))
+            layers[book] = {p.number: p for p in layer}
+            docs[book] = pymupdf.open(b.source)
+        return _crop(docs[book], layers[book][r["page"]], r["line"])
+
+    def one(job):
+        r, png = job
+        state = {
+            "line above"
+            + (" (the last line of the page before)" if r["page_top"] else ""): r["above"],
+            "line in question": r["text"],
+            "line below": r["below"],
+        }
+        return r, client.decide(state, QUESTION, image_png=png)["start"]
+
+    batch = 4 * workers
+    with path.open("a") as f, ThreadPoolExecutor(workers) as pool:
+        n = 0
+        for at in range(0, len(todo), batch):
+            # Crops are rendered on this thread; only the model calls run in the pool.
+            jobs = [(r, crop(r)) for r in todo[at : at + batch]]
+            for r, answer in pool.map(one, jobs):
+                n += 1
+                book = r["book"]
+                f.write(
                 json.dumps(
                     {
                         "book": book,
@@ -189,23 +208,22 @@ def ask(limit: int | None) -> None:
                         "confidence": answer.confidence,
                     }
                 )
-                + "\n"
-            )
+                    + "\n"
+                )
             f.flush()
-            if n % 50 == 0 or n == len(todo):
-                per = (time.time() - start) / n
-                left = (len(todo) - n) * per / 60
-                print(f"{n}/{len(todo)}  {per:.1f} s a line, ~{left:.0f} min left", flush=True)
+            per = (time.time() - start) / n
+            left = (len(todo) - n) * per / 60
+            print(f"{n}/{len(todo)}  {per:.2f} s a line, ~{left:.0f} min left", flush=True)
 
 
-def score() -> None:
+def score(model: str = JUDGE, sure: float = 0.0) -> None:
     rows = {(r["book"], r["page"], r["line"]): r for r in json.loads((OUT / "lines.json").read_text())}
-    answers = [json.loads(ln) for ln in (OUT / "answers.jsonl").read_text().splitlines() if ln]
+    answers = [json.loads(ln) for ln in _answers(model).read_text().splitlines() if ln]
     by_book: dict[str, Counter] = {}
     total = Counter()
     for a in answers:
         r = rows[(a["book"], a["page"], a["line"])]
-        judge = a["choice"] == "starts"
+        judge = a["choice"] == "starts" if a["confidence"] >= sure else r["ours"]
         c = by_book.setdefault(r["book"], Counter())
         for counter in (c, total):
             counter["lines"] += 1
@@ -224,10 +242,16 @@ def score() -> None:
 
 
 if __name__ == "__main__":
-    command = sys.argv[1]
+    command, args = sys.argv[1], sys.argv[2:]
+
+    def option(name: str, default):
+        return type(default)(args[args.index(name) + 1]) if name in args else default
+
+    model = option("--model", JUDGE)
     if command == "prepare":
         prepare()
     elif command == "ask":
-        ask(int(sys.argv[2]) if len(sys.argv) > 2 else None)
+        limit = int(args[0]) if args and not args[0].startswith("--") else None
+        ask(limit, model, option("--workers", 1))
     else:
-        score()
+        score(model, option("--sure", 0.0))
