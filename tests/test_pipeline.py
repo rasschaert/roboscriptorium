@@ -11,6 +11,7 @@ from roboscriptorium import errata, flags, pipeline, trust
 from roboscriptorium.book import Book
 from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.corrections import Corrections
+from roboscriptorium.ir import SourceRef
 
 LINES = [f"Line {i} of the story goes on and on across the page" for i in range(12)]
 
@@ -519,3 +520,28 @@ def test_an_erratum_corrects_the_misprint_it_names_and_an_ambiguous_one_stops_th
     errata.save(tmp_path, errata.Erratum(1, "zeI", "zei"))
     with pytest.raises(errata.Unmatched, match="page 1: 'zeI' occurs 0 times"):
         pipeline.run(book, use_models=False)
+
+
+def test_a_quote_question_an_answer_elsewhere_in_its_paragraph_settled_is_not_asked(
+    tmp_path, monkeypatch
+):
+    _everything_is_body(monkeypatch)
+    _no_layout(monkeypatch)
+    book = _book(tmp_path)
+    lost = "the story goes on, he said.’ And that was that"
+    read = pipeline.cached_text_layer
+
+    def layer(*args):
+        pages = read(*args)
+        lines = [replace(ln, text=lost) if k == 11 else ln for k, ln in enumerate(pages[0].lines)]
+        return [replace(pages[0], lines=lines)]
+
+    monkeypatch.setattr(pipeline, "cached_text_layer", layer)
+    stages = pipeline.run(book)
+    assert SourceRef(1, 11) in stages.quote_lines
+    # The opening mark was lost on line 9, a line of its own question (an OCR doubt, say).
+    line = stages.pages[0].lines[9].text
+    other = flags.Flag("other", 1, 9, 9, line, "text", ["ocr-doubt"])
+    Corrections(book.corrections_path).record(other, "text", "‘" + line)
+    again = pipeline.run(book)
+    assert SourceRef(1, 11) not in again.quote_lines

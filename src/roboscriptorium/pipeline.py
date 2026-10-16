@@ -231,16 +231,26 @@ def run(
     unanswered = reflow(
         checked, _apart(checked, model_roles, note_lines, epigraph_lines), known, compound
     )
+    built = reflow(corrected, _apart(corrected, roles, note_lines, epigraph_lines), known, compound)
+    # A place is asked while its paragraph's quotes still don't pair up once the answers
+    # are in (an answer elsewhere in the paragraph may have settled it), or while one of
+    # its own lines is answered, so the reviewer sees the answer.
+    still = {
+        ref
+        for b in built
+        if isinstance(b, Paragraph) and quotes.problems(b.text)
+        for ref in b.sources
+    } | {SourceRef(c.page, i) for c in answers.by_key.values() for i in range(c.first, c.last + 1)}
     quote_lines = {
         ref
         for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
+        if any(ref in still for ref in place.sources)
         for ref in place.sources
         if ref.page not in faint_pages
     }
     quote_readings = {}
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, whole, suspects, quote_lines, style, dots, settings)
-    built = reflow(corrected, _apart(corrected, roles, note_lines, epigraph_lines), known, compound)
     notes = footnotes.collect(corrected, note_lines)
     # Running text and notes together, so an erratum's words are unique across both.
     fixed = errata.apply(
