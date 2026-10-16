@@ -85,7 +85,8 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       quote mending out) and `typography.py` (the scan measurements and one ink module
       beside `italics`' threshold); one `roles.is_body` for its five copies (agent, ~half
       a day, behaviour unchanged, tests before and after)
-- [ ] Prune `experiments/`: the 24 scripts nothing names, `probe_orientation.py` broken;
+- [ ] Prune `experiments/`: 53 scripts named only in the logs deleted (2026-10-16, the
+      user: results recorded, git keeps them); left: `probe_orientation.py` broken;
       AGENTS.md cut to rules and the map (manifest keys to golden-notes.md, environment
       detail to models.md, the review page to how-it-works.md); decisions.md a heading a
       day (agent, ~2 h)
@@ -157,6 +158,8 @@ don't yet give at a price worth the reviewer's time.
       67 pages before review, 2 asked; 6 questions. Unasked: two words joined after a
       tight f ("grofwerk", "trofik")
 
+- [x] Stella's review (2026-10-16): 6 questions answered, two accents corrected
+      ("íéts", "ís"); rebuilt, epubcheck clean (`epubs/stella-2026-10-16-0859.epub`)
 - [ ] **user** reads the EPUB through, noting each error with a few words around it; no spot-check (the read covers every page). Each noted error is fixed as an answer and checked against the build's suspects: was it asked, settled wrongly, or never a suspect ("Errors no question asks about"): what the bench can't see
       (layout, italics, front matter)
 

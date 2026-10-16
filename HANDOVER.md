@@ -11,9 +11,8 @@ end of every session. Written 2026-10-16 ~06:35, at the end of the session of
 refuses winnow (AGENTS.md, Environment). clef-flash was pulled again (new digest, checked
 to answer as before).
 
-**Caches:** warm in `work/<book>/stages/`. The 16 tuning books also keep the A/A's cold
-set in `stages.cold/` (74 MB; nothing uses it, the agent proposed dropping it, the user
-hasn't said). Line readings are now keyed without line positions (cache v3, converted on
+**Caches:** warm in `work/<book>/stages/` (the A/A's spare cold copies deleted,
+2026-10-16). Line readings are keyed without line positions (cache v3, converted on
 load). Both page readings of every tuning and validation page and Claude's readings
 (`work/probes/page-reader/claude-opus-5-5/`, `work/probes/claude-stella/`) are kept.
 
@@ -50,10 +49,11 @@ load). Both page readings of every tuning and validation page and Claude's readi
 
 ## Next, in order
 
-1. **Stella's review by the user**: 6 questions, about five minutes
-   (`uv run roboscriptorium review work/stella`), then the read-through (checklist).
-2. **Ex-minnaar's review by the user**: 261 questions (~1 a page), after the user settles
-   how its blanked place names are set (below).
+1. **Stella's read-through by the user** (checklist): its review is done (2026-10-16,
+   two accents corrected), the EPUB rebuilt and clean.
+2. **Ex-minnaar's review by the user**: 261 questions (~1 a page). Its blanked place
+   names are set as "..." (`blank` in its `book.toml`); where a question shows one,
+   pick the reading with "__".
 3. From the codebase review (checklist): the line-role trainer into `src/`, one cache
    helper, the module splits; book-wide statistics on the whole body.
 4. The checklist's remaining "Assumptions to test"; Dolittle's wrapped text (wants a
@@ -64,17 +64,6 @@ runs. Last ones: 2026-10-15 09:34 and that evening.
 
 ## Waiting on the user
 
-- **Ex-minnaar's blanked place names**: the print sets a short rule on the baseline
-  before a name it withholds ("het __plein", "de __straat", ~25 times); the output has
-  "_", "__" or "____". Which one mark should the book use?
-
-- **Prune `experiments/`?** 54 scripts are named only in docs/decisions.md and
-  docs/run-times.md, as the evidence behind a decision (list in the session's scratch:
-  regenerate by grepping each script's name outside those two files). Deleting them
-  breaks the trail from a decision to the code that measured it (git keeps them). The
-  agent's view: keep those a current design choice rests on, delete superseded one-offs;
-  the user's call.
-- Drop `stages.cold/` in the 16 tuning books (74 MB)?
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`,
   `ornith-1.5:9b`, `ornith-1.5:35b`, `qwen3.8:27b-mxfp8` (not in the way, the user said).

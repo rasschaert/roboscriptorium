@@ -447,7 +447,8 @@ book, is queried once and saved on the second Save (`review.doubtful`; warned an
 turned (`r`, ↺/↻) and read again by tesseract (`o`); `-` and `+` zoom the crop. "Rebuild
 book" applies the answers and rebuilds the EPUB. Flags come from the model's decisions
 before answers, so the list stays put while you work. **Sample the questions before
-sending the user to review**: never obvious ones.
+sending the user to review** (`experiments/sample_questions.py <book>` lays them out with
+their crops): never obvious ones.
 
 ### Golden books
 
