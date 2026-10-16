@@ -273,3 +273,21 @@ def test_answers_saved_at_once_each_keep_their_line(tmp_path):
         t.join()
     lines = (tmp_path / "v.jsonl").read_text().splitlines()
     assert len(lines) == 400 and all(json.loads(line)["key"] == "k" for line in lines)
+
+
+def test_a_lost_lines_white_space_is_outlined_clear_of_the_lines_around_it(tmp_path):
+    import pymupdf
+
+    from roboscriptorium.pdf import Line, PageText
+
+    doc = pymupdf.open()
+    doc.new_page(width=300, height=300)
+    doc.save(tmp_path / "s.pdf")
+    lines = [
+        Line("je eten en je drinken", 40, 196.5, 200, 205.3),
+        Line("En, vergeef", 40, 221.3, 190, 230.2),
+    ]
+    scan = review.Scan(tmp_path / "s.pdf", [PageText(1, 300, 300, lines)])
+    gap = scan._gap(1, (40, 205.3, 200, 221.3))
+    # Below the descenders of the line above (its box ends at the baseline), above the next.
+    assert gap.y0 >= 205.3 + 0.35 * 8.8 and gap.y1 < 221.3

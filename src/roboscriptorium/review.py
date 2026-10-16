@@ -65,6 +65,9 @@ def guess_category(d: Disagreement) -> str:
 TINT = (1, 0.93, 0.55)
 TINT_OPACITY = 0.18
 OUTLINE = (0.85, 0.65, 0.2)
+# How far below a line's box (which ends at the baseline) its descenders reach, as a share
+# of the box's height.
+DESCENT = 0.4
 UNDERLINE = (0.25, 0.45, 0.95)
 
 
@@ -111,13 +114,15 @@ class Scan:
         out: int = 0,
         line: int | None = None,
         mark: bool = True,
+        gap: bool = False,
     ) -> bytes:
         """A region with some of the page around it.
 
         `turn` (degrees clockwise) shows sideways text upright, cropped to the region;
         `out` zoom-out steps show more of the page around it. With `line`, the box is a
         place in that line (an OCR doubt): the line is tinted and the place underlined.
-        `mark` False draws nothing.
+        `mark` False draws nothing. With `gap`, the box is white space where text may be
+        missing: it is drawn inside the space, clear of the lines around it.
         """
         x0, y0, x1, y1 = box
         target = pymupdf.Rect(x0 - 2, y0 - 2, x1 + 2, y1 + 2)
@@ -135,10 +140,26 @@ class Scan:
                 pdf_page.draw_rect(
                     pymupdf.Rect(x0 - 1, bottom, x1 + 1, bottom + 1.2), color=None, fill=UNDERLINE
                 )
+            elif mark and gap:
+                pdf_page.draw_rect(self._gap(page_number, box), color=OUTLINE, width=0.8)
             elif mark:
                 pdf_page.draw_rect(target + (-1, -1, 1, 1), color=OUTLINE, width=0.8)
             pix = pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip)
             return ocr.turned(pix.tobytes("png"), turn)
+
+    def _gap(self, page_number: int, box: tuple[float, float, float, float]) -> pymupdf.Rect:
+        """A box of white space between lines, kept clear of them: a text layer's line box
+        ends at the baseline, so the line above's descenders hang below it."""
+        x0, y0, x1, y1 = box
+        lines = self.pages[page_number].lines
+        above = [ln for ln in lines if ln.y1 <= y0 + 1]
+        below = [ln for ln in lines if ln.y0 >= y1 - 1]
+        if above:
+            last = max(above, key=lambda ln: ln.y1)
+            y0 = max(y0, last.y1 + DESCENT * (last.y1 - last.y0))
+        if below:
+            y1 = min(y1, min(ln.y0 for ln in below)) - 1
+        return pymupdf.Rect(x0 - 2, y0, x1 + 2, max(y1, y0 + 2))
 
     def turn(self, page_number: int, box: tuple[float, float, float, float], lang: str) -> int:
         """Degrees clockwise that make sideways text upright: the quarter turn that reads."""
@@ -398,6 +419,7 @@ class RegionReview:
                 {
                     **item,
                     "reasons": [F.REASONS[r] for r in f.reasons],
+                    "white_space": "lost-line" in f.reasons,
                     "before": page.lines[f.first - 1].text
                     if context and 0 < f.first <= len(page.lines)
                     else "",
@@ -575,7 +597,8 @@ def serve(review: RegionReview, port: int) -> None:
                     turn, out = int(q.get("turn", 0)), int(q.get("out", 0))
                     line = int(q["line"]) if "line" in q else None
                     mark = q.get("mark", "1") != "0"
-                    png = review.scan.crop_box(int(q["page"]), box, turn, out, line, mark)
+                    gap = q.get("gap") == "1"
+                    png = review.scan.crop_box(int(q["page"]), box, turn, out, line, mark, gap)
                     self._send(png, "image/png")
                 elif url.path == "/crop":
                     out, mark = int(q.get("out", 0)), q.get("mark", "1") != "0"

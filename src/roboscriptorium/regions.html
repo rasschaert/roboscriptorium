@@ -488,7 +488,9 @@ function cropUrl(r) {
   const m = `&mark=${marks ? 1 : 0}&built=${built}`;
   // A doubt's box is a place in its line: the line is tinted, the place underlined.
   const line = r.span ? `&line=${r.first}` : "";
-  return r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}&out=${out}${line}${m}`
+  // White space where a line may be lost: its box is drawn clear of the text around it.
+  const gap = r.white_space ? "&gap=1" : "";
+  return r.box ? `/crop?page=${r.page}&box=${r.box.join(",")}&turn=${r.turn || 0}&out=${out}${line}${gap}${m}`
     : `/crop?page=${r.page}&first=${r.first}&last=${r.last}&out=${out}${m}`;
 }
 
