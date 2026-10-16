@@ -40,14 +40,8 @@ runs: it now also holds `work/ex-minnaar/errata.toml`.
 
 ## Waiting on the user
 
-- **Vuurspel into tuning?** It is the only bench book that sets no paragraph indent; a
-  learned fix for its missed breaks (`work/probes/parastarts.patch`) has nothing to
-  learn from while it validates. Moving it changes what validation checks.
-- **A book that sets no paragraph indent**, asked of the user 2026-10-17: a new paragraph
-  starts at the same left edge as the line above, no blank line; lots of dialogue; an
-  IA scan plus the publisher's own EPUB of that edition; not A.W. Bruna or Valérie
-  Janssen (Vuurspel's siblings). Then `work/probes/parastarts.patch` gets a book to learn
-  from. Versplinterd (De Bezige Bij, 2010) indents, so it isn't one.
+
+
 
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`,

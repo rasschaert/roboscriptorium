@@ -60,7 +60,8 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [ ] Paragraph breaks by a model: the page image plus the pipeline's lines, "which lines
       start a paragraph?", against `reflow.indented`. A learned text table (quote after quote at
       the margin: 87 of 88 starts) did nothing, the tuning books having no unindented
-      book (2026-10-16, `work/probes/parastarts.patch`); an unindented tuning pair first
+      book (2026-10-16, `work/probes/parastarts.patch`); Vuurspel's unindented layout is
+      rare (the user, 2026-10-17), so no pair is sought for it
 - [ ] Line roles by Qwen from the page image (text, heading, running head, page number,
       caption, picture), against the rules and the trees
 - [ ] The text layer as a second reader only: the page built from the whole-page reading,
