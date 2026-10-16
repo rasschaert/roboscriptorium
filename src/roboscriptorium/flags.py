@@ -395,6 +395,11 @@ def _treatment_of(page: PageText, flag: Flag, roles: dict[SourceRef, LineRole]) 
     return "text" if "text" in kinds else "heading" if "heading" in kinds else "dropped"
 
 
+# What every epigraph is: centred or inset, set apart, and often a quotation without a
+# stop.
+_EPIGRAPH_TRAITS = {"centred", "set-apart", "quotes"}
+
+
 def find(
     pages: list[PageText],
     roles: dict[SourceRef, LineRole],
@@ -407,9 +412,8 @@ def find(
 ) -> list[Flag]:
     """Regions of the pages a human should check.
 
-    Lines set apart as an `epigraph` (`epigraphs.lines`) are centred, short and often
-    end without a stop by nature: nothing is asked about what they are, only an OCR
-    doubt about their words.
+    Lines set apart as an `epigraph` (`epigraphs.lines`) aren't asked about for what
+    every motto is (`_EPIGRAPH_TRAITS`); any other doubt about them still is.
 
     A page in `faint` (scanned too faint to read, `faint.pages`) is one region of all its
     lines: nothing on it can be trusted, so it gets no finer questions.
@@ -446,9 +450,11 @@ def find(
             role = roles.get(SourceRef(page.number, i))
             reasons = (
                 []
-                if i in in_pictures or SourceRef(page.number, i) in (epigraph or set())
+                if i in in_pictures
                 else _reasons(page, i, role, furniture, line_reasons.get(i, []))
             )
+            if SourceRef(page.number, i) in (epigraph or set()):
+                reasons = [r for r in reasons if r not in _EPIGRAPH_TRAITS]
             how = treatment(role)
             if reasons and run and run[-1][0] == i - 1 and run[-1][1] == how:
                 run.append((i, how, reasons))

@@ -303,3 +303,11 @@ def test_an_epigraph_is_not_asked_what_it_is():
     quoted = {SourceRef(7, 0)}
     assert flags.find([motto], body, quotes=quoted)
     assert flags.find([motto], body, quotes=quoted, epigraph=set(body)) == []
+
+
+def test_an_epigraph_line_with_another_doubt_is_still_asked():
+    lines = [Line("nQthiri£,\\and", 120, 100, 170, 112), Line("De |", 118, 116, 140, 128)]
+    noise = PageText(58, 300, 500, lines)
+    roles = {SourceRef(58, i): LineRole("body", 0.9, 0.9) for i in range(2)}
+    found = flags.find([noise], roles, epigraph=set(roles))
+    assert any("garbled" in f.reasons for f in found)

@@ -126,6 +126,10 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
 - [ ] Stella rebuilt with those fixes and diffed against its dated copies in
       `work/stella/epubs/` (the user, 2026-10-12: not before the Ex-minnaar review)
 
+- [ ] The epigraph stage takes noise for a motto (De eerlijke vinder p. 58: "de", "De |",
+      "ap", three inset lines of three "words"): find what tells them apart on the golden
+      books' epigraph pages first, then fix (agent, ~1 h)
+
 ## 1. Accuracy before Stella (~half a day)
 
 About 85% of the wrong words left after review were never suspects: every reading agreed
