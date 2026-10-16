@@ -420,6 +420,7 @@ dash = "–"             # optional: how the book prints dashes ("–" or "—")
 dash_spacing = "thin"  # … and their gaps ("none", "thin", "word"); else measured
 ellipsis = "..."       # optional: "…", "..." or ". . ." …
 ellipsis_space = false # … and a space before it; else measured on the scan
+blank = "..."          # optional: what a printed blank ("het __plein") becomes
 ```
 
 ```sh

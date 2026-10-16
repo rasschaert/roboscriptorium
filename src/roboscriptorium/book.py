@@ -35,6 +35,10 @@ class Book:
     # Unset, the pipeline counts it in the text layer (`typography.py`).
     ellipsis: str | None = None
     ellipsis_space: bool | None = None
+    # What a printed blank, a rule standing for a withheld word ("het __plein"), becomes
+    # in the text: "..." as the author's publisher sets it in its e-books. Unset, the
+    # blank stays as the readers read it, a run of underscores.
+    blank: str | None = None
     # Who translated it, as the colophon names them ("" when it isn't a translation).
     translator: str = ""
 
@@ -56,6 +60,7 @@ class Book:
             dash_spacing=data.get("dash_spacing"),
             ellipsis=data.get("ellipsis"),
             ellipsis_space=data.get("ellipsis_space"),
+            blank=data.get("blank"),
             translator=data.get("translator", ""),
         )
 

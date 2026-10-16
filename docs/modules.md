@@ -251,7 +251,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   the gaps between words; cached in `stages/typography.json`, and printed so a
   human can settle it). Every dash between words in the output is then set that
   way (a no-break space before it, narrow when thin); number ranges and hyphens
-  stay. The OCR check doesn't raise dash kind or spacing as a doubt.
+  stay. The OCR check doesn't raise dash kind or spacing as a doubt. And a printed
+  blank, a rule standing for a withheld word ("het __plein"): where `book.toml` sets
+  `blank`, every run of underscores becomes it (`blanked`). A rule the layer reads as a
+  dash, or leaves out, is a review question (a dash glued to a word can be the book's
+  own).
 - `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
   text layer lacks, or reads as scraps because it is printed sideways).
 - `initials.py`: guesses the letter of a decorated initial: the letters that

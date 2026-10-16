@@ -476,11 +476,35 @@ def ellipsised(text: str, style: EllipsisStyle) -> tuple[str, list[int]]:
     return "".join(out), where
 
 
+_BLANK = re.compile(r"_+")
+
+
+def blanked(text: str, blank: str) -> tuple[str, list[int]]:
+    """The text with every printed blank, a run of underscores however many the readers
+    saw, set as `blank`, and where each of the old text's characters went in it."""
+    out, where, pos = [], [], 0
+    for m in _BLANK.finditer(text):
+        for c in text[pos : m.start()]:
+            where.append(len("".join(out)))
+            out.append(c)
+        where += [len("".join(out))] * (m.end() - m.start())
+        out.append(blank)
+        pos = m.end()
+    for c in text[pos:]:
+        where.append(len("".join(out)))
+        out.append(c)
+    return "".join(out), where
+
+
 def apply(
-    blocks: list[Block], dash: DashStyle | None, ellipsis: EllipsisStyle | None = None
+    blocks: list[Block],
+    dash: DashStyle | None,
+    ellipsis: EllipsisStyle | None = None,
+    blank: str | None = None,
 ) -> list[Block]:
-    """Copies of the paragraphs with their dashes and ellipses styled; italic marks follow
-    their words."""
+    """Copies of the paragraphs with their dashes, ellipses and printed blanks styled;
+    italic marks follow their words. Blanks come last, so the ellipsis style leaves a
+    blank set as dots as the book declares it."""
     out = []
     for block in blocks:
         if isinstance(block, Paragraph):
@@ -488,6 +512,8 @@ def apply(
                 block = _restyled(block, styled(block.text, dash))
             if ellipsis is not None and ("…" in block.text or "." in block.text):
                 block = _restyled(block, ellipsised(block.text, ellipsis))
+            if blank is not None and "_" in block.text:
+                block = _restyled(block, blanked(block.text, blank))
         out.append(block)
     return out
 

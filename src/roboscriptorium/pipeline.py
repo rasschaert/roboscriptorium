@@ -234,11 +234,11 @@ def run(
     )
     if compound is not None:
         compound.save()
-    blocks = typography.apply(quotes.curl(blocks), style, dots)
+    blocks = typography.apply(quotes.curl(blocks), style, dots, book.blank)
     notes = footnotes.collect(corrected, note_lines)
     for note, typeset in zip(
         notes,
-        typography.apply(quotes.curl([n.paragraph for n in notes]), style, dots),
+        typography.apply(quotes.curl([n.paragraph for n in notes]), style, dots, book.blank),
         strict=True,
     ):
         note.paragraph = typeset

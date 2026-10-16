@@ -492,3 +492,14 @@ def ocrcheck_suspect(k: int):
         votes={"clef:27b": "story"}, confidence={"clef:27b": 0.9},
         support={"glm": (k % 2 == 0, k % 2 == 1)}, known=(True, False),
     )  # fmt: skip
+
+
+def test_a_printed_blank_takes_the_setting_in_book_toml(tmp_path, monkeypatch):
+    _no_layout(monkeypatch)
+    lines = ["Ik reed naar het __plein en stak enige brieven in de bus,", "en reed terug."]
+    book = _book(tmp_path, lines=lines)
+    assert "__plein" in pipeline.run(book, use_models=False).doc.blocks[0].text
+    toml = (tmp_path / "book.toml").read_text() + 'blank = "..."\n'
+    (tmp_path / "book.toml").write_text(toml)
+    text = pipeline.run(Book.load(tmp_path), use_models=False).doc.blocks[0].text
+    assert "het ...plein en" in text and "_" not in text

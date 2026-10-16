@@ -227,3 +227,16 @@ def test_a_scanned_books_ellipsis_style_comes_from_the_scan(tmp_path, monkeypatc
     # book.toml settles it.
     book.ellipsis, book.ellipsis_space = "…", False
     assert pipeline.ellipsis_style(book, body) == GLYPH
+
+
+def test_a_printed_blank_takes_the_books_setting_however_many_underscores_were_read():
+    p = Paragraph("naar het __plein, dan het _plein en de ____straat in", italic=(1,))
+    tight = EllipsisStyle("...", False)
+    (out,) = apply([p], None, tight, "...")
+    assert out.text == "naar het ...plein, dan het ...plein en de ...straat in"
+    assert [out.text.split()[k] for k in out.italic] == ["het"]
+
+
+def test_without_a_setting_a_blank_stays_as_read():
+    p = Paragraph("naar het __plein")
+    assert apply([p], None, EllipsisStyle("...", False))[0].text == "naar het __plein"
