@@ -74,6 +74,9 @@ class Stages:
     # Lines of `pages` set apart as an epigraph (`epigraphs.lines`): the review asks
     # nothing about what they are.
     epigraph_lines: set[SourceRef] = field(default_factory=set)
+    # The read model's prompt for this book's lines (`read_prompt`), "" when nothing was
+    # read: the review reads the lines its questions have no readings for with it.
+    read_prompt: str = ""
 
 
 def run(
@@ -97,6 +100,7 @@ def run(
     body = [p for p in layer if first <= p.number <= last]
 
     roles = model_roles = None
+    prompt = ""
     applied = 0
     suspects: list[ocrcheck.Suspect] = []
     # The suspects as the arbiter decided them, before answered lines are kept asked:
@@ -163,6 +167,7 @@ def run(
                 ),
             }
             if settings.read_model:
+                prompt = read_prompt(book, whole, style, dots)
                 readings["qwen"] = readers.line_readings(
                     book.source,
                     body,
@@ -170,7 +175,7 @@ def run(
                     settings.read_model,
                     settings.ollama_url,
                     book.stages / "third-reading.json",
-                    read_prompt(book, whole, style, dots),
+                    prompt,
                     settings.read_via,
                 )
             if settings.page_readers:
@@ -317,6 +322,7 @@ def run(
         decider,
         faint_pages,
         epigraph_lines,
+        prompt,
     )
 
 

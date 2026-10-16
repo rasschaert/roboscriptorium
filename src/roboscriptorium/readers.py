@@ -184,6 +184,32 @@ def line_readings(
     return {ref: ocr.latin(done[key(p, k)]) for ref, (p, k) in wanted.items()}
 
 
+def region_readings(
+    pdf: Path,
+    regions: list[tuple[int, tuple[float, float, float, float]]],
+    model: str,
+    ollama_url: str,
+    cache: Path,
+    prompt: str,
+) -> dict[tuple[int, tuple[float, float, float, float]], str]:
+    """The read model's reading of each (page, box) as one printed line, in Latin letters:
+    a line the text layer lacks. Cached per page and box, under the model and prompt."""
+    raw = read_cache(cache, READING_VERSION, model=model, prompt=prompt)
+    done: dict[str, str] = raw["regions"] if raw else {}
+
+    def key(number: int, box) -> str:
+        return f"{number}:" + ",".join(f"{v:.1f}" for v in box)
+
+    todo = [(n, box) for n, box in regions if key(n, box) not in done]
+    if todo:
+        with pymupdf.open(pdf) as doc:
+            crops = [_line_crop(doc, n, box) for n, box in todo]
+        for (n, box), png in zip(todo, crops, strict=True):
+            done[key(n, box)] = transcribe(png, model, ollama_url, prompt)
+        write_cache(cache, READING_VERSION, {"regions": done}, model=model, prompt=prompt)
+    return {(n, box): ocr.latin(done[key(n, box)]) for n, box in regions}
+
+
 def tesseract_readings(
     pdf: Path, pages: list[PageText], checked: set[SourceRef], lang: str, cache: Path
 ) -> dict[SourceRef, str]:

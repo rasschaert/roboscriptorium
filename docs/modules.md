@@ -103,7 +103,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   hold, and their role: heading, body or furniture), `scoring.py` (a golden spec
   `work/<book>[:pages[:chapters]]` built and scored: `build` gives the build, the
   reference with verdicts applied, the remaining differences and the review's
-  questions; `scored`, `verdicts`, `reference`, `questions`, `page_range`; what `eval`,
+  questions, those with no readings given the read model's reading of their lines or
+  region; `scored`, `verdicts`, `reference`, `questions`, `page_range`; what `eval`,
   `quality`, `review`, `bench` and the experiments share).
 - `evaluate.py`: CER, WER, paragraph F1 and scene breaks (found where the reference has
   one, and set elsewhere) against a golden reference. Typography
@@ -193,7 +194,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `readers.py`: the readings of a page's lines besides the text layer: each line's crop
   (`line_boxes`, `crop_span`), read by glm-ocr (`read_line`), the read model told the
   book's style (`transcribe`) and tesseract (`tesseract_readings`), each cached per book
-  keyed on a line's page, text and box (`line_key`); Cyrillic transliterated (`ocr.latin`).
+  keyed on a line's page, text and box (`line_key`); a region without lines (a line the
+  layer lacks) read as one line (`region_readings`, `stages/question-readings.json`);
+  Cyrillic transliterated (`ocr.latin`).
 - `ocrdoubts.py`: the OCR check's suspects as review questions, one place (`doubts`) or a
   whole line with every source's version (`line_doubts`).
 - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)

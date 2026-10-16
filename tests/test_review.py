@@ -95,6 +95,7 @@ def test_a_golden_books_places_join_the_review_cropped_from_the_layer(tmp_path, 
         faint_pages=set(),
         epigraph_lines=set(),
         corrections_applied=0,
+        read_prompt="",
     )
     book = SimpleNamespace(
         root=tmp_path,
@@ -367,3 +368,9 @@ def test_combinations_keep_insertions_at_their_place_and_stop_past_the_limit():
     assert review.with_combinations([{"text": t, "votes": []} for t in many]) == [
         {"text": t, "votes": []} for t in many
     ]
+
+
+def test_a_typed_line_is_checked_against_the_one_reading_a_heading_has():
+    qwen = [{"text": "HOOFDSTUK EEN", "votes": ["text layer", "Qwen"]}]
+    assert review.doubtful("HOOFDSTUK EEN", qwen, "heading", "HOOFDSTUK EEN") == ""
+    assert review.doubtful("HOOFDSTUK EEN", qwen, "heading", "HOOFDSTUK EN")

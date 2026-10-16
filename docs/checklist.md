@@ -219,9 +219,9 @@ In this order:
 - [x] The book teaches itself, second half (2026-10-16): one question per pattern,
       replayed on Ex-minnaar's answers (`probe_patterns.py`), saves 12–17 of ~140
       questions and settles one skipped line in eight to twelve wrong; not built
-- [ ] A typed answer checked against Qwen's reading of the line where the question had no
-      readings (headings, missing text): Qwen reads only checked body lines, so these
-      have none cached; they need reading at review build (new model calls). ~2 h
+- [x] Questions with no readings (headings, missing lines) get Qwen's reading as an
+      option, and a typed answer is checked against it (2026-10-17): Ex-minnaar 170 of
+      199 questions; benches identical
 
 ## 5. Errors no question asks about
 

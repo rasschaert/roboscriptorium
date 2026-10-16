@@ -43,9 +43,8 @@ runs: it now also holds `work/ex-minnaar/errata.toml`.
 - **Vuurspel into tuning?** It is the only bench book that sets no paragraph indent; a
   learned fix for its missed breaks (`work/probes/parastarts.patch`) has nothing to
   learn from while it validates. Moving it changes what validation checks.
-- **A Qwen reading for questions without readings** (headings, missing lines): Qwen reads
-  only checked body lines, so there is nothing cached to check a typed answer against;
-  reading those lines at review build would offer a reading to click (checklist).
+- **A book that sets no paragraph indent** (asked 2026-10-17): see decisions.md; Versplinterd
+  (De Bezige Bij) indents, so it isn't one.
 
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`,

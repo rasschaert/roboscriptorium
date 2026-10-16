@@ -7,7 +7,7 @@ from dataclasses import replace
 from pathlib import Path
 from typing import NamedTuple
 
-from roboscriptorium import disagreements, flags, layout, ocrcheck, ocrdoubts, pipeline
+from roboscriptorium import disagreements, flags, layout, ocrcheck, ocrdoubts, pipeline, readers
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
@@ -82,6 +82,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
             for i in range(c.first, c.last + 1)
         },
     )
+    found = _read_unread(book, stages, found)
     if not any(s.choice == "other" for s in stages.suspects):
         return found
     checked = {p.number: p for p in ocrcheck.apply(stages.pages, stages.suspects)}
@@ -94,6 +95,78 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         built = "\n".join(page.lines[k].text for k in range(f.first, f.last + 1))
         out.append(replace(f, built=built) if built != f.text else f)
     return out
+
+
+# A question asks for text when it is about running text or a heading, or about printed
+# text the layer lacks; a page number or scrap to drop is not read.
+_READ = ("text", "heading")
+# A region the layer has no line in is read as one line only up to this many line heights.
+_ONE_LINE = 1.8
+
+
+def _read_unread(book: Book, stages: pipeline.Stages, found: list[Flag]) -> list[Flag]:
+    """The questions with no readings to choose from (a heading, a line the layer lacks),
+    each with the read model's reading of its lines or its region as one, beside the
+    layer's: an option to pick instead of typing, and what a typed answer is checked
+    against (`review.doubtful`). Lines are read into the OCR check's cache of that
+    model's readings, a region in `stages/question-readings.json`."""
+    if not stages.read_prompt:
+        return found
+    settings = Settings.from_env()
+    pages = {p.number: p for p in stages.pages}
+    lines = [
+        f
+        for f in found
+        if not f.readings and f.first <= f.last and f.treatment in _READ and f.page in pages
+    ]
+    regions = [
+        f
+        for f in found
+        if not f.readings and f.last < f.first and f.box and "missing-text" in f.reasons
+    ]
+    refs = {SourceRef(f.page, k) for f in lines for k in range(f.first, f.last + 1)}
+    read = readers.line_readings(
+        book.source,
+        [pages[n] for n in sorted({f.page for f in lines})],
+        refs,
+        settings.read_model,
+        settings.ollama_url,
+        book.stages / "third-reading.json",
+        stages.read_prompt,
+    ) if refs else {}  # fmt: skip
+    boxes = readers.region_readings(
+        book.source,
+        [(f.page, f.box) for f in regions if _one_line(pages.get(f.page), f.box)],
+        settings.read_model,
+        settings.ollama_url,
+        book.stages / "question-readings.json",
+        stages.read_prompt,
+    )
+    out = []
+    for f in found:
+        if f in lines:
+            text = "\n".join(read.get(SourceRef(f.page, k), "") for k in range(f.first, f.last + 1))
+            f = _with_reading(f, f.text, text)
+        elif f in regions and (text := boxes.get((f.page, f.box), "")):
+            f = _with_reading(f, None, text)
+        out.append(f)
+    return out
+
+
+def _one_line(page, box) -> bool:
+    heights = sorted(ln.y1 - ln.y0 for ln in page.lines) if page and page.lines else []
+    return bool(heights) and box[3] - box[1] <= _ONE_LINE * heights[len(heights) // 2]
+
+
+def _with_reading(f: Flag, layer: str | None, text: str) -> Flag:
+    """`f` with the read model's `text` as a reading, after the layer's where there is one."""
+    if not text.strip():
+        return f
+    if layer is None:
+        return replace(f, readings=[{"text": text, "votes": ["Qwen"]}])
+    if text == layer:
+        return replace(f, readings=[{"text": layer, "votes": ["Qwen"]}])
+    return replace(f, readings=[{"text": layer, "votes": []}, {"text": text, "votes": ["Qwen"]}])
 
 
 class Scored(NamedTuple):

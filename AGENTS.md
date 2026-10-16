@@ -445,7 +445,8 @@ and takes the text as printed in a text box. Where OCR readings differ it asks w
 matches the scan instead, once per line: the whole line as the text layer, each reader
 and each judge has it, the likeliest at each place and as built, each on its own row with
 the differing parts marked and who has it (`a`, `b`, …; `e` for something else, starting
-from the option chosen, or from any option with its ✎). One Save button (`↵`;
+from the option chosen, or from any option with its ✎). A question with no readings
+of its own (a heading, a line the layer lacks) gets Qwen's beside the layer's. One Save button (`↵`;
 `⌘↵` in the text box) records the answer and moves to the next unanswered region; a
 typed line that matches none of the readings, or a straight quote in a curly-quoted
 book, is queried once and saved on the second Save (`review.doubtful`; warned answers in

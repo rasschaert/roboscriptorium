@@ -434,8 +434,9 @@ def doubtful(line: str, readings: list[dict], action: str, text: str | None) -> 
     """Why an answer deserves a second look before it is saved, or "" when it doesn't.
 
     A reviewer's typed answer is wrong about one time in eight (`quality.slip_rates`),
-    so a line typed for a question with readings must match one of them, or a line they
-    make between them (`combinations`), letter for letter but for quote glyphs and
+    so a line typed for a question with readings (one, where only the read model read a
+    heading or a missing line) must match one of them, or a line they make between them
+    (`combinations`), letter for letter but for quote glyphs and
     spacing; and an answer with a straight quote where
     the book's line or readings use curly ones is a typing slip no model is needed for.
     """
@@ -445,7 +446,7 @@ def doubtful(line: str, readings: list[dict], action: str, text: str | None) -> 
     if any(c in line for line in lines for c in _CURLY) and any(c in text for c in "'\""):
         return "That has a straight quote where the book sets curly ones."
     texts = [g["text"] for g in readings]
-    if len(texts) < 2:
+    if not texts:
         return ""
     made = combinations(texts, COMBINATIONS_CHECKED) or texts
     if _fold(text) not in {_fold(t) for t in made}:
@@ -494,8 +495,8 @@ class RegionReview:
             context = "rotated" not in f.reasons
             item = asdict(f)
             item["readings"] = with_combinations(merged(item["readings"]))
-            if item["readings"] and "text layer" not in item["readings"][0]["votes"]:
-                first = item["readings"][0]
+            first = item["readings"][0] if item["readings"] else None
+            if first and first["text"] == f.text and "text layer" not in first["votes"]:
                 item["readings"][0] = {**first, "votes": ["text layer", *first["votes"]]}
             items.append(
                 {
