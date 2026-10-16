@@ -545,3 +545,29 @@ def test_a_quote_question_an_answer_elsewhere_in_its_paragraph_settled_is_not_as
     Corrections(book.corrections_path).record(other, "text", "‘" + line)
     again = pipeline.run(book)
     assert SourceRef(1, 11) not in again.quote_lines
+
+
+def test_a_line_answered_about_its_readings_stays_asked_when_the_arbiter_is_sure_of_it(
+    tmp_path, monkeypatch
+):
+    import numpy as np
+
+    class Sure:
+        """Sure the text layer's version is the print."""
+
+        def predict_proba(self, X):
+            p = np.where(X[:, 0] == 1, 0.97, 0.03)
+            return np.column_stack([1 - p, p])
+
+    book, _ = _checked_book(tmp_path, monkeypatch)
+    monkeypatch.setattr(pipeline.trust, "load", lambda path: trust.Trust(Sure(), {}))
+    stages = pipeline.run(book)
+    (suspect,) = stages.suspects
+    assert suspect.choice == "ours"  # nothing to ask
+    line = stages.pages[0].lines[3].text
+    question = flags.Flag("q", 1, 3, 3, line, "text", ["ocr-doubt"])
+    Corrections(book.corrections_path).record(question, "text", line.replace("story", "stony"))
+    again = pipeline.run(book)
+    (suspect,) = again.suspects
+    assert suspect.choice == "review"  # answered, so its question stays
+    assert "stony" in again.doc.blocks[0].text  # and the answer sets the line
