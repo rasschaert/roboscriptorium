@@ -1,10 +1,11 @@
 """Places where a paragraph's quote marks don't pair up: a quote the OCR layer lost.
 
 Curly quotes only: an opening ‘ or “ at a word's start, a closing ’ or ” at its
-end. A ’ inside a word (zo’n, auto’s) or opening a Dutch article (’s avonds, ’t)
-is an apostrophe. A quote left open at a paragraph's end is asked about even when the
-next paragraph opens with the same mark: a quotation running over paragraphs is rare
-(56 in ~58,000 golden paragraphs), a closing mark lost at the end isn't. One left open
+end. A ’ inside a word (zo’n, auto’s), opening a Dutch article (’s avonds, ’t) or
+eliding letters (Flemish ’m, ’k; ’73) is an apostrophe. A quote left open at a
+paragraph's end is asked about even when the next paragraph opens with the same mark:
+a quotation running over paragraphs is rare (56 in ~58,000 golden paragraphs), a
+closing mark lost at the end isn't. One left open
 right after a word ("zich ‘schrap zette") is asked where it stands: a speck, or a term
 whose closing mark was lost beside it.
 Speech closed right after a letter at a paragraph's end has lost its stop: some books
@@ -24,6 +25,9 @@ from roboscriptorium.typography import EllipsisStyle, guess_ellipsis
 
 PAIRS = {"‘": "’", "“": "”"}
 _ARTICLE = re.compile(r"’(s|t|n)\b")
+# Flemish ’m (hem) and ’k (ik), and a year's two digits (’73), elided after a ’. Read as
+# ‘ the mark is the layer's error, still asked about ("Ik zei ‘m dat…").
+_ELIDED = re.compile(r"’(m|k|\d\d)\b")
 _SENTENCE_BEFORE = re.compile(r"[.!?…]\s+$")
 # A quoted term or title ("het ‘invoelend’", "‘Le mie prigioni’") runs to this many words
 # inside a sentence; a longer quotation, or one that opens a sentence, is speech.
@@ -52,6 +56,8 @@ def marks(text: str) -> list[tuple[int, str, str]]:
         if c == "’" and before.isalnum() and after.isalnum():
             continue
         if c in "‘’" and not before.isalnum() and _ARTICLE.match("’" + text[i + 1 :]):
+            continue
+        if c == "’" and not before.isalnum() and _ELIDED.match(text, i):
             continue
         opening = before.isspace() or before in "(—–-[" or i == 0
         if c in "‘“" and opening:

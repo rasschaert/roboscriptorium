@@ -372,3 +372,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | train line-role trees, running-text and numeral-slot retired | 0 | 1 | 0 |
 | 2026-10-16 | bench tuning, running-text and numeral-slot retired, trees retrained | 790 | 2 | 0 |
 | 2026-10-16 | bench validation, running-text and numeral-slot retired, trees retrained | 790 | 2 | 0 |
+| 2026-10-16 | build, Ex-minnaar, cold (caches lost 2026-10-11) | 273 | 283 | 0 |

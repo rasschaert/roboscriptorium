@@ -3,6 +3,16 @@ from roboscriptorium.ir import Paragraph, SourceRef
 from roboscriptorium.quotes import problems, unbalanced
 
 
+def test_a_flemish_elision_or_a_year_needs_no_partner():
+    assert problems("‘Ken ik ’m?’ vroeg ik, en ’k zei: ‘Uit ’73.’") == []
+    assert problems("Ik schopte ’m tegen z’n kop.") == []
+
+
+def test_an_elision_read_with_an_opening_mark_is_still_asked():
+    # The print sets ’m; the layer's ‘ is its error, and the question catches it.
+    assert problems("Ik zei ‘m dat ik veel geld had.") != []
+
+
 def test_apostrophes_need_no_partner():
     assert problems("‘Zo’n auto’s, zei hij, om zes uur ’s avonds.’") == []
     assert problems("‘Ik kom ’t halen.’") == []
