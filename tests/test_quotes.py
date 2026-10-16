@@ -13,6 +13,16 @@ def test_an_elision_read_with_an_opening_mark_is_still_asked():
     assert problems("Ik zei ‘m dat ik veel geld had.") != []
 
 
+def test_a_mark_before_an_elisions_short_word_needs_no_partner():
+    assert problems("I sell ’em to make ’em sick, in the late ’80s.") == []
+    assert problems("Kom ’ns hier, zei ’ie.") == []
+
+
+def test_a_mark_before_a_whole_word_is_still_asked():
+    # The layer's ’ for a printed opening ‘ ("dat ‘alles heel anders verliep").
+    assert problems("omdat het een vrouw was dat ’alles heel anders verliep.") != []
+
+
 def test_apostrophes_need_no_partner():
     assert problems("‘Zo’n auto’s, zei hij, om zes uur ’s avonds.’") == []
     assert problems("‘Ik kom ’t halen.’") == []

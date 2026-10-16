@@ -1,8 +1,8 @@
 """Places where a paragraph's quote marks don't pair up: a quote the OCR layer lost.
 
 Curly quotes only: an opening ‘ or “ at a word's start, a closing ’ or ” at its
-end. A ’ inside a word (zo’n, auto’s), opening a Dutch article (’s avonds, ’t) or
-eliding letters (Flemish ’m, ’k; ’73) is an apostrophe. A quote left open at a
+end. A ’ inside a word (zo’n, auto’s) or before the short word of an elision (’s avonds,
+je ’m, ’80s) is an apostrophe: a closing mark is never followed by a letter. A quote left open at a
 paragraph's end is asked about even when the next paragraph opens with the same mark:
 a quotation running over paragraphs is rare (56 in ~58,000 golden paragraphs), a
 closing mark lost at the end isn't. One left open right after a word ("zich ‘schrap
@@ -23,11 +23,11 @@ from rapidfuzz.distance import Levenshtein
 from roboscriptorium.ir import Block, Paragraph, SourceRef
 from roboscriptorium.typography import EllipsisStyle, guess_ellipsis
 
+# What follows a ’ that elides: a word of a letter or two (’s, ’t, ’m, ’ns, ’ie), a
+# decade (’80s) or one of the longer English elisions.
+_ELIDES = re.compile(r"’(?:[^\W\d_]{1,2}|\d\ds?|tis|twas|cause|til|round)\b", re.IGNORECASE)
 PAIRS = {"‘": "’", "“": "”"}
 _ARTICLE = re.compile(r"’(s|t|n)\b")
-# Flemish ’m (hem) and ’k (ik), and a year's two digits (’73), elided after a ’. Read as
-# ‘ the mark is the layer's error, still asked about ("Ik zei ‘m dat…").
-_ELIDED = re.compile(r"’(m|k|\d\d)\b")
 _SENTENCE_BEFORE = re.compile(r"[.!?…]\s+$")
 # A quoted term or title ("het ‘invoelend’", "‘Le mie prigioni’") runs to this many words
 # inside a sentence; a longer quotation, or one that opens a sentence, is speech.
@@ -53,11 +53,13 @@ def marks(text: str) -> list[tuple[int, str, str]]:
             c = "‘" if before.isspace() or i == 0 else "’"
         before = text[i - 1] if i else " "
         after = text[i + 1] if i + 1 < len(text) else " "
-        if c == "’" and before.isalnum() and after.isalnum():
-            continue
         if c in "‘’" and not before.isalnum() and _ARTICLE.match("’" + text[i + 1 :]):
             continue
-        if c == "’" and not before.isalnum() and _ELIDED.match(text, i):
+        if c == "’" and (before.isalnum() and after.isalnum() or _ELIDES.match(text, i)):
+            # A closing mark ends a word: one inside a word, or before the short word an
+            # elision leaves ("je ’m", "’ns", "’73"), is an apostrophe. One before a whole
+            # word ("dat ’alles") is likelier an opening quote the layer misread; read as ‘
+            # an elision is the layer's error too. Both are asked about.
             continue
         opening = before.isspace() or before in "(—–-[" or i == 0
         if c in "‘“" and opening:
