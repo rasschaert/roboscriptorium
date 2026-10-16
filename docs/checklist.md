@@ -71,11 +71,8 @@ models could do. Each probe below asks whether that's still true, on a few golde
 What Ex-minnaar's first review questions showed. The user reviews only after these
 (AGENTS.md, "The user's review comes last"); Ex-minnaar's review is paused.
 
-- [ ] Elision spaces: the text layer glues ’s, ’m to the word before ("maar’s", "kom’s");
-      the readers see the space, but glm-ocr's straight apostrophe parts it from Qwen's
-      curly one and the arbiter keeps the layer (9 left in Ex-minnaar, 40 of its OCR
-      doubts are apostrophe-only). Fold glm's straight marks when comparing; recount;
-      benches (agent, ~2 h)
+- [x] Elision spaces (2026-10-16): our curling made glm's "nog 's" an opening ‘; now ’.
+      Ex-minnaar glued elisions 9 → 3, apostrophe-only doubts 40 → 25; benches no change
 - [ ] Small capitals read in lower case ("Citroën xm" for XM, the section titles): find
       them on the scan (letter heights against the line's x-height), set them as capitals
       in the text; Ex-minnaar uses them throughout (agent, ~half a day)

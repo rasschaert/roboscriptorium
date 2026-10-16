@@ -683,3 +683,9 @@ def test_the_answered_copy_widens_a_box_for_a_dash_the_fix_put_before_it(tmp_pat
     assert out[0].lines[1].text == "—the same as they had done"
     assert out[0].lines[1].x0 == 17
     assert not indented(out[0].lines)[1]
+
+
+def test_a_readers_straight_elision_is_curled_as_an_apostrophe_not_a_quote():
+    assert ocrcheck._curled("nog 's opdrachten") == "nog ’s opdrachten"
+    assert ocrcheck._curled("'Wil je 'm 's de") == "‘Wil je ’m ’s de"
+    assert ocrcheck._curled("zei hij, 'kom hier'") == "zei hij, ‘kom hier’"

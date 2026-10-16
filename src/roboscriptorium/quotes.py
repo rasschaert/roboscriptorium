@@ -342,9 +342,10 @@ def style_prompt(language: str, single: bool, ellipsis: str, dash: str | None) -
     )
 
 
-# A straight ' opening a word that elides letters, not a quotation: Dutch ’s, ’t, ’n and
-# English ’em, ’tis, ’twas, ’cause, ’til, ’round, a decade (’60s).
-_ELISION = re.compile(r"'(?:[stn]|em|tis|twas|cause|til|round|\d\ds?)\b", re.IGNORECASE)
+# A straight ' opening a word that elides letters, not a quotation: Dutch ’s, ’t, ’n,
+# Flemish ’m (hem) and ’k (ik), English ’em, ’tis, ’twas, ’cause, ’til, ’round, a decade
+# (’60s).
+ELISION = re.compile(r"'(?:[stnmk]|em|tis|twas|cause|til|round|\d\ds?)\b", re.IGNORECASE)
 # What opens a quotation before it: the paragraph's start, a space, a bracket, a dash or
 # another opening mark.
 _OPENS_AFTER = "([{—–-‘“„"
@@ -383,7 +384,7 @@ def curled(text: str, opening: str = "“") -> str:
         opens = (before.isspace() or before in _OPENS_AFTER) and not after.isspace()
         if c == '"':
             chars[i] = opening if opens else "”"
-        elif opens and not _ELISION.match(text, i):
+        elif opens and not ELISION.match(text, i):
             chars[i] = "‘"
         else:
             chars[i] = "’"

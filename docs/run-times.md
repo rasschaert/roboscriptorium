@@ -375,3 +375,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | build, Ex-minnaar, cold (caches lost 2026-10-11) | 273 | 283 | 0 |
 | 2026-10-16 | bench tuning, epigraph questions narrowed, elisions, blank setting | 790 | 2 | 0 |
 | 2026-10-16 | bench validation, epigraph questions narrowed, elisions, blank setting | 790 | 1 | 0 |
+| 2026-10-16 | build, Ex-minnaar, elisions curled as apostrophes in the OCR check (warm) | 273 | 2 | 0 |
+| 2026-10-16 | bench tuning, elisions curled as apostrophes in the OCR check | 790 | 2 | 0 |
+| 2026-10-16 | bench validation, elisions curled as apostrophes in the OCR check | 790 | 2 | 0 |

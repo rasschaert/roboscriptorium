@@ -36,6 +36,7 @@ from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, line_words, page_words, spells, spliced
+from roboscriptorium.quotes import ELISION
 from roboscriptorium.reflow import HYPHENS
 from roboscriptorium.roles import DecisionCache
 
@@ -657,8 +658,11 @@ def _curly(text: str) -> bool:
 
 
 def _curled(text: str) -> str:
-    """Straight quotes as curly ones: opening at a word's start, closing elsewhere."""
-    text = re.sub(r"(^|\s)'", r"\1‘", text)
+    """Straight quotes as curly ones: opening at a word's start, closing elsewhere; an
+    apostrophe eliding letters ("nog 's", "je 'm") is ’ wherever it stands."""
+    text = re.sub(
+        r"(^|\s)'", lambda m: m[1] + ("’" if ELISION.match(text, m.end() - 1) else "‘"), text
+    )
     text = re.sub(r"(^|\s)\"", r"\1“", text)
     return text.replace("'", "’").replace('"', "”")
 
