@@ -49,15 +49,14 @@ load). Both page readings of every tuning and validation page and Claude's readi
 
 ## Next, in order
 
-1. **Stella's read-through by the user** (checklist): its review is done (2026-10-16,
-   two accents corrected), the EPUB rebuilt and clean.
-2. **Ex-minnaar's review by the user**: 261 questions (~1 a page). Its blanked place
-   names are set as "..." (`blank` in its `book.toml`); where a question shows one,
-   pick the reading with "__".
-3. From the codebase review (checklist): the line-role trainer into `src/`, one cache
-   helper, the module splits; book-wide statistics on the whole body.
-4. The checklist's remaining "Assumptions to test"; Dolittle's wrapped text (wants a
-   book with text around pictures).
+1. **Ex-minnaar's review by the user**: ready, 234 questions (308 this morning; 12 of
+   theirs already answered), one per line now. Restart the review server
+   (`uv run roboscriptorium review work/ex-minnaar`). Where a line shows a blanked place
+   name ("—straat", "_-straat"), pick or type it with "__": the book's `blank` setting
+   makes it "...".
+2. **Stella's read-through by the user** (checklist).
+3. Agent, meanwhile: the codebase review's steps (checklist), the detector for errors
+   every reading shares (the gap at a lost space measured on the scan).
 
 **Remind the user of the daily backup of `work/`** at session start and before long
 runs. Last ones: 2026-10-15 09:34 and that evening.

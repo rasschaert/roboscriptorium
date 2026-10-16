@@ -56,3 +56,19 @@ def test_a_pictures_garbled_reading_or_a_title_in_capitals_is_no_epigraph():
     ):
         pages[1] = _short_page(8, rows)
         assert epigraphs.lines(pages, {}) == set(), rows
+
+
+def test_specks_read_as_short_words_are_no_epigraph():
+    from roboscriptorium.epigraphs import _reads
+
+    specks = [
+        Line("de", 120, 100, 130, 112),
+        Line("De |", 118, 116, 140, 128),
+        Line("ap", 121, 132, 131, 144),
+    ]
+    assert not _reads(specks)
+    motto = [
+        Line("‘It’s closing time’", 104, 100, 172, 112),
+        Line("(Leonard Cohen, The Future)", 80, 116, 195, 128),
+    ]
+    assert _reads(motto)

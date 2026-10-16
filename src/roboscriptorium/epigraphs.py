@@ -25,8 +25,10 @@ INSET = 0.15
 SHORT = 0.75
 # A page this full of lines shows the book's margin and line width.
 FULL_PAGE = 10
-# An epigraph holds at least this many words of two letters or more.
+# An epigraph holds at least this many words of two letters or more, one of them at
+# least `LONG_WORD` letters: specks read as "de", "De |", "ap" hold none.
 MIN_WORDS = 3
+LONG_WORD = 4
 # The role reflow gives an epigraph's lines.
 ROLE = LineRole("epigraph", 1.0, 0.0, "epigraph")
 _FURNITURE = ("page_number", "running_head", "chapter_heading")
@@ -66,6 +68,7 @@ def _reads(lines: list[Line]) -> bool:
     words = [w for ln in lines for w in re.findall(r"[^\W\d_]{2,}", ln.text)]
     return (
         len(words) >= MIN_WORDS
+        and any(len(w) >= LONG_WORD for w in words)
         and not any(P.garbled(ln) for ln in lines)
         and any(c.islower() for w in words for c in w)
     )

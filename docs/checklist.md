@@ -78,7 +78,8 @@ What Ex-minnaar's first review questions showed. The user reviews only after the
       book breaks more than it fixes
 - [x] One OCR question per line (2026-10-16): whole-line options from every source,
       "Something else" from any option; benches better, questions fewer
-- [ ] Then sample Ex-minnaar's questions again and hand its review back to the user
+- [x] Ex-minnaar's questions sampled again (2026-10-16): 234, sound; its review is the
+      user's (restart the review server)
 
 ## From the codebase review (2026-10-13, first)
 
@@ -140,9 +141,8 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
 - [ ] Stella rebuilt with those fixes and diffed against its dated copies in
       `work/stella/epubs/` (the user, 2026-10-12: not before the Ex-minnaar review)
 
-- [ ] The epigraph stage takes noise for a motto (De eerlijke vinder p. 58: "de", "De |",
-      "ap", three inset lines of three "words"): find what tells them apart on the golden
-      books' epigraph pages first, then fix (agent, ~1 h)
+- [x] The epigraph stage took noise for a motto (2026-10-16): a word of four letters is
+      now required; benches no change
 
 ## 1. Accuracy before Stella (~half a day)
 
