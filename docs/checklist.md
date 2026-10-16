@@ -313,6 +313,8 @@ reading shares: many are specks and faint marks.
 - [ ] Block quotes and verse: find golden pages that have them first (epigraphs on a
       page of their own done 2026-10-11; De eerlijke vinder's mottos at its part
       openings, beside a drawn numeral, are not caught)
+      Ex-minnaar p. 50 (2026-10-16): a poem, "Gemis", short indented lines; its title
+      taken for a chapter heading and its lines joined into one paragraph
 - [ ] Per-book image tuning for pale or tinted scans: null on normal pages so far
 - [ ] Het Kindeken Jezus as a golden book, only if the image probe looks
       language-dependent
