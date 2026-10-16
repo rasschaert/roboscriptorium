@@ -20,7 +20,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `clients/retry.py`: `patiently`, a local model call tried again after a timeout
   (three tries), so one slow answer from a queued Ollama doesn't end a long run.
 - `files.py`: `write_atomic`, how every per-book cache is written (whole or not at all);
-  the append-only logs; `check_source`, which refuses a source PDF other than the one a
+  `read_cache` and `write_cache`, a versioned JSON cache with the identity it was made
+  with (model, prompt, language); the append-only logs; `check_source`, which refuses a source PDF other than the one a
   book's `stages/` were built from (`stages/source.json`).
 - `clients/openrouter.py`: a hosted model, named `openrouter:<model>@<provider tag>`
   read by `ocrcheck.transcribe`; the key is `OPENROUTER_API_KEY`. As `ROBO_READ_MODEL`
