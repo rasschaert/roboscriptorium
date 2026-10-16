@@ -80,6 +80,8 @@ What Ex-minnaar's first review questions showed. The user reviews only after the
       "Something else" from any option; benches better, questions fewer
 - [x] Ex-minnaar's questions sampled again (2026-10-16): 234, sound; its review is the
       user's (restart the review server)
+- [x] Misprints (2026-10-16): the review's `m` writes the book's errata; answers stay as
+      printed, so the readers that read the misprint aren't marked wrong
 
 ## From the codebase review (2026-10-13, first)
 

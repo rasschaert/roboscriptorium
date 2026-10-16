@@ -196,7 +196,8 @@ by definition (a chapter heading appears once, an apostrophe is `’`) may stay 
   and the print's own typography: its dash and spacing, its ellipsis, its quote marks. No
   house style (Standard Ebooks restyles; this project doesn't). Drop print artefacts (page
   numbers, running heads, line-end hyphens). Fix only clear OCR errors; never "improve"
-  the author's text.
+  the author's text. A misprint (the printer's slip, "zeI" for "zei") is corrected only
+  where the reviewer marks it, in the book's errata (`errata.py`), never by the machine.
 - **Non-goals (for now):** loose photo folders, dewarping phone photos, cloud models,
   non-Latin scripts.
 
@@ -241,7 +242,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `missing.py` | printed lines the layer lacks, read by glm-ocr |
 | `roles.py`, `sorter.py` | line roles: a decision model plus rules, then learned trees (`ROBO_SORTER=0` turns them off) |
 | `ocrcheck.py`, `pagereader.py`, `trust.py`, `trustdata.py`, `lexicon.py` | more readings of each body line (two of them from whole-page readings), judges where they differ, the learned trust that fixes, keeps or asks, and its training data; the word list |
-| `corrections.py`, `quotes.py` | the reviewer's answers applied; unpaired quotes as questions with a proposed reading |
+| `corrections.py`, `errata.py`, `quotes.py` | the reviewer's answers applied; the misprints they correct; unpaired quotes as questions with a proposed reading |
 | `footnotes.py`, `epigraphs.py` | footnotes at a page's foot taken out of the running text and linked to their marks; a motto on a page of its own set apart |
 | `reflow.py`, `hyphens.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; English line-end hyphens nothing else decides, by the judge; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |
 | `ir.py`, `epub.py` | the document model with references back to page lines; EPUB 3 by hand |
@@ -449,7 +450,11 @@ from the option chosen, or from any option with its ✎). One Save button (`↵`
 typed line that matches none of the readings, or a straight quote in a curly-quoted
 book, is queried once and saved on the second Save (`review.doubtful`; warned answers in
 `review/warnings.jsonl`). Arrows move through all regions. A region with a box can be
-turned (`r`, ↺/↻) and read again by tesseract (`o`); `-` and `+` zoom the crop. "Rebuild
+turned (`r`, ↺/↻) and read again by tesseract (`o`); `-` and `+` zoom the crop. Where
+the book itself is wrong, `m` (a misprint) takes the line as the edition should read it:
+the answer stays what the page prints, which the readers are scored on, and the words
+that differ go to `work/<book>/errata.toml`, found by page and printed words (`errata.py`;
+the file can be edited by hand, and an entry that doesn't match once stops the build). "Rebuild
 book" applies the answers and rebuilds the EPUB. Flags come from the model's decisions
 before answers, so the list stays put while you work. **Sample the questions before
 sending the user to review** (`experiments/sample_questions.py <book>` lays them out with

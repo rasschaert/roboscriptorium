@@ -575,6 +575,20 @@ after the check. Its failure: a line the reviewer rightly retypes at two places
 matches no reading and is queried once; and a region with no readings (a heading
 typed in, text the layer lacks) gets only the quote check.
 
+## Misprints: errata, not answers
+
+**A misprint is the book's error, not a reader's.** Ex-minnaar p. 94 prints "zeI ik"
+(a capital I for l); every reader that read "zeI" is right, so an answer of "zei" would
+train the arbiter to distrust them (the user, 2026-10-16: "i don't want to punish them
+for being right"). The answer therefore says what the page prints, and the correction
+lives apart, in `work/<book>/errata.toml` (`errata.py`), applied after reflow. An
+erratum is found by its page and its printed words, never by a paragraph, line or word
+number: those are positions, and every change to reflow or to the line list would move
+them (positions aren't identities). Its failure is loud, not silent: words its page
+holds twice or not at all stop the build, so a pipeline change that moves a word can't
+put the correction somewhere else. Only the reviewer adds one (AGENTS.md, Fidelity);
+the edition doesn't list its corrections (the user).
+
 ## Measuring
 
 - **`bench`, not single runs.** Warm caches replay themselves, so reruns agree;

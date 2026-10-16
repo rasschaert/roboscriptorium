@@ -311,3 +311,45 @@ def test_an_epigraph_line_with_another_doubt_is_still_asked():
     roles = {SourceRef(58, i): LineRole("body", 0.9, 0.9) for i in range(2)}
     found = flags.find([noise], roles, epigraph=set(roles))
     assert any("garbled" in f.reasons for f in found)
+
+
+def test_a_misprint_keeps_the_answer_as_printed_and_writes_the_edition_line_to_the_errata(
+    tmp_path,
+):
+    from roboscriptorium import errata, review
+
+    page = _page()
+    page.lines[2] = Line("‘Ach zo,’ zeI ik, ‘welk soort?’", 50, 110, 350, 122)
+    page.lines[7] = Line("en toen zeI hij niets", 50, 185, 350, 197)
+    printed = page.lines[2].text
+    doubt = flags.Flag(
+        "k1", 1, 2, 2, "‘Ach zo,’ zel ik, ‘welk soort?’", "text", ["ocr-doubt"],
+        readings=[{"text": "‘Ach zo,’ zel ik, ‘welk soort?’", "votes": []},
+                  {"text": printed, "votes": ["glm-ocr"]}],
+    )  # fmt: skip
+    answers = Corrections(tmp_path / "review" / "regions.jsonl")
+    page_review = review.RegionReview(
+        tmp_path / "none.pdf",
+        [page],
+        [doubt],
+        answers,
+        lambda: ([page], [doubt], 0),
+        "nld",
+        book_root=tmp_path,
+    )
+    fix = "‘Ach zo,’ zei ik, ‘welk soort?’"
+    saved = page_review.record({"key": "k1", "action": "text", "text": printed, "misprint": fix})
+    assert saved["text"] == printed  # the readers are scored on what the page prints
+    # "zeI" is printed twice on the page: the erratum takes the word after it too.
+    assert errata.load(tmp_path) == [errata.Erratum(1, "zeI ik,", "zei ik,")]
+    assert page_review.state()["items"][0]["errata"] == [
+        {"page": 1, "printed": "zeI ik,", "reads": "zei ik,"}
+    ]
+    # Answered again with another correction, the erratum is replaced, not added to.
+    page_review.record(
+        {"key": "k1", "action": "text", "text": printed, "misprint": fix.replace("zei", "zei,")}
+    )
+    assert errata.load(tmp_path) == [errata.Erratum(1, "zeI ik,", "zei, ik,")]
+    # A "misprint" that changes nothing is refused, and so the answer isn't saved either.
+    out = page_review.record({"key": "k1", "action": "text", "text": printed, "misprint": printed})
+    assert out["refused"]

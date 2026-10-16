@@ -10,6 +10,7 @@ import pymupdf
 from roboscriptorium import (
     corrections,
     epigraphs,
+    errata,
     faint,
     figures,
     footnotes,
@@ -230,18 +231,26 @@ def run(
     quote_readings = {}
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, whole, suspects, quote_lines, style, dots, settings)
+    built = reflow(corrected, _apart(corrected, roles, note_lines, epigraph_lines), known, compound)
+    notes = footnotes.collect(corrected, note_lines)
+    # Running text and notes together, so an erratum's words are unique across both.
+    fixed = errata.apply(
+        errata.load(book.root),
+        built + [n.paragraph for n in notes],
+        {p.number for p in body},
+    )
+    built, note_paragraphs = fixed[: len(built)], fixed[len(built) :]
     blocks = italics.mark(
-        reflow(corrected, _apart(corrected, roles, note_lines, epigraph_lines), known, compound),
+        built,
         body,
         italics.detect(book.source, body, book.stages / "italics.json"),
     )
     if compound is not None:
         compound.save()
     blocks = typography.apply(quotes.curl(blocks), style, dots, book.blank)
-    notes = footnotes.collect(corrected, note_lines)
     for note, typeset in zip(
         notes,
-        typography.apply(quotes.curl([n.paragraph for n in notes]), style, dots, book.blank),
+        typography.apply(quotes.curl(note_paragraphs), style, dots, book.blank),
         strict=True,
     ):
         note.paragraph = typeset

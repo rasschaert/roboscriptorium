@@ -253,6 +253,7 @@ def review_regions(
         ocr.language(book.language),
         lambda png, line: initials.guess(decider, vocab, png, line),
         golden,
+        book.root,
     )
     page.applied = applied
     review.serve(page, port)

@@ -97,6 +97,7 @@ def test_a_golden_books_places_join_the_review_cropped_from_the_layer(tmp_path, 
         corrections_applied=0,
     )
     book = SimpleNamespace(
+        root=tmp_path,
         source=tmp_path / "source.pdf",
         stages=tmp_path,
         language="nl",

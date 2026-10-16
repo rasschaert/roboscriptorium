@@ -7,7 +7,7 @@ import httpx
 import pymupdf
 import pytest
 
-from roboscriptorium import flags, pipeline, trust
+from roboscriptorium import errata, flags, pipeline, trust
 from roboscriptorium.book import Book
 from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.corrections import Corrections
@@ -503,3 +503,19 @@ def test_a_printed_blank_takes_the_setting_in_book_toml(tmp_path, monkeypatch):
     (tmp_path / "book.toml").write_text(toml)
     text = pipeline.run(Book.load(tmp_path), use_models=False).doc.blocks[0].text
     assert "het ...plein en" in text and "_" not in text
+
+
+def test_an_erratum_corrects_the_misprint_it_names_and_an_ambiguous_one_stops_the_build(
+    tmp_path, monkeypatch
+):
+    _no_layout(monkeypatch)
+    lines = ["'Ach zo,' zeI ik, 'welk soort invalide? Fysiek? Geeste-", "lijk?' ZeI hij niets?"]
+    book = _book(tmp_path, lines=lines)
+    errata.save(tmp_path, errata.Erratum(1, "zo,’ zeI ik", "zo,’ zei ik"))
+    errata.save(tmp_path, errata.Erratum(1, "Geestelijk", "Geestelijk"))
+    text = pipeline.run(book, use_models=False).doc.blocks[0].text
+    assert "zo,’ zei ik" in text and "ZeI hij" in text
+    errata.save(tmp_path, errata.Erratum(1, "ZeI", "Zei"))
+    errata.save(tmp_path, errata.Erratum(1, "zeI", "zei"))
+    with pytest.raises(errata.Unmatched, match="page 1: 'zeI' occurs 0 times"):
+        pipeline.run(book, use_models=False)

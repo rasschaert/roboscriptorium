@@ -22,9 +22,9 @@ from urllib.parse import parse_qs, urlparse
 
 import pymupdf
 
-from roboscriptorium import corrections, ocr
+from roboscriptorium import corrections, errata, ocr
 from roboscriptorium import flags as F
-from roboscriptorium.corrections import ACTIONS, Corrections
+from roboscriptorium.corrections import ACTIONS, Correction, Corrections
 from roboscriptorium.disagreements import UNSURE, Disagreement, Verdicts
 from roboscriptorium.evaluate import normalise
 from roboscriptorium.files import append_jsonl
@@ -367,6 +367,7 @@ class RegionReview:
         lang: str,
         guess_letter: Callable[[bytes, str], str] | None = None,
         golden: GoldenQuestions | None = None,
+        book_root: Path | None = None,
     ):
         self.scan = Scan(pdf, pages)
         self.lang = lang
@@ -378,9 +379,12 @@ class RegionReview:
         self._lock = threading.Lock()
         self.applied = None
         self.golden = golden
+        # Where the book's errata file lives (`errata.py`); None takes no misprints.
+        self.book_root = book_root
 
     def state(self) -> dict:
         items = []
+        noted = errata.load(self.book_root) if self.book_root else []
         for f in self.regions:
             page = self.scan.pages[f.page]
             c = self.corrections.for_flag(f)
@@ -401,6 +405,7 @@ class RegionReview:
                     if context and f.last + 1 < len(page.lines)
                     else "",
                     "answer": asdict(c) if c else None,
+                    "errata": _errata_of(f, c, noted),
                     "draft": self._draft(f),
                     "turn": self._turn(f),
                 }
@@ -482,7 +487,34 @@ class RegionReview:
             return {"warning": why}
         if place:
             return self.golden.record(body)
-        return asdict(self.corrections.record(flag, action, text, turn))
+        if (fix := body.get("misprint")) is not None:
+            found = self._misprints(flag, text if text is not None else flag.text, fix)
+            if isinstance(found, str):
+                return {"warning": found, "refused": True}
+        else:
+            found = []
+        answer = self.corrections.record(flag, action, text, turn)
+        for e in found:
+            errata.save(self.book_root, e)
+        noted = errata.load(self.book_root) if self.book_root else []
+        return {**asdict(answer), "errata": _errata_of(flag, answer, noted)}
+
+    def _misprints(self, flag: F.Flag, printed: str, fix: str) -> list[errata.Erratum] | str:
+        """The errata that turn a region's lines as printed into `fix`, or why not."""
+        if self.book_root is None:
+            return "This review keeps no errata."
+        old, new = printed.split("\n"), fix.split("\n")
+        if len(old) != len(new):
+            return "A misprint changes words within lines: keep the region's line breaks."
+        lines = [ln.text for ln in self.scan.pages[flag.page].lines]
+        # The region's lines as the answer says they are printed: the text layer may not.
+        lines[flag.first : flag.first + len(old)] = old
+        found = [
+            errata.from_line(flag.page, o, n, lines, flag.first + k)
+            for k, (o, n) in enumerate(zip(old, new, strict=True))
+        ]
+        found = [e for e in found if e is not None]
+        return found or "The edition's line is the same as the printed one."
 
     def rebuild(self) -> dict:
         with self._lock, PDF_LOCK:
@@ -491,6 +523,13 @@ class RegionReview:
             if self.golden is not None:
                 self.golden = GoldenQuestions(places, self.golden.verdicts)
         return self.state()
+
+
+def _errata_of(f: F.Flag, c: Correction | None, noted: list[errata.Erratum]) -> list[dict]:
+    """The misprints recorded for a region's lines: those on its page whose printed words
+    are in its text, or in its answer's."""
+    texts = [t for t in (f.text, c and c.text) if t]
+    return [asdict(e) for e in noted if e.page == f.page and any(e.printed in t for t in texts)]
 
 
 def _trusted(headers, port: int) -> bool:
