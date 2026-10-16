@@ -68,6 +68,9 @@ class Stages:
     ocr_decider: str = ""
     # Body pages scanned too faint to read (`faint.py`), on scans only.
     faint_pages: set[int] = field(default_factory=set)
+    # Lines of `pages` set apart as an epigraph (`epigraphs.lines`): the review asks
+    # nothing about what they are.
+    epigraph_lines: set[SourceRef] = field(default_factory=set)
 
 
 def run(
@@ -268,6 +271,7 @@ def run(
         quote_readings,
         decider,
         faint_pages,
+        epigraph_lines,
     )
 
 

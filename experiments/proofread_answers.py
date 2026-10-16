@@ -14,9 +14,10 @@ from pathlib import Path
 import pymupdf
 from PIL import Image, ImageDraw
 
-from roboscriptorium import flags, layout, ocrcheck, pipeline
+from roboscriptorium import flags, pipeline
 from roboscriptorium.book import Book
 from roboscriptorium.corrections import Corrections
+from roboscriptorium.golden import scoring
 
 PER_SHEET = 6
 PAD = 6  # points around the crop
@@ -53,10 +54,7 @@ def crop(pdf: pymupdf.Document, page, f: flags.Flag) -> Image.Image:
 def main(book_dir: str) -> None:
     book = Book.load(Path(book_dir))
     st = pipeline.run(book)
-    regions = layout.detect(book.source, [p.number for p in st.pages], book.stages / "layout.json")
-    found = flags.find(
-        st.pages, st.model_roles, regions, ocrcheck.doubts(st.suspects), st.quote_lines
-    )
+    found = scoring.questions(book, st)
     answers = Corrections(book.corrections_path)
     out = Path("work/probes/proofread") / Path(book_dir).name
     out.mkdir(parents=True, exist_ok=True)

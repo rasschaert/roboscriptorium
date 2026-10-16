@@ -16,24 +16,16 @@ import pymupdf
 from PIL import Image, ImageDraw
 from proofread_answers import PER_SHEET, WIDTH, crop
 
-from roboscriptorium import flags, layout, ocrcheck, pipeline
+from roboscriptorium import pipeline
 from roboscriptorium.book import Book
 from roboscriptorium.corrections import Corrections
+from roboscriptorium.golden import scoring
 
 
 def main(book_dir: str) -> None:
     book = Book.load(Path(book_dir))
     st = pipeline.run(book)
-    regions = layout.detect(book.source, [p.number for p in st.pages], book.stages / "layout.json")
-    found = flags.find(
-        st.pages,
-        st.model_roles,
-        regions,
-        ocrcheck.doubts(st.suspects),
-        st.quote_lines,
-        st.quote_readings,
-        st.faint_pages,
-    )
+    found = scoring.questions(book, st)
     answers = Corrections(book.corrections_path)
     open_ = [f for f in found if answers.for_flag(f) is None]
     out = Path("work/probes/questions") / Path(book_dir).name

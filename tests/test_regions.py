@@ -287,3 +287,19 @@ def test_a_section_opening_in_lower_case_asks_for_its_drawn_initial():
     for opening in ("I was there.", "1914 was a year."):
         page_i = PageText(79, 400, 600, [lines[0], Line(opening, 50, 100, 350, 112)])
         assert [f for f in flags.find([page_i], heading) if "initial-lost" in f.reasons] == []
+
+
+def test_an_epigraph_is_not_asked_what_it_is():
+    motto = PageText(
+        7,
+        300,
+        500,
+        [
+            Line("‘It’s closing time’", 104, 100, 172, 112),
+            Line("(Leonard Cohen, The Future)", 80, 116, 195, 128),
+        ],
+    )
+    body = {SourceRef(7, i): LineRole("body", 0.98, 0.98) for i in range(2)}
+    quoted = {SourceRef(7, 0)}
+    assert flags.find([motto], body, quotes=quoted)
+    assert flags.find([motto], body, quotes=quoted, epigraph=set(body)) == []

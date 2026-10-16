@@ -403,8 +403,13 @@ def find(
     quotes: set[SourceRef] | None = None,
     proposed: dict[SourceRef, dict[str, str]] | None = None,
     faint: set[int] | None = None,
+    epigraph: set[SourceRef] | None = None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.
+
+    Lines set apart as an `epigraph` (`epigraphs.lines`) are centred, short and often
+    end without a stop by nature: nothing is asked about what they are, only an OCR
+    doubt about their words.
 
     A page in `faint` (scanned too faint to read, `faint.pages`) is one region of all its
     lines: nothing on it can be trusted, so it gets no finer questions.
@@ -441,7 +446,7 @@ def find(
             role = roles.get(SourceRef(page.number, i))
             reasons = (
                 []
-                if i in in_pictures
+                if i in in_pictures or SourceRef(page.number, i) in (epigraph or set())
                 else _reasons(page, i, role, furniture, line_reasons.get(i, []))
             )
             how = treatment(role)

@@ -93,6 +93,7 @@ def test_a_golden_books_places_join_the_review_cropped_from_the_layer(tmp_path, 
         quote_lines=[],
         quote_readings={},
         faint_pages=set(),
+        epigraph_lines=set(),
         corrections_applied=0,
     )
     book = SimpleNamespace(

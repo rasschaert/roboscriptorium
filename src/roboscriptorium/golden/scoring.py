@@ -72,6 +72,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         stages.quote_lines,
         stages.quote_readings,
         stages.faint_pages,
+        stages.epigraph_lines,
     )
 
 
