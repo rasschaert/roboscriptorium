@@ -4,7 +4,12 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session. Written 2026-10-17 ~00:45, at the end of the session of 2026-10-16.
 
-## Nothing running.
+## Running: `robo-break-judge` (started 2026-10-17 ~00:50, ~3 h 20 min)
+
+The vision judge (clef:27b) asked, line by line on 192 bench pages (every page with a
+paragraph-break error and as many without), whether each line starts a paragraph
+(`experiments/probe_break_judge.py`; answers in `work/probes/break-judge/answers.jsonl`,
+resumable with `ask`; `score` compares it with the pipeline). No src change depends on it.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment).
