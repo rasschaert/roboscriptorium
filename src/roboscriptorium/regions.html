@@ -301,7 +301,9 @@ const takesMisprint = r => draft.kind === "text" && r.got == null;
 // The region's text as the answer says it is printed.
 function printed(r) {
   const doubt = isDoubt(r, draft.kind);
-  return doubt && draft.reading >= 0 ? r.readings[draft.reading].text : doubt && draft.reading === null ? r.text : draft.text;
+  if (!doubt) return draft.text;
+  if (draft.reading === null) return r.readings[central(r.readings.map(g => g.text))].text;
+  return draft.reading >= 0 ? r.readings[draft.reading].text : draft.text;
 }
 
 // Misprints recorded for the region, and the box for one: the line as the edition should read.
