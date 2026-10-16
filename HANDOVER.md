@@ -40,9 +40,6 @@ runs: it now also holds `work/ex-minnaar/errata.toml`.
 
 ## Waiting on the user
 
-
-
-
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`,
   `ornith-1.5:9b`, `ornith-1.5:35b`, `qwen3.8:27b-mxfp8` (not in the way, the user said).
