@@ -336,3 +336,34 @@ def test_readings_differing_only_in_a_double_quote_set_as_two_singles_are_one_op
         ["tesseract"],
     ]
     assert got[0]["text"] == line.format("“Een nachtwaker’’!’")
+
+
+def test_readings_differing_at_separate_places_offer_every_combination_and_accept_them():
+    a = "Paganini: “Ga jij nu"
+    b = "Paganini: ‘Gajij nu"
+    assert review.combinations([a, b], 6) == [
+        a,
+        b,
+        "Paganini: “Gajij nu",
+        "Paganini: ‘Ga jij nu",
+    ]
+    readings = [{"text": a, "votes": ["text layer"]}, {"text": b, "votes": ["glm-ocr"]}]
+    assert review.doubtful(a, readings, "text", "Paganini: ‘Ga jij nu") == ""
+    # A letter no reading has is still a stranger.
+    assert "none of the readings" in review.doubtful(a, readings, "text", "Paganini: ‘Ga jij nn")
+    shown = review.with_combinations(readings)
+    assert [g["votes"] for g in shown] == [["text layer"], ["glm-ocr"], ["combined"], ["combined"]]
+
+
+def test_combinations_keep_insertions_at_their_place_and_stop_past_the_limit():
+    assert review.combinations(["ab cd", "aXb cd", "ab cYd"], 6) == [
+        "ab cd",
+        "aXb cd",
+        "ab cYd",
+        "aXb cYd",
+    ]
+    many = ["abcdef", "Abcdef", "aBcdef", "abCdef"]
+    assert review.combinations(many, 6) == []  # eight lines would be more than six
+    assert review.with_combinations([{"text": t, "votes": []} for t in many]) == [
+        {"text": t, "votes": []} for t in many
+    ]

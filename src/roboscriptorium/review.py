@@ -9,7 +9,10 @@ places where our text and the publisher's e-book differ are more questions in th
 list, each a doubt between the two; their answers are verdicts on the reference.
 """
 
+import difflib
+import itertools
 import json
+import math
 import re
 import threading
 import unicodedata
@@ -370,6 +373,10 @@ class GoldenQuestions:
 
 
 _CURLY = "‘’“”"
+# The most options a line's question shows, its readings' combinations included, and the
+# most combinations an answer is checked against before it is called a stranger.
+OPTIONS = 6
+COMBINATIONS_CHECKED = 256
 _STRAIGHT = str.maketrans("‘’“”", "''\"\"")
 
 
@@ -377,12 +384,59 @@ def _fold(text: str) -> str:
     return " ".join(unicodedata.normalize("NFC", text).translate(_STRAIGHT).split())
 
 
+def combinations(texts: list[str], limit: int) -> list[str]:
+    """Every line the readings make between them, place by place: where they differ at
+    separate places, one reading's version at one place and another's at the next
+    ("‘Ga jij" from "“Ga jij" and "‘Gajij"). The first text is the base; the readings'
+    own lines come first. Empty when there would be more than `limit`."""
+    base = texts[0]
+    edits = []  # per reading: (start, end, replacement) spans of the base
+    for t in texts[1:]:
+        ops = difflib.SequenceMatcher(None, base, t, autojunk=False).get_opcodes()
+        edits.append([(i1, i2, t[j1:j2]) for tag, i1, i2, j1, j2 in ops if tag != "equal"])
+    # Places: the spans any reading changes, merged where they overlap or where an
+    # insertion meets another edit at its point.
+    spans = sorted((a, b) for e in edits for a, b, _ in e)
+    places: list[list[int]] = []
+    for a, b in spans:
+        if places and (a < places[-1][1] or a == places[-1][1] and (a == b or places[-1][0] == a)):
+            places[-1][1] = max(places[-1][1], b)
+        else:
+            places.append([a, b])
+    variants = []
+    for a, b in places:
+        seen = [base[a:b]]
+        for e in edits:
+            piece, at = "", a
+            for i1, i2, rep in e:
+                if a <= i1 and i2 <= b and not (i1 == i2 == b and a < b):
+                    piece += base[at:i1] + rep
+                    at = i2
+            piece += base[at:b]
+            if piece not in seen:
+                seen.append(piece)
+        variants.append(seen)
+    if math.prod(len(v) for v in variants) > limit:
+        return []
+    out = list(dict.fromkeys(texts))
+    for choice in itertools.product(*variants):
+        line, at = "", 0
+        for (a, b), piece in zip(places, choice, strict=True):
+            line += base[at:a] + piece
+            at = b
+        line += base[at:]
+        if line not in out:
+            out.append(line)
+    return out
+
+
 def doubtful(line: str, readings: list[dict], action: str, text: str | None) -> str:
     """Why an answer deserves a second look before it is saved, or "" when it doesn't.
 
     A reviewer's typed answer is wrong about one time in eight (`quality.slip_rates`),
-    so a line typed for a question with readings must match one of them, letter for
-    letter but for quote glyphs and spacing; and an answer with a straight quote where
+    so a line typed for a question with readings must match one of them, or a line they
+    make between them (`combinations`), letter for letter but for quote glyphs and
+    spacing; and an answer with a straight quote where
     the book's line or readings use curly ones is a typing slip no model is needed for.
     """
     if text is None or action not in ("text", "heading", "caption"):
@@ -390,7 +444,11 @@ def doubtful(line: str, readings: list[dict], action: str, text: str | None) -> 
     lines = [line, *(g["text"] for g in readings)]
     if any(c in line for line in lines for c in _CURLY) and any(c in text for c in "'\""):
         return "That has a straight quote where the book sets curly ones."
-    if len(readings) > 1 and _fold(text) not in {_fold(g["text"]) for g in readings}:
+    texts = [g["text"] for g in readings]
+    if len(texts) < 2:
+        return ""
+    made = combinations(texts, COMBINATIONS_CHECKED) or texts
+    if _fold(text) not in {_fold(t) for t in made}:
         return "That matches none of the readings of this line. Check the scan once more."
     return ""
 
@@ -435,7 +493,7 @@ class RegionReview:
             # Around sideways text the neighbouring lines are scraps too.
             context = "rotated" not in f.reasons
             item = asdict(f)
-            item["readings"] = merged(item["readings"])
+            item["readings"] = with_combinations(merged(item["readings"]))
             if item["readings"] and "text layer" not in item["readings"][0]["votes"]:
                 first = item["readings"][0]
                 item["readings"][0] = {**first, "votes": ["text layer", *first["votes"]]}
@@ -584,6 +642,16 @@ def _undoubled(text: str) -> str:
     for pattern, mark in _DOUBLED:
         text = pattern.sub(mark, text)
     return text
+
+
+def with_combinations(readings: list[dict]) -> list[dict]:
+    """The readings, and when there are few the lines they make between them place by
+    place, each an option of its own ("combined")."""
+    if len(readings) < 2:
+        return readings
+    texts = combinations([g["text"] for g in readings], OPTIONS)
+    have = {g["text"] for g in readings}
+    return readings + [{"text": t, "votes": ["combined"]} for t in texts if t not in have]
 
 
 def merged(readings: list[dict]) -> list[dict]:
