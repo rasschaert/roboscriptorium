@@ -2,7 +2,7 @@
 
 import json
 import sys
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
 import pymupdf
@@ -97,6 +97,9 @@ def run(
     roles = model_roles = None
     applied = 0
     suspects: list[ocrcheck.Suspect] = []
+    # The suspects as the arbiter decided them, before answered lines are kept asked:
+    # the text the quote check reads.
+    decided: list[ocrcheck.Suspect] | None = None
     decider = ""
     regions = None
     if layout.available():
@@ -204,14 +207,26 @@ def run(
                     )
                 read = len(body) - len(faint_pages)
                 budget = round(settings.ocr_questions_per_page * read)
-                # The book's own answers join the substitution table it decides with.
-                own = trust.rows_from(suspects, corrections.answered(answers, suspects))
-                model = trust.with_answers(model, own)
-                suspects = trust.decide(suspects, model, budget, settings.ocr_ask_below)
-                # A change its readers have been right about in the book's answers is
-                # taken where it is asked again.
-                buckets = trust.book_buckets(own)
-                suspects = trust.by_book(suspects, buckets, settings.ocr_ask_below)
+                # The book's own answers join the substitution table it decides with, and
+                # a change its readers have been right about in them is taken where it is
+                # asked again. A line answered as a question about its readings stays
+                # asked, whatever is decided now: its question and answer stay in the
+                # review, and the answer sets it.
+                labels = corrections.answered(answers, suspects)
+                own = trust.rows_from(suspects, labels)
+                taught = trust.by_book(
+                    trust.decide(
+                        suspects, trust.with_answers(model, own), budget, settings.ocr_ask_below
+                    ),
+                    trust.book_buckets(own),
+                    settings.ocr_ask_below,
+                )
+                done = {(page, line) for page, line, _ in labels}
+                decided = taught
+                suspects = [
+                    replace(s, choice="review", chosen=None) if (s.page, s.line) in done else s
+                    for s in taught
+                ]
                 decider = f"trust {trust.fingerprint(path)}"
                 if settled := sum(r["settled"] for r in own):
                     decider += f", {settled} of the book's answers"
@@ -227,7 +242,7 @@ def run(
         compound = hyphens.Compounds(
             client, settings.judge_model, book.language, book.stages / "compounds.json"
         )
-    checked = ocrcheck.apply(body, suspects)
+    checked = ocrcheck.apply(body, suspects if decided is None else decided)
     unanswered = reflow(
         checked, _apart(checked, model_roles, note_lines, epigraph_lines), known, compound
     )

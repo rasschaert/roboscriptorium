@@ -495,7 +495,8 @@ def find(
     (`quotes.unbalanced`); `proposed` are such lines as a vision model reads their marks
     (`Stages.quote_readings`), offered as a second reading. `headings` are lines a
     reviewer answered as headings: a line set as they are is asked too
-    (`_like_heading`), wherever the roles put it.
+    (`_like_heading`), wherever the roles put it, those lines themselves included, so
+    their questions stay in the review with their answers.
     """
     flags: list[Flag] = []
     furniture = _Furniture(P.Repeats(pages), P.page_offset(pages))
@@ -537,12 +538,7 @@ def find(
             )
             if SourceRef(page.number, i) in (epigraph or set()):
                 reasons = [r for r in reasons if r not in _EPIGRAPH_TRAITS]
-            if (
-                heights
-                and treatment(role) != "heading"
-                and SourceRef(page.number, i) not in (headings or set())
-                and _like_heading(page, i, heights)
-            ):
+            if heights and treatment(role) != "heading" and _like_heading(page, i, heights):
                 reasons.append("like-heading")
             how = treatment(role)
             if reasons and run and run[-1][0] == i - 1 and run[-1][1] == how:

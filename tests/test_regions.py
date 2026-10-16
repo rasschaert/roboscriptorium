@@ -399,4 +399,5 @@ def test_a_line_set_like_an_answered_heading_is_asked_and_shouting_in_a_paragrap
     shout = page(3, "OF ZE EEN SCAMPI’TJE WILDE", 12.5)
     found = flags.find([answered, title, shout], {}, headings={SourceRef(1, 4)})
     asked = [(f.page, f.first) for f in found if "like-heading" in f.reasons]
-    assert asked == [(2, 4)]
+    # The answered line stays asked too, so its answer stays in the review.
+    assert asked == [(1, 4), (2, 4)]
