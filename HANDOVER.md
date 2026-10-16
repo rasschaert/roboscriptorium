@@ -2,7 +2,7 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-16 ~23:00, at the end of the session of 2026-10-16.
+end of every session. Written 2026-10-17 ~00:45, at the end of the session of 2026-10-16.
 
 ## Nothing running.
 
@@ -10,7 +10,10 @@ end of every session. Written 2026-10-16 ~23:00, at the end of the session of 20
 refuses winnow (AGENTS.md, Environment).
 
 **Baselines now:** the latest `work/bench/tuning-*` and `validation-*` runs (0.27 and
-0.49 after review). Tonight's module splits (readers, ocrdoubts, hyphens, scanstyle,
+0.49 after review). After 23:00: the judges' cache key holds the crop (nothing cold),
+readers' quotes are curled by the book's style and closed at a line's end (Metro 0.42 →
+0.33 wrong words a page), and paragraph starts from the text were tried and reverted
+(decisions.md). Tonight's module splits (readers, ocrdoubts, hyphens, scanstyle,
 sorterdata, ink, the cache helper) changed no score; the whole-body statistics were
 reverted (decisions.md).
 
@@ -36,6 +39,13 @@ asked whole, specks unasked, questions shown as their difference with combinatio
 runs: it now also holds `work/ex-minnaar/errata.toml`.
 
 ## Waiting on the user
+
+- **Vuurspel into tuning?** It is the only bench book that sets no paragraph indent; a
+  learned fix for its missed breaks (`work/probes/parastarts.patch`) has nothing to
+  learn from while it validates. Moving it changes what validation checks.
+- **A Qwen reading for questions without readings** (headings, missing lines): Qwen reads
+  only checked body lines, so there is nothing cached to check a typed answer against;
+  reading those lines at review build would offer a reading to click (checklist).
 
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`,
