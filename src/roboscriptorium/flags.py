@@ -70,6 +70,12 @@ SPECK_HEIGHT = 0.5
 # A gap between two running-text lines this many times the page's line pitch, below a
 # line stopping mid-word or mid-sentence, is a line the text layer lost.
 LOST_LINE_GAP = 1.5
+# Lines whose height differs from the page's body lines by more than this share are set
+# apart (a title, a note); neighbours within `ALIKE` of their height and `TIGHT` of it
+# away join their question (`_set_alike`).
+APART = 0.2
+ALIKE = 0.15
+TIGHT = 1.5
 # The line below such a gap is running text: this long, opening with a letter, a digit or
 # a quote mark.
 LOST_LINE_MIN_CHARS = 10
@@ -231,7 +237,7 @@ def _region(
     `quotes.readings`), the region as the text layer reads it and as each kind reads it
     are its readings: a line without a kind reads as the OCR check left it, else the
     layer."""
-    first, last = run[0][0], run[-1][0]
+    first, last = _set_alike(page, run[0][0], run[-1][0])
     text = "\n".join(page.lines[k].text for k in range(first, last + 1))
     reasons = list(dict.fromkeys(r for _, _, rs in run for r in rs))
     flag = Flag(region_key(page.number, text), page.number, first, last, text, run[0][1], reasons)
@@ -254,6 +260,33 @@ def _region(
                 same["votes"].append(kind)
         flag = replace(flag, readings=readings)
     return flag
+
+
+def _set_alike(page: PageText, first: int, last: int) -> tuple[int, int]:
+    """Lines `first` to `last`, widened over the lines next to them set alike, when
+    they are set apart from the page's body type: a title in small capitals over two
+    lines is one question, not a line of it."""
+    lines = page.lines
+
+    def height(k: int) -> float:
+        return lines[k].y1 - lines[k].y0
+
+    if len(lines) < 3:
+        return first, last
+    body = statistics.median(height(k) for k in range(len(lines)))
+    own = statistics.median(height(k) for k in range(first, last + 1))
+    if abs(own - body) <= APART * body:
+        return first, last
+
+    def alike(k: int, beside: int) -> bool:
+        gap = max(lines[k].y0 - lines[beside].y1, lines[beside].y0 - lines[k].y1)
+        return abs(height(k) - own) <= ALIKE * own and gap <= TIGHT * own
+
+    while first > 0 and alike(first - 1, first):
+        first -= 1
+    while last + 1 < len(lines) and alike(last + 1, last):
+        last += 1
+    return first, last
 
 
 def _inside(line, region: Region) -> bool:

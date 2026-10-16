@@ -353,3 +353,20 @@ def test_a_misprint_keeps_the_answer_as_printed_and_writes_the_edition_line_to_t
     # A "misprint" that changes nothing is refused, and so the answer isn't saved either.
     out = page_review.record({"key": "k1", "action": "text", "text": printed, "misprint": printed})
     assert out["refused"]
+
+
+def test_a_title_set_small_over_two_lines_is_one_question_and_body_lines_stay_apart():
+    body = [Line("body text " * 5, 10, 200 + 12.5 * i, 260, 210 + 12.5 * i) for i in range(4)]
+    title = [
+        Line("COMPUTERS KUNNEN DE POT OP", 10, 278, 140, 284),
+        Line("ALS JE NOG DRONKEN BENT VAN DE NACHT TEVOREN", 10, 291, 216, 297),
+    ]
+    after = [Line("body text " * 5, 10, 312 + 12.5 * i, 260, 322 + 12.5 * i) for i in range(6)]
+    page = PageText(1, 300, 500, body + title + after)
+    # The layout model boxed the title's first line only; the role model dropped it.
+    roles = {SourceRef(1, 4): LineRole("artifact", 0.5, 0.3)}
+    (found,) = flags.find([page], roles)
+    assert (found.first, found.last) == (4, 5)
+    # A body line's question takes no neighbour, however tight.
+    quote = flags.find([page], {}, quotes={SourceRef(1, 7)})
+    assert [(f.first, f.last) for f in quote if "quotes" in f.reasons] == [(7, 7)]
