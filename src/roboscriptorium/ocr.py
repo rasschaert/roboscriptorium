@@ -14,6 +14,41 @@ from PIL import Image
 TESSDATA = {"nld": Path("work/tessdata")}
 
 
+# Cyrillic letters by their usual Latin transliteration. A vision model reading a Dutch
+# or English line sometimes spells part of a word in Russian ("doodgeдруkt", "plooidе");
+# transliterated, the word is the one printed.
+_CYRILLIC = dict(
+    zip(
+        "абвгдеёзийклмнопрстуфхцыэіАБВГДЕЁЗИЙКЛМНОПРСТУФХЦЫЭІ",
+        "abvgdeezijklmnoprstufhcyeiABVGDEEZIJKLMNOPRSTUFHCYEI",
+        strict=True,
+    )
+) | {
+    "ж": "zh",
+    "ч": "ch",
+    "ш": "sh",
+    "щ": "sch",
+    "ю": "ju",
+    "я": "ja",
+    "ъ": "",
+    "ь": "",
+    "Ж": "Zh",
+    "Ч": "Ch",
+    "Ш": "Sh",
+    "Щ": "Sch",
+    "Ю": "Ju",
+    "Я": "Ja",
+    "Ъ": "",
+    "Ь": "",
+}
+_LATIN = str.maketrans(_CYRILLIC)
+
+
+def latin(text: str) -> str:
+    """A reading with any Cyrillic letters transliterated: the books are in Latin script."""
+    return text.translate(_LATIN)
+
+
 def language(book_language: str) -> str:
     return "nld" if book_language.lower().startswith("nl") else "eng"
 

@@ -208,9 +208,10 @@ def line_readings(
     """The OCR model's reading of each checked line's crop, cached on the line's text.
 
     With a `prompt`, a generative vision model reads it (`transcribe`); without, glm-ocr
-    (`read_line`). Short lines are read too: "keek.’" ends dialogue, and that is where a
-    closing quote is lost. With `via`, another build of the same model reads the lines
-    still to read; they are cached under `model` and listed under `via` in the cache."""
+    (`read_line`); either reading is given in Latin letters (`ocr.latin`). Short lines are
+    read too: "keek.’" ends dialogue, and that is where a closing quote is lost. With
+    `via`, another build of the same model reads the lines still to read; they are cached
+    under `model` and listed under `via` in the cache."""
     done: dict[str, str] = {}
     read_by: dict[str, list[str]] = {}
     raw = _readings(cache, model, prompt)
@@ -263,7 +264,7 @@ def line_readings(
                         read_by.setdefault(via, []).append(key(page, k))
             finally:
                 save()  # a reading that fails loses itself, not the batch before it
-    return {ref: done[key(p, k)] for ref, (p, k) in wanted.items()}
+    return {ref: ocr.latin(done[key(p, k)]) for ref, (p, k) in wanted.items()}
 
 
 def tesseract_readings(

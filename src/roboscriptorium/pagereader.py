@@ -17,6 +17,7 @@ import httpx
 import pymupdf
 from rapidfuzz.distance import Levenshtein
 
+from roboscriptorium import ocr
 from roboscriptorium.clients.retry import patiently
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
@@ -252,14 +253,15 @@ def line_readings(
     cache: Path,
 ) -> dict[SourceRef, str]:
     """Each checked line as `model`'s page reading reads it; a line the reading has no
-    words for is left out, as is every line of a page whose reading doesn't match."""
+    words for is left out, as is every line of a page whose reading doesn't match. Any
+    Cyrillic letter in it is transliterated (`ocr.latin`)."""
     wanted = [
         p for p in pages if any(SourceRef(p.number, k) in checked for k in range(len(p.lines)))
     ]
     read = page_readings(pdf, [p.number for p in wanted], model, ollama_url, cache)
     out: dict[SourceRef, str] = {}
     for page in wanted:
-        for k, text in split_lines(page, read[page.number]).items():
+        for k, text in split_lines(page, ocr.latin(read[page.number])).items():
             if SourceRef(page.number, k) in checked:
                 out[SourceRef(page.number, k)] = text
     return out

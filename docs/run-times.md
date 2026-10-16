@@ -387,3 +387,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | bench validation, epigraphs need a word of four letters | 790 | 1 | 0 |
 | 2026-10-16 | bench tuning, an OCR doubt folded into the question covering its line | 790 | 2 | 0 |
 | 2026-10-16 | bench validation, an OCR doubt folded into the question covering its line | 790 | 1 | 0 |
+| 2026-10-16 | bench tuning+validation, Cyrillic letters in readings transliterated | 1580 | 3 | 0 |

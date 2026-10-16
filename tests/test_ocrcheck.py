@@ -747,3 +747,18 @@ def test_a_line_with_a_quote_question_and_doubtful_readings_is_asked_once():
     (question,) = found
     assert {"quotes", "ocr-doubt"} <= set(question.reasons)
     assert "een Citroën xm en een Mazda MX5" in [r["text"] for r in question.readings]
+
+
+def test_a_reading_spelt_partly_in_cyrillic_comes_back_in_latin_letters(monkeypatch, tmp_path):
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=200)
+    page.insert_text((40, 60), "plooide dubbel en doodgedrukt", fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    pages = pdf.read_text_layer(tmp_path / "source.pdf")
+    monkeypatch.setattr(
+        ocrcheck, "transcribe", lambda *_: "plooidе dubbel en doodgeдруkt, onnozельheid"
+    )
+    got = ocrcheck.line_readings(
+        tmp_path / "source.pdf", pages, {SourceRef(1, 0)}, "m", "", tmp_path / "c.json", "Read."
+    )
+    assert got == {SourceRef(1, 0): "plooide dubbel en doodgedrukt, onnozelheid"}

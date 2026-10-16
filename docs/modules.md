@@ -256,7 +256,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `blank`, every run of underscores becomes it (`blanked`). A rule the layer reads as a
   dash, or leaves out, is a review question (a dash glued to a word can be the book's
   own).
-- `ocr.py`: tesseract on a page region, for drafts a human corrects (text the
+- `ocr.py`: `latin`, a reading's Cyrillic letters transliterated (the line and page
+  readers' output goes through it); tesseract on a page region, for drafts a human corrects (text the
   text layer lacks, or reads as scraps because it is printed sideways).
 - `initials.py`: guesses the letter of a decorated initial: the letters that
   make the word beside it a word (book vocabulary plus the system word list),
@@ -272,6 +273,14 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   OCR check's own fixes elsewhere in it, combine (`apply(..., fixes)`). A break
   hyphen's place is asked across the break (`Flag.joined`: "dankbaar" or "dank
   baar") and answered back as the hyphen or none.
+- `errata.py`: the edition's departures from its print, misprints the reviewer chose to
+  correct, in `work/<book>/errata.toml`: each the page and the printed words, with the
+  words as they should read. Applied to the reflowed running text and notes together
+  (`apply`), where a printed word broken across lines is whole; quote glyphs match either
+  way. An erratum whose words its page holds not exactly once stops the build
+  (`Unmatched`). The review writes one from a line and its correction (`from_line`: the
+  words that differ, grown by words of the line until unique on the page) and keeps one
+  per printed words (`save`).
 - `footnotes.py`: the footnotes at a page's foot (`lines`: below the text, in type under
   0.78 of the body's and lighter than 1.2 of its strokes, opening on a mark, mostly
   words), given a role reflow leaves out (`with_notes`, by `Line.source` on corrected
