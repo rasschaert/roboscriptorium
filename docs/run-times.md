@@ -397,3 +397,10 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | bench tuning+validation and Ex-minnaar's questions, like-heading and narrow specks | 1853 | 4 | 0 |
 | 2026-10-16 | Ex-minnaar's questions, answered lines keep theirs | 273 | 1 | 0 |
 | 2026-10-16 | bench tuning+validation, scraps in the margin are specks | 1580 | 3 | 0 |
+| 2026-10-16 | build Ex-minnaar after review | 273 | 2 | 0 |
+| 2026-10-16 | trust data, ex-minnaar, from the review's answers | 273 | 0 | 0 |
+| 2026-10-16 | train the arbiter, Ex-minnaar's answers in | 0 | 0 | 1 |
+| 2026-10-16 | trust data, stella, from the review's answers | 67 | 0 | 0 |
+| 2026-10-16 | train the arbiter, Ex-minnaar's and Stella's answers in | 0 | 5 | 0 |
+| 2026-10-16 | bench tuning+validation, arbiter retrained with Ex-minnaar's and Stella's answers | 1580 | 3 | 0 |
+| 2026-10-16 | Ex-minnaar's questions, arbiter retrained | 273 | 2 | 0 |

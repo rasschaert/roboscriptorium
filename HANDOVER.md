@@ -12,28 +12,21 @@ refuses winnow (AGENTS.md, Environment).
 **Baselines now:** the latest `work/bench/tuning-*` and `validation-*` runs (0.28 and
 0.48 after review).
 
-## Ex-minnaar's review: stopped by the user at question 119
+## Ex-minnaar: reviewed (2026-10-16)
 
-The user, 2026-10-16: "this is a waste of my time and a violation of the rule we
-established". Their 123 answers are kept. Since then (decisions.md, 2026-10-16):
+The user answered every question (206 answers; misprints in `work/ex-minnaar/errata.toml`).
+Built with them, epubcheck clean (`work/ex-minnaar/epubs/`). The arbiter was then retrained
+with its answers and Stella's (benches no change), and asks 6 more, each a real error the
+earlier build left silently: the user may answer them (restart the review server).
 
-- The book's answers join its arbiter's substitution table (`trust.with_answers`) and
-  settle by reader (`trust.by_book`: tesseract read 12 of 12 stress accents right).
-  Open questions 102 → 76; ~25 accents the build dropped silently are now in.
-- Review page: misprints to `work/<book>/errata.toml` (`m`), sources under each reading,
-  look-alike marks named, the base reading marked too, a lost line's box and draft read
-  clear of the line above, Cyrillic letters in readings transliterated.
-- What's left (76): 50 OCR doubts (Qwen standardising Flemish is several; the
-  keep-spelling prompt didn't help: NULL on the reader set), 27 quote alarms (the print
-  leaves many speeches unclosed; the user keeps most), 7 others.
-
-The user may resume: restart the server (`uv run roboscriptorium review work/ex-minnaar`).
+The day's review fixes are in decisions.md (2026-10-16): the book teaches itself (its
+answers in the arbiter's table and by reader), answered questions stay listed, titles
+asked whole, specks unasked, questions shown as their difference with combinations.
 
 ## Next, in order
 
-1. Ex-minnaar's review by the user (76 open).
-2. Retrain the arbiter with Ex-minnaar's answers once the review is done.
-3. Checklist: the book teaches itself, second half (one question per pattern).
+1. Ex-minnaar's 6 new questions by the user, then its read-through.
+2. Checklist: the book teaches itself, second half (one question per pattern).
 4. Stella's read-through by the user (checklist).
 
 **Remind the user of the daily backup of `work/`** at session start and before long

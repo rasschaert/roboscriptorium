@@ -51,6 +51,7 @@ SPECS = {
     "monterosso-mon-amour--ia-scan": "",
     # No golden reference: labelled by a human's answers in the review.
     "stella": "answers",
+    "ex-minnaar": "answers",
 }
 # ROBO_TRUST_DATA keeps an ablation's data apart (another reader set, say).
 OUT = Path(os.environ.get("ROBO_TRUST_DATA", "work/probes/ocr-trust"))
@@ -167,13 +168,14 @@ def models_to_save(
     score,
     readings: tuple[str, ...] = trust.READINGS,
 ) -> list[tuple]:
-    """The arbiter the pipeline uses, trained on every trainable book but Stella, and a
-    copy without each tuning book, which `bench` scores that book with: (path, model,
+    """The arbiter the pipeline uses, trained on every trainable book (the books labelled
+    by a reviewer's answers too), and a copy without each tuning book, which `bench`
+    scores that book with: (path, model,
     suspects trained on, book left out). Each one's sureness is calibrated on its
     training books, each scored by `score(names, rows)` trained on the others, as a new
     book is scored. All are trained before any is written, so an interrupted run leaves
     no mix of old and new."""
-    tuning = [n for n in books if trainable(n) and n != "stella"]
+    tuning = [n for n in books if trainable(n) and SPECS.get(n) != "answers"]
     out = []
     for without in [None, *tuning]:
         names = [n for n in books if n != without and trainable(n)]
