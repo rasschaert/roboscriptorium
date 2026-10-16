@@ -76,9 +76,14 @@ get renumbered. Don't add a file to this table without a job no other file has.
   docs/run-times.md; before starting one, say how long it should take from that table.
   Start it detached, through `experiments/detached.sh <name> <command…>` (a `screen`
   session, output in `work/runs/<name>.out`), so it outlives the terminal and the agent
-  session. `screen -ls` lists the runs; watch one with a background loop that ends when
-  its screen does. Stop one with `experiments/stop-run.sh <name>`: quitting the screen
-  leaves its command running.
+  session. `screen -ls` lists the runs. Stop one with `experiments/stop-run.sh <name>`:
+  quitting the screen leaves its command running.
+- **Every background or screen job has a watcher, always** (the user, 2026-10-17: a screen
+  run tells the agent nothing, so the session falls idle). Start it in the same turn as
+  the job: a watcher that wakes the agent on each step, progress mark, error and end
+  (Claude Code's Monitor tool, re-armed when it expires), not only one that waits for the
+  end. In a script, `screen -ls` exits 1 when sessions exist: test it as
+  `{ screen -ls || true; } | grep -q …`, or under `pipefail` the wait ends at once.
 - **Test the architecture, not only its settings** (the user, 2026-10-13: "we're too stuck
   in our way of thinking … fine tuning has diminishing returns"). Before saying a model
   can't do something, or parking an idea under Later, try it on a few golden pages: a
