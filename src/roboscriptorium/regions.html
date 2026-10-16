@@ -41,6 +41,8 @@ main { max-width: 980px; margin: 0 auto; padding: 16px; }
 .option input { margin: 0; }
 .reading-option .reading { flex: 1; font: 18px/1.45 Georgia, "Iowan Old Style", serif; }
 .option .votes { margin-left: auto; font-size: 12px; color: var(--muted); white-space: nowrap; }
+/* Who has a reading, on a line of its own under it: the reading keeps the row's width. */
+.reading-option .who { display: block; font: 12px/1.4 system-ui, sans-serif; color: var(--muted); }
 .option .from { margin-left: 10px; padding: 0 6px; font-size: 13px; color: var(--muted); border: 1px solid transparent; border-radius: 4px; cursor: pointer; }
 .option .from:hover { color: var(--fg, inherit); border-color: var(--muted); }
 input.letter { font: 24px Georgia, serif; width: 2.2em; text-align: center; padding: 2px; border-radius: 6px; border: 1px solid var(--line); background: var(--card); color: var(--ink); }
@@ -275,8 +277,8 @@ function textBlock(r, doubt) {
       ? parts.before + (k === base ? esc(parts.mids[k]) : marked(parts.mids[k], parts.mids[base])) + parts.after
       : k === base ? esc(g.text) : marked(g.text, r.readings[base].text);
     return `<label class="option reading-option ${draft.reading === k ? "on" : ""} ${k === base ? "base" : ""}"><input type="radio" name="reading" value="${k}" ${draft.reading === k ? "checked" : ""}>
-      <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${text}</span>
-      <span class="votes">${esc(who)}</span><span class="from" data-k="${k}" title="Edit from this reading">✎</span></label>`;
+      <kbd>${READING_KEYS[k] || ""}</kbd><span class="reading">${text}<span class="who">${esc(who)}</span></span>
+      <span class="from" data-k="${k}" title="Edit from this reading">✎</span></label>`;
   }).join("");
   return `<div class="question">Which reading matches the scan?</div>
     <div class="legend">Marked where a reading differs from reading ${READING_KEYS[base]}, the one the others are closest to:
@@ -467,9 +469,15 @@ function marked(text, base) {
       k--;
     }
   }
-  const DASHES = {"—": "em", "–": "en", "-": "hyphen", "‑": "hyphen"};
-  const show = s => esc(s).replace(/ /g, '<span class="space">␣</span>')
-    .replace(/[—–‑-]/g, d => `${d}<sub class="dash">${DASHES[d]}</sub>`);
+  // Marks that look alike in the reading face are named where they differ: a dash by its
+  // length, a quote by its kind ("’’" two singles against "”" one double), and a letter
+  // from another script by its code.
+  const NAMES = {"—": "em", "–": "en", "-": "hyphen", "‑": "hyphen", "‘": "single", "’": "single",
+    "“": "double", "”": "double", "„": "double", "'": "straight", '"': "straight"};
+  const name = c => NAMES[c] || "U+" + c.codePointAt(0).toString(16).toUpperCase().padStart(4, "0");
+  const named = /[—–‑\-‘’“”„'"]|[^\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]/u;
+  const show = s => [...s].map(c => c === " " ? '<span class="space">␣</span>'
+    : named.test(c) ? `${esc(c)}<sub class="dash">${name(c)}</sub>` : esc(c)).join("");
   return ops.map(([kind, mine, theirs]) => kind === "same" ? esc(mine)
     : !mine ? `<mark class="lacks" title="this reading lacks it">${show(theirs)}</mark>`
     : !theirs ? `<mark class="has" title="only this reading has it">${show(mine)}</mark>`
