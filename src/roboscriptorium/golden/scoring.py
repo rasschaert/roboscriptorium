@@ -9,12 +9,13 @@ from typing import NamedTuple
 from roboscriptorium import disagreements, flags, layout, ocrcheck, pipeline
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
+from roboscriptorium.corrections import Corrections
 from roboscriptorium.disagreements import Around, Disagreement, Verdicts
 from roboscriptorium.flags import Flag
 from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import Chapter, load_chapters
-from roboscriptorium.ir import Document
+from roboscriptorium.ir import Document, SourceRef
 
 
 def page_range(value: str | None) -> tuple[int, int] | None:
@@ -73,6 +74,12 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         stages.quote_readings,
         stages.faint_pages,
         stages.epigraph_lines,
+        {
+            SourceRef(c.page, i)
+            for c in Corrections(book.corrections_path).by_key.values()
+            if c.action == "heading"
+            for i in range(c.first, c.last + 1)
+        },
     )
 
 

@@ -370,3 +370,33 @@ def test_a_title_set_small_over_two_lines_is_one_question_and_body_lines_stay_ap
     # A body line's question takes no neighbour, however tight.
     quote = flags.find([page], {}, quotes={SourceRef(1, 7)})
     assert [(f.first, f.last) for f in quote if "quotes" in f.reasons] == [(7, 7)]
+
+
+def test_a_scrap_too_small_for_its_letters_is_a_speck_and_not_asked():
+    lines = [Line("body text " * 5, 28, 6 + 12.5 * i, 278, 15 + 12.5 * i) for i in range(8)]
+    lines.insert(2, Line("ee s ba a", 300, 28, 305, 31))
+    page = PageText(1, 320, 500, lines)
+    roles = {SourceRef(1, 2): LineRole("artifact", 0.9, 0.05)}
+    assert flags.find([page], roles) == []
+    # Six letters as wide as they should be is no speck: dropped mid-page, it is asked.
+    page.lines[2] = Line("ee s ba a", 28, 28, 70, 31)
+    assert [f.reasons for f in flags.find([page], roles)] == [["dropped-mid-page"]]
+
+
+def test_a_line_set_like_an_answered_heading_is_asked_and_shouting_in_a_paragraph_is_not():
+    def page(number: int, middle: str, gap: float) -> PageText:
+        top = [Line("body text " * 5, 10, 20 + 12.5 * i, 260, 29 + 12.5 * i) for i in range(4)]
+        y = 20 + 12.5 * 3 + gap
+        mid = Line(middle, 10, y, 200, y + 8)
+        rest = [
+            Line("body text " * 5, 10, y + gap + 12.5 * i, 260, y + gap + 9 + 12.5 * i)
+            for i in range(5)
+        ]
+        return PageText(number, 300, 500, top + [mid] + rest)
+
+    answered = page(1, "DE SCHUIMENDE ANORAKJES", 24)
+    title = page(2, "DE STILLE RIJDER, AFLEVERING IV", 24)
+    shout = page(3, "OF ZE EEN SCAMPI’TJE WILDE", 12.5)
+    found = flags.find([answered, title, shout], {}, headings={SourceRef(1, 4)})
+    asked = [(f.page, f.first) for f in found if "like-heading" in f.reasons]
+    assert asked == [(2, 4)]

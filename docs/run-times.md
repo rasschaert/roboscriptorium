@@ -394,3 +394,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | sample Ex-minnaar's questions, quote questions after answers | 273 | 1 | 0 |
 | 2026-10-16 | probe: reader told to keep the author's spelling, reader set | 850 | 19 | 0 |
 | 2026-10-16 | bench tuning+validation and Ex-minnaar's questions, lines set alike join a question | 1853 | 4 | 0 |
+| 2026-10-16 | bench tuning+validation and Ex-minnaar's questions, like-heading and narrow specks | 1853 | 4 | 0 |

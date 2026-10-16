@@ -14,6 +14,7 @@ rest of its page is left to the picture.
 """
 
 import hashlib
+import math
 import statistics
 from dataclasses import dataclass, field, replace
 
@@ -45,6 +46,7 @@ REASONS = {
     "garbled": "kept as text, but it looks garbled",
     "centred": "centred, unlike running text",
     "set-apart": "set apart by white space",
+    "like-heading": "set like a line answered as a heading",
     "picture": "a picture (the layout model)",
     "caption": "a caption (the layout model)",
     "layout-title": "a title to the layout model, but not a heading here",
@@ -150,6 +152,39 @@ def _set_apart(page: PageText, i: int) -> bool:
     return spacing > 0 and min(above, below) >= SET_APART_GAP * spacing
 
 
+def _capitals(text: str) -> bool:
+    """Words set in capitals: two or more, nine in ten of their letters upper case."""
+    letters = [c for c in text if c.isalpha()]
+    return (
+        len(text.split()) >= 2
+        and bool(letters)
+        and sum(map(str.isupper, letters)) >= 0.9 * len(letters)
+    )
+
+
+def _apart_from_text(page: PageText, i: int) -> bool:
+    """Whether white space or the page's edge sets a line off on at least one side."""
+    lines = page.lines
+    if len(lines) < 4:
+        return False
+    spacing = statistics.median(b.y0 - a.y0 for a, b in zip(lines, lines[1:], strict=False))
+    above = lines[i].y0 - lines[i - 1].y0 if i else math.inf
+    below = lines[i + 1].y0 - lines[i].y0 if i + 1 < len(lines) else math.inf
+    return spacing > 0 and max(above, below) >= SET_APART_GAP * spacing
+
+
+def _like_heading(page: PageText, i: int, heights: list[float]) -> bool:
+    """Whether a line is set as the lines a reviewer answered as headings are: in
+    capitals, of their height, and set off by white space."""
+    line = page.lines[i]
+    height = line.y1 - line.y0
+    return (
+        _capitals(line.text)
+        and any(abs(height - h) <= ALIKE * h for h in heights)
+        and _apart_from_text(page, i)
+    )
+
+
 def _centred(page: PageText, i: int) -> bool:
     return P.centred_in_text(page, i, CENTRED_BALANCE)
 
@@ -174,9 +209,10 @@ class _Furniture:
 def _speck(page: PageText, i: int) -> bool:
     line = page.lines[i]
     usual = statistics.median(ln.y1 - ln.y0 for ln in page.lines)
-    return (
-        len(line.text.replace(" ", "")) <= SPECK_MAX_CHARS
-        and line.y1 - line.y0 < SPECK_HEIGHT * usual
+    # A short line too narrow for even two of the body's letters is a speck, whatever
+    # the layer read in it ("ee s ba a" in 5 points).
+    return line.y1 - line.y0 < SPECK_HEIGHT * usual and (
+        len(line.text.replace(" ", "")) <= SPECK_MAX_CHARS or line.x1 - line.x0 < usual
     )
 
 
@@ -444,6 +480,7 @@ def find(
     proposed: dict[SourceRef, dict[str, str]] | None = None,
     faint: set[int] | None = None,
     epigraph: set[SourceRef] | None = None,
+    headings: set[SourceRef] | None = None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.
 
@@ -456,10 +493,20 @@ def find(
     Each of the OCR check's `doubts` is a question of its own about one place in a line,
     cropped to it. `quotes` are lines where a paragraph's quote marks don't pair up
     (`quotes.unbalanced`); `proposed` are such lines as a vision model reads their marks
-    (`Stages.quote_readings`), offered as a second reading.
+    (`Stages.quote_readings`), offered as a second reading. `headings` are lines a
+    reviewer answered as headings: a line set as they are is asked too
+    (`_like_heading`), wherever the roles put it.
     """
     flags: list[Flag] = []
     furniture = _Furniture(P.Repeats(pages), P.page_offset(pages))
+    by_number = {p.number: p for p in pages}
+    heights = [
+        ln.y1 - ln.y0
+        for ref in headings or set()
+        if (page := by_number.get(ref.page))
+        and ref.line < len(page.lines)
+        and _capitals((ln := page.lines[ref.line]).text)
+    ]
     for page in pages:
         if page.number in (faint or set()) and page.lines:
             flags.append(_washed_out_flag(page, roles))
@@ -490,6 +537,13 @@ def find(
             )
             if SourceRef(page.number, i) in (epigraph or set()):
                 reasons = [r for r in reasons if r not in _EPIGRAPH_TRAITS]
+            if (
+                heights
+                and treatment(role) != "heading"
+                and SourceRef(page.number, i) not in (headings or set())
+                and _like_heading(page, i, heights)
+            ):
+                reasons.append("like-heading")
             how = treatment(role)
             if reasons and run and run[-1][0] == i - 1 and run[-1][1] == how:
                 run.append((i, how, reasons))
