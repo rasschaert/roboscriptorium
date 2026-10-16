@@ -157,7 +157,7 @@ def test_a_printed_line_the_text_layer_lacks_is_read_into_the_book(tmp_path, mon
     monkeypatch.setattr(pipeline.layout, "available", lambda: True)
     monkeypatch.setattr(pipeline.layout, "detect", lambda pdf, numbers, cache: {1: [number]})
     monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
-    monkeypatch.setattr(pipeline.missing.ocrcheck, "read_line", lambda png, model, url: "Seven")
+    monkeypatch.setattr(pipeline.missing.readers, "read_line", lambda png, model, url: "Seven")
 
     stages = pipeline.run(book, check_ocr=False)
     assert [ln.text for ln in stages.pages[0].lines] == ["Seven"] + LINES
@@ -219,7 +219,7 @@ def test_a_quote_question_offers_the_lines_marks_as_read_on_the_scan(tmp_path, m
         prompts.append(prompt)
         return "'the story gaes on,' he said.' And that was that"
 
-    monkeypatch.setattr(pipeline.ocrcheck, "transcribe", transcribe)
+    monkeypatch.setattr(pipeline.readers, "transcribe", transcribe)
     stages = pipeline.run(book, check_ocr=False)
     found = flags.find(
         stages.pages, stages.model_roles, quotes=stages.quote_lines,
@@ -260,18 +260,18 @@ def _checked_book(tmp_path, monkeypatch) -> tuple[Book, list[str]]:
     monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
     monkeypatch.setattr(pipeline, "dash_style", lambda book, body: None)
     monkeypatch.setattr(pipeline.Lexicon, "load", lambda lang: None)
-    monkeypatch.setattr(pipeline.ocrcheck, "tesseract_readings", lambda *args: {})
+    monkeypatch.setattr(pipeline.readers, "tesseract_readings", lambda *args: {})
     # glm-ocr reads every line as the layer does; only the read model reads line 3 apart.
     lines = iter(LINES)
-    monkeypatch.setattr(pipeline.ocrcheck, "read_line", lambda png, model, url: next(lines))
+    monkeypatch.setattr(pipeline.readers, "read_line", lambda png, model, url: next(lines))
     prompts = []
 
     def transcribe(png, model, url, prompt):
         prompts.append(prompt)
         return "Line 3 of the stony goes on and on across the page" if len(prompts) == 4 else ""
 
-    monkeypatch.setattr(pipeline.ocrcheck, "transcribe", transcribe)
-    monkeypatch.setattr(pipeline.ocrcheck, "READ_WORKERS", 1)
+    monkeypatch.setattr(pipeline.readers, "transcribe", transcribe)
+    monkeypatch.setattr(pipeline.readers, "READ_WORKERS", 1)
     return book, prompts
 
 

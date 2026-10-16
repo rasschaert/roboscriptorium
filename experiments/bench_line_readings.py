@@ -26,7 +26,7 @@ import pymupdf
 
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium import disagreements, ocr, ocrcheck, pipeline
+from roboscriptorium import disagreements, ocr, pipeline
 from roboscriptorium.book import Book
 from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
@@ -36,6 +36,7 @@ from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.ir import SourceRef
+from roboscriptorium import readers
 
 book = Book.load(Path(sys.argv[1]))
 first, last = map(int, sys.argv[2].split("-"))
@@ -54,11 +55,11 @@ kept = {
 }
 readings = {
     "text layer": {SourceRef(p.number, i): ln.text for p in pages for i, ln in enumerate(p.lines)},
-    "glm-ocr": ocrcheck.line_readings(
+    "glm-ocr": readers.line_readings(
         book.source, pages, kept, settings.ocr_model, settings.ollama_url,
         book.stages / "second-reading.json",
     ),
-    "tesseract": ocrcheck.tesseract_readings(
+    "tesseract": readers.tesseract_readings(
         book.source, pages, kept, ocr.language(book.language), book.stages / "tesseract.json"
     ),
 }
@@ -85,10 +86,10 @@ def extra_readings(model: str, prompt: str = EXTRA_PROMPT) -> dict[SourceRef, st
 
     by_number = {p.number: p for p in pages}
     with pymupdf.open(book.source) as pdf, ThreadPoolExecutor(2) as pool:
-        boxes = {n: ocrcheck.line_boxes(pdf[n - 1], by_number[n]) for n in {r.page for r in todo}}
+        boxes = {n: readers.line_boxes(pdf[n - 1], by_number[n]) for n in {r.page for r in todo}}
         for start in range(0, len(todo), 100):
             batch = todo[start : start + 100]
-            crops = [ocrcheck._line_crop(pdf, r.page, boxes[r.page][r.line]) for r in batch]
+            crops = [readers._line_crop(pdf, r.page, boxes[r.page][r.line]) for r in batch]
             for r, text in zip(batch, pool.map(read, crops), strict=True):
                 done[f"{r.page}:{r.line}"] = text
             cache.parent.mkdir(parents=True, exist_ok=True)

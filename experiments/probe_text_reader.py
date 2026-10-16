@@ -20,12 +20,12 @@ from pathlib import Path
 import httpx
 import pymupdf
 
-from roboscriptorium import ocrcheck
 from roboscriptorium.golden import scoring
 from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
 from roboscriptorium.golden.reference import unmarked
 from roboscriptorium.ir import Paragraph
+from roboscriptorium import readers
 
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
 spec, model = args[0], args[1]
@@ -109,8 +109,8 @@ def line_crop(para: int, quote: str) -> bytes | None:
     for ref in blocks[para].sources:
         page = pages.get(ref.page)
         if page and first in page.lines[ref.line].text:
-            box = ocrcheck.line_boxes(doc[ref.page - 1], page)[ref.line]
-            return ocrcheck._line_crop(doc, ref.page, box)
+            box = readers.line_boxes(doc[ref.page - 1], page)[ref.line]
+            return readers._line_crop(doc, ref.page, box)
     return None
 
 

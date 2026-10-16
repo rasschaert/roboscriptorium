@@ -241,7 +241,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `layout.py`, `typestyle.py`, `faint.py` | DocLayout-YOLO regions; each line's type against the body; washed-out pages |
 | `missing.py` | printed lines the layer lacks, read by glm-ocr |
 | `roles.py`, `sorter.py`, `sorterdata.py` | line roles: a decision model plus rules, then learned trees (`ROBO_SORTER=0` turns them off); the trees' training data |
-| `ocrcheck.py`, `pagereader.py`, `trust.py`, `trustdata.py`, `lexicon.py` | more readings of each body line (two of them from whole-page readings), judges where they differ, the learned trust that fixes, keeps or asks, and its training data; the word list |
+| `readers.py`, `pagereader.py`, `ocrcheck.py`, `ocrdoubts.py`, `trust.py`, `trustdata.py`, `lexicon.py` | more readings of each body line (two of them from whole-page readings), judges where they differ, the review's questions about them, the learned trust that fixes, keeps or asks, and its training data; the word list |
 | `corrections.py`, `errata.py`, `quotes.py` | the reviewer's answers applied; the misprints they correct; unpaired quotes as questions with a proposed reading |
 | `footnotes.py`, `epigraphs.py` | footnotes at a page's foot taken out of the running text and linked to their marks; a motto on a page of its own set apart |
 | `reflow.py`, `hyphens.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; English line-end hyphens nothing else decides, by the judge; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |

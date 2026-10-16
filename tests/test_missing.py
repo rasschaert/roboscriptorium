@@ -3,7 +3,7 @@ import json
 import pymupdf
 import pytest
 
-from roboscriptorium import missing, ocrcheck
+from roboscriptorium import missing, readers
 from roboscriptorium.layout import Region
 from roboscriptorium.pdf import Line, PageText
 
@@ -86,7 +86,7 @@ def test_reads_done_before_a_failure_are_kept(tmp_path, monkeypatch):
             raise RuntimeError("model gone")
         return reply
 
-    monkeypatch.setattr(ocrcheck, "read_line", read_line)
+    monkeypatch.setattr(readers, "read_line", read_line)
     cache = tmp_path / "missing-lines.json"
     with pytest.raises(RuntimeError):
         missing.read(tmp_path / "source.pdf", found, "m", "", cache)

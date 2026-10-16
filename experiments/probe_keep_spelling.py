@@ -14,8 +14,8 @@ import json
 from probe_qwen_dialect import KEEP
 from tryout import READER_VERSION, WORK, _readings_path, load_set, score
 
-from roboscriptorium import ocrcheck
 from roboscriptorium.config import Settings
+from roboscriptorium import readers
 
 
 def main() -> None:
@@ -28,7 +28,7 @@ def main() -> None:
     todo = [i for i in items if i["id"] not in done]
     for n, i in enumerate(todo, 1):
         prompt = books[i["book"]]["prompt"] + KEEP
-        done[i["id"]] = ocrcheck.transcribe(i["png"], model, settings.ollama_url, prompt)
+        done[i["id"]] = readers.transcribe(i["png"], model, settings.ollama_url, prompt)
         if n % 25 == 0 or n == len(todo):
             cache.write_text(json.dumps(done, ensure_ascii=False))
             print(f"  {n}/{len(todo)}", flush=True)

@@ -24,8 +24,9 @@ from pathlib import Path
 import httpx
 import pymupdf
 
-from roboscriptorium import ocrcheck, quotes
+from roboscriptorium import quotes
 from roboscriptorium.pdf import cached_text_layer
+from roboscriptorium import readers
 
 URL = "http://127.0.0.1:11434/api/generate"
 # Another build of the reader: ROBO_PROBE_MODEL=qwen3.8:27b-q8_0
@@ -43,11 +44,11 @@ def crops_from(first_page: int, want: int) -> list[tuple[str, bytes]]:
         for page in pages:
             if page.number < first_page:
                 continue
-            boxes = ocrcheck.line_boxes(doc[page.number - 1], page)
+            boxes = readers.line_boxes(doc[page.number - 1], page)
             for k, line in enumerate(page.lines):
                 if len(line.text.split()) >= 5:
-                    span = ocrcheck.crop_span(boxes, k)
-                    out.append((line.text, ocrcheck._line_crop(doc, page.number, boxes[k], span)))
+                    span = readers.crop_span(boxes, k)
+                    out.append((line.text, readers._line_crop(doc, page.number, boxes[k], span)))
                 if len(out) >= want:
                     return out
     return out
@@ -59,7 +60,7 @@ def call(png: bytes | None, prompt: str, system: str | None = None) -> dict:
         "prompt": prompt,
         "stream": False,
         "think": False,
-        "options": {"num_predict": ocrcheck.MAX_LINE_TOKENS, "temperature": 0},
+        "options": {"num_predict": readers.MAX_LINE_TOKENS, "temperature": 0},
     }
     if png is not None:
         body["images"] = [base64.b64encode(png).decode()]

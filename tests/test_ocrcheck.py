@@ -2,7 +2,7 @@ import json
 
 import pymupdf
 
-from roboscriptorium import corrections, flags, ocrcheck, pdf
+from roboscriptorium import corrections, flags, ocrcheck, ocrdoubts, pdf, readers
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.ocrcheck import Suspect, differences
@@ -91,14 +91,14 @@ def test_fixes_go_into_a_copy_and_only_onto_unchanged_lines():
 
 def test_doubted_lines_are_flagged_with_their_other_reading():
     page = _page()
-    found = flags.find([page], {}, None, ocrcheck.doubts([_suspect("review")]))
+    found = flags.find([page], {}, None, ocrdoubts.doubts([_suspect("review")]))
     assert [(f.first, f.reasons) for f in found] == [(0, ["ocr-doubt"])]
     assert found[0].readings == [
         {"text": "he was so tired up if they come", "votes": ["clef:27b"]},
         {"text": "he was so tired up—if they come", "votes": ["winnow-ollama:e4b"]},
     ]
     assert found[0].span == (16, 21)
-    assert ocrcheck.doubts([_suspect("other")]) == []
+    assert ocrdoubts.doubts([_suspect("other")]) == []
 
 
 def test_a_line_reading_stops_at_the_restart_and_spells_em_dashes(monkeypatch):
@@ -111,7 +111,7 @@ def test_a_line_reading_stops_at_the_restart_and_spells_em_dashes(monkeypatch):
 
     client = httpx.Client(transport=httpx.MockTransport(transport))
     monkeypatch.setattr(httpx, "stream", client.stream)
-    assert ocrcheck.read_line(b"png", "glm-ocr:bf16", "http://x") == "course—of the day"
+    assert readers.read_line(b"png", "glm-ocr:bf16", "http://x") == "course—of the day"
 
 
 def test_differences_from_several_readings_merge_into_one_span_per_place():
@@ -185,11 +185,9 @@ def test_a_not_sign_line_end_hyphen_is_not_a_difference():
 def test_tesseract_text_where_a_word_table_was_asked_for_is_an_error(monkeypatch):
     import pytest
 
-    from roboscriptorium import ocrcheck
-
-    monkeypatch.setattr(ocrcheck.ocr, "tesseract", lambda png, lang, tsv=False: "LICHAAMSTAAL")
+    monkeypatch.setattr(readers.ocr, "tesseract", lambda png, lang, tsv=False: "LICHAAMSTAAL")
     with pytest.raises(ValueError, match="no word table"):
-        ocrcheck._tesseract_page(b"png", "nld")
+        readers._tesseract_page(b"png", "nld")
 
 
 class _WordsPage:
@@ -221,7 +219,7 @@ def test_words_go_to_the_nearest_of_overlapping_lines():
         ["are,", "I", "suppose,"],
         ["Rome.", "It", "is"],
     ]
-    assert ocrcheck.line_boxes(_WordsPage(words), page) == [
+    assert readers.line_boxes(_WordsPage(words), page) == [
         (20, 203, 130, 218),
         (20, 219, 100, 235),
     ]
@@ -230,7 +228,7 @@ def test_words_go_to_the_nearest_of_overlapping_lines():
 def test_a_line_its_words_dont_spell_keeps_its_own_box():
     page = PageText(3, 300, 400, [Line("one two", 20, 100, 120, 114)])
     words = [(20, 101, 60, 114, "one"), (70, 100, 120, 113, "tw")]
-    assert ocrcheck.line_boxes(_WordsPage(words), page) == [(20, 100, 120, 114)]
+    assert readers.line_boxes(_WordsPage(words), page) == [(20, 100, 120, 114)]
 
 
 def test_a_suspect_at_a_line_end_has_room_for_a_missed_dash():
@@ -244,7 +242,7 @@ def test_a_suspect_at_a_line_end_has_room_for_a_missed_dash():
 def test_tesseract_words_go_to_the_nearest_line_box():
     boxes = [(20, 203, 130, 218), (20, 219, 100, 235)]
     words = [("Rome.", 20, 219, 60, 234), ("suppose,", 80, 203, 130, 217)]
-    assert [[w[0] for w in ws] for ws in ocrcheck._by_line(boxes, words)] == [
+    assert [[w[0] for w in ws] for ws in readers._by_line(boxes, words)] == [
         ["suppose,"],
         ["Rome."],
     ]
@@ -336,7 +334,7 @@ def test_each_doubted_place_is_its_own_question_and_answers_combine(tmp_path):
 
     first, second = doubt(7, 11, "uit,’"), doubt(12, 22, "rondhangt,’")
     fixed = doubt(26, 29, "dan.", chosen="dan.")
-    found = flags.find([page], {}, None, ocrcheck.doubts([first, second, fixed]))
+    found = flags.find([page], {}, None, ocrdoubts.doubts([first, second, fixed]))
     assert [(f.span, f.box[0]) for f in found] == [((7, 11), 7), ((12, 22), 12)]
     assert len({f.key for f in found}) == 2
     # Each shows the line's other places: asked ones as most models read them (a tie
@@ -345,7 +343,7 @@ def test_each_doubted_place_is_its_own_question_and_answers_combine(tmp_path):
     assert found[1].elsewhere == [(7, 11, "uit,", "asked"), (26, 29, "dan.", "fixed")]
     leaning = Suspect(9, 0, line, 7, 11, "uit,", ("uit,’",), (7, 0, 11, 1), "review", None,
                       {"clef": "uit,’", "winnow": "uit,’", "glm": "uit,"})  # fmt: skip
-    assert ocrcheck.doubts([leaning, second])[1].elsewhere == ((7, 11, "uit,’", "asked"),)
+    assert ocrdoubts.doubts([leaning, second])[1].elsewhere == ((7, 11, "uit,’", "asked"),)
 
     answers = Corrections(tmp_path / "regions.jsonl")
     for f in found:
@@ -367,7 +365,7 @@ def test_a_line_retyped_whole_takes_no_fixes_and_answers_its_places(tmp_path):
     answers.record(whole, "text", "he was so tired, up—if they come")
     out, _, _ = apply([page], {}, answers, [_suspect("other")])
     assert out[0].lines[0].text == "he was so tired, up—if they come"
-    (slot,) = flags.find([page], {}, None, ocrcheck.doubts([_suspect("review")]))
+    (slot,) = flags.find([page], {}, None, ocrdoubts.doubts([_suspect("review")]))
     assert answers.for_flag(slot) is answers.by_key[whole.key]
 
 
@@ -385,7 +383,7 @@ def test_a_break_hyphen_is_asked_as_the_word_across_the_break(tmp_path):
     page = PageText(9, 300, 400, [Line(line, 10, 10, 200, 20), Line(after, 10, 30, 200, 40)])
     s = Suspect(9, 0, line, 15, 19, "dank", ("dank-",), (150, 10, 200, 20), "review", None,
                 {"clef": "dank", "winnow": "dank-"}, joined="baar")  # fmt: skip
-    (question,) = flags.find([page], {}, None, ocrcheck.doubts([s]))
+    (question,) = flags.find([page], {}, None, ocrdoubts.doubts([s]))
     assert [r["text"] for r in question.readings] == [
         "en daar was ik dank baar",
         "en daar was ik dankbaar",
@@ -424,10 +422,10 @@ def test_a_build_read_via_is_cached_under_the_models_name_and_marked(monkeypatch
         used.append(model)
         return "read"
 
-    monkeypatch.setattr(ocrcheck, "transcribe", read)
+    monkeypatch.setattr(readers, "transcribe", read)
     cache = tmp_path / "third-reading.json"
     hosted = "openrouter:qwen/qwen3.8-27b@deepinfra/bf16"
-    got = ocrcheck.line_readings(
+    got = readers.line_readings(
         tmp_path / "source.pdf", pages, checked, "qwen3.8:27b-nvfp4", "", cache, "Read.", hosted
     )
     assert set(used) == {hosted} and set(got.values()) == {"read"}
@@ -435,7 +433,7 @@ def test_a_build_read_via_is_cached_under_the_models_name_and_marked(monkeypatch
     assert blob["model"] == "qwen3.8:27b-nvfp4"
     assert sorted(blob["via"][hosted]) == sorted(blob["lines"])
     used.clear()
-    ocrcheck.line_readings(
+    readers.line_readings(
         tmp_path / "source.pdf", pages, checked, "qwen3.8:27b-nvfp4", "", cache, "Read."
     )
     assert used == []  # the local model finds them cached
@@ -452,13 +450,13 @@ def _page_of(tmp_path, leading: float) -> tuple[pymupdf.Document, list]:
     doc.save(tmp_path / "source.pdf")
     doc = pymupdf.open(tmp_path / "source.pdf")
     layer = pdf.read_text_layer(tmp_path / "source.pdf")[0]
-    return doc, ocrcheck.line_boxes(doc[0], layer)
+    return doc, readers.line_boxes(doc[0], layer)
 
 
 def test_a_crop_on_a_tight_page_stays_out_of_its_neighbours(tmp_path):
     doc, boxes = _page_of(tmp_path, 13)
-    assert boxes[2][1] - boxes[1][3] < ocrcheck.LINE_PAD  # the pad would reach line 1
-    top, bottom = ocrcheck.crop_span(boxes, 2)
+    assert boxes[2][1] - boxes[1][3] < readers.LINE_PAD  # the pad would reach line 1
+    top, bottom = readers.crop_span(boxes, 2)
     # Up to the neighbour's box, or to its own where the two overlap.
     assert top >= min(boxes[1][3], boxes[2][1]) and bottom <= max(boxes[3][1], boxes[2][3])
     assert top <= boxes[2][1] and bottom >= boxes[2][3]  # its own line stays whole
@@ -467,12 +465,12 @@ def test_a_crop_on_a_tight_page_stays_out_of_its_neighbours(tmp_path):
 def test_a_crop_with_room_keeps_its_pad(tmp_path):
     doc, boxes = _page_of(tmp_path, 30)
     box = boxes[2]
-    assert ocrcheck.crop_span(boxes, 2) == (box[1] - ocrcheck.LINE_PAD, box[3] + ocrcheck.LINE_PAD)
+    assert readers.crop_span(boxes, 2) == (box[1] - readers.LINE_PAD, box[3] + readers.LINE_PAD)
 
 
 def test_only_a_crop_cut_short_is_read_again(monkeypatch, tmp_path):
     reads = []
-    monkeypatch.setattr(ocrcheck, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
+    monkeypatch.setattr(readers, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
     for leading, first_line_read_again in ((30, False), (13, True)):
         sub = tmp_path / str(leading)
         sub.mkdir()
@@ -480,7 +478,7 @@ def test_only_a_crop_cut_short_is_read_again(monkeypatch, tmp_path):
         pages = pdf.read_text_layer(sub / "source.pdf")
         checked = {SourceRef(1, k) for k in range(len(boxes))}
         cache = sub / "third-reading.json"
-        ocrcheck.line_readings(sub / "source.pdf", pages, checked, "m", "", cache, "Read.")
+        readers.line_readings(sub / "source.pdf", pages, checked, "m", "", cache, "Read.")
         blob = json.loads(cache.read_text())
         cut = [k for k in blob["lines"] if k.count(":") == 3]
         assert bool(cut) == first_line_read_again
@@ -488,30 +486,30 @@ def test_only_a_crop_cut_short_is_read_again(monkeypatch, tmp_path):
 
 def test_a_line_inserted_above_leaves_the_readings_below_in_place(monkeypatch, tmp_path):
     reads = []
-    monkeypatch.setattr(ocrcheck, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
+    monkeypatch.setattr(readers, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
     doc, boxes = _page_of(tmp_path, 30)
     pages = pdf.read_text_layer(tmp_path / "source.pdf")
     cache = tmp_path / "third-reading.json"
     checked = {SourceRef(1, k) for k in range(len(pages[0].lines))}
-    ocrcheck.line_readings(tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
+    readers.line_readings(tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
     reads.clear()
     # A page number split off in the margin, in front of the first line.
     first = pages[0].lines[0]
     number = Line("16", 2, first.y0, 8, first.y1)
     moved = [PageText(1, pages[0].width, pages[0].height, [number, *pages[0].lines])]
     checked = {SourceRef(1, k) for k in range(1, len(moved[0].lines))}
-    ocrcheck.line_readings(tmp_path / "source.pdf", moved, checked, "m", "", cache, "Read.")
+    readers.line_readings(tmp_path / "source.pdf", moved, checked, "m", "", cache, "Read.")
     assert reads == []
 
 
 def test_a_cache_keyed_on_line_positions_is_converted_whole(monkeypatch, tmp_path):
     reads = []
-    monkeypatch.setattr(ocrcheck, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
+    monkeypatch.setattr(readers, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
     doc, boxes = _page_of(tmp_path, 30)
     pages = pdf.read_text_layer(tmp_path / "source.pdf")
     cache = tmp_path / "third-reading.json"
     checked = {SourceRef(1, k) for k in range(len(pages[0].lines))}
-    ocrcheck.line_readings(tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
+    readers.line_readings(tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
     blob = json.loads(cache.read_text())
     old = {}
     for key, text in blob["lines"].items():
@@ -519,28 +517,28 @@ def test_a_cache_keyed_on_line_positions_is_converted_whole(monkeypatch, tmp_pat
         k = next(
             i
             for i in range(len(pages[0].lines))
-            if ocrcheck.line_key(
-                pages[0], ocrcheck.line_boxes(pymupdf.open(tmp_path / "source.pdf")[0], pages[0]), i
+            if readers.line_key(
+                pages[0], readers.line_boxes(pymupdf.open(tmp_path / "source.pdf")[0], pages[0]), i
             )
             == key
         )
         old[f"{page}:{k}:{rest}"] = text
     cache.write_text(json.dumps({**blob, "version": 2, "lines": old}))
     reads.clear()
-    got = ocrcheck.line_readings(tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
+    got = readers.line_readings(tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
     assert reads == [] and set(got.values()) == {"r"}
 
 
 def test_readings_by_another_prompt_are_kept_aside_and_come_back(monkeypatch, tmp_path):
     reads = []
-    monkeypatch.setattr(ocrcheck, "transcribe", lambda png, m, u, p: reads.append(p) or p)
+    monkeypatch.setattr(readers, "transcribe", lambda png, m, u, p: reads.append(p) or p)
     doc, boxes = _page_of(tmp_path, 30)
     pages = pdf.read_text_layer(tmp_path / "source.pdf")
     checked = {SourceRef(1, k) for k in range(len(boxes))}
     cache = tmp_path / "third-reading.json"
 
     def read(prompt):
-        return ocrcheck.line_readings(
+        return readers.line_readings(
             tmp_path / "source.pdf", pages, checked, "m", "", cache, prompt
         )
 
@@ -574,8 +572,6 @@ def test_a_batch_of_readings_is_saved_when_one_reading_fails(tmp_path, monkeypat
     import httpx
     import pytest
 
-    from roboscriptorium import ocrcheck
-
     pdf_path = tmp_path / "book.pdf"
     doc = pymupdf.open()
     page = doc.new_page(width=300, height=200)
@@ -592,12 +588,12 @@ def test_a_batch_of_readings_is_saved_when_one_reading_fails(tmp_path, monkeypat
             raise httpx.HTTPStatusError("500", request=None, response=httpx.Response(500))
         return "gelezen"
 
-    monkeypatch.setattr(ocrcheck, "read_line", read)
-    monkeypatch.setattr(ocrcheck, "READ_WORKERS", 1)
+    monkeypatch.setattr(readers, "read_line", read)
+    monkeypatch.setattr(readers, "READ_WORKERS", 1)
     cache = tmp_path / "second-reading.json"
     with pytest.raises(httpx.HTTPStatusError):
         checked = {SourceRef(1, k) for k in range(3)}
-        ocrcheck.line_readings(pdf_path, pages, checked, "glm", "http://x", cache)
+        readers.line_readings(pdf_path, pages, checked, "glm", "http://x", cache)
     saved = json.loads(cache.read_text())
     assert len(saved["lines"]) == 1  # the line read before the failure is kept
 
@@ -713,7 +709,7 @@ def _line_with_two_places() -> tuple[PageText, list[Suspect]]:
 
 def test_a_line_with_two_doubtful_places_is_one_question_of_whole_lines():
     page, suspects = _line_with_two_places()
-    (question,) = flags.find([page], {}, None, ocrcheck.line_doubts(suspects))
+    (question,) = flags.find([page], {}, None, ocrdoubts.line_doubts(suspects))
     assert question.span is None
     texts = {r["text"]: r["votes"] for r in question.readings}
     assert texts["een Citroén xm en een Mazda mx5"] == ["text layer"]
@@ -725,16 +721,16 @@ def test_a_line_with_two_doubtful_places_is_one_question_of_whole_lines():
 
 def test_a_line_question_counts_an_answer_given_about_a_place_in_it(tmp_path):
     page, suspects = _line_with_two_places()
-    per_place = flags.find([page], {}, None, ocrcheck.doubts(suspects))[0]
+    per_place = flags.find([page], {}, None, ocrdoubts.doubts(suspects))[0]
     answers = Corrections(tmp_path / "regions.jsonl")
     answers.record(per_place, "text", "een Citroën XM en een Mazda mx5")
-    (question,) = flags.find([page], {}, None, ocrcheck.line_doubts(suspects))
+    (question,) = flags.find([page], {}, None, ocrdoubts.line_doubts(suspects))
     assert Corrections(tmp_path / "regions.jsonl").for_flag(question) is not None
 
 
 def test_choosing_the_text_layers_line_keeps_it_over_the_fixes(tmp_path):
     page, suspects = _line_with_two_places()
-    (question,) = flags.find([page], {}, None, ocrcheck.line_doubts(suspects))
+    (question,) = flags.find([page], {}, None, ocrdoubts.line_doubts(suspects))
     answers = Corrections(tmp_path / "regions.jsonl")
     answers.record(question, "text", page.lines[0].text)
     out, _, _ = corrections.apply([page], {}, Corrections(tmp_path / "regions.jsonl"), suspects)
@@ -743,7 +739,7 @@ def test_choosing_the_text_layers_line_keeps_it_over_the_fixes(tmp_path):
 
 def test_a_line_with_a_quote_question_and_doubtful_readings_is_asked_once():
     page, suspects = _line_with_two_places()
-    found = flags.find([page], {}, None, ocrcheck.line_doubts(suspects), quotes={SourceRef(15, 0)})
+    found = flags.find([page], {}, None, ocrdoubts.line_doubts(suspects), quotes={SourceRef(15, 0)})
     (question,) = found
     assert {"quotes", "ocr-doubt"} <= set(question.reasons)
     assert "een Citroën xm en een Mazda MX5" in [r["text"] for r in question.readings]
@@ -756,9 +752,9 @@ def test_a_reading_spelt_partly_in_cyrillic_comes_back_in_latin_letters(monkeypa
     doc.save(tmp_path / "source.pdf")
     pages = pdf.read_text_layer(tmp_path / "source.pdf")
     monkeypatch.setattr(
-        ocrcheck, "transcribe", lambda *_: "plooidе dubbel en doodgeдруkt, onnozельheid"
+        readers, "transcribe", lambda *_: "plooidе dubbel en doodgeдруkt, onnozельheid"
     )
-    got = ocrcheck.line_readings(
+    got = readers.line_readings(
         tmp_path / "source.pdf", pages, {SourceRef(1, 0)}, "m", "", tmp_path / "c.json", "Read."
     )
     assert got == {SourceRef(1, 0): "plooide dubbel en doodgedrukt, onnozelheid"}

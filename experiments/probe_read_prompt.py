@@ -23,10 +23,10 @@ from tryout import GIT, READER_VERSION, WORK, _commit, load_set, score  # noqa: 
 import pymupdf  # noqa: E402
 from PIL import Image, ImageFilter, ImageOps  # noqa: E402
 
-from roboscriptorium import ocrcheck  # noqa: E402
 from roboscriptorium.book import Book  # noqa: E402
 from roboscriptorium.config import Settings  # noqa: E402
 from roboscriptorium.pdf import cached_text_layer  # noqa: E402
+from roboscriptorium import readers  # noqa: E402
 
 EXACT = (
     " Copy each word as printed even where it looks misspelt, unusual or old-fashioned:"
@@ -79,7 +79,7 @@ def _rendered(dpi: int):
         if len(parts) > 4:
             top, bottom = (float(v) for v in parts[4].split("-"))
         else:
-            top, bottom = box[1] - ocrcheck.LINE_PAD, box[3] + ocrcheck.LINE_PAD
+            top, bottom = box[1] - readers.LINE_PAD, box[3] + readers.LINE_PAD
         clip = pymupdf.Rect(box[0] - em, top, box[2] + em, bottom)
         return docs[name][page - 1].get_pixmap(dpi=dpi, clip=clip).tobytes("png")
 
@@ -94,7 +94,7 @@ def crops() -> dict:
     """Crop variants: each makes the PNG an item is read from."""
     up = lambda k: (lambda im: im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS))  # noqa: E731
     return {
-        "dpi300": _rendered(ocrcheck.DPI),
+        "dpi300": _rendered(readers.DPI),
         "dpi450": _rendered(450),
         "dpi600": _rendered(600),
         "up2": _edit(up(2)),
@@ -139,9 +139,9 @@ def read(model: str, name: str, make, items: list[dict], books: dict) -> dict[st
 
     def one(i):
         prompt = prompt_of(books[i["book"]]["prompt"], i)
-        return i["id"], ocrcheck.transcribe(pngs[i["id"]], model, settings.ollama_url, prompt)
+        return i["id"], readers.transcribe(pngs[i["id"]], model, settings.ollama_url, prompt)
 
-    workers = ocrcheck.HOSTED_WORKERS if model.startswith("openrouter:") else 1
+    workers = readers.HOSTED_WORKERS if model.startswith("openrouter:") else 1
     with ThreadPoolExecutor(workers) as pool:
         for n, (k, text) in enumerate(pool.map(one, todo), 1):
             done[k] = text

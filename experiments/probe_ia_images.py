@@ -22,10 +22,10 @@ import numpy as np
 import pymupdf
 from PIL import Image
 from rapidfuzz.distance import Levenshtein
-from tryout import WORK, fold, load_set
+from tryout import fold, load_set
 
-from roboscriptorium import ocrcheck
 from roboscriptorium.config import Settings
+from roboscriptorium import readers
 
 book_name = sys.argv[1] if len(sys.argv) > 1 else "the-nature-of-a-crime--doubleday-1924"
 OUT = Path("work/probes/ia-images")
@@ -71,7 +71,7 @@ for n, it in enumerate(items, 1):
     if len(parts) > 4:
         top, bottom = map(float, parts[4].split("-"))
     else:
-        top, bottom = y0 - ocrcheck.LINE_PAD, y1 + ocrcheck.LINE_PAD
+        top, bottom = y0 - readers.LINE_PAD, y1 + readers.LINE_PAD
     em = y1 - y0
     image, scale, ox, oy, score = place(int(page_no))
     clip = [int(ox + (x0 - em) * scale), int(oy + top * scale), int(ox + (x1 + em) * scale), int(oy + bottom * scale)]
@@ -86,9 +86,9 @@ for n, it in enumerate(items, 1):
             key = f"{it['id']}|{kind}|{model}"
             if key not in done:
                 if model == "glm-ocr":
-                    done[key] = ocrcheck.read_line(png, settings.ocr_model, settings.ollama_url)
+                    done[key] = readers.read_line(png, settings.ocr_model, settings.ollama_url)
                 else:
-                    done[key] = ocrcheck.transcribe(png, settings.read_model, settings.ollama_url, books[book_name]["prompt"])
+                    done[key] = readers.transcribe(png, settings.read_model, settings.ollama_url, books[book_name]["prompt"])
                 cache.write_text(json.dumps(done, ensure_ascii=False))
     if n % 10 == 0:
         print(f"  {n}/{len(items)} lines; page {page_no} match {score:.2f}", flush=True)

@@ -17,7 +17,7 @@ from statistics import median
 
 import pymupdf
 
-from roboscriptorium import ocrcheck
+from roboscriptorium import readers
 from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.layout import Region
 from roboscriptorium.page import sunk_pages
@@ -102,8 +102,8 @@ def read(
         try:
             with pymupdf.open(pdf) as doc:
                 for n, r in todo:
-                    png = ocrcheck._line_crop(doc, n, (r.x0, r.y0, r.x1, r.y1))
-                    done[_key(n, r)] = ocrcheck.read_line(png, model, ollama_url)
+                    png = readers._line_crop(doc, n, (r.x0, r.y0, r.x1, r.y1))
+                    done[_key(n, r)] = readers.read_line(png, model, ollama_url)
         finally:
             write_cache(cache, VERSION, {"lines": done}, model=model)
     return {_key(n, r): done[_key(n, r)] for n, r in found}

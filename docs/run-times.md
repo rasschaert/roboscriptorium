@@ -406,3 +406,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | Ex-minnaar's questions, arbiter retrained | 273 | 2 | 0 |
 | 2026-10-16 | role trees retrained on whole-body statistics, then bench tuning+validation | 1580 | 24 | 0 |
 | 2026-10-16 | bench tuning+validation, one cache helper (should be identical and warm) | 1580 | 3 | 0 |
+| 2026-10-16 | bench tuning+validation, ocrcheck split (should be identical and warm) | 1580 | 3 | 0 |

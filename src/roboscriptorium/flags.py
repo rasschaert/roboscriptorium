@@ -22,7 +22,7 @@ from roboscriptorium import page as P
 from roboscriptorium import roles as R
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.layout import Region
-from roboscriptorium.ocrcheck import Doubt
+from roboscriptorium.ocrdoubts import Doubt
 from roboscriptorium.pdf import PageText
 from roboscriptorium.quotes import KINDS
 from roboscriptorium.reflow import JUSTIFIED_SLACK, _page_margin
@@ -109,7 +109,7 @@ class Flag:
     # For a break hyphen: the next line's first word, which the readings end with.
     joined: str = ""
     # For a question about one place: the line's other changed or asked places
-    # (`ocrcheck.Doubt.elsewhere`), which the review page shows in the rest of the line.
+    # (`ocrdoubts.Doubt.elsewhere`), which the review page shows in the rest of the line.
     elsewhere: list[tuple[int, int, str, str]] = field(default_factory=list)
     # The lines as the build has them after the OCR check's fixes, where that differs
     # from `text` (`scoring.questions`): what the review starts the answer from.
@@ -264,7 +264,7 @@ def _reasons(
 
 def _doubt(page: PageText, d: Doubt, roles: dict[SourceRef, LineRole]) -> Flag:
     """The question about a line's readings: its versions as whole lines, its crop the
-    places in doubt. One about the whole line (`ocrcheck.line_doubts`) has no span: its
+    places in doubt. One about the whole line (`ocrdoubts.line_doubts`) has no span: its
     answer is the line."""
     return Flag(
         region_key(page.number, f"{d.original}\n{d.start}:{d.end}"),

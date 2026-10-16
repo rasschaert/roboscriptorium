@@ -1,5 +1,5 @@
 """Probe: glm-ocr's throughput with 1, 4 and 8 requests at a time, as the pipeline sends
-them (`ocrcheck.read_line`), on disjoint fresh sets of body lines; then the first set
+them (`readers.read_line`), on disjoint fresh sets of body lines; then the first set
 again at the widest setting, counting readings that differ from one at a time.
 Results in work/probes/glm-parallel.json.
 
@@ -12,10 +12,10 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-from roboscriptorium import ocrcheck
 
 sys.path.insert(0, "experiments")
 from probe_qwen_speed import crops_from  # noqa: E402
+from roboscriptorium import readers  # noqa: E402
 
 URL = "http://127.0.0.1:11434"
 MODEL = "glm-ocr:bf16"
@@ -25,7 +25,7 @@ OUT = Path("work/probes/glm-parallel.json")
 def read_set(crops: list[bytes], workers: int) -> tuple[list[str], float]:
     start = time.time()
     with ThreadPoolExecutor(workers) as pool:
-        out = list(pool.map(lambda png: ocrcheck.read_line(png, MODEL, URL), crops))
+        out = list(pool.map(lambda png: readers.read_line(png, MODEL, URL), crops))
     return out, time.time() - start
 
 
@@ -34,7 +34,7 @@ settings = (1, 4, 8)
 lines = crops_from(60, per_set * len(settings))
 sets = [lines[i * per_set : (i + 1) * per_set] for i in range(len(settings))]
 assert all(len(s) == per_set for s in sets), f"only {len(lines)} lines"
-ocrcheck.read_line(sets[0][0][1], MODEL, URL)  # load before timing
+readers.read_line(sets[0][0][1], MODEL, URL)  # load before timing
 results = {}
 for workers, crops in zip(settings, sets):
     readings, took = read_set([png for _, png in crops], workers)

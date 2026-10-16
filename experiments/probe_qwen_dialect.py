@@ -14,7 +14,7 @@ import json
 import sys
 from pathlib import Path
 
-from roboscriptorium import corrections, ocr, ocrcheck, pipeline, trust, trustdata
+from roboscriptorium import corrections, ocr, pipeline, trust, trustdata
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
@@ -60,7 +60,7 @@ def main(book_dir: str) -> None:
         if at:
             checked[(r["suspect"]["page"], at[0])] = (r, k)
     wanted = sorted({p for p, _ in checked})
-    got = ocrcheck.line_readings(
+    got = readers.line_readings(
         book.source,
         [pages[n] for n in wanted],
         {SourceRef(p, i) for p, i in checked},

@@ -7,7 +7,7 @@ from dataclasses import replace
 from pathlib import Path
 from typing import NamedTuple
 
-from roboscriptorium import disagreements, flags, layout, ocrcheck, pipeline
+from roboscriptorium import disagreements, flags, layout, ocrcheck, ocrdoubts, pipeline
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
@@ -70,7 +70,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         stages.pages,
         stages.model_roles,
         regions,
-        ocrcheck.line_doubts(stages.suspects),
+        ocrdoubts.line_doubts(stages.suspects),
         stages.quote_lines,
         stages.quote_readings,
         stages.faint_pages,

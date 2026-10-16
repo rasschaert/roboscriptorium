@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 
-from roboscriptorium import ocrcheck, trust, trustdata
+from roboscriptorium import trust, trustdata
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 

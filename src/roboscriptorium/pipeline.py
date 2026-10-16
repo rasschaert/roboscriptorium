@@ -22,6 +22,7 @@ from roboscriptorium import (
     ocrcheck,
     pagereader,
     quotes,
+    readers,
     sorter,
     trust,
     typestyle,
@@ -151,7 +152,7 @@ def run(
             }
             reader = decide.for_model(settings.check_model, settings.ollama_url)
             readings = {
-                "glm": ocrcheck.line_readings(
+                "glm": readers.line_readings(
                     book.source,
                     body,
                     kept,
@@ -159,12 +160,12 @@ def run(
                     settings.ollama_url,
                     book.stages / "second-reading.json",
                 ),
-                "tess": ocrcheck.tesseract_readings(
+                "tess": readers.tesseract_readings(
                     book.source, body, kept, lang, book.stages / "tesseract.json"
                 ),
             }
             if settings.read_model:
-                readings["qwen"] = ocrcheck.line_readings(
+                readings["qwen"] = readers.line_readings(
                     book.source,
                     body,
                     kept,
@@ -347,7 +348,7 @@ def proposals(
     """Each quote-flagged line's other readings, by kind (`quotes.readings`): as the OCR
     check left it, with the marks the read model sees on the scan, and those combined.
     Short lines are read too: "‘Nee." is where a closing quote is most often lost."""
-    read = ocrcheck.line_readings(
+    read = readers.line_readings(
         book.source,
         body,
         lines,

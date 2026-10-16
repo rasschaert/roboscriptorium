@@ -9,7 +9,7 @@ INK_MARGIN of paper, stopping halfway across the gap to another line's ink.
 import numpy as np
 import pymupdf
 
-from roboscriptorium import ocrcheck
+from roboscriptorium import readers
 
 INK_DPI = 150
 INK_LEVEL = 128
@@ -34,13 +34,13 @@ def ink_spans(pdf_page: pymupdf.Page, boxes: list) -> list[tuple[float, float]]:
         r0, r1 = max(0, int((y0 - em) * scale)), min(img.shape[0], int((y1 + em) * scale) + 1)
         c0, c1 = max(0, int(x0 * scale)), min(img.shape[1], int(x1 * scale) + 1)
         if r1 <= r0 or c1 <= c0:
-            out.append(ocrcheck.crop_span(boxes, k))
+            out.append(readers.crop_span(boxes, k))
             continue
         inked = (img[r0:r1, c0:c1] < INK_LEVEL).sum(axis=1) >= INK_PIXELS
         runs = [((r0 + a) / scale, (r0 + b + 1) / scale) for a, b in _runs(inked)]
         own = [(a, b) for a, b in runs if y0 <= (a + b) / 2 <= y1]
         if not own:
-            out.append(ocrcheck.crop_span(boxes, k))
+            out.append(readers.crop_span(boxes, k))
             continue
         top, bottom = own[0][0], own[-1][1]
         above = [b for a, b in runs if b <= top]
@@ -53,9 +53,9 @@ def ink_spans(pdf_page: pymupdf.Page, boxes: list) -> list[tuple[float, float]]:
 
 
 def use_ink_crops(pdf_path) -> None:
-    """Make `ocrcheck.line_readings` crop from the ink: `crop_span` answers with the
+    """Make `readers.line_readings` crop from the ink: `crop_span` answers with the
     ink span of the line whose box it is given."""
-    original = ocrcheck.crop_span
+    original = readers.crop_span
     spans: dict[tuple, tuple[float, float]] = {}
     seen: set[int] = set()
 
@@ -70,12 +70,12 @@ def use_ink_crops(pdf_path) -> None:
         return spans.get(tuple(boxes[k]), original(boxes, k))
 
     _pages: dict[int, list] = {}
-    line_boxes = ocrcheck.line_boxes
+    line_boxes = readers.line_boxes
 
     def remembered(pdf_page, page):
         boxes = line_boxes(pdf_page, page)
         _pages[page.number] = boxes
         return boxes
 
-    ocrcheck.line_boxes = remembered
-    ocrcheck.crop_span = ink_crop_span
+    readers.line_boxes = remembered
+    readers.crop_span = ink_crop_span

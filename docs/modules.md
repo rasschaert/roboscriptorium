@@ -15,7 +15,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `clients/ollama.py`: a thin httpx client for Ollama's own API (`doctor` lists the
   models with it). Decision models answer through `clients/decide.py` (or
   `clients/llama.py`), hosted models through `clients/openrouter.py`; the line readers
-  (`ocrcheck.read_line`, `ocrcheck.transcribe`) post to Ollama's `/api/generate`
+  (`readers.read_line`, `readers.transcribe`) post to Ollama's `/api/generate`
   themselves.
 - `clients/retry.py`: `patiently`, a local model call tried again after a timeout
   (three tries), so one slow answer from a queued Ollama doesn't end a long run.
@@ -24,7 +24,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   with (model, prompt, language); the append-only logs; `check_source`, which refuses a source PDF other than the one a
   book's `stages/` were built from (`stages/source.json`).
 - `clients/openrouter.py`: a hosted model, named `openrouter:<model>@<provider tag>`
-  read by `ocrcheck.transcribe`; the key is `OPENROUTER_API_KEY`. As `ROBO_READ_MODEL`
+  read by `readers.transcribe`; the key is `OPENROUTER_API_KEY`. As `ROBO_READ_MODEL`
   its readings cache under its own name; as `ROBO_READ_VIA`
   (`openrouter:qwen/qwen3.8-27b@deepinfra/bf16`) it reads in place of the local
   `read_model`, its readings cached under the local name and each listed under `via`
@@ -186,6 +186,12 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   a human answered are left alone. Scans only; cached in
   `stages/missing-lines.json`. Review answers find their lines again by text
   when lines are added above them.
+- `readers.py`: the readings of a page's lines besides the text layer: each line's crop
+  (`line_boxes`, `crop_span`), read by glm-ocr (`read_line`), the read model told the
+  book's style (`transcribe`) and tesseract (`tesseract_readings`), each cached per book
+  keyed on a line's page, text and box (`line_key`); Cyrillic transliterated (`ocr.latin`).
+- `ocrdoubts.py`: the OCR check's suspects as review questions, one place (`doubts`) or a
+  whole line with every source's version (`line_doubts`).
 - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)
   against glm-ocr's reading of each body line's crop (short lines too) (`ROBO_OCR_MODEL`),
   cached in `stages/second-reading.json`, tesseract's of the page, and

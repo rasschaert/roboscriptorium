@@ -53,6 +53,7 @@ from roboscriptorium.reflow import HYPHENS
 
 sys.path.insert(0, str(Path(__file__).parent))
 from roboscriptorium.trustdata import fold  # noqa: E402  the trust data's labels compare lines the same way
+from roboscriptorium import readers  # noqa: E402
 
 READER_VERSION = 2
 HARD, CONTROL = 30, 20
@@ -121,10 +122,10 @@ def build_reader() -> None:
         with pymupdf.open(book.source) as doc:
             for stratum, (ref, truth) in sorted(chosen, key=lambda x: (x[1][0].page, x[1][0].line)):
                 page = by_number[ref.page]
-                boxes = ocrcheck.line_boxes(doc[ref.page - 1], page)
+                boxes = readers.line_boxes(doc[ref.page - 1], page)
                 box = boxes[ref.line]
-                span = ocrcheck.crop_span(boxes, ref.line)
-                png = ocrcheck._line_crop(doc, ref.page, box, span)
+                span = readers.crop_span(boxes, ref.line)
+                png = readers._line_crop(doc, ref.page, box, span)
                 item_id = f"{book.root.name}:{ref.page}:{ref.line}"
                 (root / "crops" / f"{sha(item_id)}.png").write_bytes(png)
                 items.append(
@@ -136,7 +137,7 @@ def build_reader() -> None:
                         "truth": truth,
                         "crop": sha(png),
                         "truth_sha": sha(truth),
-                        "cache_key": ocrcheck.line_key(page, boxes, ref.line),
+                        "cache_key": readers.line_key(page, boxes, ref.line),
                     }
                 )
         print(f"{book.root.name}: {sum(i['book'] == book.root.name for i in items)} lines")
@@ -248,11 +249,11 @@ def read_all(model: str, items: list[dict], books: dict) -> dict[str, str]:
     start = datetime.now(UTC)
     for n, i in enumerate(todo, 1):
         if model.startswith("glm-ocr"):
-            text = ocrcheck.read_line(i["png"], model, settings.ollama_url)
+            text = readers.read_line(i["png"], model, settings.ollama_url)
         elif model.startswith(OPENAI_LOCAL):
             text = read_openai_local(i["png"], model, books[i["book"]]["prompt"])
         else:
-            text = ocrcheck.transcribe(
+            text = readers.transcribe(
                 i["png"], model, settings.ollama_url, books[i["book"]]["prompt"]
             )
         done[i["id"]] = text
@@ -278,7 +279,7 @@ OPENAI_LOCAL_URL = "http://127.0.0.1:8888/v1/chat/completions"  # Unsloth Studio
 def read_openai_local(png: bytes, model: str, prompt: str) -> str:
     """A reading by a model on a local OpenAI-compatible server (`openai-local:<id>`, or
     `openai-local:<id>#<label>` to keep apart builds the server names alike),
-    asked as `ocrcheck.transcribe` asks Ollama: the image first, temperature 0, thinking
+    asked as `readers.transcribe` asks Ollama: the image first, temperature 0, thinking
     off, the first line of the answer."""
     body = {
         "model": model.removeprefix(OPENAI_LOCAL).split("#")[0],
@@ -295,7 +296,7 @@ def read_openai_local(png: bytes, model: str, prompt: str) -> str:
             }
         ],
         "temperature": 0,
-        "max_tokens": ocrcheck.MAX_LINE_TOKENS,
+        "max_tokens": readers.MAX_LINE_TOKENS,
         "chat_template_kwargs": {"enable_thinking": False},
     }
     resp = httpx.post(OPENAI_LOCAL_URL, json=body, timeout=600)

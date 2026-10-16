@@ -18,7 +18,7 @@ from pathlib import Path
 import pymupdf
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium import ocrcheck, pdf
+from roboscriptorium import pdf
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.evaluate import normalise
@@ -26,6 +26,7 @@ from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 from roboscriptorium.ir import SourceRef
+from roboscriptorium import readers
 
 book_dir, first, last, model = Path(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4]
 chapters = sys.argv[5] if len(sys.argv) > 5 else ""
@@ -38,7 +39,7 @@ slug = model.replace("/", "-").replace(":", "-").replace("@", "-")
 out = Path("work/probes/line-readers") / f"{book_dir.name}-{first}-{last}-{slug}.json"
 url = Settings.from_env().ollama_url
 start = time.time()
-ocrcheck.line_readings(book.source, pages, checked, model, url, out, local["prompt"])
+readers.line_readings(book.source, pages, checked, model, url, out, local["prompt"])
 seconds = time.time() - start
 theirs = json.loads(out.read_text())["lines"]
 shared = [k for k in theirs if k in local["lines"]]
@@ -54,7 +55,7 @@ truth = align(pages, reference)
 rows = []
 with pymupdf.open(book.source) as doc:
     for p in pages:
-        boxes = ocrcheck.line_boxes(doc[p.number - 1], p)
+        boxes = readers.line_boxes(doc[p.number - 1], p)
         for k, line in enumerate(p.lines):
             t = truth[SourceRef(p.number, k)]
             if t.role != "body" or not 0.7 < len(t.truth) / max(1, len(line.text)) < 1.4:

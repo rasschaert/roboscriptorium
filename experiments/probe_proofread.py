@@ -37,7 +37,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Correction
-from roboscriptorium.ocrcheck import line_boxes
+from roboscriptorium.readers import line_boxes
 from roboscriptorium.pdf import Line, PageText
 
 BOOK = Path("work/stella")

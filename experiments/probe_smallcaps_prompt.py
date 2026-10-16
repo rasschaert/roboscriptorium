@@ -13,8 +13,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import tryout as T  # noqa: E402
 
-from roboscriptorium import ocrcheck  # noqa: E402
 from roboscriptorium.config import Settings  # noqa: E402
+from roboscriptorium import readers  # noqa: E402
 
 HINT = (
     " The book may set some words, such as abbreviations and car models, in small"
@@ -35,7 +35,7 @@ cache = T._readings_path(model).with_name(T._readings_path(model).stem + "+small
 done = json.loads(cache.read_text()) if cache.exists() else {}
 for n, i in enumerate([i for i in items if i["id"] not in done], 1):
     prompt = books[i["book"]]["prompt"].replace(" It is one line of a book.", " It is one line of a book." + HINT)
-    done[i["id"]] = ocrcheck.transcribe(i["png"], model, settings.ollama_url, prompt)
+    done[i["id"]] = readers.transcribe(i["png"], model, settings.ollama_url, prompt)
     if n % 25 == 0:
         cache.write_text(json.dumps(done, ensure_ascii=False))
         print(f"  {n}", flush=True)

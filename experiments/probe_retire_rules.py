@@ -9,7 +9,6 @@ bench confirms.
 Lines per rule cached in work/probes/retire-rules/<rule>/.
 """
 
-import os
 import sys
 from collections import Counter
 from pathlib import Path

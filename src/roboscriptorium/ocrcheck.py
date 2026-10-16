@@ -14,25 +14,19 @@ the line texts the review keys its answers on stay as they are. Born-digital
 PDFs, whose text is exact, aren't checked.
 """
 
-import base64
 import functools
-import hashlib
 import json
 import re
-from collections import Counter
-from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
-import httpx
 import pymupdf
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium import ocr
-from roboscriptorium.clients import decide, openrouter
+from roboscriptorium import readers
+from roboscriptorium.clients import decide
 from roboscriptorium.clients.decide import DecisionClient
-from roboscriptorium.clients.retry import patiently
-from roboscriptorium.files import read_cache, write_atomic, write_cache
+from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, line_words, page_words, spells, spliced
@@ -40,23 +34,6 @@ from roboscriptorium.quotes import ELISION
 from roboscriptorium.reflow import HYPHENS
 from roboscriptorium.roles import DecisionCache
 
-DPI = 300
-# Readings are keyed on a line's page, text and box (`line_key`); version 2 keys also held
-# its position on the page, and are converted on load (`_current`).
-READING_VERSION = 3
-READ_WORKERS = 4
-# A hosted model serves many requests at once.
-HOSTED_WORKERS = 16
-# Points above and below a line's crop for the OCR model. Crops also reach one em (the
-# line's height) past each end, where a dash or quote the text layer missed is printed.
-LINE_PAD = 3
-# Points a neighbouring line's box may reach into that pad before the crop stops at it.
-NEIGHBOUR_SLACK = 0.5
-MAX_LINE_TOKENS = 120
-# Readings are written to the cache every so many lines, so a long run keeps its progress.
-SAVE_EVERY = 200
-TESSERACT_VERSION = 1
-TESSERACT_WORKERS = 6
 # The fixed rule: the judge must be at least this sure, and agree with the text model.
 SURE = 0.3
 # Where versions differ only in punctuation, dashes or spacing, the text model can't
@@ -139,288 +116,6 @@ def _scanned(pdf: Path, mtime: int, sample: int) -> bool:
     return invisible > visible or visible == 0
 
 
-def _shelf(cache: Path, model: str, prompt: str) -> Path:
-    """Where readings by another model or prompt than the cache's are kept aside."""
-    tag = hashlib.sha1(f"{model}\n{prompt}".encode()).hexdigest()[:10]
-    return cache.with_name(f"{cache.stem}.{tag}{cache.suffix}")
-
-
-def _readings(cache: Path, model: str, prompt: str) -> dict | None:
-    """The cached readings by `model` with `prompt`, or None. The cache holds one model
-    and prompt; readings by another are moved to their shelf rather than lost, and come
-    back from it when asked for again (a slice and its whole book may differ)."""
-    if not cache.exists():
-        return None
-    raw = _current(json.loads(cache.read_text()))
-    if raw is None:
-        return None
-    if raw.get("model") == model and raw.get("prompt", "") == prompt:
-        return raw
-    shelved = _shelf(cache, raw.get("model", ""), raw.get("prompt", ""))
-    write_atomic(shelved, json.dumps(raw, ensure_ascii=False))
-    shelf = _shelf(cache, model, prompt)
-    if shelf.exists():
-        return _current(json.loads(shelf.read_text()))
-    return None
-
-
-def _current(raw: dict) -> dict | None:
-    """A readings cache in the current format: a version 2 one with its keys' line
-    positions taken out, anything older None."""
-    if raw.get("version") == READING_VERSION:
-        return raw
-    if raw.get("version") != 2:
-        return None
-
-    def key(old: str) -> str:
-        page, _, rest = old.split(":", 2)
-        return f"{page}:{rest}"
-
-    out = {**raw, "version": READING_VERSION, "lines": {key(k): v for k, v in raw["lines"].items()}}
-    if "via" in raw:
-        out["via"] = {m: [key(k) for k in keys] for m, keys in raw["via"].items()}
-    return out
-
-
-def line_key(page: PageText, boxes: list, k: int) -> str:
-    """The key a line's reading is cached under: its page, text and box, and the crop's
-    span where a neighbour cuts it short, so a crop that changes is read again. Not its
-    position: a line inserted above it leaves its reading in place."""
-    box = boxes[k]
-    text = hashlib.sha1(page.lines[k].text.encode()).hexdigest()[:10]
-    out = f"{page.number}:{text}:" + ",".join(f"{v:.0f}" for v in box)
-    top, bottom = crop_span(boxes, k)
-    if (top, bottom) != (box[1] - LINE_PAD, box[3] + LINE_PAD):
-        out += f":{top:.1f}-{bottom:.1f}"
-    return out
-
-
-def line_readings(
-    pdf: Path,
-    pages: list[PageText],
-    checked: set[SourceRef],
-    model: str,
-    ollama_url: str,
-    cache: Path,
-    prompt: str = "",
-    via: str = "",
-) -> dict[SourceRef, str]:
-    """The OCR model's reading of each checked line's crop, cached on the line's text.
-
-    With a `prompt`, a generative vision model reads it (`transcribe`); without, glm-ocr
-    (`read_line`); either reading is given in Latin letters (`ocr.latin`). Short lines are
-    read too: "keek.’" ends dialogue, and that is where a closing quote is lost. With
-    `via`, another build of the same model reads the lines still to read; they are cached
-    under `model` and listed under `via` in the cache."""
-    done: dict[str, str] = {}
-    read_by: dict[str, list[str]] = {}
-    raw = _readings(cache, model, prompt)
-    if raw is not None:
-        done = raw["lines"]
-        read_by = raw.get("via", {})
-
-    with pymupdf.open(pdf) as doc:
-        boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
-
-    def span(page: PageText, k: int) -> tuple[float, float]:
-        return crop_span(boxes[page.number], k)
-
-    def key(page: PageText, k: int) -> str:
-        return line_key(page, boxes[page.number], k)
-
-    wanted = {
-        SourceRef(p.number, k): (p, k)
-        for p in pages
-        for k, line in enumerate(p.lines)
-        if SourceRef(p.number, k) in checked and line.text.strip()
-    }
-    todo = [(p, k) for p, k in wanted.values() if key(p, k) not in done]
-
-    def save() -> None:
-        blob = {"version": READING_VERSION, "model": model, "prompt": prompt, "lines": done}
-        if read_by:
-            blob["via"] = read_by
-        write_atomic(cache, json.dumps(blob, ensure_ascii=False))
-
-    # PyMuPDF isn't thread-safe: crops are rendered here, a batch at a time, and
-    # only the model calls run in the pool.
-    reader = via or model
-    workers = HOSTED_WORKERS if openrouter.hosted(reader) else READ_WORKERS
-    with pymupdf.open(pdf) as doc, ThreadPoolExecutor(workers) as pool:
-        for start in range(0, len(todo), SAVE_EVERY):
-            batch = todo[start : start + SAVE_EVERY]
-            crops = [
-                _line_crop(doc, page.number, boxes[page.number][k], span(page, k))
-                for page, k in batch
-            ]
-            if prompt:
-                texts = pool.map(lambda png: transcribe(png, reader, ollama_url, prompt), crops)
-            else:
-                texts = pool.map(lambda png: read_line(png, reader, ollama_url), crops)
-            try:
-                for (page, k), text in zip(batch, texts, strict=True):
-                    done[key(page, k)] = text
-                    if via:
-                        read_by.setdefault(via, []).append(key(page, k))
-            finally:
-                save()  # a reading that fails loses itself, not the batch before it
-    return {ref: ocr.latin(done[key(p, k)]) for ref, (p, k) in wanted.items()}
-
-
-def tesseract_readings(
-    pdf: Path, pages: list[PageText], checked: set[SourceRef], lang: str, cache: Path
-) -> dict[SourceRef, str]:
-    """Tesseract's reading of each checked line: its words whose centres fall in the line."""
-    words = tesseract_words(pdf, [p.number for p in pages], lang, cache)
-    with pymupdf.open(pdf) as doc:
-        boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
-    out = {}
-    for page in pages:
-        for k, found in enumerate(_by_line(boxes[page.number], words[page.number])):
-            ref = SourceRef(page.number, k)
-            if ref in checked and page.lines[k].text.strip():
-                out[ref] = " ".join(w[0] for w in found)
-    return out
-
-
-def tesseract_words(
-    pdf: Path, numbers: list[int], lang: str, cache: Path
-) -> dict[int, list[tuple[str, float, float, float, float]]]:
-    """Tesseract's words with their boxes in points, per page, cached."""
-    done: dict[int, list] = {}
-    if raw := read_cache(cache, TESSERACT_VERSION, lang=lang):
-        done = {int(n): [tuple(w) for w in ws] for n, ws in raw["pages"].items()}
-    todo = [n for n in numbers if n not in done]
-    if todo:
-        # Pages are rendered on this thread (PyMuPDF isn't thread-safe); tesseract runs pooled.
-        with pymupdf.open(pdf) as doc, ThreadPoolExecutor(TESSERACT_WORKERS) as pool:
-            for start in range(0, len(todo), TESSERACT_WORKERS):
-                batch = todo[start : start + TESSERACT_WORKERS]
-                images = [doc[n - 1].get_pixmap(dpi=DPI).tobytes("png") for n in batch]
-                read = pool.map(lambda png: _tesseract_page(png, lang), images)
-                for n, page_words in zip(batch, read, strict=True):
-                    done[n] = page_words
-                write_cache(cache, TESSERACT_VERSION, {"pages": done}, lang=lang)
-    return {n: done[n] for n in numbers}
-
-
-def _tesseract_page(png: bytes, lang: str) -> list[tuple[str, float, float, float, float]]:
-    return ocr.tesseract_words(png, lang, DPI)
-
-
-def _by_line(boxes: list, words) -> list[list[tuple[str, float, float, float, float]]]:
-    """Tesseract's words per line: the nearest line box (widened a little) holding the centre."""
-    out = [[] for _ in boxes]
-    for w in words:
-        cx, cy = (w[1] + w[3]) / 2, (w[2] + w[4]) / 2
-        holding = [
-            k
-            for k, b in enumerate(boxes)
-            if b[0] - 3 <= cx <= b[2] + 3 and b[1] - 2 <= cy <= b[3] + 2
-        ]
-        if holding:
-            out[min(holding, key=lambda k: abs((boxes[k][1] + boxes[k][3]) / 2 - cy))].append(w)
-    return [sorted(ws, key=lambda w: w[1]) for ws in out]
-
-
-def crop_span(boxes: list, k: int) -> tuple[float, float]:
-    """The top and bottom of line k's crop: LINE_PAD beyond its box, but not into the box
-    of a line above or below it in the same column, where a reader would read that line
-    too. A neighbour reaching less than NEIGHBOUR_SLACK into the pad leaves it whole."""
-    x0, y0, x1, y1 = boxes[k]
-    top, bottom = y0 - LINE_PAD, y1 + LINE_PAD
-    for j, (a0, b0, a1, b1) in enumerate(boxes):
-        if j == k or a1 <= x0 or x1 <= a0:
-            continue
-        if b0 + b1 < y0 + y1:
-            if b1 - top > NEIGHBOUR_SLACK:
-                top = max(top, min(b1, y0))
-        elif bottom - b0 > NEIGHBOUR_SLACK:
-            bottom = min(bottom, max(b0, y1))
-    return top, bottom
-
-
-def _line_crop(
-    doc: pymupdf.Document, number: int, box, span: tuple[float, float] | None = None
-) -> bytes:
-    """A line's crop: one em past either end, and `span` (`crop_span`) or LINE_PAD above
-    and below."""
-    em = box[3] - box[1]
-    top, bottom = span or (box[1] - LINE_PAD, box[3] + LINE_PAD)
-    clip = pymupdf.Rect(box[0] - em, top, box[2] + em, bottom)
-    return doc[number - 1].get_pixmap(dpi=DPI, clip=clip).tobytes("png")
-
-
-def line_boxes(pdf_page: pymupdf.Page, page: PageText) -> list[tuple[float, float, float, float]]:
-    """Each line's box as printed: its words' boxes together where they spell the line.
-
-    Some OCR layers give lines boxes far taller than the print.
-    """
-    out = []
-    for line, words in zip(page.lines, line_words(page_words(pdf_page), page), strict=True):
-        if words and spells(words, line.text):
-            out.append(_union(words))
-        else:
-            out.append((line.x0, line.y0, line.x1, line.y1))
-    return out
-
-
-def _union(words) -> tuple[float, float, float, float]:
-    return (
-        min(w[0] for w in words),
-        min(w[1] for w in words),
-        max(w[2] for w in words),
-        max(w[3] for w in words),
-    )
-
-
-def read_line(png: bytes, model: str, ollama_url: str) -> str:
-    """The OCR model's reading of one printed line.
-
-    glm-ocr's Ollama template has no stop token, so after the line it starts over;
-    the reading ends at its first line break. It sometimes writes a printed em
-    dash as the CJK character 一, which looks the same.
-    """
-    payload = {
-        "model": model,
-        "prompt": "Text Recognition:",
-        "images": [base64.b64encode(png).decode()],
-        "options": {"num_predict": MAX_LINE_TOKENS},
-    }
-
-    def read() -> str:
-        out = ""
-        with httpx.stream("POST", f"{ollama_url}/api/generate", json=payload, timeout=300) as resp:
-            resp.raise_for_status()
-            for chunk in resp.iter_lines():
-                if chunk:
-                    out += json.loads(chunk).get("response", "")
-                if "\n" in out.strip():
-                    break
-        return out
-
-    return patiently(read).strip().split("\n")[0].strip().replace("一", "—")
-
-
-def transcribe(png: bytes, model: str, ollama_url: str, prompt: str) -> str:
-    """A generative vision model's transcription of one printed line, thinking off: on
-    Ollama, or hosted when the model is named `openrouter:…`."""
-    if openrouter.hosted(model):
-        text = openrouter.transcribe(png, model, prompt, MAX_LINE_TOKENS)
-        return text.strip().split("\n")[0].strip()
-    payload = {
-        "model": model,
-        "prompt": prompt,
-        "images": [base64.b64encode(png).decode()],
-        "stream": False,
-        "think": False,
-        "options": {"num_predict": MAX_LINE_TOKENS, "temperature": 0},
-    }
-    resp = patiently(lambda: httpx.post(f"{ollama_url}/api/generate", json=payload, timeout=600))
-    resp.raise_for_status()
-    return resp.json()["response"].strip().split("\n")[0].strip()
-
-
 def _word_span(text: str, start: int, end: int) -> tuple[int, int]:
     while start > 0 and text[start - 1] != " ":
         start -= 1
@@ -487,7 +182,7 @@ def _box(words: list, box, original: str, start: int, end: int):
     k1 = k0 + original[start:end].strip().count(" ") + 1
     x0, y0, x1, y1 = box
     if spells(words, original):
-        out = list(_union(words[k0:k1]))
+        out = list(readers._union(words[k0:k1]))
     else:
         out = [x0 + (x1 - x0) * start / len(original), y0, x0 + (x1 - x0) * end / len(original), y1]
     em = y1 - y0
@@ -519,7 +214,7 @@ def check(
         for page in pages:
             pdf_page = doc[page.number - 1]
             words = line_words(page_words(pdf_page), page)
-            boxes = line_boxes(pdf_page, page)
+            boxes = readers.line_boxes(pdf_page, page)
             for k, line in enumerate(page.lines):
                 ours = line.text
                 others = {n: r.get(SourceRef(page.number, k), "") for n, r in readings.items()}
@@ -820,157 +515,6 @@ def apply(pages: list[PageText], suspects: list[Suspect]) -> list[PageText]:
             lines.append(spliced(line, [(s.start, s.end, s.chosen) for s in here]))
         out.append(replace(page, lines=lines))
     return out
-
-
-@dataclass(frozen=True)
-class Doubt:
-    """One place in a line where the readings differ and no model settled it: one question."""
-
-    page: int
-    line: int  # index into the page's lines, after missing lines were added
-    original: str  # the line as the text layer reads it (glm-ocr's for an added line)
-    start: int  # the place, as a span of `original`
-    end: int
-    box: tuple[float, float, float, float]
-    # The whole line as each reading has it here (the text layer's first), with the
-    # models that picked it; the rest of the line as the text layer reads it.
-    readings: list[tuple[str, list[str]]]
-    # For a break hyphen: the next line's first word, which the readings end with.
-    joined: str = ""
-    # The line's other places the OCR check changed or asks about, as spans of
-    # `original`: (start, end, text, "fixed" or "asked"), the text an asked place's
-    # likeliest version. Shown beside the readings only; an answer keeps to its place.
-    elsewhere: tuple[tuple[int, int, str, str], ...] = ()
-
-
-def _likeliest(s: Suspect) -> str:
-    """The version of a suspect most models picked, the text layer's on a tie."""
-    versions = [s.ours, *s.others]
-    picks = Counter(v for v in s.votes.values() if v in versions)
-    return max(versions, key=lambda v: (picks[v], v == s.ours))
-
-
-def _elsewhere(s: Suspect, suspects: list[Suspect]) -> tuple[tuple[int, int, str, str], ...]:
-    """The other places in `s`'s line that a reader of its question should see settled."""
-    out = []
-    for o in suspects:
-        if (o.page, o.line, o.original) != (s.page, s.line, s.original) or o is s:
-            continue
-        if o.end <= s.start or o.start >= s.end:
-            if o.choice == "review":
-                out.append((o.start, o.end, _likeliest(o), "asked"))
-            elif o.choice == "other" and o.chosen is not None:
-                out.append((o.start, o.end, o.chosen, "fixed"))
-    out.sort()
-    # Places that overlap each other can't both be shown in one line.
-    return tuple(p for k, p in enumerate(out) if k == 0 or p[0] >= out[k - 1][1])
-
-
-def doubts(suspects: list[Suspect]) -> list[Doubt]:
-    """A question per place a human should settle."""
-    out = []
-    for s in suspects:
-        if s.choice != "review":
-            continue
-        readings: list[tuple[str, list[str]]] = []
-        for version in (s.ours, *s.others):
-            line = s.original[: s.start] + across(version, s.joined) + s.original[s.end :]
-            voters = [model for model, picked in s.votes.items() if picked == version]
-            known = next((r for r in readings if r[0] == line), None)
-            if known is None:
-                readings.append((line, voters))
-            else:
-                known[1].extend(v for v in voters if v not in known[1])
-        out.append(
-            Doubt(
-                s.page,
-                s.line,
-                s.original,
-                s.start,
-                s.end,
-                s.box,
-                readings,
-                s.joined,
-                _elsewhere(s, suspects),
-            )
-        )
-    return out
-
-
-# The second readings' names in `Suspect.support`, as the review shows them.
-READER_NAMES = {"glm": "glm-ocr", "qwen": "Qwen", "tess": "tesseract"}
-
-
-def line_doubts(suspects: list[Suspect]) -> list[Doubt]:
-    """A question per line a human should settle, however many places in it are in
-    doubt: the whole line as the text layer reads it, as each reader and each judge has
-    it at every doubtful place, with each place as most models read it, and as the build
-    has it, alike ones merged. A line
-    ending in a break hyphen keeps its own last word, not the one read across the break.
-    """
-    by_line: dict[tuple[int, int], list[Suspect]] = {}
-    for s in suspects:
-        by_line.setdefault((s.page, s.line), []).append(s)
-    out = []
-    for (page, line), here in sorted(by_line.items()):
-        if not any(s.choice == "review" for s in here):
-            continue
-        readers = dict.fromkeys(n for s in here for n in s.support)
-        judges = dict.fromkeys(m for s in here for m in s.votes)
-        # Where a source has no say, its line is as built.
-        built = [s.chosen if s.choice == "other" else s.ours for s in here]
-        sources = [("text layer", [s.ours for s in here])]
-        sources += [
-            (READER_NAMES.get(n, n), [_read_by(s, n, b) for s, b in zip(here, built, strict=True)])
-            for n in readers
-        ]
-        sources += [
-            (m, [s.votes.get(m) or b for s, b in zip(here, built, strict=True)]) for m in judges
-        ]
-        # Each doubtful place as most models read it: the line no single reader may have.
-        sources.append(
-            (
-                "likeliest",
-                [
-                    _likeliest(s) if s.choice == "review" else b
-                    for s, b in zip(here, built, strict=True)
-                ],
-            )
-        )
-        sources.append(("as built", built))
-        readings: list[tuple[str, list[str]]] = []
-        for label, versions in sources:
-            text = _with_versions(here, versions)
-            known = next((r for r in readings if r[0] == text), None)
-            if known is None:
-                readings.append((text, [label]))
-            elif label not in known[1]:
-                known[1].append(label)
-        if len(readings) < 2:
-            continue
-        boxes = [s.box for s in here]
-        box = (
-            min(b[0] for b in boxes),
-            min(b[1] for b in boxes),
-            max(b[2] for b in boxes),
-            max(b[3] for b in boxes),
-        )
-        out.append(Doubt(page, line, here[0].original, 0, len(here[0].original), box, readings))
-    return out
-
-
-def _read_by(s: Suspect, reader: str, otherwise: str) -> str:
-    """The version of a suspect `reader` reads, `otherwise` where it reads none."""
-    reads = s.support.get(reader, ())
-    return next((v for v, r in zip([s.ours, *s.others], reads, strict=False) if r), otherwise)
-
-
-def _with_versions(here: list[Suspect], versions: list[str]) -> str:
-    """The line with each suspect's span set to its version (one suspect each)."""
-    text = here[0].original
-    for s, v in sorted(zip(here, versions, strict=True), key=lambda sv: -sv[0].start):
-        text = text[: s.start] + v + text[s.end :]
-    return text
 
 
 def save(suspects: list[Suspect], path: Path) -> None:

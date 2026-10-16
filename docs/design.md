@@ -195,7 +195,7 @@ time, 0.9 95%), and the bench saw no change (tuning 0.56 → 0.57, validation 0.
 don't ask me twice"). One question per line, however many places in it are in doubt;
 its options are the whole line as the text layer reads it, as each reader and each
 judge has it, with each place as most models read it ("likeliest"), and as built
-(`ocrcheck.line_doubts`); the answer is the line. Asked per place before, a line with
+(`ocrdoubts.line_doubts`); the answer is the line. Asked per place before, a line with
 two places got two questions, and a line where each place was right in a different
 reading had no right option, so the reviewer typed it and added an error: the
 "likeliest" line combines them, and "Something else" starts from any option (✎) rather
