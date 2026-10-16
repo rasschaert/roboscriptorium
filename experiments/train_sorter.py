@@ -5,73 +5,18 @@ Labels come from `golden.align` (body, heading, other) on the bench's tuning and
 validation slices and two more golden books; features from a build with the rules'
 roles (ROBO_SORTER=0), never the trees' own. Validation books are scored by trees
 trained without any of them and never trained on; the test set is never touched.
-Lines are cached per book in work/probes/sorter/.
+Lines are cached per book in work/probes/sorter/ (`sorterdata.lines`).
 
     uv run python experiments/train_sorter.py [--rebuild] [--save]
 """
 
-import json
-import os
 import sys
 from collections import Counter
 from pathlib import Path
 
-from roboscriptorium import bench, disagreements, layout, pipeline, sorter, typestyle
-from roboscriptorium.book import Book
-from roboscriptorium.golden import scoring
+from roboscriptorium import sorter
 from roboscriptorium.config import Settings
-from roboscriptorium.files import write_atomic
-from roboscriptorium.flags import treatment
-from roboscriptorium.golden.align import align
-from roboscriptorium.golden.manifest import Golden
-from roboscriptorium.golden.reference import load_chapters
-from roboscriptorium.ir import SourceRef
-
-# Training-only slices, never scored: De aanslag's exact text; De tunnels' chapter 12, its
-# photos and captions (an OCR-made reference, close enough for role labels); Steve Jobs'
-# photo insert, captions against the retail EPUB.
-EXTRA = [
-    "de-aanslag--calibre-pdf",
-    "de-tunnels--ia-scan:238-270:14-14",
-    "steve-jobs--ia-scan:387-402:43-43",
-]
-SPECS = bench.SETS["tuning"] + bench.SETS["validation"] + EXTRA
-VALIDATION = {s.split(":")[0] for s in bench.SETS["validation"]}
-OUT = Path("work/probes/sorter")
-RULES = {"text": "body", "heading": "heading", "dropped": "other"}
-
-
-def lines(spec: str, rebuild: bool) -> list[dict]:
-    name, pages, chapters = (spec.split(":") + ["", ""])[:3]
-    path = OUT / f"{name}.json"
-    if path.exists() and not rebuild:
-        return json.loads(path.read_text())
-    os.environ["ROBO_SORTER"] = "0"
-    book = Book.load(Path("work") / name)
-    stages = pipeline.run(book, pages=scoring.page_range(pages or None), check_ocr=False)
-    reference = load_chapters(Golden.load(book.golden).text_dir)
-    if span := scoring.page_range(chapters or None):
-        reference = reference[span[0] - 1 : span[1]]
-    reference, _ = disagreements.patch(reference, scoring.verdicts(book))
-    labels = align(stages.pages, reference)
-    styles = typestyle.measure(book.source, stages.pages, book.stages / "type.json", stages.whole)
-    regions = None
-    if layout.available():
-        numbers = [p.number for p in stages.pages]
-        regions = layout.detect(book.source, numbers, book.stages / "layout.json")
-    found = sorter.features(stages.pages, stages.model_roles, styles, regions, stages.whole)
-    rows = [
-        {
-            "page": ref.page,
-            "line": ref.line,
-            "f": f,
-            "label": labels[ref].role,
-            "rules": RULES[treatment(stages.model_roles.get(ref))],
-        }
-        for ref, f in found.items()
-    ]
-    write_atomic(path, json.dumps(rows))
-    return rows
+from roboscriptorium.sorterdata import SPECS, VALIDATION, fit, lines, models_to_save, predict
 
 
 def errors(truth: list[str], pred: list[str]) -> str:
@@ -85,30 +30,11 @@ def errors(truth: list[str], pred: list[str]) -> str:
     )
 
 
-# How much more a body line weighs than its class's balanced share (SORTER_BODY_WEIGHT).
-BODY_WEIGHT = float(os.environ.get("SORTER_BODY_WEIGHT", "10"))
-
-
-def fit(rows: list[dict]) -> sorter.Sorter:
-    return sorter.train([r["f"] for r in rows], [r["label"] for r in rows], BODY_WEIGHT)
-
-
-def predict(model: sorter.Sorter, rows: list[dict]) -> list[str]:
-    return list(model.model.predict(sorter._matrix([r["f"] for r in rows])))
-
-
 if __name__ == "__main__":
     books = {s.split(":")[0]: lines(s, "--rebuild" in sys.argv) for s in SPECS}
     trainable = [b for b in books if b not in VALIDATION]
     if "--save" in sys.argv:
-        path = Path(Settings.from_env().sorter_model)
-        tuning = [s.split(":")[0] for s in bench.SETS["tuning"]]
-        models = [(path, fit([r for b in trainable for r in books[b]]))]
-        models += [
-            (sorter.without(path, held), fit([r for b in trainable if b != held for r in books[b]]))
-            for held in tuning
-        ]
-        for out, model in models:
+        for out, model in models_to_save(books, Path(Settings.from_env().sorter_model)):
             sorter.save(model, out)
             print(f"saved {out}")
         sys.exit()

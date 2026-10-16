@@ -92,8 +92,7 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       [+0.00, +0.01], no book apart; rebuilding the caches moves the score 0.01 at most
 - [x] Book-wide statistics on the whole body (2026-10-16): repeats, page numbers, type,
       missing-line height; trees retrained; benches no change
-- [ ] The line-role trainer (`experiments/train_sorter.py`) into `src/` as the trust
-      one went (agent, ~1 h)
+- [x] The line-role trainer's data and saving into `src/` (`sorterdata.py`, 2026-10-16)
 - [ ] One cache helper (identity, version, atomic write) for the nine copies; the judges'
       crop settings and the second vision judge's readout in their cache keys (agent,
       ~2 h)

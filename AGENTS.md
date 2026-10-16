@@ -240,7 +240,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `pdf.py`, `page.py` | the text layer as visual lines with boxes (tesseract's for an image-only scan); what a page's layout says without a model |
 | `layout.py`, `typestyle.py`, `faint.py` | DocLayout-YOLO regions; each line's type against the body; washed-out pages |
 | `missing.py` | printed lines the layer lacks, read by glm-ocr |
-| `roles.py`, `sorter.py` | line roles: a decision model plus rules, then learned trees (`ROBO_SORTER=0` turns them off) |
+| `roles.py`, `sorter.py`, `sorterdata.py` | line roles: a decision model plus rules, then learned trees (`ROBO_SORTER=0` turns them off); the trees' training data |
 | `ocrcheck.py`, `pagereader.py`, `trust.py`, `trustdata.py`, `lexicon.py` | more readings of each body line (two of them from whole-page readings), judges where they differ, the learned trust that fixes, keeps or asks, and its training data; the word list |
 | `corrections.py`, `errata.py`, `quotes.py` | the reviewer's answers applied; the misprints they correct; unpaired quotes as questions with a proposed reading |
 | `footnotes.py`, `epigraphs.py` | footnotes at a page's foot taken out of the running text and linked to their marks; a motto on a page of its own set apart |
