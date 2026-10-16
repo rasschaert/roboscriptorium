@@ -9,13 +9,12 @@ holds at least MIN_WORDS words is measured.
 At 60 dpi; cached per page in `stages/contrast.json`.
 """
 
-import json
 from pathlib import Path
 
 import numpy as np
 import pymupdf
 
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.pdf import PageText
 
 VERSION = 1
@@ -42,16 +41,13 @@ def contrast(page: pymupdf.Page, lines: list) -> float:
 
 def pages(pdf: Path, body: list[PageText], cache: Path) -> set[int]:
     """The numbers of the pages in `body` scanned too faint to read."""
-    done: dict[str, float] = {}
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        if raw.get("version") == VERSION:
-            done = raw["pages"]
+    raw = read_cache(cache, VERSION)
+    done: dict[str, float] = raw["pages"] if raw else {}
     worded = [p for p in body if sum(len(ln.text.split()) for ln in p.lines) >= MIN_WORDS]
     todo = [p for p in worded if str(p.number) not in done]
     if todo:
         with pymupdf.open(pdf) as doc:
             for p in todo:
                 done[str(p.number)] = contrast(doc[p.number - 1], p.lines)
-        write_atomic(cache, json.dumps({"version": VERSION, "pages": done}))
+        write_cache(cache, VERSION, {"pages": done})
     return {p.number for p in worded if done[str(p.number)] < FAINT_BELOW}

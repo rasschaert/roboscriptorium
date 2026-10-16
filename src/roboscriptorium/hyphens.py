@@ -8,11 +8,10 @@ was right on 43. Dutch ones almost always join (355 of 361), and the judge does 
 better there, so it is asked about English only (`experiments/probe_hyphen_judge.py`).
 """
 
-import json
 from pathlib import Path
 
 from roboscriptorium.clients.decide import choice
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import read_cache, write_cache
 
 VERSION = 1
 LANGUAGES = {"en": "English"}
@@ -30,12 +29,9 @@ class Compounds:
     def __init__(self, client, model: str, language: str, path: Path):
         self._client, self._model, self._path = client, model, path
         self._language = LANGUAGES[language[:2]]
-        self._answers: dict[str, float] = {}
+        blob = read_cache(path, VERSION, model=model)
+        self._answers: dict[str, float] = blob["answers"] if blob else {}
         self._new = False
-        if path.exists():
-            blob = json.loads(path.read_text())
-            if blob.get("version") == VERSION and blob.get("model") == model:
-                self._answers = blob["answers"]
 
     def __call__(self, stem: str, rest: str, context: str) -> bool:
         """Whether `stem`-`rest`, broken at a line's end in `context` (the break marked
@@ -56,6 +52,7 @@ class Compounds:
 
     def save(self) -> None:
         if self._new:
-            blob = {"version": VERSION, "model": self._model, "answers": self._answers}
-            write_atomic(self._path, json.dumps(blob, ensure_ascii=False, indent=1))
+            write_cache(
+                self._path, VERSION, {"answers": self._answers}, indent=1, model=self._model
+            )
             self._new = False

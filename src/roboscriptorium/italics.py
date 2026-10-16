@@ -12,7 +12,6 @@ leans like italic whatever its type. An unmeasured word between two italic
 words is italic ("I can talk").
 """
 
-import json
 import re
 from dataclasses import replace
 from pathlib import Path
@@ -21,7 +20,7 @@ import numpy as np
 import pymupdf
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.ir import Block, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText, line_words, lines_digest, page_words, spells
 
@@ -75,11 +74,8 @@ def detect(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, fro
     Only lines whose text-layer words spell the line are measured. Cached per page,
     with the page's lines, so a page whose lines change is measured again.
     """
-    done: dict[str, dict] = {}
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        if raw.get("version") == VERSION:
-            done = raw["pages"]
+    raw = read_cache(cache, VERSION)
+    done: dict[str, dict] = raw["pages"] if raw else {}
     todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != lines_digest(p)]
     if todo:
         with pymupdf.open(pdf) as doc:
@@ -88,7 +84,7 @@ def detect(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, fro
                     "lines": lines_digest(page),
                     "italic": _page(doc[page.number - 1], page),
                 }
-        write_atomic(cache, json.dumps({"version": VERSION, "pages": done}))
+        write_cache(cache, VERSION, {"pages": done})
     return {
         SourceRef(p.number, int(k)): frozenset(v)
         for p in pages

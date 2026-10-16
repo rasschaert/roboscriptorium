@@ -54,3 +54,16 @@ def test_a_replaced_source_is_refused_until_its_caches_are_moved_aside(tmp_path)
         check_source(source, stamp)
     stamp.unlink()
     check_source(source, stamp)
+
+
+def test_a_cache_is_read_back_only_with_its_version_and_identity(tmp_path):
+    from roboscriptorium.files import read_cache, write_cache
+
+    path = tmp_path / "c.json"
+    assert read_cache(path, 1) is None
+    write_cache(path, 2, {"lines": {"a": "één"}}, model="m", prompt="p")
+    assert read_cache(path, 2, model="m", prompt="p")["lines"] == {"a": "één"}
+    assert read_cache(path, 1, model="m", prompt="p") is None
+    assert read_cache(path, 2, model="other", prompt="p") is None
+    path.write_text("[1, 2]")  # a cache of an older shape
+    assert read_cache(path, 2) is None

@@ -18,6 +18,29 @@ def write_atomic(path: Path, text: str | bytes) -> None:
     os.replace(partial, path)
 
 
+def read_cache(path: Path, version: int, **identity) -> dict | None:
+    """A versioned JSON cache, when its format `version` and each `identity` field (the
+    model, prompt or language it was made with) match; else None, for it to be made
+    again."""
+    if not path.exists():
+        return None
+    raw = json.loads(path.read_text())
+    if not isinstance(raw, dict) or raw.get("version") != version:
+        return None
+    if any(raw.get(k) != v for k, v in identity.items()):
+        return None
+    return raw
+
+
+def write_cache(
+    path: Path, version: int, payload: dict, indent: int | None = None, **identity
+) -> None:
+    """Write a versioned JSON cache whole (`write_atomic`): its version, its `identity`
+    fields and its `payload`'s, as `read_cache` reads them."""
+    blob = {"version": version, **identity, **payload}
+    write_atomic(path, json.dumps(blob, ensure_ascii=False, indent=indent))
+
+
 def read_jsonl(path: Path) -> list[dict]:
     """The entries of an append-only log, one JSON object a line. A last line cut off by
     an interrupted write is skipped; a broken line anywhere else is an error."""

@@ -19,7 +19,7 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import ocr
 from roboscriptorium.clients.retry import patiently
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PDF_LOCK, PageText
 from roboscriptorium.reflow import HYPHENS
@@ -103,21 +103,12 @@ def page_readings(
 ) -> dict[int, str]:
     """Each page's reading by `model`, cached per page under the model, prompt and size."""
     prompt = GLM_PROMPT if _glm(model) else PROMPT
-    done: dict[str, str] = {}
-    if cache.exists():
-        kept = json.loads(cache.read_text())
-        if (kept.get("version"), kept.get("model"), kept.get("prompt"), kept.get("pixels")) == (
-            VERSION,
-            model,
-            prompt,
-            PIXELS,
-        ):
-            done = kept["pages"]
+    kept = read_cache(cache, VERSION, model=model, prompt=prompt, pixels=PIXELS)
+    done: dict[str, str] = kept["pages"] if kept else {}
     todo = [n for n in numbers if str(n) not in done]
 
     def save() -> None:
-        blob = {"version": VERSION, "model": model, "prompt": prompt, "pixels": PIXELS}
-        write_atomic(cache, json.dumps({**blob, "pages": done}, ensure_ascii=False))
+        write_cache(cache, VERSION, {"pages": done}, model=model, prompt=prompt, pixels=PIXELS)
 
     workers = GLM_WORKERS if _glm(model) else 1
     with pymupdf.open(pdf) as doc, ThreadPoolExecutor(workers) as pool:

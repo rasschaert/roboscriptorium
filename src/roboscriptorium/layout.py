@@ -10,13 +10,12 @@ caption, kept as one region marked `turned`. Which way it reads is left to OCR:
 the model labels the strip under a figure a caption whichever side is up.
 """
 
-import json
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import pymupdf
 
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import read_cache, write_cache
 
 REPO = "juliozhao/DocLayout-YOLO-DocStructBench"
 WEIGHTS = "doclayout_yolo_docstructbench_imgsz1024.pt"
@@ -50,10 +49,8 @@ def available() -> bool:
 
 def detect(pdf: Path, numbers: list[int], cache: Path) -> dict[int, list[Region]]:
     done: dict[int, list[Region]] = {}
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        if raw.get("weights") == WEIGHTS and raw.get("version") == VERSION:
-            done = {int(n): [Region(**r) for r in rs] for n, rs in raw["pages"].items()}
+    if raw := read_cache(cache, VERSION, weights=WEIGHTS):
+        done = {int(n): [Region(**r) for r in rs] for n, rs in raw["pages"].items()}
     todo = [n for n in numbers if n not in done]
     if todo:
         from doclayout_yolo import YOLOv10
@@ -72,12 +69,8 @@ def detect(pdf: Path, numbers: list[int], cache: Path) -> dict[int, list[Region]
                 if _maybe_sideways(regions):
                     regions += _sideways_caption(model, image, zoom)
                 done[n] = regions
-        blob = {
-            "weights": WEIGHTS,
-            "version": VERSION,
-            "pages": {str(n): [asdict(r) for r in rs] for n, rs in sorted(done.items())},
-        }
-        write_atomic(cache, json.dumps(blob, indent=1))
+        pages = {str(n): [asdict(r) for r in rs] for n, rs in sorted(done.items())}
+        write_cache(cache, VERSION, {"pages": pages}, indent=1, weights=WEIGHTS)
     return {n: done[n] for n in numbers}
 
 

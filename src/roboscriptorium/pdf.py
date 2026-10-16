@@ -5,7 +5,6 @@ when the caller names the book's language: its words, grouped into visual lines 
 an OCR layer's are."""
 
 import hashlib
-import json
 import statistics
 import subprocess
 import threading
@@ -17,7 +16,7 @@ from pathlib import Path
 import pymupdf
 
 from roboscriptorium import ocr
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import read_cache, write_cache
 
 # A fragment belongs to a visual line when it overlaps the line's vertical span by
 # at least this share of its own height. OCR layers box each word separately, and
@@ -315,22 +314,16 @@ def first_reading(doc: pymupdf.Document, pages: list[PageText], lang: str) -> li
 def cached_text_layer(pdf: Path, cache: Path, lang: str | None = None) -> list[PageText]:
     """`read_text_layer`, cached. A cache without lines, written without `lang`, is read
     again when a caller gives one: the PDF may be image-only."""
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        if isinstance(raw, dict) and raw.get("version") == TEXT_LAYER_VERSION:
-            pages = [
-                PageText(p["number"], p["width"], p["height"], [Line(**ln) for ln in p["lines"]])
-                for p in raw["pages"]
-            ]
-            if lang is None or any(p.lines for p in pages) or raw.get("first_reader") == lang:
-                return pages
+    if raw := read_cache(cache, TEXT_LAYER_VERSION):
+        pages = [
+            PageText(p["number"], p["width"], p["height"], [Line(**ln) for ln in p["lines"]])
+            for p in raw["pages"]
+        ]
+        if lang is None or any(p.lines for p in pages) or raw.get("first_reader") == lang:
+            return pages
     pages = read_text_layer(pdf, lang)
-    blob = {
-        "version": TEXT_LAYER_VERSION,
-        "first_reader": lang or "",
-        "pages": [asdict(p) for p in pages],
-    }
-    write_atomic(cache, json.dumps(blob, ensure_ascii=False, indent=1))
+    payload = {"first_reader": lang or "", "pages": [asdict(p) for p in pages]}
+    write_cache(cache, TEXT_LAYER_VERSION, payload, indent=1)
     return pages
 
 

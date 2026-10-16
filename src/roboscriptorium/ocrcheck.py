@@ -32,7 +32,7 @@ from roboscriptorium import ocr
 from roboscriptorium.clients import decide, openrouter
 from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.clients.retry import patiently
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import read_cache, write_atomic, write_cache
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText, line_words, page_words, spells, spliced
@@ -288,10 +288,8 @@ def tesseract_words(
 ) -> dict[int, list[tuple[str, float, float, float, float]]]:
     """Tesseract's words with their boxes in points, per page, cached."""
     done: dict[int, list] = {}
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        if raw.get("version") == TESSERACT_VERSION and raw.get("lang") == lang:
-            done = {int(n): [tuple(w) for w in ws] for n, ws in raw["pages"].items()}
+    if raw := read_cache(cache, TESSERACT_VERSION, lang=lang):
+        done = {int(n): [tuple(w) for w in ws] for n, ws in raw["pages"].items()}
     todo = [n for n in numbers if n not in done]
     if todo:
         # Pages are rendered on this thread (PyMuPDF isn't thread-safe); tesseract runs pooled.
@@ -302,8 +300,7 @@ def tesseract_words(
                 read = pool.map(lambda png: _tesseract_page(png, lang), images)
                 for n, page_words in zip(batch, read, strict=True):
                     done[n] = page_words
-                blob = {"version": TESSERACT_VERSION, "lang": lang, "pages": done}
-                write_atomic(cache, json.dumps(blob, ensure_ascii=False))
+                write_cache(cache, TESSERACT_VERSION, {"pages": done}, lang=lang)
     return {n: done[n] for n in numbers}
 
 

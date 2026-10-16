@@ -7,7 +7,6 @@ ascenders or digits count), its stroke width and its ink width per letter. The
 book's body text is the median over its full-width lines. No model.
 """
 
-import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,7 +15,7 @@ from statistics import median
 import numpy as np
 import pymupdf
 
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.italics import ink_threshold
 from roboscriptorium.page import geometry
@@ -53,11 +52,8 @@ def measure(
     Raw measurements are cached per page with the page's lines, so a page whose
     lines change is measured again.
     """
-    done: dict[str, dict] = {}
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        if raw.get("version") == VERSION:
-            done = raw["pages"]
+    raw = read_cache(cache, VERSION)
+    done: dict[str, dict] = raw["pages"] if raw else {}
     norm_pages = context or pages
     # A page of `pages` is measured as it is there (with lines added, say), not as in `context`.
     every = list({p.number: p for p in [*norm_pages, *pages]}.values())
@@ -69,7 +65,7 @@ def measure(
                     "lines": lines_digest(page),
                     "measured": _page(doc[page.number - 1], page),
                 }
-        write_atomic(cache, json.dumps({"version": VERSION, "pages": done}))
+        write_cache(cache, VERSION, {"pages": done})
 
     measured_all = {
         SourceRef(p.number, int(k)): m
