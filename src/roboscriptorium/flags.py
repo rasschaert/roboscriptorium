@@ -476,6 +476,33 @@ def find(
             for gap in _lost_lines(page, roles, regions)
             if not any(b[1] <= gap.y1 and gap.y0 <= b[3] for b in missing)
         ]
-        page_flags += [_doubt(page, d, roles) for d in doubts or [] if d.page == page.number]
-        flags += sorted(page_flags + boxes, key=lambda f: (f.first, f.last))
+        here = page_flags + boxes
+        for d in doubts or []:
+            if d.page != page.number:
+                continue
+            doubt = _doubt(page, d, roles)
+            holder = next((i for i, f in enumerate(here) if f.first <= d.line <= f.last), None)
+            if holder is None or doubt.span is not None:
+                here.append(doubt)
+            else:
+                here[holder] = _with_doubt(here[holder], doubt)
+        flags += sorted(here, key=lambda f: (f.first, f.last))
     return flags
+
+
+def _with_doubt(flag: Flag, doubt: Flag) -> Flag:
+    """A question about lines that holds a doubtful line: one question, with the line's
+    readings as readings of the whole region (the region's own first). It keeps its key,
+    so an answer given to it before still counts."""
+    lines = flag.text.split("\n")
+    at = doubt.first - flag.first
+    readings = [dict(r) for r in flag.readings] or [{"text": flag.text, "votes": []}]
+    for r in doubt.readings:
+        text = "\n".join([*lines[:at], r["text"], *lines[at + 1 :]])
+        same = next((g for g in readings if g["text"] == text), None)
+        if same is None:
+            readings.append({"text": text, "votes": list(r["votes"])})
+        else:
+            same["votes"] += [v for v in r["votes"] if v not in same["votes"]]
+    reasons = flag.reasons + [r for r in doubt.reasons if r not in flag.reasons]
+    return replace(flag, reasons=reasons, readings=readings)

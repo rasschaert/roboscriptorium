@@ -739,3 +739,11 @@ def test_choosing_the_text_layers_line_keeps_it_over_the_fixes(tmp_path):
     answers.record(question, "text", page.lines[0].text)
     out, _, _ = corrections.apply([page], {}, Corrections(tmp_path / "regions.jsonl"), suspects)
     assert out[0].lines[0].text == "een Citroén xm en een Mazda mx5"
+
+
+def test_a_line_with_a_quote_question_and_doubtful_readings_is_asked_once():
+    page, suspects = _line_with_two_places()
+    found = flags.find([page], {}, None, ocrcheck.line_doubts(suspects), quotes={SourceRef(15, 0)})
+    (question,) = found
+    assert {"quotes", "ocr-doubt"} <= set(question.reasons)
+    assert "een Citroën xm en een Mazda MX5" in [r["text"] for r in question.readings]
