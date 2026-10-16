@@ -60,6 +60,9 @@ class Settings:
     # on top of the rules in `roles.py` (docs/design.md, "Line roles").
     sorter: bool = True
     sorter_model: str = "work/models/line-roles.pkl"
+    # The vision judge says which lines start a paragraph where it is sure
+    # (`parabreaks.py`); off, the page's geometry alone decides.
+    break_judge: bool = True
 
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
@@ -98,4 +101,5 @@ class Settings:
             ocr_ask_below=float(os.environ.get("ROBO_OCR_ASK_BELOW", defaults.ocr_ask_below)),
             sorter=_flag("ROBO_SORTER", defaults.sorter),
             sorter_model=os.environ.get("ROBO_SORTER_MODEL", defaults.sorter_model),
+            break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
         )

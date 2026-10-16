@@ -37,7 +37,14 @@ def _everything_is_body(monkeypatch) -> None:
     def handler(request: httpx.Request) -> httpx.Response:
         answer = {"type": "choice", "choice": "body", "confidence": 0.9}
         answer["probabilities"] = {"body": 0.9, "page_number": 0.1}
-        return httpx.Response(200, json={"answers": {"role": answer}})
+        answers = {"role": answer}
+        for name, q in json.loads(request.content)["questions"].items():
+            if name != "role":
+                # Any other question gets a guess too unsure to act on.
+                first = next(iter(q["criteria"]))
+                answers[name] = {"type": "choice", "choice": first, "confidence": 0.4}
+                answers[name]["probabilities"] = {first: 0.4}
+        return httpx.Response(200, json={"answers": answers})
 
     def client(model, *_):
         http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
@@ -571,3 +578,34 @@ def test_a_line_answered_about_its_readings_stays_asked_when_the_arbiter_is_sure
     (suspect,) = again.suspects
     assert suspect.choice == "review"  # answered, so its question stays
     assert "stony" in again.doc.blocks[0].text  # and the answer sets the line
+
+
+def test_a_paragraph_starts_where_the_judge_is_sure_one_does(tmp_path, monkeypatch):
+    _no_layout(monkeypatch)
+    lines = list(LINES)
+    lines[5] = "Line 5 of the story goes on and on across the page."
+    lines[6] = "Then line 6 of the story goes on and on across the page"
+    book = _book(tmp_path, lines=lines)
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        body = json.loads(request.content)
+        if "start" in body["questions"]:
+            line = json.loads(body["state"])["line in question"]
+            value = "starts" if line == lines[6] else "continues"
+            answer = {"type": "choice", "choice": value, "confidence": 0.9}
+            answer["probabilities"] = {value: 0.9}
+            return httpx.Response(200, json={"answers": {"start": answer}})
+        answer = {"type": "choice", "choice": "body", "confidence": 0.9}
+        answer["probabilities"] = {"body": 0.9, "page_number": 0.1}
+        return httpx.Response(200, json={"answers": {"role": answer}})
+
+    def client(model, *_):
+        http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+        return DecisionClient("http://test", model, client=http)
+
+    monkeypatch.setattr(pipeline.decide, "for_model", client)
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    paragraphs = pipeline.run(book, check_ocr=False).doc.paragraphs
+    assert [p.text.split()[:2] for p in paragraphs] == [["Line", "0"], ["Then", "line"]]
+    monkeypatch.setenv("ROBO_BREAK_JUDGE", "0")
+    assert len(pipeline.run(book, check_ocr=False).doc.paragraphs) == 1
