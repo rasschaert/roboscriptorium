@@ -66,16 +66,12 @@ def features(
     model_roles: dict[SourceRef, LineRole],
     styles: dict[SourceRef, Style],
     regions: dict[int, list[Region]] | None = None,
-    context: list[PageText] | None = None,
 ) -> dict[SourceRef, dict[str, float]]:
     """Each line's features. `model_roles` are the role model's own answers with the rules
-    of `roles.classify` (lines it wasn't asked about have none). Repetition and the
-    printed page numbers are counted over `context` (the book's whole body; else
-    `pages`), so a slice's lines are seen as the whole book's are."""
-    whole = context or pages
-    repeats = P.Repeats(whole)
+    of `roles.classify` (lines it wasn't asked about have none)."""
+    repeats = P.Repeats(pages)
     sunk = P.sunk_pages(pages)
-    offset = P.page_offset(whole)
+    offset = P.page_offset(pages)
     out = {}
     for page in pages:
         if not page.lines:
@@ -210,13 +206,11 @@ def apply(
     model_roles: dict[SourceRef, LineRole],
     styles: dict[SourceRef, Style],
     regions: dict[int, list[Region]] | None = None,
-    context: list[PageText] | None = None,
 ) -> dict[SourceRef, LineRole]:
     """The trees' roles: every line they don't call body, and every line the role model
     answered for, with P(body) from the trees. A line called other keeps the role
-    model's name for it where it had a non-body one ("page_number"), else "artifact".
-    `context` is as `features` takes it."""
-    found = features(pages, model_roles, styles, regions, context)
+    model's name for it where it had a non-body one ("page_number"), else "artifact"."""
+    found = features(pages, model_roles, styles, regions)
     refs = list(found)
     if not refs:
         return {}

@@ -409,3 +409,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | bench tuning+validation, ocrcheck split (should be identical and warm) | 1580 | 3 | 0 |
 | 2026-10-16 | bench tuning+validation, reflow split (should be identical and warm) | 1580 | 3 | 0 |
 | 2026-10-16 | bench tuning+validation, typography split and one ink threshold (should be identical and warm) | 1580 | 3 | 0 |
+| 2026-10-16 | role trees retrained on slice statistics again (whole-body reverted), then bench tuning+validation | 1580 | 4 | 0 |

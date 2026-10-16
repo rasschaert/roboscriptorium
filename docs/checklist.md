@@ -90,8 +90,8 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
 
 - [x] One cold A/A rerun of `bench tuning` (2026-10-15): 0.32 → 0.33 after review
       [+0.00, +0.01], no book apart; rebuilding the caches moves the score 0.01 at most
-- [x] Book-wide statistics on the whole body (2026-10-16): repeats, page numbers, type,
-      missing-line height; trees retrained; benches no change
+- [x] Book-wide statistics on the whole body (2026-10-16): tried and reverted; a
+      raw repeat count over 564 pages took a dialogue tag for a running head
 - [x] The line-role trainer's data and saving into `src/` (`sorterdata.py`, 2026-10-16)
 - [x] One cache helper (`files.read_cache`, `write_cache`) for the nine copies
       (2026-10-16): formats unchanged on disk, benches identical and warm
@@ -213,8 +213,9 @@ In this order:
 - [x] The book teaches itself, first half (2026-10-16): a book's answers join its
       arbiter's substitution table (`trust.with_answers`); Ex-minnaar's review showed the
       signature (wc, stress accents, ’s)
-- [ ] The book teaches itself, second half: on the review page, one question per pattern
-      (every "we" read for "wc", every `|` read as I) applied to all its places. ~half a day
+- [x] The book teaches itself, second half (2026-10-16): one question per pattern,
+      replayed on Ex-minnaar's answers (`probe_patterns.py`), saves 12–17 of ~140
+      questions and settles one skipped line in eight to twelve wrong; not built
 - [ ] A typed answer checked against Qwen's cached reading of the line where the question
       had no readings (headings, missing text). ~1 h
 

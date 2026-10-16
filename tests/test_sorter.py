@@ -111,16 +111,3 @@ def test_every_lines_features_are_the_ones_the_trees_were_trained_on():
     roles = {SourceRef(5, 0): LineRole("page_number", 0.9, 0.1)}
     found = sorter.features([page], roles, styles, regions)
     assert all(tuple(f) == sorter.FEATURES for f in found.values())
-
-
-def test_a_slices_lines_count_their_repeats_over_the_whole_book():
-    def page(n: int) -> PageText:
-        lines = [Line("DE STILLE RIJDER", 100, 20, 200, 28)]
-        lines += [Line("body text " * 5, 40, 60 + 15 * i, 360, 72 + 15 * i) for i in range(12)]
-        return PageText(n, 400, 600, lines)
-
-    whole = [page(n) for n in range(1, 9)]
-    alone = sorter.features(whole[:1], {}, {})
-    counted = sorter.features(whole[:1], {}, {}, context=whole)
-    head = SourceRef(1, 0)
-    assert alone[head]["repeats"] == 0 and counted[head]["repeats"] == 7

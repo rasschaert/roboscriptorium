@@ -48,10 +48,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   override the model where layout settles it; `LineRole.rule` names the rule
   that set a role ("" for the model's own answer).
 - `sorter.py`: line roles from trees over layout, type, repetition and the role
-  model's answer, in place of `roles.py`'s rules (`ROBO_SORTER=1`, on by default);
-  repetition, page numbers and type are counted over the book's whole body
-  (`context`), so a slice is read as its book is. Its copies without each tuning book
-  are scored by `bench`.
+  model's answer, in place of `roles.py`'s rules (`ROBO_SORTER=1`, on by default). Its
+  copies without each tuning book are scored by `bench`.
 - `sorterdata.py`: the trees' labelled lines (golden alignment on the bench's slices and
   a few training-only ones, cached in `work/probes/sorter/`) and the models to save;
   scored and saved by `experiments/train_sorter.py [--save]`.

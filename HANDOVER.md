@@ -2,15 +2,17 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-16 ~17:40, during the session of 2026-10-16.
+end of every session. Written 2026-10-16 ~23:00, at the end of the session of 2026-10-16.
 
 ## Nothing running.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment).
 
-**Baselines now:** the latest `work/bench/tuning-*` and `validation-*` runs (0.28 and
-0.48 after review).
+**Baselines now:** the latest `work/bench/tuning-*` and `validation-*` runs (0.27 and
+0.49 after review). Tonight's module splits (readers, ocrdoubts, hyphens, scanstyle,
+sorterdata, ink, the cache helper) changed no score; the whole-body statistics were
+reverted (decisions.md).
 
 ## Ex-minnaar: reviewed (2026-10-16)
 
@@ -25,9 +27,10 @@ asked whole, specks unasked, questions shown as their difference with combinatio
 
 ## Next, in order
 
-1. Ex-minnaar's 6 new questions by the user, then its read-through.
-2. Checklist: the book teaches itself, second half (one question per pattern).
-4. Stella's read-through by the user (checklist).
+1. Ex-minnaar's 6 new questions by the user (rebuild first: the role trees were
+   retrained since), then its read-through.
+2. Checklist: the judges' crop settings and readout in their cache keys (cold: a night).
+3. Stella's read-through by the user (checklist).
 
 **Remind the user of the daily backup of `work/`** at session start and before long
 runs: it now also holds `work/ex-minnaar/errata.toml`.
@@ -46,6 +49,9 @@ runs: it now also holds `work/ex-minnaar/errata.toml`.
   times and stress accents a dozen; the per-book table and reader buckets now learn them.
 - **Check a probe's matching before reporting its count**: "7 quote questions settled"
   were questions a probe failed to match to their paragraph.
+- **Compare against the day's start, not only the last run**: two changes each within
+  noise moved validation the same way (0.48 → 0.50); only the four-way probe showed
+  which lines they lost.
 - **Test the click, not only the key**: the misprint button crashed with no reading
   chosen (`null >= 0` is true in JavaScript); the key test had chosen one first.
 
