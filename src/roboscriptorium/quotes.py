@@ -5,9 +5,9 @@ end. A ’ inside a word (zo’n, auto’s), opening a Dutch article (’s avond
 eliding letters (Flemish ’m, ’k; ’73) is an apostrophe. A quote left open at a
 paragraph's end is asked about even when the next paragraph opens with the same mark:
 a quotation running over paragraphs is rare (56 in ~58,000 golden paragraphs), a
-closing mark lost at the end isn't. One left open
-right after a word ("zich ‘schrap zette") is asked where it stands: a speck, or a term
-whose closing mark was lost beside it.
+closing mark lost at the end isn't. One left open right after a word ("zich ‘schrap
+zette") is asked where it stands: a speck, or a term whose closing mark was lost beside
+it.
 Speech closed right after a letter at a paragraph's end has lost its stop: some books
 kern it under the closing mark, and the layer misses it there.
 
