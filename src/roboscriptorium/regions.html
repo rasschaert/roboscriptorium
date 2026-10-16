@@ -160,7 +160,7 @@ function startDraft(r) {
       : CURRENT[r.treatment] || "text",
     // For a doubt: the chosen reading's index, -1 for typed text, null for none yet.
     reading: !doubt ? null : chosen == null ? null : r.readings.findIndex(g => g.text === chosen),
-    text: a && a.text != null && a.action !== "initial" ? a.text : (r.draft || r.text || ""),
+    text: a && a.text != null && a.action !== "initial" ? a.text : (r.draft || r.built || r.text || ""),
     letter: a && a.action === "initial" ? (a.text || "") : "",
     // The human's own typed text, which choosing another reading never overwrites.
     typed: !!(doubt && a && a.text != null && !r.readings.some(g => g.text === a.text)),
@@ -269,7 +269,8 @@ function textBlock(r, doubt) {
   const before = r.before ? `<div class="context">${esc(r.before)}</div>` : "";
   const after = r.after ? `<div class="context">${esc(r.after)}</div>` : "";
   if (!doubt) {
-    const prompt = r.text ? "As printed (edit if the scan says otherwise):"
+    const prompt = r.built ? "As the book has it now, the OCR check's fixes in (edit if the scan says otherwise):"
+      : r.text ? "As printed (edit if the scan says otherwise):"
       : r.draft ? "Tesseract's draft of the highlighted area; correct it:" : "Type the text, as printed:";
     return `<div class="question">${prompt}</div>${before}
       <textarea id="text" rows="${Math.min(16, draft.text.split("\n").length + 1)}">${esc(draft.text)}</textarea>${charPad()}${after}`;

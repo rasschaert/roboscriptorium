@@ -3,6 +3,7 @@ experiments share. A spec names a golden scan and the slice scored,
 `work/<book>[:pages[:chapters]]` (`work/goede-dochter--ia-scan:9-64:1-4`)."""
 
 import json
+from dataclasses import replace
 from pathlib import Path
 from typing import NamedTuple
 
@@ -65,7 +66,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
     if layout.available():
         numbers = [p.number for p in stages.pages]
         regions = layout.detect(book.source, numbers, book.stages / "layout.json")
-    return flags.find(
+    found = flags.find(
         stages.pages,
         stages.model_roles,
         regions,
@@ -81,6 +82,18 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
             for i in range(c.first, c.last + 1)
         },
     )
+    if not any(s.choice == "other" for s in stages.suspects):
+        return found
+    checked = {p.number: p for p in ocrcheck.apply(stages.pages, stages.suspects)}
+    out = []
+    for f in found:
+        page = checked.get(f.page)
+        if page is None or f.last < f.first or f.last >= len(page.lines):
+            out.append(f)
+            continue
+        built = "\n".join(page.lines[k].text for k in range(f.first, f.last + 1))
+        out.append(replace(f, built=built) if built != f.text else f)
+    return out
 
 
 class Scored(NamedTuple):

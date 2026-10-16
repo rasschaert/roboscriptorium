@@ -109,6 +109,9 @@ class Flag:
     # For a question about one place: the line's other changed or asked places
     # (`ocrcheck.Doubt.elsewhere`), which the review page shows in the rest of the line.
     elsewhere: list[tuple[int, int, str, str]] = field(default_factory=list)
+    # The lines as the build has them after the OCR check's fixes, where that differs
+    # from `text` (`scoring.questions`): what the review starts the answer from.
+    built: str | None = None
 
 
 def region_key(page: int, text: str) -> str:
