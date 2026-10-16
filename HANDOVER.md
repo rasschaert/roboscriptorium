@@ -4,12 +4,7 @@ The state of play for the next session: what runs, what comes next, what waits o
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session. Written 2026-10-16 ~17:40, during the session of 2026-10-16.
 
-## Running
-
-- `robo-keep-spelling` (screen; `work/runs/keep-spelling.log`, ~20 min): Qwen on the
-  frozen reader set told to keep the author's spelling (`experiments/probe_keep_spelling.py`).
-  If it breaks nothing, the sentence goes into `quotes.style_prompt` and every book's Qwen
-  readings are redone cold, overnight, then the benches.
+## Nothing running.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment).
@@ -29,17 +24,15 @@ established". Their 123 answers are kept. Since then (decisions.md, 2026-10-16):
   look-alike marks named, the base reading marked too, a lost line's box and draft read
   clear of the line above, Cyrillic letters in readings transliterated.
 - What's left (76): 50 OCR doubts (Qwen standardising Flemish is several; the
-  keep-spelling run is for those), 27 quote alarms (the print leaves many speeches
-  unclosed; the user keeps most), 7 others.
+  keep-spelling prompt didn't help: NULL on the reader set), 27 quote alarms (the print
+  leaves many speeches unclosed; the user keeps most), 7 others.
 
-**Don't send the user back to the review** until the keep-spelling decision is made
-and its build is in (AGENTS.md, "The user's review comes last"). Then restart the
-server (`uv run roboscriptorium review work/ex-minnaar`).
+The user may resume: restart the server (`uv run roboscriptorium review work/ex-minnaar`).
 
 ## Next, in order
 
-1. The keep-spelling result; if it holds, the cold Qwen re-read overnight and benches.
-2. Ex-minnaar's remaining questions sampled again; the user resumes.
+1. Ex-minnaar's review by the user (76 open).
+2. Retrain the arbiter with Ex-minnaar's answers once the review is done.
 3. Checklist: the book teaches itself, second half (one question per pattern).
 4. Stella's read-through by the user (checklist).
 
