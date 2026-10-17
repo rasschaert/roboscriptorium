@@ -10,7 +10,14 @@ def test_normalise_folds_typography_the_epub_may_choose():
 
 def test_folds_count_each_kind():
     counted = evaluate.folds(["‘No . . . I don’t’", "wait… – go", "a\u00a0b"])
-    assert counted == {"quotes": 3, "dashes": 1, "ellipses": 2, "spaces": 1, "soft hyphens": 0}
+    assert counted == {
+        "quotes": 3,
+        "dashes": 1,
+        "ellipses": 2,
+        "spaces": 1,
+        "soft hyphens": 0,
+        "nested quote gaps": 0,
+    }
 
 
 def test_soft_hyphens_are_folded_away_on_both_sides_and_counted():
@@ -130,3 +137,17 @@ def test_scene_breaks_count_where_they_fall_on_the_words():
     score = evaluate.score(doc, reference)
     assert (score.scene_breaks_expected, score.scene_breaks_output) == (1, 2)
     assert score.scene_breaks_found == 1
+
+
+def test_a_gap_between_nested_quote_marks_is_folded_but_not_one_between_quotations():
+    assert evaluate.normalise("ground!” ’") == evaluate.normalise("ground!”’")
+    assert evaluate.normalise("‘ “Two Acres”") == evaluate.normalise("‘“Two Acres”")
+    # Between a closing and an opening mark the space is a word's.
+    assert evaluate.normalise("‘Ja.’ ‘Nee.’") != evaluate.normalise("‘Ja.’‘Nee.’")
+    assert evaluate.folds(["ground!” ’ en ‘ “Two”", "‘Ja.’ ‘Nee.’"])["nested quote gaps"] == 2
+    assert evaluate.word_tokens("acres of ground!” ’ said") == [
+        range(0, 1),
+        range(1, 2),
+        range(2, 4),
+        range(4, 5),
+    ]

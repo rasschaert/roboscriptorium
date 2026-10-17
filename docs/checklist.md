@@ -232,8 +232,10 @@ In this order:
       text region above its first layer line or below its last is a candidate
       (`missing.edges`); Vuurspel p. 19's two lines read right. With Bruna's references
       re-derived without markup spaces: validation BETTER 0.49 → 0.38 after review
-- [ ] The Stranger's Child's dash and nested-quote spacing ("think —’", "ground!” ’"):
-      the print's, against `typography.py` (agent, ~1 h)
+- [x] 2026-10-17 The Stranger's Child's nested-quote spacing: the print sets a thin gap
+      between nested marks, some e-books write it as a space; folded in the score
+      (`evaluate._NESTED_GAP`), validation BETTER 0.38 → 0.36. Its "think—’" against our
+      "think –’" is the e-book's: the scan has the spaced en dash (5 places, left as is)
 - [x] De eerlijke vinder's unasked errors (2026-10-15): 28 of 38 were page numbers the
       layer joins to a body line; split off (`pdf._apart`), wrong words 0.88 → 0.42 a page
       on the short test; `bench tuning` 0.32 → 0.30 after review, no book worse

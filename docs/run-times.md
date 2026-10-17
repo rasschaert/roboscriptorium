@@ -419,3 +419,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-17 | bench validation, break check without the judge (warm) | 0 | 1 | 0 |
 | 2026-10-17 | bench tuning, lines at a text block's edge (warm, new glm-ocr reads) | 0 | 2 | 0 |
 | 2026-10-17 | bench validation, edge lines and Bruna references without markup spaces (warm) | 0 | 3 | 0 |
+| 2026-10-17 | bench tuning, nested quote gaps folded (warm) | 0 | 2 | 0 |
+| 2026-10-17 | bench validation, nested quote gaps folded (warm) | 0 | 1 | 0 |

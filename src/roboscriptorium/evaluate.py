@@ -3,7 +3,8 @@
 Metrics:
 - CER: character edits per reference character, after folding typography the
   EPUB is free to choose (quote and dash glyphs, an ellipsis glyph or spaced
-  dots, word joiners, soft hyphens, whitespace). `folded_reference` and `folded_output` count
+  dots, word joiners, soft hyphens, whitespace, a space between two opening or two
+  closing quote marks). `folded_reference` and `folded_output` count
   each kind on each side: what the fold forgave, so a pair whose EPUB and scan
   differ in convention shows it instead of hiding it.
 - WER: word edits per reference word, comparing lowercase letters and digits only,
@@ -45,6 +46,9 @@ _FOLD = str.maketrans(
     }
 )
 _SPACED_DOTS = re.compile(r"\.(?: \.){2,}")
+# The gap a print sets between nested marks ("ground!” ’", "‘ “Two") is written as a space
+# by some e-books and not by others. Between a closing and an opening mark it is a word's.
+_NESTED_GAP = re.compile(r"(?<=[‘“])\s+(?=[‘“])|(?<=[’”])\s+(?=[’”])")
 # What `normalise` folds, by kind, for counting. Ellipses are counted first and taken
 # out, so the spaces inside spaced dots count as the ellipsis.
 _ELLIPSES = re.compile(r"…|\.(?:\s\.){2,}")
@@ -53,11 +57,12 @@ _FOLD_KINDS = {
     "dashes": re.compile("[–―]"),
     "spaces": re.compile("[\u2060\ufeff\u00a0\u202f\u2009]"),
     "soft hyphens": re.compile("\u00ad"),
+    "nested quote gaps": _NESTED_GAP,
 }
 
 
 def normalise(text: str) -> str:
-    text = unicodedata.normalize("NFC", text).translate(_FOLD)
+    text = _NESTED_GAP.sub("", unicodedata.normalize("NFC", text)).translate(_FOLD)
     text = re.sub(r"\s+", " ", text)
     return _SPACED_DOTS.sub(lambda m: m.group(0).replace(" ", ""), text).strip()
 
