@@ -67,6 +67,26 @@ SETS = {
     "test": [
         "het-geluid-van-bananen--ia-scan:9-101:1-14",
     ],
+    # The quick tier, for a change's short test: a chapter or two of each tuning book
+    # (a later one where the first are front matter or a single short one), ending where
+    # the next opens a page; Monterosso's chapters run on, so it has no such end.
+    "quick": [
+        "goede-dochter--ia-scan:51-64:4-4",
+        "vals-alarm--ia-scan:11-25:1-4",
+        "reis-om-mijn-schedel--ia-scan:11-29:1-3",
+        "the-nature-of-a-crime--doubleday-1924:25-43:1-1",
+        "the-story-of-doctor-dolittle--stokes-1920:23-40:1-2",
+        "the-thief-takers-apprentice--ia-scan:11-26:1-6",
+        "afscheid-van-verspilde-tijd--ia-scan:9-20:1-2",
+        "metro-2033--ia-scan:7-29:1-2",
+        "de-cipier--ia-scan:9-33:1-2",
+        "artemis--ia-scan:13-34:1-1",
+        "de-tuin-van-de-avondnevel--ia-scan:11-29:1-1",
+        "het-heft-in-eigen-hand--ia-scan:9-33:1-2",
+        "doodskleed--ia-scan:13-22:1-2",
+        "het-ijzige-land--ia-scan:11-21:1-1",
+        "de-eerlijke-vinder--ia-scan:59-76:3-3",
+    ],
 }
 TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):

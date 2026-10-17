@@ -137,10 +137,11 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       first look (~5 h of models) and joins; De aanslag joins validation; Verminkt joins
       validation whole. Update design.md's test-set reason, `bench.SETS` and the CLI's
       `--score-test` guard (agent, ~1 h plus the run)
-- [ ] A lighter feedback loop (agreed 2026-10-13; its two rules are in AGENTS.md): build a quick
-      bench tier of each tuning book's first chapter or two (~10–20 pages, ending on a
-      chapter), and check once overnight that it ranks changes as the full bench does
-      (agent, ~1 h plus the run)
+- [ ] A lighter feedback loop (agreed 2026-10-13; its two rules are in AGENTS.md): the quick
+      tier is built (2026-10-17, `bench quick`: 15 tuning books, 10–25 pages each,
+      282 in all, each ending where the next chapter opens a page); left: check that it
+      ranks changes as the full bench does, by running it beside `bench tuning` before
+      and after the post-queue merges (agent, minutes warm)
 - [x] `golden derive` keeps text before a book's first heading (2026-10-17, `leading_text`):
       Normal People's reference and scan start on p. 9, its slice now chapters 23–31
 - [x] A sampled review of Ex-minnaar (2026-10-16): false quote questions on Flemish

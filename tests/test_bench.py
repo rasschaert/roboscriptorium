@@ -303,3 +303,15 @@ def test_settings_that_differ_between_two_runs_are_named():
         "ocr_trust: True → None",
         "sorter: True → False",
     ]
+
+
+def test_the_quick_tier_is_tuning_books_inside_their_tuning_slices():
+    tuning = {s.split(":")[0]: s.split(":")[1:] for s in bench.SETS["tuning"]}
+    for spec in bench.SETS["quick"]:
+        book, pages, _ = spec.split(":")
+        assert book in tuning
+        whole = tuning[book][0] if tuning[book] else ""
+        if whole:
+            first, last = map(int, pages.split("-"))
+            lo, hi = map(int, whole.split("-"))
+            assert lo <= first <= last <= hi, spec

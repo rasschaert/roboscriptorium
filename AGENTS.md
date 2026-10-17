@@ -459,7 +459,9 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   else**: no eval, quality, review or bench run, no trust data, no probe. `eval`,
   `quality`, `review` and `bench test` refuse it without `--score-test`. A
   validation book's sibling (same publisher, translator and e-book house) never trains
-  while it validates.
+  while it validates. Beside them, `bench quick` runs a chapter or two of each tuning
+  book (~280 pages, inside their tuning slices): a change's short test, which
+  `bench tuning` then confirms.
 - **Checking a candidate pair** (scan PDF plus the publisher's EPUB) before writing its
   manifest: `uv run python experiments/probe_candidate.py <scan.pdf> <ref.epub> [heading
   prefix …]`, no models, about 10 s per 100 pages. It prints the scan's kind, the EPUB's

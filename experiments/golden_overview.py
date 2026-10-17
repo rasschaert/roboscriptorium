@@ -28,7 +28,7 @@ specs = {}
 for name, lst in bench.SETS.items():
     for s in lst:
         book, pages, chapters = (s.split(":") + ["", ""])[:3]
-        specs[book] = (name, pages, chapters)
+        specs.setdefault(book, (name, pages, chapters))
 
 
 def latest_full_eval(book_dir: Path):

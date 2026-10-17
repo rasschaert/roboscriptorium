@@ -506,6 +506,9 @@ Validation books check that a choice also works on books it wasn't made on.
 The test book is scored once, at the end of the plan, and used for nothing else.
 The command line refuses to score it without `--score-test`.
 
+A quick tier holds a chapter or two of each tuning book, about a quarter of their
+pages: a change is tried there first, and the full tuning set confirms it.
+
 ### Retiring a book
 
 A pair of scan and reference can stop measuring the pipeline. When the EPUB was made
