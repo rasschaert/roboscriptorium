@@ -107,6 +107,7 @@ def features(
                 "words": len(text.split()),
                 "digits_only": float(bool(re.fullmatch(r"[\d\s.,]+", text))),
                 "numeral": float(bool(P.bare_numeral(text))),
+                "number_lookalike": float(P.number_lookalike(text)),
                 "caps_text": sum(c.isupper() for c in letters) / len(letters) if letters else nan,
                 "upper_start": float(bool(re.match(r"^[‘’'\"“]*[A-ZÀ-Þ]", text))),
                 "lower_start": float(bool(re.match(r"^[‘’'\"“]*[a-zß-ÿ]", text))),

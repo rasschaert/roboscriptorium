@@ -122,6 +122,13 @@ def bare_numeral(text: str) -> str:
 _DIGIT_MISREADS = str.maketrans("IlOo", "1100")
 
 
+def number_lookalike(text: str) -> bool:
+    """Whether `text` is a number of up to three digits as the layer may misread one, in
+    old-style figures above all ("Io" for 10, "II" for 11)."""
+    t = text.strip().strip(".,")
+    return 0 < len(t) <= 3 and digits(t.translate(_DIGIT_MISREADS))
+
+
 def digits(word: str) -> bool:
     """Whether `word` is a number `int` reads: `str.isdigit` also says yes to a superscript
     footnote mark ("¹") or a circled digit, which `int` rejects."""

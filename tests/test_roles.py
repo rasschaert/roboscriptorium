@@ -422,3 +422,12 @@ def test_a_wordy_line_called_a_page_number_above_a_heading_is_its_label(tmp_path
     assert roles[SourceRef(11, 0)].role == "page_number"
     assert roles[SourceRef(10, 0)].role == "chapter_heading"
     assert roles[SourceRef(10, 0)].rule == "heading-label"
+
+
+def test_a_number_the_layer_misread_in_old_style_figures_looks_like_one():
+    from roboscriptorium.page import number_lookalike
+
+    assert number_lookalike("Io") and number_lookalike("II") and number_lookalike("12.")
+    # A word, a garbled mark and a long run of look-alikes aren't.
+    assert not number_lookalike("Ik") and not number_lookalike("Ke,")
+    assert not number_lookalike("IIII") and not number_lookalike("")
