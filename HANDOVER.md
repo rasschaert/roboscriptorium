@@ -17,7 +17,9 @@ has ended; only the main session works on).
    `../roboscriptorium-lead`, tested: 494 pass) holds every waiting branch merged with
    main's state of 13:00, conflicts resolved; if main moved since, merge main into it
    first. Check `git diff --stat main weekend-merge` before each merge.
-   1. **Stage (a), `git merge b3051af`:** `context-judge` (with `first-look`,
+   0. **While the local context-judge sample runs (~35 min, qwen3.8 only):** the winnow
+      token-probability test (checklist), the one gap with no chain asking winnow.
+   1. **Stage (a), `git merge stage-a`:** `context-judge` (with `first-look`,
       `quick-tier`, `prune`, `leading-text`), `longer-slices`, `heading-pairs`,
       `verdict-words`. No change to what a build reads; the context judge is off. Then
       `golden derive normal-people --epub work/.cache/publisher/normal-people.epub`,
