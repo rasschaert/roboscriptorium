@@ -444,3 +444,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-17 | page kinds probe, clef-flash on 958 labelled pages | 958 | 123 | 0 |
 | 2026-10-17 | probe: winnow by tokens vs systemone, and Winnow-12B, 40 suspects a book | 0 | 124 | 0 |
 | 2026-10-17 | probe: context judge, local qwen3.8 on 100 asked suspects without counts, against the hosted run | 0 | 141 | 0 |
+| 2026-10-17 | build het-geluid-van-bananen--ia-scan 9-101 for its first look (cold, no score) | 93 | 67 | 0 |
+| 2026-10-17 | build het-schaduwhuis--ia-scan 9-91 for its first look (cold, no score) | 83 | 75 | 0 |
