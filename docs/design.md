@@ -231,6 +231,20 @@ page at its first page, an afterword just past it. Those are as much the range's
 convention as the models' errors, and one wrong end cuts or pads a book, so a model
 would need a human to confirm both ends anyway.
 
+## Context judge
+
+**A thinking model that settles questions from the text around them** (`contextjudge.py`,
+`ROBO_CONTEXT_MODEL`, off until measured). The judges in use see a line's crop (clef) or
+its sentence (winnow); many questions the reviewer answered were settled by the
+paragraph or the book: Ex-minnaar asked "we"/"wc" 13 times and small capitals read as
+"BMw" about 16, where one version is ungrammatical or the book never writes it
+(the user, 2026-10-17: "if it cuts down on questions being asked in human review, i'm
+for it"). It only settles questions the arbiter would ask, so it can cut questions and
+cannot add silent errors to suspects the arbiter decides; its failure is settling a
+question wrongly, which costs a wrong word where the question cost about a seventh of
+one (the reviewer's slips and time). The measurement that decides it:
+`experiments/probe_context_judge.py` (pending).
+
 ## Page readers
 
 **Two more readers that see the whole page** (`pagereader.py`, `ROBO_PAGE_READERS`,

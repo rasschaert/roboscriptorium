@@ -8,6 +8,7 @@ from pathlib import Path
 import pymupdf
 
 from roboscriptorium import (
+    contextjudge,
     corrections,
     epigraphs,
     errata,
@@ -32,6 +33,7 @@ from roboscriptorium import (
 )
 from roboscriptorium.book import Book
 from roboscriptorium.clients import decide, llama
+from roboscriptorium.clients.ollama import OllamaClient
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.epub import write_epub
@@ -229,6 +231,12 @@ def run(
                     trust.book_buckets(own),
                     settings.ocr_ask_below,
                 )
+                if settings.context_model:
+                    taught = contextjudge.settle(
+                        taught, body, whole, book.language,
+                        OllamaClient(settings.ollama_url), settings.context_model,
+                        settings.context_sure, book.stages / "context-judge.json",
+                    )  # fmt: skip
                 done = {(page, line) for page, line, _ in labels}
                 decided = taught
                 suspects = [
@@ -236,6 +244,8 @@ def run(
                     for s in taught
                 ]
                 decider = f"trust {trust.fingerprint(path)}"
+                if settings.context_model:
+                    decider += f", context judge {settings.context_model}"
                 if settled := sum(r["settled"] for r in own):
                     decider += f", {settled} of the book's answers"
             ocrcheck.save(suspects, book.stages / "ocr-check.json")

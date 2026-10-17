@@ -611,3 +611,42 @@ def test_a_paragraph_starts_where_the_judge_is_sure_one_does(tmp_path, monkeypat
     assert [p.text.split()[:2] for p in paragraphs] == [["Line", "0"], ["Then", "line"]]
     monkeypatch.setenv("ROBO_BREAK_JUDGE", "0")
     assert len(pipeline.run(book, check_ocr=False).doc.paragraphs) == 1
+
+
+def test_the_context_judge_settles_a_question_it_is_sure_of(tmp_path, monkeypatch):
+    import numpy as np
+
+    class Unsure:
+        def predict_proba(self, X):
+            return np.column_stack([np.full(len(X), 0.5), np.full(len(X), 0.5)])
+
+    asked = []
+
+    class Judge:
+        def __init__(self, url):
+            pass
+
+        def choose(self, model, prompt, options):
+            asked.append(prompt)
+            return list(answer)
+
+    book, _ = _checked_book(tmp_path, monkeypatch)
+    monkeypatch.setattr(pipeline.trust, "load", lambda path: trust.Trust(Unsure(), {}))
+    monkeypatch.setattr(pipeline.trust, "fingerprint", lambda path: "unsure")
+    monkeypatch.setattr(pipeline, "OllamaClient", Judge)
+    monkeypatch.setenv("ROBO_CONTEXT_MODEL", "thinker")
+    answer = (0.4, 0.6)  # not sure enough: still asked
+    (suspect,) = pipeline.run(book).suspects
+    assert suspect.choice == "review"
+    assert "» Line 3 of the ⟦?⟧ goes on" in asked[0]
+    assert '"story": ' in asked[0] and '"stony": ' in asked[0]
+    (book.stages / "context-judge.json").unlink()
+    answer = (0.03, 0.97)
+    stages = pipeline.run(book)
+    (suspect,) = stages.suspects
+    assert (suspect.choice, suspect.chosen) == ("other", "stony")
+    assert "stony" in stages.doc.blocks[0].text
+    # Its answer is cached: a rebuild asks nothing.
+    asked.clear()
+    pipeline.run(book)
+    assert asked == []

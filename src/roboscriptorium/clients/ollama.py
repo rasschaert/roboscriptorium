@@ -1,6 +1,8 @@
 """Client for Ollama, used for everything that generates text."""
 
 import base64
+import json
+import math
 from pathlib import Path
 
 import httpx
@@ -37,3 +39,40 @@ class OllamaClient:
         resp = self._http.post("/api/generate", json=payload)
         resp.raise_for_status()
         return resp.json()["response"]
+
+    def choose(self, model: str, prompt: str, options: int) -> list[float]:
+        """A thinking model's answer to a question of `options` lettered answers (A, B,
+        …), held to those letters: each letter's probability, from the answer token's
+        alternatives (the chosen letter alone when the server gives none)."""
+        letters = [chr(ord("A") + i) for i in range(options)]
+        resp = self._http.post(
+            "/api/chat",
+            json={
+                "model": model,
+                "stream": False,
+                "think": True,
+                "logprobs": True,
+                "top_logprobs": 10,
+                "messages": [{"role": "user", "content": prompt}],
+                "format": {
+                    "type": "object",
+                    "properties": {"answer": {"type": "string", "enum": letters}},
+                    "required": ["answer"],
+                },
+                "options": {"temperature": 0},
+            },
+        )
+        resp.raise_for_status()
+        r = resp.json()
+        answer = json.loads(r["message"]["content"])["answer"]
+        probs = {answer: 1.0}
+        for t in reversed(r.get("logprobs") or []):
+            if t["token"].strip() == answer:
+                probs = {}
+                for alt in t["top_logprobs"]:
+                    k = alt["token"].strip()
+                    if k in letters and k not in probs:
+                        probs[k] = math.exp(alt["logprob"])
+                break
+        total = sum(probs.values())
+        return [probs.get(k, 0.0) / total for k in letters]
