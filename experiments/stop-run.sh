@@ -21,7 +21,8 @@ descendants() {
 
 pids=($(descendants $pid))
 (( ${#pids} )) && kill $pids 2>/dev/null || true
-screen -S "robo-$name" -X quit >/dev/null 2>&1 || true
+# By its pid too: `screen -S robo-<name>` matches by prefix, so robo-<name>-2 would quit.
+screen -S "$pid.robo-$name" -X quit >/dev/null 2>&1 || true
 sleep 2
 left=($(for p in $pids; do kill -0 $p 2>/dev/null && print $p; done; true))
 if (( ${#left} )); then
