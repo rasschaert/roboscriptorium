@@ -242,8 +242,18 @@ paragraph or the book: Ex-minnaar asked "we"/"wc" 13 times and small capitals re
 for it"). It only settles questions the arbiter would ask, so it can cut questions and
 cannot add silent errors to suspects the arbiter decides; its failure is settling a
 question wrongly, which costs a wrong word where the question cost about a seventh of
-one (the reviewer's slips and time). The measurement that decides it:
-`experiments/probe_context_judge.py` (pending).
+one (the reviewer's slips and time).
+
+The probe (`experiments/probe_context_judge.py`, 2026-10-17, qwen3.8 hosted on DeepInfra
+bf16, thinking capped at 1,500 tokens) on 336 suspects the held-out arbiter would ask:
+alone it is right on 86% of the golden books' (the arbiter's likeliest 68%) and 76% of
+Ex-minnaar's answers (79%), but it overturns one in five of the suspects the arbiter
+settles rightly, so it never overrules. Where it picks the arbiter's likeliest version,
+220 of the 336 (65%), that version is wrong 17 times (8%), under a question's price:
+those are settled, the rest asked. Each version's count in the book, first in the
+prompt, made it worse (74% and 64%): "we" 241 times against "wc" 9 outweighed the
+sentence. It can't see the scan, so quote marks and accents gain least, and it reads
+for sense, so a misprint (the printer's "zeI") is where it errs by design.
 
 ## Page readers
 

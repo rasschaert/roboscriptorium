@@ -64,9 +64,8 @@ class Settings:
     # (`parabreaks.py`). Off: it broke more starts than it fixed (docs/design.md).
     break_judge: bool = False
     # A thinking model that settles the arbiter's questions from the text around them
-    # where it is at least `context_sure` of a version (`contextjudge.py`; "" for none).
+    # where it picks the arbiter's likeliest version (`contextjudge.py`; "" for none).
     context_model: str = ""
-    context_sure: float = 0.9
 
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
@@ -107,5 +106,4 @@ class Settings:
             sorter_model=os.environ.get("ROBO_SORTER_MODEL", defaults.sorter_model),
             break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
             context_model=os.environ.get("ROBO_CONTEXT_MODEL", defaults.context_model),
-            context_sure=float(os.environ.get("ROBO_CONTEXT_SURE", defaults.context_sure)),
         )

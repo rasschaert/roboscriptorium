@@ -270,12 +270,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   leave-one-out copies sit beside it.
 - `contextjudge.py`: the context judge, off unless `ROBO_CONTEXT_MODEL` names a model.
   After the arbiter, each suspect it would ask (but one no judge saw a version of) goes
-  to a thinking model with the lines around it, the place marked, and each version's
-  count in the book's text layer; its answer is held to the versions' letters
-  (`OllamaClient.choose`, structured output with the letters' log-probabilities). Where
-  its likeliest letter has `ROBO_CONTEXT_SURE` (0.9) or more, the suspect takes that
-  version instead of being asked. Answers are cached in `stages/context-judge.json`,
-  keyed by the prompt.
+  to a thinking model with the lines around it and the place marked; its answer is held
+  to the versions' letters (`OllamaClient.choose`, structured output). Where it picks
+  the version the arbiter holds likeliest, the suspect takes that version instead of
+  being asked. Answers are cached in `stages/context-judge.json`, keyed by the prompt.
 - `typography.py`: the book's ellipsis style (`…`, `...` or `. . .`, with or without a
   space before): its gaps measured on a scan (`measure_ellipses`, cached in
   `stages/ellipsis.json`; the dots and the blanks before and between them against the
