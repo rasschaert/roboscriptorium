@@ -67,9 +67,6 @@ asked whole, specks unasked, questions shown as their difference with combinatio
 2. Checklist: the next open step (docs/checklist.md).
 3. Stella's read-through by the user (checklist).
 
-**Remind the user of the daily backup of `work/`** at session start and before long
-runs: it now also holds `work/ex-minnaar/errata.toml`.
-
 ## Waiting on the user
 
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
