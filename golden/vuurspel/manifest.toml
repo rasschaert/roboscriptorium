@@ -20,6 +20,9 @@ files = [
 heading_prefixes = ["hoofdstukcijfer"]
 italic_classes = ["adobegaramondproitalic"]
 capital_classes = ["kleinkapitaal"]
+# The e-book's markup leaves a space before punctuation and hyphen-joined word parts
+# after a styled word ("FBI -agent", "Cleopatra .’"); the print sets none.
+markup_spaces = true
 hyphen_dash = "–"
 
 # The 2004 edition (ISBN 90 229 8872 4), IA Scribe scan, 360 ppi MRC, GlyphLessFont

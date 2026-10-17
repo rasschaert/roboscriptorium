@@ -355,3 +355,28 @@ def test_a_paragraph_wholly_in_a_heading_class_span_is_a_heading(tmp_path):
     sections = publisher_epub.read(epub, ["a.html"], ("bold",))
     assert [s.full_heading for s in sections] == ["Hoofdstuk 1"]
     assert sections[0].paragraphs == ["De wielrenner hield van actie.", "Let op: dit blijft tekst."]
+
+
+def test_a_space_the_markup_leaves_before_punctuation_is_dropped_where_declared(tmp_path):
+    from roboscriptorium.golden.reference import unmarked
+
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<h1>1</h1><p>Een <span class="kk">fbi</span>\n   <span>-agent</span> en de '
+                '<span class="kk">lapd</span>\n   <span>. Uit <i>Cleopatra</i> .’</span></p>'
+                # What must stay: spaced dots, an elision, a dash between words, a quote
+                # opening after a space.
+                "<p>Toen . . . nee, ’s nachts - zei hij - ‘ja’.</p>"
+            ),
+        )
+    caps = frozenset({"kk"})
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], capitals=caps, markup_spaces=True)
+    assert [unmarked(p) for p in section.paragraphs] == [
+        "Een FBI-agent en de LAPD. Uit Cleopatra.’",
+        "Toen . . . nee, ’s nachts - zei hij - ‘ja’.",
+    ]
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], capitals=caps)
+    assert unmarked(section.paragraphs[0]) == "Een FBI -agent en de LAPD . Uit Cleopatra .’"

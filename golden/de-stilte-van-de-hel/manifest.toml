@@ -18,6 +18,9 @@ files = ["OEBPS/awb_-_stilte_van_de_hel_split_4.xhtml", "OEBPS/awb_-_stilte_van_
 heading_prefixes = ["hoofdstukcijfer", "deeltitel"]
 italic_classes = ["adobegaramondproitalic"]
 capital_classes = ["kleinkapitaal"]
+# The e-book's markup leaves a space before punctuation and hyphen-joined word parts
+# after a styled word ("FBI -agent", "Cleopatra .’"); the print sets none.
+markup_spaces = true
 
 # IA Scribe scan, 360 ppi MRC, GlyphLessFont layer, 368 pages. Pages 11–363: "Deel 1" to
 # the end of the Epiloog. Internet Archive lends it only, so it is placed by hand.
