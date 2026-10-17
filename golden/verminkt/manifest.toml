@@ -13,7 +13,7 @@ source = "Verminkt, Manteau 2004, e-book of the fifth printing (2007), ISBN 978 
 sha256 = "90f7109724206ccc08dabe5ec803c60a5ec7fb472b86e561e7beda1bfcd345f5"
 files = ["Text/verminkt_1.html", "Text/verminkt_2.html", "Text/verminkt_3.html", "Text/verminkt_4.html"]
 italic_classes = ["sgc-1"]
-one_chapter = true
+leading_text = true
 
 # The first printing (2004, ISBN 90 223 1795 1), a copy of the Lede public library.
 # Internet Archive lends it only, so it is placed by hand (sourced by the user,

@@ -124,7 +124,7 @@ def golden_derive(name: str, epub: Path | None = None) -> None:
             opening=ref.opening_classes,
             closing=ref.closing_classes,
             initial_images=ref.initial_images,
-            one_chapter=ref.one_chapter,
+            leading_text=ref.leading_text,
             markup_spaces=ref.markup_spaces,
         )
     else:

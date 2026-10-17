@@ -524,8 +524,8 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   of a class gets `break_classes`, and one that marks them on the paragraph after or before
   gets `opening_classes` or `closing_classes` (check each on the scan:
   `experiments/probe_break_classes.py`); one whose drawn initials are images gets
-  `initial_images` (the letter from the file name), and a text without headings
-  `one_chapter`; one whose markup leaves a space before punctuation or a hyphen-joined
+  `initial_images` (the letter from the file name), and one with text before its first heading (an
+  epigraph) or none at all `leading_text`; one whose markup leaves a space before punctuation or a hyphen-joined
   word part after a styled word ("FBI -agent") gets `markup_spaces`; a Gutenberg transcription that drops the space its
   print sets before an ellipsis gets `ellipsis_space = true`.
   `experiments/chapter_pages.py` gives the scan page each derived chapter starts on, to

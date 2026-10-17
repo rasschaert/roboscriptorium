@@ -142,8 +142,8 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       bench tier of each tuning book's first chapter or two (~10–20 pages, ending on a
       chapter), and check once overnight that it ranks changes as the full bench does
       (agent, ~1 h plus the run)
-- [ ] `golden derive` keeps text before a book's first heading (an epigraph), so Normal
-      People's reference and scan can start on p. 9; after the chain (agent, ~30 min)
+- [x] `golden derive` keeps text before a book's first heading (2026-10-17, `leading_text`):
+      Normal People's reference and scan start on p. 9, its slice now chapters 23–31
 - [x] A sampled review of Ex-minnaar (2026-10-16): false quote questions on Flemish
       ’m fixed (308 → 261 questions); its blanked place names ("het __plein") need one
       setting for the book (the user)

@@ -312,7 +312,7 @@ def test_a_drawn_initial_gets_its_letter_and_a_text_without_headings_is_one_chap
             ),
         )
     (section,) = publisher_epub.read(epub, ["Text/a.html"], (), initial_images=r"letter_(\w)\.",
-                                     one_chapter=True)  # fmt: skip
+                                     leading_text=True)  # fmt: skip
     assert section.heading == ""
     assert section.paragraphs == [
         "De jaarwisseling was stil.",
@@ -321,6 +321,21 @@ def test_a_drawn_initial_gets_its_letter_and_a_text_without_headings_is_one_chap
     ]
     # Without the option, text before any heading belongs to no chapter.
     assert publisher_epub.read(epub, ["Text/a.html"], ()) == []
+
+
+def test_leading_text_before_the_first_heading_is_an_untitled_chapter(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr("OEBPS/Text/motto.html", PAGE.format("<p>Een motto.</p><p>T.S. Eliot</p>"))
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format('<div class="title-block"><h1>Een</h1></div><p>Het begin.</p>'),
+        )
+    files = ["Text/motto.html", "Text/a.html"]
+    motto, one = publisher_epub.read(epub, files, (), leading_text=True)
+    assert (motto.heading, motto.paragraphs) == ("", ["Een motto.", "T.S. Eliot"])
+    assert (one.heading, one.paragraphs) == ("Een", ["Het begin."])
+    assert [s.heading for s in publisher_epub.read(epub, files, ())] == ["Een"]
 
 
 def test_a_blockquote_holding_no_paragraphs_is_a_paragraph(tmp_path):

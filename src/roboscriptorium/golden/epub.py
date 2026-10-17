@@ -22,7 +22,8 @@ sign, stay. Text of the capital classes
 (small capitals the EPUB writes in lower case, "vnr") is set in capitals, as the print
 shows it and a reader reads it. A heading set as an image (a drawn chapter number) gets
 its text from the image's alt text through `image_heading`, a regex whose group 1 is the
-heading as printed.
+heading as printed. Text before the first heading belongs to no chapter, unless
+`leading_text` makes it an untitled one (an epigraph, or a text without headings).
 """
 
 import hashlib
@@ -161,9 +162,10 @@ def _is_paragraph(el: ET.Element) -> bool:
     if el.tag == f"{XHTML}p":
         return True
     # A div or blockquote holding no paragraphs is one: some EPUBs set every paragraph so
-    # (calibre's conversion of a Mobipocket e-book sets them as blockquotes).
+    # (calibre's conversion of a Mobipocket e-book sets them as blockquotes). One holding
+    # a heading wraps the heading ("title-block").
     return el.tag in (f"{XHTML}div", f"{XHTML}blockquote") and not any(
-        d.tag in BLOCK_TAGS for d in el.iter() if d is not el
+        d.tag in BLOCK_TAGS | HEADING_TAGS for d in el.iter() if d is not el
     )
 
 
@@ -184,7 +186,7 @@ def read(
     opening: Classes = frozenset(),
     closing: Classes = frozenset(),
     initial_images: str = "",
-    one_chapter: bool = False,
+    leading_text: bool = False,
     markup_spaces: bool = False,
 ) -> list[Section]:
     """The chapters; with `found_notes`, the note paragraphs' text is added to it."""
@@ -242,7 +244,7 @@ def read(
                     if not any(c.isalnum() for c in unmarked(text)):
                         continue  # a heading of marks alone is no chapter
                     sections.append(Section(unmarked(text), unmarked(text)))
-                elif sections or one_chapter:
+                elif sections or leading_text:
                     if not sections:
                         sections.append(Section("", ""))
                     if opening & classes:
@@ -271,7 +273,7 @@ def write_reference(
     opening: Classes = frozenset(),
     closing: Classes = frozenset(),
     initial_images: str = "",
-    one_chapter: bool = False,
+    leading_text: bool = False,
     markup_spaces: bool = False,
 ) -> list[Section]:
     found_notes: list[str] = []
@@ -292,7 +294,7 @@ def write_reference(
         opening,
         closing,
         initial_images,
-        one_chapter,
+        leading_text,
         markup_spaces,
     )
     text_dir = out / "text"
