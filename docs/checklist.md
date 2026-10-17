@@ -68,7 +68,9 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       151/58/25/16 without: small, every budget the same way, within a book's noise.
       Next: an arbiter trained without winnow under its own name, `bench tuning` and
       `validation` warm with `ROBO_CHECK_MODEL=` against stage (b) (cached, no model
-      calls; agent, ~1 h)
+      calls; agent, ~1 h). The word list's vote goes in the same bench: taken away it
+      changes nothing (`experiments/probe_subtract.py`), the arbiter reading the same
+      knowledge from the `known` feature
 - [ ] Winnow through token probabilities (the user, 2026-10-17, low urgency): render the
       question ourselves (in winnow's trained layout, EldanRing/winnow-inference
       `native/protocol.h`), ask `winnow-ollama:e4b` for one token with log-probabilities,
