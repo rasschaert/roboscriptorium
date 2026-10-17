@@ -17,6 +17,9 @@ and the judge where the pipeline is wrong and where it is right.
     uv run python experiments/probe_break_judge.py ask [limit] [--model m] [--workers n]
     uv run python experiments/probe_break_judge.py score [--model m] [--sure 0.7]
 
+`--styled` also tells the judge how the book sets its paragraphs (indented or flush,
+measured on its layer: `indents`), into answers-…-styled.jsonl.
+
 Another model's answers go to answers-<model>.jsonl; `--workers` asks several at once (the
 llama.cpp-served models answer four at a time, the MLX ones one).
 """
@@ -137,11 +140,37 @@ def _crop(doc, page, k: int) -> bytes:
     return doc[page.number - 1].get_pixmap(dpi=150, clip=clip).tobytes("png")
 
 
-def _answers(model: str) -> Path:
-    return OUT / ("answers.jsonl" if model == JUDGE else f"answers-{model.replace(':', '_')}.jsonl")
+def _answers(model: str, styled: bool = False) -> Path:
+    name = "answers" if model == JUDGE else f"answers-{model.replace(':', '_')}"
+    return OUT / f"{name}{'-styled' if styled else ''}.jsonl"
 
 
-def ask(limit: int | None, model: str = JUDGE, workers: int = 1) -> None:
+# A book whose lines sit an indent's width right of the margin this often indents its
+# paragraphs (bench books 6–37%; Vuurspel 0%, De stilte 1%).
+INDENTS_AT = 0.03
+
+
+def indents(layer: dict) -> bool:
+    from roboscriptorium.reflow import INDENT_MIN, MAX_INDENT
+
+    n = ind = 0
+    for p in layer.values():
+        if len(p.lines) < 8:
+            continue
+        xs = sorted(ln.x0 for ln in p.lines)
+        margin = xs[len(xs) // 4]
+        n += len(p.lines)
+        ind += sum(INDENT_MIN < ln.x0 - margin < MAX_INDENT for ln in p.lines)
+    return n > 0 and ind / n >= INDENTS_AT
+
+
+STYLE = {
+    True: "it indents the first line of a paragraph; a line set flush carries one on",
+    False: "it sets paragraphs flush, without an indent",
+}
+
+
+def ask(limit: int | None, model: str = JUDGE, workers: int = 1, styled: bool = False) -> None:
     from concurrent.futures import ThreadPoolExecutor
 
     import pymupdf
@@ -153,7 +182,7 @@ def ask(limit: int | None, model: str = JUDGE, workers: int = 1) -> None:
     from roboscriptorium.pdf import cached_text_layer
 
     rows = json.loads((OUT / "lines.json").read_text())
-    path = _answers(model)
+    path = _answers(model, styled)
     done = set()
     if path.exists():
         for ln in path.read_text().splitlines():
@@ -168,6 +197,7 @@ def ask(limit: int | None, model: str = JUDGE, workers: int = 1) -> None:
     client = decide.for_model(model, Settings.from_env().ollama_url)
     layers: dict[str, dict] = {}
     docs: dict[str, pymupdf.Document] = {}
+    sets: dict[str, bool] = {}
     start = time.time()
 
     def crop(r):
@@ -177,6 +207,7 @@ def ask(limit: int | None, model: str = JUDGE, workers: int = 1) -> None:
             layer = cached_text_layer(b.source, b.stages / "textlayer.json", ocr.language(b.language))
             layers[book] = {p.number: p for p in layer}
             docs[book] = pymupdf.open(b.source)
+            sets[book] = indents(layers[book])
         return _crop(docs[book], layers[book][r["page"]], r["line"])
 
     def one(job):
@@ -187,6 +218,8 @@ def ask(limit: int | None, model: str = JUDGE, workers: int = 1) -> None:
             "line in question": r["text"],
             "line below": r["below"],
         }
+        if styled:
+            state = {"how the book sets paragraphs": STYLE[sets[r["book"]]], **state}
         return r, client.decide(state, QUESTION, image_png=png)["start"]
 
     batch = 4 * workers
@@ -216,9 +249,9 @@ def ask(limit: int | None, model: str = JUDGE, workers: int = 1) -> None:
             print(f"{n}/{len(todo)}  {per:.2f} s a line, ~{left:.0f} min left", flush=True)
 
 
-def score(model: str = JUDGE, sure: float = 0.0) -> None:
+def score(model: str = JUDGE, sure: float = 0.0, styled: bool = False) -> None:
     rows = {(r["book"], r["page"], r["line"]): r for r in json.loads((OUT / "lines.json").read_text())}
-    answers = [json.loads(ln) for ln in _answers(model).read_text().splitlines() if ln]
+    answers = [json.loads(ln) for ln in _answers(model, styled).read_text().splitlines() if ln]
     by_book: dict[str, Counter] = {}
     total = Counter()
     for a in answers:
@@ -252,6 +285,6 @@ if __name__ == "__main__":
         prepare()
     elif command == "ask":
         limit = int(args[0]) if args and not args[0].startswith("--") else None
-        ask(limit, model, option("--workers", 1))
+        ask(limit, model, option("--workers", 1), "--styled" in args)
     else:
-        score(model, option("--sure", 0.0))
+        score(model, option("--sure", 0.0), "--styled" in args)
