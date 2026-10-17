@@ -14,10 +14,15 @@ has ended; only the main session works on).
    Don't edit `src/` in the main checkout while it runs: code work goes in a worktree.
    The queue's screen outlives the session; check it with `screen -ls` and the notes file.
    **When it ends, in order** (each branch is on origin; check `git diff --stat` first):
-   1. Merge **`quick-tier`** (worktree `../roboscriptorium-lead`; it holds `prune` and
-      `leading-text`): no change to what a build does. It adds `bench quick` (a chapter
-      or two of each tuning book, 282 pages), derives an epigraph before the first
-      heading, and cuts AGENTS.md to rules and the map. Then `golden derive normal-people
+   1. Merge **`first-look`** (worktree `../roboscriptorium-lead`; it holds `quick-tier`,
+      `prune` and `leading-text`): no change to what a build reads. It replaces the
+      test set by first looks (Het geluid van bananen 9–101, Steve Jobs 9–100, Verminkt
+      whole; `--first-look`), moves De aanslag to validation, adds `bench quick` (a
+      chapter or two of each tuning book, 282 pages) and `build --pages`, derives an
+      epigraph before the first heading, and cuts AGENTS.md to rules and the map. On
+      main afterwards: tick the code part of the checklist's first-look step, reword the
+      checklist's and outlook.md's other "test set" mentions, regenerate
+      docs/golden-books.md. Then `golden derive normal-people
       --epub work/.cache/publisher/normal-people.epub`, set `body_pages = [9, 276]` in
       `work/normal-people--ia-scan/book.toml`, and run **`bench quick`** (warm, minutes):
       the quick tier's baseline.
@@ -45,7 +50,7 @@ has ended; only the main session works on).
    Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
 4. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
    runs; on `verdict-words`; branches `heading-pairs`, `number-lookalikes` there too), `../roboscriptorium-breaks`
-   (checked out on `scene-after-judge`; `longer-slices` is on origin), `../roboscriptorium-lead` (`quick-tier`), `../roboscriptorium-py315`
+   (checked out on `scene-after-judge`; `longer-slices` is on origin), `../roboscriptorium-lead` (`first-look`), `../roboscriptorium-py315`
    (stale, left as is).
 5. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
    hurt, `work/probes/break-conditions/`), `experiments/probe_break_context.py` (a taller
