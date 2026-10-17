@@ -2,45 +2,33 @@
 
 For an agent choosing what to work on. It says how close the build is to its goal,
 which areas still have room, and which have been tried without effect, so effort goes
-where it can move results. Numbers are from the bench of 2026-10-09 (commit `dc3eb53`);
+where it can move results. Numbers are from the benches of 2026-10-17 (commit `9c5efc0`);
 rerun `roboscriptorium bench tuning|validation` before relying on them, and update
 this file when they move.
 
 ## How close we are
 
-The bench was made stricter on 2026-10-09 (paragraph breaks counted, a question catching
-only the error at its place, a typed page counting a question per line), so these
-figures aren't comparable with earlier ones: on the same build tuning went 0.48 → 0.56.
-With the rules' line roles (the default), commit `dc3eb53`:
+Bench totals (2026-10-17): tuning **0.27**, validation **0.36** wrong words a page after
+review; paragraph breaks set wrong 0.15 and 0.13 a page. Per book, wrong words a page
+before review, questions a page, wrong words after review, breaks set wrong a page:
 
-| Kind of book | Example | Wrong words a page after review | Questions a page | Breaks set wrong a page |
-| --- | --- | --- | --- | --- |
-| Clean scan, modern Dutch prose (Stella's kind) | Goede dochter, Reis, De cipier | 0.23–0.35 | 0.4–0.6 | 0.01–0.22 |
-| Clean scan, modern English prose | Metro, Thief-Taker, Crime | 0.37–0.43 | 0.4–0.9 | 0.01–0.36 |
-| Born-digital PDF | Villa Toscane | 0.12 | 0.13 | 0.01 |
-| Old typography, plates | Dolittle | 0.77 | 1.1 | 0.42 |
-| Busy layout, pictures | 11/22/63, You're Never Weird | 1.00–1.04 | 1.4–3.1 | 0.13–0.54 |
-| Washed-out scan | Afscheid | 0.63 (its typed pages now count) | 3.5 | 1.73 (its EPUB's paragraphing) |
+| Kind of book | Books (before · questions · after · breaks) |
+| --- | --- |
+| Clean scan, modern Dutch prose (Stella's kind) | Reis 0.15 · 0.24 · 0.09 · 0.06; Het ijzige land 0.18 · 0.27 · 0.04 · 0.00; De cipier 0.20 · 0.28 · 0.12 · 0.08; Doodskleed 0.30 · 0.40 · 0.16 · 0.00; Goede dochter 0.40 · 0.32 · 0.25 · 0.00; Vals alarm 0.54 · 0.58 · 0.13 · 0.02; De kerk 0.43 · 0.78 · 0.36 · 0.02 |
+| The same, chosen for their trouble | Het heft 0.48 · 0.24 · 0.40 (its washed-out lines); Monterosso 0.43 · 0.49 · 0.44 (small capitals, old-style figures); De tuin 0.84 · 0.79 · 0.34; Het laatste bevel 0.80 · 0.30 · 0.42 (its EPUB glues words) |
+| Unindented Dutch (Bruna) | Vuurspel 0.65 · 0.51 · 0.44 · 0.46; De stilte 0.86 · 0.43 · 0.38 · 0.30 |
+| Clean scan, modern English prose | Metro 0.30 · 0.35 · 0.26; Thief-Taker 0.31 · 0.62 · 0.29; Crime 0.38 · 0.24 · 0.32 (Gutenberg's edition); The Stranger's Child 0.64 · 0.45 · 0.40; Normal People 0.15 · 0.07 · 0.16 · 0.07; Artemis 0.64 · 0.50 · 0.17 · 0.32 |
+| Born-digital PDF | Villa Toscane 0.05 · 0.10 · 0.06 |
+| Old typography, plates | Dolittle 1.03 · 1.27 · 0.44 · 0.18 |
+| Busy layout, pictures | You're Never Weird 0.98 · 1.09 · 0.68 · 0.16 |
+| Washed-out scan | Afscheid 16.65 · 3.47 · 0.61 · 1.73 (typed pages; its EPUB's paragraphing) |
 
-Bench totals (2026-10-11, after the `bughunt` merge, the running-text rule, the breaks
-fix, the quote and initial questions, the hyphen judge and no paragraph inside a broken
-word; 15 tuning books, 7 validating
-with Monterosso and De stilte): tuning **0.31**,
-validation **0.70** wrong words a page after review; paragraph breaks set wrong 0.22 and
-0.21 a page. Validation rebuilt after the loss (2026-10-13, nine books, The Stranger's Child
-and Normal People new): **1.06** a book on average, **0.62** without The Stranger's Child,
-whose 4.57 is one mistake of ours (the space its print sets before an ellipsis, lost).
-After review is mostly the errors no question asks about: the arbiter
-settles only ~0.06 suspects a page wrongly, ~85% of the unasked errors were never
-suspects. So accuracy now moves by finding suspects where the readings agree (a reader of
-the finished text; the book's own consistency was null), by readers that err less or differently
-(newer models, Internet Archive's sharper page images), and by measurement that can be
-trusted (more golden pairs of other kinds, verdicts on the references); new rules buy
-~0.01 each. Unasked, by kind over the tuning books (362 words before the hyphen judge):
-punctuation 136 (52 of them English compounds' line-end hyphens, which the judge now
-settles), letters 69, word breaks 69, quotes 47, missing words 20, extra words 19. The line-role trees
-(`ROBO_SORTER=1`) no longer help on top of the running-text rule: 0.37 → 0.40 and 0.76 →
-0.72, no change, Thief-Taker and Vuurspel worse; they stay off.
+Since 2026-10-11 (tuning 0.31, validation 0.70): the trees on by default, the arbiter
+retrained with the reviewers' answers, Metro's closing quotes, the lower-case paragraph
+check (the break judge off), lines at a text block's edge, and three corrections of the
+measurement (Bruna's markup spaces, nested-quote gaps, number and title as two
+headings). What is left after review is mostly errors no question asks about; read
+place by place (decisions.md, 2026-10-17), much of it is the reference's, not ours.
 
 Until 2026-10-10 every bench figure but Goede dochter's and De tuin's measured DeepInfra's hosted Qwen,
 not the local build Stella gets; read again locally on 2026-10-10, no change by the bench.
@@ -65,11 +53,16 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
    - Line roles: the trees (`sorter.py`) are on by default since 2026-10-13 (validation
      0.59 → 0.50, no book worse); Dolittle's text wrapped around drawings is what they
      still drop.
-   - Breaks left: Afscheid's are its EPUB's; Artemis 0.46 (its letters, set without
-     spacing), Dolittle 0.42, Vuurspel 0.44, De stilte 0.36 (sentences ending at the
-     margin in unindented text), a section break at a page turn.
-   - Headings still lost: De eerlijke vinder 0/4 (part numerals), You're Never Weird 4/16.
-     Thief-Taker 9/22 and Metro 5/10 are a scoring convention (label and title as two).
+   - Breaks left: Afscheid's are its EPUB's; Vuurspel 0.46 and De stilte 0.30 (sentences
+     ending at the margin in unindented text), Artemis 0.32 (its letters, set without
+     spacing), Dolittle 0.18 (verse and lines beside drawn initials). The vision judge
+     on line crops broke more than it fixed (2026-10-17); a page-level reading of
+     breaks is the untried way.
+   - Headings still lost: De eerlijke vinder 0/4 (drawn part numerals), You're Never
+     Weird 3/16 (titles recurring as running heads, bracketed section heads read as
+     specks), Monterosso 14/22 (old-style figures misread). Branches `heading-pairs`
+     (scoring) and `number-lookalikes` (repeats counted at their place, look-alike
+     numbers) wait for the slice growth (checklist).
    - Scene breaks, scored since 2026-10-11 in the ten references that record them: 272 of
      295 found, few extra; the rest are page turns geometry can't tell from a paragraph
      running on.
