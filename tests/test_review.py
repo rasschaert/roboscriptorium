@@ -374,3 +374,14 @@ def test_a_typed_line_is_checked_against_the_one_reading_a_heading_has():
     qwen = [{"text": "HOOFDSTUK EEN", "votes": ["text layer", "Qwen"]}]
     assert review.doubtful("HOOFDSTUK EEN", qwen, "heading", "HOOFDSTUK EEN") == ""
     assert review.doubtful("HOOFDSTUK EEN", qwen, "heading", "HOOFDSTUK EN")
+
+
+def test_a_place_where_one_side_has_nothing_says_what_the_other_has(tmp_path):
+    verdicts = Verdicts(tmp_path / "v.jsonl")
+    extra = Disagreement("e", "", ">", "de tunnel", "in", 61, (3, 3))
+    lost = Disagreement("l", "en", "", "zei hij", "toen", 61, (4, 4))
+    both = _place("geld", "geId")
+    items = {i["key"]: i for i in review.GoldenQuestions([extra, lost, both], verdicts).state()}
+    assert items["e"]["reasons"] == ["the publisher's e-book has “>” here, our text nothing"]
+    assert items["l"]["reasons"] == ["our text has “en” here, the publisher's e-book nothing"]
+    assert items["k"]["reasons"] == [review.GoldenQuestions.REASON]
