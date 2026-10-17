@@ -78,6 +78,7 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       (picks against the hosted build's), then `bench quick` with
       `ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4` against the stage (b) run, then the full
       benches; on by default only if both hold
+
 ## Assumptions to test (quick probes, minutes to an hour each)
 
 The pipeline reads lines and joins them by hand-built geometry because that was what
