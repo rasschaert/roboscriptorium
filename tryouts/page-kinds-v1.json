@@ -160,45 +160,6 @@
     "324": "back-cover"
    }
   },
-  "de-aanslag--calibre-pdf": {
-   "pdf_sha256": "d5c7f4e35400042a",
-   "pages": {
-    "1": "cover",
-    "2": "title",
-    "3": "colophon",
-    "4": "motto",
-    "5": "contents",
-    "6": "text",
-    "7": "text",
-    "8": "text",
-    "9": "part-title",
-    "10": "text",
-    "11": "text",
-    "12": "text",
-    "13": "text",
-    "14": "text",
-    "15": "text",
-    "16": "text",
-    "31": "text",
-    "52": "part-title",
-    "74": "part-title",
-    "90": "part-title",
-    "94": "text",
-    "141": "part-title",
-    "169": "text",
-    "170": "text",
-    "171": "text",
-    "172": "text",
-    "173": "text",
-    "174": "text",
-    "175": "colophon",
-    "176": "colophon",
-    "177": "colophon",
-    "178": "colophon",
-    "179": "colophon",
-    "180": "back-cover"
-   }
-  },
   "de-cipier--ia-scan": {
    "pdf_sha256": "38cffab52be926ac",
    "pages": {
@@ -1079,42 +1040,6 @@
     "426": "also-by",
     "427": "library",
     "428": "back-cover"
-   }
-  },
-  "villa-toscane--calibre-pdf": {
-   "pdf_sha256": "3c85be7be6087e3a",
-   "pages": {
-    "1": "cover",
-    "2": "blank",
-    "3": "cover",
-    "4": "half-title",
-    "5": "title",
-    "6": "contents",
-    "7": "text",
-    "8": "text",
-    "9": "text",
-    "10": "text",
-    "11": "text",
-    "12": "text",
-    "13": "text",
-    "14": "text",
-    "15": "text",
-    "16": "text",
-    "55": "text",
-    "107": "text",
-    "132": "text",
-    "183": "text",
-    "184": "text",
-    "185": "text",
-    "186": "text",
-    "187": "text",
-    "188": "text",
-    "189": "text",
-    "190": "text",
-    "191": "text",
-    "192": "text",
-    "193": "colophon",
-    "194": "colophon"
    }
   },
   "vuurspel--ia-scan": {

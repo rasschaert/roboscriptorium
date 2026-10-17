@@ -34,9 +34,7 @@ SPECS = [
     "work/vals-alarm--ia-scan:11-60:1-10",
     "work/the-nature-of-a-crime--doubleday-1924",
     "work/the-story-of-doctor-dolittle--stokes-1920",
-    "work/de-aanslag--calibre-pdf",
     "work/lady-into-fox--chatto-1922",
-    "work/villa-toscane--calibre-pdf::1-12",
     "work/grand-hotel-europa--ia-scan:15-44:1-16",
     "work/de-tuin-van-de-avondnevel--ia-scan:11-52:1-3",
     "work/de-eerlijke-vinder--ia-scan",
@@ -46,7 +44,6 @@ SPECS = [
 # Scored like the others, but their errors aren't printed: they stay unseen.
 HELD_OUT = {
     "lady-into-fox",
-    "villa-toscane",
     "grand-hotel-europa",
     "de-tuin-van-de-avondnevel",
     "de-eerlijke-vinder",

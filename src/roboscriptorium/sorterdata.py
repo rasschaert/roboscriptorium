@@ -21,11 +21,10 @@ from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters
 
-# Training-only slices, never scored: De aanslag's exact text (born-digital, not a scan);
-# De tunnels' chapter 12, its photos and captions (an OCR-made reference, close enough for
-# role labels); Steve Jobs' photo insert, captions against the retail EPUB.
+# Training-only slices, never scored: De tunnels' chapter 12, its photos and captions (an
+# OCR-made reference, close enough for role labels); Steve Jobs' photo insert, captions
+# against the retail EPUB.
 EXTRA = [
-    "de-aanslag--calibre-pdf",
     "de-tunnels--ia-scan:238-270:14-14",
     "steve-jobs--ia-scan:387-402:43-43",
 ]

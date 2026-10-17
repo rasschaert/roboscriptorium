@@ -15,7 +15,6 @@ from huggingface_hub import hf_hub_download
 
 SAMPLE = {
     "the-story-of-doctor-dolittle--stokes-1920": [23, 29, 36, 51, 58, 70, 97, 200],
-    "de-aanslag--calibre-pdf": [6, 70, 152],
     "sense-and-sensibility--tauchnitz-1864": [7, 60],
     "the-nature-of-a-crime--doubleday-1924": [25, 52],
     "boze-tongen--prometheus-2002": [11, 12, 300],

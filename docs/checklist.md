@@ -47,8 +47,8 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       (one night, ~14 h): Het geluid van bananen, Het schaduwhuis, Steve Jobs (its
       words; its roles trained the sorter, so its role scores aren't a first look), De
       geruchten, Verminkt whole. Na die nacht waits without a slot (a sibling of two
-      tuning books). De aanslag and De tunnels stay role training (born-digital; an
-      EPUB that can't score words). New pairs the user finds go through the same flow
+      tuning books). De tunnels stays role training (an EPUB that can't score
+      words). New pairs the user finds go through the same flow
 - [x] Error categories tracked per run (2026-10-17): 16 causes read from an error's two
       sides alone (`errorlog.cause`), chosen from stage (a)'s 618 saved errors across 23
       books; each run's record keeps them by book, `bench` and `bench-diff` print each

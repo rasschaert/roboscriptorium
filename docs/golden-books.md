@@ -50,8 +50,6 @@ yet.
 | Na die nacht | first look | not looked at yet (its first look comes first) | – | none known |
 | Steve Jobs | first look | not looked at yet (its first look comes first) | – | none known |
 | Verminkt | first look | not looked at yet (its first look comes first) | – | none known |
-| De aanslag | out of scope (born-digital) | never: not a scan, made from the e-book itself | – | none known |
-| Villa Toscane | out of scope (born-digital) | never: not a scan, made from the e-book itself | – | none known |
 
 ## Details
 
@@ -66,7 +64,6 @@ with a line on the scan. *Eval* is the latest full run, CER and WER.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | afscheid-van-verspilde-tijd | tuning | 116 / 62 | 37430 | 1.1 h | 0.17% | 0.12% | 11.3% | 9 / 11 | hyphen_dash | none yet |
 | artemis | tuning | 305 / 68 | 87544 | 1.2 h | 0.37% | 0.97% | 3.2% | 0 / 3 | none | 0.04% / 0.14% |
-| de-aanslag | reserve | 169 / 169 | 55723 | minutes | 0.17% | 0.43% | 0.0% | 31 / 26 | none | none yet |
 | de-cipier | tuning | 474 / 84 | 158385 | 1.5 h | 0.19% | 0.34% | 2.7% | 2 / 4 | none | 0.01% / 0.01% |
 | de-eerlijke-vinder | tuning | 84 / 84 | 23802 | 1.5 h | 0.23% | 0.19% | 1.6% | 0 / 4 | hyphen_dash | none yet |
 | de-geruchten | **first look** | 218 / 89 | 50004 | 1.6 h | unmeasured | | | | capital_classes | untouched |
@@ -93,6 +90,5 @@ with a line on the scan. *Eval* is the latest full run, CER and WER.
 | the-thief-takers-apprentice | tuning | 282 / 74 | 83490 | 1.4 h | 0.28% | 0.35% | 3.6% | 22 / 22 | none | 0.08% / 0.08% |
 | vals-alarm | tuning | 292 / 50 | 87748 | 0.9 h | 0.53% | 0.45% | 3.0% | 4 / 10 | capital_classes | none yet |
 | verminkt | **first look** | 417 / 417 | 110719 | 7.6 h | unmeasured | | | | none | untouched |
-| villa-toscane | reserve | 186 / 186 | 49813 | minutes | 0.00% | 0.00% | 0.0% | 12 / 12 | none | none yet |
 | vuurspel | validation | 354 / 103 | 136893 | 1.9 h | 0.46% | 0.60% | 2.5% | 2 / 6 | hyphen_dash, capital_classes, markup_spaces | none yet |
 | youre-never-weird-on-the-internet | validation | 260 / 82 | 66181 | 1.5 h | 0.49% | 0.61% | 7.3% | 17 / 16 | none | none yet |
