@@ -104,7 +104,7 @@ def load(name: str, rebuild: bool = False) -> list[dict]:
     return rows
 
 
-# Never trained on: the validation and test books.
+# Never trained on: the validation books and those awaiting their first look.
 HELD_OUT = {spec.split("--")[0] for spec in bench.SETS["validation"] + bench.SETS["first-look"]}
 
 

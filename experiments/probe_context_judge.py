@@ -12,7 +12,7 @@ golden tuning book, the arbiter trained without that book decides as the pipelin
 settles wrongly without asking, and a seeded sample it settles rightly (the control).
 For a book labelled by a reviewer's answers (Ex-minnaar, Stella) every row was asked,
 and the arbiter weighed against is trained without that book, its answers left out.
-Validation and test books are never read.
+Validation and first-look books are never read.
 
     uv run python experiments/probe_context_judge.py items   # freeze the set, no models
     uv run python experiments/probe_context_judge.py run [--limit N] [--via openrouter:…]

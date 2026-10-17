@@ -105,7 +105,7 @@ asked whole, specks unasked, questions shown as their difference with combinatio
 - Long runs through `experiments/timed.sh` inside `experiments/detached.sh` (a screen).
   Warm benches take 2–5 minutes.
 - Don't edit `src/` while a bench or build runs; park a change as a patch.
-- Nothing reads the test set (Het geluid van bananen) until its single scoring.
+- Nothing reads a first-look book (`bench.FIRST_LOOK`) until its single scoring.
 - Stopping a run: `experiments/stop-run.sh <name>`; `ollama stop <model>` frees memory.
 
 ## Recovery, 2026-10-11: an agent destroyed work/

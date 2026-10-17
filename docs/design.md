@@ -703,8 +703,7 @@ the edition doesn't list its corrections (the user).
   that fails (an EPUB of another printing, reference headings the scan lacks) is retired,
   not kept: Grand Hotel Europa was.
 - **Every new pair gets a first look.** Validation wears out: every change is benched
-  on it, and a choice made on it makes it tuning. One test book scored at the end is a
-  sanity check, not an exam. So each new pair is scored once, before anything is
+  on it, and a choice made on it makes it tuning. So each new pair is scored once, before anything is
   chosen or trained on it, and then joins tuning or validation: the first looks,
   together, say how the build does on books it has never seen (the user, 2026-10-17).
   The CLI refuses to score such a pair without `--first-look`.

@@ -238,5 +238,5 @@ The measures that say how close a book is:
   worth as much as fewer errors;
 - headings and paragraphs (heading recall, paragraph F1);
 - epubcheck clean;
-- the test set (Het geluid van bananen) scored once, at the end, within reach of the
-  validation books.
+- the first looks (each new pair scored once, before anything is chosen on it) within
+  reach of the tuning and validation books.

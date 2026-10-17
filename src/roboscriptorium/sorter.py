@@ -8,7 +8,7 @@ openings), the line's type (`typestyle`), the spotter's regions (`layout`), and 
 role model's answer where it was asked. Their roles replace the rules' for every line.
 
 Trained by `experiments/train_sorter.py --save` on the tuning and other golden books,
-never the validation or test books, with a copy without each tuning book that `bench`
+never the validation or first-look books, with a copy without each tuning book that `bench`
 scores that book with.
 """
 

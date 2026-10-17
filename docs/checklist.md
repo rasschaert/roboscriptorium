@@ -16,7 +16,8 @@ What runs right now and what waits on the user: `HANDOVER.md`.
 first, no urgency in building books), then accuracy from what the bench data shows,
 new suspects where the readings agree first, then **Stella end to end with the user's
 review**, the target book, then the user's four books. After them, the open
-areas below in order, and the test set scored once at the end.
+areas below in order. Each new pair is scored once, at its first look, before it joins
+a set.
 
 ## First, after the slice growth (the user, 2026-10-17)
 
@@ -370,12 +371,6 @@ reading shares: many are specks and faint marks.
       the arbiter's labels sit on first: hours, spread out, whenever convenient
 - [ ] Remove the `baseline` and `qwen2` worktrees when convenient
 
-## 10. At the end
-
-- [ ] Rederive the test set's reference with the derive of the day (it was left out of the
-      2026-10-11 rederive: ornament paragraphs and blockquotes now read differently), then
-      score it once: `bench test --score-test`
-
 ## Later
 
 - [ ] Python 3.15 once PyTorch publishes cp315 wheels (pytorch/pytorch#184352): with
@@ -401,7 +396,7 @@ reading shares: many are specks and faint marks.
       (« », a thin space before `; : ! ?`, dialogue dashes) that `quotes.py`,
       `typography.py` and the arbiter's training data would all need, and Gallica is
       mostly older print. If it comes: one French Wikisource book proofread page by page
-      against its scan, held out like the test set. Proposed first instead: count the
+      against its scan, a first look like any new pair. Proposed first instead: count the
       accent errors Dutch already leaves unasked (`knieén`, `hé` for `hè`, lost stress
       accents, Stella's `scenes`), by book
 

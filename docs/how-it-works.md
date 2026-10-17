@@ -198,7 +198,7 @@ weight and capitals, takes the role the sorter gave most of them, so one misjudg
 chapter title follows its siblings.
 
 Those rules were written one book at a time and don't carry over well: on a
-calibre-made book they found none of its twelve headings. The candidate for the
+book they weren't written for they found none of its twelve headings. The candidate for the
 job is a set of trees trained on the golden books' lines, labelled body, heading
 or other by aligning the scan with its reference text. The trees see what the
 rules see (place on the page, width, indent, gaps, repetition across pages), the

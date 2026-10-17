@@ -4,7 +4,7 @@ leaving one book out, and with `--save` the model the pipeline uses (ROBO_SORTER
 Labels come from `golden.align` (body, heading, other) on the bench's tuning and
 validation slices and two more golden books; features from a build with the rules'
 roles (ROBO_SORTER=0), never the trees' own. Validation books are scored by trees
-trained without any of them and never trained on; the test set is never touched.
+trained without any of them and never trained on; first-look books are never touched.
 Lines are cached per book in work/probes/sorter/ (`sorterdata.lines`).
 
     uv run python experiments/train_sorter.py [--rebuild] [--save]
