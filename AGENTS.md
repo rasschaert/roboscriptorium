@@ -17,6 +17,7 @@ owns the fact in the same commit.
 | [docs/outlook.md](docs/outlook.md) | how close the build is, where results can still move, what was tried without effect | the bench moves, or a probe comes back null |
 | [docs/decisions.md](docs/decisions.md) | the dated log: what was learned or decided, with the numbers | every change that teaches something |
 | [docs/design.md](docs/design.md) | why each component is there: what it catches, its failure, the measurement | a component or the evidence for it changes |
+| [docs/optimism.md](docs/optimism.md) | how likely the goal looks, dated, as the user asks it | the user asks, or a result moves it (a first look, a bench of a new idea) |
 | [docs/run-times.md](docs/run-times.md) | wall-clock minutes of long runs, appended by `experiments/timed.sh` | each timed run |
 | [docs/modules.md](docs/modules.md) | the code, module by module | a module changes |
 | [docs/models.md](docs/models.md) | every model tried, by role, with its verdict; how the ones in use are set up | a model is screened or set up |
