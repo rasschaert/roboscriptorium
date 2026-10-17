@@ -568,6 +568,7 @@ def test_a_line_answered_about_its_readings_stays_asked_when_the_arbiter_is_sure
 
     book, _ = _checked_book(tmp_path, monkeypatch)
     monkeypatch.setattr(pipeline.trust, "load", lambda path: trust.Trust(Sure(), {}))
+    monkeypatch.setattr(pipeline.trust, "fingerprint", lambda path: "sure")
     stages = pipeline.run(book)
     (suspect,) = stages.suspects
     assert suspect.choice == "ours"  # nothing to ask
