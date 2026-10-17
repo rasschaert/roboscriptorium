@@ -151,3 +151,12 @@ def test_a_gap_between_nested_quote_marks_is_folded_but_not_one_between_quotatio
         range(2, 4),
         range(4, 5),
     ]
+
+
+def test_one_heading_may_stand_for_a_number_and_title_set_as_two():
+    expected = ["CHAPTER 1", "The End of the Earth", "CHAPTER 2", "The Hunter"]
+    found = ["CHAPTER 1 The End of the Earth", "CHAPTER 2 The Hunter"]
+    assert evaluate.match_headings(found, expected) == 4
+    # A number alone is one heading, not the pair; another number takes neither.
+    assert evaluate.match_headings(["CHAPTER 1", "CHAPTER 2 The Hunter"], expected) == 3
+    assert evaluate.match_headings(["CHAPTER 3 The End of the Earth"], expected[:2]) == 0
