@@ -2,42 +2,36 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-17 ~09:20, during the night run; the user may reset the sessions.
+end of every session. Written 2026-10-17 ~10:30 by the main session (the helper session
+has ended; only the main session works on).
 
-## Running, and what the night left (2026-10-17)
+## Running (2026-10-17)
 
-1. **Nothing running** (since 09:40). The paragraph-break judge v2 (`parabreaks.py`) was
-   benched on both sets (decisions.md, 2026-10-17): words unchanged, paragraph breaks
-   tuning 0.19 → 0.16 and validation 0.21 → 0.16 a page (NO CHANGE, just short). Clearly
-   better on books with lines set apart (Dolittle, You're Never Weird, Normal People),
-   clearly worse on Goede dochter 0.00 → 0.10, De stilte 0.34 → 0.47 and The Stranger's
-   Child 0.02 → 0.08; no gain on Vuurspel. Log: `work/runs/break-bench2.log`.
-2. **The break judge is off by default** (`ROBO_BREAK_JUDGE=1` on); the lower-case check
-   it came with runs on every build. Measured line by line, the check fixed 75 starts and
-   broke none, the model 43 fixed and 63 broken; benches validation BETTER (breaks 0.16 →
-   0.13), tuning no change (0.16 → 0.15) (decisions.md, 2026-10-17). The user may veto.
-3. **Slice growth not started** (the user's break): `robo-queue` was stopped while it
-   waited. To resume: `experiments/detached.sh queue work/runs/queue-20261017.sh` (it waits
-   for `robo-break-bench`, then `eval`s the seven short tuning slices to their
-   pre-2026-10-12 ranges, ~450 pages cold, ~8 h with the judge, fewest new pages first,
-   then the page-kinds probe; notes in `work/runs/queue-20261017.txt`). Every page read is
-   cached, so a stop loses nothing. Then merge branch **`longer-slices`** (on origin;
-   worktree `../roboscriptorium-breaks`): the bench SETS and trust-data specs on the long
-   ranges. Then rebuild trust data and the role trees on them, and bench.
-4. Other worktrees: `../roboscriptorium-spans` (branch `reference-spaces`, the main
-   session's: drops the space Bruna's e-books set before punctuation in derived references;
-   to merge after the validation bench, which it would change mid-run);
-   `../roboscriptorium-py315` (branch `py315`, 2026-10-11, no commits past main, two
-   untracked files: stale, left as is).
-5. Tested, not merged: nothing else. Probes and their data: `experiments/probe_break_judge.py`
-   (`work/probes/break-judge/`, incl. clef-flash and a `--styled` variant never run),
-   `experiments/seed_break_answers.py`.
+1. **`robo-queue`, from 10:28:** the seven short tuning slices grown to their pre-2026-10-12
+   ranges (`work/runs/queue-20261017.sh`, 447 pages cold, ~6–7 h, fewest new pages
+   first, then the page-kinds probe; notes in `work/runs/queue-20261017.txt`, logs
+   `work/runs/grow-<book>.log`). Every page read is cached, so a stop loses nothing.
+   Don't edit `src/` in the main checkout while it runs: code work goes in a worktree.
+   After it: merge branch **`longer-slices`** (on origin; worktree
+   `../roboscriptorium-breaks`): the bench SETS and trust-data specs on the long ranges;
+   then rebuild trust data and the role trees on them, and bench.
+2. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
+   judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
+   missing at a text block's edge read (`missing.edges`) and Bruna's references derived
+   without markup spaces (validation 0.49 → 0.38 after review, better, mostly the
+   references); a space between nested quote marks folded in the score (0.38 → 0.36).
+   Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
+3. Worktrees: `../roboscriptorium-spans` (branches `reference-spaces`, `page-edge-lines`,
+   both merged; free for the next code change), `../roboscriptorium-breaks`
+   (`longer-slices`), `../roboscriptorium-py315` (stale, left as is).
+4. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
+   hurt, `work/probes/break-conditions/`), `experiments/probe_break_judge.py`.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment).
 
 **Baselines now:** the latest `work/bench/tuning-*` and `validation-*` runs (0.27 and
-0.49 after review). After 23:00: the judges' cache key holds the crop (nothing cold),
+0.36 after review). After 23:00: the judges' cache key holds the crop (nothing cold),
 readers' quotes are curled by the book's style and closed at a line's end (Metro 0.42 →
 0.33 wrong words a page), and paragraph starts from the text were tried and reverted
 (decisions.md). Tonight's module splits (readers, ocrdoubts, hyphens, scanstyle,
