@@ -85,8 +85,8 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       test): without each version's count in the prompt, it settles 220 of 336 asked
       suspects by agreeing with the arbiter, 17 of them wrong (8%, under a question's
       price); alone it never overrules (it overturns one in five right suspects). Built
-      that way on `weekend-merge`, off. Left: the local qwen3.8 on 100 of them tonight
-      (picks against the hosted build's), then `bench quick` with
+      that way, off. The local qwen3.8 on 100 of them (2026-10-17): the same pick as
+      hosted on 84, settling 66 with 8 wrong (12%). Left: `bench quick` with
       `ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4` against the stage (b) run, then the full
       benches; on by default only if both hold
 
