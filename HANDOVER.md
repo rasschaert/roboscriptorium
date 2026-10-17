@@ -33,6 +33,10 @@ has ended; only the main session works on).
    If no worse: `check_model` becomes Winnow-12B by tokens, winnow-ollama:e4b and the
    Ollama pin go (AGENTS.md Environment, docs/models.md Setup, docs/design.md).
    **Stage (b) results**: validation 0.41 → 0.37 BETTER, tuning NO CHANGE (decisions.md).
+8. **`robo-cj-bench`**, behind the reads and `robo-w12b`: `bench quick` with the context
+   judge on (`ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4`) against stage (b)'s quick run
+   (`work/runs/cj-bench.sh`, log `work/runs/cj-bench.log`, ~2 h). If no worse, the
+   tuning and validation benches with it, then on by default.
 7. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
