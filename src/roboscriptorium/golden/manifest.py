@@ -65,6 +65,9 @@ class PublisherEpub:
     # Why the EPUB's italics aren't the print's, when they aren't: its italic words are
     # then not scored ("" scores them).
     italics_unlike_print: str = ""
+    # The EPUB's markup leaves a space before punctuation or a hyphen-joined word part
+    # ("FBI -agent", "Cleopatra .’") that its print doesn't set: dropped.
+    markup_spaces: bool = False
     # Classes whose text the print sets in capitals (small capitals written in lower case).
     capital_classes: frozenset[str] = frozenset()
     # The print's one mark for every note where the EPUB numbers them ("*", "**", …).
@@ -167,6 +170,7 @@ class Golden:
                 ref.get("hyphen_dash", ""),
                 ref.get("image_heading", ""),
                 ref.get("italics_unlike_print", ""),
+                ref.get("markup_spaces", False),
                 frozenset(ref.get("capital_classes", ())),
                 ref.get("note_mark", ""),
                 frozenset(ref.get("break_classes", ())),
