@@ -1,0 +1,61 @@
+title = "Na die nacht"
+author = "Karin Slaughter"
+language = "nl"
+# Slaughter is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# HarperCollins Holland's own e-book (ISBN 978 94 027 6862 6) of the first printing,
+# June 2023, typeset by Mat-Zet like Goede dochter. Found by the user (2026-10-17). A
+# sibling of Goede dochter (author, publisher, typesetter) and Het heft in eigen hand
+# (publisher, typesetter), both tuning: it can only ever join tuning. Chapter numbers
+# are "P_Cijfer" paragraphs, part and section titles "P_Kop…" ("PROLOOG", "DRIE JAAR
+# LATER"). It opens with a text message before the prologue (`leading_text`). The
+# e-book sets an em dash where the print sets a spaced en dash ("– hoe zal ik het
+# noemen? –", p. 84). Its buy-link file carries a buyer watermark with an
+# identification code: it is not read, and the EPUB never leaves work/. The
+# acknowledgements and colophon are left out.
+[reference]
+source = "Na die nacht, HarperCollins Holland 2023 (first printing), e-book ISBN 978 94 027 6862 6 (EPUB)"
+sha256 = "0ab530af4077d8863a3ec75930892a09ea59530327791200c44c229ce0eedac1"
+files = [
+  "OEBPS/Text/648815f15c41c6.xhtml",
+  "OEBPS/Text/648815f15c41c7.xhtml",
+  "OEBPS/Text/648815f15c41c8.xhtml",
+  "OEBPS/Text/648815f15c41c9.xhtml",
+  "OEBPS/Text/648815f15c41c10.xhtml",
+  "OEBPS/Text/648815f15c41c11.xhtml",
+  "OEBPS/Text/648815f15c41c12.xhtml",
+  "OEBPS/Text/648815f15c41c13.xhtml",
+  "OEBPS/Text/648815f15c41c14.xhtml",
+  "OEBPS/Text/648815f15c41c15.xhtml",
+  "OEBPS/Text/648815f15c41c16.xhtml",
+  "OEBPS/Text/648815f15c41c17.xhtml",
+  "OEBPS/Text/648815f15c41c18.xhtml",
+  "OEBPS/Text/648815f15c41c19.xhtml",
+  "OEBPS/Text/648815f15c41c20.xhtml",
+  "OEBPS/Text/648815f15c41c21.xhtml",
+  "OEBPS/Text/648815f15c41c22.xhtml",
+  "OEBPS/Text/648815f15c41c23.xhtml",
+  "OEBPS/Text/648815f15c41c24.xhtml",
+  "OEBPS/Text/648815f15c41c25.xhtml",
+  "OEBPS/Text/648815f15c41c26.xhtml",
+  "OEBPS/Text/648815f15c41c27.xhtml",
+  "OEBPS/Text/648815f15c41c28.xhtml",
+  "OEBPS/Text/648815f15c41c29.xhtml",
+  "OEBPS/Text/648815f15c41c30.xhtml",
+  "OEBPS/Text/648815f15c41c31.xhtml",
+  "OEBPS/Text/648815f15c41c32.xhtml",
+]
+heading_prefixes = ["P_Kop", "P_Cijfer"]
+leading_text = true
+
+# The "speciale editie" of the first printing (ISBN 978 94 027 1335 0), which adds an
+# interview and a "Will Trent-document" after the novel; IA Scribe scan (6.5), 438
+# pages. Pages 13–418: the novel, the special edition's additions left out. Internet
+# Archive lends it only, so it is placed by hand (sourced by the user, 2026-10-17).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/nadienachtlimite0000unse (borrow, then download the PDF)"
+sha256 = "b4e193764cbe3ee957e0c1edb5fb880c6f70de4770516d215ad5e072f75ba1ef"
+cover_page = 1
+body_pages = [13, 418]

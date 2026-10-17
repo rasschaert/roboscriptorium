@@ -40,9 +40,9 @@ So the job has two halves:
 2. **Get the shape right**: paragraphs, headings, italics, quote marks, dashes (the
    structure half).
 
-Some PDFs are *born-digital*, made straight from the typeset text. Their text is
-already exact, so they skip the reading half. Everything below about readers and
-judges applies to scans.
+The project is about scans. A *born-digital* PDF, made straight from typeset text
+(often by calibre, from an e-book), already holds exact text and converts back to an
+e-book with existing tools, so it is out of scope.
 
 ## The core idea: read it again, with readers that fail differently
 
@@ -165,7 +165,7 @@ project:
 | Set | Used for | Like… |
 | --- | --- | --- |
 | **tuning** (16 books) | choices are made on it, and the arbiter learns from it | studying with past exams |
-| **validation** (8 books) | checks that a choice carries over to books it wasn't made on | a mock exam |
+| **validation** (7 books) | checks that a choice carries over to books it wasn't made on | a mock exam |
 | **test** (1 book, *Het geluid van bananen*) | scored **once**, at the very end, touched by nothing else | the real exam |
 
 Even inside tuning, each book is scored by an arbiter trained *without* that book, so

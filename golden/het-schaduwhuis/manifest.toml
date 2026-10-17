@@ -1,0 +1,80 @@
+title = "Het schaduwhuis"
+author = "Anna Downes"
+language = "nl"
+translator = "Kees van Weele"
+# Downes is alive: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# De Fontein's own e-book (InDesign export, ISBN 978 90 261 6142 1, "Dit e-book is
+# gebaseerd op de eerste druk, mei 2022"), found by the user (2026-10-17). One file a
+# chapter: its number a "_1-Hoofdstukcijfer" paragraph above its name, a
+# "_2-Hoofdstuktitel" paragraph ("Alex", "Renee"), each read as a heading of its own;
+# "Proloog" and "Epiloog" are "_2-Hoofdstuktitel-copy--toc-entry-". The print sets the
+# names in capitals, the EPUB in lower case with `text-transform: uppercase`, so their
+# classes are capital classes. The map (Section-0005, an image) and the front and back
+# matter (author's note, acknowledgements, adverts) are left out.
+[reference]
+source = "Het schaduwhuis, De Fontein 2022 (first printing), e-book ISBN 978 90 261 6142 1 (EPUB)"
+sha256 = "5461c3e5d2e366a55fefcd533656fa84ceff648aa6c51053b20891af27e02d84"
+files = [
+  "OEBPS/Text/Section-0006.xhtml",
+  "OEBPS/Text/Section-0007.xhtml",
+  "OEBPS/Text/Section-0008.xhtml",
+  "OEBPS/Text/Section-0009.xhtml",
+  "OEBPS/Text/Section-0010.xhtml",
+  "OEBPS/Text/Section-0011.xhtml",
+  "OEBPS/Text/Section-0012.xhtml",
+  "OEBPS/Text/Section-0013.xhtml",
+  "OEBPS/Text/Section-0014.xhtml",
+  "OEBPS/Text/Section-0015.xhtml",
+  "OEBPS/Text/Section-0016.xhtml",
+  "OEBPS/Text/Section-0017.xhtml",
+  "OEBPS/Text/Section-0018.xhtml",
+  "OEBPS/Text/Section-0019.xhtml",
+  "OEBPS/Text/Section-0020.xhtml",
+  "OEBPS/Text/Section-0021.xhtml",
+  "OEBPS/Text/Section-0022.xhtml",
+  "OEBPS/Text/Section-0023.xhtml",
+  "OEBPS/Text/Section-0024.xhtml",
+  "OEBPS/Text/Section-0025.xhtml",
+  "OEBPS/Text/Section-0026.xhtml",
+  "OEBPS/Text/Section-0027.xhtml",
+  "OEBPS/Text/Section-0028.xhtml",
+  "OEBPS/Text/Section-0029.xhtml",
+  "OEBPS/Text/Section-0030.xhtml",
+  "OEBPS/Text/Section-0031.xhtml",
+  "OEBPS/Text/Section-0032.xhtml",
+  "OEBPS/Text/Section-0033.xhtml",
+  "OEBPS/Text/Section-0034.xhtml",
+  "OEBPS/Text/Section-0035.xhtml",
+  "OEBPS/Text/Section-0036.xhtml",
+  "OEBPS/Text/Section-0037.xhtml",
+  "OEBPS/Text/Section-0038.xhtml",
+  "OEBPS/Text/Section-0039.xhtml",
+  "OEBPS/Text/Section-0040.xhtml",
+  "OEBPS/Text/Section-0041.xhtml",
+  "OEBPS/Text/Section-0042.xhtml",
+  "OEBPS/Text/Section-0043.xhtml",
+  "OEBPS/Text/Section-0044.xhtml",
+  "OEBPS/Text/Section-0045.xhtml",
+  "OEBPS/Text/Section-0046.xhtml",
+  "OEBPS/Text/Section-0047.xhtml",
+  "OEBPS/Text/Section-0048.xhtml",
+  "OEBPS/Text/Section-0049.xhtml",
+  "OEBPS/Text/Section-0050.xhtml",
+  "OEBPS/Text/Section-0051.xhtml",
+]
+heading_prefixes = ["_1-Hoofdstuk", "_2-Hoofdstuk"]
+capital_classes = ["_2-Hoofdstuktitel", "_2-Hoofdstuktitel-copy--toc-entry-", "CharOverride-8"]
+
+# The first printing (De Fontein, May 2022, ISBN 978 90 261 6141 4); IA Scribe scan
+# (6.4), 360 ppi MRC, GlyphLessFont layer, ~350×574 pt, 340 pages. Single curly quotes,
+# stress accents on both letters of a doubled vowel ("níét"). Pages 9–337: the
+# prologue to the epilogue's end. Internet Archive lends it only, so it is placed by
+# hand (sourced by the user, 2026-10-17).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/isbn_9789026161414 (borrow, then download the PDF)"
+sha256 = "c39b7dbd5ea84492848de53114364555d44217d76653831d7fbc0c2f5a63d01a"
+cover_page = 1
+body_pages = [9, 337]

@@ -424,3 +424,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-17 | probe: break judge with ±4 lines against ±1, ~600 judge calls beside the slice growth | 0 | 34 | 0 |
 | 2026-10-17 | eval artemis--ia-scan 13-80, growing its slice (46 pages cold) | 46 | 55 | 0 |
 | 2026-10-17 | eval the-thief-takers-apprentice--ia-scan 11-84, growing its slice (58 pages cold) | 58 | 56 | 0 |
+| 2026-10-17 | eval de-cipier--ia-scan 9-92, growing its slice (59 pages cold) | 59 | 57 | 0 |

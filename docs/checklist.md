@@ -25,11 +25,14 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    ~3 h). Beside it, on cached data: `bench quick` as the tier's baseline, then the
    merges, the role trees and the arbiter retrained on the long slices, all benches
    (quick, tuning, validation): the quick tier's first check.
-2. Saturday ~23:00 to Sunday ~10:00 (`robo-first-look-reads`): the first-look slices
-   read, no scores: Het geluid van bananen, Steve Jobs, Verminkt whole.
-3. Sunday: the first looks scored once, the three books into their sets (Het geluid van
-   bananen and Steve Jobs to tuning: Stella's publisher and scan, and more training
-   data; Verminkt to validation), their trust data, the arbiter retrained on the larger
+   Between the two stages: the error categories (below), from stage (a)'s saved errors.
+2. Saturday ~23:00 to Sunday ~13:00 (`robo-first-look-reads`): the first-look slices
+   read, no scores: Het geluid van bananen, Het schaduwhuis, Steve Jobs, De geruchten,
+   Verminkt whole (tuning-bound books first).
+3. Sunday: the first looks scored once, the books into their sets (Het geluid van
+   bananen, Het schaduwhuis and Steve Jobs to tuning: Stella's publisher and scan, the
+   stress accents and "wc" the arbiter must learn, more training data; De geruchten and
+   Verminkt to validation), their trust data, the arbiter retrained on the larger
    tuning set, benches. If the probe passed, the context judge as a stage after the
    arbiter that settles the questions it is sure of, benched on the quick tier first.
 
@@ -41,10 +44,21 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       (branch `first-look`, agent ~1 h): `bench.SETS["first-look"]` replaces "test", its
       guard (`--first-look`) refuses every eval, review, probe and trust data on such a
       book, `bench first-look` scores and saves it; design.md's reason. First looks
-      (one night, ~5 h): Het geluid van bananen, Verminkt, Steve Jobs (its words; its
-      roles trained the sorter, so its role scores aren't a first look). De aanslag
-      joins validation as it is (consulted before); De tunnels stays role training (its
-      EPUB can't score words). New pairs the user finds go through the same flow
+      (one night, ~14 h): Het geluid van bananen, Het schaduwhuis, Steve Jobs (its
+      words; its roles trained the sorter, so its role scores aren't a first look), De
+      geruchten, Verminkt whole. Na die nacht waits without a slot (a sibling of two
+      tuning books). De aanslag and De tunnels stay role training (born-digital; an
+      EPUB that can't score words). New pairs the user finds go through the same flow
+- [ ] Error categories tracked per run (the user, 2026-10-17): from stage (a)'s saved
+      errors (`errorlog`, on branch `weekend-merge`), read a few hundred across books
+      and propose ~10–15 cause categories finer than today's kinds (stress accent lost,
+      small capitals lower-cased, line-end hyphen, words glued at a join, page furniture
+      left in, a break in unindented text, quote misread, missing line, reference
+      fault, …); detect each in code from the saved row, so every run uses the same
+      ruler (where code can't tell, a label kept once by the error's key); `bench`
+      prints a per-category, per-book table, before → after with the paired interval,
+      kept in the record for trends. The labels never train anything; "reference
+      fault" stays a proposal until a verdict settles it (agent, ~2 h)
 - [ ] A context judge (the user, 2026-10-17: "if it cuts down on questions being asked
       in human review, i'm for it"): qwen3.8 thinking, given the lines around a suspect,
       each version's count in the book and what OCR confuses, its answer held to the

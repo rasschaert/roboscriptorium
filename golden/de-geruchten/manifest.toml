@@ -1,0 +1,40 @@
+title = "De geruchten"
+author = "Hugo Claus"
+language = "nl"
+# Claus died in 2008: under copyright until 2078, so only this manifest is in git.
+eu_copyright_until = 2078
+
+# De Bezige Bij's own e-book (InDesign export, 2010, "Deze digitale editie is gemaakt
+# naar de zestiende druk, 2008"), which bundles the sequel Onvoltooid verleden. The
+# docs session cut it to the first novel at the user's request (2026-10-17): files E
+# and F and the "Twintig jaar later / II - Onvoltooid verleden" headings removed, the
+# text ending at "Weet ge wat, stuur Alma eens een ansichtkaartje.", and its packaging
+# slips mended (fonts declared, an empty dc:date removed, the NCX uid prefixed with
+# urn:uuid:, the cover image renamed without a space); the text is otherwise the
+# publisher's, byte for byte. The bundle as published:
+# work/.cache/publisher/de-geruchten--bundle-original.epub, sha256
+# cb99e3aa430a48cc03fe521245740b010acff935fe518108fb6d3f755c603cdd.
+# Each section opens with its narrator's name in small capitals, a "wp-kopmedium"
+# paragraph written in lower case with the class "wpt-kleinkap" ("rené", "wij");
+# derive reads them as headings in capitals. The part title "I - De Geruchten" (the
+# 1996 print has no "I") and the two mottos come before the first section and are
+# left out. Blank lines are "wp-witregel" paragraphs.
+[reference]
+source = "De geruchten, De Bezige Bij e-book 2010 (after the 16th printing, 2008), cut to the first novel (EPUB)"
+sha256 = "6cf0d9ede5d070293b708e4d50c7410f49af69a6b72f09a0e3aad6424f5d01d4"
+files = [
+  "OEBPS/9789023443292-B.xhtml", "OEBPS/9789023443292-C.xhtml", "OEBPS/9789023443292-D.xhtml",
+]
+heading_prefixes = ["wp-kopmedium"]
+capital_classes = ["wpt-kleinkap"]
+
+# The first printing (De Bezige Bij 1996, ISBN 90 234 3628 8); IA Scribe scan (6.1),
+# 360 ppi MRC, GlyphLessFont layer, ~317×545 pt, 232 pages. Flemish dialogue ("ge"),
+# single quotes, which the layer often reads as doubles. Internet Archive lends it
+# only, so it is placed by hand (sourced by the user, 2026-10-17).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/degeruchten0000clau (borrow, then download the PDF)"
+sha256 = "77925e7544ebc4af37b76e3505d53a5133b67c7ee72862aba235cde01ed41e81"
+cover_page = 1
+body_pages = [9, 226]
