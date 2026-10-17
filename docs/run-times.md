@@ -428,3 +428,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-17 | eval het-heft-in-eigen-hand--ia-scan 9-92, growing its slice (59 pages cold) | 59 | 55 | 0 |
 | 2026-10-17 | probe: context judge hosted (OpenRouter DeepInfra bf16, 8 at a time), 525 suspects | 0 | 19 | 0 |
 | 2026-10-17 | probe: context judge hosted (OpenRouter DeepInfra bf16, 8 at a time), 525 suspects | 0 | 21 | 0 |
+| 2026-10-17 | probe: context judge hosted without counts, 336 asked suspects | 0 | 16 | 0 |

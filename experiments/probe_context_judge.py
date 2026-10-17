@@ -15,8 +15,12 @@ and the arbiter weighed against is trained without that book, its answers left o
 Validation and test books are never read.
 
     uv run python experiments/probe_context_judge.py items   # freeze the set, no models
-    uv run python experiments/probe_context_judge.py run [--limit N]
-    uv run python experiments/probe_context_judge.py score
+    uv run python experiments/probe_context_judge.py run [--limit N] [--via openrouter:…]
+    uv run python experiments/probe_context_judge.py score [--via openrouter:…]
+
+`--via` asks a hosted build instead (`clients/openrouter.py`, only where the user allowed
+it): DeepInfra's bf16 Qwen, its thinking capped near the local model's length, takes the
+letters' schema but gives no log-probabilities, so its pick counts as sure. Answers are kept per model.
 
 Items, answers and timings stay in work/probes/context-judge/ (they quote the books).
 """
@@ -238,9 +242,71 @@ def ask(client: httpx.Client, item: dict) -> dict:
     }
 
 
-def run(limit: int | None) -> None:
+def ask_hosted(via: str, item: dict) -> dict:
+    from roboscriptorium.clients import openrouter
+
+    name, provider = openrouter.parse(via)
+    letters = list(LETTERS[: len(item["versions"])])
+    started = time.monotonic()
+    body = {
+        "model": name,
+        "temperature": 0,
+        "messages": [{"role": "user", "content": item["prompt"]}],
+        # Uncapped, the hosted build thinks ~8,000 tokens where the local one thinks
+        # 500–1,500; capped, it picked as the local one did on the first three items.
+        "reasoning": {"max_tokens": 1500},
+        "response_format": {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "answer",
+                "strict": True,
+                "schema": {
+                    "type": "object",
+                    "properties": {"answer": {"type": "string", "enum": letters}},
+                    "required": ["answer"],
+                    "additionalProperties": False,
+                },
+            },
+        },
+        "provider": {**openrouter._routing(provider), "require_parameters": True},
+    }
+    r = openrouter._post(openrouter.URL, body, None)
+    message = r["choices"][0]["message"]
+    answer = json.loads(message["content"])["answer"]
+    return {
+        "id": item["id"],
+        "prompt": hashlib.sha1(item["prompt"].encode()).hexdigest()[:10],
+        "pick": letters.index(answer),
+        "probs": [1.0 if k == answer else 0.0 for k in letters],
+        "thinking": message.get("reasoning") or "",
+        "tokens": r.get("usage", {}).get("completion_tokens"),
+        "seconds": round(time.monotonic() - started, 1),
+    }
+
+
+def answers_path(via: str | None) -> Path:
+    tag = (via or MODEL).replace(":", "_").replace("/", "_")
+    return OUT / f"answers-{tag}{'-nocounts' if NO_COUNTS else ''}.jsonl"
+
+
+def without_counts(prompt: str) -> str:
+    """The prompt without the versions' counts in the book (`--no-counts`): with them the
+    judge read "wc" as "we" (241 times in Ex-minnaar against 9) where the sentence said wc."""
+    prompt = re.sub(r": \d+ times in the book", "", prompt)
+    return prompt.replace(
+        "Weigh grammar and meaning in context, and how this book writes the word elsewhere (the "
+        "counts are over its whole OCR text, this place included). ",
+        "Weigh grammar and meaning in context. ",
+    )
+
+
+def run(limit: int | None, via: str | None, kinds: set[str] | None = None) -> None:
     every = json.loads((OUT / "items.json").read_text())
-    path = OUT / f"answers-{MODEL.replace(':', '_')}.jsonl"
+    if NO_COUNTS:
+        every = [{**i, "prompt": without_counts(i["prompt"])} for i in every]
+    if kinds:
+        every = [i for i in every if i["kind"] in kinds]
+    path = answers_path(via)
     done = {
         (a["id"], a["prompt"]) for a in (read_jsonl(path) if path.exists() else [])
     }
@@ -256,6 +322,20 @@ def run(limit: int | None) -> None:
         todo = todo[:limit]
     print(f"{len(todo)} to ask, {len(done)} cached", flush=True)
     seconds = []
+    if via:
+        from concurrent.futures import ThreadPoolExecutor
+
+        with ThreadPoolExecutor(8) as pool:
+            for n, (item, a) in enumerate(
+                zip(todo, pool.map(lambda i: ask_hosted(via, i), todo), strict=True), 1
+            ):
+                append_jsonl(path, a)
+                print(
+                    f"[{n}/{len(todo)}] {item['id']} {item['kind']} pick {LETTERS[a['pick']]} "
+                    f"({'right' if item['right'][a['pick']] else 'WRONG'}) {a['seconds']}s",
+                    flush=True,
+                )
+        return
     with httpx.Client(base_url=Settings.from_env().ollama_url, timeout=900) as client:
         for n, item in enumerate(todo, 1):
             a = ask(client, item)
@@ -270,9 +350,11 @@ def run(limit: int | None) -> None:
             )
 
 
-def score() -> None:
+def score(via: str | None) -> None:
     every = {i["id"]: i for i in json.loads((OUT / "items.json").read_text())}
-    path = OUT / f"answers-{MODEL.replace(':', '_')}.jsonl"
+    if NO_COUNTS:
+        every = {k: {**i, "prompt": without_counts(i["prompt"])} for k, i in every.items()}
+    path = answers_path(via)
     answers = {a["id"]: a for a in read_jsonl(path) if a["id"] in every}
     by = defaultdict(list)
     for k, a in answers.items():
@@ -305,12 +387,16 @@ def score() -> None:
               f"{[v for v, r in zip(i['versions'], i['right'], strict=True) if r]}")
 
 
+NO_COUNTS = "--no-counts" in sys.argv
+
 if __name__ == "__main__":
     step = sys.argv[1]
+    via = sys.argv[sys.argv.index("--via") + 1] if "--via" in sys.argv else None
     if step == "items":
         items()
     elif step == "run":
         limit = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv else None
-        run(limit)
+        kinds = set(sys.argv[sys.argv.index("--kinds") + 1].split(",")) if "--kinds" in sys.argv else None
+        run(limit, via, kinds)
     elif step == "score":
-        score()
+        score(via)

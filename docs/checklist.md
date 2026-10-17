@@ -70,16 +70,14 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       (`hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M`, pulled by the user 2026-10-17; text only,
       no systemone)
 - [ ] A context judge (the user, 2026-10-17: "if it cuts down on questions being asked
-      in human review, i'm for it"): qwen3.8 thinking, given the lines around a suspect,
-      each version's count in the book and what OCR confuses, its answer held to the
-      versions' letters. Probe `experiments/probe_context_judge.py` on 525 labelled
-      suspects (336 the held-out arbiter asks, 174 of them Ex-minnaar's answers; 61 it
-      settles wrongly; 128 controls), ~3 h after the slice growth. Dropped if, on asked
-      suspects, it isn't clearly above the arbiter's likeliest version, or its sure
-      picks are wrong more often than a question costs (about one in seven: the
-      reviewer's slips plus their time); else a judge feature, trust data rebuilt and
-      the arbiter retrained with the slice-growth retrain, then bench
-
+      in human review, i'm for it"): probed hosted (the user allowed OpenRouter for its
+      test): without each version's count in the prompt, it settles 220 of 336 asked
+      suspects by agreeing with the arbiter, 17 of them wrong (8%, under a question's
+      price); alone it never overrules (it overturns one in five right suspects). Built
+      that way on `weekend-merge`, off. Left: the local qwen3.8 on 100 of them tonight
+      (picks against the hosted build's), then `bench quick` with
+      `ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4` against the stage (b) run, then the full
+      benches; on by default only if both hold
 ## Assumptions to test (quick probes, minutes to an hour each)
 
 The pipeline reads lines and joins them by hand-built geometry because that was what
