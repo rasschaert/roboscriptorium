@@ -63,8 +63,12 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       the sentence, and on the asked suspects it beats the arbiter that weighs winnow
       (86% against 68% on the golden books). If the arbiter without winnow, with the
       context judge after it, benches no worse, winnow goes, and with it the only reason
-      Ollama is pinned at 0.40.3. Needs the context judge's local check first; then trust
-      data without winnow's votes (cached, no model calls) and a retrain (agent, ~1 h)
+      Ollama is pinned at 0.40.3. Leave-one-out on the trust data (2026-10-17, no
+      models): silent errors at 0/0.25/0.5/1 questions a page 148/54/24/12 with winnow,
+      151/58/25/16 without: small, every budget the same way, within a book's noise.
+      Next: an arbiter trained without winnow under its own name, `bench tuning` and
+      `validation` warm with `ROBO_CHECK_MODEL=` against stage (b) (cached, no model
+      calls; agent, ~1 h)
 - [ ] Winnow through token probabilities (the user, 2026-10-17, low urgency): render the
       question ourselves (in winnow's trained layout, EldanRing/winnow-inference
       `native/protocol.h`), ask `winnow-ollama:e4b` for one token with log-probabilities,
