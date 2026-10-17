@@ -8,7 +8,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `config.py`: `Settings`, overridable via `ROBO_OLLAMA_URL`,
   `ROBO_ROLE_MODEL` and the others it lists (`ROBO_READ_MODEL`
   reads quote questions' lines, "" for none).
-- `clients/decide.py`: decision models on Ollama's `/v1/systemone` (`for_model`).
+- `clients/decide.py`: decision models on Ollama's `/v1/systemone` (`for_model`), or
+  through token probabilities (`TokenClient`, a model named `tokens:<model>`): the
+  question rendered in the layout winnow's makers trained on, sent raw to
+  `/api/generate`, and the next token's log-probabilities over the option labels;
+  needs no decision capability, so a plain GGUF (Winnow-12B) serves.
 - `clients/llama.py`: imajev, a vision decision model whose trained readout a GGUF
   lacks, on llama-server (`ROBO_LLAMA_URL`); as `ROBO_ALARM_MODEL` it is the OCR check's
   second vision judge, asked clef's question, a vote for the arbiter only.
