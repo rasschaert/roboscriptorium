@@ -61,7 +61,8 @@ models could do. Each probe below asks whether that's still true, on a few golde
       start a paragraph?", against `reflow.indented`. A learned text table (quote after quote at
       the margin: 87 of 88 starts) did nothing, the tuning books having no unindented
       book (2026-10-16, `work/probes/parastarts.patch`); Vuurspel's unindented layout is
-      rare (the user, 2026-10-17), so no pair is sought for it
+      rare (the user, 2026-10-17), so no pair is sought for it; the vision judge on line crops (±1 and ±4 lines) gains
+      nothing over the lower-case check (2026-10-17): a page-level reading is what's left
 - [ ] Grow the seven short tuning slices (`work/runs/queue-20261017.sh`, branch
       `longer-slices`), then trust data and the role trees on them, and bench (a night)
 - [ ] After the slice growth, merge branch `heading-pairs` (one found heading for a

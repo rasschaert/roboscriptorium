@@ -12,11 +12,19 @@ has ended; only the main session works on).
    first, then the page-kinds probe; notes in `work/runs/queue-20261017.txt`, logs
    `work/runs/grow-<book>.log`). Every page read is cached, so a stop loses nothing.
    Don't edit `src/` in the main checkout while it runs: code work goes in a worktree.
-   After it: merge branch **`longer-slices`** (on origin; worktree
-   `../roboscriptorium-breaks`): the bench SETS and trust-data specs on the long ranges;
-   then rebuild trust data and the role trees on them, and bench. Two branches wait for
-   it (checklist): `heading-pairs` (scoring) and `number-lookalikes` (a tree feature; the
-   trees must be retrained before it merges, or the build stops on the feature mismatch).
+   The queue's screen outlives the session; check it with `screen -ls` and the notes file.
+   **When it ends, in order** (each branch is on origin; check `git diff --stat` first):
+   1. Merge **`longer-slices`** (worktree `../roboscriptorium-breaks`): the bench SETS and
+      trust-data specs on the long ranges.
+   2. Merge **`heading-pairs`** (scoring: one found heading for a reference's number and
+      title set as two; Metro 3/8 → 8/8, Normal People 4/9 → 8/9) and **`verdict-words`**
+      (the review says what one side has where the other has nothing).
+   3. Merge **`number-lookalikes`** and retrain the trees at once
+      (`experiments/train_sorter.py --rebuild --save`), or the build stops on the feature
+      mismatch: it adds a look-alike number feature ("Io" for 10) and counts a repeat only
+      at the line's height (chapter titles recurring as running heads). The role model is
+      asked again about the ~15 lines whose repeat count changes.
+   4. Rebuild trust data on the long slices, retrain the arbiter, bench both sets.
 2. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
@@ -24,10 +32,11 @@ has ended; only the main session works on).
    references); a space between nested quote marks folded in the score (0.38 → 0.36).
    Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
 3. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
-   runs; now on `number-lookalikes`), `../roboscriptorium-breaks`
+   runs; on `verdict-words`; branches `heading-pairs`, `number-lookalikes` there too), `../roboscriptorium-breaks`
    (`longer-slices`), `../roboscriptorium-py315` (stale, left as is).
 4. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
-   hurt, `work/probes/break-conditions/`), `experiments/probe_break_judge.py`.
+   hurt, `work/probes/break-conditions/`), `experiments/probe_break_context.py` (a taller
+   crop: no gain), `experiments/probe_break_judge.py`.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment).
