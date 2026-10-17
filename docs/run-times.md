@@ -436,3 +436,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-17 | bench tuning, stage (a) baseline (warm) | 0 | 33 | 0 |
 | 2026-10-17 | bench validation, stage (a) baseline (warm) | 0 | 2 | 0 |
 | 2026-10-17 | train line-role trees, rebuilt data on the long slices (number-lookalikes) | 0 | 10 | 0 |
+| 2026-10-17 | trust data, the seven grown slices (warm) | 0 | 2 | 0 |
+| 2026-10-17 | arbiter retrained on the long slices | 0 | 7 | 0 |
+| 2026-10-17 | bench quick, stage (b): number-lookalikes, trees and arbiter on the long slices | 0 | 4 | 0 |
+| 2026-10-17 | bench tuning, stage (b): number-lookalikes, trees and arbiter on the long slices | 0 | 5 | 0 |
+| 2026-10-17 | bench validation, stage (b): number-lookalikes, trees and arbiter on the long slices | 0 | 6 | 0 |
