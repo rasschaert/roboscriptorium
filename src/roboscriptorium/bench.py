@@ -239,7 +239,9 @@ def _book_record(
         "unasked_by_kind": quality.unasked_by_category(errors, found),
         "typography_kinds": sorted(kinds),
         # Written beside the record by `save`, not into it: the rows quote the book.
-        "_errors": errorlog.rows(run.name, errors, found, stages.pages, stages.suspects),
+        "_errors": (rows := errorlog.rows(run.name, errors, found, stages.pages, stages.suspects)),
+        # Wrong words by cause (`errorlog.cause`), for trends over runs.
+        "causes": dict(Counter(r["cause"] for r in rows for _ in range(r["size"]))),
         "pages": page_counts(
             numbers,
             errors,
@@ -431,6 +433,35 @@ def structure(old: dict, new: dict) -> list[str]:
         if round(_f1(a), 3) != round(_f1(b), 3):
             out.append(f"{name[:40]:40} paragraph F1 {_f1(a):.3f} → {_f1(b):.3f}")
     return out
+
+
+def by_cause(
+    old: dict, new: dict, old_rows: list[dict], new_rows: list[dict]
+) -> list[tuple[str, float, float, float, float]]:
+    """Per cause, wrong words a page before and after over the pages both runs scored,
+    each book weighing the same, with the interval of the difference (`pooled`); the
+    causes either run has, largest first."""
+
+    def per_page(rows: list[dict]) -> dict[tuple[str, int, str], int]:
+        out: Counter = Counter()
+        for r in rows:
+            out[(r["book"], r["page"], errorlog.cause_of(r))] += r["size"]
+        return out
+
+    a, b = per_page(old_rows), per_page(new_rows)
+    shared = old["books"].keys() & new["books"].keys()
+    pages = {
+        book: sorted(set(old["books"][book]["pages"]) & set(new["books"][book]["pages"]))
+        for book in shared
+    }
+    causes = {k[2] for k in a} | {k[2] for k in b}
+    out = []
+    for c in causes:
+        books = [
+            [(a[(book, int(p), c)], b[(book, int(p), c)]) for p in pages[book]] for book in shared
+        ]
+        out.append((c, *pooled(books)))
+    return sorted(out, key=lambda t: -max(t[1], t[2]))
 
 
 def save(record: dict, out: Path = OUT) -> Path:

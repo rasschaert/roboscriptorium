@@ -398,6 +398,14 @@ def run_bench(
     if (old_rows := errorlog.load(old_path)) and (new_rows := errorlog.load(path)):
         typer.echo("errors, place by place (`bench-diff` for the whole list):")
         typer.echo("  " + errorlog.report(errorlog.diff(old_rows, new_rows))[0])
+        _echo_causes(old, new, old_rows, new_rows)
+
+
+def _echo_causes(old: dict, new: dict, old_rows: list[dict], new_rows: list[dict]) -> None:
+    typer.echo("wrong words a page by cause (* where the 95% interval excludes 0):")
+    for c, before, after, low, high in bench.by_cause(old, new, old_rows, new_rows):
+        mark = "*" if low > 0 or high < 0 else " "
+        typer.echo(f" {mark} {c:24} {before:6.3f} → {after:6.3f}  [{low:+.3f}, {high:+.3f}]")
 
 
 @app.command("bench-diff")
@@ -415,6 +423,8 @@ def bench_diff(
             raise typer.BadParameter(f"{p.name} has no error list (saved before they were kept?)")
     for line in errorlog.report(errorlog.diff(old_rows, new_rows), examples):
         typer.echo(line)
+    typer.echo("")
+    _echo_causes(json.loads(old.read_text()), json.loads(new.read_text()), old_rows, new_rows)
 
 
 @app.command("eval")

@@ -9,6 +9,9 @@ it, and two hints at its origin. `layer`: whether the text layer already read it
 changed it), or neither shows ("unclear"; "lost" for words the build dropped). And the
 OCR check's decision on its lines, if any suspect sat there.
 
+Each row has a `cause`, read from its two sides by `cause` alone, so every run is
+measured with the same ruler and a cause's trend over runs means the build changed.
+
 A row's identity across runs is its book and its `key`, the reference words with their
 context (as verdicts are keyed), so a place keeps its identity when pages are rebuilt
 and lines renumbered. `diff` sorts two runs' rows into fixed, made and persisting.
@@ -16,6 +19,7 @@ and lines renumbered. `diff` sorts two runs' rows into fixed, made and persistin
 
 import json
 import re
+import unicodedata
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -27,6 +31,70 @@ from roboscriptorium.flags import Flag
 from roboscriptorium.ocrcheck import Suspect
 from roboscriptorium.pdf import PageText
 from roboscriptorium.trust import fold
+
+QUOTES = "'\"‘’“”„‚«»"
+DASHES = "-‐‑‒–—―−"
+# The causes `cause` tells apart, in the order they are tried.
+CAUSES = (
+    "missing text", "extra text", "case", "stress accent", "diaeresis", "other accent",
+    "dash or dot spacing", "glued or split words", "compound hyphen",
+    "quote missing or extra", "quote glyph", "dash", "dots and stops",
+    "punctuation swapped", "letters misread", "words",
+)  # fmt: skip
+
+
+def _without_marks(text: str) -> str:
+    kept = (c for c in unicodedata.normalize("NFD", text) if unicodedata.category(c) != "Mn")
+    return unicodedata.normalize("NFC", "".join(kept))
+
+
+def _marks(text: str) -> set[str]:
+    return {c for c in unicodedata.normalize("NFD", text) if unicodedata.category(c) == "Mn"}
+
+
+def cause(got: str, want: str) -> str:
+    """Why the build's words differ from the reference's, from the two sides alone: the
+    first of `CAUSES` that explains the whole difference ("zijn" for "zíjn" is a stress
+    accent, "meteen" for "met een" glued words, "rood;" for "rood,’" punctuation)."""
+    if not got.strip():
+        return "missing text"
+    if not want.strip():
+        return "extra text"
+    if got.lower() == want.lower():
+        return "case"
+    if _without_marks(got) == _without_marks(want):
+        marks = _marks(got) ^ _marks(want) or _marks(got) | _marks(want)
+        if marks <= {"\u0301", "\u0300"}:
+            return "stress accent"
+        return "diaeresis" if marks <= {"\u0308"} else "other accent"
+
+    def spaceless(t: str) -> str:
+        return re.sub(r"\s+", "", t)
+
+    def tight(t: str) -> str:
+        return re.sub(rf"\s*([{DASHES}…]|\.(?:\s*\.)+)\s*", r"\1", t)
+
+    if spaceless(got) == spaceless(want):
+        return "dash or dot spacing" if tight(got) == tight(want) else "glued or split words"
+    if spaceless(got.replace("-", "")) == spaceless(want.replace("-", "")):
+        return "compound hyphen"
+    unquoted = str.maketrans("", "", QUOTES)
+    if got.translate(unquoted) == want.translate(unquoted):
+        count = lambda t: sum(c in QUOTES for c in t)  # noqa: E731
+        return "quote missing or extra" if count(got) != count(want) else "quote glyph"
+    if re.sub(r"[\W_]+", "", got) == re.sub(r"[\W_]+", "", want):
+        undashed = str.maketrans("", "", QUOTES + DASHES)
+        if got.translate(undashed) == want.translate(undashed):
+            return "dash"
+        if re.sub(r"[.…\s]", "", got) == re.sub(r"[.…\s]", "", want):
+            return "dots and stops"
+        return "punctuation swapped"
+    return "letters misread" if len(got.split()) == len(want.split()) else "words"
+
+
+def cause_of(row: dict) -> str:
+    """A row's cause, read again for rows saved before causes were kept."""
+    return row.get("cause") or cause(row["got"], row["want"])
 
 
 def _plain(text: str) -> str:
@@ -73,6 +141,7 @@ def rows(
                 "page": e.page,
                 "lines": list(e.lines) if e.lines else None,
                 "kind": quality.category(e),
+                "cause": cause(e.got, e.want),
                 "size": quality.size(e),
                 "got": e.got,
                 "want": e.want,
@@ -141,24 +210,24 @@ def report(d: Diff, examples: int = 3) -> list[str]:
         f"made {words(d.made)} ({words(d.made, True)} unasked), "
         f"kept {words(kept)} ({words(kept, True)} unasked)"
     ]
-    for title, group in (("by kind", "kind"), ("by book", "book"), ("by origin", "layer")):
+    for title, group in (("by cause", "cause"), ("by book", "book"), ("by origin", "layer")):
         fixed, made = Counter(), Counter()
         for r in d.fixed:
-            fixed[r[group]] += r["size"]
+            fixed[cause_of(r) if group == "cause" else r[group]] += r["size"]
         for r in d.made:
-            made[r[group]] += r["size"]
+            made[cause_of(r) if group == "cause" else r[group]] += r["size"]
         out.append(f"\n{title}: fixed / made")
         for k in sorted(fixed.keys() | made.keys(), key=lambda k: -(fixed[k] + made[k])):
             out.append(f"  {k[:40]:40} {fixed[k]:5} / {made[k]:<5}")
     for title, rs in (("fixed", d.fixed), ("made", d.made)):
         shown = defaultdict(list)
         for r in rs:
-            shown[r["kind"]].append(r)
+            shown[cause_of(r)].append(r)
         out.append(f"\n{title}, examples:")
         for kind, group in sorted(shown.items(), key=lambda kv: -len(kv[1])):
             for r in group[:examples]:
                 out.append(
-                    f"  {kind:12} {r['book'][:24]:24} p{r['page']}: "
+                    f"  {kind[:22]:22} {r['book'][:24]:24} p{r['page']}: "
                     f"{r['before']} [{r['got']} → {r['want']}] {r['after']}"
                 )
     return out

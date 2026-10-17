@@ -124,8 +124,13 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   its origin (did the text layer already read it so: kept, made, lost, unclear; the OCR
   check's decision on its lines). Rows are keyed by the reference words with their
   context, like verdicts, so `diff` sorts two runs into fixed, made and kept, and
-  `roboscriptorium bench-diff <old> <new>` prints them by kind, book and origin with
-  examples; `bench` prints the one-line sum after its comparison.
+  `roboscriptorium bench-diff <old> <new>` prints them by cause, book and origin with
+  examples; `bench` prints the one-line sum after its comparison. Each row has a `cause`
+  (`errorlog.cause`, from its two sides alone: stress accent, diaeresis, glued or split
+  words, compound hyphen, quote missing or extra, quote glyph, punctuation swapped,
+  letters misread, missing or extra text, …), the record keeps each book's wrong words
+  by cause, and `bench` and `bench-diff` print each cause before → after over the pages
+  both runs scored, with its interval (`bench.by_cause`).
 - `bench.py` (`roboscriptorium bench [tuning|validation|quick|first-look]`): **the** measure for a
   change. Pinned golden slices per set, scored with `evaluate` and `quality`,
   saved whole to `work/bench/` (commit, settings, decider, model versions,

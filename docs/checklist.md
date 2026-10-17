@@ -49,16 +49,10 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       geruchten, Verminkt whole. Na die nacht waits without a slot (a sibling of two
       tuning books). De aanslag and De tunnels stay role training (born-digital; an
       EPUB that can't score words). New pairs the user finds go through the same flow
-- [ ] Error categories tracked per run (the user, 2026-10-17): from stage (a)'s saved
-      errors (`errorlog`, on branch `weekend-merge`), read a few hundred across books
-      and propose ~10–15 cause categories finer than today's kinds (stress accent lost,
-      small capitals lower-cased, line-end hyphen, words glued at a join, page furniture
-      left in, a break in unindented text, quote misread, missing line, reference
-      fault, …); detect each in code from the saved row, so every run uses the same
-      ruler (where code can't tell, a label kept once by the error's key); `bench`
-      prints a per-category, per-book table, before → after with the paired interval,
-      kept in the record for trends. The labels never train anything; "reference
-      fault" stays a proposal until a verdict settles it (agent, ~2 h)
+- [x] Error categories tracked per run (2026-10-17): 16 causes read from an error's two
+      sides alone (`errorlog.cause`), chosen from stage (a)'s 618 saved errors across 23
+      books; each run's record keeps them by book, `bench` and `bench-diff` print each
+      before → after with its interval. "Reference fault" isn't one: a verdict settles it
 - [ ] One more reader? Taking readers away costs the most of any block (without qwen3.8
       silent errors 12 → 75 at a question a page; `probe_subtract.py`), so adding one
       may pay where nothing else reaches: layer errors no reader doubts. Measure on the

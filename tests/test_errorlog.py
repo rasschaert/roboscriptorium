@@ -40,3 +40,41 @@ def test_bench_saves_the_error_rows_beside_the_record_and_not_in_it(tmp_path):
     assert "_errors" not in json.loads(path.read_text())["books"]["a"]
     assert errorlog.load(path) == rows
     assert errorlog.load(tmp_path / "other.json") == []
+
+
+def test_each_cause_is_told_from_its_neighbours():
+    cases = {
+        ("zijn", "zíjn"): "stress accent",
+        ("hé?'", "hè?'"): "stress accent",
+        ("heroine", "heroïne"): "diaeresis",
+        ("hygiéne", "hygiëne"): "other accent",
+        ("ZOU", "zou"): "case",
+        ("meteen", "met een"): "glued or split words",
+        ("got,you", "got, you"): "glued or split words",
+        ("I —'", "I—'"): "dash or dot spacing",
+        ("blood-curdling", "bloodcurdling"): "compound hyphen",
+        ("email", "e-mail"): "compound hyphen",
+        ("dagen,", "dagen,'"): "quote missing or extra",
+        ('"Your', "'Your"): "quote glyph",
+        ("-'", "—'"): "dash",
+        ("eraf'", "eraf.'"): "dots and stops",
+        ("rood;", "rood,'"): "punctuation swapped",
+        ("Tk", "Ik"): "letters misread",
+        ("", "Móni"): "missing text",
+        ("BAM!", ""): "extra text",
+        ("phy- 35 sique.", "physique."): "words",
+    }
+    assert {k: errorlog.cause(*k) for k in cases} == cases
+
+
+def test_causes_compare_page_by_page_over_the_pages_both_runs_scored():
+    def row(page, cause, size=1):
+        return {"book": "a", "key": f"{page}{cause}", "page": page, "size": size,
+                "got": "x", "want": "y", "cause": cause}  # fmt: skip
+
+    old = {"books": {"a": {"pages": {"1": [], "2": [], "3": []}}}}
+    new = {"books": {"a": {"pages": {"1": [], "2": []}}}}
+    rows_old = [row(1, "stress accent"), row(2, "stress accent"), row(3, "stress accent")]
+    rows_new = [row(2, "diaeresis", 2)]
+    table = {c: (b, a) for c, b, a, *_ in bench.by_cause(old, new, rows_old, rows_new)}
+    assert table == {"stress accent": (1.0, 0.0), "diaeresis": (0.0, 1.0)}
