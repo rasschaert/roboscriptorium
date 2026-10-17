@@ -429,3 +429,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-17 | probe: context judge hosted (OpenRouter DeepInfra bf16, 8 at a time), 525 suspects | 0 | 19 | 0 |
 | 2026-10-17 | probe: context judge hosted (OpenRouter DeepInfra bf16, 8 at a time), 525 suspects | 0 | 21 | 0 |
 | 2026-10-17 | probe: context judge hosted without counts, 336 asked suspects | 0 | 16 | 0 |
+| 2026-10-17 | eval de-tuin-van-de-avondnevel--ia-scan 11-97, growing its slice (68 pages cold) | 68 | 83 | 0 |

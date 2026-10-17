@@ -59,6 +59,13 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       prints a per-category, per-book table, before → after with the paired interval,
       kept in the record for trends. The labels never train anything; "reference
       fault" stays a proposal until a verdict settles it (agent, ~2 h)
+- [ ] One more reader? Taking readers away costs the most of any block (without qwen3.8
+      silent errors 12 → 75 at a question a page; `probe_subtract.py`), so adding one
+      may pay where nothing else reaches: layer errors no reader doubts. Measure on the
+      frozen reader set's hard lines the errors a candidate reads right where every
+      current reader is wrong ("unique catches"); dropped if it adds none beyond noise,
+      whatever its own score. Candidates: qwen3.8 with another prompt or crop, a vision
+      model not yet screened. Locally in a gap (agent, ~1 h)
 - [ ] Winnow subtracted? The context judge reads the whole paragraph where winnow reads
       the sentence, and on the asked suspects it beats the arbiter that weighs winnow
       (86% against 68% on the golden books). If the arbiter without winnow, with the
