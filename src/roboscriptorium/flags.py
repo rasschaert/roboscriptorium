@@ -208,7 +208,8 @@ class _Furniture:
         stripped = text.strip()
         if P.digits(stripped) and self.offset is not None:
             return abs(int(stripped) - (page.number - self.offset)) <= R.PAGE_NUMBER_SLACK
-        return self.repeats.other_pages(text, page.number) >= R.HEADING_MAX_REPEATS
+        y = page.lines[i].y0 / page.height
+        return self.repeats.other_pages(text, page.number, y) >= R.HEADING_MAX_REPEATS
 
 
 def _speck(page: PageText, i: int) -> bool:
