@@ -29,9 +29,7 @@ BOOTSTRAP_SAMPLES = 2000
 # for choices before, so they validate, not test. Long books are sliced at a chapter
 # boundary (a run costs about 1.1 min per cold page), about 90 pages at most: the
 # bootstrap's power comes from the pages in all, so more books of fewer pages decide as
-# surely and vary more. The books whose trust data wasn't built yet on 2026-10-12 hold
-# only their first chapters (10–27 pages) until a rescoring of 20, 45 and 90 pages a
-# book sets the size. Monterosso runs its chapters on without a page break, so no slice
+# surely and vary more. Monterosso runs its chapters on without a page break, so no slice
 # short of the whole book ends on one. Dolittle's slice holds its plates and drawn
 # initials. A new pair waits in "first-look" for one untouched score (`bench first-look
 # --first-look`): nothing is chosen on it and no model trains on it before, and the CLI
@@ -44,15 +42,15 @@ SETS = {
         "reis-om-mijn-schedel--ia-scan:11-99:1-10",
         "the-nature-of-a-crime--doubleday-1924",
         "the-story-of-doctor-dolittle--stokes-1920:23-88:1-7",
-        "the-thief-takers-apprentice--ia-scan:11-26:1-6",
+        "the-thief-takers-apprentice--ia-scan:11-84:1-22",
         "afscheid-van-verspilde-tijd--ia-scan:9-70:1-11",
         "metro-2033--ia-scan:7-92:1-8",
-        "de-cipier--ia-scan:9-33:1-2",
-        "artemis--ia-scan:13-34:1-1",
-        "de-tuin-van-de-avondnevel--ia-scan:11-29:1-1",
-        "het-heft-in-eigen-hand--ia-scan:9-33:1-2",
-        "doodskleed--ia-scan:13-22:1-2",
-        "het-ijzige-land--ia-scan:11-21:1-1",
+        "de-cipier--ia-scan:9-92:1-4",
+        "artemis--ia-scan:13-80:1-3",
+        "de-tuin-van-de-avondnevel--ia-scan:11-97:1-6",
+        "het-heft-in-eigen-hand--ia-scan:9-92:1-5",
+        "doodskleed--ia-scan:13-96:1-14",
+        "het-ijzige-land--ia-scan:11-104:1-11",
         "de-eerlijke-vinder--ia-scan",
         "monterosso-mon-amour--ia-scan",
     ],
