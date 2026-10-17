@@ -59,6 +59,14 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       prints a per-category, per-book table, before → after with the paired interval,
       kept in the record for trends. The labels never train anything; "reference
       fault" stays a proposal until a verdict settles it (agent, ~2 h)
+- [ ] Winnow through token probabilities (the user, 2026-10-17, low urgency): render the
+      question ourselves (in winnow's trained layout, EldanRing/winnow-inference
+      `native/protocol.h`), ask `winnow-ollama:e4b` for one token with log-probabilities,
+      renormalise the option labels (watch for labels of several tokens); against
+      `/v1/systemone` on 0.40.3 on the judge tryout set: right alone, and as an alarm on
+      clef. If it holds, switch winnow to it (trust data, retrain, bench) and drop the
+      Ollama pin. In a gap with no chain using winnow (agent, ~30 min). Later, the same
+      harness could screen Winnow-12B (Piotr1215's Q4_K_M GGUF, the user pulls it)
 - [ ] A context judge (the user, 2026-10-17: "if it cuts down on questions being asked
       in human review, i'm for it"): qwen3.8 thinking, given the lines around a suspect,
       each version's count in the book and what OCR confuses, its answer held to the
