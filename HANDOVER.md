@@ -5,38 +5,35 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-17 ~10:30 by the main session (the helper session
 has ended; only the main session works on).
 
-## Running (2026-10-17, evening)
+## Running (2026-10-18, night; the user asleep, the session working on)
 
-1. **Done this evening:** the slice growth (all seven, 17:55); stage (a) merged and its
-   baselines (quick; tuning on the long slices 0.28 after review; validation 0.41 over
-   seven books, Villa Toscane out); stage (b) merged (`number-lookalikes`) and the role
-   trees retrained (18:46). Every bench now saves its errors (`*.errors.jsonl`) with
-   their causes; `bench-diff` compares two runs place by place.
-2. **Stage (b) done** 19:09: trust data, arbiter, the three benches (decisions.md).
-3. **`robo-context-judge`**: the local qwen3.8 on 100 asked suspects without counts
-   (`work/runs/context-judge.log`), to set beside the hosted run
-   (`probe_context_judge.py score --no-counts` both ways). If it agrees, `bench quick`
-   with `ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4` against stage (b).
-4. **Winnow probe done** (805 suspects): Winnow-12B by tokens 77.9% right against
-   winnow's 66.5% by systemone, and a sharper alarm on clef (decisions.md).
-5. **`robo-first-look-reads`**, waiting behind `robo-context-judge` (the hold is
-   released, the trees match), then ~14 h: builds (no scores) of Het geluid van bananen
-   9–101, Het schaduwhuis 9–91, Steve Jobs 9–100, De geruchten 9–97, Verminkt whole
-   (notes `work/runs/first-look-reads.txt`). Then `bench first-look --first-look`, and
-   the books into their sets (checklist, "First, after the slice growth").
-6. **The page-kinds probe** still runs as `robo-queue`'s last step (clef-flash).
-7. **`robo-w12b`**, waiting behind `robo-first-look-reads`: Winnow-12B as the text judge
-   through token probabilities (`tokens:` client, merged, off by default): every book's
-   trust data rebuilt in `work/probes/ocr-trust-w12b`, an arbiter of its own
-   (`work/models/ocr-trust-w12b.pkl`), `bench tuning` and `validation` against stage
-   (b) (`work/runs/w12b.sh`, progress `work/probes/ocr-trust-w12b/runs/progress.txt`).
-   If no worse: `check_model` becomes Winnow-12B by tokens, winnow-ollama:e4b and the
-   Ollama pin go (AGENTS.md Environment, docs/models.md Setup, docs/design.md).
-   **Stage (b) results**: validation 0.41 → 0.37 BETTER, tuning NO CHANGE (decisions.md).
-8. **`robo-cj-bench`**, behind the reads and `robo-w12b`: `bench quick` with the context
-   judge on (`ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4`) against stage (b)'s quick run
-   (`work/runs/cj-bench.sh`, log `work/runs/cj-bench.log`, ~2 h). If no worse, the
-   tuning and validation benches with it, then on by default.
+1. **`robo-first-look-reads`**: Bananen, Schaduwhuis, Steve Jobs and De geruchten read
+   (01:25); Verminkt whole (7–423) since 01:25, ~7 h, to ~08:30
+   (`work/runs/first-look-reads.txt`, `work/runs/read-verminkt--ia-scan.log`).
+2. **`robo-first-look-bench`**, behind the reads: `bench first-look --first-look`, warm,
+   the five read books (`work/runs/first-look-bench.sh`, log
+   `work/runs/first-look-bench.log`). Na die nacht moved to `bench.WAITING` (guarded,
+   held out, not in the run: 406 pages never read). References of all five checked
+   against today's derive: identical. Then: scores to decisions.md, the books into
+   tuning (bananen, schaduwhuis, steve-jobs) and validation (geruchten, verminkt),
+   docs/optimism.md updated.
+3. **`robo-w12b`**, behind the reads: Winnow-12B as the text judge through token
+   probabilities: trust data in `work/probes/ocr-trust-w12b`, its own arbiter
+   (`work/models/ocr-trust-w12b.pkl`), `bench tuning` and `validation` against stage (b)
+   (`work/runs/w12b.sh`, progress `work/probes/ocr-trust-w12b/runs/progress.txt`). If no
+   worse: `check_model` becomes Winnow-12B by tokens; winnow-ollama:e4b and the Ollama
+   pin go (AGENTS.md Environment, docs/models.md Setup, docs/design.md), and the user can
+   update Ollama.
+4. **`robo-cj-bench`**, behind `robo-w12b`: `bench quick` with the context judge on
+   (`ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4`) against stage (b)'s quick run
+   (`work/runs/cj-bench.sh`, ~2 h). If no worse, tuning and validation with it.
+5. **Tonight, model-free** (decisions.md, 2026-10-18): the 289 unasked errors read one
+   by one (a quarter look like the references'; a verdict batch for the user, checklist);
+   a cut-off dash rule tried and not taken (branch `cutoff-dash`; its run in
+   `work/bench/tried/`); De aanslag and Villa Toscane retired; the primer's visuals.
+   Baselines are still stage (b)'s: tuning `20261017T170349`, validation
+   `20261017T170936`, quick `20261017T165913`.
+
 7. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
