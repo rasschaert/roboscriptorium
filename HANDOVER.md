@@ -2,18 +2,35 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-17 ~00:45, at the end of the session of 2026-10-16.
+end of every session. Written 2026-10-17 ~09:20, during the night run; the user may reset the sessions.
 
-## Running (2026-10-17 night)
+## Running, and what the night left (2026-10-17)
 
-1. `robo-break-bench` (v2, started 03:40, ~6.5 h): `bench tuning` then `validation` with
-   `parabreaks.py` v2 against the pre-judge baselines (`work/runs/break-bench2.log`). v1's
-   tuning result is in decisions.md. If v2 is worse, `ROBO_BREAK_JUDGE=0` turns it off.
-2. `robo-queue` (`work/runs/queue-20261017.sh`, notes in `queue-20261017.txt`) waits for
-   it, then grows the seven short tuning slices back to their pre-2026-10-12 ranges by
-   `eval` (~450 pages cold, ~7.5 h, fewest new pages first), then the page-kinds probe.
-   The bench's SETS still hold the short slices: change them once the pages are read,
-   rebuild trust data and the trees, and bench.
+1. `robo-break-bench`: `bench validation` with the paragraph-break judge v2 (`parabreaks.py`),
+   against the pre-judge baseline, log `work/runs/break-bench2.log`, ends ~10:15. Its
+   tuning half is done: NO CHANGE, words 0.27 → 0.27 after review, paragraph breaks 0.19 →
+   0.16 a page [−0.06, +0.00]; Dolittle 0.39 → 0.10, Thief-Taker 0.25 → 0.00, Monterosso
+   0.08 → 0.02, **Goede dochter 0.00 → 0.10 (flagged worse on its own)**. Read the
+   validation verdict from the log; decisions.md has v1 and v2.
+2. **The break judge is merged and on by default** (`ROBO_BREAK_JUDGE=1`). Whether it stays
+   on waits on the user (below). Its answers are cached per book in
+   `stages/decisions.jsonl`, so rebuilds don't ask again.
+3. **Slice growth not started** (the user's break): `robo-queue` was stopped while it
+   waited. To resume: `experiments/detached.sh queue work/runs/queue-20261017.sh` (it waits
+   for `robo-break-bench`, then `eval`s the seven short tuning slices to their
+   pre-2026-10-12 ranges, ~450 pages cold, ~8 h with the judge, fewest new pages first,
+   then the page-kinds probe; notes in `work/runs/queue-20261017.txt`). Every page read is
+   cached, so a stop loses nothing. Then merge branch **`longer-slices`** (on origin;
+   worktree `../roboscriptorium-breaks`): the bench SETS and trust-data specs on the long
+   ranges. Then rebuild trust data and the role trees on them, and bench.
+4. Other worktrees: `../roboscriptorium-spans` (branch `reference-spaces`, the main
+   session's: drops the space Bruna's e-books set before punctuation in derived references;
+   to merge after the validation bench, which it would change mid-run);
+   `../roboscriptorium-py315` (branch `py315`, 2026-10-11, no commits past main, two
+   untracked files: stale, left as is).
+5. Tested, not merged: nothing else. Probes and their data: `experiments/probe_break_judge.py`
+   (`work/probes/break-judge/`, incl. clef-flash and a `--styled` variant never run),
+   `experiments/seed_break_answers.py`.
 
 **Ollama is on 0.40.3; keep it there** with the app's automatic updates off: 0.40.4
 refuses winnow (AGENTS.md, Environment).
@@ -49,6 +66,11 @@ runs: it now also holds `work/ex-minnaar/errata.toml`.
 
 ## Waiting on the user
 
+- **Keep the paragraph-break judge on, or switch it off** (`ROBO_BREAK_JUDGE=0`) until
+  Goede dochter's new breaks are fixed: decide after the validation result (the user
+  postponed it, 2026-10-17). Goede dochter's errors are flush dialogue taken for new
+  paragraphs (`work/probes/break_samples.py` lists them, no models, with
+  `ROBO_OLLAMA_URL=http://127.0.0.1:9`).
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`,
   `ornith-1.5:9b`, `ornith-1.5:35b`, `qwen3.8:27b-mxfp8` (not in the way, the user said).
