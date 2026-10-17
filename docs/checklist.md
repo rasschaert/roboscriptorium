@@ -127,19 +127,11 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       worse on both sets (decisions.md); running-text and numeral-slot retired (2026-10-16,
       `probe_retire_rules.py`, bench no change); the other rules still earn their place.
       Next: a book with text wrapped around pictures for Dolittle's case
-- [ ] Trust data for the 20 books on qwen3.8:27b-nvfp4, then the arbiter and `bench
-      tuning` (`experiments/rebuild-trust.sh`): all read 2026-10-12, first bench 0.31
-      after review over 16 books; Monterosso read again whole (its 9-page slice cut a
-      chapter), then retrain and bench (running, ~21:15)
-- [ ] FKA USA, what its first bench showed (no models, from cache): note marks come out
-      as LaTeX (`illegal, $ ^{1} $` for `illegal,1`), so a reader's superscript markup
-      reaches the text; a chapter's epigraph and its credit line are dropped (p. 19,
-      and `—Reed King`); the part heading "Part I / CRUNCHTOWN 407…" is missing; single
-      words lost at a page top ("up", "almost every", "border"). Its 30% unplaced lines
-      are its footnotes (the reference keeps notes apart), so the bench's suspect-pair
-      warning is a false alarm on a footnote book: count note lines apart. Fix, then
-      its trust data (SPECS gets `fka-usa--ia-scan: 11-22:1-5`, out of
-      `bench.NO_TRUST_DATA`), retrain, bench (~30 min)
+- [x] Trust data for the 20 books on qwen3.8:27b-nvfp4, then the arbiter and `bench
+      tuning` (2026-10-12): 0.31 after review over 17 tuning books, Monterosso read whole
+- [x] ~~FKA USA's fixes from its first bench (note marks as LaTeX, a dropped epigraph,
+      a missing part heading)~~ (2026-10-13, dropped): the pair was retired as a suspect
+      (30% of its body lines unplaced) and its files deleted
 - [ ] No fixed test set or reserve (proposed, the user agreed to do it later, 2026-10-12):
       every new pair gets one untouched first-look score before anything is chosen or
       trained on it, then joins tuning or validation. Het geluid van bananen gets its
