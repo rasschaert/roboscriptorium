@@ -81,3 +81,24 @@ def test_a_line_that_isnt_body_isnt_asked(tmp_path):
     (page,) = parabreaks.judged(pdf, pages, roles, judge, DecisionCache(tmp_path / "d.jsonl"))
     assert judge.asked == ["Het regende."]
     assert page.lines[0].starts_paragraph is None
+
+
+def test_the_line_above_is_the_line_of_text_above_not_a_running_head(tmp_path):
+    pdf, pages = _scan(
+        tmp_path, ["DE NATUUR VAN EEN MISDAAD", "een man die ik kende.", "Het regende."]
+    )
+    roles = {SourceRef(1, 0): LineRole("running_head", 0.9, 0.05)}
+    seen = []
+
+    class Asked(Judge):
+        def decide(self, state, questions, image_png=None):
+            seen.append(state)
+            return super().decide(state, questions, image_png)
+
+    judge = Asked({"een man die ik kende.": ("continues", 0.9), "Het regende.": ("starts", 0.9)})
+    pages = [pages[0]]
+    parabreaks.judged(pdf, pages, roles, judge, DecisionCache(tmp_path / "d.jsonl"))
+    # The page's first line of text is asked against the page before's last; the head
+    # above it isn't its line above.
+    assert seen[0]["line above (the last line of the page before)"] == ""
+    assert seen[1]["line above"] == "een man die ik kende."
