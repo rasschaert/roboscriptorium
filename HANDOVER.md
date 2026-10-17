@@ -32,17 +32,22 @@ has ended; only the main session works on).
       asked again about the ~15 lines whose repeat count changes.
    5. Rebuild trust data on the long slices, retrain the arbiter, bench both sets, and
       `bench quick` again: does the quick tier give the same verdict as `bench tuning`?
-2. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
+2. **`robo-context-judge`**, waiting in a screen for `robo-queue` to end, then ~3 h:
+   the context-judge probe (`experiments/probe_context_judge.py run`, log
+   `work/runs/context-judge.log`; items frozen in `work/probes/context-judge/`, answers
+   cached, so a stop loses nothing). Then `... score`, and the verdict in the checklist
+   step "A context judge". It holds qwen3.8 only: warm benches can run beside it.
+3. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
    without markup spaces (validation 0.49 → 0.38 after review, better, mostly the
    references); a space between nested quote marks folded in the score (0.38 → 0.36).
    Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
-3. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
+4. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
    runs; on `verdict-words`; branches `heading-pairs`, `number-lookalikes` there too), `../roboscriptorium-breaks`
    (checked out on `scene-after-judge`; `longer-slices` is on origin), `../roboscriptorium-lead` (`quick-tier`), `../roboscriptorium-py315`
    (stale, left as is).
-4. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
+5. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
    hurt, `work/probes/break-conditions/`), `experiments/probe_break_context.py` (a taller
    crop: no gain), `experiments/probe_break_judge.py`.
 

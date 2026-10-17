@@ -149,8 +149,9 @@ mistake it prevents; check a change against them before committing.
   told apart, flag for review instead of rewriting.
 - **Measure with `roboscriptorium bench`, before and after.** A single run's CER moved by
   more than most changes did; only the bench's paired comparison says whether a change is
-  real. Choose on `bench tuning`; `bench validation` checks that it carries over, and a
-  choice made on validation scores makes them tuning.
+  real. Choose on `bench tuning`; `bench validation` only vetoes (the user, 2026-10-17):
+  a change no better on tuning isn't taken for a gain on validation, and a choice made
+  on validation scores makes them tuning.
 - **Sort a probe's catches by where they sit before building on its total.** Two page
   readers "caught 60 errors"; split into lines, as the design chosen on that count
   feeds them, about a quarter were reachable: the rest sat at line joins (end hyphens,
