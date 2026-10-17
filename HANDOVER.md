@@ -42,17 +42,23 @@ has ended; only the main session works on).
    `work/runs/context-judge.log`; items frozen in `work/probes/context-judge/`, answers
    cached, so a stop loses nothing). Then `... score`, and the verdict in the checklist
    step "A context judge". It holds qwen3.8 only: warm benches can run beside it.
-3. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
+3. **`robo-first-look-reads`**, waiting behind `robo-context-judge`, then ~11 h: builds
+   (no scores) of Het geluid van bananen 9–101, Steve Jobs 9–100, Verminkt whole
+   (`work/runs/first-look-reads.sh`, notes `work/runs/first-look-reads.txt`). **The
+   role trees must be retrained before it starts** if `number-lookalikes` is merged, or
+   its builds stop on the feature mismatch. The weekend's order is in the checklist
+   ("First, after the slice growth").
+4. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
    without markup spaces (validation 0.49 → 0.38 after review, better, mostly the
    references); a space between nested quote marks folded in the score (0.38 → 0.36).
    Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
-4. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
+5. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
    runs; on `verdict-words`; branches `heading-pairs`, `number-lookalikes` there too), `../roboscriptorium-breaks`
    (checked out on `scene-after-judge`; `longer-slices` is on origin), `../roboscriptorium-lead` (`first-look`), `../roboscriptorium-py315`
    (stale, left as is).
-5. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
+6. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
    hurt, `work/probes/break-conditions/`), `experiments/probe_break_context.py` (a taller
    crop: no gain), `experiments/probe_break_judge.py`.
 
