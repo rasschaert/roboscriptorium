@@ -1,8 +1,10 @@
 """Printed lines the text layer lacks, read from the page image.
 
 OCR layers drop short lines: a bare chapter number ("3"), a page number, a line
-of dialogue ("'Ja.'"). The layout model still sees a region there. A region about
-one line tall that no text-layer line falls in is read by the OCR model, and the
+of dialogue ("'Ja.'"), and now and then a block's first or last line. The layout model
+still sees a region there. A region about one line tall that no text-layer line falls
+in, or the strip of a text region above its first layer line or below its last, is
+read by the OCR model, and the
 reading goes into a copy of the page as a line of its own, in reading order, so
 roles, rules and reflow treat it like any other line. Readings are cached in
 `stages/missing-lines.json`.
@@ -29,6 +31,9 @@ MAX_HEIGHT = 1.8  # times the book's median line height
 # (Artemis sets each in a circle about four lines high).
 OPENING_MAX_HEIGHT = 5.0
 SKIPPED = {"figure", "figure_caption"}
+# A text region's strip above its first layer line or below its last, at least this
+# many line heights tall, is a line the layer lacks.
+EDGE_GAP = 1.5
 
 
 def _inside(line: Line, box) -> bool:
@@ -49,7 +54,8 @@ def candidates(
     answered: dict[int, list[tuple[float, float, float, float]]],
 ) -> list[tuple[int, Region]]:
     """Line-sized regions holding no text-layer line and not part of one, one per spot
-    (the surest); above the text of a sunk page, regions up to a few lines tall.
+    (the surest); above the text of a sunk page, regions up to a few lines tall; and a
+    text region's strip above its first layer line or below its last (`edges`).
 
     `answered` holds, per page, the boxes of regions a human typed text for.
     """
@@ -81,7 +87,32 @@ def candidates(
                 continue
             kept.append(r)
         found += [(page.number, r) for r in kept]
+        found += [
+            (page.number, e)
+            for e in edges(page, regions.get(page.number, []), median(heights))
+            if not any(_overlap(e, k) for k in kept)
+            and not any(
+                _inside(Line("", e.x0, e.y0, e.x1, e.y1), b) for b in answered.get(page.number, [])
+            )
+        ]
     return found
+
+
+def edges(page: PageText, regions: list[Region], height: float) -> list[Region]:
+    """The strips of the text regions above their first layer line and below their
+    last, where at least `EDGE_GAP` line heights are left and at most `MAX_HEIGHT`."""
+    out = []
+    for r in regions:
+        if r.label != "plain text" or r.turned:
+            continue
+        inside = [ln for ln in page.lines if _inside(ln, (r.x0, r.y0, r.x1, r.y1))]
+        if not inside:
+            continue
+        top, bottom = min(ln.y0 for ln in inside), max(ln.y1 for ln in inside)
+        for y0, y1 in ((r.y0, top), (bottom, r.y1)):
+            if EDGE_GAP * height <= y1 - y0 <= MAX_HEIGHT * height + height:
+                out.append(replace(r, y0=y0, y1=y1))
+    return out
 
 
 def _key(number: int, r: Region) -> str:
