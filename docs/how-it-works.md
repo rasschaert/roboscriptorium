@@ -347,6 +347,30 @@ qwen3.8 is reliable on quote marks and less so on letters.
 A drawn initial comes with a guess at its letter. Code finds the letters that make
 the word beside it a word, and the sorter picks the one the drawing shows.
 
+### The page and its keys
+
+Each region asks what it is: `1` running text, `2` heading, `3` drop, `4` image,
+`5` caption, `6` decorated initial (its letter guessed from the word it begins). The
+pipeline's call is preselected. The text as printed goes in a text box.
+
+Where the readings differ, the question asks which one matches the scan instead, once
+per line. Each row is a whole line: the text layer's, each reader's and each judge's,
+the likeliest at each place, and the line as built. The differing parts are marked,
+with who has them. Keys `a`, `b`, … pick a row; `e` types something else, starting from
+the chosen row, or from any row with its ✎. A question with no readings of its own (a
+heading, a line the layer lacks) gets qwen3.8's reading beside the layer's.
+
+Save (`↵`, or `⌘↵` in the text box) records the answer and moves to the next unanswered
+region; the arrows move through all of them. A region with a box can be turned (`r`,
+↺/↻) and read again by tesseract (`o`); `-` and `+` zoom the crop.
+
+Where the book itself is wrong, `m` (a misprint) takes the line as the edition should
+read it. The answer stays what the page prints, which the readers are scored on, and
+the words that differ go to the book's errata (`errata.py`).
+
+"Rebuild book" applies the answers and rebuilds the EPUB. The questions come from the
+model's decisions before any answers, so the list stays put while you work.
+
 ### Checking the reviewer
 
 The reviewer makes mistakes too: about one answer in ten, pooled over the books
@@ -355,6 +379,7 @@ reviewed so far. So an answer is checked before it is saved.
 A line typed for a question must match one of the readings, apart from quote
 glyphs and spacing. A straight quote in a book set with curly quotes is queried.
 The page says why once, and saves when you press Save again.
+Answers saved over such a warning are logged in `review/warnings.jsonl`.
 
 Answers are stored in `work/<book>/review/regions.jsonl`.
 

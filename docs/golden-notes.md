@@ -13,6 +13,31 @@ its footnotes among them) and Koning Wilders (its text layer at 2.45% CER, over 
 times the set's median), the suspect pairs whose scores measured their references more
 than the pipeline.
 
+## A reference's manifest keys
+
+Where a reference's markup departs from its print, a key in the manifest's
+`[reference]` undoes it when the reference is derived:
+
+| Key | When |
+| --- | --- |
+| `heading_prefixes` | its headings are paragraphs of a class, not `h1`–`h6` (or a heading's second line, a date below it) |
+| `italic_classes`, `roman_classes` | it sets italics, or upright text inside them, with a class |
+| `blank_classes` | a paragraph of a class stands for a printed blank line |
+| `note_classes` | its footnotes are paragraphs of a class (kept apart from the text) |
+| `image_heading` | its headings are images: a regex on the alt text whose group 1 is the heading as printed |
+| `italics_unlike_print` | its italics aren't the print's (why, in words): its italic words aren't scored |
+| `hyphen_dash = "–"` | the EPUB sets its dashes as spaced hyphens, a spaced `--` or minus signs |
+| `capital_classes` | it writes small capitals in lower case with a class |
+| `note_mark` | it numbers its notes in growing marks (`*`, `**`, …) where the print sets one |
+| `break_classes` | its scene breaks are empty paragraphs of a class |
+| `opening_classes`, `closing_classes` | it marks scene breaks on the paragraph after or before (check each on the scan: `experiments/probe_break_classes.py`) |
+| `initial_images` | its drawn initials are images (the letter from the file name) |
+| `leading_text` | it has text before its first heading (an epigraph), or no headings at all |
+| `markup_spaces` | its markup leaves a space before punctuation, or a hyphen-joined word part after a styled word ("FBI -agent") |
+| `ellipsis_space = true` | a Gutenberg transcription drops the space its print sets before an ellipsis |
+
+## The pairs
+
 | Golden book | Scan | Notes |
 | --- | --- | --- |
 | the-nature-of-a-crime | `doubleday-1924` | **The scan Gutenberg #75172 was made from**; 94 body pages, short; Times OCR layer; running heads |

@@ -193,7 +193,7 @@ five others), so a rerun of cached lines is free even without the pipeline's cac
   a call and clef:27b (nvfp4, the MLX runner) 1.25 s, one or four at a time alike;
   choices and confidences identical. Their calls stay one after another.
 
-**Done, in place:** `OLLAMA_NUM_PARALLEL=4` (AGENTS.md Environment) halves glm-ocr's
+**Done, in place:** `OLLAMA_NUM_PARALLEL=4` (docs/models.md, Setup) halves glm-ocr's
 time a line (0.19 → 0.09 at four at a time, readings identical); the pipeline's four
 threads already send that many. The same four slots did nothing for a 27B GGUF
 (qwen3.8:27b-q8_0, 2.2 s a line at 1 to 16 at a time), so batching is a property to

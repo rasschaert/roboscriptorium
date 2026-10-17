@@ -118,11 +118,10 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
       `quotes.py` (2026-10-16, benches identical)
 - [x] `typography.py` split: scan measurements into `scanstyle.py`, one `ink.threshold`
       (2026-10-16, benches identical)
-- [ ] Prune `experiments/`: 53 scripts named only in the logs deleted (2026-10-16, the
-      user: results recorded, git keeps them); left: `probe_orientation.py` broken;
-      AGENTS.md cut to rules and the map (manifest keys to golden-notes.md, environment
-      detail to models.md, the review page to how-it-works.md); decisions.md a heading a
-      day (agent, ~2 h)
+- [x] Prune `experiments/` (2026-10-16/17): 53 scripts named only in the logs deleted
+      (the user: results recorded, git keeps them), `probe_orientation.py` mended;
+      AGENTS.md cut to rules and the map (manifest keys to golden-notes.md, model setup
+      to models.md, the review page to how-it-works.md); decisions.md a heading a day
 - [x] Line roles learned (2026-10-13): the trees are on by default after warm benches no
       worse on both sets (decisions.md); running-text and numeral-slot retired (2026-10-16,
       `probe_retire_rules.py`, bench no change); the other rules still earn their place.

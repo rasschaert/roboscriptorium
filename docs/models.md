@@ -44,3 +44,46 @@ schedel before choosing an OCR model.
 | Ollama | `qwen3.8:27b-mxfp8` (MLX, 31 GB) | Page reader candidate: the same model at 8-bit on MLX, reading a whole page | Whole pages (`probe_page_reader.py`, 19 tuning pages, 2026-10-14): 65 wrong words and 9 paragraph breaks wrong, the nvfp4 76 and 32; most of the word gap is one page (Goede dochter p. 55, 5 against 14) and it is worse on others (Reis p. 40, 13 against 6). 19 s a page against 12 | **Not taken** for the page reader: no clear gain in words, and the page reader's breaks aren't used; 60% slower and 13 GB more beside glm-ocr and clef |
 | Ollama | `ornith-1.5:35b` (vision, Qwen architecture) | Reader candidate, as a replacement or one more reader | Reader set v2 (2026-10-15): hard 416/510, CER 1.57% (Qwen 463, 0.74%); control 299/340, 1.26% (Qwen 338, 0.01%); quote marks wrong 80/26 (Qwen 26/5); right alone on 4 lines. 0.46 s a line | **Rejected**: worse than both readers in use on every count, and it breaks lines the layer reads right |
 | Ollama | `ornith-1.5:9b` (Q4_K_M, 6.6 GB) | Reader candidate | Ten lines (2026-10-14): 5 right, two whole lines read as one mark, straight quotes despite the style prompt; the full set crashed Ollama (HTTP 500) partway | **Not screened**: the 35b of the same family was rejected |
+
+## Setup
+
+How the models in use are installed and served, where it isn't a plain `ollama pull`.
+AGENTS.md (Environment) keeps the machine's rules.
+
+- **Ollama 0.40.3** (scores before 2026-10-06 were on 0.35.1). 0.40.4 refuses
+  `winnow-ollama:e4b` ("a format that is no longer supported"): since ollama/ollama#18917
+  a decision model needs llama.cpp's decision metadata (`decision.type`) in the GGUF
+  itself, which `CAPABILITY decision` in a Modelfile can't add. Stay on 0.40.3 until
+  winnow's makers publish such a GGUF or ollama/ollama#18882 (migrating old GGUFs on
+  load) ships. Ollaya was uninstalled on 2026-10-08; every model runs on Ollama.
+- **Context length 32k** (the user, 2026-10-13), for glm-ocr reading whole pages:
+  llama.cpp's four slots share the context, so 8k left each request ~2k, too little for
+  a page. 128k only held memory for KV caches; readings are the same either way.
+- **`OLLAMA_NUM_PARALLEL=4`**, set with `launchctl setenv` (the app reads it when it
+  starts; `launchctl unsetenv` removes it): the llama.cpp-served models (glm-ocr,
+  clef-flash, winnow) get four slots, which doubles glm-ocr's throughput and changes no
+  reading; the MLX runner behind the nvfp4 builds (qwen3.8, clef:27b) serves one request
+  at a time whatever the setting, and the decision models gain nothing either way.
+- **`clef-flash:9b`** was pulled again on 2026-10-15 (digest `0a2a05d6`): it answers the
+  cached line-role questions as the old build did (`experiments/probe_decider_drift.py`).
+- **`winnow-ollama:e4b`**: winnow:e4b's Hugging Face GGUF (`hf.co/EldanRing/Winnow-E4B:Q8_0`)
+  made a decision model with `modelfiles/winnow-ollama-e4b.Modelfile`. A workaround: a
+  pulled GGUF has no `decision` capability, so the Modelfile adds `CAPABILITY decision`
+  and `CAPABILITY vision` and an empty `TEMPLATE {{ .Prompt }}`, copied from
+  clef-flash's. Ollama then renders the decision prompt its own way, not in the layout
+  winnow was trained on (EldanRing/winnow-inference `native/protocol.h`). The pipeline's
+  second judge.
+- **`imajev:4b`**: mindchain's imajev-4b (`hf.co/mindchain/imajev-4b-GGUF:Q8_0`) made a
+  decision model with `modelfiles/imajev-4b.Modelfile`. The candidate for plates without
+  a caption; off in the pipeline. The 2B and 9B were deleted after their screen (their
+  Modelfiles and readouts remain).
+- **imajev on llama.cpp** (Homebrew, 0.6.0): `llama-server` runs imajev for the judge
+  tryout on Ollama's own blobs, its readout applied in `clients/llama.py`
+  (`experiments/llama-serve.sh <size> [port]`), because Ollama's systemone takes no images
+  for GGUF models. Its image placeholder is random per start; read it from `/props`
+  (`media_marker`). Readouts and calibrations in `work/models/imajev/` (from
+  `mohit67890/imajev-{2b,4b,9b}`, 2–4 MB each).
+- **DocLayout-YOLO**: the DocStructBench weights
+  (`juliozhao/DocLayout-YOLO-DocStructBench`, `doclayout_yolo_docstructbench_imgsz1024.pt`)
+  in the Hugging Face cache, run by `layout.py` on every build (dependency group
+  `layout`, a default group).
