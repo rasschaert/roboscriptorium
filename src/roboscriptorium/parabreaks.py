@@ -22,6 +22,7 @@ import pymupdf
 from roboscriptorium.clients import decide
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PDF_LOCK, PageText
+from roboscriptorium.reflow import INDENT_MIN, MAX_INDENT
 from roboscriptorium.roles import DecisionCache, LineRole, is_body
 
 SURE = 0.7
@@ -42,6 +43,27 @@ QUESTION = {
     )
 }
 _ENDS = re.compile(r"[.!?…:;’”'\")\]]\s*$")
+# A book whose lines sit an indent's width right of the margin this often indents its
+# paragraphs (bench books 6–37%; Vuurspel 0%, De stilte 1%, which set them flush).
+INDENTS_AT = 0.03
+STYLE = {
+    True: "it indents the first line of a paragraph; a line set flush carries one on",
+    False: "it sets paragraphs flush, without an indent",
+}
+
+
+def indents(pages: list[PageText]) -> bool:
+    """Whether the book indents its paragraphs, by its lines' starts against their page's
+    margin (`INDENTS_AT`), over pages of at least eight lines."""
+    n = indented = 0
+    for p in pages:
+        if len(p.lines) < 8:
+            continue
+        starts = sorted(ln.x0 for ln in p.lines)
+        margin = starts[len(starts) // 4]
+        n += len(p.lines)
+        indented += sum(INDENT_MIN < ln.x0 - margin < MAX_INDENT for ln in p.lines)
+    return n == 0 or indented / n >= INDENTS_AT
 
 
 def can_start(above: str, text: str) -> bool:
@@ -56,10 +78,13 @@ def judged(
     roles: dict[SourceRef, LineRole] | None,
     client,
     cache: DecisionCache,
+    indented: bool = True,
 ) -> list[PageText]:
     """Copies of `pages` with `starts_paragraph` set on the body lines the judge is sure of,
     and to False on body lines that can't start one. A line that has it set already (an
-    answer) keeps it."""
+    answer) keeps it. The judge is told whether the book indents its paragraphs
+    (`indents`): without it, it took flush dialogue for new paragraphs in a book whose
+    flush lines carry them on (Goede dochter 0 → 12 breaks wrong, 2026-10-17)."""
     out = []
     before = ""
     with PDF_LOCK, pymupdf.open(pdf) as doc:
@@ -84,6 +109,7 @@ def judged(
                     lines[k] = replace(line, starts_paragraph=False)
                     continue
                 state = {
+                    "how the book sets paragraphs": STYLE[indented],
                     "line above"
                     + ("" if up is not None else " (the last line of the page before)"): above,
                     "line in question": line.text,

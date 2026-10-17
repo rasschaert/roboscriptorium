@@ -254,8 +254,9 @@ def run(
     if use_models and settings.break_judge and ocrcheck.scanned(book.source):
         client = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
         cache = DecisionCache(book.stages / "decisions.jsonl")
-        checked = parabreaks.judged(book.source, checked, model_roles, client, cache)
-        corrected = parabreaks.judged(book.source, corrected, roles, client, cache)
+        indented = parabreaks.indents(whole)
+        checked = parabreaks.judged(book.source, checked, model_roles, client, cache, indented)
+        corrected = parabreaks.judged(book.source, corrected, roles, client, cache, indented)
     unanswered = reflow(
         checked, _apart(checked, model_roles, note_lines, epigraph_lines), known, compound
     )

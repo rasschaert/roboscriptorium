@@ -102,3 +102,36 @@ def test_the_line_above_is_the_line_of_text_above_not_a_running_head(tmp_path):
     # above it isn't its line above.
     assert seen[0]["line above (the last line of the page before)"] == ""
     assert seen[1]["line above"] == "een man die ik kende."
+
+
+def test_a_book_indents_when_its_lines_start_an_indent_right_of_the_margin_often_enough():
+    def page(indent_every: int) -> PageText:
+        lines = [
+            Line(
+                "tekst " * 8,
+                40 + (15 if indent_every and k % indent_every == 0 else 0),
+                50 + 14 * k,
+                360,
+                60 + 14 * k,
+            )
+            for k in range(20)
+        ]
+        return PageText(1, 400, 600, lines)
+
+    assert parabreaks.indents([page(5)])
+    assert not parabreaks.indents([page(0)])
+
+
+def test_the_judge_is_told_how_the_book_sets_paragraphs(tmp_path):
+    pdf, pages = _scan(tmp_path, ["Het was laat.", "‘Kom je?’"])
+    seen = []
+
+    class Asked(Judge):
+        def decide(self, state, questions, image_png=None):
+            seen.append(state["how the book sets paragraphs"])
+            return super().decide(state, questions, image_png)
+
+    judge = Asked({"Het was laat.": ("starts", 0.9), "‘Kom je?’": ("continues", 0.9)})
+    cache = DecisionCache(tmp_path / "d.jsonl")
+    parabreaks.judged(pdf, pages, None, judge, cache, indented=False)
+    assert seen == [parabreaks.STYLE[False]] * 2
