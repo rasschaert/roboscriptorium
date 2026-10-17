@@ -297,7 +297,23 @@ In this order:
 - [x] 2026-10-17 The Stranger's Child's nested-quote spacing: the print sets a thin gap
       between nested marks, some e-books write it as a space; folded in the score
       (`evaluate._NESTED_GAP`), validation BETTER 0.38 → 0.36. Its "think—’" against our
-      "think –’" is the e-book's: the scan has the spaced en dash (5 places, left as is)
+      "think –’" is the print's after all: a dash breaking speech off sits close to its
+      word there (scan crops, 2026-10-18), where its other dashes are spaced
+- [x] ~~A closing dash keeps the layer's spacing on its open side~~ (2026-10-18, not
+      taken, branch `cutoff-dash`): tuning fixed 5 and made 10, all Goede dochter. Its
+      print spaces a sentence broken off after a word ("ik –’") and closes up a word cut
+      off ("directeursk–’"), and the layer reads both closed. Only each gap measured on
+      the scan could tell them apart: ~10 places in 1,900 pages, left
+- [ ] Verdicts on the unasked errors that look like the reference's (the user, ~20 min;
+      after the first looks): of 289 left unasked in the latest benches, about a quarter
+      look like the e-book departing from its print, not the build: spaces no print sets
+      ("gezicht .", "properly. ’", "BBS ’en"), words run together ("’snachts",
+      "Rookjij"), a print line-end hyphen left in ("na-iviteit", "ge-identificeerd").
+      Each verdict mends a reference, so every later bench measures the machine more
+      truly. Listed in work/probes/unasked/rows.txt
+- [ ] Line-end hyphens as questions where the judge is unsure (low): 34 of the 41 unasked
+      compound-hyphen errors sit at a line's end, 0.02 wrong words a page; a question
+      pays only in a band where the judge is wrong more than about one time in seven
 - [x] De eerlijke vinder's unasked errors (2026-10-15): 28 of 38 were page numbers the
       layer joins to a body line; split off (`pdf._apart`), wrong words 0.88 → 0.42 a page
       on the short test; `bench tuning` 0.32 → 0.30 after review, no book worse
