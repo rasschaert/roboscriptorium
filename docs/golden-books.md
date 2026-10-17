@@ -6,3 +6,93 @@ Each golden book is a scan of a printed book paired with the publisher's own tex
 printing. The build must turn the scan into that text, so a faithful pair is the
 measure of every change.
 
+**In short.** 24 scanned pairs are measured, 6 wait for their first look. Most faithful: Reis om mijn schedel, Normal People, Afscheid van verspilde tijd. Least: Artemis, Het laatste bevel, De tunnels. *Tuning* books are the ones choices are made on; *validation* books can only veto a change; a *first look* is scored once, untouched, before the book joins either.
+
+## How faithful each pair is
+
+*Scan and text differ* compares the scan's own hidden text (one OCR program's reading) with
+the publisher's text, word by word, punctuation aside. Most of the difference is that
+OCR's slips, so the most faithful pairs come out near the OCR's own rate, about 1 word in
+500 to 1,000. More than that means the publisher's text departs from the print
+somewhere (a later edition, glued words). *Corrections* are places a person checked and
+found the publisher's text, not the scan, was off; none can also mean nobody has checked
+yet.
+
+| Book | Used for | Scan and text differ | Corrections found | Known quirks of the text |
+| --- | --- | --- | --- | --- |
+| Reis om mijn schedel | tuning | about 1 word in 1,150 | – | note marks numbered |
+| Normal People | validation | about 1 word in 1,000 | – | none known |
+| Afscheid van verspilde tijd | tuning | about 1 word in 850 | – | dashes set as hyphens |
+| De eerlijke vinder | tuning | about 1 word in 520 | 6 | dashes set as hyphens |
+| Metro 2033 | tuning | about 1 word in 480 | 2 | dashes set as hyphens, italics unlike the print's |
+| De kerk van de dode meisjes | validation | about 1 word in 300 | – | small capitals written in lower case |
+| The Stranger's Child | validation | about 1 word in 300 | – | none known |
+| De cipier | tuning | about 1 word in 300 | – | none known |
+| The Thief-Taker's Apprentice | tuning | about 1 word in 290 | – | none known |
+| Monterosso mon amour | tuning | about 1 word in 250 | 4 | none known |
+| Vals alarm | tuning | about 1 word in 220 | – | small capitals written in lower case |
+| De tuin van de avondnevel | tuning | about 1 word in 220 | – | small capitals written in lower case |
+| Het heft in eigen hand | tuning | about 1 word in 210 | – | none known |
+| De stilte van de hel | validation | about 1 word in 200 | – | small capitals written in lower case, stray spaces in its markup |
+| Goede dochter | tuning | about 1 word in 200 | 5 | none known |
+| Vuurspel | validation | about 1 word in 170 | – | dashes set as hyphens, small capitals written in lower case, stray spaces in its markup |
+| You're Never Weird on the Internet (Almost) | validation | about 1 word in 160 | – | none known |
+| Doodskleed | tuning | about 1 word in 160 | – | small capitals written in lower case |
+| Het ijzige land | tuning | about 1 word in 150 | – | none known |
+| The Nature of a Crime | tuning | about 1 word in 130 | – | no space before an ellipsis |
+| The Story of Doctor Dolittle | tuning | about 1 word in 130 | – | none known |
+| Artemis | tuning | about 1 word in 100 | – | none known |
+| Het laatste bevel | validation | about 1 word in 80 | – | none known |
+| De tunnels | line roles only | about 1 word in 80 | – | none known |
+| De geruchten | first look | not looked at yet (its first look comes first) | – | small capitals written in lower case |
+| Het geluid van bananen | first look | not looked at yet (its first look comes first) | – | none known |
+| Het schaduwhuis | first look | not looked at yet (its first look comes first) | – | small capitals written in lower case |
+| Na die nacht | first look | not looked at yet (its first look comes first) | – | none known |
+| Steve Jobs | first look | not looked at yet (its first look comes first) | – | none known |
+| Verminkt | first look | not looked at yet (its first look comes first) | – | none known |
+| De aanslag | out of scope (born-digital) | never: not a scan, made from the e-book itself | – | none known |
+| Villa Toscane | out of scope (born-digital) | never: not a scan, made from the e-book itself | – | none known |
+
+## Details
+
+For the scripts and agents. Per scan, over the pages its bench set scores. *Cold* is the
+estimated cost of a run with nothing cached (1.1 min a page). *Layer CER* and *bare-word*
+are the text layer against the reference without any model; bare words ignore
+punctuation. *Unplaced* is the share of lines the aligner can't match (page furniture,
+specks, text the reference lacks), over all lines. *Headings* counts reference headings
+with a line on the scan. *Eval* is the latest full run, CER and WER.
+
+| Book | Set | Pages body / scored | Words | Cold | Layer CER | Bare-word | Unplaced | Headings | Declared | Eval CER / WER |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| afscheid-van-verspilde-tijd | tuning | 116 / 62 | 37430 | 1.1 h | 0.17% | 0.12% | 11.3% | 9 / 11 | hyphen_dash | none yet |
+| artemis | tuning | 305 / 68 | 87544 | 1.2 h | 0.37% | 0.97% | 3.2% | 0 / 3 | none | 0.04% / 0.14% |
+| de-aanslag | reserve | 169 / 169 | 55723 | minutes | 0.17% | 0.43% | 0.0% | 31 / 26 | none | none yet |
+| de-cipier | tuning | 474 / 84 | 158385 | 1.5 h | 0.19% | 0.34% | 2.7% | 2 / 4 | none | 0.01% / 0.01% |
+| de-eerlijke-vinder | tuning | 84 / 84 | 23802 | 1.5 h | 0.23% | 0.19% | 1.6% | 0 / 4 | hyphen_dash | none yet |
+| de-geruchten | **first look** | 218 / 89 | 50004 | 1.6 h | unmeasured | | | | capital_classes | untouched |
+| de-kerk-van-de-dode-meisjes | validation | 414 / 97 | 145925 | 1.8 h | 0.15% | 0.33% | 2.7% | 7 / 13 | capital_classes | none yet |
+| de-stilte-van-de-hel | validation | 353 / 91 | 136340 | 1.7 h | 0.35% | 0.50% | 2.9% | 5 / 15 | capital_classes, markup_spaces | none yet |
+| de-tuin-van-de-avondnevel | tuning | 364 / 87 | 129769 | 1.6 h | 0.81% | 0.45% | 2.8% | 6 / 6 | capital_classes | 0.05% / 0.05% |
+| de-tunnels | reserve | 409 / 409 | 126092 | 7.5 h | 0.63% | 1.25% | 3.8% | 17 / 21 | none | none yet |
+| doodskleed | tuning | 276 / 84 | 72379 | 1.5 h | 0.32% | 0.64% | 7.1% | 4 / 14 | capital_classes | 0.07% / 0.14% |
+| goede-dochter | tuning | 500 / 91 | 163183 | 1.7 h | 0.24% | 0.50% | 2.9% | 6 / 6 | none | none yet |
+| het-geluid-van-bananen | **first look** | 315 / 93 | 77984 | 1.7 h | unmeasured | | | | none | untouched |
+| het-heft-in-eigen-hand | tuning | 506 / 84 | 144642 | 1.5 h | 0.55% | 0.47% | 2.9% | 5 / 5 | none | 0.01% / 0.03% |
+| het-ijzige-land | tuning | 318 / 94 | 79550 | 1.7 h | 0.41% | 0.68% | 3.7% | 11 / 11 | none | 0.08% / 0.19% |
+| het-laatste-bevel | validation | 304 / 92 | 86225 | 1.7 h | 0.42% | 1.21% | 2.8% | 1 / 5 | none | none yet |
+| het-schaduwhuis | **first look** | 329 / 83 | 98909 | 1.5 h | unmeasured | | | | capital_classes | untouched |
+| metro-2033 | tuning | 458 / 86 | 197756 | 1.6 h | 0.17% | 0.21% | 2.5% | 7 / 8 | hyphen_dash, italics_unlike_print | none yet |
+| monterosso-mon-amour | tuning | 88 / 88 | 25640 | 1.6 h | 0.33% | 0.40% | 3.1% | 13 / 22 | none | none yet |
+| na-die-nacht | **first look** | 406 / 406 | 152340 | 7.4 h | unmeasured | | | | none | untouched |
+| normal-people | validation | 268 / 87 | 72658 | 1.6 h | 0.06% | 0.10% | 3.4% | 8 / 9 | none | none yet |
+| reis-om-mijn-schedel | tuning | 245 / 89 | 66738 | 1.6 h | 0.14% | 0.09% | 3.9% | 10 / 10 | note_mark | none yet |
+| steve-jobs | **first look** | 688 / 92 | 241137 | 1.7 h | unmeasured | | | | none | untouched |
+| the-nature-of-a-crime | tuning | 94 / 94 | 14712 | 1.7 h | 0.85% | 0.77% | 7.7% | 8 / 8 | ellipsis_space | none yet |
+| the-story-of-doctor-dolittle | tuning | 180 / 66 | 24667 | 1.2 h | 0.88% | 0.79% | 12.6% | 14 / 7 | none | none yet |
+| the-strangers-child | validation | 564 / 88 | 180095 | 1.6 h | 0.33% | 0.33% | 5.8% | 4 / 9 | none | 0.17% / 0.05% |
+| the-thief-takers-apprentice | tuning | 282 / 74 | 83490 | 1.4 h | 0.28% | 0.35% | 3.6% | 22 / 22 | none | 0.08% / 0.08% |
+| vals-alarm | tuning | 292 / 50 | 87748 | 0.9 h | 0.53% | 0.45% | 3.0% | 4 / 10 | capital_classes | none yet |
+| verminkt | **first look** | 417 / 417 | 110719 | 7.6 h | unmeasured | | | | none | untouched |
+| villa-toscane | reserve | 186 / 186 | 49813 | minutes | 0.00% | 0.00% | 0.0% | 12 / 12 | none | none yet |
+| vuurspel | validation | 354 / 103 | 136893 | 1.9 h | 0.46% | 0.60% | 2.5% | 2 / 6 | hyphen_dash, capital_classes, markup_spaces | none yet |
+| youre-never-weird-on-the-internet | validation | 260 / 82 | 66181 | 1.5 h | 0.49% | 0.61% | 7.3% | 17 / 16 | none | none yet |
