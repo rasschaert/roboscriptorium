@@ -228,8 +228,10 @@ In this order:
 
 ## 5. Errors no question asks about
 
-- [ ] A page's first line the text layer lacks (Vuurspel p. 19, p. 103: 38 missing words
-      on validation): why `missing.py` doesn't find it (agent, ~1 h, then glm-ocr reads)
+- [x] 2026-10-17 Lines the text layer lacks at a text block's top or bottom: a strip of a
+      text region above its first layer line or below its last is a candidate
+      (`missing.edges`); Vuurspel p. 19's two lines read right. With Bruna's references
+      re-derived without markup spaces: validation BETTER 0.49 → 0.38 after review
 - [ ] The Stranger's Child's dash and nested-quote spacing ("think —’", "ground!” ’"):
       the print's, against `typography.py` (agent, ~1 h)
 - [x] De eerlijke vinder's unasked errors (2026-10-15): 28 of 38 were page numbers the
