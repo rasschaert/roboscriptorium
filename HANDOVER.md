@@ -38,8 +38,9 @@ has ended; only the main session works on).
    `work/runs/context-judge.log`; items frozen in `work/probes/context-judge/`, answers
    cached, so a stop loses nothing). Then `... score`, and the verdict in the checklist
    step "A context judge". It holds qwen3.8 only: warm benches can run beside it.
-3. **`robo-first-look-reads`**, waiting behind `robo-context-judge`, then ~11 h: builds
-   (no scores) of Het geluid van bananen 9–101, Steve Jobs 9–100, Verminkt whole
+3. **`robo-first-look-reads`**, waiting behind `robo-context-judge`, then ~14 h (ending
+   ~13:00 Sunday): builds (no scores) of Het geluid van bananen 9–101, Het schaduwhuis
+   9–91, Steve Jobs 9–100, De geruchten 9–97, Verminkt whole
    (`work/runs/first-look-reads.sh`, notes `work/runs/first-look-reads.txt`). **The
    role trees must be retrained before it starts** if `number-lookalikes` is merged, or
    its builds stop on the feature mismatch. The weekend's order is in the checklist

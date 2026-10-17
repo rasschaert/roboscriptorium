@@ -25,11 +25,13 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    ~3 h). Beside it, on cached data: `bench quick` as the tier's baseline, then the
    merges, the role trees and the arbiter retrained on the long slices, all benches
    (quick, tuning, validation): the quick tier's first check.
-2. Saturday ~23:00 to Sunday ~10:00 (`robo-first-look-reads`): the first-look slices
-   read, no scores: Het geluid van bananen, Steve Jobs, Verminkt whole.
-3. Sunday: the first looks scored once, the three books into their sets (Het geluid van
-   bananen and Steve Jobs to tuning: Stella's publisher and scan, and more training
-   data; Verminkt to validation), their trust data, the arbiter retrained on the larger
+2. Saturday ~23:00 to Sunday ~13:00 (`robo-first-look-reads`): the first-look slices
+   read, no scores: Het geluid van bananen, Het schaduwhuis, Steve Jobs, De geruchten,
+   Verminkt whole (tuning-bound books first).
+3. Sunday: the first looks scored once, the books into their sets (Het geluid van
+   bananen, Het schaduwhuis and Steve Jobs to tuning: Stella's publisher and scan, the
+   stress accents and "wc" the arbiter must learn, more training data; De geruchten and
+   Verminkt to validation), their trust data, the arbiter retrained on the larger
    tuning set, benches. If the probe passed, the context judge as a stage after the
    arbiter that settles the questions it is sure of, benched on the quick tier first.
 
