@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 290" font-family="Helvetica, Arial, sans-serif">
+  <rect width="760" height="290" fill="#ffffff"/>
+  <text x="30" y="32" font-size="15" font-weight="bold" fill="#3b4252">Three bench results: where the interval sits against zero</text>
+
+  <!-- scale: 0.01 wrong words a page = 30 px, zero at x = 470 -->
+  <g stroke="#e5e9f0" stroke-width="1">
+    <line x1="290" y1="56" x2="290" y2="214"/>
+    <line x1="380" y1="56" x2="380" y2="214"/>
+    <line x1="560" y1="56" x2="560" y2="214"/>
+    <line x1="650" y1="56" x2="650" y2="214"/>
+  </g>
+  <line x1="470" y1="50" x2="470" y2="214" stroke="#3b4252" stroke-width="2"/>
+  <g font-size="11" fill="#7b8aa6" text-anchor="middle">
+    <text x="290" y="230">−0.06</text>
+    <text x="380" y="230">−0.03</text>
+    <text x="470" y="230">0</text>
+    <text x="560" y="230">+0.03</text>
+    <text x="650" y="230">+0.06</text>
+  </g>
+
+  <g font-size="13" fill="#3b4252" text-anchor="end">
+    <text x="200" y="86" font-weight="bold" fill="#2e7d32">BETTER</text>
+    <text x="200" y="138" font-weight="bold" fill="#4c566a">NO CHANGE</text>
+    <text x="200" y="190" font-weight="bold" fill="#b3261e">WORSE</text>
+  </g>
+  <g font-size="11" fill="#4c566a" text-anchor="end">
+    <text x="200" y="100">both ends below zero</text>
+    <text x="200" y="152">it straddles zero: could be luck</text>
+    <text x="200" y="204">both ends above zero</text>
+  </g>
+
+  <!-- BETTER [-0.06, -0.01], mean -0.035 -->
+  <line x1="290" y1="82" x2="440" y2="82" stroke="#2e7d32" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="365" cy="82" r="7" fill="#ffffff" stroke="#2e7d32" stroke-width="3"/>
+  <!-- NO CHANGE [-0.03, +0.02], mean -0.005 -->
+  <line x1="380" y1="134" x2="530" y2="134" stroke="#7b8aa6" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="455" cy="134" r="7" fill="#ffffff" stroke="#7b8aa6" stroke-width="3"/>
+  <!-- WORSE [+0.01, +0.05], mean +0.03 -->
+  <line x1="500" y1="186" x2="620" y2="186" stroke="#b3261e" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="560" cy="186" r="7" fill="#ffffff" stroke="#b3261e" stroke-width="3"/>
+
+  <g font-size="12" fill="#3b4252">
+    <text x="470" y="256" text-anchor="middle">change in wrong words a page after review (after minus before)</text>
+    <text x="300" y="276" text-anchor="middle" fill="#2e7d32">← fewer errors</text>
+    <text x="640" y="276" text-anchor="middle" fill="#b3261e">more errors →</text>
+  </g>
+</svg>

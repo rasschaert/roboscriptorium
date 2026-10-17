@@ -8,6 +8,8 @@ and where the next gains are expected. It assumes no knowledge of the code.
 
 ## What we're making, and why it's hard
 
+![A printed page and the same text on a phone: the running head and page number gone, a line-end hyphen joined](primer/page-to-ebook.svg)
+
 You have a book as a PDF and you want an e-book (an EPUB): text that reflows on a phone,
 with the book's own paragraphs, chapter headings, italics and quote marks, and no
 leftovers from paper such as page numbers, running heads or words split by a hyphen at
@@ -75,6 +77,12 @@ combine several that fail in different ways, and learn how far to believe each.*
   works as an alarm.
 - *the word list* checks which versions are real words.
 
+A fourth kind of judge is being tried: a **context judge** (qwen, thinking before it
+answers) reads the sentences around a question the arbiter would ask, and settles it
+when it agrees with the arbiter's own likeliest version. In a test it settled two
+thirds of such questions, about one in ten of them wrongly; whether that beats asking
+you is what its bench will say.
+
 The judges are **decision models**: they don't write text, they answer a multiple-choice
 question with a probability for each option. That is a deliberate rule in this project:
 if the answer comes from a list known in advance, ask a model that picks from the list;
@@ -102,6 +110,8 @@ where a question is likely to fix more than it costs: today around half a questi
 page on a clean scan.
 
 ## The structure half
+
+![A page with every line tagged by role: running head and page number dropped, a chapter heading, body lines in paragraphs](primer/roles.svg)
 
 The other stages, in brief (how-it-works.md has each in detail):
 
@@ -133,6 +143,8 @@ publisher's own e-book of the same printing. There are about 30, Dutch and Engli
 chosen to cover different kinds of trouble: clean modern novels, old typography,
 pictures, washed-out scans.
 
+![How a golden pair scores a build: the scan built, lined up with the reference, every difference counted; a person's verdict mends the reference](primer/golden.svg)
+
 The machine builds each golden book from its scan, lines its output up against the
 reference, and counts the differences. Not every difference is the machine's fault: a
 publisher's e-book sometimes corrects a word the print got wrong. Where it matters, a
@@ -161,6 +173,8 @@ jumbled isn't right.
 If you tune a machine on the same books you score it on, it learns those books and
 the score flatters it. So the golden books are split, as in any machine-learning
 project:
+
+![A new pair's first look, then tuning or validation; a change kept when better on tuning and not vetoed on validation](primer/sets.svg)
 
 | Set | Used for | Like… |
 | --- | --- | --- |
@@ -200,6 +214,8 @@ The other session's reports are full of lines like this:
 
 Decoded:
 
+![Three intervals against zero: BETTER entirely below, NO CHANGE straddling, WORSE entirely above](primer/intervals.svg)
+
 - **0.32 → 0.32**: wrong words a page after review, before and after the change,
   averaged over the set with every book weighing the same.
 - **[−0.06, −0.01]**: the range the true difference probably lies in (a 95% interval,
@@ -219,6 +235,8 @@ the same pages before and after, with an interval, separates a real gain from lu
 A model reading one line takes about a second; one page with everything on it takes
 about a minute. A full bench over every golden book is a few thousand pages.
 
+![A change at a reader reruns every stage after it (cold, hours); a change at the paragraph rules reuses the models' saved answers (warm, minutes)](primer/cold-warm.svg)
+
 Every model's answer is saved (cached) under `work/`. A **warm** run reuses those answers
 and finishes in minutes; it is possible when the change sits *after* the models, such
 as a new paragraph rule. A **cold** run has to ask the models again, because the change
@@ -229,6 +247,15 @@ sets of lines (`tryouts/`, run by `experiments/tryout.py`) before anything cold 
 ## Where the remaining errors are, and how we expect to improve
 
 ### What we learned about the errors that are left
+
+![The errors left by cause, split into those a question points at and those nothing asks about](primer/errors.svg)
+
+Every error the bench finds is saved with a **cause** read from its two sides (a quote
+missing, letters misread, words glued together, a hyphen in a compound word…), so each
+run says not only how many errors are left but which kinds. The orange part of each bar
+is what stays in the book after your review. Some causes are never asked about at all:
+a compound word's hyphen lost or added (*zwart-wit* against *zwartwit*), the spacing
+around a dash.
 
 The most important finding so far: **most of the errors that survive review were never
 suspects.** All the readers read the same wrong thing, so nothing raised a question.
@@ -275,20 +302,24 @@ and why it didn't help".
   is the kind of reading error a better reader alone would fix.
 - Speeding up qwen with parallel requests: the runtime handles one at a time.
 
-## What is going on right now (2026-10-17)
+## What is going on right now (2026-10-18)
 
 `HANDOVER.md` always has the current state; this is what it said when this page was
-written, decoded.
+last updated, decoded.
 
-- **Growing the short tuning slices.** Seven tuning books are scored on only 10–25 pages
-  each, which makes the bench's verdicts on them noisy. An overnight run reads more of
-  their pages. It is expected to make the measurement surer, not the books better; a
-  test on 2026-10-12 showed more pages teach the arbiter little.
-- **Waiting to merge behind it**: a fix to how headings are counted (a number and a
-  title set on two lines counted as one heading), the sorter learning numbers misread
-  as letters ("Io" for 10), and a doc cleanup. They wait so that one bench measures
-  them on the grown slices.
-- **Then**: the arbiter retrained on the grown slices, and both benches.
+- **Reading the first-look books** (overnight, until about midday Sunday): the six new
+  pairs are built without being scored, so their single scoring later is quick. Nothing
+  is chosen on them before that score.
+- **Winnow-12B**, a bigger text judge, asked through the probabilities of its answer
+  letters instead of Ollama's decision endpoint: right on 78% of labelled suspects
+  where winnow is right on 67%. Next: its votes collected on the golden books, the
+  arbiter retrained with them, and the benches. If it passes, it replaces winnow,
+  which also frees Ollama to be updated (the version we're on is the last that runs
+  winnow).
+- **The context judge's bench**: the quick bench with the context judge on, to see
+  whether it settles questions without adding errors.
+- **Then**: each first-look book scored once and moved into tuning or validation, and
+  the arbiter retrained on them.
 - **For you**: six new questions on *Ex-minnaar*, then reading it through, then
   *Wij doden Stella*, the book the project targets first.
 
@@ -305,6 +336,7 @@ that's a measurement run, not an improvement.
 | reader | a model or program that reads text off the image (glm-ocr, tesseract, qwen) |
 | suspect, version | a place where readings differ; each way of reading it |
 | judge | a model that picks a version (clef, winnow, the word list) |
+| context judge | a thinking model that settles a question from the text around it (being tried) |
 | arbiter | the trained model that weighs readers and judges and fixes, keeps or asks |
 | spotter | the layout model that marks pictures, captions and titles |
 | sorter | what decides each line's role: body, heading, page number, junk |
@@ -314,11 +346,13 @@ that's a measurement run, not an improvement.
 | golden book, pair, reference | a scan plus a checked text of the same edition |
 | verdict | a person's ruling on what the scan prints where output and reference differ |
 | slice | the pages of a golden book the bench scores |
-| tuning, validation, test | the three sets of golden books (above) |
+| tuning, validation | the golden books choices are made on, and those that only veto (above) |
+| first look | a new pair's single score, before anything is chosen on it |
 | bench | the paired before/after comparison over a set; it decides whether a change stays |
 | after review | wrong words a page once every question is answered, with questions charged |
 | unasked | errors no question points at; what the reviewer can't catch |
 | breaks | paragraph breaks set wrong, a page |
+| cause | the kind of an error, read from its two sides (a quote missing, letters misread…) |
 | probe | a quick experiment on a few pages, before building anything |
 | null | a probe or bench that showed no gain; recorded anyway |
 | cold, warm | a run that has to ask the models again, or one that reuses their saved answers |

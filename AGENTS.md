@@ -46,7 +46,7 @@ owns the fact in the same commit.
 | [docs/golden-notes.md](docs/golden-notes.md) | each golden pair: edition, what makes it hard, known deviations; the manifest keys that undo them | a pair is added, sliced or retired; a key is added |
 | [docs/golden-books.md](docs/golden-books.md) | the pairs' numbers, **generated** by `experiments/golden_overview.py` | regenerated after a pair changes |
 | [docs/hosted-inference.md](docs/hosted-inference.md) | the plan for a window of free hosted inference: what to learn, what carries back, the guardrails | access comes, or a hosted run teaches something |
-| [docs/primer.md](docs/primer.md) | for a person new or returning: the problem from first principles, how a change is judged, where the gains are expected, the vocabulary | the approach, the bets or the vocabulary change |
+| [docs/primer.md](docs/primer.md) | for a person new or returning: the problem from first principles, how a change is judged, where the gains are expected, the vocabulary | the approach, the bets or the vocabulary change; its errors chart regenerated (`experiments/primer_errors.py`) after a bench that moves the errors, its `.d2` diagrams rendered again when edited |
 | `README.md`, [docs/how-it-works.md](docs/how-it-works.md), `docs/pipeline.d2` | for people: what it is and how a build runs | the stages, their order or their models change |
 
 Cite a step or a section by its words, never by its number: numbers are positions and

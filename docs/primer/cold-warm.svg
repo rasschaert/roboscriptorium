@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Helvetica, Arial, sans-serif">
+  <rect width="760" height="300" fill="#ffffff"/>
+  <text x="30" y="32" font-size="15" font-weight="bold" fill="#3b4252">Where a change sits decides what runs again</text>
+
+  <!-- stage names: 6 boxes, 112 wide, 8 apart, from x = 30 -->
+  <g font-size="12" fill="#3b4252" text-anchor="middle">
+    <text x="86" y="62">text layer</text>
+    <text x="206" y="62">readers</text>
+    <text x="326" y="62">judges</text>
+    <text x="446" y="62">arbiter</text>
+    <text x="566" y="62">paragraphs,</text>
+    <text x="566" y="76">hyphens</text>
+    <text x="686" y="62">quotes, dashes,</text>
+    <text x="686" y="76">EPUB</text>
+  </g>
+  <g font-size="10" fill="#7b8aa6" text-anchor="middle">
+    <text x="206" y="90">models: ~1 s a line</text>
+    <text x="326" y="90">models</text>
+  </g>
+
+  <!-- cold: a reader's prompt changes -->
+  <text x="30" y="118" font-size="13" font-weight="bold" fill="#c2671b">Cold: a new prompt for a reader</text>
+  <g>
+    <rect x="30" y="128" width="112" height="40" rx="5" fill="#eceff4" stroke="#d8dee9"/>
+    <rect x="150" y="128" width="112" height="40" rx="5" fill="#f8dcc4" stroke="#c2671b" stroke-width="2"/>
+    <rect x="270" y="128" width="112" height="40" rx="5" fill="#f8dcc4" stroke="#c2671b"/>
+    <rect x="390" y="128" width="112" height="40" rx="5" fill="#f8dcc4" stroke="#c2671b"/>
+    <rect x="510" y="128" width="112" height="40" rx="5" fill="#f8dcc4" stroke="#c2671b"/>
+    <rect x="630" y="128" width="112" height="40" rx="5" fill="#f8dcc4" stroke="#c2671b"/>
+  </g>
+  <g font-size="12" text-anchor="middle">
+    <text x="86" y="152" fill="#7b8aa6">saved</text>
+    <text x="206" y="152" fill="#c2671b" font-weight="bold">changed</text>
+    <text x="326" y="152" fill="#c2671b">asked again</text>
+    <text x="446" y="152" fill="#c2671b">run again</text>
+    <text x="566" y="152" fill="#c2671b">run again</text>
+    <text x="686" y="152" fill="#c2671b">run again</text>
+  </g>
+  <text x="30" y="188" font-size="12" fill="#3b4252">Every line read again by a model, then judged again: <tspan font-weight="bold">hours</tspan>, so it runs overnight.</text>
+
+  <!-- warm: a paragraph rule changes -->
+  <text x="30" y="222" font-size="13" font-weight="bold" fill="#2e6db4">Warm: a new paragraph rule</text>
+  <g>
+    <rect x="30" y="232" width="112" height="40" rx="5" fill="#eceff4" stroke="#d8dee9"/>
+    <rect x="150" y="232" width="112" height="40" rx="5" fill="#eceff4" stroke="#d8dee9"/>
+    <rect x="270" y="232" width="112" height="40" rx="5" fill="#eceff4" stroke="#d8dee9"/>
+    <rect x="390" y="232" width="112" height="40" rx="5" fill="#eceff4" stroke="#d8dee9"/>
+    <rect x="510" y="232" width="112" height="40" rx="5" fill="#dbe9f7" stroke="#2e6db4" stroke-width="2"/>
+    <rect x="630" y="232" width="112" height="40" rx="5" fill="#dbe9f7" stroke="#2e6db4"/>
+  </g>
+  <g font-size="12" text-anchor="middle">
+    <text x="86" y="256" fill="#7b8aa6">saved</text>
+    <text x="206" y="256" fill="#7b8aa6">saved</text>
+    <text x="326" y="256" fill="#7b8aa6">saved</text>
+    <text x="446" y="256" fill="#7b8aa6">saved</text>
+    <text x="566" y="256" fill="#2e6db4" font-weight="bold">changed</text>
+    <text x="686" y="256" fill="#2e6db4">run again</text>
+  </g>
+  <text x="30" y="292" font-size="12" fill="#3b4252">The models’ saved answers are reused, only plain code runs: <tspan font-weight="bold">minutes</tspan>.</text>
+</svg>

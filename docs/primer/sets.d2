@@ -1,0 +1,47 @@
+# The golden sets: a new pair's path, and how a change is judged. Render: d2 docs/primer/sets.d2 docs/primer/sets.svg
+
+direction: right
+
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 0
+    pad: 30
+  }
+}
+
+classes: {
+  set: {
+    shape: rectangle
+    style: {fill: "#ffffff"; stroke: "#3b4252"; border-radius: 6; font-size: 14}
+  }
+  once: {
+    shape: rectangle
+    style: {fill: "#fff8db"; stroke: "#8a6d00"; border-radius: 6; font-size: 14}
+  }
+  verdict: {
+    shape: diamond
+    style: {fill: "#dbe9f7"; stroke: "#2e6db4"; font-size: 13}
+  }
+}
+
+pair: "a new golden pair" {class: set}
+first: "first look\nscored once, before\nanything touches it" {class: once}
+tuning: "tuning\nchoices are made on it;\nthe arbiter and sorter\nlearn from it" {class: set}
+validation: "validation\nnever chosen on,\nnever trained on" {class: set}
+
+pair -> first
+first -> tuning: "joins one"
+first -> validation: "or the other" {style: {stroke-dash: 3}}
+
+change: "a change" {class: set}
+better: "better on tuning,\nor as good\nand simpler?" {class: verdict}
+veto: "clearly worse\non validation?" {class: verdict}
+kept: "kept" {class: set}
+dropped: "dropped" {class: set}
+
+change -> better
+better -> veto: "yes"
+better -> dropped: "no"
+veto -> dropped: "yes: vetoed"
+veto -> kept: "no"

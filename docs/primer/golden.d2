@@ -1,0 +1,44 @@
+# How a golden pair scores a build. Render: d2 docs/primer/golden.d2 docs/primer/golden.svg
+
+direction: right
+
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 0
+    pad: 30
+  }
+}
+
+classes: {
+  thing: {
+    shape: document
+    style: {fill: "#f4efe2"; stroke: "#b8ab8a"; font-size: 14}
+  }
+  step: {
+    shape: rectangle
+    style: {fill: "#ffffff"; stroke: "#3b4252"; border-radius: 6; font-size: 14}
+  }
+  score: {
+    shape: rectangle
+    style: {fill: "#dbe9f7"; stroke: "#2e6db4"; border-radius: 6; font-size: 14; bold: true}
+  }
+  person: {
+    shape: person
+    style: {fill: "#fff8db"; stroke: "#8a6d00"; font-size: 13}
+  }
+}
+
+scan: "the scan\n(photos of one printing)" {class: thing}
+machine: "the machine\nbuilds it" {class: step}
+reference: "the reference\n(the publisher’s e-book\nof that printing)" {class: thing}
+diff: "lined up word by word:\nevery difference,\nwith its cause" {class: step}
+score: "wrong words\na page" {class: score}
+you: "a person\nlooks at the scan" {class: person}
+
+scan -> machine
+machine -> diff: "its text"
+reference -> diff
+diff -> score
+diff -> you: "may the reference\ndepart from the print?" {style: {stroke-dash: 3}}
+you -> reference: "a verdict\nmends it" {style: {stroke-dash: 3}}
