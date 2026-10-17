@@ -678,10 +678,12 @@ the edition doesn't list its corrections (the user).
   Internet (the only English one, and the hardest layout: pictures holding text). A pair
   that fails (an EPUB of another printing, reference headings the scan lacks) is retired,
   not kept: Grand Hotel Europa was.
-- **The test set is a book nothing was chosen on.** Het geluid van bananen
-  (Stella's publisher and scan format) is scored once, at the end of the plan;
-  no model trains on it and the CLI refuses to score it without `--score-test`.
-  A change that carries over to the validation books proves less than that.
+- **Every new pair gets a first look.** Validation wears out: every change is benched
+  on it, and a choice made on it makes it tuning. One test book scored at the end is a
+  sanity check, not an exam. So each new pair is scored once, before anything is
+  chosen or trained on it, and then joins tuning or validation: the first looks,
+  together, say how the build does on books it has never seen (the user, 2026-10-17).
+  The CLI refuses to score such a pair without `--first-look`.
 - **A reference can stop being one.** When a book's remaining disagreements are
   mostly edition differences, or its verdicts never settle, its score measures
   the edition. The text layer's CER against the reference and the share of body

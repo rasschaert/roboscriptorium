@@ -105,7 +105,7 @@ def load(name: str, rebuild: bool = False) -> list[dict]:
 
 
 # Never trained on: the validation and test books.
-HELD_OUT = {spec.split("--")[0] for spec in bench.SETS["validation"] + bench.SETS["test"]}
+HELD_OUT = {spec.split("--")[0] for spec in bench.SETS["validation"] + bench.SETS["first-look"]}
 
 
 def judges(settings: Settings) -> set[str]:

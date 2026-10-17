@@ -108,7 +108,7 @@ def test_a_golden_books_places_join_the_review_cropped_from_the_layer(tmp_path, 
         epubs=tmp_path / "epubs",
     )
     seen = {}
-    monkeypatch.setattr(cli, "_not_the_test_set", lambda *a: None)
+    monkeypatch.setattr(cli, "_not_a_first_look", lambda *a: None)
     monkeypatch.setattr(cli.Book, "load", lambda d: book)
     monkeypatch.setattr(cli.scoring, "reference", lambda b, chapters: ([], ([], [])))
     monkeypatch.setattr(cli.pipeline, "run", lambda b, pages=None: stages)

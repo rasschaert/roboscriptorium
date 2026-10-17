@@ -497,14 +497,17 @@ If any one book gets clearly worse, the change is rejected.
 A question counts as catching an error only at its own place in a line, and a page
 the reviewer types whole counts as a question for each of its lines.
 
-### Three sets of books
+### Sets of books
 
 Tuning books are the ones choices are made on, and the arbiter learns from them.
 
-Validation books check that a choice also works on books it wasn't made on.
+Validation books check that a choice also works on books it wasn't made on. They can
+only stop a change, never pick one: a choice made on them would make them tuning books.
 
-The test book is scored once, at the end of the plan, and used for nothing else.
-The command line refuses to score it without `--score-test`.
+A new pair is scored once before anything is chosen or trained on it: its first look,
+the fairest measure of how the build does on a book it has never seen. Then it joins
+tuning or validation. The command line refuses to score a pair awaiting its first look
+without `--first-look`.
 
 A quick tier holds a chapter or two of each tuning book, about a quarter of their
 pages: a change is tried there first, and the full tuning set confirms it.
@@ -542,7 +545,7 @@ labelled suspects. It then trains it again once for each tuning book, leaving th
 book out, so the bench can score each tuning book with an arbiter that never saw
 it.
 
-The arbiter never learns from validation or test books.
+The arbiter never learns from validation books, or from a pair awaiting its first look.
 
 ### 3. Benching
 

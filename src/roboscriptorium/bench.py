@@ -33,8 +33,10 @@ BOOTSTRAP_SAMPLES = 2000
 # only their first chapters (10–27 pages) until a rescoring of 20, 45 and 90 pages a
 # book sets the size. Monterosso runs its chapters on without a page break, so no slice
 # short of the whole book ends on one. Dolittle's slice holds its plates and drawn
-# initials. The test set is scored once, at the end: nothing is chosen on it, no model
-# trains on it, and the CLI refuses to score it without `--score-test`.
+# initials. A new pair waits in "first-look" for one untouched score (`bench first-look
+# --first-look`): nothing is chosen on it and no model trains on it before, and the CLI
+# refuses to score it without `--first-look`; then it joins tuning or validation.
+# Verminkt's reference has no chapters, so its look is the whole book.
 SETS = {
     "tuning": [
         "goede-dochter--ia-scan:9-99:1-6",
@@ -63,9 +65,12 @@ SETS = {
         "het-laatste-bevel--ia-scan:9-100:1-5",
         "the-strangers-child--ia-scan:121-208:15-23",
         "normal-people--ia-scan:146-232:23-31",
+        "de-aanslag--calibre-pdf",
     ],
-    "test": [
+    "first-look": [
         "het-geluid-van-bananen--ia-scan:9-101:1-14",
+        "steve-jobs--ia-scan:9-100:1-12",
+        "verminkt--ia-scan",
     ],
     # The quick tier, for a change's short test: a chapter or two of each tuning book
     # (a later one where the first are front matter or a single short one), ending where
@@ -88,7 +93,7 @@ SETS = {
         "de-eerlijke-vinder--ia-scan:59-76:3-3",
     ],
 }
-TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
+FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"])
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
 NO_TRUST_DATA: frozenset[str] = frozenset()

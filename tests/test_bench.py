@@ -190,16 +190,16 @@ def test_a_book_slightly_worse_does_not_veto():
     assert (found.outcome, found.vetoes) == ("better", [])
 
 
-def test_the_test_set_is_scored_only_on_purpose():
-    book = next(iter(bench.TEST_BOOKS))
+def test_a_first_look_is_scored_only_on_purpose():
+    book = next(iter(bench.FIRST_LOOK))
     with pytest.raises(typer.BadParameter):
-        cli._not_the_test_set(Path("work") / book, False)
-    cli._not_the_test_set(Path("work") / book, True)
-    cli._not_the_test_set(Path("work/goede-dochter--ia-scan"), False)
+        cli._not_a_first_look(Path("work") / book, False)
+    cli._not_a_first_look(Path("work") / book, True)
+    cli._not_a_first_look(Path("work/goede-dochter--ia-scan"), False)
     others = {
-        s.split(":")[0] for name, specs in bench.SETS.items() if name != "test" for s in specs
+        s.split(":")[0] for name, specs in bench.SETS.items() if name != "first-look" for s in specs
     }
-    assert not bench.TEST_BOOKS & others
+    assert not bench.FIRST_LOOK & others
 
 
 def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, tmp_path):

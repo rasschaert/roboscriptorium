@@ -453,12 +453,13 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
 - A scan of another edition than the transcription differs in spelling, quote style,
   spaced dashes, "Mrs" vs "Mrs.", and so on, so its scores include edition differences,
   not just pipeline errors.
-- **Three sets** (`bench.SETS`). Tuning books are chosen on; validation books were
-  consulted before, so they check that a change carries over; the **test set** (Het
-  geluid van bananen) is scored **once, at the end of the plan, and touched by nothing
-  else**: no eval, quality, review or bench run, no trust data, no probe. `eval`,
-  `quality`, `review` and `bench test` refuse it without `--score-test`. A
-  validation book's sibling (same publisher, translator and e-book house) never trains
+- **Sets** (`bench.SETS`). Tuning books are chosen on; validation books were
+  consulted before, so they only veto. **A new pair waits for its first look**
+  (`first-look`): one score, untouched by anything before it (no eval, quality, review
+  or bench run, no trust data, no probe; `build` may warm its caches, as it prints no
+  score). `eval`, `quality`, `review` and `bench first-look` refuse it without
+  `--first-look`. The score goes in decisions.md, then the pair joins tuning or
+  validation in `bench.SETS`. A validation book's sibling (same publisher, translator and e-book house) never trains
   while it validates. Beside them, `bench quick` runs a chapter or two of each tuning
   book (~280 pages, inside their tuning slices): a change's short test, which
   `bench tuning` then confirms.
