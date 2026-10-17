@@ -19,6 +19,7 @@ Metrics:
 Headings are left out of the text comparison on both sides.
 """
 
+import itertools
 import re
 import unicodedata
 from collections import Counter
@@ -213,12 +214,17 @@ def match_headings(found: list[str], expected: list[str]) -> int:
     """How many expected headings appear among the found ones.
 
     An order-preserving alignment that maximises total similarity, so a missing
-    "CHAPTER XXV." doesn't take "CHAPTER XXVI." and shift every later match.
+    "CHAPTER XXV." doesn't take "CHAPTER XXVI." and shift every later match. One found
+    heading may stand for two expected in a row: a reference sets a chapter's number and
+    its title as two headings ("CHAPTER 1", "The End of the Earth") where the build
+    joins the two lines into one.
     """
     fk = [_heading_key(t) for t in found]
     ek = [_heading_key(t) for t in expected]
     fn = [_numbers(t) for t in found]
     en = [_numbers(t) for t in expected]
+    pairs = [_heading_key(f"{a} {b}") for a, b in itertools.pairwise(expected)]
+    pn = [_numbers(f"{a} {b}") for a, b in itertools.pairwise(expected)]
     # best[i][j]: (similarity, matches) aligning found[:i] with expected[:j]
     best = [[(0.0, 0)] * (len(ek) + 1) for _ in range(len(fk) + 1)]
     for i in range(1, len(fk) + 1):
@@ -227,6 +233,11 @@ def match_headings(found: list[str], expected: list[str]) -> int:
             if _same_heading(fk[i - 1], ek[j - 1], (fn[i - 1], en[j - 1])):
                 sim, n = best[i - 1][j - 1]
                 options.append((sim + fuzz.ratio(fk[i - 1], ek[j - 1]) / 100, n + 1))
+            # Longer than either part, so "CHAPTER 1" alone can't take both.
+            longer = j >= 2 and len(fk[i - 1]) > max(len(ek[j - 1]), len(ek[j - 2]))
+            if longer and _same_heading(fk[i - 1], pairs[j - 2], (fn[i - 1], pn[j - 2])):
+                sim, n = best[i - 1][j - 2]
+                options.append((sim + 2 * fuzz.ratio(fk[i - 1], pairs[j - 2]) / 100, n + 2))
             best[i][j] = max(options)
     return best[-1][-1][1]
 
