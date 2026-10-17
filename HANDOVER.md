@@ -23,7 +23,7 @@ has ended; only the main session works on).
       `golden derive normal-people --epub work/.cache/publisher/normal-people.epub`,
       `body_pages = [9, 276]` in `work/normal-people--ia-scan/book.toml`, and the
       baselines, warm: `bench quick`, `bench tuning` (now the long slices),
-      `bench validation` (now with De aanslag, whole).
+      `bench validation`.
    2. **Stage (b), `git merge weekend-merge`:** adds `number-lookalikes`. Retrain the
       trees at once (`experiments/train_sorter.py --rebuild --save`) **before
       `robo-first-look-reads` starts** (~23:00), or its builds stop on the feature

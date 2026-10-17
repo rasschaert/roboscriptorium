@@ -43,10 +43,11 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       (branch `first-look`, agent ~1 h): `bench.SETS["first-look"]` replaces "test", its
       guard (`--first-look`) refuses every eval, review, probe and trust data on such a
       book, `bench first-look` scores and saves it; design.md's reason. First looks
-      (one night, ~5 h): Het geluid van bananen, Verminkt, Steve Jobs (its words; its
-      roles trained the sorter, so its role scores aren't a first look). De aanslag
-      joins validation as it is (consulted before); De tunnels stays role training (its
-      EPUB can't score words). New pairs the user finds go through the same flow
+      (one night, ~14 h): Het geluid van bananen, Het schaduwhuis, Steve Jobs (its
+      words; its roles trained the sorter, so its role scores aren't a first look), De
+      geruchten, Verminkt whole. Na die nacht waits without a slot (a sibling of two
+      tuning books). De aanslag and De tunnels stay role training (born-digital; an
+      EPUB that can't score words). New pairs the user finds go through the same flow
 - [ ] A context judge (the user, 2026-10-17: "if it cuts down on questions being asked
       in human review, i'm for it"): qwen3.8 thinking, given the lines around a suspect,
       each version's count in the book and what OCR confuses, its answer held to the
