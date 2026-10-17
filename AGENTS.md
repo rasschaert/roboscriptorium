@@ -500,7 +500,8 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   or bench run, no trust data, no probe; `build` may warm its caches, as it prints no
   score). `eval`, `quality`, `review` and `bench first-look` refuse it without
   `--first-look`. The score goes in decisions.md, then the pair joins tuning or
-  validation in `bench.SETS`. A validation book's sibling (same publisher, translator and e-book house) never trains
+  validation in `bench.SETS`. A pair whose look has no slot yet waits in `bench.WAITING`,
+  guarded the same way but left out of the run. A validation book's sibling (same publisher, translator and e-book house) never trains
   while it validates. Beside them, `bench quick` runs a chapter or two of each tuning
   book (~280 pages, inside their tuning slices): a change's short test, which
   `bench tuning` then confirms.

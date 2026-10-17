@@ -69,8 +69,6 @@ SETS = {
         "verminkt--ia-scan",
         "het-schaduwhuis--ia-scan:9-91:1-19",
         "de-geruchten--ia-scan:9-97:2-22",
-        # A sibling of two tuning books: its look waits for a free slot.
-        "na-die-nacht--ia-scan",
     ],
     # The quick tier, for a change's short test: a chapter or two of each tuning book
     # (a later one where the first are front matter or a single short one), ending where
@@ -93,7 +91,10 @@ SETS = {
         "de-eerlijke-vinder--ia-scan:59-76:3-3",
     ],
 }
-FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"])
+# Pairs whose first look has no slot yet: guarded and held out like the first-look set,
+# but not in its bench run. Na die nacht is a sibling of two tuning books.
+WAITING = ["na-die-nacht--ia-scan"]
+FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"] + WAITING)
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
 NO_TRUST_DATA: frozenset[str] = frozenset()
