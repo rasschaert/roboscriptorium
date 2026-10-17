@@ -4,6 +4,27 @@ Instructions for any coding agent (and human) working in this repo. Read it befo
 starting; keep it true. It holds the rules, the scope and the map; the detail lives in
 the documents it names, each with one job.
 
+## Core principles
+
+What lasts (the user, 2026-10-18): the models' reading and judging will keep getting
+better, and code will keep getting cheaper to write and maintain; these principles are
+what the project is. Everything below them is today's way of meeting them.
+
+1. **The print, faithfully.** Exact words, spelling, paragraphs and the book's own
+   typography; no house style; fix only clear reading errors, never the author.
+2. **Build the machine, not the book.** Readers and judges that fail differently,
+   combined by learned trust; a book comes out right because the machine does.
+3. **Learned, not hand-written.** A decision is learned from labels wherever it can be.
+4. **Measured against the truth.** Every change is judged on golden books, paired,
+   before and after; the human labels (verdicts, review answers) are that truth, and a
+   model can't grade itself.
+5. **The reader's time is the scarcest resource.** Ask only what the machine can't
+   settle, and only once the machine has done all it can.
+6. **Nothing is "the way we do it".** Every block keeps its place only while the
+   evidence says it earns it; reorder, add or remove when it serves the outcome.
+7. **Record what was learned.** Every result, null ones too, with its numbers and its
+   reason, so it never has to be found again.
+
 ## The documents
 
 Each fact lives in one file; the others point to it. A change updates the file that
@@ -96,13 +117,11 @@ get renumbered. Don't add a file to this table without a job no other file has.
   order it questions. When something new works, ask at once what it lets us remove.
   Proposing these experiments is the agent's job, not the user's; the cheap ones run
   unasked (the rules below).
-- **The evidence outlasts the code** (the user, 2026-10-18: models and hardware keep
-  getting better, and a future agent will write any code it likes). Code is disposable;
-  what a later model can't regenerate is the asset: the human labels (review answers,
-  verdicts, errata in `work/`), the golden pairs with their provenance and known
-  deviations, the measurements and their reasons (decisions.md, null results, bench
-  records, saved errors with causes), and the user's standards. Spend effort where it
-  adds to these; record every result so it never has to be found again.
+- **Code is disposable; the principles and their instruments aren't.** Future models
+  read better and write any code (the user, 2026-10-18). What a later model can't
+  regenerate: the human labels (review answers, verdicts, errata in `work/`), the
+  golden pairs with their provenance, and the record of what was tried and why. Spend
+  effort where it adds to these.
 - **Test the architecture, not only its settings** (the user, 2026-10-13: "we're too stuck
   in our way of thinking … fine tuning has diminishing returns"). Before saying a model
   can't do something, or parking an idea under Later, try it on a few golden pages: a
