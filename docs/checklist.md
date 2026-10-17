@@ -235,6 +235,10 @@ In this order:
 
 ## 5. Errors no question asks about
 
+- [ ] A page's first line the text layer lacks (Vuurspel p. 19, p. 103: 38 missing words
+      on validation): why `missing.py` doesn't find it (agent, ~1 h, then glm-ocr reads)
+- [ ] The Stranger's Child's dash and nested-quote spacing ("think —’", "ground!” ’"):
+      the print's, against `typography.py` (agent, ~1 h)
 - [x] De eerlijke vinder's unasked errors (2026-10-15): 28 of 38 were page numbers the
       layer joins to a body line; split off (`pdf._apart`), wrong words 0.88 → 0.42 a page
       on the short test; `bench tuning` 0.32 → 0.30 after review, no book worse
