@@ -24,6 +24,8 @@ has ended; only the main session works on).
       `body_pages = [9, 276]` in `work/normal-people--ia-scan/book.toml`, and the
       baselines, warm: `bench quick`, `bench tuning` (now the long slices),
       `bench validation`.
+   Between the stages: the error categories (checklist, "Error categories tracked per
+      run"), from stage (a)'s `work/bench/*.errors.jsonl`, so stage (b) shows them.
    2. **Stage (b), `git merge weekend-merge`:** adds `number-lookalikes`. Retrain the
       trees at once (`experiments/train_sorter.py --rebuild --save`) **before
       `robo-first-look-reads` starts** (~23:00), or its builds stop on the feature
