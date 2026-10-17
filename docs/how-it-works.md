@@ -9,11 +9,10 @@ The [diagram](pipeline.svg) draws the stages with the model behind each one.
 
 ## The idea
 
-A book comes as one of three kinds of PDF, and what matters is how much of the
-printed page the file already holds as text.
+A book comes as a scanned PDF, and what matters is how much of the printed page the
+file already holds as text. (A born-digital PDF, made from the typeset text, holds it
+exactly: it converts back trivially and is not what this project is for.)
 
-- **Born-digital**: made from the typeset text, so the text *is* the page and the
-  picture only renders it. Extracting the text is exact.
 - **A scan with a text layer**: the picture is the page. Over it, invisible, lies
   one OCR program's reading of it, which is what lets you search and copy in a
   scanned PDF. That reading is good, a few wrong characters in every thousand, and
@@ -39,8 +38,7 @@ Your answers go into the next build. They also become labels the arbiter learns 
 Before any of that, the *spotter* marks what is on each page, and the *sorter*
 decides what each line is: body text, a heading, a page number. After it, plain
 code joins the lines into paragraphs and sets the typography the way the book was
-printed. A born-digital PDF skips the reading and judging: its text is exact, so
-it goes from the sorter straight to the paragraphs.
+printed.
 
 Each of those italic words is a *role*, and the roles are the point. The machine
 is a set of jobs, not a set of models: whoever holds a job today, a model, a
@@ -114,7 +112,7 @@ to its provider, so one is used only when the user allows it for a particular ru
 
 A book is a directory, `work/<book>/`, with two files in it to start:
 
-- `source.pdf`, the scan or the born-digital PDF;
+- `source.pdf`, the scan;
 - `book.toml`, with the title, author, language, cover page, body page range and,
   optionally, the dash style (`dash`, `dash_spacing`) and the ellipsis style
   (`ellipsis`, `ellipsis_space`).
@@ -134,7 +132,7 @@ Books, scans and everything derived from them stay in `work/`, outside git.
 
 The first stage makes a first reading of every page: its text as visual lines, each
 with its box on the page. Who makes it depends on the kind of PDF. For a
-born-digital PDF and for a scan with a text layer, `pdf.py` reads the PDF's own
+scan with a text layer, `pdf.py` reads the PDF's own
 text out with PyMuPDF; in a scan that text is invisible, drawn in a font without
 letter shapes, at the places where the OCR program read each word. An image-only
 scan has no such text, so tesseract, one of the readers, reads each page image
@@ -200,7 +198,7 @@ weight and capitals, takes the role the sorter gave most of them, so one misjudg
 chapter title follows its siblings.
 
 Those rules were written one book at a time and don't carry over well: on a
-born-digital book they found none of its twelve headings. The candidate for the
+calibre-made book they found none of its twelve headings. The candidate for the
 job is a set of trees trained on the golden books' lines, labelled body, heading
 or other by aligning the scan with its reference text. The trees see what the
 rules see (place on the page, width, indent, gaps, repetition across pages), the
@@ -347,6 +345,30 @@ qwen3.8 is reliable on quote marks and less so on letters.
 A drawn initial comes with a guess at its letter. Code finds the letters that make
 the word beside it a word, and the sorter picks the one the drawing shows.
 
+### The page and its keys
+
+Each region asks what it is: `1` running text, `2` heading, `3` drop, `4` image,
+`5` caption, `6` decorated initial (its letter guessed from the word it begins). The
+pipeline's call is preselected. The text as printed goes in a text box.
+
+Where the readings differ, the question asks which one matches the scan instead, once
+per line. Each row is a whole line: the text layer's, each reader's and each judge's,
+the likeliest at each place, and the line as built. The differing parts are marked,
+with who has them. Keys `a`, `b`, … pick a row; `e` types something else, starting from
+the chosen row, or from any row with its ✎. A question with no readings of its own (a
+heading, a line the layer lacks) gets qwen3.8's reading beside the layer's.
+
+Save (`↵`, or `⌘↵` in the text box) records the answer and moves to the next unanswered
+region; the arrows move through all of them. A region with a box can be turned (`r`,
+↺/↻) and read again by tesseract (`o`); `-` and `+` zoom the crop.
+
+Where the book itself is wrong, `m` (a misprint) takes the line as the edition should
+read it. The answer stays what the page prints, which the readers are scored on, and
+the words that differ go to the book's errata (`errata.py`).
+
+"Rebuild book" applies the answers and rebuilds the EPUB. The questions come from the
+model's decisions before any answers, so the list stays put while you work.
+
 ### Checking the reviewer
 
 The reviewer makes mistakes too: about one answer in ten, pooled over the books
@@ -355,6 +377,7 @@ reviewed so far. So an answer is checked before it is saved.
 A line typed for a question must match one of the readings, apart from quote
 glyphs and spacing. A straight quote in a book set with curly quotes is queried.
 The page says why once, and saves when you press Save again.
+Answers saved over such a warning are logged in `review/warnings.jsonl`.
 
 Answers are stored in `work/<book>/review/regions.jsonl`.
 
@@ -472,14 +495,20 @@ If any one book gets clearly worse, the change is rejected.
 A question counts as catching an error only at its own place in a line, and a page
 the reviewer types whole counts as a question for each of its lines.
 
-### Three sets of books
+### Sets of books
 
 Tuning books are the ones choices are made on, and the arbiter learns from them.
 
-Validation books check that a choice also works on books it wasn't made on.
+Validation books check that a choice also works on books it wasn't made on. They can
+only stop a change, never pick one: a choice made on them would make them tuning books.
 
-The test book is scored once, at the end of the plan, and used for nothing else.
-The command line refuses to score it without `--score-test`.
+A new pair is scored once before anything is chosen or trained on it: its first look,
+the fairest measure of how the build does on a book it has never seen. Then it joins
+tuning or validation. The command line refuses to score a pair awaiting its first look
+without `--first-look`.
+
+A quick tier holds a chapter or two of each tuning book, about a quarter of their
+pages: a change is tried there first, and the full tuning set confirms it.
 
 ### Retiring a book
 
@@ -514,7 +543,7 @@ labelled suspects. It then trains it again once for each tuning book, leaving th
 book out, so the bench can score each tuning book with an arbiter that never saw
 it.
 
-The arbiter never learns from validation or test books.
+The arbiter never learns from validation books, or from a pair awaiting its first look.
 
 ### 3. Benching
 

@@ -37,15 +37,15 @@ SPECS = {
     "reis-om-mijn-schedel--ia-scan": "11-99:1-10",
     "afscheid-van-verspilde-tijd--ia-scan": "9-70:1-11",
     "metro-2033--ia-scan": "7-92:1-8",
-    "de-cipier--ia-scan": "9-33:1-2",
-    "artemis--ia-scan": "13-34:1-1",
-    "de-tuin-van-de-avondnevel--ia-scan": "11-29:1-1",
+    "de-cipier--ia-scan": "9-92:1-4",
+    "artemis--ia-scan": "13-80:1-3",
+    "de-tuin-van-de-avondnevel--ia-scan": "11-97:1-6",
     "de-eerlijke-vinder--ia-scan": "",
     "youre-never-weird-on-the-internet--ia-scan": "13-26:1-2",
-    "the-thief-takers-apprentice--ia-scan": "11-26:1-6",
-    "het-heft-in-eigen-hand--ia-scan": "9-33:1-2",
-    "doodskleed--ia-scan": "13-22:1-2",
-    "het-ijzige-land--ia-scan": "11-21:1-1",
+    "the-thief-takers-apprentice--ia-scan": "11-84:1-22",
+    "het-heft-in-eigen-hand--ia-scan": "9-92:1-5",
+    "doodskleed--ia-scan": "13-96:1-14",
+    "het-ijzige-land--ia-scan": "11-104:1-11",
     "de-kerk-van-de-dode-meisjes--ia-scan": "11-27:1-3",
     "vuurspel--ia-scan": "9-29:1-2",
     "monterosso-mon-amour--ia-scan": "",
@@ -105,7 +105,7 @@ def load(name: str, rebuild: bool = False) -> list[dict]:
 
 
 # Never trained on: the validation and test books.
-HELD_OUT = {spec.split("--")[0] for spec in bench.SETS["validation"] + bench.SETS["test"]}
+HELD_OUT = {spec.split("--")[0] for spec in bench.SETS["validation"] + bench.SETS["first-look"]}
 
 
 def judges(settings: Settings) -> set[str]:

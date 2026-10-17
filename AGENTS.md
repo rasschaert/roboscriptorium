@@ -19,8 +19,8 @@ owns the fact in the same commit.
 | [docs/design.md](docs/design.md) | why each component is there: what it catches, its failure, the measurement | a component or the evidence for it changes |
 | [docs/run-times.md](docs/run-times.md) | wall-clock minutes of long runs, appended by `experiments/timed.sh` | each timed run |
 | [docs/modules.md](docs/modules.md) | the code, module by module | a module changes |
-| [docs/models.md](docs/models.md) | every model tried, by role, with its verdict | a model is screened |
-| [docs/golden-notes.md](docs/golden-notes.md) | each golden pair: edition, what makes it hard, known deviations | a pair is added, sliced or retired |
+| [docs/models.md](docs/models.md) | every model tried, by role, with its verdict; how the ones in use are set up | a model is screened or set up |
+| [docs/golden-notes.md](docs/golden-notes.md) | each golden pair: edition, what makes it hard, known deviations; the manifest keys that undo them | a pair is added, sliced or retired; a key is added |
 | [docs/golden-books.md](docs/golden-books.md) | the pairs' numbers, **generated** by `experiments/golden_overview.py` | regenerated after a pair changes |
 | [docs/hosted-inference.md](docs/hosted-inference.md) | the plan for a window of free hosted inference: what to learn, what carries back, the guardrails | access comes, or a hosted run teaches something |
 | [docs/primer.md](docs/primer.md) | for a person new or returning: the problem from first principles, how a change is judged, where the gains are expected, the vocabulary | the approach, the bets or the vocabulary change |
@@ -67,7 +67,7 @@ get renumbered. Don't add a file to this table without a job no other file has.
   room left).
 - **Installs:** Homebrew tools, Python deps and Ollama models may be installed freely;
   the user pulls large model downloads themselves. Record each under
-  [Environment](#environment).
+  [Environment](#environment), and a model's setup in docs/models.md (Setup).
 - **Handholding first.** Prefer flagging uncertain output for human review over guessing
   silently. Automation increases only as measured quality earns it.
 - **Quality over speed.** Pick the more accurate method even when it is several times
@@ -205,8 +205,11 @@ hand-written rule where a learned one can do the job; an existing rule is replac
 learned decision once the bench says the learned one is at least as good. What is true
 by definition (a chapter heading appears once, an apostrophe is `’`) may stay code.
 
-- **Order of attack:** scanned PDF → born-digital PDF → other formats (MOBI/AZW3, DOCX,
-  HTML, …).
+- **Order of attack:** scanned PDF → other formats (MOBI/AZW3, DOCX, HTML, …).
+  **Born-digital PDFs are out of scope** (the user, 2026-10-17: "born digital pdfs are
+  easy. they were often made in calibre using an epub as source. trivial to convert
+  back. that's not the point of this project"). The pipeline still reads one (its text
+  layer is exact, so the OCR check skips it), but no pair of that kind is scored.
 - **Content order:** prose/fiction first; footnotes, figures, tables, verse later.
 - **Book languages:** Dutch and English.
 - **Fidelity:** exact wording and spelling, original paragraphs, italics and scene breaks,
@@ -258,14 +261,14 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `layout.py`, `typestyle.py`, `faint.py` | DocLayout-YOLO regions; each line's type against the body; washed-out pages |
 | `missing.py` | printed lines the layer lacks, read by glm-ocr |
 | `roles.py`, `sorter.py`, `sorterdata.py` | line roles: a decision model plus rules, then learned trees (`ROBO_SORTER=0` turns them off); the trees' training data |
-| `readers.py`, `pagereader.py`, `ocrcheck.py`, `ocrdoubts.py`, `trust.py`, `trustdata.py`, `lexicon.py` | more readings of each body line (two of them from whole-page readings), judges where they differ, the review's questions about them, the learned trust that fixes, keeps or asks, and its training data; the word list |
+| `readers.py`, `pagereader.py`, `ocrcheck.py`, `ocrdoubts.py`, `trust.py`, `trustdata.py`, `contextjudge.py`, `lexicon.py` | more readings of each body line (two of them from whole-page readings), judges where they differ, the review's questions about them, the learned trust that fixes, keeps or asks, and its training data; a thinking model settling questions from the text around them (off); the word list |
 | `corrections.py`, `errata.py`, `quotes.py` | the reviewer's answers applied; the misprints they correct; unpaired quotes as questions with a proposed reading |
 | `footnotes.py`, `epigraphs.py` | footnotes at a page's foot taken out of the running text and linked to their marks; a motto on a page of its own set apart |
 | `reflow.py`, `hyphens.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; lines joined and their end hyphens kept or dropped, by the book's spellings, the word list and the judge; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |
 | `ir.py`, `epub.py` | the document model with references back to page lines; EPUB 3 by hand |
 | `pipeline.py` | the stages for one book, each cached under `work/<book>/stages/` |
 | `flags.py`, `review.py` | what a human should check; the local review pages |
-| `golden/`, `evaluate.py`, `disagreements.py`, `quality.py`, `bench.py` | golden books (manifests, derived references, alignment, retirement signals); CER, WER and paragraph scores; differences located on the scan; what a reviewer is left with; **the** paired measure of a change |
+| `golden/`, `evaluate.py`, `disagreements.py`, `quality.py`, `bench.py`, `errorlog.py` | golden books (manifests, derived references, alignment, retirement signals); CER, WER and paragraph scores; differences located on the scan; what a reviewer is left with; **the** paired measure of a change; each run's errors place by place, and what a change fixed and made (`bench-diff`) |
 
 ## Architecture
 
@@ -348,7 +351,7 @@ decision a decision model can make.
 
 clef, clef-flash and winnow (`winnow-ollama:e4b`) answer on Ollama's `/v1/systemone`;
 every question the pipeline asks is a `choice`. A model pulled as a plain GGUF lacks the
-`decision` capability; a Modelfile adds it (Environment, `winnow-ollama:e4b`).
+`decision` capability; a Modelfile adds it (docs/models.md, Setup).
 
 - Images: raw base64 PNG, JPEG or WebP in `images`, one per request.
 - Question types: `choice` (probability per declared option), `score` (ordinal scale),
@@ -380,46 +383,16 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   model run waits while the battery is under 30%, checking hourly
   (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
   job started another way).
-- Ollama 0.40.3 at `http://127.0.0.1:11434` (scores before 2026-10-06 were on 0.35.1).
-  **Stay on 0.40.3:** 0.40.4 refuses `winnow-ollama:e4b` ("a format that is no longer
-  supported"): since ollama/ollama#18917 a decision model needs llama.cpp's decision
-  metadata (`decision.type`) in the GGUF itself, which `CAPABILITY decision` in a
-  Modelfile can't add. Keep the app's automatic updates off until winnow's makers
-  publish such a GGUF or ollama/ollama#18882 (migrating old GGUFs on load) ships. `clef-flash:9b` was pulled again on 2026-10-15
-  (digest `0a2a05d6`): it answers the cached line-role questions as the old build did
-  (`experiments/probe_decider_drift.py`).
-  Context length 32k in the app's settings since 2026-10-13 (the user), for glm-ocr reading
-  whole pages: llama.cpp's four slots share the context, so 8k left each request ~2k, too
-  little for a page. 128k only held memory for KV caches; readings are the same either way. `OLLAMA_NUM_PARALLEL=4`, set with `launchctl setenv`
-  (the app reads it when it starts; `launchctl unsetenv` removes it): the llama.cpp-served
-  models (glm-ocr, clef-flash, winnow) get four slots, which doubles glm-ocr's throughput
-  and changes no reading; the MLX runner behind the nvfp4 builds (qwen3.8, clef:27b)
-  serves one request at a time whatever the setting, and the decision models gain
-  nothing either way.
-  Ollaya was uninstalled on 2026-10-08; every model runs on Ollama.
+- Ollama 0.40.3 at `http://127.0.0.1:11434`. **Stay on 0.40.3,** with the app's automatic
+  updates off: 0.40.4 refuses `winnow-ollama:e4b` (why, and when that ends:
+  [docs/models.md](docs/models.md), Setup). Context length 32k in the app's settings;
+  `OLLAMA_NUM_PARALLEL=4` (`launchctl setenv`, read when the app starts).
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
-  `pdftotext`, `pdfimages`), epubcheck, d2 (all Homebrew where applicable).
-- llama.cpp (Homebrew, 0.6.0): `llama-server` runs imajev for the judge tryout on
-  Ollama's own blobs, its readout applied in `clients/llama.py`
-  (`experiments/llama-serve.sh <size> [port]`), because Ollama's systemone takes no
-  images for GGUF models. Its image placeholder is random per start; read it from
-  `/props` (`media_marker`). Readouts and calibrations in `work/models/imajev/` (from
-  `mohit67890/imajev-{2b,4b,9b}`, 2–4 MB each).
-- `imajev:4b` (Ollama): mindchain's imajev-4b (`hf.co/mindchain/imajev-4b-GGUF:Q8_0`)
-  made a decision model with `modelfiles/imajev-4b.Modelfile`. The candidate for plates
-  without a caption; off in the pipeline. The 2B and 9B were deleted after their screen
-  (their Modelfiles and readouts remain).
-- `winnow-ollama:e4b` (Ollama): winnow:e4b's Hugging Face GGUF
-  (`hf.co/EldanRing/Winnow-E4B:Q8_0`) made a decision model with
-  `modelfiles/winnow-ollama-e4b.Modelfile`. **A workaround:** a pulled GGUF has no
-  `decision` capability, so the Modelfile adds `CAPABILITY decision` and `CAPABILITY
-  vision` and an empty `TEMPLATE {{ .Prompt }}`, copied from clef-flash's. Ollama then
-  renders the decision prompt its own way, not in the layout winnow was trained on
-  (EldanRing/winnow-inference `native/protocol.h`). The pipeline's second judge.
-- scikit-learn (Python dep) for the trust model and the line-role trees.
-- Dependency group `layout` (a default group): `doclayout-yolo` with PyTorch, and the
-  DocLayout-YOLO DocStructBench weights (`juliozhao/DocLayout-YOLO-DocStructBench`,
-  `doclayout_yolo_docstructbench_imgsz1024.pt`, in the Hugging Face cache). `layout.py` runs it on every build.
+  `pdftotext`, `pdfimages`), epubcheck, d2, llama.cpp's `llama-server` (all Homebrew where
+  applicable); scikit-learn and the dependency group `layout` (`doclayout-yolo` with
+  PyTorch) in Python.
+- Models set up by hand (`winnow-ollama:e4b`, `imajev:4b`, imajev on `llama-server`, the
+  DocLayout-YOLO weights): [docs/models.md](docs/models.md), Setup.
 - Word lists: `work/lexicon/{nld,eng}-words.txt`, built by `lexicon.py` from the tessdata
   models with `combine_tessdata` and `dawg2wordlist` (both come with Homebrew's
   tesseract).
@@ -453,28 +426,11 @@ epubcheck work/stella/stella.epub        # must report 0 errors / 0 warnings
 uv run ruff format . && uv run ruff check . && uv run pytest
 ```
 
-**Reviewing a book.** `uv run roboscriptorium review work/<book>` builds the book,
-flags the regions that aren't plain running text and serves them on
-http://127.0.0.1:8765/ next to scan crops. Each region asks what it is (radio buttons:
-`1` running text, `2` heading, `3` drop, `4` image, `5` caption, `6` decorated initial,
-with its letter guessed from the word it begins), with the pipeline's call preselected,
-and takes the text as printed in a text box. Where OCR readings differ it asks which one
-matches the scan instead, once per line: the whole line as the text layer, each reader
-and each judge has it, the likeliest at each place and as built, each on its own row with
-the differing parts marked and who has it (`a`, `b`, …; `e` for something else, starting
-from the option chosen, or from any option with its ✎). A question with no readings
-of its own (a heading, a line the layer lacks) gets Qwen's beside the layer's. One Save button (`↵`;
-`⌘↵` in the text box) records the answer and moves to the next unanswered region; a
-typed line that matches none of the readings, or a straight quote in a curly-quoted
-book, is queried once and saved on the second Save (`review.doubtful`; warned answers in
-`review/warnings.jsonl`). Arrows move through all regions. A region with a box can be
-turned (`r`, ↺/↻) and read again by tesseract (`o`); `-` and `+` zoom the crop. Where
-the book itself is wrong, `m` (a misprint) takes the line as the edition should read it:
-the answer stays what the page prints, which the readers are scored on, and the words
-that differ go to `work/<book>/errata.toml`, found by page and printed words (`errata.py`;
-the file can be edited by hand, and an entry that doesn't match once stops the build). "Rebuild
-book" applies the answers and rebuilds the EPUB. Flags come from the model's decisions
-before answers, so the list stays put while you work. **Sample the questions before
+**Reviewing a book.** `uv run roboscriptorium review work/<book>` builds the book and
+serves its questions on http://127.0.0.1:8765/, next to scan crops; the page and its keys
+are in [docs/how-it-works.md](docs/how-it-works.md) (Review). "Rebuild book" applies the
+answers. A misprint (`m`) goes to `work/<book>/errata.toml`, which can be edited by
+hand; an entry that doesn't match once stops the build. **Sample the questions before
 sending the user to review** (`experiments/sample_questions.py <book>` lays them out with
 their crops): never obvious ones.
 
@@ -510,13 +466,16 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
 - A scan of another edition than the transcription differs in spelling, quote style,
   spaced dashes, "Mrs" vs "Mrs.", and so on, so its scores include edition differences,
   not just pipeline errors.
-- **Three sets** (`bench.SETS`). Tuning books are chosen on; validation books were
-  consulted before, so they check that a change carries over; the **test set** (Het
-  geluid van bananen) is scored **once, at the end of the plan, and touched by nothing
-  else**: no eval, quality, review or bench run, no trust data, no probe. `eval`,
-  `quality`, `review` and `bench test` refuse it without `--score-test`. A
-  validation book's sibling (same publisher, translator and e-book house) never trains
-  while it validates.
+- **Sets** (`bench.SETS`). Tuning books are chosen on; validation books were
+  consulted before, so they only veto. **A new pair waits for its first look**
+  (`first-look`): one score, untouched by anything before it (no eval, quality, review
+  or bench run, no trust data, no probe; `build` may warm its caches, as it prints no
+  score). `eval`, `quality`, `review` and `bench first-look` refuse it without
+  `--first-look`. The score goes in decisions.md, then the pair joins tuning or
+  validation in `bench.SETS`. A validation book's sibling (same publisher, translator and e-book house) never trains
+  while it validates. Beside them, `bench quick` runs a chapter or two of each tuning
+  book (~280 pages, inside their tuning slices): a change's short test, which
+  `bench tuning` then confirms.
 - **Checking a candidate pair** (scan PDF plus the publisher's EPUB) before writing its
   manifest: `uv run python experiments/probe_candidate.py <scan.pdf> <ref.epub> [heading
   prefix …]`, no models, about 10 s per 100 pages. It prints the scan's kind, the EPUB's
@@ -527,17 +486,8 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   (Stella's format); skip calibre-made PDFs, other printings, DRM and pre-1934 spelling.
   Skip an EPUB that isn't the publisher's own (made through Word or OCR: `MsoNormal`
   classes, an ABBYY generator, a colophon naming only the print): it carries its maker's
-  edits. An EPUB that sets its dashes as spaced hyphens, a spaced `--` or
-  minus signs gets `hyphen_dash = "–"` in `[reference]`; one that writes small capitals in lower case with
-  a class gets `capital_classes`; one that numbers its notes in growing marks (`*`, `**`,
-  …) where the print sets one gets `note_mark`; one whose scene breaks are empty paragraphs
-  of a class gets `break_classes`, and one that marks them on the paragraph after or before
-  gets `opening_classes` or `closing_classes` (check each on the scan:
-  `experiments/probe_break_classes.py`); one whose drawn initials are images gets
-  `initial_images` (the letter from the file name), and a text without headings
-  `one_chapter`; one whose markup leaves a space before punctuation or a hyphen-joined
-  word part after a styled word ("FBI -agent") gets `markup_spaces`; a Gutenberg transcription that drops the space its
-  print sets before an ellipsis gets `ellipsis_space = true`.
+  edits. Where the EPUB's markup departs from the print, a `[reference]` key in the
+  manifest undoes it ([docs/golden-notes.md](docs/golden-notes.md) lists them).
   `experiments/chapter_pages.py` gives the scan page each derived chapter starts on, to
   end a bench slice on a chapter.
 - **Known deviations.** No publisher's EPUB matches its print in every convention. Each

@@ -3,9 +3,10 @@
 Turns a book's PDF into a clean EPUB 3, automated as far as possible and running
 entirely on local AI (generative and decision models on Ollama).
 
-It takes searchable PDFs (a scan with an OCR text layer, as the Internet Archive
-makes them) and born-digital ones (made from the typeset text). An image-only scan,
-without a text layer, gets its first reading from tesseract.
+It takes scanned books: a PDF with an OCR text layer, as the Internet Archive makes
+them, or an image-only scan, which gets its first reading from tesseract. A
+born-digital PDF (made from the typeset text, often by calibre from an EPUB) is out of
+scope: its text converts back trivially.
 
 ![From PDF to EPUB: the stages and the model behind each](docs/pipeline.svg)
 

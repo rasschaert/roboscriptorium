@@ -118,7 +118,15 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `glyph_kinds`).
   Verdicts (what the scan prints, plus a mistake category) are stored per scan
   and patched into the reference by `eval`.
-- `bench.py` (`roboscriptorium bench [tuning|validation|test]`): **the** measure for a
+- `errorlog.py`: a bench run's errors, one row each, written beside its record
+  (`work/bench/<run>.errors.jsonl`, as they quote the books): book, page and lines,
+  kind, size, both sides with context, whether a question catches it, and two hints at
+  its origin (did the text layer already read it so: kept, made, lost, unclear; the OCR
+  check's decision on its lines). Rows are keyed by the reference words with their
+  context, like verdicts, so `diff` sorts two runs into fixed, made and kept, and
+  `roboscriptorium bench-diff <old> <new>` prints them by kind, book and origin with
+  examples; `bench` prints the one-line sum after its comparison.
+- `bench.py` (`roboscriptorium bench [tuning|validation|quick|first-look]`): **the** measure for a
   change. Pinned golden slices per set, scored with `evaluate` and `quality`,
   saved whole to `work/bench/` (commit, settings, decider, model versions,
   per-page counts, paragraph breaks set wrong among them) and compared with the
@@ -237,7 +245,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   books and slices it is built from (a tuning book left out is in `bench.NO_TRUST_DATA`,
   which a test keeps in step); `load` builds or reads a book's rows, each suspect's
   versions labelled by the aligned reference (Stella's by the user's answers);
-  `usable`, `rows_of` and `trainable` pick what trains, the validation and test books
+  `usable`, `rows_of` and `trainable` pick what trains, the validation books and first looks
   never; `models_to_save` trains the model the pipeline uses and a copy without each
   tuning book. Run by `experiments/ocr_trust_data.py` and
   `experiments/train_ocr_trust.py`, which also scores the model leaving each book out.
@@ -260,6 +268,12 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   settings name. An ablation (another reader set, say) keeps its data and models apart:
   `ROBO_TRUST_DATA` for the data folder, `ROBO_OCR_TRUST_MODEL` for the model, whose
   leave-one-out copies sit beside it.
+- `contextjudge.py`: the context judge, off unless `ROBO_CONTEXT_MODEL` names a model.
+  After the arbiter, each suspect it would ask (but one no judge saw a version of) goes
+  to a thinking model with the lines around it and the place marked; its answer is held
+  to the versions' letters (`OllamaClient.choose`, structured output). Where it picks
+  the version the arbiter holds likeliest, the suspect takes that version instead of
+  being asked. Answers are cached in `stages/context-judge.json`, keyed by the prompt.
 - `typography.py`: the book's ellipsis style (`…`, `...` or `. . .`, with or without a
   space before): its gaps measured on a scan (`measure_ellipses`, cached in
   `stages/ellipsis.json`; the dots and the blanks before and between them against the

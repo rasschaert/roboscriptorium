@@ -11,6 +11,7 @@ import typer
 from roboscriptorium import (
     bench,
     disagreements,
+    errorlog,
     evaluate,
     initials,
     ocr,
@@ -82,10 +83,14 @@ def doctor() -> None:
 
 
 @app.command()
-def build(book_dir: Path) -> None:
-    """Build an EPUB from a book directory holding book.toml and the source file."""
+def build(
+    book_dir: Path,
+    pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
+) -> None:
+    """Build an EPUB from a book directory holding book.toml and the source file. No
+    scores: it warms a first look's caches without looking."""
     book = Book.load(book_dir)
-    doc = pipeline.build(book)
+    doc = pipeline.build(book, _range(pages))
     typer.echo(f"{len(doc.blocks)} paragraphs → {book.epub_path}")
     if kept := keep_dated(book.epub_path, book.epubs):
         typer.echo(f"kept as {kept}")
@@ -124,7 +129,7 @@ def golden_derive(name: str, epub: Path | None = None) -> None:
             opening=ref.opening_classes,
             closing=ref.closing_classes,
             initial_images=ref.initial_images,
-            one_chapter=ref.one_chapter,
+            leading_text=ref.leading_text,
             markup_spaces=ref.markup_spaces,
         )
     else:
@@ -173,17 +178,17 @@ def _range(value: str | None) -> tuple[int, int] | None:
         raise typer.BadParameter(str(exc)) from None
 
 
-def _score_test() -> bool:
+def _first_look() -> bool:
     return typer.Option(
-        False, "--score-test", help="Score a book of the test set, which is done once, at the end"
+        False, "--first-look", help="Score a new pair's first look, done once, before any choice"
     )
 
 
-def _not_the_test_set(book_dir: Path, score_test: bool) -> None:
-    """The test set is scored once, at the end, on purpose; refuse it otherwise."""
-    if book_dir.name in bench.TEST_BOOKS and not score_test:
+def _not_a_first_look(book_dir: Path, first_look: bool) -> None:
+    """A pair awaiting its first look is scored once, on purpose; refuse it otherwise."""
+    if book_dir.name in bench.FIRST_LOOK and not first_look:
         raise typer.BadParameter(
-            f"{book_dir.name} is in the test set, scored only at the end (pass --score-test)"
+            f"{book_dir.name} awaits its first look, scored once (pass --first-look)"
         )
 
 
@@ -206,11 +211,11 @@ def review_regions(
         None, help="A golden book's reference chapters to compare, e.g. 1-9"
     ),
     port: int = typer.Option(8765, help="Port on 127.0.0.1"),
-    score_test: bool = _score_test(),
+    first_look: bool = _first_look(),
 ) -> None:
     """Review the regions that aren't plain running text, next to the scan; for a golden
     book also where its text and the reference differ, whose answers are verdicts."""
-    _not_the_test_set(book_dir, score_test)
+    _not_a_first_look(book_dir, first_look)
     book = Book.load(book_dir)
     if book.golden is not None:
         reference, around = scoring.reference(book, _range(chapters))
@@ -261,7 +266,7 @@ def review_regions(
 
 
 @app.command("quality")
-def quality_report(specs: list[str], score_test: bool = _score_test()) -> None:
+def quality_report(specs: list[str], first_look: bool = _first_look()) -> None:
     """Wrong words a reviewer is left with per page, at several question budgets.
 
     SPECS are golden book dirs, each optionally with :pages:chapters
@@ -275,7 +280,7 @@ def quality_report(specs: list[str], score_test: bool = _score_test()) -> None:
             book_dir, _, _ = scoring.parse_spec(spec)
         except ValueError as exc:
             raise typer.BadParameter(str(exc)) from None
-        _not_the_test_set(book_dir, score_test)
+        _not_a_first_look(book_dir, first_look)
     books = []
     for spec in specs:
         name, _, stages, _, errors, found, applied = scoring.build(spec)
@@ -322,13 +327,13 @@ def _commit() -> str:
 def run_bench(
     set_name: str = typer.Argument("tuning", help=f"One of {', '.join(bench.SETS)}"),
     against: str | None = typer.Option(None, help="A saved run to compare with (default: last)"),
-    score_test: bool = _score_test(),
+    first_look: bool = _first_look(),
 ) -> None:
     """Score a fixed set of golden slices, save the run, and compare it page by page."""
     if set_name not in bench.SETS:
         raise typer.BadParameter(f"no bench set {set_name!r}")
-    if set_name == "test" and not score_test:
-        raise typer.BadParameter("the test set is scored once, at the end: pass --score-test")
+    if set_name == "first-look" and not first_look:
+        raise typer.BadParameter("a first look is scored once, on purpose: pass --first-look")
     settings = Settings.from_env()
     record = bench.run(
         set_name,
@@ -390,6 +395,26 @@ def run_bench(
             f" {mark} {c.book[:40]:40} {c.measure:26} {c.before:6.2f} → {c.after:6.2f}"
             f"  [{c.low:+.2f}, {c.high:+.2f}]"
         )
+    if (old_rows := errorlog.load(old_path)) and (new_rows := errorlog.load(path)):
+        typer.echo("errors, place by place (`bench-diff` for the whole list):")
+        typer.echo("  " + errorlog.report(errorlog.diff(old_rows, new_rows))[0])
+
+
+@app.command("bench-diff")
+def bench_diff(
+    old: Path,
+    new: Path,
+    examples: int = typer.Option(3, help="Examples shown per kind"),
+) -> None:
+    """Which errors a change fixed, made and kept, place by place, from two saved runs
+    (work/bench/<run>.json, the earlier first) and their error lists
+    (`<run>.errors.jsonl`)."""
+    old_rows, new_rows = errorlog.load(old), errorlog.load(new)
+    for p, rows in ((old, old_rows), (new, new_rows)):
+        if not rows:
+            raise typer.BadParameter(f"{p.name} has no error list (saved before they were kept?)")
+    for line in errorlog.report(errorlog.diff(old_rows, new_rows), examples):
+        typer.echo(line)
 
 
 @app.command("eval")
@@ -399,11 +424,11 @@ def evaluate_books(
     chapters: str | None = typer.Option(None, help="Reference chapters to compare, e.g. 1-9"),
     no_models: bool = typer.Option(False, help="Skip decision models (heuristics only)"),
     check_ocr: bool = typer.Option(True, help="Check the OCR layer against a second reading"),
-    score_test: bool = _score_test(),
+    first_look: bool = _first_look(),
 ) -> None:
     """Build golden books' scans and score each against its reference text, one by one."""
     for book_dir in book_dirs:
-        _not_the_test_set(book_dir, score_test)
+        _not_a_first_look(book_dir, first_look)
     commit = _commit()
     summary = []
     for book_dir in book_dirs:

@@ -231,6 +231,30 @@ page at its first page, an afterword just past it. Those are as much the range's
 convention as the models' errors, and one wrong end cuts or pads a book, so a model
 would need a human to confirm both ends anyway.
 
+## Context judge
+
+**A thinking model that settles questions from the text around them** (`contextjudge.py`,
+`ROBO_CONTEXT_MODEL`, off until measured). The judges in use see a line's crop (clef) or
+its sentence (winnow); many questions the reviewer answered were settled by the
+paragraph or the book: Ex-minnaar asked "we"/"wc" 13 times and small capitals read as
+"BMw" about 16, where one version is ungrammatical or the book never writes it
+(the user, 2026-10-17: "if it cuts down on questions being asked in human review, i'm
+for it"). It only settles questions the arbiter would ask, so it can cut questions and
+cannot add silent errors to suspects the arbiter decides; its failure is settling a
+question wrongly, which costs a wrong word where the question cost about a seventh of
+one (the reviewer's slips and time).
+
+The probe (`experiments/probe_context_judge.py`, 2026-10-17, qwen3.8 hosted on DeepInfra
+bf16, thinking capped at 1,500 tokens) on 336 suspects the held-out arbiter would ask:
+alone it is right on 86% of the golden books' (the arbiter's likeliest 68%) and 76% of
+Ex-minnaar's answers (79%), but it overturns one in five of the suspects the arbiter
+settles rightly, so it never overrules. Where it picks the arbiter's likeliest version,
+220 of the 336 (65%), that version is wrong 17 times (8%), under a question's price:
+those are settled, the rest asked. Each version's count in the book, first in the
+prompt, made it worse (74% and 64%): "we" 241 times against "wc" 9 outweighed the
+sentence. It can't see the scan, so quote marks and accents gain least, and it reads
+for sense, so a misprint (the printer's "zeI") is where it errs by design.
+
 ## Page readers
 
 **Two more readers that see the whole page** (`pagereader.py`, `ROBO_PAGE_READERS`,
@@ -673,15 +697,17 @@ the edition doesn't list its corrections (the user).
   13 on p. 56: Afscheid read 5.03 wrong words a page after review where it is 0.24.
   A whole page typed by the reviewer still counts as one question's slips, which
   flatters a washed-out book.
-- **Validation books are not a test.** Earlier choices were made on their scores. They
-  are Kerk, Vuurspel, De eerlijke vinder, Villa Toscane and You're Never Weird on the
-  Internet (the only English one, and the hardest layout: pictures holding text). A pair
+- **Validation books are not a test.** Earlier choices were made on their scores
+  (`bench.SETS`; You're Never Weird on the Internet the hardest layout, pictures holding
+  text). Scans only: a born-digital PDF is out of scope (the user, 2026-10-17). A pair
   that fails (an EPUB of another printing, reference headings the scan lacks) is retired,
   not kept: Grand Hotel Europa was.
-- **The test set is a book nothing was chosen on.** Het geluid van bananen
-  (Stella's publisher and scan format) is scored once, at the end of the plan;
-  no model trains on it and the CLI refuses to score it without `--score-test`.
-  A change that carries over to the validation books proves less than that.
+- **Every new pair gets a first look.** Validation wears out: every change is benched
+  on it, and a choice made on it makes it tuning. One test book scored at the end is a
+  sanity check, not an exam. So each new pair is scored once, before anything is
+  chosen or trained on it, and then joins tuning or validation: the first looks,
+  together, say how the build does on books it has never seen (the user, 2026-10-17).
+  The CLI refuses to score such a pair without `--first-look`.
 - **A reference can stop being one.** When a book's remaining disagreements are
   mostly edition differences, or its verdicts never settle, its score measures
   the edition. The text layer's CER against the reference and the share of body

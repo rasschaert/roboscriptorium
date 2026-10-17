@@ -69,7 +69,7 @@ once, on the frozen sets and then the bench.
 - **Separate caches.** Hosted output is cached under its own build's name, never under a
   local model's, and enters trust data or the bench only marked as hosted (the bench's
   `read_via` share shows it).
-- **The test set stays untouched** (Het geluid van bananen), as everywhere.
+- **A pair awaiting its first look stays untouched**, as everywhere.
 - **Pinned like OpenRouter:** one model at one precision, no fallback, measured against
   the local model first. `clients/openrouter.py` and `ROBO_READ_VIA` / `ROBO_JUDGE_VIA`
   (`config.py`) are the pattern; an OpenAI-compatible API needs little more than a new

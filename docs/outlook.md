@@ -18,7 +18,6 @@ before review, questions a page, wrong words after review, breaks set wrong a pa
 | The same, chosen for their trouble | Het heft 0.48 · 0.24 · 0.40 (its washed-out lines); Monterosso 0.43 · 0.49 · 0.44 (small capitals, old-style figures); De tuin 0.84 · 0.79 · 0.34; Het laatste bevel 0.80 · 0.30 · 0.42 (its EPUB glues words) |
 | Unindented Dutch (Bruna) | Vuurspel 0.65 · 0.51 · 0.44 · 0.46; De stilte 0.86 · 0.43 · 0.38 · 0.30 |
 | Clean scan, modern English prose | Metro 0.30 · 0.35 · 0.26; Thief-Taker 0.31 · 0.62 · 0.29; Crime 0.38 · 0.24 · 0.32 (Gutenberg's edition); The Stranger's Child 0.64 · 0.45 · 0.40; Normal People 0.15 · 0.07 · 0.16 · 0.07; Artemis 0.64 · 0.50 · 0.17 · 0.32 |
-| Born-digital PDF | Villa Toscane 0.05 · 0.10 · 0.06 |
 | Old typography, plates | Dolittle 1.03 · 1.27 · 0.44 · 0.18 |
 | Busy layout, pictures | You're Never Weird 0.98 · 1.09 · 0.68 · 0.16 |
 | Washed-out scan | Afscheid 16.65 · 3.47 · 0.61 · 1.73 (typed pages; its EPUB's paragraphing) |
@@ -193,7 +192,7 @@ five others), so a rerun of cached lines is free even without the pipeline's cac
   a call and clef:27b (nvfp4, the MLX runner) 1.25 s, one or four at a time alike;
   choices and confidences identical. Their calls stay one after another.
 
-**Done, in place:** `OLLAMA_NUM_PARALLEL=4` (AGENTS.md Environment) halves glm-ocr's
+**Done, in place:** `OLLAMA_NUM_PARALLEL=4` (docs/models.md, Setup) halves glm-ocr's
 time a line (0.19 → 0.09 at four at a time, readings identical); the pipeline's four
 threads already send that many. The same four slots did nothing for a 27B GGUF
 (qwen3.8:27b-q8_0, 2.2 s a line at 1 to 16 at a time), so batching is a property to

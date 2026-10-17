@@ -80,8 +80,9 @@ class PublisherEpub:
     # Drawn initials set as images: a regex on the image's file name whose group 1 is the
     # letter ("letter_(\\w)\\." reads "letter_D.jpg" as "D").
     initial_images: str = ""
-    # A text without chapter headings: the paragraphs form one untitled chapter.
-    one_chapter: bool = False
+    # Text before the first heading (an epigraph; all of it, in a text without headings)
+    # is an untitled chapter of its own, the first.
+    leading_text: bool = False
 
 
 @dataclass(frozen=True)
@@ -177,7 +178,7 @@ class Golden:
                 frozenset(ref.get("opening_classes", ())),
                 frozenset(ref.get("closing_classes", ())),
                 ref.get("initial_images", ""),
-                ref.get("one_chapter", False),
+                ref.get("leading_text", False),
             )
         )
         se = data.get("standard_ebooks")

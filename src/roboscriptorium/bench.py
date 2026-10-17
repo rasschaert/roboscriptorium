@@ -17,7 +17,7 @@ from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
-from roboscriptorium import disagreements, evaluate, quality, sorter, trust
+from roboscriptorium import disagreements, errorlog, evaluate, quality, sorter, trust
 from roboscriptorium.config import Settings
 from roboscriptorium.golden import scoring, signals
 
@@ -29,12 +29,12 @@ BOOTSTRAP_SAMPLES = 2000
 # for choices before, so they validate, not test. Long books are sliced at a chapter
 # boundary (a run costs about 1.1 min per cold page), about 90 pages at most: the
 # bootstrap's power comes from the pages in all, so more books of fewer pages decide as
-# surely and vary more. The books whose trust data wasn't built yet on 2026-10-12 hold
-# only their first chapters (10–27 pages) until a rescoring of 20, 45 and 90 pages a
-# book sets the size. Monterosso runs its chapters on without a page break, so no slice
+# surely and vary more. Monterosso runs its chapters on without a page break, so no slice
 # short of the whole book ends on one. Dolittle's slice holds its plates and drawn
-# initials. The test set is scored once, at the end: nothing is chosen on it, no model
-# trains on it, and the CLI refuses to score it without `--score-test`.
+# initials. A new pair waits in "first-look" for one untouched score (`bench first-look
+# --first-look`): nothing is chosen on it and no model trains on it before, and the CLI
+# refuses to score it without `--first-look`; then it joins tuning or validation.
+# Verminkt's reference has no chapters, so its look is the whole book.
 SETS = {
     "tuning": [
         "goede-dochter--ia-scan:9-99:1-6",
@@ -42,15 +42,15 @@ SETS = {
         "reis-om-mijn-schedel--ia-scan:11-99:1-10",
         "the-nature-of-a-crime--doubleday-1924",
         "the-story-of-doctor-dolittle--stokes-1920:23-88:1-7",
-        "the-thief-takers-apprentice--ia-scan:11-26:1-6",
+        "the-thief-takers-apprentice--ia-scan:11-84:1-22",
         "afscheid-van-verspilde-tijd--ia-scan:9-70:1-11",
         "metro-2033--ia-scan:7-92:1-8",
-        "de-cipier--ia-scan:9-33:1-2",
-        "artemis--ia-scan:13-34:1-1",
-        "de-tuin-van-de-avondnevel--ia-scan:11-29:1-1",
-        "het-heft-in-eigen-hand--ia-scan:9-33:1-2",
-        "doodskleed--ia-scan:13-22:1-2",
-        "het-ijzige-land--ia-scan:11-21:1-1",
+        "de-cipier--ia-scan:9-92:1-4",
+        "artemis--ia-scan:13-80:1-3",
+        "de-tuin-van-de-avondnevel--ia-scan:11-97:1-6",
+        "het-heft-in-eigen-hand--ia-scan:9-92:1-5",
+        "doodskleed--ia-scan:13-96:1-14",
+        "het-ijzige-land--ia-scan:11-104:1-11",
         "de-eerlijke-vinder--ia-scan",
         "monterosso-mon-amour--ia-scan",
     ],
@@ -58,17 +58,42 @@ SETS = {
         "de-kerk-van-de-dode-meisjes--ia-scan:11-107:1-13",
         "vuurspel--ia-scan:9-111:1-6",
         "youre-never-weird-on-the-internet--ia-scan:13-94:1-16",
-        "villa-toscane--calibre-pdf::1-12",
         "de-stilte-van-de-hel--ia-scan:11-101:1-15",
         "het-laatste-bevel--ia-scan:9-100:1-5",
         "the-strangers-child--ia-scan:121-208:15-23",
-        "normal-people--ia-scan:146-232:22-30",
+        "normal-people--ia-scan:146-232:23-31",
     ],
-    "test": [
+    "first-look": [
         "het-geluid-van-bananen--ia-scan:9-101:1-14",
+        "steve-jobs--ia-scan:9-100:1-12",
+        "verminkt--ia-scan",
+        "het-schaduwhuis--ia-scan:9-91:1-19",
+        "de-geruchten--ia-scan:9-97:2-22",
+        # A sibling of two tuning books: its look waits for a free slot.
+        "na-die-nacht--ia-scan",
+    ],
+    # The quick tier, for a change's short test: a chapter or two of each tuning book
+    # (a later one where the first are front matter or a single short one), ending where
+    # the next opens a page; Monterosso's chapters run on, so it has no such end.
+    "quick": [
+        "goede-dochter--ia-scan:51-64:4-4",
+        "vals-alarm--ia-scan:11-25:1-4",
+        "reis-om-mijn-schedel--ia-scan:11-29:1-3",
+        "the-nature-of-a-crime--doubleday-1924:25-43:1-1",
+        "the-story-of-doctor-dolittle--stokes-1920:23-40:1-2",
+        "the-thief-takers-apprentice--ia-scan:11-26:1-6",
+        "afscheid-van-verspilde-tijd--ia-scan:9-20:1-2",
+        "metro-2033--ia-scan:7-29:1-2",
+        "de-cipier--ia-scan:9-33:1-2",
+        "artemis--ia-scan:13-34:1-1",
+        "de-tuin-van-de-avondnevel--ia-scan:11-29:1-1",
+        "het-heft-in-eigen-hand--ia-scan:9-33:1-2",
+        "doodskleed--ia-scan:13-22:1-2",
+        "het-ijzige-land--ia-scan:11-21:1-1",
+        "de-eerlijke-vinder--ia-scan:59-76:3-3",
     ],
 }
-TEST_BOOKS = frozenset(spec.split(":")[0] for spec in SETS["test"])
+FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"])
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
 NO_TRUST_DATA: frozenset[str] = frozenset()
@@ -213,6 +238,8 @@ def _book_record(
         "quality": {k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()},
         "unasked_by_kind": quality.unasked_by_category(errors, found),
         "typography_kinds": sorted(kinds),
+        # Written beside the record by `save`, not into it: the rows quote the book.
+        "_errors": errorlog.rows(run.name, errors, found, stages.pages, stages.suspects),
         "pages": page_counts(
             numbers,
             errors,
@@ -407,10 +434,13 @@ def structure(old: dict, new: dict) -> list[str]:
 
 
 def save(record: dict, out: Path = OUT) -> Path:
+    """The record as JSON, and its books' error rows beside it (`errorlog`)."""
     out.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
     path = out / f"{record['set']}-{stamp}-{record['commit']}.json"
-    path.write_text(json.dumps(record, indent=1, ensure_ascii=False))
+    books = {n: {k: v for k, v in b.items() if k != "_errors"} for n, b in record["books"].items()}
+    path.write_text(json.dumps({**record, "books": books}, indent=1, ensure_ascii=False))
+    errorlog.save(path, [r for b in record["books"].values() for r in b.get("_errors", [])])
     return path
 
 

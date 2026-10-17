@@ -20,7 +20,7 @@ def test_the_tuning_books_without_trust_data_are_the_ones_its_specs_lack():
     tuning = {spec.split(":")[0] for spec in bench.SETS["tuning"]}
     assert bench.NO_TRUST_DATA == tuning - set(trustdata.SPECS)
     # Validation books may have data, which is never trained on; the test set has none.
-    assert not set(trustdata.SPECS) & bench.TEST_BOOKS
+    assert not set(trustdata.SPECS) & bench.FIRST_LOOK
     assert all(not trustdata.trainable(spec.split(":")[0]) for spec in bench.SETS["validation"])
 
 

@@ -258,6 +258,15 @@ class GoldenQuestions:
         _, _, before, after = self._shown(d)
         return (before + " " if before else ""), (" " + after if after else "")
 
+    def _reason(self, d: Disagreement) -> str:
+        """Why the place is asked; where one side has nothing, what the other has."""
+        got, want, _, _ = self._shown(d)
+        if not got.strip() and want.strip():
+            return f"{self.THEIRS} has “{want}” here, {self.OURS} nothing"
+        if not want.strip() and got.strip():
+            return f"{self.OURS} has “{got}” here, {self.THEIRS} nothing"
+        return self.REASON
+
     def _line(self, d: Disagreement, words: str) -> str:
         before, after = self._parts(d)
         return before + words + after if words else (before + after.lstrip()).rstrip()
@@ -296,7 +305,7 @@ class GoldenQuestions:
                     ),
                     "box": None,
                     "treatment": "text",
-                    "reasons": [self.REASON],
+                    "reasons": [self._reason(d)],
                     "text": ours,
                     "got": self._shown(d)[0],
                     "span": [len(before), len(ours) - len(after)] if d.got else None,

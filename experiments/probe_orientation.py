@@ -17,7 +17,7 @@ from huggingface_hub import hf_hub_download
 from roboscriptorium import ocr
 from roboscriptorium.layout import IMAGE_SIZE, REPO, WEIGHTS
 from roboscriptorium.ocr import words as _words
-from roboscriptorium.review import OCR_DPI, _turned
+from roboscriptorium.review import OCR_DPI
 
 TEXTY = {"figure_caption", "title", "plain text"}
 
@@ -63,7 +63,7 @@ def main() -> None:
                         matrix=pymupdf.Matrix(OCR_DPI / 72, OCR_DPI / 72), clip=rect
                     )
                     for t in words:
-                        text = ocr.tesseract(_turned(pix, t), "eng", False)
+                        text = ocr.tesseract(ocr.turned(pix.tobytes("png"), t), "eng", False)
                         words[t] += _words(text)
                         print(f"   read {t}: {text.strip()[:70]!r}")
                 best = max(words, key=words.get)

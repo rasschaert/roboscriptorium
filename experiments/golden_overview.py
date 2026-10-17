@@ -28,7 +28,7 @@ specs = {}
 for name, lst in bench.SETS.items():
     for s in lst:
         book, pages, chapters = (s.split(":") + ["", ""])[:3]
-        specs[book] = (name, pages, chapters)
+        specs.setdefault(book, (name, pages, chapters))
 
 
 def latest_full_eval(book_dir: Path):
@@ -76,8 +76,8 @@ for m in sorted(Path("golden").glob("*/manifest.toml")):
             cold = "minutes"
         ev = latest_full_eval(book_dir)
         ev_text = f"{ev['cer']:.2%} / {ev['wer']:.2%}" if ev else "none yet"
-        if key in bench.TEST_BOOKS:
-            print(f"| {g.name} | **test** | {body} / {scored} | {words} | {cold} | unmeasured | | | | {declared} | untouched |")
+        if key in bench.FIRST_LOOK:
+            print(f"| {g.name} | **first look** | {body} / {scored} | {words} | {cold} | unmeasured | | | | {declared} | untouched |")
             continue
         if not (book_dir / "source.pdf").exists() or not ref:
             print(f"| {g.name} | {role} | {body} / {scored} | {words} | {cold} | no scan | | | | {declared} | {ev_text} |")

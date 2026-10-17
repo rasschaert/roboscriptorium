@@ -63,6 +63,9 @@ class Settings:
     # The vision judge says which lines start a paragraph where it is sure
     # (`parabreaks.py`). Off: it broke more starts than it fixed (docs/design.md).
     break_judge: bool = False
+    # A thinking model that settles the arbiter's questions from the text around them
+    # where it picks the arbiter's likeliest version (`contextjudge.py`; "" for none).
+    context_model: str = ""
 
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
@@ -102,4 +105,5 @@ class Settings:
             sorter=_flag("ROBO_SORTER", defaults.sorter),
             sorter_model=os.environ.get("ROBO_SORTER_MODEL", defaults.sorter_model),
             break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
+            context_model=os.environ.get("ROBO_CONTEXT_MODEL", defaults.context_model),
         )

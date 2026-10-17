@@ -568,6 +568,7 @@ def test_a_line_answered_about_its_readings_stays_asked_when_the_arbiter_is_sure
 
     book, _ = _checked_book(tmp_path, monkeypatch)
     monkeypatch.setattr(pipeline.trust, "load", lambda path: trust.Trust(Sure(), {}))
+    monkeypatch.setattr(pipeline.trust, "fingerprint", lambda path: "sure")
     stages = pipeline.run(book)
     (suspect,) = stages.suspects
     assert suspect.choice == "ours"  # nothing to ask
@@ -610,3 +611,47 @@ def test_a_paragraph_starts_where_the_judge_is_sure_one_does(tmp_path, monkeypat
     assert [p.text.split()[:2] for p in paragraphs] == [["Line", "0"], ["Then", "line"]]
     monkeypatch.setenv("ROBO_BREAK_JUDGE", "0")
     assert len(pipeline.run(book, check_ocr=False).doc.paragraphs) == 1
+
+
+def test_the_context_judge_settles_a_question_where_it_picks_the_arbiters_version(
+    tmp_path, monkeypatch
+):
+    import numpy as np
+
+    class Leaning:
+        """Leans to the read model's version, but not enough to settle it unasked."""
+
+        def predict_proba(self, X):
+            p = np.where(X[:, 0] == 1, 0.4, 0.6)
+            return np.column_stack([1 - p, p])
+
+    asked = []
+
+    class Judge:
+        def __init__(self, url):
+            pass
+
+        def choose(self, model, prompt, options):
+            asked.append(prompt)
+            return list(answer)
+
+    book, _ = _checked_book(tmp_path, monkeypatch)
+    monkeypatch.setattr(pipeline.trust, "load", lambda path: trust.Trust(Leaning(), {}))
+    monkeypatch.setattr(pipeline.trust, "fingerprint", lambda path: "leaning")
+    monkeypatch.setattr(pipeline, "OllamaClient", Judge)
+    monkeypatch.setenv("ROBO_CONTEXT_MODEL", "thinker")
+    answer = (0.97, 0.03)  # the layer's version, against the arbiter: still asked
+    (suspect,) = pipeline.run(book).suspects
+    assert suspect.choice == "review"
+    assert "» Line 3 of the ⟦?⟧ goes on" in asked[0]
+    assert 'A) "story"' in asked[0] and 'B) "stony"' in asked[0] and "times" not in asked[0]
+    (book.stages / "context-judge.json").unlink()
+    answer = (0.03, 0.97)
+    stages = pipeline.run(book)
+    (suspect,) = stages.suspects
+    assert (suspect.choice, suspect.chosen) == ("other", "stony")
+    assert "stony" in stages.doc.blocks[0].text
+    # Its answer is cached: a rebuild asks nothing.
+    asked.clear()
+    pipeline.run(book)
+    assert asked == []
