@@ -72,16 +72,14 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       calls; agent, ~1 h). The word list's vote goes in the same bench: taken away it
       changes nothing (`experiments/probe_subtract.py`), the arbiter reading the same
       knowledge from the `known` feature
-- [ ] Winnow through token probabilities (the user, 2026-10-17, low urgency): render the
-      question ourselves (in winnow's trained layout, EldanRing/winnow-inference
-      `native/protocol.h`), ask `winnow-ollama:e4b` for one token with log-probabilities,
-      renormalise the option labels (watch for labels of several tokens); against
-      `/v1/systemone` on 0.40.3 on the judge tryout set: right alone, and as an alarm on
-      clef. If it holds, switch winnow to it (trust data, retrain, bench) and drop the
-      Ollama pin. In a gap with no chain using winnow (agent, ~30 min). The same harness
-      screens Winnow-12B as a sentence judge beside it
-      (`hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M`, pulled by the user 2026-10-17; text only,
-      no systemone)
+- [ ] Winnow-12B as the text judge, through token probabilities (2026-10-17): the probe
+      (805 suspects) has it right on 78% against winnow's 67% through systemone, and a
+      sharper alarm on clef (32% clef wrong where it disagrees, against 23%); winnow
+      itself through tokens is at chance (50%), so it can't leave systemone. Next: a
+      token-route decision client (the trained layout, raw `/api/generate`, the labels'
+      log-probabilities), Winnow-12B's votes for every trust-data suspect (model time,
+      after the first-look reads), retrain, bench; if no worse, winnow and the Ollama
+      pin go (AGENTS.md, Environment; docs/models.md, Setup)
 - [ ] A context judge (the user, 2026-10-17: "if it cuts down on questions being asked
       in human review, i'm for it"): probed hosted (the user allowed OpenRouter for its
       test): without each version's count in the prompt, it settles 220 of 336 asked
