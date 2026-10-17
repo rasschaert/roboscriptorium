@@ -15,9 +15,10 @@ what the project is. Everything below them is today's way of meeting them.
 2. **Build the machine, not the book.** Readers and judges that fail differently,
    combined by learned trust; a book comes out right because the machine does.
 3. **Learned, not hand-written.** A decision is learned from labels wherever it can be.
-4. **Measured against the truth.** Every change is judged on golden books, paired,
-   before and after; the human labels (verdicts, review answers) are that truth, and a
-   model can't grade itself.
+4. **The faithful golden pair is the arbiter.** A scan and the publisher's own text of
+   that printing: the build must turn the one into the other. Every change is judged on
+   them, paired, before and after; a human verdict mends a reference only where it
+   departs from its print. How faithful each is: docs/golden-books.md, Faithfulness.
 5. **The reader's time is the scarcest resource.** Ask only what the machine can't
    settle, and only once the machine has done all it can.
 6. **Nothing is "the way we do it".** Every block keeps its place only while the
