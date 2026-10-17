@@ -431,3 +431,18 @@ def test_a_number_the_layer_misread_in_old_style_figures_looks_like_one():
     # A word, a garbled mark and a long run of look-alikes aren't.
     assert not number_lookalike("Ik") and not number_lookalike("Ke,")
     assert not number_lookalike("IIII") and not number_lookalike("")
+
+
+def test_a_chapter_title_recurring_as_the_running_head_is_no_repeat_where_it_opens():
+    def page(number: int, text: str, y: float) -> PageText:
+        body = [Line("tekst " * 8, 40, 60 + 14 * k, 360, 70 + 14 * k) for k in range(20)]
+        return PageText(number, 400, 600, [Line(text, 150, y, 250, y + 10), *body])
+
+    pages = [page(1, "Why I'm Weird", 120)]
+    pages += [page(n, f"Why I'm Weird / {n + 12}", 15) for n in range(2, 6)]
+    repeats = Repeats(pages)
+    # Below where its repeats sit, the title on its opening page recurs nowhere; the
+    # running heads recur at their place.
+    assert repeats.other_pages("Why I'm Weird", 1, 120 / 600) == 0
+    assert repeats.other_pages("Why I'm Weird / 14", 2, 15 / 600) == 3
+    assert repeats.other_pages("Why I'm Weird", 1) == 4

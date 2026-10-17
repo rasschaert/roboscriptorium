@@ -175,7 +175,9 @@ def state(page: PageText, i: int, repeats: Repeats) -> dict[str, Any]:
         "vertical_position": f"{line.y0 / page.height:.0%} down the page",
         "alignment": alignment,
         "width": f"{(line.x1 - line.x0) / full:.0%} of a full line",
-        "similar_text_on_other_pages": repeats.other_pages(line.text, page.number),
+        "similar_text_on_other_pages": repeats.other_pages(
+            line.text, page.number, line.y0 / page.height
+        ),
         "previous_line": lines[i - 1].text if i else None,
         "next_line": lines[i + 1].text if i + 1 < len(lines) else None,
     }

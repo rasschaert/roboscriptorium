@@ -115,7 +115,7 @@ def features(
                 "hyphen_end": float(text.endswith(("-", "­", "¬"))),
                 "garbled": float(P.garbled(ln)),
                 "labelled": float(P.labelled(ln, full)),
-                "repeats": repeats.other_pages(text, page.number),
+                "repeats": repeats.other_pages(text, page.number, ln.y0 / page.height),
                 "page_number": float(P.printed_page_number(text, page, offset)),
                 "sunk": float(page.number in sunk),
                 "set_apart": float(i == 0 and P.set_apart_opening(page)),

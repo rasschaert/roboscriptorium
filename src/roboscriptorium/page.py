@@ -27,6 +27,9 @@ SHORT_LINE = 0.8
 # same text when looking for repeats across pages: enough for OCR noise ("MONEV"),
 # not for headings that share words ("THE FIFTH CHAPTER", "THE SIXTH CHAPTER").
 REPEAT_LETTERS_PER_EDIT = 10
+# A repeat counts where it sits within this share of the page's height of the line: a
+# running head keeps its place, a chapter's title recurring as one sits below it.
+REPEAT_PLACE = 0.06
 # A page whose text starts this much lower (as a share of page height) than most
 # pages' does is sunk: a chapter opening.
 SUNK_PAGE_DROP = 0.08
@@ -269,19 +272,22 @@ class Repeats:
 
     def __init__(self, pages: list[PageText]):
         self._offset = page_offset(pages)
-        self._pages: dict[tuple[str, str, str], set[int]] = defaultdict(set)
+        # Per text, the pages it is on and how far down each (a share of the height).
+        self._pages: dict[tuple[str, str, str], dict[int, float]] = defaultdict(dict)
         for page in pages:
             for i in edge_lines(page):
                 key = self._key(page.lines[i].text, page.number)
                 if key[0]:
-                    self._pages[key].add(page.number)
+                    self._pages[key][page.number] = page.lines[i].y0 / page.height
 
     def _key(self, text: str, page_number: int) -> tuple[str, str, str]:
         number = label_number(text)
         text = without_folio(text, folio(page_number, self._offset))
         return title_key(text), numeral(text), number
 
-    def other_pages(self, text: str, page_number: int) -> int:
+    def other_pages(self, text: str, page_number: int, y: float | None = None) -> int:
+        """On how many other pages `text` recurs at an edge; given `y` (how far down its
+        line sits, a share of the page's height), only where it sits there too."""
         key, *numbers = self._key(text, page_number)
         if len(key) < 4:
             return 0
@@ -291,7 +297,7 @@ class Repeats:
                 other == key
                 or Levenshtein.distance(key, other) <= max(1, len(key) // REPEAT_LETTERS_PER_EDIT)
             ):
-                pages |= found
+                pages |= {n for n, at in found.items() if y is None or abs(at - y) <= REPEAT_PLACE}
         return len(pages - {page_number})
 
 
