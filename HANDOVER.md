@@ -6,10 +6,9 @@ end of every session. Written 2026-10-17 ~00:45, at the end of the session of 20
 
 ## Running (2026-10-17 night)
 
-1. `robo-break-bench` (started ~01:20, ~6 h): `bench tuning` then `validation` with the
-   vision judge setting paragraph starts (`parabreaks.py`, merged into main; probe in
-   `experiments/probe_break_judge.py`, 1,783 answers seeded into the caches). If it is
-   worse, `ROBO_BREAK_JUDGE=0` turns the stage off.
+1. `robo-break-bench` (v2, started 03:40, ~6.5 h): `bench tuning` then `validation` with
+   `parabreaks.py` v2 against the pre-judge baselines (`work/runs/break-bench2.log`). v1's
+   tuning result is in decisions.md. If v2 is worse, `ROBO_BREAK_JUDGE=0` turns it off.
 2. `robo-queue` (`work/runs/queue-20261017.sh`, notes in `queue-20261017.txt`) waits for
    it, then grows the seven short tuning slices back to their pre-2026-10-12 ranges by
    `eval` (~450 pages cold, ~7.5 h, fewest new pages first), then the page-kinds probe.
