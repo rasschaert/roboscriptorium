@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 
 import pymupdf
 import pytest
@@ -105,3 +106,26 @@ def test_a_drawn_number_above_a_sunk_opening_is_a_candidate_though_tall():
         20: [Region("abandon", 0.6, 140, 30, 186, 68)],  # as tall, on an ordinary page
     }
     assert missing.candidates(pages + [sunk], regions, {}) == [(24, circle)]
+
+
+def _block(first_y: float, n: int = 8) -> PageText:
+    lines = [
+        Line(f"regel {i} van de tekst", 20, first_y + 15 * i, 360, first_y + 15 * i + 10)
+        for i in range(n)
+    ]
+    return PageText(19, 400, 630, lines)
+
+
+def test_a_text_regions_strip_without_its_first_line_is_a_candidate():
+    region = Region("plain text", 0.96, 11, 24, 360, 153)
+    # The layer's lines start one line low: the strip above them is read.
+    page = _block(50, 7)
+    found = missing.candidates([page], {19: [region]}, {})
+    assert [(n, round(r.y0), round(r.y1)) for n, r in found] == [(19, 24, 50)]
+    # Lines that fill the region, but for its own margin, leave nothing to read.
+    assert missing.candidates([_block(27, 9)], {19: [region]}, {}) == []
+    # A strip under a picture or a page's furniture isn't text.
+    for label in ("figure", "abandon", "title"):
+        assert missing.candidates([page], {19: [replace(region, label=label)]}, {}) == []
+    # A strip a human typed text for keeps the human's text.
+    assert missing.candidates([page], {19: [region]}, {19: [(11, 24, 360, 50)]}) == []
