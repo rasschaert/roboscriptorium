@@ -68,7 +68,10 @@ models could do. Each probe below asks whether that's still true, on a few golde
       reference's number and title set as two: Metro 3/8 → 8/8, Normal People 4/9 → 8/9),
       and retrain the trees on the long slices with branch `number-lookalikes` (a line of
       digits or their look-alikes, "Io" for 10, as a feature: Monterosso's chapter numbers
-      in old-style figures, 14/22 found), then merge it and bench (agent, ~1 h)
+      in old-style figures, 14/22 found; and a repeat counted only at the line's height,
+      so a chapter title recurring as the running head isn't dropped as one: You're
+      Never Weird's "Introduction", "Jail Bait"), then merge it and bench (agent, ~1 h;
+      the role model is asked again about the ~15 lines whose count changes)
 - [ ] Line roles by Qwen from the page image (text, heading, running head, page number,
       caption, picture), against the rules and the trees
 - [ ] The text layer as a second reader only: the page built from the whole-page reading,
