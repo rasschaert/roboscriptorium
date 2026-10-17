@@ -18,6 +18,44 @@ new suspects where the readings agree first, then **Stella end to end with the u
 review**, the target book, then the user's four books. After them, the open
 areas below in order, and the test set scored once at the end.
 
+## First, after the slice growth (the user, 2026-10-17)
+
+The weekend's order (the user left it to the agent): each step feeds the next.
+1. Saturday ~20:00, the queue ends: the context-judge probe starts on its own (qwen3.8,
+   ~3 h). Beside it, on cached data: `bench quick` as the tier's baseline, then the
+   merges, the role trees and the arbiter retrained on the long slices, all benches
+   (quick, tuning, validation): the quick tier's first check.
+2. Saturday ~23:00 to Sunday ~10:00 (`robo-first-look-reads`): the first-look slices
+   read, no scores: Het geluid van bananen, Steve Jobs, Verminkt whole.
+3. Sunday: the first looks scored once, the three books into their sets (Het geluid van
+   bananen and Steve Jobs to tuning: Stella's publisher and scan, and more training
+   data; Verminkt to validation), their trust data, the arbiter retrained on the larger
+   tuning set, benches. If the probe passed, the context judge as a stage after the
+   arbiter that settles the questions it is sure of, benched on the quick tier first.
+
+- [ ] No fixed test set: a first look for every new pair (the user, 2026-10-17: soon,
+      ahead of other accuracy work). Validation wears out as changes are benched and
+      some decided on it; one test book is a sanity check, not an exam. Each new pair
+      gets one untouched score on a slice (~90 pages, ending on a chapter) before
+      anything is chosen or trained on it, then joins tuning or validation. Code
+      (branch `first-look`, agent ~1 h): `bench.SETS["first-look"]` replaces "test", its
+      guard (`--first-look`) refuses every eval, review, probe and trust data on such a
+      book, `bench first-look` scores and saves it; design.md's reason. First looks
+      (one night, ~5 h): Het geluid van bananen, Verminkt, Steve Jobs (its words; its
+      roles trained the sorter, so its role scores aren't a first look). De aanslag
+      joins validation as it is (consulted before); De tunnels stays role training (its
+      EPUB can't score words). New pairs the user finds go through the same flow
+- [ ] A context judge (the user, 2026-10-17: "if it cuts down on questions being asked
+      in human review, i'm for it"): qwen3.8 thinking, given the lines around a suspect,
+      each version's count in the book and what OCR confuses, its answer held to the
+      versions' letters. Probe `experiments/probe_context_judge.py` on 525 labelled
+      suspects (336 the held-out arbiter asks, 174 of them Ex-minnaar's answers; 61 it
+      settles wrongly; 128 controls), ~3 h after the slice growth. Dropped if, on asked
+      suspects, it isn't clearly above the arbiter's likeliest version, or its sure
+      picks are wrong more often than a question costs (about one in seven: the
+      reviewer's slips plus their time); else a judge feature, trust data rebuilt and
+      the arbiter retrained with the slice-growth retrain, then bench
+
 ## Assumptions to test (quick probes, minutes to an hour each)
 
 The pipeline reads lines and joins them by hand-built geometry because that was what
@@ -131,12 +169,6 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
 - [x] ~~FKA USA's fixes from its first bench (note marks as LaTeX, a dropped epigraph,
       a missing part heading)~~ (2026-10-13, dropped): the pair was retired as a suspect
       (30% of its body lines unplaced) and its files deleted
-- [ ] No fixed test set or reserve (proposed, the user agreed to do it later, 2026-10-12):
-      every new pair gets one untouched first-look score before anything is chosen or
-      trained on it, then joins tuning or validation. Het geluid van bananen gets its
-      first look (~5 h of models) and joins; De aanslag joins validation; Verminkt joins
-      validation whole. Update design.md's test-set reason, `bench.SETS` and the CLI's
-      `--score-test` guard (agent, ~1 h plus the run)
 - [ ] A lighter feedback loop (agreed 2026-10-13; its two rules are in AGENTS.md): the quick
       tier is built (2026-10-17, `bench quick`: 15 tuning books, 10–25 pages each,
       282 in all, each ending where the next chapter opens a page); left: check that it

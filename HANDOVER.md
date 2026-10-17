@@ -8,33 +8,58 @@ has ended; only the main session works on).
 ## Running (2026-10-17)
 
 1. **`robo-queue`, from 10:28:** the seven short tuning slices grown to their pre-2026-10-12
-   ranges (`work/runs/queue-20261017.sh`, 447 pages cold, ~6–7 h, fewest new pages
+   ranges (`work/runs/queue-20261017.sh`, 447 pages cold, ~1.2 min a page so ~9 h, ending ~19:30–20:00, fewest new pages
    first, then the page-kinds probe; notes in `work/runs/queue-20261017.txt`, logs
    `work/runs/grow-<book>.log`). Every page read is cached, so a stop loses nothing.
    Don't edit `src/` in the main checkout while it runs: code work goes in a worktree.
    The queue's screen outlives the session; check it with `screen -ls` and the notes file.
    **When it ends, in order** (each branch is on origin; check `git diff --stat` first):
-   1. Merge **`longer-slices`** (worktree `../roboscriptorium-breaks`): the bench SETS and
-      trust-data specs on the long ranges.
-   2. Merge **`heading-pairs`** (scoring: one found heading for a reference's number and
+   1. Merge **`context-judge`** (worktree `../roboscriptorium-lead`; it holds
+      `first-look`, `quick-tier`, `prune` and `leading-text`): no change to what a build
+      reads. The context judge is a stage, off unless `ROBO_CONTEXT_MODEL` is set. It replaces the
+      test set by first looks (Het geluid van bananen 9–101, Steve Jobs 9–100, Verminkt
+      whole; `--first-look`), moves De aanslag to validation, adds `bench quick` (a
+      chapter or two of each tuning book, 282 pages) and `build --pages`, derives an
+      epigraph before the first heading, and cuts AGENTS.md to rules and the map. On
+      main afterwards: tick the code part of the checklist's first-look step, reword the
+      checklist's and outlook.md's other "test set" mentions, regenerate
+      docs/golden-books.md. Then `golden derive normal-people
+      --epub work/.cache/publisher/normal-people.epub`, set `body_pages = [9, 276]` in
+      `work/normal-people--ia-scan/book.toml`, and run **`bench quick`** (warm, minutes):
+      the quick tier's baseline.
+   2. Merge **`longer-slices`**: the bench SETS and trust-data specs on the long ranges.
+   3. Merge **`heading-pairs`** (scoring: one found heading for a reference's number and
       title set as two; Metro 3/8 → 8/8, Normal People 4/9 → 8/9) and **`verdict-words`**
       (the review says what one side has where the other has nothing).
-   3. Merge **`number-lookalikes`** and retrain the trees at once
+   4. Merge **`number-lookalikes`** and retrain the trees at once
       (`experiments/train_sorter.py --rebuild --save`), or the build stops on the feature
       mismatch: it adds a look-alike number feature ("Io" for 10) and counts a repeat only
       at the line's height (chapter titles recurring as running heads). The role model is
       asked again about the ~15 lines whose repeat count changes.
-   4. Rebuild trust data on the long slices, retrain the arbiter, bench both sets.
-2. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
+   5. Rebuild trust data on the long slices, retrain the arbiter, bench both sets, and
+      `bench quick` again: does the quick tier give the same verdict as `bench tuning`?
+2. **`robo-context-judge`**, waiting in a screen for `robo-queue` to end, then ~3 h:
+   the context-judge probe (`experiments/probe_context_judge.py run`, log
+   `work/runs/context-judge.log`; items frozen in `work/probes/context-judge/`, answers
+   cached, so a stop loses nothing). Then `... score`, and the verdict in the checklist
+   step "A context judge". It holds qwen3.8 only: warm benches can run beside it.
+3. **`robo-first-look-reads`**, waiting behind `robo-context-judge`, then ~11 h: builds
+   (no scores) of Het geluid van bananen 9–101, Steve Jobs 9–100, Verminkt whole
+   (`work/runs/first-look-reads.sh`, notes `work/runs/first-look-reads.txt`). **The
+   role trees must be retrained before it starts** if `number-lookalikes` is merged, or
+   its builds stop on the feature mismatch. The weekend's order is in the checklist
+   ("First, after the slice growth").
+4. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
    without markup spaces (validation 0.49 → 0.38 after review, better, mostly the
    references); a space between nested quote marks folded in the score (0.38 → 0.36).
    Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
-3. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
+5. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
    runs; on `verdict-words`; branches `heading-pairs`, `number-lookalikes` there too), `../roboscriptorium-breaks`
-   (`longer-slices`), `../roboscriptorium-py315` (stale, left as is).
-4. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
+   (checked out on `scene-after-judge`; `longer-slices` is on origin), `../roboscriptorium-lead` (`context-judge`), `../roboscriptorium-py315`
+   (stale, left as is).
+6. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
    hurt, `work/probes/break-conditions/`), `experiments/probe_break_context.py` (a taller
    crop: no gain), `experiments/probe_break_judge.py`.
 

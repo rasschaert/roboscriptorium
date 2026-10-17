@@ -1,0 +1,47 @@
+# How one suspect is settled. Render: d2 docs/primer/deciding.d2 docs/primer/deciding.svg
+
+direction: right
+
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 0
+    pad: 30
+  }
+}
+
+classes: {
+  step: {
+    shape: rectangle
+    style: {fill: "#ffffff"; stroke: "#3b4252"; border-radius: 6; font-size: 15}
+  }
+  outcome: {
+    shape: rectangle
+    style: {fill: "#e3f2dc"; stroke: "#3f7f2f"; border-radius: 6; font-size: 14}
+  }
+  human: {
+    shape: person
+    style: {fill: "#f6e3f0"; stroke: "#9b3d7f"; font-size: 14}
+  }
+}
+
+suspect: "A suspect\n“vijfjaar” or “vijf jaar”?" {class: step}
+
+judges: "The judges vote" {
+  style: {fill: "#f7f9fc"; stroke: "#7b8aa6"; font-size: 15; bold: true}
+  grid-columns: 1
+  vertical-gap: 12
+  clef: "clef looks at the crop:\n“vijf jaar”, 93% sure" {class: step}
+  winnow: "winnow reads the sentence:\n“vijf jaar”, 71% sure" {class: step}
+  words: "the word list:\n“vijfjaar” isn’t a word" {class: step}
+}
+
+arbiter: "The arbiter\nweighs readers and judges\nby how often each was right before\n→ “vijf jaar”: 97% likely" {class: step}
+
+fix: "sure: fix it\n(or keep the text layer’s)" {class: outcome}
+ask: "unsure: ask you,\nwith the scan beside it" {class: human}
+
+suspect -> judges
+judges -> arbiter
+arbiter -> fix: "80% or more"
+arbiter -> ask: "less than 80%"

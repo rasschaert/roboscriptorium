@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" font-family="Helvetica, Arial, sans-serif">
+  <rect width="760" height="300" fill="#ffffff"/>
+  <text x="30" y="32" font-size="15" font-weight="bold" fill="#3b4252">Wrong words per page (about 300 words), typical tuning book, 2026-10-17</text>
+
+  <!-- scale: 1 wrong word = 120 px, baseline x = 250 -->
+  <g stroke="#e5e9f0" stroke-width="1">
+    <line x1="250" y1="56" x2="250" y2="250"/>
+    <line x1="370" y1="56" x2="370" y2="250"/>
+    <line x1="490" y1="56" x2="490" y2="250"/>
+  </g>
+  <g font-size="11" fill="#7b8aa6" text-anchor="middle">
+    <text x="250" y="266">0</text>
+    <text x="370" y="266">1</text>
+    <text x="490" y="266">2</text>
+  </g>
+
+  <g font-size="13" fill="#3b4252" text-anchor="end">
+    <text x="238" y="88">The scan’s own text layer</text>
+    <text x="238" y="152">After the machine</text>
+    <text x="238" y="216">After you answer its questions</text>
+  </g>
+  <g fill="#2e6db4">
+    <rect x="250" y="70" width="268" height="26" rx="4"/>
+    <rect x="250" y="134" width="46" height="26" rx="4"/>
+    <rect x="250" y="198" width="32" height="26" rx="4"/>
+  </g>
+  <g font-size="13" fill="#3b4252">
+    <text x="528" y="88"><tspan font-weight="bold">2.2+</tspan>  about 550 in a 250-page book</text>
+    <text x="306" y="152"><tspan font-weight="bold">0.4</tspan>  before any question is answered</text>
+    <text x="292" y="216"><tspan font-weight="bold">0.27</tspan>  about 70 in a 250-page book</text>
+  </g>
+  <text x="30" y="290" font-size="11" fill="#7b8aa6">Medians and means over the tuning books’ bench slices; the text layer’s figure ignores punctuation, so its real count is higher.</text>
+</svg>

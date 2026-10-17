@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 330" font-family="Georgia, 'Times New Roman', serif">
+  <rect width="900" height="330" fill="#ffffff"/>
+
+  <!-- the picture layer -->
+  <text x="30" y="34" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#3b4252">What you see: a photo of the page</text>
+  <rect x="30" y="48" width="330" height="250" rx="4" fill="#f4efe2" stroke="#b8ab8a"/>
+  <text x="195" y="78" text-anchor="middle" font-size="12" fill="#6b6455" font-style="italic">Wij doden Stella</text>
+  <text x="50" y="118" font-size="15" fill="#2b2b2b">Ze was toen vijf jaar oud en</text>
+  <text x="50" y="142" font-size="15" fill="#2b2b2b">wist nog niet wat de scènes</text>
+  <text x="50" y="166" font-size="15" fill="#2b2b2b">tussen haar ouders betekenden.</text>
+  <text x="68" y="190" font-size="15" fill="#2b2b2b">‘Kom binnen,’ zei Richard.</text>
+  <circle cx="300" cy="215" r="2.2" fill="#555"/>
+  <text x="195" y="282" text-anchor="middle" font-size="13" fill="#2b2b2b">10</text>
+
+  <!-- the arrow between -->
+  <text x="400" y="168" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#7b8aa6">hidden</text>
+  <text x="400" y="183" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="12" fill="#7b8aa6">beneath</text>
+  <path d="M372 196 L 428 196" stroke="#7b8aa6" stroke-width="2" marker-end="url(#a)"/>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#7b8aa6"/></marker></defs>
+
+  <!-- the text layer -->
+  <text x="440" y="34" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="bold" fill="#3b4252">What the computer reads: the text layer</text>
+  <rect x="440" y="48" width="440" height="250" rx="4" fill="#f7f9fc" stroke="#7b8aa6" stroke-dasharray="5 4"/>
+  <g font-family="Menlo, Consolas, monospace" font-size="13" fill="#3b4252">
+    <text x="456" y="78">Wij doden Stella</text>
+    <text x="456" y="118">Ze was toen <tspan fill="#b3261e" font-weight="bold">vijfjaar</tspan> oud en</text>
+    <text x="456" y="142">wist nog niet wat de <tspan fill="#b3261e" font-weight="bold">scenes</tspan></text>
+    <text x="456" y="166">tussen haar ouders be-</text>
+    <text x="456" y="182">tekenden.</text>
+    <text x="456" y="206"><tspan fill="#b3261e" font-weight="bold">'</tspan>Kom binnen,' zei Richard.</text>
+    <text x="456" y="230"><tspan fill="#b3261e" font-weight="bold">»</tspan></text>
+    <text x="456" y="282"><tspan fill="#b3261e" font-weight="bold">Io</tspan></text>
+  </g>
+  <g font-family="Helvetica, Arial, sans-serif" font-size="11" fill="#b3261e">
+    <text x="700" y="118">← missing space</text>
+    <text x="700" y="142">← lost accent</text>
+    <text x="700" y="174">← the line-end hyphen</text>
+    <text x="700" y="206">← straight quotes</text>
+    <text x="700" y="230">← a speck read as a character</text>
+    <text x="700" y="282">← the page number, misread</text>
+  </g>
+</svg>

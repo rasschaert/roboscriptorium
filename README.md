@@ -12,6 +12,7 @@ without a text layer, gets its first reading from tesseract.
 The diagram's source is [docs/pipeline.d2](docs/pipeline.d2); render it with
 `d2 docs/pipeline.d2 docs/pipeline.svg`.
 
+New to it, or back after a while? Start with [docs/primer.md](docs/primer.md).
 How it all fits together: [docs/how-it-works.md](docs/how-it-works.md); why each part
 is there: [docs/design.md](docs/design.md).
 

@@ -23,6 +23,7 @@ owns the fact in the same commit.
 | [docs/golden-notes.md](docs/golden-notes.md) | each golden pair: edition, what makes it hard, known deviations; the manifest keys that undo them | a pair is added, sliced or retired; a key is added |
 | [docs/golden-books.md](docs/golden-books.md) | the pairs' numbers, **generated** by `experiments/golden_overview.py` | regenerated after a pair changes |
 | [docs/hosted-inference.md](docs/hosted-inference.md) | the plan for a window of free hosted inference: what to learn, what carries back, the guardrails | access comes, or a hosted run teaches something |
+| [docs/primer.md](docs/primer.md) | for a person new or returning: the problem from first principles, how a change is judged, where the gains are expected, the vocabulary | the approach, the bets or the vocabulary change |
 | `README.md`, [docs/how-it-works.md](docs/how-it-works.md), `docs/pipeline.d2` | for people: what it is and how a build runs | the stages, their order or their models change |
 
 Cite a step or a section by its words, never by its number: numbers are positions and
@@ -148,8 +149,9 @@ mistake it prevents; check a change against them before committing.
   told apart, flag for review instead of rewriting.
 - **Measure with `roboscriptorium bench`, before and after.** A single run's CER moved by
   more than most changes did; only the bench's paired comparison says whether a change is
-  real. Choose on `bench tuning`; `bench validation` checks that it carries over, and a
-  choice made on validation scores makes them tuning.
+  real. Choose on `bench tuning`; `bench validation` only vetoes (the user, 2026-10-17):
+  a change no better on tuning isn't taken for a gain on validation, and a choice made
+  on validation scores makes them tuning.
 - **Sort a probe's catches by where they sit before building on its total.** Two page
   readers "caught 60 errors"; split into lines, as the design chosen on that count
   feeds them, about a quarter were reachable: the rest sat at line joins (end hyphens,
