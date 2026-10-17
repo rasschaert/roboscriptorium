@@ -501,6 +501,17 @@ starts wrong; with the judge's sure answers 19, and none it had right made wrong
 after a line that doesn't end a sentence carries on, unasked: of 3,800 such lines two
 started a paragraph, both after a scrap. That leaves about a third of the lines to ask.
 
+**That check stays; the judge is off** (`ROBO_BREAK_JUDGE=1` turns it on). Built with and
+without it, every bench slice from its caches (`experiments/probe_break_conditions.py`,
+2026-10-17): the check fixed 75 starts and broke none; the judge's sure answers fixed 43
+and broke 63. Most of its wrong answers are flush dialogue after narration taken for a
+new paragraph in a book that indents (all 9 of Goede dochter's), though it is told how
+the book sets them; on the two books that set no indent, where it was meant to help, it
+fixed 22 and broke 29. With the check alone, against the judge: tuning breaks 0.16 →
+0.15 a page (no change), validation 0.16 → 0.13 (**better**), words unchanged on both;
+Goede dochter back to 0.00, De stilte 0.47 → 0.30, Dolittle 0.10 → 0.18 (0.39 before
+either).
+
 ## Footnotes
 
 **A footnote leaves the running text.** Printed at a page's foot, a note read as body

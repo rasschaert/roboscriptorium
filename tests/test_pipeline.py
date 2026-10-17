@@ -605,6 +605,7 @@ def test_a_paragraph_starts_where_the_judge_is_sure_one_does(tmp_path, monkeypat
 
     monkeypatch.setattr(pipeline.decide, "for_model", client)
     monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    monkeypatch.setenv("ROBO_BREAK_JUDGE", "1")
     paragraphs = pipeline.run(book, check_ocr=False).doc.paragraphs
     assert [p.text.split()[:2] for p in paragraphs] == [["Line", "0"], ["Then", "line"]]
     monkeypatch.setenv("ROBO_BREAK_JUDGE", "0")

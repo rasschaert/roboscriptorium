@@ -415,3 +415,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-16 | paragraph-starts table trained on tuning, then bench tuning+validation | 1580 | 5 | 0 |
 | 2026-10-16 | bench tuning+validation, Qwen reads questions without readings (new reads of headings) | 1580 | 8 | 0 |
 | 2026-10-17 | bench tuning+validation, break judge v2: text neighbours, told the book's paragraph style (cold judge questions) | 1580 | 359 | 0 |
+| 2026-10-17 | bench tuning, break check without the judge (warm) | 0 | 2 | 0 |
+| 2026-10-17 | bench validation, break check without the judge (warm) | 0 | 1 | 0 |

@@ -62,13 +62,6 @@ models could do. Each probe below asks whether that's still true, on a few golde
       the margin: 87 of 88 starts) did nothing, the tuning books having no unindented
       book (2026-10-16, `work/probes/parastarts.patch`); Vuurspel's unindented layout is
       rare (the user, 2026-10-17), so no pair is sought for it
-- [ ] **user** decides: keep the paragraph-break judge (`parabreaks.py`, on by default) or
-      switch it off until Goede dochter's flush-dialogue breaks are fixed; tuning v2
-      breaks 0.19 → 0.16 a page, Goede dochter 0.00 → 0.10 (2026-10-17, postponed by the
-      user till the validation result)
-- [ ] Goede dochter's breaks under the judge: flush dialogue taken for new paragraphs in
-      a book whose flush lines carry them on, though it is told the book indents (agent,
-      ~1 h, no models: `work/probes/break_samples.py`, then a short test on its pages)
 - [ ] Grow the seven short tuning slices (`work/runs/queue-20261017.sh`, branch
       `longer-slices`), then trust data and the role trees on them, and bench (a night)
 - [ ] Line roles by Qwen from the page image (text, heading, running head, page number,
@@ -540,6 +533,9 @@ many the layer had wrong.
 
 ## Structure and line roles
 
+- [x] 2026-10-17 Paragraph starts: a line beginning in lower case after one not ending a
+      sentence carries on (no model); the vision judge (`parabreaks.py`) off, as it broke
+      more than it fixed; breaks tuning 0.19 → 0.15, validation 0.21 → 0.13 a page
 - [x] 2026-10-11 Footnotes out of the running text, linked to their marks (`footnotes.py`):
       Reis 7 of 8 found and linked (the eighth's mark read "ie"), no false ones on the
       benches after a stroke-weight limit; Reis paragraph breaks 0.07 → 0.06, BETTER

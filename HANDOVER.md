@@ -12,9 +12,10 @@ end of every session. Written 2026-10-17 ~09:20, during the night run; the user 
    better on books with lines set apart (Dolittle, You're Never Weird, Normal People),
    clearly worse on Goede dochter 0.00 → 0.10, De stilte 0.34 → 0.47 and The Stranger's
    Child 0.02 → 0.08; no gain on Vuurspel. Log: `work/runs/break-bench2.log`.
-2. **The break judge is merged and on by default** (`ROBO_BREAK_JUDGE=1`). Whether it stays
-   on waits on the user (below). Its answers are cached per book in
-   `stages/decisions.jsonl`, so rebuilds don't ask again.
+2. **The break judge is off by default** (`ROBO_BREAK_JUDGE=1` on); the lower-case check
+   it came with runs on every build. Measured line by line, the check fixed 75 starts and
+   broke none, the model 43 fixed and 63 broken; benches validation BETTER (breaks 0.16 →
+   0.13), tuning no change (0.16 → 0.15) (decisions.md, 2026-10-17). The user may veto.
 3. **Slice growth not started** (the user's break): `robo-queue` was stopped while it
    waited. To resume: `experiments/detached.sh queue work/runs/queue-20261017.sh` (it waits
    for `robo-break-bench`, then `eval`s the seven short tuning slices to their
@@ -66,11 +67,6 @@ runs: it now also holds `work/ex-minnaar/errata.toml`.
 
 ## Waiting on the user
 
-- **Keep the paragraph-break judge on, or switch it off** (`ROBO_BREAK_JUDGE=0`) until
-  Goede dochter's new breaks are fixed: decide after the validation result (the user
-  postponed it, 2026-10-17). Goede dochter's errors are flush dialogue taken for new
-  paragraphs (`work/probes/break_samples.py` lists them, no models, with
-  `ROBO_OLLAMA_URL=http://127.0.0.1:9`).
 - Remove the Ollama models nothing uses: `gemma4:latest`, `deepseek-ocr:3b`,
   `numind/nuextract3:q6_k`, `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`,
   `ornith-1.5:9b`, `ornith-1.5:35b`, `qwen3.8:27b-mxfp8` (not in the way, the user said).

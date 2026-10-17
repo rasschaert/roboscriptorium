@@ -61,8 +61,8 @@ class Settings:
     sorter: bool = True
     sorter_model: str = "work/models/line-roles.pkl"
     # The vision judge says which lines start a paragraph where it is sure
-    # (`parabreaks.py`); off, the page's geometry alone decides.
-    break_judge: bool = True
+    # (`parabreaks.py`). Off: it broke more starts than it fixed (docs/design.md).
+    break_judge: bool = False
 
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:

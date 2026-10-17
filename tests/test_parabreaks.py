@@ -135,3 +135,14 @@ def test_the_judge_is_told_how_the_book_sets_paragraphs(tmp_path):
     cache = DecisionCache(tmp_path / "d.jsonl")
     parabreaks.judged(pdf, pages, None, judge, cache, indented=False)
     assert seen == [parabreaks.STYLE[False]] * 2
+
+
+def test_without_a_judge_only_the_lines_that_cant_start_are_set():
+    lines = [
+        Line("Hij keek op en zei dat het", 40, 50, 360, 62),
+        Line("al laat was.", 40, 68, 200, 80),
+        Line("Buiten regende het.", 40, 86, 360, 98),
+    ]
+    # No judge: the scan isn't opened, so it needn't exist.
+    (page,) = parabreaks.judged("absent.pdf", [PageText(1, 400, 600, lines)], None)
+    assert [ln.starts_paragraph for ln in page.lines] == [None, False, None]

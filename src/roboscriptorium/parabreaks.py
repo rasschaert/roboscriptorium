@@ -11,10 +11,14 @@ least 0.7 sure left 17, and broke none it had right (`experiments/probe_break_ju
 
 A line can't start a paragraph after a line that doesn't end a sentence when it begins
 in lower case (2 such starts among 3,800 lines, both after a scrap): it carries on, and
-isn't asked.
+isn't asked. That check runs on every build; the judge only when asked for
+(`ROBO_BREAK_JUDGE`). Over both bench sets the check fixed 75 starts and broke none, the
+judge's sure answers fixed 43 and broke 63, most of them flush dialogue it took for a new
+paragraph in a book that indents (`experiments/probe_break_conditions.py`, 2026-10-17).
 """
 
 import re
+from contextlib import nullcontext
 from dataclasses import replace
 
 import pymupdf
@@ -76,18 +80,18 @@ def judged(
     pdf,
     pages: list[PageText],
     roles: dict[SourceRef, LineRole] | None,
-    client,
-    cache: DecisionCache,
+    client=None,
+    cache: DecisionCache | None = None,
     indented: bool = True,
 ) -> list[PageText]:
-    """Copies of `pages` with `starts_paragraph` set on the body lines the judge is sure of,
-    and to False on body lines that can't start one. A line that has it set already (an
-    answer) keeps it. The judge is told whether the book indents its paragraphs
+    """Copies of `pages` with `starts_paragraph` set to False on body lines that can't start
+    one, and, given a `client`, set on the body lines the judge is sure of. A line that has
+    it set already (an answer) keeps it. The judge is told whether the book indents its paragraphs
     (`indents`): without it, it took flush dialogue for new paragraphs in a book whose
     flush lines carry them on (Goede dochter 0 → 12 breaks wrong, 2026-10-17)."""
     out = []
     before = ""
-    with PDF_LOCK, pymupdf.open(pdf) as doc:
+    with PDF_LOCK, pymupdf.open(pdf) if client else nullcontext() as doc:
         for page in pages:
             lines = list(page.lines)
             body = [
@@ -107,6 +111,8 @@ def judged(
                     continue
                 if not can_start(above, line.text):
                     lines[k] = replace(line, starts_paragraph=False)
+                    continue
+                if client is None:
                     continue
                 state = {
                     "how the book sets paragraphs": STYLE[indented],
