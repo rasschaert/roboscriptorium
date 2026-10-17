@@ -87,6 +87,14 @@ get renumbered. Don't add a file to this table without a job no other file has.
   (Claude Code's Monitor tool, re-armed when it expires), not only one that waits for the
   end. In a script, `screen -ls` exits 1 when sessions exist: test it as
   `{ screen -ls || true; } | grep -q …`, or under `pipefail` the wait ends at once.
+- **Nothing is "the way we do it"** (the user, 2026-10-17: "i just don't want ever see
+  you get complascent … i just need you to have that mentality. it's important"). Every
+  stage, model and rule keeps its place only while the evidence says it earns it. At
+  every result (a probe, a bench, a review batch) ask what it says about the structure,
+  not only the setting: which block it makes redundant, which block it suggests, which
+  order it questions. When something new works, ask at once what it lets us remove.
+  Proposing these experiments is the agent's job, not the user's; the cheap ones run
+  unasked (the rules below).
 - **Test the architecture, not only its settings** (the user, 2026-10-13: "we're too stuck
   in our way of thinking … fine tuning has diminishing returns"). Before saying a model
   can't do something, or parking an idea under Later, try it on a few golden pages: a

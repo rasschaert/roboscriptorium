@@ -59,6 +59,12 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       prints a per-category, per-book table, before → after with the paired interval,
       kept in the record for trends. The labels never train anything; "reference
       fault" stays a proposal until a verdict settles it (agent, ~2 h)
+- [ ] Winnow subtracted? The context judge reads the whole paragraph where winnow reads
+      the sentence, and on the asked suspects it beats the arbiter that weighs winnow
+      (86% against 68% on the golden books). If the arbiter without winnow, with the
+      context judge after it, benches no worse, winnow goes, and with it the only reason
+      Ollama is pinned at 0.40.3. Needs the context judge's local check first; then trust
+      data without winnow's votes (cached, no model calls) and a retrain (agent, ~1 h)
 - [ ] Winnow through token probabilities (the user, 2026-10-17, low urgency): render the
       question ourselves (in winnow's trained layout, EldanRing/winnow-inference
       `native/protocol.h`), ask `winnow-ollama:e4b` for one token with log-probabilities,
