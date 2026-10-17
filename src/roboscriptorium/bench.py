@@ -69,6 +69,8 @@ SETS = {
         "het-geluid-van-bananen--ia-scan:9-101:1-14",
         "steve-jobs--ia-scan:9-100:1-12",
         "verminkt--ia-scan",
+        "het-schaduwhuis--ia-scan:9-91:1-19",
+        "de-geruchten--ia-scan:9-97:2-22",
     ],
     # The quick tier, for a change's short test: a chapter or two of each tuning book
     # (a later one where the first are front matter or a single short one), ending where
