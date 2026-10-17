@@ -12,24 +12,27 @@ has ended; only the main session works on).
    seven books, Villa Toscane out); stage (b) merged (`number-lookalikes`) and the role
    trees retrained (18:46). Every bench now saves its errors (`*.errors.jsonl`) with
    their causes; `bench-diff` compares two runs place by place.
-2. **`robo-stage-b`** (`work/runs/stage-b.sh`, notes `work/runs/stage-b.txt`): trust
-   data on the seven grown slices, the arbiter retrained and saved, then `bench quick`,
-   `tuning`, `validation` against stage (a). Then compare quick's verdict with
-   tuning's (the quick tier's check) and read the causes table.
+2. **Stage (b) done** 19:09: trust data, arbiter, the three benches (decisions.md).
 3. **`robo-context-judge`**: the local qwen3.8 on 100 asked suspects without counts
    (`work/runs/context-judge.log`), to set beside the hosted run
    (`probe_context_judge.py score --no-counts` both ways). If it agrees, `bench quick`
    with `ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4` against stage (b).
-4. **`robo-winnow-tokens`**: winnow by systemone, winnow by tokens, Winnow-12B by tokens
-   on ~800 labelled suspects (`experiments/probe_winnow_tokens.py`). On 21: tokens 9,
-   systemone 15, Winnow-12B 17 right. If 12B holds, it replaces winnow by tokens and
-   the Ollama pin goes; then the lighter-arbiter bench (checklist, "Winnow subtracted?").
+4. **Winnow probe done** (805 suspects): Winnow-12B by tokens 77.9% right against
+   winnow's 66.5% by systemone, and a sharper alarm on clef (decisions.md).
 5. **`robo-first-look-reads`**, waiting behind `robo-context-judge` (the hold is
    released, the trees match), then ~14 h: builds (no scores) of Het geluid van bananen
    9–101, Het schaduwhuis 9–91, Steve Jobs 9–100, De geruchten 9–97, Verminkt whole
    (notes `work/runs/first-look-reads.txt`). Then `bench first-look --first-look`, and
    the books into their sets (checklist, "First, after the slice growth").
 6. **The page-kinds probe** still runs as `robo-queue`'s last step (clef-flash).
+7. **`robo-w12b`**, waiting behind `robo-first-look-reads`: Winnow-12B as the text judge
+   through token probabilities (`tokens:` client, merged, off by default): every book's
+   trust data rebuilt in `work/probes/ocr-trust-w12b`, an arbiter of its own
+   (`work/models/ocr-trust-w12b.pkl`), `bench tuning` and `validation` against stage
+   (b) (`work/runs/w12b.sh`, progress `work/probes/ocr-trust-w12b/runs/progress.txt`).
+   If no worse: `check_model` becomes Winnow-12B by tokens, winnow-ollama:e4b and the
+   Ollama pin go (AGENTS.md Environment, docs/models.md Setup, docs/design.md).
+   **Stage (b) results**: validation 0.41 → 0.37 BETTER, tuning NO CHANGE (decisions.md).
 7. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
