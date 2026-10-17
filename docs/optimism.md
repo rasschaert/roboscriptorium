@@ -17,7 +17,8 @@ Each entry is a judgment, not a measurement: the numbers it rests on are in
 | --- | --- |
 | Modern prose, clean IA scan (Stella's kind), commercial-e-book quality with a light review (≤ 0.2 questions a page) | ~75% |
 | The same books with no human at all, ≤ 1 wrong word in 1,000 | ~45% |
-| Universal: any physical-book scan (old typography, footnotes, verse, busy layouts, washed-out pages) in, high-quality EPUB out, unattended | ~20% in this project's horizon |
+| Universal: any physical-book scan (old typography, footnotes, verse, busy layouts, washed-out pages) in, high-quality EPUB out, unattended | ~20% on today's local models |
+| The same by 2030, with the same bones and the models and memory of then | ~60–70% |
 
 **Where it stands:** tuning 0.30 and validation 0.37 wrong words a page after review,
 with 0.3–0.6 questions a page; about one wrong word in 1,000.
@@ -31,6 +32,15 @@ nameable kinds (extra text, glued words, quotes, accents).
 nothing yet catches it but a better reader. Each new kind of book has needed its own
 work. `init` can't yet find a body range unattended (page kinds 86%, the text's start
 right on 25 of 29 books). Local models are the ceiling.
+
+**The horizon** (the user: models get better and consumer hardware gets more memory;
+the project keeps its bones with better models in them). What is hard now (a reader
+seeing what no reader doubts, sorting a busy layout) is what better vision models fix.
+The risk by then is the bones: whether a new model drops into a role (reader, judge,
+sorter) behind one interface, the arbiter learning its trust by retraining, and the
+golden pairs, first looks and error causes saying in minutes whether it helps. Thin
+and replaceable: prompts tuned to one model, hand rules patching one model's habits,
+workarounds like the Ollama pin.
 
 **Would move it up:** a reader that catches what none doubts today; `init` finding the
 body range alone; first-look scores within reach of the tuned books.
