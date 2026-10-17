@@ -64,6 +64,11 @@ models could do. Each probe below asks whether that's still true, on a few golde
       rare (the user, 2026-10-17), so no pair is sought for it
 - [ ] Grow the seven short tuning slices (`work/runs/queue-20261017.sh`, branch
       `longer-slices`), then trust data and the role trees on them, and bench (a night)
+- [ ] After the slice growth, merge branch `heading-pairs` (one found heading for a
+      reference's number and title set as two: Metro 3/8 → 8/8, Normal People 4/9 → 8/9),
+      and retrain the trees on the long slices with branch `number-lookalikes` (a line of
+      digits or their look-alikes, "Io" for 10, as a feature: Monterosso's chapter numbers
+      in old-style figures, 14/22 found), then merge it and bench (agent, ~1 h)
 - [ ] Line roles by Qwen from the page image (text, heading, running head, page number,
       caption, picture), against the rules and the trees
 - [ ] The text layer as a second reader only: the page built from the whole-page reading,

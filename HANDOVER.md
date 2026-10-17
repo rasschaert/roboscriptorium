@@ -14,15 +14,17 @@ has ended; only the main session works on).
    Don't edit `src/` in the main checkout while it runs: code work goes in a worktree.
    After it: merge branch **`longer-slices`** (on origin; worktree
    `../roboscriptorium-breaks`): the bench SETS and trust-data specs on the long ranges;
-   then rebuild trust data and the role trees on them, and bench.
+   then rebuild trust data and the role trees on them, and bench. Two branches wait for
+   it (checklist): `heading-pairs` (scoring) and `number-lookalikes` (a tree feature; the
+   trees must be retrained before it merges, or the build stops on the feature mismatch).
 2. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
    without markup spaces (validation 0.49 → 0.38 after review, better, mostly the
    references); a space between nested quote marks folded in the score (0.38 → 0.36).
    Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
-3. Worktrees: `../roboscriptorium-spans` (branches `reference-spaces`, `page-edge-lines`,
-   both merged; free for the next code change), `../roboscriptorium-breaks`
+3. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
+   runs; now on `number-lookalikes`), `../roboscriptorium-breaks`
    (`longer-slices`), `../roboscriptorium-py315` (stale, left as is).
 4. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
    hurt, `work/probes/break-conditions/`), `experiments/probe_break_judge.py`.
