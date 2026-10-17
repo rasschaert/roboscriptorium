@@ -63,7 +63,6 @@ SETS = {
         "het-laatste-bevel--ia-scan:9-100:1-5",
         "the-strangers-child--ia-scan:121-208:15-23",
         "normal-people--ia-scan:146-232:23-31",
-        "de-aanslag--calibre-pdf",
     ],
     "first-look": [
         "het-geluid-van-bananen--ia-scan:9-101:1-14",
@@ -71,6 +70,8 @@ SETS = {
         "verminkt--ia-scan",
         "het-schaduwhuis--ia-scan:9-91:1-19",
         "de-geruchten--ia-scan:9-97:2-22",
+        # A sibling of two tuning books: its look waits for a free slot.
+        "na-die-nacht--ia-scan",
     ],
     # The quick tier, for a change's short test: a chapter or two of each tuning book
     # (a later one where the first are front matter or a single short one), ending where
