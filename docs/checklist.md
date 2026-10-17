@@ -254,7 +254,9 @@ In this order:
       it, the readers write `. . . '`, curled as opening or not at all; now closed at a
       line's end and curled by the book's style, Metro 0.42 → 0.33 wrong words a page
 - [ ] Verdict page: a place where one side has something the print lacks (Metro p. 61's
-      stray `>` in the e-book) says so in words (agent, ~30 min)
+      stray `>` in the e-book) says so in words: done on branch `verdict-words`
+      ("the publisher's e-book has “>” here, our text nothing"), to merge after the slice
+      growth
 - [x] Monterosso's capital T read as an opening quote (2026-10-16): one case left in the
       build ("‘Lieve ‘Tiziana,’ zegt"), asked at the paragraph's end ("open at end"), not
       where the ‘ stands, since quotes nest in their own mark; not worth a rule for one
