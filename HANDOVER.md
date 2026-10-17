@@ -24,8 +24,9 @@ has ended; only the main session works on).
       mismatch: it adds a look-alike number feature ("Io" for 10) and counts a repeat only
       at the line's height (chapter titles recurring as running heads). The role model is
       asked again about the ~15 lines whose repeat count changes.
-   4. Merge **`leading-text`** (worktree `../roboscriptorium-lead`): derive keeps an
-      epigraph before the first heading. Then `golden derive normal-people --epub
+   4. Merge **`prune`** (worktree `../roboscriptorium-lead`; it holds `leading-text`):
+      derive keeps an epigraph before the first heading, and AGENTS.md is cut to rules
+      and the map (golden-notes.md, models.md, how-it-works.md take the rest). Then `golden derive normal-people --epub
       work/.cache/publisher/normal-people.epub`, set `body_pages = [9, 276]` in
       `work/normal-people--ia-scan/book.toml`, and regenerate docs/golden-books.md.
    5. Rebuild trust data on the long slices, retrain the arbiter, bench both sets.
@@ -37,7 +38,7 @@ has ended; only the main session works on).
    Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
 3. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
    runs; on `verdict-words`; branches `heading-pairs`, `number-lookalikes` there too), `../roboscriptorium-breaks`
-   (`longer-slices`), `../roboscriptorium-lead` (`leading-text`), `../roboscriptorium-py315`
+   (`longer-slices`), `../roboscriptorium-lead` (`prune`), `../roboscriptorium-py315`
    (stale, left as is).
 4. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
    hurt, `work/probes/break-conditions/`), `experiments/probe_break_context.py` (a taller
