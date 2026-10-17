@@ -36,11 +36,10 @@ right on 25 of 29 books). Local models are the ceiling.
 **The horizon** (the user: models get better and consumer hardware gets more memory;
 the project keeps its bones with better models in them). What is hard now (a reader
 seeing what no reader doubts, sorting a busy layout) is what better vision models fix.
-The risk by then is the bones: whether a new model drops into a role (reader, judge,
-sorter) behind one interface, the arbiter learning its trust by retraining, and the
-golden pairs, first looks and error causes saying in minutes whether it helps. Thin
-and replaceable: prompts tuned to one model, hand rules patching one model's habits,
-workarounds like the Ollama pin.
+Code won't be the limit either: a future agent rewrites any of it (the user: "it will
+have no problem solving any coding task"). What carries over is the evidence: the
+human labels, the golden pairs, the measurements and the record of what was tried and
+why. The 2030 chance rests on how much of that we gather now.
 
 **Would move it up:** a reader that catches what none doubts today; `init` finding the
 body range alone; first-look scores within reach of the tuned books.

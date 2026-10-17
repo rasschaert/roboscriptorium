@@ -96,11 +96,13 @@ get renumbered. Don't add a file to this table without a job no other file has.
   order it questions. When something new works, ask at once what it lets us remove.
   Proposing these experiments is the agent's job, not the user's; the cheap ones run
   unasked (the rules below).
-- **Build for the models of 2030** (the user, 2026-10-18: models get better and consumer
-  hardware gets more memory; the project keeps its bones with better models in them).
-  Ask of every change whether it makes the next model easier to plug in or harder:
-  roles behind one interface, trust learned by retraining, golden pairs and benches
-  that judge a newcomer in minutes. Keep model-specific glue thin and replaceable.
+- **The evidence outlasts the code** (the user, 2026-10-18: models and hardware keep
+  getting better, and a future agent will write any code it likes). Code is disposable;
+  what a later model can't regenerate is the asset: the human labels (review answers,
+  verdicts, errata in `work/`), the golden pairs with their provenance and known
+  deviations, the measurements and their reasons (decisions.md, null results, bench
+  records, saved errors with causes), and the user's standards. Spend effort where it
+  adds to these; record every result so it never has to be found again.
 - **Test the architecture, not only its settings** (the user, 2026-10-13: "we're too stuck
   in our way of thinking … fine tuning has diminishing returns"). Before saying a model
   can't do something, or parking an idea under Later, try it on a few golden pages: a
