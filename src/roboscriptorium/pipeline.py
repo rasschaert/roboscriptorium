@@ -224,18 +224,18 @@ def run(
                 # review, and the answer sets it.
                 labels = corrections.answered(answers, suspects)
                 own = trust.rows_from(suspects, labels)
+                arbiter = trust.with_answers(model, own)
                 taught = trust.by_book(
-                    trust.decide(
-                        suspects, trust.with_answers(model, own), budget, settings.ocr_ask_below
-                    ),
+                    trust.decide(suspects, arbiter, budget, settings.ocr_ask_below),
                     trust.book_buckets(own),
                     settings.ocr_ask_below,
                 )
                 if settings.context_model:
                     taught = contextjudge.settle(
-                        taught, body, whole, book.language,
+                        taught, body, book.language,
+                        lambda s: int(trust.probabilities(arbiter, s).argmax()),
                         OllamaClient(settings.ollama_url), settings.context_model,
-                        settings.context_sure, book.stages / "context-judge.json",
+                        book.stages / "context-judge.json",
                     )  # fmt: skip
                 done = {(page, line) for page, line, _ in labels}
                 decided = taught

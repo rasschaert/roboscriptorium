@@ -2,13 +2,7 @@ import json
 
 import httpx
 
-from roboscriptorium import contextjudge
 from roboscriptorium.clients.ollama import OllamaClient
-
-
-def test_counts_take_whole_tokens_only():
-    text = "‘Je zei het. Je wist het. Jezus. je"
-    assert contextjudge.counts(text, ["Je", "‘Je", "je"]) == [1, 1, 1]
 
 
 def test_choose_reads_the_letters_probabilities_from_the_answer_token():

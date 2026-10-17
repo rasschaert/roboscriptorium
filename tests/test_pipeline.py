@@ -613,12 +613,17 @@ def test_a_paragraph_starts_where_the_judge_is_sure_one_does(tmp_path, monkeypat
     assert len(pipeline.run(book, check_ocr=False).doc.paragraphs) == 1
 
 
-def test_the_context_judge_settles_a_question_it_is_sure_of(tmp_path, monkeypatch):
+def test_the_context_judge_settles_a_question_where_it_picks_the_arbiters_version(
+    tmp_path, monkeypatch
+):
     import numpy as np
 
-    class Unsure:
+    class Leaning:
+        """Leans to the read model's version, but not enough to settle it unasked."""
+
         def predict_proba(self, X):
-            return np.column_stack([np.full(len(X), 0.5), np.full(len(X), 0.5)])
+            p = np.where(X[:, 0] == 1, 0.4, 0.6)
+            return np.column_stack([1 - p, p])
 
     asked = []
 
@@ -631,15 +636,15 @@ def test_the_context_judge_settles_a_question_it_is_sure_of(tmp_path, monkeypatc
             return list(answer)
 
     book, _ = _checked_book(tmp_path, monkeypatch)
-    monkeypatch.setattr(pipeline.trust, "load", lambda path: trust.Trust(Unsure(), {}))
-    monkeypatch.setattr(pipeline.trust, "fingerprint", lambda path: "unsure")
+    monkeypatch.setattr(pipeline.trust, "load", lambda path: trust.Trust(Leaning(), {}))
+    monkeypatch.setattr(pipeline.trust, "fingerprint", lambda path: "leaning")
     monkeypatch.setattr(pipeline, "OllamaClient", Judge)
     monkeypatch.setenv("ROBO_CONTEXT_MODEL", "thinker")
-    answer = (0.4, 0.6)  # not sure enough: still asked
+    answer = (0.97, 0.03)  # the layer's version, against the arbiter: still asked
     (suspect,) = pipeline.run(book).suspects
     assert suspect.choice == "review"
     assert "» Line 3 of the ⟦?⟧ goes on" in asked[0]
-    assert '"story": ' in asked[0] and '"stony": ' in asked[0]
+    assert 'A) "story"' in asked[0] and 'B) "stony"' in asked[0] and "times" not in asked[0]
     (book.stages / "context-judge.json").unlink()
     answer = (0.03, 0.97)
     stages = pipeline.run(book)
