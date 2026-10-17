@@ -432,3 +432,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-17 | eval de-tuin-van-de-avondnevel--ia-scan 11-97, growing its slice (68 pages cold) | 68 | 83 | 0 |
 | 2026-10-17 | eval doodskleed--ia-scan 13-96, growing its slice (74 pages cold) | 74 | 60 | 0 |
 | 2026-10-17 | eval het-ijzige-land--ia-scan 11-104, growing its slice (83 pages cold) | 83 | 81 | 0 |
+| 2026-10-17 | bench quick, stage (a) baseline (warm) | 0 | 2 | 0 |
+| 2026-10-17 | bench tuning, stage (a) baseline (warm) | 0 | 33 | 0 |
+| 2026-10-17 | bench validation, stage (a) baseline (warm) | 0 | 2 | 0 |
