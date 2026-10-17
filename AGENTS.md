@@ -22,6 +22,7 @@ owns the fact in the same commit.
 | [docs/models.md](docs/models.md) | every model tried, by role, with its verdict | a model is screened |
 | [docs/golden-notes.md](docs/golden-notes.md) | each golden pair: edition, what makes it hard, known deviations | a pair is added, sliced or retired |
 | [docs/golden-books.md](docs/golden-books.md) | the pairs' numbers, **generated** by `experiments/golden_overview.py` | regenerated after a pair changes |
+| [docs/hosted-inference.md](docs/hosted-inference.md) | the plan for a window of free hosted inference: what to learn, what carries back, the guardrails | access comes, or a hosted run teaches something |
 | `README.md`, [docs/how-it-works.md](docs/how-it-works.md), `docs/pipeline.d2` | for people: what it is and how a build runs | the stages, their order or their models change |
 
 Cite a step or a section by its words, never by its number: numbers are positions and
@@ -46,7 +47,9 @@ get renumbered. Don't add a file to this table without a job no other file has.
   never on an agent's own initiative, never by carrying an earlier permission over to
   another run, never as a default in `config.py`. When it is used it is pinned to one
   provider and precision, never falls back, refuses providers that keep prompts, and is
-  measured against the local model first.
+  measured against the local model first. If the user gets free hosted inference (a
+  Belgian start-up's launch offered a month, 2026-10-17), read
+  [docs/hosted-inference.md](docs/hosted-inference.md) before planning its use.
 - **No copyrighted material in git.** Books, page images, OCR output and golden pages
   live in `work/` (gitignored). Commit only code, prompts, question sets, configs and
   synthetic test fixtures.
