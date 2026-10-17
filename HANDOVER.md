@@ -5,61 +5,42 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-17 ~10:30 by the main session (the helper session
 has ended; only the main session works on).
 
-## Running (2026-10-17)
+## Running (2026-10-17, evening)
 
-1. **`robo-queue`, from 10:28:** the seven short tuning slices grown to their pre-2026-10-12
-   ranges (`work/runs/queue-20261017.sh`, 447 pages cold, ~1.2 min a page so ~9 h, ending ~19:30–20:00, fewest new pages
-   first, then the page-kinds probe; notes in `work/runs/queue-20261017.txt`, logs
-   `work/runs/grow-<book>.log`). Every page read is cached, so a stop loses nothing.
-   Don't edit `src/` in the main checkout while it runs: code work goes in a worktree.
-   The queue's screen outlives the session; check it with `screen -ls` and the notes file.
-   **When it ends, in order.** Branch **`weekend-merge`** (worktree
-   `../roboscriptorium-lead`, tested: 494 pass) holds every waiting branch merged with
-   main's state of 13:00, conflicts resolved; if main moved since, merge main into it
-   first. Check `git diff --stat main weekend-merge` before each merge.
-   0. **While the local context-judge sample runs (~35 min, qwen3.8 only):** the winnow
-      token-probability test (checklist), the one gap with no chain asking winnow.
-   1. **Stage (a), `git merge stage-a`:** `context-judge` (with `first-look`,
-      `quick-tier`, `prune`, `leading-text`), `longer-slices`, `heading-pairs`,
-      `verdict-words`. No change to what a build reads; the context judge is off. Then
-      `golden derive normal-people --epub work/.cache/publisher/normal-people.epub`,
-      `body_pages = [9, 276]` in `work/normal-people--ia-scan/book.toml`, and the
-      baselines, warm: `bench quick`, `bench tuning` (now the long slices),
-      `bench validation`.
-   Between the stages: the error categories (checklist, "Error categories tracked per
-      run"), from stage (a)'s `work/bench/*.errors.jsonl`, so stage (b) shows them.
-   2. **Stage (b), `git merge weekend-merge`:** adds `number-lookalikes`. Retrain the
-      trees at once (`experiments/train_sorter.py --rebuild --save`) **before
-      `robo-first-look-reads` starts** (~23:00), or its builds stop on the feature
-      mismatch. Rebuild trust data on the long slices, retrain the arbiter, then
-      `bench quick`, `bench tuning`, `bench validation`: the change judged by both
-      tiers, the quick tier's check.
-   3. On main afterwards: tick the code part of the first-look step, reword the
-      checklist's and outlook.md's other "test set" mentions, regenerate
-      docs/golden-books.md.
-2. **`robo-context-judge`**, waiting in a screen for `robo-queue` to end, then ~3 h:
-   the context-judge probe (`experiments/probe_context_judge.py run`, log
-   `work/runs/context-judge.log`; items frozen in `work/probes/context-judge/`, answers
-   cached, so a stop loses nothing). Then `... score`, and the verdict in the checklist
-   step "A context judge". It holds qwen3.8 only: warm benches can run beside it.
-3. **`robo-first-look-reads`**, waiting behind `robo-context-judge`, then ~14 h (ending
-   ~13:00 Sunday): builds (no scores) of Het geluid van bananen 9–101, Het schaduwhuis
-   9–91, Steve Jobs 9–100, De geruchten 9–97, Verminkt whole
-   (`work/runs/first-look-reads.sh`, notes `work/runs/first-look-reads.txt`). **The
-   role trees must be retrained before it starts** if `number-lookalikes` is merged, or
-   its builds stop on the feature mismatch. The weekend's order is in the checklist
-   ("First, after the slice growth").
-4. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
+1. **Done this evening:** the slice growth (all seven, 17:55); stage (a) merged and its
+   baselines (quick; tuning on the long slices 0.28 after review; validation 0.41 over
+   seven books, Villa Toscane out); stage (b) merged (`number-lookalikes`) and the role
+   trees retrained (18:46). Every bench now saves its errors (`*.errors.jsonl`) with
+   their causes; `bench-diff` compares two runs place by place.
+2. **`robo-stage-b`** (`work/runs/stage-b.sh`, notes `work/runs/stage-b.txt`): trust
+   data on the seven grown slices, the arbiter retrained and saved, then `bench quick`,
+   `tuning`, `validation` against stage (a). Then compare quick's verdict with
+   tuning's (the quick tier's check) and read the causes table.
+3. **`robo-context-judge`**: the local qwen3.8 on 100 asked suspects without counts
+   (`work/runs/context-judge.log`), to set beside the hosted run
+   (`probe_context_judge.py score --no-counts` both ways). If it agrees, `bench quick`
+   with `ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4` against stage (b).
+4. **`robo-winnow-tokens`**: winnow by systemone, winnow by tokens, Winnow-12B by tokens
+   on ~800 labelled suspects (`experiments/probe_winnow_tokens.py`). On 21: tokens 9,
+   systemone 15, Winnow-12B 17 right. If 12B holds, it replaces winnow by tokens and
+   the Ollama pin goes; then the lighter-arbiter bench (checklist, "Winnow subtracted?").
+5. **`robo-first-look-reads`**, waiting behind `robo-context-judge` (the hold is
+   released, the trees match), then ~14 h: builds (no scores) of Het geluid van bananen
+   9–101, Het schaduwhuis 9–91, Steve Jobs 9–100, De geruchten 9–97, Verminkt whole
+   (notes `work/runs/first-look-reads.txt`). Then `bench first-look --first-look`, and
+   the books into their sets (checklist, "First, after the slice growth").
+6. **The page-kinds probe** still runs as `robo-queue`'s last step (clef-flash).
+7. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
    without markup spaces (validation 0.49 → 0.38 after review, better, mostly the
    references); a space between nested quote marks folded in the score (0.38 → 0.36).
    Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
-5. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
+8. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
    runs; on `verdict-words`; branches `heading-pairs`, `number-lookalikes` there too), `../roboscriptorium-breaks`
    (checked out on `scene-after-judge`; `longer-slices` is on origin), `../roboscriptorium-lead` (`weekend-merge`), `../roboscriptorium-py315`
    (stale, left as is).
-6. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
+9. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
    hurt, `work/probes/break-conditions/`), `experiments/probe_break_context.py` (a taller
    crop: no gain), `experiments/probe_break_judge.py`.
 
