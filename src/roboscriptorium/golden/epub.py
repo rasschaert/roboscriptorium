@@ -56,9 +56,9 @@ _XML_ENTITIES = {"amp", "lt", "gt", "quot", "apos"}
 
 # A space before a stop, comma, closing mark (not an elision's apostrophe) or a hyphen
 # joined to the word after it, italic marks between them aside; a space after a dot
-# stays (spaced dots, ". . .").
+# (spaced dots, ". . .") or a dash ("hel -- ,", which `hyphen_dash` reads as spaced) stays.
 _MARKUP_SPACE = re.compile(
-    r"(?<=\S)(?<!\.)\s+(?=[\x01\x02]*(?:[,;:!?…)]|\.(?!\s?\.)|[’”](?!\w)|-\w))"
+    r"(?<=\S)(?<![.\-–—])\s+(?=[\x01\x02]*(?:[,;:!?…)]|\.(?!\s?\.)|[’”](?!\w)|-\w))"
 )
 
 

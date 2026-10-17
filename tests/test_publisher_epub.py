@@ -369,14 +369,14 @@ def test_a_space_the_markup_leaves_before_punctuation_is_dropped_where_declared(
                 '<span class="kk">lapd</span>\n   <span>. Uit <i>Cleopatra</i> .’</span></p>'
                 # What must stay: spaced dots, an elision, a dash between words, a quote
                 # opening after a space.
-                "<p>Toen . . . nee, ’s nachts - zei hij - ‘ja’.</p>"
+                "<p>Toen . . . nee, ’s nachts - zei hij - ‘ja’, in de hel -- , zei hij.</p>"
             ),
         )
     caps = frozenset({"kk"})
     (section,) = publisher_epub.read(epub, ["Text/a.html"], capitals=caps, markup_spaces=True)
     assert [unmarked(p) for p in section.paragraphs] == [
         "Een FBI-agent en de LAPD. Uit Cleopatra.’",
-        "Toen . . . nee, ’s nachts - zei hij - ‘ja’.",
+        "Toen . . . nee, ’s nachts - zei hij - ‘ja’, in de hel -- , zei hij.",
     ]
     (section,) = publisher_epub.read(epub, ["Text/a.html"], capitals=caps)
     assert unmarked(section.paragraphs[0]) == "Een FBI -agent en de LAPD . Uit Cleopatra .’"
