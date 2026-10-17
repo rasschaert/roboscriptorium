@@ -118,7 +118,15 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `glyph_kinds`).
   Verdicts (what the scan prints, plus a mistake category) are stored per scan
   and patched into the reference by `eval`.
-- `bench.py` (`roboscriptorium bench [tuning|validation|test]`): **the** measure for a
+- `errorlog.py`: a bench run's errors, one row each, written beside its record
+  (`work/bench/<run>.errors.jsonl`, as they quote the books): book, page and lines,
+  kind, size, both sides with context, whether a question catches it, and two hints at
+  its origin (did the text layer already read it so: kept, made, lost, unclear; the OCR
+  check's decision on its lines). Rows are keyed by the reference words with their
+  context, like verdicts, so `diff` sorts two runs into fixed, made and kept, and
+  `roboscriptorium bench-diff <old> <new>` prints them by kind, book and origin with
+  examples; `bench` prints the one-line sum after its comparison.
+- `bench.py` (`roboscriptorium bench [tuning|validation|quick|first-look]`): **the** measure for a
   change. Pinned golden slices per set, scored with `evaluate` and `quality`,
   saved whole to `work/bench/` (commit, settings, decider, model versions,
   per-page counts, paragraph breaks set wrong among them) and compared with the

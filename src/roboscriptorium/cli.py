@@ -11,6 +11,7 @@ import typer
 from roboscriptorium import (
     bench,
     disagreements,
+    errorlog,
     evaluate,
     initials,
     ocr,
@@ -394,6 +395,26 @@ def run_bench(
             f" {mark} {c.book[:40]:40} {c.measure:26} {c.before:6.2f} → {c.after:6.2f}"
             f"  [{c.low:+.2f}, {c.high:+.2f}]"
         )
+    if (old_rows := errorlog.load(old_path)) and (new_rows := errorlog.load(path)):
+        typer.echo("errors, place by place (`bench-diff` for the whole list):")
+        typer.echo("  " + errorlog.report(errorlog.diff(old_rows, new_rows))[0])
+
+
+@app.command("bench-diff")
+def bench_diff(
+    old: Path,
+    new: Path,
+    examples: int = typer.Option(3, help="Examples shown per kind"),
+) -> None:
+    """Which errors a change fixed, made and kept, place by place, from two saved runs
+    (work/bench/<run>.json, the earlier first) and their error lists
+    (`<run>.errors.jsonl`)."""
+    old_rows, new_rows = errorlog.load(old), errorlog.load(new)
+    for p, rows in ((old, old_rows), (new, new_rows)):
+        if not rows:
+            raise typer.BadParameter(f"{p.name} has no error list (saved before they were kept?)")
+    for line in errorlog.report(errorlog.diff(old_rows, new_rows), examples):
+        typer.echo(line)
 
 
 @app.command("eval")

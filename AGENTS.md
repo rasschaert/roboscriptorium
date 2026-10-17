@@ -260,7 +260,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `ir.py`, `epub.py` | the document model with references back to page lines; EPUB 3 by hand |
 | `pipeline.py` | the stages for one book, each cached under `work/<book>/stages/` |
 | `flags.py`, `review.py` | what a human should check; the local review pages |
-| `golden/`, `evaluate.py`, `disagreements.py`, `quality.py`, `bench.py` | golden books (manifests, derived references, alignment, retirement signals); CER, WER and paragraph scores; differences located on the scan; what a reviewer is left with; **the** paired measure of a change |
+| `golden/`, `evaluate.py`, `disagreements.py`, `quality.py`, `bench.py`, `errorlog.py` | golden books (manifests, derived references, alignment, retirement signals); CER, WER and paragraph scores; differences located on the scan; what a reviewer is left with; **the** paired measure of a change; each run's errors place by place, and what a change fixed and made (`bench-diff`) |
 
 ## Architecture
 

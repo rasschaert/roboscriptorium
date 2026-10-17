@@ -17,7 +17,7 @@ from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
-from roboscriptorium import disagreements, evaluate, quality, sorter, trust
+from roboscriptorium import disagreements, errorlog, evaluate, quality, sorter, trust
 from roboscriptorium.config import Settings
 from roboscriptorium.golden import scoring, signals
 
@@ -238,6 +238,8 @@ def _book_record(
         "quality": {k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()},
         "unasked_by_kind": quality.unasked_by_category(errors, found),
         "typography_kinds": sorted(kinds),
+        # Written beside the record by `save`, not into it: the rows quote the book.
+        "_errors": errorlog.rows(run.name, errors, found, stages.pages, stages.suspects),
         "pages": page_counts(
             numbers,
             errors,
@@ -432,10 +434,13 @@ def structure(old: dict, new: dict) -> list[str]:
 
 
 def save(record: dict, out: Path = OUT) -> Path:
+    """The record as JSON, and its books' error rows beside it (`errorlog`)."""
     out.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%S")
     path = out / f"{record['set']}-{stamp}-{record['commit']}.json"
-    path.write_text(json.dumps(record, indent=1, ensure_ascii=False))
+    books = {n: {k: v for k, v in b.items() if k != "_errors"} for n, b in record["books"].items()}
+    path.write_text(json.dumps({**record, "books": books}, indent=1, ensure_ascii=False))
+    errorlog.save(path, [r for b in record["books"].values() for r in b.get("_errors", [])])
     return path
 
 
