@@ -6,12 +6,12 @@ end of every session. Written 2026-10-17 ~09:20, during the night run; the user 
 
 ## Running, and what the night left (2026-10-17)
 
-1. `robo-break-bench`: `bench validation` with the paragraph-break judge v2 (`parabreaks.py`),
-   against the pre-judge baseline, log `work/runs/break-bench2.log`, ends ~10:15. Its
-   tuning half is done: NO CHANGE, words 0.27 → 0.27 after review, paragraph breaks 0.19 →
-   0.16 a page [−0.06, +0.00]; Dolittle 0.39 → 0.10, Thief-Taker 0.25 → 0.00, Monterosso
-   0.08 → 0.02, **Goede dochter 0.00 → 0.10 (flagged worse on its own)**. Read the
-   validation verdict from the log; decisions.md has v1 and v2.
+1. **Nothing running** (since 09:40). The paragraph-break judge v2 (`parabreaks.py`) was
+   benched on both sets (decisions.md, 2026-10-17): words unchanged, paragraph breaks
+   tuning 0.19 → 0.16 and validation 0.21 → 0.16 a page (NO CHANGE, just short). Clearly
+   better on books with lines set apart (Dolittle, You're Never Weird, Normal People),
+   clearly worse on Goede dochter 0.00 → 0.10, De stilte 0.34 → 0.47 and The Stranger's
+   Child 0.02 → 0.08; no gain on Vuurspel. Log: `work/runs/break-bench2.log`.
 2. **The break judge is merged and on by default** (`ROBO_BREAK_JUDGE=1`). Whether it stays
    on waits on the user (below). Its answers are cached per book in
    `stages/decisions.jsonl`, so rebuilds don't ask again.
