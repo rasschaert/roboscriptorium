@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 320" font-family="Helvetica, Arial, sans-serif">
+  <rect width="760" height="320" fill="#ffffff"/>
+
+  <text x="30" y="32" font-size="15" font-weight="bold" fill="#3b4252">One printed line, read four times</text>
+
+  <!-- the crop -->
+  <rect x="30" y="48" width="700" height="44" rx="4" fill="#f4efe2" stroke="#b8ab8a"/>
+  <text x="46" y="77" font-family="Georgia, 'Times New Roman', serif" font-size="19" fill="#2b2b2b">Ze was toen vijf jaar oud en wist nog niet wat de scènes</text>
+  
+  <g font-size="13" fill="#3b4252">
+    <text x="30" y="128">text layer</text>
+    <text x="30" y="160">glm-ocr</text>
+    <text x="30" y="192">tesseract</text>
+    <text x="30" y="224">qwen</text>
+  </g>
+  <g font-family="Menlo, Consolas, monospace" font-size="15" fill="#3b4252">
+    <text x="130" y="128">Ze was toen <tspan fill="#b3261e" font-weight="bold">vijfjaar</tspan> oud en wist nog niet wat de <tspan fill="#b3261e" font-weight="bold">scenes</tspan></text>
+    <text x="130" y="160">Ze was toen <tspan fill="#2e7d32" font-weight="bold">vijf jaar</tspan> oud en wist nog niet wat de <tspan fill="#b3261e" font-weight="bold">scenes</tspan></text>
+    <text x="130" y="192">Ze was toen <tspan fill="#2e7d32" font-weight="bold">vijf jaar</tspan> oud en wist nog niet wat de <tspan fill="#2e7d32" font-weight="bold">scènes</tspan></text>
+    <text x="130" y="224">Ze was toen <tspan fill="#2e7d32" font-weight="bold">vijf jaar</tspan> oud en wist nog niet wat de <tspan fill="#2e7d32" font-weight="bold">scènes</tspan></text>
+  </g>
+
+  <!-- suspect boxes -->
+  <rect x="240" y="110" width="80" height="124" rx="6" fill="none" stroke="#c2671b" stroke-width="2" stroke-dasharray="6 4"/>
+  <rect x="560" y="110" width="78" height="124" rx="6" fill="none" stroke="#c2671b" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="280" y="256" text-anchor="middle" font-size="13" font-weight="bold" fill="#c2671b">suspect 1</text>
+  <text x="599" y="256" text-anchor="middle" font-size="13" font-weight="bold" fill="#c2671b">suspect 2</text>
+  <text x="280" y="274" text-anchor="middle" font-size="12" fill="#4c566a">versions: “vijfjaar”, “vijf jaar”</text>
+  <text x="599" y="274" text-anchor="middle" font-size="12" fill="#4c566a">“scenes”, “scènes”</text>
+  <text x="380" y="306" text-anchor="middle" font-size="12" fill="#4c566a">everywhere else all four agree: left alone</text>
+</svg>

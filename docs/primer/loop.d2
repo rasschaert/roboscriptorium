@@ -1,0 +1,43 @@
+# How a change earns its place. Render: d2 docs/primer/loop.d2 docs/primer/loop.svg
+
+direction: right
+
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 0
+    pad: 30
+  }
+}
+
+classes: {
+  step: {
+    shape: rectangle
+    style: {fill: "#ffffff"; stroke: "#3b4252"; border-radius: 6; font-size: 15}
+  }
+  verdict: {
+    shape: diamond
+    style: {fill: "#dbe9f7"; stroke: "#2e6db4"; font-size: 14}
+  }
+  record: {
+    shape: document
+    style: {fill: "#fff8db"; stroke: "#8a6d00"; font-size: 14}
+  }
+}
+
+idea: "1. An idea" {class: step}
+probe: "2. A probe\nminutes, on the pages\nthe idea touches" {class: step}
+bench: "3. The bench\nevery golden book,\nbefore and after" {class: step}
+verdict: "verdict" {class: verdict}
+keep: "kept" {class: step}
+drop: "dropped or\nswitched off" {class: step}
+log: "4. Written down\n(nulls too)" {class: record}
+
+idea -> probe
+probe -> idea: "no gain" {style: {stroke-dash: 3}}
+probe -> bench: "promising"
+bench -> verdict
+verdict -> keep: "better"
+verdict -> drop: "worse"
+keep -> log
+drop -> log
