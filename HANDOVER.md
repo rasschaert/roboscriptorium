@@ -8,28 +8,30 @@ has ended; only the main session works on).
 ## Running (2026-10-17)
 
 1. **`robo-queue`, from 10:28:** the seven short tuning slices grown to their pre-2026-10-12
-   ranges (`work/runs/queue-20261017.sh`, 447 pages cold, ~6–7 h, fewest new pages
+   ranges (`work/runs/queue-20261017.sh`, 447 pages cold, ~1.2 min a page so ~9 h, ending ~19:30–20:00, fewest new pages
    first, then the page-kinds probe; notes in `work/runs/queue-20261017.txt`, logs
    `work/runs/grow-<book>.log`). Every page read is cached, so a stop loses nothing.
    Don't edit `src/` in the main checkout while it runs: code work goes in a worktree.
    The queue's screen outlives the session; check it with `screen -ls` and the notes file.
    **When it ends, in order** (each branch is on origin; check `git diff --stat` first):
-   1. Merge **`longer-slices`** (worktree `../roboscriptorium-breaks`): the bench SETS and
-      trust-data specs on the long ranges.
-   2. Merge **`heading-pairs`** (scoring: one found heading for a reference's number and
+   1. Merge **`quick-tier`** (worktree `../roboscriptorium-lead`; it holds `prune` and
+      `leading-text`): no change to what a build does. It adds `bench quick` (a chapter
+      or two of each tuning book, 282 pages), derives an epigraph before the first
+      heading, and cuts AGENTS.md to rules and the map. Then `golden derive normal-people
+      --epub work/.cache/publisher/normal-people.epub`, set `body_pages = [9, 276]` in
+      `work/normal-people--ia-scan/book.toml`, and run **`bench quick`** (warm, minutes):
+      the quick tier's baseline.
+   2. Merge **`longer-slices`**: the bench SETS and trust-data specs on the long ranges.
+   3. Merge **`heading-pairs`** (scoring: one found heading for a reference's number and
       title set as two; Metro 3/8 → 8/8, Normal People 4/9 → 8/9) and **`verdict-words`**
       (the review says what one side has where the other has nothing).
-   3. Merge **`number-lookalikes`** and retrain the trees at once
+   4. Merge **`number-lookalikes`** and retrain the trees at once
       (`experiments/train_sorter.py --rebuild --save`), or the build stops on the feature
       mismatch: it adds a look-alike number feature ("Io" for 10) and counts a repeat only
       at the line's height (chapter titles recurring as running heads). The role model is
       asked again about the ~15 lines whose repeat count changes.
-   4. Merge **`prune`** (worktree `../roboscriptorium-lead`; it holds `leading-text`):
-      derive keeps an epigraph before the first heading, and AGENTS.md is cut to rules
-      and the map (golden-notes.md, models.md, how-it-works.md take the rest). Then `golden derive normal-people --epub
-      work/.cache/publisher/normal-people.epub`, set `body_pages = [9, 276]` in
-      `work/normal-people--ia-scan/book.toml`, and regenerate docs/golden-books.md.
-   5. Rebuild trust data on the long slices, retrain the arbiter, bench both sets.
+   5. Rebuild trust data on the long slices, retrain the arbiter, bench both sets, and
+      `bench quick` again: does the quick tier give the same verdict as `bench tuning`?
 2. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
    missing at a text block's edge read (`missing.edges`) and Bruna's references derived
@@ -38,7 +40,7 @@ has ended; only the main session works on).
    Tuning 0.27 throughout. `ROBO_BREAK_JUDGE=1` turns the judge back on; the user may veto.
 3. Worktrees: `../roboscriptorium-spans` (the main session's code checkout while the queue
    runs; on `verdict-words`; branches `heading-pairs`, `number-lookalikes` there too), `../roboscriptorium-breaks`
-   (`longer-slices`), `../roboscriptorium-lead` (`prune`), `../roboscriptorium-py315`
+   (checked out on `scene-after-judge`; `longer-slices` is on origin), `../roboscriptorium-lead` (`quick-tier`), `../roboscriptorium-py315`
    (stale, left as is).
 4. Probes: `experiments/probe_break_conditions.py` (where the break judge helped and
    hurt, `work/probes/break-conditions/`), `experiments/probe_break_context.py` (a taller
