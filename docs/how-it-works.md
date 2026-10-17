@@ -9,11 +9,10 @@ The [diagram](pipeline.svg) draws the stages with the model behind each one.
 
 ## The idea
 
-A book comes as one of three kinds of PDF, and what matters is how much of the
-printed page the file already holds as text.
+A book comes as a scanned PDF, and what matters is how much of the printed page the
+file already holds as text. (A born-digital PDF, made from the typeset text, holds it
+exactly: it converts back trivially and is not what this project is for.)
 
-- **Born-digital**: made from the typeset text, so the text *is* the page and the
-  picture only renders it. Extracting the text is exact.
 - **A scan with a text layer**: the picture is the page. Over it, invisible, lies
   one OCR program's reading of it, which is what lets you search and copy in a
   scanned PDF. That reading is good, a few wrong characters in every thousand, and
@@ -39,8 +38,7 @@ Your answers go into the next build. They also become labels the arbiter learns 
 Before any of that, the *spotter* marks what is on each page, and the *sorter*
 decides what each line is: body text, a heading, a page number. After it, plain
 code joins the lines into paragraphs and sets the typography the way the book was
-printed. A born-digital PDF skips the reading and judging: its text is exact, so
-it goes from the sorter straight to the paragraphs.
+printed.
 
 Each of those italic words is a *role*, and the roles are the point. The machine
 is a set of jobs, not a set of models: whoever holds a job today, a model, a
@@ -114,7 +112,7 @@ to its provider, so one is used only when the user allows it for a particular ru
 
 A book is a directory, `work/<book>/`, with two files in it to start:
 
-- `source.pdf`, the scan or the born-digital PDF;
+- `source.pdf`, the scan;
 - `book.toml`, with the title, author, language, cover page, body page range and,
   optionally, the dash style (`dash`, `dash_spacing`) and the ellipsis style
   (`ellipsis`, `ellipsis_space`).
@@ -134,7 +132,7 @@ Books, scans and everything derived from them stay in `work/`, outside git.
 
 The first stage makes a first reading of every page: its text as visual lines, each
 with its box on the page. Who makes it depends on the kind of PDF. For a
-born-digital PDF and for a scan with a text layer, `pdf.py` reads the PDF's own
+scan with a text layer, `pdf.py` reads the PDF's own
 text out with PyMuPDF; in a scan that text is invisible, drawn in a font without
 letter shapes, at the places where the OCR program read each word. An image-only
 scan has no such text, so tesseract, one of the readers, reads each page image
@@ -200,7 +198,7 @@ weight and capitals, takes the role the sorter gave most of them, so one misjudg
 chapter title follows its siblings.
 
 Those rules were written one book at a time and don't carry over well: on a
-born-digital book they found none of its twelve headings. The candidate for the
+calibre-made book they found none of its twelve headings. The candidate for the
 job is a set of trees trained on the golden books' lines, labelled body, heading
 or other by aligning the scan with its reference text. The trees see what the
 rules see (place on the page, width, indent, gaps, repetition across pages), the

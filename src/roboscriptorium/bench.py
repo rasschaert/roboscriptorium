@@ -58,7 +58,6 @@ SETS = {
         "de-kerk-van-de-dode-meisjes--ia-scan:11-107:1-13",
         "vuurspel--ia-scan:9-111:1-6",
         "youre-never-weird-on-the-internet--ia-scan:13-94:1-16",
-        "villa-toscane--calibre-pdf::1-12",
         "de-stilte-van-de-hel--ia-scan:11-101:1-15",
         "het-laatste-bevel--ia-scan:9-100:1-5",
         "the-strangers-child--ia-scan:121-208:15-23",

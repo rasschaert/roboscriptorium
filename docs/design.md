@@ -687,9 +687,9 @@ the edition doesn't list its corrections (the user).
   13 on p. 56: Afscheid read 5.03 wrong words a page after review where it is 0.24.
   A whole page typed by the reviewer still counts as one question's slips, which
   flatters a washed-out book.
-- **Validation books are not a test.** Earlier choices were made on their scores. They
-  are Kerk, Vuurspel, De eerlijke vinder, Villa Toscane and You're Never Weird on the
-  Internet (the only English one, and the hardest layout: pictures holding text). A pair
+- **Validation books are not a test.** Earlier choices were made on their scores
+  (`bench.SETS`; You're Never Weird on the Internet the hardest layout, pictures holding
+  text). Scans only: a born-digital PDF is out of scope (the user, 2026-10-17). A pair
   that fails (an EPUB of another printing, reference headings the scan lacks) is retired,
   not kept: Grand Hotel Europa was.
 - **Every new pair gets a first look.** Validation wears out: every change is benched

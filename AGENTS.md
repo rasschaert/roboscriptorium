@@ -197,8 +197,11 @@ hand-written rule where a learned one can do the job; an existing rule is replac
 learned decision once the bench says the learned one is at least as good. What is true
 by definition (a chapter heading appears once, an apostrophe is `’`) may stay code.
 
-- **Order of attack:** scanned PDF → born-digital PDF → other formats (MOBI/AZW3, DOCX,
-  HTML, …).
+- **Order of attack:** scanned PDF → other formats (MOBI/AZW3, DOCX, HTML, …).
+  **Born-digital PDFs are out of scope** (the user, 2026-10-17: "born digital pdfs are
+  easy. they were often made in calibre using an epub as source. trivial to convert
+  back. that's not the point of this project"). The pipeline still reads one (its text
+  layer is exact, so the OCR check skips it), but no pair of that kind is scored.
 - **Content order:** prose/fiction first; footnotes, figures, tables, verse later.
 - **Book languages:** Dutch and English.
 - **Fidelity:** exact wording and spelling, original paragraphs, italics and scene breaks,
