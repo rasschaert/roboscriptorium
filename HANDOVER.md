@@ -28,6 +28,9 @@ the machine to the agent.
 `bench.SETS["first-look"]` and adds the `hidden_classes` reference key). Log
 `work/runs/au-pair-look.log`.
 
+**`robo-vergelding-read`**, last (`work/runs/vergelding-read.sh`): De vergelding's slice
+(pp. 9–107) read cold (~2 h), no score: it waits in `bench.WAITING` (branch `au-pair`).
+
 ## Done today, afternoon (decisions.md, 2026-10-18)
 
 - **Winnow-12B is the text judge** (`check_model`
@@ -54,9 +57,9 @@ the machine to the agent.
    vetoed on validation → `context_model` on by default (config.py), design.md, the
    diagram and the docs follow.
 
-3. **Merge `au-pair`** once the chains are done: `golden/au-pair/manifest.toml` sits
-   untracked in main (derive ran from there) and is identical to the branch's; remove
-   it, then fast-forward. Record Au pair's first-look score in decisions.md, then its
+3. **Merge `au-pair`** once the chains are done: `golden/au-pair/manifest.toml` and
+   `golden/de-vergelding/manifest.toml` sit untracked in main (derive ran from there) and
+   are identical to the branch's; remove them, rebase on main, then fast-forward. Record Au pair's first-look score in decisions.md, then its
    set (tuning if De laatste roker is to train the line roles; checklist).
 
 ## Waiting on the user
