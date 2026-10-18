@@ -23,7 +23,9 @@ uses main's `src/`. **`robo-robo-cj-validation`** (`work/runs/cj-validation.sh`,
 `work/runs/cj-validation-2.log`) reruns validation from that worktree after the local
 chains below. Then **the user's call** (reviewer time against wrong words): the judge on
 by default saves ~20% of questions at equal errors after review, but makes errors
-unasked; to try first, its "can't tell" answer.
+unasked; to try first, its "can't tell" answer: **`robo-robo-cj-unsure`**
+(`work/runs/cj-unsure.sh`, log `work/runs/cj-unsure.log`, ~2–3 h) after the validation
+rerun, the probe's 100 items paired against today's prompt (66 settled, 8 wrong).
 
 **The queue, in order** (the user, 2026-10-18: the edition checks matter more than the
 first looks): **`robo-carrere-builds`**, running since 21:30
