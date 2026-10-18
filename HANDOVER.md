@@ -45,11 +45,13 @@ gives the first reading.
 **Stella's edition check, hosted** (the user allowed OpenRouter for the edition checks
 only, 2026-10-18; topped up to $7.98 at ~17:10, a paywall ends it; DeepInfra bf16,
 pinned): the whole book against the German, Danish and English, flags in
-`work/probes/stella-editions/full-hosted.jsonl`, capped at $1.20 (the 20-paragraph pilot
-cost $0.05, found "trofik", one false flag "staart"). Then every flag checked on a crop.
-The Carrère books follow hosted once built (~$3 each, French and English, a budget per
-run); before them the aligner also matches on names and numbers (it is a paragraph or
-two off at the books' edges by length alone).
+`work/probes/stella-editions/full-hosted.jsonl`. The first run died at ¶39 (a stalled
+call, results not yet written lost, ~$0.40); the rerun (output `full-hosted-2.out`,
+budget $1, script now writes each result as it arrives) does the other 206. Of the
+first 38 paragraphs' 8 flags, checked on crops: no reading error; one likely misprint
+for the user's errata ("de hete zomer" for "zomers", scan p. 7); the rest the
+translator's wording. Then every remaining flag checked on a crop. The Carrère books
+follow hosted once built (~$3 each, French and English, a budget per run).
 
 **Stella's translation-check pilot, local** (stopped: hosted answered it;
 `experiments/probe_translation_check.py`, output `work/probes/stella-editions/pilot.out`
