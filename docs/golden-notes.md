@@ -34,6 +34,7 @@ Where a reference's markup departs from its print, a key in the manifest's
 | `initial_images` | its drawn initials are images (the letter from the file name) |
 | `leading_text` | it has text before its first heading (an epigraph), or no headings at all |
 | `markup_spaces` | its markup leaves a space before punctuation, or a hyphen-joined word part after a styled word ("FBI -agent") |
+| `single_quotes` | its print sets every quotation in single marks, nested ones too, where the EPUB sets some in double ones |
 | `ellipsis_space = true` | a Gutenberg transcription drops the space its print sets before an ellipsis |
 
 ## The pairs

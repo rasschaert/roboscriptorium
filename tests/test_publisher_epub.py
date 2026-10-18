@@ -338,6 +338,19 @@ def test_leading_text_before_the_first_heading_is_an_untitled_chapter(tmp_path):
     assert [s.heading for s in publisher_epub.read(epub, files, ())] == ["Een"]
 
 
+def test_double_quotes_become_single_where_the_print_sets_only_single(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format("<h1>Een</h1><p>‘Ze zegt: “Alma, ge lacht.” Ik zeg: “Ik?”’</p>"),
+        )
+    (one,) = publisher_epub.read(epub, ["Text/a.html"], (), single_quotes=True)
+    assert one.paragraphs == ["‘Ze zegt: ‘Alma, ge lacht.’ Ik zeg: ‘Ik?’’"]
+    (kept,) = publisher_epub.read(epub, ["Text/a.html"], ())
+    assert kept.paragraphs == ["‘Ze zegt: “Alma, ge lacht.” Ik zeg: “Ik?”’"]
+
+
 def test_a_blockquote_holding_no_paragraphs_is_a_paragraph(tmp_path):
     # calibre sets a Mobipocket e-book's paragraphs as blockquotes; a quotation that
     # holds paragraphs is read through them, as before.

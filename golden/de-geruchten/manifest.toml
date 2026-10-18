@@ -27,6 +27,9 @@ files = [
 ]
 heading_prefixes = ["wp-kopmedium"]
 capital_classes = ["wpt-kleinkap"]
+# The print sets every quotation in single marks, nested ones too; the e-book sets the
+# speech a narrator quotes in double ones (scan pp. 14, 17, 51).
+single_quotes = true
 
 # The first printing (De Bezige Bij 1996, ISBN 90 234 3628 8); IA Scribe scan (6.1),
 # 360 ppi MRC, GlyphLessFont layer, ~317×545 pt, 232 pages. Flemish dialogue ("ge"),

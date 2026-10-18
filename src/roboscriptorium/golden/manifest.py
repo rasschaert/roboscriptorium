@@ -83,6 +83,9 @@ class PublisherEpub:
     # Text before the first heading (an epigraph; all of it, in a text without headings)
     # is an untitled chapter of its own, the first.
     leading_text: bool = False
+    # The print sets every quotation in single marks, nested ones too, where the EPUB
+    # sets some in double ones: those become single.
+    single_quotes: bool = False
 
 
 @dataclass(frozen=True)
@@ -179,6 +182,7 @@ class Golden:
                 frozenset(ref.get("closing_classes", ())),
                 ref.get("initial_images", ""),
                 ref.get("leading_text", False),
+                ref.get("single_quotes", False),
             )
         )
         se = data.get("standard_ebooks")
