@@ -61,9 +61,18 @@ def edition(spec: str) -> tuple[str, list[str]]:
     return Path(path).stem, ps[s:e]
 
 
+def anchors(p: str) -> set[str]:
+    """What a translation carries over unchanged: numbers, and capitalised words not opening
+    a sentence (names, places)."""
+    numbers = set(re.findall(r"\d+", p))
+    names = re.findall(r"(?<![.!?:»«“”‘’\"]\s)(?<!^)\b([A-ZÀ-Ý][\w’'-]{2,})", p)
+    return numbers | set(names)
+
+
 def align(a: list[str], b: list[str]) -> dict[int, list[int]]:
-    """For each paragraph of `b`, the paragraphs of `a` it corresponds to, by lengths; a
-    paragraph one edition has and the other lacks (a preface, a motto) maps to none."""
+    """For each paragraph of `b`, the paragraphs of `a` it corresponds to, by lengths and
+    shared names and numbers; a paragraph one edition has and the other lacks (a preface,
+    a motto) maps to none."""
 
     def share(ps):
         t = sum(len(p) for p in ps)
@@ -71,6 +80,10 @@ def align(a: list[str], b: list[str]) -> dict[int, list[int]]:
 
     A, B = share(a), share(b)
     n, m = len(A), len(B)
+    KA, KB = [anchors(p) for p in a], [anchors(p) for p in b]
+    # Each name or number the two sides share lowers the cost as about half an average
+    # paragraph's length would.
+    bonus = 0.5 / max(n, m)
     inf = float("inf")
     cost = [[inf] * (m + 1) for _ in range(n + 1)]
     back = {}
@@ -89,6 +102,9 @@ def align(a: list[str], b: list[str]) -> dict[int, list[int]]:
             ):
                 if i + di <= n and j + dj <= m:
                     d = cost[i][j] + abs(sum(A[i : i + di]) - sum(B[j : j + dj])) + pen
+                    if di and dj:
+                        shared = set().union(*KA[i : i + di]) & set().union(*KB[j : j + dj])
+                        d -= bonus * min(len(shared), 4)
                     if d < cost[i + di][j + dj]:
                         cost[i + di][j + dj] = d
                         back[(i + di, j + dj)] = (i, j)
