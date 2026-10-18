@@ -46,8 +46,11 @@ gives the first reading.
 paragraphs against the German, Danish and English; one reading error ("trofik", p. 53), already a review question, so no silent one,
 one likely misprint for the user's errata ("de hete zomer", p. 7), 47 false flags. Its
 recall on 37 planted errors: 29 of 31 word errors, 0 of 6 accents. Balance left ~$6.5.
-The Carrère books follow hosted once built (~$3 each, French and English, a budget per
-run; a paywall ends OpenRouter use).
+**`robo-robo-carrere-check`** (`work/runs/carrere-check.sh`, output
+`work/runs/robo-carrere-check.out`), behind `robo-carrere-builds`: Andere levens against
+the French and English (budget $2), then Een Russische roman ($3.5), hosted; flags in
+`work/probes/carrere-editions/`. Then every flag checked on a crop, and each book's open
+review questions against the flags, as for Stella.
 
 **Stella's translation-check pilot, local** (stopped: hosted answered it;
 `experiments/probe_translation_check.py`, output `work/probes/stella-editions/pilot.out`
