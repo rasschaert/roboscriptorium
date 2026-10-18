@@ -8,7 +8,7 @@ chains at 13:00.
 ## Running
 
 The user is back by 10–11 on 2026-10-19. The queue, reordered at 00:30 so the edition
-checks and the context judge's answers land by then (each job a screen, logs in
+checks and the context judge's two runs land by then (each job a screen, logs in
 `work/runs/`, every one with a watcher):
 
 1. **`robo-carrere-builds`** (`carrere-builds.sh`): Andere levens cold since 21:30
@@ -19,18 +19,18 @@ checks and the context judge's answers land by then (each job a screen, logs in
    $3.5; balance ~$6.5, a paywall ends OpenRouter use). Flags in
    `work/probes/carrere-editions/`; then every flag checked on a crop, and each book's
    open review questions against the flags, as for Stella.
-3. **`robo-au-pair-look`** (`au-pair-look.sh`), after the builds: Au pair's slice read
-   cold (~1.5–2 h), then its single first-look score from `../roboscriptorium-aupair`.
-4. **`robo-robo-cj-validation`** (`cj-validation.sh`, log `cj-validation-2.log`, ~1.5 h):
-   the context judge's validation rerun from branch `cj-cap`, against
+3. **`robo-robo-cj-validation`** (`cj-validation.sh`, log `cj-validation-2.log`, ~1.5 h,
+   to ~07:30): the context judge's validation rerun from branch `cj-cap`, against
    `validation-20261018T134936`.
-5. **`robo-robo-cj-unsure`** (`cj-unsure.sh`, log `cj-unsure.log`, ~2–3 h): the judge
-   allowed to answer "the text can't tell", on the probe's 100 items paired against
-   today's prompt (66 settled, 8 wrong).
+4. **`robo-robo-cj-unsure`** (`cj-unsure.sh`, log `cj-unsure.log`, ~2–3 h, to ~10:00):
+   the judge allowed to answer "the text can't tell", on the probe's 100 items paired
+   against today's prompt (66 settled, 8 wrong).
+5. **`robo-au-pair-look`** (`au-pair-look.sh`): Au pair's slice read cold (~1.5–2 h),
+   then its single first-look score from `../roboscriptorium-aupair`.
 6. **`robo-vergelding-read`**, **`robo-glazuur-read`**, **`robo-vanille-read`** last: the
    three waiting pairs' slices read cold (~2, ~2, ~1.5 h), no score.
 
-**The context judge: the user's call** once 4 and 5 are in (reviewer time against wrong
+**The context judge: the user's call** once 3 and 4 are in (reviewer time against wrong
 words). Full tuning (decisions.md, 2026-10-18): NO CHANGE after review (0.28 → 0.28),
 questions down in all 18 books, 29 wrong words made (17 unasked) against 110 fixed,
 mostly the print's spelling normalised ("van binnen" → "vanbinnen").
