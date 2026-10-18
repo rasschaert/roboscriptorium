@@ -194,8 +194,14 @@ def ask_hosted(via: str, prompt: str) -> tuple[list[dict], float]:
         "usage": {"include": True},
     }
     r = openrouter._post(openrouter.URL, body, None)
+    cost = float(r.get("usage", {}).get("cost") or 0)
+    if r["choices"][0]["message"]["content"] is None:
+        # The thinking ran out its tokens before an answer: once more with room for both.
+        body["reasoning"] = {"max_tokens": 10000}
+        r = openrouter._post(openrouter.URL, body, None)
+        cost += float(r.get("usage", {}).get("cost") or 0)
     flags = json.loads(r["choices"][0]["message"]["content"])["flags"]
-    return flags, float(r.get("usage", {}).get("cost") or 0)
+    return flags, cost
 
 
 def main() -> None:
