@@ -49,6 +49,8 @@ SPECS = {
     "de-kerk-van-de-dode-meisjes--ia-scan": "11-27:1-3",
     "vuurspel--ia-scan": "9-29:1-2",
     "monterosso-mon-amour--ia-scan": "",
+    "het-geluid-van-bananen--ia-scan": "9-101:1-14",
+    "het-schaduwhuis--ia-scan": "9-91:1-19",
     # No golden reference: labelled by a human's answers in the review.
     "stella": "answers",
     "ex-minnaar": "answers",

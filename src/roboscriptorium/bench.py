@@ -53,6 +53,8 @@ SETS = {
         "het-ijzige-land--ia-scan:11-104:1-11",
         "de-eerlijke-vinder--ia-scan",
         "monterosso-mon-amour--ia-scan",
+        "het-geluid-van-bananen--ia-scan:9-101:1-14",
+        "het-schaduwhuis--ia-scan:9-91:1-19",
     ],
     "validation": [
         "de-kerk-van-de-dode-meisjes--ia-scan:11-107:1-13",
@@ -62,13 +64,10 @@ SETS = {
         "het-laatste-bevel--ia-scan:9-100:1-5",
         "the-strangers-child--ia-scan:121-208:15-23",
         "normal-people--ia-scan:146-232:23-31",
-    ],
-    "first-look": [
-        "het-geluid-van-bananen--ia-scan:9-101:1-14",
         "verminkt--ia-scan",
-        "het-schaduwhuis--ia-scan:9-91:1-19",
         "de-geruchten--ia-scan:9-97:2-22",
     ],
+    "first-look": [],
     # The quick tier, for a change's short test: a chapter or two of each tuning book
     # (a later one where the first are front matter or a single short one), ending where
     # the next opens a page; Monterosso's chapters run on, so it has no such end.
@@ -88,6 +87,8 @@ SETS = {
         "doodskleed--ia-scan:13-22:1-2",
         "het-ijzige-land--ia-scan:11-21:1-1",
         "de-eerlijke-vinder--ia-scan:59-76:3-3",
+        "het-geluid-van-bananen--ia-scan:22-34:7-7",
+        "het-schaduwhuis--ia-scan:11-19:2-3",
     ],
 }
 # Pairs whose first look has no slot yet: guarded and held out like the first-look set,
