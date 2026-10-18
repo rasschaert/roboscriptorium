@@ -15,6 +15,13 @@ logs in `work/probes/ocr-trust/runs/`), then `bench validation`
 part: Verminkt (417 pages) and De geruchten were read with winnow-ollama:e4b, so their
 text judge's calls are cold.
 
+**`robo-cj-full`**, behind it (`work/runs/cj-full.sh`, output `work/runs/cj-full.out`):
+`bench tuning` then `validation` with the context judge on
+(`ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4`), against the runs robo-sets saves (logs
+`work/runs/cj-tuning.log`, `cj-validation.log`; ~3 h and ~1.5 h). It exits without
+benching if robo-sets didn't finish both benches. The user is away for the day and left
+the machine to the agent.
+
 ## Done today, afternoon (decisions.md, 2026-10-18)
 
 - **Winnow-12B is the text judge** (`check_model`
@@ -37,8 +44,9 @@ text judge's calls are cold.
 1. **The first-look books into their sets**: in code (`bench.SETS`, `trustdata.SPECS`,
    232feb9); `robo-sets` above makes the new baselines. Record them in decisions.md,
    outlook.md and the checklist, and regenerate docs/golden-books.md.
-2. **The context judge's full benches** against those baselines, overnight (cold for the
-   context judge: tuning ~3 h, validation ~1.5 h); on by default only if both hold.
+2. **The context judge's full benches** (`robo-cj-full`): no worse on tuning and not
+   vetoed on validation → `context_model` on by default (config.py), design.md, the
+   diagram and the docs follow.
 
 ## Waiting on the user
 
