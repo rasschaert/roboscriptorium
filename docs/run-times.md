@@ -446,3 +446,12 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-17 | probe: context judge, local qwen3.8 on 100 asked suspects without counts, against the hosted run | 0 | 141 | 0 |
 | 2026-10-17 | build het-geluid-van-bananen--ia-scan 9-101 for its first look (cold, no score) | 93 | 67 | 0 |
 | 2026-10-17 | build het-schaduwhuis--ia-scan 9-91 for its first look (cold, no score) | 83 | 75 | 0 |
+| 2026-10-18 | build steve-jobs--ia-scan 9-100 for its first look (cold, no score) | 92 | 85 | 0 |
+| 2026-10-18 | bench tuning warm, cut-off dash | 0 | 3 | 0 |
+| 2026-10-18 | build de-geruchten--ia-scan 9-97 for its first look (cold, no score) | 89 | 81 | 0 |
+| 2026-10-18 | build verminkt--ia-scan 7-423 for its first look (cold, no score) | 417 | 528 | 0 |
+| 2026-10-18 | bench first-look (five books, warm) | 0 | 4 | 0 |
+| 2026-10-18 | trust data, stella, Winnow-12B by tokens | 0 | 6 | 0 |
+| 2026-10-18 | trust data, goede-dochter--ia-scan | 91 | 14 | 0 |
+| 2026-10-18 | trust data, vals-alarm--ia-scan | 50 | 7 | 0 |
+| 2026-10-18 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 5 | 0 |
