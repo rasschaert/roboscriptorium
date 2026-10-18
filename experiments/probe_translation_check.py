@@ -62,7 +62,8 @@ def edition(spec: str) -> tuple[str, list[str]]:
 
 
 def align(a: list[str], b: list[str]) -> dict[int, list[int]]:
-    """For each paragraph of `b`, the paragraphs of `a` it corresponds to, by lengths."""
+    """For each paragraph of `b`, the paragraphs of `a` it corresponds to, by lengths; a
+    paragraph one edition has and the other lacks (a preface, a motto) maps to none."""
 
     def share(ps):
         t = sum(len(p) for p in ps)
@@ -78,7 +79,14 @@ def align(a: list[str], b: list[str]) -> dict[int, list[int]]:
         for j in range(m + 1):
             if cost[i][j] == inf:
                 continue
-            for di, dj, pen in ((1, 1, 0), (1, 2, 0.002), (2, 1, 0.002)):
+            # A paragraph without a counterpart costs its whole length and a little more.
+            for di, dj, pen in (
+                (1, 1, 0),
+                (1, 2, 0.002),
+                (2, 1, 0.002),
+                (1, 0, 0.004),
+                (0, 1, 0.004),
+            ):
                 if i + di <= n and j + dj <= m:
                     d = cost[i][j] + abs(sum(A[i : i + di]) - sum(B[j : j + dj])) + pen
                     if d < cost[i + di][j + dj]:
