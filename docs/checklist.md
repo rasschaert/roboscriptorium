@@ -121,6 +121,22 @@ The pipeline reads lines and joins them by hand-built geometry because that was 
 models could do. Each probe below asks whether that's still true, on a few golden pages
 (tuning books), before any building. Record each result, null ones too.
 
+- [ ] The original beside the translation (the user, 2026-10-18): for a translated book,
+      the aligned sentence of its original (or another translation) given to the context
+      judge beside the Dutch versions. Meaning crosses languages where spelling doesn't:
+      real-word swaps the word list and winnow can't settle ("hij"/"zij", "maar"/"maat", a
+      lost "niet"), names and numbers carried over letter for letter, a Dutch sentence
+      with no counterpart in either edition (extra text, the bench's largest cause, 0.63 a
+      page) or a gap where both have one (a dropped line), and where speech opens and
+      closes (the quote questions). Paragraph alignment by length already works (Stella
+      against Ullstein's original and Gyldendal's Danish: decisions.md, 2026-10-18).
+      Needs: the English originals' EPUBs of two or three translated tuning books (Goede
+      dochter, De tuin van de avondnevel, Het ijzige land; also Het heft in eigen hand,
+      De cipier, Het schaduwhuis), from **the user**; then sentence alignment (lengths
+      within the aligned paragraphs, or a local embedding model) and the judge scored on
+      their labelled suspects against the arbiter, local only (the originals are
+      copyrighted too). Agent ~2 h plus a probe of ~1–2 h on Ollama
+
 - [x] Whole-page reading (`probe_page_reader.py`, 2026-10-13): Qwen 76 wrong words and
       32 breaks over 19 pages against the pipeline's 27 and 7 (letters doubled at page
       resolution, dialogue paragraphs merged); glm-ocr near-exact on plain text pages at a
