@@ -366,8 +366,10 @@ region; the arrows move through all of them. A region with a box can be turned (
 ↺/↻) and read again by tesseract (`o`); `-` and `+` zoom the crop.
 
 Where the book itself is wrong, `m` (a misprint) takes the line as the edition should
-read it. The answer stays what the page prints, which the readers are scored on, and
-the words that differ go to the book's errata (`errata.py`).
+read it, in the one box left to type in: what the page prints stands above it as read,
+and a correction already typed into the text before `m` moves into the misprint box.
+The answer stays what the page prints, which the readers are scored on, and the words
+that differ go to the book's errata (`errata.py`).
 
 A line the machine didn't ask about, such as a misprint seen while reading, joins the
 questions with `review work/<book> --find "<words>"`: each line holding those words,

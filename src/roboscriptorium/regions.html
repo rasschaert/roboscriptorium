@@ -83,7 +83,8 @@ kbd { font: 12px ui-monospace, monospace; border: 1px solid var(--line); border-
 .noted { margin-top: 8px; color: var(--ok); font: 16px/1.4 Georgia, "Iowan Old Style", serif; }
 .answer { margin-top: 12px; padding: 8px 10px; border-radius: 6px; background: var(--ok-bg); color: var(--ok); }
 .hint { color: var(--muted); font-size: 13px; margin-top: 10px; }
-.hint.warn { color: #b3261e; }
+.printed { white-space: pre-wrap; padding: 6px 8px; border: 1px dashed var(--muted); border-radius: 4px; }
+.hint.warn { color: #b3261e; font-weight: 600; background: #fdecea; padding: 4px 8px; border-radius: 4px; }
 .nav { display: flex; justify-content: space-between; margin-top: 12px; color: var(--muted); font-size: 13px; }
 a { color: var(--accent); }
 </style>
@@ -268,9 +269,15 @@ function render() {
 function textBlock(r, doubt) {
   const before = r.before ? `<div class="context">${esc(r.before)}</div>` : "";
   const after = r.after ? `<div class="context">${esc(r.after)}</div>` : "";
+  if (!doubt && draft.misprint != null) {
+    // One box at a time: with a misprint said, the print stands as read and the
+    // misprint box below is the answer.
+    return `<div class="question">The page prints (cancel the misprint to change this):</div>${before}
+      <div class="printed">${esc(draft.text)}</div>${after}`;
+  }
   if (!doubt) {
     const prompt = r.built ? "As the book has it now, the OCR check's fixes in (edit if the scan says otherwise):"
-      : r.text ? "As printed (edit if the scan says otherwise):"
+      : r.text ? "What the page prints (edit only where the scan says otherwise; for a mistake in the book itself, press m):"
       : r.draft ? "Tesseract's draft of the highlighted area; correct it:" : "Type the text, as printed:";
     return `<div class="question">${prompt}</div>${before}
       <textarea id="text" rows="${Math.min(16, draft.text.split("\n").length + 1)}">${esc(draft.text)}</textarea>${charPad()}${after}`;
@@ -303,7 +310,8 @@ function textBlock(r, doubt) {
       <label class="option reading-option ${draft.reading === -1 ? "on" : ""}"><input type="radio" name="reading" value="-1" ${draft.reading === -1 ? "checked" : ""}>
         <kbd>e</kbd><span class="reading muted">Something else…</span></label>
     </div>
-    ${draft.reading === -1 ? `<textarea id="text" rows="2">${esc(draft.text)}</textarea>${charPad()}` : ""}${after}`;
+    ${draft.reading !== -1 ? "" : draft.misprint != null ? `<div class="printed">${esc(draft.text)}</div>`
+      : `<textarea id="text" rows="2">${esc(draft.text)}</textarea>${charPad()}`}${after}`;
 }
 
 // A misprint is said of running text the human answers here, not of a golden book's place.
@@ -324,14 +332,22 @@ function misprintBlock(r) {
   if (draft.misprint == null) {
     return `${noted}<div class="turnbar"><button id="misprint" title="The book itself is wrong here: say what the edition should read"><kbd>m</kbd>A misprint in the book…</button></div>`;
   }
-  return `${noted}<div class="question">A misprint: the edition should read <button id="misprint" title="No misprint after all">cancel</button></div>
+  return `${noted}<div class="question">A misprint: what the edition should read <button id="misprint" title="No misprint after all">cancel</button></div>
     <textarea id="fix" rows="2">${esc(draft.misprint)}</textarea>
     <div class="context">The answer above stays what the page prints; this only changes the book's text.</div>`;
 }
 
 function toggleMisprint() {
   const r = queue[pos];
-  draft.misprint = draft.misprint == null ? printed(r) : null;
+  const start = r.draft || r.built || r.text || "";
+  if (draft.misprint == null && !isDoubt(r, draft.kind) && draft.text !== start) {
+    // The text was edited before m: that edit is the edition's line, and the page
+    // prints what was there before it.
+    draft.misprint = draft.text;
+    draft.text = start;
+  } else {
+    draft.misprint = draft.misprint == null ? printed(r) : null;
+  }
   draft.confirm = false;
   render();
   document.getElementById("fix")?.focus();
