@@ -411,3 +411,17 @@ def test_a_scrap_wholly_in_the_margin_is_a_speck_but_a_short_line_in_the_column_
     assert flags.find([page], roles) == []
     page.lines[2] = Line("ee = 8 a", 120, 31.1, 128.5, 35.6)  # inside the column: asked
     assert [f.reasons for f in flags.find([page], roles)] == [["dropped-mid-page"]]
+
+
+def test_a_line_asked_for_is_a_region_whose_answer_applies_without_asking_again(tmp_path):
+    page = _page()
+    page.lines[3] = Line("Waar zijn de hete zomer van mijn", 50, 125, 350, 137)
+    (asked,) = flags.asked([page], "hete zomer")
+    assert (asked.page, asked.first, asked.last, asked.treatment) == (1, 3, 3, "text")
+    assert asked.key == flags.region_key(1, page.lines[3].text)
+    assert flags.asked([page], "koude winter") == []
+
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(asked, "text", "Waar zijn de hete zomers van mijn")
+    fixed, _, applied = corrections.apply([page], {}, Corrections(tmp_path / "regions.jsonl"))
+    assert applied == 1 and fixed[0].lines[3].text == "Waar zijn de hete zomers van mijn"

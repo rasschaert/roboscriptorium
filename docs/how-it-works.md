@@ -369,6 +369,10 @@ Where the book itself is wrong, `m` (a misprint) takes the line as the edition s
 read it. The answer stays what the page prints, which the readers are scored on, and
 the words that differ go to the book's errata (`errata.py`).
 
+A line the machine didn't ask about, such as a misprint seen while reading, joins the
+questions with `review work/<book> --find "<words>"`: each line holding those words,
+answered like any other, its answer kept in later builds without asking again.
+
 "Rebuild book" applies the answers and rebuilds the EPUB. The questions come from the
 model's decisions before any answers, so the list stays put while you work.
 

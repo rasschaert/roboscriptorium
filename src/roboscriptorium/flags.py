@@ -57,6 +57,7 @@ REASONS = {
     "washed-out": "the scan is too faint to read: the text layer here is guesswork",
     "lost-line": "white space inside a sentence: the text layer may have lost a line",
     "initial-lost": "a section opens in lower case or capitals: its drawn initial may be lost",
+    "asked-for": "you asked for this line (review --find)",
 }
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
@@ -608,3 +609,15 @@ def _with_doubt(flag: Flag, doubt: Flag) -> Flag:
             same["votes"] += [v for v in r["votes"] if v not in same["votes"]]
     reasons = flag.reasons + [r for r in doubt.reasons if r not in flag.reasons]
     return replace(flag, reasons=reasons, readings=readings)
+
+
+def asked(pages: list[PageText], words: str) -> list[Flag]:
+    """Each line whose text holds `words`, as a question the reviewer asked for
+    (`review --find`): a place the machine didn't flag, such as a misprint seen while
+    reading, to answer as any other."""
+    return [
+        Flag(region_key(p.number, ln.text), p.number, i, i, ln.text, "text", ["asked-for"])
+        for p in pages
+        for i, ln in enumerate(p.lines)
+        if words in ln.text
+    ]
