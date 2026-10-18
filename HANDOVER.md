@@ -31,6 +31,9 @@ the machine to the agent.
 **`robo-vergelding-read`**, last (`work/runs/vergelding-read.sh`): De vergelding's slice
 (pp. 9–107) read cold (~2 h), no score: it waits in `bench.WAITING` (branch `au-pair`).
 
+**`robo-glazuur-read`**, last (`work/runs/glazuur-read.sh`): Glazuur's slice (pp. 11–101)
+read cold (~2 h), no score, likewise waiting.
+
 ## Done today, afternoon (decisions.md, 2026-10-18)
 
 - **Winnow-12B is the text judge** (`check_model`
@@ -58,7 +61,7 @@ the machine to the agent.
    diagram and the docs follow.
 
 3. **Merge `au-pair`** once the chains are done: `golden/au-pair/manifest.toml` and
-   `golden/de-vergelding/manifest.toml` sit untracked in main (derive ran from there) and
+   `golden/de-vergelding/` and `golden/glazuur/` manifests sit untracked in main (derive ran from there) and
    are identical to the branch's; remove them, rebase on main, then fast-forward. Record Au pair's first-look score in decisions.md, then its
    set (tuning if De laatste roker is to train the line roles; checklist).
 
