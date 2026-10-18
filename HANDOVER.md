@@ -21,6 +21,13 @@ De geruchten 0.87, 2 of 21 headings).
 benching if robo-sets didn't finish both benches. The user is away for the day and left
 the machine to the agent.
 
+**The queue, in order** (the user, 2026-10-18: the edition checks matter more than the
+first looks): `robo-cj-full`, then **`robo-stella-check`** (`work/runs/stella-check.sh`:
+Stella's whole book against the German, Danish and English editions, local qwen3.8,
+~3–4 h; flags in `work/probes/stella-editions/full.jsonl`), then **`robo-carrere-builds`**
+(`work/runs/carrere-builds.sh`: Andere levens ~4 h, Een Russische roman ~4.5 h, cold), then
+the four first-look jobs below, each waiting on all of those.
+
 **`robo-au-pair-look`**, behind both (`work/runs/au-pair-look.sh`): Au pair's slice
 (pp. 7–99) read cold (~1.5–2 h), then its single first-look score, run from the
 `../roboscriptorium-aupair` worktree (branch `au-pair`, which lists it in
