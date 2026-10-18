@@ -7,7 +7,13 @@ chains at 13:00.
 
 ## Running
 
-Nothing. Ollama is idle on 0.40.6.
+**`robo-sets`** (since 14:55, ~2.5–3 h; `work/runs/sets.sh`, output `work/runs/sets.out`):
+the line-role trees retrained (`work/runs/sets-sorter.log`), the two new tuning books'
+trust data, the arbiter retrained and `bench tuning` (`experiments/rebuild-trust.sh`,
+logs in `work/probes/ocr-trust/runs/`), then `bench validation`
+(`work/runs/sets-validation.log`), against the Winnow-12B runs. Validation is the long
+part: Verminkt (417 pages) and De geruchten were read with winnow-ollama:e4b, so their
+text judge's calls are cold.
 
 ## Done today, afternoon (decisions.md, 2026-10-18)
 
@@ -28,11 +34,9 @@ Nothing. Ollama is idle on 0.40.6.
 
 ## Next, in order
 
-1. **The first-look books into their sets** (checklist, "First, after the slice
-   growth"): Het geluid van bananen and Het schaduwhuis to tuning, De geruchten and
-   Verminkt to validation (`bench.SETS`, `trustdata.SPECS`); the two tuning books' trust
-   data with Winnow-12B, the arbiter and the role trees retrained, `bench tuning` and
-   `validation` as the new baselines.
+1. **The first-look books into their sets**: in code (`bench.SETS`, `trustdata.SPECS`,
+   232feb9); `robo-sets` above makes the new baselines. Record them in decisions.md,
+   outlook.md and the checklist, and regenerate docs/golden-books.md.
 2. **The context judge's full benches** against those baselines, overnight (cold for the
    context judge: tuning ~3 h, validation ~1.5 h); on by default only if both hold.
 
