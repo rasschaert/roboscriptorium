@@ -102,7 +102,6 @@ setting (checklist, "Other editions as an error finder"). Already found: "trofik
 
 ## Waiting on the user
 
-- Stella: whether "de hete zomer" (p. 7) goes in the errata as a misprint for "zomers"; its questions are answered (2026-10-19).
 - Ex-minnaar's 6 new questions (rebuild first: the role trees were retrained since), then
   its read-through; then Stella's.
 - A verdict batch (~20 min, after the sets move): the unasked errors that look like the
@@ -113,6 +112,13 @@ setting (checklist, "Other editions as an error finder"). Already found: "trofik
 - More golden pairs when convenient. **French**: undecided (checklist, Later).
 
 ## Worktrees
+
+Unmerged, both from main, to merge once no run uses main's `src/`:
+`../roboscriptorium-cjcap` (`cj-cap`: the context judge's cap, its "can't tell" probe;
+the validation rerun and the probe run from it) and `../roboscriptorium-find`
+(`review-find`: `review --find`, the misprint answered in one box; Stella's review
+server runs from it).
+
 
 `../roboscriptorium-aupair` (`au-pair`, to merge), `../roboscriptorium-w12b` (`w12b-default`, merged), `../roboscriptorium-lead`
 (`token-judge`, merged), `../roboscriptorium-spans` (`verdict-words`),
