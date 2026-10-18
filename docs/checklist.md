@@ -121,22 +121,6 @@ The pipeline reads lines and joins them by hand-built geometry because that was 
 models could do. Each probe below asks whether that's still true, on a few golden pages
 (tuning books), before any building. Record each result, null ones too.
 
-- [ ] The original beside the translation (the user, 2026-10-18): for a translated book,
-      the aligned sentence of its original (or another translation) given to the context
-      judge beside the Dutch versions. Meaning crosses languages where spelling doesn't:
-      real-word swaps the word list and winnow can't settle ("hij"/"zij", "maar"/"maat", a
-      lost "niet"), names and numbers carried over letter for letter, a Dutch sentence
-      with no counterpart in either edition (extra text, the bench's largest cause, 0.63 a
-      page) or a gap where both have one (a dropped line), and where speech opens and
-      closes (the quote questions). Paragraph alignment by length already works (Stella
-      against Ullstein's original and Gyldendal's Danish: decisions.md, 2026-10-18).
-      Needs: the English originals' EPUBs of two or three translated tuning books (Goede
-      dochter, De tuin van de avondnevel, Het ijzige land; also Het heft in eigen hand,
-      De cipier, Het schaduwhuis), from **the user**; then sentence alignment (lengths
-      within the aligned paragraphs, or a local embedding model) and the judge scored on
-      their labelled suspects against the arbiter, local only (the originals are
-      copyrighted too). Agent ~2 h plus a probe of ~1–2 h on Ollama
-
 - [x] Whole-page reading (`probe_page_reader.py`, 2026-10-13): Qwen 76 wrong words and
       32 breaks over 19 pages against the pipeline's 27 and 7 (letters doubled at page
       resolution, dialogue paragraphs merged); glm-ocr near-exact on plain text pages at a
@@ -313,12 +297,24 @@ In this order:
       reviews, rebuild, epubcheck, a **spot-check** (5 random pages drawn by a script,
       the **user** marks every wrong word, break and italic against the scan, ~15–20
       min: the book's own error estimate with its interval), **user** reads the EPUB
-- [ ] Other editions as an error finder (`experiments/probe_translation_check.py`; Stella
-      has three, in `work/stella/editions/`): for the Carrère books the French originals
-      (P.O.L: *D'autres vies que la mienne*, 2009; *Un roman russe*, 2007) and their English
-      translations (*Lives Other Than My Own*; *My Life as a Russian Novel*), any printing,
-      from **the user** when convenient; they also spell the French and Russian names
-      letter for letter. The Brusselmans books likely have none
+- [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
+      an instrument for a book with no reference, so its errors are found and fixed by
+      pipeline changes measured on the golden books. The built EPUB's paragraphs are
+      aligned with the other editions' by length (structure: Stella's 244 against the
+      German 238, Danish 239 and English 237; the ten places they disagree with the Dutch
+      are all the translator's, checked on the scan); then a local thinking model reads
+      each Dutch paragraph beside its counterparts and flags reading errors with their
+      evidence ("maat" where the German has "aber"), each flag checked on a crop
+      (`experiments/probe_translation_check.py`; `work/probes/stella-editions/`).
+      Four editions narrow the true errors: a translator's liberty shows in one, a
+      reading error against all. Stella: a 20-paragraph pilot (German and Danish) runs,
+      then the same 20 with the English added and with each edition asked apart (flags
+      at least two support); the best per false flag goes to the whole book (~4 h,
+      overnight), its confirmed errors sorted by cause into pipeline fixes. Carrère: the
+      French originals and English translations are in `work/<book>/editions/`; their
+      paragraphing differs more (382 French against ~404 English; 817 against ~872, each
+      English lacking the French opening), so the aligner needs a paragraph with no
+      counterpart (1:0) before their turn. The Brusselmans books likely have none
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
