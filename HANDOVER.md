@@ -7,13 +7,12 @@ chains at 13:00.
 
 ## Running
 
-**`robo-sets`** (since ~13:45, ~2.5–3 h; `work/runs/sets.sh`, output `work/runs/sets.out`):
-the line-role trees retrained (`work/runs/sets-sorter.log`), the two new tuning books'
-trust data, the arbiter retrained and `bench tuning` (`experiments/rebuild-trust.sh`,
-logs in `work/runs/rebuild/`), then `bench validation`
-(`work/runs/sets-validation.log`), against the Winnow-12B runs. Validation is the long
-part: Verminkt (417 pages) and De geruchten were read with winnow-ollama:e4b, so their
-text judge's calls are cold.
+**`robo-sets` done** (~13:45–15:50): role trees and arbiter retrained with the two new
+tuning books; **the new baselines**: tuning `work/bench/tuning-20261018T121943-b1d19e5-dirty.json`
+(0.28 → 0.27 against Winnow-12B's, no change; Het schaduwhuis 0.17, Het geluid van bananen
+0.57 against 0.47 at its first look, to look into), validation
+`validation-20261018T134936-b1d19e5-dirty.json` (0.39 → 0.38, no change; Verminkt 0.47,
+De geruchten 0.87, 2 of 21 headings).
 
 **`robo-cj-full`**, behind it (`work/runs/cj-full.sh`, output `work/runs/cj-full.out`):
 `bench tuning` then `validation` with the context judge on
