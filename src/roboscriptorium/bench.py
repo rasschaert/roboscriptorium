@@ -95,8 +95,12 @@ SETS = {
 }
 # Pairs whose first look has no slot yet: guarded and held out like the first-look set,
 # but not in its bench run. Na die nacht is a sibling of two tuning books; De vergelding
-# waits for a night's reading.
-WAITING = ["na-die-nacht--ia-scan", "de-vergelding--ia-scan:9-107:1-4"]
+# and Glazuur wait for a night's reading.
+WAITING = [
+    "na-die-nacht--ia-scan",
+    "de-vergelding--ia-scan:9-107:1-4",
+    "glazuur--ia-scan:11-101:1-9",
+]
 FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"] + WAITING)
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
