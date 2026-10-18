@@ -51,13 +51,15 @@ schedel before choosing an OCR model.
 How the models in use are installed and served, where it isn't a plain `ollama pull`.
 AGENTS.md (Environment) keeps the machine's rules.
 
-- **Ollama 0.40.3** (scores before 2026-10-06 were on 0.35.1). 0.40.4 and later refuse
-  a decision model made from a GGUF by a Modelfile ("a format that is no longer
-  supported"): since ollama/ollama#18917 one needs llama.cpp's decision metadata
-  (`decision.type`) in the GGUF itself, which `CAPABILITY decision` can't add. No model
-  in use is made so (imajev:4b, off, is), so an update is open, checked with
-  `roboscriptorium doctor` and a warm bench. Ollaya was uninstalled on 2026-10-08;
-  every model runs on Ollama.
+- **Ollama 0.40.6** since 2026-10-18 (0.40.3 before, 0.35.1 before 2026-10-06). Since
+  0.40.4 a decision model made from a GGUF by a Modelfile is refused ("a format that is
+  no longer supported", ollama/ollama#18917: it needs llama.cpp's decision metadata in
+  the GGUF itself), which retired winnow-ollama:e4b; imajev:4b, off, is made so too.
+  After an update the decision models' cached answers are asked again: on 0.40.6
+  clef:27b gave the same pick on 60 of 60 OCR-check questions, clef-flash the same role
+  on 80 of 80 (`experiments/probe_decider_drift.py`), Winnow-12B the same pick on 157 of
+  158 suspects of the token probe (the one a near-tie, 0.41 against 0.405). Ollaya was
+  uninstalled on 2026-10-08; every model runs on Ollama.
 - **Context length 32k** (the user, 2026-10-13), for glm-ocr reading whole pages:
   llama.cpp's four slots share the context, so 8k left each request ~2k, too little for
   a page. 128k only held memory for KV caches; readings are the same either way.

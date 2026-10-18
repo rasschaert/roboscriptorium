@@ -85,9 +85,12 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       suspects by agreeing with the arbiter, 17 of them wrong (8%, under a question's
       price); alone it never overrules (it overturns one in five right suspects). Built
       that way, off. The local qwen3.8 on 100 of them (2026-10-17): the same pick as
-      hosted on 84, settling 66 with 8 wrong (12%). Left: `bench quick` with
-      `ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4` against the stage (b) run, then the full
-      benches; on by default only if both hold
+      hosted on 84, settling 66 with 8 wrong (12%). `bench quick` with it (2026-10-18,
+      38 min): after review 0.30 → 0.26 [−0.07, −0.02], BETTER; questions 0.72 → 0.60 a
+      page (book mean), fixed 24 wrong words, made none. Left: `bench tuning` and
+      `validation` with it against the Winnow-12B runs (cold for the context judge,
+      ~41 s a call: tuning ~3 h, validation ~1.5 h, overnight); on by default only if
+      both hold
 
 ## Assumptions to test (quick probes, minutes to an hour each)
 

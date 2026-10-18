@@ -474,3 +474,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-18 | trust data, monterosso-mon-amour--ia-scan | 88 | 5 | 0 |
 | 2026-10-18 | train arbiter after the rebuild | 0 | 6 | 0 |
 | 2026-10-18 | bench tuning after the rebuild | 1285 | 2 | 0 |
+| 2026-10-18 | bench validation, Winnow-12B by tokens as the text judge | 0 | 41 | 0 |
+| 2026-10-18 | bench quick, context judge on (local qwen3.8) | 282 | 38 | 0 |
