@@ -63,7 +63,7 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    where it sits before relying on that slice. Het laatste bevel's glued words: check
    they're tracked (a key, the normaliser or verdicts).
 8. The next set review (AGENTS.md, "Reviewing the sets"): after the four waiting pairs'
-   first looks, by 2026-11-18 at the latest; the gaps in docs/golden-notes.md go to the
+   first looks, by 2026-10-25 at the latest; the gaps in docs/golden-notes.md go to the
    user as the books to look for.
 
 - [ ] No fixed test set: a first look for every new pair (the user, 2026-10-17: soon,
