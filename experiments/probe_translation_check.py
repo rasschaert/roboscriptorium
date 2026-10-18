@@ -12,8 +12,9 @@ evidence. Each flag is then checked by eye on a crop of the scan.
 
 An edition's slice runs from the paragraph starting with <first paragraph> up to the
 first paragraph starting with <last heading> (or the end). Flags are appended to
-out.jsonl per paragraph, so a rerun skips the done ones. Local only: the editions are
-copyrighted.
+out.jsonl per paragraph, so a rerun skips the done ones. The editions are copyrighted:
+`--via openrouter:<model>@<provider>` asks a hosted build only where the user allowed it
+(the edition checks, 2026-10-18), eight at a time, its thinking capped.
 """
 
 import argparse
@@ -23,6 +24,7 @@ import re
 import sys
 import time
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import httpx
@@ -61,6 +63,7 @@ def edition(spec: str) -> tuple[str, list[str]]:
 
 def align(a: list[str], b: list[str]) -> dict[int, list[int]]:
     """For each paragraph of `b`, the paragraphs of `a` it corresponds to, by lengths."""
+
     def share(ps):
         t = sum(len(p) for p in ps)
         return [len(p) / t for p in ps]
@@ -128,6 +131,47 @@ SCHEMA = {
 }
 
 
+def ask_local(http: httpx.Client, model: str, prompt: str) -> list[dict]:
+    r = http.post(
+        "/api/chat",
+        json={
+            "model": model,
+            "stream": False,
+            "think": True,
+            "format": SCHEMA,
+            "messages": [{"role": "user", "content": prompt}],
+            "options": {"temperature": 0},
+        },
+    )
+    r.raise_for_status()
+    return json.loads(r.json()["message"]["content"])["flags"]
+
+
+def ask_hosted(via: str, prompt: str) -> tuple[list[dict], float]:
+    """The flags and what the call cost in dollars (OpenRouter's usage accounting)."""
+    from roboscriptorium.clients import openrouter
+
+    name, provider = openrouter.parse(via)
+    strict = json.loads(json.dumps(SCHEMA))
+    strict["additionalProperties"] = False
+    strict["properties"]["flags"]["items"]["additionalProperties"] = False
+    body = {
+        "model": name,
+        "temperature": 0,
+        "messages": [{"role": "user", "content": prompt}],
+        "reasoning": {"max_tokens": 3000},
+        "response_format": {
+            "type": "json_schema",
+            "json_schema": {"name": "flags", "strict": True, "schema": strict},
+        },
+        "provider": {**openrouter._routing(provider), "require_parameters": True},
+        "usage": {"include": True},
+    }
+    r = openrouter._post(openrouter.URL, body, None)
+    flags = json.loads(r["choices"][0]["message"]["content"])["flags"]
+    return flags, float(r.get("usage", {}).get("cost") or 0)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("built")
@@ -135,6 +179,9 @@ def main() -> None:
     ap.add_argument("editions", nargs="+")
     ap.add_argument("--paragraphs", default="")
     ap.add_argument("--model", default="qwen3.8:27b-nvfp4")
+    ap.add_argument("--via", default="")
+    # Dollars a hosted run may spend; no new call starts past it.
+    ap.add_argument("--budget", type=float, default=0.0)
     args = ap.parse_args()
     nl = paragraphs(Path(args.built))
     others = [edition(s) for s in args.editions]
@@ -143,34 +190,43 @@ def main() -> None:
     out = Path(args.out)
     done = {json.loads(line)["paragraph"] for line in out.open()} if out.exists() else set()
     url = Settings.from_env().ollama_url
-    with httpx.Client(base_url=url, timeout=900) as http:
-        for j in want:
-            if j + 1 in done:
+    todo = [j for j in want if j + 1 not in done]
+    spent = [0.0]
+
+    def one(j: int) -> dict | None:
+        if args.budget and spent[0] >= args.budget:
+            return None
+        texts = "\n\n".join(
+            f"{name}:\n" + "\n".join(ps[i] for i in m.get(j, [])) for name, ps, m in maps
+        )
+        prompt = PROMPT.format(dutch=nl[j], others=texts)
+        t0 = time.time()
+        cost = 0.0
+        if args.via:
+            try:
+                flags, cost = ask_hosted(args.via, prompt)
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code == 402:
+                    spent[0] = float("inf")
+                    print("payment required: the hosted run stops", flush=True)
+                    return None
+                raise
+            spent[0] += cost
+        else:
+            with httpx.Client(base_url=url, timeout=900) as http:
+                flags = ask_local(http, args.model, prompt)
+        seconds = round(time.time() - t0)
+        return {"paragraph": j + 1, "seconds": seconds, "cost": cost, "flags": flags}
+
+    with ThreadPoolExecutor(8 if args.via else 1) as pool:
+        for row in pool.map(one, todo):
+            if row is None:
                 continue
-            texts = "\n\n".join(
-                f"{name}:\n" + "\n".join(ps[i] for i in m.get(j, [])) for name, ps, m in maps
-            )
-            t0 = time.time()
-            r = http.post(
-                "/api/chat",
-                json={
-                    "model": args.model,
-                    "stream": False,
-                    "think": True,
-                    "format": SCHEMA,
-                    "messages": [
-                        {"role": "user", "content": PROMPT.format(dutch=nl[j], others=texts)}
-                    ],
-                    "options": {"temperature": 0},
-                },
-            )
-            r.raise_for_status()
-            flags = json.loads(r.json()["message"]["content"])["flags"]
-            row = {"paragraph": j + 1, "seconds": round(time.time() - t0), "flags": flags}
             with out.open("a") as f:
                 f.write(json.dumps(row, ensure_ascii=False) + "\n")
-            print(f"¶{j + 1}: {len(flags)} flags in {row['seconds']} s", flush=True)
-            for fl in flags:
+            n, sec = len(row["flags"]), row["seconds"]
+            print(f"¶{row['paragraph']}: {n} flags in {sec} s, ${spent[0]:.3f} so far", flush=True)
+            for fl in row["flags"]:
                 print(f"   {fl['dutch']!r} → {fl['fix']!r} ({fl['evidence'][:80]})", flush=True)
 
 

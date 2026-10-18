@@ -22,9 +22,7 @@ benching if robo-sets didn't finish both benches. The user is away for the day a
 the machine to the agent.
 
 **The queue, in order** (the user, 2026-10-18: the edition checks matter more than the
-first looks): `robo-cj-full`, then **`robo-stella-check`** (`work/runs/stella-check.sh`:
-Stella's whole book against the German, Danish and English editions, local qwen3.8,
-~3–4 h; flags in `work/probes/stella-editions/full.jsonl`), then **`robo-carrere-builds`**
+first looks): `robo-cj-full`, then **`robo-carrere-builds`**
 (`work/runs/carrere-builds.sh`: Andere levens ~4 h, Een Russische roman ~4.5 h, cold), then
 the four first-look jobs below, each waiting on all of those.
 
@@ -44,7 +42,13 @@ read cold (~2 h), no score, likewise waiting.
 slice (pp. 9–79) read cold (~1.5 h), no score: the first image-only scan, so tesseract
 gives the first reading.
 
-**Stella's translation-check pilot** (a plain background job, not a screen:
+**Stella's edition check, hosted** (the user allowed OpenRouter for the edition checks
+only, 2026-10-18, with the $3.52 left on the account: a paywall ends it; DeepInfra bf16,
+pinned): the whole book against the German, Danish and English, flags in
+`work/probes/stella-editions/full-hosted.jsonl`, capped at $1.20 (the 20-paragraph pilot
+cost $0.05, found "trofik", one false flag "staart"). Then every flag checked on a crop.
+
+**Stella's translation-check pilot, local** (stopped: hosted answered it;
 `experiments/probe_translation_check.py`, output `work/probes/stella-editions/pilot.out`
 and `pilot.jsonl`): 20 paragraphs of today's Stella build read by qwen3.8 beside the
 German original and the Danish translation, ~1–3 min each beside the context judge. Next:
