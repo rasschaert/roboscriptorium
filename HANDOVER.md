@@ -42,16 +42,12 @@ read cold (~2 h), no score, likewise waiting.
 slice (pp. 9–79) read cold (~1.5 h), no score: the first image-only scan, so tesseract
 gives the first reading.
 
-**Stella's edition check, hosted** (the user allowed OpenRouter for the edition checks
-only, 2026-10-18; topped up to $7.98 at ~17:10, a paywall ends it; DeepInfra bf16,
-pinned): the whole book against the German, Danish and English, flags in
-`work/probes/stella-editions/full-hosted.jsonl`. The first run died at ¶39 (a stalled
-call, results not yet written lost, ~$0.40); the rerun (output `full-hosted-2.out`,
-budget $1, script now writes each result as it arrives) does the other 206. Of the
-first 38 paragraphs' 8 flags, checked on crops: no reading error; one likely misprint
-for the user's errata ("de hete zomer" for "zomers", scan p. 7); the rest the
-translator's wording. Then every remaining flag checked on a crop. The Carrère books
-follow hosted once built (~$3 each, French and English, a budget per run).
+**Stella's edition check: done** (hosted, ~$1.8; decisions.md, 2026-10-18): all 244
+paragraphs against the German, Danish and English; one reading error ("trofik", p. 53),
+one likely misprint for the user's errata ("de hete zomer", p. 7), 47 false flags. Its
+recall on 37 planted errors: 29 of 31 word errors, 0 of 6 accents. Balance left ~$6.5.
+The Carrère books follow hosted once built (~$3 each, French and English, a budget per
+run; a paywall ends OpenRouter use).
 
 **Stella's translation-check pilot, local** (stopped: hosted answered it;
 `experiments/probe_translation_check.py`, output `work/probes/stella-editions/pilot.out`
