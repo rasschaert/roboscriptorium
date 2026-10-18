@@ -30,12 +30,21 @@ The weekend's order (the user left it to the agent): each step feeds the next.
 2. Saturday ~23:00 to Sunday ~13:00 (`robo-first-look-reads`): the first-look slices
    read, no scores: Het geluid van bananen, Het schaduwhuis, Steve Jobs, De geruchten,
    Verminkt whole (tuning-bound books first).
-3. Sunday: the first looks scored once, the books into their sets (Het geluid van
-   bananen, Het schaduwhuis and Steve Jobs to tuning: Stella's publisher and scan, the
-   stress accents and "wc" the arbiter must learn, more training data; De geruchten and
-   Verminkt to validation), their trust data, the arbiter retrained on the larger
-   tuning set, benches. If the probe passed, the context judge as a stage after the
-   arbiter that settles the questions it is sure of, benched on the quick tier first.
+3. Sunday 10:18: the first looks scored once (decisions.md, 2026-10-18). Next, once
+   `robo-w12b` and `robo-cj-bench` are done (they compare against stage (b)'s sets):
+   the books into their sets (Het geluid van bananen and Het schaduwhuis to tuning:
+   Stella's publisher and scan, the stress accents and "wc" the arbiter must learn; De
+   geruchten and Verminkt to validation), their trust data with the text judge the
+   Winnow-12B bench picks, the arbiter retrained on the larger tuning set, benches. If
+   the context judge's bench passed, it as a stage after the arbiter, benched on
+   tuning. **Steve Jobs waits on the user**: its e-book is a revised text (proposed: no
+   word scoring, its photo insert kept as line-role training).
+4. After the chain: `experiments/rebuild-trust.sh` builds its book list from every spec
+   but "answers" (it skipped Stella and crashed on Ex-minnaar, whose trust data
+   `robo-w12b-answers` built beside it), not after the chain stops reading the script.
+5. De geruchten's section headings (a narrator's name in capitals mid-page, "DOLF"):
+   0 of 21 found. A validation book, so not chosen on: the next tuning book that sets
+   headings so teaches it, or a probe of what the trees see on those lines.
 
 - [ ] No fixed test set: a first look for every new pair (the user, 2026-10-17: soon,
       ahead of other accuracy work). Validation wears out as changes are benched and

@@ -5,34 +5,29 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Written 2026-10-17 ~10:30 by the main session (the helper session
 has ended; only the main session works on).
 
-## Running (2026-10-18, night; the user asleep, the session working on)
+## Running (2026-10-18, late morning)
 
-1. **`robo-first-look-reads`**: Bananen, Schaduwhuis, Steve Jobs and De geruchten read
-   (01:25); Verminkt whole (7–423) since 01:25, ~7 h, to ~08:30
-   (`work/runs/first-look-reads.txt`, `work/runs/read-verminkt--ia-scan.log`).
-2. **`robo-first-look-bench`**, behind the reads: `bench first-look --first-look`, warm,
-   the five read books (`work/runs/first-look-bench.sh`, log
-   `work/runs/first-look-bench.log`). Na die nacht moved to `bench.WAITING` (guarded,
-   held out, not in the run: 406 pages never read). References of all five checked
-   against today's derive: identical. Then: scores to decisions.md, the books into
-   tuning (bananen, schaduwhuis, steve-jobs) and validation (geruchten, verminkt),
-   docs/optimism.md updated.
-3. **`robo-w12b`**, behind the reads: Winnow-12B as the text judge through token
-   probabilities: trust data in `work/probes/ocr-trust-w12b`, its own arbiter
-   (`work/models/ocr-trust-w12b.pkl`), `bench tuning` and `validation` against stage (b)
-   (`work/runs/w12b.sh`, progress `work/probes/ocr-trust-w12b/runs/progress.txt`). If no
-   worse: `check_model` becomes Winnow-12B by tokens; winnow-ollama:e4b and the Ollama
-   pin go (AGENTS.md Environment, docs/models.md Setup, docs/design.md), and the user can
-   update Ollama.
-4. **`robo-cj-bench`**, behind `robo-w12b`: `bench quick` with the context judge on
-   (`ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4`) against stage (b)'s quick run
-   (`work/runs/cj-bench.sh`, ~2 h). If no worse, tuning and validation with it.
-5. **Tonight, model-free** (decisions.md, 2026-10-18): the 289 unasked errors read one
-   by one (a quarter look like the references'; a verdict batch for the user, checklist);
-   a cut-off dash rule tried and not taken (branch `cutoff-dash`; its run in
-   `work/bench/tried/`); De aanslag and Villa Toscane retired; the primer's visuals.
-   Baselines are still stage (b)'s: tuning `20261017T170349`, validation
-   `20261017T170936`, quick `20261017T165913`.
+1. **The first look is done** (10:18; decisions.md): schaduwhuis 0.17, bananen 0.47,
+   Verminkt 0.49, De geruchten 1.59 (0.82 after its reference's quotes were mended,
+   `single_quotes`), Steve Jobs 2.59 (a revised e-book: proposed to the user, no word
+   scoring). Optimism 6.5/10. The books move into their sets after the two chains
+   below (checklist, "First, after the slice growth").
+2. **`robo-w12b`** (since 10:13): Winnow-12B as the text judge through token
+   probabilities: trust data for the 19 golden books in `work/probes/ocr-trust-w12b`
+   (progress `…/runs/progress.txt`), then its arbiter and `bench tuning`, then
+   `bench validation` against stage (b). Its book list crashed on Ex-minnaar's
+   "answers" spec after printing the others; **`robo-w12b-answers`** builds Stella's
+   (done) and Ex-minnaar's beside it so the arbiter trains on what stage (b)'s did.
+   If no worse: `check_model` becomes Winnow-12B by tokens; winnow-ollama:e4b and the
+   Ollama pin go, and the user can update Ollama.
+3. **`robo-cj-bench`**, behind `robo-w12b`: `bench quick` with the context judge on,
+   against stage (b)'s quick run (~2 h).
+4. **Tonight, model-free** (decisions.md, 2026-10-18): the unasked errors read one by
+   one (a verdict batch for the user, checklist); a cut-off dash rule tried and not
+   taken (branch `cutoff-dash`, its run in `work/bench/tried/`); De aanslag and Villa
+   Toscane retired; the primer's visuals; Na die nacht to `bench.WAITING`. Baselines are
+   still stage (b)'s: tuning `20261017T170349`, validation `20261017T170936`, quick
+   `20261017T165913`.
 
 7. **This morning, merged and benched** (decisions.md, 2026-10-17): the paragraph-break
    judge off, its lower-case check kept (validation breaks 0.16 → 0.13, better); lines
