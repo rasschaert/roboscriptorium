@@ -50,6 +50,17 @@ The weekend's order (the user left it to the agent): each step feeds the next.
 6. De vergelding's and Glazuur's first looks (slices 9–107 and 11–101,
    `bench.WAITING`): their reading on a free night (~2 h each, cold), then out of
    WAITING into the first-look set for their scores.
+7. Trim the sets (the user, 2026-10-18: "trim the fat"; after tonight's benches, batched
+   with one retrain and new baselines): Verminkt sliced to ~90 pages (tooling: cut a
+   reference without chapters where the slice's first and last scan lines align); Afscheid
+   kept for its words, its paragraph breaks no longer scored (a manifest key like
+   `italics_unlike_print`: its EPUB's paragraphing, untracked until now); Na die nacht
+   retired (a sibling of two tuning books, no honest first look); The Nature of a Crime
+   out of tuning and out of the arbiter's training (its Gutenberg punctuation would teach
+   the transcriber's convention), its manifest and verdicts kept for hosted work; Normal
+   People kept (it moved the 2026-10-13 trees verdict, and its questions moved today).
+   Dolittle's quick slice is a suspect pair (layer 2.93% against a median 0.48%): read
+   where it sits before relying on that slice.
 
 - [ ] No fixed test set: a first look for every new pair (the user, 2026-10-17: soon,
       ahead of other accuracy work). Validation wears out as changes are benched and
