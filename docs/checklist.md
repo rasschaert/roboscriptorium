@@ -37,8 +37,8 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    geruchten and Verminkt to validation), their trust data with the text judge the
    Winnow-12B bench picks, the arbiter retrained on the larger tuning set, benches. If
    the context judge's bench passed, it as a stage after the arbiter, benched on
-   tuning. **Steve Jobs waits on the user**: its e-book is a revised text (proposed: no
-   word scoring, its photo insert kept as line-role training).
+   tuning. Steve Jobs scores no words (the user, 2026-10-18): its photo insert stays line-role
+   training.
 4. Once `robo-w12b` no longer runs it: `experiments/rebuild-trust.sh` takes every spec
    but "answers" into its book list and builds those books' trust data too (its list
    skipped Stella and crashed on Ex-minnaar; `robo-w12b-answers` built both beside it).

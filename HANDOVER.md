@@ -9,8 +9,8 @@ has ended; only the main session works on).
 
 1. **The first look is done** (10:18; decisions.md): schaduwhuis 0.17, bananen 0.47,
    Verminkt 0.49, De geruchten 1.59 (0.82 after its reference's quotes were mended,
-   `single_quotes`), Steve Jobs 2.59 (a revised e-book: proposed to the user, no word
-   scoring). Optimism 6.5/10. The books move into their sets after the two chains
+   `single_quotes`), Steve Jobs 2.59 (a revised e-book: line-role training only, the user
+   agreed). Optimism 6.5/10. The books move into their sets after the two chains
    below (checklist, "First, after the slice growth").
 2. **`robo-w12b`** (since 10:13): Winnow-12B as the text judge through token
    probabilities: trust data for the 19 golden books in `work/probes/ocr-trust-w12b`

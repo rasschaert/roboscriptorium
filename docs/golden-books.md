@@ -6,7 +6,7 @@ Each golden book is a scan of a printed book paired with the publisher's own tex
 printing. The build must turn the scan into that text, so a faithful pair is the
 measure of every change.
 
-**In short.** 24 scanned pairs are measured, 6 wait for their first look. Most faithful: Reis om mijn schedel, Normal People, Afscheid van verspilde tijd. Least: Artemis, Het laatste bevel, De tunnels. *Tuning* books are the ones choices are made on; *validation* books can only veto a change; a *first look* is scored once, untouched, before the book joins either.
+**In short.** 25 scanned pairs are measured, 5 wait for their first look. Most faithful: Reis om mijn schedel, Normal People, Afscheid van verspilde tijd. Least: Artemis, Het laatste bevel, De tunnels. *Tuning* books are the ones choices are made on; *validation* books can only veto a change; a *first look* is scored once, untouched, before the book joins either.
 
 ## How faithful each pair is
 
@@ -41,6 +41,7 @@ yet.
 | Het ijzige land | tuning | about 1 word in 150 | – | none known |
 | The Nature of a Crime | tuning | about 1 word in 130 | – | no space before an ellipsis |
 | The Story of Doctor Dolittle | tuning | about 1 word in 130 | – | none known |
+| Steve Jobs | line roles only | about 1 word in 130 | – | none known |
 | Artemis | tuning | about 1 word in 100 | – | none known |
 | Het laatste bevel | validation | about 1 word in 80 | – | none known |
 | De tunnels | line roles only | about 1 word in 80 | – | none known |
@@ -48,7 +49,6 @@ yet.
 | Het geluid van bananen | first look | not looked at yet (its first look comes first) | – | none known |
 | Het schaduwhuis | first look | not looked at yet (its first look comes first) | – | small capitals written in lower case |
 | Na die nacht | first look | not looked at yet (its first look comes first) | – | none known |
-| Steve Jobs | first look | not looked at yet (its first look comes first) | – | none known |
 | Verminkt | first look | not looked at yet (its first look comes first) | – | none known |
 
 ## Details
@@ -83,7 +83,7 @@ with a line on the scan. *Eval* is the latest full run, CER and WER.
 | na-die-nacht | **first look** | 406 / 406 | 152340 | 7.4 h | unmeasured | | | | none | untouched |
 | normal-people | validation | 268 / 87 | 72658 | 1.6 h | 0.06% | 0.10% | 3.4% | 8 / 9 | none | none yet |
 | reis-om-mijn-schedel | tuning | 245 / 89 | 66738 | 1.6 h | 0.14% | 0.09% | 3.9% | 10 / 10 | note_mark | none yet |
-| steve-jobs | **first look** | 688 / 92 | 241137 | 1.7 h | unmeasured | | | | none | untouched |
+| steve-jobs | reserve | 688 / 688 | 241137 | 12.6 h | 0.45% | 0.79% | 3.7% | 85 / 85 | none | none yet |
 | the-nature-of-a-crime | tuning | 94 / 94 | 14712 | 1.7 h | 0.85% | 0.77% | 7.7% | 8 / 8 | ellipsis_space | none yet |
 | the-story-of-doctor-dolittle | tuning | 180 / 66 | 24667 | 1.2 h | 0.88% | 0.79% | 12.6% | 14 / 7 | none | none yet |
 | the-strangers-child | validation | 564 / 88 | 180095 | 1.6 h | 0.33% | 0.33% | 5.8% | 4 / 9 | none | 0.17% / 0.05% |
