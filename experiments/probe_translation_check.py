@@ -24,7 +24,7 @@ import re
 import sys
 import time
 import zipfile
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import httpx
@@ -242,8 +242,15 @@ def main() -> None:
         seconds = round(time.time() - t0)
         return {"paragraph": j + 1, "seconds": seconds, "cost": cost, "flags": flags}
 
+    # Each result is written as it arrives: a call that fails loses only itself, and a
+    # rerun skips every paragraph already answered.
     with ThreadPoolExecutor(8 if args.via else 1) as pool:
-        for row in pool.map(one, todo):
+        for future in as_completed([pool.submit(one, j) for j in todo]):
+            try:
+                row = future.result()
+            except Exception as e:  # noqa: BLE001
+                print(f"a paragraph failed: {e}", flush=True)
+                continue
             if row is None:
                 continue
             with out.open("a") as f:
