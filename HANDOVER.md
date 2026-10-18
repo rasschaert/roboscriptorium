@@ -43,7 +43,7 @@ slice (pp. 9–79) read cold (~1.5 h), no score: the first image-only scan, so t
 gives the first reading.
 
 **Stella's edition check: done** (hosted, ~$1.8; decisions.md, 2026-10-18): all 244
-paragraphs against the German, Danish and English; one reading error ("trofik", p. 53),
+paragraphs against the German, Danish and English; one reading error ("trofik", p. 53), already a review question, so no silent one,
 one likely misprint for the user's errata ("de hete zomer", p. 7), 47 false flags. Its
 recall on 37 planted errors: 29 of 31 word errors, 0 of 6 accents. Balance left ~$6.5.
 The Carrère books follow hosted once built (~$3 each, French and English, a budget per
