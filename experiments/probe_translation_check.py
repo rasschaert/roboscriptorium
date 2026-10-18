@@ -175,6 +175,8 @@ def ask_hosted(via: str, prompt: str) -> tuple[list[dict], float]:
     """The flags and what the call cost in dollars (OpenRouter's usage accounting)."""
     from roboscriptorium.clients import openrouter
 
+    # A paragraph's thinking can take minutes on a busy provider; a call cut off is paid.
+    openrouter.DEADLINE = 600
     name, provider = openrouter.parse(via)
     strict = json.loads(json.dumps(SCHEMA))
     strict["additionalProperties"] = False
