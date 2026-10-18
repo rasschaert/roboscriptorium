@@ -39,9 +39,9 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    the context judge's bench passed, it as a stage after the arbiter, benched on
    tuning. **Steve Jobs waits on the user**: its e-book is a revised text (proposed: no
    word scoring, its photo insert kept as line-role training).
-4. After the chain: `experiments/rebuild-trust.sh` builds its book list from every spec
-   but "answers" (it skipped Stella and crashed on Ex-minnaar, whose trust data
-   `robo-w12b-answers` built beside it), not after the chain stops reading the script.
+4. Once `robo-w12b` no longer runs it: `experiments/rebuild-trust.sh` takes every spec
+   but "answers" into its book list and builds those books' trust data too (its list
+   skipped Stella and crashed on Ex-minnaar; `robo-w12b-answers` built both beside it).
 5. De geruchten's section headings (a narrator's name in capitals mid-page, "DOLF"):
    0 of 21 found. A validation book, so not chosen on: the next tuning book that sets
    headings so teaches it, or a probe of what the trees see on those lines.
