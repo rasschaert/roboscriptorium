@@ -7,10 +7,10 @@ chains at 13:00.
 
 ## Running
 
-**`robo-sets`** (since 14:55, ~2.5–3 h; `work/runs/sets.sh`, output `work/runs/sets.out`):
+**`robo-sets`** (since ~13:45, ~2.5–3 h; `work/runs/sets.sh`, output `work/runs/sets.out`):
 the line-role trees retrained (`work/runs/sets-sorter.log`), the two new tuning books'
 trust data, the arbiter retrained and `bench tuning` (`experiments/rebuild-trust.sh`,
-logs in `work/probes/ocr-trust/runs/`), then `bench validation`
+logs in `work/runs/rebuild/`), then `bench validation`
 (`work/runs/sets-validation.log`), against the Winnow-12B runs. Validation is the long
 part: Verminkt (417 pages) and De geruchten were read with winnow-ollama:e4b, so their
 text judge's calls are cold.
