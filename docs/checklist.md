@@ -39,10 +39,7 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    the context judge's bench passed, it as a stage after the arbiter, benched on
    tuning. Steve Jobs scores no words (the user, 2026-10-18): its photo insert stays line-role
    training.
-4. Once `robo-w12b` no longer runs it: `experiments/rebuild-trust.sh` takes every spec
-   but "answers" into its book list and builds those books' trust data too (its list
-   skipped Stella and crashed on Ex-minnaar; `robo-w12b-answers` built both beside it).
-5. De geruchten's section headings (a narrator's name in capitals mid-page, "DOLF"):
+4. De geruchten's section headings (a narrator's name in capitals mid-page, "DOLF"):
    0 of 21 found. A validation book, so not chosen on: the next tuning book that sets
    headings so teaches it, or a probe of what the trees see on those lines.
 
@@ -503,6 +500,9 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Trust data and the arbiter
 
+- [x] 2026-10-18 `experiments/rebuild-trust.sh` builds every book's trust data, the two
+      labelled by review answers (Stella, Ex-minnaar) at their body pages too, and
+      trains without `--partial`
 - [x] 2026-10-11 Training code for the shipped models in the package: `trust.train`,
       `trust.training_matrix` and `sorter.train` were there already, with feature-count
       tests for trust; the sorter's feature names now tested with regions and styles

@@ -15,6 +15,10 @@ arms a watcher on them first** (AGENTS.md, standing rules).
    (`work/models/ocr-trust-w12b.pkl`) and `bench tuning` (log
    `work/probes/ocr-trust-w12b/runs/bench-tuning.log`), then `bench validation`
    (`work/runs/w12b-validation.log`), both against stage (b). Script `work/runs/w12b.sh`.
+   Trust data, arbiter and tuning done by 12:22: **tuning 0.30 → 0.28 after review
+   [-0.03, -0.00]**, a gain (letters misread, quotes, dots, diaeresis down; Artemis and
+   De cipier a shade worse, inside noise). Validation running since 12:22, watched by
+   the session that took the chains over at 13:00.
 2. **`robo-w12b-answers` done** (11:13): Stella's and Ex-minnaar's Winnow-12B trust
    data, which the chain's book list leaves out, are in place before its arbiter trains,
    so it learns from the same books as stage (b)'s.
@@ -42,7 +46,6 @@ the way of default comparisons.
   Verminkt to validation; their trust data with the text judge the bench chose, the
   arbiter and role trees retrained, the three benches. Not before: the chains compare
   against stage (b)'s sets.
-- **`experiments/rebuild-trust.sh`'s book list** fixed for "answers" specs (checklist).
 
 ## Done this session (decisions.md, 2026-10-17/18)
 

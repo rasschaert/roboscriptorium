@@ -21,9 +21,8 @@ from roboscriptorium.trustdata import SPECS
 from roboscriptorium.book import Book
 from pathlib import Path
 for b, spec in SPECS.items():
-    if b == "stella":
-        continue
-    first, last = map(int, spec.split(":")[0].split("-")) if spec else Book.load(Path("work") / b).body_pages
+    ranged = spec and spec != "answers"
+    first, last = map(int, spec.split(":")[0].split("-")) if ranged else Book.load(Path("work") / b).body_pages
     print(b, last - first + 1)
 ')"})
 failed=0
@@ -44,9 +43,8 @@ if (( failed )); then
   print "$(date '+%F %H:%M') stopped: a book failed, no training" >> $progress
   exit 1
 fi
-# --partial: Stella's data comes from its review answers, which this loop doesn't build.
 experiments/timed.sh "train arbiter after the rebuild" 0 $runs/train.log \
-  env PYTHONPATH=experiments uv run python experiments/train_ocr_trust.py --save --partial
+  env PYTHONPATH=experiments uv run python experiments/train_ocr_trust.py --save
 code=$?
 print "$(date '+%F %H:%M') train exit $code" >> $progress
 (( code )) && exit 1

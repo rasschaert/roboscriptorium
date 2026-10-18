@@ -455,3 +455,22 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-18 | trust data, goede-dochter--ia-scan | 91 | 14 | 0 |
 | 2026-10-18 | trust data, vals-alarm--ia-scan | 50 | 7 | 0 |
 | 2026-10-18 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 5 | 0 |
+| 2026-10-18 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 15 | 0 |
+| 2026-10-18 | trust data, reis-om-mijn-schedel--ia-scan | 89 | 7 | 0 |
+| 2026-10-18 | trust data, afscheid-van-verspilde-tijd--ia-scan | 62 | 5 | 0 |
+| 2026-10-18 | trust data, ex-minnaar, Winnow-12B by tokens | 0 | 53 | 0 |
+| 2026-10-18 | trust data, metro-2033--ia-scan | 86 | 9 | 0 |
+| 2026-10-18 | trust data, de-cipier--ia-scan | 84 | 4 | 0 |
+| 2026-10-18 | trust data, artemis--ia-scan | 68 | 3 | 0 |
+| 2026-10-18 | trust data, de-tuin-van-de-avondnevel--ia-scan | 87 | 11 | 0 |
+| 2026-10-18 | trust data, de-eerlijke-vinder--ia-scan | 84 | 8 | 0 |
+| 2026-10-18 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 1 | 0 |
+| 2026-10-18 | trust data, the-thief-takers-apprentice--ia-scan | 74 | 4 | 0 |
+| 2026-10-18 | trust data, het-heft-in-eigen-hand--ia-scan | 84 | 7 | 0 |
+| 2026-10-18 | trust data, doodskleed--ia-scan | 84 | 5 | 0 |
+| 2026-10-18 | trust data, het-ijzige-land--ia-scan | 94 | 6 | 0 |
+| 2026-10-18 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 2 | 0 |
+| 2026-10-18 | trust data, vuurspel--ia-scan | 21 | 2 | 0 |
+| 2026-10-18 | trust data, monterosso-mon-amour--ia-scan | 88 | 5 | 0 |
+| 2026-10-18 | train arbiter after the rebuild | 0 | 6 | 0 |
+| 2026-10-18 | bench tuning after the rebuild | 1285 | 2 | 0 |
