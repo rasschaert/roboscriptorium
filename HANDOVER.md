@@ -34,6 +34,10 @@ the machine to the agent.
 **`robo-glazuur-read`**, last (`work/runs/glazuur-read.sh`): Glazuur's slice (pp. 11–101)
 read cold (~2 h), no score, likewise waiting.
 
+**`robo-vanille-read`**, last (`work/runs/vanille-read.sh`): Vanille en andere smaken's
+slice (pp. 9–79) read cold (~1.5 h), no score: the first image-only scan, so tesseract
+gives the first reading.
+
 ## Done today, afternoon (decisions.md, 2026-10-18)
 
 - **Winnow-12B is the text judge** (`check_model`
@@ -61,7 +65,7 @@ read cold (~2 h), no score, likewise waiting.
    diagram and the docs follow.
 
 3. **Merge `au-pair`** once the chains are done: `golden/au-pair/manifest.toml` and
-   `golden/de-vergelding/` and `golden/glazuur/` manifests sit untracked in main (derive ran from there) and
+   `golden/de-vergelding/`, `golden/glazuur/` and `golden/vanille-en-andere-smaken/` manifests sit untracked in main (derive ran from there) and
    are identical to the branch's; remove them, rebase on main, then fast-forward. Record Au pair's first-look score in decisions.md, then its
    set (tuning if De laatste roker is to train the line roles; checklist).
 
