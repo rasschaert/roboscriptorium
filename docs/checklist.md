@@ -307,9 +307,12 @@ In this order:
       `work/probes/stella-editions/`). Stella, hosted (qwen3.8-27b on DeepInfra, German,
       Danish and English, ~$1.7 with paid cut-off calls): 46 flags, one reading error
       ("trofik", scan p. 53), one likely misprint for the user's errata ("de hete zomer",
-      p. 7), the rest the translator's wording. Next: **its recall**, on a golden pair with
-      another edition, so a quiet result can be told from a deaf one; the Carrère books
-      (`work/<book>/editions/`, French and English, ~$3 each) once built
+      p. 7), the rest the translator's wording. Its recall, on 37 errors planted in Stella's text
+      (`experiments/edition_recall_plant.py`, $0.14): 29 of 31 word errors caught, 0 of 6
+      lost accents or diaereses; so the build is clean, not the check deaf. Accents need
+      another instrument: the word list knows only some bare forms as non-words
+      ("geergerd", not "financiele", "client", "loge"), and finds none in Stella. Next: the
+      Carrère books (`work/<book>/editions/`, French and English, ~$3 each) once built
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
