@@ -13,6 +13,41 @@ its footnotes among them) and Koning Wilders (its text layer at 2.45% CER, over 
 times the set's median), the suspect pairs whose scores measured their references more
 than the pipeline.
 
+## What each pair is for, and what is missing
+
+Reviewed at every set review (AGENTS.md, Golden books). A pair keeps its place while it
+has a job here no other pair does better; one whose job is gone, or whose score measures
+its reference, is proposed for retirement or a lesser role. Last reviewed 2026-10-18.
+
+| Job | Pairs |
+| --- | --- |
+| Stella's kind, the bulk: what the arbiter learns from and where the bench's power comes from | Goede dochter, Vals alarm, Reis om mijn schedel and Het geluid van bananen (Stella's publisher and scan format), De cipier, Het ijzige land, Doodskleed, De tuin van de avondnevel, De eerlijke vinder, Het schaduwhuis; Au pair, De vergelding, Glazuur waiting |
+| Washed-out pages (`faint.py`, their questions) | Afscheid van verspilde tijd (pages), Het heft in eigen hand (lines) |
+| Plates, drawn initials, old typography | The Story of Doctor Dolittle |
+| Busy layout, pictures | You're Never Weird on the Internet |
+| Old-style figures, small capitals | Monterosso mon amour, De vergelding (waiting) |
+| Footnotes | Het geluid van bananen |
+| Unindented paragraphs (Bruna) | Vuurspel, De stilte van de hel |
+| Flemish | Verminkt, De geruchten, Het laatste bevel |
+| Headings unlike the rest (names mid-page, bare numerals) | De geruchten, Glazuur (waiting) |
+| English, so the machine stays general | Metro 2033, The Thief-Taker's Apprentice, Artemis, The Nature of a Crime (tuning); The Stranger's Child, Normal People, You're Never Weird (validation) |
+| A clean book where a false fix shows | Normal People, De kerk van de dode meisjes |
+| No text layer: tesseract's first reading; a rekeyed reference (DBNL); 1988 spelling | Vanille en andere smaken (waiting) |
+| Public-domain pages a hosted model may see | The Nature of a Crime, Doctor Dolittle |
+| Line-role training only, words not scored | Steve Jobs (its photo insert) |
+
+**Doubts at the last review**: Afscheid's paragraph breaks measure its EPUB, untracked;
+Het laatste bevel's EPUB glues words, to check it is tracked; Doctor Dolittle's quick
+slice is a suspect pair; The Nature of a Crime's Gutenberg punctuation shouldn't train
+the arbiter; Verminkt is scored whole; Na die nacht can't have an honest first look.
+The checklist ("Trim the sets") holds what is done about each.
+
+**Gaps to hunt for**, in order: a second scan without a text layer, of Stella's kind (a
+lent IA book with its layer stripped would do); a scan whose text layer is poor all
+through (an old Scribe or a low resolution), so the layer is the worst reading rather
+than a good one; then, once prose is done, verse, two columns and tables. Another clean
+modern Dutch book adds pages, not information: take one only for a trait above.
+
 ## A reference's manifest keys
 
 Where a reference's markup departs from its print, a key in the manifest's

@@ -60,7 +60,11 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    the transcriber's convention), its manifest and verdicts kept for hosted work; Normal
    People kept (it moved the 2026-10-13 trees verdict, and its questions moved today).
    Dolittle's quick slice is a suspect pair (layer 2.93% against a median 0.48%): read
-   where it sits before relying on that slice.
+   where it sits before relying on that slice. Het laatste bevel's glued words: check
+   they're tracked (a key, the normaliser or verdicts).
+8. The next set review (AGENTS.md, "Reviewing the sets"): after the four waiting pairs'
+   first looks, by 2026-11-18 at the latest; the gaps in docs/golden-notes.md go to the
+   user as the books to look for.
 
 - [ ] No fixed test set: a first look for every new pair (the user, 2026-10-17: soon,
       ahead of other accuracy work). Validation wears out as changes are benched and

@@ -543,6 +543,13 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   or washed-out pages tops it without being suspect. **Whoever notices says so in the session's report and
   proposes retiring it, without being asked.** A retired book's files are deleted from
   `work/` and its manifest from git, with a dated line in docs/decisions.md.
+- **Reviewing the sets** (the user, 2026-10-18: "periodically hunt for new books and
+  cull old ones, and re-evaluate what we use each one for"). After every batch of first
+  looks, and at least monthly: each pair's job against docs/golden-notes.md ("What each
+  pair is for"), the suspect signals, the doubts; propose retiring, slicing or a lesser
+  role (line roles only, out of training) where a job is gone; update the gaps to hunt
+  for, and ask the user for candidates that fill them. The review's date goes in that
+  section and a line in docs/decisions.md.
 
 ```sh
 uv run roboscriptorium golden derive the-nature-of-a-crime
