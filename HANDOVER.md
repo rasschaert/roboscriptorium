@@ -7,67 +7,39 @@ chains at 13:00.
 
 ## Running
 
-**`robo-sets` done** (~13:45–15:50): role trees and arbiter retrained with the two new
-tuning books; **the new baselines**: tuning `work/bench/tuning-20261018T121943-b1d19e5-dirty.json`
-(0.28 → 0.27 against Winnow-12B's, no change; Het schaduwhuis 0.17, Het geluid van bananen
-0.57 against 0.47 at its first look, to look into), validation
-`validation-20261018T134936-b1d19e5-dirty.json` (0.39 → 0.38, no change; Verminkt 0.47,
-De geruchten 0.87, 2 of 21 headings).
+The user is back by 10–11 on 2026-10-19. The queue, reordered at 00:30 so the edition
+checks and the context judge's answers land by then (each job a screen, logs in
+`work/runs/`, every one with a watcher):
 
-**`robo-cj-full` done**: tuning with the context judge NO CHANGE after review (0.28 →
-0.28), questions down in all 18 books, 29 wrong words made (17 unasked) against 110 fixed
-(decisions.md). Validation died on Vuurspel (a thinking answer past the client's 10 min);
-fixed on branch `cj-cap` (`../roboscriptorium-cjcap`: answers capped at 10,000 tokens, a
-capped or timed-out answer leaves the question asked), not yet merged: merge once no run
-uses main's `src/`. **`robo-robo-cj-validation`** (`work/runs/cj-validation.sh`, log
-`work/runs/cj-validation-2.log`) reruns validation from that worktree after the local
-chains below. Then **the user's call** (reviewer time against wrong words): the judge on
-by default saves ~20% of questions at equal errors after review, but makes errors
-unasked; to try first, its "can't tell" answer: **`robo-robo-cj-unsure`**
-(`work/runs/cj-unsure.sh`, log `work/runs/cj-unsure.log`, ~2–3 h) after the validation
-rerun, the probe's 100 items paired against today's prompt (66 settled, 8 wrong).
+1. **`robo-carrere-builds`** (`carrere-builds.sh`): Andere levens cold since 21:30
+   (~4 h), then Een Russische roman (~4.5 h, to ~06:00).
+2. **`robo-robo-carrere-check`** (`carrere-check.sh`, out `robo-carrere-check.out`),
+   hosted beside the local work: each book against its French and English as soon as
+   its build's row is in docs/run-times.md (Andere levens budget $2, Een Russische roman
+   $3.5; balance ~$6.5, a paywall ends OpenRouter use). Flags in
+   `work/probes/carrere-editions/`; then every flag checked on a crop, and each book's
+   open review questions against the flags, as for Stella.
+3. **`robo-au-pair-look`** (`au-pair-look.sh`), after the builds: Au pair's slice read
+   cold (~1.5–2 h), then its single first-look score from `../roboscriptorium-aupair`.
+4. **`robo-robo-cj-validation`** (`cj-validation.sh`, log `cj-validation-2.log`, ~1.5 h):
+   the context judge's validation rerun from branch `cj-cap`, against
+   `validation-20261018T134936`.
+5. **`robo-robo-cj-unsure`** (`cj-unsure.sh`, log `cj-unsure.log`, ~2–3 h): the judge
+   allowed to answer "the text can't tell", on the probe's 100 items paired against
+   today's prompt (66 settled, 8 wrong).
+6. **`robo-vergelding-read`**, **`robo-glazuur-read`**, **`robo-vanille-read`** last: the
+   three waiting pairs' slices read cold (~2, ~2, ~1.5 h), no score.
 
-**The queue, in order** (the user, 2026-10-18: the edition checks matter more than the
-first looks): **`robo-carrere-builds`**, running since 21:30
-(`work/runs/carrere-builds.sh`: Andere levens ~4 h, Een Russische roman ~4.5 h, cold), then
-the four first-look jobs below, each waiting on all of those.
+**The context judge: the user's call** once 4 and 5 are in (reviewer time against wrong
+words). Full tuning (decisions.md, 2026-10-18): NO CHANGE after review (0.28 → 0.28),
+questions down in all 18 books, 29 wrong words made (17 unasked) against 110 fixed,
+mostly the print's spelling normalised ("van binnen" → "vanbinnen").
 
-**`robo-au-pair-look`**, behind both (`work/runs/au-pair-look.sh`): Au pair's slice
-(pp. 7–99) read cold (~1.5–2 h), then its single first-look score, run from the
-`../roboscriptorium-aupair` worktree (branch `au-pair`, which lists it in
-`bench.SETS["first-look"]` and adds the `hidden_classes` reference key). Log
-`work/runs/au-pair-look.log`.
-
-**`robo-vergelding-read`**, last (`work/runs/vergelding-read.sh`): De vergelding's slice
-(pp. 9–107) read cold (~2 h), no score: it waits in `bench.WAITING` (branch `au-pair`).
-
-**`robo-glazuur-read`**, last (`work/runs/glazuur-read.sh`): Glazuur's slice (pp. 11–101)
-read cold (~2 h), no score, likewise waiting.
-
-**`robo-vanille-read`**, last (`work/runs/vanille-read.sh`): Vanille en andere smaken's
-slice (pp. 9–79) read cold (~1.5 h), no score: the first image-only scan, so tesseract
-gives the first reading.
-
-**Stella's edition check: done** (hosted, ~$1.8; decisions.md, 2026-10-18): all 244
-paragraphs against the German, Danish and English; one reading error ("trofik", p. 53), already a review question, so no silent one,
-one likely misprint for the user's errata ("de hete zomer", p. 7), 47 false flags. Its
-recall on 37 planted errors: 29 of 31 word errors, 0 of 6 accents. Balance left ~$6.5.
-**`robo-robo-carrere-check`** (`work/runs/carrere-check.sh`, output
-`work/runs/robo-carrere-check.out`), behind `robo-carrere-builds`: Andere levens against
-the French and English (budget $2), then Een Russische roman ($3.5), hosted; flags in
-`work/probes/carrere-editions/`. Then every flag checked on a crop, and each book's open
-review questions against the flags, as for Stella.
-
-**Stella's translation-check pilot, local** (stopped: hosted answered it;
-`experiments/probe_translation_check.py`, output `work/probes/stella-editions/pilot.out`
-and `pilot.jsonl`): 20 paragraphs of today's Stella build read by qwen3.8 beside the
-German original and the Danish translation, ~1–3 min each beside the context judge. Next:
-check every flag on a crop of the scan, rerun the same 20 with the English translation
-added and with each edition asked apart, then the whole book overnight in the best
-setting (checklist, "Other editions as an error finder"). Already found: "trofik" for
-"trof ik" (scan p. 53), unasked, still in today's build. The editions are in
-`work/stella/editions/` (German Ullstein, Danish Gyldendal 2025, English New Directions
-2025) and the Carrère books' French and English in `work/<book>/editions/`.
+**Stella: done.** Edition check (hosted, ~$1.8): one reading error, already a question;
+recall 29 of 31 planted word errors, 0 of 6 accents. The user answered its last
+questions and marked "de hete zomer" a misprint (2026-10-19); the build changes those
+words alone, and a copy is in the user's Downloads. Stella's review server runs from
+`../roboscriptorium-find` on port 8765 (stop it when done).
 
 ## Done today, afternoon (decisions.md, 2026-10-18)
 
