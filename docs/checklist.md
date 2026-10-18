@@ -313,6 +313,12 @@ In this order:
       reviews, rebuild, epubcheck, a **spot-check** (5 random pages drawn by a script,
       the **user** marks every wrong word, break and italic against the scan, ~15–20
       min: the book's own error estimate with its interval), **user** reads the EPUB
+- [ ] Other editions as an error finder (`experiments/probe_translation_check.py`; Stella
+      has three, in `work/stella/editions/`): for the Carrère books the French originals
+      (P.O.L: *D'autres vies que la mienne*, 2009; *Un roman russe*, 2007) and their English
+      translations (*Lives Other Than My Own*; *My Life as a Russian Novel*), any printing,
+      from **the user** when convenient; they also spell the French and Russian names
+      letter for letter. The Brusselmans books likely have none
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
