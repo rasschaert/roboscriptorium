@@ -300,21 +300,16 @@ In this order:
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are
-      aligned with the other editions' by length (structure: Stella's 244 against the
-      German 238, Danish 239 and English 237; the ten places they disagree with the Dutch
-      are all the translator's, checked on the scan); then a local thinking model reads
-      each Dutch paragraph beside its counterparts and flags reading errors with their
-      evidence ("maat" where the German has "aber"), each flag checked on a crop
-      (`experiments/probe_translation_check.py`; `work/probes/stella-editions/`).
-      Four editions narrow the true errors: a translator's liberty shows in one, a
-      reading error against all. Stella: a 20-paragraph pilot (German and Danish) runs,
-      then the same 20 with the English added and with each edition asked apart (flags
-      at least two support); the best per false flag goes to the whole book (~4 h,
-      overnight), its confirmed errors sorted by cause into pipeline fixes. Carrère: the
-      French originals and English translations are in `work/<book>/editions/`; their
-      paragraphing differs more (382 French against ~404 English; 817 against ~872, each
-      English lacking the French opening), so the aligner needs a paragraph with no
-      counterpart (1:0) before their turn. The Brusselmans books likely have none
+      aligned with the other editions' by length and by the names and numbers they share
+      (1:1, 1:2, 2:1, and a paragraph with no counterpart); a thinking model reads each
+      Dutch paragraph beside its counterparts and flags reading errors with their
+      evidence, each flag checked on a crop (`experiments/probe_translation_check.py`;
+      `work/probes/stella-editions/`). Stella, hosted (qwen3.8-27b on DeepInfra, German,
+      Danish and English, ~$1.7 with paid cut-off calls): 46 flags, one reading error
+      ("trofik", scan p. 53), one likely misprint for the user's errata ("de hete zomer",
+      p. 7), the rest the translator's wording. Next: **its recall**, on a golden pair with
+      another edition, so a quiet result can be told from a deaf one; the Carrère books
+      (`work/<book>/editions/`, French and English, ~$3 each) once built
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
