@@ -37,6 +37,17 @@ read cold (~2 h), no score, likewise waiting.
 slice (pp. 9–79) read cold (~1.5 h), no score: the first image-only scan, so tesseract
 gives the first reading.
 
+**Stella's translation-check pilot** (a plain background job, not a screen:
+`experiments/probe_translation_check.py`, output `work/probes/stella-editions/pilot.out`
+and `pilot.jsonl`): 20 paragraphs of today's Stella build read by qwen3.8 beside the
+German original and the Danish translation, ~1–3 min each beside the context judge. Next:
+check every flag on a crop of the scan, rerun the same 20 with the English translation
+added and with each edition asked apart, then the whole book overnight in the best
+setting (checklist, "Other editions as an error finder"). Already found: "trofik" for
+"trof ik" (scan p. 53), unasked, still in today's build. The editions are in
+`work/stella/editions/` (German Ullstein, Danish Gyldendal 2025, English New Directions
+2025) and the Carrère books' French and English in `work/<book>/editions/`.
+
 ## Done today, afternoon (decisions.md, 2026-10-18)
 
 - **Winnow-12B is the text judge** (`check_model`
