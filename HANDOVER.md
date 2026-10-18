@@ -14,15 +14,19 @@ tuning books; **the new baselines**: tuning `work/bench/tuning-20261018T121943-b
 `validation-20261018T134936-b1d19e5-dirty.json` (0.39 → 0.38, no change; Verminkt 0.47,
 De geruchten 0.87, 2 of 21 headings).
 
-**`robo-cj-full`**, behind it (`work/runs/cj-full.sh`, output `work/runs/cj-full.out`):
-`bench tuning` then `validation` with the context judge on
-(`ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4`), against the runs robo-sets saves (logs
-`work/runs/cj-tuning.log`, `cj-validation.log`; ~3 h and ~1.5 h). It exits without
-benching if robo-sets didn't finish both benches. The user is away for the day and left
-the machine to the agent.
+**`robo-cj-full` done**: tuning with the context judge NO CHANGE after review (0.28 →
+0.28), questions down in all 18 books, 29 wrong words made (17 unasked) against 110 fixed
+(decisions.md). Validation died on Vuurspel (a thinking answer past the client's 10 min);
+fixed on branch `cj-cap` (`../roboscriptorium-cjcap`: answers capped at 10,000 tokens, a
+capped or timed-out answer leaves the question asked), not yet merged: merge once no run
+uses main's `src/`. **`robo-robo-cj-validation`** (`work/runs/cj-validation.sh`, log
+`work/runs/cj-validation-2.log`) reruns validation from that worktree after the local
+chains below. Then **the user's call** (reviewer time against wrong words): the judge on
+by default saves ~20% of questions at equal errors after review, but makes errors
+unasked; to try first, its "can't tell" answer.
 
 **The queue, in order** (the user, 2026-10-18: the edition checks matter more than the
-first looks): `robo-cj-full`, then **`robo-carrere-builds`**
+first looks): **`robo-carrere-builds`**, running since 21:30
 (`work/runs/carrere-builds.sh`: Andere levens ~4 h, Een Russische roman ~4.5 h, cold), then
 the four first-look jobs below, each waiting on all of those.
 
