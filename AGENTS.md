@@ -350,7 +350,7 @@ user refer to it by that role (docs/how-it-works.md):
 | spotter | DocLayout-YOLO | marks figures, captions, titles and furniture on the page image |
 | reader | glm-ocr, tesseract, qwen3.8 | reads text from the scan (also a line the layer missed) |
 | sorter | clef-flash:9b | decides each doubtful line's role; guesses a drawn initial |
-| judge | clef:27b, winnow-ollama:e4b, the word list | picks a version of a suspect |
+| judge | clef:27b, Winnow-12B, the word list | picks a version of a suspect |
 | arbiter | the trust model (`trust.py`) | fixes, keeps or asks, weighing readers and judges |
 | reviewer | the user | answers what the arbiter is unsure of |
 
@@ -377,9 +377,10 @@ decision a decision model can make.
 
 ### Decision models
 
-clef, clef-flash and winnow (`winnow-ollama:e4b`) answer on Ollama's `/v1/systemone`;
-every question the pipeline asks is a `choice`. A model pulled as a plain GGUF lacks the
-`decision` capability; a Modelfile adds it (docs/models.md, Setup).
+clef and clef-flash answer on Ollama's `/v1/systemone`; every question the pipeline asks
+is a `choice`. Winnow-12B, a plain GGUF without the `decision` capability, is asked the
+same questions through its answer's token probabilities (`tokens:<model>`,
+`clients/decide.py`; docs/models.md, Setup).
 
 - Images: raw base64 PNG, JPEG or WebP in `images`, one per request.
 - Question types: `choice` (probability per declared option), `score` (ordinal scale),
@@ -387,7 +388,7 @@ every question the pipeline asks is a `choice`. A model pulled as a plain GGUF l
 
 ```sh
 curl http://127.0.0.1:11434/v1/systemone -d '{
-  "model": "winnow-ollama:e4b",
+  "model": "clef-flash:9b",
   "state": "<text, or JSON describing the situation>",
   "questions": {"role": {"type": "choice", "instructions": "...",
                 "criteria": {"page_number": "...", "body": "..."}}}
@@ -411,15 +412,15 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   model run waits while the battery is under 30%, checking hourly
   (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
   job started another way).
-- Ollama 0.40.3 at `http://127.0.0.1:11434`. **Stay on 0.40.3,** with the app's automatic
-  updates off: 0.40.4 refuses `winnow-ollama:e4b` (why, and when that ends:
-  [docs/models.md](docs/models.md), Setup). Context length 32k in the app's settings;
-  `OLLAMA_NUM_PARALLEL=4` (`launchctl setenv`, read when the app starts).
+- Ollama 0.40.3 at `http://127.0.0.1:11434`, the app's automatic updates off: nothing the
+  pipeline uses needs this version, but an update is checked with `roboscriptorium
+  doctor` and a warm bench before a long run relies on it. Context length 32k in the
+  app's settings; `OLLAMA_NUM_PARALLEL=4` (`launchctl setenv`, read when the app starts).
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
   `pdftotext`, `pdfimages`), epubcheck, d2, llama.cpp's `llama-server` (all Homebrew where
   applicable); scikit-learn and the dependency group `layout` (`doclayout-yolo` with
   PyTorch) in Python.
-- Models set up by hand (`winnow-ollama:e4b`, `imajev:4b`, imajev on `llama-server`, the
+- Models set up by hand (Winnow-12B, `imajev:4b`, imajev on `llama-server`, the
   DocLayout-YOLO weights): [docs/models.md](docs/models.md), Setup.
 - Word lists: `work/lexicon/{nld,eng}-words.txt`, built by `lexicon.py` from the tessdata
   models with `combine_tessdata` and `dawg2wordlist` (both come with Homebrew's

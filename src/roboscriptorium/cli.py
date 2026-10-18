@@ -468,7 +468,8 @@ def _model_versions(settings: Settings) -> dict[str, str]:
         settings.role_model, settings.check_model, settings.judge_model,
         settings.ocr_model, settings.read_model,
     }  # fmt: skip
-    versions = {name: out.get(name, "?") for name in sorted(used - {""})}
+    served = {name: name.removeprefix(decide.TokenClient.PREFIX) for name in used - {""}}
+    versions = {name: out.get(served[name], "?") for name in sorted(served)}
     if settings.alarm_model:
         size = settings.alarm_model.removeprefix("imajev-")
         readout = llama.READOUTS / f"{size}-decision_readout.safetensors"

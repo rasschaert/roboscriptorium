@@ -73,8 +73,8 @@ combine several that fail in different ways, and learn how far to believe each.*
 - *clef* looks at the crop of the page and picks the version that matches what's
   printed. It is usually right.
 - *winnow* reads only the sentence and picks the version that reads best. Alone it is
-  a poor judge, but when it disagrees with clef, clef is wrong much more often, so it
-  works as an alarm.
+  right four times in five, less than clef, but when it disagrees with clef, clef is
+  wrong much more often, so it works as an alarm.
 - *the word list* checks which versions are real words.
 
 A fourth kind of judge is being tried: a **context judge** (qwen, thinking before it
@@ -307,19 +307,16 @@ and why it didn't help".
 `HANDOVER.md` always has the current state; this is what it said when this page was
 last updated, decoded.
 
-- **Reading the first-look books** (overnight, until about midday Sunday): the six new
-  pairs are built without being scored, so their single scoring later is quick. Nothing
-  is chosen on them before that score.
-- **Winnow-12B**, a bigger text judge, asked through the probabilities of its answer
-  letters instead of Ollama's decision endpoint: right on 78% of labelled suspects
-  where winnow is right on 67%. Next: its votes collected on the golden books, the
-  arbiter retrained with them, and the benches. If it passes, it replaces winnow,
-  which also frees Ollama to be updated (the version we're on is the last that runs
-  winnow).
+- **Winnow-12B is the text judge now**: a bigger winnow, asked through the
+  probabilities of its answer letters instead of Ollama's decision endpoint. It is right
+  on 81% of labelled suspects where the old winnow was right on 67%; with the arbiter
+  retrained on its votes, tuning went from 0.30 to 0.28 wrong words a page after review
+  and validation saw no clear change. Ollama can be updated now: the old winnow was the
+  only reason to stay on this version.
 - **The context judge's bench**: the quick bench with the context judge on, to see
   whether it settles questions without adding errors.
-- **Then**: each first-look book scored once and moved into tuning or validation, and
-  the arbiter retrained on them.
+- **Then**: the first-look books, each scored once, moved into tuning or validation,
+  and the arbiter retrained on them.
 - **For you**: six new questions on *Ex-minnaar*, then reading it through, then
   *Wij doden Stella*, the book the project targets first.
 

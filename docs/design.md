@@ -103,20 +103,22 @@ back a version, so these are left to trust and the bench, with no rule of their 
   5,412 alone (90%, trust data of 14 books, 2026-10-09). Told the book's typesetting
   and given options in ⟨ ⟩ rather than “ ”, it picks right more often on typography
   (Goede dochter 92 → 98 of 102).
-- *winnow (`winnow-ollama:e4b`) reads the sentence, not the image.* It is a poor judge
-  alone (3,610 of 5,412, 67%) and is kept as **an alarm on clef**: where winnow agrees
-  with clef, clef is wrong on 141 of 3,363 (4%); where it disagrees, on 425 of 2,049
-  (21%). The alarm works on 12 of 14 books, Goede dochter included (2/265 against
-  23/112); it is weak on 11/22/63 (12% against 17%) and reversed on Stella's 65
-  suspects (8/40 against 2/25). Its Ollaya build, the one before it, got 63% alone
-  with a 4% / 22% alarm and none on Goede dochter. Lady into Fox, whose labels
-  differ from its print in typography, favoured winnow over clef there, which measured
-  the reference more than the judges; it is in no set now. Told the book's style, the
-  Ollaya build got worse on Goede dochter (91 → 84 of 200), so it isn't.
+- *winnow (Winnow-12B) reads the sentence, not the image.* Asked through its answer's
+  token probabilities (`tokens:`, `clients/decide.py`), it is right alone on 7,363 of
+  9,131 trust-data suspects (81%, clef about 90%) and is kept as **an alarm on clef**:
+  where winnow agrees with clef, clef is wrong on 144 of 6,730 (2%); where it
+  disagrees, on 851 of 2,401 (35%). The arbiter retrained on its votes: tuning after
+  review 0.30 → 0.28 [−0.03, −0.00], validation 0.37 → 0.39 [−0.01, +0.05], no veto
+  (2026-10-18). The smaller winnow-ollama:e4b it replaced was right alone on 67% with a
+  4% / 22% alarm, and works only through Ollama's systemone, which versions after
+  0.40.3 refuse it; asked through tokens it was at chance. On two books winnow beats
+  clef (De kerk van de dode meisjes, The Nature of a Crime): their references are more
+  standard than their prints. Told the book's style, an
+  earlier winnow got worse on Goede dochter (91 → 84 of 200), so it isn't.
 - *imajev-4b, a second vision judge, is not used* (`ROBO_ALARM_MODEL`, off). Asked clef's
-  question on the crop, it is right alone on 85% and a sharper alarm than winnow where it
-  speaks (clef wrong on 37% of their disagreements against 5% of their agreements) but
-  it speaks less (904 disagreements against winnow's 2,049), and as the arbiter's third
+  question on the crop, it is right alone on 85% and a sharper alarm than winnow-ollama:e4b
+  where it speaks (clef wrong on 37% of their disagreements against 5% of their
+  agreements) but it speaks less (904 disagreements against that winnow's 2,049), and as the arbiter's third
   judge the bench saw no change: tuning 1.02 → 1.01 after review [−0.04, −0.00],
   validation 0.81 → 0.80 [−0.05, +0.02] (2026-10-09). Not worth a second model server and
   a quarter second a suspect. Its votes stay in the trust data; training uses only the

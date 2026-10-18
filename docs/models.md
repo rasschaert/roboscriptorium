@@ -17,7 +17,8 @@ schedel before choosing an OCR model.
 | Ollaya (gone) | `laya:en` | Decisions on English text | **unfit for line roles** (see docs/decisions.md) |
 | Ollaya (gone) | `winnow:e4b` | Line roles (previous default) | P(body) ≥ 0.9: keeps 147/150 body lines, catches ~99% of junk; ~270 ms/line. Reads a leading page number ("2 SENSE AND…") as a chapter heading; ignores numeric features |
 | Ollaya (gone) | `winnow:e4b` (as `check_model`) | Second opinion on OCR suspects, from the line's text only | Dolittle pp. 30–49: 74/90 right alone; its disagreeing with clef marks clef's errors (clef right on only 9/13 of those) |
-| Ollama | `winnow-ollama:e4b` (as `check_model`) | **Second judge (in use)**: picks a version of an OCR suspect from the sentence | On three tuning books' cached suspects, right alone 285/208/265 where Ollaya's build got 174 each; right where clef is wrong on 78 of 100 against 45. ~0.13 s a question. The only winnow since Ollaya was uninstalled (2026-10-08) |
+| Ollama | `winnow-ollama:e4b` (as `check_model`) | Second judge (previous default, 2026-10-08 to 2026-10-18): picks a version of an OCR suspect from the sentence | On three tuning books' cached suspects, right alone 285/208/265 where Ollaya's build got 174 each; right where clef is wrong on 78 of 100 against 45. ~0.13 s a question. Over the trust data (9,162 suspects): right alone 67%; clef wrong on 4% where it agrees, 22% where it disagrees. Asked through token probabilities instead, at chance (50%): it works only through systemone, which Ollama 0.40.4 refuses it. **Replaced** by Winnow-12B |
+| Ollama | `hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M` (as `check_model`, `tokens:`) | **Second judge (in use)**: picks a version of an OCR suspect from the sentence, asked through its answer's token probabilities | Probe (805 suspects, 2026-10-17): right alone 78% against e4b's 67%. Trust data (9,131 suspects): right alone 81%; clef wrong on 2% where it agrees, 35% where it disagrees (144 of 6,730; 851 of 2,401). Its own arbiter: `bench tuning` after review 0.30 → 0.28 [−0.03, −0.00], BETTER; `bench validation` 0.37 → 0.39 [−0.01, +0.05], no change, no veto (2026-10-18). **In use** since 2026-10-18 |
 | llama.cpp | imajev-4b (Q8_0 GGUF + its trained readout) | Second vision judge (`alarm_model`), **off by default**: an alarm on clef the bench can't tell from none | Trust data (5,412 suspects, 14 books): right alone 85% (clef 90%); clef wrong on 5% where it agrees, 37% where it disagrees, but it disagrees on 904 against winnow's 2,049, so it flags 338 of clef's 566 errors to winnow's 425. As a third judge, retrained: `bench tuning` after review 1.02 → 1.01 [−0.04, −0.00], `bench validation` 0.81 → 0.80 [−0.05, +0.02], no change (2026-10-09). Judge set v1: 84.0% weighted right (clef 90.0%), 25 confidently wrong; clef wrong on 4.6% where it agrees, 34% where it disagrees, on Dutch books (3.2% / 31%) as on English (5.8% / 35%), though its card says English only; its own pick right on 139/150 of the clef errors it flags. 0.25 s a question. The 2B: 80.7%, alarm 4.9% / 28.8%, 0.12 s. The 9B: 82.4%, 31 confidently wrong, the sharpest alarm on Dutch (39%) and the weakest on English (8.5% / 23%), 0.43 s. Page types: 19/23 like clef-flash; the body's ends (252 pages round 18 books' ranges) 227 against clef-flash's 231, the same pages missed, so neither decides them. Which way a plate is up: 10/10 on Dolittle (four turns each, P(yes) ≥ 0.95 on the right one), the candidate for plates without a caption |
 | Ollaya (gone) | `winnow:12b` | Line roles candidate | Slightly better than e4b on 60 lines (0/30 body lost at 0.9), 2.6× slower (~700 ms/line) |
 | Ollaya (gone) | `decider:2b-vision` | Page type from a page image | 19/23 sample pages right; low confidence on the hard ones, but confidently wrong on Stella p5 (an opening without heading). ONNX on **CPU**, ~3.8 s/page |
@@ -50,29 +51,33 @@ schedel before choosing an OCR model.
 How the models in use are installed and served, where it isn't a plain `ollama pull`.
 AGENTS.md (Environment) keeps the machine's rules.
 
-- **Ollama 0.40.3** (scores before 2026-10-06 were on 0.35.1). 0.40.4 refuses
-  `winnow-ollama:e4b` ("a format that is no longer supported"): since ollama/ollama#18917
-  a decision model needs llama.cpp's decision metadata (`decision.type`) in the GGUF
-  itself, which `CAPABILITY decision` in a Modelfile can't add. Stay on 0.40.3 until
-  winnow's makers publish such a GGUF or ollama/ollama#18882 (migrating old GGUFs on
-  load) ships. Ollaya was uninstalled on 2026-10-08; every model runs on Ollama.
+- **Ollama 0.40.3** (scores before 2026-10-06 were on 0.35.1). 0.40.4 and later refuse
+  a decision model made from a GGUF by a Modelfile ("a format that is no longer
+  supported"): since ollama/ollama#18917 one needs llama.cpp's decision metadata
+  (`decision.type`) in the GGUF itself, which `CAPABILITY decision` can't add. No model
+  in use is made so (imajev:4b, off, is), so an update is open, checked with
+  `roboscriptorium doctor` and a warm bench. Ollaya was uninstalled on 2026-10-08;
+  every model runs on Ollama.
 - **Context length 32k** (the user, 2026-10-13), for glm-ocr reading whole pages:
   llama.cpp's four slots share the context, so 8k left each request ~2k, too little for
   a page. 128k only held memory for KV caches; readings are the same either way.
 - **`OLLAMA_NUM_PARALLEL=4`**, set with `launchctl setenv` (the app reads it when it
   starts; `launchctl unsetenv` removes it): the llama.cpp-served models (glm-ocr,
-  clef-flash, winnow) get four slots, which doubles glm-ocr's throughput and changes no
+  clef-flash, Winnow-12B) get four slots, which doubles glm-ocr's throughput and changes no
   reading; the MLX runner behind the nvfp4 builds (qwen3.8, clef:27b) serves one request
   at a time whatever the setting, and the decision models gain nothing either way.
 - **`clef-flash:9b`** was pulled again on 2026-10-15 (digest `0a2a05d6`): it answers the
   cached line-role questions as the old build did (`experiments/probe_decider_drift.py`).
-- **`winnow-ollama:e4b`**: winnow:e4b's Hugging Face GGUF (`hf.co/EldanRing/Winnow-E4B:Q8_0`)
-  made a decision model with `modelfiles/winnow-ollama-e4b.Modelfile`. A workaround: a
-  pulled GGUF has no `decision` capability, so the Modelfile adds `CAPABILITY decision`
-  and `CAPABILITY vision` and an empty `TEMPLATE {{ .Prompt }}`, copied from
-  clef-flash's. Ollama then renders the decision prompt its own way, not in the layout
-  winnow was trained on (EldanRing/winnow-inference `native/protocol.h`). The pipeline's
-  second judge.
+- **Winnow-12B** (`hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M`, pulled as it is): the
+  pipeline's second judge, named `tokens:hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M` in
+  `check_model`. `clients/decide.py`'s `TokenClient` renders the question in the layout
+  winnow was trained on (EldanRing/winnow-inference `native/protocol.h`), sends it raw
+  to `/api/generate` and reads the next token's log-probabilities over the option
+  labels, so it needs no `decision` capability and no Modelfile.
+- **`winnow-ollama:e4b`** (out of use since 2026-10-18; its Modelfile,
+  `modelfiles/winnow-ollama-e4b.Modelfile`, is kept): winnow:e4b's GGUF
+  (`hf.co/EldanRing/Winnow-E4B:Q8_0`) given `CAPABILITY decision`, `CAPABILITY vision`
+  and an empty `TEMPLATE {{ .Prompt }}`, copied from clef-flash's.
 - **`imajev:4b`**: mindchain's imajev-4b (`hf.co/mindchain/imajev-4b-GGUF:Q8_0`) made a
   decision model with `modelfiles/imajev-4b.Modelfile`. The candidate for plates without
   a caption; off in the pipeline. The 2B and 9B were deleted after their screen (their

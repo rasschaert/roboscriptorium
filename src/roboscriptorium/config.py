@@ -19,10 +19,10 @@ def _flag(name: str, default: bool) -> bool:
 class Settings:
     ollama_url: str = "http://127.0.0.1:11434"
     role_model: str = "clef-flash:9b"
-    # Reads OCR suspects from the sentence, not the image. Weak alone (67% right), it is
-    # kept as an alarm on the judge: clef is wrong 4% where it agrees, 21% where it
-    # doesn't (docs/design.md).
-    check_model: str = "winnow-ollama:e4b"
+    # Reads OCR suspects from the sentence, not the image, asked through token
+    # probabilities. Right alone on 81%, and an alarm on the judge: clef is wrong 2% where
+    # it agrees, 35% where it doesn't (docs/design.md).
+    check_model: str = "tokens:hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M"
     # Judges the OCR check's suspects from the crop; better than role_model at that,
     # worse at line roles.
     judge_model: str = "clef:27b"

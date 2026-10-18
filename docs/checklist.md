@@ -34,8 +34,8 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    `robo-w12b` and `robo-cj-bench` are done (they compare against stage (b)'s sets):
    the books into their sets (Het geluid van bananen and Het schaduwhuis to tuning:
    Stella's publisher and scan, the stress accents and "wc" the arbiter must learn; De
-   geruchten and Verminkt to validation), their trust data with the text judge the
-   Winnow-12B bench picks, the arbiter retrained on the larger tuning set, benches. If
+   geruchten and Verminkt to validation), their trust data with Winnow-12B as the
+   text judge (it passed its benches), the arbiter retrained on the larger tuning set, benches. If
    the context judge's bench passed, it as a stage after the arbiter, benched on
    tuning. Steve Jobs scores no words (the user, 2026-10-18): its photo insert stays line-role
    training.
@@ -70,23 +70,15 @@ The weekend's order (the user left it to the agent): each step feeds the next.
 - [ ] Winnow subtracted? The context judge reads the whole paragraph where winnow reads
       the sentence, and on the asked suspects it beats the arbiter that weighs winnow
       (86% against 68% on the golden books). If the arbiter without winnow, with the
-      context judge after it, benches no worse, winnow goes, and with it the only reason
-      Ollama is pinned at 0.40.3. Leave-one-out on the trust data (2026-10-17, no
-      models): silent errors at 0/0.25/0.5/1 questions a page 148/54/24/12 with winnow,
-      151/58/25/16 without: small, every budget the same way, within a book's noise.
-      Next: an arbiter trained without winnow under its own name, `bench tuning` and
-      `validation` warm with `ROBO_CHECK_MODEL=` against stage (b) (cached, no model
-      calls; agent, ~1 h). The word list's vote goes in the same bench: taken away it
-      changes nothing (`experiments/probe_subtract.py`), the arbiter reading the same
-      knowledge from the `known` feature
-- [ ] Winnow-12B as the text judge, through token probabilities (2026-10-17): the probe
-      (805 suspects) has it right on 78% against winnow's 67% through systemone, and a
-      sharper alarm on clef (32% clef wrong where it disagrees, against 23%); winnow
-      itself through tokens is at chance (50%), so it can't leave systemone. Next: a
-      token-route decision client (the trained layout, raw `/api/generate`, the labels'
-      log-probabilities), Winnow-12B's votes for every trust-data suspect (model time,
-      after the first-look reads), retrain, bench; if no worse, winnow and the Ollama
-      pin go (AGENTS.md, Environment; docs/models.md, Setup)
+      context judge after it, benches no worse, winnow goes. Leave-one-out on the trust
+      data with winnow-ollama:e4b (2026-10-17, no models): silent errors at
+      0/0.25/0.5/1 questions a page 148/54/24/12 with it, 151/58/25/16 without: small,
+      every budget the same way, within a book's noise; Winnow-12B, a sharper alarm,
+      may weigh more. Next: an arbiter trained without winnow under its own name,
+      `bench tuning` and `validation` warm with `ROBO_CHECK_MODEL=` against the
+      Winnow-12B runs (cached, no model calls; agent, ~1 h). The word list's vote goes
+      in the same bench: taken away it changes nothing (`experiments/probe_subtract.py`),
+      the arbiter reading the same knowledge from the `known` feature
 - [ ] A context judge (the user, 2026-10-17: "if it cuts down on questions being asked
       in human review, i'm for it"): probed hosted (the user allowed OpenRouter for its
       test): without each version's count in the prompt, it settles 220 of 336 asked
@@ -500,6 +492,9 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Trust data and the arbiter
 
+- [x] 2026-10-18 Winnow-12B the text judge, asked through token probabilities: right
+      alone 81% (winnow-ollama:e4b 67%), its arbiter tuning 0.30 → 0.28 after review,
+      better; validation 0.37 → 0.39, no change; the Ollama pin's reason gone
 - [x] 2026-10-18 `experiments/rebuild-trust.sh` builds every book's trust data, the two
       labelled by review answers (Stella, Ex-minnaar) at their body pages too, and
       trains without `--partial`

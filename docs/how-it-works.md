@@ -59,7 +59,7 @@ handled yet, nor any input but PDF.
 | spotter | DocLayout-YOLO | marks figures, captions, titles and page furniture on each page image | vision model |
 | readers | glm-ocr, tesseract, qwen3.8 | read the text again from the scan | generative models and a classic OCR program |
 | sorter | clef-flash:9b | decides what each doubtful line is | decision model |
-| judges | clef:27b, winnow-ollama:e4b, the word list | each pick a version of a suspect | decision models and plain code |
+| judges | clef:27b, Winnow-12B, the word list | each pick a version of a suspect | decision models and plain code |
 | arbiter | the trust model (`trust.py`) | fixes, keeps, or asks about each suspect | trees trained on golden books |
 | reviewer | you | answer what the arbiter is unsure of | a person |
 
@@ -83,7 +83,9 @@ time. tesseract is a classic OCR program, and reads the whole page.
 The sorter and the AI judges are decision models. Each answers a question whose
 options are fixed in advance, such as "which of these versions does the crop
 show?", with a probability for each option. They write no text, so there is no
-prose to parse. clef, clef-flash and winnow run on Ollama's `/v1/systemone` endpoint.
+prose to parse. clef and clef-flash run on Ollama's `/v1/systemone` endpoint; winnow
+is asked the same questions through the probabilities Ollama gives the first letter of
+its answer, one label per option.
 
 The third judge, the word list, is plain code.
 
@@ -250,9 +252,10 @@ Every suspect goes to the three judges.
 clef:27b looks at the crop of that place on the scan and picks the version it
 shows. It is told the book's typesetting, and it is usually right.
 
-winnow (winnow-ollama:e4b) reads only the sentence and picks the version that reads well. On its
-own it is a poor judge. It is there as an alarm: where it disagrees with clef,
-clef is wrong several times as often as where they agree.
+winnow (Winnow-12B) reads only the sentence and picks the version that reads well.
+Right on four suspects in five, it is weaker than clef alone and there mostly as an
+alarm: where it disagrees with clef, clef is wrong about one time in three; where they
+agree, one time in fifty.
 
 The word list, unpacked from tesseract's own language model, picks the versions
 made of words it knows. It decides nothing by itself; the arbiter weighs it, and

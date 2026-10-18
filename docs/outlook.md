@@ -8,19 +8,20 @@ this file when they move.
 
 ## How close we are
 
-Bench totals (2026-10-17): tuning **0.27**, validation **0.36** wrong words a page after
-review; paragraph breaks set wrong 0.15 and 0.13 a page. Per book, wrong words a page
-before review, questions a page, wrong words after review, breaks set wrong a page:
+Bench totals (2026-10-18, Winnow-12B as the text judge): tuning **0.28**, validation
+**0.39** wrong words a page after review; paragraph breaks set wrong 0.17 and 0.14 a page.
+Per book, wrong words a page before review, questions a page, wrong words after review,
+breaks set wrong a page:
 
 | Kind of book | Books (before · questions · after · breaks) |
 | --- | --- |
-| Clean scan, modern Dutch prose (Stella's kind) | Reis 0.15 · 0.24 · 0.09 · 0.06; Het ijzige land 0.18 · 0.27 · 0.04 · 0.00; De cipier 0.20 · 0.28 · 0.12 · 0.08; Doodskleed 0.30 · 0.40 · 0.16 · 0.00; Goede dochter 0.40 · 0.32 · 0.25 · 0.00; Vals alarm 0.54 · 0.58 · 0.13 · 0.02; De kerk 0.43 · 0.78 · 0.36 · 0.02 |
-| The same, chosen for their trouble | Het heft 0.48 · 0.24 · 0.40 (its washed-out lines); Monterosso 0.43 · 0.49 · 0.44 (small capitals, old-style figures); De tuin 0.84 · 0.79 · 0.34; Het laatste bevel 0.80 · 0.30 · 0.42 (its EPUB glues words) |
-| Unindented Dutch (Bruna) | Vuurspel 0.65 · 0.51 · 0.44 · 0.46; De stilte 0.86 · 0.43 · 0.38 · 0.30 |
-| Clean scan, modern English prose | Metro 0.30 · 0.35 · 0.26; Thief-Taker 0.31 · 0.62 · 0.29; Crime 0.38 · 0.24 · 0.32 (Gutenberg's edition); The Stranger's Child 0.64 · 0.45 · 0.40; Normal People 0.15 · 0.07 · 0.16 · 0.07; Artemis 0.64 · 0.50 · 0.17 · 0.32 |
-| Old typography, plates | Dolittle 1.03 · 1.27 · 0.44 · 0.18 |
-| Busy layout, pictures | You're Never Weird 0.98 · 1.09 · 0.68 · 0.16 |
-| Washed-out scan | Afscheid 16.65 · 3.47 · 0.61 · 1.73 (typed pages; its EPUB's paragraphing) |
+| Clean scan, modern Dutch prose (Stella's kind) | Reis 0.20 · 0.30 · 0.07 · 0.08; Het ijzige land 0.37 · 0.32 · 0.18 · 0.01; De cipier 0.21 · 0.21 · 0.18 · 0.02; Doodskleed 0.64 · 1.44 · 0.38 · 0.04; Goede dochter 0.41 · 0.41 · 0.21 · 0.00; Vals alarm 0.38 · 0.42 · 0.13 · 0.02; De kerk 0.42 · 0.69 · 0.35 · 0.02; De eerlijke vinder 0.31 · 0.51 · 0.19 · 0.05 |
+| The same, chosen for their trouble | Het heft 0.33 · 0.32 · 0.21 · 0.00 (its washed-out lines); Monterosso 0.42 · 0.48 · 0.43 · 0.01 (small capitals, old-style figures); De tuin 0.70 · 0.67 · 0.28 · 0.01; Het laatste bevel 0.65 · 0.39 · 0.50 · 0.00 (its EPUB glues words) |
+| Unindented Dutch (Bruna) | Vuurspel 0.39 · 0.50 · 0.20 · 0.43; De stilte 0.80 · 0.43 · 0.34 · 0.29 |
+| Clean scan, modern English prose | Metro 0.30 · 0.43 · 0.24 · 0.02; Thief-Taker 0.51 · 0.54 · 0.42 · 0.14; Crime 0.28 · 0.26 · 0.28 · 0.01 (Gutenberg's edition); The Stranger's Child 0.64 · 0.55 · 0.48 · 0.01; Normal People 0.17 · 0.13 · 0.16 · 0.07; Artemis 0.56 · 0.44 · 0.33 · 0.34 |
+| Old typography, plates | Dolittle 1.03 · 1.39 · 0.40 · 0.18 |
+| Busy layout, pictures | You're Never Weird 1.00 · 1.13 · 0.68 · 0.20 |
+| Washed-out scan | Afscheid 9.35 · 3.47 · 0.61 · 1.73 (typed pages; its EPUB's paragraphing) |
 
 Since 2026-10-11 (tuning 0.31, validation 0.70): the trees on by default, the arbiter
 retrained with the reviewers' answers, Metro's closing quotes, the lower-case paragraph

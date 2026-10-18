@@ -117,7 +117,7 @@ check: 3 · Check the OCR (scans only) {
     tess: "READER tesseract\n(the book's language)" {class: code}
     qwen: "READER qwen3.8:27b-nvfp4,\ntold the book's style" {class: ollama}
     clef: "JUDGE clef:27b\nfrom the crop" {class: decision}
-    winnow: "JUDGE winnow-ollama:e4b\nfrom the sentence" {class: decision}
+    winnow: "JUDGE Winnow-12B\nfrom the sentence" {class: decision}
     words: "JUDGE the word list" {class: code}
     gbt: "ARBITER trees trained\non golden books" {class: code}
   }
