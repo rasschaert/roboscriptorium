@@ -408,3 +408,23 @@ def test_a_space_the_markup_leaves_before_punctuation_is_dropped_where_declared(
     ]
     (section,) = publisher_epub.read(epub, ["Text/a.html"], capitals=caps)
     assert unmarked(section.paragraphs[0]) == "Een FBI -agent en de LAPD . Uit Cleopatra .’"
+
+
+def test_hidden_text_is_left_out_and_the_text_around_it_kept(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                "<h1>1</h1>"
+                '<p>Ze zette de koffers neer.<span class="wpt-wit"><span>’</span></span></p>'
+                '<p>Gedachten die <span class="wpt-wit"><span>’</span></span>nooit kwamen.</p>'
+                '<p>Hij zei: ‘<span class="wpt-cursief">nee</span>.’</p>'
+            ),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], hidden=frozenset({"wpt-wit"}))
+    assert section.paragraphs == [
+        "Ze zette de koffers neer.",
+        "Gedachten die nooit kwamen.",
+        "Hij zei: ‘nee.’",
+    ]

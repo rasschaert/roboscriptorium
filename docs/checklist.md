@@ -42,6 +42,11 @@ The weekend's order (the user left it to the agent): each step feeds the next.
 4. De geruchten's section headings (a narrator's name in capitals mid-page, "DOLF"):
    0 of 21 found. A validation book, so not chosen on: the next tuning book that sets
    headings so teaches it, or a probe of what the trees see on those lines.
+5. Au pair's first look (pp. 7–99, chapters 1–24): its reading after the context
+   judge's benches, overnight (~1.5–2 h cold, about 1.1 min a page), then `bench
+   first-look --first-look`, its score in decisions.md, then a set. If tuning, De
+   laatste roker can join the line-role training (`sorterdata.EXTRA`, its manifest and
+   reference first; the user's files were placed only for Au pair).
 
 - [ ] No fixed test set: a first look for every new pair (the user, 2026-10-17: soon,
       ahead of other accuracy work). Validation wears out as changes are benched and
