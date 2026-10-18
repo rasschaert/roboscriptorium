@@ -15,10 +15,9 @@ arms a watcher on them first** (AGENTS.md, standing rules).
    (`work/models/ocr-trust-w12b.pkl`) and `bench tuning` (log
    `work/probes/ocr-trust-w12b/runs/bench-tuning.log`), then `bench validation`
    (`work/runs/w12b-validation.log`), both against stage (b). Script `work/runs/w12b.sh`.
-2. **`robo-w12b-answers`**: Stella's (done) and Ex-minnaar's Winnow-12B trust data, which
-   the chain's book list leaves out; it must be done before the chain's arbiter trains
-   (`work/probes/ocr-trust-w12b/runs/answers.txt`), so the new arbiter learns from the
-   same books as stage (b)'s.
+2. **`robo-w12b-answers` done** (11:13): Stella's and Ex-minnaar's Winnow-12B trust
+   data, which the chain's book list leaves out, are in place before its arbiter trains,
+   so it learns from the same books as stage (b)'s.
 3. **`robo-cj-bench`**, behind `robo-w12b`: `bench quick` with the context judge on
    (`ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4`) against stage (b)'s quick run
    (`work/runs/cj-bench.sh`, log `work/runs/cj-bench.log`, ~2 h).
