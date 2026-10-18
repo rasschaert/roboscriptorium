@@ -85,7 +85,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `pipeline.py`: runs the stages for one book and caches artefacts under `stages/`:
   the text layer in `textlayer.json`, the finished IR in `document.json`, and each
   stage's own cache named under its module.
-- `docs/pipeline.d2`: the README's diagram of the stages and the model behind
+- `docs/pipeline.d2`: the diagram of the stages and the model behind
   each; kept current under the standing rules.
 - `experiments/`: probes for comparing models and settings, the trainers of the trust
   and line-role models (`train_ocr_trust.py`, `train_sorter.py`), the bench's tools

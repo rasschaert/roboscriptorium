@@ -47,7 +47,8 @@ owns the fact in the same commit.
 | [docs/golden-books.md](docs/golden-books.md) | the pairs' numbers, **generated** by `experiments/golden_overview.py` | regenerated after a pair changes |
 | [docs/hosted-inference.md](docs/hosted-inference.md) | the plan for a window of free hosted inference: what to learn, what carries back, the guardrails | access comes, or a hosted run teaches something |
 | [docs/primer.md](docs/primer.md) | for a person new or returning: the problem from first principles, how a change is judged, where the gains are expected, the vocabulary | the approach, the bets or the vocabulary change; its errors chart regenerated (`experiments/primer_errors.py`) after a bench that moves the errors, its `.d2` diagrams rendered again when edited |
-| `README.md`, [docs/how-it-works.md](docs/how-it-works.md), `docs/pipeline.d2` | for people: what it is and how a build runs | the stages, their order or their models change |
+| `README.md` | the first entry, for people: what it makes, the idea in brief, today's result, how to run it, where to read more | the approach, the result, the models to pull or the commands change |
+| [docs/how-it-works.md](docs/how-it-works.md), `docs/pipeline.d2` | for people: how a build runs, stage by stage | the stages, their order or their models change |
 
 Cite a step or a section by its words, never by its number: numbers are positions and
 get renumbered. Don't add a file to this table without a job no other file has.
@@ -63,7 +64,8 @@ get renumbered. Don't add a file to this table without a job no other file has.
   change that touches it is committed. A reviewer should never have to rediscover from
   data why something is there.
 - **Keep the diagram true.** A change to the stages, their order or the model behind one
-  also updates `README.md`, `docs/how-it-works.md` and `docs/pipeline.d2`; render again
+  also updates `docs/how-it-works.md` and `docs/pipeline.d2` (and `README.md` if it
+  changes the models to pull); render again
   with `d2 docs/pipeline.d2 docs/pipeline.svg` and commit both.
 - **Local first.** AI runs on this machine via Ollama. A hosted model (OpenRouter,
   `clients/openrouter.py`) costs money and sends copyrighted page crops to its provider,
