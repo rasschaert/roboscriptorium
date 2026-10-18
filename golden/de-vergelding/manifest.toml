@@ -1,0 +1,44 @@
+title = "De vergelding"
+author = "Jan Brokken"
+language = "nl"
+# Brokken is living: under copyright until at least 2100, so only this manifest is in git.
+eu_copyright_until = 2100
+
+# Atlas Contact's own e-book (Elgraphic, "Deze digitale editie is gemaakt naar de 1e
+# druk 2012 met ISBN 978 90 450 2271 0"), as a Kindle or Kobo file run through calibre
+# (koboSpan spans, mbppagebreak, calibre classes only), no DRM. No heading tags: the
+# chapter titles EEN–VIJFTIEN and VERANTWOORDING are "calibre9" paragraphs; italics are
+# "italic" spans; small capitals are set as capitals in a 0.75em class ("calibre13"),
+# so nothing undoes them; its 22 images are spacers. Before EEN, the note on the book's
+# sources (scan p. 9) and two mottos (pp. 10–11) form an untitled first chapter
+# (`leading_text`); the title pages and colophon are left out.
+[reference]
+source = "De vergelding, Atlas Contact e-book (after the 1st printing, 2012/2013), ISBN 978 90 450 2271 0 (EPUB)"
+sha256 = "b040becaf79b47b23c9a67dfae5310fa4b122aa2344584e14e028eb3eeaf7c6b"
+files = [
+  "text/part0003.html", "text/part0004.html", "text/part0005.html", "text/part0006.html",
+  "text/part0007.html", "text/part0008.html", "text/part0009.html", "text/part0010.html",
+  "text/part0011.html", "text/part0012.html", "text/part0013.html", "text/part0014.html",
+  "text/part0015.html", "text/part0016.html", "text/part0017.html", "text/part0018.html",
+  "text/part0019.html", "text/part0020.html", "text/part0021.html",
+]
+heading_prefixes = ["calibre9"]
+italic_classes = ["italic"]
+leading_text = true
+# A scene break comes before each "calibre17" paragraph, unindented (checked on the
+# scan's crops, pp. 109, 171, 283, 307).
+opening_classes = ["calibre17"]
+
+# The second printing (Atlas Contact, January 2013, the same month as the first, ISBN
+# 978 90 450 2271 0, typeset by Elgraphic like the e-book); IA Scribe scan (4.5,
+# digitized 2022), 360 ppi MRC, GlyphLessFont layer, ~356×572 pt, 392 pages, a library
+# copy (OBA Osdorp's stamp on the title page). Old-style figures, which the layer
+# misreads ("ro" for 10, "r944"), and small-capital acronyms half in lower case ("sp",
+# "NsB"). Internet Archive lends it only, so it is placed by hand (sourced by the user,
+# 2026-10-18).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/devergeldingeend0000brok (borrow, then download the PDF)"
+sha256 = "610e90392af16cc1826b49b78349b615d106a88783096fd6d3e316616d211b06"
+cover_page = 1
+body_pages = [9, 387]

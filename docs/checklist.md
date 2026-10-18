@@ -47,6 +47,8 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    first-look --first-look`, its score in decisions.md, then a set. If tuning, De
    laatste roker can join the line-role training (`sorterdata.EXTRA`, its manifest and
    reference first; the user's files were placed only for Au pair).
+6. De vergelding's first look (slice 9–107, `bench.WAITING`): its reading on a free
+   night (~2 h cold), then out of WAITING into the first-look set for its score.
 
 - [ ] No fixed test set: a first look for every new pair (the user, 2026-10-17: soon,
       ahead of other accuracy work). Validation wears out as changes are benched and
