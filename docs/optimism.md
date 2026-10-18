@@ -11,6 +11,28 @@ commercial e-book; a careful edition like Standard Ebooks is nearer one in 10,00
 Each entry is a judgment, not a measurement: the numbers it rests on are in
 [outlook.md](outlook.md) and [decisions.md](decisions.md). Newest first.
 
+## 2026-10-18, late morning: 6.5/10
+
+| Goal | Chance |
+| --- | --- |
+| Modern prose, clean IA scan, commercial-e-book quality with a light review | ~80% |
+| The same books with no human at all, ≤ 1 wrong word in 1,000 | ~45% |
+| Universal, unattended, on today's local models | ~20% |
+| The same by 2030 | ~60–70% |
+
+**Up:** the first look, the first scores on books nothing was ever chosen on. Het
+schaduwhuis 0.17 wrong words a page after review, Het geluid van bananen 0.47, Verminkt
+whole (417 pages) 0.49, against 0.28 and 0.37 on the books the machine was tuned and
+checked on. The machine carries over to new books of the kind it was built for; the
+golden books weren't simply fitted.
+
+**Not down, but noted:** the two that scored far off were mostly their references
+(De geruchten's e-book changed the print's quote marks; Steve Jobs's is a revised
+text), which says the pairs need the same scrutiny as the machine. What is the
+machine's in them is structure: De geruchten's section headings (a narrator's name in
+capitals mid-page) found 0 of 21, and Verminkt's quote marks and dashes. Each new kind
+of book still brings a structural surprise.
+
 ## 2026-10-18, past midnight: 6/10
 
 | Goal | Chance |
