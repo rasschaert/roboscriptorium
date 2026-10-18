@@ -93,6 +93,7 @@ setting (checklist, "Other editions as an error finder"). Already found: "trofik
 
 ## Waiting on the user
 
+- Stella's 2 new questions ("trofik" p. 53, "grofwerk" p. 23; both wrong as built, ~1 min).
 - Ex-minnaar's 6 new questions (rebuild first: the role trees were retrained since), then
   its read-through; then Stella's.
 - A verdict batch (~20 min, after the sets move): the unasked errors that look like the
