@@ -1,0 +1,39 @@
+title = "Vanille en andere smaken"
+author = "Anja Meulenbelt"
+language = "nl"
+# Meulenbelt is living: under copyright until at least 2100, so only this manifest is in git.
+eu_copyright_until = 2100
+
+# DBNL's transcription (text id meul017vani01_01), keyed from the edition it names,
+# Uitgeverij Contact, Amsterdam 1988: a rekeying like Gutenberg's, not the publisher's
+# file, so a slip of DBNL's shows as a disagreement and a verdict settles it (the share
+# of verdicts against DBNL measures its error rate). Headings are "kop" and "onderkop"
+# paragraphs (chapter numbers and titles, subheads, three interviews, "Verder lezen" at
+# each chapter's end); the motto before chapter 1 (scan p. 9) is an untitled first
+# chapter (`leading_text`); the title page is left out. Small capitals ("aids", "sm",
+# "lsd") are written in lower case with the class "kleinkap"; the print's dash, an en
+# dash with a word space each side (scan p. 13, "begon – een feest"), as a spaced
+# hyphen; "empty-line" paragraphs are the print's white lines between scenes (p. 14).
+[reference]
+source = "Vanille en andere smaken, DBNL transcription of the Contact edition, Amsterdam 1988 (EPUB)"
+sha256 = "caa3b5099fbbbd1f7c326b9e306bb981325ff8120a0b2aa920c6e7df97765a64"
+files = ["OEBPS/meul017vani01_01-0002.xhtml", "OEBPS/meul017vani01_01-0003.xhtml", "OEBPS/meul017vani01_01-0004.xhtml", "OEBPS/meul017vani01_01-0005.xhtml", "OEBPS/meul017vani01_01-0006.xhtml", "OEBPS/meul017vani01_01-0007.xhtml", "OEBPS/meul017vani01_01-0008.xhtml", "OEBPS/meul017vani01_01-0009.xhtml", "OEBPS/meul017vani01_01-0010.xhtml", "OEBPS/meul017vani01_01-0011.xhtml", "OEBPS/meul017vani01_01-0012.xhtml", "OEBPS/meul017vani01_01-0013.xhtml", "OEBPS/meul017vani01_01-0014.xhtml", "OEBPS/meul017vani01_01-0015.xhtml", "OEBPS/meul017vani01_01-0016.xhtml"]
+heading_prefixes = ["kop", "onderkop"]
+italic_classes = ["cursief"]
+capital_classes = ["kleinkap"]
+hyphen_dash = "–"
+break_classes = ["empty-line"]
+leading_text = true
+
+# DBNL's facsimile of the same edition: image-only, one colour JPEG a page (~380 ppi),
+# no text layer, so the build's first reading is tesseract's; 797×1218 pt, 200 pages.
+# Pages 7–8 the contents, 9 the motto, 11 chapter 1's opening. Old-style figures, small
+# capitals, a pen mark on scan p. 21 over "vrouwvijandig". Checked by the docs session
+# (2026-10-18, work/probes/candidates/meul017vani01_01.txt): tesseract 0.38% CER against
+# DBNL, no real-word differences.
+[[scans]]
+id = "dbnl-scan"
+source = "https://www.dbnl.org/tekst/meul017vani01_01/ (the facsimile PDF)"
+sha256 = "6f3f46aed1e54d8ff4a011e8ff90fc4a937d0eab5513ca021cbe33a658d66a8b"
+cover_page = 1
+body_pages = [9, 197]

@@ -47,9 +47,9 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    first-look --first-look`, its score in decisions.md, then a set. If tuning, De
    laatste roker can join the line-role training (`sorterdata.EXTRA`, its manifest and
    reference first; the user's files were placed only for Au pair).
-6. De vergelding's and Glazuur's first looks (slices 9–107 and 11–101,
-   `bench.WAITING`): their reading on a free night (~2 h each, cold), then out of
-   WAITING into the first-look set for their scores.
+6. De vergelding's, Glazuur's and Vanille en andere smaken's first looks (slices 9–107,
+   11–101 and 9–79, `bench.WAITING`): their reading on a free night (~2 h, 2 h and 1.5 h,
+   cold), then out of WAITING into the first-look set for their scores.
 7. Trim the sets (the user, 2026-10-18: "trim the fat"; after tonight's benches, batched
    with one retrain and new baselines): Verminkt sliced to ~90 pages (tooling: cut a
    reference without chapters where the slice's first and last scan lines align); Afscheid
