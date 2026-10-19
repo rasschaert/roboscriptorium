@@ -58,7 +58,6 @@ mark .space { opacity: 0.7; font-weight: 400; }
 mark.fixed, mark.asked { background: none; color: inherit; font-weight: 400; padding: 0; border-radius: 0; }
 mark.fixed { border-bottom: 1px solid var(--muted); }
 mark.asked { border-bottom: 2px dashed var(--muted); }
-mark sub.dash { font: 600 9px system-ui, sans-serif; opacity: 0.8; margin-left: 1px; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; color: var(--muted); margin: 2px 0 8px; }
 .legend mark { font-size: 14px; }
 .turnbar { display: flex; gap: 8px; align-items: center; margin-top: 8px; color: var(--muted); font-size: 13px; flex-wrap: wrap; }
@@ -536,7 +535,7 @@ function marked(text, base) {
       k--;
     }
   }
-  // Marks that look alike in the reading face are named where they differ: a dash by its
+  // Marks that look alike in the reading face are named, on hover, where they differ: a dash by its
   // length, a quote by its kind ("’’" two singles against "”" one double), and a letter
   // from another script by its code.
   const NAMES = {"—": "em", "–": "en", "-": "hyphen", "‑": "hyphen", "‘": "single", "’": "single",
@@ -544,7 +543,7 @@ function marked(text, base) {
   const name = c => NAMES[c] || "U+" + c.codePointAt(0).toString(16).toUpperCase().padStart(4, "0");
   const named = /[—–‑\-‘’“”„'"]|[^\p{Script=Latin}\p{Script=Common}\p{Script=Inherited}]/u;
   const show = s => [...s].map(c => c === " " ? '<span class="space">␣</span>'
-    : named.test(c) ? `${esc(c)}<sub class="dash">${name(c)}</sub>` : esc(c)).join("");
+    : named.test(c) ? `<span title="${name(c)}">${esc(c)}</span>` : esc(c)).join("");
   return ops.map(([kind, mine, theirs]) => kind === "same" ? esc(mine)
     : !mine ? `<mark class="lacks" title="this reading lacks it">${show(theirs)}</mark>`
     : !theirs ? `<mark class="has" title="only this reading has it">${show(mine)}</mark>`
