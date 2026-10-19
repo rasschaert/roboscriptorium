@@ -586,6 +586,20 @@ def test_a_word_left_open_before_a_conjunction_keeps_its_hyphen_and_space():
     assert join("pre-", "and post-war") == "pre- and post-war"
 
 
+def test_a_word_broken_at_its_diaeresis_gets_it_back_when_joined():
+    knows = {"voor", "nadelen", "democratieën", "democratie", "ruïne", "geen", "bo"}.__contains__
+    # Where no diaeresis form is a word, nothing changes.
+    assert join("de voor-", "en nadelen", known=knows) == "de voor- en nadelen"
+    assert join("ge-", "en", known=knows) == "geen"
+    assert join("de ru-", "ine", known=lambda w: False) == "de ruine"
+    # A closed form the list knows wins over the diaeresis one.
+    assert join("een bo-", "en meer", known={"boen", "boën"}.__contains__) == "een boen meer"
+    # The break dropped the diaeresis: the joined word has it.
+    assert join("de democratie-", "en zijn", known=knows) == "de democratieën zijn"
+    assert join("een ru-", "ine stond er", known=knows) == "een ruïne stond er"
+    assert join("De democratie-", "En") == "De democratie-En"
+
+
 def test_a_number_range_broken_at_the_lines_end_keeps_its_hyphen():
     assert join("in de jaren 1914-", "1918 was het") == "in de jaren 1914-1918 was het"
     assert join("op bladzijde 12-", "14 staat") == "op bladzijde 12-14 staat"

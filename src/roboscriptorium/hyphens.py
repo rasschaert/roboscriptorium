@@ -31,6 +31,7 @@ _BESIDE_END = re.compile(r"[\w'’-]*$")
 _BESIDE_START = re.compile(r"[\w'’-]*")
 # The words that open the second half of a word left open at a hyphen, its ending shared
 # with a word further on: "in- en uitvoer", "zes- tot achtjarigen", "pre- and post-war".
+_DIAERESIS = {"e": "ë", "i": "ï", "o": "ö", "u": "ü"}
 _SUSPENDED_BY = frozenset({"en", "of", "noch", "tot", "and", "or", "nor"})
 
 
@@ -127,6 +128,8 @@ def join(
         # The letters beside the break only: "pus—that's" continues "cam-" with "pus".
         stem = _WORD.sub("", _BESIDE_END.search(last).group())
         rest = _WORD.sub("", _BESIDE_START.match(first).group() or first)
+        if (marked := _diaeresis(stem, rest, known)) and nxt.startswith(rest):
+            return text[:-1] + marked[len(stem) :] + nxt[len(rest) :]
         if _suspended(nxt, stem, rest, seen, known):
             return text.rstrip("".join(HYPHENS)) + "- " + nxt
         if _hyphen_stays(nxt, stem, rest, seen, known, compound, f"{text[-120:]}|{nxt}"):
@@ -138,6 +141,16 @@ def join(
     if text.endswith("-") and len(text) > 1 and text[-2].isdigit() and nxt[:1].isdigit():
         return text + nxt  # a number range broken at the line's end ("1914-" / "1918")
     return f"{text} {nxt}"
+
+
+def _diaeresis(stem: str, rest: str, known: Callable[[str], bool] | None) -> str:
+    """The joined word with the diaeresis a Dutch break drops ("democratie-" / "en" →
+    "democratieën"), when the list knows that form and not the plain one; else ''."""
+    mark = _DIAERESIS.get(rest[:1])
+    if known is None or not mark or known(stem + rest):
+        return ""
+    marked = stem + mark + rest[1:]
+    return marked if known(marked) else ""
 
 
 def _suspended(
