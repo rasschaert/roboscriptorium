@@ -42,12 +42,10 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
 
 ## Next, in order
 
-1. **The context judge at sureness 0.6 passes both sets** (merged, off by default): questions
-   -12% (tuning) and -16% (validation), after review level (0.277 / 0.441 against 0.281 /
-   0.442), unasked errors +0.011 / +0.016 a page. Turning it on is the user's call (asked in
-   the session): `ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4 ROBO_CONTEXT_MIN=0.6`, defaults in
-   `config.py` if yes. Cost: the judge's thinking time on a cold build (the full tuning run
-   took ~4 h cold).
+1. **The context judge stays off** (the user, 2026-10-19: no silent errors for fewer
+   questions). At sureness 0.6 it passed both sets (questions -12% / -16%, after review level,
+   unasked errors +0.011 / +0.016 a page) and is merged with its settings unset. Don't propose
+   it again as a settler; only as a vote the arbiter weighs.
 2. **Merged into main 2026-10-19** (tests 508 pass, pushed): `cj-cap`, `review-find`, `cj-min`,
    `hyphen-chains` (chains, diaeresis join, footnote star; its warm benches no change).
    **Still to merge**: `au-pair` last, when no read runs from main (its four manifests sit
