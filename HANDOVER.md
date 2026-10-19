@@ -71,8 +71,9 @@ Each job a screen, logs in `work/runs/`, every one with a watcher. The qwen3.8 r
 
 - Andere levens' eight printer's errors for the errata, when they review it (listed in
   `work/probes/carrere-editions/andere-levens-checked.md`).
-- Een Russische roman's three washed-out pages (46, 47, 259): another copy of the book
-  or a rescan; the scan can't give them.
+- Een Russische roman's three washed-out pages (46, 47, 259): not in the PDF's layers at
+  all (decisions.md, 2026-10-19); the Internet Archive's reader serves the full-resolution
+  pages to a borrower, else a paper copy.
 - Ex-minnaar's 6 new questions, then its read-through.
 - A verdict batch (~20 min): the unasked errors that look like the references'
   (checklist, "Verdicts on the unasked errors").
