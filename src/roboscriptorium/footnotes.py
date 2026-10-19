@@ -34,6 +34,15 @@ ROLE = LineRole("footnote", 1.0, 0.0, "footnote")
 _MARK = re.compile(r"^\s*([*†‡§]+|\d{1,3})(?:[\s_.)]+|(?=[A-ZÀ-Þ]))")
 
 
+# A quote glyph before a capital, which the layer reads for a "*" in small type.
+_QUOTE_FOR_STAR = re.compile(r"^\s*[“”\"«»„‘’']\s*(?=[A-ZÀ-Þ])")
+
+
+def _opens(text: str) -> bool:
+    """Whether a foot line opens on a note's mark, or on a quote glyph for a misread star."""
+    return bool(_MARK.match(text) or _QUOTE_FOR_STAR.match(text))
+
+
 def _body(role: LineRole | None) -> bool:
     """Whether reflow takes the line for running text."""
     return is_body(role)
@@ -66,7 +75,7 @@ def lines(
         if any(w is not None and w > NOTE_WEIGHT for w in (weights[i] for i in block)):
             continue
         # The block opens on a measured small line with a mark, below text in body type.
-        while block and (sizes[block[0]] is None or not _MARK.match(page.lines[block[0]].text)):
+        while block and (sizes[block[0]] is None or not _opens(page.lines[block[0]].text)):
             block.pop(0)
         if block and len(block) < len(body) and _words(page, block, known):
             found.update(SourceRef(page.number, i) for i in block)

@@ -330,8 +330,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   words that differ, grown by words of the line until unique on the page) and keeps one
   per printed words (`save`).
 - `footnotes.py`: the footnotes at a page's foot (`lines`: below the text, in type under
-  0.78 of the body's and lighter than 1.2 of its strokes, opening on a mark, mostly
-  words), given a role reflow leaves out (`with_notes`, by `Line.source` on corrected
+  0.78 of the body's and lighter than 1.2 of its strokes, opening on a mark or on a
+  quote glyph the layer read for a star, mostly words), given a role reflow leaves out (`with_notes`, by `Line.source` on corrected
   pages), collected into `ir.Note`s from the checked and answered pages (`collect`), and
   linked to the paragraph carrying the mark on their page (`link`, `Paragraph.notes`).
   `epub.py` sets the mark as a noteref and the note as an `aside` after the paragraph.

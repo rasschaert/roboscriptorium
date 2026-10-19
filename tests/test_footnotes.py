@@ -38,6 +38,35 @@ def test_marked_small_lines_at_the_foot_are_notes_and_the_page_number_is_not():
     assert footnotes.lines([page], roles, styles) == {SourceRef(5, i) for i in (1, 2, 3)}
 
 
+def test_a_quote_glyph_in_small_type_at_the_foot_is_a_misread_star():
+    # Not a mark: the glyph before a lowercase word, in body type, or above the body's last line.
+    page, styles = _page([("Tekst van het boek.", BODY), ("“een klein citaat", SMALL)])
+    assert footnotes.lines([page], {}, styles) == set()
+    page, styles = _page([("Tekst van het boek.", BODY), ("“Een citaat in body", BODY)])
+    assert footnotes.lines([page], {}, styles) == set()
+    page, styles = _page([("“Klein boven", SMALL), ("Tekst van het boek.", BODY)])
+    assert footnotes.lines([page], {}, styles) == set()
+    # A star the layer read as a quote glyph opens a note; the OCR check puts the star back.
+    rows = [
+        ("Tekst die doorloopt", BODY),
+        ("“Erik Orsenna (1947) is", SMALL),
+        ("een schrijver.", SMALL),
+    ]
+    page, styles = _page(rows)
+    found = footnotes.lines([page], {}, styles)
+    assert found == {SourceRef(5, 1), SourceRef(5, 2)}
+    checked = PageText(
+        5,
+        300,
+        500,
+        [page.lines[0], Line("*Erik Orsenna (1947) is", 10, 32, 280, 42), page.lines[2]],
+    )
+    notes = footnotes.collect([checked], found)
+    assert [(n.mark, n.paragraph.text) for n in notes] == [
+        ("*", "Erik Orsenna (1947) is een schrijver.")
+    ]
+
+
 def test_notes_collect_their_lines_and_link_to_their_marks():
     rows = [("Tekst tot de berg*. En ver-", BODY), ("der tot de trein**.", BODY)]
     rows += [("*_Een berg bij de", SMALL), ("stad. (vert)", SMALL), ("** Een trein.", SMALL)]
