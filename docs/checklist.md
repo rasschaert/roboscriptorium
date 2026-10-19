@@ -321,6 +321,16 @@ In this order:
       reading's all-capitals form (letters only, 1 → I, 0 → O) as one more version where
       it mixes case inside a word, and let them choose. Upstream of the OCR check's
       caches: short test on the pages it touches, then a cold bench
+- [ ] Line-end hyphens inside hyphenated chains (found by the edition check, 2026-10-19):
+      Een Russische roman prints a chant, "geen-verandering-in-de-toestand-van-de-
+      patiënt", broken at its own hyphens ("in-de-" / "toestand", "van-" / "de"), and the
+      build joins both as break hyphens ("in-detoestand-vande"), silently; the next line
+      prints the chant whole. The latest benches hold five more, all unasked:
+      "neem-jehuisdier", "doe-hetzelfbouwdozen", "muzieken-lichtshows",
+      "topaasen-amberkleurige", "glas-inloodramen". A hyphen at a line end in a word that
+      has another hyphen is mostly the word's own, but not always ("Noord-Hol-" /
+      "landse"): give the joiner the chain as evidence (and the book's spellings of
+      chain pieces), its counterexamples tested first
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
