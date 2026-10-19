@@ -109,3 +109,10 @@ Merged or stale: `../roboscriptorium-w12b`, `-lead`, `-spans`, `-breaks`, `-py31
 
 Restored from the user's Downloads and the 2026-10-07 backup (details in
 docs/decisions.md, 2026-10-11). Never symlink `work` into a worktree; stage files by name.
+
+## Trail (2026-10-19, night)
+- `robo-reads-chain` (vergelding 22:30, then glazuur, then vanille; builds only) is followed by
+  `robo-first-look-three` (`work/runs/first-look-three.sh`: `bench first-look --first-look`, the
+  three scored once each, log `work/runs/first-look-three.log`). Both are watched. When it ends:
+  scores into docs/decisions.md, then each book into a set in `bench.SETS`.
+- Au pair is tuning now (no trust data yet).
