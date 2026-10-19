@@ -331,6 +331,12 @@ In this order:
       has another hyphen is mostly the word's own, but not always ("Noord-Hol-" /
       "landse"): give the joiner the chain as evidence (and the book's spellings of
       chain pieces), its counterexamples tested first
+- [ ] A Dutch word broken at its diaeresis gets it back when joined (low; found by the
+      edition check, 2026-10-19): Dutch drops the diaeresis where it breaks a word
+      ("democratieën" as "democratie-" / "en"), so the join must try the ë or ï form
+      against the word list. Een Russische roman's became "democratie- en", taken for a
+      word left open before "en" (`hyphens._suspended`, "voor- en nadelen"). True by
+      definition, so code; no other case in the latest benches
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
