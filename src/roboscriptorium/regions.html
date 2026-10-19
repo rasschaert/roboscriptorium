@@ -423,7 +423,8 @@ function marksOnly(mids) {
 // A place that differs only in marks, its marks shown large and apart, unmarked.
 function plainly(mid, [head, tail]) {
   const core = mid.slice(head, mid.length - tail);
-  return esc(mid.slice(0, head)) + `<span class="glyphs">${core ? esc(core) : "∅"}</span>` + esc(mid.slice(mid.length - tail));
+  // A reading without the mark just joins up ("achtuurjournaal" beside "acht-uurjournaal").
+  return esc(mid.slice(0, head)) + (core ? `<span class="glyphs">${esc(core)}</span>` : "") + esc(mid.slice(mid.length - tail));
 }
 
 // Characters the readings must share before only their difference is shown, and how
