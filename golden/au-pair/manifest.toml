@@ -1,0 +1,64 @@
+title = "Au pair"
+author = "Willem Frederik Hermans"
+language = "nl"
+# Hermans died in 1995: under copyright until 2065, so only this manifest is in git.
+eu_copyright_until = 2065
+
+# De Bezige Bij's own e-book ("Deze digitale editie is gemaakt naar de 21e druk, 2010",
+# e-book by Peter Verwey), as a Kobo file run through calibre: koboSpan spans and
+# calibre classes around the publisher's wp-/wpt- classes, its five fonts
+# Adobe-obfuscated (the text is not). Chapters are "wp-kop" paragraphs (1–96), then
+# the author's "Aantekening" ("wp-bovenkop"), which the print sets too (scan p. 449);
+# the blurb, title pages and colophon before chapter 1 are left out. Six stray closing
+# quotes sit in "wpt-wit" spans set in white, which the print doesn't have (scan pp.
+# 69, 134, 203, 263, 327, 386). The small capitals of abbreviations and inscriptions
+# ("fnac", "edf", "abstvlit qvi dedit", ~30 words) are written in lower case with no
+# class left to mark them: verdicts settle them. "wp-witregel" paragraphs are blank
+# lines, most of them scene breaks.
+[reference]
+source = "Au pair, De Bezige Bij e-book (after the 21st printing, 2010), ISBN 978 90 234 6706 9 (EPUB)"
+sha256 = "b8a9cca1bbe58fc5064b39056965a5046f6f3f2295c6088867bcc953362e2f80"
+files = [
+  "text/part0004.html", "text/part0005.html", "text/part0006.html", "text/part0007.html",
+  "text/part0008.html", "text/part0009.html", "text/part0010.html", "text/part0011.html",
+  "text/part0012.html", "text/part0013.html", "text/part0014.html", "text/part0015.html",
+  "text/part0016.html", "text/part0017.html", "text/part0018.html", "text/part0019.html",
+  "text/part0020.html", "text/part0021.html", "text/part0022.html", "text/part0023.html",
+  "text/part0024.html", "text/part0025.html", "text/part0026.html", "text/part0027.html",
+  "text/part0028.html", "text/part0029.html", "text/part0030.html", "text/part0031.html",
+  "text/part0032.html", "text/part0033.html", "text/part0034.html", "text/part0035.html",
+  "text/part0036.html", "text/part0037.html", "text/part0038.html", "text/part0039.html",
+  "text/part0040.html", "text/part0041.html", "text/part0042.html", "text/part0043.html",
+  "text/part0044.html", "text/part0045.html", "text/part0046.html", "text/part0047.html",
+  "text/part0048.html", "text/part0049.html", "text/part0050.html", "text/part0051.html",
+  "text/part0052.html", "text/part0053.html", "text/part0054.html", "text/part0055.html",
+  "text/part0056.html", "text/part0057.html", "text/part0058.html", "text/part0059.html",
+  "text/part0060.html", "text/part0061.html", "text/part0062.html", "text/part0063.html",
+  "text/part0064.html", "text/part0065.html", "text/part0066.html", "text/part0067.html",
+  "text/part0068.html", "text/part0069.html", "text/part0070.html", "text/part0071.html",
+  "text/part0072.html", "text/part0073.html", "text/part0074.html", "text/part0075.html",
+  "text/part0076.html", "text/part0077.html", "text/part0078.html", "text/part0079.html",
+  "text/part0080.html", "text/part0081.html", "text/part0082.html", "text/part0083.html",
+  "text/part0084.html", "text/part0085.html", "text/part0086.html", "text/part0087.html",
+  "text/part0088.html", "text/part0089.html", "text/part0090.html", "text/part0091.html",
+  "text/part0092.html", "text/part0093.html", "text/part0094.html", "text/part0095.html",
+  "text/part0096.html", "text/part0097.html", "text/part0098.html", "text/part0099.html",
+  "text/part0100.html",
+]
+heading_prefixes = ["wp-kop", "wp-bovenkop"]
+italic_classes = ["wpt-cursief"]
+break_classes = ["wp-witregel"]
+hidden_classes = ["wpt-wit"]
+
+# The 19th printing (De Bezige Bij, Ulysses, August 2006, ISBN 90 234 2042 X); IA Scribe
+# scan (4.4), 360 ppi MRC, GlyphLessFont layer, ~318×544 pt, 452 pages. Pages 7–447 the
+# 96 chapters, p. 449 the Aantekening. Single quotes, which the layer often reads as
+# doubles; an opening quote before an apostrophe ("‘’t Is", scan p. 107), as in the
+# e-book. Internet Archive lends it only, so it is placed by hand (sourced by the user,
+# 2026-10-18).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/aupairroman0000herm (borrow, then download the PDF)"
+sha256 = "c60c958bebf39912387a2c54a7d65ba3374b5d3ec4bbca49821c611bc0a44556"
+cover_page = 1
+body_pages = [7, 449]

@@ -1,0 +1,35 @@
+title = "Glazuur"
+author = "Lisette Jonkman"
+language = "nl"
+# Jonkman is living: under copyright until at least 2100, so only this manifest is in git.
+eu_copyright_until = 2100
+
+# Luitingh-Sijthoff's own e-book (ISBN 978 90 218 0642 6, "Deze digitale editie is
+# gemaakt naar de 1e druk 2012 met ISBN 978 90 218 0641 9"), no DRM; a shop's watermark
+# file at the end of the spine is left out, as are the dedication (scan p. 9), the title
+# page and the colophon. Chapters are h1 headings, bare numerals 1–24, then the
+# Dankwoord. Italics are "elts-cursief" spans, small capitals ("elts-klkap") are written
+# as capitals, so nothing undoes them; "elts-vet" is bold. Some words are split into
+# <font> runs inside the word ("Da<font>a</font>rvoor"), read as one word.
+[reference]
+source = "Glazuur, Luitingh-Sijthoff e-book (after the 1st printing, 2012), ISBN 978 90 218 0642 6 (EPUB)"
+sha256 = "720a074764ffb5bc200c4877eb6be4e65f831d79a4d8d21e65f4c804392c3eb4"
+files = ["Glazuur/OEBPS/5094e949a3dba3.html", "Glazuur/OEBPS/5094e949a3dba4.html", "Glazuur/OEBPS/5094e949a3dba5.html", "Glazuur/OEBPS/5094e949a3dba6.html", "Glazuur/OEBPS/5094e949a3dba7.html", "Glazuur/OEBPS/5094e949a3dba8.html", "Glazuur/OEBPS/5094e949a3dba9.html", "Glazuur/OEBPS/5094e949a3dba10.html", "Glazuur/OEBPS/5094e949a3dba11.html", "Glazuur/OEBPS/5094e949a3dba12.html", "Glazuur/OEBPS/5094e949a3dba13.html", "Glazuur/OEBPS/5094e949a3dba14.html", "Glazuur/OEBPS/5094e949a3dba15.html", "Glazuur/OEBPS/5094e949a3dba16.html", "Glazuur/OEBPS/5094e949a3dba17.html", "Glazuur/OEBPS/5094e949a3dba18.html", "Glazuur/OEBPS/5094e949a3dba19.html", "Glazuur/OEBPS/5094e949a3dba20.html", "Glazuur/OEBPS/5094e949a3dba21.html", "Glazuur/OEBPS/5094e949a3dba22.html", "Glazuur/OEBPS/5094e949a3dba23.html", "Glazuur/OEBPS/5094e949a3dba24.html", "Glazuur/OEBPS/5094e949a3dba25.html", "Glazuur/OEBPS/5094e949a3dba26.html", "Glazuur/OEBPS/5094e949a3dba27.html"]
+heading_prefixes = []
+italic_classes = ["elts-cursief", "elts-klkapcursief"]
+# A scene break comes before each "el-00-wit-voor" paragraph, unindented (checked on the
+# scan's crops, pp. 12, 21, 42).
+opening_classes = ["el-00-wit-voor"]
+
+# The first printing (Luitingh-Sijthoff 2012, ISBN 978 90 218 0641 9; no printing line,
+# so presumably the first); IA Scribe scan (4.5, digitized 2021), 360 ppi MRC,
+# GlyphLessFont layer, ~370×599 pt, 280 pages, a library copy (OBA Bijlmer's stamps on
+# pp. 3 and 5). Single quotes, which the layer reads as doubles; bare chapter numerals
+# it often misses or misreads ("T2", "I3"). Internet Archive lends it only, so it is
+# placed by hand (sourced by the user, 2026-10-18).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/glazuur0000jonk (borrow, then download the PDF)"
+sha256 = "96a2efea408cb23e8ef863a9076b16dd99fefab9506bebb9f46bf014d06419d9"
+cover_page = 1
+body_pages = [11, 273]

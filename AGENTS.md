@@ -43,7 +43,7 @@ owns the fact in the same commit.
 | [docs/run-times.md](docs/run-times.md) | wall-clock minutes of long runs, appended by `experiments/timed.sh` | each timed run |
 | [docs/modules.md](docs/modules.md) | the code, module by module | a module changes |
 | [docs/models.md](docs/models.md) | every model tried, by role, with its verdict; how the ones in use are set up | a model is screened or set up |
-| [docs/golden-notes.md](docs/golden-notes.md) | each golden pair: edition, what makes it hard, known deviations; the manifest keys that undo them | a pair is added, sliced or retired; a key is added |
+| [docs/golden-notes.md](docs/golden-notes.md) | each golden pair: edition, what makes it hard, known deviations, what it is for; the gaps to hunt for; the manifest keys that undo deviations | a pair is added, sliced or retired; a key is added; a set review |
 | [docs/golden-books.md](docs/golden-books.md) | the pairs' numbers, **generated** by `experiments/golden_overview.py` | regenerated after a pair changes |
 | [docs/hosted-inference.md](docs/hosted-inference.md) | the plan for a window of free hosted inference: what to learn, what carries back, the guardrails | access comes, or a hosted run teaches something |
 | [docs/primer.md](docs/primer.md) | for a person new or returning: the problem from first principles, how a change is judged, where the gains are expected, the vocabulary | the approach, the bets or the vocabulary change; its errors chart regenerated (`experiments/primer_errors.py`) after a bench that moves the errors, its `.d2` diagrams rendered again when edited |
@@ -548,6 +548,15 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   or washed-out pages tops it without being suspect. **Whoever notices says so in the session's report and
   proposes retiring it, without being asked.** A retired book's files are deleted from
   `work/` and its manifest from git, with a dated line in docs/decisions.md.
+- **Reviewing the sets** (the user, 2026-10-18: "periodically hunt for new books and
+  cull old ones, and re-evaluate what we use each one for"). Whenever pairs are added,
+  after each batch of first looks, whenever a bench flags a suspect pair or a doubt about
+  a book, and at least weekly (the sets changed dozens of times in the project's first two
+  weeks): each pair's job against docs/golden-notes.md ("What each
+  pair is for"), the suspect signals, the doubts; propose retiring, slicing or a lesser
+  role (line roles only, out of training) where a job is gone; update the gaps to hunt
+  for, and ask the user for candidates that fill them. The review's date goes in that
+  section and a line in docs/decisions.md.
 
 ```sh
 uv run roboscriptorium golden derive the-nature-of-a-crime

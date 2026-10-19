@@ -42,6 +42,29 @@ The weekend's order (the user left it to the agent): each step feeds the next.
 4. De geruchten's section headings (a narrator's name in capitals mid-page, "DOLF"):
    0 of 21 found. A validation book, so not chosen on: the next tuning book that sets
    headings so teaches it, or a probe of what the trees see on those lines.
+5. Au pair's first look (pp. 7–99, chapters 1–24): its reading after the context
+   judge's benches, overnight (~1.5–2 h cold, about 1.1 min a page), then `bench
+   first-look --first-look`, its score in decisions.md, then a set. If tuning, De
+   laatste roker can join the line-role training (`sorterdata.EXTRA`, its manifest and
+   reference first; the user's files were placed only for Au pair).
+6. De vergelding's, Glazuur's and Vanille en andere smaken's first looks (slices 9–107,
+   11–101 and 9–79, `bench.WAITING`): their reading on a free night (~2 h, 2 h and 1.5 h,
+   cold), then out of WAITING into the first-look set for their scores.
+7. Trim the sets (the user, 2026-10-18: "trim the fat"; after tonight's benches, batched
+   with one retrain and new baselines): Verminkt sliced to ~90 pages (tooling: cut a
+   reference without chapters where the slice's first and last scan lines align); Afscheid
+   kept for its words, its paragraph breaks no longer scored (a manifest key like
+   `italics_unlike_print`: its EPUB's paragraphing, untracked until now); Na die nacht
+   retired (a sibling of two tuning books, no honest first look); The Nature of a Crime
+   out of tuning and out of the arbiter's training (its Gutenberg punctuation would teach
+   the transcriber's convention), its manifest and verdicts kept for hosted work; Normal
+   People kept (it moved the 2026-10-13 trees verdict, and its questions moved today).
+   Dolittle's quick slice is a suspect pair (layer 2.93% against a median 0.48%): read
+   where it sits before relying on that slice. Het laatste bevel's glued words: check
+   they're tracked (a key, the normaliser or verdicts).
+8. The next set review (AGENTS.md, "Reviewing the sets"): after the four waiting pairs'
+   first looks, by 2026-10-25 at the latest; the gaps in docs/golden-notes.md go to the
+   user as the books to look for.
 
 - [ ] No fixed test set: a first look for every new pair (the user, 2026-10-17: soon,
       ahead of other accuracy work). Validation wears out as changes are benched and
@@ -274,6 +297,75 @@ In this order:
       reviews, rebuild, epubcheck, a **spot-check** (5 random pages drawn by a script,
       the **user** marks every wrong word, break and italic against the scan, ~15–20
       min: the book's own error estimate with its interval), **user** reads the EPUB
+- [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
+      an instrument for a book with no reference, so its errors are found and fixed by
+      pipeline changes measured on the golden books. The built EPUB's paragraphs are
+      aligned with the other editions' by length and by the names and numbers they share
+      (1:1, 1:2, 2:1, and a paragraph with no counterpart); a thinking model reads each
+      Dutch paragraph beside its counterparts and flags reading errors with their
+      evidence, each flag checked on a crop (`experiments/probe_translation_check.py`;
+      `work/probes/stella-editions/`). Stella, hosted (qwen3.8-27b on DeepInfra, German,
+      Danish and English, ~$1.7 with paid cut-off calls): 46 flags, one reading error
+      ("trofik", scan p. 53), one likely misprint for the user's errata ("de hete zomer",
+      p. 7), the rest the translator's wording. Its recall, on 37 errors planted in Stella's text
+      (`experiments/edition_recall_plant.py`, $0.14): 29 of 31 word errors caught, 0 of 6
+      lost accents or diaereses; so the build is clean, not the check deaf. Accents need
+      another instrument: the word list knows only some bare forms as non-words
+      ("geergerd", not "financiele", "client", "loge"), and finds none in Stella. Next: the
+      Carrère books (`work/<book>/editions/`, French and English, ~$3 each) once built
+- [ ] Small capitals as a version for the judges (found by the edition check, 2026-10-19):
+      Andere levens' one silent error is "LC1" for "LCI" set in small capitals, where no
+      reading had the capitals; in the latest benches 18 errors are capitals read in
+      mixed case ("vTM", "voc", "ocMw", "xTc", "cr" for CT), 7 unasked. The judges'
+      prompt already knows the pattern but can only pick among the readings: add a
+      reading's all-capitals form (letters only, 1 → I, 0 → O) as one more version where
+      it mixes case inside a word, and let them choose. Upstream of the OCR check's
+      caches: short test on the pages it touches, then a cold bench
+- [ ] Line-end hyphens inside hyphenated chains (found by the edition check, 2026-10-19):
+      Een Russische roman prints a chant, "geen-verandering-in-de-toestand-van-de-
+      patiënt", broken at its own hyphens ("in-de-" / "toestand", "van-" / "de"), and the
+      build joins both as break hyphens ("in-detoestand-vande"), silently; the next line
+      prints the chant whole. The latest benches hold five more, all unasked:
+      "neem-jehuisdier", "doe-hetzelfbouwdozen", "muzieken-lichtshows",
+      "topaasen-amberkleurige", "glas-inloodramen". A hyphen at a line end in a word that
+      has another hyphen is mostly the word's own, but not always ("Noord-Hol-" /
+      "landse"): give the joiner the chain as evidence (and the book's spellings of
+      chain pieces), its counterexamples tested first
+- [ ] A Dutch word broken at its diaeresis gets it back when joined (low; found by the
+      edition check, 2026-10-19): Dutch drops the diaeresis where it breaks a word
+      ("democratieën" as "democratie-" / "en"), so the join must try the ë or ï form
+      against the word list. Een Russische roman's became "democratie- en", taken for a
+      word left open before "en" (`hyphens._suspended`, "voor- en nadelen"). True by
+      definition, so code; no other case in the latest benches
+- [ ] Lost lines mid-block read before they are asked (found by the edition check,
+      2026-10-19): Een Russische roman's text layer drops whole lines inside a text block
+      (p. 133 "te filmen terwijl jij uitstapt, of heb je liever dat de camera laat zien",
+      p. 175 "raam te springen en jij lijkt niet veel meer mans dan zij, dus als je"),
+      where `missing.py` doesn't look (it reads empty layout regions and a block's top and
+      bottom strips). The gaps meet `flags._lost_lines`' rule, so they become questions
+      the reviewer must type in full. Read each such gap with the missing-line reader
+      first, so the question proposes the line (or it is trusted); confirm both pages
+      are asked today, then count lost-line questions over the golden books
+- [ ] A footnote whose mark the layer misreads (found by the edition check, 2026-10-19):
+      Een Russische roman p. 270's translator's note "*Erik Orsenna (1947)…" stays in the
+      running text, spliced mid-sentence into the paragraph that runs on, because the
+      layer reads its "*" as "“" and `footnotes._MARK` decides on the layer's text; the OCR
+      check corrects the mark to "*" afterwards. Decide on the checked text, or take a
+      quote glyph at a small-type foot line's start for a misread mark; then count notes
+      missed over the golden books with notes
+- [ ] What the pipeline should do with a PDF's embedded images (the user, 2026-10-19,
+      when taking up Een Russische roman again: "have a good think"). Found: its
+      washed-out pages (46, 47, 259) and Afscheid's (p. 32) are lost in the PDF itself:
+      the JBIG2 mask holds speckle or letter outlines, the 120 ppi background grey
+      smudge, so rendering the mask alone rescues neither (decisions.md, 2026-10-19).
+      To think through, each a cheap probe first: (1) readers get the composited render;
+      would the 360 ppi mask alone (sharp, binarised) read better or worse on ordinary
+      pages (the frozen reader set)? (2) A washed-out page in the PDF may be fine in the
+      Internet Archive's full-resolution originals (`_jp2.zip`, public on public-domain
+      items, `golden fetch` already takes them; a lending item's reader serves them to a
+      borrower): fetch and read those pages instead, and say so in the review rather
+      than asking the reviewer to type guesswork. (3) Whether `faint.py` should say
+      "lost in this PDF" against "faint in print", and what the review offers for each
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 

@@ -86,6 +86,8 @@ class PublisherEpub:
     # The print sets every quotation in single marks, nested ones too, where the EPUB
     # sets some in double ones: those become single.
     single_quotes: bool = False
+    # Classes whose text the EPUB hides (set in white) and the print doesn't set.
+    hidden_classes: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -183,6 +185,7 @@ class Golden:
                 ref.get("initial_images", ""),
                 ref.get("leading_text", False),
                 ref.get("single_quotes", False),
+                frozenset(ref.get("hidden_classes", ())),
             )
         )
         se = data.get("standard_ebooks")
