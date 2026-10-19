@@ -5,6 +5,8 @@ A suspect the arbiter would ask about goes first to a generative model in thinki
 what OCR tends to confuse. Its answer is held to the versions' letters: it picks a
 version, never writes one. Where it picks the version the arbiter holds likeliest, the
 suspect takes that version instead of going to review; where they differ, it is asked.
+A judge that thinks past its token limit, or doesn't answer in time, leaves the suspect
+asked.
 A suspect whose versions the vision judge saw none of (`trust.unseen`) is left asked:
 its readings missed the print. Answers are cached per book in `context-judge.json`,
 keyed by the prompt.
@@ -14,6 +16,8 @@ import hashlib
 from collections.abc import Callable
 from dataclasses import replace
 from pathlib import Path
+
+import httpx
 
 from roboscriptorium.clients.ollama import OllamaClient
 from roboscriptorium.files import read_cache, write_cache
@@ -84,9 +88,17 @@ def settle(
         text = prompt(s, pages, language)
         key = hashlib.sha1(text.encode()).hexdigest()[:16]
         if key not in answers:
-            answers[key] = client.choose(model, text, len(s.others) + 1)
+            try:
+                answers[key] = client.choose(model, text, len(s.others) + 1)
+            except httpx.TimeoutException:
+                # Not cached: a busy server, not the judge's answer.
+                out.append(s)
+                continue
             write_cache(cache_path, CACHE_VERSION, {"answers": answers}, model=model)
         probs = answers[key]
+        if not probs:
+            out.append(s)
+            continue
         best = max(range(len(probs)), key=probs.__getitem__)
         if best != likeliest(s):
             out.append(s)

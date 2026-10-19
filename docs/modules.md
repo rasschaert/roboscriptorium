@@ -283,7 +283,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   to a thinking model with the lines around it and the place marked; its answer is held
   to the versions' letters (`OllamaClient.choose`, structured output). Where it picks
   the version the arbiter holds likeliest, the suspect takes that version instead of
-  being asked. Answers are cached in `stages/context-judge.json`, keyed by the prompt.
+  being asked. A judge that thinks past 10,000 tokens, or doesn't answer within the
+  client's timeout, leaves it asked (a timeout uncached, so a rerun asks again). Answers
+  are cached in `stages/context-judge.json`, keyed by the prompt.
 - `typography.py`: the book's ellipsis style (`…`, `...` or `. . .`, with or without a
   space before): its gaps measured on a scan (`measure_ellipses`, cached in
   `stages/ellipsis.json`; the dots and the blanks before and between them against the

@@ -40,10 +40,11 @@ class OllamaClient:
         resp.raise_for_status()
         return resp.json()["response"]
 
-    def choose(self, model: str, prompt: str, options: int) -> list[float]:
+    def choose(self, model: str, prompt: str, options: int, limit: int = 10000) -> list[float]:
         """A thinking model's answer to a question of `options` lettered answers (A, B,
         …), held to those letters: each letter's probability, from the answer token's
-        alternatives (the chosen letter alone when the server gives none)."""
+        alternatives (the chosen letter alone when the server gives none). Empty when
+        the thinking runs past `limit` tokens before an answer."""
         letters = [chr(ord("A") + i) for i in range(options)]
         resp = self._http.post(
             "/api/chat",
@@ -59,11 +60,13 @@ class OllamaClient:
                     "properties": {"answer": {"type": "string", "enum": letters}},
                     "required": ["answer"],
                 },
-                "options": {"temperature": 0},
+                "options": {"temperature": 0, "num_predict": limit},
             },
         )
         resp.raise_for_status()
         r = resp.json()
+        if r.get("done_reason") == "length" or not r["message"].get("content"):
+            return []
         answer = json.loads(r["message"]["content"])["answer"]
         probs = {answer: 1.0}
         for t in reversed(r.get("logprobs") or []):

@@ -17,6 +17,9 @@ Validation and first-look books are never read.
     uv run python experiments/probe_context_judge.py items   # freeze the set, no models
     uv run python experiments/probe_context_judge.py run [--limit N] [--via openrouter:…]
     uv run python experiments/probe_context_judge.py score [--via openrouter:…]
+    uv run python experiments/probe_context_judge.py run --no-counts --unsure \
+        --same-as answers-qwen3.8_27b-nvfp4-nocounts.jsonl   # "can't tell" allowed
+    uv run python experiments/probe_context_judge.py compare <base answers> <new answers>
 
 `--via` asks a hosted build instead (`clients/openrouter.py`, only where the user allowed
 it): DeepInfra's bf16 Qwen, its thinking capped near the local model's length, takes the
@@ -94,9 +97,7 @@ def context(pages: dict[int, list[str]], s) -> str:
         at, add = 0, True
     before = flat[max(0, at - AROUND) : at]
     after = flat[at + (0 if add else 1) : at + (0 if add else 1) + AROUND]
-    return "\n".join(
-        [f"  {t}" for _, t in before] + [f"» {marked}"] + [f"  {t}" for _, t in after]
-    )
+    return "\n".join([f"  {t}" for _, t in before] + [f"» {marked}"] + [f"  {t}" for _, t in after])
 
 
 def counts(pages: dict[int, list[str]], versions: list[str]) -> list[int]:
@@ -153,7 +154,9 @@ def items() -> None:
         if name in ANSWER_BOOKS:
             strata = ["asked"] * len(rows)
         else:
-            budget = round(settings.ocr_questions_per_page * pages_read(book, trustdata.SPECS[name]))
+            budget = round(
+                settings.ocr_questions_per_page * pages_read(book, trustdata.SPECS[name])
+            )
             decided = trust.decide([r["s"] for r in rows], model, budget, settings.ocr_ask_below)
             strata = []
             for r, d, p in zip(rows, decided, probs, strict=True):
@@ -199,7 +202,7 @@ def items() -> None:
 
 
 def ask(client: httpx.Client, item: dict) -> dict:
-    letters = list(LETTERS[: len(item["versions"])])
+    letters = list(LETTERS[: len(item["versions"]) + UNSURE])
     started = time.monotonic()
     resp = client.post(
         "/api/chat",
@@ -246,7 +249,7 @@ def ask_hosted(via: str, item: dict) -> dict:
     from roboscriptorium.clients import openrouter
 
     name, provider = openrouter.parse(via)
-    letters = list(LETTERS[: len(item["versions"])])
+    letters = list(LETTERS[: len(item["versions"]) + UNSURE])
     started = time.monotonic()
     body = {
         "model": name,
@@ -286,7 +289,8 @@ def ask_hosted(via: str, item: dict) -> dict:
 
 def answers_path(via: str | None) -> Path:
     tag = (via or MODEL).replace(":", "_").replace("/", "_")
-    return OUT / f"answers-{tag}{'-nocounts' if NO_COUNTS else ''}.jsonl"
+    suffix = ("-nocounts" if NO_COUNTS else "") + ("-unsure" if UNSURE else "")
+    return OUT / f"answers-{tag}{suffix}.jsonl"
 
 
 def without_counts(prompt: str) -> str:
@@ -300,16 +304,42 @@ def without_counts(prompt: str) -> str:
     )
 
 
+def with_unsure(item: dict) -> dict:
+    """The item with one more answer, "the text can't tell" (`--unsure`), which leaves the
+    suspect asked: where both versions are right Dutch ("van binnen", "vanbinnen") or differ
+    in an accent only the print shows, the judge settled wrongly with the arbiter."""
+    n = len(item["versions"])
+    prompt = (
+        item["prompt"]
+        .replace(
+            "\n\nWeigh grammar",
+            f"\n{LETTERS[n]}) the text around it can't tell\n\nWeigh grammar",
+            1,
+        )
+        .replace(
+            "Answer with the letter.",
+            f"If more than one version is right in the sentence, so that only the printed page "
+            f"could tell them apart, answer {LETTERS[n]}. Answer with the letter.",
+        )
+    )
+    return {**item, "prompt": prompt}
+
+
 def run(limit: int | None, via: str | None, kinds: set[str] | None = None) -> None:
     every = json.loads((OUT / "items.json").read_text())
     if NO_COUNTS:
         every = [{**i, "prompt": without_counts(i["prompt"])} for i in every]
+    if UNSURE:
+        every = [with_unsure(i) for i in every]
+    if "--same-as" in sys.argv:
+        # Only the items another answers file holds, for a paired comparison.
+        other = OUT / sys.argv[sys.argv.index("--same-as") + 1]
+        ids = {a["id"] for a in read_jsonl(other)}
+        every = [i for i in every if i["id"] in ids]
     if kinds:
         every = [i for i in every if i["kind"] in kinds]
     path = answers_path(via)
-    done = {
-        (a["id"], a["prompt"]) for a in (read_jsonl(path) if path.exists() else [])
-    }
+    done = {(a["id"], a["prompt"]) for a in (read_jsonl(path) if path.exists() else [])}
     todo = [
         i
         for i in every
@@ -332,7 +362,7 @@ def run(limit: int | None, via: str | None, kinds: set[str] | None = None) -> No
                 append_jsonl(path, a)
                 print(
                     f"[{n}/{len(todo)}] {item['id']} {item['kind']} pick {LETTERS[a['pick']]} "
-                    f"({'right' if item['right'][a['pick']] else 'WRONG'}) {a['seconds']}s",
+                    f"({verdict(item, a['pick'])}) {a['seconds']}s",
                     flush=True,
                 )
         return
@@ -344,7 +374,7 @@ def run(limit: int | None, via: str | None, kinds: set[str] | None = None) -> No
             mean = sum(seconds) / len(seconds)
             print(
                 f"[{n}/{len(todo)}] {item['id']} {item['kind']} pick {LETTERS[a['pick']]} "
-                f"({'right' if item['right'][a['pick']] else 'WRONG'}) {a['seconds']}s "
+                f"({verdict(item, a['pick'])}) {a['seconds']}s "
                 f"{a['tokens']} tok, ~{mean * (len(todo) - n) / 60:.0f} min left",
                 flush=True,
             )
@@ -361,33 +391,82 @@ def score(via: str | None) -> None:
         i = every[k]
         group = "answers" if i["book"] in ANSWER_BOOKS else "golden"
         by[(group, i["kind"])].append((i, a))
-    print(f"{len(answers)} of {len(every)} answered; median "
-          f"{sorted(a['seconds'] for a in answers.values())[len(answers) // 2]} s a call")
+    print(
+        f"{len(answers)} of {len(every)} answered; median "
+        f"{sorted(a['seconds'] for a in answers.values())[len(answers) // 2]} s a call"
+    )
     for (group, kind), pairs in sorted(by.items()):
         n = len(pairs)
         judge = sum(i["right"][a["pick"]] for i, a in pairs)
-        arb = sum(i["right"][max(range(len(i["arbiter"])), key=i["arbiter"].__getitem__)]
-                  for i, _ in pairs)
-        print(f"\n{group} {kind}: {n} suspects; context judge right {judge} ({judge / n:.0%}),"
-              f" arbiter's likeliest right {arb} ({arb / n:.0%})")
+        arb = sum(
+            i["right"][max(range(len(i["arbiter"])), key=i["arbiter"].__getitem__)]
+            for i, _ in pairs
+        )
+        print(
+            f"\n{group} {kind}: {n} suspects; context judge right {judge} ({judge / n:.0%}),"
+            f" arbiter's likeliest right {arb} ({arb / n:.0%})"
+        )
         for cut in (0.9, 0.99):
             sure = [(i, a) for i, a in pairs if max(a["probs"]) >= cut]
             wrong = sum(not i["right"][a["pick"]] for i, a in sure)
             print(f"  sure ≥ {cut}: {len(sure)} ({len(sure) / n:.0%}), {wrong} of them wrong")
-        both = [(i, a) for i, a in pairs
-                if a["pick"] == max(range(len(i["arbiter"])), key=i["arbiter"].__getitem__)]
+        both = [
+            (i, a)
+            for i, a in pairs
+            if a["pick"] == max(range(len(i["arbiter"])), key=i["arbiter"].__getitem__)
+        ]
         wrong = sum(not i["right"][a["pick"]] for i, a in both)
         print(f"  judge and arbiter agree: {len(both)}, {wrong} of them wrong")
-    wrongs = [(every[k], a) for k, a in answers.items()
-              if every[k]["kind"] == "asked" and not every[k]["right"][a["pick"]]
-              and max(a["probs"]) >= 0.9]
+    wrongs = [
+        (every[k], a)
+        for k, a in answers.items()
+        if every[k]["kind"] == "asked"
+        and not every[k]["right"][a["pick"]]
+        and max(a["probs"]) >= 0.9
+    ]
     print("\nSure and wrong on asked suspects (up to 15):")
     for i, a in wrongs[:15]:
-        print(f"  {i['id']}: picked {i['versions'][a['pick']]!r}, the print "
-              f"{[v for v, r in zip(i['versions'], i['right'], strict=True) if r]}")
+        print(
+            f"  {i['id']}: picked {i['versions'][a['pick']]!r}, the print "
+            f"{[v for v, r in zip(i['versions'], i['right'], strict=True) if r]}"
+        )
+
+
+def verdict(item: dict, pick: int) -> str:
+    if pick == len(item["versions"]):
+        return "can't tell"
+    return "right" if item["right"][pick] else "WRONG"
+
+
+def compare(base: str, new: str) -> None:
+    """Paired: what each answers file settles (the judge's pick agreeing with the arbiter's
+    likeliest), right and wrong, and how often the new one says the text can't tell."""
+    every = {i["id"]: i for i in json.loads((OUT / "items.json").read_text())}
+    a = {r["id"]: r for r in read_jsonl(OUT / base)}
+    b = {r["id"]: r for r in read_jsonl(OUT / new)}
+    tally = Counter()
+    for k in sorted(a.keys() & b.keys()):
+        i = every[k]
+        likeliest = max(range(len(i["arbiter"])), key=i["arbiter"].__getitem__)
+        for name, r in (("base", a[k]), ("new", b[k])):
+            if r["pick"] == len(i["versions"]):
+                tally[(name, "can't tell", i["right"][likeliest])] += 1
+            elif r["pick"] == likeliest:
+                tally[(name, "settled", i["right"][likeliest])] += 1
+            else:
+                tally[(name, "asked", i["right"][likeliest])] += 1
+    print(f"{len(a.keys() & b.keys())} items in both")
+    for name in ("base", "new"):
+        for what in ("settled", "can't tell", "asked"):
+            right, wrong = tally[(name, what, True)], tally[(name, what, False)]
+            print(
+                f"  {name:4} {what:10}: {right + wrong:3} (the arbiter's likeliest right "
+                f"{right}, wrong {wrong})"
+            )
 
 
 NO_COUNTS = "--no-counts" in sys.argv
+UNSURE = int("--unsure" in sys.argv)
 
 if __name__ == "__main__":
     step = sys.argv[1]
@@ -396,7 +475,13 @@ if __name__ == "__main__":
         items()
     elif step == "run":
         limit = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv else None
-        kinds = set(sys.argv[sys.argv.index("--kinds") + 1].split(",")) if "--kinds" in sys.argv else None
+        kinds = (
+            set(sys.argv[sys.argv.index("--kinds") + 1].split(","))
+            if "--kinds" in sys.argv
+            else None
+        )
         run(limit, via, kinds)
     elif step == "score":
         score(via)
+    elif step == "compare":
+        compare(sys.argv[2], sys.argv[3])
