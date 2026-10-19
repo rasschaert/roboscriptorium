@@ -68,3 +68,11 @@ def test_an_entry_that_carries_words_from_another_line_is_not_local():
     assert not errata.local(
         Erratum(87, "inspanningen -twee", "– na eeuwen van vergeefse inspanningen – twee")
     )
+
+
+def test_a_wording_that_reaches_beyond_the_layer_line_is_compared_on_the_shared_stretch_only():
+    layer = ["Kelly’s", "gezicht . ‘Ze is goddomme nog erger dan haar pa.’"]
+    wording = "man met zijn voet tegen Kelly’s gezicht. ‘Ze is goddomme nog erger dan"
+    assert errata.from_layer(69, layer[1], wording, layer, 1) == Erratum(
+        69, "gezicht .", "gezicht."
+    )

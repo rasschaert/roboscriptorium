@@ -18,6 +18,7 @@ saying what the page prints (the readers are scored on that); an erratum changes
 
 import tomllib
 from dataclasses import dataclass, replace
+from difflib import SequenceMatcher
 from pathlib import Path
 
 from roboscriptorium.files import write_atomic
@@ -107,6 +108,27 @@ def from_line(page: int, printed: str, reads: str, lines: list[str], at: int) ->
     cut = edges[lo]
     after = len(printed) - (cut + len(found))
     return Erratum(page, found, reads[cut : len(reads) - after])
+
+
+def from_layer(page: int, layer_line: str, reads: str, lines: list[str], at: int) -> Erratum | None:
+    """The erratum that turns a text layer's line into `reads`, a wording that may begin or
+    end beyond that line (a question's line takes in the words around its place): only the
+    stretch the two share an anchor at both ends of is compared."""
+    blocks = [
+        b
+        for b in SequenceMatcher(None, layer_line, reads, autojunk=False).get_matching_blocks()
+        if b.size >= 3
+    ]
+    if not blocks:
+        return None
+    first, last = blocks[0], blocks[-1]
+    return from_line(
+        page,
+        layer_line[first.a : last.a + last.size],
+        reads[first.b : last.b + last.size],
+        lines,
+        at,
+    )
 
 
 def occurs_once(erratum: Erratum, lines: list[str]) -> bool:

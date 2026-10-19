@@ -642,12 +642,13 @@ class RegionReview:
         d = self.golden.items[key]
         ours = self.golden.lines(key)[0]
         lines = [ln.text for ln in self.scan.pages[d.page].lines]
-        if fix == ours:
-            # An OCR judge already settled it our way: the entry keeps it so whatever
-            # reads the line later, from the text layer's wording.
-            ours = lines[d.lines[0]]
         try:
-            found = errata.from_line(d.page, ours, fix, lines, d.lines[0])
+            if fix == ours:
+                # An OCR judge already settled it our way: the entry keeps it, from the
+                # text layer's wording, so whatever reads the line later is corrected too.
+                found = errata.from_layer(d.page, lines[d.lines[0]], fix, lines, d.lines[0])
+            else:
+                found = errata.from_line(d.page, ours, fix, lines, d.lines[0])
         except (StopIteration, ValueError):
             found = None
         if found is None or not errata.occurs_once(found, lines) or not errata.local(found):
