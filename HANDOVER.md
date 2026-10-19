@@ -2,23 +2,21 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-19 ~10:30 by the session that ran the night.
+end of every session. Written 2026-10-19 ~21:15 by the session that queued the evening.
 
 ## Running
 
-Nothing: everything stopped at ~10:30 on 2026-10-19 (the user leaving). Each resumes from
-its caches:
+Started 2026-10-19 ~20:30, each with a watcher; `screen -ls` lists them:
 
-1. **The context judge's validation rerun** (`work/runs/cj-validation.sh`, from branch
-   `cj-cap`): eight of nine books done, stopped on De geruchten; rerun the script and the
-   cached judge answers replay. Its result decides, with the tuning run, the user's call.
-2. **The hyphen-chains bench** (`work/runs/chains-bench.sh`, warm, minutes; drop its wait
-   line), then merge `hyphen-chains` if no worse.
-3. **Au pair's first look** (`work/runs/au-pair-look.sh`), then the three reads
-   (`vergelding-read.sh`, `glazuur-read.sh`, `vanille-read.sh`): each waits on the jobs
-   named in its first line; start them in order, each with a watcher.
+1. **`au-pair-look`**: Au pair's cold build (pp. 7-99, ~3 h), then its single first-look
+   scoring; the three reads (`vergelding-read`, `glazuur-read`, `vanille-read`) wait behind
+   it, in that order (`work/runs/*.sh`; their wait lines had a doubled `robo-` prefix, fixed).
+2. **`chains-bench-2`**: a warm bench of `hyphen-chains` (now with the diaeresis join and the
+   quote-glyph footnote star) against the sets' baselines; slow while the cold build runs.
+   Its verdicts: `work/runs/chains2-{tuning,validation}.log`.
 
-The "can't tell" probe is done (decisions.md, 2026-10-19): null.
+Done today: the judge's validation rerun (WORSE, after review 0.44 -> 0.46) and the
+chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
 
 ## Done overnight (decisions.md, 2026-10-18 and 19)
 
@@ -47,18 +45,22 @@ The "can't tell" probe is done (decisions.md, 2026-10-19): null.
 
 ## Next, in order
 
-1. **The context judge: the user's call** once its validation is in (reviewer time
-   against wrong words): about 20% fewer questions at equal errors after review, but some
-   made unasked; letting it say "can't tell" didn't help.
+1. **The context judge**: validation is in (worse after review, 63 wrong words made, 24
+   unasked); tuning no change. The user is for it only if there is no downside; the
+   proposal waiting on their yes: feed its pick to the arbiter as one more vote instead of
+   letting it settle (trust data rebuilt cold, overnight, after Au pair).
 2. **Merge the branches** once no run uses their worktrees, each after `git diff --stat`
-   against main: `cj-cap`, `review-find`, `hyphen-chains` (if its bench is no worse),
-   then `au-pair` (its four manifests sit untracked in main and are identical: remove
-   them, rebase, fast-forward). Regenerate docs/golden-books.md.
+   against main: `cj-cap`, `review-find`, `hyphen-chains` (diaeresis join `d316a4a`,
+   footnote star `800b7c5`; wait for `chains-bench-2`), `small-caps` (`5fb536c`, coded and
+   tested, **not benched**), then `au-pair` (its four manifests sit untracked in main and
+   are identical: remove them, rebase, fast-forward). Regenerate docs/golden-books.md.
 3. **Au pair's first-look score** in decisions.md, then its set (checklist).
-4. The edition check's silent gaps, in the checklist's order: small capitals as a
-   version for the judges; two-letter words beside a chain's break (the riskier half of
-   the chain fix); the misread footnote mark; lost lines read before asked; the
-   diaeresis at a break.
+4. **`small-caps` short test** on the pages with the 18 known errors, then a cold bench with
+   the trust data rebuilt (needs Ollama free: after Au pair).
+5. The edition check's other silent gaps: lost lines read before asked; two-letter words
+   beside a chain's break (probe: `experiments/probe_chain_breaks.py`, 2 of 11 wrong, too
+   few to set a rule). Not yet counted: notes lost or made by the footnote star, on the
+   golden books with notes (the chains bench shows it).
 
 ## Waiting on the user
 
