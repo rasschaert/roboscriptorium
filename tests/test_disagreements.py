@@ -1,5 +1,13 @@
 from roboscriptorium import disagreements, lexicon
-from roboscriptorium.disagreements import Disagreement, Verdicts, _auto, _spans, garbled, patch
+from roboscriptorium.disagreements import (
+    Disagreement,
+    Verdicts,
+    _auto,
+    _spans,
+    garbled,
+    only,
+    patch,
+)
 from roboscriptorium.golden.reference import Chapter
 from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.lexicon import Lexicon
@@ -201,3 +209,21 @@ def test_a_verdict_for_the_reference_as_written_patches_nothing(tmp_path):
     d = Disagreement("k", "nu’,", "dan',", "'Kom", "zei", 9, (0, 0))
     verdicts.record(d, "dan’,", "ocr")
     assert patch(reference, verdicts)[1] == 0
+
+
+def _place(key: str, page: int, got: str, want: str) -> Disagreement:
+    return Disagreement(key, got, want, "", "", page, (3, 3))
+
+
+def test_only_keeps_the_places_a_list_names_by_page_and_both_readings():
+    places = [
+        _place("a", 14, "gezicht.", "gezicht ."),
+        _place("b", 14, "gezicht.", "gezicht ."),
+        _place("c", 15, "gezicht.", "gezicht ."),
+        _place("d", 14, "zeize", "zei ze"),
+    ]
+    rows = [{"page": 14, "got": "gezicht.", "want": "gezicht ."}]
+    # The list names a place, not a key: both of that page's identical readings stay, and
+    # the same words on another page or other words on the page don't.
+    assert [d.key for d in only(places, rows)] == ["a", "b"]
+    assert only(places, []) == []

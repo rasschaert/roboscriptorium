@@ -375,6 +375,12 @@ A line the machine didn't ask about, such as a misprint seen while reading, join
 questions with `review work/<book> --find "<words>"`: each line holding those words,
 answered like any other, its answer kept in later builds without asking again.
 
+For a golden book, `review work/<book> --only <list.json>` asks only the places a list of
+error rows names (a bench's `errors.jsonl` rows: page, output words, reference words), and
+no flagged regions. It includes places the code settles by their kind (spacing- or
+hyphen-only differences), which the review otherwise leaves out and so never gets a verdict
+that would mend the reference where it departs from the print.
+
 "Rebuild book" applies the answers and rebuilds the EPUB. The questions come from the
 model's decisions before any answers, so the list stays put while you work.
 

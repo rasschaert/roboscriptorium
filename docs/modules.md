@@ -121,7 +121,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   clearly garbled output and whitespace-only differences are auto-resolved; the pages
   of paragraph breaks set wrong (`break_errors`) and of words whose quote marks, dashes
   or ellipsis are set wrong (`glyph_errors`, the kinds a reference can speak for from
-  `glyph_kinds`).
+  `glyph_kinds`). `only` keeps the places a list of error rows names, auto-resolved ones
+  too (`review --only`).
   Verdicts (what the scan prints, plus a mistake category) are stored per scan
   and patched into the reference by `eval`.
 - `errorlog.py`: a bench run's errors, one row each, written beside its record

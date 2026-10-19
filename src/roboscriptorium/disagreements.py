@@ -207,6 +207,13 @@ def _spans(out: list[str], ref: list[str]) -> list[tuple[int, int, int, int]]:
     return [tuple(s) for s in spans]
 
 
+def only(places: list[Disagreement], rows: list[dict]) -> list[Disagreement]:
+    """The places a list of error rows (a bench's `errors.jsonl`) names: the same page,
+    output words and reference words, settled by their kind (`auto`) or not."""
+    named = {(r["page"], r["got"], r["want"]) for r in rows}
+    return [d for d in places if (d.page, d.got, d.want) in named]
+
+
 def find(
     doc: Document,
     reference: list[Chapter],

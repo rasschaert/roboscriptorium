@@ -218,6 +218,13 @@ def review_regions(
         list[str] | None,
         typer.Option(help="Words whose lines to ask about too, e.g. a misprint seen reading"),
     ] = None,
+    only: Annotated[
+        Path | None,
+        typer.Option(
+            help="A golden book's places to ask, as a JSON list of error rows (page, got, "
+            "want); nothing else is asked"
+        ),
+    ] = None,
     first_look: bool = _first_look(),
 ) -> None:
     """Review the regions that aren't plain running text, next to the scan; for a golden
@@ -246,6 +253,10 @@ def review_regions(
             doc = scoring.scored(book, stages)
             differ = disagreements.find(doc, reference, stages.pages, book.language, around)
             places = [d for d in differ if not d.auto]
+            if only is not None:
+                # Places settled by their kind are asked too where the list names them.
+                rows = [r for r in json.loads(only.read_text()) if r["book"] == book_dir.name]
+                places, found = disagreements.only(differ, rows), []
         return stages.pages, found, stages.corrections_applied, places
 
     body, regions, applied, places = rebuild()
