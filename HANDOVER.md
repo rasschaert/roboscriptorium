@@ -82,8 +82,14 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
   photos arrive. The chains, diaeresis and footnote-star fixes were found on it and are
   judged on its next build, which waits.
 - Ex-minnaar's 6 new questions, then its read-through.
-- A verdict batch (~20 min): the unasked errors that look like the references'
-  (checklist, "Verdicts on the unasked errors").
+- **The verdict batch is ready (2026-10-19; it was wrongly listed here before it was).** 42
+  places from the latest tuning bench's unasked errors that look like the reference's
+  departures, in `work/probes/unasked/candidates-20261019.json`: `uv run python
+  experiments/review_batch_commands.py work/probes/unasked/candidates-20261019.json` prints
+  one `review <book> --only <list>` command per book (Monterosso 8, The Nature of a Crime 6,
+  Goede dochter 4, Dolittle 4, Metro 4, then 1-3 each in ten more). Roughly 20 minutes for all;
+  the first books give most. Places the code settles by kind now reach the review through
+  `--only`.
 - One Ollama model nothing in the pipeline uses: `hf.co/mindchain/imajev-4b-GGUF:Q8_0`
   (5.2 GB; the others on the old list are pruned, checked 2026-10-19). Whether imajev on
   `llama-server` reads this copy is not checked (docs/models.md, Setup): the user's call.
