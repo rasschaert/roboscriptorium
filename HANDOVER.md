@@ -11,9 +11,8 @@ Started 2026-10-19 ~20:30, each with a watcher; `screen -ls` lists them:
 1. **`au-pair-look`**: Au pair's cold build (pp. 7-99, ~3 h), then its single first-look
    scoring; the three reads (`vergelding-read`, `glazuur-read`, `vanille-read`) wait behind
    it, in that order (`work/runs/*.sh`; their wait lines had a doubled `robo-` prefix, fixed).
-2. **`chains-bench-2`**: a warm bench of `hyphen-chains` (now with the diaeresis join and the
-   quote-glyph footnote star) against the sets' baselines; slow while the cold build runs.
-   Its verdicts: `work/runs/chains2-{tuning,validation}.log`.
+2. **`cj-min-bench`**: two warm tuning benches of branch `cj-min` (judge on, settling only
+   where the arbiter is at least 0.7, then 0.6 sure), logs `work/runs/cjmin-*-tuning.log`.
 
 Done today: the judge's validation rerun (WORSE, after review 0.44 -> 0.46) and the
 chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
@@ -49,11 +48,16 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
    unasked); tuning no change. The user is for it only if there is no downside; the
    proposal waiting on their yes: feed its pick to the arbiter as one more vote instead of
    letting it settle (trust data rebuilt cold, overnight, after Au pair).
-2. **Merge the branches** once no run uses their worktrees, each after `git diff --stat`
-   against main: `cj-cap`, `review-find`, `hyphen-chains` (diaeresis join `d316a4a`,
-   footnote star `800b7c5`; wait for `chains-bench-2`), `small-caps` (`5fb536c`, coded and
-   tested, **not benched**), then `au-pair` (its four manifests sit untracked in main and
-   are identical: remove them, rebase, fast-forward). Regenerate docs/golden-books.md.
+2. **Merged into main 2026-10-19** (tests 508 pass, pushed): `cj-cap`, `review-find`,
+   `hyphen-chains` (chains, diaeresis join, footnote star; its warm benches no change).
+   **Still to merge**: `au-pair` last, when no read runs from main (its four manifests sit
+   untracked in main and are identical to the branch's: remove them, merge, check with
+   `git diff --stat`; the reads need them present while they run), then regenerate
+   docs/golden-books.md and tick the checklist's diaeresis, footnote-star and chains steps
+   (the checklist lives on `au-pair`). `small-caps` (`5fb536c`) waits for its cold bench.
+   `cj-min` (the judge settles only where the arbiter is at least `ROBO_CONTEXT_MIN` sure;
+   `b151c6d`): its two warm tuning benches (0.7, 0.6) are queued as `cj-min-bench`, the
+   winner's validation next; merge only if it beats no-judge on tuning and validation.
 3. **Au pair's first-look score** in decisions.md, then its set (checklist).
 4. **`small-caps` short test** on the pages with the 18 known errors, then a cold bench with
    the trust data rebuilt (needs Ollama free: after Au pair).
