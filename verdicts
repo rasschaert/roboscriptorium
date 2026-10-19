@@ -1,0 +1,3 @@
+#!/usr/bin/env zsh
+# The verdict batch: one review per book, Ctrl-C moves to the next (experiments/review_batch.sh).
+exec "${0:A:h}/experiments/review_batch.sh" "$@"
