@@ -476,3 +476,14 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-18 | bench tuning after the rebuild | 1285 | 2 | 0 |
 | 2026-10-18 | bench validation, Winnow-12B by tokens as the text judge | 0 | 41 | 0 |
 | 2026-10-18 | bench quick, context judge on (local qwen3.8) | 282 | 38 | 0 |
+| 2026-10-18 | train line-role trees, first-look books in their sets | 0 | 1 | 0 |
+| 2026-10-18 | trust data, het-geluid-van-bananen--ia-scan | 93 | 5 | 0 |
+| 2026-10-18 | trust data, het-schaduwhuis--ia-scan | 83 | 5 | 0 |
+| 2026-10-18 | train arbiter after the rebuild | 0 | 9 | 0 |
+| 2026-10-18 | bench tuning after the rebuild | 1461 | 4 | 0 |
+| 2026-10-18 | bench validation, first-look books in their sets | 0 | 90 | 0 |
+| 2026-10-18 | bench tuning, context judge on (local qwen3.8) | 0 | 293 | 0 |
+| 2026-10-18 | bench validation, context judge on (local qwen3.8) | 0 | 50 | 1 |
+| 2026-10-19 | build andere-levens (cold) | 236 | 200 | 0 |
+| 2026-10-19 | build een-russische-roman (cold) | 265 | 225 | 0 |
+| 2026-10-19 | context judge probe, can't tell allowed (100 items) | 0 | 57 | 1 |

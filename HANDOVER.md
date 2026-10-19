@@ -2,30 +2,23 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-19 ~09:40 by the session that ran the night.
+end of every session. Written 2026-10-19 ~10:30 by the session that ran the night.
 
 ## Running
 
-Each job a screen, logs in `work/runs/`, every one with a watcher. The qwen3.8 runner
-(MLX) answers one request at a time, so two jobs on it take turns.
+Nothing: everything stopped at ~10:30 on 2026-10-19 (the user leaving). Each resumes from
+its caches:
 
-1. **`robo-robo-cj-validation`** (`cj-validation.sh`, log `cj-validation-2.log`): the
-   context judge's validation rerun from branch `cj-cap`, against
-   `validation-20261018T134936`; on De geruchten, the last of nine, since ~09:45 (cold judge
-   answers).
-2. **`robo-robo-cj-unsure`** (`cj-unsure.sh`, log `cj-unsure.log`), beside it: the judge
-   allowed to answer "the text can't tell", the probe's 100 items paired against today's
-   prompt; ~11:00. After 29: today's prompt settles 20 (6 wrong), the new one 17 (6
-   wrong), its one "can't tell" a right one: not the fix so far.
-3. **`robo-chains-bench`** (`chains-bench.sh`, logs `chains-tuning.log`,
-   `chains-validation.log`, warm, minutes), after 1: branch `hyphen-chains`
-   (`../roboscriptorium-chains`): a chain's interior pairs count as the book's spellings,
-   so a break inside it keeps its hyphen (Een Russische roman's chant now whole; tests
-   with counterexamples). Merge if no worse.
-4. **`robo-au-pair-look`**, after 1 and 2: Au pair's slice read cold (~1.5–2 h), then its
-   single first-look score from `../roboscriptorium-aupair`.
-5. **`robo-vergelding-read`**, **`robo-glazuur-read`**, **`robo-vanille-read`** last: the
-   three waiting pairs' slices read cold (~2, ~2, ~1.5 h), no score.
+1. **The context judge's validation rerun** (`work/runs/cj-validation.sh`, from branch
+   `cj-cap`): eight of nine books done, stopped on De geruchten; rerun the script and the
+   cached judge answers replay. Its result decides, with the tuning run, the user's call.
+2. **The hyphen-chains bench** (`work/runs/chains-bench.sh`, warm, minutes; drop its wait
+   line), then merge `hyphen-chains` if no worse.
+3. **Au pair's first look** (`work/runs/au-pair-look.sh`), then the three reads
+   (`vergelding-read.sh`, `glazuur-read.sh`, `vanille-read.sh`): each waits on the jobs
+   named in its first line; start them in order, each with a watcher.
+
+The "can't tell" probe is done (decisions.md, 2026-10-19): null.
 
 ## Done overnight (decisions.md, 2026-10-18 and 19)
 
@@ -54,9 +47,9 @@ Each job a screen, logs in `work/runs/`, every one with a watcher. The qwen3.8 r
 
 ## Next, in order
 
-1. **The context judge: the user's call** once 1 and 2 are in (reviewer time against
-   wrong words): about 20% fewer questions at equal errors after review, but some made
-   unasked.
+1. **The context judge: the user's call** once its validation is in (reviewer time
+   against wrong words): about 20% fewer questions at equal errors after review, but some
+   made unasked; letting it say "can't tell" didn't help.
 2. **Merge the branches** once no run uses their worktrees, each after `git diff --stat`
    against main: `cj-cap`, `review-find`, `hyphen-chains` (if its bench is no worse),
    then `au-pair` (its four manifests sit untracked in main and are identical: remove
