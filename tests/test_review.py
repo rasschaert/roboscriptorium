@@ -408,14 +408,12 @@ def _misprint_review(tmp_path, layer_line=OURS, root=True) -> review.RegionRevie
     )
 
 
-def test_a_misprint_on_a_place_that_our_text_already_reads_is_refused_and_nothing_is_saved(
-    tmp_path,
-):
+def test_a_misprint_our_text_already_reads_saves_the_answer_and_adds_no_erratum(tmp_path):
     r = _misprint_review(tmp_path)
     body = {"key": "k", "text": OURS, "misprint": OURS}
     out = r.record(body)
-    assert out["refused"] and "nothing to correct" in out["warning"]
-    assert not errata.path(tmp_path).exists() and not (tmp_path / "v.jsonl").exists()
+    assert "refused" not in out and "errata" not in out
+    assert not errata.path(tmp_path).exists() and (tmp_path / "v.jsonl").exists()
 
 
 def test_a_misprint_the_text_layer_cant_place_once_is_refused(tmp_path):
