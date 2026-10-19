@@ -362,7 +362,7 @@ def run(limit: int | None, via: str | None, kinds: set[str] | None = None) -> No
                 append_jsonl(path, a)
                 print(
                     f"[{n}/{len(todo)}] {item['id']} {item['kind']} pick {LETTERS[a['pick']]} "
-                    f"({'right' if item['right'][a['pick']] else 'WRONG'}) {a['seconds']}s",
+                    f"({verdict(item, a['pick'])}) {a['seconds']}s",
                     flush=True,
                 )
         return
