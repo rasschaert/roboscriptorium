@@ -69,7 +69,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   after the break, the parts beside an inner hyphen, then `Compounds`, the judge
   (`judge_model`) asked whether an English hyphen nothing else decides is the word's
   own, its answers cached by the hyphenated word in `stages/compounds.json` (only
-  English books ask it, `asked`; docs/design.md).
+  English books ask it, `asked`; docs/design.md). A break that dropped a Dutch
+  diaeresis ("democratie-" / "en") is joined with it when the word list knows only
+  that form (`_diaeresis`).
 - `ir.py`: the IR (`Document`; `Paragraph` and `Heading` with `SourceRef`s back
   to page lines, a paragraph marking a scene break before it; `Figure` with its image file, page box and caption).
 - `figures.py`: the pictures in the book. The layout model's figures on body

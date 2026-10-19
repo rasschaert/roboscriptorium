@@ -601,7 +601,11 @@ breaks are left undecided by the rest with a one-way reference
 better than joining (353 right at 0.5); in English 43 of 77 close, and clef:27b picks
 right on 63 (clef-flash 59, winnow 46). So only English books ask it.
 
-Three cases aren't a word's hyphen at all and skip the evidence: a word left open before
+Four cases aren't a word's hyphen at all and skip the evidence: a Dutch word broken at its
+diaeresis ("democratie-" / "en"), which the break drops, is joined with it
+("democratieën") where the word list knows that form and not the plain one (true by
+definition, so code; it ran ahead of the next case, which took "democratie- en" for a
+word left open); a word left open before
 a conjunction ("in-" / "en uitvoer", "pre-" / "and post-war") keeps its hyphen and the
 space after it, unless the book or the word list knows the closed form ("Toron-" / "to");
 a line ending in a digit
