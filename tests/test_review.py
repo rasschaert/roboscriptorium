@@ -438,3 +438,10 @@ def test_a_misprint_on_a_place_is_an_erratum_from_our_text_and_the_verdict_stays
     assert out["errata"] == [{"page": 17, "printed": "geld", "reads": "geldt"}]
     assert errata.load(tmp_path) == [errata.Erratum(17, "geld", "geldt")]
     assert Verdicts(tmp_path / "v.jsonl").by_key["k"].truth == "geId"
+
+
+def test_a_typed_wording_that_scores_like_the_reference_is_shown_as_typed(tmp_path):
+    r = _verdicts(tmp_path, _place("taste... .", "taste...."))
+    typed = "Hij was zo stom geweest zijn taste.… niet op een"
+    r.golden.record({"key": "k", "text": typed})
+    assert r.state()["items"][0]["answer"]["text"] == typed

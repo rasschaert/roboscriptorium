@@ -289,8 +289,14 @@ class GoldenQuestions:
             if v is not None and kind in self.KINDS:
                 answer = {"action": kind, "text": typed or None}
             elif v is not None and v.category != UNSURE:
-                truth = normalise(v.truth or "")
-                text = ours if truth == d.got else theirs if truth == d.want else None
+                truth = v.truth or ""
+                text = (
+                    theirs
+                    if truth == d.want
+                    else ours
+                    if truth == d.got or normalise(truth) == d.got
+                    else None
+                )
                 answer = {"action": "text", "text": text or self._line(d, v.truth or "")}
             items.append(
                 {
