@@ -570,6 +570,8 @@ def merged_differences(
                 versions.append(piece)
         if versions and (both := _combined(ours[g0:g1], versions)):
             versions.append(both)
+        if versions and (capitals := _capitals(ours[g0:g1], versions)):
+            versions.append(capitals)
         if versions:
             out.append((g0, g1, versions))
     return out
@@ -587,6 +589,36 @@ def curly_book(pages: list[PageText]) -> bool:
     """Whether the layer sets more curly quote marks than straight ones."""
     text = "".join(ln.text for p in pages for ln in p.lines)
     return sum(text.count(c) for c in "‘’“”") > sum(text.count(c) for c in "'\"")
+
+
+_WORDS = re.compile(r"[^\W_]+")
+
+
+def _small_capitals(word: str) -> str | None:
+    """The all-capitals form of a short word that small capitals could be read as
+    ("vTM" → "VTM", "LC1" → "LCI": a 1 or 0 among capitals is an I or O), else None."""
+    if not 2 <= len(word) <= 5:
+        return None
+    if word.isalpha():
+        return word.upper() if word[1:] != word[1:].lower() else None
+    if word.isalnum() and set(word) & set("10") and word.translate(_LOOKALIKE).isupper():
+        return word.translate(_LOOKALIKE)
+    return None
+
+
+_LOOKALIKE = str.maketrans("10", "IO")
+
+
+def _capitals(ours: str, versions: list[str]) -> str | None:
+    """One more version of a span: its first short word that mixes case inside, or a digit
+    among capitals, in capitals, unless that form is already a version. The judges can only
+    pick among the readings, and none has the capitals small capitals were set in."""
+    for piece in (ours, *versions):
+        form = _WORDS.sub(lambda m: _small_capitals(m[0]) or m[0], piece)
+        if form != piece:
+            folded = [_alike(v) for v in (ours, *versions)]
+            return form if _alike(form) not in folded else None
+    return None
 
 
 _TRAILING = re.compile(r"^(.*?)([.,;:!?…]*)([’”'\"]*)$", re.S)

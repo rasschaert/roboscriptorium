@@ -68,6 +68,17 @@ against 0, CER 0.21% against 0.10%), and the newest open models that might
 (DeepSeek V4.1, GLM-5.3, MiMo 2.6, Step 3.7) are 200–760B, too big for this machine.
 
 Its prompt is the book's style and an instruction to transcribe exactly, nothing more.
+
+**Small capitals get an all-capitals version.** The judges pick among the readings of a
+span, and a word set in small capitals comes out of every reader in mixed case or with a
+digit for a letter ("LC1" for "LCI" in Andere levens: the edition check's one silent
+error there; 18 such errors, 7 unasked, in the latest benches: "vTM", "ocMw", "xTc"). Where
+a span holds a short word (two to five letters) that mixes case inside, or a 1 or 0 among
+capitals, its all-capitals form (1 → I, 0 → O) is one more version (`ocrcheck._capitals`),
+unless a reading already has it. A lowercase word ("voc" for VOC) can't be told from text
+and gets none; a long mixed-case name ("McDonald") gets none. Not yet measured: the
+versions are upstream of the OCR check's caches, so it takes a short test on the pages it
+touches and a cold bench (checklist).
 Five richer prompts on the reader set (hosted, 330 hard lines) each fixed about as many
 lines as they broke: "never correct or modernise" 2 against 5, the lines above and
 below 5 against 5, both 4 against 3, the layer's own reading 10 against 13 (it copies

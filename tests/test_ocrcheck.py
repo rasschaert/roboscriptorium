@@ -13,6 +13,22 @@ def _spans(ours: str, theirs: str) -> list[tuple[str, str]]:
     return [(ours[a0:a1], theirs[b0:b1]) for a0, a1, b0, b1 in differences(ours, theirs)]
 
 
+def _versions(ours: str, *others: str) -> list[list[str]]:
+    return [v for _, _, v in ocrcheck.merged_differences(ours, list(others))]
+
+
+def test_an_all_capitals_version_is_added_only_for_a_short_word_mixing_case():
+    # Nothing to add: a capitalised word, a long mixed-case name, a lowercase word.
+    assert _versions("zei Tolly", "zei Polly") == [["Polly"]]
+    assert _versions("bij McDonald thuis", "bij McDonalds thuis") == [["McDonalds"]]
+    assert _versions("de voc was", "de voe was") == [["voe"]]
+    # Small capitals read in mixed case or with a digit for a letter.
+    assert _versions("bij de vTM nieuws", "bij de VTM nieuws") == [["VTM"]]
+    assert _versions("bij de vTM nieuws", "bij de vIM nieuws") == [["vIM", "VTM"]]
+    assert _versions("bij LC1 thuis", "bij LC! thuis") == [["LC!", "LCI"]]
+    assert _versions("op ocMw af", "op ocmw af") == [["ocmw", "OCMW"]]
+
+
 def test_differences_are_whole_words():
     assert _spans("up if they come", "up—if they come") == [("up if", "up—if")]
     assert _spans("say, Tolly wants", "say, ‘Polly wants") == [("Tolly", "‘Polly")]
