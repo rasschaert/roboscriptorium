@@ -374,7 +374,7 @@ def run(limit: int | None, via: str | None, kinds: set[str] | None = None) -> No
             mean = sum(seconds) / len(seconds)
             print(
                 f"[{n}/{len(todo)}] {item['id']} {item['kind']} pick {LETTERS[a['pick']]} "
-                f"({'right' if item['right'][a['pick']] else 'WRONG'}) {a['seconds']}s "
+                f"({verdict(item, a['pick'])}) {a['seconds']}s "
                 f"{a['tokens']} tok, ~{mean * (len(todo) - n) / 60:.0f} min left",
                 flush=True,
             )
@@ -430,6 +430,12 @@ def score(via: str | None) -> None:
             f"  {i['id']}: picked {i['versions'][a['pick']]!r}, the print "
             f"{[v for v, r in zip(i['versions'], i['right'], strict=True) if r]}"
         )
+
+
+def verdict(item: dict, pick: int) -> str:
+    if pick == len(item["versions"]):
+        return "can't tell"
+    return "right" if item["right"][pick] else "WRONG"
 
 
 def compare(base: str, new: str) -> None:
