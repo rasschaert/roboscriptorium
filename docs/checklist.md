@@ -313,6 +313,14 @@ In this order:
       another instrument: the word list knows only some bare forms as non-words
       ("geergerd", not "financiele", "client", "loge"), and finds none in Stella. Next: the
       Carrère books (`work/<book>/editions/`, French and English, ~$3 each) once built
+- [ ] Small capitals as a version for the judges (found by the edition check, 2026-10-19):
+      Andere levens' one silent error is "LC1" for "LCI" set in small capitals, where no
+      reading had the capitals; in the latest benches 18 errors are capitals read in
+      mixed case ("vTM", "voc", "ocMw", "xTc", "cr" for CT), 7 unasked. The judges'
+      prompt already knows the pattern but can only pick among the readings: add a
+      reading's all-capitals form (letters only, 1 → I, 0 → O) as one more version where
+      it mixes case inside a word, and let them choose. Upstream of the OCR check's
+      caches: short test on the pages it touches, then a cold bench
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
