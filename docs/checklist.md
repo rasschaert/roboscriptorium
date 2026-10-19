@@ -353,6 +353,19 @@ In this order:
       check corrects the mark to "*" afterwards. Decide on the checked text, or take a
       quote glyph at a small-type foot line's start for a misread mark; then count notes
       missed over the golden books with notes
+- [ ] What the pipeline should do with a PDF's embedded images (the user, 2026-10-19,
+      when taking up Een Russische roman again: "have a good think"). Found: its
+      washed-out pages (46, 47, 259) and Afscheid's (p. 32) are lost in the PDF itself:
+      the JBIG2 mask holds speckle or letter outlines, the 120 ppi background grey
+      smudge, so rendering the mask alone rescues neither (decisions.md, 2026-10-19).
+      To think through, each a cheap probe first: (1) readers get the composited render;
+      would the 360 ppi mask alone (sharp, binarised) read better or worse on ordinary
+      pages (the frozen reader set)? (2) A washed-out page in the PDF may be fine in the
+      Internet Archive's full-resolution originals (`_jp2.zip`, public on public-domain
+      items, `golden fetch` already takes them; a lending item's reader serves them to a
+      borrower): fetch and read those pages instead, and say so in the review rather
+      than asking the reviewer to type guesswork. (3) Whether `faint.py` should say
+      "lost in this PDF" against "faint in print", and what the review offers for each
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
