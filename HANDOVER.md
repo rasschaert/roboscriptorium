@@ -74,8 +74,9 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
 - Ex-minnaar's 6 new questions, then its read-through.
 - A verdict batch (~20 min): the unasked errors that look like the references'
   (checklist, "Verdicts on the unasked errors").
-- Ollama models nothing uses now: `winnow-ollama:e4b`, `hf.co/EldanRing/Winnow-E4B:Q8_0`,
-  `imajev:4b`, `hf.co/mindchain/imajev-4b-GGUF:Q8_0`, `qwen3.8:27b-q8_0`. Not in the way.
+- One Ollama model nothing in the pipeline uses: `hf.co/mindchain/imajev-4b-GGUF:Q8_0`
+  (5.2 GB; the others on the old list are pruned, checked 2026-10-19). Whether imajev on
+  `llama-server` reads this copy is not checked (docs/models.md, Setup): the user's call.
 
 ## Worktrees
 
