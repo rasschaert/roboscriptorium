@@ -82,6 +82,14 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
   photos arrive. The chains, diaeresis and footnote-star fixes were found on it and are
   judged on its next build, which waits.
 - Ex-minnaar's 6 new questions, then its read-through.
+- **The verdict batch is ready and runs as one command** (2026-10-19; it was wrongly listed
+  here before it was): `! experiments/review_batch.sh` walks 15 books, most places first,
+  on http://127.0.0.1:8765/ (Ctrl-C ends a book and starts the next; twice quickly stops).
+  42 places from the latest tuning bench's unasked errors that look like the reference's
+  departures (`work/probes/unasked/candidates-20261019.json`), about 20 minutes in all, the
+  first books giving most. Tested end to end; a book may show fewer places than listed
+  (Monterosso showed 6 of 8).
+- Ex-minnaar's 6 new questions, then its read-through.
 - **The verdict batch is ready (2026-10-19; it was wrongly listed here before it was).** 42
   places from the latest tuning bench's unasked errors that look like the reference's
   departures, in `work/probes/unasked/candidates-20261019.json`: `uv run python
