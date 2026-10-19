@@ -257,6 +257,18 @@ prompt, made it worse (74% and 64%): "we" 241 times against "wc" 9 outweighed th
 sentence. It can't see the scan, so quote marks and accents gain least, and it reads
 for sense, so a misprint (the printer's "zeI") is where it errs by design.
 
+**Its agreement is information; the arbiter's sureness says when to take it** (2026-10-19,
+the same 336 hosted answers and the local 100, no new model calls). Where the arbiter is
+unsure (likeliest under 0.6) it is right on 54% (23 of 38 locally; 45 of 84 hosted); when
+the judge agrees, on 86% (18 of 21; 33 of 39); when it disagrees, on 29% (5 of 17; 12 of
+45). The wrong settles sit where the arbiter is least sure: hosted, judge agreeing, 6 of 39
+below 0.6, 6 of 54 from 0.6 to 0.7, 5 of 127 from 0.7 up (4%, against 8% for every
+agreement). So `ROBO_CONTEXT_MIN` (`Settings.context_min`, default 0: every agreement
+settles) leaves a suspect asked, unread by the judge, where the arbiter's likeliest is
+under that sureness. A threshold is a setting the bench can choose, not a hand-written
+rule on text; the sets' benches say whether the questions it keeps cut still pay for the
+errors it avoids.
+
 ## Page readers
 
 **Two more readers that see the whole page** (`pagereader.py`, `ROBO_PAGE_READERS`,

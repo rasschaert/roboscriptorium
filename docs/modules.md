@@ -279,7 +279,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   settings name. An ablation (another reader set, say) keeps its data and models apart:
   `ROBO_TRUST_DATA` for the data folder, `ROBO_OCR_TRUST_MODEL` for the model, whose
   leave-one-out copies sit beside it.
-- `contextjudge.py`: the context judge, off unless `ROBO_CONTEXT_MODEL` names a model.
+- `contextjudge.py`: the context judge, off unless `ROBO_CONTEXT_MODEL` names a model, and only where the arbiter is at
+  least `ROBO_CONTEXT_MIN` sure of its likeliest version (default 0).
   After the arbiter, each suspect it would ask (but one no judge saw a version of) goes
   to a thinking model with the lines around it and the place marked; its answer is held
   to the versions' letters (`OllamaClient.choose`, structured output). Where it picks

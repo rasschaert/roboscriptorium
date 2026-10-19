@@ -236,6 +236,8 @@ def run(
                         lambda s: int(trust.probabilities(arbiter, s).argmax()),
                         OllamaClient(settings.ollama_url), settings.context_model,
                         book.stages / "context-judge.json",
+                        sure=lambda s: float(trust.probabilities(arbiter, s).max()),
+                        min_sure=settings.context_min,
                     )  # fmt: skip
                 done = {(page, line) for page, line, _ in labels}
                 decided = taught
