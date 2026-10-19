@@ -51,3 +51,13 @@ def test_the_file_round_trips_quotes_and_backslashes(tmp_path):
     errata.save(tmp_path, Erratum(8, "a", "b"))
     assert errata.load(tmp_path) == [e, Erratum(8, "a", "b")]
     assert errata.load(tmp_path / "nowhere") == []
+
+
+def test_an_erratum_whose_reading_already_stands_is_met_not_unmatched():
+    blocks = [_para("Kelly’s gezicht. ‘Ze is", 5)]
+    assert errata.apply([Erratum(5, "gezicht . ‘Ze", "gezicht. ‘Ze")], blocks, {5}) == blocks
+
+
+def test_an_erratum_matching_neither_form_still_stops_the_build():
+    with pytest.raises(errata.Unmatched):
+        errata.apply([Erratum(5, "gezicht . ‘Ze", "gezicht. ‘Ze")], [_para("iets anders", 5)], {5})

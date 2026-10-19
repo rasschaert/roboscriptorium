@@ -524,7 +524,7 @@ def test_an_erratum_corrects_the_misprint_it_names_and_an_ambiguous_one_stops_th
     text = pipeline.run(book, use_models=False).doc.blocks[0].text
     assert "zo,’ zei ik" in text and "ZeI hij" in text
     errata.save(tmp_path, errata.Erratum(1, "ZeI", "Zei"))
-    errata.save(tmp_path, errata.Erratum(1, "zeI", "zei"))
+    errata.save(tmp_path, errata.Erratum(1, "zeI", "zij"))
     with pytest.raises(errata.Unmatched, match="page 1: 'zeI' occurs 0 times"):
         pipeline.run(book, use_models=False)
 

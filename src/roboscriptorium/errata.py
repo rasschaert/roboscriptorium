@@ -11,8 +11,9 @@ the printed words themselves, never by a position:
 `printed` must occur exactly once in the text of the paragraphs that page holds,
 as reflowed (lines joined, line-end hyphens undone); quote glyphs, straight or
 curly, match either. One that matches nothing or more than once stops the build:
-add words around it until it is unique. The review's answers keep saying what the
-page prints (the readers are scored on that); an erratum changes only the text.
+add words around it until it is unique. The exception: one whose `reads` already stands
+on the page is met (a reader or judge settled it that way). The review's answers keep
+saying what the page prints (the readers are scored on that); an erratum changes only the text.
 """
 
 import tomllib
@@ -137,6 +138,9 @@ def apply(errata: list[Erratum], blocks: list[Block], pages: set[int]) -> list[B
             if isinstance(b, (Paragraph, Heading)) and any(s.page == e.page for s in b.sources)
             for at in _occurrences(b.text.translate(_FOLD), needle)
         ]
+        reads = e.reads.translate(_FOLD)
+        if not found and _occurrences(_text_of(out, e.page).translate(_FOLD), reads):
+            continue  # a reader or judge already settled it as the erratum would
         if len(found) != 1:
             raise Unmatched(
                 f"Erratum on page {e.page}: {e.printed!r} occurs {len(found)} times on that "
@@ -146,6 +150,14 @@ def apply(errata: list[Erratum], blocks: list[Block], pages: set[int]) -> list[B
         b = out[k]
         out[k] = replace(b, text=b.text[:at] + e.reads + b.text[at + len(e.printed) :])
     return out
+
+
+def _text_of(blocks: list[Block], page: int) -> str:
+    return "\n".join(
+        b.text
+        for b in blocks
+        if isinstance(b, (Paragraph, Heading)) and any(s.page == page for s in b.sources)
+    )
 
 
 def _occurrences(text: str, needle: str) -> list[int]:

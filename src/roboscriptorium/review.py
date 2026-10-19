@@ -626,18 +626,20 @@ class RegionReview:
         noted = errata.load(self.book_root) if self.book_root else []
         return {**asdict(answer), "errata": _errata_of(flag, answer, noted)}
 
-    def _place_misprint(self, key: str, fix: str) -> errata.Erratum | str | None:
-        """The erratum that turns our text's line at a golden place into `fix`, or why not;
-        None when our text already reads `fix`.
+    def _place_misprint(self, key: str, fix: str) -> errata.Erratum | str:
+        """The erratum that turns our text's line at a golden place into `fix`, or why not
+        (the text layer's line when ours already reads `fix`).
         It is made from our text, not from the reading the answer chose: the build holds
         ours, and an entry that doesn't match it stops the build."""
         if self.book_root is None:
             return "This review keeps no errata."
         d = self.golden.items[key]
         ours = self.golden.lines(key)[0]
-        if fix == ours:
-            return None
         lines = [ln.text for ln in self.scan.pages[d.page].lines]
+        if fix == ours:
+            # An OCR judge already settled it our way: the entry keeps it so whatever
+            # reads the line later, from the text layer's wording.
+            ours = lines[d.lines[0]]
         try:
             found = errata.from_line(d.page, ours, fix, lines, d.lines[0])
         except (StopIteration, ValueError):
