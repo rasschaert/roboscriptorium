@@ -55,6 +55,7 @@ SETS = {
         "monterosso-mon-amour--ia-scan",
         "het-geluid-van-bananen--ia-scan:9-101:1-14",
         "het-schaduwhuis--ia-scan:9-91:1-19",
+        "au-pair--ia-scan:7-99:1-24",
     ],
     "validation": [
         "de-kerk-van-de-dode-meisjes--ia-scan:11-107:1-13",
@@ -68,7 +69,9 @@ SETS = {
         "de-geruchten--ia-scan:9-97:2-22",
     ],
     "first-look": [
-        "au-pair--ia-scan:7-99:1-24",
+        "de-vergelding--ia-scan:9-107:1-4",
+        "glazuur--ia-scan:11-101:1-9",
+        "vanille-en-andere-smaken--dbnl-scan:9-79:1-16",
     ],
     # The quick tier, for a change's short test: a chapter or two of each tuning book
     # (a later one where the first are front matter or a single short one), ending where
@@ -94,18 +97,14 @@ SETS = {
     ],
 }
 # Pairs whose first look has no slot yet: guarded and held out like the first-look set,
-# but not in its bench run. Na die nacht is a sibling of two tuning books; De vergelding,
-# Glazuur and Vanille en andere smaken wait for a night's reading.
+# but not in its bench run. Na die nacht is a sibling of two tuning books.
 WAITING = [
     "na-die-nacht--ia-scan",
-    "de-vergelding--ia-scan:9-107:1-4",
-    "glazuur--ia-scan:11-101:1-9",
-    "vanille-en-andere-smaken--dbnl-scan:9-79:1-16",
 ]
 FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"] + WAITING)
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
-NO_TRUST_DATA: frozenset[str] = frozenset()
+NO_TRUST_DATA: frozenset[str] = frozenset({"au-pair--ia-scan"})
 TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST_DATA
 # The line-role model trains on every tuning book (`experiments/train_sorter.py`).
 SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"])

@@ -42,14 +42,13 @@ The weekend's order (the user left it to the agent): each step feeds the next.
 4. De geruchten's section headings (a narrator's name in capitals mid-page, "DOLF"):
    0 of 21 found. A validation book, so not chosen on: the next tuning book that sets
    headings so teaches it, or a probe of what the trees see on those lines.
-5. Au pair's first look (pp. 7–99, chapters 1–24): its reading after the context
-   judge's benches, overnight (~1.5–2 h cold, about 1.1 min a page), then `bench
-   first-look --first-look`, its score in decisions.md, then a set. If tuning, De
-   laatste roker can join the line-role training (`sorterdata.EXTRA`, its manifest and
-   reference first; the user's files were placed only for Au pair).
+5. Au pair is tuning (2026-10-19, after its first look); its trust data and the line roles'
+   training on De laatste roker (`sorterdata.EXTRA`, its manifest and reference first; the
+   user's files were placed only for Au pair) wait for the next trust rebuild.
 6. De vergelding's, Glazuur's and Vanille en andere smaken's first looks (slices 9–107,
-   11–101 and 9–79, `bench.WAITING`): their reading on a free night (~2 h, 2 h and 1.5 h,
-   cold), then out of WAITING into the first-look set for their scores.
+   11–101 and 9–79, now the first-look set): their reading runs overnight 2026-10-19 (~2 h,
+   2 h and 1.5 h, cold), then `bench first-look --first-look` scores the three once each,
+   their scores go in decisions.md, then each joins a set.
 7. Trim the sets (the user, 2026-10-18: "trim the fat"; after tonight's benches, batched
    with one retrain and new baselines): Verminkt sliced to ~90 pages (tooling: cut a
    reference without chapters where the slice's first and last scan lines align); Afscheid
