@@ -66,6 +66,17 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
    few to set a rule). Not yet counted: notes lost or made by the footnote star, on the
    golden books with notes (the chains bench shows it).
 
+6. **Screen Nemotron-3.5-Bolt-74B-A9B** (the user is pulling
+   `hf.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-GGUF`, 2026-10-19; never tried: only
+   `nemotron3:33b` was, as an OCR reader, unfit). When Ollama is free of the Au pair build:
+   `ollama show` for its capabilities (vision? thinking? a plain GGUF without the
+   `decision` capability is asked through token probabilities, `tokens:<model>`,
+   docs/models.md Setup); then the two questions in AGENTS.md: as a **judge** (replace or
+   sit beside clef:27b / Winnow-12B / the qwen3.8 context judge; an A9B should be faster than
+   a 27B thinker) with `experiments/tryout.py run judge <model>`, and as a **reader** if it
+   sees images (`tryout.py run reader <model>`). Time a few calls first (small probes). Record
+   the verdict in docs/models.md, Setup in the same place.
+
 ## Waiting on the user
 
 - Andere levens' eight printer's errors for the errata, when they review it (listed in
