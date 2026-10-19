@@ -9,7 +9,7 @@
   --bg: #f6f5f1; --card: #fff; --ink: #1d1d1b; --muted: #6b6a66; --line: #dddbd3;
   --ok: #1f6f43; --ok-bg: #e3f2e8;
   --accent: #2f5bd3; --accent-bg: #e6ecfb;
-  --has: #0b6b2e; --has-bg: #c9f0d6; --lacks: #b4161b; --lacks-bg: #fde0e0;
+  --has: #0b6b2e; --has-bg: #c9f0d6;
   --swap: #6b21a8; --swap-bg: #ead9fb;
 }
 @media (prefers-color-scheme: dark) {
@@ -17,7 +17,7 @@
     --bg: #161614; --card: #22221f; --ink: #ecebe6; --muted: #9b9a94; --line: #3a3a35;
     --ok: #7dd3a0; --ok-bg: #183326;
     --accent: #8aa8ff; --accent-bg: #1d2640;
-    --has: #86efac; --has-bg: #12391f; --lacks: #fca5a5; --lacks-bg: #4a1414;
+    --has: #86efac; --has-bg: #12391f;
     --swap: #d8b4fe; --swap-bg: #351b52;
   }
 }
@@ -52,8 +52,6 @@ button.primary:disabled { background: var(--line); border-color: var(--line); co
 mark { border-radius: 3px; padding: 0 2px; font-weight: 700; }
 mark.has { background: var(--has-bg); color: var(--has); border-bottom: 2px solid var(--has); }
 mark.swap { background: var(--swap-bg); color: var(--swap); border-bottom: 2px dotted var(--swap); }
-mark.lacks { background: var(--lacks-bg); color: var(--lacks); text-decoration: line-through 2px; }
-mark.lacks::before { content: "‸"; text-decoration: none; display: inline-block; margin-right: 1px; }
 mark .space { opacity: 0.7; font-weight: 400; }
 mark.fixed, mark.asked { background: none; color: inherit; font-weight: 400; padding: 0; border-radius: 0; }
 mark.fixed { border-bottom: 1px solid var(--muted); }
@@ -298,7 +296,6 @@ function textBlock(r, doubt) {
   return `<div class="question">Which reading matches the scan?</div>
     <div class="legend">Marked where a reading differs from reading ${READING_KEYS[base]}, the one the others are closest to, and ${READING_KEYS[base]} where it differs from ${READING_KEYS[near]}:
       <span><mark class="has">x</mark> only this one has it</span>
-      <span><mark class="lacks">x</mark> this one lacks it</span>
       <span><mark class="swap">x</mark> this one has something else</span>
       <span><mark class="has"><span class="space">␣</span></mark> a space</span>
       ${parts && parts.asked ? `<span><mark class="asked">x</mark> asked in a question of its own</span>` : ""}
@@ -509,8 +506,8 @@ function nearest(texts, k) {
   return best;
 }
 
-// `text` with every place it differs from `base` marked: what only it has, what it
-// lacks (shown struck through), or what it has instead. Spaces in a mark show as ␣.
+// `text` as it reads, with every place it differs from `base` marked: what only it has, or
+// what it has instead. What it lacks isn't shown. Spaces in a mark show as ␣.
 function marked(text, base) {
   const t = lcs(text, base);
   const ops = [];  // [kind, mine, theirs], adjacent edits merged
@@ -545,7 +542,7 @@ function marked(text, base) {
   const show = s => [...s].map(c => c === " " ? '<span class="space">␣</span>'
     : named.test(c) ? `<span title="${name(c)}">${esc(c)}</span>` : esc(c)).join("");
   return ops.map(([kind, mine, theirs]) => kind === "same" ? esc(mine)
-    : !mine ? `<mark class="lacks" title="this reading lacks it">${show(theirs)}</mark>`
+    : !mine ? ""
     : !theirs ? `<mark class="has" title="only this reading has it">${show(mine)}</mark>`
     : `<mark class="swap" title="the plain reading has “${esc(theirs)}” here">${show(mine)}</mark>`).join("");
 }
