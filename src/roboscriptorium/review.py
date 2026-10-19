@@ -632,7 +632,10 @@ class RegionReview:
             for k, (o, n) in enumerate(zip(old, new, strict=True))
         ]
         found = [e for e in found if e is not None]
-        return found or "The edition's line is the same as the printed one."
+        return found or (
+            "Not saved: both boxes say the same. The top one is what the page prints; "
+            "put the print back there and keep the correction in the misprint box."
+        )
 
     def rebuild(self) -> dict:
         with self._lock, PDF_LOCK:

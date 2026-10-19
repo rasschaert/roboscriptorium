@@ -462,7 +462,8 @@ uv run ruff format . && uv run ruff check . && uv run pytest
 serves its questions on http://127.0.0.1:8765/, next to scan crops; the page and its keys
 are in [docs/how-it-works.md](docs/how-it-works.md) (Review). "Rebuild book" applies the
 answers. A misprint (`m`) goes to `work/<book>/errata.toml`, which can be edited by
-hand; an entry that doesn't match once stops the build. **Sample the questions before
+hand; an entry that doesn't match once stops the build. `--find "<words>"` adds the
+lines holding those words as questions (a misprint seen while reading). **Sample the questions before
 sending the user to review** (`experiments/sample_questions.py <book>` lays them out with
 their crops): never obvious ones.
 

@@ -4,6 +4,7 @@ from collections import Counter
 from dataclasses import asdict
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Annotated
 
 import httpx
 import typer
@@ -13,6 +14,7 @@ from roboscriptorium import (
     disagreements,
     errorlog,
     evaluate,
+    flags,
     initials,
     ocr,
     pipeline,
@@ -212,6 +214,10 @@ def review_regions(
         None, help="A golden book's reference chapters to compare, e.g. 1-9"
     ),
     port: int = typer.Option(8765, help="Port on 127.0.0.1"),
+    find: Annotated[
+        list[str] | None,
+        typer.Option(help="Words whose lines to ask about too, e.g. a misprint seen reading"),
+    ] = None,
     first_look: bool = _first_look(),
 ) -> None:
     """Review the regions that aren't plain running text, next to the scan; for a golden
@@ -226,6 +232,13 @@ def review_regions(
         if pages is None:
             keep_dated(book.epub_path, book.epubs)
         found = scoring.questions(book, stages)
+        keys = {f.key for f in found}
+        for words in find or []:
+            more = [f for f in flags.asked(stages.pages, words) if f.key not in keys]
+            if not more:
+                typer.echo(f"No line holds {words!r} (or it is asked already)")
+            found += more
+            keys |= {f.key for f in more}
         places = []
         if book.golden is not None:
             # The paragraphs' line references point into the pages before answers (the
