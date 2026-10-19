@@ -346,6 +346,13 @@ In this order:
       the reviewer must type in full. Read each such gap with the missing-line reader
       first, so the question proposes the line (or it is trusted); confirm both pages
       are asked today, then count lost-line questions over the golden books
+- [ ] A footnote whose mark the layer misreads (found by the edition check, 2026-10-19):
+      Een Russische roman p. 270's translator's note "*Erik Orsenna (1947)…" stays in the
+      running text, spliced mid-sentence into the paragraph that runs on, because the
+      layer reads its "*" as "“" and `footnotes._MARK` decides on the layer's text; the OCR
+      check corrects the mark to "*" afterwards. Decide on the checked text, or take a
+      quote glyph at a small-type foot line's start for a misread mark; then count notes
+      missed over the golden books with notes
 - [ ] Ex-minnaar: whether OmniPage earns a place as another reading (it fails
       differently from the layer); only if the questions show the readers stuck together
 
