@@ -487,3 +487,16 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-19 | build andere-levens (cold) | 236 | 200 | 0 |
 | 2026-10-19 | build een-russische-roman (cold) | 265 | 225 | 0 |
 | 2026-10-19 | context judge probe, can't tell allowed (100 items) | 0 | 57 | 1 |
+| 2026-10-19 | bench validation, context judge on (local qwen3.8), rerun | 0 | 4 | 0 |
+| 2026-10-19 | bench tuning, hyphen chains (warm) | 0 | 3 | 0 |
+| 2026-10-19 | bench validation, hyphen chains (warm) | 0 | 4 | 0 |
+| 2026-10-19 | bench tuning, chains + diaeresis + footnote star (warm) | 0 | 3 | 0 |
+| 2026-10-19 | bench validation, chains + diaeresis + footnote star (warm) | 0 | 5 | 0 |
+| 2026-10-19 | bench tuning, context judge on from sureness 0.7 (warm) | 0 | 3 | 0 |
+| 2026-10-19 | bench tuning, context judge on from sureness 0.6 (warm) | 0 | 3 | 0 |
+| 2026-10-19 | bench validation, context judge on from sureness 0.6 (warm) | 0 | 3 | 0 |
+| 2026-10-19 | build au-pair--ia-scan 7-99 for its first look (cold, no score) | 93 | 125 | 0 |
+| 2026-10-19 | bench first-look, Au pair | 93 | 0 | 0 |
+| 2026-10-19 | probe: Nemotron-3.5-Bolt-74B-A9B on samples of the reader and judge sets | 0 | 0 | 0 |
+| 2026-10-19 | probe: Nemotron-3.5-Bolt-74B-A9B as a context judge, 40 items | 0 | 0 | 1 |
+| 2026-10-19 | probe: Nemotron-3.5-Bolt-74B-A9B as a context judge, 40 items | 0 | 11 | 0 |
