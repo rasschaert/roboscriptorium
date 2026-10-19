@@ -650,7 +650,7 @@ class RegionReview:
             found = errata.from_line(d.page, ours, fix, lines, d.lines[0])
         except (StopIteration, ValueError):
             found = None
-        if found is None or not errata.occurs_once(found, lines):
+        if found is None or not errata.occurs_once(found, lines) or not errata.local(found):
             return (
                 "Not saved: those words can't be found exactly once in the page's text layer "
                 "(an OCR correction or a line break is in the way). Add the entry to "

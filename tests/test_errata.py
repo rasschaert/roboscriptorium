@@ -61,3 +61,10 @@ def test_an_erratum_whose_reading_already_stands_is_met_not_unmatched():
 def test_an_erratum_matching_neither_form_still_stops_the_build():
     with pytest.raises(errata.Unmatched):
         errata.apply([Erratum(5, "gezicht . ‘Ze", "gezicht. ‘Ze")], [_para("iets anders", 5)], {5})
+
+
+def test_an_entry_that_carries_words_from_another_line_is_not_local():
+    assert errata.local(Erratum(1, "zeI ik", "zei ik"))
+    assert not errata.local(
+        Erratum(87, "inspanningen -twee", "– na eeuwen van vergeefse inspanningen – twee")
+    )

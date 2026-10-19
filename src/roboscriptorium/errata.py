@@ -114,6 +114,12 @@ def occurs_once(erratum: Erratum, lines: list[str]) -> bool:
     return " ".join(lines).translate(_FOLD).count(erratum.printed.translate(_FOLD)) == 1
 
 
+def local(erratum: Erratum) -> bool:
+    """Whether the entry changes a few characters, as a misprint does: one whose reading is
+    much longer than its printed words carries words from beyond the line it was made on."""
+    return abs(len(erratum.reads) - len(erratum.printed)) <= 12
+
+
 def _common(a: str, b: str) -> str:
     k = 0
     while k < min(len(a), len(b)) and a[k] == b[k]:
