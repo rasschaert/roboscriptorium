@@ -11,8 +11,6 @@ Started 2026-10-19 ~20:30, each with a watcher; `screen -ls` lists them:
 1. **`au-pair-look`**: Au pair's cold build (pp. 7-99, ~3 h), then its single first-look
    scoring; the three reads (`vergelding-read`, `glazuur-read`, `vanille-read`) wait behind
    it, in that order (`work/runs/*.sh`; their wait lines had a doubled `robo-` prefix, fixed).
-2. **`cj-min-bench`**: two warm tuning benches of branch `cj-min` (judge on, settling only
-   where the arbiter is at least 0.7, then 0.6 sure), logs `work/runs/cjmin-*-tuning.log`.
 
 Done today: the judge's validation rerun (WORSE, after review 0.44 -> 0.46) and the
 chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
@@ -44,20 +42,19 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
 
 ## Next, in order
 
-1. **The context judge**: validation is in (worse after review, 63 wrong words made, 24
-   unasked); tuning no change. The user is for it only if there is no downside; the
-   proposal waiting on their yes: feed its pick to the arbiter as one more vote instead of
-   letting it settle (trust data rebuilt cold, overnight, after Au pair).
-2. **Merged into main 2026-10-19** (tests 508 pass, pushed): `cj-cap`, `review-find`,
+1. **The context judge at sureness 0.6 passes both sets** (merged, off by default): questions
+   -12% (tuning) and -16% (validation), after review level (0.277 / 0.441 against 0.281 /
+   0.442), unasked errors +0.011 / +0.016 a page. Turning it on is the user's call (asked in
+   the session): `ROBO_CONTEXT_MODEL=qwen3.8:27b-nvfp4 ROBO_CONTEXT_MIN=0.6`, defaults in
+   `config.py` if yes. Cost: the judge's thinking time on a cold build (the full tuning run
+   took ~4 h cold).
+2. **Merged into main 2026-10-19** (tests 508 pass, pushed): `cj-cap`, `review-find`, `cj-min`,
    `hyphen-chains` (chains, diaeresis join, footnote star; its warm benches no change).
    **Still to merge**: `au-pair` last, when no read runs from main (its four manifests sit
    untracked in main and are identical to the branch's: remove them, merge, check with
    `git diff --stat`; the reads need them present while they run), then regenerate
    docs/golden-books.md and tick the checklist's diaeresis, footnote-star and chains steps
    (the checklist lives on `au-pair`). `small-caps` (`5fb536c`) waits for its cold bench.
-   `cj-min` (the judge settles only where the arbiter is at least `ROBO_CONTEXT_MIN` sure;
-   `b151c6d`): its two warm tuning benches (0.7, 0.6) are queued as `cj-min-bench`, the
-   winner's validation next; merge only if it beats no-judge on tuning and validation.
 3. **Au pair's first-look score** in decisions.md, then its set (checklist).
 4. **`small-caps` short test** on the pages with the 18 known errors, then a cold bench with
    the trust data rebuilt (needs Ollama free: after Au pair).
