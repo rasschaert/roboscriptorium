@@ -392,6 +392,29 @@ def test_a_hyphen_already_in_the_word_keeps_the_breaks_only_between_words():
     assert join("Zuid-Lon-", "den") == "Zuid-Lon-den"
 
 
+def test_a_chain_broken_at_its_own_hyphen_keeps_it_where_the_book_prints_its_parts():
+    from roboscriptorium.reflow import spellings
+
+    # Een Russische roman p. 30: the chant never stands whole on a line.
+    texts = [
+        "psalmodiëren: geen-verandering-in-de-toestand-van-",
+        "de-patiënt-hij-spreekt-alleen-Hongaars-geen-verandering-in-de-",
+        "toestand-van-de-patiënt-hij-spreekt-alleen-Hongaars… Aha, toch",
+    ]
+    lines = [Line(t, 0, 12 * i, 300, 12 * i + 10) for i, t in enumerate(texts)]
+    seen = spellings([PageText(1, 300, 400, lines)])
+    # Pairs away from a cut count; the parts beside a cut don't.
+    assert seen["de-toestand"] == 1 and seen["van-de"] == 1
+    assert seen["in-de"] == 1 and seen["toestand"] == 0
+    # The counterexamples first: a word the book prints whole is joined, and a chain the
+    # book prints nowhere else is left to the other evidence.
+    assert join("Zuid-Lon-", "den", Counter({"londen": 2})) == "Zuid-Londen"
+    assert join("de Yasukuni-tem-", "pel", Counter()) == "de Yasukuni-tem-pel"
+    # The chain whose parts the book prints elsewhere keeps both hyphens.
+    assert "toestand-van-de-patiënt" in join(texts[0], texts[1], seen)
+    assert "in-de-toestand-van-de" in join(texts[1], texts[2], seen)
+
+
 @pytest.mark.xfail(
     strict=True,
     reason="open step, hyphens as a question: a compound the list knows both ways is a question",

@@ -77,17 +77,28 @@ class Compounds:
 
 def spellings(pages: list[PageText]) -> Counter:
     """How often the book prints each word where no line break decides its spelling: all
-    but a line's last word cut by a hyphen and the next line's first word, its rest."""
+    but a line's last word cut by a hyphen and the next line's first word, its rest. A
+    hyphenated chain also counts each pair of neighbouring parts ("in-de-toestand" counts
+    "in-de" and "de-toestand"), which a break inside a chain is weighed by; a chain cut
+    by the break counts its pairs away from the cut."""
     seen: Counter = Counter()
     for page in pages:
         cut = False
         for line in page.lines:
             words = line.text.split()
-            whole = words[1:] if cut else words
-            cut = bool(words) and words[-1].endswith(HYPHENS)
-            for word in whole[:-1] if cut else whole:
-                if key := _WORD.sub("", word).lower():
+            rest, cut = cut, bool(words) and words[-1].endswith(HYPHENS)
+            for k, word in enumerate(words):
+                if not (key := _WORD.sub("", word).lower()):
+                    continue
+                head, tail = rest and k == 0, cut and k == len(words) - 1
+                if not (head or tail):
                     seen[key] += 1
+                parts = [p for p in key.split("-") if p]
+                whole = len(parts) > 2 and not (head or tail)
+                if whole or head or tail:
+                    inner = parts[1 if head else 0 : len(parts) - 1 if tail else len(parts)]
+                    for a, b in zip(inner, inner[1:], strict=False):
+                        seen[f"{a}-{b}"] += 1
     return seen
 
 
@@ -165,6 +176,10 @@ def _hyphen_stays(
     if not nxt[:1].islower():
         return not (len(rest) > 1 and rest.isupper())
     if "-" in stem or "-" in rest:
+        # Within a chain, the book's spelling of the parts beside the break.
+        before, after = stem.rsplit("-", 1)[-1].lower(), rest.split("-", 1)[0].lower()
+        if seen and seen[f"{before}-{after}"] != seen[before + after]:
+            return seen[f"{before}-{after}"] > seen[before + after]
         if known is None:
             return True
         # The parts beside the break: a word of their own ("Lon" + "den") was broken
