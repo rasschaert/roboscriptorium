@@ -13,15 +13,12 @@ checks and the context judge's two runs land by then (each job a screen, logs in
 
 1. **`robo-carrere-builds`** (`carrere-builds.sh`): Andere levens cold since 21:30
    (~4 h), then Een Russische roman (~4.5 h, to ~06:00).
-2. **`robo-robo-carrere-check`** (`carrere-check.sh`, out `robo-carrere-check.out`),
-   hosted beside the local work: each book against its French and English as soon as
-   its build's row is in docs/run-times.md (Andere levens budget $2, Een Russische roman
-   $3.5; balance ~$6.5, a paywall ends OpenRouter use). Flags in
-   `work/probes/carrere-editions/`; then every flag checked on a crop, and each book's
-   open review questions against the flags, as for Stella. Carrère's paragraphs cost
-   ~$0.008 each (Stella's ~$0.004): the caps stop Andere levens near 260 of 355 and Een
-   Russische roman near 550 of 815; the balance left then (~$0.6) goes to the rest of
-   Andere levens, budgeted under the balance so the paywall is never hit.
+2. **The Carrère edition checks: done** (hosted, $2.20 and $3.30, every paragraph;
+   decisions.md, 2026-10-19; flags checked on crops in
+   `work/probes/carrere-editions/*-checked.md`). OpenRouter balance $0.89: done with it
+   for now. Their silent errors are checklist steps (small capitals, hyphenated chains,
+   a diaeresis at a break, a misread footnote mark, lost lines read before asking);
+   Andere levens' eight printer's errors wait for the user's errata.
 3. **`robo-robo-cj-validation`** (`cj-validation.sh`, log `cj-validation-2.log`, ~1.5 h,
    to ~07:30): the context judge's validation rerun from branch `cj-cap`, against
    `validation-20261018T134936`.
