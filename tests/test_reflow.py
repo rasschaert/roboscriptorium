@@ -392,6 +392,29 @@ def test_a_hyphen_already_in_the_word_keeps_the_breaks_only_between_words():
     assert join("Zuid-Lon-", "den") == "Zuid-Lon-den"
 
 
+def test_a_chain_broken_at_its_own_hyphen_keeps_it_where_the_book_prints_its_parts():
+    from roboscriptorium.reflow import spellings
+
+    # Een Russische roman p. 30: the chant never stands whole on a line.
+    texts = [
+        "psalmodiëren: geen-verandering-in-de-toestand-van-",
+        "de-patiënt-hij-spreekt-alleen-Hongaars-geen-verandering-in-de-",
+        "toestand-van-de-patiënt-hij-spreekt-alleen-Hongaars… Aha, toch",
+    ]
+    lines = [Line(t, 0, 12 * i, 300, 12 * i + 10) for i, t in enumerate(texts)]
+    seen = spellings([PageText(1, 300, 400, lines)])
+    # Pairs away from a cut count; the parts beside a cut don't.
+    assert seen["de-toestand"] == 1 and seen["van-de"] == 1
+    assert seen["in-de"] == 1 and seen["toestand"] == 0
+    # The counterexamples first: a word the book prints whole is joined, and a chain the
+    # book prints nowhere else is left to the other evidence.
+    assert join("Zuid-Lon-", "den", Counter({"londen": 2})) == "Zuid-Londen"
+    assert join("de Yasukuni-tem-", "pel", Counter()) == "de Yasukuni-tem-pel"
+    # The chain whose parts the book prints elsewhere keeps both hyphens.
+    assert "toestand-van-de-patiënt" in join(texts[0], texts[1], seen)
+    assert "in-de-toestand-van-de" in join(texts[1], texts[2], seen)
+
+
 @pytest.mark.xfail(
     strict=True,
     reason="open step, hyphens as a question: a compound the list knows both ways is a question",
@@ -561,6 +584,20 @@ def test_a_word_left_open_before_a_conjunction_keeps_its_hyphen_and_space():
     assert join("in-", "of uitvoer", known=knows) == "in- of uitvoer"
     assert join("zes-", "tot achtjarigen") == "zes- tot achtjarigen"
     assert join("pre-", "and post-war") == "pre- and post-war"
+
+
+def test_a_word_broken_at_its_diaeresis_gets_it_back_when_joined():
+    knows = {"voor", "nadelen", "democratieën", "democratie", "ruïne", "geen", "bo"}.__contains__
+    # Where no diaeresis form is a word, nothing changes.
+    assert join("de voor-", "en nadelen", known=knows) == "de voor- en nadelen"
+    assert join("ge-", "en", known=knows) == "geen"
+    assert join("de ru-", "ine", known=lambda w: False) == "de ruine"
+    # A closed form the list knows wins over the diaeresis one.
+    assert join("een bo-", "en meer", known={"boen", "boën"}.__contains__) == "een boen meer"
+    # The break dropped the diaeresis: the joined word has it.
+    assert join("de democratie-", "en zijn", known=knows) == "de democratieën zijn"
+    assert join("een ru-", "ine stond er", known=knows) == "een ruïne stond er"
+    assert join("De democratie-", "En") == "De democratie-En"
 
 
 def test_a_number_range_broken_at_the_lines_end_keeps_its_hyphen():

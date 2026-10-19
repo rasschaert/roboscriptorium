@@ -31,6 +31,7 @@ _BESIDE_END = re.compile(r"[\w'’-]*$")
 _BESIDE_START = re.compile(r"[\w'’-]*")
 # The words that open the second half of a word left open at a hyphen, its ending shared
 # with a word further on: "in- en uitvoer", "zes- tot achtjarigen", "pre- and post-war".
+_DIAERESIS = {"e": "ë", "i": "ï", "o": "ö", "u": "ü"}
 _SUSPENDED_BY = frozenset({"en", "of", "noch", "tot", "and", "or", "nor"})
 
 
@@ -77,17 +78,28 @@ class Compounds:
 
 def spellings(pages: list[PageText]) -> Counter:
     """How often the book prints each word where no line break decides its spelling: all
-    but a line's last word cut by a hyphen and the next line's first word, its rest."""
+    but a line's last word cut by a hyphen and the next line's first word, its rest. A
+    hyphenated chain also counts each pair of neighbouring parts ("in-de-toestand" counts
+    "in-de" and "de-toestand"), which a break inside a chain is weighed by; a chain cut
+    by the break counts its pairs away from the cut."""
     seen: Counter = Counter()
     for page in pages:
         cut = False
         for line in page.lines:
             words = line.text.split()
-            whole = words[1:] if cut else words
-            cut = bool(words) and words[-1].endswith(HYPHENS)
-            for word in whole[:-1] if cut else whole:
-                if key := _WORD.sub("", word).lower():
+            rest, cut = cut, bool(words) and words[-1].endswith(HYPHENS)
+            for k, word in enumerate(words):
+                if not (key := _WORD.sub("", word).lower()):
+                    continue
+                head, tail = rest and k == 0, cut and k == len(words) - 1
+                if not (head or tail):
                     seen[key] += 1
+                parts = [p for p in key.split("-") if p]
+                whole = len(parts) > 2 and not (head or tail)
+                if whole or head or tail:
+                    inner = parts[1 if head else 0 : len(parts) - 1 if tail else len(parts)]
+                    for a, b in zip(inner, inner[1:], strict=False):
+                        seen[f"{a}-{b}"] += 1
     return seen
 
 
@@ -116,6 +128,8 @@ def join(
         # The letters beside the break only: "pus—that's" continues "cam-" with "pus".
         stem = _WORD.sub("", _BESIDE_END.search(last).group())
         rest = _WORD.sub("", _BESIDE_START.match(first).group() or first)
+        if (marked := _diaeresis(stem, rest, known)) and nxt.startswith(rest):
+            return text[:-1] + marked[len(stem) :] + nxt[len(rest) :]
         if _suspended(nxt, stem, rest, seen, known):
             return text.rstrip("".join(HYPHENS)) + "- " + nxt
         if _hyphen_stays(nxt, stem, rest, seen, known, compound, f"{text[-120:]}|{nxt}"):
@@ -127,6 +141,16 @@ def join(
     if text.endswith("-") and len(text) > 1 and text[-2].isdigit() and nxt[:1].isdigit():
         return text + nxt  # a number range broken at the line's end ("1914-" / "1918")
     return f"{text} {nxt}"
+
+
+def _diaeresis(stem: str, rest: str, known: Callable[[str], bool] | None) -> str:
+    """The joined word with the diaeresis a Dutch break drops ("democratie-" / "en" →
+    "democratieën"), when the list knows that form and not the plain one; else ''."""
+    mark = _DIAERESIS.get(rest[:1])
+    if known is None or not mark or known(stem + rest):
+        return ""
+    marked = stem + mark + rest[1:]
+    return marked if known(marked) else ""
 
 
 def _suspended(
@@ -165,6 +189,10 @@ def _hyphen_stays(
     if not nxt[:1].islower():
         return not (len(rest) > 1 and rest.isupper())
     if "-" in stem or "-" in rest:
+        # Within a chain, the book's spelling of the parts beside the break.
+        before, after = stem.rsplit("-", 1)[-1].lower(), rest.split("-", 1)[0].lower()
+        if seen and seen[f"{before}-{after}"] != seen[before + after]:
+            return seen[f"{before}-{after}"] > seen[before + after]
         if known is None:
             return True
         # The parts beside the break: a word of their own ("Lon" + "den") was broken

@@ -547,7 +547,11 @@ they are small (under 0.78 of body type: Reis sets notes at 0.7, folios at 0.8, 
 1.0) and the first opens on a mark. Two guards came from false notes on the benches:
 a picture or smudge read as small type has heavy strokes (Afscheid's 1.6–2.6 against
 Reis's notes' 0.7–0.8; limit 1.2), and most of a note's words must be in the word list
-(which alone was too lenient: the Dutch list knows "hd" and "vip"). A note keeps its OCR
+(which alone was too lenient: the Dutch list knows "hd" and "vip"). The block's first
+line may also open on a quote glyph before a capital: in small type the layer reads a
+"*" as "“" (Een Russische roman p. 270, whose note stayed in the running text, spliced
+mid-sentence), and the OCR check puts the star back afterwards, so `collect` finds the
+mark; the guards above bound the risk (small type, below body text, mostly words). A note keeps its OCR
 check, then is set apart and linked to its mark; where the mark wasn't read the note
 follows its page's last paragraph. Bench (2026-10-11): Reis 7 of 8 found, all linked
 (the eighth's mark read "ie"), paragraph breaks 0.07 → 0.06 (tuning BETTER), no notes
@@ -601,7 +605,11 @@ breaks are left undecided by the rest with a one-way reference
 better than joining (353 right at 0.5); in English 43 of 77 close, and clef:27b picks
 right on 63 (clef-flash 59, winnow 46). So only English books ask it.
 
-Three cases aren't a word's hyphen at all and skip the evidence: a word left open before
+Four cases aren't a word's hyphen at all and skip the evidence: a Dutch word broken at its
+diaeresis ("democratie-" / "en"), which the break drops, is joined with it
+("democratieën") where the word list knows that form and not the plain one (true by
+definition, so code; it ran ahead of the next case, which took "democratie- en" for a
+word left open); a word left open before
 a conjunction ("in-" / "en uitvoer", "pre-" / "and post-war") keeps its hyphen and the
 space after it, unless the book or the word list knows the closed form ("Toron-" / "to");
 a line ending in a digit
