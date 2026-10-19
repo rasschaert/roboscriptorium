@@ -25,6 +25,11 @@ checks and the context judge's two runs land by then (each job a screen, logs in
 4. **`robo-robo-cj-unsure`** (`cj-unsure.sh`, log `cj-unsure.log`, ~2–3 h, to ~10:00):
    the judge allowed to answer "the text can't tell", on the probe's 100 items paired
    against today's prompt (66 settled, 8 wrong).
+4b. **`robo-chains-bench`** (`chains-bench.sh`, logs `chains-tuning.log`,
+   `chains-validation.log`, warm, minutes): branch `hyphen-chains`
+   (`../roboscriptorium-chains`): a hyphenated chain's interior pairs count as the book's
+   spellings, so a break inside it keeps its hyphen (Een Russische roman's chant now
+   whole). Against the sets' baselines, after the judge's validation. Merge if no worse.
 5. **`robo-au-pair-look`** (`au-pair-look.sh`): Au pair's slice read cold (~1.5–2 h),
    then its single first-look score from `../roboscriptorium-aupair`.
 6. **`robo-vergelding-read`**, **`robo-glazuur-read`**, **`robo-vanille-read`** last: the
