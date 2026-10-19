@@ -57,11 +57,12 @@ def _suspect() -> Suspect:
     return Suspect(3, 0, line, 16, 22, "trofik", ("trof ik",), (0, 0, 1, 1), "review")
 
 
-def _settle(judge, tmp_path):
+def _settle(judge, tmp_path, sure=0.6, min_sure=0.0):
     pages = [PageText(3, 280, 400, [Line(_suspect().original, 10, 20, 250, 30)])]
     return contextjudge.settle(
-        [_suspect()], pages, "nl", lambda s: 1, judge, "m", tmp_path / "cj.json"
-    )
+        [_suspect()], pages, "nl", lambda s: 1, judge, "m", tmp_path / "cj.json",
+        sure=lambda s: sure, min_sure=min_sure,
+    )  # fmt: skip
 
 
 def test_a_judge_without_an_answer_leaves_the_suspect_asked(tmp_path):
@@ -77,3 +78,11 @@ def test_a_judge_that_times_out_leaves_the_suspect_asked_and_is_asked_again(tmp_
     assert s.choice == "review"
     (s,) = _settle(_Judge([0.1, 0.9]), tmp_path)
     assert s.choice == "other" and s.chosen == "trof ik"
+
+
+def test_a_suspect_the_arbiter_is_less_sure_of_than_the_threshold_stays_asked_unread(tmp_path):
+    judge = _Judge([0.1, 0.9])
+    (s,) = _settle(judge, tmp_path, sure=0.65, min_sure=0.7)
+    assert s.choice == "review" and judge.calls == 0
+    (s,) = _settle(judge, tmp_path, sure=0.7, min_sure=0.7)
+    assert s.choice == "other" and s.chosen == "trof ik" and judge.calls == 1

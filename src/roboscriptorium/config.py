@@ -66,6 +66,9 @@ class Settings:
     # A thinking model that settles the arbiter's questions from the text around them
     # where it picks the arbiter's likeliest version (`contextjudge.py`; "" for none).
     context_model: str = ""
+    # The arbiter's least sureness in its likeliest version for the judge to settle it:
+    # where the judge agrees below this, the suspect stays asked.
+    context_min: float = 0.0
 
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
@@ -106,4 +109,5 @@ class Settings:
             sorter_model=os.environ.get("ROBO_SORTER_MODEL", defaults.sorter_model),
             break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
             context_model=os.environ.get("ROBO_CONTEXT_MODEL", defaults.context_model),
+            context_min=float(os.environ.get("ROBO_CONTEXT_MIN", defaults.context_min)),
         )

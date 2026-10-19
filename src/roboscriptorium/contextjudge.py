@@ -3,8 +3,9 @@
 A suspect the arbiter would ask about goes first to a generative model in thinking mode
 (`Settings.context_model`), given the lines around its line with the place marked and
 what OCR tends to confuse. Its answer is held to the versions' letters: it picks a
-version, never writes one. Where it picks the version the arbiter holds likeliest, the
-suspect takes that version instead of going to review; where they differ, it is asked.
+version, never writes one. Where it picks the version the arbiter holds likeliest, and the
+arbiter is at least `Settings.context_min` sure of it, the suspect takes that version
+instead of going to review; otherwise it is asked.
 A judge that thinks past its token limit, or doesn't answer in time, leaves the suspect
 asked.
 A suspect whose versions the vision judge saw none of (`trust.unseen`) is left asked:
@@ -74,15 +75,23 @@ def settle(
     client: OllamaClient,
     model: str,
     cache_path: Path,
+    sure: Callable[[Suspect], float] = lambda s: 1.0,
+    min_sure: float = 0.0,
 ) -> list[Suspect]:
     """Copies of the suspects, each asked one settled where the judge picks the version
-    the arbiter holds likeliest (`likeliest`: its index, 0 for ours). `pages` are the
+    the arbiter holds likeliest (`likeliest`: its index, 0 for ours), and the arbiter is
+    at least `min_sure` sure of it (`sure`: that version's probability). `pages` are the
     built pages the suspects index."""
     raw = read_cache(cache_path, CACHE_VERSION, model=model) or {}
     answers: dict[str, list[float]] = raw.get("answers", {})
     out = []
     for s in suspects:
-        if s.choice != "review" or unseen(s) or len(s.others) + 1 > len(LETTERS):
+        if (
+            s.choice != "review"
+            or unseen(s)
+            or len(s.others) + 1 > len(LETTERS)
+            or sure(s) < min_sure
+        ):
             out.append(s)
             continue
         text = prompt(s, pages, language)
