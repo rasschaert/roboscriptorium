@@ -74,22 +74,15 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
   photos arrive. The chains, diaeresis and footnote-star fixes were found on it and are
   judged on its next build, which waits.
 - Ex-minnaar's 6 new questions, then its read-through.
-- **The verdict batch is ready and runs as one command** (2026-10-19; it was wrongly listed
-  here before it was): `./verdicts`, in the user's own terminal (not `!`: the session cuts it at 120 s), walks 15 books, most places first,
-  on http://127.0.0.1:8765/ (Ctrl-C ends a book and starts the next; twice quickly stops).
-  42 places from the latest tuning bench's unasked errors that look like the reference's
-  departures (`work/probes/unasked/candidates-20261019.json`), about 20 minutes in all, the
-  first books giving most. Tested end to end; a book may show fewer places than listed
-  (Monterosso showed 6 of 8).
 - Ex-minnaar's 6 new questions, then its read-through.
-- **The verdict batch is ready (2026-10-19; it was wrongly listed here before it was).** 42
-  places from the latest tuning bench's unasked errors that look like the reference's
-  departures, in `work/probes/unasked/candidates-20261019.json`: `uv run python
-  experiments/review_batch_commands.py work/probes/unasked/candidates-20261019.json` prints
-  one `review <book> --only <list>` command per book (Monterosso 8, The Nature of a Crime 6,
-  Goede dochter 4, Dolittle 4, Metro 4, then 1-3 each in ten more). Roughly 20 minutes for all;
-  the first books give most. Places the code settles by kind now reach the review through
-  `--only`.
+- **The verdict batch is done (2026-10-19, the user, all 15 books).** 32 places answered:
+  7 were the reference departing from its print (ours right, now patched in), 25 were the
+  build's errors: 18 of them compounds hyphenated in print at a line end that the join closed
+  ("life-long", "face-plate", "non-reactive", "acht-uurjournaal"), 3 spaced "B & B", 2 a
+  sentence-end ellipsis ("taste... ." for a period and an ellipsis), 1 "H et", 1 "KL 1566".
+  The batch was chosen as places that looked like the reference's departures: it was wrong
+  about three in four, so the open gap is the line-end compound (docs/decisions.md,
+  2026-10-19). Next: a model-free look at those 18 against the hyphen judge's answers.
 - One Ollama model nothing in the pipeline uses: `hf.co/mindchain/imajev-4b-GGUF:Q8_0`
   (5.2 GB; the others on the old list are pruned, checked 2026-10-19). Whether imajev on
   `llama-server` reads this copy is not checked (docs/models.md, Setup): the user's call.
