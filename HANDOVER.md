@@ -11,8 +11,8 @@ Each job a screen, logs in `work/runs/`, every one with a watcher. The qwen3.8 r
 
 1. **`robo-robo-cj-validation`** (`cj-validation.sh`, log `cj-validation-2.log`): the
    context judge's validation rerun from branch `cj-cap`, against
-   `validation-20261018T134936`; on Verminkt, its last book, since ~06:40 (cold judge
-   answers, whole book).
+   `validation-20261018T134936`; on De geruchten, the last of nine, since ~09:45 (cold judge
+   answers).
 2. **`robo-robo-cj-unsure`** (`cj-unsure.sh`, log `cj-unsure.log`), beside it: the judge
    allowed to answer "the text can't tell", the probe's 100 items paired against today's
    prompt; ~11:00. After 29: today's prompt settles 20 (6 wrong), the new one 17 (6
