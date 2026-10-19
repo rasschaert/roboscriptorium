@@ -104,7 +104,8 @@ def ask_letter(prompt: str, options: int) -> tuple[int, str]:
         "think": False,
         "logprobs": True,
         "top_logprobs": 20,
-        "options": {"temperature": 0, "num_predict": 4},
+        # A batch above 16 segfaults the runner on this Ollama build (Metal); 16 runs.
+        "options": {"temperature": 0, "num_predict": 4, "num_batch": 16},
     }
     resp = httpx.post(f"{settings.ollama_url}/api/chat", json=body, timeout=600)
     resp.raise_for_status()

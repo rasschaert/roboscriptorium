@@ -61,16 +61,8 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
    few to set a rule). Not yet counted: notes lost or made by the footnote star, on the
    golden books with notes (the chains bench shows it).
 
-6. **Screen Nemotron-3.5-Bolt-74B-A9B** (the user is pulling
-   `hf.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-GGUF`, 2026-10-19; never tried: only
-   `nemotron3:33b` was, as an OCR reader, unfit). When Ollama is free of the Au pair build:
-   `ollama show` for its capabilities (vision? thinking? a plain GGUF without the
-   `decision` capability is asked through token probabilities, `tokens:<model>`,
-   docs/models.md Setup); then the two questions in AGENTS.md: as a **judge** (replace or
-   sit beside clef:27b / Winnow-12B / the qwen3.8 context judge; an A9B should be faster than
-   a 27B thinker) with `experiments/tryout.py run judge <model>`, and as a **reader** if it
-   sees images (`tryout.py run reader <model>`). Time a few calls first (small probes). Record
-   the verdict in docs/models.md, Setup in the same place.
+6. **Nemotron-3.5-Bolt-74B-A9B is screened and unfit** (decisions.md, models.md 2026-10-19): judge 18 of 40 against qwen3.8's 31; image requests and batches over 16 crash this Ollama build. Nothing left to do on it; re-screen only if llama.cpp's Metal support for `nemotron_h_moe` is fixed.
+7. **The three first-look reads** (`vergelding-read.sh`, `glazuur-read.sh`, `vanille-read.sh` in `work/runs`) are not queued any more: start them when Ollama is free, in that order, each with a watcher (~2 h, 2 h, 1.5 h cold).
 
 ## Waiting on the user
 
