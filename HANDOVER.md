@@ -66,9 +66,11 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
 
 - Andere levens' eight printer's errors for the errata, when they review it (listed in
   `work/probes/carrere-editions/andere-levens-checked.md`).
-- Een Russische roman's three washed-out pages (46, 47, 259): not in the PDF's layers at
-  all (decisions.md, 2026-10-19); the Internet Archive's reader serves the full-resolution
-  pages to a borrower, else a paper copy.
+- **Een Russische roman is on hold entirely** (the user, 2026-10-19): they are getting a
+  library copy and will photograph the three washed-out pages (46, 47, 259; not in the
+  PDF's layers, decisions.md 2026-10-19). No builds, reviews or probes on it until the
+  photos arrive. The chains, diaeresis and footnote-star fixes were found on it and are
+  judged on its next build, which waits.
 - Ex-minnaar's 6 new questions, then its read-through.
 - A verdict batch (~20 min): the unasked errors that look like the references'
   (checklist, "Verdicts on the unasked errors").
