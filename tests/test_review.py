@@ -9,8 +9,9 @@ from types import SimpleNamespace
 
 import pytest
 
-from roboscriptorium import cli, review
+from roboscriptorium import cli, errata, review
 from roboscriptorium.disagreements import Disagreement, Verdicts
+from roboscriptorium.pdf import Line, PageText
 
 
 class _Recorder:
@@ -385,3 +386,58 @@ def test_a_place_where_one_side_has_nothing_says_what_the_other_has(tmp_path):
     assert items["e"]["reasons"] == ["the publisher's e-book has “>” here, our text nothing"]
     assert items["l"]["reasons"] == ["our text has “en” here, the publisher's e-book nothing"]
     assert items["k"]["reasons"] == [review.GoldenQuestions.REASON]
+
+
+OURS = "Hij was zo stom geweest zijn geld niet op een"
+
+
+def _misprint_review(tmp_path, layer_line=OURS, root=True) -> review.RegionReview:
+    """A golden review whose place `k` sits on line 24 of page 17, the text layer's line."""
+    page = PageText(
+        17, 300, 500, [Line("x", 10, 20, 280, 30)] * 24 + [Line(layer_line, 10, 20, 280, 30)]
+    )
+    return review.RegionReview(
+        tmp_path / "s.pdf",
+        [page],
+        [],
+        review.Corrections(tmp_path / "answers.jsonl"),
+        lambda: None,
+        "nld",
+        golden=review.GoldenQuestions([_place("geld", "geId")], Verdicts(tmp_path / "v.jsonl")),
+        book_root=tmp_path if root else None,
+    )
+
+
+def test_a_misprint_on_a_place_that_our_text_already_reads_is_refused_and_nothing_is_saved(
+    tmp_path,
+):
+    r = _misprint_review(tmp_path)
+    body = {"key": "k", "text": OURS, "misprint": OURS}
+    out = r.record(body)
+    assert out["refused"] and "nothing to correct" in out["warning"]
+    assert not errata.path(tmp_path).exists() and not (tmp_path / "v.jsonl").exists()
+
+
+def test_a_misprint_the_text_layer_cant_place_once_is_refused(tmp_path):
+    # Our line differs from the layer's (an OCR correction sits there), and the entry would
+    # match nothing in the build: refused, with the book left able to build.
+    r = _misprint_review(tmp_path, layer_line="Hij was zo stom geweest zijn gelt niet op een")
+    out = r.record({"key": "k", "text": OURS, "misprint": OURS.replace("geld", "geldt")})
+    assert out["refused"] and "errata.toml" in out["warning"]
+    assert not errata.path(tmp_path).exists()
+    out = _misprint_review(tmp_path, root=False).record(
+        {"key": "k", "text": OURS, "misprint": OURS.replace("geld", "geldt")}
+    )
+    assert out["refused"] and "keeps no errata" in out["warning"]
+
+
+def test_a_misprint_on_a_place_is_an_erratum_from_our_text_and_the_verdict_stays_the_print(
+    tmp_path,
+):
+    r = _misprint_review(tmp_path)
+    # The page prints the e-book's reading; our text is what the erratum turns.
+    theirs = "Hij was zo stom geweest zijn geId niet op een"
+    out = r.record({"key": "k", "text": theirs, "misprint": OURS.replace("geld", "geldt")})
+    assert out["errata"] == [{"page": 17, "printed": "geld", "reads": "geldt"}]
+    assert errata.load(tmp_path) == [errata.Erratum(17, "geld", "geldt")]
+    assert Verdicts(tmp_path / "v.jsonl").by_key["k"].truth == "geId"

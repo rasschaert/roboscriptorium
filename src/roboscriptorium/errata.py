@@ -108,6 +108,11 @@ def from_line(page: int, printed: str, reads: str, lines: list[str], at: int) ->
     return Erratum(page, found, reads[cut : len(reads) - after])
 
 
+def occurs_once(erratum: Erratum, lines: list[str]) -> bool:
+    """Whether an erratum's printed words occur exactly once in a page's lines."""
+    return " ".join(lines).translate(_FOLD).count(erratum.printed.translate(_FOLD)) == 1
+
+
 def _common(a: str, b: str) -> str:
     k = 0
     while k < min(len(a), len(b)) and a[k] == b[k]:

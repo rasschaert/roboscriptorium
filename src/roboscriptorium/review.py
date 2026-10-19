@@ -604,7 +604,16 @@ class RegionReview:
             append_jsonl(self.corrections.path.with_name("warnings.jsonl"), entry)
             return {"warning": why}
         if place:
-            return self.golden.record(body)
+            saved = None
+            if (fix := body.get("misprint")) is not None:
+                saved = self._place_misprint(body["key"], fix)
+                if isinstance(saved, str):
+                    return {"warning": saved, "refused": True}
+            answer = self.golden.record(body)
+            if saved is None:
+                return answer
+            errata.save(self.book_root, saved)
+            return {**answer, "errata": [asdict(saved)]}
         if (fix := body.get("misprint")) is not None:
             found = self._misprints(flag, text if text is not None else flag.text, fix)
             if isinstance(found, str):
@@ -616,6 +625,29 @@ class RegionReview:
             errata.save(self.book_root, e)
         noted = errata.load(self.book_root) if self.book_root else []
         return {**asdict(answer), "errata": _errata_of(flag, answer, noted)}
+
+    def _place_misprint(self, key: str, fix: str) -> errata.Erratum | str:
+        """The erratum that turns our text's line at a golden place into `fix`, or why not.
+        It is made from our text, not from the reading the answer chose: the build holds
+        ours, and an entry that doesn't match it stops the build."""
+        if self.book_root is None:
+            return "This review keeps no errata."
+        d = self.golden.items[key]
+        ours = self.golden.lines(key)[0]
+        if fix == ours:
+            return "Our text already reads that: there is nothing to correct."
+        lines = [ln.text for ln in self.scan.pages[d.page].lines]
+        try:
+            found = errata.from_line(d.page, ours, fix, lines, d.lines[0])
+        except (StopIteration, ValueError):
+            found = None
+        if found is None or not errata.occurs_once(found, lines):
+            return (
+                "Not saved: those words can't be found exactly once in the page's text layer "
+                "(an OCR correction or a line break is in the way). Add the entry to "
+                "errata.toml by hand."
+            )
+        return found
 
     def _misprints(self, flag: F.Flag, printed: str, fix: str) -> list[errata.Erratum] | str:
         """The errata that turn a region's lines as printed into `fix`, or why not."""

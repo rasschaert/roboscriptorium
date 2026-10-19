@@ -308,8 +308,9 @@ function textBlock(r, doubt) {
       : `<textarea id="text" rows="2">${esc(draft.text)}</textarea>${charPad()}`}${after}`;
 }
 
-// A misprint is said of running text the human answers here, not of a golden book's place.
-const takesMisprint = r => draft.kind === "text" && r.got == null;
+// A misprint can be said of any text answer, on a golden book's place too (our text is what
+// the erratum corrects).
+const takesMisprint = r => draft.kind === "text";
 
 // The region's text as the answer says it is printed.
 function printed(r) {
@@ -340,7 +341,8 @@ function toggleMisprint() {
     draft.misprint = draft.text;
     draft.text = start;
   } else {
-    draft.misprint = draft.misprint == null ? printed(r) : null;
+    // On a golden book's place (`got` is our words) the box starts from our text.
+    draft.misprint = draft.misprint == null ? (r.got != null ? r.readings[0].text : printed(r)) : null;
   }
   draft.confirm = false;
   render();

@@ -371,6 +371,12 @@ and a correction already typed into the text before `m` moves into the misprint 
 The answer stays what the page prints, which the readers are scored on, and the words
 that differ go to the book's errata (`errata.py`).
 
+On a golden book's question (our text against the publisher's e-book), `m` works the same: the
+box starts from our text, and the erratum is made from our text, not from the reading the
+answer chose, because the build holds ours. It is refused where our text already reads what
+was typed, and where the words can't be found exactly once in the page's text layer (an OCR
+correction or a line break in the way): that entry goes into `errata.toml` by hand.
+
 A line the machine didn't ask about, such as a misprint seen while reading, joins the
 questions with `review work/<book> --find "<words>"`: each line holding those words,
 answered like any other, its answer kept in later builds without asking again.
