@@ -522,3 +522,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-20 | bench validation after the arbiter retrain (warm) | 0 | 3 | 0 |
 | 2026-10-20 | train arbiter without Au pair, De vergelding, Glazuur (restore) | 0 | 9 | 0 |
 | 2026-10-20 | bench tuning after the arbiter restore (warm) | 0 | 3 | 0 |
+| 2026-10-20 | trust data, all books, warm, rebuilt for the line-end features | 1500 | 3 | 0 |
+| 2026-10-20 | train arbiter with line-end features, bench tuning and validation, warm | 1500 | 16 | 0 |
+| 2026-10-20 | bench tuning, line-end arbiter, warm | 1500 | 4 | 0 |

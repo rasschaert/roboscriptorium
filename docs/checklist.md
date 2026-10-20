@@ -336,7 +336,7 @@ In this order:
       against the word list. Een Russische roman's became "democratie- en", taken for a
       word left open before "en" (`hyphens._suspended`, "voor- en nadelen"). True by
       definition, so code; no other case in the latest benches
-- [ ] A comma at a line's end turned into a stop by the check (2026-10-20: decisions.md): add
+- [ ] A comma at a line's end turned into a stop by the check (2026-10-20: decisions.md; the two arbiter features below were tried and NOT taken, tuning 0.29 → 0.30, glued or split words worse; look for another handle, or a rule true by definition): add
       "the next line opens in lower case" and "the span ends its line" as arbiter features at
       the next trust-data rebuild; 22 unasked errors in De vergelding and De kerk van de dode
       meisjes, 7 certain (a stop before lower case). Resolution doesn't help the readers.
