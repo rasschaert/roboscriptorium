@@ -48,7 +48,7 @@ The weekend's order (the user left it to the agent): each step feeds the next.
 6. De vergelding's, Glazuur's and Vanille en andere smaken's first looks (slices 9–107,
    11–101 and 9–79, now the first-look set): their reading runs overnight 2026-10-19 (~2 h,
    2 h and 1.5 h, cold), then `bench first-look --first-look` scores the three once each,
-   their scores go in decisions.md, then each joins a set.
+   their scores go in decisions.md, then each joins a set. Done 2026-10-20: De vergelding and Glazuur tuning, Vanille validation (no trust data for the first two yet).
 7. Trim the sets (the user, 2026-10-18: "trim the fat"; after tonight's benches, batched
    with one retrain and new baselines): Verminkt sliced to ~90 pages (tooling: cut a
    reference without chapters where the slice's first and last scan lines align); Afscheid

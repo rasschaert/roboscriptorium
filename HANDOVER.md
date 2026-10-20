@@ -74,7 +74,6 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
   photos arrive. The chains, diaeresis and footnote-star fixes were found on it and are
   judged on its next build, which waits.
 - Ex-minnaar's 6 new questions, then its read-through.
-- Ex-minnaar's 6 new questions, then its read-through.
 - **The verdict batch is done (2026-10-19, the user, all 15 books).** 32 places answered:
   7 were the reference departing from its print (ours right, now patched in), 25 were the
   build's errors: 18 of them compounds hyphenated in print at a line end that the join closed
@@ -83,9 +82,6 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
   The batch was chosen as places that looked like the reference's departures: it was wrong
   about three in four, so the open gap is the line-end compound (docs/decisions.md,
   2026-10-19). Next: a model-free look at those 18 against the hyphen judge's answers.
-- One Ollama model nothing in the pipeline uses: `hf.co/mindchain/imajev-4b-GGUF:Q8_0`
-  (5.2 GB; the others on the old list are pruned, checked 2026-10-19). Whether imajev on
-  `llama-server` reads this copy is not checked (docs/models.md, Setup): the user's call.
 
 ## Worktrees
 
@@ -112,9 +108,6 @@ docs/decisions.md, 2026-10-11). Never symlink `work` into a worktree; stage file
 
 ## Trail (2026-10-20, morning)
 - Done: the three reads and their first-look scorings (decisions.md, 2026-10-20). Nothing runs.
-- Next: place De vergelding, Glazuur and Vanille in `bench.SETS` (they are in the first-look set,
-  which a rerun of `bench first-look` would score twice: move them out first). Look at Vanille's
-  paragraph breaks (0.87), dashes and headings (1/15) and De vergelding's unasked (0.70) before
-  choosing; `docs/golden-books.md` then regenerates.
+- Next: the sets are placed (decisions.md, 2026-10-20: De vergelding and Glazuur tuning, Vanille validation); then the checklist's order (au-pair merge, small-caps short test, line-end compounds).
 - Au pair is tuning (no trust data yet); the verdict batch is answered (decisions.md, 2026-10-19).
 - Priority from the user: glued words and wrong letters over ambiguous compounds.

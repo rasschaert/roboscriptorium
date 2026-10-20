@@ -180,7 +180,7 @@ project:
 | --- | --- | --- |
 | **tuning** (16 books) | choices are made on it, and the arbiter learns from it | studying with past exams |
 | **validation** (7 books) | only vetoes: a choice no better on tuning isn't taken for a gain here | a mock exam |
-| **first look** (6 books waiting) | a new book scored **once**, touched by nothing before it; then it joins tuning or validation | the real exam, sat by every new book |
+| **first look** (1 book waiting) | a new book scored **once**, touched by nothing before it; then it joins tuning or validation | the real exam, sat by every new book |
 
 Even inside tuning, each book is scored by an arbiter trained *without* that book, so
 it never grades its own homework. A first look says how the machine does on a book it
