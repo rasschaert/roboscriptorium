@@ -2,14 +2,13 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-20 ~16:00 by the session that placed the three new
-books in sets and fixed the OCR check's split words.
+end of every session. Rewritten 2026-10-21 ~00:20 by the session that screened the downloaded models.
 
 ## Running
 
-Nothing (`screen -ls` is empty). Everything below is committed on `main`, not pushed.
+`experiments/detached.sh night-chain` (screen `robo-night-chain`, log `work/runs/night-chain.log`, started 2026-10-21 ~00:15): H2O-Lightning-Omni-4B on the unasked-error set (`work/probes/unasked-set`, built by the screen `unasked-set`), scored by `experiments/triage_score.py h2o work/probes/unasked-set`; then, once `qwen72-download` ends, `experiments/screen_reader.sh` on Qwen2.5-VL-72B-4bit (reader score and vote simulation). Everything else is committed on `main`, not pushed.
 
-**Model trials, paused.** Weights live in `~/.cache/huggingface/models/`, never under `~/code` (backed up hourly; the user, 2026-10-20). Screened: PaddleOCR-VL (unfit, deleted), olmOCR-2-7B (not better, 8.8 GB kept there). Downloads stopped part way, not resumed: Fusion GGUF (17 of 21 GB), Qwen2.5-VL-72B (0.9 of 42 GB; probably cancel), fonles-decision-1 (1.5 of 19 GB), H2O-Lightning-Omni-4B (1.2 of 9 GB). Ask the user before resuming any (size, place, free disk).
+**Models.** Weights live in `~/.cache/huggingface/models/` (never under `~/code`, which is backed up hourly), environments in `~/.cache/huggingface/envs/` (`h2o-env`); `work/models/mlx-env` stays. Screened: PaddleOCR-VL (unfit, deleted), olmOCR-2-7B (best alone second to qwen, helps a plain vote 801 → 809, but 9 → 12 silent errors as the arbiter's fourth witness and no better on whole pages: not taken), Fusion (imported as `fusion-27b:q5km`, text only, not screened: the judge set `work/tryout/judge-v1` is missing, a new set means a version bump and a warm build), H2O (a line detector: AUC 0.86 on the reader set; on the unasked errors, see decisions.md), fonles-decision-1 (downloaded, custom server not read yet).
 
 ## Done today (decisions.md, 2026-10-20)
 
