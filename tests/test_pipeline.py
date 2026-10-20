@@ -12,6 +12,7 @@ from roboscriptorium.book import Book
 from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.ir import SourceRef
+from roboscriptorium.pdf import Line, PageText
 
 LINES = [f"Line {i} of the story goes on and on across the page" for i in range(12)]
 
@@ -655,3 +656,17 @@ def test_the_context_judge_settles_a_question_where_it_picks_the_arbiters_versio
     asked.clear()
     pipeline.run(book)
     assert asked == []
+
+
+def _spelling_page(number: int, text: str) -> PageText:
+    return PageText(number, 280, 500, [Line(text, 10, 20, 250, 30)])
+
+
+def test_a_slice_weighs_hyphens_by_the_whole_bodys_spellings_and_a_full_build_by_its_own():
+    whole = [_spelling_page(n, f"een make-up nummer {n}") for n in (1, 2, 3)]
+    built = [replace(whole[0], lines=[Line("een makeup nummer 1", 10, 20, 250, 30)])]
+    # The page being built counts as it is now, the others as the layer reads them.
+    seen = pipeline._book_spellings(whole, built)
+    assert seen["make-up"] == 2 and seen["makeup"] == 1
+    # Built whole, the evidence is exactly the pages' own.
+    assert pipeline._book_spellings(whole, whole) == pipeline.hyphens.spellings(whole)
