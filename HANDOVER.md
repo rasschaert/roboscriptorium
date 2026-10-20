@@ -2,13 +2,15 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Rewritten 2026-10-21 ~00:20 by the session that screened the downloaded models.
+end of every session. Rewritten 2026-10-21 ~03:00 by the session that screened the downloaded models.
 
 ## Running
 
-`experiments/detached.sh night-chain` (screen `robo-night-chain`, log `work/runs/night-chain.log`, started 2026-10-21 ~00:15): H2O-Lightning-Omni-4B on the unasked-error set (`work/probes/unasked-set`, built by the screen `unasked-set`), scored by `experiments/triage_score.py h2o work/probes/unasked-set`; then, once `qwen72-download` ends, `experiments/screen_reader.sh` on Qwen2.5-VL-72B-4bit (reader score and vote simulation). Everything else is committed on `main`, not pushed.
+Nothing (`screen -ls` is empty). 22 commits on `main`, not pushed (the user was asleep; a push over 1Password's SSH key could have stalled the session).
 
-**Models.** Weights live in `~/.cache/huggingface/models/` (never under `~/code`, which is backed up hourly), environments in `~/.cache/huggingface/envs/` (`h2o-env`); `work/models/mlx-env` stays. Screened: PaddleOCR-VL (unfit, deleted), olmOCR-2-7B (best alone second to qwen, helps a plain vote 801 → 809, but 9 → 12 silent errors as the arbiter's fourth witness and no better on whole pages: not taken), Fusion (imported as `fusion-27b:q5km`, text only, not screened: the judge set `work/tryout/judge-v1` is missing, a new set means a version bump and a warm build), H2O (a line detector: AUC 0.86 on the reader set; on the unasked errors, see decisions.md), fonles-decision-1 (downloaded, custom server not read yet).
+**Models.** Weights live in `~/.cache/huggingface/models/` (never under `~/code`, which is backed up hourly), environments in `~/.cache/huggingface/envs/` (`h2o-env`); `work/models/mlx-env` stays. Every download the user asked for is screened (decisions.md, 2026-10-20 and 21): PaddleOCR-VL unfit (deleted); olmOCR-2-7B helps a plain vote (801 → 809) but not the arbiter (9 → 12 silent errors) nor whole pages; Qwen2.5-VL-72B unfit (vote 801 → 793, 42 GB still on disk: delete when the user says); H2O-Lightning-Omni-4B and fonles-decision-1 as detectors of the unasked errors, AUC 0.62 and 0.57: not taken; Fusion imported as `fusion-27b:q5km` (text only, no vision through Ollama), not screened (the judge set `work/tryout/judge-v1` is missing: a new set is a version bump and a warm build). Ask before any download over 1 GB.
+
+**Arbiter.** Unchanged: the earlier one, restored (tuning 0.29, run `tuning-20261021` of the sanity bench). The line-end features (span ends its line, next line's case) were tried and not taken: tuning 0.29 → 0.30, glued or split words worse.
 
 ## Done today (decisions.md, 2026-10-20)
 
@@ -30,21 +32,11 @@ end of every session. Rewritten 2026-10-21 ~00:20 by the session that screened t
 
 ## Next, in order
 
-1. **The arbiter features** (the three new books' trust data is built but NOT used: training on them did not help, decisions.md 2026-10-20; the earlier arbiter is restored and the tuning reference run is `tuning-20261020T182636-f38e636-dirty`): they go in (checklist: a line-end comma turned into a stop
-   when the next line opens in lower case, 7 certain errors; and the line-end "span ends
-   its line" feature). Say the estimate from docs/run-times.md before starting.
-2. **A line-end compound the join closed** (60 unasked errors over tuning and validation, the
-   mild class: the user ranks glued words and wrong letters first). The hyphen judge asks only
-   English books; Dutch closes 355 of 361. A look at the 18 verdict-batch cases against the
-   judge's answers is still model-free work.
-3. **The edition check's silent gaps**: lost words read before asked (the reader on a line's
-   left end and 1.2-pitch gaps, extending `missing.py`: Vanille and Verminkt hold the dot lines;
-   the five in Vanille's slice don't earn a stage yet); two-letter words beside a chain's break
-   (`experiments/probe_chain_breaks.py`, 2 of 11 wrong); notes lost or made by the footnote
-   star, to count on the golden books with notes.
-4. **A non-fiction pair with numbered chapters and sub-heads** for tuning (the user supplies
-   candidates; golden-notes.md, gaps to hunt).
-5. De geruchten's headings, the checklist's remaining steps (its top section is out of date).
+1. **Emphasis accents and rare glyphs** (the largest unasked class together with them): half of the 42 stress-accent errors are real (an acute accent on an i for emphasis: "zíjn", "níét"), the rest the reference's slips (decisions.md, 2026-10-21); no prompt or reader tried keeps them at 300 DPI (a 450 DPI crop keeps 2 of 6). The dotless ı of "Sıla" (five times in Het geluid van bananen) is the same kind. The next step is a reader that sees the accent: a word crop at high resolution, only where a word is a likely target; learned, not a list.
+2. **A verdict batch for the reference's slips** (the other half of that class and "I" for "l", "0" for "o"): human verdicts only, through `experiments/review_batch_commands.py`; it needs the user.
+3. **A line-end compound the join closed** (60 unasked, the mild class). The hyphen judge asks only English books; Dutch closes 355 of 361.
+4. **Lost lines** (about half are held by the whole-page readers but not as clean inserts; the rest are decorated openings no whole-page reader reads): an opening-line reader (`missing.py` on line starts and gaps).
+5. **A non-fiction pair with numbered chapters and sub-heads** for tuning (the user supplies candidates); De geruchten's headings; the checklist's remaining steps.
 
 ## Waiting on the user
 
