@@ -23,6 +23,14 @@ def page(number: int, rows: list[tuple[float, str]], footer: list[str] = ()) -> 
     return PageText(number, 280, HEIGHT, lines)
 
 
+def test_a_hyphen_at_a_break_follows_the_spelling_the_caller_has_of_the_whole_book():
+    rows = [(10.0, "wist hij van make-"), (10.0, "up en zo")]
+    alone = reflow([page(5, rows)])
+    assert "makeup" in alone[0].text
+    elsewhere = Counter({"make-up": 2})
+    assert "make-up" in reflow([page(5, rows)], seen=elsewhere)[0].text
+
+
 def test_join_undoes_hyphenation_only_before_lowercase():
     assert join("af-", "stormde") == "afstormde"
     assert join("Noord-", "Holland") == "Noord-Holland"

@@ -274,11 +274,13 @@ def reflow(
     roles: dict[SourceRef, LineRole] | None = None,
     known: Callable[[str], bool] | None = None,
     compound: Compound | None = None,
+    seen: Counter | None = None,
 ) -> list[Block]:
     """Lines into blocks. `known` says whether the language's word list has a word
     (`Lexicon.knows`), and `compound` whether an undecided hyphen is the word's own:
-    evidence for the hyphens at line ends (`join`)."""
-    seen = spellings(pages)
+    evidence for the hyphens at line ends (`join`). `seen` is how the book spells its
+    words (`spellings`), of these pages unless the caller has more of the book."""
+    seen = spellings(pages) if seen is None else seen
     blocks: list[Block] = []
     opening = True
     # Whether a scene break waits for the next paragraph.

@@ -2,6 +2,7 @@
 
 import json
 import sys
+from collections import Counter
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
@@ -275,9 +276,19 @@ def run(
     )
     corrected = parabreaks.judged(book.source, corrected, roles, break_judge, judge_cache, indented)
     unanswered = reflow(
-        checked, _apart(checked, model_roles, note_lines, epigraph_lines), known, compound
+        checked,
+        _apart(checked, model_roles, note_lines, epigraph_lines),
+        known,
+        compound,
+        _book_spellings(whole, checked),
     )
-    built = reflow(corrected, _apart(corrected, roles, note_lines, epigraph_lines), known, compound)
+    built = reflow(
+        corrected,
+        _apart(corrected, roles, note_lines, epigraph_lines),
+        known,
+        compound,
+        _book_spellings(whole, corrected),
+    )
     # A place is asked while its paragraph's quotes still don't pair up once the answers
     # are in (an answer elsewhere in the paragraph may have settled it), or while one of
     # its own lines is answered, so the reviewer sees the answer.
@@ -424,6 +435,14 @@ def read_prompt(
 ) -> str:
     """The read model's prompt for a line of this book, telling it how the book is set."""
     return quotes.style_prompt(*_style(book, body, dash, dots))
+
+
+def _book_spellings(whole: list[PageText], pages: list[PageText]) -> Counter:
+    """How the book spells its words, over its whole body: the pages being built as they
+    are now, the rest as the text layer reads them, so a slice weighs a hyphenated
+    compound by the book's other pages as a build of the whole book does."""
+    built = {p.number: p for p in pages}
+    return hyphens.spellings([built.get(p.number, p) for p in whole])
 
 
 def book_style(
