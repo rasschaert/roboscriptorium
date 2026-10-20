@@ -51,6 +51,9 @@ SPECS = {
     "monterosso-mon-amour--ia-scan": "",
     "het-geluid-van-bananen--ia-scan": "9-101:1-14",
     "het-schaduwhuis--ia-scan": "9-91:1-19",
+    "au-pair--ia-scan": "7-99:1-24",
+    "de-vergelding--ia-scan": "9-107:1-4",
+    "glazuur--ia-scan": "11-101:1-9",
     # No golden reference: labelled by a human's answers in the review.
     "stella": "answers",
     "ex-minnaar": "answers",

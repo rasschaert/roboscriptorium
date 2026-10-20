@@ -103,9 +103,7 @@ WAITING = [
 FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"] + WAITING)
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
-NO_TRUST_DATA: frozenset[str] = frozenset(
-    {"au-pair--ia-scan", "de-vergelding--ia-scan", "glazuur--ia-scan"}
-)
+NO_TRUST_DATA: frozenset[str] = frozenset()
 TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST_DATA
 # The line-role model trains on every tuning book (`experiments/train_sorter.py`).
 SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"])
