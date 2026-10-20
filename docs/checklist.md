@@ -312,7 +312,7 @@ In this order:
       another instrument: the word list knows only some bare forms as non-words
       ("geergerd", not "financiele", "client", "loge"), and finds none in Stella. Next: the
       Carrère books (`work/<book>/editions/`, French and English, ~$3 each) once built
-- [ ] Small capitals as a version for the judges (found by the edition check, 2026-10-19):
+- [x] ~~Small capitals as a version for the judges~~ (null on its short test, 2026-10-20: decisions.md; branch `small-caps` unmerged; found by the edition check, 2026-10-19):
       Andere levens' one silent error is "LC1" for "LCI" set in small capitals, where no
       reading had the capitals; in the latest benches 18 errors are capitals read in
       mixed case ("vTM", "voc", "ocMw", "xTc", "cr" for CT), 7 unasked. The judges'

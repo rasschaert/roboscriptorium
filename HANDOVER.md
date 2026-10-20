@@ -48,10 +48,9 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
    it again as a settler; only as a vote the arbiter weighs.
 2. **Merged into main 2026-10-19** (tests 508 pass, pushed): `cj-cap`, `review-find`, `cj-min`,
    `hyphen-chains` (chains, diaeresis join, footnote star; its warm benches no change).
-   `au-pair` is merged too (checked 2026-10-20). **Still to merge**: `small-caps` (`5fb536c`), after its short test and cold bench. Merged branches' worktrees (`../roboscriptorium-*`) can be removed.
+   `au-pair` is merged too (checked 2026-10-20). `small-caps` (`5fb536c`) is NOT to merge: its short test was null (decisions.md, 2026-10-20); its worktree can go. Merged branches' worktrees (`../roboscriptorium-*`) can be removed.
 3. **Au pair's first-look score** is in decisions.md and the set is chosen (tuning).
-4. **`small-caps` short test** on the pages with the 18 known errors, then a cold bench with
-   the trust data rebuilt (needs Ollama free: after Au pair).
+4. **`small-caps`: done, null** (2026-10-20); nothing left on it.
 5. The edition check's other silent gaps: lost lines read before asked; two-letter words
    beside a chain's break (probe: `experiments/probe_chain_breaks.py`, 2 of 11 wrong, too
    few to set a rule). Not yet counted: notes lost or made by the footnote star, on the

@@ -48,7 +48,7 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
    Fed in as two more line readers they reached few of them: `bench tuning` no change
    (0.32 → 0.32), validation 0.50 → 0.43 after review but worse before it on two books
    (2026-10-15). The line-role feature they suggested found little left to fix
-   (2026-10-16: 5 of 657 unread lines wrong), and the hyphen votes were a null too.
+   (2026-10-16: 5 of 657 unread lines wrong), and the hyphen votes were a null too. A small capitals' all-capitals version for the judges: 0 of 11 known errors fixed (2026-10-20).
 1. **Structure.** The bench now counts paragraph breaks per page and prints headings.
    - Line roles: the trees (`sorter.py`) are on by default since 2026-10-13 (validation
      0.59 → 0.50, no book worse); Dolittle's text wrapped around drawings is what they
