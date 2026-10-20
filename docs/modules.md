@@ -65,7 +65,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `ink.py`: `threshold`, the grey level between ink and paper (Otsu), for the italics,
   type and scan measurements.
 - `hyphens.py`: lines joined across their ends (`join`). A line-end hyphen stays or goes
-  by evidence in order: the book's own spelling (`spellings`), the word list, a capital
+  by evidence in order: the book's own spelling (`spellings`, over the whole body: `pipeline._book_spellings`), the word list, a capital
   after the break, the parts beside an inner hyphen, then `Compounds`, the judge
   (`judge_model`) asked whether an English hyphen nothing else decides is the word's
   own, its answers cached by the hyphenated word in `stages/compounds.json` (only

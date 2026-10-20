@@ -596,7 +596,7 @@ where the stronger ones are silent:
 
 | Evidence | Why it is there | Its own failure |
 | --- | --- | --- |
-| the book's own spelling inside lines (`spellings`) | 12 of 12 right where it spoke | silent on a word printed once |
+| the book's own spelling inside lines (`spellings`), counted over the book's whole body (a slice's pages as built, the rest as the layer reads them: `pipeline._book_spellings`) | 12 of 12 right where it spoke; counted over a bench slice only, it was silent on words the book hyphenates elsewhere (3 of 27 compounds closed wrongly, tuning compound hyphens 0.023 → 0.020 once the whole body counts) | silent on a word printed once (24 of those 27 compounds) |
 | the word list knows exactly one of the two forms | fixes 7 wrong calls, breaks none where the book is silent | knows a closed form the print hyphenates (`faceplate`, `northernmost`: 3); knows both (`make-up`, `makeup`) |
 | a capital after the break (`Noord-Holland`) | right on every true capital | a word set in capitals (`WE-` + `RELDGESCHIEDENIS`), 0 of 3: so it no longer counts as one |
 | a hyphen already in the word | `Mens-erger-je-niet`, `good-for-nothing` | kept as a rule it was wrong 8 of 10 (`Zuid-Lon-den`, `Majuba-theeplan-tage`): now only where the parts beside the break are both words and don't make one |
