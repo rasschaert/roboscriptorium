@@ -320,7 +320,7 @@ In this order:
       reading's all-capitals form (letters only, 1 → I, 0 → O) as one more version where
       it mixes case inside a word, and let them choose. Upstream of the OCR check's
       caches: short test on the pages it touches, then a cold bench
-- [ ] Line-end hyphens inside hyphenated chains (found by the edition check, 2026-10-19):
+- [x] Line-end hyphens inside hyphenated chains (done 2026-10-19, merged; 55 of 60 right on the chain probe, warm bench no change: decisions.md; found by the edition check):
       Een Russische roman prints a chant, "geen-verandering-in-de-toestand-van-de-
       patiënt", broken at its own hyphens ("in-de-" / "toestand", "van-" / "de"), and the
       build joins both as break hyphens ("in-detoestand-vande"), silently; the next line
@@ -330,7 +330,7 @@ In this order:
       has another hyphen is mostly the word's own, but not always ("Noord-Hol-" /
       "landse"): give the joiner the chain as evidence (and the book's spellings of
       chain pieces), its counterexamples tested first
-- [ ] A Dutch word broken at its diaeresis gets it back when joined (low; found by the
+- [x] A Dutch word broken at its diaeresis gets it back when joined (done 2026-10-19, merged: decisions.md; low; found by the
       edition check, 2026-10-19): Dutch drops the diaeresis where it breaks a word
       ("democratieën" as "democratie-" / "en"), so the join must try the ë or ï form
       against the word list. Een Russische roman's became "democratie- en", taken for a
@@ -345,7 +345,7 @@ In this order:
       the reviewer must type in full. Read each such gap with the missing-line reader
       first, so the question proposes the line (or it is trusted); confirm both pages
       are asked today, then count lost-line questions over the golden books
-- [ ] A footnote whose mark the layer misreads (found by the edition check, 2026-10-19):
+- [x] A footnote whose mark the layer misreads (done 2026-10-19, merged: decisions.md; its notes lost or made are still to count on the golden books with notes; found by the edition check):
       Een Russische roman p. 270's translator's note "*Erik Orsenna (1947)…" stays in the
       running text, spliced mid-sentence into the paragraph that runs on, because the
       layer reads its "*" as "“" and `footnotes._MARK` decides on the layer's text; the OCR

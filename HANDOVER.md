@@ -48,12 +48,8 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
    it again as a settler; only as a vote the arbiter weighs.
 2. **Merged into main 2026-10-19** (tests 508 pass, pushed): `cj-cap`, `review-find`, `cj-min`,
    `hyphen-chains` (chains, diaeresis join, footnote star; its warm benches no change).
-   **Still to merge**: `au-pair` last, when no read runs from main (its four manifests sit
-   untracked in main and are identical to the branch's: remove them, merge, check with
-   `git diff --stat`; the reads need them present while they run), then regenerate
-   docs/golden-books.md and tick the checklist's diaeresis, footnote-star and chains steps
-   (the checklist lives on `au-pair`). `small-caps` (`5fb536c`) waits for its cold bench.
-3. **Au pair's first-look score** in decisions.md, then its set (checklist).
+   `au-pair` is merged too (checked 2026-10-20). **Still to merge**: `small-caps` (`5fb536c`), after its short test and cold bench. Merged branches' worktrees (`../roboscriptorium-*`) can be removed.
+3. **Au pair's first-look score** is in decisions.md and the set is chosen (tuning).
 4. **`small-caps` short test** on the pages with the 18 known errors, then a cold bench with
    the trust data rebuilt (needs Ollama free: after Au pair).
 5. The edition check's other silent gaps: lost lines read before asked; two-letter words
