@@ -547,9 +547,20 @@ def apply(pages: list[PageText], suspects: list[Suspect]) -> list[PageText]:
         for i, line in enumerate(page.lines):
             text = line.text
             here = [s for s in fixes.get((page.number, i), []) if s.original == text]
-            lines.append(spliced(line, [(s.start, s.end, s.chosen) for s in here]))
+            lines.append(spliced(line, [(s.start, s.end, fixed_text(s, text)) for s in here]))
         out.append(replace(page, lines=lines))
     return out
+
+
+def fixed_text(s: Suspect, text: str) -> str:
+    """The text a fix puts in its span. A line's last word that loses only its break hyphen
+    keeps it: whether the hyphen is the break's is the joiner's call (`hyphens.join`), and
+    without it the next line is joined with a space ("Oran je"). `text` is the line the fix
+    is made in; every place that writes a fix into a line goes through this."""
+    last = s.end == len(text) and text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha()
+    if last and s.chosen == s.ours[:-1] and s.ours.endswith(text[-1]):
+        return s.ours
+    return s.chosen
 
 
 def save(suspects: list[Suspect], path: Path) -> None:

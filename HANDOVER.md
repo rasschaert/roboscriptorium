@@ -6,14 +6,16 @@ end of every session. Written 2026-10-19 ~21:15 by the session that queued the e
 
 ## Running
 
-Started 2026-10-19 ~20:30, each with a watcher; `screen -ls` lists them:
+Started 2026-10-20 ~15:00, with a watcher; `screen -ls` lists it:
 
-1. **`au-pair-look`**: Au pair's cold build (pp. 7-99, ~3 h), then its single first-look
-   scoring; the three reads (`vergelding-read`, `glazuur-read`, `vanille-read`) wait behind
-   it, in that order (`work/runs/*.sh`; their wait lines had a doubled `robo-` prefix, fixed).
-
-Done today: the judge's validation rerun (WORSE, after review 0.44 -> 0.46) and the
-chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
+1. **`hyphen-keep`**: two warm tuning benches in a row, the first from the worktree
+   `../roboscriptorium-hyp` (the code before the fix), the second from main with the fix
+   (`ocrcheck._chosen`, uncommitted with its tests and the design.md paragraph). The line-role
+   trees were retrained first on the tuning set that now holds Au pair, De vergelding and
+   Glazuur (`train_sorter.py --save`), so both runs use the same trees. Commit the fix only
+   if the second shows split words fixed and nothing made (`bench-diff`); then record in
+   decisions.md (the numbers; 12 of 12 of De vergelding's line-end fixes came out split) and
+   remove `../roboscriptorium-hyp`.
 
 ## Done overnight (decisions.md, 2026-10-18 and 19)
 

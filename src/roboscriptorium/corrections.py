@@ -26,6 +26,7 @@ from roboscriptorium import hyphens
 from roboscriptorium.files import append_jsonl, read_jsonl
 from roboscriptorium.flags import Flag
 from roboscriptorium.ir import SourceRef
+from roboscriptorium.ocrcheck import fixed_text
 from roboscriptorium.pdf import Line, PageText, spliced
 from roboscriptorium.roles import LineRole
 
@@ -308,7 +309,9 @@ def apply(
             continue
         human = places.get((s.page, s.line), [])
         if not any(a < s.end and s.start < b for a, b, _ in human):
-            places.setdefault((s.page, s.line), []).append((s.start, s.end, s.chosen))
+            places.setdefault((s.page, s.line), []).append(
+                (s.start, s.end, fixed_text(s, s.original))
+            )
     for (number, i), found in places.items():
         if (number, i) not in retyped:
             by_number[number].lines[i] = spliced(by_number[number].lines[i], found)

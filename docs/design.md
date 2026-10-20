@@ -609,6 +609,15 @@ known, and one Dutch compound (`heen-en-weerbewegingen`, closed in print though 
 parts are words). Both parts being words is no rule for them: it fired 13 right against
 3 wrong on the English slices and 0 against 44 on the Dutch.
 
+**The OCR check never takes a line's break hyphen off.** Where its versions of a line's last
+word differ only by the hyphen ("Oran-" / "Oran"), the judges are shown the word joined
+with the next line (`ocrcheck.hyphen_only`) and may well choose the bare stem; but
+writing the stem into the line leaves `join` no hyphen to see, and it sets the next line
+after a space ("Oran je", "ver plaatsen"). `ocrcheck._chosen` keeps the hyphen on such a fix and
+leaves the hyphen to reflow, which closes "Oran-" and "je." from the word list. Found
+2026-10-20 in De vergelding, where 12 of its 12 such fixes came out split (13 over all
+the books' caches; the other books' readers keep the hyphen).
+
 **The judge settles the English ones, not a question.** The scan can't show
 whether a broken word keeps its hyphen; that is the language's spelling, which a
 reviewer reading the crop knows no better than a model. Over the tuning books 438

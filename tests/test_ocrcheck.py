@@ -2,7 +2,7 @@ import json
 
 import pymupdf
 
-from roboscriptorium import corrections, flags, ocrcheck, ocrdoubts, pdf, readers
+from roboscriptorium import corrections, flags, hyphens, ocrcheck, ocrdoubts, pdf, readers
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.ocrcheck import Suspect, differences
@@ -828,3 +828,54 @@ def test_a_book_quotes_curly_when_its_layer_sets_more_curly_marks():
 
     assert ocrcheck.curly_book(pages("‘Ja,’ zei ze.", "Hij zei: 'nee'", "‘Nooit.’"))
     assert not ocrcheck.curly_book(pages("'Yes,' she said.", "He's ‘gone'"))
+
+
+def _hyphen_page() -> PageText:
+    lines = [
+        Line("het Franse equivalent van Radio Oran-", 25, 10, 276, 20),
+        Line("je. Dat lied begon met", 25, 22, 160, 32),
+    ]
+    return PageText(7, 300, 400, lines)
+
+
+def test_a_fix_that_drops_a_line_ends_break_hyphen_leaves_it_to_the_joiner():
+    text = "het Franse equivalent van Radio Oran-"
+    start = len(text) - len("Oran-")
+    drop = Suspect(7, 0, text, start, len(text), "Oran-", ("Oran",), (0, 0, 1, 1), "other", "Oran")
+    fixed = ocrcheck.apply([_hyphen_page()], [drop])
+    assert fixed[0].lines[0].text == text
+
+
+def test_a_fix_inside_a_line_still_drops_a_hyphen_it_removes():
+    text = "een zo- vreemd woord"
+    drop = Suspect(7, 0, text, 4, 7, "zo-", ("zo",), (0, 0, 1, 1), "other", "zo")
+    fixed = ocrcheck.apply([PageText(7, 300, 400, [Line(text, 25, 10, 276, 20)])], [drop])
+    assert fixed[0].lines[0].text == "een zo vreemd woord"
+
+
+def test_a_fix_that_changes_a_line_ends_word_and_its_hyphen_is_kept():
+    text = "de dankbar-"
+    fix = Suspect(7, 0, text, 3, 11, "dankbar-", ("dankbaar-",), (0, 0, 1, 1), "other", "dankbaar-")
+    fixed = ocrcheck.apply([PageText(7, 300, 400, [Line(text, 25, 10, 276, 20)])], [fix])
+    assert fixed[0].lines[0].text == "de dankbaar-"
+
+
+def test_a_line_end_word_the_check_fixed_joins_the_next_line_without_a_space():
+    text = "het Franse equivalent van Radio Oran-"
+    start = len(text) - len("Oran-")
+    drop = Suspect(7, 0, text, start, len(text), "Oran-", ("Oran",), (0, 0, 1, 1), "other", "Oran")
+    first, second = ocrcheck.apply([_hyphen_page()], [drop])[0].lines
+    assert (
+        hyphens.join(first.text, second.text)
+        == "het Franse equivalent van Radio Oranje. Dat lied begon met"
+    )
+
+
+def test_the_text_that_is_built_keeps_a_line_ends_break_hyphen_too(tmp_path):
+    text = "het Franse equivalent van Radio Oran-"
+    start = len(text) - len("Oran-")
+    drop = Suspect(7, 0, text, start, len(text), "Oran-", ("Oran",), (0, 0, 1, 1), "other", "Oran")
+    pages, _, _ = corrections.apply(
+        [_hyphen_page()], {}, Corrections(tmp_path / "regions.jsonl"), [drop]
+    )
+    assert pages[0].lines[0].text == text
