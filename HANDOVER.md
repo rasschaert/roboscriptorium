@@ -29,9 +29,7 @@ Nothing (`screen -ls` is empty). Everything below is committed on `main`, not pu
 
 ## Next, in order
 
-1. **Trust data and the arbiter for the three new tuning books** (Au pair, De vergelding,
-   Glazuur): the cold rebuild is hours of Ollama, so overnight, not by day (AGENTS.md); it is
-   also where the two arbiter features go in (checklist: a line-end comma turned into a stop
+1. **The arbiter features** (the three new books' trust data is built but NOT used: training on them did not help, decisions.md 2026-10-20; the earlier arbiter is restored and the tuning reference run is `tuning-20261020T182636-f38e636-dirty`): they go in (checklist: a line-end comma turned into a stop
    when the next line opens in lower case, 7 certain errors; and the line-end "span ends
    its line" feature). Say the estimate from docs/run-times.md before starting.
 2. **A line-end compound the join closed** (60 unasked errors over tuning and validation, the

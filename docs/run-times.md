@@ -513,3 +513,12 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-20 | bench validation, line-end hyphen kept (warm) | 0 | 3 | 0 |
 | 2026-10-20 | bench tuning, hyphen kept only where the joined word is known (warm) | 0 | 4 | 0 |
 | 2026-10-20 | bench validation, hyphen kept only where the joined word is known (warm) | 0 | 4 | 0 |
+| 2026-10-20 | trust data, au-pair--ia-scan | 93 | 0 | 0 |
+| 2026-10-20 | trust data, de-vergelding--ia-scan | 99 | 0 | 0 |
+| 2026-10-20 | trust data, glazuur--ia-scan | 91 | 0 | 0 |
+| 2026-10-20 | train arbiter after the rebuild | 0 | 24 | 0 |
+| 2026-10-20 | bench tuning after the rebuild | 1744 | 1 | 1 |
+| 2026-10-20 | bench tuning after the arbiter retrain on Au pair, De vergelding, Glazuur (warm) | 0 | 3 | 0 |
+| 2026-10-20 | bench validation after the arbiter retrain (warm) | 0 | 3 | 0 |
+| 2026-10-20 | train arbiter without Au pair, De vergelding, Glazuur (restore) | 0 | 9 | 0 |
+| 2026-10-20 | bench tuning after the arbiter restore (warm) | 0 | 3 | 0 |
