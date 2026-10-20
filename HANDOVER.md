@@ -66,14 +66,16 @@ chains bench (NO CHANGE, 0 fixed 0 made): both in decisions.md.
 
 ## Waiting on the user
 
-- Andere levens' eight printer's errors for the errata, when they review it (listed in
-  `work/probes/carrere-editions/andere-levens-checked.md`).
+- Andere levens: reviewed 2026-10-20 through `--find`; one erratum made ("hoelahoepnummmer").
+  The other seven candidate misprints (`work/probes/carrere-editions/andere-levens-checked.md`)
+  were saved as printed, no erratum: the user decides if any is a misprint; pp. 135 and 153
+  span a line break, so their entries are written by hand.
 - **Een Russische roman is on hold entirely** (the user, 2026-10-19): they are getting a
   library copy and will photograph the three washed-out pages (46, 47, 259; not in the
   PDF's layers, decisions.md 2026-10-19). No builds, reviews or probes on it until the
   photos arrive. The chains, diaeresis and footnote-star fixes were found on it and are
   judged on its next build, which waits.
-- Ex-minnaar's 6 new questions, then its read-through.
+- Ex-minnaar's questions are answered (2026-10-20, rebuilt, epubcheck clean). No full read-throughs of any book soon (the user, 2026-10-20): don't schedule them.
 - **The verdict batch is done (2026-10-19, the user, all 15 books).** 32 places answered:
   7 were the reference departing from its print (ours right, now patched in), 25 were the
   build's errors: 18 of them compounds hyphenated in print at a line end that the join closed
