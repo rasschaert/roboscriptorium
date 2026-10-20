@@ -18,11 +18,10 @@ from pathlib import Path
 
 import pymupdf
 
-from roboscriptorium import pipeline, readers
+from roboscriptorium import bench, pipeline, readers
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.golden import scoring
-from roboscriptorium.trustdata import SPECS
 
 RUN = "tuning-20261020T182636-f38e636-dirty"
 ROOT = Path("work/probes/unasked-set")
@@ -47,8 +46,8 @@ if __name__ == "__main__":
     (ROOT / "crops").mkdir(parents=True, exist_ok=True)
     items = []
     for book, errors in wanted.items():
-        spec = SPECS.get(book, "")
-        pages_arg = (spec.split(":") + [""])[0] if spec and spec != "answers" else ""
+        spec = next(x for x in bench.SETS["tuning"] if x.split(":")[0] == book)
+        pages_arg = (spec.split(":") + ["", ""])[1]
         b = Book.load(Path("work") / book)
         stages = pipeline.run(
             b, pages=scoring.page_range(pages_arg or None), settings=replace(Settings.from_env(), ocr_trust=False)
