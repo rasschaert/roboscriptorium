@@ -9,6 +9,8 @@ books in sets and fixed the OCR check's split words.
 
 Nothing (`screen -ls` is empty). Everything below is committed on `main`, not pushed.
 
+**Model trials, paused.** Weights live in `~/.cache/huggingface/models/`, never under `~/code` (backed up hourly; the user, 2026-10-20). Screened: PaddleOCR-VL (unfit, deleted), olmOCR-2-7B (not better, 8.8 GB kept there). Downloads stopped part way, not resumed: Fusion GGUF (17 of 21 GB), Qwen2.5-VL-72B (0.9 of 42 GB; probably cancel), fonles-decision-1 (1.5 of 19 GB), H2O-Lightning-Omni-4B (1.2 of 9 GB). Ask the user before resuming any (size, place, free disk).
+
 ## Done today (decisions.md, 2026-10-20)
 
 - **Sets**: De vergelding and Glazuur are tuning (no trust data yet, `bench.NO_TRUST_DATA`),
