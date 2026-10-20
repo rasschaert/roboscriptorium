@@ -504,3 +504,12 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-20 | build glazuur--ia-scan 11-101 for its first look (cold, no score) | 91 | 137 | 0 |
 | 2026-10-20 | build vanille-en-andere-smaken--dbnl-scan 9-79 for its first look (cold, no score) | 71 | 158 | 0 |
 | 2026-10-20 | bench first-look, De vergelding + Glazuur + Vanille | 261 | 1 | 0 |
+| 2026-10-20 | bench tuning, before the hyphen-keep fix (warm) | 0 | 3 | 1 |
+| 2026-10-20 | train_sorter --save, Au pair + De vergelding + Glazuur added to tuning | 0 | 1 | 0 |
+| 2026-10-20 | bench tuning, before the hyphen-keep fix (warm; sorter retrained on the larger tuning set) | 0 | 4 | 0 |
+| 2026-10-20 | bench tuning, line-end hyphen kept by the OCR check (warm) | 0 | 3 | 0 |
+| 2026-10-20 | bench tuning, line-end hyphen kept by the OCR check, in the built text too (warm) | 0 | 3 | 1 |
+| 2026-10-20 | bench validation, before the hyphen-keep fix (warm; trees retrained) | 0 | 4 | 0 |
+| 2026-10-20 | bench validation, line-end hyphen kept (warm) | 0 | 3 | 0 |
+| 2026-10-20 | bench tuning, hyphen kept only where the joined word is known (warm) | 0 | 4 | 0 |
+| 2026-10-20 | bench validation, hyphen kept only where the joined word is known (warm) | 0 | 4 | 0 |
