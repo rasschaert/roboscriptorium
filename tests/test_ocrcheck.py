@@ -841,7 +841,20 @@ def _hyphen_page() -> PageText:
 def test_a_fix_that_drops_a_line_ends_break_hyphen_leaves_it_to_the_joiner():
     text = "het Franse equivalent van Radio Oran-"
     start = len(text) - len("Oran-")
-    drop = Suspect(7, 0, text, start, len(text), "Oran-", ("Oran",), (0, 0, 1, 1), "other", "Oran")
+    drop = Suspect(
+        7,
+        0,
+        text,
+        start,
+        len(text),
+        "Oran-",
+        ("Oran",),
+        (0, 0, 1, 1),
+        "other",
+        "Oran",
+        known=(True, True),
+        joined="je",
+    )
     fixed = ocrcheck.apply([_hyphen_page()], [drop])
     assert fixed[0].lines[0].text == text
 
@@ -863,7 +876,20 @@ def test_a_fix_that_changes_a_line_ends_word_and_its_hyphen_is_kept():
 def test_a_line_end_word_the_check_fixed_joins_the_next_line_without_a_space():
     text = "het Franse equivalent van Radio Oran-"
     start = len(text) - len("Oran-")
-    drop = Suspect(7, 0, text, start, len(text), "Oran-", ("Oran",), (0, 0, 1, 1), "other", "Oran")
+    drop = Suspect(
+        7,
+        0,
+        text,
+        start,
+        len(text),
+        "Oran-",
+        ("Oran",),
+        (0, 0, 1, 1),
+        "other",
+        "Oran",
+        known=(True, True),
+        joined="je",
+    )
     first, second = ocrcheck.apply([_hyphen_page()], [drop])[0].lines
     assert (
         hyphens.join(first.text, second.text)
@@ -874,8 +900,38 @@ def test_a_line_end_word_the_check_fixed_joins_the_next_line_without_a_space():
 def test_the_text_that_is_built_keeps_a_line_ends_break_hyphen_too(tmp_path):
     text = "het Franse equivalent van Radio Oran-"
     start = len(text) - len("Oran-")
-    drop = Suspect(7, 0, text, start, len(text), "Oran-", ("Oran",), (0, 0, 1, 1), "other", "Oran")
+    drop = Suspect(
+        7,
+        0,
+        text,
+        start,
+        len(text),
+        "Oran-",
+        ("Oran",),
+        (0, 0, 1, 1),
+        "other",
+        "Oran",
+        known=(True, True),
+        joined="je",
+    )
     pages, _, _ = corrections.apply(
         [_hyphen_page()], {}, Corrections(tmp_path / "regions.jsonl"), [drop]
     )
     assert pages[0].lines[0].text == text
+
+
+def test_a_hyphen_the_word_list_cant_join_is_dropped_as_the_check_chose():
+    text = "Wanneer ze is-"
+    page = PageText(
+        7,
+        300,
+        400,
+        [Line(text, 25, 10, 276, 20), Line("uitgesproken, knikt Jenny", 25, 22, 160, 32)],
+    )
+    drop = Suspect(
+        7, 0, text, 11, 14, "is-", ("is",), (0, 0, 1, 1), "other", "is",
+        known=(False, True), joined="uitgesproken",
+    )  # fmt: skip
+    first, second = ocrcheck.apply([page], [drop])[0].lines
+    assert first.text == "Wanneer ze is"
+    assert hyphens.join(first.text, second.text) == "Wanneer ze is uitgesproken, knikt Jenny"

@@ -613,10 +613,13 @@ parts are words). Both parts being words is no rule for them: it fired 13 right 
 word differ only by the hyphen ("Oran-" / "Oran"), the judges are shown the word joined
 with the next line (`ocrcheck.hyphen_only`) and may well choose the bare stem; but
 writing the stem into the line leaves `join` no hyphen to see, and it sets the next line
-after a space ("Oran je", "ver plaatsen"). `ocrcheck._chosen` keeps the hyphen on such a fix and
-leaves the hyphen to reflow, which closes "Oran-" and "je." from the word list. Found
-2026-10-20 in De vergelding, where 12 of its 12 such fixes came out split (13 over all
-the books' caches; the other books' readers keep the hyphen).
+after a space ("Oran je", "ver plaatsen"). `ocrcheck.fixed_text` keeps the hyphen on such a fix where the
+word list knows the joined word ("Oran-" + "je" is "Oranje") and leaves the join to
+reflow. Where it doesn't ("is-" + "uitgesproken": a speck the layer read as a hyphen,
+print "ze is uitgesproken") the check's fix stands: keeping every hyphen glued it on
+validation. Found 2026-10-20 in De vergelding, where its 12 such fixes came out split
+(13 over all the books' caches; the other books' readers keep the hyphen); 10 keep the
+hyphen now; an unlisted compound ("vlas-" + "fabriek") stays split, and so does "Enge-".
 
 **The judge settles the English ones, not a question.** The scan can't show
 whether a broken word keeps its hyphen; that is the language's spelling, which a

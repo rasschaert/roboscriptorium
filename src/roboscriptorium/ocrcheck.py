@@ -553,12 +553,15 @@ def apply(pages: list[PageText], suspects: list[Suspect]) -> list[PageText]:
 
 
 def fixed_text(s: Suspect, text: str) -> str:
-    """The text a fix puts in its span. A line's last word that loses only its break hyphen
-    keeps it: whether the hyphen is the break's is the joiner's call (`hyphens.join`), and
-    without it the next line is joined with a space ("Oran je"). `text` is the line the fix
-    is made in; every place that writes a fix into a line goes through this."""
+    """The text a fix puts in its span. A line's last word that loses only its hyphen keeps
+    it where the word list knows the word the hyphen joins with the next line's ("Oran-" +
+    "je"): the readers saw no hyphen, but the word goes on, and without one the joiner sets
+    the next line after a space ("Oran je"). Where the joined form isn't a word ("is-" +
+    "uitgesproken": a speck read as a hyphen) the fix stands. `text` is the line the fix is
+    made in; every place that writes a fix into a line goes through this."""
     last = s.end == len(text) and text.endswith(HYPHENS) and len(text) > 1 and text[-2].isalpha()
-    if last and s.chosen == s.ours[:-1] and s.ours.endswith(text[-1]):
+    joins = bool(s.known) and s.known[0] is True and bool(s.joined)
+    if last and joins and s.chosen == s.ours[:-1] and s.ours.endswith(text[-1]):
         return s.ours
     return s.chosen
 
