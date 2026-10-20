@@ -45,7 +45,7 @@ The checklist ("Trim the sets") holds what is done about each.
 **Gaps to hunt for**, in order: a second scan without a text layer, of Stella's kind (a
 lent IA book with its layer stripped would do); a scan whose text layer is poor all
 through (an old Scribe or a low resolution), so the layer is the worst reading rather
-than a good one; then, once prose is done, verse, two columns and tables. Another clean
+than a good one; a non-fiction pair with numbered chapters, sub-heads and a closing notes section (Vanille's 1 of 15 headings, 2026-10-20: no tuning book teaches the sorter such headings); then, once prose is done, verse, two columns and tables. Another clean
 modern Dutch book adds pages, not information: take one only for a trait above.
 
 ## A reference's manifest keys
