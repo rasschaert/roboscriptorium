@@ -26,7 +26,9 @@ from roboscriptorium.ir import Block, Heading, Paragraph
 
 # Each glyph folded to one character, so positions in the folded text are positions
 # in the text.
-_FOLD = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"', "„": '"'})
+# A hyphen, an en dash and an em dash are one glyph here too: which of them the OCR check
+# kept at a word's start ("-twee" or "–twee") must not decide whether an erratum matches.
+_FOLD = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"', "„": '"', "–": "-", "—": "-"})
 
 
 class Unmatched(ValueError):

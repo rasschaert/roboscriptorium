@@ -30,6 +30,19 @@ def test_quote_glyphs_match_either_way_and_the_rest_of_the_text_keeps_its_own():
     assert out[0].text == "‘Ach zo,’ zei ik"
 
 
+def test_a_hyphen_an_en_dash_and_an_em_dash_match_either_way():
+    for built in ("-twee maanden", "–twee maanden", "—twee maanden"):
+        out = errata.apply(
+            [Erratum(1, "–twee maanden", "– twee maanden")], [_para(f"ja {built} eerder", 1)], {1}
+        )
+        assert out[0].text == "ja – twee maanden eerder"
+
+
+def test_words_that_differ_in_more_than_a_dash_still_stop_the_build():
+    with pytest.raises(errata.Unmatched, match="0 times"):
+        errata.apply([Erratum(1, "–twee maanden", "– twee")], [_para("ja twee maanden", 1)], {1})
+
+
 def test_a_heading_takes_an_erratum_too():
     out = errata.apply(
         [Erratum(1, "HOOFSTUK", "HOOFDSTUK")], [Heading("HOOFSTUK", [SourceRef(1, 0)])], {1}
