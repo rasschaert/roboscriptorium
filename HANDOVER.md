@@ -2,101 +2,79 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Written 2026-10-19 ~21:15 by the session that queued the evening.
+end of every session. Written 2026-10-20 ~16:00 by the session that placed the three new
+books in sets and fixed the OCR check's split words.
 
 ## Running
 
-Started 2026-10-20 ~15:00, with a watcher; `screen -ls` lists it:
+Nothing (`screen -ls` is empty). Everything below is committed on `main`, not pushed.
 
-1. **`hyphen-keep`**: two warm tuning benches in a row, the first from the worktree
-   `../roboscriptorium-hyp` (the code before the fix), the second from main with the fix
-   (`ocrcheck._chosen`, uncommitted with its tests and the design.md paragraph). The line-role
-   trees were retrained first on the tuning set that now holds Au pair, De vergelding and
-   Glazuur (`train_sorter.py --save`), so both runs use the same trees. Commit the fix only
-   if the second shows split words fixed and nothing made (`bench-diff`); then record in
-   decisions.md (the numbers; 12 of 12 of De vergelding's line-end fixes came out split) and
-   remove `../roboscriptorium-hyp`.
+## Done today (decisions.md, 2026-10-20)
 
-## Done overnight (decisions.md, 2026-10-18 and 19)
-
-- **The edition check, on every book with other editions** (hosted qwen3.8-27b on
-  DeepInfra, the user's permission; ~$7.3 in all, $0.89 left: done with OpenRouter for
-  now). Flags checked on crops in `work/probes/stella-editions/`,
-  `work/probes/carrere-editions/*-checked.md`.
-  - **Stella**: no silent error; its two open questions answered and its one misprint
-    ("zomers") marked by the user; rebuilt, the diff those words alone. Recall on 37
-    planted errors: 29 of 31 word errors, 0 of 6 accents.
-  - **Andere levens**: one silent error ("LCI" in small capitals), four open questions,
-    eight printer's errors (waiting on the user's errata).
-  - **Een Russische roman**: silent: hyphenated chains broken at their own hyphen, a
-    diaeresis lost at a break ("democratie- en"), a footnote whose "*" the layer reads
-    as "“" spliced into the text; asked: "ooo" for 000, two lines the layer lost
-    mid-block, three washed-out pages the scan can't give.
-  - Each silent gap is a checklist step with its evidence (branch `au-pair`'s checklist).
-- **The context judge, full tuning**: NO CHANGE after review (0.28 → 0.28), questions
-  down in all 18 books, 29 wrong words made (17 unasked) against 110 fixed, mostly the
-  print's spelling normalised ("van binnen" → "vanbinnen"). Validation crashed on a
-  runaway thought (fixed on `cj-cap`: answers capped, a capped one asked) and reruns.
-- **`review --find "<words>"`** (branch `review-find`): a line the machine didn't ask
-  about as a question; the misprint answer typed in one box, the print shown above it
-  (the user: "why offer me two text boxes").
-- The queue reordered for the user's 10:00 return: the judge's two runs before Au pair.
+- **Sets**: De vergelding and Glazuur are tuning (no trust data yet, `bench.NO_TRUST_DATA`),
+  Vanille en andere smaken is validation; `bench first-look` is empty. The line-role trees
+  were retrained on the larger tuning set (`train_sorter.py --save`); every tuning bench from
+  now on is against those trees, so older bench records aren't paired with new ones.
+- **The OCR check keeps a line end's break hyphen where the joined word is known**
+  (`ocrcheck.fixed_text`, both writers): tuning fixed 20 wrong words (18 unasked), made 0, all
+  in De vergelding; validation 0 and 0. 13 such fixes exist in all the books' caches.
+- **Null results, recorded**: the `small-caps` all-capitals version (0 of 11 known errors
+  fixed; branch `small-caps` stays unmerged), lost text by ink in a gap or uncovered ink
+  (the "lost lines" are mostly runs of dots and one-word drops; only a dot-led line is findable
+  by ink, left of a line's start), a higher-resolution crop for line-end commas.
+- **Looked at**: Vanille's headings 1 of 15 (non-fiction sub-heads no tuning book teaches; a
+  non-fiction pair is in the gaps to hunt, golden-notes.md); De vergelding's unasked errors.
+- Andere levens reviewed through `--find` (one erratum), Ex-minnaar's questions answered
+  and rebuilt, the unused imajev model removed from Ollama.
 
 ## Next, in order
 
-1. **The context judge stays off** (the user, 2026-10-19: no silent errors for fewer
-   questions). At sureness 0.6 it passed both sets (questions -12% / -16%, after review level,
-   unasked errors +0.011 / +0.016 a page) and is merged with its settings unset. Don't propose
-   it again as a settler; only as a vote the arbiter weighs.
-2. **Merged into main 2026-10-19** (tests 508 pass, pushed): `cj-cap`, `review-find`, `cj-min`,
-   `hyphen-chains` (chains, diaeresis join, footnote star; its warm benches no change).
-   `au-pair` is merged too (checked 2026-10-20). `small-caps` (`5fb536c`) is NOT to merge: its short test was null (decisions.md, 2026-10-20); its worktree can go. Merged branches' worktrees (`../roboscriptorium-*`) can be removed.
-3. **Au pair's first-look score** is in decisions.md and the set is chosen (tuning).
-4. **`small-caps`: done, null** (2026-10-20); nothing left on it.
-5. The edition check's other silent gaps: lost lines read before asked; two-letter words
-   beside a chain's break (probe: `experiments/probe_chain_breaks.py`, 2 of 11 wrong, too
-   few to set a rule). Not yet counted: notes lost or made by the footnote star, on the
-   golden books with notes (the chains bench shows it).
-
-6. **Nemotron-3.5-Bolt-74B-A9B is screened and unfit** (decisions.md, models.md 2026-10-19): judge 18 of 40 against qwen3.8's 31; image requests and batches over 16 crash this Ollama build. Nothing left to do on it; re-screen only if llama.cpp's Metal support for `nemotron_h_moe` is fixed.
-7. **The three first-look reads** (`vergelding-read.sh`, `glazuur-read.sh`, `vanille-read.sh` in `work/runs`) are not queued any more: start them when Ollama is free, in that order, each with a watcher (~2 h, 2 h, 1.5 h cold).
+1. **Trust data and the arbiter for the three new tuning books** (Au pair, De vergelding,
+   Glazuur): the cold rebuild is hours of Ollama, so overnight, not by day (AGENTS.md); it is
+   also where the two arbiter features go in (checklist: a line-end comma turned into a stop
+   when the next line opens in lower case, 7 certain errors; and the line-end "span ends
+   its line" feature). Say the estimate from docs/run-times.md before starting.
+2. **A line-end compound the join closed** (60 unasked errors over tuning and validation, the
+   mild class: the user ranks glued words and wrong letters first). The hyphen judge asks only
+   English books; Dutch closes 355 of 361. A look at the 18 verdict-batch cases against the
+   judge's answers is still model-free work.
+3. **The edition check's silent gaps**: lost words read before asked (the reader on a line's
+   left end and 1.2-pitch gaps, extending `missing.py`: Vanille and Verminkt hold the dot lines;
+   the five in Vanille's slice don't earn a stage yet); two-letter words beside a chain's break
+   (`experiments/probe_chain_breaks.py`, 2 of 11 wrong); notes lost or made by the footnote
+   star, to count on the golden books with notes.
+4. **A non-fiction pair with numbered chapters and sub-heads** for tuning (the user supplies
+   candidates; golden-notes.md, gaps to hunt).
+5. De geruchten's headings, the checklist's remaining steps (its top section is out of date).
 
 ## Waiting on the user
 
-- Andere levens: reviewed 2026-10-20 through `--find`; one erratum made ("hoelahoepnummmer").
-  The other seven candidate misprints (`work/probes/carrere-editions/andere-levens-checked.md`)
-  were saved as printed, no erratum: the user decides if any is a misprint; pp. 135 and 153
-  span a line break, so their entries are written by hand.
-- **Een Russische roman is on hold entirely** (the user, 2026-10-19): they are getting a
-  library copy and will photograph the three washed-out pages (46, 47, 259; not in the
-  PDF's layers, decisions.md 2026-10-19). No builds, reviews or probes on it until the
-  photos arrive. The chains, diaeresis and footnote-star fixes were found on it and are
-  judged on its next build, which waits.
-- Ex-minnaar's questions are answered (2026-10-20, rebuilt, epubcheck clean). No full read-throughs of any book soon (the user, 2026-10-20): don't schedule them.
-- **The verdict batch is done (2026-10-19, the user, all 15 books).** 32 places answered:
-  7 were the reference departing from its print (ours right, now patched in), 25 were the
-  build's errors: 18 of them compounds hyphenated in print at a line end that the join closed
-  ("life-long", "face-plate", "non-reactive", "acht-uurjournaal"), 3 spaced "B & B", 2 a
-  sentence-end ellipsis ("taste... ." for a period and an ellipsis), 1 "H et", 1 "KL 1566".
-  The batch was chosen as places that looked like the reference's departures: it was wrong
-  about three in four, so the open gap is the line-end compound (docs/decisions.md,
-  2026-10-19). Next: a model-free look at those 18 against the hyphen judge's answers.
+- Andere levens: the other seven candidate misprints
+  (`work/probes/carrere-editions/andere-levens-checked.md`) were saved as printed with no
+  erratum; the user says which, if any, are misprints. Pages 135 and 153 span a line
+  break, so their entries are written by hand.
+- **Een Russische roman is on hold entirely** (the user, 2026-10-19): a library copy and
+  photographs of three washed-out pages (46, 47, 259). No builds, reviews or probes on it
+  until they arrive; the chains, diaeresis and footnote-star fixes are judged on its next build.
+- **No full read-throughs of any book soon** (the user, 2026-10-20): don't schedule them.
+- Stella's review server (port 8765) may still run from `../roboscriptorium-find`: stop it.
 
 ## Worktrees
 
-To merge: `../roboscriptorium-cjcap` (`cj-cap`), `../roboscriptorium-find`
-(`review-find`; Stella's review server runs from it on port 8765, stop it when done),
-`../roboscriptorium-chains` (`hyphen-chains`), `../roboscriptorium-aupair` (`au-pair`).
-Merged or stale: `../roboscriptorium-w12b`, `-lead`, `-spans`, `-breaks`, `-py315`.
+Every branch but `small-caps` is merged: `../roboscriptorium-cjcap`, `-cjmin`, `-find`, `-chains`,
+`-aupair`, `-w12b`, `-lead`, `-spans`, `-breaks`, `-py315`, `-mis`, `-only`, `-ux` can go. `-caps`
+holds the unmerged `small-caps` branch (null result).
 
 ## How to run things
 
 - Long runs through `experiments/timed.sh` inside `experiments/detached.sh` (a screen),
-  each with a watcher. Warm benches take 2–5 minutes.
-- Don't edit `src/` while a bench or build runs from `main`: work in a worktree and bench
-  it with `uv run --project ../<worktree> roboscriptorium bench …` from this directory,
-  so `work/` is reached by path, never linked.
-- Nothing reads a first-look book (`bench.FIRST_LOOK`) until its single scoring.
+  each with a watcher. Warm benches take 2–5 minutes (tuning), ~10 (validation).
+- A bench of a change: `git worktree add ../<name> HEAD --detach` for the "before", then
+  `uv run --project ../<name> roboscriptorium bench tuning` from this directory (so `work/` is
+  reached by path, never linked) and the same from main for the "after";
+  `bench-diff <old.json> <new.json>` compares them place by place. `--against` takes a path.
+- Check every writer of what you change: the scored text is built from `corrections.apply`,
+  the question view from `ocrcheck.apply`; a fix to one alone showed no change at all.
 - Stopping a run: `experiments/stop-run.sh <name>`; a job waiting on another's screen
   starts the moment that screen goes, so stop the waiters first.
 
@@ -104,9 +82,3 @@ Merged or stale: `../roboscriptorium-w12b`, `-lead`, `-spans`, `-breaks`, `-py31
 
 Restored from the user's Downloads and the 2026-10-07 backup (details in
 docs/decisions.md, 2026-10-11). Never symlink `work` into a worktree; stage files by name.
-
-## Trail (2026-10-20, morning)
-- Done: the three reads and their first-look scorings (decisions.md, 2026-10-20). Nothing runs.
-- Next: the sets are placed (decisions.md, 2026-10-20: De vergelding and Glazuur tuning, Vanille validation); then the checklist's order (au-pair merge, small-caps short test, line-end compounds).
-- Au pair is tuning (no trust data yet); the verdict batch is answered (decisions.md, 2026-10-19).
-- Priority from the user: glued words and wrong letters over ambiguous compounds.
