@@ -44,6 +44,17 @@ _FOLD = str.maketrans(
         "–": "—",
         "―": "—",
         "…": "...",
+        # A footnote mark set as a superscript in the print is a plain digit in many e-books.
+        "⁰": "0",
+        "¹": "1",
+        "²": "2",
+        "³": "3",
+        "⁴": "4",
+        "⁵": "5",
+        "⁶": "6",
+        "⁷": "7",
+        "⁸": "8",
+        "⁹": "9",
     }
 )
 _SPACED_DOTS = re.compile(r"\.(?: \.){2,}")
@@ -59,6 +70,7 @@ _FOLD_KINDS = {
     "spaces": re.compile("[\u2060\ufeff\u00a0\u202f\u2009]"),
     "soft hyphens": re.compile("\u00ad"),
     "nested quote gaps": _NESTED_GAP,
+    "superscript digits": re.compile("[⁰¹²³⁴⁵⁶⁷⁸⁹]"),
 }
 
 

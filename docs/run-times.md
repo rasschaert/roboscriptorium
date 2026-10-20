@@ -533,3 +533,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-21 | unasked-error set: warm builds of the tuning books on the bench slices, crops | 1500 | 1 | 0 |
 | 2026-10-21 | night chain: H2O on unasked set, Qwen2.5-VL-72B reader screening | 900 | 53 | 0 |
 | 2026-10-21 | bench tuning, sanity check after restoring the earlier arbiter, warm | 1500 | 3 | 0 |
+| 2026-10-21 | bench tuning, superscript digits folded by the scorer, warm | 1500 | 3 | 0 |

@@ -8,6 +8,11 @@ def test_normalise_folds_typography_the_epub_may_choose():
     assert evaluate.normalise("Yes . . . .") == "Yes ...."
 
 
+def test_a_superscript_footnote_mark_is_the_plain_digit_an_epub_may_set():
+    assert evaluate.normalise("Hezb⁸ en Kataeb⁴.") == evaluate.normalise("Hezb8 en Kataeb4.")
+    assert evaluate.folds(["Hezb⁸ en Kataeb⁴."])["superscript digits"] == 2
+
+
 def test_folds_count_each_kind():
     counted = evaluate.folds(["‘No . . . I don’t’", "wait… – go", "a\u00a0b"])
     assert counted == {
@@ -17,6 +22,7 @@ def test_folds_count_each_kind():
         "spaces": 1,
         "soft hyphens": 0,
         "nested quote gaps": 0,
+        "superscript digits": 0,
     }
 
 

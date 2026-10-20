@@ -5,9 +5,8 @@ language = "nl"
 # manifest is in git.
 eu_copyright_until = 2200
 
-# THE TEST BOOK (`bench.SETS["test"]`): nothing is chosen on it and no model
-# trains on it. Manifest, derive and fetch only; it is scored once, at the end,
-# with `bench test --score-test`.
+# Tuning since 2026-10-18 (`bench.SETS`), after its first look; manifest, derive and fetch
+# are in git, the text and verdicts in `work/golden/`.
 
 # Van Gennep's own EPUB ("e-editie november 2013, naar de eerste druk november
 # 2013"), set like Reis om mijn schedel's: chapter numbers are "kop"
