@@ -341,6 +341,7 @@ In this order:
       the next trust-data rebuild; 22 unasked errors in De vergelding and De kerk van de dode
       meisjes, 7 certain (a stop before lower case). Resolution doesn't help the readers.
 - [ ] olmOCR-2-7B as a fourth reader for the arbiter (2026-10-20: `experiments/vote_sim.py`, 801 → 809 right of 850 in a plain vote, 16 mended and 8 broken; 0.55 s a line, MLX runtime in `work/models/mlx-env`): needs a reader stage that runs it on every body line, then a trust-data rebuild and a retrain; bench against the arbiter with the line-end features. Decide after that arbiter is in.
+- [ ] A lost line that two whole-page readings hold becomes a question (2026-10-20: decisions.md, about half the lost lines; 6 cases): first count, on the cached page readings of the tuning pages and with no models, how many lines the readings hold that the layer lacks and that are not running heads, captions or page numbers; the question is only worth it if few are false.
 - [ ] Lost lines mid-block read before they are asked (2026-10-20: a gap or ink rule can't find them, decisions.md; the reader must look at line starts and gaps; found by the edition check,
       2026-10-19): Een Russische roman's text layer drops whole lines inside a text block
       (p. 133 "te filmen terwijl jij uitstapt, of heb je liever dat de camera laat zien",
