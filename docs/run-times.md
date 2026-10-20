@@ -525,3 +525,11 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-20 | trust data, all books, warm, rebuilt for the line-end features | 1500 | 3 | 0 |
 | 2026-10-20 | train arbiter with line-end features, bench tuning and validation, warm | 1500 | 16 | 0 |
 | 2026-10-20 | bench tuning, line-end arbiter, warm | 1500 | 4 | 0 |
+| 2026-10-20 | judge screening, Fusion 27B via tokens, frozen set v1 | 520 | 0 | 1 |
+| 2026-10-20 | olmOCR whole-page reading, 105 pages at 1288 px | 105 | 17 | 0 |
+| 2026-10-20 | olmOCR suspect crops, all trust-data books, warm builds | 1500 | 6 | 0 |
+| 2026-10-20 | olmOCR line readings of 9,349 suspect lines, MLX | 9349 | 84 | 0 |
+| 2026-10-20 | H2O-Lightning-Omni-4B line triage, frozen reader set, MPS | 850 | 9 | 0 |
+| 2026-10-21 | unasked-error set: warm builds of the tuning books on the bench slices, crops | 1500 | 1 | 0 |
+| 2026-10-21 | night chain: H2O on unasked set, Qwen2.5-VL-72B reader screening | 900 | 53 | 0 |
+| 2026-10-21 | bench tuning, sanity check after restoring the earlier arbiter, warm | 1500 | 3 | 0 |
