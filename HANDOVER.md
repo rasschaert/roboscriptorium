@@ -110,9 +110,11 @@ Merged or stale: `../roboscriptorium-w12b`, `-lead`, `-spans`, `-breaks`, `-py31
 Restored from the user's Downloads and the 2026-10-07 backup (details in
 docs/decisions.md, 2026-10-11). Never symlink `work` into a worktree; stage files by name.
 
-## Trail (2026-10-19, night)
-- `robo-reads-chain` (vergelding 22:30, then glazuur, then vanille; builds only) is followed by
-  `robo-first-look-three` (`work/runs/first-look-three.sh`: `bench first-look --first-look`, the
-  three scored once each, log `work/runs/first-look-three.log`). Both are watched. When it ends:
-  scores into docs/decisions.md, then each book into a set in `bench.SETS`.
-- Au pair is tuning now (no trust data yet).
+## Trail (2026-10-20, morning)
+- Done: the three reads and their first-look scorings (decisions.md, 2026-10-20). Nothing runs.
+- Next: place De vergelding, Glazuur and Vanille in `bench.SETS` (they are in the first-look set,
+  which a rerun of `bench first-look` would score twice: move them out first). Look at Vanille's
+  paragraph breaks (0.87), dashes and headings (1/15) and De vergelding's unasked (0.70) before
+  choosing; `docs/golden-books.md` then regenerates.
+- Au pair is tuning (no trust data yet); the verdict batch is answered (decisions.md, 2026-10-19).
+- Priority from the user: glued words and wrong letters over ambiguous compounds.

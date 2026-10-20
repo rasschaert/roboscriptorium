@@ -500,3 +500,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-19 | probe: Nemotron-3.5-Bolt-74B-A9B on samples of the reader and judge sets | 0 | 0 | 0 |
 | 2026-10-19 | probe: Nemotron-3.5-Bolt-74B-A9B as a context judge, 40 items | 0 | 0 | 1 |
 | 2026-10-19 | probe: Nemotron-3.5-Bolt-74B-A9B as a context judge, 40 items | 0 | 11 | 0 |
+| 2026-10-20 | build de-vergelding--ia-scan 9-107 for its first look (cold, no score) | 99 | 177 | 0 |
+| 2026-10-20 | build glazuur--ia-scan 11-101 for its first look (cold, no score) | 91 | 137 | 0 |
+| 2026-10-20 | build vanille-en-andere-smaken--dbnl-scan 9-79 for its first look (cold, no score) | 71 | 158 | 0 |
+| 2026-10-20 | bench first-look, De vergelding + Glazuur + Vanille | 261 | 1 | 0 |
