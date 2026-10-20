@@ -336,7 +336,7 @@ In this order:
       against the word list. Een Russische roman's became "democratie- en", taken for a
       word left open before "en" (`hyphens._suspended`, "voor- en nadelen"). True by
       definition, so code; no other case in the latest benches
-- [ ] Lost lines mid-block read before they are asked (found by the edition check,
+- [ ] Lost lines mid-block read before they are asked (2026-10-20: a gap or ink rule can't find them, decisions.md; the reader must look at line starts and gaps; found by the edition check,
       2026-10-19): Een Russische roman's text layer drops whole lines inside a text block
       (p. 133 "te filmen terwijl jij uitstapt, of heb je liever dat de camera laat zien",
       p. 175 "raam te springen en jij lijkt niet veel meer mans dan zij, dus als je"),
