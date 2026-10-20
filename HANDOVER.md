@@ -33,8 +33,8 @@ Nothing (`screen -ls` is empty). 22 commits on `main`, not pushed (the user was 
 ## Next, in order
 
 1. **Emphasis accents and rare glyphs** (the largest unasked class together with them): half of the 42 stress-accent errors are real (an acute accent on an i for emphasis: "zíjn", "níét"), the rest the reference's slips (decisions.md, 2026-10-21); no prompt or reader tried keeps them at 300 DPI (a 450 DPI crop keeps 2 of 6). The dotless ı of "Sıla" (five times in Het geluid van bananen) is the same kind. The next step is a reader that sees the accent: a word crop at high resolution, only where a word is a likely target; learned, not a list.
-2. **A verdict batch for the reference's slips** (the other half of that class and "I" for "l", "0" for "o"): human verdicts only, through `experiments/review_batch_commands.py`; it needs the user.
-3. **A line-end compound the join closed** (60 unasked, the mild class). The hyphen judge asks only English books; Dutch closes 355 of 361.
+2. **A verdict batch for the reference's slips: not worth the user's time.** The 46 unasked stress-accent places of the latest benches (`work/probes/unasked/candidates-stress-accent-20261021.json`, commands from `experiments/review_batch_commands.py`) span 20 books; on the reference's half our text already matches the print, so a verdict only tidies the measure and changes no book. Ask only if a cleaner measure is wanted.
+3. **A line-end compound the join closed** (the mild class): done for what the book itself shows (hyphen spellings now count the whole body: compound hyphens 0.023 → 0.020 on tuning); 24 of 27 have no other evidence in the book (the word occurs once), for the word list or a judge. The hyphen judge asks only English books; Dutch closes 355 of 361.
 4. **Lost lines** (about half are held by the whole-page readers but not as clean inserts; the rest are decorated openings no whole-page reader reads): an opening-line reader (`missing.py` on line starts and gaps).
 5. **A non-fiction pair with numbered chapters and sub-heads** for tuning (the user supplies candidates); De geruchten's headings; the checklist's remaining steps.
 
