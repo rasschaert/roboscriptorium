@@ -25,15 +25,20 @@ validation 0.51 (0.37 on the 18th, but the set has grown with harder books: not
 comparable). The arbiter that settles the OCR check's suspects takes 9 wrong ones
 silently in 9,300; almost everything left is a place no reader doubts.
 
-**What the last two days taught:** swapping models is not the lever. Five models were
+**What the last two days taught:** the line reader is the lever, and it moves fast.
+Qwen3.8-27B is two months old and reads 463 of 510 hard lines right; Qwen2.5-VL-72B,
+state of the art in open vision models in January 2025, reads 382. Five models were
 tried as readers, witnesses or detectors (PaddleOCR-VL, olmOCR-2-7B, Qwen2.5-VL-72B,
-H2O-Lightning-Omni-4B, fonles-decision-1) and none beat the Qwen3.8 line reader we have;
-one helped a plain vote (801 → 809) but not the arbiter. Two arbiter features for a
-line-end comma failed too. What did pay: reading the errors place by place. About
-half of the biggest unasked class (stress accents) is the reference's slips, not ours
-(our text matches the print), so the measured error rate overstates the build by a
-fifth or so, and a book's hyphens should be weighed by the whole book, not the slice
-(compound hyphens 0.023 → 0.020).
+H2O-Lightning-Omni-4B, fonles-decision-1) and none beat the current one; olmOCR helped
+a plain vote (801 → 809) but not the arbiter. That is a snapshot of what could be
+pulled this week, not a verdict on swapping models: something will dethrone it within a
+year in the memory a laptop holds, and the build is set up to take it (frozen sets, one
+command to screen a reader, the arbiter retrained on its readings). Two arbiter
+features for a line-end comma failed. What paid besides: reading the errors place by
+place. About half of the biggest unasked class (stress accents) is the reference's
+slips, not ours (our text matches the print), so the measured error rate overstates the
+build by a fifth or so, and a book's hyphens should be weighed by the whole book, not
+the slice (compound hyphens 0.023 → 0.020).
 
 **The doubts:** the real half of what is left is reader blindness to rare marks (an
 emphasis accent on an i, the dotless ı of a Turkish name): no prompt, no model and no
@@ -41,9 +46,11 @@ higher resolution but a narrow one (450 DPI keeps 2 of 6) sees them. Lost lines 
 half are decorated chapter openings no whole-page reader reads) and every new kind of
 book still need their own work. Local models are still the ceiling.
 
-**The horizon:** unchanged. A reader that sees what no reader sees today is what the
-2030 chance rests on; today's local OCR-tuned models don't yet supply it, which
-moves nothing: they aren't the models of 2030.
+**The horizon:** unchanged, and the last two days support it (the user's point): the
+reader that fits a laptop has changed more in the months since January 2025 than any
+tuning of ours did, and what is hard now (accents and rare marks no reader sees) is what
+the next vision models are likely to fix. The work that carries over is the gate a new
+model must pass: the reader set, the vote simulation, and the unasked-error set.
 
 **Would move it up:** a reader that keeps emphasis accents and rare glyphs; an
 opening-line reader for lost lines; `init` finding the body range alone.

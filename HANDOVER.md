@@ -38,6 +38,10 @@ Nothing (`screen -ls` is empty). 22 commits on `main`, not pushed (the user was 
 4. **Lost lines** (about half are held by the whole-page readers but not as clean inserts; the rest are decorated openings no whole-page reader reads): an opening-line reader (`missing.py` on line starts and gaps).
 5. **A non-fiction pair with numbered chapters and sub-heads** for tuning (the user supplies candidates); De geruchten's headings; the checklist's remaining steps.
 
+## When a new vision model appears
+
+The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen3.8-27B is two months old and beats the January 2025 state of the art by a wide margin). Gate for a candidate that fits 64 GB, in order: `experiments/screen_reader.sh <label> <model dir or ollama name>` (its score on the reader set, then the vote simulation), `probe_accent_readers.py` (emphasis accents, the dotless ı: the open class), then, if it earns it, a trust-data rebuild with it as a reader and a bench. Ask before a download over 1 GB.
+
 ## Waiting on the user
 
 - Andere levens: the other seven candidate misprints
