@@ -935,3 +935,22 @@ def test_a_hyphen_the_word_list_cant_join_is_dropped_as_the_check_chose():
     first, second = ocrcheck.apply([page], [drop])[0].lines
     assert first.text == "Wanneer ze is"
     assert hyphens.join(first.text, second.text) == "Wanneer ze is uitgesproken, knikt Jenny"
+
+
+def test_readings_at_another_resolution_are_read_again_and_kept_apart(monkeypatch, tmp_path):
+    reads = []
+    monkeypatch.setattr(readers, "transcribe", lambda png, m, u, p: reads.append(png) or "r")
+    _page_of(tmp_path, 30)
+    pages = pdf.read_text_layer(tmp_path / "source.pdf")
+    checked = {SourceRef(1, k) for k in range(len(pages[0].lines))}
+    cache = tmp_path / "third-reading.json"
+    args = (tmp_path / "source.pdf", pages, checked, "m", "", cache, "Read.")
+    readers.line_readings(*args)
+    first = len(reads)
+    monkeypatch.setattr(readers, "DPI", 450)
+    readers.line_readings(*args)
+    assert len(reads) == 2 * first  # not taken for the 300 dpi readings
+    assert json.loads(cache.read_text())["prompt"].endswith("[450 dpi]")
+    monkeypatch.setattr(readers, "DPI", 300)
+    readers.line_readings(*args)
+    assert len(reads) == 2 * first  # the 300 dpi readings come back from their shelf

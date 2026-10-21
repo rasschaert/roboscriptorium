@@ -6,6 +6,7 @@ box, never its position). The OCR check (`ocrcheck.py`) compares them."""
 import base64
 import hashlib
 import json
+import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -19,7 +20,9 @@ from roboscriptorium.files import read_cache, write_atomic, write_cache
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PageText, line_words, page_words, spells
 
-DPI = 300
+# The resolution a line's crop is rendered at (`ROBO_READER_DPI`). Line readings at another one
+# carry it in the prompt they are cached under, so they never mix with the 300 dpi ones.
+DPI = int(os.environ.get("ROBO_READER_DPI", "300"))
 
 
 # Readings are keyed on a line's page, text and box (`line_key`); version 2 keys also held
@@ -131,7 +134,8 @@ def line_readings(
     under `model` and listed under `via` in the cache."""
     done: dict[str, str] = {}
     read_by: dict[str, list[str]] = {}
-    raw = _readings(cache, model, prompt)
+    stored = prompt if DPI == 300 else f"{prompt}\n[{DPI} dpi]"
+    raw = _readings(cache, model, stored)
     if raw is not None:
         done = raw["lines"]
         read_by = raw.get("via", {})
@@ -154,7 +158,7 @@ def line_readings(
     todo = [(p, k) for p, k in wanted.values() if key(p, k) not in done]
 
     def save() -> None:
-        blob = {"version": READING_VERSION, "model": model, "prompt": prompt, "lines": done}
+        blob = {"version": READING_VERSION, "model": model, "prompt": stored, "lines": done}
         if read_by:
             blob["via"] = read_by
         write_atomic(cache, json.dumps(blob, ensure_ascii=False))
