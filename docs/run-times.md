@@ -536,3 +536,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-21 | bench tuning, superscript digits folded by the scorer, warm | 1500 | 3 | 0 |
 | 2026-10-21 | bench tuning, whole-book hyphen spellings, warm | 1500 | 3 | 0 |
 | 2026-10-21 | bench validation before and after the whole-book spellings, warm | 1500 | 6 | 0 |
+| 2026-10-21 | init page kinds: edge pages by clef-flash through pagekinds.kinds, 27 books | 27 | 0 | 0 |
