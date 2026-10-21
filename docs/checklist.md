@@ -453,6 +453,9 @@ reading shares: many are specks and faint marks.
 
 ## 8. Beyond the golden books' kind
 
+- [ ] **`init` names both page numbers whenever it shows or asks for a page** (the user, 2026-10-21): the PDF's page (the document's own index, which `body_pages` and every
+      `--pages` use) and the number the scan prints, e.g. "PDF page 9 (the page prints 7)", never a bare "page 9"; where a page prints no number say so. The confirmation of the
+      text's two ends on the review page shows the first and last page of the text proper this way, with the crops.
 - [ ] **`roboscriptorium init <pdf>`** (agreed 2026-10-11): drafts book.toml and asks the
       user only what it can't settle, on the review page; `build` and `review` run it first
       when book.toml is missing. Steps: (1) each page's **kind** (cover, blank, scan noise
