@@ -297,6 +297,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `reflow.py`, `hyphens.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; lines joined and their end hyphens kept or dropped, by the book's spellings, the word list and the judge; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |
 | `ir.py`, `epub.py` | the document model with references back to page lines; EPUB 3 by hand |
 | `pipeline.py` | the stages for one book, each cached under `work/<book>/stages/` |
+| `pagekinds.py`, `bookinit.py` | what kind of page each page is (signals for the middle, a decision model for the 8 pages at either edge) and so where the text proper starts and ends; `roboscriptorium init` drafts a book's `book.toml` from the PDF alone, naming every page by both numbers (the PDF's and the one printed) |
 | `flags.py`, `review.py` | what a human should check; the local review pages |
 | `golden/`, `evaluate.py`, `disagreements.py`, `quality.py`, `bench.py`, `errorlog.py` | golden books (manifests, derived references, alignment, retirement signals); CER, WER and paragraph scores; differences located on the scan; what a reviewer is left with; **the** paired measure of a change; each run's errors place by place, and what a change fixed and made (`bench-diff`) |
 

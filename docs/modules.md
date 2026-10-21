@@ -163,6 +163,18 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   (questions ranked by how often their kind caught an error in the *other*
   books given), each with a 95% bootstrap interval over pages; the unasked
   errors by kind (punctuation, quotes, letters, word breaks, missing words…).
+- `pagekinds.py`: what kind of page each page of a scan is, for `init`: cover, blank, title,
+  colophon, foreword, text, afterword, ads … Signals first (a page's words, number-only lines,
+  centred lines, the name its first lines carry), a decision model (`role_model`, asked
+  `QUESTION` with the page image) for the `EDGE` pages at either edge, cached by page. `ends`
+  is the first and last page whose kind goes into the EPUB (`fate`); `page_label` names a page by
+  both numbers, "PDF page 9 (the page prints 7)", the PDF's own (what `body_pages` and `--pages`
+  take) and the printed one, or says the page prints none.
+- `bookinit.py`: a book's setup drafted from its PDF alone (`roboscriptorium init <pdf>`): the
+  language (the word list that knows more of the text's words), the cover, the title page's lines
+  and the two ends of the text proper; writes `book.toml` (or `init/book.toml.draft`),
+  `init/report.md` and `init/ends.png`, the pages around both ends with both their numbers. Title
+  and author are left for a person, and both ends are always shown for confirmation.
 - `flags.py`: regions a human should check, i.e. what isn't plain running
   text: headings, lines dropped mid-page or without the model being sure,
   garbled text, centred or set-apart lines. Page furniture (repeated running

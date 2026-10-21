@@ -77,6 +77,7 @@ body_pages = [5, 71]   # the pages of the text proper
 ```
 
 ```sh
+uv run roboscriptorium init scan.pdf         # drafts work/<name>/book.toml: language, where the text starts and ends
 uv run roboscriptorium build work/stella    # → work/stella/stella.epub
 uv run roboscriptorium review work/stella   # the questions, on http://127.0.0.1:8765/
 ```

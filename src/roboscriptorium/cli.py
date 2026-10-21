@@ -98,6 +98,55 @@ def build(
         typer.echo(f"kept as {kept}")
 
 
+@app.command("init")
+def init_book(
+    pdf: Path,
+    name: str | None = typer.Option(
+        None, help="Folder under work/ (default: from the file's name)"
+    ),
+    language: str | None = typer.Option(None, help="nl or en, when it can't be told from the text"),
+) -> None:
+    """Draft a book's setup from its scanned PDF alone: language, page kinds, where the text
+    proper starts and ends, shown for confirmation with both page numbers (the PDF's own and
+    the one the page prints). Writes book.toml (or init/book.toml.draft where one exists),
+    init/report.md and init/ends.png in the book's folder."""
+    import shutil
+
+    from roboscriptorium import bookinit, pagekinds
+    from roboscriptorium.pdf import cached_text_layer
+
+    settings = Settings.from_env()
+    root = Path("work") / (name or bookinit.slug(pdf.stem))
+    root.mkdir(parents=True, exist_ok=True)
+    source = root / "source.pdf"
+    if not source.exists():
+        shutil.copy2(pdf, source)
+    pages = cached_text_layer(
+        source, root / "stages" / "textlayer.json", ocr.language(language) if language else None
+    )
+    if not any(ln.text.strip() for p in pages for ln in p.lines):
+        raise typer.BadParameter("the PDF has no text layer: pass --language so it is read first")
+    client = decide.for_model(settings.role_model, settings.ollama_url)
+    kinds = pagekinds.kinds(source, pages, client, root / "stages" / "page-kinds.json")
+    d = bookinit.draft(root.name, pages, kinds)
+    if language:
+        d.language = language
+    out = root / "init"
+    out.mkdir(exist_ok=True)
+    (out / "report.md").write_text(bookinit.report(d))
+    bookinit.sheet(source, d, out / "ends.png")
+    toml = root / "book.toml"
+    drafted = toml if not toml.exists() else out / "book.toml.draft"
+    drafted.write_text(bookinit.toml(d))
+    typer.echo(f"language {d.language}; {len(pages)} PDF pages")
+    typer.echo(f"text starts at {pagekinds.page_label(d.first, d.offset)}")
+    typer.echo(f"text ends at   {pagekinds.page_label(d.last, d.offset)}")
+    typer.echo(
+        f"draft: {drafted}; report: {out / 'report.md'}; pages around both ends: {out / 'ends.png'}"
+    )
+    typer.echo("Confirm both ends and fill in title and author before building.")
+
+
 golden_app = typer.Typer(no_args_is_help=True, help="Golden reference books.")
 app.add_typer(golden_app, name="golden")
 
