@@ -62,8 +62,12 @@ if __name__ == "__main__":
     for item in items:
         if item["id"] in done:
             continue
-        with pymupdf.open(Path("work") / item["book"] / "source.pdf") as doc:
-            png = crop_of(doc, item, dpi)
+        pdf = Path("work") / item["book"] / "source.pdf"
+        if pdf.exists():
+            with pymupdf.open(pdf) as doc:
+                png = crop_of(doc, item, dpi)
+        else:  # a retired book: its frozen crop (300 dpi) stands in
+            png = item["png"]
         done[item["id"]] = readers.transcribe(png, settings.read_model, settings.ollama_url, books[item["book"]]["prompt"])
         asked += 1
         if asked % 25 == 0:
