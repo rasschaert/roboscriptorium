@@ -301,24 +301,35 @@ and why it didn't help".
 - Fine-tuning a reader: ruled out by measurement, since only about 30% of what's left
   is the kind of reading error a better reader alone would fix.
 - Speeding up qwen with parallel requests: the runtime handles one at a time.
+- **Swapping in the other vision models we could get** (2026-10-20 and 21): five were tried
+  as readers, extra witnesses or error detectors, and none beat the reader we have. That
+  reader (Qwen3.8-27B) is two months old and reads far better than a 72B model that was
+  the best open one in January 2025, so models are the lever and move fast: the work that
+  lasts is the gate a new model passes (HANDOVER.md, "When a new vision model appears").
+- Letting the reader think before answering: it reads worse and slower.
+- Rewording the page-kind question for `init`: it changed 15 answers in 432 and no result.
+- Two extra arbiter features for a comma at a line's end: no better, and glued words worse.
 
-## What is going on right now (2026-10-18)
+## What is going on right now (2026-10-21)
 
 `HANDOVER.md` always has the current state; this is what it said when this page was
 last updated, decoded.
 
-- **Winnow-12B is the text judge now**: a bigger winnow, asked through the
-  probabilities of its answer letters instead of Ollama's decision endpoint. It is right
-  on 81% of labelled suspects where the old winnow was right on 67%; with the arbiter
-  retrained on its votes, tuning went from 0.30 to 0.28 wrong words a page after review
-  and validation saw no clear change. Ollama can be updated now: the old winnow was the
-  only reason to stay on this version.
-- **The context judge's bench**: the quick bench with the context judge on, to see
-  whether it settles questions without adding errors.
-- **Then**: the first-look books, each scored once, moved into tuning or validation,
-  and the arbiter retrained on them.
-- **For you**: six new questions on *Ex-minnaar*, then reading it through, then
-  *Wij doden Stella*, the book the project targets first.
+- **`roboscriptorium init <pdf>` exists** (first version): from a PDF alone it drafts the
+  language, finds each page's kind, and shows where the text proper starts and ends with
+  a contact sheet, every page named by both numbers (the PDF's and the printed one). It
+  gets the two ends right on about 22 of 27 books, off by a page or two on the rest, so a
+  person confirms both. Title and author from the title page are being tested.
+- **The compound-hyphen errors dropped** (0.023 to 0.020 wrong words a page): a hyphen at
+  a line's end is now weighed by how the *whole book* spells the word, not only the pages
+  being built.
+- **What is left is mostly what no reader doubts**: stress accents the print sets over an
+  i for emphasis (half of what looks like errors there is the reference's own slips),
+  rare glyphs like a dotless ı, specks read as characters. A model-free shape test for
+  accents looked promising on four lines and failed on whole books; specks can be ranked by
+  their look in two pages of three. Both wait on more labelled pages and on better vision models.
+- **Running overnight**: a better page-kind model (clef:27b) for `init`, a vote test of
+  Qwen reading each line at a second resolution, and title-and-author extraction.
 
 Good questions to ask the other session about any run, to stay in touch with it: *what
 do you expect it to show? what would make you drop the idea? which file will the result
