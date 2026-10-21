@@ -63,6 +63,10 @@ def blobs(book: str, page: int, boxes: list[list[float]]) -> tuple[np.ndarray, n
 
 
 if __name__ == "__main__":
+    import sys
+
+    # `--no-position` drops the two page-position features (the blob's place on the page).
+    keep = slice(0, 9) if "--no-position" in sys.argv else slice(None)
     data = {}
     for f in sorted(SPECKS.glob("boxes-*.json")):
         book = f.stem.removeprefix("boxes-")
@@ -71,9 +75,9 @@ if __name__ == "__main__":
     for held, (X, y, _) in data.items():
         train = [d for k, d in data.items() if k != held]
         model = HistGradientBoostingClassifier(max_depth=3, min_samples_leaf=5, random_state=0).fit(
-            np.vstack([t[0] for t in train]), np.concatenate([t[1] for t in train])
+            np.vstack([t[0][:, keep] for t in train]), np.concatenate([t[1] for t in train])
         )
-        p = model.predict_proba(X)[:, 1]
+        p = model.predict_proba(X[:, keep])[:, 1]
         order = np.argsort(-p)
         top = y[order[: max(1, int(y.sum()))]].sum()
         print(
