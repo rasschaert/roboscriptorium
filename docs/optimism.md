@@ -98,8 +98,10 @@ nameable kinds (extra text, glued words, quotes, accents).
 
 **The doubts:** about two thirds of what is left was never doubted by any reader, and
 nothing yet catches it but a better reader. Each new kind of book has needed its own
-work. `init` can't yet find a body range unattended (page kinds 86%, the text's start
-right on 25 of 29 books). Local models are the ceiling.
+work. `init` drafts a book's setup from the PDF (2026-10-21) but can't settle the text's
+two ends unattended: first end right on 22 of 27 labelled books, last on 21, off by a page or
+two (an advert for an afterword), so a person confirms both from a contact sheet. Local
+models are the ceiling.
 
 **The horizon** (the user: models get better and consumer hardware gets more memory;
 the project keeps its bones with better models in them). What is hard now (a reader

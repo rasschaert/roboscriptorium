@@ -457,7 +457,13 @@ reading shares: many are specks and faint marks.
 - [ ] **`init` names both page numbers whenever it shows or asks for a page** (the user, 2026-10-21): the PDF's page (the document's own index, which `body_pages` and every
       `--pages` use) and the number the scan prints, e.g. "PDF page 9 (the page prints 7)", never a bare "page 9"; where a page prints no number say so. The confirmation of the
       text's two ends on the review page shows the first and last page of the text proper this way, with the crops.
-- [ ] **`roboscriptorium init <pdf>`** (agreed 2026-10-11): drafts book.toml and asks the
+- [x] **`init`, first version** (2026-10-21; `bookinit.py`, `pagekinds.py`): language, page kinds (signals in the
+      middle, clef-flash on the 8 pages at either edge), the two ends of the text proper, the cover and
+      the title page's lines, written as `book.toml` (or a draft beside it), `init/report.md` and a contact
+      sheet `init/ends.png`, every page named by both numbers. Ends right on 22 and 21 of 27 books;
+      a rewording of the question changed nothing. Still open below: title and author, the confirmation
+      on the review page, `build` and `review` running it when book.toml is missing.
+- [ ] **`roboscriptorium init <pdf>`, the rest** (agreed 2026-10-11): drafts book.toml and asks the
       user only what it can't settle, on the review page; `build` and `review` run it first
       when book.toml is missing. Steps: (1) each page's **kind** (cover, blank, scan noise
       or library stamp, half title, title page, colophon, contents, dedication, motto,
