@@ -11,6 +11,45 @@ commercial e-book; a careful edition like Standard Ebooks is nearer one in 10,00
 Each entry is a judgment, not a measurement: the numbers it rests on are in
 [outlook.md](outlook.md) and [decisions.md](decisions.md). Newest first.
 
+## 2026-10-21, early morning: 6.5/10 (unchanged)
+
+| Goal | Chance |
+| --- | --- |
+| Modern prose, clean IA scan, commercial-e-book quality with a light review | ~80% |
+| The same books with no human at all, ≤ 1 wrong word in 1,000 | ~45% |
+| Universal, unattended, on today's local models | ~20% |
+| The same by 2030 | ~60–70% |
+
+**Where it stands:** tuning 0.29 wrong words a page after review (0.30 on the 18th),
+validation 0.51 (0.37 on the 18th, but the set has grown with harder books: not
+comparable). The arbiter that settles the OCR check's suspects takes 9 wrong ones
+silently in 9,300; almost everything left is a place no reader doubts.
+
+**What the last two days taught:** swapping models is not the lever. Five models were
+tried as readers, witnesses or detectors (PaddleOCR-VL, olmOCR-2-7B, Qwen2.5-VL-72B,
+H2O-Lightning-Omni-4B, fonles-decision-1) and none beat the Qwen3.8 line reader we have;
+one helped a plain vote (801 → 809) but not the arbiter. Two arbiter features for a
+line-end comma failed too. What did pay: reading the errors place by place. About
+half of the biggest unasked class (stress accents) is the reference's slips, not ours
+(our text matches the print), so the measured error rate overstates the build by a
+fifth or so, and a book's hyphens should be weighed by the whole book, not the slice
+(compound hyphens 0.023 → 0.020).
+
+**The doubts:** the real half of what is left is reader blindness to rare marks (an
+emphasis accent on an i, the dotless ı of a Turkish name): no prompt, no model and no
+higher resolution but a narrow one (450 DPI keeps 2 of 6) sees them. Lost lines (about
+half are decorated chapter openings no whole-page reader reads) and every new kind of
+book still need their own work. Local models are still the ceiling.
+
+**The horizon:** unchanged. A reader that sees what no reader sees today is what the
+2030 chance rests on; today's local OCR-tuned models don't yet supply it, which
+moves nothing: they aren't the models of 2030.
+
+**Would move it up:** a reader that keeps emphasis accents and rare glyphs; an
+opening-line reader for lost lines; `init` finding the body range alone.
+**Would move it down:** first looks far worse than tuning; a measure found to flatter
+the build (the reference's slips cut the other way today).
+
 ## 2026-10-18, late morning: 6.5/10
 
 | Goal | Chance |
