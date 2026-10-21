@@ -2,7 +2,7 @@
 
 For `roboscriptorium init`: the clues a page gives before any model looks at it, and
 how far rules on them get against the hand labels in
-work/probes/page-kinds/<book>/labels.json (`experiments/page_sheets.py`).
+tryouts/page-kinds-v1.json (made with `experiments/page_sheets.py`).
 
     uv run python experiments/probe_page_signals.py <book dir> [...]     # one table each
     uv run python experiments/probe_page_signals.py --score              # every labelled book
@@ -23,6 +23,7 @@ from pathlib import Path
 from roboscriptorium.pdf import PageText, cached_text_layer
 
 LABELS = Path("work/probes/page-kinds")
+GIT_LABELS = Path("tryouts/page-kinds-v1.json")
 
 # Words that name a page's kind in its first lines, Dutch and English.
 NAMES = {
@@ -96,7 +97,7 @@ def clues(pages: list[PageText]) -> list[Clues]:
 
 
 def layer(book: Path) -> list[PageText]:
-    return cached_text_layer(book / "source.pdf", book / "stages" / "text-layer.json")
+    return cached_text_layer(book / "source.pdf", book / "stages" / "textlayer.json")
 
 
 def guess(c: Clues, at: float) -> str:
@@ -129,9 +130,11 @@ def score() -> None:
     fates: Counter = Counter()
     confusions: Counter = Counter()
     ends_right = Counter()
-    for f in sorted(LABELS.glob("*/labels.json")):
-        book = Path("work") / f.parent.name
-        labels = {int(k): v for k, v in json.loads(f.read_text()).items() if k.isdigit()}
+    for name, entry in sorted(json.loads(GIT_LABELS.read_text())["books"].items()):
+        book = Path("work") / name
+        if not (book / "source.pdf").exists():
+            continue
+        labels = {int(k): v for k, v in entry["pages"].items()}
         pages = layer(book)
         # Pages the sheets left out are long pages inside the book: running text.
         labels = {p.number: labels.get(p.number, "text") for p in pages}
