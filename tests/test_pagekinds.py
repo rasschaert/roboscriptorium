@@ -67,3 +67,25 @@ def test_the_text_proper_runs_from_its_first_to_its_last_page_that_goes_into_the
         8: "back-cover",
     }
     assert pagekinds.ends(kinds) == (4, 6)
+
+
+def test_answers_to_another_wording_of_the_question_are_asked_again(tmp_path, monkeypatch):
+    monkeypatch.setattr(pagekinds, "render_png", lambda pdf, n: b"png")
+    pages = [_page(n) for n in range(1, 21)]
+    pdf, cache = tmp_path / "work" / "book" / "source.pdf", tmp_path / "a.json"
+    pagekinds.kinds(pdf, pages, _Client(), cache)
+    monkeypatch.setattr(pagekinds, "TAG", "another")
+    second = _Client()
+    pagekinds.kinds(pdf, pages, second, cache)
+    assert len(second.calls) == len(pagekinds.edge_pages(20))
+
+
+def test_answers_of_another_model_are_asked_again(tmp_path, monkeypatch):
+    monkeypatch.setattr(pagekinds, "render_png", lambda pdf, n: b"png")
+    pages = [_page(n) for n in range(1, 21)]
+    pdf, cache = tmp_path / "work" / "book" / "source.pdf", tmp_path / "a.json"
+    small, large = _Client(), _Client()
+    small.model, large.model = "small", "large"
+    pagekinds.kinds(pdf, pages, small, cache)
+    pagekinds.kinds(pdf, pages, large, cache)
+    assert len(large.calls) == len(pagekinds.edge_pages(20))

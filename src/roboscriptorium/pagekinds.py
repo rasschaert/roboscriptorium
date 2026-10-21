@@ -14,6 +14,7 @@ A page is always named by both its numbers (`page_label`): the PDF's own page, w
 
 # ruff: noqa: E501 - the names are one regex a line
 
+import hashlib
 import json
 import re
 import statistics
@@ -199,6 +200,11 @@ def ends(kinds: dict[int, str]) -> tuple[int, int]:
     return inside[0], inside[-1]
 
 
+# The question's wording, as the cache knows it with the model asked: answers to another
+# wording or another model are asked again.
+TAG = hashlib.sha1(json.dumps([KINDS], sort_keys=True).encode()).hexdigest()[:8]
+
+
 def edge_pages(total: int) -> set[int]:
     """The pages at either edge of a book of `total` pages, which the model answers for."""
     return set(range(1, min(EDGE, total) + 1)) | set(range(max(1, total - EDGE + 1), total + 1))
@@ -209,7 +215,9 @@ def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, st
     for the rest, a page they can't tell counting as text. The model's answers are kept in
     `cache` by page, so a rerun asks only what is new."""
     total = len(pages)
-    answers = json.loads(cache.read_text()) if cache.exists() else {}
+    kept = json.loads(cache.read_text()) if cache.exists() else {}
+    asked_of = f"{TAG}:{getattr(client, 'model', '')}"
+    answers = kept.get("answers", {}) if kept.get("question") == asked_of else {}
     edge = edge_pages(total)
     by = {c.page: c for c in clues(pages)}
     out = {}
@@ -221,7 +229,7 @@ def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, st
                     state(pdf.parent.name, n, total, page), QUESTION, image_png=render_png(pdf, n)
                 )["kind"]
                 answers[str(n)] = [answer.value, round(answer.confidence, 3)]
-                write_atomic(cache, json.dumps(answers))
+                write_atomic(cache, json.dumps({"question": asked_of, "answers": answers}))
             out[n] = answers[str(n)][0]
         else:
             g = guess(by[n], (n - 1) / max(1, total - 1))

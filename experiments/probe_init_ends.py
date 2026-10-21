@@ -3,7 +3,10 @@ the signals in the middle, scored against `tryouts/page-kinds-v1.json` on the te
 ends. The model's earlier answers (`probe_page_kinds_model.py`'s cache) seed the per-book
 caches, so only edge pages never asked before cost a call (about 4 s each on clef-flash).
 
-    uv run python experiments/probe_init_ends.py [model]
+    uv run python experiments/probe_init_ends.py [model] [--seed]
+
+`--seed` fills the caches from the old answers file (right only while the question's wording is
+the one those answers were given to); without it every edge page is asked again.
 """
 
 import json
@@ -19,7 +22,8 @@ from roboscriptorium.pdf import cached_text_layer
 OLD = Path("work/probes/page-kinds")
 
 if __name__ == "__main__":
-    model = sys.argv[1] if len(sys.argv) > 1 else "clef-flash:9b"
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    model = args[0] if args else "clef-flash:9b"
     client = decide.for_model(model, Settings.from_env().ollama_url)
     old = {}
     for f in OLD.glob("answers-*.json"):
@@ -31,10 +35,10 @@ if __name__ == "__main__":
         if not (book / "source.pdf").exists():
             continue
         pages = cached_text_layer(book / "source.pdf", book / "stages" / "textlayer.json")
-        cache = OLD / f"edges-{name}.json"
-        if not cache.exists():
+        cache = OLD / f"edges-{model.replace(':', '_')}-{name}.json"
+        if "--seed" in sys.argv:
             seed = {k.split(":")[1]: v for k, v in old.items() if k.startswith(name + ":")}
-            cache.write_text(json.dumps(seed))
+            cache.write_text(json.dumps({"question": f"{pagekinds.TAG}:{model}", "answers": seed}))
         kinds = pagekinds.kinds(book / "source.pdf", pages, client, cache)
         want = {int(k): v for k, v in entry["pages"].items()}
         want = {p.number: want.get(p.number, "text") for p in pages}
