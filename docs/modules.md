@@ -173,8 +173,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `bookinit.py`: a book's setup drafted from its PDF alone (`roboscriptorium init <pdf>`): the
   language (the word list that knows more of the text's words), the cover, the title page's lines
   and the two ends of the text proper; writes `book.toml` (or `init/book.toml.draft`),
-  `init/report.md` and `init/ends.png`, the pages around both ends with both their numbers. Title
-  and author are left for a person, and both ends are always shown for confirmation.
+  `init/report.md` and `init/ends.png`, the pages around both ends with both their numbers. The read
+  model also reads the title, author and translator off the title and copyright pages
+  (`read_front`); they go in the draft marked to confirm, and both ends are always shown for
+  confirmation.
 - `flags.py`: regions a human should check, i.e. what isn't plain running
   text: headings, lines dropped mid-page or without the model being sure,
   garbled text, centred or set-apart lines. Page furniture (repeated running

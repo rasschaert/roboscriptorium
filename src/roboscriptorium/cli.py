@@ -131,6 +131,7 @@ def init_book(
     d = bookinit.draft(root.name, pages, kinds)
     if language:
         d.language = language
+    d.front = bookinit.read_front(source, kinds, settings.read_model, settings.ollama_url)
     out = root / "init"
     out.mkdir(exist_ok=True)
     (out / "report.md").write_text(bookinit.report(d))
@@ -144,7 +145,7 @@ def init_book(
     typer.echo(
         f"draft: {drafted}; report: {out / 'report.md'}; pages around both ends: {out / 'ends.png'}"
     )
-    typer.echo("Confirm both ends and fill in title and author before building.")
+    typer.echo("Confirm both ends, the title and the author before building.")
 
 
 golden_app = typer.Typer(no_args_is_help=True, help="Golden reference books.")

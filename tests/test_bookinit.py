@@ -74,3 +74,23 @@ def test_the_title_pages_lines_are_kept_for_confirmation():
     assert bookinit.title_lines(pages, {1: "title", 2: "dedication"}) == ["Een Titel"]
     assert bookinit.title_lines(pages, {1: "text"}) == []
     assert pagekinds.fate("title") == "details"
+
+
+def test_the_title_author_and_translator_come_from_the_models_json_and_go_in_the_draft():
+    got = bookinit.parse_front(
+        'Sure: {"title": "Het \\"Boek\\"", "author": " Mia Jansen ", "translator": "", "x": 1}'
+    )
+    assert got == {"title": 'Het "Boek"', "author": "Mia Jansen", "translator": ""}
+    d = _draft()
+    d.front = got | {"translator": "Piet Klaas"}
+    text = bookinit.toml(d)
+    assert 'title = "Het \\"Boek\\""' in text and 'author = "Mia Jansen"' in text
+    assert 'translator = "Piet Klaas"' in text
+    assert "translator" not in bookinit.toml(_draft())
+    assert bookinit.parse_front("no json here") == {}
+
+
+def test_the_front_pages_are_the_title_page_else_the_half_title_and_the_copyright_page():
+    assert bookinit.front_pages({1: "cover", 2: "half-title", 3: "colophon", 4: "text"}) == [2, 3]
+    assert bookinit.front_pages({2: "half-title", 3: "title", 4: "colophon"}) == [3, 4]
+    assert bookinit.front_pages({1: "text"}) == []

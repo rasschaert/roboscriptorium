@@ -461,7 +461,8 @@ reading shares: many are specks and faint marks.
       middle, clef-flash on the 8 pages at either edge), the two ends of the text proper, the cover and
       the title page's lines, written as `book.toml` (or a draft beside it), `init/report.md` and a contact
       sheet `init/ends.png`, every page named by both numbers. Ends right on 22 and 21 of 27 books;
-      a rewording of the question changed nothing. Still open below: title and author, the confirmation
+      a rewording of the question changed nothing. Title, author and translator are drafted from the title and
+      copyright pages (2026-10-22: title 26, author 25 right of 27). Still open below: the confirmation
       on the review page, `build` and `review` running it when book.toml is missing.
 - [ ] **`roboscriptorium init <pdf>`, the rest** (agreed 2026-10-11): drafts book.toml and asks the
       user only what it can't settle, on the review page; `build` and `review` run it first

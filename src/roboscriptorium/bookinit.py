@@ -9,12 +9,15 @@ A page is named by both its numbers wherever it is shown (`pagekinds.page_label`
 page, which `book.toml` and every `--pages` use, and the number the page prints.
 """
 
+import base64
+import json
 import re
 from collections import Counter
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from io import BytesIO
 from pathlib import Path
 
+import httpx
 from PIL import Image, ImageDraw
 
 from roboscriptorium import pagekinds
@@ -25,6 +28,13 @@ from roboscriptorium.pdf import PageText, render_png
 AROUND = 2
 # Words of the text sampled to tell the language.
 SAMPLE = 20_000
+FRONT_PROMPT = (
+    "These are two pages of a scanned book: its title page and its copyright page (the images, "
+    "in that order). Answer with one JSON object and nothing else, with the keys title (the "
+    "book's title as printed on the title page, without the author), author (the author's name "
+    "as printed, in the usual order, first name first) and translator (the translator's name "
+    "if the pages name one, else an empty string)."
+)
 
 
 @dataclass
@@ -39,6 +49,7 @@ class Draft:
     first: int
     last: int
     title_lines: list[str]
+    front: dict[str, str] = field(default_factory=dict)
 
 
 def slug(stem: str) -> str:
@@ -71,6 +82,36 @@ def title_lines(pages: list[PageText], kinds: dict[int, str]) -> list[str]:
     return []
 
 
+def parse_front(text: str) -> dict[str, str]:
+    """The title, author and translator in a model's JSON answer; empty where it isn't JSON."""
+    try:
+        got = json.loads(re.search(r"\{.*\}", text, re.S).group())
+    except (AttributeError, json.JSONDecodeError):
+        return {}
+    return {
+        k: got[k].strip() for k in ("title", "author", "translator") if isinstance(got.get(k), str)
+    }
+
+
+def front_pages(kinds: dict[int, str]) -> list[int]:
+    """The title page (else the half title) and the copyright page, those the book has."""
+    pick = lambda *names: next((n for n, k in sorted(kinds.items()) if k in names), None)  # noqa: E731
+    return [n for n in (pick("title") or pick("half-title"), pick("colophon")) if n]
+
+
+def read_front(pdf: Path, kinds: dict[int, str], model: str, url: str) -> dict[str, str]:
+    """The title, author and translator the read model finds on the title and copyright pages."""
+    pages = front_pages(kinds)
+    if not pages:
+        return {}
+    images = [base64.b64encode(render_png(pdf, n, max_pixels=1_000_000)).decode() for n in pages]
+    body = {"model": model, "prompt": FRONT_PROMPT, "images": images, "stream": False,
+            "think": False, "options": {"temperature": 0, "num_predict": 300}}  # fmt: skip
+    resp = httpx.post(f"{url}/api/generate", json=body, timeout=600)
+    resp.raise_for_status()
+    return parse_front(resp.json()["response"])
+
+
 def draft(name: str, pages: list[PageText], kinds: dict[int, str], lexicons=None) -> Draft:
     """The draft of a book from its text layer and its pages' kinds."""
     language, shares = language_of(pages, lexicons)
@@ -80,6 +121,11 @@ def draft(name: str, pages: list[PageText], kinds: dict[int, str], lexicons=None
         name, pages, kinds, pagekinds.printed_offset(pages), language, shares, cover, first, last,
         title_lines(pages, kinds),
     )  # fmt: skip
+
+
+def _q(text: str) -> str:
+    """Text safe inside a TOML basic string."""
+    return text.replace("\\", "\\\\").replace('"', '\\"')
 
 
 def _shares(d: Draft) -> str:
@@ -94,10 +140,15 @@ def toml(d: Draft) -> str:
     first = pagekinds.page_label(d.first, d.offset)
     last = pagekinds.page_label(d.last, d.offset)
     seen = "; ".join(d.title_lines) or "none found"
+    translator = (
+        f'translator = "{_q(d.front["translator"])}"   # confirm: the copyright page names them\n'
+        if d.front.get("translator")
+        else ""
+    )
     return f"""# Drafted by `roboscriptorium init` from the PDF alone. Confirm what is marked.
-title = ""   # confirm. On the title page: {seen}
-author = ""   # confirm
-language = "{d.language}"   # confirm. The word lists know {shares} of the text's words
+title = "{_q(d.front.get("title", ""))}"   # confirm. On the title page: {seen}
+author = "{_q(d.front.get("author", ""))}"   # confirm
+{translator}language = "{d.language}"   # confirm. The word lists know {shares} of the text's words
 cover_page = {d.cover or 1}
 # The text proper, as PDF pages (what body_pages and --pages take). Confirm both ends:
 #   first: {first}
@@ -135,11 +186,16 @@ def report(d: Draft) -> str:
         "",
         f"- Cover: PDF page {d.cover or 1}.",
         f"- On the title page: {'; '.join(d.title_lines) or 'no title page found'}.",
-        "- Title and author are left for you.",
+        f"- Read from the title and copyright pages (confirm): {_front(d)}.",
         f"- Kinds found: {', '.join(f'{k} {n}' for k, n in counts.most_common())}.",
         "",
     ]
     return "\n".join(lines)
+
+
+def _front(d: Draft) -> str:
+    got = [f"{k} {v!r}" for k, v in d.front.items() if v]
+    return ", ".join(got) or "nothing; title and author are left for you"
 
 
 def _around(d: Draft, end: int) -> list[int]:
