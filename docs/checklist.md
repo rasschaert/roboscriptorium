@@ -169,6 +169,29 @@ models could do. Each probe below asks whether that's still true, on a few golde
       the layer and the line readers judging where they differ
 - [ ] Page kinds for `init` (cover, front matter, body, back matter) by Qwen from the page
       image, on `tryouts/page-kinds-v1.json`
+- [ ] **Per-book settings and extra witnesses** (the user, 2026-10-22: do some books respond
+      better to some settings, and can a quick pre-pass tell which?). Evidence so far: qwen at
+      300/450/600 dpi on 50 lines of each of 16 books differs by 1–4 lines per book, noise
+      except perhaps Reis om mijn schedel (45 → 49) and Artemis (50 → 48); the cold `bench quick`
+      at 450 dpi fixed more than it made in De tuin and De eerlijke vinder, the reverse in
+      Dolittle and De cipier. One page can't show it (about 0.2 wrong words a page), and an
+      unknown book has no reference to score against. In order, each a cheap test first:
+      - [ ] Does *agreement* predict the right setting? On the golden books, per setting
+            (dpi, contrast, crop padding, prompt wording) the share of lines agreeing with an
+            independent reader; does the setting with the most agreement score best on the
+            reader set? No models beyond the readings already made for dpi; contrast, crop and
+            prompt variants need one reading each of the 850 lines.
+      - [ ] Variants as extra *witnesses* for the vote simulation, not a choice: contrast
+            stretch, tighter and wider crop, a second prompt wording, 450 dpi (+12 so far),
+            each through `vote_sim.py`; the best into the arbiter's trust data.
+      - [ ] The 450 dpi qwen reading as an extra arbiter reader: trust data rebuilt, arbiter
+            retrained, `bench tuning` (a cold run, overnight).
+      - [ ] Token probabilities of a reading (Ollama's logprobs) as a per-line confidence,
+            calibrated on the reader set; does it rank wrong readings below right ones better
+            than the readers' disagreement does?
+      - [ ] Only if the first shows a signal: a per-book pre-pass (20–30 pages through the
+            variants, the setting with the most agreement kept), learned from the golden
+            books' fingerprints, not a hand-written rule.
 
 ## Before the user reviews another book (2026-10-16)
 
