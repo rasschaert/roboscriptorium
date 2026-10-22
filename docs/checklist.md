@@ -176,6 +176,8 @@ models could do. Each probe below asks whether that's still true, on a few golde
       at 450 dpi fixed more than it made in De tuin and De eerlijke vinder, the reverse in
       Dolittle and De cipier. One page can't show it (about 0.2 wrong words a page), and an
       unknown book has no reference to score against. In order, each a cheap test first:
+      The first two steps share one list of variants: read each variant once over the reader
+      set's 850 lines, then score it both ways (its agreement, and its vote gain as a witness).
       - [ ] Does *agreement* predict the right setting? On the golden books, per setting
             (dpi, contrast, crop padding, prompt wording) the share of lines agreeing with an
             independent reader; does the setting with the most agreement score best on the
