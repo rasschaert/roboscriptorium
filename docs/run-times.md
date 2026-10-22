@@ -539,3 +539,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-21 | init page kinds: edge pages by clef-flash through pagekinds.kinds, 27 books | 27 | 0 | 0 |
 | 2026-10-21 | read model with thinking on, reader set v2 (850 lines), score and vote simulation | 850 | 60 | 0 |
 | 2026-10-21 | page kinds: wording variant 2 on every edge page of 27 books, clef-flash | 27 | 22 | 0 |
+| 2026-10-22 | page kinds: clef:27b on every edge page of 27 books | 27 | 62 | 0 |
+| 2026-10-22 | title and author from the title and copyright pages, 27 books, read model | 27 | 66 | 0 |
