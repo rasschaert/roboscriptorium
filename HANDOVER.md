@@ -46,6 +46,16 @@ The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen
 
 ## Waiting on the user
 
+- **Specks** (parked, the user has no time for it now): the speck classifier ranks well on three labelled Thief-Taker pages (`probe_speck_blobs.py`, `--no-position`) but needs labelled pages from other scans before it is trusted; sightings are in `work/probes/specks/sightings.jsonl`. A "speck" kind in the review UI was not built.
+- **Push**: 19 commits ahead of `origin/main`; a push needs 1Password unlocked.
+- `work/models/mlx-env` (809 MB, MLX readers) stays until the user says it can go.
+
+## Loose ends found at the end of the 2026-10-21/22 session
+
+- **The frozen reader set (`tryouts/reader-v2.json`) still holds 50 lines of the retired 11/22/63**, whose PDF is gone. `read_set_dpi.py` stands in their frozen crops, and the night's 450/600 dpi figures leave them out; any script that reopens the PDFs for every item crashes on them. Rebuild the set without that book before the next reader screen (readings files are keyed on item ids, so old ones need the same filter).
+- **Nine `book.toml` files name no translator** though the colophon does (`probe_title_author.py` output, `work/runs/title-author.log`): fill them in, or leave them if the golden pair doesn't use the field.
+- **Run-in-screen traps hit tonight**: `experiments/screen_reader.sh <label>` treats the label as an Ollama model (it fails for a readings-file label such as `…+dpi450`: run `tryout.py`'s reading step yourself, then `vote_sim.py <stem>` directly); a watcher's `Monitor` expires after 30 minutes however long its timeout, so a long run needs it re-armed.
+- **Per-book settings and extra witnesses** is a new checklist item ("Assumptions to test"): start with the agreement probe.
 - Andere levens: the other seven candidate misprints
   (`work/probes/carrere-editions/andere-levens-checked.md`) were saved as printed with no
   erratum; the user says which, if any, are misprints. Pages 135 and 153 span a line
