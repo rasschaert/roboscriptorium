@@ -163,6 +163,9 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   wrong words the tuning books keep after a perfect review, only 53 (29%) are reading
   errors no reader doubted, the only ones a better reader alone would fix, and 31 of
   those are punctuation. Below the half agreed with the user as the bar.
+- **Line crops padded to qwen's 32-px vision grid instead of resized** (2026-10-23): hard
+  436 → 427 of 480, control 319 → 311 of 320; the padded crops make qwen add accents the
+  print lacks. The resampled crop is what it reads best.
 
 ## Inference speed: what a cold page costs, and what's been tried
 

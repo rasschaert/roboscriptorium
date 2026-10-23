@@ -219,11 +219,13 @@ costs against what it could reach; every reader candidate passes the new-model g
       ("vríénden", Het schaduwhuis PDF page 56) the accent shows plainly in both the mask and the
       composited render the readers get: the loss is the readers', not the scan's, and the mask
       shows an accent no better than the render
-- [ ] Crops padded to the vision encoder's grid instead of resized (Argon): Qwen's image
-      processor rounds a crop's size to its patch grid by resampling, which may blur a
-      two-pixel accent or comma. Check Qwen3.8's patch and merge size first, then pad the
-      frozen set's crops with paper colour to an exact multiple and read them again;
-      compare per stratum and on the six accent lines (agent, ~30 min of qwen)
+- [x] ~~Crops padded to the vision encoder's grid instead of resized~~ (Argon; NOT TAKEN
+      2026-10-23, `probe_grid_pad.py`): Qwen3.8 takes 16-px patches merged 2×2, so its
+      processor scales the frozen crops' heights by 0.8–1.2 to a multiple of 32. Padded with
+      paper colour instead, qwen read 427 of 480 hard lines right against 436 and 311 of 320
+      control lines against 319 (9 fixed, 26 broken; the 68 most squashed lines 64 → 65);
+      re-reading the crops as they are changed none, so it is the padding. It invents marks:
+      "nògal", "dië", "én", "Ârtyôm"
 - [x] ~~Small capitals from the descender band~~ (Argon; dropped on reading the errors,
       2026-10-23): of the 27 unasked case errors on tuning, 15 are Au pair's reference writing
       small capitals in lower case (verdicts, golden-notes), and the other 12 are short acronyms
