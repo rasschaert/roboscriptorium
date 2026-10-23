@@ -184,10 +184,13 @@ models could do. Each probe below asks whether that's still true, on a few golde
             reader set? No models beyond the readings already made for dpi; contrast, crop and
             prompt variants need one reading each of the 850 lines.
       - [ ] Variants as extra *witnesses* for the vote simulation, not a choice: contrast
-            stretch, tighter and wider crop, a second prompt wording, 450 dpi (+12 so far),
-            each through `vote_sim.py`; the best into the arbiter's trust data.
-      - [ ] The 450 dpi qwen reading as an extra arbiter reader: trust data rebuilt, arbiter
-            retrained, `bench tuning` (a cold run, overnight).
+            stretch, tighter and wider crop, a second prompt wording, each through
+            `vote_sim.py`, then on the lines no reader flags (as
+            `probe_dpi450_alone.py` does): the frozen set is 60% hard lines, so its vote
+            gain overstates a witness that only helps where the arbiter already looks.
+      - [x] ~~The 450 dpi qwen reading as an extra arbiter reader~~ (dropped 2026-10-23):
+            right alone on 0 of 57 quiet lines where it differs, and the 2026-10-09
+            bench of the same second look found no gain.
       - [ ] Token probabilities of a reading (Ollama's logprobs) as a per-line confidence,
             calibrated on the reader set; does it rank wrong readings below right ones better
             than the readers' disagreement does?

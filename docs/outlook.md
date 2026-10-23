@@ -184,7 +184,7 @@ five others), so a rerun of cached lines is free even without the pipeline's cac
 
 **Tried, no effect, don't repeat:**
 
-- **The pipeline's line readers at 450 dpi** (2026-10-22). `bench quick`, earlier arbiter: fixed 11, made 18. The 450 dpi qwen reading *added* as a voter helps the vote simulation (+12 of 800), a swap of the readers' resolution does not: the arbiter was trained on 300 dpi readings. Open: the extra reader with the arbiter retrained.
+- **The pipeline's line readers at 450 dpi** (2026-10-22). `bench quick`, earlier arbiter: fixed 11, made 18. The 450 dpi qwen reading *added* as a voter helps the vote simulation (+12 of 800), a swap of the readers' resolution does not: the arbiter was trained on 300 dpi readings. As an extra witness (2026-10-23) it is never right alone where no reader differs (0 of 57 on the quick slices), and the same second look as a trust feature gained nothing on 2026-10-09: closed.
 - **Requests in parallel to Qwen.** 1, 2, 4, 8 and 16 at a time: 1.16–1.21 s a line
   alike, with and without `OLLAMA_NUM_PARALLEL=4`. The MLX runner takes one request at
   a time; the pipeline's four reader threads only queue on it. Readings identical.
