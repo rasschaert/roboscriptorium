@@ -7,7 +7,11 @@ apart in a word of `MIN_LETTERS` or more) occurs at least `COMMON` times. Scored
 the latest tuning bench's errors: how many unasked one-word errors are flagged (their right
 form common elsewhere in the book), and how many flags fall on words the bench counts right.
 
-    uv run python experiments/probe_book_consistency.py [errors.jsonl]
+    uv run python experiments/probe_book_consistency.py [errors.jsonl] [--marks]
+
+`--marks` (Argon's narrowing) flags only a reading that lacks a diaeresis or a letter outside
+ASCII (ë, ï, ı, ł, ç …) its common variant has; acute and grave accents vary by emphasis
+in Dutch, so they never flag.
 """
 
 import json
@@ -26,6 +30,9 @@ from roboscriptorium import bench  # noqa: E402
 from roboscriptorium.golden import scoring  # noqa: E402
 
 RARE, COMMON, MIN_LETTERS = 1, 3, 5
+MARKS = "--marks" in sys.argv
+# Accents that mark emphasis or stress, which a book may set on one occurrence only.
+STRESS = {"\u0301", "\u0300"}
 WORD = re.compile(r"[^\W\d_]+(?:[-'’][^\W\d_]+)*")
 
 
@@ -35,8 +42,18 @@ def bare(word: str) -> str:
     )
 
 
+def lost_mark(word: str, other: str) -> bool:
+    """Whether `other` is `word` with a diaeresis or a non-ASCII letter `word` lacks."""
+    if bare(other) != bare(word) or other == word:
+        return False
+    extra = [c for c in unicodedata.normalize("NFD", other) if ord(c) > 127]
+    return bool(extra) and not set(extra) <= STRESS and len(other) == len(word)
+
+
 def variants(word: str, counts: Counter) -> list[str]:
     """The book's common words that `word` could be an OCR slip of."""
+    if MARKS:
+        return [o for o, n in counts.items() if n >= COMMON and lost_mark(word, o)]
     out = []
     key = bare(word).replace("-", "")
     for other, n in counts.items():
@@ -56,7 +73,8 @@ def latest_errors() -> Path:
 
 
 if __name__ == "__main__":
-    path = Path(sys.argv[1]) if len(sys.argv) > 1 else latest_errors()
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    path = Path(args[0]) if args else latest_errors()
     errors = [json.loads(x) for x in path.read_text().splitlines()]
     totals: Counter = Counter()
     examples = []

@@ -229,11 +229,10 @@ costs against what it could reach; every reader candidate passes the new-model g
       in small capitals ("ss", "wa", "voc", "usb", "cv", "v-hals", "u-boten") with no letter that
       descends: the test reaches none. What is left needs a shape classifier (the glyph-level
       checks below), and a small-capital S is nearly a lower-case s
-- [ ] Book-wide consistency for diaereses and letters outside ASCII only (Argon's narrowing
-      of the null above): the same probe, flagging a plain reading only where the book
-      prints the word with ë, ï, ı, ł, ç … and never for acute accents, which vary by
-      emphasis; and only where every reader reads the common form the same at every one of
-      its occurrences, so one doubtful printing flags nothing (Fable) (agent, ~15 min, no models)
+- [x] ~~Book-wide consistency for diaereses and letters outside ASCII only~~ (Argon's
+      narrowing; 2026-10-23, `probe_book_consistency.py --marks`): one flag over every tuning
+      slice, and a right one ("geinteresseerd" for "geïnteresseerd"), but 1 of 184 unasked
+      one-word errors: most such words occur once in a book, so the book can't vouch for them
 - [ ] A per-book character recogniser with no language model, as a witness that fails
       differently (Fable's first idea, Argon's fourth; DeepSeek advised against): Calamari or
       Kraken trained on golden line crops leaving the book out, then fine-tuned on the book's
