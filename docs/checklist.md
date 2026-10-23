@@ -216,7 +216,10 @@ costs against what it could reach; every reader candidate passes the new-model g
       and the accent survives only in Internet Archive's original JP2 images. Compare the mask
       and the JP2 at a known emphatic accent in a public-domain book, and check the PDFs'
       JBIG2 mode (a symbol dictionary or generic coding). Decides whether the mask can be
-      trusted for accents (agent, ~15 min, no models)
+      trusted for accents. If it is lossy, the accent may survive nowhere in an MRC-only PDF
+      (the mask holds the plain template, the JPEG2000 foreground is too coarse): the stress-
+      accent errors are then a floor for copyrighted books, reachable only through the original
+      JP2s or a one-time image export from the owner (agent, ~15 min, no models)
 - [ ] Crops padded to the vision encoder's grid instead of resized (Argon): Qwen's image
       processor rounds a crop's size to its patch grid by resampling, which may blur a
       two-pixel accent or comma. Check Qwen3.8's patch and merge size first, then pad the
@@ -229,7 +232,8 @@ costs against what it could reach; every reader candidate passes the new-model g
 - [ ] Book-wide consistency for diaereses and letters outside ASCII only (Argon's narrowing
       of the null above): the same probe, flagging a plain reading only where the book
       prints the word with ë, ï, ı, ł, ç … and never for acute accents, which vary by
-      emphasis (agent, ~15 min, no models)
+      emphasis; and only where every reader reads the common form the same at every one of
+      its occurrences, so one doubtful printing flags nothing (Fable) (agent, ~15 min, no models)
 - [ ] A per-book character recogniser with no language model, as a witness that fails
       differently (Fable's first idea, Argon's fourth; DeepSeek advised against): Calamari or
       Kraken trained on golden line crops leaving the book out, then fine-tuned on the book's
@@ -279,7 +283,9 @@ costs against what it could reach; every reader candidate passes the new-model g
       WACV 2022, a ~100 KB graph network; Fable's review rates it the best fit for unindented
       books): learned, as the principles want; the obstacle is data, since the unindented books
       are validation only. Synthetic unindented pages from the tuning books (indents removed,
-      breaks kept) would train it (agent, ~2 days)
+      breaks kept) would train it, but they carry the short last line and not the extra lead
+      real flush-set books put between paragraphs (Fable): measure that lead on the validation
+      books first, to know what the synthetic pages miss (agent, ~2 days)
 - [x] ~~Gated language-model scoring of words with a visual twin~~ (Argon's PLLR with
       RobBERT; Fable and DeepSeek against): parked behind the glyph and image-gain probes,
       which ask the scan rather than the language
@@ -294,10 +300,12 @@ costs against what it could reach; every reader candidate passes the new-model g
       working): crops of the scan's own binary mask, without the JPEG2000 layers, for the six
       known emphasis-accent lines and the small-capital ones, read by qwen; compared with the
       composited crops (agent, ~30 min)
-- [ ] Questions ranked by expected errors fixed per second (DeepSeek 8; already in the
-      outlook as untried): replay saved benches offline with the arbiter's probabilities and
-      a severity per cause learned from the error logs, against today's threshold (agent,
-      ~2 h, no models)
+- [ ] A threshold per kind of question (Argon's value of information; DeepSeek 8 as
+      ranking): replay saved benches offline. Reviewer mistakes are too few for a predictor
+      (8 of 68 on Stella): first test whether the arbiter's margin between its top two
+      versions predicts the known wrong answers, then at most a rate per class with several
+      mistakes (Fable). The 80% cutoff already minimises the headline on tuning, so only a
+      class-specific threshold can gain (agent, ~2 h, no models)
 - [x] ~~Character-level ROVER with a diacritic-restoration vote~~ (DeepSeek 1, not taken
       on reading): suspects are already made at character level where any reader differs;
       the silent errors are where every reader gives the same characters, which a vote
