@@ -131,7 +131,7 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, dict]:
     threshold = ink_threshold(img)
     out = {}
     for k, (line, words) in enumerate(
-        zip(page.lines, line_words(page_words(pdf_page), page), strict=True)
+        zip(page.lines, line_words(page_words(pdf_page, page), page), strict=True)
     ):
         # A line the text layer lacks (read from the scan) has only its own box.
         pieces = [(w[:4], w[4]) for w in words] or [

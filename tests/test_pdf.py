@@ -26,6 +26,28 @@ def test_an_image_only_pdf_gets_tesseracts_lines_with_boxes(tmp_path):
     assert lines[0].y1 <= lines[1].y0 and 30 < lines[0].x0 < 50
 
 
+def test_an_image_only_page_keeps_its_first_readings_words_for_the_word_measures(tmp_path):
+    source = _image_only(tmp_path, ["The first line of it", "and the second line"])
+    cache = tmp_path / "textlayer.json"
+    page = pdf.cached_text_layer(source, cache, "eng")[0]
+    with pymupdf.open(source) as doc:
+        assert pdf.page_words(doc[0]) == []  # the PDF itself has none
+        words = pdf.page_words(doc[0], page)
+    assert [w[4] for w in words] == "The first line of it and the second line".split()
+    # Each word's line is the visual line holding it, so a line's words spell it.
+    held = pdf.line_words(words, page)
+    assert all(pdf.spells(ws, ln.text) for ws, ln in zip(held, page.lines, strict=True))
+    # Measures cached on these words aren't mistaken for ones made without them.
+    assert pdf.lines_digest(page) != pdf.lines_digest(pdf.replace(page, words=()))
+    # The words survive the cache; one written before they were kept is read again.
+    assert pdf.cached_text_layer(source, cache)[0].words == page.words
+    raw = json.loads(cache.read_text())
+    for p in raw["pages"]:
+        p.pop("words")
+    cache.write_text(json.dumps(raw))
+    assert pdf.cached_text_layer(source, cache)[0].words == page.words
+
+
 def test_an_image_only_pdf_counts_as_a_scan(tmp_path):
     assert ocrcheck.scanned(_image_only(tmp_path, ["The first line of it"]))
 

@@ -304,7 +304,7 @@ def line_boxes(pdf_page: pymupdf.Page, page: PageText) -> list[tuple[float, floa
     Some OCR layers give lines boxes far taller than the print.
     """
     out = []
-    for line, words in zip(page.lines, line_words(page_words(pdf_page), page), strict=True):
+    for line, words in zip(page.lines, line_words(page_words(pdf_page, page), page), strict=True):
         if words and spells(words, line.text):
             out.append(_union(words))
         else:

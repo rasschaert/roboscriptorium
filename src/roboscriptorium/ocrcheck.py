@@ -217,7 +217,7 @@ def check(
     with pymupdf.open(pdf) as doc:
         for page in pages:
             pdf_page = doc[page.number - 1]
-            words = line_words(page_words(pdf_page), page)
+            words = line_words(page_words(pdf_page, page), page)
             boxes = readers.line_boxes(pdf_page, page)
             for k, line in enumerate(page.lines):
                 ours = line.text

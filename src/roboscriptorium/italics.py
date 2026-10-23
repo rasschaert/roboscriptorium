@@ -88,7 +88,7 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:
     threshold = ink.threshold(img)
     out = {}
     for k, (line, words) in enumerate(
-        zip(page.lines, line_words(page_words(pdf_page), page), strict=True)
+        zip(page.lines, line_words(page_words(pdf_page, page), page), strict=True)
     ):
         if not words or not spells(words, line.text):
             continue

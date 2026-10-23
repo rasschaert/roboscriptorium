@@ -87,6 +87,9 @@ class PageText:
     width: float
     height: float
     lines: list[Line]
+    # An image-only page's words as its first reading (tesseract) found them, shaped as
+    # `page_words` gives a PDF's own: (x0, y0, x1, y1, text, block, line, word).
+    words: tuple = ()
 
 
 def _visual_lines(
@@ -155,8 +158,10 @@ def _apart(group: list[Line], gap: float) -> list[list[Line]]:
 
 
 def lines_digest(page: PageText) -> str:
-    """A short hash of the page's line texts, for caches measured on those lines."""
-    return hashlib.sha256("\n".join(ln.text for ln in page.lines).encode()).hexdigest()[:16]
+    """A short hash of the page's line texts, for caches measured on those lines (and on
+    the first reading's words, where the page has them)."""
+    text = "\n".join(ln.text for ln in page.lines) + ("\n[first reading]" if page.words else "")
+    return hashlib.sha256(text.encode()).hexdigest()[:16]
 
 
 def line_words(page_words: list, page: PageText) -> list[list]:
@@ -188,8 +193,11 @@ def _shown(page: pymupdf.Page, box) -> tuple[float, float, float, float]:
     return tuple(pymupdf.Rect(box) * page.rotation_matrix)
 
 
-def page_words(page: pymupdf.Page) -> list[tuple]:
-    """`page.get_text("words")`, each box as the page is shown (`_shown`)."""
+def page_words(page: pymupdf.Page, text: "PageText | None" = None) -> list[tuple]:
+    """`page.get_text("words")`, each box as the page is shown (`_shown`); on an image-only
+    page, the words its first reading found (`text.words`)."""
+    if text is not None and text.words:
+        return list(text.words)
     return [(*_shown(page, w[:4]), *w[4:]) for w in page.get_text("words")]
 
 
@@ -303,12 +311,21 @@ def first_reading(doc: pymupdf.Document, pages: list[PageText], lang: str) -> li
             images = [doc[n - 1].get_pixmap(dpi=FIRST_READER_DPI).tobytes("png") for n in batch]
             read = pool.map(lambda png: ocr.tesseract_words(png, lang, FIRST_READER_DPI), images)
             found.update(zip(batch, read, strict=True))
-    return [
-        replace(p, lines=_visual_lines([Line(w[0], *w[1:]) for w in found[p.number]]))
-        if p.number in found
-        else p
-        for p in pages
-    ]
+    out = []
+    for p in pages:
+        if p.number not in found:
+            out.append(p)
+            continue
+        lines = _visual_lines([Line(w[0], *w[1:]) for w in found[p.number]])
+        page = replace(p, lines=lines)
+        boxes = [(*w[1:], w[0]) for w in found[p.number]]
+        words = tuple(
+            (*w[:5], 0, k, i)
+            for k, held in enumerate(line_words(boxes, page))
+            for i, w in enumerate(held)
+        )
+        out.append(replace(page, words=words))
+    return out
 
 
 def cached_text_layer(pdf: Path, cache: Path, lang: str | None = None) -> list[PageText]:
@@ -316,11 +333,19 @@ def cached_text_layer(pdf: Path, cache: Path, lang: str | None = None) -> list[P
     again when a caller gives one: the PDF may be image-only."""
     if raw := read_cache(cache, TEXT_LAYER_VERSION):
         pages = [
-            PageText(p["number"], p["width"], p["height"], [Line(**ln) for ln in p["lines"]])
+            PageText(
+                p["number"], p["width"], p["height"], [Line(**ln) for ln in p["lines"]],
+                tuple(tuple(w) for w in p.get("words", ())),
+            )
             for p in raw["pages"]
-        ]
-        if lang is None or any(p.lines for p in pages) or raw.get("first_reader") == lang:
+        ]  # fmt: skip
+        # A first reading cached before its words were kept is read again.
+        stale = raw.get("first_reader") and not any(p.words for p in pages)
+        if not stale and (
+            lang is None or any(p.lines for p in pages) or raw.get("first_reader") == lang
+        ):
             return pages
+        lang = lang or raw.get("first_reader") or None
     pages = read_text_layer(pdf, lang)
     payload = {"first_reader": lang or "", "pages": [asdict(p) for p in pages]}
     write_cache(cache, TEXT_LAYER_VERSION, payload, indent=1)
