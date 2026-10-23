@@ -66,9 +66,12 @@ def features(
     model_roles: dict[SourceRef, LineRole],
     styles: dict[SourceRef, Style],
     regions: dict[int, list[Region]] | None = None,
+    page_roles: dict[int, dict[int, str]] | None = None,
 ) -> dict[SourceRef, dict[str, float]]:
     """Each line's features. `model_roles` are the role model's own answers with the rules
-    of `roles.classify` (lines it wasn't asked about have none)."""
+    of `roles.classify` (lines it wasn't asked about have none). With `page_roles` (the read
+    model's heading and furniture lines per page it answered for, `pageroles.py`) the
+    features also hold `PAGE_FEATURES`."""
     repeats = P.Repeats(pages)
     sunk = P.sunk_pages(pages)
     offset = P.page_offset(pages)
@@ -129,6 +132,14 @@ def features(
                 **_layout(ln, here),
                 "page_figure_share": figures / (page.width * page.height),
             }
+            if page_roles is not None:
+                said = page_roles.get(page.number)
+                kind = said.get(i, "body") if said is not None else None
+                out[ref] |= {
+                    "page_asked": float(said is not None),
+                    "page_heading": float(kind == "heading") if said is not None else nan,
+                    "page_other": float(kind == "other") if said is not None else nan,
+                }
     return out
 
 
@@ -139,10 +150,19 @@ FEATURES = tuple(
     ]
 )
 
+PAGE_FEATURES = ("page_asked", "page_heading", "page_other")
+
 
 @dataclass
 class Sorter:
     model: object
+    # The features it was trained on: `FEATURES`, and `PAGE_FEATURES` after them when it
+    # was trained with the read model's page roles.
+    features: tuple = FEATURES
+
+    @property
+    def page_roles(self) -> bool:
+        return self.features[len(FEATURES) :] == PAGE_FEATURES
 
 
 class Mismatch(RuntimeError):
@@ -164,32 +184,37 @@ def train(rows: list[dict[str, float]], labels: list[str], body_weight: float = 
     counts = {c: labels.count(c) for c in set(labels)}
     weight = {c: len(labels) / (len(counts) * n) for c, n in counts.items()}
     weight["body"] = weight.get("body", 1.0) * body_weight
-    return Sorter(model.fit(_matrix(rows), labels, sample_weight=[weight[c] for c in labels]))
+    names = FEATURES + PAGE_FEATURES if PAGE_FEATURES[0] in rows[0] else FEATURES
+    fitted = model.fit(_matrix(rows, names), labels, sample_weight=[weight[c] for c in labels])
+    return Sorter(fitted, names)
 
 
-def _matrix(rows: list[dict[str, float]]) -> np.ndarray:
-    return np.array([[r[k] for k in FEATURES] for r in rows], dtype=float)
+def _matrix(rows: list[dict[str, float]], names: tuple = FEATURES) -> np.ndarray:
+    return np.array([[r[k] for k in names] for r in rows], dtype=float)
 
 
 def save(sorter: Sorter, path: Path) -> None:
-    blob = {"version": MODEL_VERSION, "features": FEATURES, "model": sorter.model}
+    blob = {"version": MODEL_VERSION, "features": sorter.features, "model": sorter.model}
     write_atomic(path, pickle.dumps(blob))
 
 
-def load(path: Path) -> Sorter:
-    """The saved model; a missing one, or one trained on other features, stops the build."""
+def load(path: Path, page_roles: bool = False) -> Sorter:
+    """The saved model; a missing one, or one trained on other features (with the page
+    roles where `page_roles` says without, or the other way round), stops the build."""
     if not path.exists():
         raise Mismatch(
             f"No line-role model at {path}: train one (experiments/train_sorter.py --save) "
             "or set ROBO_SORTER=0 for the rules."
         )
     blob = pickle.loads(path.read_bytes())
-    if blob.get("version") != MODEL_VERSION or tuple(blob.get("features", ())) != FEATURES:
+    want = FEATURES + PAGE_FEATURES if page_roles else FEATURES
+    if blob.get("version") != MODEL_VERSION or tuple(blob.get("features", ())) != want:
         raise Mismatch(
-            f"The line-role model {path} was trained on other features: retrain it "
-            "(experiments/train_sorter.py --save) or set ROBO_SORTER=0 for the rules."
+            f"The line-role model {path} was trained on other features"
+            f" ({'with' if page_roles else 'without'} the page roles wanted, ROBO_PAGE_ROLES):"
+            " retrain it (experiments/train_sorter.py --save) or set ROBO_SORTER=0 for the rules."
         )
-    return Sorter(blob["model"])
+    return Sorter(blob["model"], want)
 
 
 def without(path: Path, book: str) -> Path:
@@ -207,15 +232,17 @@ def apply(
     model_roles: dict[SourceRef, LineRole],
     styles: dict[SourceRef, Style],
     regions: dict[int, list[Region]] | None = None,
+    page_roles: dict[int, dict[int, str]] | None = None,
 ) -> dict[SourceRef, LineRole]:
     """The trees' roles: every line they don't call body, and every line the role model
     answered for, with P(body) from the trees. A line called other keeps the role
     model's name for it where it had a non-body one ("page_number"), else "artifact"."""
-    found = features(pages, model_roles, styles, regions)
+    said = (page_roles or {}) if sorter.page_roles else None
+    found = features(pages, model_roles, styles, regions, said)
     refs = list(found)
     if not refs:
         return {}
-    probs = sorter.model.predict_proba(_matrix([found[r] for r in refs]))
+    probs = sorter.model.predict_proba(_matrix([found[r] for r in refs], sorter.features))
     classes = list(sorter.model.classes_)
     out = {}
     for ref, p in zip(refs, probs, strict=True):

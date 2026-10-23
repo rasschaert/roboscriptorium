@@ -60,6 +60,9 @@ class Settings:
     # on top of the rules in `roles.py` (docs/design.md, "Line roles").
     sorter: bool = True
     sorter_model: str = "work/models/line-roles.pkl"
+    # The read model names each body page's heading and furniture lines from the page image
+    # (`pageroles.py`), an input to the trees, which must be trained with it.
+    page_roles: bool = False
     # The vision judge says which lines start a paragraph where it is sure
     # (`parabreaks.py`). Off: it broke more starts than it fixed (docs/design.md).
     break_judge: bool = False
@@ -79,6 +82,8 @@ class Settings:
         if len(set(judges)) < len(judges):
             # Votes are kept by model name, so two judges by one name would be one vote.
             raise ValueError(f"the judges must be different models, not {judges}")
+        if self.page_roles and not (self.sorter and self.read_model):
+            raise ValueError("ROBO_PAGE_ROLES feeds the trees (ROBO_SORTER) from ROBO_READ_MODEL")
         if self.read_via and not self.read_model:
             raise ValueError(
                 'ROBO_READ_VIA reads in read_model\'s place, but ROBO_READ_MODEL is ""'
@@ -107,6 +112,7 @@ class Settings:
             ocr_ask_below=float(os.environ.get("ROBO_OCR_ASK_BELOW", defaults.ocr_ask_below)),
             sorter=_flag("ROBO_SORTER", defaults.sorter),
             sorter_model=os.environ.get("ROBO_SORTER_MODEL", defaults.sorter_model),
+            page_roles=_flag("ROBO_PAGE_ROLES", defaults.page_roles),
             break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
             context_model=os.environ.get("ROBO_CONTEXT_MODEL", defaults.context_model),
             context_min=float(os.environ.get("ROBO_CONTEXT_MIN", defaults.context_min)),

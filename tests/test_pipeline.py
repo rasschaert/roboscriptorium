@@ -4,6 +4,7 @@ import json
 from dataclasses import replace
 
 import httpx
+import numpy as np
 import pymupdf
 import pytest
 
@@ -670,3 +671,44 @@ def test_a_slice_weighs_hyphens_by_the_whole_bodys_spellings_and_a_full_build_by
     assert seen["make-up"] == 2 and seen["makeup"] == 1
     # Built whole, the evidence is exactly the pages' own.
     assert pipeline._book_spellings(whole, whole) == pipeline.hyphens.spellings(whole)
+
+
+class _PageHeadings:
+    """Calls a heading every line the read model named a heading, the rest body."""
+
+    classes_ = np.array(["body", "heading", "other"])
+
+    def predict_proba(self, X):
+        from roboscriptorium import sorter
+
+        out = np.tile([0.9, 0.05, 0.05], (len(X), 1))
+        column = len(sorter.FEATURES) + sorter.PAGE_FEATURES.index("page_heading")
+        out[X[:, column] == 1] = [0.1, 0.8, 0.1]
+        return out
+
+
+def test_the_read_models_page_roles_reach_the_trees(tmp_path, monkeypatch):
+    from roboscriptorium import sorter
+
+    _everything_is_body(monkeypatch)
+    _no_layout(monkeypatch)
+    path = tmp_path / "line-roles-pages.pkl"
+    sorter.save(sorter.Sorter(_PageHeadings(), sorter.FEATURES + sorter.PAGE_FEATURES), path)
+    monkeypatch.setenv("ROBO_SORTER", "1")
+    monkeypatch.setenv("ROBO_SORTER_MODEL", str(path))
+    monkeypatch.setenv("ROBO_PAGE_ROLES", "1")
+    shown = []
+
+    def ask(png, text, model, url):
+        shown.append(text)
+        return '{"H": [1], "F": []}'
+
+    monkeypatch.setattr(pipeline.pageroles, "ask", ask)
+    book = _book(tmp_path)
+    stages = pipeline.run(book)
+    assert shown and shown[0].startswith("1. " + LINES[0])
+    assert stages.model_roles[SourceRef(1, 0)].role == "chapter_heading"
+    # Trees trained without the page roles refuse a build that asks for them.
+    sorter.save(sorter.Sorter(_PageHeadings()), path)
+    with pytest.raises(sorter.Mismatch, match="ROBO_PAGE_ROLES"):
+        pipeline.run(book)

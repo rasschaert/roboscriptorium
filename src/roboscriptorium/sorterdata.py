@@ -3,7 +3,8 @@
 Labels come from `golden.align` (body, heading, other) on the bench's tuning and
 validation slices and a few training-only slices; features from a build with the
 rules' roles (the trees off), never the trees' own. Lines are cached per book in
-work/probes/sorter/. Scored and saved by `experiments/train_sorter.py`.
+work/probes/sorter/, or with the read model's page roles (ROBO_PAGE_ROLES=1, `pageroles.py`)
+in work/probes/sorter-pages/. Scored and saved by `experiments/train_sorter.py`.
 """
 
 import json
@@ -11,7 +12,7 @@ import os
 from dataclasses import replace
 from pathlib import Path
 
-from roboscriptorium import bench, disagreements, layout, pipeline, sorter, typestyle
+from roboscriptorium import bench, disagreements, layout, pageroles, pipeline, sorter, typestyle
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.files import write_atomic
@@ -33,7 +34,8 @@ EXTRA = [
 SPECS = bench.SETS["tuning"] + bench.SETS["validation"] + EXTRA
 # Scored by trees trained without any of them, and never trained on.
 VALIDATION = {s.split(":")[0] for s in bench.SETS["validation"]}
-OUT = Path("work/probes/sorter")
+PAGE_ROLES = Settings.from_env().page_roles
+OUT = Path("work/probes/sorter-pages" if PAGE_ROLES else "work/probes/sorter")
 # The rules' treatment of a line as the trees' label for it.
 RULES = {"text": "body", "heading": "heading", "dropped": "other"}
 # How much more a body line weighs than its class's balanced share (SORTER_BODY_WEIGHT).
@@ -47,7 +49,7 @@ def lines(spec: str, rebuild: bool = False) -> list[dict]:
     if path.exists() and not rebuild:
         return json.loads(path.read_text())
     book = Book.load(Path("work") / name)
-    settings = replace(Settings.from_env(), sorter=False)
+    settings = replace(Settings.from_env(), sorter=False, page_roles=False)
     stages = pipeline.run(
         book, pages=scoring.page_range(pages or None), check_ocr=False, settings=settings
     )
@@ -61,7 +63,13 @@ def lines(spec: str, rebuild: bool = False) -> list[dict]:
     if layout.available():
         numbers = [p.number for p in stages.pages]
         regions = layout.detect(book.source, numbers, book.stages / "layout.json")
-    found = sorter.features(stages.pages, stages.model_roles, styles, regions)
+    said = None
+    if PAGE_ROLES:
+        said = pageroles.page_roles(
+            book.source, stages.pages, settings.read_model, settings.ollama_url,
+            book.stages / "page-roles.json",
+        )  # fmt: skip
+    found = sorter.features(stages.pages, stages.model_roles, styles, regions, said)
     rows = [
         {
             "page": ref.page,
@@ -81,7 +89,7 @@ def fit(rows: list[dict]) -> sorter.Sorter:
 
 
 def predict(model: sorter.Sorter, rows: list[dict]) -> list[str]:
-    return list(model.model.predict(sorter._matrix([r["f"] for r in rows])))
+    return list(model.model.predict(sorter._matrix([r["f"] for r in rows], model.features)))
 
 
 def models_to_save(books: dict[str, list[dict]], path: Path) -> list[tuple[Path, sorter.Sorter]]:

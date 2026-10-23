@@ -23,6 +23,7 @@ from roboscriptorium import (
     ocr,
     ocrcheck,
     pagereader,
+    pageroles,
     parabreaks,
     quotes,
     readers,
@@ -142,8 +143,14 @@ def run(
         styles = typestyle.measure(book.source, body, book.stages / "type.json")
         model_roles = classify(body, client, cache, styles)
         if settings.sorter:
-            trees = sorter.load(Path(settings.sorter_model))
-            model_roles = sorter.apply(trees, body, model_roles, styles, regions)
+            trees = sorter.load(Path(settings.sorter_model), settings.page_roles)
+            said = None
+            if settings.page_roles:
+                said = pageroles.page_roles(
+                    book.source, body, settings.read_model, settings.ollama_url,
+                    book.stages / "page-roles.json",
+                )  # fmt: skip
+            model_roles = sorter.apply(trees, body, model_roles, styles, regions, said)
         note_lines = footnotes.lines(body, model_roles, styles, known)
         epigraph_lines = epigraphs.lines(body, model_roles)
         if check_ocr and ocrcheck.scanned(book.source):

@@ -8,6 +8,10 @@ trained without any of them and never trained on; first-look books are never tou
 Lines are cached per book in work/probes/sorter/ (`sorterdata.lines`).
 
     uv run python experiments/train_sorter.py [--rebuild] [--save]
+    ROBO_PAGE_ROLES=1 uv run python experiments/train_sorter.py [--without-pages]
+
+With ROBO_PAGE_ROLES=1 the lines carry the read model's page roles (`pageroles.py`, asked
+where not cached); `--without-pages` drops them again, for the same lines scored both ways.
 """
 
 import sys
@@ -32,6 +36,10 @@ def errors(truth: list[str], pred: list[str]) -> str:
 
 if __name__ == "__main__":
     books = {s.split(":")[0]: lines(s, "--rebuild" in sys.argv) for s in SPECS}
+    if "--without-pages" in sys.argv:
+        for rows in books.values():
+            for r in rows:
+                r["f"] = {k: v for k, v in r["f"].items() if k not in sorter.PAGE_FEATURES}
     trainable = [b for b in books if b not in VALIDATION]
     if "--save" in sys.argv:
         for out, model in models_to_save(books, Path(Settings.from_env().sorter_model)):

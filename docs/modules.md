@@ -61,7 +61,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   copies without each tuning book are scored by `bench`.
 - `sorterdata.py`: the trees' labelled lines (golden alignment on the bench's slices and
   a few training-only ones, cached in `work/probes/sorter/`) and the models to save;
-  scored and saved by `experiments/train_sorter.py [--save]`.
+  scored and saved by `experiments/train_sorter.py [--save]`; with `ROBO_PAGE_ROLES=1`
+  the lines carry the page roles too, cached in `work/probes/sorter-pages/`.
+- `pageroles.py`: the read model names each body page's heading and furniture lines from
+  the page image and its numbered lines, cached per page in `stages/page-roles.json`
+  under the lines it was shown; an input to the trees (`ROBO_PAGE_ROLES=1`, off).
 - `reflow.py`: lines → blocks (headings, paragraphs; indents, punctuation spacing),
   lines joined by `hyphens.join`, a single-quoted book's misread openings and an old
   layer's closings mended by `quotes`. Without roles it falls back to a footer heuristic.

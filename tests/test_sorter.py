@@ -111,3 +111,25 @@ def test_every_lines_features_are_the_ones_the_trees_were_trained_on():
     roles = {SourceRef(5, 0): LineRole("page_number", 0.9, 0.1)}
     found = sorter.features([page], roles, styles, regions)
     assert all(tuple(f) == sorter.FEATURES for f in found.values())
+
+
+def test_the_page_roles_are_features_only_for_trees_trained_with_them(tmp_path):
+    page = _page()
+    plain = sorter.features([page], {}, {})
+    assert all(tuple(f) == sorter.FEATURES for f in plain.values())
+    said = sorter.features([page], {}, {}, None, {5: {2: "heading", 0: "other"}})
+    want = sorter.FEATURES + sorter.PAGE_FEATURES
+    assert all(tuple(f) == want for f in said.values())
+    assert [said[SourceRef(5, i)]["page_heading"] for i in range(3)] == [0.0, 0.0, 1.0]
+    assert said[SourceRef(5, 0)]["page_other"] == 1.0
+    # A page the read model didn't answer for has nothing to say.
+    unasked = sorter.features([page], {}, {}, None, {})[SourceRef(5, 2)]
+    assert unasked["page_asked"] == 0.0 and np.isnan(unasked["page_heading"])
+
+    sorter.save(sorter.Sorter(_Trees(), want), tmp_path / "pages.pkl")
+    assert sorter.load(tmp_path / "pages.pkl", page_roles=True).page_roles
+    with pytest.raises(sorter.Mismatch, match="ROBO_PAGE_ROLES"):
+        sorter.load(tmp_path / "pages.pkl")
+    sorter.save(sorter.Sorter(_Trees()), tmp_path / "plain.pkl")
+    with pytest.raises(sorter.Mismatch, match="ROBO_PAGE_ROLES"):
+        sorter.load(tmp_path / "plain.pkl", page_roles=True)
