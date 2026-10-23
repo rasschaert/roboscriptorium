@@ -426,6 +426,10 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   PyTorch) in Python.
 - Model weights live outside `~/code` (backed up hourly): models we train or download by
   hand in `~/models/roboscriptorium/`, one subfolder each.
+- Kraken 7.1.1 (a line recogniser with no language model, for the witness probe) in its own
+  environment, `~/models/roboscriptorium/kraken-env` (`uv venv`, Python 3.13), with scipy 1.18.1
+  forced over its 1.15 pin (`uv pip install --no-deps`): 1.15's binary won't load on macOS 27.
+  Its training lines and models are in `~/models/roboscriptorium/kraken/`.
 - Models set up by hand (Winnow-12B, `imajev:4b`, imajev on `llama-server`, the
   DocLayout-YOLO weights): [docs/models.md](docs/models.md), Setup.
 - Word lists: `work/lexicon/{nld,eng}-words.txt`, built by `lexicon.py` from the tessdata
