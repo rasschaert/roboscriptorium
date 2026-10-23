@@ -205,19 +205,75 @@ models could do. Each probe below asks whether that's still true, on a few golde
 ## Ideas from the deep-research reports (2026-10-23)
 
 The user handed the research brief (`work/research-brief-2026-10-23.md`) to several
-deep-research models; each idea is checked against what was already measured before it
-goes here. DeepSeek's report first; Claude Fable's and Gemini's to follow.
+deep-research models (DeepSeek, Claude Fable, Google Argon; their reports are with the
+user); each idea is checked against what was already measured before it goes here.
+Where they disagree it is noted, for the user to pass back. Ordered by what the probe
+costs against what it could reach; every reader candidate passes the new-model gate
+(HANDOVER, "When a new vision model appears").
+
+- [ ] Crops padded to the vision encoder's grid instead of resized (Argon): Qwen's image
+      processor rounds a crop's size to its patch grid by resampling, which may blur a
+      two-pixel accent or comma. Check Qwen3.8's patch and merge size first, then pad the
+      frozen set's crops with paper colour to an exact multiple and read them again;
+      compare per stratum and on the six accent lines (agent, ~30 min of qwen)
+- [ ] Small capitals from the descender band (Argon): a word read with g, j, p, q or y but
+      no ink below the line's baseline is set in small capitals ("app" against "APD"),
+      measured on the scan's binary mask or the rendered crop. No models: of the 31 case
+      errors on tuning, how many the test finds, and how many right words it flags (agent, ~1 h)
+- [ ] Book-wide consistency for diaereses and letters outside ASCII only (Argon's narrowing
+      of the null above): the same probe, flagging a plain reading only where the book
+      prints the word with ë, ï, ı, ł, ç … and never for acute accents, which vary by
+      emphasis (agent, ~15 min, no models)
+- [ ] A per-book character recogniser with no language model, as a witness that fails
+      differently (Fable's first idea, Argon's fourth; DeepSeek advised against): Calamari or
+      Kraken trained on golden line crops leaving the book out, then fine-tuned on the book's
+      lines every reader agrees on (no suspect touching them), a 5-fold ensemble voting on
+      character confidences. Judged by the vote simulation on the frozen set: how many of the
+      hard lines it reads right where every current reader agrees on the wrong reading.
+      The reports' gains (46%, 70–78% over ABBYY) are on early print with far higher error
+      (agent, ~1 day; installs asked first)
+- [ ] Image-gain as a silent-error signal (Fable): each qwen and glm-ocr token's
+      log-probability with the crop against without it, one extra text-only pass; a low gain
+      marks a token from the language prior. AUC on the frozen set's silent errors. Argon
+      proposes raw runner-up tokens instead (`top_logprobs`, no extra pass) and DeepSeek
+      neither; measure both from one run (agent, ~2 h)
+- [ ] Two-line crops at each line break as a decision for clef (Fable, Argon): the last
+      words of a line and the first of the next as one image, "join or not, hyphen or not,
+      comma or full stop", where a trigger fires (a line ending in a stop before a lower-case
+      start, a join that forms a word). Targets the 109 unasked errors at line joins
+      (agent, ~1 day)
+- [ ] New OCR models as witnesses on the frozen set (Fable, Argon): dots.mocr (3B, MLX
+      builds), LightOnOCR-2-1B (reported to keep diacritics where Qwen3 drops them),
+      Chandra OCR 2 (5.3B), HunyuanOCR (1B), PaddleOCR-VL-1.6. No Dutch accent test exists for
+      any; downloads over 1 GB asked first (agent, ~1 h each)
+- [ ] Qwen faster on the same output (DeepSeek, Fable, Argon): prefix caching of the fixed
+      prompt, batched decoding (mlx-vlm, vllm-mlx), speculative decoding with the text layer
+      or glm-ocr as the draft (lossless under greedy decoding); readings must stay identical
+      on the frozen set. Speed buys the page-level role pass everywhere (agent, ~1 day)
+- [ ] Review: identical questions batched into one card, and same-page reference crops
+      (this printer's comma and full stop, a plain i and an accented vowel) beside each
+      punctuation, accent or small-capital question (Argon); answers propagated to every other
+      occurrence of the word (Fable). The user's time: a design, then the user's say
+- [ ] Speck labels harvested from the golden pairs (Fable, Argon): every reader's character
+      absent from the reference, aligned to an ink blob, is a speck; every mark the reference
+      confirms is ink. Labels from all 30 books for the speck classifier (agent, ~1 day)
+- [ ] Line-end compound hyphens learned from the compounds the books print unbroken mid-line
+      (Argon): self-supervised, for the 24 of 27 the book itself can't settle (agent, ~half a day)
+- [ ] Glyph-level checks, later (Argon's pairwise classifiers for confusable letters, Fable's
+      glyph clusters with one label each): only after the cheaper glyph probes above
+- [ ] Paragraph starts by a model that knows the book's indent regime (Argon), and heading
+      tags from Granite-Docling-258M (Argon): after the page-level role pass, which already
+      finds every heading in its probe
+- [x] ~~Gated language-model scoring of words with a visual twin~~ (Argon's PLLR with
+      RobBERT; Fable and DeepSeek against): parked behind the glyph and image-gain probes,
+      which ask the scan rather than the language
+- [x] ~~Constrained LLM post-correction~~ (all three call it low value at this error rate)
 
 - [x] ~~Book-wide consistency as a suspect~~ (DeepSeek 5; NOT TAKEN 2026-10-23,
       `probe_book_consistency.py`): a word spelled one way once and a close variant three
       times or more flags 4,802 words over the tuning slices (3 a page), 34 of them errors;
       it catches 17 of 184 unasked one-word errors, about 6 of them real, the rest emphasis
       accents the print has and the reference drops, which it would remove
-- [ ] Batched or continuous decoding for qwen on MLX (DeepSeek 3: oMLX reports 1.7× at
-      batch 2 and 2.6× at batch 4 for Qwen3-VL-30B-A3B on an M3 Ultra). Ollama's MLX runner
-      takes one request at a time; measure mlx-vlm or oMLX batching on the frozen set,
-      readings identical. A 2× pace makes the page-level role pass affordable everywhere
-      (agent, ~1 h; a download if a new runtime is needed, asked first)
 - [ ] The JBIG2 text mask as the image (DeepSeek 6, speculative, no report found of it
       working): crops of the scan's own binary mask, without the JPEG2000 layers, for the six
       known emphasis-accent lines and the small-capital ones, read by qwen; compared with the
