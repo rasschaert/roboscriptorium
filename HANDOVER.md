@@ -6,12 +6,13 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
 
 ## Running
 
-- `robo-page-breaks` (2026-10-23 ~18:40, ~20 min): `experiments/probe_page_breaks.py ask`, Qwen
-  told the page image and our lines, which start a paragraph (94 tuning pages); then `score`.
 - `robo-nolayer` (queued behind it, ~2.5 h cold): Goede dochter with its text layer stripped
   (`work/goede-dochter--nolayer`, `experiments/strip_text_layer.py`), `eval` 9-99 with the
   arbiter and trees trained without Goede dochter, then the layered copy warm with the same
   models (`work/runs/nolayer.sh`, logs `work/runs/{nolayer,layer}-eval.log`).
+- `robo-page-roles` (queued behind it, ~50 min): `experiments/probe_page_roles.py ask`, the read
+  model naming each line's kind from the whole page (208 tuning pages, half with a heading);
+  then `score` against the reference and the pipeline (`work/runs/page-roles.sh`).
 
 **Night of 2026-10-21/22, in one paragraph.** The read model at 450 dpi is the best vote witness found so far on the reader set (+12 lines, none broken; 300 dpi adds 4, 600 dpi 9, so it is resolution), and glm-ocr alone gains 54 lines at 450 dpi. But swapping the pipeline's readers to 450 dpi (`ROBO_READER_DPI=450`, cold `bench quick`, earlier arbiter) made 18 wrong words and fixed 11: not taken. As an extra witness it was closed on 2026-10-23 without a run: right alone on 0 of 57 lines no reader flags (`probe_dpi450_alone.py`). `init` now drafts title, author and translator (title 26, author 25 of 27 right). clef:27b is no better than clef-flash for the page-kind ends (21/21 against 22/21). All in decisions.md, 2026-10-22.
 

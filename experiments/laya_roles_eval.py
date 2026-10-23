@@ -1,8 +1,10 @@
-"""Line roles on the certain rows of the validation books (`laya_roles_data.py`): the
-pipeline's own (the role model, its rules and the trees, as a warm build sets them) against
+"""Line roles on the certain rows of a set's books (`laya_roles_data.py`; validation unless
+`--set tuning`): the pipeline's own (the role model, its rules and the trees, as a warm build sets them) against
 a trained decision model's predictions.
 
-    uv run python experiments/laya_roles_eval.py [predictions.jsonl]
+    uv run python experiments/laya_roles_eval.py [predictions.jsonl] [--set tuning]
+
+On tuning books each is built with the trees trained without it (`bench.unseen`).
 
 A predictions file holds {"book", "page", "line", "role", "p"} per row; without one only the
 pipeline is scored. Every wrong row is listed under work/probes/laya-roles/errors-<who>.txt.
@@ -34,7 +36,7 @@ def pipeline_roles(spec: str) -> dict[tuple[int, int], str]:
         Book.load(Path("work") / name),
         pages=scoring.page_range(pages or None),
         check_ocr=False,
-        settings=Settings.from_env(),
+        settings=bench.unseen(Settings.from_env(), name),
     )
     return {
         (p.number, k): AS_LABEL[treatment(stages.model_roles.get(SourceRef(p.number, k)))]
@@ -66,12 +68,14 @@ def score(who: str, got: dict, books: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    specs = [s for s in bench.SETS["validation"] if (ROOT / f"{s.split(':')[0]}.jsonl").exists()]
+    which = sys.argv[sys.argv.index("--set") + 1] if "--set" in sys.argv else "validation"
+    args = [a for a in sys.argv[1:] if not a.startswith("--") and a != which]
+    specs = [s for s in bench.SETS[which] if (ROOT / f"{s.split(':')[0]}.jsonl").exists()]
     books = [s.split(":")[0] for s in specs]
     base = {}
     for spec, book in zip(specs, books, strict=True):
         base.update({(book, *k): v for k, v in pipeline_roles(spec).items()})
     score("pipeline", base, books)
-    if len(sys.argv) > 1:
-        preds = [json.loads(x) for x in Path(sys.argv[1]).read_text().splitlines()]
+    if args:
+        preds = [json.loads(x) for x in Path(args[0]).read_text().splitlines()]
         score("model", {(p["book"], p["page"], p["line"]): p["role"] for p in preds}, books)
