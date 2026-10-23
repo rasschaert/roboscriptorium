@@ -12,11 +12,14 @@ from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.disagreements import Around, Disagreement, Verdicts
+from roboscriptorium.evaluate import normalise
 from roboscriptorium.flags import Flag
 from roboscriptorium.golden import notes as golden_notes
+from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
-from roboscriptorium.golden.reference import Chapter, load_chapters
+from roboscriptorium.golden.reference import Chapter, load_chapters, unmarked
 from roboscriptorium.ir import Document, SourceRef
+from roboscriptorium.pdf import PageText
 
 
 def page_range(value: str | None) -> tuple[int, int] | None:
@@ -54,10 +57,96 @@ def verdicts(book: Book) -> Verdicts:
     return Verdicts(Golden.load(book.golden).verdicts_dir / f"{scan_id}.jsonl")
 
 
-def reference(book: Book, chapters: tuple[int, int] | None) -> tuple[list[Chapter], Around]:
-    """The reference's chapters scored, and the words around them."""
+def reference(
+    book: Book, chapters: tuple[int, int] | None, sliced: list[PageText] | None = None
+) -> tuple[list[Chapter], Around]:
+    """The reference's chapters scored, and the words around them. Given the pages of a
+    slice that names no chapters (`sliced`), the paragraphs those pages hold."""
     chapters_text = load_chapters(Golden.load(book.golden).text_dir)
+    if chapters is None and sliced:
+        cut, around, _ = cut_to_pages(chapters_text, sliced)
+        return cut, around
     return disagreements.slice_reference(chapters_text, chapters)
+
+
+def cut_to_pages(
+    reference: list[Chapter], pages: list[PageText]
+) -> tuple[list[Chapter], Around, tuple[int, int]]:
+    """The whole paragraphs of `reference` from the one holding the first words `pages`
+    place to the one holding the last (`align`), with scene breaks and italics kept, the
+    words around them, and how many reference words those edge paragraphs hold beyond
+    the pages (before, after): a slice that starts and ends on a paragraph has none."""
+    labels = align(pages, reference)
+    # Each placed line's truth and how many words it shows. `align` spreads the words
+    # before and after the slice over its first and last lines, so only lines whose
+    # truth is about as long as what they show anchor the cut.
+    placed = [
+        (normalise(lab.truth).split(), len(normalise(page.lines[k].text).split()))
+        for page in pages
+        for k in range(len(page.lines))
+        if (lab := labels.get(SourceRef(page.number, k))) and lab.role != "other" and lab.truth
+    ]
+    placed = [(w, n) for w, n in placed if w and n]
+    # Each reference word's (chapter, paragraph); a heading's words have paragraph -1.
+    words: list[str] = []
+    at: list[tuple[int, int]] = []
+    for c, ch in enumerate(reference):
+        for p, text in [(-1, ch.heading)] + list(enumerate(map(unmarked, ch.paragraphs))):
+            found = normalise(text).split()
+            words += found
+            at += [(c, p)] * len(found)
+    first = _anchor(words, placed, 0)
+    last = _anchor(words, placed[::-1], first[0] if first else 0, backwards=True)
+    if first is None or last is None:
+        return reference, ([], []), (0, 0)
+    # The lines outside the anchoring runs, counted by the words they show.
+    start, end = max(0, first[0] - first[1]), min(len(words) - 1, last[0] + last[1])
+    if end < start:
+        return reference, ([], []), (0, 0)
+    (c0, p0), (c1, p1) = at[start], at[end]
+    out = []
+    for c in range(c0, c1 + 1):
+        ch = reference[c]
+        first = max(p0, 0) if c == c0 else 0
+        last = p1 if c == c1 else len(ch.paragraphs) - 1
+        out.append(
+            Chapter(
+                ch.heading if c > c0 or p0 < 0 else "",
+                ch.paragraphs[first : last + 1],
+                ch.italic[first : last + 1] if ch.italic else [],
+                frozenset(i - first for i in ch.breaks if first <= i <= last),
+            )
+        )
+    lo, hi = at.index((c0, p0)), len(at) - 1 - at[::-1].index((c1, p1))
+    around = (
+        words[:lo][-disagreements.CONTEXT_WORDS :],
+        words[hi + 1 :][: disagreements.CONTEXT_WORDS],
+    )
+    return out, around, (start - lo, hi - end)
+
+
+# Consecutive lines, each holding about the words it shows, that anchor each end of a slice.
+RUN_LINES = 3
+
+
+def _anchor(
+    words: list[str], lines: list[tuple[list[str], int]], after: int, backwards: bool = False
+) -> tuple[int, int] | None:
+    """The first `RUN_LINES` consecutive `lines` (truth words, words shown) that each hold
+    about what they show and occur together in `words` at or after `after`: where the run
+    starts (where it ends, `backwards`, `lines` given last to first) and how many words
+    the lines before it show; None if no run is found."""
+    sound = [abs(len(w) - n) <= max(2, n // 3) for w, n in lines]
+    shown = 0
+    for k in range(len(lines) - RUN_LINES + 1):
+        if all(sound[k : k + RUN_LINES]):
+            group = [w for w, _ in lines[k : k + RUN_LINES]]
+            run = [x for line in (group[::-1] if backwards else group) for x in line]
+            for i in range(after, len(words) - len(run) + 1):
+                if words[i : i + len(run)] == run:
+                    return (i + len(run) - 1 if backwards else i), shown
+        shown += lines[k][1]
+    return None
 
 
 def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
@@ -185,7 +274,7 @@ def build(spec: str, settings: Settings | None = None) -> Scored:
     book = Book.load(book_dir)
     stages = pipeline.run(book, pages=pages, settings=settings)
     found = questions(book, stages)
-    chapters_text, around = reference(book, chapters)
+    chapters_text, around = reference(book, chapters, stages.pages if pages else None)
     patched, applied = disagreements.patch(chapters_text, verdicts(book), around)
     errors = disagreements.find(scored(book, stages), patched, stages.pages, book.language, around)
     return Scored(book_dir.name, book, stages, patched, errors, found, applied)

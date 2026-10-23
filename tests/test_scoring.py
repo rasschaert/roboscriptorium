@@ -69,3 +69,38 @@ def test_a_region_is_read_once_and_then_from_its_cache(tmp_path, monkeypatch):
     assert readers.region_readings(*args) == {wanted[0]: "Een regel"}
     assert readers.region_readings(*args) == {wanted[0]: "Een regel"}
     assert len(calls) == 1
+
+
+def test_a_slice_without_chapters_is_scored_on_the_paragraphs_its_pages_hold():
+    from roboscriptorium.golden.reference import Chapter
+    from roboscriptorium.golden.scoring import cut_to_pages
+    from roboscriptorium.pdf import Line, PageText
+
+    def page(number, texts):
+        lines = [Line(t, 20, 20 + 15 * i, 280, 30 + 15 * i) for i, t in enumerate(texts)]
+        return PageText(number, 300, 500, lines)
+
+    paragraphs = [
+        "De eerste alinea staat op een eerdere bladzijde.",
+        "Toen kwam de trein het station binnen, langzaam en zwaar.",
+        "Niemand stapte uit, ook de conducteur niet.",
+        "Na de witregel sliep de stad onder een laag wolkendek.",
+        "De laatste alinea valt buiten het stuk.",
+    ]
+    italic = [frozenset(), frozenset({1}), frozenset(), frozenset(), frozenset()]
+    reference = [Chapter("", paragraphs, italic, frozenset({3}))]
+    pages = [
+        page(20, ["Toen kwam de trein het", "station binnen, langzaam", "en zwaar.", "20"]),
+        page(21, ["Niemand stapte uit, ook", "de conducteur niet.", "Na de witregel sliep",
+                  "de stad onder een laag", "wolkendek."]),
+    ]  # fmt: skip
+    cut, around, overhang = cut_to_pages(reference, pages)
+    assert [ch.paragraphs for ch in cut] == [paragraphs[1:4]]
+    assert cut[0].italic == italic[1:4] and cut[0].breaks == frozenset({2})
+    assert overhang == (0, 0)
+    assert around[0][-2:] == ["eerdere", "bladzijde."] and around[1][:2] == ["De", "laatste"]
+    # A slice that starts mid-paragraph says how many words it leaves out of the first.
+    late = [
+        page(20, ["station binnen, langzaam", "en zwaar.", *(ln.text for ln in pages[1].lines)])
+    ]
+    assert cut_to_pages(reference, late)[2] == (5, 0)

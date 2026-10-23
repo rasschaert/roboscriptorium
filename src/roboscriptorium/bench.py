@@ -66,7 +66,7 @@ SETS = {
         "het-laatste-bevel--ia-scan:9-100:1-5",
         "the-strangers-child--ia-scan:121-208:15-23",
         "normal-people--ia-scan:146-232:23-31",
-        "verminkt--ia-scan",
+        "verminkt--ia-scan:7-100",
         "de-geruchten--ia-scan:9-97:2-22",
         "vanille-en-andere-smaken--dbnl-scan:9-79:1-16",
     ],

@@ -253,7 +253,8 @@ def _build_golden(
     if book.golden is None:
         raise typer.BadParameter(f"{book_dir}/book.toml names no golden book")
     stages = pipeline.run(book, pages=_range(pages), use_models=not no_models, check_ocr=check_ocr)
-    reference, around = scoring.reference(book, _range(chapters))
+    sliced = stages.pages if pages else None
+    reference, around = scoring.reference(book, _range(chapters), sliced)
     return book, stages, scoring.scored(book, stages), reference, around
 
 

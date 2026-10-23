@@ -71,8 +71,7 @@ The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen
 
 - **Waiting on the user from the trims**: Na die nacht's retirement (deletes its `work/`
   files and manifest; the auto-mode classifier blocks deletions, so the user runs or allows
-  it); Verminkt sliced to ~90 pages (tooling to write: a reference without chapters cut where
-  the slice's scan lines align).
+  it). Verminkt is sliced to 7–100 (2026-10-23).
 - **Twelve merged worktrees** (`-aupair`, `-breaks`, `-chains`, `-cjcap`, `-cjmin`, `-find`,
   `-lead`, `-mis`, `-only`, `-spans`, `-ux`, `-w12b`) are clean and merged; removing them was
   blocked by the classifier. `-py315` holds two untracked scratch files; `-caps` the

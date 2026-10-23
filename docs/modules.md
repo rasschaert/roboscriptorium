@@ -110,7 +110,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `work/<book>[:pages[:chapters]]` built and scored: `build` gives the build, the
   reference with verdicts applied, the remaining differences and the review's
   questions, those with no readings given the read model's reading of their lines or
-  region; `scored`, `verdicts`, `reference`, `questions`, `page_range`; what `eval`,
+  region; `scored`, `verdicts`, `reference`, `questions`, `page_range`; a page slice that
+  names no chapters is scored on the whole paragraphs its pages hold, the reference cut
+  where its lines align (`cut_to_pages`); what `eval`,
   `quality`, `review`, `bench` and the experiments share).
 - `evaluate.py`: CER, WER, paragraph F1 and scene breaks (found where the reference has
   one, and set elsewhere) against a golden reference. Typography

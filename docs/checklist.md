@@ -54,10 +54,10 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    unscored (`breaks_unlike_print`); The Nature of a Crime out of tuning and quick, but
    kept in the arbiter's training (without it: unasked fixed 7, made 16); Dolittle's
    quick slice kept (every line places; its layer is poor, not another edition). Left:
-   Verminkt sliced to ~90 pages (tooling: cut a reference without chapters where the
-   slice's first and last scan lines align); Na die nacht retired (a sibling of two
+   Na die nacht retired (a sibling of two
    tuning books; deleting its `work/` files and manifest waits on the user); Het laatste
-   bevel's glued words as verdicts (the user's time).
+   bevel's glued words as verdicts (the user's time). Verminkt sliced to 7–100 (2026-10-23,
+   `scoring.cut_to_pages`).
 8. The next set review (AGENTS.md, "Reviewing the sets"): after the four waiting pairs'
    first looks, by 2026-10-25 at the latest; the gaps in docs/golden-notes.md go to the
    user as the books to look for.
