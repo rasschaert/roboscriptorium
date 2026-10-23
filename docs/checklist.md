@@ -202,6 +202,41 @@ models could do. Each probe below asks whether that's still true, on a few golde
             variants, the setting with the most agreement kept), learned from the golden
             books' fingerprints, not a hand-written rule.
 
+## Ideas from the deep-research reports (2026-10-23)
+
+The user handed the research brief (`work/research-brief-2026-10-23.md`) to several
+deep-research models; each idea is checked against what was already measured before it
+goes here. DeepSeek's report first; Claude Fable's and Gemini's to follow.
+
+- [x] ~~Book-wide consistency as a suspect~~ (DeepSeek 5; NOT TAKEN 2026-10-23,
+      `probe_book_consistency.py`): a word spelled one way once and a close variant three
+      times or more flags 4,802 words over the tuning slices (3 a page), 34 of them errors;
+      it catches 17 of 184 unasked one-word errors, about 6 of them real, the rest emphasis
+      accents the print has and the reference drops, which it would remove
+- [ ] Batched or continuous decoding for qwen on MLX (DeepSeek 3: oMLX reports 1.7× at
+      batch 2 and 2.6× at batch 4 for Qwen3-VL-30B-A3B on an M3 Ultra). Ollama's MLX runner
+      takes one request at a time; measure mlx-vlm or oMLX batching on the frozen set,
+      readings identical. A 2× pace makes the page-level role pass affordable everywhere
+      (agent, ~1 h; a download if a new runtime is needed, asked first)
+- [ ] The JBIG2 text mask as the image (DeepSeek 6, speculative, no report found of it
+      working): crops of the scan's own binary mask, without the JPEG2000 layers, for the six
+      known emphasis-accent lines and the small-capital ones, read by qwen; compared with the
+      composited crops (agent, ~30 min)
+- [ ] Questions ranked by expected errors fixed per second (DeepSeek 8; already in the
+      outlook as untried): replay saved benches offline with the arbiter's probabilities and
+      a severity per cause learned from the error logs, against today's threshold (agent,
+      ~2 h, no models)
+- [x] ~~Character-level ROVER with a diacritic-restoration vote~~ (DeepSeek 1, not taken
+      on reading): suspects are already made at character level where any reader differs;
+      the silent errors are where every reader gives the same characters, which a vote
+      can't open, and a dictionary-driven accent restoration would invent Dutch emphasis
+      accents, which are optional
+- [x] ~~PaddleOCR-VL-1.5 as one more reader~~ (DeepSeek 2): screened 2026-10-20, unfit
+- [x] ~~LLM post-correction under a learned edit budget~~ (DeepSeek 4, parked): only on
+      the places the consistency test flags, if that probe earns it
+- [x] ~~A small graph network for paragraph breaks~~ (DeepSeek 7, parked): learned, which
+      fits, but tuning books set 0.06 breaks a page wrong; the weak books are validation
+
 ## Before the user reviews another book (2026-10-16)
 
 What Ex-minnaar's first review questions showed. The user reviews only after these
