@@ -6,9 +6,6 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
 
 ## Running
 
-- `robo-nolayer2` (queued behind it, ~1–1.5 h, judges' crops cold): Goede dochter without its
-  layer rebuilt with the first reading's words (`work/runs/nolayer2.sh`); compare with its first
-  build (decisions.md, 2026-10-23: 0.92 wrong a page, italics 0/364) and the layered 0.33.
 - `robo-page-roles-short` (queued behind it, ~20 min): the role probe's short answer (heading
   and furniture line numbers only) on the same 208 pages; `probe_page_roles.py score --short`.
   The long answer scored 3 wrong lines against the pipeline's 22 (decisions.md, 2026-10-23).
