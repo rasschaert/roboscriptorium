@@ -246,11 +246,10 @@ costs against what it could reach; every reader candidate passes the new-model g
       marks a token from the language prior. AUC on the frozen set's silent errors. Argon
       proposes raw runner-up tokens instead (`top_logprobs`, no extra pass) and DeepSeek
       neither; measure both from one run (agent, ~2 h)
-- [ ] Real-word confusion pairs mined from the golden pages (Fable): every pair the
-      readers swapped (check/cheek, vijf/vijt, gat/gaf) with its rate, as a suspect trigger on
-      lines every reader agrees on, only where the partner word is attested in the book, and
-      as an arbiter feature. Probe like the consistency one: catches against flags on the
-      tuning slices, mined leaving each book out (agent, ~2 h, no models)
+- [x] ~~Real-word confusion pairs mined from the golden pages~~ (Fable; NOT TAKEN
+      2026-10-23, `probe_book_consistency.py --pairs`): pairs from the other tuning books'
+      errors flag 216 word types whose partner occurs in the book, mostly common words with an
+      emphatic twin ("mijn"/"míjn", "ik"/"ík"), thousands of occurrences, for 2 unasked catches
 - [ ] Two-line crops at each line break as a decision for clef (Fable, Argon): the last
       words of a line and the first of the next as one image, "join or not, hyphen or not,
       comma or full stop", where a trigger fires (a line ending in a stop before a lower-case

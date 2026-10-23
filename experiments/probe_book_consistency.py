@@ -9,6 +9,9 @@ form common elsewhere in the book), and how many flags fall on words the bench c
 
     uv run python experiments/probe_book_consistency.py [errors.jsonl] [--marks]
 
+`--pairs` (Fable's mined confusion pairs) flags a word the readers swapped for another
+in some other tuning book's errors, where that other word occurs in this book.
+
 `--marks` (Argon's narrowing) flags only a reading that lacks a diaeresis or a letter outside
 ASCII (ë, ï, ı, ł, ç …) its common variant has; acute and grave accents vary by emphasis
 in Dutch, so they never flag.
@@ -31,6 +34,7 @@ from roboscriptorium.golden import scoring  # noqa: E402
 
 RARE, COMMON, MIN_LETTERS = 1, 3, 5
 MARKS = "--marks" in sys.argv
+PAIRS = "--pairs" in sys.argv
 # Accents that mark emphasis or stress, which a book may set on one occurrence only.
 STRESS = {"\u0301", "\u0300"}
 WORD = re.compile(r"[^\W\d_]+(?:[-'’][^\W\d_]+)*")
@@ -85,7 +89,18 @@ if __name__ == "__main__":
         words = [w.lower() for p in doc.paragraphs for w in WORD.findall(p.text)]
         counts = Counter(words)
         rare = {w for w, n in counts.items() if n <= RARE}
-        flagged = {w: v for w in rare if (v := variants(w, counts))}
+        if PAIRS:
+            swapped = {}
+            for e in errors:
+                g, w = WORD.findall(e["got"] or ""), WORD.findall(e["want"] or "")
+                if e["book"] != name and len(g) == 1 and len(w) == 1 and g[0] != w[0]:
+                    swapped.setdefault(g[0].lower(), set()).add(w[0].lower())
+            flagged = {
+                w: [y for y in swapped[w] if counts[y]] for w in counts
+                if w in swapped and any(counts[y] for y in swapped[w])
+            }  # fmt: skip
+        else:
+            flagged = {w: v for w in rare if (v := variants(w, counts))}
         wrong_got = Counter()
         for e in errors:
             if e["book"] != name or e["size"] != 1:
