@@ -89,9 +89,10 @@ def build(
     book_dir: Path,
     pages: str | None = typer.Option(None, help="Body pages to build, e.g. 7-45"),
 ) -> None:
-    """Build an EPUB from a book directory holding book.toml and the source file. No
-    scores: it warms a first look's caches without looking."""
-    book = Book.load(book_dir)
+    """Build an EPUB from a book directory holding book.toml and the source file, or from a
+    PDF alone (`init` drafts its book.toml first). No scores: it warms a first look's caches
+    without looking."""
+    book = Book.load(_book_dir(book_dir))
     doc = pipeline.build(book, _range(pages))
     typer.echo(f"{len(doc.blocks)} paragraphs → {book.epub_path}")
     if kept := keep_dated(book.epub_path, book.epubs):
@@ -110,13 +111,20 @@ def init_book(
     proper starts and ends, shown for confirmation with both page numbers (the PDF's own and
     the one the page prints). Writes book.toml (or init/book.toml.draft where one exists),
     init/report.md and init/ends.png in the book's folder."""
+    from roboscriptorium import bookinit
+
+    _initialise(pdf, Path("work") / (name or bookinit.slug(pdf.stem)), language)
+    typer.echo("Confirm both ends, the title and the author before building.")
+
+
+def _initialise(pdf: Path, root: Path, language: str | None = None) -> Path:
+    """`init`'s work: the book's folder `root` drafted from `pdf`; the draft's path."""
     import shutil
 
     from roboscriptorium import bookinit, pagekinds
     from roboscriptorium.pdf import cached_text_layer
 
     settings = Settings.from_env()
-    root = Path("work") / (name or bookinit.slug(pdf.stem))
     root.mkdir(parents=True, exist_ok=True)
     source = root / "source.pdf"
     if not source.exists():
@@ -145,7 +153,26 @@ def init_book(
     typer.echo(
         f"draft: {drafted}; report: {out / 'report.md'}; pages around both ends: {out / 'ends.png'}"
     )
-    typer.echo("Confirm both ends, the title and the author before building.")
+    return drafted
+
+
+def _book_dir(path: Path) -> Path:
+    """A book's folder from a folder or a PDF, drafted by `init` first when it has no
+    book.toml but has its PDF: a PDF gets a folder under work/ named after it, a folder
+    holding only source.pdf is set up in place."""
+    from roboscriptorium import bookinit
+
+    if path.suffix.lower() == ".pdf":
+        root, pdf = Path("work") / bookinit.slug(path.stem), path
+    else:
+        root, pdf = path, path / "source.pdf"
+    if not (root / "book.toml").exists() and pdf.exists():
+        typer.echo(f"{root} has no book.toml: drafting one from the PDF (`init`)")
+        _initialise(pdf, root)
+        typer.echo(
+            f"Built from the draft; check {root / 'init' / 'report.md'} and correct book.toml."
+        )
+    return root
 
 
 golden_app = typer.Typer(no_args_is_help=True, help="Golden reference books.")
@@ -282,7 +309,7 @@ def review_regions(
     """Review the regions that aren't plain running text, next to the scan; for a golden
     book also where its text and the reference differ, whose answers are verdicts."""
     _not_a_first_look(book_dir, first_look)
-    book = Book.load(book_dir)
+    book = Book.load(_book_dir(book_dir))
     if book.golden is not None:
         reference, around = scoring.reference(book, _range(chapters))
 
@@ -307,7 +334,7 @@ def review_regions(
             places = [d for d in differ if not d.auto]
             if only is not None:
                 # Places settled by their kind are asked too where the list names them.
-                rows = [r for r in json.loads(only.read_text()) if r["book"] == book_dir.name]
+                rows = [r for r in json.loads(only.read_text()) if r["book"] == book.root.name]
                 places, found = disagreements.only(differ, rows), []
         return stages.pages, found, stages.corrections_applied, places
 

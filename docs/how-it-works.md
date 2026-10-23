@@ -580,6 +580,7 @@ it stays.
 ```sh
 uv run roboscriptorium doctor              # is Ollama up, do its decision models answer?
 uv run roboscriptorium build work/stella   # → work/stella/stella.epub
+uv run roboscriptorium build scan.pdf      # no book.toml yet: `init` drafts one first
 uv run roboscriptorium review work/stella  # questions on http://127.0.0.1:8765/
 uv run roboscriptorium eval work/<golden scan> --pages 9-64 --chapters 1-4
 uv run roboscriptorium bench tuning

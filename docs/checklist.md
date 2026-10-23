@@ -490,8 +490,9 @@ reading shares: many are specks and faint marks.
       the title page's lines, written as `book.toml` (or a draft beside it), `init/report.md` and a contact
       sheet `init/ends.png`, every page named by both numbers. Ends right on 22 and 21 of 27 books;
       a rewording of the question changed nothing. Title, author and translator are drafted from the title and
-      copyright pages (2026-10-22: title 26, author 25 right of 27). Still open below: the confirmation
-      on the review page, `build` and `review` running it when book.toml is missing.
+      copyright pages (2026-10-22: title 26, author 25 right of 27). `build` and `review` run it
+      when book.toml is missing, given a PDF or a folder holding one (2026-10-23). Still open below:
+      the confirmation on the review page.
 - [ ] **`roboscriptorium init <pdf>`, the rest** (agreed 2026-10-11): drafts book.toml and asks the
       user only what it can't settle, on the review page; `build` and `review` run it first
       when book.toml is missing. Steps: (1) each page's **kind** (cover, blank, scan noise

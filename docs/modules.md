@@ -4,7 +4,8 @@ What each module in `src/roboscriptorium/` does, as the code stands now; the one
 is in AGENTS.md, why each part is there in [design.md](design.md), the walk through a build
 in [how-it-works.md](how-it-works.md). Keep this file true when a module changes.
 
-- `cli.py`: typer app, the entry point.
+- `cli.py`: typer app, the entry point; `build` and `review` take a PDF or a folder and run
+  `init` first where book.toml is missing (`_book_dir`).
 - `config.py`: `Settings`, overridable via `ROBO_OLLAMA_URL`,
   `ROBO_ROLE_MODEL` and the others it lists (`ROBO_READ_MODEL`
   reads quote questions' lines, "" for none).
