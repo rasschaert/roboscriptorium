@@ -211,15 +211,13 @@ Where they disagree it is noted, for the user to pass back. Ordered by what the 
 costs against what it could reach; every reader candidate passes the new-model gate
 (HANDOVER, "When a new vision model appears").
 
-- [ ] Is the scan's text mask lossy? (Fable's review): if the encoder used JBIG2 symbol
-      substitution, an accented í may be stored as the plain-i template in the mask itself,
-      and the accent survives only in Internet Archive's original JP2 images. Compare the mask
-      and the JP2 at a known emphatic accent in a public-domain book, and check the PDFs'
-      JBIG2 mode (a symbol dictionary or generic coding). Decides whether the mask can be
-      trusted for accents. If it is lossy, the accent may survive nowhere in an MRC-only PDF
-      (the mask holds the plain template, the JPEG2000 foreground is too coarse): the stress-
-      accent errors are then a floor for copyrighted books, reachable only through the original
-      JP2s or a one-time image export from the owner (agent, ~15 min, no models)
+- [x] Is the scan's text mask lossy? (Fable's review; 2026-10-23, no): Internet Archive's
+      Scribe scans (Stella, Goede dochter, Het schaduwhuis) code their mask as JBIG2 generic
+      regions, an exact bitmap with no symbol dictionary, so no letter can be substituted;
+      Dolittle's older scan uses symbol dictionaries. At a known emphatic accent
+      ("vríénden", Het schaduwhuis PDF page 56) the accent shows plainly in both the mask and the
+      composited render the readers get: the loss is the readers', not the scan's, and the mask
+      shows an accent no better than the render
 - [ ] Crops padded to the vision encoder's grid instead of resized (Argon): Qwen's image
       processor rounds a crop's size to its patch grid by resampling, which may blur a
       two-pixel accent or comma. Check Qwen3.8's patch and merge size first, then pad the
