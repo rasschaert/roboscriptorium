@@ -467,7 +467,7 @@ def ellipsis_style(book: Book, body: list[PageText]) -> typography.EllipsisStyle
     lines = [ln.text for p in body for ln in p.lines]
     layer = typography.guess_ellipsis(lines)
     scan = scanstyle.measure_ellipses(
-        book.source, [p.number for p in body], book.stages / "ellipsis.json", body
+        book.source, [p.number for p in body], book.stages / "ellipsis.json"
     )
     guess = scanstyle.scanned_style(layer, scan)
     if guess is None:
@@ -492,9 +492,7 @@ def dash_style(book: Book, body: list[PageText]) -> typography.DashStyle | None:
         return typography.DashStyle(book.dash, book.dash_spacing)
     if not ocrcheck.scanned(book.source):
         return None
-    guess = scanstyle.guess(
-        book.source, [p.number for p in body], book.stages / "typography.json", body
-    )
+    guess = scanstyle.guess(book.source, [p.number for p in body], book.stages / "typography.json")
     if guess is None:
         return None
     name = {"–": "en", "—": "em"}[guess.style.dash]

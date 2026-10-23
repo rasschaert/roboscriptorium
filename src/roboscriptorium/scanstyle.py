@@ -59,29 +59,22 @@ class Guess:
         )
 
 
-def _first_reading(pages) -> bool:
-    """Whether the words measured are an image-only scan's first reading's: a cache made
-    without them is measured again."""
-    return any(p.words for p in pages or [])
-
-
-def guess(pdf_path, numbers: list[int], cache, pages=None) -> Guess | None:
+def guess(pdf_path, numbers: list[int], cache) -> Guess | None:
     """The dash style the scan shows, cached; None when it has too few dashes to tell.
-    `pages` (the text layer) give an image-only scan its first reading's words."""
+    Measured on the PDF's own words only: a first reading (tesseract) glues most dashes
+    to their neighbours, which reads as short unspaced dashes."""
     if cache.exists():
         raw = json.loads(cache.read_text())
-        same = raw.get("first_reading", False) == _first_reading(pages)
-        if raw.get("version") == VERSION and raw.get("pages") == numbers and same:
+        if raw.get("version") == VERSION and raw.get("pages") == numbers:
             g = raw["guess"]
             return Guess(DashStyle(**g.pop("style")), **g) if g else None
     found = []
-    by_number = {p.number: p for p in pages or []}
     with pymupdf.open(pdf_path) as pdf:
         for n in numbers:
             if len(found) >= ENOUGH:
                 break
             page = pdf[n - 1]
-            words = page_words(page, by_number.get(n))
+            words = page_words(page)
             for w in words:
                 if _is_dash(w[4]) or any(c in DASHES for c in w[4]) or "--" in w[4]:
                     line = [v for v in words if v[5] == w[5] and v[6] == w[6]]
@@ -89,7 +82,6 @@ def guess(pdf_path, numbers: list[int], cache, pages=None) -> Guess | None:
                         found.append(m)
     result = _decide(found)
     blob = {"version": VERSION, "pages": numbers, "guess": asdict(result) if result else None}
-    blob["first_reading"] = _first_reading(pages)
     write_atomic(cache, json.dumps(blob))
     return result
 
@@ -239,24 +231,22 @@ class EllipsisMeasure:
         )
 
 
-def measure_ellipses(pdf_path, numbers: list[int], cache, pages=None) -> EllipsisMeasure | None:
+def measure_ellipses(pdf_path, numbers: list[int], cache) -> EllipsisMeasure | None:
     """How the scan spaces its ellipses, cached; None when too few can be measured.
 
     Only an ellipsis the layer reads right after a letter of the same word ("Ka...",
     "dear . . .") is measured: there the blank before it is the gap the print sets."""
     if cache.exists():
         raw = json.loads(cache.read_text())
-        same = raw.get("first_reading", False) == _first_reading(pages)
-        if raw.get("version") == ELLIPSIS_VERSION and raw.get("pages") == numbers and same:
+        if raw.get("version") == ELLIPSIS_VERSION and raw.get("pages") == numbers:
             return EllipsisMeasure(**raw["measure"]) if raw["measure"] else None
     found, gaps = [], []
-    by_number = {p.number: p for p in pages or []}
     with pymupdf.open(pdf_path) as pdf:
         for n in numbers:
             if len(found) >= ELLIPSES_ENOUGH:
                 break
             page = pdf[n - 1]
-            words = page_words(page, by_number.get(n))
+            words = page_words(page)
             for w in words:
                 m = _IN_WORD.search(w[4])
                 if m is None or m.start() == 0 or not w[4][m.start() - 1].isalpha():
@@ -278,7 +268,6 @@ def measure_ellipses(pdf_path, numbers: list[int], cache, pages=None) -> Ellipsi
         "version": ELLIPSIS_VERSION,
         "pages": numbers,
         "measure": asdict(result) if result else None,
-        "first_reading": _first_reading(pages),
     }
     write_atomic(cache, json.dumps(blob))
     return result

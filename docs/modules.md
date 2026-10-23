@@ -42,8 +42,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   image-only PDF, given the book's language, is read by tesseract instead
   (`first_reading`), its words grouped into lines as an OCR layer's are, and kept on
   the page (`PageText.words`): `page_words` serves them where the PDF has none, so
-  italics, type styles, the scan's dash and ellipsis style and the judges' crops measure
-  an image-only scan as they do a layered one. A bare
+  italics, type styles and the judges' crops measure an image-only scan as they do a
+  layered one. The scan's dash and ellipsis style is measured on the PDF's own words only:
+  tesseract glues most dashes to their neighbours. A bare
   number far from the rest of its line becomes a line of its own (`_apart`).
 - `page.py`: what a page's layout says without a model, shared by roles,
   flags and reflow: geometry, edge lines, text repeated across pages, sunk
