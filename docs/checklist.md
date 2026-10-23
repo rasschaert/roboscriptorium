@@ -53,10 +53,9 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    with one retrain and new baselines). Done 2026-10-23: Afscheid's paragraph breaks
    unscored (`breaks_unlike_print`); The Nature of a Crime out of tuning and quick, but
    kept in the arbiter's training (without it: unasked fixed 7, made 16); Dolittle's
-   quick slice kept (every line places; its layer is poor, not another edition). Left:
-   Na die nacht retired (a sibling of two
-   tuning books; deleting its `work/` files and manifest waits on the user); Het laatste
-   bevel's glued words as verdicts (the user's time). Verminkt sliced to 7–100 (2026-10-23,
+   quick slice kept (every line places; its layer is poor, not another edition). Na die nacht
+   held back, not retired (the user, 2026-10-23: its files kept, `bench.RESERVE`). Left: Het
+   laatste bevel's glued words as verdicts (the user's time). Verminkt sliced to 7–100 (2026-10-23,
    `scoring.cut_to_pages`).
 8. The next set review (AGENTS.md, "Reviewing the sets"): after the four waiting pairs'
    first looks, by 2026-10-25 at the latest; the gaps in docs/golden-notes.md go to the
@@ -72,8 +71,8 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       book, `bench first-look` scores and saves it; design.md's reason. First looks
       (one night, ~14 h): Het geluid van bananen, Het schaduwhuis, Steve Jobs (its
       words; its roles trained the sorter, so its role scores aren't a first look), De
-      geruchten, Verminkt whole. Na die nacht waits without a slot (a sibling of two
-      tuning books). De tunnels stays role training (an EPUB that can't score
+      geruchten, Verminkt whole. Na die nacht is held back (a sibling of two
+      tuning books; `bench.RESERVE`). De tunnels stays role training (an EPUB that can't score
       words). New pairs the user finds go through the same flow
 - [x] Error categories tracked per run (2026-10-17): 16 causes read from an error's two
       sides alone (`errorlog.cause`), chosen from stage (a)'s 618 saved errors across 23

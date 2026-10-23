@@ -7,7 +7,8 @@ eu_copyright_until = 2200
 # HarperCollins Holland's own e-book (ISBN 978 94 027 6862 6) of the first printing,
 # June 2023, typeset by Mat-Zet like Goede dochter. Found by the user (2026-10-17). A
 # sibling of Goede dochter (author, publisher, typesetter) and Het heft in eigen hand
-# (publisher, typesetter), both tuning: it can only ever join tuning. Chapter numbers
+# (publisher, typesetter), both tuning: its first look would be flattered, so it is held
+# back (`bench.RESERVE`) as a candidate for training data. Chapter numbers
 # are "P_Cijfer" paragraphs, part and section titles "P_Kop…" ("PROLOOG", "DRIE JAAR
 # LATER"). It opens with a text message before the prologue (`leading_text`). The
 # e-book sets an em dash where the print sets a spaced en dash ("– hoe zal ik het

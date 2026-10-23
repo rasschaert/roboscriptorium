@@ -77,13 +77,10 @@ The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen
 
 ## Loose ends found at the end of the 2026-10-21/22 session
 
-- **Waiting on the user from the trims**: Na die nacht's retirement (deletes its `work/`
-  files and manifest; the auto-mode classifier blocks deletions, so the user runs or allows
-  it). Verminkt is sliced to 7–100 (2026-10-23).
-- **Twelve merged worktrees** (`-aupair`, `-breaks`, `-chains`, `-cjcap`, `-cjmin`, `-find`,
-  `-lead`, `-mis`, `-only`, `-spans`, `-ux`, `-w12b`) are clean and merged; removing them was
-  blocked by the classifier. `-py315` holds two untracked scratch files; `-caps` the
-  unmerged null result.
+- **The trims are done**: Na die nacht held back rather than retired (the user, 2026-10-23),
+  Verminkt sliced to 7–100.
+- **Worktrees**: the twelve merged ones were removed with their branches (2026-10-23, the user
+  approving). `-py315` holds two untracked scratch files; `-caps` the unmerged null result.
 - **Run-in-screen traps hit tonight**: `experiments/screen_reader.sh <label>` treats the label as an Ollama model (it fails for a readings-file label such as `…+dpi450`: run `tryout.py`'s reading step yourself, then `vote_sim.py <stem>` directly); a watcher's `Monitor` expires after 30 minutes however long its timeout, so a long run needs it re-armed.
 - **Per-book settings and extra witnesses** is a new checklist item ("Assumptions to test"): start with the agreement probe.
 - Andere levens: the other seven candidate misprints
@@ -98,9 +95,8 @@ The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen
 
 ## Worktrees
 
-Every branch but `small-caps` is merged: `../roboscriptorium-cjcap`, `-cjmin`, `-find`, `-chains`,
-`-aupair`, `-w12b`, `-lead`, `-spans`, `-breaks`, `-py315`, `-mis`, `-only`, `-ux` can go. `-caps`
-holds the unmerged `small-caps` branch (null result).
+`../roboscriptorium-caps` holds the unmerged `small-caps` branch (null result); `-py315` two
+untracked scratch files. The rest were removed on 2026-10-23.
 
 ## How to run things
 

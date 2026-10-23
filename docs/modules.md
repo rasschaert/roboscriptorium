@@ -146,7 +146,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   both runs scored, with its interval (`bench.by_cause`).
 - `bench.py` (`roboscriptorium bench [tuning|validation|quick|first-look]`): **the** measure for a
   change. Pinned golden slices per set (`FIRST_LOOK` guards the first-look set and
-  `WAITING`, pairs with no slot yet), scored with `evaluate` and `quality`,
+  `RESERVE`, pairs held back), scored with `evaluate` and `quality`,
   saved whole to `work/bench/` (commit, settings, decider, model versions,
   per-page counts, paragraph breaks set wrong among them) and compared with the
   previous run page by page (or `--against` a named one), naming any setting the two

@@ -74,7 +74,7 @@ def ask(limit: int | None) -> None:
     answers = [json.loads(x) for x in path.read_text().splitlines()] if path.exists() else []
     done = {(a["book"], a["page"]) for a in answers if a["kinds"] is not None}
     rows = {}
-    for path_rows in ROOT.glob("*.jsonl"):
+    for path_rows in ROOT.glob("*--*.jsonl"):
         for x in path_rows.read_text().splitlines():
             r = json.loads(x)
             rows.setdefault((r["book"], r["page"]), []).append(r)
@@ -116,7 +116,7 @@ def score() -> None:
     for a in map(json.loads, _answers(model).read_text().splitlines()):
         last[(a["book"], a["page"])] = a
     gold = {}
-    for path in ROOT.glob("*.jsonl"):
+    for path in ROOT.glob("*--*.jsonl"):
         for x in path.read_text().splitlines():
             r = json.loads(x)
             gold[(r["book"], r["page"], r["line"])] = r["gold"]["role"]

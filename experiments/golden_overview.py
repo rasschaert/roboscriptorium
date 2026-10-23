@@ -93,6 +93,9 @@ for m in sorted(Path("golden").glob("*/manifest.toml")):
         ev = latest_full_eval(book_dir)
         ev_text = f"{ev['cer']:.2%} / {ev['wer']:.2%}" if ev else "none yet"
         title = raw.get("title", g.name)
+        if key in bench.RESERVE:
+            details.append(f"| {g.name} | **held back** | {body} / {scored} | {words} | {cold} | unmeasured | | | | {declared} | untouched |")
+            continue
         if key in bench.FIRST_LOOK:
             details.append(f"| {g.name} | **first look** | {body} / {scored} | {words} | {cold} | unmeasured | | | | {declared} | untouched |")
             faithful.append((None, title, "first look", 0, scored, found, s.id))

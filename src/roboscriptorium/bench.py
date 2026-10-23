@@ -93,12 +93,13 @@ SETS = {
         "het-schaduwhuis--ia-scan:11-19:2-3",
     ],
 }
-# Pairs whose first look has no slot yet: guarded and held out like the first-look set,
-# but not in its bench run. Na die nacht is a sibling of two tuning books.
-WAITING = [
+# Pairs held back: guarded like the first-look set, so nothing scores or trains on them by
+# accident, and in no run. Na die nacht is a sibling of two tuning books, so its first look
+# would be flattered; it is kept as a training candidate.
+RESERVE = [
     "na-die-nacht--ia-scan",
 ]
-FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"] + WAITING)
+FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"] + RESERVE)
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
 NO_TRUST_DATA: frozenset[str] = frozenset(
