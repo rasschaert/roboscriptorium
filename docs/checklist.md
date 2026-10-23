@@ -211,6 +211,12 @@ Where they disagree it is noted, for the user to pass back. Ordered by what the 
 costs against what it could reach; every reader candidate passes the new-model gate
 (HANDOVER, "When a new vision model appears").
 
+- [ ] Is the scan's text mask lossy? (Fable's review): if the encoder used JBIG2 symbol
+      substitution, an accented í may be stored as the plain-i template in the mask itself,
+      and the accent survives only in Internet Archive's original JP2 images. Compare the mask
+      and the JP2 at a known emphatic accent in a public-domain book, and check the PDFs'
+      JBIG2 mode (a symbol dictionary or generic coding). Decides whether the mask can be
+      trusted for accents (agent, ~15 min, no models)
 - [ ] Crops padded to the vision encoder's grid instead of resized (Argon): Qwen's image
       processor rounds a crop's size to its patch grid by resampling, which may blur a
       two-pixel accent or comma. Check Qwen3.8's patch and merge size first, then pad the
@@ -237,6 +243,11 @@ costs against what it could reach; every reader candidate passes the new-model g
       marks a token from the language prior. AUC on the frozen set's silent errors. Argon
       proposes raw runner-up tokens instead (`top_logprobs`, no extra pass) and DeepSeek
       neither; measure both from one run (agent, ~2 h)
+- [ ] Real-word confusion pairs mined from the golden pages (Fable): every pair the
+      readers swapped (check/cheek, vijf/vijt, gat/gaf) with its rate, as a suspect trigger on
+      lines every reader agrees on, only where the partner word is attested in the book, and
+      as an arbiter feature. Probe like the consistency one: catches against flags on the
+      tuning slices, mined leaving each book out (agent, ~2 h, no models)
 - [ ] Two-line crops at each line break as a decision for clef (Fable, Argon): the last
       words of a line and the first of the next as one image, "join or not, hyphen or not,
       comma or full stop", where a trigger fires (a line ending in a stop before a lower-case
@@ -264,6 +275,11 @@ costs against what it could reach; every reader candidate passes the new-model g
 - [ ] Paragraph starts by a model that knows the book's indent regime (Argon), and heading
       tags from Granite-Docling-258M (Argon): after the page-level role pass, which already
       finds every heading in its probe
+- [ ] Paragraph starts as edge classification on a graph of lines (DeepSeek 7, Wang et al.,
+      WACV 2022, a ~100 KB graph network; Fable's review rates it the best fit for unindented
+      books): learned, as the principles want; the obstacle is data, since the unindented books
+      are validation only. Synthetic unindented pages from the tuning books (indents removed,
+      breaks kept) would train it (agent, ~2 days)
 - [x] ~~Gated language-model scoring of words with a visual twin~~ (Argon's PLLR with
       RobBERT; Fable and DeepSeek against): parked behind the glyph and image-gain probes,
       which ask the scan rather than the language
@@ -290,8 +306,6 @@ costs against what it could reach; every reader candidate passes the new-model g
 - [x] ~~PaddleOCR-VL-1.5 as one more reader~~ (DeepSeek 2): screened 2026-10-20, unfit
 - [x] ~~LLM post-correction under a learned edit budget~~ (DeepSeek 4, parked): only on
       the places the consistency test flags, if that probe earns it
-- [x] ~~A small graph network for paragraph breaks~~ (DeepSeek 7, parked): learned, which
-      fits, but tuning books set 0.06 breaks a page wrong; the weak books are validation
 
 ## Before the user reviews another book (2026-10-16)
 
