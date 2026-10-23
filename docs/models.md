@@ -58,11 +58,15 @@ schedel before choosing an OCR model.
 How the models in use are installed and served, where it isn't a plain `ollama pull`.
 AGENTS.md (Environment) keeps the machine's rules.
 
-- **Ollama 0.40.6** since 2026-10-18 (0.40.3 before, 0.35.1 before 2026-10-06). Since
+- **Ollama 0.40.9** since 2026-10-22 or 23 (updated without a record; 0.40.6 from 2026-10-18,
+  0.40.3 before, 0.35.1 before 2026-10-06). Since
   0.40.4 a decision model made from a GGUF by a Modelfile is refused ("a format that is
   no longer supported", ollama/ollama#18917: it needs llama.cpp's decision metadata in
   the GGUF itself), which retired winnow-ollama:e4b; imajev:4b, off, is made so too.
-  After an update the decision models' cached answers are asked again: on 0.40.6
+  After an update the decision models' cached answers are asked again
+  (`experiments/probe_decider_drift.py` for the roles, `probe_judge_drift.py` for the
+  judges): on 0.40.9 clef-flash the same role on 80 of 80, clef:27b and Winnow-12B the
+  same pick on 60 of 60 each (Goede dochter). On 0.40.6
   clef:27b gave the same pick on 60 of 60 OCR-check questions, clef-flash the same role
   on 80 of 80 (`experiments/probe_decider_drift.py`), Winnow-12B the same pick on 157 of
   158 suspects of the token probe (the one a near-tie, 0.41 against 0.405). Ollaya was
