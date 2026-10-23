@@ -625,6 +625,11 @@ reading shares: many are specks and faint marks.
       author, translator, language from the title page and colophon. The earlier screen
       put 227–231 of 252 edge pages on the right side, missing forewords and afterwords
       that the ranges of then left out (design.md, Where the body starts and ends).
+- [ ] The dash and ellipsis style of an image-only scan, measured on the image (2026-10-23):
+      tesseract glues most dashes to their neighbours, so its words can't be measured as the
+      PDF's own are; a long thin component at mid x-height between word gaps is a dash, and
+      its length and gaps measured on the page image. Today an image-only scan falls back to
+      the style read in the text (agent, ~half a day)
 - [ ] An image-only scan through the whole pipeline (Goede dochter with its layer removed:
       tesseract 0.35% CER against the layer's 0.20%): does the OCR check close the gap?
       ~1 h cold. Then italics from tesseract's word boxes
