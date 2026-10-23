@@ -2,7 +2,7 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Rewritten 2026-10-22 ~02:30 by the session that screened the downloaded models and tried the reader's resolution.
+end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the sets (decisions.md, 2026-10-23).
 
 ## Running
 
@@ -13,6 +13,18 @@ Nothing (`screen -ls` is empty). Many commits on `main` since the last push (if 
 **Models.** No model weights live outside Ollama any more (the user, 2026-10-21: `~/code` is backed up hourly, so weights never go under it, and every download over 1 GB is asked first). Every model the user asked for was screened (decisions.md, 2026-10-20 and 21) and deleted: PaddleOCR-VL, Qwen2.5-VL-72B, H2O-Lightning-Omni-4B, fonles-decision-1, Fusion and, last, olmOCR-2-7B (it helped a plain vote, 801 → 809, but not the arbiter, nor whole pages). `work/models/mlx-env` (809 MB, the MLX runtime for `mlx_read_set.py` and `mlx_read_crops.py`) stays for a future MLX candidate; `experiments/h2o_triage.py` and `fonles_triage.py` need their environments built again. The gate for a new vision model is below.
 
 **Arbiter.** Unchanged: the earlier one, restored (tuning 0.29, run `tuning-20261021` of the sanity bench). The line-end features (span ends its line, next line's case) were tried and not taken: tuning 0.29 → 0.30, glued or split words worse.
+
+## Done 2026-10-23 (decisions.md)
+
+- Reader set v3 (v2 less the retired 11/22/63; `tryout.py prune reader`), the probes pointed at it.
+- The 450 dpi witness closed without a run: never right alone on lines no reader flags.
+- Ollama is 0.40.9 (an unrecorded update): the decision models answer as cached
+  (`probe_judge_drift.py`, new, for the judges).
+- Set review: Afscheid's breaks unscored (`breaks_unlike_print`), The Nature of a Crime out of
+  tuning and quick but still arbiter training (its removal from training was worse:
+  unasked fixed 7, made 16). New tuning baseline `tuning-20261023T133740`. The arbiter
+  files before the test retrain are in `work/models/ocr-trust-backup-20261023/` (restored;
+  the folder can go).
 
 ## Done today (decisions.md, 2026-10-20)
 
@@ -52,7 +64,14 @@ The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen
 
 ## Loose ends found at the end of the 2026-10-21/22 session
 
-- **Nine `book.toml` files name no translator** though the colophon does (`probe_title_author.py` output, `work/runs/title-author.log`): fill them in, or leave them if the golden pair doesn't use the field.
+- **Waiting on the user from the trims**: Na die nacht's retirement (deletes its `work/`
+  files and manifest; the auto-mode classifier blocks deletions, so the user runs or allows
+  it); Verminkt sliced to ~90 pages (tooling to write: a reference without chapters cut where
+  the slice's scan lines align).
+- **Twelve merged worktrees** (`-aupair`, `-breaks`, `-chains`, `-cjcap`, `-cjmin`, `-find`,
+  `-lead`, `-mis`, `-only`, `-spans`, `-ux`, `-w12b`) are clean and merged; removing them was
+  blocked by the classifier. `-py315` holds two untracked scratch files; `-caps` the
+  unmerged null result.
 - **Run-in-screen traps hit tonight**: `experiments/screen_reader.sh <label>` treats the label as an Ollama model (it fails for a readings-file label such as `…+dpi450`: run `tryout.py`'s reading step yourself, then `vote_sim.py <stem>` directly); a watcher's `Monitor` expires after 30 minutes however long its timeout, so a long run needs it re-armed.
 - **Per-book settings and extra witnesses** is a new checklist item ("Assumptions to test"): start with the agreement probe.
 - Andere levens: the other seven candidate misprints
