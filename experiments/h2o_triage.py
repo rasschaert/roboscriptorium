@@ -7,7 +7,7 @@ Run with an environment that has torch and transformers (no roboscriptorium):
     H2O=~/.cache/huggingface/models/h2o-lightning-omni-4b
     ~/.cache/huggingface/envs/h2o-env/bin/python -I experiments/h2o_triage.py $H2O [limit] [set folder]
 
-Writes <set folder>/triage/h2o.json (default work/tryout/reader-v2): {id: P(exact)}, resumable.
+Writes <set folder>/triage/h2o.json (default work/tryout/reader-v3): {id: P(exact)}, resumable.
 """
 
 import hashlib
@@ -21,7 +21,7 @@ import torch
 sys.path.insert(0, sys.argv[1])
 from inference import FrameBank, load_omni  # noqa: E402
 
-ROOT = Path(sys.argv[3] if len(sys.argv) > 3 else "work/tryout/reader-v2")
+ROOT = Path(sys.argv[3] if len(sys.argv) > 3 else "work/tryout/reader-v3")
 QUESTION = {
     "match": {
         "type": "noul",

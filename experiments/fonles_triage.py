@@ -21,7 +21,7 @@ import torch
 sys.path.insert(0, sys.argv[1])
 from joint_schema_model import load_release_model, systemone  # noqa: E402
 
-ROOT = Path(sys.argv[3] if len(sys.argv) > 3 else "work/tryout/reader-v2")
+ROOT = Path(sys.argv[3] if len(sys.argv) > 3 else "work/tryout/reader-v3")
 QUESTION = {
     "match": {
         "type": "noul",

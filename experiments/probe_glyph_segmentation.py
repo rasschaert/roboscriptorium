@@ -19,7 +19,7 @@ import numpy as np
 from PIL import Image
 from scipy import ndimage
 
-ROOT = Path("work/tryout/reader-v2")
+ROOT = Path("work/tryout/reader-v3")
 TWO = set("ij!?:;=")
 
 

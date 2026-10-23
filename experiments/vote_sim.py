@@ -12,7 +12,7 @@ from pathlib import Path
 
 from roboscriptorium.evaluate import normalise as fold
 
-ROOT = Path("work/tryout/reader-v2")
+ROOT = Path("work/tryout/reader-v3")
 BASE = ["qwen3.8_27b-nvfp4", "glm-ocr_bf16"]
 
 

@@ -5,7 +5,7 @@ witness for the vote simulation.
 
 Each line is cut from its PDF as the readers cut it (`readers._line_crop`, the box and the
 neighbour-trimmed span in the item's cache key) but at <dpi>, then read with the book's own prompt.
-Writes work/tryout/reader-v2/readings/<read model>+dpi<dpi>.json; `vote_sim.py <that stem>` scores it.
+Writes work/tryout/reader-v3/readings/<read model>+dpi<dpi>.json; `vote_sim.py <that stem>` scores it.
 `--check` only compares the crops at 300 dpi with the frozen ones. Resumable.
 """
 

@@ -4,7 +4,7 @@
 
 Asks the read model (`Settings.read_model`) each line as the pipeline does, the book's own
 prompt and the crop, but with `think` on and room to think; the reading is the answer's
-first line. Writes work/tryout/reader-v2/readings/<model>+think.json, which
+first line. Writes work/tryout/reader-v3/readings/<model>+think.json, which
 `tryout.py run reader <model>+think` scores. Resumable.
 """
 

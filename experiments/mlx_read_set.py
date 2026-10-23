@@ -4,7 +4,7 @@ Run with the isolated MLX environment (it has no roboscriptorium):
 
     work/models/mlx-env/bin/python -I experiments/mlx_read_set.py <model dir> <label> [prompt] [limit]
 
-Writes {id: reading} to work/tryout/reader-v2/readings/<label>.json, the cache
+Writes {id: reading} to work/tryout/reader-v3/readings/<label>.json, the cache
 `tryout.py run reader <label>` scores. A reading is the model's first line.
 """
 
@@ -18,7 +18,7 @@ from mlx_vlm import generate, load
 from mlx_vlm.prompt_utils import apply_chat_template
 from mlx_vlm.utils import load_config
 
-ROOT = Path("work/tryout/reader-v2")
+ROOT = Path("work/tryout/reader-v3")
 path, label = sys.argv[1], sys.argv[2]
 prompt = sys.argv[3] if len(sys.argv) > 3 else "OCR:"
 limit = int(sys.argv[4]) if len(sys.argv) > 4 else 0

@@ -4,6 +4,7 @@ A quick screen before the bench: a candidate that loses here isn't wired in; one
 wins goes on to a trust-data rebuild, a retrain and `bench`. Roles: reader, judge.
 
     uv run python experiments/tryout.py build reader      # freeze the set (no models)
+    uv run python experiments/tryout.py prune reader      # the last set less retired books
     uv run python experiments/tryout.py run reader <model> [--glm]
     uv run python experiments/tryout.py build judge       # from cached suspects
     uv run python experiments/tryout.py run judge <model>
@@ -12,7 +13,9 @@ The reader set (`READER_VERSION`) holds body lines of the tuning books' bench sl
 each line's crop cut as the OCR check cuts it and saved as a PNG, and its printed text
 from the aligned golden reference. Two strata per book: lines the text layer reads
 wrong (the hard ones, up to `HARD` a book) and lines it reads right (`CONTROL` a book,
-a candidate must not break them). The manifest in git (tryouts/reader-v<N>.json) holds
+a candidate must not break them). `prune` makes the next version from the last one
+without the books whose scan is gone, the same crops and ids, readings carried over.
+The manifest in git (tryouts/reader-v<N>.json) holds
 only ids and hashes; crops, texts and readings stay in work/tryout/.
 
 The judge set (`JUDGE_VERSION`) holds the vision judge's questions about settled OCR
@@ -55,7 +58,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from roboscriptorium.trustdata import fold  # noqa: E402  the trust data's labels compare lines the same way
 from roboscriptorium import readers  # noqa: E402
 
-READER_VERSION = 2
+READER_VERSION = 3
 HARD, CONTROL = 30, 20
 JUDGE_VERSION = 1
 JUDGE_HARD, JUDGE_CONTROL = 25, 25
@@ -192,6 +195,41 @@ def _shifted(layer: str, truth: str) -> bool:
         and min(len(p), len(q)) > 0
         for p, q in [last]
     )
+
+
+def prune_reader() -> None:
+    old, new = WORK / f"reader-v{READER_VERSION - 1}", WORK / f"reader-v{READER_VERSION}"
+    manifest_path = GIT / f"reader-v{READER_VERSION}.json"
+    if manifest_path.exists():
+        sys.exit(f"{manifest_path} exists: a set never changes; bump READER_VERSION")
+    data = json.loads((old / "items.json").read_text())
+    manifest = json.loads((GIT / f"reader-v{READER_VERSION - 1}.json").read_text())
+    gone = {b for b in data["books"] if not (Path("work") / b / "source.pdf").exists()}
+    items = [i for i in data["items"] if i["book"] not in gone]
+    keep = {i["id"] for i in items}
+    (new / "crops").mkdir(parents=True, exist_ok=True)
+    for i in items:
+        name = f"{sha(i['id'])}.png"
+        (new / "crops" / name).write_bytes((old / "crops" / name).read_bytes())
+    books = {n: b for n, b in data["books"].items() if n not in gone}
+    (new / "items.json").write_text(
+        json.dumps({"books": books, "items": items}, ensure_ascii=False)
+    )
+    (new / "readings").mkdir(exist_ok=True)
+    for path in (old / "readings").glob("*.json"):
+        readings = {k: v for k, v in json.loads(path.read_text()).items() if k in keep}
+        (new / "readings" / path.name).write_text(json.dumps(readings, ensure_ascii=False))
+    manifest.update(
+        version=READER_VERSION,
+        created=datetime.now(UTC).isoformat(timespec="seconds"),
+        commit=_commit(),
+        pruned_from=READER_VERSION - 1,
+        dropped=sorted(gone),
+        books={n: b for n, b in manifest["books"].items() if n not in gone},
+        items=[i for i in manifest["items"] if i["id"] in keep],
+    )
+    manifest_path.write_text(json.dumps(manifest, indent=1) + "\n")
+    print(f"dropped {sorted(gone)}; {len(items)} lines; manifest {manifest_path}")
 
 
 def _commit() -> str:
@@ -583,5 +621,7 @@ if __name__ == "__main__":
         sys.exit("roles: reader, judge")
     if command == "build":
         build_reader() if role == "reader" else build_judge()
+    elif command == "prune" and role == "reader":
+        prune_reader()
     elif command == "run":
         run_reader(sys.argv[3]) if role == "reader" else run_judge(sys.argv[3])

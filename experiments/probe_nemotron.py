@@ -4,7 +4,7 @@
 
 Two parts, each capped in minutes, so there is an answer whatever its pace:
 
-reader: a seeded sample of the reader set (`tryouts/reader-v2.json`) read as the pipeline
+reader: a seeded sample of the reader set (`tryouts/reader-v3.json`) read as the pipeline
   reads a line (`readers.transcribe`, told the book's style, thinking off), against the text
   layer and the readings the book caches hold for qwen3.8 and glm-ocr on the same crops.
 judge:  the context judge's prompt (`work/probes/context-judge/items.json`: the lines around an

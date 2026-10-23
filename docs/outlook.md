@@ -210,12 +210,12 @@ accurate; an MLX build at higher precision, mxfp8, is untested and not pulled); 
 says the runner uses the MTP head, and it could speed only the 0.35 s of output).
 
 **What a faster reader must pass.** `experiments/tryout.py run reader <model>` on reader
-set v2 (`tryouts/reader-v2.json`: 850 body lines from the 17 tuning books' slices, 510
-the text layer reads wrong and 340 it reads right; the incumbents' readings are cached
-under `work/tryout/reader-v2/readings/`, so a run costs the candidate's own 850 lines,
-and reports seconds a line). The reader in use, qwen3.8:27b-nvfp4, reads 463 of the 510
-hard lines right (CER 0.74%) and 338 of the 340 control lines (0.01%), quote marks wrong
-on 26 and 5, at 1.20 s a line; a candidate must match both strata, quote marks and
+set v3 (`tryouts/reader-v3.json`: 800 body lines from 16 tuning books' slices, 480
+the text layer reads wrong and 320 it reads right; the incumbents' readings are cached
+under `work/tryout/reader-v3/readings/`, so a run costs the candidate's own 800 lines,
+and reports seconds a line). The reader in use, qwen3.8:27b-nvfp4, reads 436 of the 480
+hard lines right (CER 0.76%) and 319 of the 320 control lines (0.01%), quote marks wrong
+on 23 and 4, at 1.20 s a line; a candidate must match both strata, quote marks and
 accents included, and be right alone on lines the others miss (docs/models.md has the
 ones that didn't: the q8_0, UD-Q6_K_XL and UD-Q8_K_XL builds, gemma4, a ~1-bit Qwen3.8-Flash-Next, MoE readers).
 Speed is its own pace one request at a time, since no runner tried batches a model this

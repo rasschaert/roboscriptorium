@@ -4,14 +4,14 @@ and how many hard lines it would flag at a given share of control lines flagged.
 
     uv run python experiments/triage_score.py <label>
 
-Reads work/tryout/reader-v2/triage/<label>.json (`h2o_triage.py`). No models.
+Reads work/tryout/reader-v3/triage/<label>.json (`h2o_triage.py`). No models.
 """
 
 import json
 import sys
 from pathlib import Path
 
-ROOT = Path(sys.argv[2] if len(sys.argv) > 2 else "work/tryout/reader-v2")
+ROOT = Path(sys.argv[2] if len(sys.argv) > 2 else "work/tryout/reader-v3")
 
 
 def auc(low: list[float], high: list[float]) -> float:

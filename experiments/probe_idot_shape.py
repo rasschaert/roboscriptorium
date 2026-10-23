@@ -21,7 +21,7 @@ import numpy as np
 from PIL import Image
 from scipy import ndimage
 
-READER = Path("work/tryout/reader-v2")
+READER = Path("work/tryout/reader-v3")
 UNASKED = Path("work/probes/unasked-set")
 RUN = "tuning-20261020T182636-f38e636-dirty"
 
