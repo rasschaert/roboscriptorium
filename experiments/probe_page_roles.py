@@ -6,8 +6,11 @@ heading and as many without, seeded. The model sees the page and all its lines, 
 and names each line's kind; its answer is compared with the reference's label and the
 pipeline's (`laya_roles_eval.pipeline_roles`, the trees trained without the book).
 
-    uv run python experiments/probe_page_roles.py ask [limit]
-    uv run python experiments/probe_page_roles.py score
+    uv run python experiments/probe_page_roles.py ask [limit] [--short]
+    uv run python experiments/probe_page_roles.py score [--short]
+
+`--short` asks only for the numbers of the heading and furniture lines (every other line is
+running text): a few tokens a page instead of one label a line.
 
 Answers are appended to work/probes/page-roles/answers-<model>.jsonl (a run resumes).
 """
@@ -38,6 +41,17 @@ PROMPT = (
 )
 
 
+SHORT_PROMPT = (
+    "This is a page of a printed book. Below is every line read from it, numbered from the "
+    "top. Which lines are headings of the book (a chapter, part or section title, name or "
+    "number, set where it begins, often larger, spaced, centred or in capitals), and which "
+    "are page furniture (a page number, a running head) or stray marks? Every other line is "
+    "running text.\n\n{lines}\n\n"
+    'Answer with a JSON object and nothing else, for example {{"H": [2], "F": [1, 30]}}.'
+)
+SHORT = "--short" in sys.argv
+
+
 def sample() -> list[tuple[str, int]]:
     from roboscriptorium import bench
 
@@ -56,7 +70,17 @@ def sample() -> list[tuple[str, int]]:
 
 
 def _answers(model: str) -> Path:
-    return OUT / f"answers-{model.replace(':', '_').replace('/', '_')}.jsonl"
+    name = model.replace(":", "_").replace("/", "_") + ("-short" if SHORT else "")
+    return OUT / f"answers-{name}.jsonl"
+
+
+def _kinds(found: dict, count: int) -> dict[str, str]:
+    """A short answer ({"H": [...], "F": [...]}) as one kind a line."""
+    out = {str(i): "T" for i in range(1, count + 1)}
+    for kind in ("F", "H"):
+        for i in found.get(kind, []) if isinstance(found.get(kind), list) else []:
+            out[str(i)] = kind
+    return out
 
 
 def ask(limit: int | None) -> None:
@@ -85,7 +109,8 @@ def ask(limit: int | None) -> None:
             png = pagereader._render(doc[page - 1])
         listing = "\n".join(f"{i}. {r['state']['line']}" for i, r in enumerate(lines, 1))
         body = {
-            "model": model, "prompt": PROMPT.format(lines=listing), "stream": False,
+            "model": model, "prompt": (SHORT_PROMPT if SHORT else PROMPT).format(lines=listing),
+            "stream": False,
             "think": False, "images": [base64.b64encode(png).decode()],
             "options": {"temperature": 0, "num_predict": 2000},
         }  # fmt: skip
@@ -99,6 +124,8 @@ def ask(limit: int | None) -> None:
             kinds = json.loads(found[-1]) if found else None
         except json.JSONDecodeError:
             kinds = None
+        if SHORT and kinds is not None:
+            kinds = _kinds(kinds, len(lines))
         with _answers(model).open("a") as f:
             f.write(json.dumps({"book": book, "page": page, "reply": reply, "kinds": kinds,
                                 "lines": [r["line"] for r in lines]}) + "\n")  # fmt: skip
@@ -152,6 +179,7 @@ def score() -> None:
 
 if __name__ == "__main__":
     if sys.argv[1] == "ask":
-        ask(int(sys.argv[2]) if len(sys.argv) > 2 else None)
+        args = [a for a in sys.argv[2:] if not a.startswith("--")]
+        ask(int(args[0]) if args else None)
     else:
         score()

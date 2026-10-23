@@ -163,7 +163,12 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [x] `heading-pairs` and `number-lookalikes` merged (2026-10-17), the trees retrained on the
       long slices: Metro's headings 3/8 → 8/8; extra text 1.08 → 0.63 a page on tuning
 - [ ] Line roles by Qwen from the page image (text, heading, running head, page number,
-      caption, picture), against the rules and the trees
+      caption, picture), against the rules and the trees. **Probe 2026-10-23: a strong signal**
+      (`probe_page_roles.py`, 208 tuning pages, half holding a heading, certain labels only):
+      5,993 lines, the pipeline 22 wrong and Qwen 3 (three datelines called headings);
+      headings found 126/126 against 110, 3 false. 25 s a page. Next: the short answer
+      (heading and furniture numbers only, queued), then Qwen's call as an input to the
+      role trees over every tuning page, benched
 - [ ] The text layer as a second reader only: the page built from the whole-page reading,
       the layer and the line readers judging where they differ
 - [ ] Page kinds for `init` (cover, front matter, body, back matter) by Qwen from the page
