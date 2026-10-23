@@ -166,9 +166,10 @@ models could do. Each probe below asks whether that's still true, on a few golde
       caption, picture), against the rules and the trees. **Probe 2026-10-23: a strong signal**
       (`probe_page_roles.py`, 208 tuning pages, half holding a heading, certain labels only):
       5,993 lines, the pipeline 22 wrong and Qwen 3 (three datelines called headings);
-      headings found 126/126 against 110, 3 false. 25 s a page. Next: the short answer
-      (heading and furniture numbers only, queued), then Qwen's call as an input to the
-      role trees over every tuning page, benched
+      headings found 126/126 against 110, 3 false. 25 s a page. The short answer (only
+      the heading and furniture line numbers, `--short`) keeps it: 4 wrong, 126/126 headings,
+      3 false, 1 page unparsed, at ~6 s a page. Next: Qwen's short call as an input to the
+      role trees over every tuning page (a few hours of qwen, overnight), benched
 - [ ] The text layer as a second reader only: the page built from the whole-page reading,
       the layer and the line readers judging where they differ
 - [ ] Page kinds for `init` (cover, front matter, body, back matter) by Qwen from the page
