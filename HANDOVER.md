@@ -31,6 +31,14 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
   unasked fixed 7, made 16). New tuning baseline `tuning-20261023T133740`. The arbiter
   files before the test retrain are in `work/models/ocr-trust-backup-20261023/` (restored;
   the folder can go).
+- Flint skipped on its card (text-only coding model). Laya fine-tuned for line roles on MLX
+  (Unsloth's `FastDecisionModel` trains Laya and Clef on this Mac, ~15 min) on rows whose labels
+  can't be wrong (`laya_roles_data.py`): alone 75 wrong of 19,422 clean validation lines
+  against the pipeline's 30; not pursued (`~/models/roboscriptorium/laya-roles/full`).
+- Paragraph starts by qwen from the page image: fixes 53 of 78 on error pages but sets 0.11–0.15
+  a page wrong on clean ones (the reflow 0.06): not taken.
+- Verminkt scored on 7–100 (`scoring.cut_to_pages`: a slice without chapters cut to its
+  paragraphs). `build` and `review` start from a PDF alone, `init` drafting book.toml.
 
 ## Done today (decisions.md, 2026-10-20)
 
