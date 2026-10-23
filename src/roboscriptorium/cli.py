@@ -578,6 +578,8 @@ def _evaluate_book(
         f"recall {result.paragraph_recall:.3f}; "
         f"words: {result.output_words} out / {result.reference_words} reference"
     )
+    if unlike := scoring.breaks_unlike(book):
+        typer.echo(f"  paragraph breaks: bench skips them, unlike the print's ({unlike})")
     if unlike := scoring.italics_unlike(book):
         typer.echo(
             f"  italic words: not scored, the reference's italics aren't the print's ({unlike})"

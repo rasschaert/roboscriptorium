@@ -43,7 +43,7 @@ def latest_full_eval(book_dir: Path):
 # Manifest keys that undo a way the reference departs from its print.
 DEVIATIONS = (
     "hyphen_dash", "capital_classes", "note_mark", "markup_spaces", "italics_unlike_print",
-    "ellipsis_space",
+    "ellipsis_space", "breaks_unlike_print",
 )  # fmt: skip
 faithful = []
 
@@ -65,8 +65,9 @@ PLAIN = {
     "markup_spaces": "stray spaces in its markup",
     "italics_unlike_print": "italics unlike the print's",
     "ellipsis_space": "no space before an ellipsis",
+    "breaks_unlike_print": "paragraph breaks unlike the print's",
 }
-USE = {"tuning": "tuning", "validation": "validation", "quick": "tuning", "reserve": "line roles only"}
+USE = {"tuning": "tuning", "validation": "validation", "quick": "tuning", "reserve": "training only"}
 
 details = []
 for m in sorted(Path("golden").glob("*/manifest.toml")):

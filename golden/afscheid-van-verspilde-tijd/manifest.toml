@@ -15,6 +15,7 @@ files = [
   "Text/hfd 1.html", "Text/hfd 2.html", "Text/hfd 3.html", "Text/hfd 4.html", "Text/hfd 5.html", "Text/hfd 6.html", "Text/hfd 7.html", "Text/hfd 8.html", "Text/hfd 9.html", "Text/hfd 10.html", "Text/hfd 11.html", "Text/hfd 12.html", "Text/hfd 13.html", "Text/hfd 14.html", "Text/hfd 15.html", "Text/hfd 16.html", "Text/hfd 17.html", "Text/hfd 18.html", "Text/hfd 19.html", "Text/hfd 20.html", "Text/hfd 21.html", "Text/hfd 22.html", "Text/hfd 23.html"
 ]
 hyphen_dash = "–"
+breaks_unlike_print = "the EPUB breaks and joins paragraphs where the print doesn't"
 
 # The first printing (September 2011, ISBN 9789491259258), an IA Scribe scan in
 # Stella's format (360 ppi MRC, GlyphLessFont layer). Pages 9–124: chapter 1 to

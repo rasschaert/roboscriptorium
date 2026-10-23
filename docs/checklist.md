@@ -50,17 +50,14 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    2 h and 1.5 h, cold), then `bench first-look --first-look` scores the three once each,
    their scores go in decisions.md, then each joins a set. Done 2026-10-20: De vergelding and Glazuur tuning, Vanille validation (no trust data for the first two yet).
 7. Trim the sets (the user, 2026-10-18: "trim the fat"; after tonight's benches, batched
-   with one retrain and new baselines): Verminkt sliced to ~90 pages (tooling: cut a
-   reference without chapters where the slice's first and last scan lines align); Afscheid
-   kept for its words, its paragraph breaks no longer scored (a manifest key like
-   `italics_unlike_print`: its EPUB's paragraphing, untracked until now); Na die nacht
-   retired (a sibling of two tuning books, no honest first look); The Nature of a Crime
-   out of tuning and out of the arbiter's training (its Gutenberg punctuation would teach
-   the transcriber's convention), its manifest and verdicts kept for hosted work; Normal
-   People kept (it moved the 2026-10-13 trees verdict, and its questions moved today).
-   Dolittle's quick slice is a suspect pair (layer 2.93% against a median 0.48%): read
-   where it sits before relying on that slice. Het laatste bevel's glued words: check
-   they're tracked (a key, the normaliser or verdicts).
+   with one retrain and new baselines). Done 2026-10-23: Afscheid's paragraph breaks
+   unscored (`breaks_unlike_print`); The Nature of a Crime out of tuning and quick, but
+   kept in the arbiter's training (without it: unasked fixed 7, made 16); Dolittle's
+   quick slice kept (every line places; its layer is poor, not another edition). Left:
+   Verminkt sliced to ~90 pages (tooling: cut a reference without chapters where the
+   slice's first and last scan lines align); Na die nacht retired (a sibling of two
+   tuning books; deleting its `work/` files and manifest waits on the user); Het laatste
+   bevel's glued words as verdicts (the user's time).
 8. The next set review (AGENTS.md, "Reviewing the sets"): after the four waiting pairs'
    first looks, by 2026-10-25 at the latest; the gaps in docs/golden-notes.md go to the
    user as the books to look for.

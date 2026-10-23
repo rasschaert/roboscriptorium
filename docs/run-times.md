@@ -541,3 +541,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-21 | page kinds: wording variant 2 on every edge page of 27 books, clef-flash | 27 | 22 | 0 |
 | 2026-10-22 | page kinds: clef:27b on every edge page of 27 books | 27 | 62 | 0 |
 | 2026-10-22 | title and author from the title and copyright pages, 27 books, read model | 27 | 66 | 0 |
+| 2026-10-23 | bench tuning, trimmed sets, arbiter still with Crime (warm) | 0 | 3 | 0 |
+| 2026-10-23 | bench tuning, arbiter retrained without Crime (warm) | 0 | 4 | 0 |
+| 2026-10-23 | bench validation, arbiter retrained without Crime (warm) | 0 | 4 | 0 |

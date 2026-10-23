@@ -40,7 +40,6 @@ SETS = {
         "goede-dochter--ia-scan:9-99:1-6",
         "vals-alarm--ia-scan:11-60:1-10",
         "reis-om-mijn-schedel--ia-scan:11-99:1-10",
-        "the-nature-of-a-crime--doubleday-1924",
         "the-story-of-doctor-dolittle--stokes-1920:23-88:1-7",
         "the-thief-takers-apprentice--ia-scan:11-84:1-22",
         "afscheid-van-verspilde-tijd--ia-scan:9-70:1-11",
@@ -79,7 +78,6 @@ SETS = {
         "goede-dochter--ia-scan:51-64:4-4",
         "vals-alarm--ia-scan:11-25:1-4",
         "reis-om-mijn-schedel--ia-scan:11-29:1-3",
-        "the-nature-of-a-crime--doubleday-1924:25-43:1-1",
         "the-story-of-doctor-dolittle--stokes-1920:23-40:1-2",
         "the-thief-takers-apprentice--ia-scan:11-26:1-6",
         "afscheid-van-verspilde-tijd--ia-scan:9-20:1-2",
@@ -242,6 +240,7 @@ def _book_record(
         "ocr_suspects": dict(Counter(s.choice for s in stages.suspects)),
         "read_via": scoring.read_via(book, {p.number for p in stages.pages}),
         "italics_scored": not scoring.italics_unlike(book),
+        "breaks_scored": not scoring.breaks_unlike(book),
         "verdicts_applied": run.applied,
         "score": {k: v for k, v in asdict(score).items() if k != "confusions"},
         "quality": {k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()},
@@ -255,7 +254,9 @@ def _book_record(
             numbers,
             errors,
             found,
-            breaks=disagreements.break_errors(scored, reference, stages.pages),
+            breaks=()
+            if scoring.breaks_unlike(book)
+            else disagreements.break_errors(scored, reference, stages.pages),
             glyphs=disagreements.glyph_errors(scored, reference, stages.pages, kinds),
         ),
     }

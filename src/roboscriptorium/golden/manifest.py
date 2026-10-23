@@ -88,6 +88,9 @@ class PublisherEpub:
     single_quotes: bool = False
     # Classes whose text the EPUB hides (set in white) and the print doesn't set.
     hidden_classes: frozenset[str] = frozenset()
+    # Why the EPUB's paragraph breaks aren't the print's, when they aren't: its breaks are
+    # then not scored ("" scores them).
+    breaks_unlike_print: str = ""
 
 
 @dataclass(frozen=True)
@@ -186,6 +189,7 @@ class Golden:
                 ref.get("leading_text", False),
                 ref.get("single_quotes", False),
                 frozenset(ref.get("hidden_classes", ())),
+                ref.get("breaks_unlike_print", ""),
             )
         )
         se = data.get("standard_ebooks")

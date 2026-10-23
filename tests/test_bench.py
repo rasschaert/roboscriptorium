@@ -157,15 +157,15 @@ def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path, monk
     from roboscriptorium.config import Settings
 
     settings = Settings(ocr_trust_model=str(tmp_path / "ocr-trust.pkl"), sorter=False)
-    crime = "the-nature-of-a-crime--doubleday-1924"
+    tuned = "goede-dochter--ia-scan"
     # A tuning book was trained on: scoring it with the full model is refused.
     with pytest.raises(FileNotFoundError):
-        bench.unseen(settings, crime)
+        bench.unseen(settings, tuned)
     off = replace(settings, ocr_trust=False)
-    assert bench.unseen(off, crime) == off
-    (tmp_path / f"ocr-trust-without-{crime}.pkl").write_bytes(b"")
-    assert bench.unseen(settings, crime).ocr_trust_model == str(
-        tmp_path / f"ocr-trust-without-{crime}.pkl"
+    assert bench.unseen(off, tuned) == off
+    (tmp_path / f"ocr-trust-without-{tuned}.pkl").write_bytes(b"")
+    assert bench.unseen(settings, tuned).ocr_trust_model == str(
+        tmp_path / f"ocr-trust-without-{tuned}.pkl"
     )
     # A validation book, or a tuning book without trust data, was never trained on.
     assert bench.unseen(settings, "vuurspel--ia-scan") == settings
@@ -228,10 +228,12 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
         evaluate, "score", lambda doc, ref: evaluate.Score(0, 0, 1, 1, 7, 7, 0, 0, 0)
     )
     monkeypatch.setattr(cli, "_model_versions", lambda settings: {})
-    monkeypatch.setattr(cli.disagreements, "break_errors", lambda doc, ref, pages: [])
+    monkeypatch.setattr(cli.disagreements, "break_errors", lambda doc, ref, pages: [11])
     monkeypatch.setattr(cli.disagreements, "glyph_kinds", lambda ref: set())
     monkeypatch.setattr(scoring, "read_via", lambda book, pages: {book: 1.0})
     monkeypatch.setattr(scoring, "italics_unlike", lambda book: "")
+    # Book b's reference breaks paragraphs unlike its print.
+    monkeypatch.setattr(scoring, "breaks_unlike", lambda book: "unlike" if book == "book b" else "")
     monkeypatch.setattr(bench, "OUT", tmp_path)
     monkeypatch.setattr(bench.save, "__defaults__", (tmp_path,))
     result = CliRunner().invoke(cli.app, ["bench", "probe"])
@@ -243,6 +245,9 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
     assert record["books"]["a"]["pair"]["cer"] == 0
     # Each book's own build is recorded, not the last one built.
     assert record["books"]["a"]["read_via"] == {"book a": 1.0}
+    # A reference whose breaks aren't the print's counts none of them wrong.
+    assert record["books"]["a"]["pages"]["11"][6] == 1 and record["books"]["a"]["breaks_scored"]
+    assert record["books"]["b"]["pages"]["11"][6] == 0 and not record["books"]["b"]["breaks_scored"]
 
 
 def test_a_change_to_a_books_structure_is_reported_beside_the_test():

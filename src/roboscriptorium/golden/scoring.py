@@ -196,6 +196,11 @@ def italics_unlike(book: Book) -> str:
     return getattr(Golden.load(book.golden).reference, "italics_unlike_print", "")
 
 
+def breaks_unlike(book: Book) -> str:
+    """Why the book's reference breaks paragraphs unlike its print, or "" when it doesn't."""
+    return getattr(Golden.load(book.golden).reference, "breaks_unlike_print", "")
+
+
 def read_via(book: Book, pages: set[int]) -> dict[str, float]:
     """Of the read model's cached readings of these pages, the share each hosted build
     read in its place (`ROBO_READ_VIA`): a bench run says which reader it measured."""

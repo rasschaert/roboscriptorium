@@ -23,8 +23,10 @@ from roboscriptorium.golden.reference import load_chapters
 
 # Training-only slices, never scored: De tunnels' chapter 12, its photos and captions (an
 # OCR-made reference, close enough for role labels); Steve Jobs' photo insert, captions
-# against the retail EPUB.
+# against the retail EPUB; The Nature of a Crime, whose Gutenberg punctuation is the
+# transcriber's, so its words aren't scored (the arbiter still trains on it).
 EXTRA = [
+    "the-nature-of-a-crime--doubleday-1924",
     "de-tunnels--ia-scan:238-270:14-14",
     "steve-jobs--ia-scan:387-402:43-43",
 ]
