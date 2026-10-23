@@ -424,6 +424,8 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   `pdftotext`, `pdfimages`), epubcheck, d2, llama.cpp's `llama-server` (all Homebrew where
   applicable); scikit-learn and the dependency group `layout` (`doclayout-yolo` with
   PyTorch) in Python.
+- Model weights live outside `~/code` (backed up hourly): models we train or download by
+  hand in `~/models/roboscriptorium/`, one subfolder each.
 - Models set up by hand (Winnow-12B, `imajev:4b`, imajev on `llama-server`, the
   DocLayout-YOLO weights): [docs/models.md](docs/models.md), Setup.
 - Word lists: `work/lexicon/{nld,eng}-words.txt`, built by `lexicon.py` from the tessdata
