@@ -118,8 +118,9 @@ def ask(limit: int | None) -> None:
     model = settings.read_model
     pages = json.loads((OUT / "pages.json").read_text())
     path = _answers(model)
-    done = {(a["book"], a["page"]) for a in map(json.loads, path.read_text().splitlines())} \
-        if path.exists() else set()  # fmt: skip
+    # An answer without a list (the model reasoned past its budget) is asked again.
+    answers = [json.loads(x) for x in path.read_text().splitlines()] if path.exists() else []
+    done = {(a["book"], a["page"]) for a in answers if a["starts"] is not None}
     todo = [p for p in pages if (p["book"], p["page"]) not in done][:limit]
     for n, p in enumerate(todo, 1):
         with pymupdf.open(Path("work") / p["book"] / "source.pdf") as doc:
@@ -128,13 +129,13 @@ def ask(limit: int | None) -> None:
         body = {
             "model": model, "prompt": PROMPT.format(lines=lines), "stream": False,
             "think": False, "images": [base64.b64encode(png).decode()],
-            "options": {"temperature": 0, "num_predict": 300},
+            "options": {"temperature": 0, "num_predict": 2000},
         }  # fmt: skip
         reply = patiently(
             lambda: httpx.post(f"{settings.ollama_url}/api/generate", json=body, timeout=900)
         ).json()["response"]
-        found = re.search(r"\[[\d,\s]*\]", reply)
-        picked = json.loads(found.group()) if found else None
+        found = re.findall(r"\[[\d,\s]*\]", reply)
+        picked = json.loads(found[-1]) if found else None
         with path.open("a") as f:
             f.write(json.dumps({"book": p["book"], "page": p["page"], "reply": reply,
                                 "starts": picked}) + "\n")  # fmt: skip
@@ -146,7 +147,11 @@ def score() -> None:
 
     model = Settings.from_env().read_model
     pages = {(p["book"], p["page"]): p for p in json.loads((OUT / "pages.json").read_text())}
-    answers = [json.loads(x) for x in _answers(model).read_text().splitlines()]
+    # The last answer for each page: an unparsed one was asked again.
+    last = {}
+    for a in map(json.loads, _answers(model).read_text().splitlines()):
+        last[(a["book"], a["page"])] = a
+    answers = list(last.values())
     per_book: dict[str, Counter] = {}
     unparsed = 0
     for a in answers:

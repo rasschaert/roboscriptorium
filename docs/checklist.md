@@ -150,7 +150,10 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [ ] Whole-page reading with the page before as context, for paragraphs that cross a page
 - [ ] The whole-page reading as one more reader: where it and the line readers differ,
       a suspect for the arbiter; how many of the undoubted errors it would have raised
-- [ ] Paragraph breaks by a model: the page image plus the pipeline's lines, "which lines
+- [x] Paragraph breaks by a model (2026-10-23, NOT TAKEN; `probe_page_breaks.py`): on 47
+      tuning pages with a break error it fixes 53 of 78 wrong starts, but it sets 7 wrong
+      on 47 clean pages (0.15 a page, against the reflow's 0.06 over all pages). The page
+      image plus the pipeline's lines, "which lines
       start a paragraph?", against `reflow.indented`. A learned text table (quote after quote at
       the margin: 87 of 88 starts) did nothing, the tuning books having no unindented
       book (2026-10-16, `work/probes/parastarts.patch`); Vuurspel's unindented layout is
