@@ -223,10 +223,12 @@ costs against what it could reach; every reader candidate passes the new-model g
       two-pixel accent or comma. Check Qwen3.8's patch and merge size first, then pad the
       frozen set's crops with paper colour to an exact multiple and read them again;
       compare per stratum and on the six accent lines (agent, ~30 min of qwen)
-- [ ] Small capitals from the descender band (Argon): a word read with g, j, p, q or y but
-      no ink below the line's baseline is set in small capitals ("app" against "APD"),
-      measured on the scan's binary mask or the rendered crop. No models: of the 31 case
-      errors on tuning, how many the test finds, and how many right words it flags (agent, ~1 h)
+- [x] ~~Small capitals from the descender band~~ (Argon; dropped on reading the errors,
+      2026-10-23): of the 27 unasked case errors on tuning, 15 are Au pair's reference writing
+      small capitals in lower case (verdicts, golden-notes), and the other 12 are short acronyms
+      in small capitals ("ss", "wa", "voc", "usb", "cv", "v-hals", "u-boten") with no letter that
+      descends: the test reaches none. What is left needs a shape classifier (the glyph-level
+      checks below), and a small-capital S is nearly a lower-case s
 - [ ] Book-wide consistency for diaereses and letters outside ASCII only (Argon's narrowing
       of the null above): the same probe, flagging a plain reading only where the book
       prints the word with ë, ï, ı, ł, ç … and never for acute accents, which vary by
@@ -294,10 +296,9 @@ costs against what it could reach; every reader candidate passes the new-model g
       times or more flags 4,802 words over the tuning slices (3 a page), 34 of them errors;
       it catches 17 of 184 unasked one-word errors, about 6 of them real, the rest emphasis
       accents the print has and the reference drops, which it would remove
-- [ ] The JBIG2 text mask as the image (DeepSeek 6, speculative, no report found of it
-      working): crops of the scan's own binary mask, without the JPEG2000 layers, for the six
-      known emphasis-accent lines and the small-capital ones, read by qwen; compared with the
-      composited crops (agent, ~30 min)
+- [x] ~~The JBIG2 text mask as the readers' image~~ (DeepSeek 6): the accent is as plain
+      in the composited render as in the mask (the lossiness check above); the mask stays a
+      geometry channel for the descender band and specks
 - [ ] A threshold per kind of question (Argon's value of information; DeepSeek 8 as
       ranking): replay saved benches offline. Reviewer mistakes are too few for a predictor
       (8 of 68 on Stella): first test whether the arbiter's margin between its top two
