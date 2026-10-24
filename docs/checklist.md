@@ -97,7 +97,7 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       Winnow-12B runs (cached, no model calls; agent, ~1 h). The word list's vote goes
       in the same bench: taken away it changes nothing (`experiments/probe_subtract.py`),
       the arbiter reading the same knowledge from the `known` feature
-- [ ] A context judge (the user, 2026-10-17: "if it cuts down on questions being asked
+- [x] ~~A context judge~~: stays off (the user, 2026-10-19, shown it passing both sets with fewer questions but more unasked errors: "then i'm against it"; decisions.md). Before (the user, 2026-10-17: "if it cuts down on questions being asked
       in human review, i'm for it"): probed hosted (the user allowed OpenRouter for its
       test): without each version's count in the prompt, it settles 220 of 336 asked
       suspects by agreeing with the arbiter, 17 of them wrong (8%, under a question's
