@@ -582,3 +582,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-24 | bench quick, defaults (warm) | 282 | 6 | 0 |
 | 2026-10-24 | bench quick, without winnow (warm) | 282 | 6 | 0 |
 | 2026-10-24 | bench quick, picture-marked page roles (warm) | 282 | 6 | 0 |
+| 2026-10-24 | bench tuning, a short line ending in a comma starts a paragraph (warm) | 0 | 9 | 0 |
+| 2026-10-24 | bench validation, a short line ending in a comma starts a paragraph (warm) | 0 | 5 | 0 |

@@ -528,7 +528,10 @@ ends on a short sentence starts a paragraph on the next page's first line, unles
 opens in lower case. Bench (2026-10-11): validation breaks 1.97 → 0.21 a page (Vuurspel
 7.91 → 0.44, De stilte 4.90 → 0.36), tuning 0.26 → 0.22 (Artemis 0.75 → 0.46), no book
 worse, words unchanged. Left on De stilte, 3.5% of its breaks: sentences that end within
-3 pt of the margin, which the print doesn't show either.
+3 pt of the margin, which the print doesn't show either. A salutation's comma counts as an
+end too ("Dear Kelvin," before a letter's body set flush, 2026-10-24): in justified text a
+line stops short only at a paragraph's end; Artemis's letters 0.34 → 0.18 breaks a page,
+tuning 0.057 → 0.048 [−0.016, −0.004], validation and words unchanged.
 
 **A scene break is white space of two lines, or an ornament line.** Over 1.8 pitches
 after a sentence (one blank line is two pitches), or a line of three ornament marks or

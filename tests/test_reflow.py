@@ -262,6 +262,23 @@ def test_dialogue_short_lines_dont_hide_that_the_text_is_justified():
     ]
 
 
+def test_a_short_line_ending_on_a_comma_starts_a_paragraph_only_in_justified_text():
+    letter = [
+        ("Ze schreef hem die avond nog een brief", 250),
+        ("en legde hem op de tafel bij het raam.", 160),
+        ("Beste Kelvin,", 80),
+        ("Het gaat goed met me en met de hond,", 250),
+        ("die nu elke ochtend met me meeloopt.", 170),
+    ]
+    assert [p.text[:6] for p in reflow([_justified(5, letter)])] == ["Ze sch", "Beste ", "Het ga"]
+    # Ragged text: a short line says nothing, whatever it ends on.
+    ragged = [("Een regel,", 200), ("Nog een regel", 150), ("Derde regel,", 230), ("Vierde", 120)]
+    lines = [
+        Line(t, 10, 20 + i * SPACING, x1, 30 + i * SPACING) for i, (t, x1) in enumerate(ragged)
+    ]
+    assert len(reflow([PageText(5, 280, HEIGHT, lines)])) == 1
+
+
 def test_a_page_ending_on_a_short_sentence_starts_a_paragraph_on_the_next():
     body = [
         ("Ze zweeg en keek uit het raam naar", 250),
