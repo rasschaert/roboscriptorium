@@ -563,3 +563,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-24 | qwen image-gain: frozen reader set with and without crops (800 lines) | 0 | 41 | 0 |
 | 2026-10-24 | LightOnOCR-3-4B on the reader set (800 lines), pad 0 | 0 | 10 | 0 |
 | 2026-10-24 | LightOnOCR-3-4B on the reader set (800 lines), pad 120 | 0 | 22 | 0 |
+| 2026-10-24 | bench tuning, line-end comma kept before lower case (warm) | 0 | 10 | 1 |
+| 2026-10-24 | bench validation, defaults (warm) | 0 | 14 | 0 |
+| 2026-10-24 | bench validation, line-end comma kept before lower case (warm) | 0 | 5 | 0 |

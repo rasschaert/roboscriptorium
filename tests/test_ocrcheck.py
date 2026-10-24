@@ -65,6 +65,31 @@ def test_readings_that_differ_only_in_how_an_ellipsis_is_set_are_one_version():
     )
 
 
+def test_a_full_stop_for_a_line_end_comma_is_kept_where_a_sentence_can_end():
+    line = "Samen holden ze naar huis,"
+    a0, a1 = line.index("huis,"), len(line)
+    # A capital, a digit or no next line: a sentence may end there.
+    for nxt in ("Hand in hand", "1944 was", ""):
+        assert not ocrcheck.stop_for_comma(line, a0, a1, "huis.", nxt, set())
+    # A word the book abbreviates ("bijv. de") may stop mid-sentence.
+    assert not ocrcheck.stop_for_comma(line, a0, a1, "huis.", "hand in hand", {"huis"})
+    # Another change than the comma alone, or a comma inside the line, isn't this case.
+    assert not ocrcheck.stop_for_comma(line, a0, a1, "huís.", "hand", set())
+    assert not ocrcheck.stop_for_comma(line + " ze", a0, a1, "huis.", "hand", set())
+
+
+def test_a_full_stop_for_a_line_end_comma_before_lower_case_is_never_the_print():
+    line = "van verbijstering in zijn stem,"
+    a0, a1 = line.index("stem,"), len(line)
+    for nxt in ("kreeg geen lucht", "‘dat kon ik niet", "(en dan"):
+        assert ocrcheck.stop_for_comma(line, a0, a1, "stem.", nxt, set())
+
+
+def test_a_books_abbreviations_are_the_words_it_stops_before_lower_case():
+    page = PageText(1, 300, 400, [Line("zie bijv. de kaart op blz. 12. Daarna", 1, 1, 9, 9)])
+    assert ocrcheck.abbreviations([page]) == {"bijv"}
+
+
 def _page() -> PageText:
     lines = [
         Line("he was so tired up if they come", 10, 10, 200, 20),

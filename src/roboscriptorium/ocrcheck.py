@@ -53,6 +53,10 @@ _ANY_DASH = re.compile(r"\s*[—–]\s*|\s+-\s+|\s+-(?=['\"]|$)")
 _ELLIPSIS = re.compile(r" ?(?:…|\. ?\. ?\.)")
 _SPACE_BEFORE_APOSTROPHE = re.compile(r"(?<=\w) +'(?=\w)")
 LANGUAGE_NAMES = {"nld": "Dutch", "eng": "English"}
+# A word, a full stop and a lower-case word: an abbreviation mid-sentence ("bijv. de").
+_ABBREVIATION = re.compile(r"(\w+)\.\s+[\"'‘’“”(]*([^\W\d_])")
+# The first letter of a line, after any opening quotes, brackets or dashes.
+_FIRST_LETTER = re.compile(r"[\"'‘’“”(—–-]*\s*([^\W\d_])")
 
 
 @dataclass(frozen=True)
@@ -214,6 +218,7 @@ def check(
     vote for the arbiter, not part of the fixed rule."""
     suspects = []
     curly = curly_book(pages)
+    shortened = abbreviations(pages)
     with pymupdf.open(pdf) as doc:
         for page in pages:
             pdf_page = doc[page.number - 1]
@@ -223,13 +228,20 @@ def check(
                 ours = line.text
                 others = {n: r.get(SourceRef(page.number, k), "") for n, r in readings.items()}
                 read = [o for o in others.values() if o]
+                around = (
+                    page.lines[k - 1].text if k > 0 else "",
+                    page.lines[k + 1].text if k + 1 < len(page.lines) else "",
+                )
                 for a0, a1, alternatives in merged_differences(ours, read, curly):
+                    alternatives = [
+                        v
+                        for v in alternatives
+                        if not stop_for_comma(ours, a0, a1, v, around[1], shortened)
+                    ]
+                    if not alternatives:
+                        continue
                     versions = [ours[a0:a1], *alternatives]
                     box = _box(words[k], boxes[k], ours, a0, a1)
-                    around = (
-                        page.lines[k - 1].text if k > 0 else "",
-                        page.lines[k + 1].text if k + 1 < len(page.lines) else "",
-                    )
                     continues = a0 == 0 and k > 0 and page.lines[k - 1].text.endswith(HYPHENS)
                     joined = hyphen_only(ours, a1, versions, around[1])
                     read_as = [across(v, joined) for v in versions]
@@ -265,6 +277,34 @@ def check(
                         )  # fmt: skip
                     )
     return suspects
+
+
+def abbreviations(pages: list[PageText]) -> set[str]:
+    """The words the book prints with a full stop before a lower-case word, folded to
+    lower case: its abbreviations ("bijv.", "blz.")."""
+    return {
+        m.group(1).lower()
+        for page in pages
+        for line in page.lines
+        for m in _ABBREVIATION.finditer(line.text)
+        if m.group(2).islower()
+    }
+
+
+def stop_for_comma(
+    ours: str, a0: int, a1: int, version: str, next_line: str, shortened: set[str]
+) -> bool:
+    """Whether `version` only turns the comma that ends the line into a full stop while
+    the next line opens in lower case. No sentence ends there, so it is never the print,
+    unless the word is one the book abbreviates (`abbreviations`)."""
+    span = ours[a0:a1]
+    if a1 != len(ours.rstrip()) or not span.endswith(",") or version != span[:-1] + ".":
+        return False
+    first = _FIRST_LETTER.match(next_line.strip())
+    if not first or not first.group(1).islower():
+        return False
+    word = re.findall(r"\w+", span)
+    return not word or word[-1].lower() not in shortened
 
 
 def known_versions(lexicon, read_as: list[str], continues: bool) -> tuple[bool | None, ...]:

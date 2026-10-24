@@ -246,9 +246,15 @@ def test_a_quote_question_offers_the_lines_marks_as_read_on_the_scan(tmp_path, m
     assert "‘the story goes on,’ he said." in " ".join(p.text for p in again.doc.paragraphs)
 
 
-def _checked_book(tmp_path, monkeypatch) -> tuple[Book, list[str]]:
-    """A scanned one-page book whose OCR check sees one suspect, on line 3, which only
-    the read model reads apart; and the prompts the read model is given."""
+def _checked_book(
+    tmp_path,
+    monkeypatch,
+    lines: list[str] = LINES,
+    reading: str = "Line 3 of the stony goes on and on across the page",
+) -> tuple[Book, list[str]]:
+    """A scanned one-page book of `lines` whose OCR check sees one suspect, on line 3,
+    which only the read model reads apart (as `reading`); and the prompts the read model
+    is given."""
     import json
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -265,19 +271,19 @@ def _checked_book(tmp_path, monkeypatch) -> tuple[Book, list[str]]:
 
     monkeypatch.setattr(pipeline.decide, "for_model", client)
     _no_layout(monkeypatch)
-    book = _book(tmp_path)
+    book = _book(tmp_path, lines=lines)
     monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
     monkeypatch.setattr(pipeline, "dash_style", lambda book, body: None)
     monkeypatch.setattr(pipeline.Lexicon, "load", lambda lang: None)
     monkeypatch.setattr(pipeline.readers, "tesseract_readings", lambda *args: {})
     # glm-ocr reads every line as the layer does; only the read model reads line 3 apart.
-    lines = iter(LINES)
-    monkeypatch.setattr(pipeline.readers, "read_line", lambda png, model, url: next(lines))
+    layer = iter(lines)
+    monkeypatch.setattr(pipeline.readers, "read_line", lambda png, model, url: next(layer))
     prompts = []
 
     def transcribe(png, model, url, prompt):
         prompts.append(prompt)
-        return "Line 3 of the stony goes on and on across the page" if len(prompts) == 4 else ""
+        return reading if len(prompts) == 4 else ""
 
     monkeypatch.setattr(pipeline.readers, "transcribe", transcribe)
     monkeypatch.setattr(pipeline.readers, "READ_WORKERS", 1)
@@ -293,6 +299,31 @@ def test_the_read_models_reading_of_a_line_is_checked_like_the_others(tmp_path, 
     assert (suspect.line, suspect.ours, suspect.others) == (3, "story", ("stony",))
     assert suspect.support["qwen"] == (False, True) and suspect.support["glm"] == (True, False)
     assert "English" in prompts[0]
+
+
+def test_a_full_stop_for_a_line_end_comma_before_lower_case_is_no_suspect(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
+    lines = [
+        *LINES[:3],
+        "Line 3 of the story goes on and on across the page,",
+        "and on",
+        *LINES[5:],
+    ]
+    book, _ = _checked_book(tmp_path, monkeypatch, lines, lines[3][:-1] + ".")
+    assert pipeline.run(book).suspects == []
+
+
+def test_a_full_stop_for_a_line_end_comma_before_a_capital_is_a_suspect(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
+    lines = [
+        *LINES[:3],
+        "Line 3 of the story goes on and on across the page,",
+        "And on",
+        *LINES[5:],
+    ]
+    book, _ = _checked_book(tmp_path, monkeypatch, lines, lines[3][:-1] + ".")
+    (suspect,) = pipeline.run(book).suspects
+    assert (suspect.line, suspect.ours, suspect.others) == (3, "page,", ("page.",))
 
 
 def test_a_washed_out_page_is_left_to_the_reviewer_not_read_by_the_ocr_check(tmp_path, monkeypatch):

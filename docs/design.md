@@ -89,6 +89,16 @@ were left out as ties, 44 of them hiding a real lost ellipsis (`kra.` for `kra�
 arbiter then never saw a label for. Folded (2026-10-09): Reis's questions 1.09 → 0.34 a
 page and after review 0.32 → 0.22; the set unchanged by the test.
 
+**A full stop for a line's last comma before a lower-case line is no version.** No
+sentence ends where the next line opens in lower case, so a reading that only turns the
+line's closing comma into a stop there is dropped before judging (`stop_for_comma`),
+unless the book prints the word as an abbreviation elsewhere ("bijv. de"). In the trust
+data every such place (about 40, all books) prints the comma, yet the arbiter took the
+stop on 3 and asked 7, all in De vergelding, whose commas the readers see as stops; the two
+arbiter features tried for it first ("the next line opens in lower case", "the span ends
+the line") made other errors. Taken 2026-10-24: tuning after review 0.290 → 0.286
+[−0.007, −0.000], 6 unasked words fixed and none made.
+
 **Every body line is read, short ones too.** A dialogue line ending "keek.’" is
 where a closing quote is lost. On Goede dochter pp. 9–64, reading the lines under 12
 characters added 18 suspects. About three of them are real layer errors (`weg?` for

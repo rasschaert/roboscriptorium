@@ -251,7 +251,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   cached in `stages/second-reading.json`, tesseract's of the page, and
   `read_model`'s (qwen3.8) of the crop, told the book's typesetting
   (`stages/third-reading.json`; readings by another model or prompt are kept aside
-  in `third-reading.<hash>.json` and come back when asked for). Where a line's readings differ, clef picks from
+  in `third-reading.<hash>.json` and come back when asked for). A version that only turns
+  the line's closing comma into a stop before a lower-case line is dropped
+  (`stop_for_comma`), unless the book abbreviates the word (`abbreviations`). Where a line's readings differ, clef picks from
   the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence. The learned trust
   (`trust.py`, on by default) then fixes, keeps or asks, its substitution table
   extended with the book's own answers (`corrections.answered`, `trust.with_answers`);
