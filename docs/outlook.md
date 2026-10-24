@@ -179,6 +179,9 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   mark its errors well only where another reader already disagrees (0.78).
 - **Qwen as the line-end hyphen judge** (2026-10-24): on 542 undecided Dutch breaks it
   finds none of the 14 real hyphens; on English it is right on 24 of 30, clef 25.
+- **LightOnOCR-3 (1B, 4B) as a line reader** (2026-10-24): the 4B on padded crops hard
+  405 of 480 (qwen 436, olmOCR-2 426), right alone on 4, none of the lines every reader
+  gets wrong; bare crops send the 1B into loops. Weaker than olmOCR-2, which failed as a witness.
 
 ## Inference speed: what a cold page costs, and what's been tried
 

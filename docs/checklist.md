@@ -275,9 +275,14 @@ costs against what it could reach; every reader candidate passes the new-model g
       join's commas read as stops are a glyph the readers miss at any resolution. Little
       for a crop to see; low priority
 - [ ] New OCR models as witnesses on the frozen set (Fable, Argon): dots.mocr (3B, MLX
-      builds), LightOnOCR-2-1B (reported to keep diacritics where Qwen3 drops them),
-      Chandra OCR 2 (5.3B), HunyuanOCR (1B), PaddleOCR-VL-1.6. No Dutch accent test exists for
-      any; downloads over 1 GB asked first (agent, ~1 h each)
+      builds), LightOnOCR-3 1B and 4B done 2026-10-24 (unfit: weaker than olmOCR-2,
+      `lighton_read.py`; score a candidate with `witness_score.py` too), Chandra OCR 2
+      (5.3B), HunyuanOCR (1B), PaddleOCR-VL-1.6. No Dutch accent test exists for any;
+      downloads over 1 GB asked first (agent, ~1 h each)
+      - [ ] LightOnOCR-3's grounding mode (labelled page blocks: header, footer, page
+            number, footnote, title, with boxes) as an input to line roles. Qwen's page
+            roles, tried so on 2026-10-24, cost more words than they saved; try only on
+            the pages where the trees err, first (agent, ~2 h)
 - [ ] Qwen faster on the same output (DeepSeek, Fable, Argon): prefix caching of the fixed
       prompt, batched decoding (mlx-vlm, vllm-mlx), speculative decoding with the text layer
       or glm-ocr as the draft (lossless under greedy decoding); readings must stay identical
