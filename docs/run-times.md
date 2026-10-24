@@ -589,3 +589,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-24 | eval goede-dochter--nolayer 9-99, dashes measured on the image (warm) | 91 | 33 | 0 |
 | 2026-10-24 | bench tuning, dash style measured on the line's height (warm) | 0 | 11 | 0 |
 | 2026-10-24 | bench validation, dash style measured on the line's height (warm) | 0 | 96 | 0 |
+| 2026-10-24 | bench tuning, ellipses measured through a first reading (warm) | 0 | 10 | 0 |
+| 2026-10-25 | bench validation, ellipses measured through a first reading (Vanille re-read) | 0 | 97 | 0 |

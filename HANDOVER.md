@@ -7,14 +7,11 @@ and took the day's three OCR-check rules and the paragraph fix (decisions.md, 20
 
 ## Running
 
-- `robo-ellipsis-image` (screen, from ~22:40, ~3 h: Vanille is re-read for its new prompt): an
-  image-only scan's ellipses measured through its first reading's words (uncommitted in
-  `scanstyle.measure_ellipses` and `pipeline.ellipsis_style`; Vanille's print sets ". . .", the
-  text fallback gave "..."). Tuning, which should not move, then validation
-  (`work/runs/ellipsis-image.sh`). Commit if validation doesn't veto; else revert those two files.
+Nothing runs.
 
 The baselines are `work/bench/tuning-20261024T185118` (after review 0.282, breaks 0.045 a
-page) and `work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults.
+page) and `work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults. The image-only ellipsis measurement was vetoed by
+validation and reverted (decisions.md).
 
 ## Done 2026-10-24 (decisions.md has every number)
 
