@@ -93,17 +93,17 @@ page and after review 0.32 → 0.22; the set unchanged by the test.
 sentence ends where the next line opens in lower case, so a reading that only turns the
 line's closing comma into a stop there is dropped before judging (`stop_for_comma`),
 unless the book prints the word as an abbreviation elsewhere ("bijv. de"). In the trust
-data every such place (about 40, all books) prints the comma, yet the arbiter took the
-stop on 3 and asked 7, all in De vergelding, whose commas the readers see as stops; the two
-arbiter features tried for it first ("the next line opens in lower case", "the span ends
-the line") made other errors. Taken 2026-10-24: tuning after review 0.290 → 0.286
+data every such place (about 40, all books) prints the comma; on the bench the arbiter
+took the stop, unasked, on 6 places of De vergelding, whose commas the readers see as
+stops. The two arbiter features tried for it first ("the next line opens in lower case",
+"the span ends the line") made other errors. Taken 2026-10-24: tuning after review 0.290 → 0.286
 [−0.007, −0.000], 6 unasked words fixed and none made.
 
 Two more kinds of reading are never the print, by the same test (wrong in every book's
 trust data, and true by definition): an accent on one letter of a doubled a, o or u
 ("doóde", "voór"; stress is marked on both, `half_accent`; e is left out, as French
-endings and "Eén" set it so), 27 versions, 19 of them asked; and a mark prose doesn't
-print (`~`, `^`, `|`, `garbled`), on 50 suspects, 15 of them asked: where the layer was
+endings and "Eén" set it so), 27 versions, never right; and a mark prose doesn't
+print (`~`, `^`, `|`, `garbled`), on 50 suspects, never right: where the layer was
 wrong (11) a kept version always had it right, so dropping them loses no catch. A
 capital inside a lower-case word ("aaN") is never the print either, but a reader's
 "wA-dienstplicht" for a word set in small capitals was what raised that place's question
