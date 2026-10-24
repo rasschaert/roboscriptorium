@@ -17,7 +17,7 @@ than the pipeline.
 
 Reviewed at every set review (AGENTS.md, Golden books). A pair keeps its place while it
 has a job here no other pair does better; one whose job is gone, or whose score measures
-its reference, is proposed for retirement or a lesser role. Last reviewed 2026-10-23.
+its reference, is proposed for retirement or a lesser role. Last reviewed 2026-10-24.
 
 | Job | Pairs |
 | --- | --- |
@@ -36,9 +36,13 @@ its reference, is proposed for retirement or a lesser role. Last reviewed 2026-1
 | Public-domain pages a hosted model may see | The Nature of a Crime, Doctor Dolittle |
 | Line-role training only, words not scored | Steve Jobs (its photo insert); The Nature of a Crime (the arbiter's too) |
 
-**Doubts at the last review** (2026-10-23): no pair past the suspect thresholds (tuning
-layer CER 0.20–1.63% against a median 0.75%, validation 0.08–1.71% against 1.0%; no book
-over 1% of body lines unplaced). Dolittle's quick slice is 5× its tier's median but
+**Doubts at the last review** (2026-10-24): no pair past the suspect thresholds (tuning
+layer CER 0.20–1.63% against a median 0.71%, validation 0.08–1.35% against 0.88%; no book
+over 1% of body lines unplaced). Au pair's small capitals (13 unasked errors on the
+bench) are its e-book writing them in lower case: verdicts settle them (HANDOVER.md has
+the batch); until then 13 of the tuning set's ~280 unasked errors measure the reference.
+The quiet set (decisions.md) shows the errors no reader flags are mostly small capitals
+and rare glyphs, which the job rows below already cover. Dolittle's quick slice is 5× its tier's median but
 places every line: a poor layer, kept. Het laatste bevel's EPUB glues words, settled only
 by verdicts; Na die nacht can't have an honest first look. No
 new pairs since 2026-10-20, so the gaps below stand. The checklist ("Trim the sets")

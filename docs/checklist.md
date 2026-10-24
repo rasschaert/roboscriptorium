@@ -57,9 +57,9 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    held back, not retired (the user, 2026-10-23: its files kept, `bench.RESERVE`). Left: Het
    laatste bevel's glued words as verdicts (the user's time). Verminkt sliced to 7–100 (2026-10-23,
    `scoring.cut_to_pages`).
-8. The next set review (AGENTS.md, "Reviewing the sets"): after the four waiting pairs'
-   first looks, by 2026-10-25 at the latest; the gaps in docs/golden-notes.md go to the
-   user as the books to look for.
+8. The next set review (AGENTS.md, "Reviewing the sets"): done 2026-10-24 (no suspects,
+   nothing retired; decisions.md). The gaps in docs/golden-notes.md go to the user as the
+   books to look for.
 
 - [ ] No fixed test set: a first look for every new pair (the user, 2026-10-17: soon,
       ahead of other accuracy work). Validation wears out as changes are benched and
