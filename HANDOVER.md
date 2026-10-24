@@ -6,7 +6,9 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
 
 ## Running
 
-Nothing runs.
+- `robo-kinds-qwen` (screen, ~45 min from ~15:25): `init`'s page kinds at the book edges asked of
+  qwen (`experiments/probe_page_kinds_qwen.py`), scored on the 27 labelled books' two ends
+  against clef-flash's 22 and 21 (`work/runs/kinds-qwen.log`).
 
 Done 2026-10-24 (decisions.md): Kraken as a witness and Qwen's page roles as an input to
 the role trees, both not taken; crops padded to Qwen's grid read worse; a sureness threshold
