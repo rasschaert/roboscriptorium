@@ -6,7 +6,9 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
 
 ## Running
 
-Nothing runs.
+- `robo-quick-rank` (screen, ~15 min from ~18:10): does `bench quick` rank changes as `bench
+  tuning` did today? Defaults, then Winnow taken away (tuning: WORSE) and the picture-marked page
+  roles (tuning: NO CHANGE), against the defaults' quick run (`work/runs/quick-rank.sh`).
 
 Done 2026-10-24 (decisions.md): Kraken as a witness and Qwen's page roles as an input to
 the role trees, both not taken; crops padded to Qwen's grid read worse; a sureness threshold
