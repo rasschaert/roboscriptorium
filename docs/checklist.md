@@ -674,9 +674,9 @@ reading shares: many are specks and faint marks.
       PDF's own are; a long thin component at mid x-height between word gaps is a dash, and
       its length and gaps measured on the page image. Today an image-only scan falls back to
       the style read in the text (agent, ~half a day)
-- [ ] An image-only scan through the whole pipeline (Goede dochter with its layer removed:
-      tesseract 0.35% CER against the layer's 0.20%): does the OCR check close the gap?
-      ~1 h cold. Then italics from tesseract's word boxes
+- [x] ~~An image-only scan through the whole pipeline~~: done 2026-10-23 (`work/goede-dochter--nolayer`,
+      decisions.md): 0.84 wrong words a page against the layered 0.33, the gap tesseract's reading;
+      italics from the first reading's word boxes since (323 of 364). Dashes wait on the item above
 
 ## 9. Golden books and housekeeping
 
