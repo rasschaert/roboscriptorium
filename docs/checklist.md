@@ -147,6 +147,8 @@ models could do. Each probe below asks whether that's still true, on a few golde
 - [x] Whole-page reading by the bigger build (2026-10-14): `qwen3.8:27b-mxfp8` 65 wrong
       words over 19 pages against the nvfp4's 76, mostly one page; 60% slower; not taken
 - [ ] Whole-page reading with the page before as context, for paragraphs that cross a page
+      (counted 2026-10-24: 14 of the 78 paragraph-break errors on tuning sit on a page's first
+      line; low priority)
 - [x] ~~The whole-page reading as one more reader~~: answered 2026-10-14/15 (decisions.md): the page readers point at about 60 errors no question asks, mostly at line joins a line reading can't carry; added as readers for the arbiter, tuning no change (outlook.md, "Tried")
 - [x] Paragraph breaks by a model (2026-10-23, NOT TAKEN; `probe_page_breaks.py`): on 47
       tuning pages with a break error it fixes 53 of 78 wrong starts, but it sets 7 wrong
