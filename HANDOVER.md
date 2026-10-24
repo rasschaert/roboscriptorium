@@ -73,7 +73,12 @@ The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen
 ## Waiting on the user
 
 - **Specks** (parked, the user has no time for it now): the speck classifier ranks well on three labelled Thief-Taker pages (`probe_speck_blobs.py`, `--no-position`) but needs labelled pages from other scans before it is trusted; sightings are in `work/probes/specks/sightings.jsonl`. A "speck" kind in the review UI was not built.
-- **Push**: 19 commits ahead of `origin/main`; a push needs 1Password unlocked.
+- **Au pair's small capitals** (13 of the 236 unasked errors on `tuning-20261024T063416`): the
+  print sets "FNAC", "GUYENNE" in small capitals, the publisher's e-book writes them in lower
+  case with no class, the build in capitals. Verdicts settle them, ~2 minutes:
+  `uv run roboscriptorium review work/au-pair--ia-scan --pages 7-99 --chapters 1-24 --only work/probes/unasked/au-pair-smallcaps-20261024.json`
+- The LightOnOCR-3 weights (~12 GB in `~/models/roboscriptorium/lightonocr-3-{1b,4b}`) stay until
+  the user says they can go.
 - `work/models/mlx-env` (809 MB, MLX readers) stays until the user says it can go.
 
 ## Loose ends found at the end of the 2026-10-21/22 session
