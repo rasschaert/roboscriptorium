@@ -137,6 +137,13 @@ get renumbered. Don't add a file to this table without a job no other file has.
   touch (each book's scan and caches, each model pulled), and that books retired since
   a set was made are left out. A test on one book tests that book only: the page-kinds
   probe passed on Monterosso and failed overnight on 11/22/63, retired two days before.
+- **Never idle while the checklist has open steps** (the user, 2026-10-19 and 2026-10-24:
+  "as long as you can see todos, you're not to be idle"). Finishing a task, a report or a
+  question to the user is not a stopping point: in the same turn, start the next open step
+  the agent can do, choosing by docs/checklist.md and docs/outlook.md. A question waiting on
+  the user blocks only its own step; a run in flight blocks only other model jobs. Never end
+  a turn with "shall I go ahead?" about work that is already on the checklist: say what is
+  next and start it. Stop only when every open step waits on the user, and say which.
 - **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.
