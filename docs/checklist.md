@@ -622,8 +622,10 @@ reading shares: many are specks and faint marks.
       downloads, so not for Stella or the user's books): on Crime's 50 reader-set lines
       both readers err about a fifth less (glm-ocr hard CER 1.57% → 1.26%, Qwen 1.78% →
       1.36%; `experiments/probe_ia_images.py`, 2026-10-11). Later, with public-domain books
-- [ ] ABBYY's letter confidence as an arbiter feature: first check the PDF's layer is
-      ABBYY's reading, then does a low one separate the real errors? ~1 h, no models
+- [x] ~~ABBYY's letter confidence as an arbiter feature~~: dropped 2026-10-24 without a
+      probe: only the public-domain items (Crime, Dolittle) have their `_abbyy.gz`; a
+      lending-library scan (Stella, the user's books, every other pair) keeps it private,
+      so the target books could never have the feature
 
 ## 8. Beyond the golden books' kind
 
