@@ -78,7 +78,7 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       sides alone (`errorlog.cause`), chosen from stage (a)'s 618 saved errors across 23
       books; each run's record keeps them by book, `bench` and `bench-diff` print each
       before → after with its interval. "Reference fault" isn't one: a verdict settles it
-- [ ] One more reader? Taking readers away costs the most of any block (without qwen3.8
+- [x] ~~One more reader?~~ Answered 2026-10-24 by the quiet set (`quiet_set.py`): the layer and both readers are wrong together on 23 lines of the tuning slices, so a new reader can add a handful; LightOnOCR-3 found 1. Before: taking readers away costs the most of any block (without qwen3.8
       silent errors 12 → 75 at a question a page; `probe_subtract.py`), so adding one
       may pay where nothing else reaches: layer errors no reader doubts. Measure on the
       frozen reader set's hard lines the errors a candidate reads right where every
