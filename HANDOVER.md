@@ -72,7 +72,8 @@ page) and `work/bench/validation-20261024T175525` (0.503, 0.196): today's defaul
    A reader that gives letter positions is the way in.
 4. **Verse and lists** (Dolittle's poem, Thief-Taker's song, Glazuur's numbered list): most of
    the paragraph errors left on tuning; in scope later, per AGENTS.md.
-5. **Qwen faster on the same output** (checklist): speed buys the page-level passes.
+5. **Qwen faster on the same output**: measured 2026-10-24, a line read is half prefill and a
+   quarter decode, so speculative decoding buys little; fewer image reads (whole pages) is the lever.
 
 ## When a new vision model appears
 

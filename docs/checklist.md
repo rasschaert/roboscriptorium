@@ -290,7 +290,7 @@ costs against what it could reach; every reader candidate passes the new-model g
             number, footnote, title, with boxes) as an input to line roles. Qwen's page
             roles, tried so on 2026-10-24, cost more words than they saved; try only on
             the pages where the trees err, first (agent, ~2 h)
-- [ ] Qwen faster on the same output (DeepSeek, Fable, Argon): prefix caching of the fixed
+- [ ] (Measured 2026-10-24: a line is 52% prefill, 23% decode, so speculative decoding buys little; batching was ruled out; the lever is fewer image reads, decisions.md. Low priority.) Qwen faster on the same output (DeepSeek, Fable, Argon): prefix caching of the fixed
       prompt, batched decoding (mlx-vlm, vllm-mlx), speculative decoding with the text layer
       or glm-ocr as the draft (lossless under greedy decoding); readings must stay identical
       on the frozen set. Speed buys the page-level role pass everywhere (agent, ~1 day)
