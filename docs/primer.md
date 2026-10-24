@@ -310,26 +310,31 @@ and why it didn't help".
 - Rewording the page-kind question for `init`: it changed 15 answers in 432 and no result.
 - Two extra arbiter features for a comma at a line's end: no better, and glued words worse.
 
-## What is going on right now (2026-10-21)
+## What is going on right now (2026-10-24)
 
 `HANDOVER.md` always has the current state; this is what it said when this page was
 last updated, decoded.
 
-- **`roboscriptorium init <pdf>` exists** (first version): from a PDF alone it drafts the
-  language, finds each page's kind, and shows where the text proper starts and ends with
-  a contact sheet, every page named by both numbers (the PDF's and the printed one). It
-  gets the two ends right on about 22 of 27 books, off by a page or two on the rest, so a
-  person confirms both. Title and author from the title page are being tested.
-- **The compound-hyphen errors dropped** (0.023 to 0.020 wrong words a page): a hyphen at
-  a line's end is now weighed by how the *whole book* spells the word, not only the pages
-  being built.
-- **What is left is mostly what no reader doubts**: stress accents the print sets over an
-  i for emphasis (half of what looks like errors there is the reference's own slips),
-  rare glyphs like a dotless ı, specks read as characters. A model-free shape test for
-  accents looked promising on four lines and failed on whole books; specks can be ranked by
-  their look in two pages of three. Both wait on more labelled pages and on better vision models.
-- **Running overnight**: a better page-kind model (clef:27b) for `init`, a vote test of
-  Qwen reading each line at a second resolution, and title-and-author extraction.
+- **Where the errors left are, counted on today's bench**: of the 236 wrong words no
+  question asks about, 84 sit where no reader disagreed at all (a third of them hyphens in
+  compound words at a line's end), and 152 sit where the readers did disagree but the
+  machine chose wrong without asking. Of those, 38 are places where the scan's own text
+  layer was right and the machine "corrected" it: an accent added or dropped, or a comma
+  at a line's end turned into a full stop.
+- **One of those is fixed**: a full stop is never taken in place of a line's last comma
+  when the next line starts in lower case, since no sentence ends there. Six fewer wrong
+  words, none new (0.290 to 0.286 wrong words a page after review).
+- **New reading models no longer look like the way forward.** Every place where all
+  three readers agree on the same wrong reading was collected: only 23 lines in 18 books,
+  mostly small capitals and the rare dotless ı. So a new model reading lines can fix a
+  handful at most. LightOnOCR-3, a new OCR model with excellent published scores, reads
+  lines worse than Qwen and found 1 of those 23.
+- **Ideas tried today without effect**: a separate "ask below" threshold per kind of
+  question, Qwen's own confidence as a warning sign, Qwen deciding line-end hyphens, a
+  character recogniser trained on the golden books (Kraken), Qwen's page roles for the
+  line-role trees. Each is in decisions.md with its numbers.
+- **Waiting on you**: 13 small-capital places in Au pair that the publisher's e-book
+  writes in lower case: a two-minute verdict batch (HANDOVER.md has the command).
 
 Good questions to ask the other session about any run, to stay in touch with it: *what
 do you expect it to show? what would make you drop the idea? which file will the result
