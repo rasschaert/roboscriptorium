@@ -72,6 +72,9 @@ The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen
 
 ## Waiting on the user
 
+- **Stella's read-through** (the checklist, Stella): rebuilt 2026-10-24 with today's changes, its
+  text is word for word the 2026-10-19 copy, `work/stella/epubs/stella-2026-10-19-0014.epub`, so
+  nothing the agent knows how to improve changes it; read that one.
 - **Specks** (parked, the user has no time for it now): the speck classifier ranks well on three labelled Thief-Taker pages (`probe_speck_blobs.py`, `--no-position`) but needs labelled pages from other scans before it is trusted; sightings are in `work/probes/specks/sightings.jsonl`. A "speck" kind in the review UI was not built.
 - **Au pair's small capitals** (13 of the 236 unasked errors on `tuning-20261024T063416`): the
   print sets "FNAC", "GUYENNE" in small capitals, the publisher's e-book writes them in lower
