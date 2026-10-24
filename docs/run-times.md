@@ -544,3 +544,18 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-23 | bench tuning, trimmed sets, arbiter still with Crime (warm) | 0 | 3 | 0 |
 | 2026-10-23 | bench tuning, arbiter retrained without Crime (warm) | 0 | 4 | 0 |
 | 2026-10-23 | bench validation, arbiter retrained without Crime (warm) | 0 | 4 | 0 |
+| 2026-10-23 | Laya line roles: 60-step timing run, then 19k validation predictions | 0 | 2 | 1 |
+| 2026-10-23 | Laya line roles: 60-step run, then 19k validation predictions | 0 | 7 | 0 |
+| 2026-10-23 | Laya line roles: 2 epochs on 11k clean rows, then 19k validation predictions | 0 | 22 | 0 |
+| 2026-10-23 | page-level break probe: qwen on 94 tuning pages, resumed (warm) | 94 | 16 | 0 |
+| 2026-10-23 | eval goede-dochter--nolayer 9-99 (cold, text layer stripped) | 91 | 91 | 0 |
+| 2026-10-23 | eval goede-dochter--ia-scan 9-99 (warm, same models, for the pair) | 91 | 0 | 0 |
+| 2026-10-23 | page-level line-role probe: qwen on 208 tuning pages (warm) | 208 | 49 | 0 |
+| 2026-10-23 | eval goede-dochter--nolayer 9-99 with first-reading words (judges' crops cold) | 91 | 17 | 0 |
+| 2026-10-23 | Kraken line recogniser, fold a (~22k lines, MPS, early stop) | 0 | 0 | 1 |
+| 2026-10-23 | Kraken line recogniser, fold b (~22k lines, MPS, early stop) | 0 | 0 | 1 |
+| 2026-10-23 | page-level roles, short answer: qwen on 208 tuning pages (warm) | 208 | 40 | 0 |
+| 2026-10-23 | Qwen grid-padded crops, frozen reader set (800 lines) | 0 | 20 | 0 |
+| 2026-10-24 | Qwen page roles, line-role training pages (cold), trees left one out | 2687 | 527 | 0 |
+| 2026-10-24 | bench tuning, defaults before page roles (warm) | 0 | 10 | 0 |
+| 2026-10-24 | bench tuning, page roles into the role trees (warm) | 0 | 11 | 0 |
