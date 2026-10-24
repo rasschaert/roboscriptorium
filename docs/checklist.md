@@ -620,7 +620,8 @@ In this order:
 - [ ] You're Never Weird's headings (5/16: bracketed sections, "- 1 -" numbers) and p. 47's
       picture text read into the body
 - [ ] Dolittle's captions scored: derive them into the reference, or leave caption lines
-      out of the score as footnotes are
+      out of the score as footnotes are (2026-10-24: 19 words on tuning, all asked: a caption
+      is the one a reviewer gives, `figures.py`, so the bench counts them until answered; low)
 
 ## 7. Better pixels: Internet Archive's own files
 
