@@ -329,6 +329,10 @@ last updated, decoded.
   labelled data. 0.290 to 0.282 wrong words a page after review over the day. The same
   rule for a comma mid-line was tried and dropped: there an author sometimes does set a
   stop before a lower-case word.
+- **Paragraphs in letters**: a book set in justified type only leaves a line short where a
+  paragraph ends, so any short line now ends one, not only a sentence's end. Letters that open
+  with "Dear Kelvin," or a dateline get their paragraphs back: paragraph breaks set wrong
+  0.057 to 0.045 a page on tuning, words unchanged.
 - **Winnow, the judge that reads the sentence, earns its place**: taken away, the build
   made twice as many new errors as it fixed (0.282 to 0.316). Nothing gets removed
   without such a test.
