@@ -326,6 +326,14 @@ def test_a_full_stop_for_a_line_end_comma_before_a_capital_is_a_suspect(tmp_path
     assert (suspect.line, suspect.ours, suspect.others) == (3, "page,", ("page.",))
 
 
+def test_the_ocr_check_runs_without_a_text_judge(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
+    monkeypatch.setenv("ROBO_CHECK_MODEL", "")
+    book, _ = _checked_book(tmp_path, monkeypatch)
+    (suspect,) = pipeline.run(book).suspects
+    assert suspect.others == ("stony",) and len(suspect.votes) == 1
+
+
 def test_a_washed_out_page_is_left_to_the_reviewer_not_read_by_the_ocr_check(tmp_path, monkeypatch):
     monkeypatch.setenv("ROBO_OCR_TRUST", "0")
     book, prompts = _checked_book(tmp_path, monkeypatch)

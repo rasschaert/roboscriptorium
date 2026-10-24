@@ -211,7 +211,7 @@ def check(
     readings: dict[str, dict[SourceRef, str]],
     lang: str,
     vision: DecisionClient | decide.HostedClient,
-    reader: DecisionClient,
+    reader: DecisionClient | None,
     cache: DecisionCache,
     lexicon: Lexicon | None = None,
     style: str = "",
@@ -510,26 +510,31 @@ def _decide(
     if joined:
         around = (around[0], around[1].split(maxsplit=1)[1] if " " in around[1].strip() else "")
     intro = "Two OCR readings" if len(lines) == 2 else "Several OCR readings"
-    read = _ask(
-        reader,
-        cache,
-        {
-            "line before": around[0],
-            **dict(zip(letters, lines, strict=True)),
-            "line after": around[1],
-        },
-        {
-            "reading": decide.choice(
-                f"{intro} of the same line of a printed {language} book differ. "
-                "Which is the correct transcription, as printed, read between "
-                "the line before and the line after?",
-                {c: f"“{line}”" for c, line in zip(letters, lines, strict=True)},
-            )
-        },
-    )
+    read = {"value": "", "confidence": 0.0}
+    if reader is not None:
+        read = _ask(
+            reader,
+            cache,
+            {
+                "line before": around[0],
+                **dict(zip(letters, lines, strict=True)),
+                "line after": around[1],
+            },
+            {
+                "reading": decide.choice(
+                    f"{intro} of the same line of a printed {language} book differ. "
+                    "Which is the correct transcription, as printed, read between "
+                    "the line before and the line after?",
+                    {c: f"“{line}”" for c, line in zip(letters, lines, strict=True)},
+                )
+            },
+        )
     pick = lambda value: versions[letters.index(value)] if value in letters else ""  # noqa: E731
-    votes = {vision.model: pick(seen["value"]), reader.model: pick(read["value"])}
-    confidence = {vision.model: seen["confidence"], reader.model: read["confidence"]}
+    votes = {vision.model: pick(seen["value"])}
+    confidence = {vision.model: seen["confidence"]}
+    if reader is not None:
+        votes[reader.model] = pick(read["value"])
+        confidence[reader.model] = read["confidence"]
     if alarm is not None:
         alarmed = _ask(alarm, cache, state, question, image=lambda: _crop(pdf_page, box))
         votes[alarm.model] = pick(alarmed["value"])

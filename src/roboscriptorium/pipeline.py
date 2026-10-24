@@ -163,7 +163,11 @@ def run(
                 for i in range(len(p.lines))
                 if treatment(model_roles.get(SourceRef(p.number, i))) != "dropped"
             }
-            reader = decide.for_model(settings.check_model, settings.ollama_url)
+            reader = (
+                decide.for_model(settings.check_model, settings.ollama_url)
+                if settings.check_model
+                else None
+            )
             readings = {
                 "glm": readers.line_readings(
                     book.source,
