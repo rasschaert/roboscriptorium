@@ -190,6 +190,15 @@ Don't repeat these without a new reason (details in docs/decisions.md):
 - **More OCR models as line witnesses** (2026-10-24, the quiet set): the layer, glm-ocr
   and qwen are wrong together on 23 lines of the tuning slices, 7 of them small capitals
   and 5 a dotless ı; that is all a new line reader could add where no suspect is raised.
+- **Winnow taken away** (2026-10-24): tuning 0.282 → 0.316, 164 wrong words made for 79
+  fixed; the sentence judge earns its place.
+- **The comma rule mid-line** (2026-10-24): at a line's end a stop before lower case is
+  never the print, mid-line it sometimes is (a quotation opened in lower case, a misread
+  I); tuning 1 fixed, 1 made.
+- **Qwen for `init`'s page kinds** (2026-10-24): ends right 20 and 23 of 27 against
+  clef-flash's 22 and 21, more ends cut.
+- **Qwen's page roles with picture lines marked** (2026-10-24): half the harm of the
+  unmarked try, still no change (30 fixed, 27 made); mottos and attributions stand in the way.
 
 ## Inference speed: what a cold page costs, and what's been tried
 
