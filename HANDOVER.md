@@ -72,6 +72,9 @@ The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen
 
 ## Waiting on the user
 
+- **A flush-set book for tuning** (golden-notes.md, gaps): a scan and the publisher's EPUB of a
+  book printed without paragraph indents, not A.W. Bruna's. Without one, no fix for the flush
+  books' missed paragraph starts can be chosen.
 - **Stella's read-through** (the checklist, Stella): rebuilt 2026-10-24 with today's changes, its
   text is word for word the 2026-10-19 copy, `work/stella/epubs/stella-2026-10-19-0014.epub`, so
   nothing the agent knows how to improve changes it; read that one.

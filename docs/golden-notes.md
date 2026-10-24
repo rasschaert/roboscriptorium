@@ -48,7 +48,10 @@ by verdicts; Na die nacht can't have an honest first look. No
 new pairs since 2026-10-20, so the gaps below stand. The checklist ("Trim the sets")
 holds what is done about each.
 
-**Gaps to hunt for**, in order: a second scan without a text layer, of Stella's kind (a
+**Gaps to hunt for**, in order: a book set flush, without paragraph indents, for tuning
+(not Bruna's, whose two books validate; 2026-10-24: every flush-book break error is a start
+after a full line, which only a learned model can find, and with no flush book in tuning
+no such change can be chosen); a second scan without a text layer, of Stella's kind (a
 lent IA book with its layer stripped would do); a scan whose text layer is poor all
 through (an old Scribe or a low resolution), so the layer is the worst reading rather
 than a good one; a non-fiction pair with numbered chapters, sub-heads and a closing notes section (Vanille's 1 of 15 headings, 2026-10-20: no tuning book teaches the sorter such headings); then, once prose is done, verse, two columns and tables. Another clean

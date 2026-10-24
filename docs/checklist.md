@@ -318,8 +318,9 @@ costs against what it could reach; every reader candidate passes the new-model g
       books first, to know what the synthetic pages miss (agent, ~2 days). **Measured 2026-10-24
       (`probe_flush_lead.py`): no extra lead (0.99 of the pitch before a start, 1.00 within);
       the short last line is the mark, as in indented books, so synthetic flush pages miss
-      nothing; a start after a near-full line (one in ten) needs text cues.** Next: the
-      synthetic pages and the graph model
+      nothing; a start after a near-full line (one in ten) needs text cues.** Blocked
+      2026-10-24 on a flush-set tuning book (decisions.md): the user's candidates, then the
+      synthetic pages and the model
 - [x] ~~Gated language-model scoring of words with a visual twin~~ (Argon's PLLR with
       RobBERT; Fable and DeepSeek against): parked behind the glyph and image-gain probes,
       which ask the scan rather than the language
