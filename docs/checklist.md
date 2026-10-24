@@ -685,7 +685,7 @@ reading shares: many are specks and faint marks.
       Vrijdag next; a Kosmos book for later, beyond prose
 - [ ] **user** Settle verdicts on the tuning books (`review` on each), the disagreements
       the arbiter's labels sit on first: hours, spread out, whenever convenient
-- [ ] Remove the `baseline` and `qwen2` worktrees when convenient
+- [x] ~~Remove the `baseline` and `qwen2` worktrees~~ (gone by 2026-10-24)
 
 ## Later
 
