@@ -33,8 +33,22 @@ PROMPT = (
 KINDS = {"H": "heading", "F": "other"}
 
 
-def listing(page: PageText) -> str:
-    return "\n".join(f"{i}. {line.text.strip()}" for i, line in enumerate(page.lines, 1))
+# A picture region surer than this marks the lines inside it.
+PICTURE_SURE = 0.5
+
+
+def listing(page: PageText, pictures: list | None = None) -> str:
+    """The page's lines, numbered; a line whose centre lies in one of `pictures` (the
+    spotter's figure regions) is marked so, as lettering in a drawing isn't text."""
+
+    def inside(line) -> bool:
+        cx, cy = (line.x0 + line.x1) / 2, (line.y0 + line.y1) / 2
+        return any(r.x0 <= cx <= r.x1 and r.y0 <= cy <= r.y1 for r in pictures or [])
+
+    return "\n".join(
+        f"{i}. {'[inside a picture] ' if inside(line) else ''}{line.text.strip()}"
+        for i, line in enumerate(page.lines, 1)
+    )
 
 
 def parse(reply: str, count: int) -> dict[int, str] | None:
@@ -75,18 +89,29 @@ def ask(png: bytes, text: str, model: str, ollama_url: str) -> str:
 
 
 def page_roles(
-    pdf: Path, pages: list[PageText], model: str, ollama_url: str, cache: Path
+    pdf: Path,
+    pages: list[PageText],
+    model: str,
+    ollama_url: str,
+    cache: Path,
+    regions: dict | None = None,
 ) -> dict[int, dict[int, str]]:
     """Per page the model answered for, its heading and furniture lines by index in
-    `pages` (the layer with its missing lines added, as the trees see it). A page whose
-    reply held no answer is left out. Cached per page under the lines it was shown."""
+    `pages` (the layer with its missing lines added, as the trees see it). The spotter's
+    `regions` mark the lines inside a picture. A page whose reply held no answer is left
+    out. Cached per page under the lines it was shown."""
     kept = read_cache(cache, VERSION, model=model, prompt=PROMPT)
     done: dict[str, dict] = kept["pages"] if kept else {}
     with pymupdf.open(pdf) as doc:
         for page in pages:
             if not page.lines:
                 continue
-            text = listing(page)
+            pictures = [
+                r
+                for r in (regions or {}).get(page.number, [])
+                if r.label == "figure" and r.confidence >= PICTURE_SURE and not r.turned
+            ]
+            text = listing(page, pictures)
             key = hashlib.sha256(text.encode()).hexdigest()[:16]
             entry = done.get(str(page.number))
             if entry is None or entry["lines"] != key:

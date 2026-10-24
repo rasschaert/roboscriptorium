@@ -67,7 +67,7 @@ def lines(spec: str, rebuild: bool = False) -> list[dict]:
     if PAGE_ROLES:
         said = pageroles.page_roles(
             book.source, stages.pages, settings.read_model, settings.ollama_url,
-            book.stages / "page-roles.json",
+            book.stages / "page-roles.json", regions,
         )  # fmt: skip
     found = sorter.features(stages.pages, stages.model_roles, styles, regions, said)
     rows = [

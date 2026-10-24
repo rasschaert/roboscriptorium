@@ -148,7 +148,7 @@ def run(
             if settings.page_roles:
                 said = pageroles.page_roles(
                     book.source, body, settings.read_model, settings.ollama_url,
-                    book.stages / "page-roles.json",
+                    book.stages / "page-roles.json", regions,
                 )  # fmt: skip
             model_roles = sorter.apply(trees, body, model_roles, styles, regions, said)
         note_lines = footnotes.lines(body, model_roles, styles, known)

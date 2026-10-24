@@ -23,6 +23,19 @@ def _page(texts: list[str]) -> PageText:
     )
 
 
+def test_the_lines_inside_a_picture_are_marked_so():
+    from roboscriptorium.layout import Region
+
+    page = _page(["Chapter One", "HEY BABY", "It was a cold day."])
+    picture = Region("figure", 0.9, 30, 70, 310, 95)
+    assert pageroles.listing(page, [picture]).splitlines() == [
+        "1. Chapter One",
+        "2. [inside a picture] HEY BABY",
+        "3. It was a cold day.",
+    ]
+    assert "[inside" not in pageroles.listing(page)
+
+
 def test_a_page_is_asked_once_and_again_when_its_lines_change(tmp_path, monkeypatch):
     doc = pymupdf.open()
     doc.new_page(width=400, height=600)
