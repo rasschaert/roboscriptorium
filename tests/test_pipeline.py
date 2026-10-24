@@ -458,7 +458,8 @@ def test_a_footnote_leaves_the_running_text_and_follows_the_paragraph_with_its_m
     doc = pymupdf.open()
     page = doc.new_page(width=400, height=600)
     lines = [f"Line {i} of the story goes on and on across the page" for i in range(10)]
-    lines[4] = "Line 4 of the story goes on up the hill* and on"
+    # Justified like the others: a line short of the measure would end its paragraph.
+    lines[4] = "Line 4 of the story goes on up the hill* and on across page"
     for i, text in enumerate(lines):
         page.insert_text((40, 60 + 18 * i), text, fontsize=11)
     page.insert_text((40, 520), "* A hill near the town, with a railway up", fontsize=7)

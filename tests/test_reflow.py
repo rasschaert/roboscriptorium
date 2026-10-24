@@ -262,7 +262,7 @@ def test_dialogue_short_lines_dont_hide_that_the_text_is_justified():
     ]
 
 
-def test_a_short_line_ending_on_a_comma_starts_a_paragraph_only_in_justified_text():
+def test_any_short_line_ends_a_paragraph_only_in_justified_text():
     letter = [
         ("Ze schreef hem die avond nog een brief", 250),
         ("en legde hem op de tafel bij het raam.", 160),
@@ -271,6 +271,21 @@ def test_a_short_line_ending_on_a_comma_starts_a_paragraph_only_in_justified_tex
         ("die nu elke ochtend met me meeloopt.", 170),
     ]
     assert [p.text[:6] for p in reflow([_justified(5, letter)])] == ["Ze sch", "Beste ", "Het ga"]
+    dated = [
+        ("Ze schreef hem die avond nog een brief", 250),
+        ("aan de keukentafel, met de lamp aan en", 250),
+        ("de radio zacht op de achtergrond, en", 250),
+        ("legde hem toen op de tafel bij het raam.", 160),
+        ("Shatila, 15 juli 1982", 120),
+        ("Beste Kelvin,", 80),
+        ("Het gaat goed met me en met de hond,", 250),
+        ("die nu elke ochtend met me meeloopt naar", 250),
+        ("de bakker op de hoek van de straat, en", 250),
+        ("dan weer terug.", 90),
+    ]
+    assert [p.text[:6] for p in reflow([_justified(5, dated)])] == [
+        "Ze sch", "Shatil", "Beste ", "Het ga",
+    ]  # fmt: skip
     # Ragged text: a short line says nothing, whatever it ends on.
     ragged = [("Een regel,", 200), ("Nog een regel", 150), ("Derde regel,", 230), ("Vierde", 120)]
     lines = [

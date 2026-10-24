@@ -200,8 +200,8 @@ def _after_short_line(lines: list[Line], i: int, margin: float) -> bool:
 
 
 def _short_end(lines: list[Line], k: int, margin: float) -> bool:
-    """Whether line k ends a sentence, or a salutation's comma ("Dear Kelvin,"), short of
-    the right margin in justified text."""
+    """Whether line k stops short of the right margin in justified text, where a line stops
+    short only at a paragraph's end: a sentence, a salutation ("Dear Kelvin,"), a dateline."""
     window = lines[max(0, k + 1 - MARGIN_WINDOW) : k + MARGIN_WINDOW + 2]
     # Lines that stop mid-sentence show whether the text is justified: dialogue's
     # short last lines don't count against it.
@@ -213,10 +213,8 @@ def _short_end(lines: list[Line], k: int, margin: float) -> bool:
     ends = sorted(ln.x1 for ln in inner)
     right = ends[len(ends) // 2]
     justified = sum(abs(right - ln.x1) < JUSTIFIED_SLACK for ln in inner)
-    return (
-        justified >= JUSTIFIED_SHARE * len(inner)
-        and right - lines[k].x1 > SHORT_LINE * (right - margin)
-        and lines[k].text.rstrip().endswith((*SENTENCE_END, ","))
+    return justified >= JUSTIFIED_SHARE * len(inner) and right - lines[k].x1 > SHORT_LINE * (
+        right - margin
     )
 
 
