@@ -669,7 +669,10 @@ reading shares: many are specks and faint marks.
       author, translator, language from the title page and colophon. The earlier screen
       put 227–231 of 252 edge pages on the right side, missing forewords and afterwords
       that the ranges of then left out (design.md, Where the body starts and ends).
-- [ ] The dash and ellipsis style of an image-only scan, measured on the image (2026-10-23):
+- [x] ~~The dash style of an image-only scan, measured on the image~~: done 2026-10-24 (the first
+      reading's words, the stroke cropped on its line's height; Goede dochter without its layer
+      23 of 26 dashes against 5, Vanille's typography 0.56 → 0.00). Left: the ellipsis on the
+      first reading's words. Before (2026-10-23):
       tesseract glues most dashes to their neighbours, so its words can't be measured as the
       PDF's own are; a long thin component at mid x-height between word gaps is a dash, and
       its length and gaps measured on the page image. Today an image-only scan falls back to

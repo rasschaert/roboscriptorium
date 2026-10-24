@@ -9,8 +9,8 @@ and took the day's three OCR-check rules and the paragraph fix (decisions.md, 20
 
 Nothing runs.
 
-The baselines are `work/bench/tuning-20261024T175025` (after review 0.282, breaks 0.045 a
-page) and `work/bench/validation-20261024T175525` (0.503, 0.196): today's defaults.
+The baselines are `work/bench/tuning-20261024T185118` (after review 0.282, breaks 0.045 a
+page) and `work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults.
 
 ## Done 2026-10-24 (decisions.md has every number)
 
@@ -21,7 +21,9 @@ page) and `work/bench/validation-20261024T175525` (0.503, 0.196): today's defaul
     (`half_accent`, `garbled`: no change on the bench, never right in the trust data);
   - any short line in justified text ends a paragraph (`reflow._short_end`: salutations and
     datelines before a letter's flush body; breaks 0.057 → 0.045 on tuning,
-    0.202 → 0.196 on validation, words unchanged).
+    0.202 → 0.196 on validation, words unchanged);
+  - an image-only scan's dash style measured on the image (`scanstyle.guess` through the first
+    reading's words; Vanille's typography 0.56 → 0.00 a page).
 - **Not taken**:
   - a sureness threshold per kind of question;
   - Qwen's token probabilities, image-gain included, as a silent-error signal;

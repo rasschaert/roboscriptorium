@@ -152,24 +152,59 @@ def test_after_a_question_mark_an_ellipsis_keeps_the_layers_space():
     assert ellipsised("Waar … Ik zocht", GLYPH)[0] == "Waar… Ik zocht"
 
 
-def _scan(tmp_path, printed: str, layer: str):
+def _scan(tmp_path, printed: str, layer: str, font: str = "tiro"):
     """A one-page scan of `printed` lines (an image, as a scan is) under an invisible text
-    layer reading `layer` on the same lines."""
+    layer reading `layer` on the same lines, both in `font`."""
     import pymupdf
 
     src = pymupdf.open()
     page = src.new_page(width=400, height=60 + 20 * 30)
     for k, line in enumerate(printed.splitlines()):
-        page.insert_text((20, 40 + 20 * k), line, fontsize=14, fontname="tiro")
+        page.insert_text((20, 40 + 20 * k), line, fontsize=14, fontname=font)
     png = page.get_pixmap(dpi=300).tobytes("png")
     out = pymupdf.open()
     scan = out.new_page(width=page.rect.width, height=page.rect.height)
     scan.insert_image(scan.rect, stream=png)
     for k, line in enumerate(layer.splitlines()):
-        scan.insert_text((20, 40 + 20 * k), line, fontsize=14, fontname="tiro", render_mode=3)
+        scan.insert_text((20, 40 + 20 * k), line, fontsize=14, fontname=font, render_mode=3)
     path = tmp_path / "scan.pdf"
     out.save(path)
     return path
+
+
+def test_an_image_only_scans_dashes_are_measured_through_its_first_reading(tmp_path):
+    import pymupdf
+
+    from roboscriptorium.pdf import PageText
+    from roboscriptorium.scanstyle import guess
+
+    src = pymupdf.open()
+    page = src.new_page(width=400, height=400)
+    words = []
+    for k in range(8):
+        y = 40 + 24 * k
+        x = 20.0
+        for i, text in enumerate(["the", "people", "said", "–", "and", "then", "she"]):
+            if text == "–":
+                # An en dash about a letter long, at mid x-height, a word space either side.
+                page.draw_rect(pymupdf.Rect(x, y - 4.6, x + 8, y - 3.6), color=None, fill=(0, 0, 0))
+                box = (x, y - 4.6, x + 8, y - 3.6)  # a first reading's box hugs the stroke
+                x += 8 + 4
+            else:
+                width = pymupdf.get_text_length(text, fontname="helv", fontsize=14)
+                page.insert_text((x, y), text, fontsize=14, fontname="helv")
+                box = (x, y - 10.5, x + width, y + 3)
+                x += width + 4
+            words.append((*box, text, 0, k, i))
+    png = page.get_pixmap(dpi=300).tobytes("png")
+    out = pymupdf.open()
+    scan = out.new_page(width=400, height=400)
+    scan.insert_image(scan.rect, stream=png)
+    path = tmp_path / "image-only.pdf"
+    out.save(path)
+    first = PageText(1, 400, 400, [], words=tuple(words))
+    found = guess(path, [1], tmp_path / "typography.json", [first])
+    assert found is not None and found.style.dash == "–" and found.style.spacing != "none"
 
 
 def test_the_scan_shows_the_space_the_layer_drops_before_spaced_dots(tmp_path):

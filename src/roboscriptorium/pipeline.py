@@ -503,7 +503,9 @@ def dash_style(book: Book, body: list[PageText]) -> typography.DashStyle | None:
         return typography.DashStyle(book.dash, book.dash_spacing)
     if not ocrcheck.scanned(book.source):
         return None
-    guess = scanstyle.guess(book.source, [p.number for p in body], book.stages / "typography.json")
+    guess = scanstyle.guess(
+        book.source, [p.number for p in body], book.stages / "typography.json", body
+    )
     if guess is None:
         return None
     name = {"–": "en", "—": "em"}[guess.style.dash]

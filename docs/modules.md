@@ -71,7 +71,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   lines joined by `hyphens.join`, a single-quoted book's misread openings and an old
   layer's closings mended by `quotes`. Without roles it falls back to a footer heuristic.
 - `scanstyle.py`: the book's dash and ellipsis as measured on the scan (`guess`,
-  `measure_ellipses`, cached); `typography.py` sets the text in the style found.
+  `measure_ellipses`, cached); a dash found through the PDF's words or, on an image-only
+  scan, its first reading's, each stroke measured across its line's height; `typography.py`
+  sets the text in the style found.
 - `ink.py`: `threshold`, the grey level between ink and paper (Otsu), for the italics,
   type and scan measurements.
 - `hyphens.py`: lines joined across their ends (`join`). A line-end hyphen stays or goes

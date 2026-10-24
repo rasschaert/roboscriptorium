@@ -17,7 +17,7 @@ from roboscriptorium.files import write_atomic
 from roboscriptorium.pdf import page_words
 from roboscriptorium.typography import DASHES, DashStyle, EllipsisStyle, _is_dash
 
-VERSION = 1
+VERSION = 2
 
 
 DPI = 300
@@ -59,13 +59,16 @@ class Guess:
         )
 
 
-def guess(pdf_path, numbers: list[int], cache) -> Guess | None:
+def guess(pdf_path, numbers: list[int], cache, pages: list | None = None) -> Guess | None:
     """The dash style the scan shows, cached; None when it has too few dashes to tell.
-    Measured on the PDF's own words only: a first reading (tesseract) glues most dashes
-    to their neighbours, which reads as short unspaced dashes."""
+    Found through the PDF's own words, or on an image-only scan through its first reading's
+    (`pages`' words), which are cached apart."""
+    texts = {p.number: p for p in pages or []}
+    source = "first reading" if any(p.words for p in texts.values()) else "pdf"
     if cache.exists():
         raw = json.loads(cache.read_text())
-        if raw.get("version") == VERSION and raw.get("pages") == numbers:
+        same = raw.get("pages") == numbers and raw.get("words", "pdf") == source
+        if raw.get("version") == VERSION and same:
             g = raw["guess"]
             return Guess(DashStyle(**g.pop("style")), **g) if g else None
     found = []
@@ -74,14 +77,15 @@ def guess(pdf_path, numbers: list[int], cache) -> Guess | None:
             if len(found) >= ENOUGH:
                 break
             page = pdf[n - 1]
-            words = page_words(page)
+            words = page_words(page, texts.get(n))
             for w in words:
                 if _is_dash(w[4]) or any(c in DASHES for c in w[4]) or "--" in w[4]:
                     line = [v for v in words if v[5] == w[5] and v[6] == w[6]]
                     if (m := _measure(page, w, line)) is not None:
                         found.append(m)
     result = _decide(found)
-    blob = {"version": VERSION, "pages": numbers, "guess": asdict(result) if result else None}
+    blob = {"version": VERSION, "pages": numbers, "words": source}
+    blob["guess"] = asdict(result) if result else None
     write_atomic(cache, json.dumps(blob))
     return result
 
@@ -119,7 +123,9 @@ def _measure(page: pymupdf.Page, word: tuple, line: list[tuple]) -> dict | None:
     char_w = statistics.median((w[2] - w[0]) / len(w[4]) for w in letters)
     at = next((i for i, c in enumerate(text) if c in DASHES + "-"), 0)
     expect = x0 + (x1 - x0) * (at + 0.5) / len(text)
-    clip = pymupdf.Rect(expect - 8 * char_w, y0, expect + 8 * char_w, y1)
+    # The line's height, not the dash's own box: a first reading's box hugs the stroke.
+    top, bottom = min(w[1] for w in line), max(w[3] for w in line)
+    clip = pymupdf.Rect(expect - 8 * char_w, top, expect + 8 * char_w, bottom)
     pix = page.get_pixmap(dpi=DPI, clip=clip, colorspace=pymupdf.csGRAY)
     dark = _ink(np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width))
     h, rows = dark.shape[0], np.arange(dark.shape[0])
