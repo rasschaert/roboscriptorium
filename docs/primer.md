@@ -321,9 +321,17 @@ last updated, decoded.
   machine chose wrong without asking. Of those, 38 are places where the scan's own text
   layer was right and the machine "corrected" it: an accent added or dropped, or a comma
   at a line's end turned into a full stop.
-- **One of those is fixed**: a full stop is never taken in place of a line's last comma
-  when the next line starts in lower case, since no sentence ends there. Six fewer wrong
-  words, none new (0.290 to 0.286 wrong words a page after review).
+- **Some of those are fixed by rules that are true by definition**: a full stop is never
+  taken in place of a line's last comma when the next line starts in lower case (no
+  sentence ends there: six fewer wrong words, none new), and a reading that accents only
+  one letter of a doubled vowel ("doóde") or carries a mark prose never prints (`~ ^ |`) is
+  never the print. Each was found the same way: a kind of reading wrong in every book's
+  labelled data. 0.290 to 0.282 wrong words a page after review over the day. The same
+  rule for a comma mid-line was tried and dropped: there an author sometimes does set a
+  stop before a lower-case word.
+- **Winnow, the judge that reads the sentence, earns its place**: taken away, the build
+  made twice as many new errors as it fixed (0.282 to 0.316). Nothing gets removed
+  without such a test.
 - **New reading models no longer look like the way forward.** Every place where all
   three readers agree on the same wrong reading was collected: only 23 lines in 18 books,
   mostly small capitals and the rare dotless ı. So a new model reading lines can fix a
