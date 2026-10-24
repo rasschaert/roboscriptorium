@@ -27,7 +27,8 @@ BOOTSTRAP_SAMPLES = 2000
 # Golden scans and the pages:chapters scored. Tuning books are tuned on, and scored
 # with models trained without them (`unseen`); validation books have been consulted
 # for choices before, so they validate, not test. Long books are sliced at a chapter
-# boundary (a run costs about 1.1 min per cold page), about 90 pages at most: the
+# boundary (a run costs about 1.1 min per cold page), about 90 pages, seven of Stella's
+# kind about 170 (their trust data and the bench's power grown overnight): the
 # bootstrap's power comes from the pages in all, so more books of fewer pages decide as
 # surely and vary more. Monterosso runs its chapters on without a page break, so no slice
 # short of the whole book ends on one. Dolittle's slice holds its plates and drawn
@@ -37,23 +38,23 @@ BOOTSTRAP_SAMPLES = 2000
 # Verminkt's reference has no chapters, so its look is the whole book.
 SETS = {
     "tuning": [
-        "goede-dochter--ia-scan:9-99:1-6",
-        "vals-alarm--ia-scan:11-60:1-10",
+        "goede-dochter--ia-scan:9-206:1-10",
+        "vals-alarm--ia-scan:11-110:1-18",
         "reis-om-mijn-schedel--ia-scan:11-99:1-10",
         "the-story-of-doctor-dolittle--stokes-1920:23-88:1-7",
         "the-thief-takers-apprentice--ia-scan:11-84:1-22",
         "afscheid-van-verspilde-tijd--ia-scan:9-70:1-11",
         "metro-2033--ia-scan:7-92:1-8",
-        "de-cipier--ia-scan:9-92:1-4",
+        "de-cipier--ia-scan:9-174:1-6",
         "artemis--ia-scan:13-80:1-3",
         "de-tuin-van-de-avondnevel--ia-scan:11-97:1-6",
         "het-heft-in-eigen-hand--ia-scan:9-92:1-5",
-        "doodskleed--ia-scan:13-96:1-14",
-        "het-ijzige-land--ia-scan:11-104:1-11",
+        "doodskleed--ia-scan:13-186:1-28",
+        "het-ijzige-land--ia-scan:11-186:1-21",
         "de-eerlijke-vinder--ia-scan",
         "monterosso-mon-amour--ia-scan",
-        "het-geluid-van-bananen--ia-scan:9-101:1-14",
-        "het-schaduwhuis--ia-scan:9-91:1-19",
+        "het-geluid-van-bananen--ia-scan:9-187:1-23",
+        "het-schaduwhuis--ia-scan:9-179:1-43",
         "au-pair--ia-scan:7-99:1-24",
         "de-vergelding--ia-scan:9-107:1-4",
         "glazuur--ia-scan:11-101:1-9",
