@@ -18,7 +18,7 @@ from datetime import date
 from pathlib import Path
 
 from roboscriptorium import bench, pdf
-from roboscriptorium.golden import signals
+from roboscriptorium.golden import scoring, signals
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import load_chapters, unmarked
 
@@ -105,6 +105,8 @@ for m in sorted(Path("golden").glob("*/manifest.toml")):
             continue
         layer = pdf.cached_text_layer(book_dir / "source.pdf", book_dir / "stages" / "textlayer.json")
         layer = [p for p in layer if a <= p.number <= b]
+        if pages and not chapters:
+            ref, _, _ = scoring.cut_to_pages(ref, layer)
         cer, bare, unplaced, headings = astuple(signals.measure(layer, ref))
         details.append(
             f"| {g.name} | {role} | {body} / {scored} | {words} | {cold} | {cer:.2%} | {bare:.2%} |"

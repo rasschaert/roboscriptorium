@@ -169,6 +169,10 @@ Don't repeat these without a new reason (details in docs/decisions.md):
 - **Line crops padded to qwen's 32-px vision grid instead of resized** (2026-10-23): hard
   436 → 427 of 480, control 319 → 311 of 320; the padded crops make qwen add accents the
   print lacks. The resampled crop is what it reads best.
+- **A sureness threshold per kind of question** (2026-10-24): replayed on the trust data,
+  accent 0.9, space 0.95, quote 0.7 and letters 0.85 left 7 fewer silent errors for 12
+  fewer questions with each book left out; on the bench questions fell 0.732 → 0.721 a page
+  and unasked errors rose 0.174 → 0.176. One threshold is as good as several.
 
 ## Inference speed: what a cold page costs, and what's been tried
 

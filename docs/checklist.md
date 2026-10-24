@@ -311,12 +311,14 @@ costs against what it could reach; every reader candidate passes the new-model g
 - [x] ~~The JBIG2 text mask as the readers' image~~ (DeepSeek 6): the accent is as plain
       in the composited render as in the mask (the lossiness check above); the mask stays a
       geometry channel for the descender band and specks
-- [ ] A threshold per kind of question (Argon's value of information; DeepSeek 8 as
-      ranking): replay saved benches offline. Reviewer mistakes are too few for a predictor
-      (8 of 68 on Stella): first test whether the arbiter's margin between its top two
-      versions predicts the known wrong answers, then at most a rate per class with several
-      mistakes (Fable). The 80% cutoff already minimises the headline on tuning, so only a
-      class-specific threshold can gain (agent, ~2 h, no models)
+- [x] ~~A threshold per kind of question~~ (Argon's value of information; DeepSeek 8 as
+      ranking; NOT TAKEN 2026-10-24, `probe_kind_threshold.py`): on the trust data, with
+      each tuning book scored by the arbiter saved without it, thresholds chosen on the
+      other books (accent 0.9, space 0.95, quote 0.7, letters 0.85, in every fold) left
+      65 → 58 silent errors for 330 → 318 questions; the warm bench didn't carry it (after
+      review 0.290 → 0.290, questions 0.732 → 0.721 a page, unasked 0.174 → 0.176: 9 unasked
+      fixed, 10 made). The reviewer-mistake test (does the arbiter's margin predict a wrong
+      answer) was not run: 8 mistakes on Stella are too few to choose by
 - [x] ~~Character-level ROVER with a diacritic-restoration vote~~ (DeepSeek 1, not taken
       on reading): suspects are already made at character level where any reader differs;
       the silent errors are where every reader gives the same characters, which a vote

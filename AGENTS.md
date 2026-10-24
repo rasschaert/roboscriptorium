@@ -548,7 +548,7 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   can't place (`golden/signals.py`). `bench` records both per book and names each book
   past a threshold as a suspect pair; docs/golden-books.md has them over all lines
   (regenerate it with `uv run python experiments/golden_overview.py >
-  docs/golden-books.md`, half a minute, no models, after adding, slicing or retiring a
+  docs/golden-books.md`, about a quarter of an hour (it aligns every book), no models, after adding, slicing or retiring a
   book). Past three times the set's median layer CER, or one body line in twenty
   unplaced, the book is suspect. Judge by the bench's figures, over body lines: the
   overview's unplaced share counts page furniture too, so a book with running heads
