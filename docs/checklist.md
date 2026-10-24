@@ -269,7 +269,11 @@ costs against what it could reach; every reader candidate passes the new-model g
       words of a line and the first of the next as one image, "join or not, hyphen or not,
       comma or full stop", where a trigger fires (a line ending in a stop before a lower-case
       start, a join that forms a word). Targets the 109 unasked errors at line joins
-      (agent, ~1 day)
+      (agent, ~1 day). Recounted 2026-10-24 on `tuning-20261024T063416`: of 236 unasked
+      errors, 2 span a join; the 31 compound hyphens sit at line ends, where the scan
+      can't show whether the hyphen is the word's (the qwen and clef probe above); the
+      join's commas read as stops are a glyph the readers miss at any resolution. Little
+      for a crop to see; low priority
 - [ ] New OCR models as witnesses on the frozen set (Fable, Argon): dots.mocr (3B, MLX
       builds), LightOnOCR-2-1B (reported to keep diacritics where Qwen3 drops them),
       Chandra OCR 2 (5.3B), HunyuanOCR (1B), PaddleOCR-VL-1.6. No Dutch accent test exists for
