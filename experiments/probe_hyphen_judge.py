@@ -3,7 +3,7 @@ models: is the hyphen the word's own ("half-cooked") or the break's ("halfcooked
 Scored against the tuning books' references where they spell the word one way only,
 beside `hyphens.join`'s default (the break's).
 
-    uv run python experiments/probe_hyphen_judge.py [model …]
+    uv run python experiments/probe_hyphen_judge.py [model …]   # chat:<model> for a generative one
 
 Answers are cached in work/probes/hyphen-judge/<model>.jsonl.
 """
@@ -67,6 +67,36 @@ print(f"{len(items)} undecided line-end hyphens with a one-way reference:",
       dict(Counter((i["lang"], i["truth"]) for i in items)))
 
 settings = Settings.from_env()
+
+
+def ask_chat(model: str, it: dict) -> float:
+    """P(hyphenated) from a generative model's first answer token, A or B, the two
+    spellings in both orders averaged against a bias for either letter."""
+    import math
+
+    import httpx
+
+    ps = []
+    for first, second in ((it["closed"], it["hyphenated"]), (it["hyphenated"], it["closed"])):
+        prompt = (
+            f"A {LANG[it['lang']]} book breaks a word across two lines with a hyphen at the "
+            "line's end (shown as |). Is the hyphen part of the word's spelling, or only the "
+            f"line break's?\n\nText: {it['context']}\n\nHow is the word spelled in running "
+            f"text?\nA. {first}\nB. {second}\n\nAnswer with the letter only."
+        )
+        resp = httpx.post(f"{settings.ollama_url}/api/chat", json={
+            "model": model, "stream": False, "think": False,
+            "messages": [{"role": "user", "content": prompt}],
+            "logprobs": True, "top_logprobs": 10, "options": {"num_predict": 1, "temperature": 0},
+        }, timeout=600)  # fmt: skip
+        resp.raise_for_status()
+        top = (resp.json().get("logprobs") or [{}])[0].get("top_logprobs", [])
+        p = {k: sum(math.exp(a["logprob"]) for a in top if a["token"].strip() == k) for k in "AB"}
+        p_a = p["A"] / max(p["A"] + p["B"], 1e-9)
+        ps.append(p_a if first == it["hyphenated"] else 1 - p_a)
+    return sum(ps) / 2
+
+
 client = DecisionClient(settings.ollama_url, models[0])
 OUT.mkdir(parents=True, exist_ok=True)
 for model in models:
@@ -91,10 +121,15 @@ for model in models:
                     "in running text.",
                     {"closed": f"{it['closed']}", "hyphenated": f"{it['hyphenated']}"},
                 )
-                a = client.decide({"language": LANG[it["lang"][:2]], "text": it["context"]},
-                                  {"spelling": q}, model=model)["spelling"]
+                if model.startswith("chat:"):
+                    p_hyph = ask_chat(model.removeprefix("chat:"), it)
+                    choice_ = "hyphenated" if p_hyph >= 0.5 else "closed"
+                else:
+                    a = client.decide({"language": LANG[it["lang"][:2]], "text": it["context"]},
+                                      {"spelling": q}, model=model)["spelling"]
+                    choice_, p_hyph = a.value, a.probabilities.get("hyphenated", 0)
                 cache[key] = {"closed": it["closed"], "context": it["context"],
-                              "choice": a.value, "p_hyph": a.probabilities.get("hyphenated", 0)}
+                              "choice": choice_, "p_hyph": p_hyph}
                 f.write(json.dumps(cache[key], ensure_ascii=False) + "\n")
                 f.flush()
             r = cache[key]

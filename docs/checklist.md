@@ -286,7 +286,10 @@ costs against what it could reach; every reader candidate passes the new-model g
       absent from the reference, aligned to an ink blob, is a speck; every mark the reference
       confirms is ink. Labels from all 30 books for the speck classifier (agent, ~1 day)
 - [ ] Line-end compound hyphens learned from the compounds the books print unbroken mid-line
-      (Argon): self-supervised, for the 24 of 27 the book itself can't settle (agent, ~half a day)
+      (Argon): self-supervised, for the 24 of 27 the book itself can't settle (agent, ~half a day).
+      Measured first (2026-10-24): of 542 undecided Dutch breaks 14 are real hyphens; qwen,
+      clef and the cheap cues (a capital first half, a vowel clash, both halves words) tell
+      none of them apart. A learner needs a feature none of these has; low priority
 - [ ] Glyph-level checks, later (Argon's pairwise classifiers for confusable letters, Fable's
       glyph clusters with one label each): only after the cheaper glyph probes above
 - [ ] Paragraph starts by a model that knows the book's indent regime (Argon), and heading

@@ -177,6 +177,8 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   glm-ocr agrees with it, the weakest token's log-probability and runner-up margin mark
   qwen's errors with AUC 0.57, and image-gain (with the crop against without) 0.44. They
   mark its errors well only where another reader already disagrees (0.78).
+- **Qwen as the line-end hyphen judge** (2026-10-24): on 542 undecided Dutch breaks it
+  finds none of the 14 real hyphens; on English it is right on 24 of 30, clef 25.
 
 ## Inference speed: what a cold page costs, and what's been tried
 
