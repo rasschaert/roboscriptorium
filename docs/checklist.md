@@ -176,12 +176,14 @@ models could do. Each probe below asks whether that's still true, on a few golde
       (De vergelding) and keeps a motto as text (Bananen). It gains where the trees miss a
       date heading or a chapter's first line (Het heft, Thief-Taker, Reis). Its heading call
       is ignored for narrator names in small capitals (De geruchten "DOLF", 1 of 20 found):
-      no tuning book has them. Next, if any: tell qwen which regions the spotter calls
-      pictures, and re-probe on picture pages
+      no tuning book has them. **With the lines inside a picture marked (2026-10-24): role
+      errors 137, tuning 30 fixed / 27 made (5 unasked), NO CHANGE; not taken.** Left: mottos
+      and an epigraph's attribution (Bananen, De vergelding), which a next try would have to
+      tell qwen about
 - [ ] The text layer as a second reader only: the page built from the whole-page reading,
       the layer and the line readers judging where they differ
-- [ ] Page kinds for `init` (cover, front matter, body, back matter) by Qwen from the page
-      image, on `tryouts/page-kinds-v1.json`
+- [x] ~~Page kinds for `init` by Qwen from the page image~~: done 2026-10-24, no better than
+      clef-flash (ends right 20 and 23 of 27 against 22 and 21, 3 ends cut against 2); not taken
 - [ ] **Per-book settings and extra witnesses** (the user, 2026-10-22: do some books respond
       better to some settings, and can a quick pre-pass tell which?). Evidence so far: qwen at
       300/450/600 dpi on 50 lines of each of 16 books differs by 1–4 lines per book, noise

@@ -576,3 +576,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-24 | bench validation, comma kept before lower case mid-line too (warm) | 0 | 6 | 0 |
 | 2026-10-24 | bench tuning, arbiter without winnow (warm) | 0 | 1 | 1 |
 | 2026-10-24 | bench tuning, arbiter without winnow (warm) | 0 | 10 | 0 |
+| 2026-10-24 | page kinds at the edges by qwen (27 books, ~430 pages) | 430 | 54 | 0 |
+| 2026-10-24 | bench tuning, page roles with picture marks into the trees (warm) | 0 | 10 | 0 |
+| 2026-10-24 | bench validation, page roles with picture marks into the trees (warm) | 0 | 7 | 0 |

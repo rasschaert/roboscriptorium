@@ -6,18 +6,12 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
 
 ## Running
 
-- `robo-kinds-qwen` (screen, ~45 min from ~15:25): `init`'s page kinds at the book edges asked of
-  qwen (`experiments/probe_page_kinds_qwen.py`), scored on the 27 labelled books' two ends
-  against clef-flash's 22 and 21 (`work/runs/kinds-qwen.log`).
-- `robo-roles-pictures` (screen, starts when `robo-kinds-qwen` ends, ~40 min): qwen's page roles
-  re-asked on picture pages with the lines inside a figure region marked (`pageroles.listing`),
-  trees retrained with them (`work/models/line-roles-pages-pictures.pkl`), warm tuning and
-  validation benches (`work/runs/roles-pictures.sh`). The trees in use are untouched.
+Nothing runs.
 
 Done 2026-10-24 (decisions.md): Kraken as a witness and Qwen's page roles as an input to
 the role trees, both not taken; crops padded to Qwen's grid read worse; a sureness threshold
 per kind of question, not taken (replay gain, bench no change); qwen's token probabilities
-as a silent-error signal, not taken (AUC 0.57 where glm-ocr agrees); qwen as the line-end hyphen judge, no better than clef; LightOnOCR-3 1B and 4B as readers, unfit (weaker than olmOCR-2). The quiet set (`quiet_set.py`): the layer and both readers are wrong together on only 23 lines of the tuning slices, so more OCR models as line witnesses are deprioritised; the unasked errors left sit at line joins (25 compound hyphens with no suspect) and in the arbiter's decisions (152 with a suspect, 38 of them a right layer changed). A line-end comma is kept before a lower-case line (`stop_for_comma`, taken: 6 fixed, none made), and readings with a half-accented doubled vowel or `~ ^ |` are dropped (taken, no change on the bench). Winnow subtracted: worse (0.282 → 0.316), it stays. The baselines are
+as a silent-error signal, not taken (AUC 0.57 where glm-ocr agrees); qwen as the line-end hyphen judge, no better than clef; LightOnOCR-3 1B and 4B as readers, unfit (weaker than olmOCR-2). The quiet set (`quiet_set.py`): the layer and both readers are wrong together on only 23 lines of the tuning slices, so more OCR models as line witnesses are deprioritised; the unasked errors left sit at line joins (25 compound hyphens with no suspect) and in the arbiter's decisions (152 with a suspect, 38 of them a right layer changed). A line-end comma is kept before a lower-case line (`stop_for_comma`, taken: 6 fixed, none made), and readings with a half-accented doubled vowel or `~ ^ |` are dropped (taken, no change on the bench). Winnow subtracted: worse (0.282 → 0.316), it stays. Qwen for `init`'s page kinds: no better than clef-flash. Qwen's page roles with picture lines marked: half the harm of the morning's, NO CHANGE, off. The baselines are
 `work/bench/tuning-20261024T141134` and `work/bench/validation-20261024T141643` (today's defaults).
 
 **Night of 2026-10-21/22, in one paragraph.** The read model at 450 dpi is the best vote witness found so far on the reader set (+12 lines, none broken; 300 dpi adds 4, 600 dpi 9, so it is resolution), and glm-ocr alone gains 54 lines at 450 dpi. But swapping the pipeline's readers to 450 dpi (`ROBO_READER_DPI=450`, cold `bench quick`, earlier arbiter) made 18 wrong words and fixed 11: not taken. As an extra witness it was closed on 2026-10-23 without a run: right alone on 0 of 57 lines no reader flags (`probe_dpi450_alone.py`). `init` now drafts title, author and translator (title 26, author 25 of 27 right). clef:27b is no better than clef-flash for the page-kind ends (21/21 against 22/21). All in decisions.md, 2026-10-22.
