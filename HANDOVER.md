@@ -99,8 +99,9 @@ Ask before a download over 1 GB. A model outside Ollama gets its own environment
   two minutes:
   `uv run roboscriptorium review work/au-pair--ia-scan --pages 7-99 --chapters 1-24 --only work/probes/unasked/au-pair-smallcaps-20261024.json`
 - **Specks** (parked): the speck classifier needs labelled pages from more scans.
-- **Disk**: the LightOnOCR-3 weights (~12 GB, `~/models/roboscriptorium/lightonocr-3-{1b,4b}`) and
-  `work/models/mlx-env` (809 MB) stay until the user says they can go.
+- **Disk**: `work/models/mlx-env` (809 MB) and `~/models/roboscriptorium/lighton-env` (767 MB, the
+  LightOnOCR runtime; its weights were deleted 2026-10-24, the user agreeing) stay until the user
+  says they can go.
 - Andere levens: seven candidate misprints saved as printed
   (`work/probes/carrere-editions/andere-levens-checked.md`); the user says which, if any, are
   misprints.
