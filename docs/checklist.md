@@ -315,7 +315,11 @@ costs against what it could reach; every reader candidate passes the new-model g
       are validation only. Synthetic unindented pages from the tuning books (indents removed,
       breaks kept) would train it, but they carry the short last line and not the extra lead
       real flush-set books put between paragraphs (Fable): measure that lead on the validation
-      books first, to know what the synthetic pages miss (agent, ~2 days)
+      books first, to know what the synthetic pages miss (agent, ~2 days). **Measured 2026-10-24
+      (`probe_flush_lead.py`): no extra lead (0.99 of the pitch before a start, 1.00 within);
+      the short last line is the mark, as in indented books, so synthetic flush pages miss
+      nothing; a start after a near-full line (one in ten) needs text cues.** Next: the
+      synthetic pages and the graph model
 - [x] ~~Gated language-model scoring of words with a visual twin~~ (Argon's PLLR with
       RobBERT; Fable and DeepSeek against): parked behind the glyph and image-gain probes,
       which ask the scan rather than the language
