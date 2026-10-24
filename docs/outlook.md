@@ -163,6 +163,9 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   wrong words the tuning books keep after a perfect review, only 53 (29%) are reading
   errors no reader doubted, the only ones a better reader alone would fix, and 31 of
   those are punctuation. Below the half agreed with the user as the bar.
+- **A line recogniser with no language model as a witness** (Kraken trained on golden
+  lines, 2026-10-24): right on 1 of 6 lines where every reader agrees on the same wrong
+  reading, and it shares their errors; wrong on 74 lines qwen reads right.
 - **Line crops padded to qwen's 32-px vision grid instead of resized** (2026-10-23): hard
   436 → 427 of 480, control 319 → 311 of 320; the padded crops make qwen add accents the
   print lacks. The resampled crop is what it reads best.

@@ -168,8 +168,17 @@ models could do. Each probe below asks whether that's still true, on a few golde
       5,993 lines, the pipeline 22 wrong and Qwen 3 (three datelines called headings);
       headings found 126/126 against 110, 3 false. 25 s a page. The short answer (only
       the heading and furniture line numbers, `--short`) keeps it: 4 wrong, 126/126 headings,
-      3 false, 1 page unparsed, at ~6 s a page. Next: Qwen's short call as an input to the
-      role trees over every tuning page (a few hours of qwen, overnight), benched
+      3 false, 1 page unparsed, at ~6 s a page. **As an input to the trees (2026-10-24,
+      `pageroles.py`, `ROBO_PAGE_ROLES`, off): role errors left one book out 186 → 146 on
+      tuning, 128 → 120 on validation, but `bench tuning` made 60 wrong words for 30 fixed
+      (19 unasked made, 10 fixed): not taken.** Qwen fails on picture pages, which the probe's
+      certain pages left out: on Dolittle p. 74 it calls every line furniture, the text
+      beside the drawing too (48 of the words made); it also drops an epigraph's attribution
+      (De vergelding) and keeps a motto as text (Bananen). It gains where the trees miss a
+      date heading or a chapter's first line (Het heft, Thief-Taker, Reis). Its heading call
+      is ignored for narrator names in small capitals (De geruchten "DOLF", 1 of 20 found):
+      no tuning book has them. Next, if any: tell qwen which regions the spotter calls
+      pictures, and re-probe on picture pages
 - [ ] The text layer as a second reader only: the page built from the whole-page reading,
       the layer and the line readers judging where they differ
 - [ ] Page kinds for `init` (cover, front matter, body, back matter) by Qwen from the page
@@ -236,14 +245,16 @@ costs against what it could reach; every reader candidate passes the new-model g
       narrowing; 2026-10-23, `probe_book_consistency.py --marks`): one flag over every tuning
       slice, and a right one ("geinteresseerd" for "geïnteresseerd"), but 1 of 184 unasked
       one-word errors: most such words occur once in a book, so the book can't vouch for them
-- [ ] A per-book character recogniser with no language model, as a witness that fails
-      differently (Fable's first idea, Argon's fourth; DeepSeek advised against): Calamari or
-      Kraken trained on golden line crops leaving the book out, then fine-tuned on the book's
-      lines every reader agrees on (no suspect touching them), a 5-fold ensemble voting on
-      character confidences. Judged by the vote simulation on the frozen set: how many of the
-      hard lines it reads right where every current reader agrees on the wrong reading.
-      The reports' gains (46%, 70–78% over ABBYY) are on early print with far higher error
-      (agent, ~1 day; installs asked first)
+- [x] ~~A per-book character recogniser with no language model, as a witness that fails
+      differently~~ (Fable's first idea, Argon's fourth; DeepSeek advised against; NOT TAKEN
+      2026-10-24, `kraken_lines.py`, `kraken_eval.py`): Kraken 7 trained from scratch on 22k
+      golden line crops (the reader set's other half of books held out), 99.73% characters
+      right on its validation lines after 8 epochs. On its 400 frozen lines it reads 169 of
+      240 hard lines right (qwen 216) and 142 of 160 control (qwen 160); of the 6 lines where
+      the layer, qwen and glm-ocr agree on the same wrong reading it reads 1 right (a stray
+      full stop left out), and it shares the others' errors ("some one", a colon for a full
+      stop); right alone on 3, breaking 74 qwen reads right. The other fold not trained:
+      half the set settles it. The per-book fine-tune and the ensemble were not tried
 - [ ] Image-gain as a silent-error signal (Fable): each qwen and glm-ocr token's
       log-probability with the crop against without it, one extra text-only pass; a low gain
       marks a token from the language prior. AUC on the frozen set's silent errors. Argon

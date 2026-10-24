@@ -6,20 +6,9 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
 
 ## Running
 
-- `robo-kraken-train` (`work/runs/kraken-train.sh`, ~10 min an epoch when the GPU is free;
-  it stalls while qwen runs): a Kraken line recogniser per fold, models in
-  `~/models/roboscriptorium/kraken/{a,b}/`. Then `kraken-env/bin/python -I
-  experiments/kraken_eval.py read <fold> <best checkpoint>` per fold (Kraken 7's `rpred` API
-  untested, may need adjusting) and `uv run python experiments/kraken_eval.py score`.
-- `robo-robo-grid-pad` (~40 min): qwen on the frozen reader set's crops padded to its 32-px
-  vision grid instead of resized (`probe_grid_pad.py`, which prints the score at its end).
-- `robo-page-roles-train` (queued behind the grid probe, ~4.5 h of qwen): qwen's page roles
-  (`pageroles.py`, `ROBO_PAGE_ROLES=1`) on all 2,687 pages the line-role trees train on, then
-  the trees left one book out with them (`work/runs/page-roles-train.log`) and without them on
-  the same lines (`page-roles-train-without.log`). If they help: `ROBO_PAGE_ROLES=1
-  ROBO_SORTER_MODEL=work/models/line-roles-pages.pkl uv run python experiments/train_sorter.py
-  --save`, then `bench tuning` with both variables set (warm but for the page-role calls on
-  the bench pages outside training: none, all tuning pages are in it).
+Nothing runs. The night's results (decisions.md, 2026-10-24): Kraken as a witness and Qwen's page roles
+as an input to the role trees, both not taken; crops padded to Qwen's grid read worse. The
+tuning baseline is `work/bench/tuning-20261024T063416` (today's defaults).
 
 **Night of 2026-10-21/22, in one paragraph.** The read model at 450 dpi is the best vote witness found so far on the reader set (+12 lines, none broken; 300 dpi adds 4, 600 dpi 9, so it is resolution), and glm-ocr alone gains 54 lines at 450 dpi. But swapping the pipeline's readers to 450 dpi (`ROBO_READER_DPI=450`, cold `bench quick`, earlier arbiter) made 18 wrong words and fixed 11: not taken. As an extra witness it was closed on 2026-10-23 without a run: right alone on 0 of 57 lines no reader flags (`probe_dpi450_alone.py`). `init` now drafts title, author and translator (title 26, author 25 of 27 right). clef:27b is no better than clef-flash for the page-kind ends (21/21 against 22/21). All in decisions.md, 2026-10-22.
 

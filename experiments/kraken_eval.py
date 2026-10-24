@@ -7,10 +7,10 @@ each scored on the other half's frozen lines.
     ~/models/roboscriptorium/kraken-env/bin/ketos -d mps --workers 4 train -f path -u NFD \\
         -B 16 -q early --min-epochs 5 -o ~/models/roboscriptorium/kraken/<fold> \\
         -t work/probes/kraken/<fold>.txt
-    ~/models/roboscriptorium/kraken-env/bin/python -I experiments/kraken_eval.py read <fold> <model>
+    ~/models/roboscriptorium/kraken-env/bin/python -I experiments/kraken_eval.py read <fold> <model> [n]
     uv run python experiments/kraken_eval.py score
 
-`read` runs in Kraken's own environment and writes work/probes/kraken/readings-<fold>.json
+`read` runs in Kraken's own environment (`n` prints the first n lines and writes nothing) and writes work/probes/kraken/readings-<fold>.json
 ({item id: reading}). `score` counts, on the hard lines, where Kraken reads the truth while
 the text layer, qwen and glm-ocr all agree on the same wrong reading (the silent kind), and
 its errors on the control lines.
@@ -46,29 +46,42 @@ def lists() -> None:
               f" (books outside the set: {sorted(d.name for d in LINES.iterdir() if d.name not in held)})")
 
 
-def read(fold: str, model_path: str) -> None:
-    from kraken import rpred
+def read(fold: str, model_path: str, limit: int | None = None) -> None:
+    """Kraken's reading of the fold's frozen lines, on the CPU (the GPU is qwen's). A
+    training checkpoint (.ckpt) is converted to weights first, as Kraken 7 loads only those."""
+    import subprocess
+
+    from kraken.configs import RecognitionInferenceConfig
     from kraken.containers import BBoxLine, Segmentation
-    from kraken.lib import models
+    from kraken.tasks import RecognitionTaskModel
     from PIL import Image
 
     hashes = __import__("hashlib")
-    net = models.load_any(model_path)
+    if model_path.endswith(".ckpt"):
+        weights = ROOT / f"model-{fold}.safetensors"
+        ketos = Path(sys.executable).with_name("ketos")
+        subprocess.run([str(ketos), "convert", "-o", str(weights), model_path], check=True)
+        model_path = str(weights)
+    net = RecognitionTaskModel.load_model(model_path)
+    config = RecognitionInferenceConfig(accelerator="cpu", device=1, num_threads=4)
     test = set(folds()[fold])
     items = [i for i in json.loads((SET / "items.json").read_text())["items"] if i["book"] in test]
     out = {}
-    for n, item in enumerate(items, 1):
+    for n, item in enumerate(items[:limit], 1):
         name = hashes.sha256(item["id"].encode()).hexdigest()[:16]
         im = Image.open(SET / "crops" / f"{name}.png")
         seg = Segmentation(
             type="bbox", imagename="", text_direction="horizontal-lr", script_detection=False,
             lines=[BBoxLine(id="l", bbox=(0, 0, im.width, im.height))],
         )  # fmt: skip
-        text = "".join(r.prediction for r in rpred.rpred(net, im, seg))
+        text = "".join(r.prediction for r in net.predict(im, seg, config))
         out[item["id"]] = unicodedata.normalize("NFC", text)
-        if n % 100 == 0:
+        if limit:
+            print(repr(out[item["id"]]), "|", repr(item["truth"]), flush=True)
+        elif n % 100 == 0:
             print(f"{n}/{len(items)}", flush=True)
-    (ROOT / f"readings-{fold}.json").write_text(json.dumps(out, ensure_ascii=False))
+    if not limit:
+        (ROOT / f"readings-{fold}.json").write_text(json.dumps(out, ensure_ascii=False))
 
 
 def score() -> None:
@@ -106,6 +119,6 @@ if __name__ == "__main__":
     if cmd == "lists":
         lists()
     elif cmd == "read":
-        read(sys.argv[2], sys.argv[3])
+        read(sys.argv[2], sys.argv[3], int(sys.argv[4]) if len(sys.argv) > 4 else None)
     else:
         score()

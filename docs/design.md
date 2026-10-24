@@ -456,7 +456,7 @@ opens on "Deel een" over "Proloog", set right; the sorter called "Deel een" a pa
 right above a chapter heading, is the heading's label and joins it (`heading-label`), as
 "CHAPTER" over "I." does. Bench (2026-10-11): no change on either set.
 
-**The read model's page roles, an input being tried (off, `ROBO_PAGE_ROLES`).** Shown a whole
+**The read model's page roles, tried and not taken (off, `ROBO_PAGE_ROLES`).** Shown a whole
 page and its numbered lines, qwen names the heading and furniture lines (`pageroles.py`, a
 short answer at ~6 s a page). On 208 tuning pages with certain labels, half holding a
 heading, it had 4 roles wrong of 5,967 lines where the pipeline had 22, and found all 126
@@ -464,6 +464,9 @@ headings where the pipeline found 110, 3 false (`experiments/probe_page_roles.py
 2026-10-23). Its answer is three more features for the trees (asked, heading, furniture),
 not a rule over them, so they learn where to trust it; trees trained with it live at their
 own path (`ROBO_SORTER_MODEL`), and a build refuses trees trained on the other features.
+On 2026-10-24 they cut role errors by a fifth left one book out, yet `bench tuning` made 60
+wrong words for 30 fixed, most on Dolittle's picture pages, where Qwen calls text beside a
+drawing furniture (docs/decisions.md).
 
 ## Reflow: where paragraphs start
 

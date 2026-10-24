@@ -426,7 +426,7 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   PyTorch) in Python.
 - Model weights live outside `~/code` (backed up hourly): models we train or download by
   hand in `~/models/roboscriptorium/`, one subfolder each.
-- Kraken 7.1.1 (a line recogniser with no language model, for the witness probe) in its own
+- Kraken 7.1.1 (a line recogniser with no language model; its witness probe was not taken, 2026-10-24) in its own
   environment, `~/models/roboscriptorium/kraken-env` (`uv venv`, Python 3.13), with scipy 1.18.1
   forced over its 1.15 pin (`uv pip install --no-deps`): 1.15's binary won't load on macOS 27.
   Its training lines and models are in `~/models/roboscriptorium/kraken/`.
