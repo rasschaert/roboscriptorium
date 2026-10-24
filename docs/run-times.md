@@ -566,3 +566,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-24 | bench tuning, line-end comma kept before lower case (warm) | 0 | 10 | 1 |
 | 2026-10-24 | bench validation, defaults (warm) | 0 | 14 | 0 |
 | 2026-10-24 | bench validation, line-end comma kept before lower case (warm) | 0 | 5 | 0 |
+| 2026-10-24 | bench tuning, half-accented doubled vowels dropped (warm) | 0 | 10 | 0 |
+| 2026-10-24 | bench validation, half-accented doubled vowels dropped (warm) | 0 | 6 | 0 |
+| 2026-10-24 | bench tuning, half accents and garbled readings dropped (warm) | 0 | 11 | 0 |
+| 2026-10-24 | bench validation, half accents and garbled readings dropped (warm) | 0 | 6 | 0 |
+| 2026-10-24 | bench tuning, half accents and marks dropped (warm) | 0 | 10 | 0 |
+| 2026-10-24 | bench validation, half accents and marks dropped (warm) | 0 | 5 | 0 |

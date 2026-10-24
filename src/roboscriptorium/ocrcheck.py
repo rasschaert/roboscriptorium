@@ -57,6 +57,11 @@ LANGUAGE_NAMES = {"nld": "Dutch", "eng": "English"}
 _ABBREVIATION = re.compile(r"(\w+)\.\s+[\"'‘’“”(]*([^\W\d_])")
 # The first letter of a line, after any opening quotes, brackets or dashes.
 _FIRST_LETTER = re.compile(r"[\"'‘’“”(—–-]*\s*([^\W\d_])")
+# A doubled a, o or u with an accent on one letter only: stress is marked on both ("vóór").
+# Not e, which French endings ("née") and a capital ("Eén") set so.
+_HALF_ACCENT = re.compile(r"(?i)aá|áa|aà|àa|oó|óo|oò|òo|uú|úu")
+# Marks prose doesn't print.
+_GARBLED = re.compile(r"[~^|]")
 
 
 @dataclass(frozen=True)
@@ -237,6 +242,8 @@ def check(
                         v
                         for v in alternatives
                         if not stop_for_comma(ours, a0, a1, v, around[1], shortened)
+                        and not half_accent(ours[a0:a1], v)
+                        and not garbled(ours[a0:a1], v)
                     ]
                     if not alternatives:
                         continue
@@ -289,6 +296,18 @@ def abbreviations(pages: list[PageText]) -> set[str]:
         for m in _ABBREVIATION.finditer(line.text)
         if m.group(2).islower()
     }
+
+
+def half_accent(ours: str, version: str) -> bool:
+    """Whether `version` accents one letter of a doubled vowel (`_HALF_ACCENT`) where the
+    layer doesn't: no spelling does, so it is never the print."""
+    return bool(_HALF_ACCENT.search(version)) and not _HALF_ACCENT.search(ours)
+
+
+def garbled(ours: str, version: str) -> bool:
+    """Whether `version` brings in a mark prose doesn't print (`_GARBLED`) that the layer
+    lacks."""
+    return bool(_GARBLED.search(version)) and not _GARBLED.search(ours)
 
 
 def stop_for_comma(

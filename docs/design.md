@@ -99,6 +99,16 @@ arbiter features tried for it first ("the next line opens in lower case", "the s
 the line") made other errors. Taken 2026-10-24: tuning after review 0.290 → 0.286
 [−0.007, −0.000], 6 unasked words fixed and none made.
 
+Two more kinds of reading are never the print, by the same test (wrong in every book's
+trust data, and true by definition): an accent on one letter of a doubled a, o or u
+("doóde", "voór"; stress is marked on both, `half_accent`; e is left out, as French
+endings and "Eén" set it so), 27 versions, 19 of them asked; and a mark prose doesn't
+print (`~`, `^`, `|`, `garbled`), on 50 suspects, 15 of them asked: where the layer was
+wrong (11) a kept version always had it right, so dropping them loses no catch. A
+capital inside a lower-case word ("aaN") is never the print either, but a reader's
+"wA-dienstplicht" for a word set in small capitals was what raised that place's question
+(De vergelding), so it stays a version.
+
 **Every body line is read, short ones too.** A dialogue line ending "keek.’" is
 where a closing quote is lost. On Goede dochter pp. 9–64, reading the lines under 12
 characters added 18 suspects. About three of them are real layer errors (`weg?` for

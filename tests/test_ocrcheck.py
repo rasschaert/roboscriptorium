@@ -85,6 +85,24 @@ def test_a_full_stop_for_a_line_end_comma_before_lower_case_is_never_the_print()
         assert ocrcheck.stop_for_comma(line, a0, a1, "stem.", nxt, set())
 
 
+def test_an_accent_on_one_letter_of_a_doubled_vowel_is_never_the_print():
+    for version in ("doóde", "làat", "voór", "vandaág", "Uúr"):
+        assert ocrcheck.half_accent("dode", version)
+    # Both letters accented, one e of a pair (a French ending, "Eén"), or the layer's own.
+    for version in ("vóór", "dáár", "fiancée", "née", "Eén", "één"):
+        assert not ocrcheck.half_accent("voor", version)
+    assert not ocrcheck.half_accent("voór", "voór,")
+
+
+def test_a_reading_with_marks_prose_doesnt_print_is_no_version():
+    for version in ("~de", "hu^is", "|k"):
+        assert ocrcheck.garbled("huis", version)
+    # A capital inside a word stays a version: a reader's "wA" can be small capitals.
+    for version in ("Huis", "wA-dienstplicht", "aaN-knop"):
+        assert not ocrcheck.garbled("huis", version)
+    assert not ocrcheck.garbled("~de", "~de,")
+
+
 def test_a_books_abbreviations_are_the_words_it_stops_before_lower_case():
     page = PageText(1, 300, 400, [Line("zie bijv. de kaart op blz. 12. Daarna", 1, 1, 9, 9)])
     assert ocrcheck.abbreviations([page]) == {"bijv"}
