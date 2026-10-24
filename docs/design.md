@@ -135,6 +135,10 @@ back a version, so these are left to trust and the bench, with no rule of their 
   clef (De kerk van de dode meisjes, The Nature of a Crime): their references are more
   standard than their prints. Told the book's style, an
   earlier winnow got worse on Goede dochter (91 → 84 of 200), so it isn't.
+  Taken away (an arbiter trained without its votes, the check run without it,
+  2026-10-24): tuning after review 0.282 → 0.316 [+0.02, +0.05], 164 wrong words made
+  against 79 fixed, questions down on most books: without it the arbiter is surer and
+  wrong more often.
 - *imajev-4b, a second vision judge, is not used* (`ROBO_ALARM_MODEL`, off). Asked clef's
   question on the crop, it is right alone on 85% and a sharper alarm than winnow-ollama:e4b
   where it speaks (clef wrong on 37% of their disagreements against 5% of their

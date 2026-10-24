@@ -85,7 +85,7 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       current reader is wrong ("unique catches"); dropped if it adds none beyond noise,
       whatever its own score. Candidates: qwen3.8 with another prompt or crop, a vision
       model not yet screened. Locally in a gap (agent, ~1 h)
-- [ ] Winnow subtracted? The context judge reads the whole paragraph where winnow reads
+- [x] ~~Winnow subtracted?~~ Done 2026-10-24: WORSE without it (tuning 0.282 → 0.316, 79 fixed, 164 made; decisions.md); Winnow stays. Before: the context judge reads the whole paragraph where winnow reads
       the sentence, and on the asked suspects it beats the arbiter that weighs winnow
       (86% against 68% on the golden books). If the arbiter without winnow, with the
       context judge after it, benches no worse, winnow goes. Leave-one-out on the trust

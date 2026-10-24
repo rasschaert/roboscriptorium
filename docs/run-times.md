@@ -574,3 +574,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-24 | bench validation, half accents and marks dropped (warm) | 0 | 5 | 0 |
 | 2026-10-24 | bench tuning, comma kept before lower case mid-line too (warm) | 0 | 10 | 0 |
 | 2026-10-24 | bench validation, comma kept before lower case mid-line too (warm) | 0 | 6 | 0 |
+| 2026-10-24 | bench tuning, arbiter without winnow (warm) | 0 | 1 | 1 |
+| 2026-10-24 | bench tuning, arbiter without winnow (warm) | 0 | 10 | 0 |
