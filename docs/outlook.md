@@ -2,26 +2,31 @@
 
 For an agent choosing what to work on. It says how close the build is to its goal,
 which areas still have room, and which have been tried without effect, so effort goes
-where it can move results. Numbers are from the benches of 2026-10-17 (commit `9c5efc0`);
+where it can move results. Numbers are from the benches of 2026-10-24 (commit `67caac4`);
 rerun `roboscriptorium bench tuning|validation` before relying on them, and update
 this file when they move.
 
 ## How close we are
 
-Bench totals (2026-10-18, Winnow-12B as the text judge): tuning **0.28**, validation
-**0.39** wrong words a page after review; paragraph breaks set wrong 0.17 and 0.14 a page.
-Per book, wrong words a page before review, questions a page, wrong words after review,
-breaks set wrong a page:
+Bench totals (2026-10-24, `tuning-20261024T130319`, `validation-20261024T132343`): tuning
+**0.286**, validation **0.502** wrong words a page after review; paragraph breaks set wrong
+0.06 and 0.20 a page. Per book, wrong words a page before review, questions a page, wrong
+words after review, breaks set wrong a page (validation books marked *v*):
 
 | Kind of book | Books (before · questions · after · breaks) |
 | --- | --- |
-| Clean scan, modern Dutch prose (Stella's kind) | Reis 0.20 · 0.30 · 0.07 · 0.08; Het ijzige land 0.37 · 0.32 · 0.18 · 0.01; De cipier 0.21 · 0.21 · 0.18 · 0.02; Doodskleed 0.64 · 1.44 · 0.38 · 0.04; Goede dochter 0.41 · 0.41 · 0.21 · 0.00; Vals alarm 0.38 · 0.42 · 0.13 · 0.02; De kerk 0.42 · 0.69 · 0.35 · 0.02; De eerlijke vinder 0.31 · 0.51 · 0.19 · 0.05 |
-| The same, chosen for their trouble | Het heft 0.33 · 0.32 · 0.21 · 0.00 (its washed-out lines); Monterosso 0.42 · 0.48 · 0.43 · 0.01 (small capitals, old-style figures); De tuin 0.70 · 0.67 · 0.28 · 0.01; Het laatste bevel 0.65 · 0.39 · 0.50 · 0.00 (its EPUB glues words) |
-| Unindented Dutch (Bruna) | Vuurspel 0.39 · 0.50 · 0.20 · 0.43; De stilte 0.80 · 0.43 · 0.34 · 0.29 |
-| Clean scan, modern English prose | Metro 0.30 · 0.43 · 0.24 · 0.02; Thief-Taker 0.51 · 0.54 · 0.42 · 0.14; Crime 0.28 · 0.26 · 0.28 · 0.01 (Gutenberg's edition); The Stranger's Child 0.64 · 0.55 · 0.48 · 0.01; Normal People 0.17 · 0.13 · 0.16 · 0.07; Artemis 0.56 · 0.44 · 0.33 · 0.34 |
-| Old typography, plates | Dolittle 1.03 · 1.39 · 0.40 · 0.18 |
-| Busy layout, pictures | You're Never Weird 1.00 · 1.13 · 0.68 · 0.20 |
-| Washed-out scan | Afscheid 9.35 · 3.47 · 0.61 · 1.73 (typed pages; its EPUB's paragraphing) |
+| Clean scan, modern Dutch prose (Stella's kind) | Reis 0.08 · 0.25 · 0.04 · 0.06; Vals alarm 0.44 · 0.48 · 0.12 · 0.00; Goede dochter 0.33 · 0.41 · 0.16 · 0.00; De cipier 0.18 · 0.24 · 0.16 · 0.01; Het schaduwhuis 0.29 · 0.52 · 0.17 · 0.01; Het ijzige land 0.36 · 0.33 · 0.18 · 0.01; De eerlijke vinder 0.34 · 0.55 · 0.22 · 0.05; Glazuur 0.49 · 0.42 · 0.22 · 0.08; Au pair 0.38 · 0.63 · 0.37 · 0.01; Doodskleed 0.60 · 1.37 · 0.39 · 0.02; Het geluid van bananen 0.64 · 0.71 · 0.42 · 0.09; De vergelding 0.79 · 0.80 · 0.62 · 0.04; De kerk *v* 0.41 · 0.67 · 0.32 · 0.02; Verminkt *v* 0.97 · 0.66 · 0.59 · 0.16 |
+| The same, chosen for their trouble | Het heft 0.30 · 0.33 · 0.20 · 0.00 (its washed-out lines); De tuin 0.68 · 0.70 · 0.25 · 0.01; Monterosso 0.27 · 0.53 · 0.30 · 0.01 (small capitals, old-style figures); Het laatste bevel *v* 0.65 · 0.35 · 0.46 · 0.00 (its EPUB glues words); De geruchten *v* 0.91 · 0.49 · 0.86 · 0.02 (small-capital names) |
+| Unindented Dutch | Vuurspel *v* 0.39 · 0.51 · 0.24 · 0.42; De stilte *v* 0.88 · 0.40 · 0.33 · 0.29; Vanille en andere smaken *v* 1.56 · 0.73 · 0.96 · 0.87 (a rekeyed reference) |
+| Clean scan, modern English prose | Metro 0.27 · 0.44 · 0.21 · 0.02; Artemis 0.57 · 0.51 · 0.30 · 0.34; Thief-Taker 0.66 · 0.68 · 0.36 · 0.16; Normal People *v* 0.15 · 0.11 · 0.16 · 0.07; The Stranger's Child *v* 0.65 · 0.51 · 0.45 · 0.01 |
+| Old typography, plates | Dolittle 0.76 · 1.26 · 0.42 · 0.21 |
+| Busy layout, pictures | You're Never Weird *v* 0.91 · 1.11 · 0.65 · 0.16 |
+| Washed-out scan | Afscheid 9.13 · 3.42 · 0.62 · 0.00 (typed pages) |
+
+The sets changed since the last table (2026-10-18): Au pair, De vergelding, Glazuur and
+Het schaduwhuis joined tuning, Verminkt, De geruchten and Vanille validation, Crime is
+trained on but no longer scored, and several pairs were retired (decisions.md), so the
+totals don't compare with earlier ones.
 
 Since 2026-10-11 (tuning 0.31, validation 0.70): the trees on by default, the arbiter
 retrained with the reviewers' answers, Metro's closing quotes, the lower-case paragraph
