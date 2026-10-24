@@ -173,6 +173,10 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   accent 0.9, space 0.95, quote 0.7 and letters 0.85 left 7 fewer silent errors for 12
   fewer questions with each book left out; on the bench questions fell 0.732 → 0.721 a page
   and unasked errors rose 0.174 → 0.176. One threshold is as good as several.
+- **Qwen's own token probabilities as a silent-error signal** (2026-10-24): on lines where
+  glm-ocr agrees with it, the weakest token's log-probability and runner-up margin mark
+  qwen's errors with AUC 0.57, and image-gain (with the crop against without) 0.44. They
+  mark its errors well only where another reader already disagrees (0.78).
 
 ## Inference speed: what a cold page costs, and what's been tried
 

@@ -255,11 +255,12 @@ costs against what it could reach; every reader candidate passes the new-model g
       full stop left out), and it shares the others' errors ("some one", a colon for a full
       stop); right alone on 3, breaking 74 qwen reads right. The other fold not trained:
       half the set settles it. The per-book fine-tune and the ensemble were not tried
-- [ ] Image-gain as a silent-error signal (Fable): each qwen and glm-ocr token's
-      log-probability with the crop against without it, one extra text-only pass; a low gain
-      marks a token from the language prior. AUC on the frozen set's silent errors. Argon
-      proposes raw runner-up tokens instead (`top_logprobs`, no extra pass) and DeepSeek
-      neither; measure both from one run (agent, ~2 h)
+- [x] ~~Image-gain as a silent-error signal~~ (Fable; Argon's runner-up margin; NOT TAKEN
+      2026-10-24, `probe_image_gain.py`): on the 800 frozen lines, qwen wrong on 45, the
+      weakest token's log-probability marks them with AUC 0.78 and the runner-up margin 0.77,
+      image-gain 0.47 (no better than chance). Where glm-ocr reads as qwen does (676 lines,
+      qwen wrong on 12, the errors no disagreement flags) the three are 0.57, 0.57 and 0.44:
+      qwen is as sure of its silent errors as of its right lines
 - [x] ~~Real-word confusion pairs mined from the golden pages~~ (Fable; NOT TAKEN
       2026-10-23, `probe_book_consistency.py --pairs`): pairs from the other tuning books'
       errors flag 216 word types whose partner occurs in the book, mostly common words with an

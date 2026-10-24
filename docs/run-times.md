@@ -560,3 +560,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-24 | bench tuning, defaults before page roles (warm) | 0 | 10 | 0 |
 | 2026-10-24 | bench tuning, page roles into the role trees (warm) | 0 | 11 | 0 |
 | 2026-10-24 | bench tuning, ask threshold per kind (warm) | 0 | 11 | 0 |
+| 2026-10-24 | qwen image-gain: frozen reader set with and without crops (800 lines) | 0 | 41 | 0 |
