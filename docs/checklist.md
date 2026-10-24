@@ -595,7 +595,9 @@ In this order:
       truly. Listed in work/probes/unasked/rows.txt
 - [ ] Line-end hyphens as questions where the judge is unsure (low): 34 of the 41 unasked
       compound-hyphen errors sit at a line's end, 0.02 wrong words a page; a question
-      pays only in a band where the judge is wrong more than about one time in seven
+      pays only in a band where the judge is wrong more than about one time in seven.
+      From the 2026-10-24 hyphen-judge probe: Dutch real hyphens are 14 of 542 undecided
+      breaks (3%), so no band pays; English 6 wrong of 30, near the price; not worth building
 - [x] De eerlijke vinder's unasked errors (2026-10-15): 28 of 38 were page numbers the
       layer joins to a body line; split off (`pdf._apart`), wrong words 0.88 → 0.42 a page
       on the short test; `bench tuning` 0.32 → 0.30 after review, no book worse
