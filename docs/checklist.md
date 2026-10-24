@@ -182,8 +182,10 @@ models could do. Each probe below asks whether that's still true, on a few golde
       errors 137, tuning 30 fixed / 27 made (5 unasked), NO CHANGE; not taken.** Left: mottos
       and an epigraph's attribution (Bananen, De vergelding), which a next try would have to
       tell qwen about
-- [ ] The text layer as a second reader only: the page built from the whole-page reading,
-      the layer and the line readers judging where they differ
+- [x] ~~The text layer as a second reader only~~: closed 2026-10-24 on the evidence above: a
+      whole-page reading starts from more errors than the pipeline (Qwen 76 wrong words over
+      19 pages against 27, glm-ocr 103) while the layer reads 0.21% CER on modern Dutch, so the
+      page would start from the worse reading. Reopen when a page reader beats the layer
 - [x] ~~Page kinds for `init` by Qwen from the page image~~: done 2026-10-24, no better than
       clef-flash (ends right 20 and 23 of 27 against 22 and 21, 3 ends cut against 2); not taken
 - [ ] **Per-book settings and extra witnesses** (the user, 2026-10-22: do some books respond
