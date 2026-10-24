@@ -2,126 +2,136 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the sets (decisions.md, 2026-10-23).
+end of every session. Updated 2026-10-24 ~19:00 by the session that screened LightOnOCR-3
+and took the day's three OCR-check rules and the paragraph fix (decisions.md, 2026-10-24).
 
 ## Running
 
 Nothing runs.
 
-Done 2026-10-24 (decisions.md): Kraken as a witness and Qwen's page roles as an input to
-the role trees, both not taken; crops padded to Qwen's grid read worse; a sureness threshold
-per kind of question, not taken (replay gain, bench no change); qwen's token probabilities
-as a silent-error signal, not taken (AUC 0.57 where glm-ocr agrees); qwen as the line-end hyphen judge, no better than clef; LightOnOCR-3 1B and 4B as readers, unfit (weaker than olmOCR-2). The quiet set (`quiet_set.py`): the layer and both readers are wrong together on only 23 lines of the tuning slices, so more OCR models as line witnesses are deprioritised; the unasked errors left sit at line joins (25 compound hyphens with no suspect) and in the arbiter's decisions (152 with a suspect, 38 of them a right layer changed). A line-end comma is kept before a lower-case line (`stop_for_comma`, taken: 6 fixed, none made), and readings with a half-accented doubled vowel or `~ ^ |` are dropped (taken, no change on the bench). Winnow subtracted: worse (0.282 → 0.316), it stays. Qwen for `init`'s page kinds: no better than clef-flash. Qwen's page roles with picture lines marked: half the harm of the morning's, NO CHANGE, off. Any short line in justified text ends a paragraph (salutations, datelines: breaks 0.057 → 0.045 a page on tuning, 0.202 → 0.196 on validation, taken). The baselines are
-`work/bench/tuning-20261024T175025` and `work/bench/validation-20261024T175525` (today's defaults).
+The baselines are `work/bench/tuning-20261024T175025` (after review 0.282, breaks 0.045 a
+page) and `work/bench/validation-20261024T175525` (0.503, 0.196): today's defaults.
 
-**Night of 2026-10-21/22, in one paragraph.** The read model at 450 dpi is the best vote witness found so far on the reader set (+12 lines, none broken; 300 dpi adds 4, 600 dpi 9, so it is resolution), and glm-ocr alone gains 54 lines at 450 dpi. But swapping the pipeline's readers to 450 dpi (`ROBO_READER_DPI=450`, cold `bench quick`, earlier arbiter) made 18 wrong words and fixed 11: not taken. As an extra witness it was closed on 2026-10-23 without a run: right alone on 0 of 57 lines no reader flags (`probe_dpi450_alone.py`). `init` now drafts title, author and translator (title 26, author 25 of 27 right). clef:27b is no better than clef-flash for the page-kind ends (21/21 against 22/21). All in decisions.md, 2026-10-22.
+## Done 2026-10-24 (decisions.md has every number)
 
-**Models.** No model weights live outside Ollama any more (the user, 2026-10-21: `~/code` is backed up hourly, so weights never go under it, and every download over 1 GB is asked first). Every model the user asked for was screened (decisions.md, 2026-10-20 and 21) and deleted: PaddleOCR-VL, Qwen2.5-VL-72B, H2O-Lightning-Omni-4B, fonles-decision-1, Fusion and, last, olmOCR-2-7B (it helped a plain vote, 801 → 809, but not the arbiter, nor whole pages). `work/models/mlx-env` (809 MB, the MLX runtime for `mlx_read_set.py` and `mlx_read_crops.py`) stays for a future MLX candidate; `experiments/h2o_triage.py` and `fonles_triage.py` need their environments built again. The gate for a new vision model is below.
-
-**Arbiter.** Unchanged: the earlier one, restored (tuning 0.29, run `tuning-20261021` of the sanity bench). The line-end features (span ends its line, next line's case) were tried and not taken: tuning 0.29 → 0.30, glued or split words worse.
-
-## Done 2026-10-23 (decisions.md)
-
-- Reader set v3 (v2 less the retired 11/22/63; `tryout.py prune reader`), the probes pointed at it.
-- The 450 dpi witness closed without a run: never right alone on lines no reader flags.
-- Ollama is 0.40.9 (an unrecorded update): the decision models answer as cached
-  (`probe_judge_drift.py`, new, for the judges).
-- Set review: Afscheid's breaks unscored (`breaks_unlike_print`), The Nature of a Crime out of
-  tuning and quick but still arbiter training (its removal from training was worse:
-  unasked fixed 7, made 16). New tuning baseline `tuning-20261023T133740`. The arbiter
-  files before the test retrain are in `work/models/ocr-trust-backup-20261023/` (restored;
-  the folder can go).
-- Flint skipped on its card (text-only coding model). Laya fine-tuned for line roles on MLX
-  (Unsloth's `FastDecisionModel` trains Laya and Clef on this Mac, ~15 min) on rows whose labels
-  can't be wrong (`laya_roles_data.py`): alone 75 wrong of 19,422 clean validation lines
-  against the pipeline's 30; not pursued (`~/models/roboscriptorium/laya-roles/full`).
-- Paragraph starts by qwen from the page image: fixes 53 of 78 on error pages but sets 0.11–0.15
-  a page wrong on clean ones (the reflow 0.06): not taken.
-- Verminkt scored on 7–100 (`scoring.cut_to_pages`: a slice without chapters cut to its
-  paragraphs). `build` and `review` start from a PDF alone, `init` drafting book.toml.
-
-## Done today (decisions.md, 2026-10-20)
-
-- **Sets**: De vergelding and Glazuur are tuning (no trust data yet, `bench.NO_TRUST_DATA`),
-  Vanille en andere smaken is validation; `bench first-look` is empty. The line-role trees
-  were retrained on the larger tuning set (`train_sorter.py --save`); every tuning bench from
-  now on is against those trees, so older bench records aren't paired with new ones.
-- **The OCR check keeps a line end's break hyphen where the joined word is known**
-  (`ocrcheck.fixed_text`, both writers): tuning fixed 20 wrong words (18 unasked), made 0, all
-  in De vergelding; validation 0 and 0. 13 such fixes exist in all the books' caches.
-- **Null results, recorded**: the `small-caps` all-capitals version (0 of 11 known errors
-  fixed; branch `small-caps` stays unmerged), lost text by ink in a gap or uncovered ink
-  (the "lost lines" are mostly runs of dots and one-word drops; only a dot-led line is findable
-  by ink, left of a line's start), a higher-resolution crop for line-end commas.
-- **Looked at**: Vanille's headings 1 of 15 (non-fiction sub-heads no tuning book teaches; a
-  non-fiction pair is in the gaps to hunt, golden-notes.md); De vergelding's unasked errors.
-- Andere levens reviewed through `--find` (one erratum), Ex-minnaar's questions answered
-  and rebuilt, the unused imajev model removed from Ollama.
+- **Taken**:
+  - a full stop for a line's last comma before a lower-case line is no version
+    (`ocrcheck.stop_for_comma`: 6 unasked words fixed, none made);
+  - readings that accent one letter of a doubled a, o or u, or carry `~ ^ |`, are no version
+    (`half_accent`, `garbled`: no change on the bench, never right in the trust data);
+  - any short line in justified text ends a paragraph (`reflow._short_end`: salutations and
+    datelines before a letter's flush body; breaks 0.057 → 0.045 on tuning,
+    0.202 → 0.196 on validation, words unchanged).
+- **Not taken**:
+  - a sureness threshold per kind of question;
+  - Qwen's token probabilities, image-gain included, as a silent-error signal;
+  - Qwen as the line-end hyphen judge;
+  - Kraken as a witness;
+  - Qwen's page roles for the trees, unmarked (more wrong words) and with the lines inside
+    pictures marked (half the harm, still no change; code kept, off);
+  - the comma rule mid-line (1 fixed, 1 made: an author's stop before a lower-case
+    quotation);
+  - Winnow subtracted (worse, 0.282 → 0.316: it stays);
+  - Qwen for `init`'s page kinds (no better than clef-flash, more ends cut).
+- **Screened**: LightOnOCR-3 1B and 4B as line readers, unfit, weaker than olmOCR-2 (the 1B's
+  checkpoint needs its weights renamed, a bare crop needs a white margin;
+  `experiments/lighton_read.py`).
+- **New instruments**:
+  - the quiet set (`experiments/quiet_set.py`, 423 frozen lines where the layer, glm-ocr
+    and qwen agree): they are wrong together on only 23 lines of the tuning slices, so a
+    new line witness can add a handful;
+  - `experiments/witness_score.py` for the reader set.
+- **Measured**:
+  - the trust data's `choice` is the fixed rule's, not the arbiter's: join to a build's
+    `ocr-check.json` for the arbiter's;
+  - books set flush put no extra lead between paragraphs;
+  - `bench quick` ranks a change that acts everywhere as tuning does, with a fifth of the
+    power, and never sees front matter or picture pages;
+  - batching identical questions would save 7% of cards;
+  - an accent told from an i-dot by shape alone: AUC 0.66–0.76, too weak (the per-book
+    alphabet parked);
+  - ABBYY's letter confidence: private on every lent scan, dropped.
+- **Sets reviewed**: no pair past the thresholds, nothing retired.
+- **Stella**: rebuilt with all of the above, text and paragraphs unchanged.
 
 ## Next, in order
 
-1. **Emphasis accents and rare glyphs** (the largest unasked class together with them): half of the 42 stress-accent errors are real (an acute accent on an i for emphasis: "zíjn", "níét"), the rest the reference's slips (decisions.md, 2026-10-21); no prompt or reader tried keeps them at 300 DPI (a 450 DPI crop keeps 2 of 6). The dotless ı of "Sıla" (five times in Het geluid van bananen) is the same kind. The next step is a reader that sees the accent: a word crop at high resolution, only where a word is a likely target; learned, not a list.
-2. **A verdict batch for the reference's slips: not worth the user's time.** The 46 unasked stress-accent places of the latest benches (`work/probes/unasked/candidates-stress-accent-20261021.json`, commands from `experiments/review_batch_commands.py`) span 20 books; on the reference's half our text already matches the print, so a verdict only tidies the measure and changes no book. Ask only if a cleaner measure is wanted.
-3. **A line-end compound the join closed** (the mild class): done for what the book itself shows (hyphen spellings now count the whole body: compound hyphens 0.023 → 0.020 on tuning); 24 of 27 have no other evidence in the book (the word occurs once), for the word list or a judge. The hyphen judge asks only English books; Dutch closes 355 of 361.
-4. **Lost lines** (about half are held by the whole-page readers but not as clean inserts; the rest are decorated openings no whole-page reader reads): an opening-line reader (`missing.py` on line starts and gaps).
-5. **A non-fiction pair with numbered chapters and sub-heads** for tuning (the user supplies candidates); De geruchten's headings; the checklist's remaining steps.
+1. **The arbiter's own silent errors** (152 of the 236 unasked errors this morning sat where a
+   suspect was raised and the arbiter chose wrong). The biggest groups:
+   - a right layer changed: stress accents added or dropped;
+   - a shared misreading kept where qwen, both judges and the word list say otherwise
+     ("vijt" for "vijf", "cen" for "een" in De vergelding, whose glm-ocr and tesseract share
+     the layer's error).
+
+   De vergelding, Au pair and Glazuur aren't trained on (training on them on 2026-10-20 made
+   the others worse). A feature, not a retrain, is the next try.
+2. **Compound hyphens at line ends** (25 unasked with no suspect): no cue found in qwen, clef
+   or the obvious signals; only a learner with a new feature can reach them.
+3. **Emphasis accents and the dotless ı** (the quiet set's largest classes after small
+   capitals): they need each mark tied to its letter, which the layer's letter boxes can't give.
+   A reader that gives letter positions is the way in.
+4. **Verse and lists** (Dolittle's poem, Thief-Taker's song, Glazuur's numbered list): most of
+   the paragraph errors left on tuning; in scope later, per AGENTS.md.
+5. **Qwen faster on the same output** (checklist): speed buys the page-level passes.
 
 ## When a new vision model appears
 
-The line reader is the lever, and models change fast (the user, 2026-10-21: Qwen3.8-27B is two months old and beats the January 2025 state of the art by a wide margin). Gate for a candidate that fits 64 GB, in order: `experiments/screen_reader.sh <label> <model dir or ollama name>` (its score on the reader set, then the vote simulation), `probe_accent_readers.py` (emphasis accents, the dotless ı: the open class), then, if it earns it, a trust-data rebuild with it as a reader and a bench. Ask before a download over 1 GB.
+Gate for a candidate that fits 64 GB, in order:
+1. the quiet set: can it read any of the 23 lines every reader gets wrong? A few minutes;
+2. `experiments/screen_reader.sh <label> <model dir or ollama name>` (the reader set, then
+   the vote simulation);
+3. `probe_accent_readers.py`;
+4. only then a trust-data rebuild and a bench.
+
+Ask before a download over 1 GB. A model outside Ollama gets its own environment in
+`~/models/roboscriptorium/` (as `lighton-env`).
 
 ## Waiting on the user
 
-- **A flush-set book for tuning** (golden-notes.md, gaps): a scan and the publisher's EPUB of a
-  book printed without paragraph indents, not A.W. Bruna's. Without one, no fix for the flush
-  books' missed paragraph starts can be chosen.
-- **Stella's read-through** (the checklist, Stella): rebuilt 2026-10-24 with today's changes, its
-  text is word for word the 2026-10-19 copy, `work/stella/epubs/stella-2026-10-19-0014.epub`, so
-  nothing the agent knows how to improve changes it; read that one.
-- **Specks** (parked, the user has no time for it now): the speck classifier ranks well on three labelled Thief-Taker pages (`probe_speck_blobs.py`, `--no-position`) but needs labelled pages from other scans before it is trusted; sightings are in `work/probes/specks/sightings.jsonl`. A "speck" kind in the review UI was not built.
-- **Au pair's small capitals** (13 of the 236 unasked errors on `tuning-20261024T063416`): the
-  print sets "FNAC", "GUYENNE" in small capitals, the publisher's e-book writes them in lower
-  case with no class, the build in capitals. Verdicts settle them, ~2 minutes:
+- **Stella's read-through**: `work/stella/epubs/stella-2026-10-19-0014.epub`. Today's changes
+  leave its text and paragraphs as they are.
+- **A flush-set book for tuning** (golden-notes.md, gaps): a scan and the publisher's EPUB of
+  a book printed without paragraph indents, not A.W. Bruna's. Every break error left in the
+  flush books is a start after a full line, which only a learned model finds, and without a
+  flush tuning book no such change can be chosen.
+- **Au pair's small capitals** (13 unasked errors that measure its reference): verdicts, about
+  two minutes:
   `uv run roboscriptorium review work/au-pair--ia-scan --pages 7-99 --chapters 1-24 --only work/probes/unasked/au-pair-smallcaps-20261024.json`
-- The LightOnOCR-3 weights (~12 GB in `~/models/roboscriptorium/lightonocr-3-{1b,4b}`) stay until
-  the user says they can go.
-- `work/models/mlx-env` (809 MB, MLX readers) stays until the user says it can go.
+- **Specks** (parked): the speck classifier needs labelled pages from more scans.
+- **Disk**: the LightOnOCR-3 weights (~12 GB, `~/models/roboscriptorium/lightonocr-3-{1b,4b}`) and
+  `work/models/mlx-env` (809 MB) stay until the user says they can go.
+- Andere levens: seven candidate misprints saved as printed
+  (`work/probes/carrere-editions/andere-levens-checked.md`); the user says which, if any, are
+  misprints.
 
-## Loose ends found at the end of the 2026-10-21/22 session
+## Standing notes
 
-- **The trims are done**: Na die nacht held back rather than retired (the user, 2026-10-23),
-  Verminkt sliced to 7–100.
-- **Worktrees**: the twelve merged ones were removed with their branches (2026-10-23, the user
-  approving). `-py315` holds two untracked scratch files; `-caps` the unmerged null result.
-- **Run-in-screen traps hit tonight**: `experiments/screen_reader.sh <label>` treats the label as an Ollama model (it fails for a readings-file label such as `…+dpi450`: run `tryout.py`'s reading step yourself, then `vote_sim.py <stem>` directly); a watcher's `Monitor` expires after 30 minutes however long its timeout, so a long run needs it re-armed.
-- **Per-book settings and extra witnesses** is a new checklist item ("Assumptions to test"): start with the agreement probe.
-- Andere levens: the other seven candidate misprints
-  (`work/probes/carrere-editions/andere-levens-checked.md`) were saved as printed with no
-  erratum; the user says which, if any, are misprints. Pages 135 and 153 span a line
-  break, so their entries are written by hand.
-- **Een Russische roman is on hold entirely** (the user, 2026-10-19): a library copy and
-  photographs of three washed-out pages (46, 47, 259). No builds, reviews or probes on it
-  until they arrive; the chains, diaeresis and footnote-star fixes are judged on its next build.
-- **No full read-throughs of any book soon** (the user, 2026-10-20): don't schedule them.
-- Stella's review server (port 8765) may still run from `../roboscriptorium-find`: stop it.
+- **Een Russische roman is on hold** (the user, 2026-10-19) until three washed-out pages
+  (46, 47, 259) are photographed from a library copy: no builds, reviews or probes on it.
+- **No full read-throughs of any book soon** (the user, 2026-10-20) beyond Stella's.
+- `experiments/screen_reader.sh <label>` treats the label as an Ollama model; for a readings
+  file label run `tryout.py`'s reading step and `vote_sim.py <stem>` directly.
+- A Monitor watcher expires after 30 minutes whatever its timeout: re-arm it on a long run.
 
 ## Worktrees
 
 `../roboscriptorium-caps` holds the unmerged `small-caps` branch (null result); `-py315` two
-untracked scratch files. The rest were removed on 2026-10-23.
+untracked scratch files.
 
 ## How to run things
 
-- Long runs through `experiments/timed.sh` inside `experiments/detached.sh` (a screen),
-  each with a watcher. Warm benches take 2–5 minutes (tuning), ~10 (validation).
-- A bench of a change: `git worktree add ../<name> HEAD --detach` for the "before", then
-  `uv run --project ../<name> roboscriptorium bench tuning` from this directory (so `work/` is
-  reached by path, never linked) and the same from main for the "after";
-  `bench-diff <old.json> <new.json>` compares them place by place. `--against` takes a path.
+- Long runs through `experiments/timed.sh` inside `experiments/detached.sh` (a screen), each
+  with a watcher. Warm benches take about 11 minutes (tuning) and 5 (validation); `bench
+  quick` 6.
+- A bench of a change: run it, then compare against the baseline by path:
+  `bench tuning --against work/bench/<run>.json`, `bench-diff <old.json> <new.json>` place by
+  place, and `bench.verdict(old, new)` in Python for the paired interval. A change of
+  settings only (an environment variable) needs no worktree; a code change's "before" is the
+  baseline run.
 - Check every writer of what you change: the scored text is built from `corrections.apply`,
-  the question view from `ocrcheck.apply`; a fix to one alone showed no change at all.
-- Stopping a run: `experiments/stop-run.sh <name>`; a job waiting on another's screen
-  starts the moment that screen goes, so stop the waiters first.
+  the question view from `ocrcheck.apply`.
+- Stopping a run: `experiments/stop-run.sh <name>`; a job waiting on another's screen starts
+  the moment that screen goes, so stop the waiters first.
 
 ## Recovery, 2026-10-11: an agent destroyed work/
 
