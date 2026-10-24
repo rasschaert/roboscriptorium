@@ -529,7 +529,8 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   candidate) sits in `bench.RESERVE`, guarded the same way and in no run. A validation book's sibling (same publisher, translator and e-book house) never trains
   while it validates. Beside them, `bench quick` runs a chapter or two of each tuning
   book (~280 pages, inside their tuning slices): a change's short test, which
-  `bench tuning` then confirms.
+  `bench tuning` then confirms. It has a fifth of the power and never sees front matter,
+  mottos or picture pages (2026-10-24), so a change to those goes to `bench tuning` at once.
 - **Checking a candidate pair** (scan PDF plus the publisher's EPUB) before writing its
   manifest: `uv run python experiments/probe_candidate.py <scan.pdf> <ref.epub> [heading
   prefix …]`, no models, about 10 s per 100 pages. It prints the scan's kind, the EPUB's

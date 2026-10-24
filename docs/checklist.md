@@ -402,7 +402,7 @@ steps; building Ex-minnaar and Stella has no urgency. The findings are in decisi
 - [x] ~~FKA USA's fixes from its first bench (note marks as LaTeX, a dropped epigraph,
       a missing part heading)~~ (2026-10-13, dropped): the pair was retired as a suspect
       (30% of its body lines unplaced) and its files deleted
-- [ ] A lighter feedback loop (agreed 2026-10-13; its two rules are in AGENTS.md): the quick
+- [x] ~~A lighter feedback loop~~: checked 2026-10-24 (decisions.md): quick ranks a change that acts everywhere in the same direction with less power, and misses one acting on front matter or pictures (outside its slices); it stays the short test, tuning the verdict. Before (agreed 2026-10-13; its two rules are in AGENTS.md): the quick
       tier is built (2026-10-17, `bench quick`: 15 tuning books, 10–25 pages each,
       282 in all, each ending where the next chapter opens a page); left: check that it
       ranks changes as the full bench does, by running it beside `bench tuning` before
