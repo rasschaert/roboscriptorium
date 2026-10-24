@@ -290,7 +290,7 @@ costs against what it could reach; every reader candidate passes the new-model g
       prompt, batched decoding (mlx-vlm, vllm-mlx), speculative decoding with the text layer
       or glm-ocr as the draft (lossless under greedy decoding); readings must stay identical
       on the frozen set. Speed buys the page-level role pass everywhere (agent, ~1 day)
-- [ ] Review: identical questions batched into one card, and same-page reference crops
+- [ ] Review (counted 2026-10-24: batching identical questions saves 30 of 456 OCR cards on tuning, 7%): identical questions batched into one card, and same-page reference crops
       (this printer's comma and full stop, a plain i and an accented vowel) beside each
       punctuation, accent or small-capital question (Argon); answers propagated to every other
       occurrence of the word (Fable). The user's time: a design, then the user's say
