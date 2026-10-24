@@ -182,6 +182,9 @@ Don't repeat these without a new reason (details in docs/decisions.md):
 - **LightOnOCR-3 (1B, 4B) as a line reader** (2026-10-24): the 4B on padded crops hard
   405 of 480 (qwen 436, olmOCR-2 426), right alone on 4, none of the lines every reader
   gets wrong; bare crops send the 1B into loops. Weaker than olmOCR-2, which failed as a witness.
+- **More OCR models as line witnesses** (2026-10-24, the quiet set): the layer, glm-ocr
+  and qwen are wrong together on 23 lines of the tuning slices, 7 of them small capitals
+  and 5 a dotless ı; that is all a new line reader could add where no suspect is raised.
 
 ## Inference speed: what a cold page costs, and what's been tried
 

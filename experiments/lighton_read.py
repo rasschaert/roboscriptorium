@@ -3,7 +3,7 @@ witnesses"). Runs in its own environment, as LightOnOCR needs a newer transforme
 project's; writes the readings where `tryout.py` and `vote_sim.py` look for them.
 
     ~/models/roboscriptorium/lighton-env/bin/python -I experiments/lighton_read.py \\
-        ~/models/roboscriptorium/lightonocr-3-1b [n] [--scale 2] [--pad 120]
+        ~/models/roboscriptorium/lightonocr-3-1b [n] [--scale 2] [--pad 120] [--set quiet]
     uv run python experiments/tryout.py run reader lighton-3-1b   # scores, reads nothing
     uv run python experiments/vote_sim.py lighton-3-1b
 
@@ -11,7 +11,8 @@ The model is asked as its card says for transcription: the image alone, no promp
 off, but greedy rather than sampled, as every reader on the set is. Its first non-empty line
 is the reading. `n` reads the first n lines, prints them beside the truth and writes nothing;
 `--scale` enlarges each crop before the processor sees it, `--pad` sets it on a white margin
-of that many pixels (a bare line crop sends the model into endless repetition on some scans).
+of that many pixels (a bare line crop sends the model into endless repetition on some scans),
+`--set quiet` reads the quiet set (`quiet_set.py`) instead.
 """
 
 import hashlib
@@ -25,7 +26,7 @@ from pathlib import Path
 import torch
 from PIL import Image, ImageOps
 
-SET = Path("work/tryout/reader-v3")
+SETS = {"reader": Path("work/tryout/reader-v3"), "quiet": Path("work/tryout/quiet-v1")}
 MAX_TOKENS = 200
 
 
@@ -76,13 +77,13 @@ def read(model, processor, device: str, image: Image.Image) -> str:
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    opts = {"--scale": 1.0, "--pad": 0.0}
+    opts = {"--scale": 1.0, "--pad": 0.0, "--set": "reader"}
     for flag in opts:
         if flag in args:
             k = args.index(flag)
-            opts[flag] = float(args[k + 1])
+            opts[flag] = args[k + 1] if flag == "--set" else float(args[k + 1])
             del args[k : k + 2]
-    scale, pad = opts["--scale"], int(opts["--pad"])
+    scale, pad, SET = opts["--scale"], int(opts["--pad"]), SETS[opts["--set"]]
     model_dir = Path(args[0]).expanduser()
     limit = int(args[1]) if len(args) > 1 else None
     name = model_dir.name.replace("lightonocr-", "lighton-") + (f"+x{scale:g}" if scale != 1 else "") + (f"+pad{pad}" if pad else "")
