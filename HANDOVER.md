@@ -6,9 +6,16 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
 
 ## Running
 
-Nothing runs. The night's results (decisions.md, 2026-10-24): Kraken as a witness and Qwen's page roles
-as an input to the role trees, both not taken; crops padded to Qwen's grid read worse. The
-tuning baseline is `work/bench/tuning-20261024T063416` (today's defaults).
+**The image-gain probe** (`experiments/probe_image_gain.py`, screen `robo-image-gain`, log
+`work/runs/image-gain.log`, ~2 h from 09:30 on 2026-10-24): qwen's token log-probabilities
+with and without the crop on the 800 frozen reader lines; it resumes from its caches in
+`work/probes/image-gain/` if stopped. Next on Qwen: the hyphen judge probe asked of qwen
+through its answer tokens (`probe_hyphen_judge.py tokens:qwen3.8:27b-nvfp4`, minutes).
+
+Done 2026-10-24 (decisions.md): Kraken as a witness and Qwen's page roles as an input to
+the role trees, both not taken; crops padded to Qwen's grid read worse; a sureness threshold
+per kind of question, not taken (replay gain, bench no change). The tuning baseline is
+`work/bench/tuning-20261024T063416` (today's defaults).
 
 **Night of 2026-10-21/22, in one paragraph.** The read model at 450 dpi is the best vote witness found so far on the reader set (+12 lines, none broken; 300 dpi adds 4, 600 dpi 9, so it is resolution), and glm-ocr alone gains 54 lines at 450 dpi. But swapping the pipeline's readers to 450 dpi (`ROBO_READER_DPI=450`, cold `bench quick`, earlier arbiter) made 18 wrong words and fixed 11: not taken. As an extra witness it was closed on 2026-10-23 without a run: right alone on 0 of 57 lines no reader flags (`probe_dpi450_alone.py`). `init` now drafts title, author and translator (title 26, author 25 of 27 right). clef:27b is no better than clef-flash for the page-kind ends (21/21 against 22/21). All in decisions.md, 2026-10-22.
 
