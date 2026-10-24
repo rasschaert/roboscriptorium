@@ -196,7 +196,9 @@ models could do. Each probe below asks whether that's still true, on a few golde
             independent reader; does the setting with the most agreement score best on the
             reader set? No models beyond the readings already made for dpi; contrast, crop and
             prompt variants need one reading each of the 850 lines.
-      - [ ] Variants as extra *witnesses* for the vote simulation, not a choice: contrast
+      - [ ] (Capped 2026-10-24: the quiet set has 23 lines every reader gets wrong, so a
+            witness can add a handful; screen a variant there first, in minutes.) Variants
+            as extra *witnesses* for the vote simulation, not a choice: contrast
             stretch, tighter and wider crop, a second prompt wording, each through
             `vote_sim.py`, then on the lines no reader flags (as
             `probe_dpi450_alone.py` does): the frozen set is 60% hard lines, so its vote
@@ -204,9 +206,9 @@ models could do. Each probe below asks whether that's still true, on a few golde
       - [x] ~~The 450 dpi qwen reading as an extra arbiter reader~~ (dropped 2026-10-23):
             right alone on 0 of 57 quiet lines where it differs, and the 2026-10-09
             bench of the same second look found no gain.
-      - [ ] Token probabilities of a reading (Ollama's logprobs) as a per-line confidence,
-            calibrated on the reader set; does it rank wrong readings below right ones better
-            than the readers' disagreement does?
+      - [x] ~~Token probabilities of a reading as a per-line confidence~~: done 2026-10-24
+            (`probe_image_gain.py`): AUC 0.78 over all lines, 0.57 where glm-ocr agrees, so it
+            marks only what the readers' disagreement already flags; not taken
       - [ ] Only if the first shows a signal: a per-book pre-pass (20–30 pages through the
             variants, the setting with the most agreement kept), learned from the golden
             books' fingerprints, not a hand-written rule.
