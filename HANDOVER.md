@@ -6,7 +6,10 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
 
 ## Running
 
-Nothing runs.
+- `robo-lighton-4b` (screen, ~35 min from ~12:50): LightOnOCR-3-4B reads the frozen reader
+  set bare, then on a 120 px white margin (`work/probes/lighton/run-4b.sh`); readings land in
+  `work/tryout/reader-v3/readings/lighton-3-4b*.json`. Then score with `tryout.py run reader`,
+  `vote_sim.py` and `witness_score.py`. The 1B is done: not a witness (decisions.md, when written).
 
 Done 2026-10-24 (decisions.md): Kraken as a witness and Qwen's page roles as an input to
 the role trees, both not taken; crops padded to Qwen's grid read worse; a sureness threshold

@@ -430,6 +430,10 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   environment, `~/models/roboscriptorium/kraken-env` (`uv venv`, Python 3.13), with scipy 1.18.1
   forced over its 1.15 pin (`uv pip install --no-deps`): 1.15's binary won't load on macOS 27.
   Its training lines and models are in `~/models/roboscriptorium/kraken/`.
+- LightOnOCR-3 (1B, 4B) in its own environment, `~/models/roboscriptorium/lighton-env` (`uv venv`,
+  Python 3.13; transformers 5.20, torch with MPS, torchvision for the 4B's processor), weights in
+  `~/models/roboscriptorium/lightonocr-3-{1b,4b}/`; `experiments/lighton_read.py` reads the
+  frozen reader set with it.
 - Models set up by hand (Winnow-12B, `imajev:4b`, imajev on `llama-server`, the
   DocLayout-YOLO weights): [docs/models.md](docs/models.md), Setup.
 - Word lists: `work/lexicon/{nld,eng}-words.txt`, built by `lexicon.py` from the tessdata
