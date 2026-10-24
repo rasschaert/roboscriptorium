@@ -6,7 +6,10 @@ end of every session. Updated 2026-10-23 ~17:00 by the session that trimmed the 
 
 ## Running
 
-Nothing runs.
+- `robo-no-winnow` (screen, ~20 min from ~14:55): the checklist's "Winnow subtracted?": an
+  arbiter trained without Winnow's votes (`work/models/ocr-trust-no-winnow.pkl`, `ROBO_CHECK_MODEL=`),
+  then warm tuning and validation benches against `tuning-20261024T141134` and
+  `validation-20261024T141643` (`work/runs/no-winnow.sh`). The arbiter in use is untouched.
 
 Done 2026-10-24 (decisions.md): Kraken as a witness and Qwen's page roles as an input to
 the role trees, both not taken; crops padded to Qwen's grid read worse; a sureness threshold
