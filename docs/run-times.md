@@ -597,3 +597,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-25 | bench tuning, picture-marked page roles on the grown slices (page roles cold for new pages) | 585 | 120 | 0 |
 | 2026-10-25 | bench validation, picture-marked page roles (warm) | 0 | 6 | 0 |
 | 2026-10-25 | bench tuning, defaults on the grown slices with Au pair's verdicts (warm) | 0 | 12 | 0 |
+| 2026-10-25 | bench tuning, page roles without picture pages (warm) | 0 | 11 | 0 |
