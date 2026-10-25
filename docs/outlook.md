@@ -8,14 +8,14 @@ this file when they move.
 
 ## How close we are
 
-Bench totals (`tuning-20261025T074616`, seven slices grown to about 170 pages on
-2026-10-25; `validation-20261024T202747`): tuning **0.286**, validation **0.502** wrong words a
+Bench totals (`tuning-20261025T103637`, seven slices grown to about 170 pages and Au pair's
+verdicts on 2026-10-25; `validation-20261024T202747`): tuning **0.277**, validation **0.502** wrong words a
 page after review; paragraph breaks set wrong about 0.04 and 0.196 a page. Per book, wrong words a page before review, questions a page, wrong
 words after review, breaks set wrong a page (validation books marked *v*):
 
 | Kind of book | Books (before · questions · after · breaks) |
 | --- | --- |
-| Clean scan, modern Dutch prose (Stella's kind) | Reis 0.08 · 0.25 · 0.04 · 0.04; Vals alarm 0.32 · 0.40 · 0.11 · 0.03; Goede dochter 0.49 · 0.49 · 0.27 · 0.01; De cipier 0.23 · 0.28 · 0.16 · 0.01; Het schaduwhuis 0.29 · 0.46 · 0.20 · 0.02; Het ijzige land 0.34 · 0.37 · 0.16 · 0.02; De eerlijke vinder 0.34 · 0.55 · 0.22 · 0.05; Glazuur 0.49 · 0.42 · 0.22 · 0.08; Au pair 0.38 · 0.63 · 0.37 · 0.01; Doodskleed 0.57 · 0.95 · 0.40 · 0.01; Het geluid van bananen 0.51 · 0.79 · 0.31 · 0.08; De vergelding 0.79 · 0.80 · 0.62 · 0.04; De kerk *v* 0.40 · 0.66 · 0.32 · 0.02; Verminkt *v* 0.97 · 0.66 · 0.59 · 0.15 |
+| Clean scan, modern Dutch prose (Stella's kind) | Reis 0.08 · 0.25 · 0.04 · 0.04; Vals alarm 0.32 · 0.40 · 0.11 · 0.03; Goede dochter 0.49 · 0.49 · 0.27 · 0.01; De cipier 0.23 · 0.28 · 0.16 · 0.01; Het schaduwhuis 0.29 · 0.46 · 0.20 · 0.02; Het ijzige land 0.34 · 0.37 · 0.16 · 0.02; De eerlijke vinder 0.34 · 0.55 · 0.22 · 0.05; Glazuur 0.49 · 0.42 · 0.22 · 0.08; Au pair 0.19 · 0.63 · 0.19 · 0.01 (its small capitals settled); Doodskleed 0.57 · 0.95 · 0.40 · 0.01; Het geluid van bananen 0.51 · 0.79 · 0.31 · 0.08; De vergelding 0.79 · 0.80 · 0.62 · 0.04; De kerk *v* 0.40 · 0.66 · 0.32 · 0.02; Verminkt *v* 0.97 · 0.66 · 0.59 · 0.15 |
 | The same, chosen for their trouble | Het heft 0.30 · 0.33 · 0.20 · 0.00 (its washed-out lines); De tuin 0.68 · 0.70 · 0.25 · 0.01; Monterosso 0.27 · 0.53 · 0.30 · 0.01 (small capitals, old-style figures); Het laatste bevel *v* 0.65 · 0.35 · 0.46 · 0.00 (its EPUB glues words); De geruchten *v* 0.91 · 0.49 · 0.86 · 0.01 (small-capital names) |
 | Unindented Dutch | Vuurspel *v* 0.39 · 0.51 · 0.24 · 0.42; De stilte *v* 0.88 · 0.40 · 0.33 · 0.29; Vanille en andere smaken *v* 1.56 · 0.73 · 0.96 · 0.83 (a rekeyed reference) |
 | Clean scan, modern English prose | Metro 0.27 · 0.44 · 0.21 · 0.02; Artemis 0.57 · 0.51 · 0.30 · 0.18; Thief-Taker 0.66 · 0.68 · 0.36 · 0.16; Normal People *v* 0.15 · 0.11 · 0.16 · 0.07; The Stranger's Child *v* 0.65 · 0.51 · 0.45 · 0.01 |
