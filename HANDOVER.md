@@ -7,21 +7,12 @@ and took the day's three OCR-check rules and the paragraph fix (decisions.md, 20
 
 ## Running
 
-- `robo-grow` (screen, from ~00:55 on 2026-10-25, ~13 h; the user away until Sunday evening):
-  seven tuning slices of Stella's kind grown to about 170 pages each (committed `72a99dc`,
-  ~585 new pages). Steps (`work/runs/grow.sh`, log `work/runs/grow.out`):
-  1. `bench tuning` on the grown slices with today's arbiter, cold for the new pages (the new
-     tuning baseline);
-  2. trust data rebuilt for the seven books;
-  3. the arbiter retrained apart (`work/models/ocr-trust-grown.pkl`);
-  4. `bench tuning` with it against step 1;
-  5. `bench validation` with it against `validation-20261024T202747`.
+Nothing runs.
 
-  Take the grown arbiter only if step 4 is better and step 5 doesn't veto: then
-  `train_ocr_trust.py --save` with the default path writes it where the pipeline reads it.
-
-The baselines are `work/bench/tuning-20261024T185118` (after review 0.282, breaks 0.045 a
-page) and `work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults. The image-only ellipsis measurement was vetoed by
+The baselines are `work/bench/tuning-20261025T074616` (the seven grown slices, 2026-10-25:
+after review 0.286) and `work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults.
+The arbiter retrained on the grown slices was no better (decisions.md, 2026-10-25), so the one
+in use stays; `work/models/ocr-trust-grown*.pkl` can go. The image-only ellipsis measurement was vetoed by
 validation and reverted (decisions.md).
 
 ## Done 2026-10-24 (decisions.md has every number)

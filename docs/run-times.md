@@ -591,3 +591,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-24 | bench validation, dash style measured on the line's height (warm) | 0 | 96 | 0 |
 | 2026-10-24 | bench tuning, ellipses measured through a first reading (warm) | 0 | 10 | 0 |
 | 2026-10-25 | bench validation, ellipses measured through a first reading (Vanille re-read) | 0 | 97 | 0 |
+| 2026-10-25 | bench tuning, seven slices grown (cold for ~585 new pages) | 585 | 503 | 0 |
+| 2026-10-25 | bench tuning, arbiter trained on the grown slices (warm) | 0 | 11 | 0 |
+| 2026-10-25 | bench validation, arbiter trained on the grown slices (warm) | 0 | 5 | 0 |
