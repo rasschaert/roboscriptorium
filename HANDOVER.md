@@ -103,9 +103,6 @@ Ask before a download over 1 GB. A model outside Ollama gets its own environment
   a book printed without paragraph indents, not A.W. Bruna's. Every break error left in the
   flush books is a start after a full line, which only a learned model finds, and without a
   flush tuning book no such change can be chosen.
-- **Au pair's small capitals** (13 unasked errors that measure its reference): verdicts, about
-  two minutes:
-  `uv run roboscriptorium review work/au-pair--ia-scan --pages 7-99 --chapters 1-24 --only work/probes/unasked/au-pair-smallcaps-20261024.json`
 - **Specks** (parked): the speck classifier needs labelled pages from more scans.
 - **Disk**: `work/models/mlx-env` (809 MB) and `~/models/roboscriptorium/lighton-env` (767 MB, the
   LightOnOCR runtime; its weights were deleted 2026-10-24, the user agreeing) stay until the user
