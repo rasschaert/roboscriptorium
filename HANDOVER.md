@@ -7,7 +7,10 @@ and took the day's three OCR-check rules and the paragraph fix (decisions.md, 20
 
 ## Running
 
-Nothing runs.
+- `robo-roles-grown` (screen, from ~09:40 on 2026-10-25, ~1.5 h): the picture-marked page roles
+  (`ROBO_PAGE_ROLES=1`, `line-roles-pages-pictures.pkl`) benched on the grown slices, where the
+  new pages are body text (2026-10-24 on the old slices: 30 fixed, 27 made, NO CHANGE); then
+  validation (`work/runs/roles-grown.sh`).
 
 The baselines are `work/bench/tuning-20261025T074616` (the seven grown slices, 2026-10-25:
 after review 0.286) and `work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults.
