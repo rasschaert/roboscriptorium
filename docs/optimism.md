@@ -11,6 +11,43 @@ commercial e-book; a careful edition like Standard Ebooks is nearer one in 10,00
 Each entry is a judgment, not a measurement: the numbers it rests on are in
 [outlook.md](outlook.md) and [decisions.md](decisions.md). Newest first.
 
+## 2026-10-25, morning: 6.5/10 (unchanged; the reasons sharper)
+
+| Goal | Chance |
+| --- | --- |
+| Modern prose, clean IA scan, commercial-e-book quality with a light review | ~80% |
+| The same books with no human at all, ≤ 1 wrong word in 1,000 | ~40% (was ~45%) |
+| Universal, unattended, on today's local models | ~20% |
+| The same by 2030 | ~60–70% |
+
+**Where it stands:** tuning 0.282 wrong words a page after review on the slices of the 24th
+(0.290 that morning), 0.286 on the seven slices grown overnight to ~170 pages; validation
+0.502; paragraph breaks set wrong 0.045 a page on tuning (0.057).
+
+**The deep-research ideas** (2026-10-23): about twenty tested, none kept: image-gain and
+runner-up margin, a threshold per kind of question, grid-padded crops, Kraken, book-wide
+consistency, confusion pairs, character-level voting, qwen as hyphen judge, page roles
+twice, page kinds, LightOnOCR-3, small capitals from shape, speculative decoding,
+learned compound hyphens, accent shape. What paid came from reading our own errors: three
+readings that are never the print (a stop before a lower-case line, a half-accented
+doubled vowel, marks prose doesn't print), any short line in justified text ending a
+paragraph, an image-only scan's dashes measured on the image.
+
+**Why the first row holds:** the errors are located now. Every reader is wrong together on
+only 23 lines of the tuning slices (the quiet set); most unasked errors sit where the
+readers did disagree and the arbiter chose wrong, which questions catch.
+
+**Why the second slips:** the arbiter twice failed to improve with more labelled suspects
+(three more books on the 20th; 2,600 more suspects on the 25th: more unasked errors both
+times). It has reached what its features can tell; going unattended needs a new signal
+for it, and none of the reports found one.
+
+**Would move it up:** a signal that tells the arbiter's wrong choices apart; a flush-set
+tuning book (the flush books' break errors wait on it); a reader that keeps emphasis
+accents and rare glyphs.
+**Would move it down:** Stella's read-through or a first look finding errors the bench
+can't see.
+
 ## 2026-10-21, early morning: 6.5/10 (unchanged)
 
 | Goal | Chance |
