@@ -27,7 +27,7 @@ BOOTSTRAP_SAMPLES = 2000
 # Golden scans and the pages:chapters scored. Tuning books are tuned on, and scored
 # with models trained without them (`unseen`); validation books have been consulted
 # for choices before, so they validate, not test. Long books are sliced at a chapter
-# boundary (a run costs about 0.9 min per cold page), about 120 to 270 pages: the
+# boundary (a run costs about 0.9 min per cold page), about 120 to 210 pages: the
 # bootstrap's power comes from the pages in all, so more books of fewer pages decide as
 # surely and vary more. Monterosso runs its chapters on without a page break, so no slice
 # short of the whole book ends on one. Dolittle's slice holds its plates and drawn
@@ -37,25 +37,25 @@ BOOTSTRAP_SAMPLES = 2000
 # Verminkt's reference has no chapters, so its look is the whole book.
 SETS = {
     "tuning": [
-        "goede-dochter--ia-scan:9-278:1-13",
-        "vals-alarm--ia-scan:11-188:1-31",
+        "goede-dochter--ia-scan:9-206:1-10",
+        "vals-alarm--ia-scan:11-110:1-18",
         "reis-om-mijn-schedel--ia-scan:11-182:1-19",
         "the-story-of-doctor-dolittle--stokes-1920:23-146:1-14",
         "the-thief-takers-apprentice--ia-scan:11-165:1-48",
         "afscheid-van-verspilde-tijd--ia-scan:9-122:1-22",
-        "metro-2033--ia-scan:7-263:1-22",
-        "de-cipier--ia-scan:9-252:1-8",
-        "artemis--ia-scan:13-251:1-13",
-        "de-tuin-van-de-avondnevel--ia-scan:11-254:1-16",
-        "het-heft-in-eigen-hand--ia-scan:9-253:1-11",
-        "doodskleed--ia-scan:13-264:1-41",
-        "het-ijzige-land--ia-scan:11-266:1-30",
+        "metro-2033--ia-scan:7-188:1-16",
+        "de-cipier--ia-scan:9-174:1-6",
+        "artemis--ia-scan:13-184:1-9",
+        "de-tuin-van-de-avondnevel--ia-scan:11-183:1-12",
+        "het-heft-in-eigen-hand--ia-scan:9-184:1-8",
+        "doodskleed--ia-scan:13-186:1-28",
+        "het-ijzige-land--ia-scan:11-186:1-21",
         "de-eerlijke-vinder--ia-scan",
         "monterosso-mon-amour--ia-scan",
-        "het-geluid-van-bananen--ia-scan:9-264:1-31",
-        "het-schaduwhuis--ia-scan:9-254:1-68",
-        "au-pair--ia-scan:7-230:1-44",
-        "de-vergelding--ia-scan:9-253:1-10",
+        "het-geluid-van-bananen--ia-scan:9-187:1-23",
+        "het-schaduwhuis--ia-scan:9-179:1-43",
+        "au-pair--ia-scan:7-181:1-34",
+        "de-vergelding--ia-scan:9-175:1-7",
         "glazuur--ia-scan:11-177:1-16",
     ],
     "validation": [

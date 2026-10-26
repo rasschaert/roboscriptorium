@@ -2,21 +2,40 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-10-24 ~19:00 by the session that screened LightOnOCR-3
-and took the day's three OCR-check rules and the paragraph fix (decisions.md, 2026-10-24).
+end of every session. Updated 2026-10-26 ~09:30 by the session that screened LightOnOCR-3, took the
+24th's OCR-check rules and paragraph fix, and grew the tuning slices (decisions.md,
+2026-10-24 to 2026-10-26).
 
 ## Running
 
-`robo-grow3` (`work/runs/grow3.sh`, started 2026-10-26 ~09:10, ~14 h): `bench tuning` cold on
-thirteen slices grown again (to about 220–270 pages, ~925 new pages), against
-`tuning-20261026T075608`; then the trust data rebuilt warm for the eleven with trust data. Its
-result becomes the tuning baseline. After it, the remaining room is mostly in Goede dochter,
-De cipier, Metro, Het heft, De tuin, Au pair and De vergelding.
+Nothing runs. The user needs the machine for other work (2026-10-26): don't start model runs
+until they say it's free again.
 
-The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3,100 pages,
-2026-10-26: after review 0.362, every book weighing the same) and
-`work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults. The user
-(2026-10-25): use idle machine time to grow tuning slices until told to stop.
+The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3,100 pages:
+after review 0.362, every book weighing the same; breaks 0.049) and
+`work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults. `bench.SETS` matches
+that tuning run, so warm benches take about 15 minutes.
+
+## Done 2026-10-25 and 26 (decisions.md has every number)
+
+- **Slices grown twice** (the user: idle machine time may go to it): seven slices on the 25th
+  (~585 pages), eleven more on the 26th (~860 pages, 13 h cold). On the pages both runs
+  share: no change. Tuning went from ~1,700 to ~3,100 pages, and the after-review interval
+  should narrow from ±0.010 to about ±0.008.
+- **Batch two paused** at the user's request, minutes into Goede dochter: thirteen slices to
+  about 220–270 pages, ~925 pages, ~14 h. Its ranges are in commit 3e6177c, taken back out of
+  `bench.SETS` so the baseline and the sets agree. The checklist step "Grow the tuning slices
+  further" says how to resume (reapply, run `work/runs/grow3.sh`).
+- **Not taken**: the arbiter retrained on the grown slices (more unasked errors; the second time
+  more rows haven't helped, so the arbiter needs a new signal, not more data); page roles on
+  the grown slices, and withheld on picture pages (no change; the harm is in the line-role
+  trees trained with page features).
+- **Au pair's 13 small capitals** settled by the user's verdicts (0.286 → 0.277 on the slices
+  of the 25th). Lesson: check scan crops before asking; bring a verdict only when it needs a
+  human's eye, with crops beside a confident reading.
+- **Lessons**: compare against a run made after the latest verdicts; a slice's growth can move
+  its old pages a little (the book's own spellings and abbreviations come from all its pages);
+  the cold rate is about 0.9 min a page.
 
 ## Done 2026-10-24 (decisions.md has every number)
 
@@ -82,6 +101,11 @@ The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3
    the paragraph errors left on tuning; in scope later, per AGENTS.md.
 5. **Qwen faster on the same output**: measured 2026-10-24, a line read is half prefill and a
    quarter decode, so speculative decoding buys little; fewer image reads (whole pages) is the lever.
+6. **Page roles need the line-role trees retrained** with picture pages and mottos labelled
+   (Dolittle's picture-page lines go wrong under the trees trained with page features, whatever
+   qwen says); only then bench page roles again.
+7. **Grow the slices again** when the machine is idle (checklist, "Grow the tuning slices
+   further"): batch two is ready in commit 3e6177c.
 
 ## When a new vision model appears
 
@@ -106,7 +130,8 @@ Ask before a download over 1 GB. A model outside Ollama gets its own environment
 - **Specks** (parked): the speck classifier needs labelled pages from more scans.
 - **Disk**: `work/models/mlx-env` (809 MB) and `~/models/roboscriptorium/lighton-env` (767 MB, the
   LightOnOCR runtime; its weights were deleted 2026-10-24, the user agreeing) stay until the user
-  says they can go.
+  says they can go. `work/models/ocr-trust-grown*.pkl` (the arbiter retrained on the
+  25th, not taken) can go too.
 - Andere levens: seven candidate misprints saved as printed
   (`work/probes/carrere-editions/andere-levens-checked.md`); the user says which, if any, are
   misprints.

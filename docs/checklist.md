@@ -57,6 +57,16 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    held back, not retired (the user, 2026-10-23: its files kept, `bench.RESERVE`). Left: Het
    laatste bevel's glued words as verdicts (the user's time). Verminkt sliced to 7–100 (2026-10-23,
    `scoring.cut_to_pages`).
+- [ ] Grow the tuning slices further whenever the machine is idle (the user, 2026-10-25,
+      until told to stop; the user's other work comes first). Done 2026-10-26: eleven slices,
+      ~860 pages (13 h cold), tuning now ~3,100 pages. Paused 2026-10-26 at the user's
+      request: batch two (thirteen slices to about 220–270 pages, ~925 pages, ~14 h) had
+      started on Goede dochter. Its ranges are in commit 3e6177c (`git show 3e6177c --
+      src/roboscriptorium/bench.py src/roboscriptorium/trustdata.py`); reapply them, run
+      `work/runs/grow3.sh`, and the read caches resume. Gain: the bench's interval, about
+      ±0.010 at 2,271 pages, narrows with the square root of the pages (about ±0.007 at
+      ~4,000); more pages did not make a better arbiter (decisions.md, 2026-10-25).
+
 8. The next set review (AGENTS.md, "Reviewing the sets"): done 2026-10-24 (no suspects,
    nothing retired; decisions.md). The gaps in docs/golden-notes.md go to the user as the
    books to look for.
