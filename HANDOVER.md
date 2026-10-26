@@ -7,18 +7,12 @@ and took the day's three OCR-check rules and the paragraph fix (decisions.md, 20
 
 ## Running
 
-`robo-grow2` (`work/runs/grow2.sh`, started 2026-10-25 ~12:30, ~12 h): `bench tuning` cold on
-eleven more grown slices (commit 51f50df, ~860 new pages), against the baseline below; then
-the trust data rebuilt warm for the seven of them that have trust data. No retrain: the
-arbiter trained on the last growth was worse. Its result is the new tuning baseline. The
-user (2026-10-25): use idle machine time to grow slices until told to stop; next would be
-Goede dochter, De cipier, Metro and Het heft toward 250 pages.
+Nothing runs between grow batches; see below for the one in flight.
 
-The baselines are `work/bench/tuning-20261025T103637` (the seven grown slices and Au pair's
-verdicts, 2026-10-25: after review 0.277) and `work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults.
-The arbiter retrained on the grown slices was no better (decisions.md, 2026-10-25), so the one
-in use stays; `work/models/ocr-trust-grown*.pkl` can go. The image-only ellipsis measurement was vetoed by
-validation and reverted (decisions.md).
+The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3,100 pages,
+2026-10-26: after review 0.362, every book weighing the same) and
+`work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults. The user
+(2026-10-25): use idle machine time to grow tuning slices until told to stop.
 
 ## Done 2026-10-24 (decisions.md has every number)
 
