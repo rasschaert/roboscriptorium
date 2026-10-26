@@ -7,7 +7,11 @@ and took the day's three OCR-check rules and the paragraph fix (decisions.md, 20
 
 ## Running
 
-Nothing runs between grow batches; see below for the one in flight.
+`robo-grow3` (`work/runs/grow3.sh`, started 2026-10-26 ~09:10, ~14 h): `bench tuning` cold on
+thirteen slices grown again (to about 220–270 pages, ~925 new pages), against
+`tuning-20261026T075608`; then the trust data rebuilt warm for the eleven with trust data. Its
+result becomes the tuning baseline. After it, the remaining room is mostly in Goede dochter,
+De cipier, Metro, Het heft, De tuin, Au pair and De vergelding.
 
 The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3,100 pages,
 2026-10-26: after review 0.362, every book weighing the same) and
