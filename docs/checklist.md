@@ -356,6 +356,11 @@ costs against what it could reach; every reader candidate passes the new-model g
       review 0.290 → 0.290, questions 0.732 → 0.721 a page, unasked 0.174 → 0.176: 9 unasked
       fixed, 10 made). The reviewer-mistake test (does the arbiter's margin predict a wrong
       answer) was not run: 8 mistakes on Stella are too few to choose by
+- [x] ~~The arbiter's own silent errors, a feature for them~~ (NOT TAKEN 2026-10-26,
+      `probe_accent_mark*.py`, `probe_ask_threshold.py`): of the 97 bench places where a
+      version had it right, 39 are accents, specks taken for accents and emphasis dropped;
+      the mark's shape adds nothing to the trees, and the rest are suspects the arbiter was
+      0.8 sure of; three questions a page caught 8 on De vergelding, tuning no change
 - [x] ~~Character-level ROVER with a diacritic-restoration vote~~ (DeepSeek 1, not taken
       on reading): suspects are already made at character level where any reader differs;
       the silent errors are where every reader gives the same characters, which a vote

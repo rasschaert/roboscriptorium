@@ -796,8 +796,8 @@ the edition doesn't list its corrections (the user).
   is in the checklist. *The veto's size* (0.05 wrong words a page): its 99% level is
   argued above, its size isn't. *The suspect-pair thresholds* (3× the median layer CER,
   one body line in twenty): never checked against the pairs they flagged. *The question
-  budget* (1 a page): set with the first trust run; `ocr_ask_below` was swept, the
-  budget wasn't. *Headings outside the primary test*: the bench reports headings found
+  budget* (1 a page): swept once, to 3 (2026-10-26): it binds only on De vergelding,
+  where it caught 8 unasked words for 33 questions; NO CHANGE on tuning. *Headings outside the primary test*: the bench reports headings found
   and spurious but no verdict rests on them. *Footnotes outside the score*
   (`golden/notes.py`): left out because the pipeline didn't place notes; it has since
   2026-10-11, so the reason has expired. *Quote and dash glyphs folded in the score*

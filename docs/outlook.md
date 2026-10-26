@@ -141,6 +141,12 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   unseen books. The readings stay cached for the uses above.
 - **"No page reader reads it" as a line-role feature** (2026-10-16, a probe): the trees
   already get those lines right but for 5 of 657.
+- **The ink over an accent's letter as an arbiter feature** (2026-10-26, no models): specks
+  and printed accents differ a little by shape (AUC 0.81 against 0.71 leaving a book out),
+  nothing the trees don't already have (silent errors 17 → 18). The arbiter's silent errors
+  on the bench are its sureness line's price: 9–11 questions for each one caught past 0.8.
+- **Three questions a page** (2026-10-26, warm benches): the budget binds only on De
+  vergelding (8 unasked words caught for 33 questions); tuning no change.
 - **The page readers' spelling of a line-end compound** (2026-10-15, a probe): with the
   hyphen judge in, the build is wrong on 19 of 3,184 line-end hyphens; the readers
   agreeing fix 9 and break about 6. Too few to build on.

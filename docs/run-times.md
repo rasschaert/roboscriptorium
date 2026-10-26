@@ -599,3 +599,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-25 | bench tuning, defaults on the grown slices with Au pair's verdicts (warm) | 0 | 12 | 0 |
 | 2026-10-25 | bench tuning, page roles without picture pages (warm) | 0 | 11 | 0 |
 | 2026-10-26 | bench tuning, eleven slices grown (cold for ~860 new pages) | 860 | 769 | 0 |
+| 2026-10-26 | bench tuning, 3 questions a page (warm) | 3100 | 14 | 0 |
+| 2026-10-26 | bench validation, 3 questions a page (warm) | 0 | 5 | 0 |

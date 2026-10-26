@@ -2,9 +2,8 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-10-26 ~09:30 by the session that screened LightOnOCR-3, took the
-24th's OCR-check rules and paragraph fix, and grew the tuning slices (decisions.md,
-2026-10-24 to 2026-10-26).
+end of every session. Updated 2026-10-26 evening by the session that probed the arbiter's silent errors (no models;
+decisions.md, 2026-10-26).
 
 ## Running
 
@@ -83,15 +82,13 @@ that tuning run, so warm benches take about 15 minutes.
 
 ## Next, in order
 
-1. **The arbiter's own silent errors** (152 of the 236 unasked errors this morning sat where a
-   suspect was raised and the arbiter chose wrong). The biggest groups:
-   - a right layer changed: stress accents added or dropped;
-   - a shared misreading kept where qwen, both judges and the word list say otherwise
-     ("vijt" for "vijf", "cen" for "een" in De vergelding, whose glm-ocr and tesseract share
-     the layer's error).
-
-   De vergelding, Au pair and Glazuur aren't trained on (training on them on 2026-10-20 made
-   the others worse). A feature, not a retrain, is the next try.
+1. **The arbiter's own silent errors: probed 2026-10-26, nothing taken.** They are what its
+   0.8 sureness line costs (9–11 questions for each one caught past it), plus De vergelding's
+   page budget (three questions a page caught 8 unasked words there, tuning no change). The
+   accent half goes both ways (specks read as accents in Doodskleed, Glazuur, Monterosso;
+   emphasis dropped in Goede dochter, Het schaduwhuis, Au pair), and the ink's shape over the
+   letter adds nothing to the trees. Left: De vergelding's own arbiter (it has the most
+   unsure suspects, never trained on); a speck classifier with more labelled pages.
 2. **Compound hyphens at line ends** (25 unasked with no suspect): no cue found in qwen, clef
    or the obvious signals; only a learner with a new feature can reach them.
 3. **Emphasis accents and the dotless ı** (the quiet set's largest classes after small
