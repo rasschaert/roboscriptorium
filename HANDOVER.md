@@ -118,8 +118,6 @@ Ask before a download over 1 GB. A model outside Ollama gets its own environment
 
 ## Waiting on the user
 
-- **Stella's read-through**: `work/stella/epubs/stella-2026-10-19-0014.epub`. Today's changes
-  leave its text and paragraphs as they are.
 - **A flush-set book for tuning** (golden-notes.md, gaps): a scan and the publisher's EPUB of
   a book printed without paragraph indents, not A.W. Bruna's. Every break error left in the
   flush books is a start after a full line, which only a learned model finds, and without a

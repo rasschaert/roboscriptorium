@@ -475,8 +475,9 @@ don't yet give at a price worth the reviewer's time.
 
 - [x] Stella's review (2026-10-16): 6 questions answered, two accents corrected
       ("íéts", "ís"); rebuilt, epubcheck clean (`epubs/stella-2026-10-16-0859.epub`)
-- [ ] **user** reads the EPUB through, noting each error with a few words around it; no spot-check (the read covers every page). Each noted error is fixed as an answer and checked against the build's suspects: was it asked, settled wrongly, or never a suspect ("Errors no question asks about"): what the bench can't see
-      (layout, italics, front matter)
+- [x] **user** read the EPUB through (2026-10-31, `epubs/stella-2026-10-19-0014.epub`):
+      no errors. Two sentences queried as odd (p. 41 "Ik weet dat aan…", *wijten*; p. 50
+      "met welgevallen") match the scan
 
 ## 3. The user's books after Stella
 
