@@ -13,6 +13,11 @@ nothing, then `build` on its unconfirmed `book.toml`, each through `timed.sh` (l
 `work/runs/hwv-init.log`, `hwv-build.log`). The two minutes in docs/run-times.md are the
 answer. Then: confirm the setup against `init/report.md`, sample the questions, the user's review.
 
+Queued after it (the user, 2026-11-01): once Hoe wij verdwijnen is built and checked, and
+the machine is idle, the next book, *Pieter Daens*, at `~/Downloads/Pieter Daens.pdf`, the
+same way: `init` then `build`, timed. Not opened or started before Hoe wij verdwijnen ends:
+that run gets the whole machine.
+
 The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3,100 pages:
 after review 0.362, every book weighing the same; breaks 0.049) and
 `work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults. `bench.SETS` matches
