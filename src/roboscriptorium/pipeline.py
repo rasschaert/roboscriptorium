@@ -23,6 +23,7 @@ from roboscriptorium import (
     missing,
     ocr,
     ocrcheck,
+    pagekinds,
     pagereader,
     pageroles,
     parabreaks,
@@ -44,7 +45,8 @@ from roboscriptorium.files import check_source, write_atomic
 from roboscriptorium.flags import treatment
 from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.lexicon import Lexicon
-from roboscriptorium.pdf import PageText, cached_text_layer, render_jpeg
+from roboscriptorium.page import garbled
+from roboscriptorium.pdf import Line, PageText, cached_text_layer, render_jpeg
 from roboscriptorium.reflow import reflow
 from roboscriptorium.roles import DecisionCache, LineRole, classify, with_role
 
@@ -77,8 +79,8 @@ class Stages:
     ocr_decider: str = ""
     # Body pages scanned too faint to read (`faint.py`), on scans only.
     faint_pages: set[int] = field(default_factory=set)
-    # Lines of `pages` set apart as an epigraph (`epigraphs.lines`): the review asks
-    # nothing about what they are.
+    # Lines of `pages` set apart as an epigraph or a dedication (`epigraphs.lines`,
+    # `pagekinds.set_apart`): the review asks nothing about what they are.
     epigraph_lines: set[SourceRef] = field(default_factory=set)
     # The read model's prompt for this book's lines (`read_prompt`), "" when nothing was
     # read: the review reads the lines its questions have no readings for with it.
@@ -125,6 +127,8 @@ def run(
     note_lines: set[SourceRef] = set()
     # Lines of a motto set on a page of its own (`epigraphs.lines`), likewise.
     epigraph_lines: set[SourceRef] = set()
+    # Lines of a dedication on a page of its own (`pagekinds.set_apart`), likewise.
+    dedication_lines: set[SourceRef] = set()
     if ocrcheck.scanned(book.source):
         faint_pages = faint.pages(book.source, body, book.stages / "contrast.json")
     if use_models:
@@ -155,6 +159,19 @@ def run(
         model_roles = chapters.openings(body, model_roles)
         note_lines = footnotes.lines(body, model_roles, styles, known)
         epigraph_lines = epigraphs.lines(body, model_roles)
+        apart = pagekinds.set_apart(
+            book.source, body, len(layer), client, book.stages / "short-pages.json"
+        )
+        for page in body:
+            refs = {
+                SourceRef(page.number, i)
+                for i in range(len(page.lines))
+                if _kept_apart(page.lines[i], model_roles.get(SourceRef(page.number, i)))
+            }
+            if apart.get(page.number) == "epigraph":
+                epigraph_lines |= refs
+            elif apart.get(page.number) == "dedication":
+                dedication_lines |= refs
         if check_ocr and ocrcheck.scanned(book.source):
             # A washed-out page is one region for the reviewer to type; on its faint crops
             # the readers invent fluent text and the judges pick it.
@@ -290,7 +307,7 @@ def run(
     corrected = parabreaks.judged(book.source, corrected, roles, break_judge, judge_cache, indented)
     unanswered = reflow(
         checked,
-        _apart(checked, model_roles, note_lines, epigraph_lines),
+        _apart(checked, model_roles, note_lines, epigraph_lines, dedication_lines),
         known,
         compound,
         _book_spellings(whole, checked),
@@ -298,7 +315,7 @@ def run(
     built = chapters.numbered(
         reflow(
             corrected,
-            _apart(corrected, roles, note_lines, epigraph_lines),
+            _apart(corrected, roles, note_lines, epigraph_lines, dedication_lines),
             known,
             compound,
             _book_spellings(whole, corrected),
@@ -371,7 +388,7 @@ def run(
         quote_readings,
         decider,
         faint_pages,
-        epigraph_lines,
+        epigraph_lines | dedication_lines,
         prompt,
     )
 
@@ -381,11 +398,20 @@ def _apart(
     roles: dict[SourceRef, LineRole] | None,
     note_lines: set[SourceRef],
     epigraph_lines: set[SourceRef],
+    dedication_lines: set[SourceRef],
 ) -> dict[SourceRef, LineRole] | None:
-    """`roles` for reflow, keyed on positions in `pages`: footnotes and epigraphs set
-    apart from the running text."""
+    """`roles` for reflow, keyed on positions in `pages`: footnotes, epigraphs and
+    dedications set apart from the running text."""
     roles = with_role(pages, roles, note_lines, footnotes.ROLE)
-    return with_role(pages, roles, epigraph_lines, epigraphs.ROLE)
+    roles = with_role(pages, roles, epigraph_lines, epigraphs.ROLE)
+    return with_role(pages, roles, dedication_lines, epigraphs.DEDICATION)
+
+
+def _kept_apart(line: Line, role: LineRole | None) -> bool:
+    """Whether a line of a motto's or dedication's page belongs to it: not a page number,
+    running head or garbled speck. The sorter may call an attribution an artifact."""
+    furniture = role is not None and role.role in ("page_number", "running_head")
+    return not furniture and not garbled(line)
 
 
 def proposals(

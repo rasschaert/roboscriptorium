@@ -307,9 +307,17 @@ def reflow(
             if _ornament(line):
                 scene[0] = True
                 continue
-            if role == "epigraph":
-                # A motto's line, each its own paragraph, set apart (`epigraphs.py`).
-                blocks.append(Paragraph(line.text, [ref], opening=True, epigraph=True))
+            if role in ("epigraph", "dedication"):
+                # A motto's or a dedication's line, each its own paragraph, set apart.
+                blocks.append(
+                    Paragraph(
+                        line.text,
+                        [ref],
+                        opening=True,
+                        epigraph=role == "epigraph",
+                        dedication=role == "dedication",
+                    )
+                )
                 opening = True
                 continue
             if role == "chapter_heading":

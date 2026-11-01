@@ -426,8 +426,10 @@ and checked like any other line; then the note is set apart from the paragraphs 
 linked to the paragraph that carries its mark, both ways in the EPUB. A note whose
 mark wasn't read in the text follows the last paragraph of its page, unlinked.
 
-A page holding only a few short lines set well in from the margin, of real words and
-not all capitals, is a motto (`epigraphs.py`): "‘It’s closing time’ (Leonard Cohen,
+A page of the text proper with only a few words is shown to the model that names a
+page's kind (`pagekinds.py`, as `init` uses it): a motto is set apart as an epigraph, a
+dedication as a dedication. A page holding only a few short lines set well in from the
+margin, of real words and not all capitals, is also a motto (`epigraphs.py`): "‘It’s closing time’ (Leonard Cohen,
 The Future)". Its lines are set apart as one epigraph block before the text.
 
 A chapter number the layer misread or dropped is put right by the book itself

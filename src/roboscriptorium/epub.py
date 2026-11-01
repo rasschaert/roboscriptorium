@@ -27,6 +27,8 @@ aside.footnote p { font-size: 0.85em; text-indent: 0; margin: 0.5em 0; }
 a.noteref { text-decoration: none; }
 blockquote.epigraph { margin: 3em 0 3em 30%; }
 blockquote.epigraph p { text-indent: 0; text-align: left; }
+div.dedication { margin: 3em 0; }
+div.dedication p { text-indent: 0; text-align: center; }
 """
 
 CONTAINER = """\
@@ -250,18 +252,27 @@ def _translator(doc: Document) -> str:
     )
 
 
+def _dedication(lines: list[str]) -> str:
+    """A dedication's lines, set apart as one block."""
+    return '<div class="dedication" epub:type="dedication">' + "".join(lines) + "</div>"
+
+
 def _section(doc: Document, section: _Section) -> str:
-    parts, motto = [], []
+    parts, apart, kind = [], [], None
     for b in section.blocks:
-        if isinstance(b, Paragraph) and b.epigraph:
-            motto.append(f"<p>{_inline(b.text, set(b.italic))}</p>")
+        this = None
+        if isinstance(b, Paragraph):
+            this = _epigraph if b.epigraph else _dedication if b.dedication else None
+        if apart and this is not kind:
+            parts.append(kind(apart))
+            apart = []
+        kind = this
+        if this is not None:
+            apart.append(f"<p>{_inline(b.text, set(b.italic))}</p>")
             continue
-        if motto:
-            parts.append(_epigraph(motto))
-            motto = []
         parts.append(_block(b, doc.notes))
-    if motto:
-        parts.append(_epigraph(motto))
+    if apart:
+        parts.append(kind(apart))
     body = "\n".join(parts)
     return _xhtml(
         section.title, doc.language, f'<section epub:type="bodymatter">\n{body}\n</section>'

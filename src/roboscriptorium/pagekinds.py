@@ -237,6 +237,37 @@ def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, st
     return out
 
 
+# A page inside the text proper holding fewer words than this is asked what it is: a
+# motto or a dedication there is set apart from the running text (`set_apart`).
+SHORT_PAGE_WORDS = 60
+# The kinds set apart, and how: as an epigraph or as a dedication.
+APART = {"motto": "epigraph", "dedication": "dedication"}
+
+
+def set_apart(pdf: Path, pages: list[PageText], total: int, client, cache: Path) -> dict[int, str]:
+    """How each short page of `pages` (the text proper) is set apart, by the model's kind
+    for it (`APART`): "epigraph" or "dedication". `total` is the PDF's page count. The
+    model's answers are kept in `cache` by page, so a rerun asks only what is new."""
+    kept = json.loads(cache.read_text()) if cache.exists() else {}
+    asked_of = f"{TAG}:{getattr(client, 'model', '')}"
+    answers = kept.get("answers", {}) if kept.get("question") == asked_of else {}
+    out = {}
+    for page in pages:
+        words = sum(len(ln.text.split()) for ln in page.lines)
+        if not 0 < words < SHORT_PAGE_WORDS:
+            continue
+        n = page.number
+        if str(n) not in answers:
+            answer = client.decide(
+                state(pdf.parent.name, n, total, page), QUESTION, image_png=render_png(pdf, n)
+            )["kind"]
+            answers[str(n)] = [answer.value, round(answer.confidence, 3)]
+            write_atomic(cache, json.dumps({"question": asked_of, "answers": answers}))
+        if answers[str(n)][0] in APART:
+            out[n] = APART[answers[str(n)][0]]
+    return out
+
+
 def page_label(number: int, offset: int | None) -> str:
     """A page named by both its numbers, never one alone: "PDF page 9 (the page prints 7)",
     or "(the page prints no number)" where the book's offset gives none above zero. The PDF's

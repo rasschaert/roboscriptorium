@@ -623,6 +623,21 @@ two letters or more, no garbled line and some lower case, and finds none in any 
 slice (both NO CHANGE). The word list isn't asked: mottos are often in another
 language, as this one is.
 
+## Mottos and dedications: the page-kind model on short pages
+
+**A short page inside the text proper is asked what it is.** Hoe wij verdwijnen's
+dedication ("Voor mijn ouders / Bruni en Thomas Eggers", p. 9) came out split, its second
+line a chapter heading, and its Camus motto (p. 11) as running text: the motto's lines
+are centred and nearly a full line wide, so the epigraph rule's inset (`epigraphs.py`)
+doesn't take it, and no rule knows a dedication. `init`'s page-kind model knows both
+kinds but answers only the 8 pages at either edge of the book. Asked about Hoe wij
+verdwijnen pp. 9–12 and Ex-minnaar p. 7 (2026-11-01): dedication 0.91, motto 0.90 and
+0.91, the show-through and blank pages blank. So every page of the text proper with
+fewer than 60 words is asked (`pagekinds.set_apart`, cached in `short-pages.json`); a
+motto's lines become an epigraph, a dedication's a dedication block, page numbers,
+running heads and garbled specks left out. Short test: both set apart, six other short
+pages left as text. The inset rule stays beside it until a bench says it adds nothing.
+
 ## Chapter numbers
 
 **A chapter opening looks like the book's other openings, and numbered chapters run

@@ -791,3 +791,37 @@ def test_a_dropped_chapter_number_atop_an_opening_is_read_by_the_books_run(tmp_p
     stages = pipeline.run(Book.load(tmp_path))
     headings = [b.text for b in stages.doc.blocks if type(b).__name__ == "Heading"]
     assert headings == [str(n) for n in range(1, 13)]
+
+
+def test_a_short_page_the_model_calls_a_dedication_is_set_apart(tmp_path, monkeypatch):
+    def handler(request: httpx.Request) -> httpx.Response:
+        answers = {}
+        for name, q in json.loads(request.content)["questions"].items():
+            choice = {"role": "body", "kind": "dedication"}.get(name, next(iter(q["criteria"])))
+            answers[name] = {"type": "choice", "choice": choice, "confidence": 0.9}
+            answers[name]["probabilities"] = {choice: 0.9}
+        return httpx.Response(200, json={"answers": answers})
+
+    def client(model, *_):
+        http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+        return DecisionClient("http://test", model, client=http)
+
+    monkeypatch.setattr(pipeline.decide, "for_model", client)
+    _no_layout(monkeypatch)
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=600)
+    page.insert_text((160, 120), "Voor mijn ouders", fontsize=11)
+    page.insert_text((150, 136), "Bruni en Thomas Eggers", fontsize=11)
+    for _ in range(2):
+        page = doc.new_page(width=400, height=600)
+        for i, text in enumerate(LINES):
+            page.insert_text((40, 60 + 18 * i), text, fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    (tmp_path / "book.toml").write_text(
+        'title = "T"\nauthor = "A"\nlanguage = "nl"\nbody_pages = [1, 3]\n'
+    )
+    stages = pipeline.run(Book.load(tmp_path))
+    first, second, third = stages.doc.paragraphs[:3]
+    assert (first.text, first.dedication) == ("Voor mijn ouders", True)
+    assert (second.text, second.dedication) == ("Bruni en Thomas Eggers", True)
+    assert not third.dedication and third.text.startswith("Line 0")

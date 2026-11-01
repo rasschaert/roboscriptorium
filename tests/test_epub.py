@@ -72,6 +72,27 @@ def test_a_mottos_lines_are_set_apart_as_one_block(tmp_path):
     ) in html
 
 
+def test_a_dedication_and_a_motto_after_it_are_each_their_own_block(tmp_path):
+    doc = Document("T", "A", "nl", [
+        Paragraph("Voor mijn ouders", dedication=True),
+        Paragraph("Bruni en Thomas Eggers", dedication=True),
+        Paragraph("Zwart paard, wit paard", epigraph=True),
+        Paragraph("Albert Camus", epigraph=True),
+        Paragraph("Toen de eerste brief kwam.", opening=True),
+    ])  # fmt: skip
+    out = tmp_path / "book.epub"
+    write_epub(doc, out)
+    with zipfile.ZipFile(out) as z:
+        html = z.read("OEBPS/text-001.xhtml").decode()
+    assert (
+        '<div class="dedication" epub:type="dedication"><p>Voor mijn ouders</p>'
+        "<p>Bruni en Thomas Eggers</p></div>\n"
+        '<blockquote class="epigraph" epub:type="epigraph"><p>Zwart paard, wit paard</p>'
+        "<p>Albert Camus</p></blockquote>\n"
+        '<p class="opening">Toen de eerste brief kwam.</p>'
+    ) in html
+
+
 def test_a_translator_is_named_in_the_translators_role(tmp_path):
     out = tmp_path / "book.epub"
     write_epub(Document("T", "A", "nl", [Paragraph("Een.")], translator="Ria van Hengel"), out)

@@ -31,6 +31,8 @@ MIN_WORDS = 3
 LONG_WORD = 4
 # The role reflow gives an epigraph's lines.
 ROLE = LineRole("epigraph", 1.0, 0.0, "epigraph")
+# The role reflow gives a dedication's lines (`pagekinds.set_apart`).
+DEDICATION = LineRole("dedication", 1.0, 0.0, "dedication")
 _FURNITURE = ("page_number", "running_head", "chapter_heading")
 
 

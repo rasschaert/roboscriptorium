@@ -489,9 +489,10 @@ also part of the pipeline itself." Before either book goes to review:
 
 - [x] Chapter numbers (2026-11-01, `chapters.py`): all 52 of Hoe wij verdwijnen right on
       its warm rebuild; the five dropped ones read right by the readers once kept
-- [ ] Front matter: a dedication of two lines stays one block, in the print's italics; a
-      motto with its attribution on a page of its own is an epigraph (Hoe wij
-      verdwijnen pp. 9, 11)
+- [x] Front matter (2026-11-01, `pagekinds.set_apart`): the page-kind model asked about
+      short pages of the text proper; Hoe wij verdwijnen's dedication and motto each one
+      block. Left: their italics (the print's dedication all italic, the motto upright;
+      we set "Voor" upright and "Zwart" italic): `italics.py` on display lines
 - [ ] A structure check at the end of every build: numbered headings out of their run,
       a lone heading of another kind among numbers, sections of a line or two, text set
       apart on a page of its own not taken as a motto or dedication; each repaired where

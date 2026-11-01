@@ -35,6 +35,8 @@ class Paragraph:
     notes: list[int] = field(default_factory=list)
     # A line of a motto set apart before the text (`epigraphs.py`).
     epigraph: bool = False
+    # A line of a dedication set apart before the text (`pagekinds.set_apart`).
+    dedication: bool = False
 
 
 @dataclass
