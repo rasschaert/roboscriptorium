@@ -76,6 +76,12 @@ def test_a_dropped_short_line_atop_an_opening_is_a_heading_where_the_others_are(
     # Where most openings carry no heading, a short line atop one stays dropped.
     sparse = {SourceRef(1, 0): heading, SourceRef(51, 0): roles[SourceRef(51, 0)]}
     assert chapters.openings(pages, sparse)[SourceRef(51, 0)].role == "artifact"
+    # A speck in the corner, or a mark with no letter or digit, is no number either.
+    corner = list(pages)
+    corner[15] = PageText(51, 330, 450, [Line("zi", 20, 80, 35, 92)] + pages[15].lines[1:])
+    assert chapters.openings(corner, roles)[SourceRef(51, 0)].role == "artifact"
+    corner[15] = _page(51, "-")
+    assert chapters.openings(corner, roles)[SourceRef(51, 0)].role == "artifact"
     # A line of words atop an opening is no number: the rule leaves it to the roles.
     pages[15] = _page(51, "Een titel")
     assert chapters.openings(pages, roles)[SourceRef(51, 0)].role == "artifact"

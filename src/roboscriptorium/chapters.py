@@ -45,7 +45,15 @@ def openings(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[So
         role = roles.get(ref)
         if role is None or is_body(role) or role.role == "chapter_heading":
             continue
-        if len(p.lines[0].text.strip()) <= NUMBER_CHARS:
+        line = p.lines[0]
+        text = line.text.strip()
+        # A speck in a corner reads as "-" or "." and stands aside; a number is centred.
+        full, _ = P.geometry(p)
+        if (
+            len(text) <= NUMBER_CHARS
+            and any(c.isalnum() for c in text)
+            and P.centred_on_page(line, p, full)
+        ):
             out[ref] = LineRole("chapter_heading", role.confidence, 0.0, RULE)
     return out
 

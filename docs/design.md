@@ -412,7 +412,9 @@ lines tall are read too: Artemis draws each chapter number in a circle about fou
 high, which DocLayout-YOLO marks and glm-ocr reads right ("1", "2", "3"). Headings 0/3 →
 3/3, no other book changed (bench, 2026-10-09).
 
-On a speck glm-ocr may answer with talk rather than a reading: "```markdown", or a letter
+Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
+same way: a speck in a page's top corner read "境", kept as the page's first line, then
+read by a page reader as a whole sentence the arbiter took. On a speck glm-ocr may answer with talk rather than a reading: "```markdown", or a letter
 of another script ("境"). 24 of the 541 readings cached over all books were such (Doodskleed
 15, where they became chapter headings; 8 other books, Pieter Daens among them), so a
 reading with a code fence or a letter outside the Latin script is no line (`_printed`);
@@ -658,8 +660,8 @@ words are the only change in the book.
 1, 2, 3.** Hoe wij verdwijnen prints its 52 chapter numbers in old-style figures above
 sunk openings: the layer read them "Io", "SE", "#7", and five ("zi", "ee,", "rj",
 "zit", "si") were dropped as specks, so no reader saw them and their chapters ran into
-the one before. `chapters.openings` makes a short line (three characters or fewer) set
-apart atop a sunk page a heading where at least two thirds of the book's set-apart sunk
+the one before. `chapters.openings` makes a short line (three characters or fewer,
+holding a letter or digit, centred) set apart atop a sunk page a heading where at least two thirds of the book's set-apart sunk
 openings (five or more) carry one; the readers then read all five right ("23" … "45",
 clef:27b's vote). `chapters.numbered` sets each short heading of a run (five or more,
 half following the one before) to its number: old-style look-alikes folded where they
