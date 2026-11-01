@@ -479,6 +479,32 @@ don't yet give at a price worth the reviewer's time.
       no errors. Two sentences queried as odd (p. 41 "Ik weet dat aan…", *wijten*; p. 50
       "met welgevallen") match the scan
 
+## The machine finds what a reader would (the user, 2026-11-01)
+
+Hoe wij verdwijnen's first build came out with its chapter numbers misread or missing
+(old-style figures: "Io", "SE", "zi" dropped for 23), its dedication split in two and its
+motto as running text, and Pieter Daens' `init` took the publisher's ads for text. An
+agent found them by reading the EPUB; the user: "ideally that detection and the fix is
+also part of the pipeline itself." Before either book goes to review:
+
+- [ ] Chapter numbers: a short line set apart atop a chapter opening is a heading where
+      the book's other openings have one (so the readers read it), and headings that are
+      numbers are checked against their run (1, 2, 3 …), a look-alike or a lone gap
+      settled by its neighbours. Short test: Hoe wij verdwijnen warm, all 52 numbers
+- [ ] Front matter: a dedication of two lines stays one block, in the print's italics; a
+      motto with its attribution on a page of its own is an epigraph (Hoe wij
+      verdwijnen pp. 9, 11)
+- [ ] A structure check at the end of every build: numbered headings out of their run,
+      a lone heading of another kind among numbers, sections of a line or two, text set
+      apart on a page of its own not taken as a motto or dedication; each repaired where
+      the book's own evidence settles it, else a review question, and the count printed
+      by `build`. First real test: Pieter Daens, unchecked by eye
+- [ ] `init`: ends that land on publisher's lists and blurbs (Daens pp. 789–796 taken as
+      text; the text ends p. 787) as labels for its page kinds
+- [ ] The bench counts heading errors as a measure of its own; a golden pair with
+      old-style chapter numbers over sunk openings goes on the gaps to hunt for
+      (golden-notes.md)
+
 ## 3. The user's books after Stella
 
 Dutch books the user wants as EPUBs, none with a reference EPUB, each an IA Scribe

@@ -166,6 +166,11 @@ get renumbered. Don't add a file to this table without a job no other file has.
   or read a book, finish every checklist step that would change that book's text or
   questions. A review of a build the agent knows how to improve spends them on errors
   the machine could have caught.
+- **What an agent finds by eye, the machine learns to find** (the user, 2026-11-01:
+  "ideally that detection and the fix is also part of the pipeline itself"). An error
+  seen in a built book (a misread chapter number, a split dedication, ads taken for
+  text) is never fixed for that book alone: in the same change it becomes a repair in
+  the pipeline, a check the build runs on every book, or a case the bench scores.
 - **Questions the bench can't weigh** (the reviewer's time against wrong words, say) are
   the user's call: ask in one short sentence.
 
