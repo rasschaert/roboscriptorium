@@ -15,7 +15,7 @@ What runs right now and what waits on the user: `HANDOVER.md`.
 **The plan now:** the codebase review's steps first (the user, 2026-10-13: bug fixes
 first, no urgency in building books), then accuracy from what the bench data shows,
 new suspects where the readings agree first, then **Stella end to end with the user's
-review**, the target book, then the user's four books. After them, the open
+review**, the target book, then the user's own books. After them, the open
 areas below in order. Each new pair is scored once, at its first look, before it joins
 a set.
 
@@ -481,7 +481,7 @@ don't yet give at a price worth the reviewer's time.
 
 ## 3. The user's books after Stella
 
-Four Dutch books the user wants as EPUBs, none with a reference EPUB, each an IA Scribe
+Dutch books the user wants as EPUBs, none with a reference EPUB, each an IA Scribe
 scan with its own hidden layer (Stella's format), in `work/<name>/` with a `book.toml`.
 In this order:
 
