@@ -421,24 +421,40 @@ def scenes(score: dict) -> str:
     return f"{found}/{score.get('scene_breaks_expected', 0)} (+{extra})"
 
 
+def headings(score: dict) -> str:
+    """Headings found of those expected, how many of them letter for letter ("4I" for 41
+    is found, not exact), and how many
+    more the output sets (a score saved before exact ones were counted reads them as found)."""
+    exact = score.get("headings_exact", score["headings_found"])
+    return (
+        f"{score['headings_found']}/{score['headings_expected']} "
+        f"({exact} exact, +{score['headings_spurious']})"
+    )
+
+
+def heading_totals(run: dict) -> dict:
+    """The run's heading counts summed over its books."""
+    keys = ("headings_found", "headings_expected", "headings_spurious")
+    total = {k: sum(b["score"][k] for b in run["books"].values()) for k in keys}
+    total["headings_exact"] = sum(
+        b["score"].get("headings_exact", b["score"]["headings_found"])
+        for b in run["books"].values()
+    )
+    return total
+
+
 def structure(old: dict, new: dict) -> list[str]:
     """Per book, the headings and scene breaks found and spurious and the paragraph F1
-    where they changed: the primary measure counts words, so a change to a book's
-    structure shows only here."""
-    out = []
+    where they changed, after the headings over all books where they did: the primary measure counts
+    words, so a change to a book's structure shows only here."""
+    before, after = headings(heading_totals(old)), headings(heading_totals(new))
+    out = [f"{'all books':40} headings {before} → {after}"] if before != after else []
     for name, book in new["books"].items():
         if name not in old["books"]:
             continue
         a, b = old["books"][name]["score"], book["score"]
-        if (a["headings_found"], a["headings_spurious"]) != (
-            b["headings_found"],
-            b["headings_spurious"],
-        ):
-            out.append(
-                f"{name[:40]:40} headings {a['headings_found']}/{a['headings_expected']} "
-                f"(+{a['headings_spurious']}) → {b['headings_found']}/{b['headings_expected']} "
-                f"(+{b['headings_spurious']})"
-            )
+        if headings(a) != headings(b):
+            out.append(f"{name[:40]:40} headings {headings(a)} → {headings(b)}")
         if scenes(a) != scenes(b):
             out.append(f"{name[:40]:40} scene breaks {scenes(a)} → {scenes(b)}")
         if round(_f1(a), 3) != round(_f1(b), 3):

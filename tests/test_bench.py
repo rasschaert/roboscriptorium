@@ -264,7 +264,8 @@ def test_a_change_to_a_books_structure_is_reported_beside_the_test():
     old, new = run(5, 4, 0.95), run(23, 1, 0.95)
     new["books"]["b"]["score"] = dict(old["books"]["b"]["score"])
     lines = bench.structure(old, new)
-    assert len(lines) == 1 and "5/24 (+4) → 23/24 (+1)" in lines[0]
+    assert lines[0].startswith("all books")
+    assert len(lines) == 2 and "5/24 (5 exact, +4) → 23/24 (23 exact, +1)" in lines[1]
     assert bench.structure(old, old) == []
 
 

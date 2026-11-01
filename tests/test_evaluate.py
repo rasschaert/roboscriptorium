@@ -167,3 +167,12 @@ def test_one_heading_may_stand_for_a_number_and_title_set_as_two():
     # A number alone is one heading, not the pair; another number takes neither.
     assert evaluate.match_headings(["CHAPTER 1", "CHAPTER 2 The Hunter"], expected) == 3
     assert evaluate.match_headings(["CHAPTER 3 The End of the Earth"], expected[:2]) == 0
+
+
+def test_a_look_alike_heading_is_found_but_not_exactly():
+    from roboscriptorium.evaluate import match_headings
+
+    # "4I" holds 41 with a look-alike folded; "II" is the Roman 2, no 11 at all.
+    found, expected = ["40", "4I", "II", "43"], ["40", "41", "42", "43"]
+    assert match_headings(found, expected) == 3
+    assert match_headings(found, expected, exact=True) == 2

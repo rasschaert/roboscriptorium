@@ -510,9 +510,10 @@ also part of the pipeline itself." Before either book goes to review:
       Short test once Daens' build is done: `init` again on Daens (its end should be
       p. 787) and `experiments/probe_init_ends.py` on the 27 labelled books (22 and 21 ends
       right before)
-- [ ] The bench counts heading errors as a measure of its own; a golden pair with
-      old-style chapter numbers over sunk openings goes on the gaps to hunt for
-      (golden-notes.md)
+- [x] The bench counts headings set letter for letter beside those found, and prints
+      the totals over all books when they move (2026-11-01, `bench.heading_totals`)
+- [ ] Headings in the bench's verdict, not only its structure lines; a golden pair with
+      old-style chapter numbers over sunk openings on the gaps to hunt for (golden-notes.md)
 
 ## 3. The user's books after Stella
 

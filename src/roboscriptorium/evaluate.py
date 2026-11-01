@@ -13,7 +13,7 @@ Metrics:
 - Scene breaks: how many of the reference's the output sets at the same word, and how
   many it sets elsewhere.
 - Headings: how many reference chapter headings the output has (matched in order,
-  fuzzily), and how many output headings match none.
+  fuzzily), how many of those letter for letter, and how many output headings match none.
 - Italics: precision and recall of italic words, over the words that align.
 
 Headings are left out of the text comparison on both sides.
@@ -124,6 +124,8 @@ class Score:
     headings_found: int
     headings_expected: int
     headings_spurious: int
+    # Of `headings_found`, those set as the reference sets them, letter for letter.
+    headings_exact: int = 0
     italic_expected: int = 0
     italic_output: int = 0
     italic_precision: float = 0.0
@@ -222,8 +224,10 @@ def _same_heading(
     return fuzz.ratio(a, b) >= 85 or (len(short) >= 8 and long.startswith(short))
 
 
-def match_headings(found: list[str], expected: list[str]) -> int:
-    """How many expected headings appear among the found ones.
+def match_headings(found: list[str], expected: list[str], exact: bool = False) -> int:
+    """How many expected headings appear among the found ones; `exact`, how many as the
+    reference sets them, letter for letter, with no look-alike or near reading taken
+    ("4I" for 41 is found, but not exactly).
 
     An order-preserving alignment that maximises total similarity, so a missing
     "CHAPTER XXV." doesn't take "CHAPTER XXVI." and shift every later match. One found
@@ -242,12 +246,18 @@ def match_headings(found: list[str], expected: list[str]) -> int:
     for i in range(1, len(fk) + 1):
         for j in range(1, len(ek) + 1):
             options = [best[i - 1][j], best[i][j - 1]]
-            if _same_heading(fk[i - 1], ek[j - 1], (fn[i - 1], en[j - 1])):
+            same = fk[i - 1] == ek[j - 1] if exact else None
+            if same or same is None and _same_heading(fk[i - 1], ek[j - 1], (fn[i - 1], en[j - 1])):
                 sim, n = best[i - 1][j - 1]
                 options.append((sim + fuzz.ratio(fk[i - 1], ek[j - 1]) / 100, n + 1))
             # Longer than either part, so "CHAPTER 1" alone can't take both.
             longer = j >= 2 and len(fk[i - 1]) > max(len(ek[j - 1]), len(ek[j - 2]))
-            if longer and _same_heading(fk[i - 1], pairs[j - 2], (fn[i - 1], pn[j - 2])):
+            pair = fk[i - 1] == pairs[j - 2] if exact and longer else None
+            if longer and (
+                pair
+                or pair is None
+                and _same_heading(fk[i - 1], pairs[j - 2], (fn[i - 1], pn[j - 2]))
+            ):
                 sim, n = best[i - 1][j - 2]
                 options.append((sim + 2 * fuzz.ratio(fk[i - 1], pairs[j - 2]) / 100, n + 2))
             best[i][j] = max(options)
@@ -323,6 +333,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         headings_found=matched,
         headings_expected=len(titled),
         headings_spurious=len(doc.headings) - matched,
+        headings_exact=match_headings([h.text for h in doc.headings], titled, exact=True),
         italic_expected=len(ref_italic),
         italic_output=len(out_italic),
         italic_precision=len(hit_italic) / len(out_italic) if out_italic else 0.0,
