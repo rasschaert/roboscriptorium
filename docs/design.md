@@ -412,6 +412,12 @@ lines tall are read too: Artemis draws each chapter number in a circle about fou
 high, which DocLayout-YOLO marks and glm-ocr reads right ("1", "2", "3"). Headings 0/3 →
 3/3, no other book changed (bench, 2026-10-09).
 
+On a speck glm-ocr may answer with talk rather than a reading: "```markdown", or a letter
+of another script ("境"). 24 of the 541 readings cached over all books were such (Doodskleed
+15, where they became chapter headings; 8 other books, Pieter Daens among them), so a
+reading with a code fence or a letter outside the Latin script is no line (`_printed`);
+the project reads Latin scripts only, and accented letters ("Één") stay.
+
 ## Lost lines
 
 An OCR layer sometimes loses a whole printed line, and when the spotter sees nothing there

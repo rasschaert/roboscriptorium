@@ -51,6 +51,16 @@ def test_read_lines_go_into_a_copy_in_reading_order():
     assert len(page.lines) == 6
 
 
+def test_the_models_talk_or_another_scripts_letter_is_no_line_but_an_accent_is():
+    page = _page()
+    boxes = [Region("abandon", 0.5, 70, 10 + 15 * k, 80, 17 + 15 * k) for k in range(4)]
+    found = [(22, b) for b in boxes]
+    said = ["```markdown", "境", "«Één»", "‘Ja.’"]
+    readings = {missing._key(22, b): s for b, s in zip(boxes, said, strict=True)}
+    out = missing.add([page], found, readings)[0]
+    assert [ln.text for ln in out.lines[:2]] == ["«Één»", "‘Ja.’"]
+
+
 def test_an_answer_finds_its_lines_after_a_line_is_added_above():
     from roboscriptorium.corrections import Correction, _located
 

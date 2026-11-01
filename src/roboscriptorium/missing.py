@@ -13,6 +13,7 @@ Figures and captions are left to the figures stage, and regions a human
 answered in the review keep the human's text.
 """
 
+import unicodedata
 from dataclasses import replace
 from pathlib import Path
 from statistics import median
@@ -138,17 +139,26 @@ def read(
     return {_key(n, r): done[_key(n, r)] for n, r in found}
 
 
+def _printed(text: str) -> bool:
+    """Whether a reading can be printed text of a book in a Latin script: not a code fence
+    the model opens on a speck ("```markdown"), nor a letter of another script ("境")."""
+    if "```" in text:
+        return False
+    return all(not c.isalpha() or unicodedata.name(c, "").startswith("LATIN") for c in text)
+
+
 def add(
     pages: list[PageText], found: list[tuple[int, Region]], readings: dict[str, str]
 ) -> list[PageText]:
     """Copies of the pages with each read line in reading order (by its middle).
 
-    A reading with no letter or digit (a smudge) is left out.
+    A reading with no letter or digit (a smudge) is left out, and so is the model's
+    talk rather than a reading (`_printed`).
     """
     by_page: dict[int, list[Line]] = {}
     for n, r in found:
         text = " ".join(readings.get(_key(n, r), "").split())
-        if any(c.isalnum() for c in text):
+        if any(c.isalnum() for c in text) and _printed(text):
             by_page.setdefault(n, []).append(Line(text, r.x0, r.y0, r.x1, r.y1))
     out = []
     for page in pages:

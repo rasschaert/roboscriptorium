@@ -502,9 +502,10 @@ also part of the pipeline itself." Before either book goes to review:
 - [ ] Structure findings repaired where the book's own evidence settles them, beyond
       the chapter numbers
 - [ ] The golden builds' heading errors the check found (Vals alarm 5, 11–13; Artemis 8;
-      Het schaduwhuis 4; Glazuur "EO"; Doodskleed's "```markdown" and "境" headings, a
-      reader's output taken for a line; Vanille's split motto): which `chapters.py`
-      mends, on the warm bench after Daens; the rest traced to their stage
+      Het schaduwhuis 4; Glazuur "EO"; Doodskleed's sentences as headings; Vanille's split
+      motto): which tonight's changes mend, on the warm bench after Daens; the rest traced
+      to their stage. Doodskleed's "```markdown" and "境": glm-ocr's talk on specks, now
+      no line (2026-11-01, `missing._printed`)
 - [ ] `init`: the model walks inward from each edge until three pages in a row go into
       the EPUB (code in, 2026-11-01; Daens' ads, pp. 789–796, lay past the 8 edge pages).
       Short test once Daens' build is done: `init` again on Daens (its end should be
