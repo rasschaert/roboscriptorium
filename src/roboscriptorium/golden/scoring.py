@@ -7,7 +7,16 @@ from dataclasses import replace
 from pathlib import Path
 from typing import NamedTuple
 
-from roboscriptorium import disagreements, flags, layout, ocrcheck, ocrdoubts, pipeline, readers
+from roboscriptorium import (
+    disagreements,
+    flags,
+    layout,
+    ocrcheck,
+    ocrdoubts,
+    pipeline,
+    readers,
+    structure,
+)
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
@@ -170,6 +179,9 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
             if c.action == "heading"
             for i in range(c.first, c.last + 1)
         },
+    )
+    found = flags.structural(
+        stages.pages, stages.model_roles, structure.findings(stages.doc), found
     )
     found = _read_unread(book, stages, found)
     if not any(s.choice == "other" for s in stages.suspects):

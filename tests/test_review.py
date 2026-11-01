@@ -11,6 +11,7 @@ import pytest
 
 from roboscriptorium import cli, errata, review
 from roboscriptorium.disagreements import Disagreement, Verdicts
+from roboscriptorium.ir import Document
 from roboscriptorium.pdf import Line, PageText
 
 
@@ -97,6 +98,7 @@ def test_a_golden_books_places_join_the_review_cropped_from_the_layer(tmp_path, 
         epigraph_lines=set(),
         corrections_applied=0,
         read_prompt="",
+        doc=Document("T", "A", "nl"),
     )
     book = SimpleNamespace(
         root=tmp_path,

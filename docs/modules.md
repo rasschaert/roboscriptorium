@@ -390,7 +390,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `structure.py`: what a reader would notice in a built document's structure, without a
   model (`findings`: numbered chapters out of their run, a title of words among them, a
   section of fewer than 20 words not set apart); `summary` is the line `build` prints,
-  and `pipeline.run` keeps the places in `stages/structure.json`.
+  and `pipeline.run` keeps the places in `stages/structure.json`. `flags.structural` asks
+  each at its first line in the review (`scoring.questions`).
 - `review.py` + `regions.html`: the local review page (stdlib HTTP server on
   127.0.0.1), with scan crops: the flagged regions of any book and, for a golden book,
   its places where our text and the reference differ (`GoldenQuestions`), in the same

@@ -20,6 +20,7 @@ from dataclasses import dataclass, field, replace
 
 from roboscriptorium import page as P
 from roboscriptorium import roles as R
+from roboscriptorium import structure
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.layout import Region
 from roboscriptorium.ocrdoubts import Doubt
@@ -58,6 +59,9 @@ REASONS = {
     "lost-line": "white space inside a sentence: the text layer may have lost a line",
     "initial-lost": "a section opens in lower case or capitals: its drawn initial may be lost",
     "asked-for": "you asked for this line (review --find)",
+    "number-out-of-run": "a chapter number that doesn't follow the one before: one may be missing",
+    "title-among-numbers": "a heading of words between numbered chapters",
+    "short-section": "a section of only a line or two: split off, or a heading that isn't one",
 }
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
@@ -609,6 +613,38 @@ def _with_doubt(flag: Flag, doubt: Flag) -> Flag:
             same["votes"] += [v for v in r["votes"] if v not in same["votes"]]
     reasons = flag.reasons + [r for r in doubt.reasons if r not in flag.reasons]
     return replace(flag, reasons=reasons, readings=readings)
+
+
+def structural(
+    pages: list[PageText],
+    roles: dict[SourceRef, LineRole],
+    found: list["structure.Finding"],
+    flags: list[Flag],
+) -> list[Flag]:
+    """`flags` with each structure finding (`structure.findings`) asked at its first line:
+    as a reason on the question holding that line, else as a question of its own."""
+    out = list(flags)
+    by_number = {p.number: p for p in pages}
+    for f in found:
+        page = by_number.get(f.where.page) if f.where else None
+        if page is None or f.where.line >= len(page.lines):
+            continue
+        line = f.where.line
+        at = next(
+            (k for k, g in enumerate(out) if g.page == page.number and g.first <= line <= g.last),
+            None,
+        )
+        if at is not None:
+            if f.kind not in out[at].reasons:
+                out[at] = replace(out[at], reasons=[*out[at].reasons, f.kind])
+            continue
+        text = page.lines[line].text
+        role = roles.get(SourceRef(page.number, line))
+        out.append(
+            Flag(region_key(page.number, text), page.number, line, line, text, treatment(role),
+                 [f.kind])
+        )  # fmt: skip
+    return sorted(out, key=lambda g: (g.page, g.first, g.last))
 
 
 def asked(pages: list[PageText], words: str) -> list[Flag]:

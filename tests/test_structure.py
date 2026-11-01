@@ -44,3 +44,22 @@ def test_a_number_out_of_its_run_a_stray_title_and_a_split_line_are_findings():
     ]
     assert structure.summary(structure.findings(doc)).startswith("structure: 1 × a section")
     assert structure.summary([]) == "structure: nothing out of place"
+
+
+def test_a_finding_is_asked_at_its_line_on_its_own_or_beside_a_question_there():
+    from roboscriptorium import flags
+    from roboscriptorium.pdf import Line, PageText
+
+    page = PageText(9, 300, 500, [Line("Voor mijn ouders", 100, 40, 200, 52)])
+    other = PageText(12, 300, 500, [Line("EO", 140, 40, 160, 52)])
+    found = [
+        structure.Finding("short-section", "Voor mijn ouders", SourceRef(9, 0)),
+        structure.Finding("title-among-numbers", "EO", SourceRef(12, 0)),
+    ]
+    there = flags.Flag("k", 12, 0, 0, "EO", "heading", ["heading"])
+    out = flags.structural([page, other], {}, found, [there])
+    assert [(f.page, f.text, f.reasons) for f in out] == [
+        (9, "Voor mijn ouders", ["short-section"]),
+        (12, "EO", ["heading", "title-among-numbers"]),
+    ]
+    assert all(r in flags.REASONS for f in out for r in f.reasons)

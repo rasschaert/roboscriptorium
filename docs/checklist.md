@@ -496,8 +496,11 @@ also part of the pipeline itself." Before either book goes to review:
 - [x] A structure check at the end of every build (2026-11-01, `structure.py`): numbers
       out of their run, a title among numbers, sections under 20 words; `build` prints the
       count. On the 44 books built so far: 18 places in 6 books, all errors by eye
-- [ ] Each structure finding a review question (the region review, its crop), and
-      repaired where the book's own evidence settles it
+- [x] Each structure finding a review question (2026-11-01, `flags.structural`): at its
+      first line, or a reason on the question already there. To walk in the review page
+      before the next review (every kind, its crop)
+- [ ] Structure findings repaired where the book's own evidence settles them, beyond
+      the chapter numbers
 - [ ] The golden builds' heading errors the check found (Vals alarm 5, 11–13; Artemis 8;
       Het schaduwhuis 4; Glazuur "EO"; Doodskleed's "```markdown" and "境" headings, a
       reader's output taken for a line; Vanille's split motto): which `chapters.py`

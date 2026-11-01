@@ -667,8 +667,10 @@ documents before `chapters.py`): 18 places in 6 books, every one an error by eye
 alarm without chapters 5 and 11–13, Artemis without 8, Het schaduwhuis without 4, Glazuur's
 "EO" for 10, Doodskleed's "```markdown" and "境" as headings (a reader's output taken for
 a line), Vanille's motto attribution split off. The bench forgave all of them: it folds
-number look-alikes and doesn't count a missing heading. Not yet: each finding as a
-review question, and a repair where the book settles it.
+number look-alikes and doesn't count a missing heading. Each finding is also a review
+question at its first line (`flags.structural`), or a reason added to the question
+already there, in the same region review as every other. Not yet: a repair where the
+book settles it beyond the chapter numbers.
 
 ## Reflow: line-end hyphens
 
