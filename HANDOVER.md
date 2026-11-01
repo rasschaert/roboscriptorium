@@ -7,8 +7,11 @@ decisions.md, 2026-10-26).
 
 ## Running
 
-Nothing runs. The user needs the machine for other work (2026-10-26): don't start model runs
-until they say it's free again.
+`robo-hwv-e2e` (started 2026-11-01 17:52): a new book of the user's, Mirko Bonné, *Hoe wij
+verdwijnen* (IA Scribe scan, 300 pages), timed end to end at the user's request: `init` from
+nothing, then `build` on its unconfirmed `book.toml`, each through `timed.sh` (logs
+`work/runs/hwv-init.log`, `hwv-build.log`). The two minutes in docs/run-times.md are the
+answer. Then: confirm the setup against `init/report.md`, sample the questions, the user's review.
 
 The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3,100 pages:
 after review 0.362, every book weighing the same; breaks 0.049) and
