@@ -493,11 +493,15 @@ also part of the pipeline itself." Before either book goes to review:
       short pages of the text proper; Hoe wij verdwijnen's dedication and motto each one
       block. Left: their italics (the print's dedication all italic, the motto upright;
       we set "Voor" upright and "Zwart" italic): `italics.py` on display lines
-- [ ] A structure check at the end of every build: numbered headings out of their run,
-      a lone heading of another kind among numbers, sections of a line or two, text set
-      apart on a page of its own not taken as a motto or dedication; each repaired where
-      the book's own evidence settles it, else a review question, and the count printed
-      by `build`. First real test: Pieter Daens, unchecked by eye
+- [x] A structure check at the end of every build (2026-11-01, `structure.py`): numbers
+      out of their run, a title among numbers, sections under 20 words; `build` prints the
+      count. On the 44 books built so far: 18 places in 6 books, all errors by eye
+- [ ] Each structure finding a review question (the region review, its crop), and
+      repaired where the book's own evidence settles it
+- [ ] The golden builds' heading errors the check found (Vals alarm 5, 11–13; Artemis 8;
+      Het schaduwhuis 4; Glazuur "EO"; Doodskleed's "```markdown" and "境" headings, a
+      reader's output taken for a line; Vanille's split motto): which `chapters.py`
+      mends, on the warm bench after Daens; the rest traced to their stage
 - [ ] `init`: ends that land on publisher's lists and blurbs (Daens pp. 789–796 taken as
       text; the text ends p. 787) as labels for its page kinds
 - [ ] The bench counts heading errors as a measure of its own; a golden pair with

@@ -31,6 +31,7 @@ from roboscriptorium import (
     readers,
     scanstyle,
     sorter,
+    structure,
     trust,
     typestyle,
     typography,
@@ -376,6 +377,11 @@ def run(
 
     cover = render_jpeg(book.source, book.cover_page) if book.cover_page else None
     write_epub(doc, book.epub_path, cover, images)
+    found = structure.findings(doc)
+    write_atomic(
+        book.stages / "structure.json",
+        json.dumps([asdict(f) for f in found], ensure_ascii=False, indent=1),
+    )
     return Stages(
         body,
         model_roles,

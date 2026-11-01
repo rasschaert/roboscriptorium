@@ -654,6 +654,22 @@ fit ("Io" → 10, "S2" → 52), an unreadable one only where both neighbours agr
 learned decision. Short test: all 52 numbers right (2026-11-01). Found by reading the
 book: no golden pair prints its numbers so, which the bench can't yet see.
 
+## The structure check
+
+**A build says what a reader would notice in its structure** (the user, 2026-11-01:
+"ideally that detection and the fix is also part of the pipeline itself").
+`structure.findings` runs on every built document, with no model: a numbered chapter
+that doesn't follow the one before (a part's title with the numbers starting again at 1
+is no slip), a heading of words between numbered chapters, and a section of fewer than
+20 words not set apart as a motto or dedication. `build` prints the count;
+`stages/structure.json` keeps the places. On the 44 books built so far (2026-11-01, the
+documents before `chapters.py`): 18 places in 6 books, every one an error by eye: Vals
+alarm without chapters 5 and 11–13, Artemis without 8, Het schaduwhuis without 4, Glazuur's
+"EO" for 10, Doodskleed's "```markdown" and "境" as headings (a reader's output taken for
+a line), Vanille's motto attribution split off. The bench forgave all of them: it folds
+number look-alikes and doesn't count a missing heading. Not yet: each finding as a
+review question, and a repair where the book settles it.
+
 ## Reflow: line-end hyphens
 
 **Nothing else looks at a line-end hyphen.** The OCR check starts where readings

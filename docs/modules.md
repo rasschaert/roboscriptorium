@@ -386,6 +386,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   the roles after the sorter; `numbered`: each short heading of a run of numbers set to
   its number, old-style look-alikes folded, a lone unreadable one settled by both
   neighbours, on the reflowed blocks). Both return new data.
+- `structure.py`: what a reader would notice in a built document's structure, without a
+  model (`findings`: numbered chapters out of their run, a title of words among them, a
+  section of fewer than 20 words not set apart); `summary` is the line `build` prints,
+  and `pipeline.run` keeps the places in `stages/structure.json`.
 - `review.py` + `regions.html`: the local review page (stdlib HTTP server on
   127.0.0.1), with scan crops: the flagged regions of any book and, for a golden book,
   its places where our text and the reference differ (`GoldenQuestions`), in the same

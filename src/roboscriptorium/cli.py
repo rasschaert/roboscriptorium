@@ -20,6 +20,7 @@ from roboscriptorium import (
     pipeline,
     quality,
     review,
+    structure,
 )
 from roboscriptorium.book import Book
 from roboscriptorium.clients import decide, llama
@@ -97,6 +98,7 @@ def build(
     book = Book.load(_book_dir(book_dir))
     doc = pipeline.build(book, _range(pages))
     typer.echo(f"{len(doc.blocks)} paragraphs → {book.epub_path}")
+    typer.echo(structure.summary(structure.findings(doc)))
     if kept := keep_dated(book.epub_path, book.epubs):
         typer.echo(f"kept as {kept}")
 
