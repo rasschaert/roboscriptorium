@@ -19,7 +19,9 @@ Hoe wij verdwijnen is done end to end (4 h 14 min) and rebuilt warm with tonight
    `experiments/probe_init_ends.py` on the 27 labelled books (22 and 21 ends right before);
 3. Daens' `body_pages` to [7, 787], rebuilt warm;
 4. a warm `bench tuning`, then `bench validation`, for tonight's three changes (chapter
-   numbers, short pages asked, the structure check) against `tuning-20261026T075608`;
+   numbers, short pages asked, the structure check) against `tuning-20261026T075608`:
+   queued in `robo-after-daens-bench`, which starts them the moment Daens' screen ends
+   (logs `work/runs/bench-*-chapters.log`); steps 2 and 3 run after it, not beside it;
 5. sample both books' questions; the user's review comes after.
 Don't run models beside Daens' build: its time is the measurement.
 
