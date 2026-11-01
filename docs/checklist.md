@@ -502,8 +502,11 @@ also part of the pipeline itself." Before either book goes to review:
       Het schaduwhuis 4; Glazuur "EO"; Doodskleed's "```markdown" and "境" headings, a
       reader's output taken for a line; Vanille's split motto): which `chapters.py`
       mends, on the warm bench after Daens; the rest traced to their stage
-- [ ] `init`: ends that land on publisher's lists and blurbs (Daens pp. 789–796 taken as
-      text; the text ends p. 787) as labels for its page kinds
+- [ ] `init`: the model walks inward from each edge until three pages in a row go into
+      the EPUB (code in, 2026-11-01; Daens' ads, pp. 789–796, lay past the 8 edge pages).
+      Short test once Daens' build is done: `init` again on Daens (its end should be
+      p. 787) and `experiments/probe_init_ends.py` on the 27 labelled books (22 and 21 ends
+      right before)
 - [ ] The bench counts heading errors as a measure of its own; a golden pair with
       old-style chapter numbers over sunk openings goes on the gaps to hunt for
       (golden-notes.md)

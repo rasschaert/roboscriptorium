@@ -12,14 +12,18 @@ def _page(number: int, words: int = 150) -> PageText:
 
 
 class _Client:
-    """A decision model that calls every page it is shown a cover, counting its calls."""
+    """A decision model that calls the two pages at either end a cover and every other
+    page text, or what `kinds` says of it, counting its calls."""
 
-    def __init__(self):
+    def __init__(self, kinds: dict[int, str] | None = None):
         self.calls = []
+        self.kinds = kinds or {}
 
     def decide(self, state, questions, image_png=None):
         self.calls.append(state["page"])
-        return {"kind": SimpleNamespace(value="cover", confidence=0.9)}
+        n, total = (int(w) for w in state["page"].split(" of "))
+        kind = "cover" if n <= 2 or n >= total - 1 else "text"
+        return {"kind": SimpleNamespace(value=self.kinds.get(n, kind), confidence=0.9)}
 
 
 def test_a_page_is_named_by_both_its_numbers_or_says_it_prints_none():
@@ -39,8 +43,21 @@ def test_the_model_answers_the_edge_pages_and_the_signals_the_middle(tmp_path, m
     edge = pagekinds.edge_pages(40)
     assert edge == set(range(1, 9)) | set(range(33, 41))
     assert sorted(int(c.split(" ")[0]) for c in client.calls) == sorted(edge)
-    assert all(out[n] == "cover" for n in edge)
-    assert all(out[n] == "text" for n in range(9, 33))
+    assert all(out[n] == "cover" for n in (1, 2, 39, 40))
+    assert all(out[n] == "text" for n in range(3, 39))
+
+
+def test_past_the_edge_the_model_goes_on_inward_until_the_text_runs(tmp_path, monkeypatch):
+    monkeypatch.setattr(pagekinds, "render_png", lambda pdf, n: b"png")
+    pages = [_page(n) for n in range(1, 61)]
+    # The publisher's lists and blurbs from p. 45, more than the edge's eight pages.
+    client = _Client({n: "also-by" for n in range(45, 59)})
+    out = pagekinds.kinds(
+        tmp_path / "work" / "book" / "source.pdf", pages, client, tmp_path / "a.json"
+    )
+    asked = sorted(int(c.split(" ")[0]) for c in client.calls)
+    assert asked == list(range(1, 9)) + list(range(42, 61))
+    assert pagekinds.ends(out) == (3, 44)
 
 
 def test_a_rerun_asks_only_what_the_cache_lacks(tmp_path, monkeypatch):

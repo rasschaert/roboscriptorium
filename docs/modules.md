@@ -180,7 +180,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `pagekinds.py`: what kind of page each page of a scan is, for `init`: cover, blank, title,
   colophon, foreword, text, afterword, ads … Signals first (a page's words, number-only lines,
   centred lines, the name its first lines carry), a decision model (`role_model`, asked
-  `QUESTION` with the page image) for the `EDGE` pages at either edge, cached by page. `ends`
+  `QUESTION` with the page image) for the `EDGE` pages at either edge and on inward until
+  `RUN` pages in a row go into the EPUB (at most `WALK`), cached by page. `ends`
   is the first and last page whose kind goes into the EPUB (`fate`); `page_label` names a page by
   both numbers, "PDF page 9 (the page prints 7)", the PDF's own (what `body_pages` and `--pages`
   take) and the printed one, or says the page prints none.

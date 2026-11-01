@@ -4,7 +4,8 @@ Signals first, without a model: a page's words, number-only lines, centred lines
 its first lines carry ("Inhoud", "Woord vooraf", ©/ISBN). They call 95% of the labelled pages
 right (docs/decisions.md, 2026-10-21) but take a long advert or appendix page for text, which
 pads an end by a page or two. So the model (a decision model asked `QUESTION` with the page
-image) answers every page at either edge of the book (`EDGE`), and the signals the middle.
+image) answers the pages at either edge of the book (`EDGE`) and on inward until the text
+runs (`RUN`), and the signals the middle.
 The text proper's two ends are then the first and last page whose kind goes into the EPUB
 (`fate`). A person confirms them: a padded blank is mild, a cut page is not.
 
@@ -26,8 +27,12 @@ from roboscriptorium.files import write_atomic
 from roboscriptorium.page import folio, page_offset
 from roboscriptorium.pdf import PageText, render_png
 
-# The pages at each edge of the book the model answers for.
+# The pages at each edge of the book the model answers for at least; past them it goes on
+# inward until `RUN` pages in a row go into the EPUB, at most `WALK` pages from the edge
+# (Pieter Daens' publisher's lists and blurbs end 16 pages from the back).
 EDGE = 8
+RUN = 3
+WALK = 40
 
 # Words that name a page's kind in its first lines, Dutch and English.
 NAMES = {
@@ -211,27 +216,39 @@ def edge_pages(total: int) -> set[int]:
 
 
 def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, str]:
-    """Each page's kind: the model's for the pages at either edge (`edge_pages`), the signals'
-    for the rest, a page they can't tell counting as text. The model's answers are kept in
-    `cache` by page, so a rerun asks only what is new."""
+    """Each page's kind: the model's from either edge inward (`edge_pages`, then on until
+    `RUN` pages in a row go into the EPUB), the signals' for the rest, a page they can't
+    tell counting as text. The model's answers are kept in `cache` by page, so a rerun
+    asks only what is new."""
     total = len(pages)
     kept = json.loads(cache.read_text()) if cache.exists() else {}
     asked_of = f"{TAG}:{getattr(client, 'model', '')}"
     answers = kept.get("answers", {}) if kept.get("question") == asked_of else {}
-    edge = edge_pages(total)
-    by = {c.page: c for c in clues(pages)}
+    by_number = {p.number: p for p in pages}
     out = {}
-    for page in pages:
-        n = page.number
-        if n in edge:
-            if str(n) not in answers:
-                answer = client.decide(
-                    state(pdf.parent.name, n, total, page), QUESTION, image_png=render_png(pdf, n)
-                )["kind"]
-                answers[str(n)] = [answer.value, round(answer.confidence, 3)]
-                write_atomic(cache, json.dumps({"question": asked_of, "answers": answers}))
-            out[n] = answers[str(n)][0]
-        else:
+
+    def ask(n: int) -> str:
+        if str(n) not in answers:
+            answer = client.decide(
+                state(pdf.parent.name, n, total, by_number[n]),
+                QUESTION,
+                image_png=render_png(pdf, n),
+            )["kind"]
+            answers[str(n)] = [answer.value, round(answer.confidence, 3)]
+            write_atomic(cache, json.dumps({"question": asked_of, "answers": answers}))
+        return answers[str(n)][0]
+
+    numbers = [p.number for p in pages]
+    for order in (numbers, numbers[::-1]):
+        run = 0
+        for k, n in enumerate(order[:WALK]):
+            if k >= EDGE and run >= RUN:
+                break
+            out[n] = ask(n)
+            run = run + 1 if fate(out[n]) == "in" else 0
+    by = {c.page: c for c in clues(pages)}
+    for n in numbers:
+        if n not in out:
             g = guess(by[n], (n - 1) / max(1, total - 1))
             out[n] = "text" if g == "?" else g
     return out
