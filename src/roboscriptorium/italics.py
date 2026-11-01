@@ -123,6 +123,42 @@ def _fill(leaning: list[bool | None]) -> list[int]:
     return out
 
 
+# A motto or dedication is set in one type: at most this many of its words measured
+# otherwise than all the rest take the rest's type ("Voor", too round to measure, among
+# italic words; "Zwart", whose Z and w lean, among upright ones).
+APART_ODD = 1
+
+
+def uniform(blocks: list[Block]) -> list[Block]:
+    """Copies of the blocks with each motto's or dedication's lines set in one type, where
+    all but `APART_ODD` of their words are."""
+    out = list(blocks)
+    k = 0
+    while k < len(out):
+        kind = _apart(out[k])
+        if kind is None:
+            k += 1
+            continue
+        end = k
+        while end < len(out) and _apart(out[end]) == kind:
+            end += 1
+        group = out[k:end]
+        words = sum(len(b.text.split()) for b in group)
+        italic = sum(len(b.italic) for b in group)
+        if words > APART_ODD and 0 < words - italic <= APART_ODD:
+            out[k:end] = [replace(b, italic=tuple(range(len(b.text.split())))) for b in group]
+        elif words > APART_ODD and 0 < italic <= APART_ODD:
+            out[k:end] = [replace(b, italic=()) for b in group]
+        k = end
+    return out
+
+
+def _apart(block: Block) -> str | None:
+    if isinstance(block, Paragraph) and (block.epigraph or block.dedication):
+        return "epigraph" if block.epigraph else "dedication"
+    return None
+
+
 def _key(word: str) -> str:
     return re.sub(r"\W+", "", word.lower())
 

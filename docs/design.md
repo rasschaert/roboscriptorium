@@ -638,6 +638,14 @@ motto's lines become an epigraph, a dedication's a dedication block, page number
 running heads and garbled specks left out. Short test: both set apart, six other short
 pages left as text. The inset rule stays beside it until a bench says it adds nothing.
 
+Their italics: a motto or dedication is set in one type, so where all its words but one
+measure alike, that one takes their type (`italics.uniform`): "Voor", too round and
+diagonal to measure, among italic words; "Zwart", whose Z and w lean 25°, among upright
+ones. Tried first and reverted: measuring only words whose stems outnumber their
+diagonals; it fixed "Zwart" but lost two printed italics in the running text
+("*Zwarte* eeuwigheid", "*wolk*?"), as the scan shows. With `uniform` alone, those two
+words are the only change in the book.
+
 ## Chapter numbers
 
 **A chapter opening looks like the book's other openings, and numbered chapters run

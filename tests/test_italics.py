@@ -9,6 +9,24 @@ def test_a_short_word_between_italic_ones_is_italic():
     assert italics._fill([None, True, None]) == [1]
 
 
+def test_a_dedication_all_but_one_word_italic_is_set_all_italic_not_running_text():
+    ded = [
+        Paragraph("Voor mijn ouders", dedication=True, italic=(1, 2)),
+        Paragraph("Bruni en Thomas Eggers", dedication=True, italic=(0, 1, 2, 3)),
+    ]
+    text = Paragraph("Voor mijn ouders schreef hij.", italic=(1, 2))
+    out = italics.uniform([*ded, text])
+    assert [b.italic for b in out] == [(0, 1, 2), (0, 1, 2, 3), (1, 2)]
+    # A motto with two upright words keeps them: it may set its source upright.
+    motto = [Paragraph("Zwart paard", epigraph=True, italic=(0, 1)),
+             Paragraph("Albert Camus", epigraph=True)]  # fmt: skip
+    assert italics.uniform(motto) == motto
+    # One word leaning among upright ones is upright.
+    upright = [Paragraph("Zwart paard, wit paard", epigraph=True, italic=(0,)),
+               Paragraph("Albert Camus", epigraph=True)]  # fmt: skip
+    assert [b.italic for b in italics.uniform(upright)] == [(), ()]
+
+
 def test_marks_follow_words_through_fixes_and_joined_hyphenation():
     page = PageText(
         3,

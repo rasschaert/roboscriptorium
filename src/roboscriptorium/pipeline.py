@@ -349,10 +349,12 @@ def run(
         {p.number for p in body},
     )
     built, note_paragraphs = fixed[: len(built)], fixed[len(built) :]
-    blocks = italics.mark(
-        built,
-        body,
-        italics.detect(book.source, body, book.stages / "italics.json"),
+    blocks = italics.uniform(
+        italics.mark(
+            built,
+            body,
+            italics.detect(book.source, body, book.stages / "italics.json"),
+        )
     )
     if compound is not None:
         compound.save()

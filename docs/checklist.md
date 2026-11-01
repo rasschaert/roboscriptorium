@@ -491,8 +491,8 @@ also part of the pipeline itself." Before either book goes to review:
       its warm rebuild; the five dropped ones read right by the readers once kept
 - [x] Front matter (2026-11-01, `pagekinds.set_apart`): the page-kind model asked about
       short pages of the text proper; Hoe wij verdwijnen's dedication and motto each one
-      block. Left: their italics (the print's dedication all italic, the motto upright;
-      we set "Voor" upright and "Zwart" italic): `italics.py` on display lines
+      block. Their italics too (`italics.uniform`, one type per motto or
+      dedication): "Voor" italic, "Zwart" upright, nothing else in the book moved
 - [x] A structure check at the end of every build (2026-11-01, `structure.py`): numbers
       out of their run, a title among numbers, sections under 20 words; `build` prints the
       count. On the 44 books built so far: 18 places in 6 books, all errors by eye

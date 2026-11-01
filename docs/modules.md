@@ -233,7 +233,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `italics.py`: italic words, from each text-layer word's stroke slant on
   the page image (no model; scans and born-digital PDFs alike), marked on paragraphs by aligning their
   words with their source lines'; cached in `stages/italics.json`. The EPUB
-  sets them in `<i>`; `eval` scores italic words.
+  sets them in `<i>`; `eval` scores italic words. `uniform` sets a motto's or
+  dedication's lines in one type where all but one word agree.
 - `missing.py`: printed lines the OCR layer lacks (bare chapter numbers,
   page numbers, short lines of dialogue). A layout region about one line tall
   (up to five above a sunk page's text, where Artemis draws its chapter numbers in a
