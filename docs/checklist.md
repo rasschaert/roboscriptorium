@@ -491,6 +491,8 @@ In this order:
 | Herman Brusselmans, *De kus in de nacht* (Prometheus 2002) | `de-kus-in-de-nacht` | 620 (7–616) | 300 ppi, large pages | parts ("Deel een", "Proloog" on p. 7), small-capital openings |
 | Emmanuel Carrère, *Andere levens dan het mijne* (De Arbeiderspers, tr. Floor Borsboom) | `andere-levens` | 248 (9–244) | 360 ppi | library copy; French names and accents |
 | Emmanuel Carrère, *Een Russische roman* (De Arbeiderspers, tr. Marianne Kaas) | `een-russische-roman` | 276 (7–271) | 360 ppi | library copy; seven parts, each a small number atop its own page (pp. 7, 47, 131, 169, 233, 259, …) with pencil marks the layer reads as noise (pre-check, no OCR check: part "1" read "I" and dropped as a page number; the marks kept as running text, "Fyarvin er pan ee Ka": see what the full build asks, then decide on a rule); p. 272 show-through only |
+| Mirko Bonné, *Hoe wij verdwijnen* (Querido 2011, tr. Elly Schippers; added 2026-11-01) | `hoe-wij-verdwijnen` | 300 (9–295, by `init`) | IA Scribe | dedication (p. 9) and a Camus motto (p. 11) before the text; timed end to end, `init` to EPUB |
+| Louis Paul Boon, *Pieter Daens* (Singel Pockets 1997; added 2026-11-01) | `pieter-daens` | 804 (body about 9–787: foreword to sources) | IA Scribe, Leeds library copy | six parts ("Boek een" … "Boek zes") and chapters headed by years; a motto (p. 7); a two-page table of contents (pp. 11–12) to leave out; the layer lacks "Boek vijf / Onze doden" (p. 527, printed 525); show-through read as text on pp. 8, 14; verse (p. 354); a sources list at the end; timed end to end |
 
 - [ ] Each book in turn: check its front and back matter and `body_pages`, build (cold
       ~1 min a page: Ex-minnaar ~4 h, De kus ~10 h), sample the questions, **user**
