@@ -7,16 +7,21 @@ decisions.md, 2026-10-26).
 
 ## Running
 
-`robo-hwv-e2e` (started 2026-11-01 17:52): a new book of the user's, Mirko Bonné, *Hoe wij
-verdwijnen* (IA Scribe scan, 300 pages), timed end to end at the user's request: `init` from
-nothing, then `build` on its unconfirmed `book.toml`, each through `timed.sh` (logs
-`work/runs/hwv-init.log`, `hwv-build.log`). The two minutes in docs/run-times.md are the
-answer. Then: confirm the setup against `init/report.md`, sample the questions, the user's review.
+`robo-daens-e2e`: Louis Paul Boon, *Pieter Daens* (804 pages), timed end to end at the user's
+request: `init` (done: PDF 7–796, the end nine pages late, publisher's lists) then `build`
+(started 2026-11-01 22:08, about 11 h at Hoe wij verdwijnen's pace). Logs
+`work/runs/daens-*.log`; its run-times rows say 0 pages: fill in 790.
 
-`robo-daens-e2e` (the user, 2026-11-01: start once the heavy work is done, without waiting
-for the review): waits for `robo-hwv-e2e` to end, then *Pieter Daens*
-(`~/Downloads/Pieter Daens.pdf`) the same way, `init` then `build`, timed (logs
-`work/runs/daens-*.log`; its run-times rows say 0 pages until the count is filled in).
+Hoe wij verdwijnen is done end to end (4 h 14 min) and rebuilt warm with tonight's fixes
+(chapter numbers, dedication and motto). **When Daens' build ends**, in this order:
+1. its time into docs/run-times.md (pages), its structure line and EPUB checked by eye;
+2. `init` again on Daens (the walk should end it at PDF 787) and
+   `experiments/probe_init_ends.py` on the 27 labelled books (22 and 21 ends right before);
+3. Daens' `body_pages` to [7, 787], rebuilt warm;
+4. a warm `bench tuning`, then `bench validation`, for tonight's three changes (chapter
+   numbers, short pages asked, the structure check) against `tuning-20261026T075608`;
+5. sample both books' questions; the user's review comes after.
+Don't run models beside Daens' build: its time is the measurement.
 
 The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3,100 pages:
 after review 0.362, every book weighing the same; breaks 0.049) and
