@@ -13,10 +13,10 @@ nothing, then `build` on its unconfirmed `book.toml`, each through `timed.sh` (l
 `work/runs/hwv-init.log`, `hwv-build.log`). The two minutes in docs/run-times.md are the
 answer. Then: confirm the setup against `init/report.md`, sample the questions, the user's review.
 
-Queued after it (the user, 2026-11-01): once Hoe wij verdwijnen is built and checked, and
-the machine is idle, the next book, *Pieter Daens*, at `~/Downloads/Pieter Daens.pdf`, the
-same way: `init` then `build`, timed. Not opened or started before Hoe wij verdwijnen ends:
-that run gets the whole machine.
+`robo-daens-e2e` (the user, 2026-11-01: start once the heavy work is done, without waiting
+for the review): waits for `robo-hwv-e2e` to end, then *Pieter Daens*
+(`~/Downloads/Pieter Daens.pdf`) the same way, `init` then `build`, timed (logs
+`work/runs/daens-*.log`; its run-times rows say 0 pages until the count is filled in).
 
 The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3,100 pages:
 after review 0.362, every book weighing the same; breaks 0.049) and
