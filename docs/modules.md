@@ -377,6 +377,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   words or more, none garbled, not all capitals, no heading on the page). Reflow makes
   each line a paragraph marked `epigraph`; `epub.py` sets a run of them as one
   `blockquote epub:type="epigraph"`. The words stay in the scored paragraphs.
+- `chapters.py`: a book's numbered chapters (`openings`: a short line set apart atop a
+  sunk page is a heading where most of the book's such openings carry one, applied to
+  the roles after the sorter; `numbered`: each short heading of a run of numbers set to
+  its number, old-style look-alikes folded, a lone unreadable one settled by both
+  neighbours, on the reflowed blocks). Both return new data.
 - `review.py` + `regions.html`: the local review page (stdlib HTTP server on
   127.0.0.1), with scan crops: the flagged regions of any book and, for a golden book,
   its places where our text and the reference differ (`GoldenQuestions`), in the same

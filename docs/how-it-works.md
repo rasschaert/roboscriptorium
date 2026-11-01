@@ -430,6 +430,11 @@ A page holding only a few short lines set well in from the margin, of real words
 not all capitals, is a motto (`epigraphs.py`): "‘It’s closing time’ (Leonard Cohen,
 The Future)". Its lines are set apart as one epigraph block before the text.
 
+A chapter number the layer misread or dropped is put right by the book itself
+(`chapters.py`): a short line set apart above a chapter's first lines is a heading where
+the book's other chapter openings carry one, and a run of numbered chapters goes 1, 2,
+3, so "Io" is 10 and a "SE" between 50 and 52 is 51.
+
 ### Paragraphs
 
 Plain code (`reflow.py`) joins lines into paragraphs and headings, using

@@ -752,3 +752,42 @@ def test_the_read_models_page_roles_reach_the_trees(tmp_path, monkeypatch):
     sorter.save(sorter.Sorter(_PageHeadings()), path)
     with pytest.raises(sorter.Mismatch, match="ROBO_PAGE_ROLES"):
         pipeline.run(book)
+
+
+def test_a_dropped_chapter_number_atop_an_opening_is_read_by_the_books_run(tmp_path, monkeypatch):
+    def handler(request: httpx.Request) -> httpx.Response:
+        line = json.loads(request.content)["state"]
+        line = json.loads(line)["line"] if isinstance(line, str) else line["line"]
+        role = "chapter_heading" if line in {*map(str, range(1, 10)), "Io", "I2"} else "body"
+        role = "artifact" if line == "zi" else role
+        answers = {}
+        for name, q in json.loads(request.content)["questions"].items():
+            choice = role if name == "role" else next(iter(q["criteria"]))
+            answers[name] = {"type": "choice", "choice": choice, "confidence": 0.9}
+            answers[name]["probabilities"] = {choice: 0.9, "body": 0.9 if role == "body" else 0.0}
+        return httpx.Response(200, json={"answers": answers})
+
+    def client(model, *_):
+        http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+        return DecisionClient("http://test", model, client=http)
+
+    monkeypatch.setattr(pipeline.decide, "for_model", client)
+    monkeypatch.setenv("ROBO_SORTER", "0")
+    _no_layout(monkeypatch)
+    doc = pymupdf.open()
+    numbers = [*map(str, range(1, 10)), "Io", "zi", "I2"]
+    for number in numbers:
+        opening = doc.new_page(width=400, height=600)
+        opening.insert_text((195, 140), number, fontsize=11)
+        for i, text in enumerate(LINES[:8]):
+            opening.insert_text((40, 200 + 18 * i), text, fontsize=11)
+        full = doc.new_page(width=400, height=600)
+        for i, text in enumerate(LINES):
+            full.insert_text((40, 60 + 18 * i), text, fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    (tmp_path / "book.toml").write_text(
+        f'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, {2 * len(numbers)}]\n'
+    )
+    stages = pipeline.run(Book.load(tmp_path))
+    headings = [b.text for b in stages.doc.blocks if type(b).__name__ == "Heading"]
+    assert headings == [str(n) for n in range(1, 13)]

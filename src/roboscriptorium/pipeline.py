@@ -9,6 +9,7 @@ from pathlib import Path
 import pymupdf
 
 from roboscriptorium import (
+    chapters,
     contextjudge,
     corrections,
     epigraphs,
@@ -151,6 +152,7 @@ def run(
                     book.stages / "page-roles.json", regions,
                 )  # fmt: skip
             model_roles = sorter.apply(trees, body, model_roles, styles, regions, said)
+        model_roles = chapters.openings(body, model_roles)
         note_lines = footnotes.lines(body, model_roles, styles, known)
         epigraph_lines = epigraphs.lines(body, model_roles)
         if check_ocr and ocrcheck.scanned(book.source):
@@ -293,12 +295,14 @@ def run(
         compound,
         _book_spellings(whole, checked),
     )
-    built = reflow(
-        corrected,
-        _apart(corrected, roles, note_lines, epigraph_lines),
-        known,
-        compound,
-        _book_spellings(whole, corrected),
+    built = chapters.numbered(
+        reflow(
+            corrected,
+            _apart(corrected, roles, note_lines, epigraph_lines),
+            known,
+            compound,
+            _book_spellings(whole, corrected),
+        )
     )
     # A place is asked while its paragraph's quotes still don't pair up once the answers
     # are in (an answer elsewhere in the paragraph may have settled it), or while one of

@@ -623,6 +623,22 @@ two letters or more, no garbled line and some lower case, and finds none in any 
 slice (both NO CHANGE). The word list isn't asked: mottos are often in another
 language, as this one is.
 
+## Chapter numbers
+
+**A chapter opening looks like the book's other openings, and numbered chapters run
+1, 2, 3.** Hoe wij verdwijnen prints its 52 chapter numbers in old-style figures above
+sunk openings: the layer read them "Io", "SE", "#7", and five ("zi", "ee,", "rj",
+"zit", "si") were dropped as specks, so no reader saw them and their chapters ran into
+the one before. `chapters.openings` makes a short line (three characters or fewer) set
+apart atop a sunk page a heading where at least two thirds of the book's set-apart sunk
+openings (five or more) carry one; the readers then read all five right ("23" … "45",
+clef:27b's vote). `chapters.numbered` sets each short heading of a run (five or more,
+half following the one before) to its number: old-style look-alikes folded where they
+fit ("Io" → 10, "S2" → 52), an unreadable one only where both neighbours agree on it
+("SE" between 50 and 52). Numbering is true by definition, so this is code, not a
+learned decision. Short test: all 52 numbers right (2026-11-01). Found by reading the
+book: no golden pair prints its numbers so, which the bench can't yet see.
+
 ## Reflow: line-end hyphens
 
 **Nothing else looks at a line-end hyphen.** The OCR check starts where readings

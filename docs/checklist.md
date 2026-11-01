@@ -487,10 +487,8 @@ motto as running text, and Pieter Daens' `init` took the publisher's ads for tex
 agent found them by reading the EPUB; the user: "ideally that detection and the fix is
 also part of the pipeline itself." Before either book goes to review:
 
-- [ ] Chapter numbers: a short line set apart atop a chapter opening is a heading where
-      the book's other openings have one (so the readers read it), and headings that are
-      numbers are checked against their run (1, 2, 3 …), a look-alike or a lone gap
-      settled by its neighbours. Short test: Hoe wij verdwijnen warm, all 52 numbers
+- [x] Chapter numbers (2026-11-01, `chapters.py`): all 52 of Hoe wij verdwijnen right on
+      its warm rebuild; the five dropped ones read right by the readers once kept
 - [ ] Front matter: a dedication of two lines stays one block, in the print's italics; a
       motto with its attribution on a page of its own is an epigraph (Hoe wij
       verdwijnen pp. 9, 11)
