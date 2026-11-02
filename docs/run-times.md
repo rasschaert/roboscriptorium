@@ -623,3 +623,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-02 | bench validation, motto lines joined (warm, parallel) | 0 | 3 | 0 |
 | 2026-11-02 | bench tuning, obvious questions out (warm, parallel) | 3100 | 10 | 0 |
 | 2026-11-02 | bench validation, obvious questions out (warm, parallel) | 0 | 3 | 0 |
+| 2026-11-02 | bench tuning, blank pages only when washed out (warm, parallel) | 3100 | 10 | 0 |
+| 2026-11-02 | bench validation, blank pages only when washed out (warm, parallel) | 0 | 3 | 0 |
