@@ -3,7 +3,6 @@
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
 end of every session. Updated 2026-11-02 midday by the session that built Hoe wij verdwijnen and Pieter Daens.
-decisions.md, 2026-10-26).
 
 ## Running
 
