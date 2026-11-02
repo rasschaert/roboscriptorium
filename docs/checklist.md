@@ -533,7 +533,12 @@ also part of the pipeline itself." Before either book goes to review:
 
 - [x] Quote questions: a possessive after an s-sound ("Maurice’ moeder") no longer a
       closing quote (2026-11-02): Hoe wij verdwijnen's quote questions 37 → 16
-- [ ] Pieter Daens' 148 quote questions sorted by kind before its review
+- [x] Pieter Daens' quote questions sorted (2026-11-02): of 159 unpaired places, 101 open
+      at a paragraph's end, by the scan real losses (p. 50 prints "zingen.’", we read
+      "zingen."): a closing mark after the stop that the readers drop. Fair questions
+- [ ] The closing mark lost after a paragraph's last stop as a fix, not a question, where
+      the vision reading adds only that mark: measured on the golden books' quote
+      questions first (how often its proposal is the print)
 - [ ] One question per letter quoted over paragraphs, not one per paragraph (Hoe wij
       verdwijnen's letters): marks alone can't tell it from a lost closing mark, so it
       stays asked, but once
