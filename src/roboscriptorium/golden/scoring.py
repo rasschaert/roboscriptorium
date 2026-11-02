@@ -2,7 +2,9 @@
 experiments share. A spec names a golden scan and the slice scored,
 `work/<book>[:pages[:chapters]]` (`work/goede-dochter--ia-scan:9-64:1-4`)."""
 
+import difflib
 import json
+from collections import Counter
 from dataclasses import replace
 from pathlib import Path
 from typing import NamedTuple
@@ -15,6 +17,7 @@ from roboscriptorium import (
     ocrcheck,
     ocrdoubts,
     pipeline,
+    quotes,
     readers,
     structure,
 )
@@ -205,6 +208,11 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         )
     ]
     found = _read_unread(book, stages, found)
+    if quotes.single_quoted(stages.doc.blocks):
+        found = [_single_quoted(f) for f in found]
+    learned = answered_words(Corrections(book.corrections_path))
+    if learned:
+        found = [_with_answered(f, learned) for f in found]
     if not any(s.choice == "other" for s in stages.suspects):
         return found
     checked = {p.number: p for p in ocrcheck.apply(stages.pages, stages.suspects)}
@@ -224,6 +232,66 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
 _READ = ("text", "heading")
 # A region the layer has no line in is read as one line only up to this many line heights.
 _ONE_LINE = 1.8
+
+
+# A word the reviewer replaced the same way this many times, and never otherwise, is
+# offered where it recurs: an option, never settled unasked (settling so was wrong one
+# time in eight to twelve, decisions.md 2026-10-16).
+ANSWERED_TIMES = 2
+
+
+def answered_words(answers: Corrections) -> dict[str, str]:
+    """The words the reviewer's typed answers replaced, each with what it became, where
+    the same word became the same thing `ANSWERED_TIMES` times and nothing else ("ps" and
+    "Ds" → "DS", the print's small capitals)."""
+    seen: dict[str, Counter] = {}
+    for c in answers.by_key.values():
+        if c.text is None or c.action != "text":
+            continue
+        a, b = c.original.split(), c.text.split()
+        for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+            if op == "replace" and i2 - i1 == 1 and j2 - j1 == 1:
+                seen.setdefault(a[i1], Counter())[b[j1]] += 1
+    return {
+        w: next(iter(c))
+        for w, c in seen.items()
+        if len(c) == 1 and next(iter(c.values())) >= ANSWERED_TIMES
+    }
+
+
+def _with_answered(f: Flag, learned: dict[str, str]) -> Flag:
+    """A question with one more option where its words hold ones the reviewer replaced
+    the same way before (`answered_words`): the line with those words as answered."""
+    if not f.readings:
+        return f
+    texts = [r["text"] for r in f.readings]
+    lines = [" ".join(learned.get(w, w) for w in line.split(" ")) for line in texts[0].split("\n")]
+    option = "\n".join(lines)
+    if option in texts or option == texts[0]:
+        return f
+    return replace(f, readings=[*f.readings, {"text": option, "votes": ["your answers"]}])
+
+
+def _single_quoted(f: Flag) -> Flag:
+    """A question's readings as a book whose dialogue opens with ‘ prints them: a “ no ”
+    closes on its line shown as ‘ (`quotes.open_single`, line by line), readings that
+    then agree one, their votes together. The layer reads ‘W as “W; the readers' right ‘
+    had no version of its own, as the kind of an opening mark is no difference. The
+    question's `text` stays the layer's: an answer finds its line by it."""
+
+    def shown(text: str) -> str:
+        return "\n".join(quotes.open_single(line) for line in text.split("\n"))
+
+    readings: list[dict] = []
+    for r in f.readings:
+        text = shown(r["text"])
+        same = next((g for g in readings if g["text"] == text), None)
+        if same is None:
+            readings.append({**r, "text": text, "votes": list(r["votes"])})
+        else:
+            same["votes"] += [v for v in r["votes"] if v not in same["votes"]]
+    built = shown(f.built) if f.built is not None else None
+    return replace(f, readings=readings, built=built)
 
 
 def _mark_settled(f: Flag, closed: set[SourceRef]) -> bool:

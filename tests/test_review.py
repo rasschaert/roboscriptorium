@@ -5,6 +5,7 @@ import http.client
 import json
 import socket
 import threading
+from dataclasses import replace
 from types import SimpleNamespace
 
 import pytest
@@ -447,3 +448,43 @@ def test_a_typed_wording_that_scores_like_the_reference_is_shown_as_typed(tmp_pa
     typed = "Hij was zo stom geweest zijn taste.… niet op een"
     r.golden.record({"key": "k", "text": typed})
     assert r.state()["items"][0]["answer"]["text"] == typed
+
+
+def test_a_single_quoted_books_question_shows_its_readings_with_the_books_opening_mark():
+    from roboscriptorium.flags import Flag
+    from roboscriptorium.golden.scoring import _single_quoted
+
+    f = Flag("k", 36, 3, 3, "“We halen haar op.", "text", ["ocr-doubt"], readings=[
+        {"text": "“We halen haar op.", "votes": ["text layer"]},
+        {"text": "‘We halen haar op.", "votes": ["Qwen"]},
+        {"text": "We halen haar op.", "votes": ["glm-ocr"]},
+    ])  # fmt: skip
+    out = _single_quoted(f)
+    assert out.text == f.text
+    assert [(r["text"], r["votes"]) for r in out.readings] == [
+        ("‘We halen haar op.", ["text layer", "Qwen"]),
+        ("We halen haar op.", ["glm-ocr"]),
+    ]
+    # A “ its line closes with ” is a quotation inside dialogue, shown as printed.
+    g = replace(f, readings=[{"text": "“Vlot” zou mama zeggen.", "votes": ["Qwen"]}])
+    assert _single_quoted(g).readings[0]["text"] == "“Vlot” zou mama zeggen."
+
+
+def test_a_word_answered_alike_twice_is_offered_where_it_recurs_never_settled(tmp_path):
+    from roboscriptorium.corrections import Corrections
+    from roboscriptorium.flags import Flag
+    from roboscriptorium.golden.scoring import _with_answered, answered_words
+
+    answers = Corrections(tmp_path / "answers.jsonl")
+    for page, line in [(30, "van de ps zat"), (31, "in de ps iets"), (32, "zei de mot")]:
+        f = Flag(f"k{page}", page, 0, 0, line, "text", ["ocr-doubt"])
+        answers.record(f, "text", line.replace("ps", "DS").replace("mot", "mol"))
+    learned = answered_words(answers)
+    assert learned == {"ps": "DS"}  # "mot" → "mol" once only
+    q = Flag("k", 181, 0, 0, "voor een ps gestaan?", "text", ["ocr-doubt"], readings=[
+        {"text": "voor een ps gestaan?", "votes": ["text layer"]},
+        {"text": "voor een ds gestaan?", "votes": ["glm-ocr"]},
+    ])  # fmt: skip
+    out = _with_answered(q, learned)
+    assert out.readings[-1] == {"text": "voor een DS gestaan?", "votes": ["your answers"]}
+    assert out.text == q.text

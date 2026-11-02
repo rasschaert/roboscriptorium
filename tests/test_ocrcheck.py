@@ -997,3 +997,13 @@ def test_readings_at_another_resolution_are_read_again_and_kept_apart(monkeypatc
     monkeypatch.setattr(readers, "DPI", 300)
     readers.line_readings(*args)
     assert len(reads) == 2 * first  # the 300 dpi readings come back from their shelf
+
+
+def test_a_dash_before_a_comma_is_a_dash_whatever_its_kind_a_compound_hyphen_is_not():
+    from roboscriptorium.ocrcheck import differences
+
+    assert differences("zag -, wat vond je", "zag —, wat vond je") == []
+    assert differences("was het maar -, dan", "was het maar –, dan") == []
+    # A lost comma after the dash is still a difference, and so is a hyphen in a word.
+    assert differences("zegd — waarin", "zegd —, waarin") != []
+    assert differences("Noord- en Zuid-Holland", "Noord en Zuid-Holland") != []

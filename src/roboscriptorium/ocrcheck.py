@@ -48,7 +48,10 @@ UNKEYED_CROP = {"zoom": 4, "pad": 4}
 # hyphen, one character for one, so offsets stay put.
 _FOLD = str.maketrans("‘’“”¬", "''\"\"-")
 _OPENING_QUOTES = re.compile(r"(^|\s)([\"'‘’“”]+)")
-_ANY_DASH = re.compile(r"\s*[—–]\s*|\s+-\s+|\s+-(?=['\"]|$)")
+# A dash as any reader sets it: an em or en dash, or a hyphen with a space before it (or
+# opening a word-wide span, which starts after a space) and a space, a quote, a stop or
+# comma, or the line's end after ("zag -, wat" is "zag —, wat").
+_ANY_DASH = re.compile(r"\s*[—–]\s*|\s+-\s+|(?:\s+|^)-(?=['\",;:.!?]|$)")
 # An ellipsis as a glyph, three dots or spaced dots, with or without a space before.
 _ELLIPSIS = re.compile(r" ?(?:…|\. ?\. ?\.)")
 _SPACE_BEFORE_APOSTROPHE = re.compile(r"(?<=\w) +'(?=\w)")

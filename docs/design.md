@@ -814,6 +814,17 @@ and a hyphen before a line starting with a digit is a number range broken at the
 next line starts lowercase is asked of the letter itself (`str.islower`), not of a Latin-1
 range that took "ĳ" and "ç" for capitals and kept the hyphen.
 
+## The review shows what the book will print
+
+A single-quoted book's questions show their readings with its own opening mark
+(`scoring._single_quoted`, line by line as `quotes.open_single` works on paragraphs):
+the layer reads ‘W as “W, and a reader's right ‘ merges with it, since the kind of an
+opening mark is no difference to the OCR check (the style stage sets it). And a word the
+reviewer has replaced the same way twice, never otherwise, is offered as an option where
+it recurs (`scoring.answered_words`, "your answers"): Hoe wij verdwijnen's small-capital
+"DS", which no reader sets in capitals on some lines. Offered, never settled: a skip on
+a book's own answers was wrong one time in eight to twelve (2026-10-16).
+
 ## The reviewer's answers are checked
 
 **A question isn't free: the reviewer slips.** 8 of 68 checked answers on Stella were
