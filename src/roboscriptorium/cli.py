@@ -12,6 +12,7 @@ import typer
 from roboscriptorium import (
     bench,
     disagreements,
+    epubdiff,
     errorlog,
     evaluate,
     flags,
@@ -99,6 +100,13 @@ def build(
     doc = pipeline.build(book, _range(pages))
     typer.echo(f"{len(doc.blocks)} paragraphs → {book.epub_path}")
     typer.echo(structure.summary(structure.findings(doc)))
+    if (last := epubdiff.against_last(book.epub_path, book.epubs)) is not None:
+        changes, previous = last
+        typer.echo(f"{epubdiff.summary(changes)} ({previous.name})")
+        if changes.places:
+            out = book.epubs / f"{book.epub_path.stem}-changes.txt"
+            out.write_text(f"{previous.name} → this build\n\n{epubdiff.report(changes)}")
+            typer.echo(f"the changes, old above new: {out}")
     if kept := keep_dated(book.epub_path, book.epubs):
         typer.echo(f"kept as {kept}")
 

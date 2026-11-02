@@ -698,6 +698,17 @@ question at its first line (`flags.structural`), or a reason added to the questi
 already there, in the same region review as every other. Not yet: a repair where the
 book settles it beyond the chapter numbers.
 
+## A build against the last build
+
+**A book with no reference is checked against its own earlier builds** (the user,
+2026-11-02). The bench measures golden books; a book of the user's has only its dated
+builds. `build` lines up the new EPUB's headings and paragraphs, as plain text, with the
+last dated copy's and prints what was added, removed or changed, the places in
+`epubs/<book>-changes.txt`, so a rebuild that changes a book already read says so.
+First used on Hoe wij verdwijnen's first and latest builds: 6 headings changed, 5 added,
+the dedication and motto moved, one paragraph split where chapter 45 had run into 44,
+every one a fix of that night.
+
 ## Reflow: line-end hyphens
 
 **Nothing else looks at a line-end hyphen.** The OCR check starts where readings

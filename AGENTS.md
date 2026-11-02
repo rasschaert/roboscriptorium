@@ -310,7 +310,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `corrections.py`, `errata.py`, `quotes.py` | the reviewer's answers applied; the misprints they correct; unpaired quotes as questions with a proposed reading |
 | `footnotes.py`, `epigraphs.py`, `chapters.py` | footnotes at a page's foot taken out of the running text and linked to their marks; a motto or a dedication on a page of its own set apart (`pagekinds.set_apart` asks the page-kind model about short pages); a book's numbered chapters read by their run |
 | `reflow.py`, `hyphens.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; lines joined and their end hyphens kept or dropped, by the book's spellings, the word list and the judge; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |
-| `ir.py`, `epub.py` | the document model with references back to page lines; EPUB 3 by hand |
+| `ir.py`, `epub.py`, `epubdiff.py` | the document model with references back to page lines; EPUB 3 by hand; what a build changed against the book's last |
 | `pipeline.py` | the stages for one book, each cached under `work/<book>/stages/` |
 | `pagekinds.py`, `bookinit.py` | what kind of page each page is (signals for the middle, a decision model from either edge inward until the text runs) and so where the text proper starts and ends; `roboscriptorium init` drafts a book's `book.toml` from the PDF alone, naming every page by both numbers (the PDF's and the one printed) |
 | `flags.py`, `review.py`, `structure.py` | what a human should check; the local review pages; what a reader would notice in a built book's structure, printed by `build` |

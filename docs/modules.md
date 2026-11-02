@@ -396,6 +396,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   section of fewer than 20 words not set apart); `summary` is the line `build` prints,
   and `pipeline.run` keeps the places in `stages/structure.json`. `flags.structural` asks
   each at its first line in the review (`scoring.questions`).
+- `epubdiff.py`: a build against the book's previous dated build (`against_last`): headings
+  and paragraphs as plain text lined up, each added, removed or changed one listed;
+  `build` prints `summary` and writes `report` to `epubs/<book>-changes.txt`.
 - `review.py` + `regions.html`: the local review page (stdlib HTTP server on
   127.0.0.1), with scan crops: the flagged regions of any book and, for a golden book,
   its places where our text and the reference differ (`GoldenQuestions`), in the same
