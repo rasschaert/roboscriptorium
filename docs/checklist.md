@@ -531,6 +531,11 @@ also part of the pipeline itself." Before either book goes to review:
       Pieter Daens' three prose mottos one paragraph each, its song and the Camus motto
       line by line
 
+- [ ] Quote questions before the review: a possessive apostrophe after an s-sound
+      ("Maurice’ moeder", Hoe wij verdwijnen ~15 of 37) taken for a closing quote; a
+      letter or article quoted over paragraphs (opened each paragraph, closed in the
+      last); Pieter Daens' 148 sorted by kind first
+
 ## 3. The user's books after Stella
 
 Dutch books the user wants as EPUBs, none with a reference EPUB, each an IA Scribe

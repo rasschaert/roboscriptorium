@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 from roboscriptorium import (
+    chapters,
     disagreements,
     flags,
     layout,
@@ -183,6 +184,25 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
     found = flags.structural(
         stages.pages, stages.model_roles, structure.findings(stages.doc), found
     )
+    # A heading its run confirms (chapter numbers or years in order, parts counted) is
+    # asked about nothing, nor is its reading; a page left out of the book isn't asked.
+    confirmed = chapters.settled(stages.doc.blocks)
+    omitted = {r.page for r, role in stages.model_roles.items() if role.rule == pipeline.OMITTED}
+
+    def lines(f: Flag) -> set[SourceRef]:
+        return {SourceRef(f.page, i) for i in range(f.first, f.last + 1)}
+
+    found = [
+        f
+        for f in found
+        if f.page not in omitted
+        and not (
+            set(f.reasons) <= {"heading", "ocr-doubt"}
+            and "heading" in f.reasons
+            and f.last >= f.first
+            and lines(f) <= confirmed
+        )
+    ]
     found = _read_unread(book, stages, found)
     if not any(s.choice == "other" for s in stages.suspects):
         return found

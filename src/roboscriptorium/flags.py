@@ -492,7 +492,9 @@ def _treatment_of(page: PageText, flag: Flag, roles: dict[SourceRef, LineRole]) 
 
 # What every epigraph is: centred or inset, set apart, and often a quotation without a
 # stop.
-_EPIGRAPH_TRAITS = {"centred", "set-apart", "quotes"}
+# A motto's or dedication's line is set apart, centred and quoted by nature, and the line
+# role it had before it was set apart ("heading") no longer decides what it becomes.
+_EPIGRAPH_TRAITS = {"centred", "set-apart", "quotes", "heading"}
 
 
 def find(

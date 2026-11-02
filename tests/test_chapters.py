@@ -109,3 +109,22 @@ def test_a_dropped_line_of_a_title_page_set_like_another_title_pages_heading_is_
     assert chapters.title_lines(pages, roles, small)[SourceRef(161, 1)].role == "artifact"
     pages[2] = PageText(161, 300, 500, pages[2].lines + _full(162).lines)
     assert chapters.title_lines(pages, roles, styles)[SourceRef(161, 1)].role == "artifact"
+
+
+def test_a_heading_in_its_confirmed_run_is_settled_a_lone_or_misread_one_not():
+    blocks = []
+    for k, t in enumerate(["1", "2", "3", "Proloog", "9", "SE"], 1):
+        blocks += [Heading(t, [SourceRef(k, 0)], [t]), Paragraph("Tekst.")]
+    assert chapters.settled(blocks) == {SourceRef(1, 0), SourceRef(2, 0), SourceRef(3, 0)}
+
+
+def test_titles_opening_on_years_in_order_and_parts_counted_in_order_are_settled():
+    texts = ["Woord vooraf", "BOEK EEN De cijnskiezers", "1840-1884: Aan de Dender",
+             "1885: Een ramp", "1886: Jan Byl", "BOEK TWEE", "1887-1888: ‘De Toekomst’",
+             "1889–1890: Cieske Luyckx", "Nawoord"]  # fmt: skip
+    blocks = [Heading(t, [SourceRef(k, 0)], [t]) for k, t in enumerate(texts, 1)]
+    assert chapters.settled(blocks) == {SourceRef(k, 0) for k in range(2, 9)}
+    # Years out of order settle nothing.
+    shuffled = [Heading(t, [SourceRef(k, 0)], [t]) for k, t in enumerate(
+        ["1885: A", "1840: B", "1886: C", "1887: D", "1888: E"], 1)]  # fmt: skip
+    assert chapters.settled(shuffled) == set()

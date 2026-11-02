@@ -682,7 +682,12 @@ learned decision. A title page (headings, no running text) likewise: a dropped l
 it is a heading where another title page has a heading at that line in the same type
 (`chapters.title_lines`, after the trees). Pieter Daens' trees dropped three of its six
 part subtitles ("Meervoudig stemrecht", artifact 0.52–0.74) while keeping two set alike;
-all five the layer holds are headings now. Short test: all 52 numbers right (2026-11-01). Found by reading the
+all five the layer holds are headings now. Short test: all 52 numbers right (2026-11-01).
+A heading its run confirms isn't asked in the review (`chapters.settled`): bare numbers
+each one more than the one before or after, titles opening on years in order ("1885:
+Een ramp" after "1840-1884: …", five or more), parts counted in words in order; nor is
+the readers' disagreement on such a number. Asked before: every one of Hoe wij
+verdwijnen's 52 chapter numbers and Pieter Daens' 34 year titles and 6 parts. Found by reading the
 book: no golden pair prints its numbers so, which the bench can't yet see.
 
 ## The structure check

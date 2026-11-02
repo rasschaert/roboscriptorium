@@ -8,6 +8,7 @@ set apart atop a sunk page is a heading where most such openings carry one
 heading too short to be a title, is the number its neighbours say (`numbered`).
 """
 
+import re
 from dataclasses import replace
 
 from roboscriptorium import page as P
@@ -108,6 +109,52 @@ def value(text: str) -> int | None:
     """The chapter number `text` reads as, its old-style look-alikes folded, or None."""
     t = text.strip().rstrip(".").translate(_MISREADS)
     return int(t) if 0 < len(t) <= NUMBER_CHARS and t.isascii() and t.isdigit() else None
+
+
+def settled(blocks: list[Block]) -> set[SourceRef]:
+    """The lines of headings their run confirms, so the review needn't ask about them
+    (`blocks` after `numbered`): bare chapter numbers each one more than the one before
+    or after; titles opening on a year, at least `MIN_NUMBERED` of them, each later than
+    the one before ("1885: Een ramp" after "1840-1884: Aan de Dender"); parts counted in
+    words in order ("BOEK TWEE" after "BOEK EEN")."""
+    headings = [b for b in blocks if isinstance(b, Heading)]
+    out: set[SourceRef] = set()
+    values = [value(h.text) for h in headings]
+    for k, (h, v) in enumerate(zip(headings, values, strict=True)):
+        before = values[k - 1] if k else None
+        after = values[k + 1] if k + 1 < len(values) else None
+        if v is not None and (before == v - 1 or after == v + 1) and str(v) == h.text:
+            out |= set(h.sources)
+    for key in (_year, _part):
+        run = [(h, n) for h in headings if (n := key(h.text)) is not None]
+        if len(run) >= MIN_NUMBERED or key is _part and len(run) >= 2:
+            if all(b > a for (_, a), (_, b) in zip(run, run[1:], strict=False)):
+                out |= {s for h, _ in run for s in h.sources}
+    return out
+
+
+_YEAR = re.compile(r"^(1[5-9]\d\d|20\d\d)\s*(?:[-–]\s*\d{4})?\s*:")
+_PART = re.compile(r"^(?:boek|deel|part|book)\s+(\w+)", re.I)
+_COUNT = "een twee drie vier vijf zes zeven acht negen tien".split() + (
+    "one two three four five six seven eight nine ten".split()
+)
+
+
+def _year(text: str) -> int | None:
+    """The year a title opens on ("1887-1888: ‘De Toekomst’" → 1887), or None."""
+    m = _YEAR.match(text.strip())
+    return int(m.group(1)) if m else None
+
+
+def _part(text: str) -> int | None:
+    """A part's count ("BOEK TWEE Meervoudig stemrecht" → 2, "Part 3" → 3), or None."""
+    m = _PART.match(text.strip())
+    if not m:
+        return None
+    word = m.group(1).lower()
+    if word.isdigit():
+        return int(word)
+    return _COUNT.index(word) % 10 + 1 if word in _COUNT else None
 
 
 def numbered(blocks: list[Block]) -> list[Block]:

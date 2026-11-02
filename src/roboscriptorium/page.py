@@ -85,8 +85,10 @@ def centred_in_text(page: PageText, i: int, balance: float) -> bool:
     )
 
 
+# A word in its punctuation: opening quotes ("„ken", "’t"), closing ones and an ellipsis
+# ("gen…", "zetten…”").
 _WORDLIKE = re.compile(
-    r"^[\"'(“‘]*(?:[A-Za-zÀ-ÿ][a-zß-ÿ'’-]*|[A-ZÀ-Þ][A-ZÀ-Þ'’-]*)[.,;:!?\"')”’—-]*$"
+    r"^[\"'(“‘’„]*(?:[A-Za-zÀ-ÿ][a-zß-ÿ'’-]*|[A-ZÀ-Þ][A-ZÀ-Þ'’-]*)[.,;:!?\"')”’—…-]*$"
 )
 # Dots and dashes on their own (spaced ellipses, dashes) are neither words nor noise.
 _NEUTRAL = re.compile(r"^[.…—–-]+$")

@@ -180,11 +180,11 @@ def run(
                 epigraph_lines |= refs
             elif apart.get(page.number) == "dedication":
                 dedication_lines |= refs
-        # A table of contents inside the text range is no part of the text.
+        # A table of contents or a blank page inside the text range is no part of the text.
         model_roles = {
             **model_roles,
             **{
-                SourceRef(page.number, i): LineRole("artifact", 1.0, 0.0, "contents-page")
+                SourceRef(page.number, i): LineRole("artifact", 1.0, 0.0, OMITTED)
                 for page in body
                 if apart.get(page.number) == "omit"
                 for i in range(len(page.lines))
@@ -430,6 +430,11 @@ def _apart(
     roles = with_role(pages, roles, note_lines, footnotes.ROLE)
     roles = with_role(pages, roles, epigraph_lines, epigraphs.ROLE)
     return with_role(pages, roles, dedication_lines, epigraphs.DEDICATION)
+
+
+# The rule of a line on a page left out of the book (`pagekinds.set_apart`): the review
+# asks nothing about it.
+OMITTED = "omitted-page"
 
 
 def _kept_apart(line: Line, role: LineRole | None) -> bool:
