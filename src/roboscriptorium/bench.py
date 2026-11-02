@@ -403,12 +403,17 @@ def heading_errors(a: dict, b: dict) -> tuple[int, int]:
     headings, and, where both scores count them, headings not set letter for letter. A
     warm build sets the same headings each time, so the counts need no interval."""
 
-    def errors(s: dict, exact: bool) -> int:
+    def errors(s: dict, exact: bool, extra: bool) -> int:
         found = s["headings_exact"] if exact else s["headings_found"]
-        return s["headings_expected"] - found + s["headings_spurious"]
+        return (
+            s["headings_expected"]
+            - found
+            + (s["headings_extra"] if extra else s["headings_spurious"])
+        )
 
     exact = "headings_exact" in a and "headings_exact" in b
-    return errors(a, exact), errors(b, exact)
+    extra = "headings_extra" in a and "headings_extra" in b
+    return errors(a, exact, extra), errors(b, exact, extra)
 
 
 def verdict(old: dict, new: dict) -> Verdict:
@@ -499,16 +504,18 @@ def headings(score: dict) -> str:
     is found, not exact), and how many
     more the output sets (a score saved before exact ones were counted reads them as found)."""
     exact = score.get("headings_exact", score["headings_found"])
-    return (
-        f"{score['headings_found']}/{score['headings_expected']} "
-        f"({exact} exact, +{score['headings_spurious']})"
-    )
+    extra = score.get("headings_extra", score["headings_spurious"])
+    return f"{score['headings_found']}/{score['headings_expected']} ({exact} exact, +{extra})"
 
 
 def heading_totals(run: dict) -> dict:
     """The run's heading counts summed over its books."""
     keys = ("headings_found", "headings_expected", "headings_spurious")
     total = {k: sum(b["score"][k] for b in run["books"].values()) for k in keys}
+    total["headings_extra"] = sum(
+        b["score"].get("headings_extra", b["score"]["headings_spurious"])
+        for b in run["books"].values()
+    )
     total["headings_exact"] = sum(
         b["score"].get("headings_exact", b["score"]["headings_found"])
         for b in run["books"].values()

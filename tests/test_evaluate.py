@@ -176,3 +176,14 @@ def test_a_look_alike_heading_is_found_but_not_exactly():
     found, expected = ["40", "4I", "II", "43"], ["40", "41", "42", "43"]
     assert match_headings(found, expected) == 3
     assert match_headings(found, expected, exact=True) == 2
+
+
+def test_a_heading_standing_for_two_is_no_extra_and_never_a_negative_one():
+    from roboscriptorium.evaluate import extra_headings, match_headings
+
+    found, expected = (
+        ["CHAPTER 1 The End of the Earth", "Gibberish"],
+        ["CHAPTER 1", "The End of the Earth"],
+    )
+    assert match_headings(found, expected) == 2
+    assert extra_headings(found, expected) == 1

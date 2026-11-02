@@ -371,3 +371,16 @@ def test_a_book_whose_unasked_errors_double_is_named():
     # A small rise, even a doubling of very little, is noise.
     tiny = {p: [1, 0.1 if p else 0.6, 1, 1] for p in range(20)}
     assert bench.doubled(_run(flat), _run(tiny)) == []
+
+
+def test_extra_headings_are_compared_on_the_same_count_in_both_runs():
+    old = {
+        "headings_found": 45,
+        "headings_expected": 48,
+        "headings_spurious": -20,
+        "headings_exact": 39,
+    }
+    new = dict(old, headings_extra=3)
+    # An old run has no corrected count: both are compared on the old one.
+    assert bench.heading_errors(old, new) == (-11, -11)
+    assert bench.heading_errors(new, dict(new)) == (12, 12)

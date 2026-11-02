@@ -126,6 +126,10 @@ class Score:
     headings_spurious: int
     # Of `headings_found`, those set as the reference sets them, letter for letter.
     headings_exact: int = 0
+    # Found headings matching none expected. `headings_spurious`, kept for comparing with
+    # runs saved before, subtracts expected ones matched, so one heading standing for two
+    # ("CHAPTER 1" and its title) makes it negative.
+    headings_extra: int = 0
     italic_expected: int = 0
     italic_output: int = 0
     italic_precision: float = 0.0
@@ -225,6 +229,15 @@ def _same_heading(
 
 
 def match_headings(found: list[str], expected: list[str], exact: bool = False) -> int:
+    return _match_headings(found, expected, exact)[0]
+
+
+def extra_headings(found: list[str], expected: list[str]) -> int:
+    """How many found headings match none expected (one standing for two counts once)."""
+    return len(found) - _match_headings(found, expected, False)[1]
+
+
+def _match_headings(found: list[str], expected: list[str], exact: bool) -> tuple[int, int]:
     """How many expected headings appear among the found ones; `exact`, how many as the
     reference sets them, letter for letter, with no look-alike or near reading taken
     ("4I" for 41 is found, but not exactly).
@@ -241,15 +254,15 @@ def match_headings(found: list[str], expected: list[str], exact: bool = False) -
     en = [_numbers(t) for t in expected]
     pairs = [_heading_key(f"{a} {b}") for a, b in itertools.pairwise(expected)]
     pn = [_numbers(f"{a} {b}") for a, b in itertools.pairwise(expected)]
-    # best[i][j]: (similarity, matches) aligning found[:i] with expected[:j]
-    best = [[(0.0, 0)] * (len(ek) + 1) for _ in range(len(fk) + 1)]
+    # best[i][j]: (similarity, expected matched, found used) aligning found[:i], expected[:j]
+    best = [[(0.0, 0, 0)] * (len(ek) + 1) for _ in range(len(fk) + 1)]
     for i in range(1, len(fk) + 1):
         for j in range(1, len(ek) + 1):
             options = [best[i - 1][j], best[i][j - 1]]
             same = fk[i - 1] == ek[j - 1] if exact else None
             if same or same is None and _same_heading(fk[i - 1], ek[j - 1], (fn[i - 1], en[j - 1])):
-                sim, n = best[i - 1][j - 1]
-                options.append((sim + fuzz.ratio(fk[i - 1], ek[j - 1]) / 100, n + 1))
+                sim, n, u = best[i - 1][j - 1]
+                options.append((sim + fuzz.ratio(fk[i - 1], ek[j - 1]) / 100, n + 1, u + 1))
             # Longer than either part, so "CHAPTER 1" alone can't take both.
             longer = j >= 2 and len(fk[i - 1]) > max(len(ek[j - 1]), len(ek[j - 2]))
             pair = fk[i - 1] == pairs[j - 2] if exact and longer else None
@@ -258,10 +271,10 @@ def match_headings(found: list[str], expected: list[str], exact: bool = False) -
                 or pair is None
                 and _same_heading(fk[i - 1], pairs[j - 2], (fn[i - 1], pn[j - 2]))
             ):
-                sim, n = best[i - 1][j - 2]
-                options.append((sim + 2 * fuzz.ratio(fk[i - 1], pairs[j - 2]) / 100, n + 2))
+                sim, n, u = best[i - 1][j - 2]
+                options.append((sim + 2 * fuzz.ratio(fk[i - 1], pairs[j - 2]) / 100, n + 2, u + 1))
             best[i][j] = max(options)
-    return best[-1][-1][1]
+    return best[-1][-1][1], best[-1][-1][2]
 
 
 def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
@@ -333,6 +346,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         headings_found=matched,
         headings_expected=len(titled),
         headings_spurious=len(doc.headings) - matched,
+        headings_extra=extra_headings([h.text for h in doc.headings], titled),
         headings_exact=match_headings([h.text for h in doc.headings], titled, exact=True),
         italic_expected=len(ref_italic),
         italic_output=len(out_italic),
