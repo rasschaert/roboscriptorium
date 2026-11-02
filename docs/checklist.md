@@ -510,11 +510,11 @@ also part of the pipeline itself." Before either book goes to review:
       to their stage. Doodskleed's "```markdown" and "境" headings, and its sentences as
       headings, all from corner specks glm-ocr talked about: now no line (2026-11-01,
       `missing._printed`)
-- [ ] `init`: the model walks inward from each edge until three pages in a row go into
-      the EPUB (code in, 2026-11-01; Daens' ads, pp. 789–796, lay past the 8 edge pages).
-      Short test once Daens' build is done: `init` again on Daens (its end should be
-      p. 787) and `experiments/probe_init_ends.py` on the 27 labelled books (22 and 21 ends
-      right before)
+- [x] `init`: the model walks inward from each edge until three pages in a row go into
+      the EPUB (2026-11-02): Pieter Daens now ends at PDF 787; on the 27 labelled books
+      starts right 22 → 23, ends 21 → 21 (22 against Het laatste bevel's corrected label,
+      where the old setup's 20), no new cut. Left: Thief-Taker's "about the author" page
+      (PDF 295) called a back cover, an old miss
 - [x] The bench counts headings set letter for letter beside those found, and prints
       the totals over all books when they move (2026-11-01, `bench.heading_totals`)
 - [x] Heading errors in the bench's verdict (the user, 2026-11-02): more is worse, fewer
