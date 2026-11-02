@@ -658,6 +658,13 @@ diagonals; it fixed "Zwart" but lost two printed italics in the running text
 ("*Zwarte* eeuwigheid", "*wolk*?"), as the scan shows. With `uniform` alone, those two
 words are the only change in the book.
 
+Their lines: a line the print wrapped runs on into the next (`reflow._wrapped`: at least
+0.85 of the motto's widest line, not closing a quote, and stopping mid-sentence or
+followed by lower case); verse and attributions stand alone. Pieter Daens' three prose
+mottos became one paragraph each, its song stayed verse; the first version glued "Albert
+Camus" onto the Camus quote's widest, last line, caught by the build's comparison with
+its last build, hence the sentence end.
+
 ## Chapter numbers
 
 **A chapter opening looks like the book's other openings, and numbered chapters run

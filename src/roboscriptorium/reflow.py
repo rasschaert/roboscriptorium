@@ -268,6 +268,36 @@ def _role(roles: dict[SourceRef, LineRole] | None, ref: SourceRef) -> str:
     return "body" if is_body(r) else r.role
 
 
+_CLOSING = ("’", "”", "'", '"', "»")
+_SENTENCE_END = (".", "!", "?", "…")
+# A motto's or dedication's line at least this share of the widest one on its page was
+# wrapped by the print and runs on; a shorter one ends its paragraph (verse, attribution).
+WRAPPED = 0.85
+
+
+def _wrapped(
+    page: PageText, lines: list[Line], roles: dict[SourceRef, LineRole] | None
+) -> set[int]:
+    """The lines set apart as a motto or dedication on `page` that the print wrapped, by
+    the index a `SourceRef` gives them: wide, and stopping mid-sentence or followed by a
+    line in lower case; never the last, nor one closing a quote."""
+    apart = [
+        (k, ln)
+        for k, ln in enumerate(lines)
+        if _role(roles, SourceRef(page.number, k)) in ("epigraph", "dedication")
+    ]
+    if not apart:
+        return set()
+    widest = max(ln.x1 - ln.x0 for _, ln in apart)
+    return {
+        k if ln.source is None else ln.source
+        for (k, ln), (_, nxt) in zip(apart, apart[1:], strict=False)
+        if ln.x1 - ln.x0 >= WRAPPED * widest
+        and not ln.text.rstrip().endswith(_CLOSING)
+        and (not ln.text.rstrip().endswith(_SENTENCE_END) or nxt.text.lstrip()[:1].islower())
+    }
+
+
 def reflow(
     pages: list[PageText],
     roles: dict[SourceRef, LineRole] | None = None,
@@ -288,6 +318,7 @@ def reflow(
     short_end = [False]
     for page in pages:
         lines = page.lines if roles is not None else page.lines[: footer_start(page)]
+        wrapped = _wrapped(page, lines, roles)
         kept = []
         for index, line in enumerate(lines):
             role = _role(roles, SourceRef(page.number, index))
@@ -308,16 +339,27 @@ def reflow(
                 scene[0] = True
                 continue
             if role in ("epigraph", "dedication"):
-                # A motto's or a dedication's line, each its own paragraph, set apart.
-                blocks.append(
-                    Paragraph(
-                        line.text,
-                        [ref],
-                        opening=True,
-                        epigraph=role == "epigraph",
-                        dedication=role == "dedication",
+                # A motto's or a dedication's lines, set apart: a line the print wrapped
+                # runs on into the next, a line of verse or an attribution stands alone.
+                previous = blocks[-1] if blocks else None
+                if (
+                    isinstance(previous, Paragraph)
+                    and (previous.epigraph or previous.dedication)
+                    and previous.sources[-1].page == page.number
+                    and previous.sources[-1].line in wrapped
+                ):
+                    previous.text = join(previous.text, line.text, seen, known, compound)
+                    previous.sources.append(ref)
+                else:
+                    blocks.append(
+                        Paragraph(
+                            line.text,
+                            [ref],
+                            opening=True,
+                            epigraph=role == "epigraph",
+                            dedication=role == "dedication",
+                        )
                     )
-                )
                 opening = True
                 continue
             if role == "chapter_heading":

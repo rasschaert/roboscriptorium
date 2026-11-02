@@ -527,9 +527,9 @@ also part of the pipeline itself." Before either book goes to review:
       as a page before the first heading). Boek twee to vier's subtitles, dropped by
       the trees, headings again (`chapters.title_lines`). Left: Boek vijf's "Onze doden",
       absent from the layer and not read by the missing-lines stage
-- [ ] A motto's lines joined into its paragraphs (one per quote, one per attribution)
-      unless it is verse: each printed line is a paragraph now, so a prose quote breaks
-      where the print wrapped (Pieter Daens p. 7, Hoe wij verdwijnen's Camus)
+- [x] A motto's wrapped lines joined into its paragraphs (2026-11-02, `reflow._wrapped`):
+      Pieter Daens' three prose mottos one paragraph each, its song and the Camus motto
+      line by line
 
 ## 3. The user's books after Stella
 

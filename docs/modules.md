@@ -378,7 +378,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `epigraphs.py`: a motto on a page of its own (`lines`: at most six short lines set in
   at least 0.15 of a full line from the book's margin, read on full pages nearby, three
   words or more, none garbled, not all capitals, no heading on the page). Reflow makes
-  each line a paragraph marked `epigraph`; `epub.py` sets a run of them as one
+  each line a paragraph marked `epigraph`, a line the print wrapped joined to the next
+  (`_wrapped`); `epub.py` sets a run of them as one
   `blockquote epub:type="epigraph"`. The words stay in the scored paragraphs.
 - `pagekinds.set_apart`: each page of the text proper with fewer than 60 words, or with
   most lines ending in a page number, or before the text's first heading, asked the

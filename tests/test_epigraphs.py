@@ -72,3 +72,36 @@ def test_specks_read_as_short_words_are_no_epigraph():
         Line("(Leonard Cohen, The Future)", 80, 116, 195, 128),
     ]
     assert _reads(motto)
+
+
+def test_a_mottos_wrapped_prose_runs_on_its_verse_and_attribution_stand_alone():
+    rows = [
+        (16, 240, "‘Dat één gedachte u allen geleide en sterke: te weten dat gij te"),
+        (15, 250, "midden van al dit woelig strijden maar één soort vijanden hebt.’"),
+        (15, 65, "Pieter Daens"),
+        (15, 141, "“… Leen ons gehoor en sluit u aan"),
+        (15, 150, "vereend kan niets het volk weerstaan.’"),
+        (14, 100, "Socialistisch strijdlied"),
+    ]
+    page = _short_page(7, rows)
+    blocks = reflow([page], {SourceRef(7, i): epigraphs.ROLE for i in range(len(rows))})
+    assert [b.text for b in blocks] == [
+        "‘Dat één gedachte u allen geleide en sterke: te weten dat gij te midden van al dit "
+        "woelig strijden maar één soort vijanden hebt.’",
+        "Pieter Daens",
+        "“… Leen ons gehoor en sluit u aan",
+        "vereend kan niets het volk weerstaan.’",
+        "Socialistisch strijdlied",
+    ]
+    assert blocks[0].sources == [SourceRef(7, 0), SourceRef(7, 1)]
+
+
+def test_a_mottos_widest_line_ending_its_sentence_keeps_the_attribution_apart():
+    rows = [
+        (73, 223, "Zwart paard, wit paard, één enkele"),
+        (25, 270, "Waarheid liegt, openheid verhult. Verberg je in het licht."),
+        (118, 179, "Albert Camus"),
+    ]
+    page = _short_page(11, rows)
+    blocks = reflow([page], {SourceRef(11, i): epigraphs.ROLE for i in range(len(rows))})
+    assert [b.text for b in blocks] == [r[2] for r in rows]
