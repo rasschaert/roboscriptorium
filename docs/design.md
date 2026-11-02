@@ -860,7 +860,9 @@ the edition doesn't list its corrections (the user).
   than the machine's cores (`ROBO_BENCH_WORKERS` overrides; tests use one), the
   question ranking across books after them. On tuning, every page and score identical
   to the sequential run, 21 → 10 minutes (the longest books set the pace; most of the
-  time is the system's, reading caches), memory above 30% free with 15 workers.
+  time is the system's, reading caches), memory above 30% free with 15 workers. A cold
+  run goes one book at a time (`ROBO_BENCH_WORKERS=1`): books in parallel would ask
+  different models at once, and Ollama would swap them in and out.
 - **A book whose unasked errors double is named** beside the verdict (`bench.doubled`:
   at least twice as many, and 0.1 a page more). A lost page is one place, so its
   interval is wide and no veto fires: Reis om mijn schedel 0.08 → 0.30 went to a BETTER

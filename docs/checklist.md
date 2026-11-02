@@ -63,7 +63,8 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       request: batch two (thirteen slices to about 220–270 pages, ~925 pages, ~14 h) had
       started on Goede dochter. Its ranges are in commit 3e6177c (`git show 3e6177c --
       src/roboscriptorium/bench.py src/roboscriptorium/trustdata.py`); reapply them, run
-      `work/runs/grow3.sh`, and the read caches resume. Gain: the bench's interval, about
+      `work/runs/grow3.sh`, and the read caches resume. Resumed 2026-11-02 (the user away,
+      "do whatever you think is productive"), one book at a time, against today's baseline. Gain: the bench's interval, about
       ±0.010 at 2,271 pages, narrows with the square root of the pages (about ±0.007 at
       ~4,000); more pages did not make a better arbiter (decisions.md, 2026-10-25).
 
