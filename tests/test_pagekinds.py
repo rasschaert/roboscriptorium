@@ -106,3 +106,21 @@ def test_answers_of_another_model_are_asked_again(tmp_path, monkeypatch):
     pagekinds.kinds(pdf, pages, small, cache)
     pagekinds.kinds(pdf, pages, large, cache)
     assert len(large.calls) == len(pagekinds.edge_pages(20))
+
+
+def test_a_listing_page_inside_the_text_is_asked_and_a_contents_page_left_out(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(pagekinds, "render_png", lambda pdf, n: b"png")
+    toc = PageText(11, 280, 500, [
+        Line(f"{1884 + k}: Een hoofdstuk {13 + 20 * k}", 10, 20 + k * 12, 250, 30 + k * 12)
+        for k in range(12)
+    ])  # fmt: skip
+    # A page of running text with a few years in it ends no line in a number.
+    pages = [_page(10), toc, _page(12)]
+    client = _Client({11: "contents"})
+    out = pagekinds.set_apart(
+        tmp_path / "w" / "b" / "source.pdf", pages, 300, client, tmp_path / "s.json"
+    )
+    assert out == {11: "omit"}
+    assert [c.split(" ")[0] for c in client.calls] == ["11"]

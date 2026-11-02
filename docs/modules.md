@@ -379,9 +379,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   words or more, none garbled, not all capitals, no heading on the page). Reflow makes
   each line a paragraph marked `epigraph`; `epub.py` sets a run of them as one
   `blockquote epub:type="epigraph"`. The words stay in the scored paragraphs.
-- `pagekinds.set_apart`: each page of the text proper with fewer than 60 words asked the
-  page-kind question; a motto's lines set apart as an epigraph, a dedication's as a
-  dedication (`Paragraph.dedication`, `epigraphs.DEDICATION`), which `epub.py` sets as
+- `pagekinds.set_apart`: each page of the text proper with fewer than 60 words, or with
+  most lines ending in a page number, asked the page-kind question; a motto's lines set
+  apart as an epigraph, a dedication's as a dedication, a table of contents left out (`Paragraph.dedication`, `epigraphs.DEDICATION`), which `epub.py` sets as
   one `div epub:type="dedication"`.
 - `chapters.py`: a book's numbered chapters (`openings`: a short line set apart atop a
   sunk page is a heading where most of the book's such openings carry one, applied to

@@ -173,6 +173,16 @@ def run(
                 epigraph_lines |= refs
             elif apart.get(page.number) == "dedication":
                 dedication_lines |= refs
+        # A table of contents inside the text range is no part of the text.
+        model_roles = {
+            **model_roles,
+            **{
+                SourceRef(page.number, i): LineRole("artifact", 1.0, 0.0, "contents-page")
+                for page in body
+                if apart.get(page.number) == "omit"
+                for i in range(len(page.lines))
+            },
+        }
         if check_ocr and ocrcheck.scanned(book.source):
             # A washed-out page is one region for the reviewer to type; on its faint crops
             # the readers invent fluent text and the judges pick it.

@@ -644,7 +644,9 @@ verdwijnen pp. 9–12 and Ex-minnaar p. 7 (2026-11-01): dedication 0.91, motto 0
 fewer than 60 words is asked (`pagekinds.set_apart`, cached in `short-pages.json`); a
 motto's lines become an epigraph, a dedication's a dedication block, page numbers,
 running heads and garbled specks left out. Short test: both set apart, six other short
-pages left as text. The inset rule stays beside it until a bench says it adds nothing.
+pages left as text. A page on which most lines (five or more) end in a page number is
+asked too, and one the model calls "contents" is left out: Pieter Daens' table of
+contents lies inside its text range (PDF 11–12) and was set as headings and paragraphs. The inset rule stays beside it until a bench says it adds nothing.
 
 Their italics: a motto or dedication is set in one type, so where all its words but one
 measure alike, that one takes their type (`italics.uniform`): "Voor", too round and

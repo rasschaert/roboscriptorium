@@ -257,21 +257,34 @@ def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, st
 # A page inside the text proper holding fewer words than this is asked what it is: a
 # motto or a dedication there is set apart from the running text (`set_apart`).
 SHORT_PAGE_WORDS = 60
-# The kinds set apart, and how: as an epigraph or as a dedication.
-APART = {"motto": "epigraph", "dedication": "dedication"}
+# A page inside the text proper on which at least this share of its lines (and
+# `LISTING_LINES` or more) end in a page number is asked too: a table of contents there
+# is left out of the book (Pieter Daens' two pages of it, inside its text range).
+LISTING_SHARE = 0.5
+LISTING_LINES = 5
+# The kinds set apart, and how: as an epigraph, as a dedication, or left out.
+APART = {"motto": "epigraph", "dedication": "dedication", "contents": "omit"}
+_ENDS_IN_NUMBER = re.compile(r"\s\d{1,3}\s*$")
+
+
+def _listing(page: PageText) -> bool:
+    """Whether most of the page's lines end in a page number, as a table of contents' do."""
+    ending = sum(1 for ln in page.lines if _ENDS_IN_NUMBER.search(ln.text))
+    return ending >= LISTING_LINES and ending >= LISTING_SHARE * len(page.lines)
 
 
 def set_apart(pdf: Path, pages: list[PageText], total: int, client, cache: Path) -> dict[int, str]:
-    """How each short page of `pages` (the text proper) is set apart, by the model's kind
-    for it (`APART`): "epigraph" or "dedication". `total` is the PDF's page count. The
-    model's answers are kept in `cache` by page, so a rerun asks only what is new."""
+    """How each short or listing page of `pages` (the text proper) is set apart, by the
+    model's kind for it (`APART`): "epigraph", "dedication", or "omit" for a table of
+    contents. `total` is the PDF's page count. The model's answers are kept in `cache` by
+    page, so a rerun asks only what is new."""
     kept = json.loads(cache.read_text()) if cache.exists() else {}
     asked_of = f"{TAG}:{getattr(client, 'model', '')}"
     answers = kept.get("answers", {}) if kept.get("question") == asked_of else {}
     out = {}
     for page in pages:
         words = sum(len(ln.text.split()) for ln in page.lines)
-        if not 0 < words < SHORT_PAGE_WORDS:
+        if not 0 < words < SHORT_PAGE_WORDS and not _listing(page):
             continue
         n = page.number
         if str(n) not in answers:
