@@ -501,7 +501,10 @@ also part of the pipeline itself." Before either book goes to review:
       before the next review (every kind, its crop)
 - [ ] Structure findings repaired where the book's own evidence settles them, beyond
       the chapter numbers
-- [ ] The golden builds' heading errors the check found (Vals alarm 5, 11–13; Artemis 8;
+- [ ] (Benched 2026-11-02: heading errors 102 → 65 on tuning, 50 → 44 on validation;
+      Glazuur and Doodskleed mended.) Left: headings found but not set as printed
+      (Dolittle 7, Thief-Taker 6, Metro 2, Het ijzige land 2); the extra-heading count
+      going negative; De cipier's lost scene break. The golden builds' heading errors the check found (Vals alarm 5, 11–13; Artemis 8;
       Het schaduwhuis 4; Glazuur "EO"; Vanille's split
       motto): which tonight's changes mend, on the warm bench after Daens; the rest traced
       to their stage. Doodskleed's "```markdown" and "境" headings, and its sentences as
