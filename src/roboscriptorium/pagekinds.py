@@ -273,18 +273,22 @@ def _listing(page: PageText) -> bool:
     return ending >= LISTING_LINES and ending >= LISTING_SHARE * len(page.lines)
 
 
-def set_apart(pdf: Path, pages: list[PageText], total: int, client, cache: Path) -> dict[int, str]:
-    """How each short or listing page of `pages` (the text proper) is set apart, by the
-    model's kind for it (`APART`): "epigraph", "dedication", or "omit" for a table of
-    contents. `total` is the PDF's page count. The model's answers are kept in `cache` by
-    page, so a rerun asks only what is new."""
+def set_apart(
+    pdf: Path, pages: list[PageText], total: int, client, cache: Path, front: set[int] = frozenset()
+) -> dict[int, str]:
+    """How each short or listing page of `pages` (the text proper), and each page in
+    `front` (those before its first heading, where mottos sit whatever their length: Pieter
+    Daens sets four on one page), is set apart, by the model's kind for it (`APART`):
+    "epigraph", "dedication", or "omit" for a table of contents. `total` is the PDF's
+    page count. The model's answers are kept in `cache` by page, so a rerun asks only
+    what is new."""
     kept = json.loads(cache.read_text()) if cache.exists() else {}
     asked_of = f"{TAG}:{getattr(client, 'model', '')}"
     answers = kept.get("answers", {}) if kept.get("question") == asked_of else {}
     out = {}
     for page in pages:
         words = sum(len(ln.text.split()) for ln in page.lines)
-        if not 0 < words < SHORT_PAGE_WORDS and not _listing(page):
+        if not 0 < words < SHORT_PAGE_WORDS and not _listing(page) and page.number not in front:
             continue
         n = page.number
         if str(n) not in answers:

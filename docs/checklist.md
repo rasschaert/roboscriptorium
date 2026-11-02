@@ -522,12 +522,13 @@ also part of the pipeline itself." Before either book goes to review:
 - [ ] A golden pair with old-style chapter numbers over sunk openings on the gaps to hunt
       for (golden-notes.md)
 
-- [ ] Pieter Daens' first build (2026-11-02, 12 h 22 min end to end, with last night's
-      code only partly in it): its table of contents (PDF 11–12) set as headings and
-      paragraphs (code in: a listing page asked, "contents" left out); the
-      subtitles of Boek twee to vier dropped though the layer has them ("Meervoudig
-      stemrecht", p. 161), Boek zes's kept; its motto (p. 7) not set apart (built before
-      the short-page question). Check each on its warm rebuild with `body_pages` [7, 787]
+- [x] Pieter Daens rebuilt warm with [7, 787] and today's code (2026-11-02, 3 min): the
+      table of contents left out, the ads gone, its page of four mottos set apart (asked
+      as a page before the first heading). Left: Boek twee to vijf's subtitles dropped
+      though the layer has them ("Meervoudig stemrecht", p. 161), Boek zes's kept
+- [ ] A motto's lines joined into its paragraphs (one per quote, one per attribution)
+      unless it is verse: each printed line is a paragraph now, so a prose quote breaks
+      where the print wrapped (Pieter Daens p. 7, Hoe wij verdwijnen's Camus)
 
 ## 3. The user's books after Stella
 

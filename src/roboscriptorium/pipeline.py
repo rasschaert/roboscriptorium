@@ -160,8 +160,14 @@ def run(
         model_roles = chapters.openings(body, model_roles)
         note_lines = footnotes.lines(body, model_roles, styles, known)
         epigraph_lines = epigraphs.lines(body, model_roles)
+        headed = [r.page for r, role in model_roles.items() if role.role == "chapter_heading"]
         apart = pagekinds.set_apart(
-            book.source, body, len(layer), client, book.stages / "short-pages.json"
+            book.source,
+            body,
+            len(layer),
+            client,
+            book.stages / "short-pages.json",
+            {p.number for p in body if headed and p.number < min(headed)},
         )
         for page in body:
             refs = {

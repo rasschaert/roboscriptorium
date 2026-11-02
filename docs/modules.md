@@ -381,7 +381,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   each line a paragraph marked `epigraph`; `epub.py` sets a run of them as one
   `blockquote epub:type="epigraph"`. The words stay in the scored paragraphs.
 - `pagekinds.set_apart`: each page of the text proper with fewer than 60 words, or with
-  most lines ending in a page number, asked the page-kind question; a motto's lines set
+  most lines ending in a page number, or before the text's first heading, asked the
+  page-kind question; a motto's lines set
   apart as an epigraph, a dedication's as a dedication, a table of contents left out (`Paragraph.dedication`, `epigraphs.DEDICATION`), which `epub.py` sets as
   one `div epub:type="dedication"`.
 - `chapters.py`: a book's numbered chapters (`openings`: a short line set apart atop a

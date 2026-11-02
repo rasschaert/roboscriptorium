@@ -124,3 +124,13 @@ def test_a_listing_page_inside_the_text_is_asked_and_a_contents_page_left_out(
     )
     assert out == {11: "omit"}
     assert [c.split(" ")[0] for c in client.calls] == ["11"]
+
+
+def test_a_long_page_before_the_first_heading_is_asked_one_after_it_is_not(tmp_path, monkeypatch):
+    monkeypatch.setattr(pagekinds, "render_png", lambda pdf, n: b"png")
+    pages = [_page(7), _page(9)]
+    client = _Client({7: "motto", 9: "motto"})
+    cache = tmp_path / "s.json"
+    out = pagekinds.set_apart(tmp_path / "w" / "b" / "source.pdf", pages, 300, client, cache, {7})
+    assert out == {7: "epigraph"}
+    assert [c.split(" ")[0] for c in client.calls] == ["7"]
