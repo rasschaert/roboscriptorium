@@ -2,33 +2,39 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-10-26 evening by the session that probed the arbiter's silent errors (no models;
+end of every session. Updated 2026-11-02 midday by the session that built Hoe wij verdwijnen and Pieter Daens.
 decisions.md, 2026-10-26).
 
 ## Running
 
-`robo-daens-e2e`: Louis Paul Boon, *Pieter Daens* (804 pages), timed end to end at the user's
-request: `init` (done: PDF 7–796, the end nine pages late, publisher's lists) then `build`
-(started 2026-11-01 22:08, about 11 h at Hoe wij verdwijnen's pace). Logs
-`work/runs/daens-*.log`; its run-times rows say 0 pages: fill in 790.
+Nothing runs. Benches score their books in parallel now (15 processes): warm tuning ~10
+min, validation ~3. Today's baselines: `work/bench/tuning-20261102T*` and
+`validation-20261102T*`, the last of each (after the blank-page fix).
 
-Hoe wij verdwijnen is done end to end (4 h 14 min) and rebuilt warm with tonight's fixes
-(chapter numbers, dedication and motto). **When Daens' build ends**, in this order:
-1. its time into docs/run-times.md (pages), its structure line and EPUB checked by eye;
-2. `init` again on Daens (the walk should end it at PDF 787) and
-   `experiments/probe_init_ends.py` on the 27 labelled books (22 and 21 ends right before);
-3. Daens' `body_pages` to [7, 787], rebuilt warm;
-4. a warm `bench tuning`, then `bench validation`, for tonight's three changes (chapter
-   numbers, short pages asked, the structure check) against `tuning-20261026T075608`:
-   queued in `robo-after-daens-bench`, which starts them the moment Daens' screen ends
-   (logs `work/runs/bench-*-chapters.log`); steps 2 and 3 run after it, not beside it;
-5. sample both books' questions; the user's review comes after.
-Don't run models beside Daens' build: its time is the measurement.
+## Done 2026-11-01 and 02 (decisions.md has every number)
 
-The baselines are `work/bench/tuning-20261026T075608` (eighteen grown slices, ~3,100 pages:
-after review 0.362, every book weighing the same; breaks 0.049) and
-`work/bench/validation-20261024T202747` (0.502, 0.196): today's defaults. `bench.SETS` matches
-that tuning run, so warm benches take about 15 minutes.
+- **Two new books of the user's, timed end to end** (README, docs/run-times.md): Hoe wij
+  verdwijnen 4 h 14 min (300 pages), Pieter Daens 12 h 22 min (804).
+- **What reading them showed, now the pipeline's own** (AGENTS.md rule, "What an agent
+  finds by eye"): chapter numbers by their run (`chapters.py`); short pages, pages before
+  the first heading and listing pages asked the page-kind question (mottos, dedications,
+  tables of contents; blank pages left out only when washed out); title-page subtitles;
+  a motto's wrapped lines joined; italics uniform in a motto; glm-ocr's talk on specks no
+  line; `init` walking inward past the edge (Daens' ads); a structure check and a
+  comparison with the last build printed by every `build`; heading errors in the bench's
+  verdict; the review's obvious questions out.
+- Benches: heading errors 102 → 82 on tuning (exact count), 50 → 45 validation; after
+  review 0.36 → 0.35 tuning, 0.49 → 0.48 validation.
+
+## Next, before the user reviews Hoe wij verdwijnen and Pieter Daens
+
+1. Quote questions (checklist): "Maurice’ moeder", a possessive apostrophe taken for a
+   closing quote (~15 of Hoe wij verdwijnen's 37); letters and articles quoted over
+   paragraphs; Daens' 148 sorted by kind.
+2. Sample both books' questions again (`experiments/sample_questions.py`), then the user
+   reviews: Hoe wij verdwijnen 78 questions, Pieter Daens 338.
+3. A proposal for the user: the bench names a book whose unasked errors double (the
+   veto missed Reis om mijn schedel losing a page, interval [0, +0.65]).
 
 ## Done 2026-10-25 and 26 (decisions.md has every number)
 
