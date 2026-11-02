@@ -321,3 +321,33 @@ def test_the_quick_tier_is_tuning_books_inside_their_tuning_slices():
             first, last = map(int, pages.split("-"))
             lo, hi = map(int, whole.split("-"))
             assert lo <= first <= last <= hi, spec
+
+
+def _scored(run: dict, **scores: tuple[int, int, int, int]) -> dict:
+    """`run` with each named book's heading counts: found, expected, spurious, exact."""
+    for name, (found, expected, spurious, exact) in scores.items():
+        run["books"][name]["score"] = {
+            "headings_found": found,
+            "headings_expected": expected,
+            "headings_spurious": spurious,
+            "headings_exact": exact,
+        }
+    return run
+
+
+def test_heading_errors_decide_the_verdict_when_words_and_breaks_dont_move():
+    flat = {p: [1, 1, 1, 1] for p in range(30)}
+    before = _scored(_run(flat, c=flat), b=(20, 24, 2, 20), c=(10, 10, 0, 10))
+    mended = _scored(_run(flat, c=flat), b=(24, 24, 0, 24), c=(10, 10, 0, 10))
+    found = bench.verdict(before, mended)
+    assert found.outcome == "better" and found.headings == (6, 0)
+    assert bench.verdict(mended, before).outcome == "worse"
+    # Fewer errors over all, but one book loses a heading: vetoed.
+    traded = _scored(_run(flat, c=flat), b=(24, 24, 0, 24), c=(9, 10, 0, 9))
+    assert bench.verdict(before, traded).outcome == "vetoed"
+    # A look-alike counts as an error only where both runs count exact headings.
+    old = _scored(_run(flat, c=flat), b=(24, 24, 0, 24), c=(10, 10, 0, 10))
+    for s in old["books"].values():
+        del s["score"]["headings_exact"]
+    lookalike = _scored(_run(flat, c=flat), b=(24, 24, 0, 23), c=(10, 10, 0, 10))
+    assert bench.verdict(old, lookalike).outcome == "no change"

@@ -369,14 +369,30 @@ class Verdict:
     pooled: list[Change]  # the primary measure over the shared books, per slip rate
     vetoes: list[str]  # books whose own "after review" got worse
     breaks: Change | None = None  # paragraph breaks over the shared books
+    # Heading errors over the shared books, before and after (`heading_errors`).
+    headings: tuple[int, int] | None = None
+
+
+def heading_errors(a: dict, b: dict) -> tuple[int, int]:
+    """A book's heading errors in scores `a` and `b`: reference headings missing, extra
+    headings, and, where both scores count them, headings not set letter for letter. A
+    warm build sets the same headings each time, so the counts need no interval."""
+
+    def errors(s: dict, exact: bool) -> int:
+        found = s["headings_exact"] if exact else s["headings_found"]
+        return s["headings_expected"] - found + s["headings_spurious"]
+
+    exact = "headings_exact" in a and "headings_exact" in b
+    return errors(a, exact), errors(b, exact)
 
 
 def verdict(old: dict, new: dict) -> Verdict:
     """Whether the new run is better. Worse when "after review", each book weighing the
-    same, is clearly worse at any slip rate, or the paragraph breaks set wrong clearly
-    rise; better when it improves at every slip rate, or the breaks clearly fall, and
-    neither is worse; vetoed when better but a book clearly gets worse in words or in
-    breaks (`VETO_LEVEL`, `VETO_MIN` on the mean)."""
+    same, is clearly worse at any slip rate, the paragraph breaks set wrong clearly rise,
+    or the heading errors over all books rise; better when it improves at every slip
+    rate, or the breaks clearly fall, or the heading errors fall, and none is worse;
+    vetoed when better but a book clearly gets worse in words or in breaks
+    (`VETO_LEVEL`, `VETO_MIN` on the mean), or gains heading errors."""
     shared = [n for n in new["books"] if n in old["books"]]
     index = dict(PAIRED)
     primary = [
@@ -393,19 +409,27 @@ def verdict(old: dict, new: dict) -> Verdict:
             if low > 0 and after - before >= VETO_MIN:
                 vetoes.append(n)
                 break
+    counts = {
+        n: heading_errors(old["books"][n]["score"], new["books"][n]["score"])
+        for n in shared
+        if "score" in old["books"][n] and "score" in new["books"][n]
+    }
+    vetoes += [n for n, (a, b) in counts.items() if b > a and n not in vetoes]
+    headings = (sum(a for a, _ in counts.values()), sum(b for _, b in counts.values()))
     pairs = [_pairs(old, new, index["paragraph breaks"], [n]) for n in shared]
     breaks = Change("all", "paragraph breaks", *pooled(pairs)) if any(pairs) else None
     words_better = all(c.high < 0 for c in primary)
     words_worse = any(c.low > 0 for c in primary)
     breaks_better = breaks is not None and breaks.high < 0
     breaks_worse = breaks is not None and breaks.low > 0
-    if words_worse or breaks_worse:
+    headings_worse, headings_better = headings[1] > headings[0], headings[1] < headings[0]
+    if words_worse or breaks_worse or headings_worse:
         outcome = "worse"
-    elif words_better or breaks_better:
+    elif words_better or breaks_better or headings_better:
         outcome = "vetoed" if vetoes else "better"
     else:
         outcome = "no change"
-    return Verdict(outcome, primary, vetoes, breaks)
+    return Verdict(outcome, primary, vetoes, breaks, headings if counts else None)
 
 
 def _f1(score: dict) -> float:

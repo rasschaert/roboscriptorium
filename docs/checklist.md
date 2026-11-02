@@ -514,8 +514,10 @@ also part of the pipeline itself." Before either book goes to review:
       right before)
 - [x] The bench counts headings set letter for letter beside those found, and prints
       the totals over all books when they move (2026-11-01, `bench.heading_totals`)
-- [ ] Headings in the bench's verdict, not only its structure lines; a golden pair with
-      old-style chapter numbers over sunk openings on the gaps to hunt for (golden-notes.md)
+- [x] Heading errors in the bench's verdict (the user, 2026-11-02): more is worse, fewer
+      better, a book gaining any vetoes (`bench.heading_errors`)
+- [ ] A golden pair with old-style chapter numbers over sunk openings on the gaps to hunt
+      for (golden-notes.md)
 
 ## 3. The user's books after Stella
 

@@ -809,6 +809,14 @@ the edition doesn't list its corrections (the user).
   from each page's unasked errors and questions, so runs saved before a price changed
   compare at today's; this morning's tuning run stays better at the new price
   (0.57 → 0.55 [−0.03, −0.01]).
+- **Headings count** (the user, 2026-11-02: "absolutely"). A heading is one word among
+  thousands, so a lost chapter number never moved the words; it showed only in a report
+  beside the verdict, which no one acted on, while six golden builds lacked chapters.
+  Heading errors (a reference heading missing, one not set letter for letter, an extra
+  one) are summed over the set's books: more is worse, fewer is better, and a book
+  gaining any vetoes. Warm builds set the same headings each time, so the counts need
+  no interval. A run saved before exact headings were counted is compared on found and
+  extra ones only.
 - **Paragraph breaks count.** A break in the wrong place is as visible in an edition as
   a wrong word, and no question asks about it, so the bench counts them per page
   (`disagreements.break_errors`: a reference paragraph starting mid-paragraph in the

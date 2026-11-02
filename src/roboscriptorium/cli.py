@@ -490,6 +490,10 @@ def run_bench(
             f"  all pages, {c.measure:26} {c.before:6.2f} → {c.after:6.2f}"
             f"  [{c.low:+.2f}, {c.high:+.2f}]"
         )
+    if found.headings is not None:
+        typer.echo(
+            f"  all books, {'heading errors':26} {found.headings[0]:6} → {found.headings[1]:6}"
+        )
     if found.vetoes:
         typer.echo("  worse on its own: " + ", ".join(found.vetoes))
     if changed := bench.structure(old, new):

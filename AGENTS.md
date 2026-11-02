@@ -197,7 +197,8 @@ mistake it prevents; check a change against them before committing.
   `close_quotes` turned "the animals' language" into a closing quote. Write the cases
   where the rule must *not* fire before the ones where it must; when the two can't be
   told apart, flag for review instead of rewriting.
-- **Measure with `roboscriptorium bench`, before and after.** A single run's CER moved by
+- **Measure with `roboscriptorium bench`, before and after** (words, paragraph breaks and
+  heading errors, docs/design.md, Measuring). A single run's CER moved by
   more than most changes did; only the bench's paired comparison says whether a change is
   real. Choose on `bench tuning`; `bench validation` only vetoes (the user, 2026-10-17):
   a change no better on tuning isn't taken for a gain on validation, and a choice made
