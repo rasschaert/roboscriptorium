@@ -263,7 +263,7 @@ SHORT_PAGE_WORDS = 60
 LISTING_SHARE = 0.5
 LISTING_LINES = 5
 # The kinds set apart, and how: as an epigraph, as a dedication, or left out.
-APART = {"motto": "epigraph", "dedication": "dedication", "contents": "omit", "blank": "omit"}
+APART = {"motto": "epigraph", "dedication": "dedication", "contents": "omit", "blank": "blank"}
 _ENDS_IN_NUMBER = re.compile(r"\s\d{1,3}\s*$")
 
 
@@ -279,8 +279,9 @@ def set_apart(
     """How each short or listing page of `pages` (the text proper), and each page in
     `front` (those before its first heading, where mottos sit whatever their length: Pieter
     Daens sets four on one page), is set apart, by the model's kind for it (`APART`):
-    "epigraph", "dedication", or "omit" for a table of contents or a blank page (its
-    specks and show-through no question). `total` is the PDF's
+    "epigraph", "dedication", "omit" for a table of contents, or "blank", which the
+    caller leaves out only where the scan agrees (a chapter's last lines were once called
+    blank). `total` is the PDF's
     page count. The model's answers are kept in `cache` by page, so a rerun asks only
     what is new."""
     kept = json.loads(cache.read_text()) if cache.exists() else {}

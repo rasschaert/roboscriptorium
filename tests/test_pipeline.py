@@ -825,3 +825,33 @@ def test_a_short_page_the_model_calls_a_dedication_is_set_apart(tmp_path, monkey
     assert (first.text, first.dedication) == ("Voor mijn ouders", True)
     assert (second.text, second.dedication) == ("Bruni en Thomas Eggers", True)
     assert not third.dedication and third.text.startswith("Line 0")
+
+
+def test_a_printed_page_the_model_calls_blank_keeps_its_text(tmp_path, monkeypatch):
+    def handler(request: httpx.Request) -> httpx.Response:
+        answers = {}
+        for name, q in json.loads(request.content)["questions"].items():
+            choice = {"role": "body", "kind": "blank"}.get(name, next(iter(q["criteria"])))
+            answers[name] = {"type": "choice", "choice": choice, "confidence": 0.9}
+            answers[name]["probabilities"] = {choice: 0.9}
+        return httpx.Response(200, json={"answers": answers})
+
+    def client(model, *_):
+        http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+        return DecisionClient("http://test", model, client=http)
+
+    monkeypatch.setattr(pipeline.decide, "for_model", client)
+    _no_layout(monkeypatch)
+    doc = pymupdf.open()
+    for _ in range(2):
+        page = doc.new_page(width=400, height=600)
+        for i, text in enumerate(LINES):
+            page.insert_text((40, 60 + 18 * i), text, fontsize=11)
+    end = doc.new_page(width=400, height=600)
+    end.insert_text((40, 60), "Ze sloot haar brief af met een verwijt.", fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    (tmp_path / "book.toml").write_text(
+        'title = "T"\nauthor = "A"\nlanguage = "nl"\nbody_pages = [1, 3]\n'
+    )
+    stages = pipeline.run(Book.load(tmp_path))
+    assert stages.doc.paragraphs[-1].text.endswith("Ze sloot haar brief af met een verwijt.")

@@ -180,13 +180,17 @@ def run(
                 epigraph_lines |= refs
             elif apart.get(page.number) == "dedication":
                 dedication_lines |= refs
-        # A table of contents or a blank page inside the text range is no part of the text.
+        # A table of contents inside the text range is no part of the text; nor is a page
+        # called blank that is washed out (show-through), but one in print is kept: Reis
+        # om mijn schedel's last four lines of a chapter were called blank.
         model_roles = {
             **model_roles,
             **{
                 SourceRef(page.number, i): LineRole("artifact", 1.0, 0.0, OMITTED)
                 for page in body
                 if apart.get(page.number) == "omit"
+                or apart.get(page.number) == "blank"
+                and page.number in faint_pages
                 for i in range(len(page.lines))
             },
         }

@@ -648,7 +648,10 @@ pages left as text. A page on which most lines (five or more) end in a page numb
 asked too, and one the model calls "contents" is left out: Pieter Daens' table of
 contents lies inside its text range (PDF 11–12) and was set as headings and paragraphs;
 now left out (contents 0.87, 0.77). So is every page before the text's first heading,
-whatever its length: Pieter Daens sets four mottos on one page (144 words; motto 0.56). The inset rule stays beside it until a bench says it adds nothing.
+whatever its length: Pieter Daens sets four mottos on one page (144 words; motto 0.56). A page called
+blank is left out only where the scan is washed out too (show-through): the model calls
+real print blank (a chapter's last four lines in Reis om mijn schedel, 0.48), and leaving
+those out cost 0.2 wrong words a page there. The inset rule stays beside it until a bench says it adds nothing.
 
 Their italics: a motto or dedication is set in one type, so where all its words but one
 measure alike, that one takes their type (`italics.uniform`): "Voor", too round and
