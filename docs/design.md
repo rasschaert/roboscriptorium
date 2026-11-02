@@ -811,6 +811,11 @@ the edition doesn't list its corrections (the user).
   from each page's unasked errors and questions, so runs saved before a price changed
   compare at today's; this morning's tuning run stays better at the new price
   (0.57 → 0.55 [−0.03, −0.01]).
+- **Books are scored in parallel** (the user, 2026-11-02): one process a book, one fewer
+  than the machine's cores (`ROBO_BENCH_WORKERS` overrides; tests use one), the
+  question ranking across books after them. On tuning, every page and score identical
+  to the sequential run, 21 → 10 minutes (the longest books set the pace; most of the
+  time is the system's, reading caches), memory above 30% free with 15 workers.
 - **Headings count** (the user, 2026-11-02: "absolutely"). A heading is one word among
   thousands, so a lost chapter number never moved the words; it showed only in a report
   beside the verdict, which no one acted on, while six golden builds lacked chapters.

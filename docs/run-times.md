@@ -615,3 +615,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-02 | Pieter Daens end to end: build after init, cold | 790 | 740 | 0 |
 | 2026-11-02 | bench tuning, chapter numbers + short pages asked + structure check (warm) | 3100 | 21 | 0 |
 | 2026-11-02 | bench validation, chapter numbers + short pages asked + structure check (warm) | 0 | 7 | 0 |
+| 2026-11-02 | bench tuning, 15 books in parallel (warm), equality check | 3100 | 10 | 0 |

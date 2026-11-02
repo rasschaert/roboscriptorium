@@ -292,7 +292,9 @@ right, then expand.
 - Lint/format: `ruff` (line length 100; `experiments/` excluded). Tests: `pytest`.
 - Settings: `config.py`'s `Settings`, each overridable by a `ROBO_*` variable it lists
   (`ROBO_OLLAMA_URL`, `ROBO_READ_MODEL`, `ROBO_JUDGE_MODEL`, `ROBO_SORTER`,
-  `ROBO_OCR_TRUST`, `ROBO_OCR_QUESTIONS`, `ROBO_OCR_ASK_BELOW`, …).
+  `ROBO_OCR_TRUST`, `ROBO_OCR_QUESTIONS`, `ROBO_OCR_ASK_BELOW`, …). `ROBO_BENCH_WORKERS`
+  (how many books `bench` scores at once; one fewer than the cores) is no build setting
+  and lives in `bench.py`.
 
 The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 
