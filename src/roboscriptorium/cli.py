@@ -504,6 +504,8 @@ def run_bench(
         )
     if found.vetoes:
         typer.echo("  worse on its own: " + ", ".join(found.vetoes))
+    for name, before, after in bench.doubled(old, new):
+        typer.echo(f"  unasked errors doubled, look at it: {name} {before:.2f} → {after:.2f}")
     if changed := bench.structure(old, new):
         typer.echo("structure (not in the test above):")
         for line in changed:

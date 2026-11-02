@@ -457,6 +457,30 @@ def verdict(old: dict, new: dict) -> Verdict:
     return Verdict(outcome, primary, vetoes, breaks, headings if counts else None)
 
 
+# A book whose unasked errors at least double, and rise by this many a page, is named
+# for a look: one place broken, as Reis om mijn schedel's lost page (0.08 → 0.30, inside
+# a veto's interval). Over 95 past tuning comparisons it fired 8 times (2026-11-02).
+DOUBLED_RISE = 0.1
+
+
+def doubled(old: dict, new: dict) -> list[tuple[str, float, float]]:
+    """The books whose unasked errors a page at least doubled, by `DOUBLED_RISE` or more,
+    on the pages both runs scored: a warning beside the verdict, not part of it."""
+    out = []
+    for name, book in new["books"].items():
+        if name not in old["books"]:
+            continue
+        a, b = old["books"][name]["pages"], book["pages"]
+        shared = [p for p in b if p in a]
+        if not shared:
+            continue
+        before = sum(a[p][1] for p in shared) / len(shared)
+        after = sum(b[p][1] for p in shared) / len(shared)
+        if after >= 2 * before and after - before >= DOUBLED_RISE:
+            out.append((name, before, after))
+    return out
+
+
 def _f1(score: dict) -> float:
     p, r = score["paragraph_precision"], score["paragraph_recall"]
     return 2 * p * r / (p + r) if p + r else 0.0

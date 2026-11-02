@@ -861,6 +861,11 @@ the edition doesn't list its corrections (the user).
   question ranking across books after them. On tuning, every page and score identical
   to the sequential run, 21 → 10 minutes (the longest books set the pace; most of the
   time is the system's, reading caches), memory above 30% free with 15 workers.
+- **A book whose unasked errors double is named** beside the verdict (`bench.doubled`:
+  at least twice as many, and 0.1 a page more). A lost page is one place, so its
+  interval is wide and no veto fires: Reis om mijn schedel 0.08 → 0.30 went to a BETTER
+  verdict (2026-11-02). Over 95 past tuning comparisons the rule fired 8 times. A warning
+  to look, not a veto: a doubling on a few pages may be noise.
 - **Headings count** (the user, 2026-11-02: "absolutely"). A heading is one word among
   thousands, so a lost chapter number never moved the words; it showed only in a report
   beside the verdict, which no one acted on, while six golden builds lacked chapters.

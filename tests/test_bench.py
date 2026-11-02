@@ -361,3 +361,13 @@ def test_the_bench_scores_books_one_fewer_than_the_cores_at_once_or_as_set(monke
     assert bench.workers() == 1
     monkeypatch.setenv("ROBO_BENCH_WORKERS", "0")
     assert bench.workers() == 1
+
+
+def test_a_book_whose_unasked_errors_double_is_named():
+    flat = {p: [1, 0.1, 1, 1] for p in range(20)}
+    broken = {p: [1, 0.1 if p else 5.0, 1, 1] for p in range(20)}
+    named = bench.doubled(_run(flat, c=flat), _run(flat, c=broken))
+    assert [n for n, _, _ in named] == ["c"]
+    # A small rise, even a doubling of very little, is noise.
+    tiny = {p: [1, 0.1 if p else 0.6, 1, 1] for p in range(20)}
+    assert bench.doubled(_run(flat), _run(tiny)) == []
