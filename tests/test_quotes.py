@@ -271,3 +271,23 @@ def test_a_book_curls_its_straight_quotes_as_it_opens_its_own():
     assert out[1].text == "„Nee,” zei hij, ’t was laat."
     assert out[2] is blocks[2]  # headings keep what the reviewer or the layer gave
     assert blocks[1].text.startswith('"')  # the input is left alone
+
+
+def test_a_quote_open_at_the_end_is_closed_where_the_reading_adds_only_that_mark():
+    from roboscriptorium.ir import Paragraph, SourceRef
+    from roboscriptorium.quotes import closed_at_end
+
+    end = SourceRef(50, 4)
+    p = Paragraph("Ik schreef: ‘Het is erg, ze zingen.", [SourceRef(50, 3), end])
+    out, settled = closed_at_end([p], {end: {"checked": "erg, ze zingen.’"}})
+    assert out[0].text == "Ik schreef: ‘Het is erg, ze zingen.’" and settled == {end}
+    assert p.text.endswith("zingen.")
+    # Other words in the reading, a mark that pairs with no open one, or another quote
+    # problem in the paragraph: left as a question.
+    for reading, text in [
+        ("erg, ze zongen.’", p.text),
+        ("erg, ze zingen.”", p.text),
+        ("erg, ze zingen.’", "Hij zei’ ik: ‘Het is erg, ze zingen."),
+    ]:
+        q = Paragraph(text, [SourceRef(50, 3), end])
+        assert closed_at_end([q], {end: {"checked": reading}}) == ([q], set())

@@ -166,6 +166,40 @@ def unbalanced(paragraphs: list[Paragraph]) -> list[Place]:
     return out
 
 
+_LETTERS = re.compile(r"[^\W_]+")
+
+
+def closed_at_end(
+    blocks: list[Block], readings: dict[SourceRef, dict[str, str]]
+) -> tuple[list[Block], set[SourceRef]]:
+    """Copies of the blocks with a quote left open at a paragraph's end closed, where the
+    read model's reading of its last line is the same words with only that closing mark
+    added at the end; and the lines so settled. Only the mark is taken from the reading.
+    On the tuning books such a reading was the print 39 times in 39 (2026-11-02)."""
+    out, settled = [], set()
+    for b in blocks:
+        if (
+            not isinstance(b, Paragraph)
+            or not b.sources
+            or [w for _, w in problems(b.text)] != ["open at end"]
+        ):
+            out.append(b)
+            continue
+        last = b.sources[-1]
+        found = readings.get(last, {})
+        reading = next(iter(found.values()), "").rstrip()
+        mark = reading[-1:]
+        words = [w.lower() for w in _LETTERS.findall(reading)]
+        tail = [w.lower() for w in _LETTERS.findall(b.text)][-len(words) :] if words else []
+        opener = next((o for o, c in PAIRS.items() if c == mark), None)
+        if opener and words and tail == words and opener in b.text and b.text.rstrip()[-1:] != mark:
+            out.append(replace(b, text=b.text.rstrip() + mark))
+            settled.add(last)
+        else:
+            out.append(b)
+    return out, settled
+
+
 def _around(p: Paragraph, offset: int, why: str) -> list[SourceRef]:
     """The lines a place falls on, by its share of the paragraph's text, one either side.
 

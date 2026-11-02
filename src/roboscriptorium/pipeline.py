@@ -86,6 +86,9 @@ class Stages:
     # The read model's prompt for this book's lines (`read_prompt`), "" when nothing was
     # read: the review reads the lines its questions have no readings for with it.
     read_prompt: str = ""
+    # Last lines of paragraphs whose open quote the read model's reading closed
+    # (`quotes.closed_at_end`): a doubt there about only that mark is settled.
+    quotes_closed: set[SourceRef] = field(default_factory=set)
 
 
 def run(
@@ -360,8 +363,22 @@ def run(
         if ref.page not in faint_pages
     }
     quote_readings = {}
+    closed: set[SourceRef] = set()
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, whole, suspects, quote_lines, style, dots, settings)
+        # A closing mark the read model sees after the paragraph's last word is the print's.
+        built, closed = quotes.closed_at_end(built, quote_readings)
+        quote_lines = (
+            {
+                ref
+                for place in quotes.unbalanced([b for b in built if isinstance(b, Paragraph)])
+                for ref in place.sources
+                if ref.page not in faint_pages
+            }
+            & quote_lines
+            if closed
+            else quote_lines
+        )
     notes = footnotes.collect(corrected, note_lines)
     # Running text and notes together, so an erratum's words are unique across both.
     fixed = errata.apply(
@@ -419,6 +436,7 @@ def run(
         faint_pages,
         epigraph_lines | dedication_lines,
         prompt,
+        quotes_closed=closed,
     )
 
 

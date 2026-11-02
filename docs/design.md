@@ -420,6 +420,19 @@ of another script ("境"). 24 of the 541 readings cached over all books were suc
 reading with a code fence or a letter outside the Latin script is no line (`_printed`);
 the project reads Latin scripts only, and accented letters ("Één") stay.
 
+## A quote left open at a paragraph's end
+
+**Closed where the read model's reading adds only that mark** (`quotes.closed_at_end`).
+Pieter Daens loses the closing mark after a paragraph's last stop about a hundred
+times (p. 50 prints "zingen.’", every reader gives "zingen."). On the tuning books
+(`experiments/probe_quote_end.py`, 2026-11-02), 169 quotes were open at a paragraph's
+end; in 39 the reading of the last line was the same words with only a closing mark
+added, and the reference sets that mark all 39 times; the other 125 close in print only
+45 times, so they stay questions. Only the mark is taken, never the reading's letters,
+and only one that pairs with a mark opened in the paragraph. A doubt on such a line
+between readings that differ only in that mark is settled with it (`Stages.quotes_closed`).
+Pieter Daens: 38 paragraphs closed, questions 338 → 309.
+
 ## Lost lines
 
 An OCR layer sometimes loses a whole printed line, and when the spotter sees nothing there

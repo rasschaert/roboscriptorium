@@ -196,6 +196,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         f
         for f in found
         if f.page not in omitted
+        and not _mark_settled(f, stages.quotes_closed)
         and not (
             set(f.reasons) <= {"heading", "ocr-doubt"}
             and "heading" in f.reasons
@@ -223,6 +224,17 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
 _READ = ("text", "heading")
 # A region the layer has no line in is read as one line only up to this many line heights.
 _ONE_LINE = 1.8
+
+
+def _mark_settled(f: Flag, closed: set[SourceRef]) -> bool:
+    """A doubt on a line whose closing quote the build added, between readings that differ
+    only in that mark: settled, so not asked."""
+    if not set(f.reasons) <= {"ocr-doubt", "quotes"} or f.first != f.last:
+        return False
+    if SourceRef(f.page, f.first) not in closed:
+        return False
+    texts = [r["text"] if isinstance(r, dict) else r for r in f.readings] or [f.text]
+    return len({t.rstrip().rstrip("’”").rstrip() for t in texts}) == 1
 
 
 def _read_unread(book: Book, stages: pipeline.Stages, found: list[Flag]) -> list[Flag]:
