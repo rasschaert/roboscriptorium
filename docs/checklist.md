@@ -540,9 +540,9 @@ also part of the pipeline itself." Before either book goes to review:
 - [x] The closing mark lost after a paragraph's last stop as a fix where the reading adds
       only that mark (2026-11-02, `quotes.closed_at_end`): 39 of 39 the print on tuning;
       Pieter Daens 38 closed, its questions 338 → 309
-- [ ] One question per letter quoted over paragraphs, not one per paragraph (Hoe wij
-      verdwijnen's letters): marks alone can't tell it from a lost closing mark, so it
-      stays asked, but once
+- [x] ~~One question per letter quoted over paragraphs~~ (dropped 2026-11-02): where a
+      paragraph is left open and the next opens with the same mark, the print closes the
+      first 20 times in 45 on tuning: asking once would leave those 20 unasked
 
 ## 3. The user's books after Stella
 
