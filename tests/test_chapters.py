@@ -107,8 +107,16 @@ def test_a_dropped_line_of_a_title_page_set_like_another_title_pages_heading_is_
     assert out[SourceRef(300, 1)].role == "artifact"
     small = styles | {SourceRef(161, 1): Style(1.0, 1.0, 1.0, False)}
     assert chapters.title_lines(pages, roles, small)[SourceRef(161, 1)].role == "artifact"
-    pages[2] = PageText(161, 300, 500, pages[2].lines + _full(162).lines)
-    assert chapters.title_lines(pages, roles, styles)[SourceRef(161, 1)].role == "artifact"
+    # Below a page's running text, a line set so is no subtitle.
+    pages[2] = PageText(161, 300, 500, pages[2].lines[:1] + _full(162).lines + pages[2].lines[1:])
+    below = {SourceRef(161, 0): heading, SourceRef(161, 29): dropped} | {
+        SourceRef(161, i): LineRole("body", 0.9, 0.9) for i in range(1, 29)
+    }
+    styles_below = styles | {SourceRef(161, 29): big}
+    assert (
+        chapters.title_lines(pages, roles | below, styles_below)[SourceRef(161, 29)].role
+        == "artifact"
+    )
 
 
 def test_a_heading_in_its_confirmed_run_is_settled_a_lone_or_misread_one_not():

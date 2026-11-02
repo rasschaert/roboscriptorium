@@ -69,38 +69,47 @@ def title_lines(
     roles: dict[SourceRef, LineRole],
     styles: dict[SourceRef, Style],
 ) -> dict[SourceRef, LineRole]:
-    """`roles` with a dropped line of a title page (headings and no running text) made a
-    heading, where another title page has a heading at that line set in the same type:
-    "Meervoudig stemrecht" under "BOEK TWEE" when "De cijnskiezers" stands under "BOEK EEN".
+    """`roles` with a dropped line under a heading made a heading, where the book sets a
+    heading's second line in the same type elsewhere: "Meervoudig stemrecht" under "BOEK
+    TWEE" as "De cijnskiezers" under "BOEK EEN", Dolittle's "A MESSAGE FROM AFRICA" under
+    "THE FOURTH CHAPTER" as "PUDDLEBY" under the first. Only lines above the page's
+    running text, of `SUBTITLE_LETTERS` letters or more (a speck "i" is no subtitle).
     Returns a new dict."""
-    titles = [
-        p
+
+    def heading(ref: SourceRef) -> bool:
+        return (role := roles.get(ref)) is not None and role.role == "chapter_heading"
+
+    seconds = [
+        styles[r]
         for p in pages
-        if p.lines
-        and _role(roles, p) == "chapter_heading"
-        and not any(is_body(roles.get(SourceRef(p.number, i))) for i in range(len(p.lines)))
+        for i in range(1, len(p.lines))
+        if heading(r := SourceRef(p.number, i))
+        and heading(SourceRef(p.number, i - 1))
+        and r in styles
     ]
-    headed = {
-        i: [styles[r] for p in titles if (r := SourceRef(p.number, i)) in styles
-            and roles.get(r) is not None and roles[r].role == "chapter_heading"]
-        for i in range(1, 3)
-    }  # fmt: skip
     out = dict(roles)
-    for p in titles:
-        for i in range(1, min(3, len(p.lines))):
+    for p in pages:
+        above = False  # a heading above, and no running text yet
+        for i, line in enumerate(p.lines):
             ref = SourceRef(p.number, i)
             role, style = roles.get(ref), styles.get(ref)
-            if role is None or role.role != "artifact" or style is None or style.size is None:
+            if heading(ref):
+                above = True
                 continue
-            if P.garbled(p.lines[i]) or not any(c.isalpha() for c in p.lines[i].text):
+            if is_body(role):
+                break
+            if not above or role.role != "artifact" or style is None or style.size is None:
+                continue
+            letters = sum(c.isalpha() for c in line.text)
+            if letters < SUBTITLE_LETTERS or P.garbled(line):
                 continue
             if any(
                 s.size is not None
                 and max(s.size, style.size) <= SAME_SIZE * min(s.size, style.size)
                 and s.capitals == style.capitals
-                for s in headed[i]
+                for s in seconds
             ):
-                out[ref] = LineRole("chapter_heading", role.confidence, 0.0, "title-page")
+                out[ref] = LineRole("chapter_heading", role.confidence, 0.0, "subtitle-alike")
     return out
 
 
@@ -234,6 +243,8 @@ def numbered(blocks: list[Block]) -> list[Block]:
 
 
 _PARTS = {"boek", "deel", "part", "book"}
+# A subtitle has at least this many letters ("i", a speck under a heading, has one).
+SUBTITLE_LETTERS = 4
 # A heading of a label word and a number as read ("HOOFDSTUK 11", "Hoorpstvk 13").
 _LABELLED = re.compile(r"^([^\W\d_]{4,})\s+([^\s]{1,3})\.?$")
 # A label at least this alike the book's commonest is that label misread ("HoOoeEpstvkK"

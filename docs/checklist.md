@@ -546,7 +546,7 @@ also part of the pipeline itself." Before either book goes to review:
 
 - [ ] Heading errors the exact count shows (2026-11-02): the first line of text swallowed
       into a heading (Thief-Taker, Dolittle: mended, `chapters.running_text`); Dolittle's chapter subtitles
-      missing ("THE FOURTH CHAPTER" without "A MESSAGE FROM AFRICA"); Metro's "CHAPTER The
+      missing (13 of 14 mended, `chapters.title_lines`; "THE MONKEYS' COUNCIL" left); Metro's "CHAPTER The
       Rights of the Strong" lacking its 7; Het ijzige land's chapters 1, 3, 7, 8 lost
       (labelled numbers, now flagged by the structure check)
 

@@ -13,7 +13,8 @@ data rebuilt warm for the eleven books with it (`work/runs/grow3.sh`, logs
 `work/runs/grow3*.log`). Stop it with `experiments/stop-run.sh grow3` if the user needs the
 machine; the read caches resume. Afterwards: a parallel warm `bench tuning` against grow3's
 run (it measures what was committed while grow3 ran: the closing fix comparing printed
-lines, display titles on empty pages, `headings_extra`, labelled chapter numbers) and `bench validation`; the first becomes the new baseline. Benches otherwise score their books in parallel (warm ~10 min, validation ~3).
+lines, display titles on empty pages, `headings_extra`, labelled chapter numbers, a heading never running on into the text,
+subtitles under any heading) and `bench validation`; the first becomes the new baseline. Benches otherwise score their books in parallel (warm ~10 min, validation ~3).
 
 ## Done 2026-11-01 and 02 (decisions.md has every number)
 
