@@ -519,6 +519,13 @@ also part of the pipeline itself." Before either book goes to review:
 - [ ] A golden pair with old-style chapter numbers over sunk openings on the gaps to hunt
       for (golden-notes.md)
 
+- [ ] Pieter Daens' first build (2026-11-02, 12 h 22 min end to end, with last night's
+      code only partly in it): its table of contents (PDF 11–12) set as headings and
+      paragraphs, to leave out (a page of kind "contents" inside the text range); the
+      subtitles of Boek twee to vier dropped though the layer has them ("Meervoudig
+      stemrecht", p. 161), Boek zes's kept; its motto (p. 7) not set apart (built before
+      the short-page question). Check each on its warm rebuild with `body_pages` [7, 787]
+
 ## 3. The user's books after Stella
 
 Dutch books the user wants as EPUBs, none with a reference EPUB, each an IA Scribe
