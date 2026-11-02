@@ -35,6 +35,10 @@ SKIPPED = {"figure", "figure_caption"}
 # A text region's strip above its first layer line or below its last, at least this
 # many line heights tall, is a line the layer lacks.
 EDGE_GAP = 1.5
+# A read line overlapping a layer line down by this share of its height is that line
+# (Hoe wij verdwijnen's, Goede dochter's and Vals alarm's short replies overlap 0.35–0.38;
+# lines a pitch apart don't overlap).
+SAME_LINE = 0.3
 
 
 def _inside(line: Line, box) -> bool:
@@ -143,6 +147,14 @@ def read(
     return {_key(n, r): done[_key(n, r)] for n, r in found}
 
 
+def _same_line(layer: Line, read: Line) -> bool:
+    """Whether a read line covers a layer line: overlapping across, and down by
+    `SAME_LINE` of the read line's height or more."""
+    across = min(layer.x1, read.x1) - max(layer.x0, read.x0)
+    down = min(layer.y1, read.y1) - max(layer.y0, read.y0)
+    return across > 0 and down >= SAME_LINE * (read.y1 - read.y0)
+
+
 def _printed(text: str) -> bool:
     """Whether a reading can be printed text of a book in a Latin script: not a code fence
     the model opens on a speck ("```markdown"), nor a letter of another script ("境")."""
@@ -157,7 +169,10 @@ def add(
     """Copies of the pages with each read line in reading order (by its middle).
 
     A reading with no letter or digit (a smudge) is left out, and so is the model's
-    talk rather than a reading (`_printed`).
+    talk rather than a reading (`_printed`). A read line overlapping a layer line by
+    `SAME_LINE` of its height is that line, its box set too high or low by the layer (a
+    short "‘Ja.’" read "qa”" seven points up): it takes the layer line's place, with the
+    image's box and the model's reading, rather than standing beside it.
     """
     by_page: dict[int, list[Line]] = {}
     for n, r in found:
@@ -171,6 +186,10 @@ def add(
             continue
         lines = list(page.lines)
         for new in by_page[page.number]:
+            same = next((k for k, ln in enumerate(lines) if _same_line(ln, new)), None)
+            if same is not None:
+                lines[same] = new
+                continue
             middle = (new.y0 + new.y1) / 2
             at = sum(1 for ln in lines if (ln.y0 + ln.y1) / 2 < middle)
             lines.insert(at, new)

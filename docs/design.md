@@ -419,7 +419,13 @@ same way: a speck in a page's top corner read "境", kept as the page's first li
 read by a page reader as a whole sentence the arbiter took. On a speck glm-ocr may answer with talk rather than a reading: "```markdown", or a letter
 of another script ("境"). 24 of the 541 readings cached over all books were such (Doodskleed
 15, where they became chapter headings; 8 other books, Pieter Daens among them), so a
-reading with a code fence or a letter outside the Latin script is no line (`_printed`);
+reading with a code fence or a letter outside the Latin script is no line (`_printed`).
+A read line overlapping a layer line down by 0.3 of its height is that line, its box set
+too high by the layer (a short "‘Ja.’" read "qa”" seven points up, Hoe wij verdwijnen p.
+105): it takes the layer line's place rather than standing beside it, which had read
+each reply twice, the crop at the wrong height making a "‘I.’" and running two
+paragraphs together. One or two such places in Hoe wij verdwijnen, Goede dochter, Vals
+alarm; none in Stella or Pieter Daens;
 the project reads Latin scripts only, and accented letters ("Één") stay.
 
 ## A quote left open at a paragraph's end

@@ -149,3 +149,24 @@ def test_a_page_the_layer_holds_nothing_of_has_its_display_title_read():
     assert missing.candidates([heights, empty], regions, {}) == [(527, title)]
     # On a page with text, the same box is no missing line: too tall for one.
     assert missing.candidates([heights], {22: [replace(title, y0=300, y1=320)]}, {}) == []
+
+
+def test_a_read_line_over_a_misplaced_layer_line_takes_its_place_not_its_neighbours():
+    lines = [
+        Line("‘Heeft hij de informatie gevonden die je zocht?’", 25, 70, 232, 82),
+        Line("qa”", 25, 77, 43, 88),  # the layer's "‘Ja.’", seven points too high
+        Line("‘En ben je tevreden?’", 25, 96, 117, 106),
+    ]
+    page = PageText(105, 300, 500, lines)
+    region = Region("plain text", 0.6, 25, 84, 45, 95)
+    out = missing.add([page], [(105, region)], {missing._key(105, region): "‘Ja.’"})[0]
+    assert [ln.text for ln in out.lines] == [
+        "‘Heeft hij de informatie gevonden die je zocht?’",
+        "‘Ja.’",
+        "‘En ben je tevreden?’",
+    ]
+    # A line read in the gap between two layer lines is added, as before.
+    gap = Region("plain text", 0.6, 25, 108, 60, 118)
+    page2 = PageText(105, 300, 500, [lines[0], lines[2], Line("‘Dat doet", 25, 122, 60, 132)])
+    out2 = missing.add([page2], [(105, gap)], {missing._key(105, gap): "‘Ja.’"})[0]
+    assert len(out2.lines) == 4
