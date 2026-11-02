@@ -619,3 +619,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-02 | Pieter Daens rebuilt warm, body_pages [7, 787], today's code | 781 | 3 | 0 |
 | 2026-11-02 | bench tuning, contents pages + front pages asked + title-page lines (warm, parallel) | 3100 | 10 | 0 |
 | 2026-11-02 | bench validation, contents pages + front pages asked + title-page lines (warm, parallel) | 0 | 3 | 0 |
+| 2026-11-02 | bench tuning, motto lines joined (warm, parallel) | 3100 | 10 | 0 |
+| 2026-11-02 | bench validation, motto lines joined (warm, parallel) | 0 | 3 | 0 |
