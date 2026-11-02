@@ -6,6 +6,14 @@ label says how warm the caches were, which matters more than the page count. A r
 with nothing cached costs **0.8–1.1 min per page** for a trust-data rebuild
 (glm-ocr, tesseract and qwen3.8 per line, then clef and winnow per suspect).
 
+End to end, PDF to EPUB with no one stepping in (`init`, then `build` on its unconfirmed
+setup), on a book never built before:
+
+| Book | Date | Pages | `init` | `build` | Total | Per page | Slowest stages |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Hoe wij verdwijnen | 2026-11-01 | 300 | 1 min | 253 min | 4 h 14 min | 0.85 min | third reading ~2 h 40, judges ~1 h |
+| Pieter Daens | 2026-11-02 | 804 | 2 min | 740 min | 12 h 22 min | 0.94 min | third reading ~7 h 15, judges ~3 h 45 |
+
 A run made partly or wholly in macOS Low Power Mode (the battery can't keep up with
 Ollama even on the charger) says so in its label and doesn't count towards the
 estimate. It slows model runs by half or more: Qwen's page reading went from about 200

@@ -84,7 +84,15 @@ uv run roboscriptorium review work/stella   # the questions, on http://127.0.0.1
 ```
 
 A build takes about a minute a page the first time; every model's answer is saved, so a
-rebuild after answering questions takes minutes. The model that weighs the readings and
+rebuild after answering questions takes minutes. Timed from PDF to EPUB with no one
+stepping in (`init`, then `build` on its unconfirmed setup):
+
+| Book | Pages | `init` | `build` | Total | Per page |
+| --- | --- | --- | --- | --- | --- |
+| Hoe wij verdwijnen (2026-11-01) | 300 | 1 min | 253 min | 4 h 14 min | 0.85 min |
+| Pieter Daens (2026-11-02) | 804 | 2 min | 740 min | 12 h 22 min | 0.94 min |
+
+Every timed run is in [docs/run-times.md](docs/run-times.md). The model that weighs the readings and
 the one that sorts lines are trained from the golden books into `work/models/`; without
 them, `ROBO_OCR_TRUST=0` and `ROBO_SORTER=0` use fixed rules instead.
 
