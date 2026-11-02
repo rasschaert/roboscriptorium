@@ -6,9 +6,13 @@ end of every session. Updated 2026-11-02 midday by the session that built Hoe wi
 
 ## Running
 
-Nothing runs. Benches score their books in parallel now (15 processes): warm tuning ~10
-min, validation ~3. Today's baselines: `work/bench/tuning-20261102T*` and
-`validation-20261102T*`, the last of each (after the blank-page fix).
+`robo-grow3` (started 2026-11-02 14:35, ~14 h, the user away: "do whatever you think is
+productive"): batch two of the slice growth, thirteen tuning slices to about 220–270 pages
+(~925 cold pages), one book at a time, against `tuning-20261102T130507`; then the trust
+data rebuilt warm for the eleven books with it (`work/runs/grow3.sh`, logs
+`work/runs/grow3*.log`). Stop it with `experiments/stop-run.sh grow3` if the user needs the
+machine; the read caches resume. Afterwards: a parallel warm `bench tuning` as the new
+baseline. Benches otherwise score their books in parallel (warm ~10 min, validation ~3).
 
 ## Done 2026-11-01 and 02 (decisions.md has every number)
 
