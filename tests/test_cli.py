@@ -53,9 +53,14 @@ def test_build_drafts_a_missing_book_toml_first(monkeypatch, tmp_path):
     monkeypatch.setattr(cli, "_initialise", initialise)
     monkeypatch.setattr(
         cli.pipeline,
-        "build",
-        lambda book, pages: built.append(book.root) or SimpleNamespace(blocks=[]),
+        "run",
+        lambda book, pages: (
+            built.append(book.root)
+            or SimpleNamespace(doc=SimpleNamespace(blocks=[]), lost_breaks=[])
+        ),
     )
+    monkeypatch.setattr(cli.structure, "findings", lambda doc: [])
+    monkeypatch.setattr(cli.epubdiff, "against_last", lambda epub, folder: None)
     monkeypatch.setattr(cli, "keep_dated", lambda *a: None)
     (tmp_path / "Mijn Boek.pdf").write_bytes(b"%PDF")
     result = CliRunner().invoke(cli.app, ["build", "Mijn Boek.pdf"])

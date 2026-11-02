@@ -565,6 +565,8 @@ In this order:
 | Mirko Bonné, *Hoe wij verdwijnen* (Querido 2011, tr. Elly Schippers; added 2026-11-01) | `hoe-wij-verdwijnen` | 300 (9–295, by `init`) | IA Scribe | dedication (p. 9) and a Camus motto (p. 11) before the text; timed end to end, `init` to EPUB |
 | Louis Paul Boon, *Pieter Daens* (Singel Pockets 1997; added 2026-11-01) | `pieter-daens` | 804 (body about 9–787: foreword to sources) | IA Scribe, Leeds library copy | six parts ("Boek een" … "Boek zes") and chapters headed by years; a motto (p. 7); a two-page table of contents (pp. 11–12) to leave out; the layer lacks "Boek vijf / Onze doden" (p. 527, printed 525); show-through read as text on pp. 8, 14; verse (p. 354); a sources list at the end; timed end to end |
 
+- [x] Hoe wij verdwijnen reviewed by the user (2026-11-02, 53 answers in two rounds; the
+      review smartened between them); rebuilt with them, epubcheck clean
 - [ ] Each book in turn: check its front and back matter and `body_pages`, build (cold
       ~1 min a page: Ex-minnaar ~4 h, De kus ~10 h), sample the questions, **user**
       reviews, rebuild, epubcheck, a **spot-check** (5 random pages drawn by a script,

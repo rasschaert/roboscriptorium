@@ -250,8 +250,9 @@ def apply(
     it: each is a span of the line as the text layer reads it. A human's answer wins
     where they overlap, and a line the human retyped whole takes neither fixes nor
     answers about places in it; an answer that only says what a line is keeps both. A
-    line a retyped region took into its first line stays dropped, whatever else answers
-    it. The
+    region retyped in as many lines sets each line's text; in another number of lines,
+    its text goes into its first line, ending where its last did, and the other lines
+    stay dropped, whatever else answers them. The
     copies' roles are keyed on line positions in the copied pages.
     """
     pages = [
@@ -294,9 +295,19 @@ def apply(
         for i in range(c.first, c.last + 1):
             roles[SourceRef(c.page, i)] = _ROLE[c.action]
         if c.text is not None and c.action in ("text", "heading"):
-            first = page.lines[c.first]
-            page.lines[c.first] = replace(first, text=_join_lines(c.text))
-            merged.update(SourceRef(c.page, i) for i in range(c.first + 1, c.last + 1))
+            typed = c.text.split("\n")
+            if len(typed) == c.last - c.first + 1:
+                # As many lines as it answers: each its own, so each keeps the shape that
+                # tells reflow where a paragraph ends (a short last line).
+                for i, text in enumerate(typed, c.first):
+                    page.lines[i] = replace(page.lines[i], text=text)
+            else:
+                # Lines added or taken out: one line, ending where the region's last did.
+                first, last = page.lines[c.first], page.lines[c.last]
+                page.lines[c.first] = replace(
+                    first, text=_join_lines(c.text), x1=last.x1, y1=last.y1
+                )
+                merged.update(SourceRef(c.page, i) for i in range(c.first + 1, c.last + 1))
         applied += 1
     # Another answer about such a line, whenever given, would print its text twice.
     for ref in merged:

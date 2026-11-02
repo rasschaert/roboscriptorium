@@ -89,6 +89,9 @@ class Stages:
     # Last lines of paragraphs whose open quote the read model's reading closed
     # (`quotes.closed_at_end`): a doubt there about only that mark is settled.
     quotes_closed: set[SourceRef] = field(default_factory=set)
+    # Paragraph starts the build without answers has and the build with them lost, on
+    # lines no answer is about (`lost_breaks`): an answer should never merge paragraphs.
+    lost_breaks: list[SourceRef] = field(default_factory=list)
 
 
 def run(
@@ -441,6 +444,7 @@ def run(
         epigraph_lines | dedication_lines,
         prompt,
         quotes_closed=closed,
+        lost_breaks=lost_breaks(unanswered, built, answers),
     )
 
 
@@ -461,6 +465,23 @@ def _apart(
 # The rule of a line on a page left out of the book (`pagekinds.set_apart`): the review
 # asks nothing about it.
 OMITTED = "omitted-page"
+
+
+def lost_breaks(unanswered: list, built: list, answers: Corrections) -> list[SourceRef]:
+    """The paragraph starts in `unanswered` that `built` lacks, on lines no answer covers."""
+
+    def starts(blocks: list) -> set[SourceRef]:
+        return {
+            SourceRef(b.sources[0].page, b.sources[0].line)
+            for b in blocks
+            if isinstance(b, Paragraph) and b.sources
+        }
+
+    answered = {(c.page, i) for c in answers.by_key.values() for i in range(c.first, c.last + 1)}
+    return sorted(
+        (r for r in starts(unanswered) - starts(built) if (r.page, r.line) not in answered),
+        key=lambda r: (r.page, r.line),
+    )
 
 
 def _kept_apart(line: Line, role: LineRole | None) -> bool:

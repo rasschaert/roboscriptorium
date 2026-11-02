@@ -855,3 +855,54 @@ def test_a_printed_page_the_model_calls_blank_keeps_its_text(tmp_path, monkeypat
     )
     stages = pipeline.run(Book.load(tmp_path))
     assert stages.doc.paragraphs[-1].text.endswith("Ze sloot haar brief af met een verwijt.")
+
+
+def test_an_answer_over_a_paragraphs_last_lines_keeps_the_break_after_it(tmp_path, monkeypatch):
+    _everything_is_body(monkeypatch)
+    _no_layout(monkeypatch)
+    doc = pymupdf.open()
+    # An indented book: a paragraph opens set in, and only a short last line ends one
+    # before a line set flush, as at the top of a page.
+    run = [f"of the letter runs on, and on, across the page, line {i} it" for i in range(4)]
+    paragraphs = [[f"Paragraph {k} opens here and runs on across the page", *run, "ends."]
+                  for k in range(3)]  # fmt: skip
+    first = doc.new_page(width=400, height=600)
+    rows = [line for para in paragraphs for line in para][:-1]
+    # The letter's line before the last runs the full width, as in the print.
+    rows += ["Adieu Raymond, vergeef me nu, en geniet van de prachtige zo-", "mer."]
+    for i, text in enumerate(rows):
+        indent = 60 if text.startswith("Paragraph") else 40
+        first.insert_text((indent, 60 + 18 * i), text, fontsize=11)
+    second = doc.new_page(width=400, height=600)
+    for i, text in enumerate(["Hij had ondertekend met Je vriend Maurice, en toen ik dat las",
+                              *run, "ends."]):  # fmt: skip
+        second.insert_text((40, 60 + 18 * i), text, fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    (tmp_path / "book.toml").write_text(
+        'title = "T"\nauthor = "A"\nlanguage = "nl"\nbody_pages = [1, 2]\n'
+    )
+    book = Book.load(tmp_path)
+    page = pipeline.run(book, use_models=False).pages[0]
+    lines = [ln.text for ln in page.lines[-2:]]
+    original = "\n".join(lines)
+    answers = Corrections(book.corrections_path)
+    flag = flags.Flag(flags.region_key(1, original), 1, len(page.lines) - 2,
+                      len(page.lines) - 1, original, "text", ["quotes"])  # fmt: skip
+    answers.record(flag, "text", original.replace("mer.", "mer!"))
+    stages = pipeline.run(book)
+    texts = [p.text for p in stages.doc.paragraphs]
+    assert any(t.endswith("prachtige zomer!") for t in texts)
+    assert any(t.startswith("Hij had ondertekend") for t in texts)
+    assert stages.lost_breaks == []
+
+
+def test_a_paragraph_start_an_answer_lost_is_named_one_it_answered_is_not(tmp_path):
+    from roboscriptorium.ir import Paragraph
+
+    before = [Paragraph("Een.", [SourceRef(1, 0)]), Paragraph("Twee.", [SourceRef(2, 0)]),
+              Paragraph("Drie.", [SourceRef(2, 4)])]  # fmt: skip
+    after = [Paragraph("Een. Twee.", [SourceRef(1, 0), SourceRef(2, 0)]),
+             Paragraph("Drie.", [SourceRef(2, 2)])]  # fmt: skip
+    answers = Corrections(tmp_path / "regions.jsonl")
+    answers.record(flags.Flag("k", 2, 3, 4, "x\ny", "text", []), "text", "x")
+    assert pipeline.lost_breaks(before, after, answers) == [SourceRef(2, 0)]

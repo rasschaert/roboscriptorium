@@ -831,6 +831,17 @@ it recurs (`scoring.answered_words`, "your answers"): Hoe wij verdwijnen's small
 "DS", which no reader sets in capitals on some lines. Offered, never settled: a skip on
 a book's own answers was wrong one time in eight to twelve (2026-10-16).
 
+## An answer keeps the paragraph's shape
+
+**A region retyped in as many lines sets each line's text** (`corrections.apply`); in
+another number of lines its text goes into its first line, which ends where the
+region's last did. Reflow ends a paragraph on its short last line, so joining a letter's
+last two lines into its first, full-width one ran the letter into the next page's
+"Hij had ondertekend met ‘Je vriend Maurice’…" (Hoe wij verdwijnen, after the user's
+review: four paragraphs run together, three of them a letter's signature). And the
+build names any paragraph break the answers lost on a line no answer covers
+(`pipeline.lost_breaks`, printed by `build`): an answer should never merge paragraphs.
+
 ## The reviewer's answers are checked
 
 **A question isn't free: the reviewer slips.** 8 of 68 checked answers on Stella were

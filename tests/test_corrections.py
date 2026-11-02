@@ -5,6 +5,7 @@ from roboscriptorium.corrections import Corrections, apply
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.ocrcheck import Suspect
 from roboscriptorium.pdf import Line, PageText
+from roboscriptorium.reflow import reflow
 
 
 def _page(*texts: str) -> PageText:
@@ -62,13 +63,14 @@ def test_a_line_retyped_with_text_takes_no_fixes(tmp_path):
 
 
 def _retyped(tmp_path, original: str, typed: str) -> str:
+    """The paragraph reflow makes of lines retyped as `typed`."""
     page = _page(*original.split("\n"))
     answers = Corrections(tmp_path / "regions.jsonl")
     flag = flags.Flag(flags.region_key(3, original), 3, 0, original.count("\n"), original,
                       "text", ["centred"])  # fmt: skip
     answers.record(flag, "text", typed)
-    out, _, _ = apply([page], {}, Corrections(tmp_path / "regions.jsonl"))
-    return out[0].lines[0].text
+    out, roles, _ = apply([page], {}, Corrections(tmp_path / "regions.jsonl"))
+    return reflow(out, roles)[0].text
 
 
 def test_lines_retyped_together_keep_a_hyphen_that_is_the_words(tmp_path):
@@ -87,7 +89,7 @@ def test_lines_retyped_together_lose_the_breaks_hyphen(tmp_path):
     )
 
 
-def test_lines_merged_into_a_retyped_region_stay_merged_under_a_later_answer(tmp_path):
+def test_a_region_retyped_in_as_many_lines_keeps_each_line_under_a_later_answer(tmp_path):
     lines = ("Ik glimlachte. ‘Lief van je, zei ik, ‘maar", "niet, ze zag er echt", "uit.")
     page = _page(*lines, "Later ging ik zitten.")
     answers = Corrections(tmp_path / "regions.jsonl")
@@ -96,16 +98,22 @@ def test_lines_merged_into_a_retyped_region_stay_merged_under_a_later_answer(tmp
                    whole.replace("je,", "je,’"))  # fmt: skip
     part = "\n".join(lines[1:])
     answers.record(flags.Flag(flags.region_key(3, part), 3, 1, 2, part, "text", []), "text", None)
-    later = "Later ging ik zitten."
-    answers.record(flags.Flag(flags.region_key(3, later), 3, 3, 3, later, "drop", []), "text",
-                   None)  # fmt: skip
     out, roles, _ = apply([page], {}, Corrections(tmp_path / "regions.jsonl"))
-    assert (
-        out[0].lines[0].text
-        == "Ik glimlachte. ‘Lief van je,’ zei ik, ‘maar niet, ze zag er echt uit."
+    assert [ln.text for ln in out[0].lines[:3]] == [lines[0].replace("je,", "je,’"), *lines[1:]]
+    assert reflow(out, roles)[0].text.startswith(
+        "Ik glimlachte. ‘Lief van je,’ zei ik, ‘maar niet, ze zag er echt uit."
     )
-    assert roles[SourceRef(3, 1)].role == roles[SourceRef(3, 2)].role == "artifact"
-    assert roles[SourceRef(3, 3)].role == "body"
+
+
+def test_a_region_retyped_in_fewer_lines_ends_where_its_last_line_did(tmp_path):
+    lines = ("Adieu, Raymond, vergeef me. en geniet van de prachtige zo-", "mer.”")
+    page = PageText(3, 300, 400, [Line(lines[0], 10, 10, 290, 20), Line(lines[1], 10, 30, 40, 40)])
+    answers = Corrections(tmp_path / "regions.jsonl")
+    whole = "\n".join(lines)
+    answers.record(flags.Flag(flags.region_key(3, whole), 3, 0, 1, whole, "text", []), "text",
+                   "Adieu, Raymond, vergeef me… en geniet van de prachtige zomer.’")  # fmt: skip
+    out, roles, _ = apply([page], {}, Corrections(tmp_path / "regions.jsonl"))
+    assert out[0].lines[0].x1 == 40 and roles[SourceRef(3, 1)].role == "artifact"
 
 
 def test_a_typed_compound_keeps_one_hyphen_across_the_break():

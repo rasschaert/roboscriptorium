@@ -397,6 +397,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   section of fewer than 20 words not set apart); `summary` is the line `build` prints,
   and `pipeline.run` keeps the places in `stages/structure.json`. `flags.structural` asks
   each at its first line in the review (`scoring.questions`).
+- `pipeline.lost_breaks`: paragraph starts the build without answers has and the build
+  with them lost, on lines no answer covers; `build` prints them.
 - `epubdiff.py`: a build against the book's previous dated build (`against_last`): headings
   and paragraphs as plain text lined up, each added, removed or changed one listed;
   `build` prints `summary` and writes `report` to `epubs/<book>-changes.txt`.
