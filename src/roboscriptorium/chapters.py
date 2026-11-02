@@ -9,6 +9,7 @@ heading too short to be a title, is the number its neighbours say (`numbered`).
 """
 
 import re
+import statistics
 from collections import Counter
 from dataclasses import replace
 
@@ -100,6 +101,44 @@ def title_lines(
                 for s in headed[i]
             ):
                 out[ref] = LineRole("chapter_heading", role.confidence, 0.0, "title-page")
+    return out
+
+
+# A heading line at least this share of the page's full line runs as wide as text; so
+# does one ending within `FLUSH` of a full line of the text's right edge, as beside a
+# drawn initial ("UEEN ERMINTRUDE had" by its "Q").
+RUNS_WIDE = 0.8
+FLUSH = 0.03
+_RUNS_ON = re.compile(r"[^\W\d_,;:-]$|[,;:-]$")
+
+
+def running_text(
+    pages: list[PageText], roles: dict[SourceRef, LineRole]
+) -> dict[SourceRef, LineRole]:
+    """`roles` with a "heading" that runs on into the next line made body: as wide as a
+    line of text or flush with its right edge, ending mid-sentence, the next line body in
+    lower case ("BERREN" over
+    "The crowd had come to watch three men die. Most of" / "them had no idea…"). A heading
+    never runs into the sentence below it. Returns a new dict."""
+    out = dict(roles)
+    for p in pages:
+        if len(p.lines) < 2:
+            continue
+        full, _ = P.geometry(p)
+        right = statistics.median(ln.x1 for ln in p.lines)
+        for i, line in enumerate(p.lines[:-1]):
+            ref, nxt = SourceRef(p.number, i), p.lines[i + 1]
+            role = roles.get(ref)
+            if role is None or role.role != "chapter_heading":
+                continue
+            below = roles.get(SourceRef(p.number, i + 1))
+            if (
+                (line.x1 - line.x0 >= RUNS_WIDE * full or abs(line.x1 - right) <= FLUSH * full)
+                and _RUNS_ON.search(line.text.rstrip())
+                and nxt.text.lstrip()[:1].islower()
+                and is_body(below)
+            ):
+                out[ref] = LineRole("body", role.confidence, 1.0, "runs-on")
     return out
 
 

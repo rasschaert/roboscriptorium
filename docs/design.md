@@ -711,7 +711,14 @@ commonest spelling of it where a reading is at least half alike ("Hoorpstuk",
 "HoOoeEpstvkK"); part labels (boek, deel) count apart. A run is judged on the
 neighbours both read, so a lost heading leaves a gap, not a break: Het ijzige land's
 slice, lacking four chapter headings, came out with 13 of its 17 corrected (`II`, `I4`,
-`IY`, `[3`, `1/7`), all now as printed. Found by reading the
+`IY`, `[3`, `1/7`), all now as printed.
+**A heading never runs on into the sentence below it** (`chapters.running_text`, after
+the trees): a "heading" as wide as a line of text, or flush with its right edge as beside
+a drawn initial, ending mid-sentence over a body line in lower case is body. The trees
+trained without a book, as the bench scores it and as any new book meets them, made
+Thief-Taker's first lines headings ("1 BERREN The crowd had come… Most of") and two of
+Dolittle's ("THE SEVENTH CHAPTER UEEN ERMINTRUDE had"); the full trees, trained on those
+books, did not, which hid it from a plain rebuild. Found by reading the
 book: no golden pair prints its numbers so, which the bench can't yet see.
 
 ## The structure check

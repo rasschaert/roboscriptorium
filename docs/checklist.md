@@ -545,8 +545,7 @@ also part of the pipeline itself." Before either book goes to review:
       first 20 times in 45 on tuning: asking once would leave those 20 unasked
 
 - [ ] Heading errors the exact count shows (2026-11-02): the first line of text swallowed
-      into a heading (Thief-Taker "1 BERREN The crowd had come…"; Dolittle "THE SEVENTH
-      CHAPTER UEEN ERMINTRUDE had", its drop cap lost too); Dolittle's chapter subtitles
+      into a heading (Thief-Taker, Dolittle: mended, `chapters.running_text`); Dolittle's chapter subtitles
       missing ("THE FOURTH CHAPTER" without "A MESSAGE FROM AFRICA"); Metro's "CHAPTER The
       Rights of the Strong" lacking its 7; Het ijzige land's chapters 1, 3, 7, 8 lost
       (labelled numbers, now flagged by the structure check)

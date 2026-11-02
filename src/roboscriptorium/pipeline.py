@@ -162,6 +162,7 @@ def run(
             model_roles = sorter.apply(trees, body, model_roles, styles, regions, said)
         model_roles = chapters.openings(body, model_roles)
         model_roles = chapters.title_lines(body, model_roles, styles)
+        model_roles = chapters.running_text(body, model_roles)
         note_lines = footnotes.lines(body, model_roles, styles, known)
         epigraph_lines = epigraphs.lines(body, model_roles)
         headed = [r.page for r, role in model_roles.items() if role.role == "chapter_heading"]

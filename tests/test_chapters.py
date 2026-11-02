@@ -140,3 +140,28 @@ def test_labelled_chapter_numbers_run_with_the_books_commonest_label():
     # Another label among them, or labels that don't run, stay as read.
     mixed = [Heading(t, [], [t]) for t in ["Proloog", "Deel 1", "Deel 3", "Hoofdstuk A"]]
     assert _read(chapters.numbered(mixed)) == ["Proloog", "Deel 1", "Deel 3", "Hoofdstuk A"]
+
+
+def test_a_heading_running_on_into_the_sentence_below_is_body_a_real_one_stays():
+    text = "them had no idea who the men were, regel"
+    full = [Line(f"{text} {i}", 30, 100 + 14 * i, 330, 110 + 14 * i) for i in range(20)]
+    page = PageText(13, 360, 500, [
+        Line("BERREN", 150, 40, 210, 52),
+        Line("The crowd had come to watch three men die. Most of", 20, 80, 335, 92),
+        *full,
+    ])  # fmt: skip
+    heading = LineRole("chapter_heading", 1.0, 0.0, "trees")
+    roles = {SourceRef(13, 0): heading, SourceRef(13, 1): heading}
+    out = chapters.running_text([page], roles)
+    assert out[SourceRef(13, 1)].role == "body" and out[SourceRef(13, 0)].role == "chapter_heading"
+    # A heading over two lines, both headings, stays one; so does a wide title before a
+    # capital, and a narrow heading ending in a word.
+    two = dict(roles) | {SourceRef(13, 2): heading}
+    assert chapters.running_text([page], two)[SourceRef(13, 1)].role == "chapter_heading"
+    capital = PageText(13, 360, 500, [page.lines[0], page.lines[1], Line("Them", 30, 100, 330, 110),
+                                      *full[1:]])  # fmt: skip
+    assert chapters.running_text([capital], roles)[SourceRef(13, 1)].role == "chapter_heading"
+    narrow = PageText(
+        13, 360, 500, [page.lines[0], Line("A NICE BOTTLE OF", 120, 80, 240, 92), *full]
+    )
+    assert chapters.running_text([narrow], roles)[SourceRef(13, 1)].role == "chapter_heading"
