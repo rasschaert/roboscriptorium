@@ -24,3 +24,5 @@ def _default_settings(monkeypatch):
     # The line-role trees are trained on the books in work/, which a test can't depend
     # on: tests run on the rules, and a test of the trees switches them on itself.
     monkeypatch.setenv("ROBO_SORTER", "0")
+    # One process: a test's stand-ins don't reach the bench's worker processes.
+    monkeypatch.setenv("ROBO_BENCH_WORKERS", "1")

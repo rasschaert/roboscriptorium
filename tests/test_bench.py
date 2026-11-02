@@ -351,3 +351,13 @@ def test_heading_errors_decide_the_verdict_when_words_and_breaks_dont_move():
         del s["score"]["headings_exact"]
     lookalike = _scored(_run(flat, c=flat), b=(24, 24, 0, 23), c=(10, 10, 0, 10))
     assert bench.verdict(old, lookalike).outcome == "no change"
+
+
+def test_the_bench_scores_books_one_fewer_than_the_cores_at_once_or_as_set(monkeypatch):
+    monkeypatch.delenv("ROBO_BENCH_WORKERS")
+    monkeypatch.setattr(bench.os, "cpu_count", lambda: 16)
+    assert bench.workers() == 15
+    monkeypatch.setenv("ROBO_BENCH_WORKERS", "1")
+    assert bench.workers() == 1
+    monkeypatch.setenv("ROBO_BENCH_WORKERS", "0")
+    assert bench.workers() == 1

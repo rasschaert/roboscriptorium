@@ -10,9 +10,11 @@ the noise worth measuring.
 """
 
 import json
+import os
 import random
 from collections import Counter
 from collections.abc import Callable
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
@@ -189,12 +191,21 @@ def run(
     without it (`unseen`): the record `save` writes and `verdict` compares. A book's
     questions are ranked by how often each kind caught an error in the set's other
     books."""
-    built = []
-    for spec in SETS[set_name]:
-        on_book(spec)
-        own = unseen(settings, spec.split(":")[0])
-        run = scoring.build(f"work/{spec}", own)
-        built.append((spec, run, own))
+    specs = SETS[set_name]
+    done: dict[str, tuple[str, scoring.Scored, Settings]] = {}
+    if (n := min(workers(), len(specs))) <= 1:
+        for spec in specs:
+            on_book(spec)
+            done[spec] = _build_one(spec, settings)
+    else:
+        # Each book in its own process: the books are independent until their questions
+        # are ranked below, and PyMuPDF can't be shared between threads.
+        with ProcessPoolExecutor(n) as pool:
+            futures = {pool.submit(_build_one, spec, settings): spec for spec in specs}
+            for future in as_completed(futures):
+                on_book(futures[future])
+                done[futures[future]] = future.result()
+    built = [done[spec] for spec in specs]
     books = {}
     for spec, run, own in built:
         rates: dict[str, tuple[int, int]] = {}
@@ -212,6 +223,20 @@ def run(
         "model_versions": model_versions,
         "books": books,
     }
+
+
+def workers() -> int:
+    """How many books `run` scores at once: `ROBO_BENCH_WORKERS`, else one fewer than the
+    machine's cores. Not a setting of the build, so not in `Settings` or a run's record."""
+    if value := os.environ.get("ROBO_BENCH_WORKERS"):
+        return max(1, int(value))
+    return max(1, (os.cpu_count() or 2) - 1)
+
+
+def _build_one(spec: str, settings: Settings) -> tuple[str, scoring.Scored, Settings]:
+    """One slice built and scored with the learned models trained without it."""
+    own = unseen(settings, spec.split(":")[0])
+    return spec, scoring.build(f"work/{spec}", own), own
 
 
 def _book_record(
