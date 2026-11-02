@@ -63,3 +63,11 @@ def test_a_finding_is_asked_at_its_line_on_its_own_or_beside_a_question_there():
         (12, "EO", ["heading", "title-among-numbers"]),
     ]
     assert all(r in flags.REASONS for f in out for r in f.reasons)
+
+
+def test_labelled_chapter_numbers_out_of_their_run_are_found():
+    doc = _doc(*[x for n in (2, 4, 5, 6, 9, 10) for x in (f"#HOOFDSTUK {n}", TEXT)])
+    assert [(k, t) for k, t in _kinds(doc)] == [
+        ("number-out-of-run", "HOOFDSTUK 4"),
+        ("number-out-of-run", "HOOFDSTUK 9"),
+    ]

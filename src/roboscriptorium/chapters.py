@@ -9,7 +9,10 @@ heading too short to be a title, is the number its neighbours say (`numbered`).
 """
 
 import re
+from collections import Counter
 from dataclasses import replace
+
+from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import page as P
 from roboscriptorium.ir import Block, Heading, SourceRef
@@ -161,19 +164,70 @@ def numbered(blocks: list[Block]) -> list[Block]:
     """The blocks with each heading of a numbered run set to its number: a look-alike
     folded ("Io" → "10") where it fits the run, and a short heading that doesn't read as
     a number ("SE", "zi") where both its neighbours agree on it. Headings with a title
-    of words are left out of the run. Returns a new list."""
+    of words are left out of the run. Labelled numbers ("HOOFDSTUK II") run the same way,
+    their label set as the book's commonest spelling of it ("Hoorpstuk 6"). Returns a new
+    list."""
+    out = list(blocks)
     at = [
         i
         for i, b in enumerate(blocks)
         if isinstance(b, Heading) and len(b.text.strip()) <= NUMBER_CHARS
     ]
-    read = [value(blocks[i].text) for i in at]
-    following = sum(1 for a, b in zip(read, read[1:], strict=False) if a is not None and b == a + 1)
-    if len(at) < MIN_NUMBERED or following < len(at) / 2:
-        return blocks
-    out = list(blocks)
+    for i, number in zip(at, _settle([value(blocks[i].text) for i in at]), strict=True):
+        if number is not None and str(number) != blocks[i].text:
+            out[i] = replace(blocks[i], text=str(number), parts=[str(number)])
+    labelled = [
+        (i, m.group(1), m.group(2))
+        for i, b in enumerate(blocks)
+        if isinstance(b, Heading)
+        and (m := _LABELLED.match(b.text.strip()))
+        and m.group(1).lower() not in _PARTS
+    ]
+    if not labelled:
+        return out
+    common = Counter(label for _, label, _ in labelled).most_common(1)[0][0]
+    alike = [(i, n) for i, label, n in labelled if _same_label(label, common)]
+    for (i, _), number in zip(alike, _settle([value(n) for _, n in alike]), strict=True):
+        text = f"{common} {number}" if number is not None else None
+        if text is not None and text != blocks[i].text:
+            out[i] = replace(blocks[i], text=text, parts=[text])
+    return out
+
+
+_PARTS = {"boek", "deel", "part", "book"}
+# A heading of a label word and a number as read ("HOOFDSTUK 11", "Hoorpstvk 13").
+_LABELLED = re.compile(r"^([^\W\d_]{4,})\s+([^\s]{1,3})\.?$")
+# A label at least this alike the book's commonest is that label misread ("HoOoeEpstvkK"
+# 0.5, "Hoorpstuk" 0.78); another word is far below ("Proloog" 0.11).
+LABEL_ALIKE = 0.5
+
+
+def number_of(text: str) -> int | None:
+    """A heading's chapter number, bare ("12", "Io") or after a label ("HOOFDSTUK 12"); a
+    part's number ("Boek 2") is none: parts are counted apart."""
+    if (n := value(text)) is not None:
+        return n
+    m = _LABELLED.match(text.strip())
+    return value(m.group(2)) if m and m.group(1).lower() not in _PARTS else None
+
+
+def _same_label(label: str, common: str) -> bool:
+    return Levenshtein.normalized_similarity(label.lower(), common.lower()) >= LABEL_ALIKE
+
+
+def _settle(read: list[int | None]) -> list[int | None]:
+    """Each heading's number, by its run: a reading that fits stays, one off the run is
+    the number both neighbours agree on. All None where the readings don't run: five or
+    more, and of the neighbours both read, half following one on the other (a heading
+    lost leaves a gap, not a break: Het ijzige land's lacks four)."""
+    pairs = [
+        (a, b) for a, b in zip(read, read[1:], strict=False) if a is not None and b is not None
+    ]
+    following = sum(1 for a, b in pairs if b == a + 1)
+    if len(read) < MIN_NUMBERED or not pairs or following < len(pairs) / 2:
+        return [None] * len(read)
     settled: list[int | None] = []
-    for k, i in enumerate(at):
+    for k, number in enumerate(read):
         before = settled[k - 1] if k else None
         after = read[k + 1] if k + 1 < len(read) else None
         if before is not None:
@@ -182,12 +236,9 @@ def numbered(blocks: list[Block]) -> list[Block]:
             expected = after - 1
         else:
             expected = None
-        number = read[k]
         if expected is not None and number != expected:
             # A reading off the run stands unless both neighbours say otherwise.
             agreed = before is not None and after == expected + 1
             number = expected if agreed or number is None and after is None else number
         settled.append(number)
-        if number is not None and str(number) != blocks[i].text:
-            out[i] = replace(blocks[i], text=str(number), parts=[str(number)])
-    return out
+    return settled

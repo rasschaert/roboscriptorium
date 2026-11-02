@@ -705,7 +705,13 @@ A heading its run confirms isn't asked in the review (`chapters.settled`): bare 
 each one more than the one before or after, titles opening on years in order ("1885:
 Een ramp" after "1840-1884: …", five or more), parts counted in words in order; nor is
 the readers' disagreement on such a number. Asked before: every one of Hoe wij
-verdwijnen's 52 chapter numbers and Pieter Daens' 34 year titles and 6 parts. Found by reading the
+verdwijnen's 52 chapter numbers and Pieter Daens' 34 year titles and 6 parts.
+Labelled numbers ("HOOFDSTUK 11") run the same way, the label set as the book's
+commonest spelling of it where a reading is at least half alike ("Hoorpstuk",
+"HoOoeEpstvkK"); part labels (boek, deel) count apart. A run is judged on the
+neighbours both read, so a lost heading leaves a gap, not a break: Het ijzige land's
+slice, lacking four chapter headings, came out with 13 of its 17 corrected (`II`, `I4`,
+`IY`, `[3`, `1/7`), all now as printed. Found by reading the
 book: no golden pair prints its numbers so, which the bench can't yet see.
 
 ## The structure check

@@ -54,7 +54,7 @@ def _where(block: Block) -> SourceRef | None:
 
 def _numbers(blocks: list[Block]) -> list[Finding]:
     headings = [b for b in blocks if isinstance(b, Heading)]
-    numbered = [(k, chapters.value(h.text)) for k, h in enumerate(headings)]
+    numbered = [(k, chapters.number_of(h.text)) for k, h in enumerate(headings)]
     numbered = [(k, v) for k, v in numbered if v is not None]
     pairs = list(zip(numbered, numbered[1:], strict=False))
     following = sum(1 for (_, a), (_, b) in pairs if b == a + 1)
@@ -69,7 +69,7 @@ def _numbers(blocks: list[Block]) -> list[Finding]:
         stray = [
             h
             for h in headings[i + 1 : k]
-            if chapters.value(h.text) is None
+            if chapters.number_of(h.text) is None
             and not re.match(pagekinds.NAMES["part-title"], h.text.strip(), re.I)
         ]
         out += [Finding("title-among-numbers", h.text, _where(h)) for h in stray]

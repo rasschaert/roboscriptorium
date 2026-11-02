@@ -128,3 +128,15 @@ def test_titles_opening_on_years_in_order_and_parts_counted_in_order_are_settled
     shuffled = [Heading(t, [SourceRef(k, 0)], [t]) for k, t in enumerate(
         ["1885: A", "1840: B", "1886: C", "1887: D", "1888: E"], 1)]  # fmt: skip
     assert chapters.settled(shuffled) == set()
+
+
+def test_labelled_chapter_numbers_run_with_the_books_commonest_label():
+    texts = ["HOOFDSTUK 1", "HOOFDSTUK 2", "HOOFDSTUK 3", "HOOFDSTUK 4", "HOOFDSTUK 5",
+             "Hoorpstuk 6", "HOOFDSTUK 7", "HOOFDSTUK 8", "HOOFDSTUK 9", "HOOFDSTUK 10",
+             "HOOFDSTUK II", "HOOFDSTUK 12", "Hoorpstvk 13", "HOOFDSTUK I4", "HOOFDSTUK 15",
+             "Hoofdstuk IY", "HOOFDSTUK 17"]  # fmt: skip
+    blocks = [Heading(t, [], [t]) for t in texts]
+    assert _read(chapters.numbered(blocks)) == [f"HOOFDSTUK {n}" for n in range(1, 18)]
+    # Another label among them, or labels that don't run, stay as read.
+    mixed = [Heading(t, [], [t]) for t in ["Proloog", "Deel 1", "Deel 3", "Hoofdstuk A"]]
+    assert _read(chapters.numbered(mixed)) == ["Proloog", "Deel 1", "Deel 3", "Hoofdstuk A"]
