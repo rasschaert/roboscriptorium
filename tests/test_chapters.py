@@ -85,3 +85,27 @@ def test_a_dropped_short_line_atop_an_opening_is_a_heading_where_the_others_are(
     # A line of words atop an opening is no number: the rule leaves it to the roles.
     pages[15] = _page(51, "Een titel")
     assert chapters.openings(pages, roles)[SourceRef(51, 0)].role == "artifact"
+
+
+def test_a_dropped_line_of_a_title_page_set_like_another_title_pages_heading_is_one():
+    from roboscriptorium.typestyle import Style
+
+    def title(n: int, part: str, sub: str) -> PageText:
+        return PageText(n, 300, 500, [Line(part, 120, 30, 180, 40), Line(sub, 100, 50, 200, 62)])
+
+    pages = [title(13, "BOEK EEN", "De cijnskiezers"), _full(14),
+             title(161, "BOEK TWEE", "Meervoudig stemrecht"), _full(162),
+             title(300, "BOEK DRIE", "17"), _full(301)]  # fmt: skip
+    heading, dropped = LineRole("chapter_heading", 0.9, 0.0), LineRole("artifact", 0.5, 0.03)
+    roles = {SourceRef(n, 0): heading for n in (13, 161, 300)}
+    roles |= {SourceRef(13, 1): heading, SourceRef(161, 1): dropped, SourceRef(300, 1): dropped}
+    big = Style(1.4, 1.0, 1.0, False)
+    styles = {SourceRef(n, i): big for n in (13, 161, 300) for i in range(2)}
+    out = chapters.title_lines(pages, roles, styles)
+    assert out[SourceRef(161, 1)].role == "chapter_heading"
+    # A number, or a line in another type, stays dropped; so does one on a page of text.
+    assert out[SourceRef(300, 1)].role == "artifact"
+    small = styles | {SourceRef(161, 1): Style(1.0, 1.0, 1.0, False)}
+    assert chapters.title_lines(pages, roles, small)[SourceRef(161, 1)].role == "artifact"
+    pages[2] = PageText(161, 300, 500, pages[2].lines + _full(162).lines)
+    assert chapters.title_lines(pages, roles, styles)[SourceRef(161, 1)].role == "artifact"

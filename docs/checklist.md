@@ -524,8 +524,9 @@ also part of the pipeline itself." Before either book goes to review:
 
 - [x] Pieter Daens rebuilt warm with [7, 787] and today's code (2026-11-02, 3 min): the
       table of contents left out, the ads gone, its page of four mottos set apart (asked
-      as a page before the first heading). Left: Boek twee to vijf's subtitles dropped
-      though the layer has them ("Meervoudig stemrecht", p. 161), Boek zes's kept
+      as a page before the first heading). Boek twee to vier's subtitles, dropped by
+      the trees, headings again (`chapters.title_lines`). Left: Boek vijf's "Onze doden",
+      absent from the layer and not read by the missing-lines stage
 - [ ] A motto's lines joined into its paragraphs (one per quote, one per attribution)
       unless it is verse: each printed line is a paragraph now, so a prose quote breaks
       where the print wrapped (Pieter Daens p. 7, Hoe wij verdwijnen's Camus)

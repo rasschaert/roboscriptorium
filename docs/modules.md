@@ -389,7 +389,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   sunk page is a heading where most of the book's such openings carry one, applied to
   the roles after the sorter; `numbered`: each short heading of a run of numbers set to
   its number, old-style look-alikes folded, a lone unreadable one settled by both
-  neighbours, on the reflowed blocks). Both return new data.
+  neighbours, on the reflowed blocks; `title_lines`: a dropped line of a title page set
+  like a heading at that line on another). All return new data.
 - `structure.py`: what a reader would notice in a built document's structure, without a
   model (`findings`: numbered chapters out of their run, a title of words among them, a
   section of fewer than 20 words not set apart); `summary` is the line `build` prints,

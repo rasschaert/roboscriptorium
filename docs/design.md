@@ -671,7 +671,11 @@ clef:27b's vote). `chapters.numbered` sets each short heading of a run (five or 
 half following the one before) to its number: old-style look-alikes folded where they
 fit ("Io" → 10, "S2" → 52), an unreadable one only where both neighbours agree on it
 ("SE" between 50 and 52). Numbering is true by definition, so this is code, not a
-learned decision. Short test: all 52 numbers right (2026-11-01). Found by reading the
+learned decision. A title page (headings, no running text) likewise: a dropped line on
+it is a heading where another title page has a heading at that line in the same type
+(`chapters.title_lines`, after the trees). Pieter Daens' trees dropped three of its six
+part subtitles ("Meervoudig stemrecht", artifact 0.52–0.74) while keeping two set alike;
+all five the layer holds are headings now. Short test: all 52 numbers right (2026-11-01). Found by reading the
 book: no golden pair prints its numbers so, which the bench can't yet see.
 
 ## The structure check

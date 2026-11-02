@@ -14,6 +14,7 @@ from roboscriptorium import page as P
 from roboscriptorium.ir import Block, Heading, SourceRef
 from roboscriptorium.pdf import PageText
 from roboscriptorium.roles import LineRole, is_body
+from roboscriptorium.typestyle import SAME_SIZE, Style
 
 # A chapter number is at most this many characters as read ("I2", "17.", "#7").
 NUMBER_CHARS = 3
@@ -55,6 +56,46 @@ def openings(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[So
             and P.centred_on_page(line, p, full)
         ):
             out[ref] = LineRole("chapter_heading", role.confidence, 0.0, RULE)
+    return out
+
+
+def title_lines(
+    pages: list[PageText],
+    roles: dict[SourceRef, LineRole],
+    styles: dict[SourceRef, Style],
+) -> dict[SourceRef, LineRole]:
+    """`roles` with a dropped line of a title page (headings and no running text) made a
+    heading, where another title page has a heading at that line set in the same type:
+    "Meervoudig stemrecht" under "BOEK TWEE" when "De cijnskiezers" stands under "BOEK EEN".
+    Returns a new dict."""
+    titles = [
+        p
+        for p in pages
+        if p.lines
+        and _role(roles, p) == "chapter_heading"
+        and not any(is_body(roles.get(SourceRef(p.number, i))) for i in range(len(p.lines)))
+    ]
+    headed = {
+        i: [styles[r] for p in titles if (r := SourceRef(p.number, i)) in styles
+            and roles.get(r) is not None and roles[r].role == "chapter_heading"]
+        for i in range(1, 3)
+    }  # fmt: skip
+    out = dict(roles)
+    for p in titles:
+        for i in range(1, min(3, len(p.lines))):
+            ref = SourceRef(p.number, i)
+            role, style = roles.get(ref), styles.get(ref)
+            if role is None or role.role != "artifact" or style is None or style.size is None:
+                continue
+            if P.garbled(p.lines[i]) or not any(c.isalpha() for c in p.lines[i].text):
+                continue
+            if any(
+                s.size is not None
+                and max(s.size, style.size) <= SAME_SIZE * min(s.size, style.size)
+                and s.capitals == style.capitals
+                for s in headed[i]
+            ):
+                out[ref] = LineRole("chapter_heading", role.confidence, 0.0, "title-page")
     return out
 
 
