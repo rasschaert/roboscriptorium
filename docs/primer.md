@@ -310,43 +310,42 @@ and why it didn't help".
 - Rewording the page-kind question for `init`: it changed 15 answers in 432 and no result.
 - Two extra arbiter features for a comma at a line's end: no better, and glued words worse.
 
-## What is going on right now (2026-10-24)
+## What is going on right now (2026-11-02)
 
 `HANDOVER.md` always has the current state; this is what it said when this page was
 last updated, decoded.
 
-- **Where the errors left are, counted on today's bench**: of the 236 wrong words no
-  question asks about, 84 sit where no reader disagreed at all (a third of them hyphens in
-  compound words at a line's end), and 152 sit where the readers did disagree but the
-  machine chose wrong without asking. Of those, 38 are places where the scan's own text
-  layer was right and the machine "corrected" it: an accent added or dropped, or a comma
-  at a line's end turned into a full stop.
-- **Some of those are fixed by rules that are true by definition**: a full stop is never
-  taken in place of a line's last comma when the next line starts in lower case (no
-  sentence ends there: six fewer wrong words, none new), and a reading that accents only
-  one letter of a doubled vowel ("doóde") or carries a mark prose never prints (`~ ^ |`) is
-  never the print. Each was found the same way: a kind of reading wrong in every book's
-  labelled data. 0.290 to 0.282 wrong words a page after review over the day. The same
-  rule for a comma mid-line was tried and dropped: there an author sometimes does set a
-  stop before a lower-case word.
-- **Paragraphs in letters**: a book set in justified type only leaves a line short where a
-  paragraph ends, so any short line now ends one, not only a sentence's end. Letters that open
-  with "Dear Kelvin," or a dateline get their paragraphs back: paragraph breaks set wrong
-  0.057 to 0.045 a page on tuning, words unchanged.
-- **Winnow, the judge that reads the sentence, earns its place**: taken away, the build
-  made twice as many new errors as it fixed (0.282 to 0.316). Nothing gets removed
-  without such a test.
-- **New reading models no longer look like the way forward.** Every place where all
-  three readers agree on the same wrong reading was collected: only 23 lines in 18 books,
-  mostly small capitals and the rare dotless ı. So a new model reading lines can fix a
-  handful at most. LightOnOCR-3, a new OCR model with excellent published scores, reads
-  lines worse than Qwen and found 1 of those 23.
-- **Ideas tried today without effect**: a separate "ask below" threshold per kind of
-  question, Qwen's own confidence as a warning sign, Qwen deciding line-end hyphens, a
-  character recogniser trained on the golden books (Kraken), Qwen's page roles for the
-  line-role trees. Each is in decisions.md with its numbers.
-- **Waiting on you**: 13 small-capital places in Au pair that the publisher's e-book
-  writes in lower case: a two-minute verdict batch (HANDOVER.md has the command).
+- **Stella is done**: you read it through and found no errors.
+- **Two new books, built with no one stepping in**: *Hoe wij verdwijnen* (300 pages,
+  4 h 14 min from PDF to EPUB) and *Pieter Daens* (804 pages, 12 h 22 min). About a
+  minute a page; the README has the table.
+- **What reading them showed, now the machine's own job**: reading the two EPUBs found
+  chapter numbers misread or lost (old-style figures read as "Io" and "SE", a "23" thrown
+  away as a speck), a dedication cut in two, mottos set as running text, a table of
+  contents and the publisher's ads taken for text. Each was fixed in the pipeline, not in
+  the book, mostly from the book's own evidence: chapters number 1, 2, 3; a chapter's
+  opening looks like the book's other openings; a part's subtitle is set like the other
+  parts'. The model that names a page's kind now also looks at short pages inside the
+  text (dedication, motto, contents).
+- **The machine checks itself now.** Every build prints a structure line (chapter
+  numbers out of order, a stray heading, a section of a line or two) and a line saying
+  what changed since the last build of that book. Run over the books built before, the
+  structure check found missing chapters in six golden books nobody had noticed.
+- **The bench counts headings**: a lost chapter heading now makes a change "worse",
+  like a lost word; before, it showed only in a side report. Heading errors on tuning
+  went from 102 to 82. The bench also names a book whose unasked errors double, and runs
+  its books in parallel (21 minutes down to 10).
+- **Fewer, fairer questions**: *Hoe wij verdwijnen* asks 58 (from 135), *Pieter Daens*
+  296 (from 388). Out: chapter numbers the run already confirms, "Maurice’ moeder" taken
+  for a closing quote, and closing quotes the vision model sees after a paragraph's last
+  full stop (right 39 times in 39 on the golden books, so no new silent error).
+- **Tried and dropped**: asking once per letter quoted over several paragraphs (in half
+  the cases a closing mark really was lost), and leaving out every page the model calls
+  blank (it called a chapter's last four lines blank).
+- **Running**: the tuning slices growing again, about 925 pages, so the bench's verdicts
+  get surer. Then a bench of the day's last changes.
+- **Waiting on you**: the review of *Hoe wij verdwijnen*, then of *Pieter Daens*, when you
+  have time.
 
 Good questions to ask the other session about any run, to stay in touch with it: *what
 do you expect it to show? what would make you drop the idea? which file will the result
