@@ -2,7 +2,9 @@
 
 Curly quotes only: an opening ‘ or “ at a word's start, a closing ’ or ” at its
 end. A ’ inside a word (zo’n, auto’s) or before the short word of an elision (’s avonds,
-je ’m, ’80s) is an apostrophe: a closing mark is never followed by a letter. A quote left open at a
+je ’m, ’80s) is an apostrophe: a closing mark is never followed by a letter; so is one
+after an s-sound before a word (Jezus’ tijd, Maurice’ moeder), unless it alone can
+close an open quote. A quote left open at a
 paragraph's end is asked about even when the next paragraph opens with the same mark:
 a quotation running over paragraphs is rare (56 in ~58,000 golden paragraphs), a
 closing mark lost at the end isn't. One left open right after a word ("zich ‘schrap
@@ -28,6 +30,9 @@ from roboscriptorium.typography import EllipsisStyle, guess_ellipsis
 _ELIDES = re.compile(r"’(?:[^\W\d_]{1,2}|\d\ds?|tis|twas|cause|til|round)\b", re.IGNORECASE)
 PAIRS = {"‘": "’", "“": "”"}
 _ARTICLE = re.compile(r"’(s|t|n)\b")
+# Word endings sounding s or z, after which a bare ’ makes a possessive: Jezus’, Maurice’,
+# Louise’, Felix’.
+_SIBILANT = ("s", "z", "x", "ce", "se", "ze")
 _SENTENCE_BEFORE = re.compile(r"[.!?…]\s+$")
 # A quoted term or title ("het ‘invoelend’", "‘Le mie prigioni’") runs to this many words
 # inside a sentence; a longer quotation, or one that opens a sentence, is speech.
@@ -96,7 +101,9 @@ def problems(text: str) -> list[tuple[int, str]]:
             continue
         opener = next(o for o, cl in PAIRS.items() if cl == c)
         possessive = (
-            c == "’" and text[i - 1 : i] in ("s", "z") and not text[i + 1 : i + 2].isalnum()
+            c == "’"
+            and text[max(0, i - 2) : i].lower().endswith(_SIBILANT)
+            and not text[i + 1 : i + 2].isalnum()
         )
         if possessive and depth[opener]:
             # A plural possessive inside a quotation (‘The animals’ language is hard,’) when
@@ -105,7 +112,8 @@ def problems(text: str) -> list[tuple[int, str]]:
             left = depth[opener] + later.count("open") - later.count("close")
             possessive = left == 0
         if possessive:
-            # A plural possessive (the animals’ language, Jezus’) needs no partner.
+            # A possessive after an s-sound (the animals’ language, Jezus’, Maurice’
+            # moeder) needs no partner.
             continue
         if depth[opener]:
             depth[opener] -= 1

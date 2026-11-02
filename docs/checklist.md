@@ -531,10 +531,12 @@ also part of the pipeline itself." Before either book goes to review:
       Pieter Daens' three prose mottos one paragraph each, its song and the Camus motto
       line by line
 
-- [ ] Quote questions before the review: a possessive apostrophe after an s-sound
-      ("Maurice’ moeder", Hoe wij verdwijnen ~15 of 37) taken for a closing quote; a
-      letter or article quoted over paragraphs (opened each paragraph, closed in the
-      last); Pieter Daens' 148 sorted by kind first
+- [x] Quote questions: a possessive after an s-sound ("Maurice’ moeder") no longer a
+      closing quote (2026-11-02): Hoe wij verdwijnen's quote questions 37 → 16
+- [ ] Pieter Daens' 148 quote questions sorted by kind before its review
+- [ ] One question per letter quoted over paragraphs, not one per paragraph (Hoe wij
+      verdwijnen's letters): marks alone can't tell it from a lost closing mark, so it
+      stays asked, but once
 
 ## 3. The user's books after Stella
 

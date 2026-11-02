@@ -34,6 +34,17 @@ def test_a_plural_possessive_needs_no_partner():
     assert problems("He spoke the animals’ language, as in Jezus’ tijd.") == []
 
 
+def test_a_possessive_after_a_name_ending_in_an_s_sound_needs_no_partner():
+    assert problems("Het lezen van Maurice’ handschrift maakte me nerveus.") == []
+    assert problems("Felix’ fiets en Louise’ boek.") == []
+    assert problems("‘Ik zag Maurice’ moeder,’ zei hij.") == []
+    # A closing mark after such a word still closes, where nothing else can.
+    assert problems("‘Hij reed de race’ en won.") == []
+    assert problems("‘Wat een race’ zei hij. ‘Kom.’") == []
+    # A name not ending in an s-sound keeps its mark a quote: one is missing.
+    assert problems("Het lezen van Marie’ handschrift.") != []
+
+
 def test_a_closing_quote_after_an_s_still_closes():
     # The only ’ that can close the quotation is the one after the s.
     assert problems("‘Hij zei ja tegen Jans’ en ging.") == []
