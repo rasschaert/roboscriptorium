@@ -526,8 +526,8 @@ also part of the pipeline itself." Before either book goes to review:
 - [x] Pieter Daens rebuilt warm with [7, 787] and today's code (2026-11-02, 3 min): the
       table of contents left out, the ads gone, its page of four mottos set apart (asked
       as a page before the first heading). Boek twee to vier's subtitles, dropped by
-      the trees, headings again (`chapters.title_lines`). Left: Boek vijf's "Onze doden",
-      absent from the layer and not read by the missing-lines stage
+      the trees, headings again (`chapters.title_lines`). Boek vijf's "Onze doden", absent from
+      the layer, read since (2026-11-02): all six part titles whole
 - [x] A motto's wrapped lines joined into its paragraphs (2026-11-02, `reflow._wrapped`):
       Pieter Daens' three prose mottos one paragraph each, its song and the Camus motto
       line by line

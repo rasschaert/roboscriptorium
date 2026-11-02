@@ -139,3 +139,13 @@ def test_a_text_regions_strip_without_its_first_line_is_a_candidate():
         assert missing.candidates([page], {19: [replace(region, label=label)]}, {}) == []
     # A strip a human typed text for keeps the human's text.
     assert missing.candidates([page], {19: [region]}, {19: [(11, 24, 360, 50)]}) == []
+
+
+def test_a_page_the_layer_holds_nothing_of_has_its_display_title_read():
+    heights = _page()
+    empty = PageText(527, 333, 580, [])
+    title = Region("plain text", 0.37, 81, 44, 173, 64)  # display type, 20 pt tall
+    regions = {527: [title]}
+    assert missing.candidates([heights, empty], regions, {}) == [(527, title)]
+    # On a page with text, the same box is no missing line: too tall for one.
+    assert missing.candidates([heights], {22: [replace(title, y0=300, y1=320)]}, {}) == []

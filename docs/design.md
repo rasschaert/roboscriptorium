@@ -410,7 +410,9 @@ one line tall (1.8× the book's line height): taller ones are pictures or blocks
 figures stage owns. Above a sunk page's text, where a chapter opens, regions up to five
 lines tall are read too: Artemis draws each chapter number in a circle about four lines
 high, which DocLayout-YOLO marks and glm-ocr reads right ("1", "2", "3"). Headings 0/3 →
-3/3, no other book changed (bench, 2026-10-09).
+3/3, no other book changed (bench, 2026-10-09). On a page the layer holds nothing of, a
+title in display type may be taller still (Pieter Daens' "Onze doden" under "BOEK VIJF",
+19 pt, p. 527): regions up to five lines tall are read there too.
 
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
 same way: a speck in a page's top corner read "境", kept as the page's first line, then

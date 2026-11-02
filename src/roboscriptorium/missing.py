@@ -55,8 +55,9 @@ def candidates(
     answered: dict[int, list[tuple[float, float, float, float]]],
 ) -> list[tuple[int, Region]]:
     """Line-sized regions holding no text-layer line and not part of one, one per spot
-    (the surest); above the text of a sunk page, regions up to a few lines tall; and a
-    text region's strip above its first layer line or below its last (`edges`).
+    (the surest); above the text of a sunk page, or on a page the layer holds nothing of,
+    regions up to a few lines tall; and a text region's strip above its first layer line
+    or below its last (`edges`).
 
     `answered` holds, per page, the boxes of regions a human typed text for.
     """
@@ -79,6 +80,9 @@ def candidates(
                 or r.turned
                 or r.y1 - r.y0 > tallest
                 and not (page.number in sunk and r.y1 <= top and r.y1 - r.y0 <= opening)
+                # A page the layer has nothing of may set its title in display type
+                # (Pieter Daens' "Onze doden" under "BOEK VIJF").
+                and not (not page.lines and r.y1 - r.y0 <= opening)
                 or any(_inside(ln, box) for ln in page.lines)
                 or any(_inside(centre, (ln.x0, ln.y0, ln.x1, ln.y1)) for ln in page.lines)
                 or any(_inside(centre, (f.x0, f.y0, f.x1, f.y1)) for f in figures)

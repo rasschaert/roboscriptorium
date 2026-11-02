@@ -15,6 +15,8 @@ from pathlib import Path
 
 _BLOCK = re.compile(r"<(h2|p)\b[^>]*>(.*?)</\1>", re.S)
 _TAG = re.compile(r"<[^>]+>")
+# A line break inside a heading ("BOEK VIJF<br/>Onze doden") parts two words.
+_BREAK = re.compile(r"<br\s*/?>")
 
 
 def blocks(epub: Path) -> list[tuple[str, str]]:
@@ -24,7 +26,7 @@ def blocks(epub: Path) -> list[tuple[str, str]]:
         out = []
         for name in names:
             for tag, inner in _BLOCK.findall(z.read(name).decode()):
-                text = " ".join(html.unescape(_TAG.sub("", inner)).split())
+                text = " ".join(html.unescape(_TAG.sub("", _BREAK.sub(" ", inner))).split())
                 if text:
                     out.append(("h" if tag == "h2" else "p", text))
     return out

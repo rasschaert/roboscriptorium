@@ -29,3 +29,10 @@ def test_a_changed_heading_a_changed_paragraph_and_an_added_one_are_counted(tmp_
     )
     assert ("h", "Io", "10") in changes.places and ("p", "", "Drie.") in changes.places
     assert "- Io\n+ 10" in epubdiff.report(changes)
+
+
+def test_a_headings_two_lines_read_as_two_words(tmp_path):
+    blocks = _epub(
+        tmp_path, "a", [Heading("BOEK VIJF Onze doden", parts=["BOEK VIJF", "Onze doden"])]
+    )
+    assert blocks[0] == ("h", "BOEK VIJF Onze doden")
