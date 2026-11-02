@@ -278,10 +278,16 @@ def test_a_quote_open_at_the_end_is_closed_where_the_reading_adds_only_that_mark
     from roboscriptorium.quotes import closed_at_end
 
     end = SourceRef(50, 4)
+    lines = {end: "erg, ze zingen."}
     p = Paragraph("Ik schreef: ‘Het is erg, ze zingen.", [SourceRef(50, 3), end])
-    out, settled = closed_at_end([p], {end: {"checked": "erg, ze zingen.’"}})
+    out, settled = closed_at_end([p], {end: {"checked": "erg, ze zingen.’"}}, lines)
     assert out[0].text == "Ik schreef: ‘Het is erg, ze zingen.’" and settled == {end}
     assert p.text.endswith("zingen.")
+    # The last line starts mid-word: compared as the line, closed as the paragraph.
+    split = Paragraph("‘Ik hoor echo’s van lang geleden.", [SourceRef(51, 0), SourceRef(51, 1)])
+    out, _ = closed_at_end([split], {SourceRef(51, 1): {"checked": "den.’"}},
+                           {SourceRef(51, 1): "den."})  # fmt: skip
+    assert out[0].text.endswith("geleden.’")
     # Other words in the reading, a mark that pairs with no open one, or another quote
     # problem in the paragraph: left as a question.
     for reading, text in [
@@ -290,4 +296,4 @@ def test_a_quote_open_at_the_end_is_closed_where_the_reading_adds_only_that_mark
         ("erg, ze zingen.’", "Hij zei’ ik: ‘Het is erg, ze zingen."),
     ]:
         q = Paragraph(text, [SourceRef(50, 3), end])
-        assert closed_at_end([q], {end: {"checked": reading}}) == ([q], set())
+        assert closed_at_end([q], {end: {"checked": reading}}, lines) == ([q], set())

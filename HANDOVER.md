@@ -11,8 +11,9 @@ productive"): batch two of the slice growth, thirteen tuning slices to about 220
 (~925 cold pages), one book at a time, against `tuning-20261102T130507`; then the trust
 data rebuilt warm for the eleven books with it (`work/runs/grow3.sh`, logs
 `work/runs/grow3*.log`). Stop it with `experiments/stop-run.sh grow3` if the user needs the
-machine; the read caches resume. Afterwards: a parallel warm `bench tuning` as the new
-baseline. Benches otherwise score their books in parallel (warm ~10 min, validation ~3).
+machine; the read caches resume. Afterwards: a parallel warm `bench tuning` against grow3's
+run (it isolates commit "The closing fix compares the reading with the printed line",
+made while grow3 ran) and `bench validation`; the first becomes the new baseline. Benches otherwise score their books in parallel (warm ~10 min, validation ~3).
 
 ## Done 2026-11-01 and 02 (decisions.md has every number)
 

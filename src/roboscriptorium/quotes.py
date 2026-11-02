@@ -170,12 +170,15 @@ _LETTERS = re.compile(r"[^\W_]+")
 
 
 def closed_at_end(
-    blocks: list[Block], readings: dict[SourceRef, dict[str, str]]
+    blocks: list[Block],
+    readings: dict[SourceRef, dict[str, str]],
+    lines: dict[SourceRef, str],
 ) -> tuple[list[Block], set[SourceRef]]:
     """Copies of the blocks with a quote left open at a paragraph's end closed, where the
-    read model's reading of its last line is the same words with only that closing mark
-    added at the end; and the lines so settled. Only the mark is taken from the reading.
-    On the tuning books such a reading was the print 39 times in 39 (2026-11-02)."""
+    read model's reading of its last line (`lines`, the line as the build reads it) is the
+    same words with only that closing mark added at the end; and the lines so settled. Only
+    the mark is taken from the reading. On the tuning books such a reading was the print
+    39 times in 39 (2026-11-02)."""
     out, settled = [], set()
     for b in blocks:
         if (
@@ -190,9 +193,10 @@ def closed_at_end(
         reading = next(iter(found.values()), "").rstrip()
         mark = reading[-1:]
         words = [w.lower() for w in _LETTERS.findall(reading)]
-        tail = [w.lower() for w in _LETTERS.findall(b.text)][-len(words) :] if words else []
+        line = lines.get(last, "")
+        same = words and [w.lower() for w in _LETTERS.findall(line)] == words
         opener = next((o for o, c in PAIRS.items() if c == mark), None)
-        if opener and words and tail == words and opener in b.text and b.text.rstrip()[-1:] != mark:
+        if opener and same and opener in b.text and line.rstrip()[-1:] != mark:
             out.append(replace(b, text=b.text.rstrip() + mark))
             settled.add(last)
         else:

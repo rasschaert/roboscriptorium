@@ -367,7 +367,10 @@ def run(
     if use_models and quote_lines and ocrcheck.scanned(book.source) and settings.read_model:
         quote_readings = proposals(book, body, whole, suspects, quote_lines, style, dots, settings)
         # A closing mark the read model sees after the paragraph's last word is the print's.
-        built, closed = quotes.closed_at_end(built, quote_readings)
+        last_lines = {
+            SourceRef(p.number, i): ln.text for p in checked for i, ln in enumerate(p.lines)
+        }
+        built, closed = quotes.closed_at_end(built, quote_readings, last_lines)
         quote_lines = (
             {
                 ref
