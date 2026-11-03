@@ -7,14 +7,18 @@ end of every session. Updated 2026-11-03 by the session that built Hoe wij verdw
 ## Running
 
 Nothing runs. The tuning set is grown to ~4,000 pages (batch two done 2026-11-03); today's
-baselines: the last `work/bench/tuning-20261103T*` and `validation-20261103T*` (after the
-dash fix). Warm benches run in parallel: tuning ~12 min, validation ~3.
+baselines: `work/bench/tuning-20261103T160749` (after the italics change and Het
+schaduwhuis' italic classes; compare against it, not earlier runs: that book's reference
+changed) and `validation-20261103T155513`. Warm benches run in parallel: tuning ~13 min,
+validation ~3. The verdict counts italic errors since 2026-11-03.
 
 ## Waiting on the user (2026-11-03)
 
 - Hoe wij verdwijnen's **spot-check**: `open work/probes/spot-check/hoe-wij-verdwijnen/index.html`
   (PDF 41, 77, 87, 144, 292; count wrong words, breaks and italics per page); then its
-  read-through. The EPUB has all 53 answers.
+  read-through. The EPUB has all 53 answers. In progress: the user found "op" (p. 41) and
+  "een" (p. 144) set italic, both fixed in the pipeline (12 such words in the book); the
+  counts are of the build the page showed, before that fix.
 - Pieter Daens' **review**: 292 questions, `uv run roboscriptorium review work/pieter-daens`.
 
 ## Done 2026-11-01 and 02 (decisions.md has every number)
