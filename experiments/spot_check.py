@@ -69,8 +69,8 @@ header {{ max-width: 70em; margin: 1.5em auto; }} header p {{ color: var(--muted
 section {{ max-width: 70em; margin: 2em auto; border-top: 1px solid var(--line); }}
 .pair {{ display: flex; gap: 2em; align-items: flex-start; flex-wrap: wrap; }}
 .pair img {{ max-width: 100%; width: 30em; border: 1px solid var(--line); }}
-.text {{ flex: 1; min-width: 18em; }} .text p {{ margin: 0 0 0.6em; }}
-.epigraph, .dedication {{ margin-left: 2em; color: var(--muted); }}
+.text {{ flex: 1; min-width: 18em; }} .text p {{ margin: 0; text-indent: 1.5em; }}
+.epigraph, .dedication {{ margin: 0.6em 0 0.6em 2em; text-indent: 0; color: var(--muted); }}
 </style></head><body><header><h1>{html.escape(book.title)}: spot-check</h1>
 <p>{len(chosen)} random pages of the text proper. On each, compare the scan with the
 paragraphs beside it and count every wrong word (a letter, accent, mark or space), every
