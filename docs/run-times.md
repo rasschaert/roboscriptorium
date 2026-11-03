@@ -631,3 +631,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-02 | bench validation, quotes closed at paragraph end (warm, parallel) | 0 | 3 | 0 |
 | 2026-11-03 | bench tuning, thirteen slices grown (cold for ~925 new pages, one book at a time) | 925 | 904 | 0 |
 | 2026-11-03 | bench tuning, the changes of 2026-11-02 afternoon and evening (warm, parallel) | 4000 | 13 | 0 |
+| 2026-11-03 | bench validation, the changes of 2026-11-02 afternoon and evening (warm, parallel) | 0 | 5 | 0 |
