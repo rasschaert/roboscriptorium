@@ -439,10 +439,14 @@ def verdict(old: dict, new: dict) -> Verdict:
             if low > 0 and after - before >= VETO_MIN:
                 vetoes.append(n)
                 break
+    # Headings are counted over a book's whole slice, so only a slice both runs score
+    # alike compares: a grown one holds more chapters, and more headings to miss.
     counts = {
         n: heading_errors(old["books"][n]["score"], new["books"][n]["score"])
         for n in shared
-        if "score" in old["books"][n] and "score" in new["books"][n]
+        if "score" in old["books"][n]
+        and "score" in new["books"][n]
+        and old["books"][n].get("spec") == new["books"][n].get("spec")
     }
     vetoes += [n for n, (a, b) in counts.items() if b > a and n not in vetoes]
     headings = (sum(a for a, _ in counts.values()), sum(b for _, b in counts.values()))

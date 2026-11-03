@@ -384,3 +384,12 @@ def test_extra_headings_are_compared_on_the_same_count_in_both_runs():
     # An old run has no corrected count: both are compared on the old one.
     assert bench.heading_errors(old, new) == (-11, -11)
     assert bench.heading_errors(new, dict(new)) == (12, 12)
+
+
+def test_heading_errors_compare_only_books_whose_slice_is_the_same():
+    flat = {p: [1, 1, 1, 1] for p in range(30)}
+    before = _scored(_run(flat, c=flat), b=(20, 24, 0, 20), c=(10, 10, 0, 10))
+    grown = _scored(_run(flat, c=flat), b=(30, 40, 0, 30), c=(10, 10, 0, 10))
+    before["books"]["b"]["spec"], grown["books"]["b"]["spec"] = "b:1-100", "b:1-180"
+    assert bench.verdict(before, grown).headings == (0, 0)
+    assert bench.verdict(before, grown).outcome == "no change"

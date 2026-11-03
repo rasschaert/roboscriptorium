@@ -921,6 +921,10 @@ the edition doesn't list its corrections (the user).
   gaining any vetoes. Warm builds set the same headings each time, so the counts need
   no interval. A run saved before exact headings were counted is compared on found and
   extra ones only.
+  Headings are counted over a book's whole slice, so only a book whose slice both runs
+  score alike compares: a grown slice holds more chapters (on 2026-11-03 the grown
+  tuning slices expected 482 headings for 379, and the verdict read the new misses as
+  heading errors).
 - **Paragraph breaks count.** A break in the wrong place is as visible in an edition as
   a wrong word, and no question asks about it, so the bench counts them per page
   (`disagreements.break_errors`: a reference paragraph starting mid-paragraph in the
