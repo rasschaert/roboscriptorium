@@ -207,6 +207,9 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   unmarked try, still no change (30 fixed, 27 made); mottos and attributions stand in the way.
 - **The arbiter retrained on 2,600 more labelled suspects** (2026-10-25, the grown slices):
   tuning 0.286 → 0.294, more unasked errors; more rows of the same features don't help.
+- **An italic cut drawn from the book's own italic runs** (2026-11-03): a book's single
+  emphasised words lean less than its runs (Artemis lost 20); the stems a word is
+  measured on separate a misread lean from emphasis instead.
 
 ## Inference speed: what a cold page costs, and what's been tried
 

@@ -396,6 +396,14 @@ class Verdict:
     breaks: Change | None = None  # paragraph breaks over the shared books
     # Heading errors over the shared books, before and after (`heading_errors`).
     headings: tuple[int, int] | None = None
+    # Italic words set wrong over the shared books, before and after (`italic_errors`).
+    italics: tuple[int, int] | None = None
+
+
+# A book whose italic words set wrong rise by this many, and by this share, is worse on
+# its own: a cut can mend one book's lone words and cost a few in another.
+ITALIC_VETO_MIN = 10
+ITALIC_VETO_SHARE = 0.1
 
 
 def heading_errors(a: dict, b: dict) -> tuple[int, int]:
@@ -416,13 +424,22 @@ def heading_errors(a: dict, b: dict) -> tuple[int, int]:
     return errors(a, exact, extra), errors(b, exact, extra)
 
 
+def italic_errors(score: dict) -> int:
+    """A book's italic words set wrong: italic where the reference is upright, and upright
+    where it is italic. Warm builds measure the same slants, so the count needs no interval."""
+    output, expected = score["italic_output"], score["italic_expected"]
+    right = round(score["italic_precision"] * output)
+    return (output - right) + (expected - right)
+
+
 def verdict(old: dict, new: dict) -> Verdict:
     """Whether the new run is better. Worse when "after review", each book weighing the
     same, is clearly worse at any slip rate, the paragraph breaks set wrong clearly rise,
     or the heading errors over all books rise; better when it improves at every slip
-    rate, or the breaks clearly fall, or the heading errors fall, and none is worse;
-    vetoed when better but a book clearly gets worse in words or in breaks
-    (`VETO_LEVEL`, `VETO_MIN` on the mean), or gains heading errors."""
+    rate, or the breaks clearly fall, or the heading or italic errors fall, and none is
+    worse (the italic errors rising is worse too); vetoed when better but a book clearly
+    gets worse in words or in breaks (`VETO_LEVEL`, `VETO_MIN` on the mean), gains heading
+    errors, or gains italic errors (`ITALIC_VETO_MIN`, `ITALIC_VETO_SHARE`)."""
     shared = [n for n in new["books"] if n in old["books"]]
     index = dict(PAIRED)
     primary = [
@@ -444,12 +461,28 @@ def verdict(old: dict, new: dict) -> Verdict:
     counts = {
         n: heading_errors(old["books"][n]["score"], new["books"][n]["score"])
         for n in shared
-        if "score" in old["books"][n]
-        and "score" in new["books"][n]
+        if "headings_found" in old["books"][n].get("score", {})
+        and "headings_found" in new["books"][n].get("score", {})
         and old["books"][n].get("spec") == new["books"][n].get("spec")
     }
     vetoes += [n for n, (a, b) in counts.items() if b > a and n not in vetoes]
     headings = (sum(a for a, _ in counts.values()), sum(b for _, b in counts.values()))
+    # Italics only where the reference sets them as the print does (`italics_scored`).
+    slanted = {
+        n: (italic_errors(old["books"][n]["score"]), italic_errors(new["books"][n]["score"]))
+        for n in shared
+        if old["books"][n].get("italics_scored")
+        and new["books"][n].get("italics_scored")
+        and "italic_output" in old["books"][n].get("score", {})
+        and "italic_output" in new["books"][n].get("score", {})
+        and old["books"][n].get("spec") == new["books"][n].get("spec")
+    }
+    vetoes += [
+        n
+        for n, (a, b) in slanted.items()
+        if b - a >= max(ITALIC_VETO_MIN, ITALIC_VETO_SHARE * a) and n not in vetoes
+    ]
+    italics = (sum(a for a, _ in slanted.values()), sum(b for _, b in slanted.values()))
     pairs = [_pairs(old, new, index["paragraph breaks"], [n]) for n in shared]
     breaks = Change("all", "paragraph breaks", *pooled(pairs)) if any(pairs) else None
     words_better = all(c.high < 0 for c in primary)
@@ -457,13 +490,21 @@ def verdict(old: dict, new: dict) -> Verdict:
     breaks_better = breaks is not None and breaks.high < 0
     breaks_worse = breaks is not None and breaks.low > 0
     headings_worse, headings_better = headings[1] > headings[0], headings[1] < headings[0]
-    if words_worse or breaks_worse or headings_worse:
+    italics_worse, italics_better = italics[1] > italics[0], italics[1] < italics[0]
+    if words_worse or breaks_worse or headings_worse or italics_worse:
         outcome = "worse"
-    elif words_better or breaks_better or headings_better:
+    elif words_better or breaks_better or headings_better or italics_better:
         outcome = "vetoed" if vetoes else "better"
     else:
         outcome = "no change"
-    return Verdict(outcome, primary, vetoes, breaks, headings if counts else None)
+    return Verdict(
+        outcome,
+        primary,
+        vetoes,
+        breaks,
+        headings if counts else None,
+        italics if slanted else None,
+    )
 
 
 # A book whose unasked errors at least double, and rise by this many a page, is named

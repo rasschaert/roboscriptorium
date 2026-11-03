@@ -12,7 +12,9 @@ eu_copyright_until = 2200
 # "Proloog" and "Epiloog" are "_2-Hoofdstuktitel-copy--toc-entry-". The print sets the
 # names in capitals, the EPUB in lower case with `text-transform: uppercase`, so their
 # classes are capital classes. The map (Section-0005, an image) and the front and back
-# matter (author's note, acknowledgements, adverts) are left out.
+# matter (author's note, acknowledgements, adverts) are left out. Italics are span classes
+# whose CSS sets `font-style: italic` (CharOverride-1 619 times, -10 the small capitals of
+# a message, -6 once).
 [reference]
 source = "Het schaduwhuis, De Fontein 2022 (first printing), e-book ISBN 978 90 261 6142 1 (EPUB)"
 sha256 = "5461c3e5d2e366a55fefcd533656fa84ceff648aa6c51053b20891af27e02d84"
@@ -66,6 +68,7 @@ files = [
 ]
 heading_prefixes = ["_1-Hoofdstuk", "_2-Hoofdstuk"]
 capital_classes = ["_2-Hoofdstuktitel", "_2-Hoofdstuktitel-copy--toc-entry-", "CharOverride-8"]
+italic_classes = ["CharOverride-1", "CharOverride-6", "CharOverride-10"]
 
 # The first printing (De Fontein, May 2022, ISBN 978 90 261 6141 4); IA Scribe scan
 # (6.4), 360 ppi MRC, GlyphLessFont layer, ~350×574 pt, 340 pages. Single curly quotes,

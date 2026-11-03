@@ -757,6 +757,32 @@ lost comma isn't hidden by a 3–3 split over the dash's kind) and where the boo
 style is set (`typography._DASH`). The first without the second left the hyphen in the
 book where the hyphen version was kept: 15 dash errors on tuning (2026-11-03).
 
+## Italics: a word's slant against its page and its neighbours
+
+Italic words are found by the slant of their strokes on the scan (`italics.slant`), no
+model: roman type stands near 0°, italic leans 10–18°. Three things keep a word read a
+few degrees off from becoming italic (the user's spot-check of Hoe wij verdwijnen,
+2026-11-03: "het *op* te geven", "*een* van het bejaardentehuis"):
+
+- **A slant counts from its page's upright** (`_upright`, the median of the page's words
+  under the cut), so a page scanned askew leans none of its words. Only where most of a
+  page's words are under the cut: on Het geluid van bananen's pages set in italic, the
+  few under it are italic words read upright, and taking them for the page's upright
+  lost 10,000 italic words.
+- **A word leaning alone, measured on fewer than three stems, needs 12°** (`LONE_STEMS`,
+  `LONE_AT`). Every word set italic by mistake on Hoe wij verdwijnen ("op", "een", "en",
+  "goed", "geen", "zeggen", 9–11° from the page) and on Artemis ("good", "of", "faced",
+  8–9°) has one or two stems to measure; Artemis' real lone emphasis ("*quite*",
+  "*some*", "*anyone*", "*not*") has three or more and leans 8–11°. A cut drawn from the
+  book's italic runs (their tenth percentile) lost twenty of Artemis' lone italics, whose
+  runs lean further than its single words.
+- **A run carried over a line end keeps its words**: the line above's last measured word
+  and the line below's first are neighbours too ("boekpublicatie *De* / *laatste drie
+  dagen*").
+
+Benched 2026-11-03 warm: false italics 433 → 331 on tuning, 245 → 162 on validation,
+missed 2,022 → 1,995 and 166 → 166; no book worse by the veto.
+
 ## A build against the last build
 
 **A book with no reference is checked against its own earlier builds** (the user,
@@ -933,6 +959,13 @@ the edition doesn't list its corrections (the user).
   score alike compares: a grown slice holds more chapters (on 2026-11-03 the grown
   tuning slices expected 482 headings for 379, and the verdict read the new misses as
   heading errors).
+- **Italic errors count** (2026-11-03): words set italic where the reference is
+  upright, and upright where it is italic, summed over the books whose reference sets
+  italics as the print does (`italics_scored`) and whose slice both runs score alike
+  (`bench.italic_errors`). More is worse, fewer is better; a book gaining 10 or more,
+  and a tenth of its own, vetoes (a cut that mends one book's lone words can cost a few
+  in another). Before, a change that lost Het geluid van bananen's italic pages, 10,000
+  words, read "no change".
 - **Paragraph breaks count.** A break in the wrong place is as visible in an edition as
   a wrong word, and no question asks about it, so the bench counts them per page
   (`disagreements.break_errors`: a reference paragraph starting mid-paragraph in the

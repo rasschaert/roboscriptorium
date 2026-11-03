@@ -164,7 +164,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   weighing the same, must improve at the low, mean and high slip rate, or the
   paragraph breaks set wrong must fall, with neither clearly worse at any slip rate,
   and no book may get worse by ≥ 0.05 wrong words or breaks per page on the mean with
-  its 99% interval above zero (a veto); the per-book intervals are diagnostics, and so are the heading and paragraph-F1 changes it prints beside the test (`bench.structure`), which the word counts can't see. A tuning book is
+  its 99% interval above zero (a veto); the per-book intervals are diagnostics, and so are the paragraph-F1 changes it prints beside the test (`bench.structure`); heading and italic errors over all books (`heading_errors`, `italic_errors`) are in the verdict, which the word counts can't see. A tuning book is
   scored with the trust model trained without it
   (`ocr-trust-without-<book>.pkl`, written by `train_ocr_trust.py --save`). "After review"
   adds, per question asked, the reviewer's own slips (`quality.slip_rates`, a Beta
@@ -234,7 +234,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `italics.py`: italic words, from each text-layer word's stroke slant on
   the page image (no model; scans and born-digital PDFs alike), marked on paragraphs by aligning their
   words with their source lines'; cached in `stages/italics.json`. The EPUB
-  sets them in `<i>`; `eval` scores italic words. `uniform` sets a motto's or
+  sets them in `<i>`; `eval` scores italic words. A slant counts from the page's
+  upright (`_upright`); a word leaning alone on few stems needs `LONE_AT`, a run's
+  neighbours reach over line ends (`_italic`). `uniform` sets a motto's or
   dedication's lines in one type where all but one word agree.
 - `missing.py`: printed lines the OCR layer lacks (bare chapter numbers,
   page numbers, short lines of dialogue). A layout region about one line tall
@@ -400,7 +402,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `pipeline.lost_breaks`: paragraph starts the build without answers has and the build
   with them lost, on lines no answer covers; `build` prints them.
 - `epubdiff.py`: a build against the book's previous dated build (`against_last`): headings
-  and paragraphs as plain text lined up, each added, removed or changed one listed;
+  and paragraphs as plain text (italic runs between asterisks) lined up, each added, removed or changed one listed;
   `build` prints `summary` and writes `report` to `epubs/<book>-changes.txt`.
 - `review.py` + `regions.html`: the local review page (stdlib HTTP server on
   127.0.0.1), with scan crops: the flagged regions of any book and, for a golden book,

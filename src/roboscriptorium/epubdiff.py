@@ -17,16 +17,21 @@ _BLOCK = re.compile(r"<(h2|p)\b[^>]*>(.*?)</\1>", re.S)
 _TAG = re.compile(r"<[^>]+>")
 # A line break inside a heading ("BOEK VIJF<br/>Onze doden") parts two words.
 _BREAK = re.compile(r"<br\s*/?>")
+# Italic runs show as *…*, so a word set in another type counts as a change.
+_ITALIC = re.compile(r"</?i>")
 
 
 def blocks(epub: Path) -> list[tuple[str, str]]:
-    """The book's headings ("h") and paragraphs ("p") in reading order, as plain text."""
+    """The book's headings ("h") and paragraphs ("p") in reading order, as plain text with
+    italic runs between asterisks."""
     with zipfile.ZipFile(epub) as z:
         names = sorted(n for n in z.namelist() if re.search(r"text-\d+\.xhtml$", n))
         out = []
         for name in names:
             for tag, inner in _BLOCK.findall(z.read(name).decode()):
-                text = " ".join(html.unescape(_TAG.sub("", _BREAK.sub(" ", inner))).split())
+                text = " ".join(
+                    html.unescape(_TAG.sub("", _ITALIC.sub("*", _BREAK.sub(" ", inner)))).split()
+                )
                 if text:
                     out.append(("h" if tag == "h2" else "p", text))
     return out

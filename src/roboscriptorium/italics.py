@@ -10,9 +10,14 @@ Only words with an upright stem to measure are: two stems, or one in a word
 without diagonal letters. A word of round and diagonal letters ("zo", "ze")
 leans like italic whatever its type. An unmeasured word between two italic
 words is italic ("I can talk").
+
+A word's slant counts from its page's upright words, so a page scanned askew leans
+none of its words. A word leaning alone, among upright neighbours, and measured on fewer
+than LONE_STEMS stems needs LONE_AT: "op" or "een" reads a few degrees off.
 """
 
 import re
+import statistics
 from dataclasses import replace
 from pathlib import Path
 
@@ -25,10 +30,21 @@ from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.ir import Block, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText, line_words, lines_digest, page_words, spells
 
-VERSION = 8
+VERSION = 9
 DPI = 300
 ANGLES = np.arange(-25, 26, 1)
 ITALIC_AT = 8  # degrees of slant
+# A page's upright is the median slant of its words below ITALIC_AT, when it has this many
+# and they are this share of its measured words: on a page set in italic, those few are
+# italic words read a little upright.
+UPRIGHT_MIN = 10
+UPRIGHT_SHARE = 0.6
+# A word with no leaning neighbour and fewer stems than this is italic from LONE_AT. Read
+# by eye: Hoe wij verdwijnen's upright "op", "een", "goed" lean 9–11° from their page's
+# upright, Artemis' "good", "of", "faced" 8–9°, while its "quite", "some", "anyone",
+# "not" (three stems or more) lean 8–11° in italic.
+LONE_STEMS = 3
+LONE_AT = 12
 # Upright stems per letter, in roman and italic alike.
 STEMS = {c: 1 for c in "bdfijklpqrtBDEFIJKLPRT"} | {c: 2 for c in "hnuHNU"} | {"m": 3, "M": 2}
 DIAGONALS = set("kvwxyzAKVWXYZ")
@@ -60,8 +76,9 @@ def slant(gray: np.ndarray, threshold: int = 128) -> float:
 def detect(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, frozenset[int]]:
     """Per text-layer line, the indices of its italic words in `line.text.split(" ")`.
 
-    Only lines whose text-layer words spell the line are measured. Cached per page,
-    with the page's lines, so a page whose lines change is measured again.
+    Only lines whose text-layer words spell the line are measured. Each word's slant is
+    cached per page, with the page's lines, so a page whose lines change is measured
+    again; the cut is drawn over all of `pages`.
     """
     raw = read_cache(cache, VERSION)
     done: dict[str, dict] = raw["pages"] if raw else {}
@@ -71,17 +88,34 @@ def detect(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, fro
             for page in todo:
                 done[str(page.number)] = {
                     "lines": lines_digest(page),
-                    "italic": _page(doc[page.number - 1], page),
+                    "slants": _page(doc[page.number - 1], page),
                 }
         write_cache(cache, VERSION, {"pages": done})
-    return {
-        SourceRef(p.number, int(k)): frozenset(v)
+    slants = {
+        SourceRef(p.number, int(k)): _leaning(v, _upright(done[str(p.number)]["slants"]))
         for p in pages
-        for k, v in done[str(p.number)]["italic"].items()
+        for k, v in done[str(p.number)]["slants"].items()
     }
+    out = {}
+    text = {
+        SourceRef(p.number, k): ln.text.split(" ") for p in pages for k, ln in enumerate(p.lines)
+    }
+    for ref, line in slants.items():
+        above = slants.get(SourceRef(ref.page, ref.line - 1), [])
+        below = slants.get(SourceRef(ref.page, ref.line + 1), [])
+        edges = (_last(above), _last(below[::-1]))
+        stems = [_stems(w) for w in text[ref]]
+        if italic := _fill(_italic(line, stems, edges)):
+            out[ref] = frozenset(italic)
+    return out
 
 
-def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:
+def _last(line: list[float | None]) -> float | None:
+    return next((a for a in reversed(line) if a is not None), None)
+
+
+def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[float | None]]:
+    """Per measured line, each word's slant in degrees (None where it can't be measured)."""
     pix = pdf_page.get_pixmap(dpi=DPI, colorspace=pymupdf.csGRAY)
     img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width)
     scale = DPI / 72
@@ -92,20 +126,61 @@ def _page(pdf_page: pymupdf.Page, page: PageText) -> dict[str, list[int]]:
     ):
         if not words or not spells(words, line.text):
             continue
-        leaning = []
+        found: list[float | None] = []
         for w in words:
             if not _measurable(w[4]):
-                leaning.append(None)
+                found.append(None)
                 continue
             x0, y0, x1, y1 = (int(v * scale) for v in w[:4])
-            leaning.append(slant(img[max(0, y0) : y1, max(0, x0) : x1], threshold) >= ITALIC_AT)
-        if italic := _fill(leaning):
-            out[str(k)] = italic
+            a = slant(img[max(0, y0) : y1, max(0, x0) : x1], threshold)
+            found.append(None if np.isnan(a) else a)
+        out[str(k)] = found
     return out
 
 
+def _upright(lines: dict[str, list[float | None]]) -> float:
+    """The page's upright slant: the median of its words that don't lean like italic."""
+    measured = [a for line in lines.values() for a in line if a is not None]
+    roman = [a for a in measured if abs(a) < ITALIC_AT]
+    if len(roman) < UPRIGHT_MIN or len(roman) < UPRIGHT_SHARE * len(measured):
+        return 0.0
+    return statistics.median(roman)
+
+
+def _leaning(line: list[float | None], upright: float) -> list[float | None]:
+    return [None if a is None else a - upright for a in line]
+
+
+def _italic(
+    line: list[float | None], stems: list[int], edges: tuple[float | None, float | None]
+) -> list[bool | None]:
+    """Each word leaning like italic; one with no leaning measured neighbour and fewer than
+    LONE_STEMS `stems` needs LONE_AT.
+
+    `edges` are the measured words before the line's first and after its last (the line
+    above's last, the line below's first), so a run carried over a line end keeps them.
+    """
+    measured = [i for i, a in enumerate(line) if a is not None]
+    out: list[bool | None] = [None] * len(line)
+    for n, i in enumerate(measured):
+        beside = [line[j] for j in measured[max(0, n - 1) : n] + measured[n + 1 : n + 2]]
+        if n == 0 and edges[0] is not None:
+            beside.append(edges[0])
+        if n == len(measured) - 1 and edges[1] is not None:
+            beside.append(edges[1])
+        a = line[i]
+        alone = not any(b >= ITALIC_AT for b in beside)
+        few = i >= len(stems) or stems[i] < LONE_STEMS
+        out[i] = a >= (LONE_AT if alone and few else ITALIC_AT)
+    return out
+
+
+def _stems(word: str) -> int:
+    return sum(STEMS.get(c, 0) for c in word)
+
+
 def _measurable(word: str) -> bool:
-    stems = sum(STEMS.get(c, 0) for c in word)
+    stems = _stems(word)
     return stems >= 2 or (stems == 1 and not DIAGONALS & set(word))
 
 

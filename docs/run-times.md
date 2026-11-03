@@ -635,3 +635,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-03 | bench tuning, a spaced hyphen before punctuation set as a dash (warm, parallel) | 4000 | 12 | 0 |
 | 2026-11-03 | bench validation, a spaced hyphen before punctuation set as a dash (warm, parallel) | 0 | 3 | 0 |
 | 2026-11-03 | Pieter Daens rebuilt with the changes of 2026-11-02 and 03 (warm, judges re-asked where readings regroup) | 781 | 3 | 0 |
+| 2026-11-03 | bench tuning, a lone italic word leans as far as the book's runs (warm, slants measured again) | 4000 | 13 | 0 |
+| 2026-11-03 | bench validation, a lone italic word leans as far as the book's runs (warm, slants measured again) | 0 | 3 | 0 |
+| 2026-11-03 | bench tuning, a lone italic word leans as far as the book's runs (warm, slants measured again) | 4000 | 13 | 0 |
+| 2026-11-03 | bench tuning, a lone italic word on few stems needs 12 degrees (warm, slants measured again) | 4000 | 12 | 0 |
+| 2026-11-03 | bench validation, a lone italic word on few stems needs 12 degrees (warm, slants measured again) | 0 | 3 | 0 |

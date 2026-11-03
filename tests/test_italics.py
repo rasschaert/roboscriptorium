@@ -9,6 +9,34 @@ def test_a_short_word_between_italic_ones_is_italic():
     assert italics._fill([None, True, None]) == [1]
 
 
+def test_a_short_word_leaning_a_little_among_upright_ones_stays_upright():
+    # "bereid was het op te geven": "op", one stem, at 10° from the page's upright.
+    line, stems = [0.0, None, 0.0, 10.0, -1.0], [4, 0, 2, 1, 1]
+    assert italics._italic(line, stems, (None, None)) == [False, None, False, False, False]
+    # A short word leaning as far as italic type does is italic alone.
+    assert italics._italic([0.0, 13.0, 0.0], [2, 1, 2], (None, None)) == [False, True, False]
+    # A word with stems enough to measure keeps the plain cut alone: "You can't *quite*".
+    assert italics._italic([0.0, 9.0, 0.0], [2, 5, 2], (None, None)) == [False, True, False]
+    # Beside another leaning word the plain cut holds for any word.
+    assert italics._italic([9.0, 8.0, 0.0], [1, 2, 2], (None, None)) == [True, True, False]
+
+
+def test_a_run_over_a_line_end_keeps_its_first_word():
+    # "boekpublicatie De" / "laatste drie dagen …", the title italic on the next line.
+    assert italics._italic([0.0, 9.0], [4, 1], (None, 15.0)) == [False, True]
+    assert italics._italic([9.0, 0.0], [1, 4], (14.0, None)) == [True, False]
+    assert italics._italic([0.0, 9.0], [4, 1], (None, 0.0)) == [False, False]
+
+
+def test_slants_count_from_the_pages_upright():
+    page = {"0": [2.0] * 12, "1": [2.0, 11.0, None]}
+    assert italics._upright(page) == 2.0
+    assert italics._leaning(page["1"], 2.0) == [0.0, 9.0, None]
+    assert italics._upright({"0": [3.0] * 3}) == 0.0
+    # A page set in italic: its few words under the cut are italic ones, not its upright.
+    assert italics._upright({"0": [5.0] * 12 + [10.0] * 200}) == 0.0
+
+
 def test_a_dedication_all_but_one_word_italic_is_set_all_italic_not_running_text():
     ded = [
         Paragraph("Voor mijn ouders", dedication=True, italic=(1, 2)),

@@ -393,3 +393,36 @@ def test_heading_errors_compare_only_books_whose_slice_is_the_same():
     before["books"]["b"]["spec"], grown["books"]["b"]["spec"] = "b:1-100", "b:1-180"
     assert bench.verdict(before, grown).headings == (0, 0)
     assert bench.verdict(before, grown).outcome == "no change"
+
+
+def _slanted(run: dict, **scores: tuple[int, int, int]) -> dict:
+    """`run` with each named book's italics: expected, set, set right."""
+    for name, (expected, output, right) in scores.items():
+        book = run["books"][name]
+        book["italics_scored"] = True
+        book.setdefault("score", {}).update(
+            italic_expected=expected,
+            italic_output=output,
+            italic_precision=right / output if output else 0.0,
+        )
+    return run
+
+
+def test_italic_errors_decide_the_verdict_and_a_book_losing_its_italics_vetoes():
+    flat = {p: [1, 1, 1, 1] for p in range(30)}
+    before = _slanted(_run(flat, c=flat), b=(100, 110, 90), c=(500, 480, 470))
+    mended = _slanted(_run(flat, c=flat), b=(100, 95, 90), c=(500, 480, 470))
+    found = bench.verdict(before, mended)
+    # b: 20 false and 10 missed → 5 and 10; c: 10 and 30 throughout.
+    assert found.outcome == "better" and found.italics == (70, 55)
+    assert bench.verdict(mended, before).outcome == "worse"
+    lost = _slanted(_run(flat, c=flat), b=(100, 60, 60), c=(500, 480, 470))
+    assert bench.verdict(before, lost).outcome == "worse"
+    # Fewer over all, but c loses 20 of its italics: vetoed.
+    traded = _slanted(_run(flat, c=flat), b=(100, 100, 100), c=(500, 470, 455))
+    assert bench.verdict(before, traded).italics == (70, 60)
+    assert bench.verdict(before, traded).outcome == "vetoed"
+    # A reference that sets italics unlike its print isn't counted.
+    unscored = _slanted(_run(flat, c=flat), b=(100, 60, 60), c=(500, 480, 470))
+    unscored["books"]["b"]["italics_scored"] = False
+    assert bench.verdict(before, unscored).italics == (40, 40)

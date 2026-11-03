@@ -550,6 +550,20 @@ also part of the pipeline itself." Before either book goes to review:
       Rights of the Strong" lacking its 7; Het ijzige land's chapters 1, 3, 7, 8 lost
       (labelled numbers, now flagged by the structure check)
 
+- [x] A short word leaning a little among upright ones no italic (the user's spot-check,
+      2026-11-03: "op", "een" in Hoe wij verdwijnen): a lone word measured on fewer than
+      three stems needs 12°, slants count from the page's upright, a run keeps its word at
+      a line end (`italics._italic`). Tuning false italics 433 → 331, validation 245 → 162
+- [x] Italic errors in the bench's verdict (2026-11-03, `bench.italic_errors`): the first
+      try lost Het geluid van bananen's italic pages (10,000 words) and the verdict said
+      "no change"
+- [x] A build's comparison with the last shows italic changes (2026-11-03, `*word*`)
+- [x] Het schaduwhuis' reference had no italics (its e-book sets them by class):
+      `italic_classes` declared, derived again (2026-11-03)
+- [ ] An italic decision learned from the golden pairs' aligned words (slant, stems,
+      neighbours, line position) in place of the cuts, once the bench's italic errors
+      are logged place by place
+
 ## 3. The user's books after Stella
 
 Dutch books the user wants as EPUBs, none with a reference EPUB, each an IA Scribe

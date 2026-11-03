@@ -508,6 +508,8 @@ def run_bench(
         typer.echo(
             f"  all books, {'heading errors':26} {found.headings[0]:6} → {found.headings[1]:6}"
         )
+    if found.italics is not None:
+        typer.echo(f"  all books, {'italic errors':26} {found.italics[0]:6} → {found.italics[1]:6}")
     if found.vetoes:
         typer.echo("  worse on its own: " + ", ".join(found.vetoes))
     for name, before, after in bench.doubled(old, new):

@@ -13,10 +13,18 @@ def _epub(tmp_path, name: str, blocks: list) -> list[tuple[str, str]]:
 
 def test_the_same_text_with_other_markup_is_no_change(tmp_path):
     old = _epub(tmp_path, "a", [Heading("1"), Paragraph("Een <zin> & meer.", opening=True)])
-    new = _epub(tmp_path, "b", [Heading("1"), Paragraph("Een <zin> & meer.", italic=(0,))])
+    new = _epub(tmp_path, "b", [Heading("1"), Paragraph("Een <zin> & meer.")])
     assert old == [("h", "1"), ("p", "Een <zin> & meer.")]
     changes = epubdiff.compare(old, new)
     assert epubdiff.summary(changes) == "since the last build: no text changed"
+
+
+def test_a_word_set_in_another_type_is_a_change(tmp_path):
+    old = _epub(tmp_path, "a", [Paragraph("bereid was het op te geven.", italic=(3,))])
+    new = _epub(tmp_path, "b", [Paragraph("bereid was het op te geven.")])
+    assert old == [("p", "bereid was het *op* te geven.")]
+    changes = epubdiff.compare(old, new)
+    assert epubdiff.summary(changes) == "since the last build: paragraphs 1 changed"
 
 
 def test_a_changed_heading_a_changed_paragraph_and_an_added_one_are_counted(tmp_path):
