@@ -6,15 +6,15 @@ end of every session. Updated 2026-11-02 midday by the session that built Hoe wi
 
 ## Running
 
-`robo-grow3` (started 2026-11-02 14:35, ~14 h, the user away: "do whatever you think is
-productive"): batch two of the slice growth, thirteen tuning slices to about 220–270 pages
-(~925 cold pages), one book at a time, against `tuning-20261102T130507`; then the trust
-data rebuilt warm for the eleven books with it (`work/runs/grow3.sh`, logs
-`work/runs/grow3*.log`). Stop it with `experiments/stop-run.sh grow3` if the user needs the
-machine; the read caches resume. Afterwards: a parallel warm `bench tuning` against grow3's
-run (it measures what was committed while grow3 ran: the closing fix comparing printed
-lines, display titles on empty pages, `headings_extra`, labelled chapter numbers, a heading never running on into the text,
-subtitles under any heading) and `bench validation`; the first becomes the new baseline. Benches otherwise score their books in parallel (warm ~10 min, validation ~3).
+`robo-grow3` step 2 (trust data rebuilt warm on the grown slices), then `robo-bench-batch3`
+starts on its own: warm parallel `bench tuning` against `tuning-20261103T043948` (the grown
+slices' first run; no change on shared pages) and `bench validation` against
+`validation-20261102T130814`, measuring the changes of 2026-11-02 afternoon and evening
+(labelled chapter numbers, run-on headings, subtitles under any heading, display titles,
+the closing fix by printed line, the dash fold, misplaced short layer lines, answers keeping
+their paragraph's shape, the review's display changes). Revert whatever proves worse.
+Then: Pieter Daens rebuilt with all of it (its question count to the user), Hoe wij
+verdwijnen's spot-check pages prepared for the user.
 
 ## Done 2026-11-01 and 02 (decisions.md has every number)
 
