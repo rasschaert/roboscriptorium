@@ -641,3 +641,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-03 | bench tuning, a lone italic word on few stems needs 12 degrees (warm, slants measured again) | 4000 | 12 | 0 |
 | 2026-11-03 | bench validation, a lone italic word on few stems needs 12 degrees (warm, slants measured again) | 0 | 3 | 0 |
 | 2026-11-03 | bench tuning, baseline after Het schaduwhuis' italic classes (warm) | 4000 | 12 | 0 |
+| 2026-11-03 | bench tuning, a lone word with a diagonal letter or acute accent needs 12 degrees (warm) | 4000 | 13 | 0 |
+| 2026-11-03 | bench validation, a lone word with a diagonal letter or acute accent needs 12 degrees (warm) | 0 | 3 | 0 |
