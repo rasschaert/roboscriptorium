@@ -41,7 +41,9 @@ def _is_dash(text: str) -> bool:
 
 
 # A dash with whatever spacing the layer gave it, all of it; `_kept` says which stay as read.
-_DASH = re.compile(r"\s*(?:[—–]|--)\s*|(?<=\S) +- +(?=\S)")
+# A hyphen with a space before it and closing punctuation after is one too ("wat -, maar":
+# the OCR check takes "-," and "—," for one reading, `ocrcheck._ANY_DASH`).
+_DASH = re.compile(r"\s*(?:[—–]|--)\s*|(?<=\S) +- +(?=\S)|(?<=\S) +-(?=[,;:.!?’”'\")])")
 
 
 def _kept(text: str, m: re.Match) -> bool:

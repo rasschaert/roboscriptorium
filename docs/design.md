@@ -749,6 +749,14 @@ question at its first line (`flags.structural`), or a reason added to the questi
 already there, in the same region review as every other. Not yet: a repair where the
 book settles it beyond the chapter numbers.
 
+## A dash read as a hyphen before punctuation
+
+A spaced hyphen before a comma, stop or closing quote is a dash, both where readings are
+compared (`ocrcheck._ANY_DASH`: "zag -, wat" and "zag —, wat" are one reading, so a
+lost comma isn't hidden by a 3–3 split over the dash's kind) and where the book's dash
+style is set (`typography._DASH`). The first without the second left the hyphen in the
+book where the hyphen version was kept: 15 dash errors on tuning (2026-11-03).
+
 ## A build against the last build
 
 **A book with no reference is checked against its own earlier builds** (the user,

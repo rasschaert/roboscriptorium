@@ -275,3 +275,14 @@ def test_a_printed_blank_takes_the_books_setting_however_many_underscores_were_r
 def test_without_a_setting_a_blank_stays_as_read():
     p = Paragraph("naar het __plein")
     assert apply([p], None, EllipsisStyle("...", False))[0].text == "naar het __plein"
+
+
+def test_a_spaced_hyphen_before_a_comma_or_quote_is_set_as_the_books_dash():
+    from roboscriptorium.typography import DashStyle, styled
+
+    em = DashStyle("—", "word")
+    # Word spacing sets a no-break space before the dash, so it never opens a line.
+    assert styled("ik ken ze -, zal ze", em)[0] == "ik ken ze\u00a0—, zal ze"
+    assert styled("het laantje -' 'Niks", em)[0] == "het laantje\u00a0—' 'Niks"
+    # A compound's hyphen and a number's minus stay.
+    assert styled("Noord- en Zuid-Holland, -5 graden", em)[0] == "Noord- en Zuid-Holland, -5 graden"
