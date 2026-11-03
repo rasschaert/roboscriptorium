@@ -567,6 +567,9 @@ In this order:
 
 - [x] Hoe wij verdwijnen reviewed by the user (2026-11-02, 53 answers in two rounds; the
       review smartened between them); rebuilt with them, epubcheck clean
+- [ ] **user**: Hoe wij verdwijnen's spot-check, PDF pages 41, 77, 87, 144, 292
+      (`experiments/spot_check.py`, work/probes/spot-check/hoe-wij-verdwijnen/index.html):
+      wrong words, breaks and italics counted per page, the book's own error rate
 - [ ] Each book in turn: check its front and back matter and `body_pages`, build (cold
       ~1 min a page: Ex-minnaar ~4 h, De kus ~10 h), sample the questions, **user**
       reviews, rebuild, epubcheck, a **spot-check** (5 random pages drawn by a script,
