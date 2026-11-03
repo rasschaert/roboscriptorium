@@ -6,15 +6,16 @@ end of every session. Updated 2026-11-02 midday by the session that built Hoe wi
 
 ## Running
 
-`robo-grow3` step 2 (trust data rebuilt warm on the grown slices), then `robo-bench-batch3`
-starts on its own: warm parallel `bench tuning` against `tuning-20261103T043948` (the grown
-slices' first run; no change on shared pages) and `bench validation` against
-`validation-20261102T130814`, measuring the changes of 2026-11-02 afternoon and evening
-(labelled chapter numbers, run-on headings, subtitles under any heading, display titles,
-the closing fix by printed line, the dash fold, misplaced short layer lines, answers keeping
-their paragraph's shape, the review's display changes). Revert whatever proves worse.
-Then: Pieter Daens rebuilt with all of it (its question count to the user), Hoe wij
-verdwijnen's spot-check pages prepared for the user.
+Nothing runs. The tuning set is grown to ~4,000 pages (batch two done 2026-11-03); today's
+baselines: the last `work/bench/tuning-20261103T*` and `validation-20261103T*` (after the
+dash fix). Warm benches run in parallel: tuning ~12 min, validation ~3.
+
+## Waiting on the user (2026-11-03)
+
+- Hoe wij verdwijnen's **spot-check**: `open work/probes/spot-check/hoe-wij-verdwijnen/index.html`
+  (PDF 41, 77, 87, 144, 292; count wrong words, breaks and italics per page); then its
+  read-through. The EPUB has all 53 answers.
+- Pieter Daens' **review**: 292 questions, `uv run roboscriptorium review work/pieter-daens`.
 
 ## Done 2026-11-01 and 02 (decisions.md has every number)
 

@@ -634,3 +634,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-03 | bench validation, the changes of 2026-11-02 afternoon and evening (warm, parallel) | 0 | 5 | 0 |
 | 2026-11-03 | bench tuning, a spaced hyphen before punctuation set as a dash (warm, parallel) | 4000 | 12 | 0 |
 | 2026-11-03 | bench validation, a spaced hyphen before punctuation set as a dash (warm, parallel) | 0 | 3 | 0 |
+| 2026-11-03 | Pieter Daens rebuilt with the changes of 2026-11-02 and 03 (warm, judges re-asked where readings regroup) | 781 | 3 | 0 |
