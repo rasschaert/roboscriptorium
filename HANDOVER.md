@@ -2,7 +2,7 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-11-02 midday by the session that built Hoe wij verdwijnen and Pieter Daens.
+end of every session. Updated 2026-11-03 by the session that built Hoe wij verdwijnen and Pieter Daens.
 
 ## Running
 
@@ -29,18 +29,18 @@ dash fix). Warm benches run in parallel: tuning ~12 min, validation ~3.
   line; `init` walking inward past the edge (Daens' ads); a structure check and a
   comparison with the last build printed by every `build`; heading errors in the bench's
   verdict; the review's obvious questions out.
-- Benches: heading errors 102 → 82 on tuning (exact count), 50 → 45 validation; after
-  review 0.36 → 0.35 tuning, 0.49 → 0.48 validation.
+- Benches: the 11-01 batch, heading errors 102 → 82 on tuning, 50 → 45 validation; the
+  11-02 batch on the grown slices, after review 0.34 → 0.33, heading errors 104 → 72,
+  missing text 0.073 → 0.048, validation no change; the dash fix, dash errors to zero.
+- Also taken: quotes closed at a paragraph's end where the reading adds only the mark
+  (39/39 on tuning); possessives after a sibilant ("Maurice’ moeder") no quote; the
+  bench names a book whose unasked errors double (`bench.doubled`); bench in parallel.
 
-## Next, before the user reviews Hoe wij verdwijnen and Pieter Daens
+## Next, for the agent
 
-1. Quote questions (checklist): "Maurice’ moeder", a possessive apostrophe taken for a
-   closing quote (~15 of Hoe wij verdwijnen's 37); letters and articles quoted over
-   paragraphs; Daens' 148 sorted by kind.
-2. Sample both books' questions again (`experiments/sample_questions.py`), then the user
-   reviews: Hoe wij verdwijnen 78 questions, Pieter Daens 338.
-3. A proposal for the user: the bench names a book whose unasked errors double (the
-   veto missed Reis om mijn schedel losing a page, interval [0, +0.65]).
+The open steps in docs/checklist.md, in its order; when the user brings the spot-check
+counts, the book's error estimate with its interval goes in decisions.md and the
+checklist. Idle machine time: grow the tuning slices further.
 
 ## Done 2026-10-25 and 26 (decisions.md has every number)
 
