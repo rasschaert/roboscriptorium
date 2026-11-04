@@ -6,14 +6,10 @@ end of every session. Updated 2026-11-04 by the session that learned the italics
 
 ## Running
 
-**Stella's rebuild** (2026-11-04 evening, `screen` `robo-stella-rebuild`, log
-`work/runs/stella-rebuild.log`): everything since its 2026-10-24 build, the learned italics
-now on by default. The user asked for it, and for **every text difference to be shown to
-them by eye**, even after the agent's own check: `experiments/rebuild_diff.py work/stella
-work/stella/epubs/stella-2026-10-19-0014.epub [notes.json]` writes
-`work/probes/rebuild-diff/stella/index.html` (crop, old and new words, the agent's note).
-The 10-24 build (text identical to the 10-19 one the user read) is kept in
-`work/probes/stella-rebuild/`.
+**Nothing.** Stella's rebuild (2026-11-04 evening) changed no text against the build the
+user read; the user wants every difference of a read book's rebuild shown to them by eye
+(`experiments/rebuild_diff.py <book> <old.epub> [notes.json]`, crops beside old and new
+words), so the next rebuild that changes Stella goes through that page.
 
 **Benched and taken today** (decisions.md 2026-11-04): learned italics on by default,
 chapter labels, chapter numbers at the spotter's usual opening box, numbers over labels
@@ -47,8 +43,7 @@ settled. Tuning italic errors 2,445 → 1,088, headings 104 → 69; validation 3
 
 ## Next, for the agent
 
-1. Stella's diff page for the user (above), every difference with the agent's note.
-2. Then the open steps of docs/checklist.md in its order (next: the 59 errors the build
+1. The open steps of docs/checklist.md in its order (next: the 59 errors the build
    made where the layer was right); idle machine time grows the tuning slices. When the
    user brings the spot-check counts, the book's error estimate with its interval goes in
    decisions.md and the checklist.
