@@ -6,19 +6,15 @@ end of every session. Updated 2026-11-04 by the session that learned the italics
 
 ## Running
 
-**`robo-italic-trees`** (started 2026-11-04 ~10:20, `work/runs/italic-trees.sh`): warm
-`bench tuning` then `bench validation` with `ROBO_ITALIC_TREES=1`, against
-`work/bench/tuning-20261103T160749-cc4eeb4-dirty.json` and
-`validation-20261103T155513-cc4eeb4-dirty.json`. It measures two changes together: the
-learned italic decision and the chapter labels (checklist, section "The machine finds
-what a reader would"). Logs: `work/runs/italic-trees-tuning.log`, `-validation.log`. If the
-laptop slept it may have stopped: `{ screen -ls || true; } | grep italic`, and rerun
-`experiments/detached.sh italic-trees work/runs/italic-trees.sh` (~13 + ~4 min, warm).
-The verdict decides the first open step below. Both changes are committed; the learned
-italics stay off until the verdict, the labels are on.
+Nothing, unless `robo-italic-trees`' validation half is still going
+(`{ screen -ls || true; } | grep italic`; log `work/runs/italic-trees-validation.log`).
 
-Yesterday's baselines stand: tuning `tuning-20261103T160749` (italic errors 2,445,
-heading errors 104), validation `validation-20261103T155513` (328, 53).
+**The tuning bench of the learned italics and the chapter labels** (2026-11-04,
+`tuning-20261104T092340-ed2234b`, against `tuning-20261103T160749`): italic errors
+2,445 → 1,088, heading errors 104 → 71 (Het schaduwhuis 32 → 65 of 68), not a word or
+break changed. The verdict still read WORSE: after review 0.3208 → 0.3213, all from
+Het schaduwhuis' questions 100 → 117, its labelled numbers ("2 ALEX") no longer settled
+by their run. Fixed since (`chapters.settled`, commit 6d98102), not yet benched.
 
 ## Waiting on the user (2026-11-03)
 
@@ -47,8 +43,10 @@ heading errors 104), validation `validation-20261103T155513` (328, 53).
 
 ## Next, for the agent
 
-1. The bench's verdict on the two changes (checklist: "Learned italics: bench verdict,
-   then on by default"; "Chapter labels recurring under headings").
+1. Bench tuning again warm with `ROBO_ITALIC_TREES=1` (`work/runs/italic-trees.sh`, ~13 +
+   ~4 min) to confirm Het schaduwhuis' questions back to ~100 and the verdict BETTER;
+   then the learned italics on by default (checklist: "Learned italics: bench verdict,
+   then on by default"), new baselines.
 2. Chapter numbers the layer and the spotter both miss (checklist, same section).
 3. Then the open steps of docs/checklist.md in its order; idle machine time grows the
    tuning slices. When the user brings the spot-check counts, the book's error estimate

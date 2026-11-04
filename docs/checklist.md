@@ -566,8 +566,10 @@ also part of the pipeline itself." Before either book goes to review:
       built and trained (`experiments/italic_words.py --save`, 21 models in
       `work/models/italics*.pkl`), off behind `ROBO_ITALIC_TREES`. Offline, each book left
       out: tuning italic errors 2,123 → 798, validation 283 → 162. The warm bench of it
-      together with the chapter labels below (`work/runs/italic-trees.sh`, logs
-      `work/runs/italic-trees-{tuning,validation}.log`) was running at the handover. If
+      together with the chapter labels below (`work/runs/italic-trees.sh`): tuning italic
+      errors 2,445 → 1,088, headings 104 → 71, no word or break changed; WORSE only by Het
+      schaduwhuis' questions 100 → 117 (labelled numbers unsettled, fixed in 6d98102).
+      Bench it again; if
       BETTER with no veto: set `italic_trees = True` in `config.py`, say so in
       docs/how-it-works.md (Italics) and `docs/pipeline.d2` (the slant node: trees trained
       on golden books), render the diagram, new baselines. If a book vetoes, read its
