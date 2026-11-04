@@ -6,16 +6,14 @@ end of every session. Updated 2026-11-04 by the session that learned the italics
 
 ## Running
 
-**The sorter's lines rebuilt with a new feature** (2026-11-05 night, `screen`
-`robo-sorter-runs`, `work/runs/sorter-runs.sh`): `number_run` (`sorter.number_runs`, does a
-number line continue a run of number lines through the book), for Monterosso's mid-page
-chapter numbers, which the trees trained without it call artifacts (7 of 22 headings on the
-bench; 19 with the trees that saw it). Uncommitted in the working tree: `sorter.py`
-(MODEL_VERSION 2), its test, `train_sorter.py --without-runs`. The old cache is in
-`work/probes/sorter-before-number-run/`. Next: compare `sorter-runs-with.log` against
-`-without.log`; if headings rise without lost body lines, `--save`, bench warm, commit.
-The user is away for many hours (2026-11-04 evening): keep working down the checklist, then
-grow the slices (batch two, commit 3e6177c).
+**The line-role trees retrained with bare page numbers never labelled body** (2026-11-05
+night, `screen` `robo-sorter-folios`, `work/runs/sorter-folios.sh`: offline score, `--save`,
+bench tuning and validation warm). Uncommitted: `sorterdata.folio_label` and its test.
+**The run's `--save` overwrites `work/models/line-roles*.pkl`**: if either bench says WORSE,
+restore the models in use with `cp work/models/line-roles-2026-11-05-bak/*.pkl work/models/`
+before anything else builds. The number-run feature and the plain retrain were not taken
+(decisions.md 2026-11-05). The user is away for many hours (2026-11-04 evening): keep
+working down the checklist, then grow the slices (batch two, commit 3e6177c).
 
 Stella's rebuild (2026-11-04 evening) changed no text against the build the user read;
 the user wants every difference of a read book's rebuild shown to them by eye

@@ -657,3 +657,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-04 | arbiter offline, leave one out, with the stop-before-lower feature | 0 | 26 | 0 |
 | 2026-11-04 | bench tuning, a stop added at a line end before lower case no version (warm) | 4000 | 13 | 0 |
 | 2026-11-04 | bench validation, a stop added at a line end before lower case no version (warm) | 0 | 3 | 0 |
+| 2026-11-05 | sorter lines rebuilt (warm builds, rules' roles) and scored with number_run | 0 | 24 | 0 |
+| 2026-11-05 | sorter scored without number_run (cached lines) | 0 | 0 | 1 |
+| 2026-11-05 | sorter scored without number_run (cached lines) | 0 | 2 | 0 |
+| 2026-11-05 | train_sorter --save on the grown slices' lines (cached) | 0 | 1 | 0 |
+| 2026-11-05 | bench tuning, line-role trees retrained on the grown slices (warm) | 4000 | 13 | 0 |
+| 2026-11-05 | bench validation, line-role trees retrained on the grown slices (warm) | 0 | 4 | 0 |
