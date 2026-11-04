@@ -19,7 +19,7 @@ from dataclasses import asdict, dataclass, replace
 from datetime import UTC, datetime
 from pathlib import Path
 
-from roboscriptorium import disagreements, errorlog, evaluate, quality, sorter, trust
+from roboscriptorium import disagreements, errorlog, evaluate, italics, quality, sorter, trust
 from roboscriptorium.config import Settings
 from roboscriptorium.golden import scoring, signals
 
@@ -166,6 +166,15 @@ def unseen(settings: Settings, book: str) -> Settings:
             raise FileNotFoundError(
                 f"{copy} is missing: {book} is a tuning book, which the line-role model "
                 "trains on (experiments/train_sorter.py --save writes it)"
+            )
+    if settings.italic_trees:
+        copy = italics.without(Path(settings.italic_model), book)
+        if copy.exists():
+            settings = replace(settings, italic_model=str(copy))
+        elif book in SORTER_TRAINED_ON:
+            raise FileNotFoundError(
+                f"{copy} is missing: {book} is a tuning book, which the italic model "
+                "trains on (experiments/italic_words.py --save writes it)"
             )
     if not settings.ocr_trust:
         return settings

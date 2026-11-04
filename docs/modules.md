@@ -237,7 +237,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   sets them in `<i>`; `eval` scores italic words. A slant counts from the page's
   upright (`_upright`); a word leaning alone on few stems needs `LONE_AT`, a run's
   neighbours reach over line ends (`_italic`). `uniform` sets a motto's or
-  dedication's lines in one type where all but one word agree.
+  dedication's lines in one type where all but one word agree. With `ROBO_ITALIC_TREES=1` the trees in
+  `work/models/italics.pkl` decide instead (`Trees`, `features`, `decide`; trained by
+  `experiments/italic_words.py --save`, a copy without each tuning book for `bench`).
 - `missing.py`: printed lines the OCR layer lacks (bare chapter numbers,
   page numbers, short lines of dialogue). A layout region about one line tall
   (up to five above a sunk page's text, where Artemis draws its chapter numbers in a
@@ -392,8 +394,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   sunk page is a heading where most of the book's such openings carry one, applied to
   the roles after the sorter; `numbered`: each short heading of a run of numbers set to
   its number, old-style look-alikes folded, a lone unreadable one settled by both
-  neighbours, on the reflowed blocks; `title_lines`: a dropped line of a title page set
-  like a heading at that line on another). All return new data.
+  neighbours, on the reflowed blocks; `title_lines`: a dropped line under a heading set
+  like another heading's second line, or a short one recurring in one type under three
+  headings or more, such as a narrator's name). All return new data.
 - `structure.py`: what a reader would notice in a built document's structure, without a
   model (`findings`: numbered chapters out of their run, a title of words among them, a
   section of fewer than 20 words not set apart); `summary` is the line `build` prints,

@@ -16,9 +16,11 @@ none of its words. A word leaning alone, among upright neighbours, and measured 
 than LONE_STEMS stems needs LONE_AT: "op" or "een" reads a few degrees off.
 """
 
+import math
+import pickle
 import re
 import statistics
-from dataclasses import replace
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 import numpy as np
@@ -26,7 +28,7 @@ import pymupdf
 from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import ink
-from roboscriptorium.files import read_cache, write_cache
+from roboscriptorium.files import read_cache, write_atomic, write_cache
 from roboscriptorium.ir import Block, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText, line_words, lines_digest, page_words, spells
 
@@ -73,13 +75,25 @@ def slant(gray: np.ndarray, threshold: int = 128) -> float:
     return best
 
 
-def detect(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, frozenset[int]]:
-    """Per text-layer line, the indices of its italic words in `line.text.split(" ")`.
+def detect(
+    pdf: Path, pages: list[PageText], cache: Path, trees: "Trees | None" = None
+) -> dict[SourceRef, frozenset[int]]:
+    """Per text-layer line, the indices of its italic words in `line.text.split(" ")`:
+    by the learned `trees` where given, else by the cuts.
 
     Only lines whose text-layer words spell the line are measured. Each word's slant is
     cached per page, with the page's lines, so a page whose lines change is measured
     again; the cut is drawn over all of `pages`.
     """
+    done = measure(pdf, pages, cache)
+    if trees is not None:
+        return decide(trees, features(pages, done))
+    return _cut(pages, done)
+
+
+def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[str, dict]:
+    """Per page number (as a string), its words' slants by line (`_page`), from `cache`
+    where the page's lines are unchanged."""
     raw = read_cache(cache, VERSION)
     done: dict[str, dict] = raw["pages"] if raw else {}
     todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != lines_digest(p)]
@@ -91,6 +105,10 @@ def detect(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, fro
                     "slants": _page(doc[page.number - 1], page),
                 }
         write_cache(cache, VERSION, {"pages": done})
+    return done
+
+
+def _cut(pages: list[PageText], done: dict[str, dict]) -> dict[SourceRef, frozenset[int]]:
     slants = {
         SourceRef(p.number, int(k)): _leaning(v, _upright(done[str(p.number)]["slants"]))
         for p in pages
@@ -196,6 +214,156 @@ def _fill(leaning: list[bool | None]) -> list[int]:
             if before and after:
                 out.append(i)
     return out
+
+
+# The learned decision (`Trees`): gradient-boosted trees over each word's lean, its
+# neighbours', its line's and its page's, and its letters, trained on the golden pairs'
+# aligned words (`experiments/italic_words.py`). Counts of measured words are left out:
+# with them the trees picked out single pages of other books.
+FEATURES = (
+    "lean", "raw", "prev", "next", "prev2", "next2", "above_last", "below_first",
+    "line_mean", "line_lean_share", "pos", "page_up_vs_book",
+    "page_lean_share", "page_median_lean", "stems", "diagonals",
+    "cap_diag_initial", "acute", "capital", "letters",
+)  # fmt: skip
+MODEL_VERSION = 1
+# A word is italic where the trees give it at least this chance.
+ITALIC_P = 0.5
+_OPENERS = "'‘’\"“„("
+
+
+class Mismatch(Exception):
+    """The italic model is missing or was trained on other features."""
+
+
+@dataclass
+class Trees:
+    model: object  # a fitted classifier with predict_proba
+    features: tuple[str, ...]
+
+
+def features(pages: list[PageText], done: dict[str, dict]) -> dict[SourceRef, list[dict]]:
+    """Per text-layer line of `pages`, a feature row for each word of
+    `line.text.split(" ")` (None for an empty one); `done` is `measure`'s slants.
+
+    A word's lean counts from its page's upright (`_upright`); `page_up_vs_book` is that
+    upright against the median over `pages`. A line not measured has its words' slants
+    unknown (NaN), its page's still known.
+    """
+    nan = float("nan")
+    ups = {p.number: _upright(done[str(p.number)]["slants"]) for p in pages}
+    book_up = statistics.median(ups.values()) if ups else 0.0
+    out: dict[SourceRef, list[dict]] = {}
+    for p in pages:
+        sl = done[str(p.number)]["slants"]
+        up = ups[p.number]
+        measured = [a - up for line in sl.values() for a in line if a is not None]
+        page_share = sum(a >= ITALIC_AT for a in measured) / len(measured) if measured else nan
+        page_median = statistics.median(measured) if measured else nan
+        for k, ln in enumerate(p.lines):
+            words = ln.text.split(" ")
+            line = sl.get(str(k))
+            lean = _leaning(line, up) if line is not None and len(line) == len(words) else None
+            known = [a for a in (lean or []) if a is not None]
+            above = [a for a in (sl.get(str(k - 1)) or []) if a is not None]
+            below = [a for a in (sl.get(str(k + 1)) or []) if a is not None]
+
+            def at(j: int, lean=lean) -> float:
+                if lean is None or not 0 <= j < len(lean) or lean[j] is None:
+                    return nan
+                return float(lean[j])
+
+            rows: list[dict | None] = []
+            for i, w in enumerate(words):
+                if not w:
+                    rows.append(None)
+                    continue
+                bare = w.lstrip(_OPENERS)
+                rows.append({
+                    "lean": at(i),
+                    "raw": nan if math.isnan(at(i)) else at(i) + up,
+                    "prev": at(i - 1),
+                    "next": at(i + 1),
+                    "prev2": at(i - 2),
+                    "next2": at(i + 2),
+                    "above_last": above[-1] - up if above else nan,
+                    "below_first": below[0] - up if below else nan,
+                    "line_mean": statistics.mean(known) if known else nan,
+                    "line_lean_share": (
+                        sum(a >= ITALIC_AT for a in known) / len(known) if known else nan
+                    ),
+                    "pos": i / max(1, len(words) - 1),
+                    "page_up_vs_book": up - book_up,
+                    "page_lean_share": page_share,
+                    "page_median_lean": page_median,
+                    "stems": _stems(w),
+                    "diagonals": sum(c in DIAGONALS for c in w),
+                    "cap_diag_initial": int(bare[:1] in "AKVWXYZ" and bare[:1] != ""),
+                    "acute": int(any(c in "áéíóúÁÉÍÓÚ" for c in w)),
+                    "capital": int(bare[:1].isupper()),
+                    "letters": sum(c.isalpha() for c in w),
+                })  # fmt: skip
+            out[SourceRef(p.number, k)] = rows
+    return out
+
+
+def decide(
+    trees: Trees, rows: dict[SourceRef, list[dict | None]]
+) -> dict[SourceRef, frozenset[int]]:
+    """Per line, its words the trees call italic (at least `ITALIC_P`)."""
+    refs = [(ref, i) for ref, line in rows.items() for i, r in enumerate(line) if r is not None]
+    if not refs:
+        return {}
+    X = np.array([[rows[ref][i][k] for k in trees.features] for ref, i in refs], dtype=float)
+    p = trees.model.predict_proba(X)[:, 1]
+    out: dict[SourceRef, set[int]] = {}
+    for (ref, i), q in zip(refs, p, strict=True):
+        if q >= ITALIC_P:
+            out.setdefault(ref, set()).add(i)
+    return {ref: frozenset(v) for ref, v in out.items()}
+
+
+def train(rows: list[dict], labels: list[bool], books: list[str]) -> Trees:
+    """Trees fitted on feature `rows` with their reference `labels`, each of `books`
+    (one per row) weighing alike whatever its length."""
+    from sklearn.ensemble import HistGradientBoostingClassifier
+
+    sizes: dict[str, int] = {}
+    for b in books:
+        sizes[b] = sizes.get(b, 0) + 1
+    weight = [len(rows) / sizes[b] for b in books]
+    X = np.array([[r[k] for k in FEATURES] for r in rows], dtype=float)
+    model = HistGradientBoostingClassifier(
+        max_iter=200, learning_rate=0.1, max_depth=6, min_samples_leaf=500, random_state=0
+    )
+    model.fit(X, np.array(labels), sample_weight=np.array(weight))
+    return Trees(model, FEATURES)
+
+
+def save(trees: Trees, path: Path) -> None:
+    blob = {"version": MODEL_VERSION, "features": trees.features, "model": trees.model}
+    write_atomic(path, pickle.dumps(blob))
+
+
+def load(path: Path) -> Trees:
+    """The saved trees; a missing model, or one trained on other features, stops the build."""
+    if not path.exists():
+        raise Mismatch(
+            f"No italic model at {path}: train one (experiments/italic_words.py --save) "
+            "or set ROBO_ITALIC_TREES=0 for the cuts."
+        )
+    blob = pickle.loads(path.read_bytes())
+    if blob.get("version") != MODEL_VERSION or tuple(blob.get("features", ())) != FEATURES:
+        raise Mismatch(
+            f"The italic model {path} was trained on other features: retrain it "
+            "(experiments/italic_words.py --save) or set ROBO_ITALIC_TREES=0 for the cuts."
+        )
+    return Trees(blob["model"], FEATURES)
+
+
+def without(path: Path, book: str) -> Path:
+    """Where the model trained without `book` is kept, beside `path`."""
+    return path.with_name(f"{path.stem}-without-{book}{path.suffix}")
 
 
 # A motto or dedication is set in one type: at most this many of its words measured

@@ -394,11 +394,17 @@ def run(
         {p.number for p in body},
     )
     built, note_paragraphs = fixed[: len(built)], fixed[len(built) :]
+    shape = settings or Settings.from_env()
     blocks = italics.uniform(
         italics.mark(
             built,
             body,
-            italics.detect(book.source, body, book.stages / "italics.json"),
+            italics.detect(
+                book.source,
+                body,
+                book.stages / "italics.json",
+                italics.load(Path(shape.italic_model)) if shape.italic_trees else None,
+            ),
         )
     )
     if compound is not None:
