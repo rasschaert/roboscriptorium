@@ -119,6 +119,56 @@ def test_a_dropped_line_of_a_title_page_set_like_another_title_pages_heading_is_
     )
 
 
+def test_a_label_recurring_under_chapter_numbers_is_part_of_the_heading():
+    from roboscriptorium.typestyle import Style
+
+    def opening(n: int, lines: list[str]) -> PageText:
+        heads = [Line(t, 140, 60 + 40 * k, 180, 75 + 40 * k) for k, t in enumerate(lines)]
+        return PageText(n, 300, 500, heads + _full(n).lines[:3])
+
+    number, name = LineRole("chapter_heading", 0.9, 0.0), LineRole("artifact", 0.8, 0.02)
+    body = LineRole("body", 0.99, 0.99)
+    label = Style(1.6, 1.0, 1.0, True)
+    pages = [opening(11, ["ALEX"]), opening(20, ["2", "ALEX"]), opening(30, ["3", "RENEE"]),
+             opening(51, ["5", "ALEX"]), _full(52)]  # fmt: skip
+    roles, styles = {}, {}
+    for p in pages[:4]:
+        heads = len(p.lines) - 3
+        for i in range(len(p.lines)):
+            ref = SourceRef(p.number, i)
+            roles[ref] = body if i >= heads else (name if p.lines[i].text.isalpha() else number)
+            styles[ref] = label
+    for i in range(len(pages[4].lines)):
+        roles[SourceRef(52, i)] = body
+    out = chapters.title_lines(pages, roles, styles)
+    for ref in [SourceRef(20, 1), SourceRef(30, 1), SourceRef(51, 1)]:
+        assert out[ref].role == "chapter_heading"
+    # The same name opening a page whose number the layer lacks.
+    assert out[SourceRef(11, 0)].role == "chapter_heading"
+    # Under two headings only, the type isn't the book's own: both stay dropped.
+    two = {r: v for r, v in roles.items() if r.page != 51}
+    out = chapters.title_lines(pages[:3], two, styles)
+    assert out[SourceRef(20, 1)].role == "artifact" and out[SourceRef(11, 0)].role == "artifact"
+    # A running head over pages of text, though it recurs, is under no heading.
+    head = [PageText(n, 300, 500, [Line("HET SCHADUWHUIS", 120, 20, 200, 30)] + _full(n).lines[:3])
+            for n in range(60, 66)]  # fmt: skip
+    head_roles = {SourceRef(n, 0): name for n in range(60, 66)} | {
+        SourceRef(n, i): body for n in range(60, 66) for i in range(1, 4)}  # fmt: skip
+    head_styles = {SourceRef(n, 0): label for n in range(60, 66)}
+    out = chapters.title_lines(pages + head, roles | head_roles, styles | head_styles)
+    assert all(out[SourceRef(n, 0)].role == "artifact" for n in range(60, 66))
+    # Lines of more than a few words under the numbers are no labels.
+    long = {**styles}
+    pages_long = [opening(20, ["2", "Een motto van zes korte woorden"]),
+                  opening(30, ["3", "Een motto van zes korte woorden"]),
+                  opening(51, ["5", "Een motto van zes korte woorden"])]  # fmt: skip
+    long_roles = {SourceRef(n, 0): number for n in (20, 30, 51)} | {
+        SourceRef(n, 1): name for n in (20, 30, 51)} | {
+        SourceRef(n, i): body for n in (20, 30, 51) for i in range(2, 5)}  # fmt: skip
+    out = chapters.title_lines(pages_long, long_roles, long)
+    assert all(out[SourceRef(n, 1)].role == "artifact" for n in (20, 30, 51))
+
+
 def test_a_heading_in_its_confirmed_run_is_settled_a_lone_or_misread_one_not():
     blocks = []
     for k, t in enumerate(["1", "2", "3", "Proloog", "9", "SE"], 1):

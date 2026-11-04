@@ -2,24 +2,57 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-11-03 by the session that built Hoe wij verdwijnen and Pieter Daens.
+end of every session. Updated 2026-11-04 by the session that learned the italics.
 
 ## Running
 
-Nothing runs. The tuning set is grown to ~4,000 pages (batch two done 2026-11-03); today's
-baselines: `work/bench/tuning-20261103T160749` (after the italics change and Het
-schaduwhuis' italic classes; compare against it, not earlier runs: that book's reference
-changed) and `validation-20261103T155513`. Warm benches run in parallel: tuning ~13 min,
-validation ~3. The verdict counts italic errors since 2026-11-03.
+**`robo-italic-trees`** (started 2026-11-04 ~10:20, `work/runs/italic-trees.sh`): warm
+`bench tuning` then `bench validation` with `ROBO_ITALIC_TREES=1`, against
+`work/bench/tuning-20261103T160749-cc4eeb4-dirty.json` and
+`validation-20261103T155513-cc4eeb4-dirty.json`. It measures two changes together: the
+learned italic decision and the chapter labels (checklist, section "The machine finds
+what a reader would"). Logs: `work/runs/italic-trees-tuning.log`, `-validation.log`. If the
+laptop slept it may have stopped: `{ screen -ls || true; } | grep italic`, and rerun
+`experiments/detached.sh italic-trees work/runs/italic-trees.sh` (~13 + ~4 min, warm).
+The verdict decides the first open step below. Both changes are committed; the learned
+italics stay off until the verdict, the labels are on.
+
+Yesterday's baselines stand: tuning `tuning-20261103T160749` (italic errors 2,445,
+heading errors 104), validation `validation-20261103T155513` (328, 53).
 
 ## Waiting on the user (2026-11-03)
 
 - Hoe wij verdwijnen's **spot-check**: `open work/probes/spot-check/hoe-wij-verdwijnen/index.html`
   (PDF 41, 77, 87, 144, 292; count wrong words, breaks and italics per page); then its
-  read-through. The EPUB has all 53 answers. In progress: the user found "op" (p. 41) and
-  "een" (p. 144) set italic, both fixed in the pipeline (12 such words in the book); the
-  counts are of the build the page showed, before that fix.
+  read-through. The counts are of the build before the "op"/"een" italic fix.
 - Pieter Daens' **review**: 292 questions, `uv run roboscriptorium review work/pieter-daens`.
+
+## Done 2026-11-03 evening and 11-04 (decisions.md has every number)
+
+- **Not taken**: a lone word with a diagonal letter or acute accent held to 12° (tuning
+  italic errors 2,445 → 2,588): a capital Z or W leans the whole word ~26°, past any cut.
+  Patch in `work/probes/italics/`.
+- **Built: the learned italic decision** (`italics.Trees`, `experiments/italic_words.py`):
+  trees over each word's lean, its neighbours', its line's and page's, and its letters,
+  trained on the golden pairs' aligned words. Offline, each book left out: tuning italic
+  errors 2,123 → 798, validation 283 → 162. Lesson: counts of measured words let the
+  trees memorise single pages of other books (whole upright lines set italic); without
+  them, and with each book weighing alike, the trees generalise.
+- **Built: chapter labels** (`chapters.title_lines`): Het schaduwhuis' narrator names under
+  every chapter number, lost because the trees call them running heads, page numbers or
+  artifacts.
+- **Found**: the errors left, sorted (decisions.md 2026-11-03); tesseract's per-letter boxes
+  are real; Het schaduwhuis' chapters 1 and 4 have no number in the layer and none marked
+  by the spotter.
+
+## Next, for the agent
+
+1. The bench's verdict on the two changes (checklist: "Learned italics: bench verdict,
+   then on by default"; "Chapter labels recurring under headings").
+2. Chapter numbers the layer and the spotter both miss (checklist, same section).
+3. Then the open steps of docs/checklist.md in its order; idle machine time grows the
+   tuning slices. When the user brings the spot-check counts, the book's error estimate
+   with its interval goes in decisions.md and the checklist.
 
 ## Done 2026-11-01 and 02 (decisions.md has every number)
 
@@ -39,12 +72,6 @@ validation ~3. The verdict counts italic errors since 2026-11-03.
 - Also taken: quotes closed at a paragraph's end where the reading adds only the mark
   (39/39 on tuning); possessives after a sibilant ("Maurice’ moeder") no quote; the
   bench names a book whose unasked errors double (`bench.doubled`); bench in parallel.
-
-## Next, for the agent
-
-The open steps in docs/checklist.md, in its order; when the user brings the spot-check
-counts, the book's error estimate with its interval goes in decisions.md and the
-checklist. Idle machine time: grow the tuning slices further.
 
 ## Done 2026-10-25 and 26 (decisions.md has every number)
 

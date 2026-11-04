@@ -560,9 +560,40 @@ also part of the pipeline itself." Before either book goes to review:
 - [x] A build's comparison with the last shows italic changes (2026-11-03, `*word*`)
 - [x] Het schaduwhuis' reference had no italics (its e-book sets them by class):
       `italic_classes` declared, derived again (2026-11-03)
-- [ ] An italic decision learned from the golden pairs' aligned words (slant, stems,
-      neighbours, line position) in place of the cuts, once the bench's italic errors
-      are logged place by place
+- [x] ~~A lone word with a diagonal letter or acute accent held to 12°~~ (2026-11-03, not
+      taken): tuning italic errors 2,445 → 2,588; a capital Z or W leans the word ~26°
+- [ ] **Learned italics: bench verdict, then on by default** (2026-11-04). `italics.Trees`
+      built and trained (`experiments/italic_words.py --save`, 21 models in
+      `work/models/italics*.pkl`), off behind `ROBO_ITALIC_TREES`. Offline, each book left
+      out: tuning italic errors 2,123 → 798, validation 283 → 162. The warm bench of it
+      together with the chapter labels below (`work/runs/italic-trees.sh`, logs
+      `work/runs/italic-trees-{tuning,validation}.log`) was running at the handover. If
+      BETTER with no veto: set `italic_trees = True` in `config.py`, say so in
+      docs/how-it-works.md (Italics) and `docs/pipeline.d2` (the slant node: trees trained
+      on golden books), render the diagram, new baselines. If a book vetoes, read its
+      italic places (`bench-diff`) before anything else
+- [ ] **Chapter labels recurring under headings** (2026-11-04, `chapters.title_lines`
+      "label-recurs", on by default, in the same bench): Het schaduwhuis' "ALEX"/"RENEE"
+      under each number. On its own build 11 of 32 kept before the role widening; benched
+      after it. If the bench shows extra headings in another book, trace them first
+- [ ] Chapter numbers the layer and the spotter both miss (Het schaduwhuis 1 and 4, PDF
+      11 and 37): where the spotter marks a title box at one place on three sunk openings
+      or more, that box on every sunk opening lacking one becomes a missing-lines
+      candidate, only where it holds ink (a blank box must not become read text). Short
+      test on Het schaduwhuis, then the bench
+- [ ] De geruchten's section headings (validation, 0 of 21): a narrator's name in capitals
+      mid-page ("DOLF"), not under a number, so the label rule doesn't reach it; wait for a
+      tuning book that sets headings so
+- [ ] The 59 errors the build made where the layer was right (decisions.md, 2026-11-03):
+      a stop added after a word mid-sentence by another reader ("leopard.", "the. ground",
+      7) and emphasis accents added or dropped (16, about half the reference's); check
+      the arbiter's features for "a version adds a stop before a lower-case word"
+- [ ] (Low) An accent told from an i-dot or a speck by its shape over its own letter,
+      with tesseract's per-letter boxes (`hocr_char_boxes`, real since checked
+      2026-11-03); ~50 real accent errors left on tuning
+- [ ] (Low) Line-end compounds by definition: an all-capitals part before a lower-case
+      one keeps the hyphen ("NSB-leden"), a stem left open before "en" where the stem
+      plus the word after's ending is a word ("voor- en nadelen"); ~5 of 74 on tuning
 
 ## 3. The user's books after Stella
 

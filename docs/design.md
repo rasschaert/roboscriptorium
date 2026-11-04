@@ -709,6 +709,14 @@ trees). Pieter Daens' trees dropped three of its six part subtitles ("Meervoudig
 stemrecht", artifact 0.52–0.74) while keeping two set alike; the trees trained without
 Dolittle dropped 11 of its 14 chapter titles ("A MESSAGE FROM AFRICA", 0.80–0.83). Now
 Daens' five the layer holds and 13 of Dolittle's 14 are headings. Short test: all 52 numbers right (2026-11-01).
+A chapter's label works the same way where no heading's second line confirms it: a short
+dropped line (four words at most) between a heading and the text, in a type recurring
+under three headings or more, is part of the heading, and the same words opening a page
+with no heading are one too (`title_lines`, "label-recurs"). Het schaduwhuis prints its
+narrator, "ALEX" or "RENEE", under every chapter number; the trees call that line a running
+head, page number or artifact (0.56–0.91), so all 34 names were lost, and chapters 1 and 4,
+whose numbers the layer lacks, with them. The line under the heading may have any
+furniture role: a running head never sits between a chapter heading and its text.
 A heading its run confirms isn't asked in the review (`chapters.settled`): bare numbers
 each one more than the one before or after, titles opening on years in order ("1885:
 Een ramp" after "1840-1884: …", five or more), parts counted in words in order; nor is
@@ -782,6 +790,23 @@ few degrees off from becoming italic (the user's spot-check of Hoe wij verdwijne
 
 Benched 2026-11-03 warm: false italics 433 → 331 on tuning, 245 → 162 on validation,
 missed 2,022 → 1,995 and 166 → 166; no book worse by the veto.
+
+**The learned decision** (`italics.Trees`, `ROBO_ITALIC_TREES`, off until its bench says
+otherwise) replaces the cuts with gradient-boosted trees over each word's lean, its
+neighbours' and the lines' beside it, its line's and its page's share of leaning words,
+its page's upright against the book's, and its letters (stems, diagonals, a diagonal
+capital first, an acute accent). Labels are the golden pairs' aligned words
+(`experiments/italic_words.py`, 1.1 million words on tuning), each book weighing alike;
+a tuning book is scored by the copy trained without it. Why: the cuts can't reach two
+classes. A lone word opening on a capital Z or W leans ~26° from its page in roman, past
+any cut, while real lone italics with those letters lean 8–12° (the cut for them, not
+taken, 2026-11-03); and on a page set mostly in italic (Het geluid van bananen) the page's
+upright can't be found, so italic words leaning 5° read upright (1,227 missed). Left one
+book out at a time on tuning: italic errors 2,123 → 798 (missed 1,889 → 675, false
+234 → 123), every book better or level but Dolittle (+1); on validation, trained on all
+of tuning, 283 → 162. Counts of measured words are no feature: with them the trees
+picked out single pages of other books and set whole upright lines italic. The chance
+0.5, not 0.4 (634 errors on tuning but 39 more false italics, which a reader notices).
 
 ## A build against the last build
 

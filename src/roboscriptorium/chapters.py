@@ -72,12 +72,23 @@ def title_lines(
     """`roles` with a dropped line under a heading made a heading, where the book sets a
     heading's second line in the same type elsewhere: "Meervoudig stemrecht" under "BOEK
     TWEE" as "De cijnskiezers" under "BOEK EEN", Dolittle's "A MESSAGE FROM AFRICA" under
-    "THE FOURTH CHAPTER" as "PUDDLEBY" under the first. Only lines above the page's
-    running text, of `SUBTITLE_LETTERS` letters or more (a speck "i" is no subtitle).
-    Returns a new dict."""
+    "THE FOURTH CHAPTER" as "PUDDLEBY" under the first. Or where such dropped lines, of at
+    most `LABEL_WORDS` words, recur in one type under `RECUR` headings or more: Het
+    schaduwhuis' narrator, "ALEX" or "RENEE" under each chapter number; then the same
+    words opening a page with no heading are one too (a chapter whose number the layer
+    lacks). Only lines above the page's running text, of `SUBTITLE_LETTERS` letters or
+    more (a speck "i" is no subtitle). Returns a new dict."""
 
     def heading(ref: SourceRef) -> bool:
         return (role := roles.get(ref)) is not None and role.role == "chapter_heading"
+
+    def alike(a: Style, b: Style) -> bool:
+        return (
+            a.size is not None
+            and b.size is not None
+            and max(a.size, b.size) <= SAME_SIZE * min(a.size, b.size)
+            and a.capitals == b.capitals
+        )
 
     seconds = [
         styles[r]
@@ -87,7 +98,7 @@ def title_lines(
         and heading(SourceRef(p.number, i - 1))
         and r in styles
     ]
-    out = dict(roles)
+    dropped: list[tuple[SourceRef, Style, str]] = []  # under a heading, above the text
     for p in pages:
         above = False  # a heading above, and no running text yet
         for i, line in enumerate(p.lines):
@@ -98,18 +109,39 @@ def title_lines(
                 continue
             if is_body(role):
                 break
-            if not above or role.role != "artifact" or style is None or style.size is None:
+            # Dropped as furniture of any kind: the trees call such a line an artifact, a
+            # running head or a page number.
+            if not above or role is None or style is None or style.size is None:
                 continue
             letters = sum(c.isalpha() for c in line.text)
-            if letters < SUBTITLE_LETTERS or P.garbled(line):
-                continue
-            if any(
-                s.size is not None
-                and max(s.size, style.size) <= SAME_SIZE * min(s.size, style.size)
-                and s.capitals == style.capitals
-                for s in seconds
-            ):
-                out[ref] = LineRole("chapter_heading", role.confidence, 0.0, "subtitle-alike")
+            if letters >= SUBTITLE_LETTERS and not P.garbled(line):
+                dropped.append((ref, style, line.text.strip()))
+    labels = [
+        (ref, style, text)
+        for ref, style, text in dropped
+        if len(text.split()) <= LABEL_WORDS
+        and sum(alike(style, s) for _, s, t in dropped if len(t.split()) <= LABEL_WORDS) >= RECUR
+    ]
+    out = dict(roles)
+    for ref, style, _ in dropped:
+        if any(alike(style, s) for s in seconds):
+            out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, "subtitle-alike")
+    for ref, _, _ in labels:
+        out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, "label-recurs")
+    words = {text for _, _, text in labels}
+    for p in pages:
+        if not p.lines or any(heading(SourceRef(p.number, i)) for i in range(len(p.lines))):
+            continue
+        ref = SourceRef(p.number, 0)
+        role, style = roles.get(ref), styles.get(ref)
+        if (
+            role is not None
+            and not is_body(role)
+            and style is not None
+            and p.lines[0].text.strip() in words
+            and any(alike(style, s) for _, s, _ in labels)
+        ):
+            out[ref] = LineRole("chapter_heading", role.confidence, 0.0, "label-recurs")
     return out
 
 
@@ -245,6 +277,10 @@ def numbered(blocks: list[Block]) -> list[Block]:
 _PARTS = {"boek", "deel", "part", "book"}
 # A subtitle has at least this many letters ("i", a speck under a heading, has one).
 SUBTITLE_LETTERS = 4
+# A heading's dropped second line recurring in one type under this many headings, of at
+# most this many words, labels the book's chapters (a narrator's name, a place).
+RECUR = 3
+LABEL_WORDS = 4
 # A heading of a label word and a number as read ("HOOFDSTUK 11", "Hoorpstvk 13").
 _LABELLED = re.compile(r"^([^\W\d_]{4,})\s+([^\s]{1,3})\.?$")
 # A label at least this alike the book's commonest is that label misread ("HoOoeEpstvkK"
