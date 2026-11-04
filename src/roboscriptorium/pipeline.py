@@ -141,7 +141,8 @@ def run(
     if use_models:
         settings = settings or Settings.from_env()
         if regions is not None and ocrcheck.scanned(book.source):
-            found = missing.candidates(body, regions, _answered(answers))
+            placed = missing.openings(book.source, body, regions)
+            found = missing.candidates(body, placed, _answered(answers))
             readings = missing.read(
                 book.source,
                 found,

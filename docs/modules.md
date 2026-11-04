@@ -244,7 +244,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   page numbers, short lines of dialogue). A layout region about one line tall
   (up to five above a sunk page's text, where Artemis draws its chapter numbers in a
   circle) with no text-layer line in it is read by glm-ocr and added to a copy of the
-  page in reading order, before the line roles; figures, captions and regions
+  page in reading order, before the line roles; on a sunk opening the spotter boxed
+  nothing on, its usual box over openings, where that place holds ink (`openings`); figures, captions and regions
   a human answered are left alone. Scans only; cached in
   `stages/missing-lines.json`. Review answers find their lines again by text
   when lines are added above them.

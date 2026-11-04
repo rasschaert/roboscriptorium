@@ -568,7 +568,8 @@ also part of the pipeline itself." Before either book goes to review:
       out: tuning italic errors 2,123 → 798, validation 283 → 162. The warm bench of it
       together with the chapter labels below (`work/runs/italic-trees.sh`): tuning italic
       errors 2,445 → 1,088, headings 104 → 71, no word or break changed; WORSE only by Het
-      schaduwhuis' questions 100 → 117 (labelled numbers unsettled, fixed in 6d98102).
+      schaduwhuis' questions 100 → 117 (labelled numbers unsettled; 6d98102 didn't fix
+      it, the pairing fix of 2026-11-04 evening did: 102 → 69 on the short test).
       Bench it again; if
       BETTER with no veto: set `italic_trees = True` in `config.py`, say so in
       docs/how-it-works.md (Italics) and `docs/pipeline.d2` (the slant node: trees trained
@@ -579,10 +580,8 @@ also part of the pipeline itself." Before either book goes to review:
       under each number. On its own build 11 of 32 kept before the role widening; benched
       after it. If the bench shows extra headings in another book, trace them first
 - [ ] Chapter numbers the layer and the spotter both miss (Het schaduwhuis 1 and 4, PDF
-      11 and 37): where the spotter marks a title box at one place on three sunk openings
-      or more, that box on every sunk opening lacking one becomes a missing-lines
-      candidate, only where it holds ink (a blank box must not become read text). Short
-      test on Het schaduwhuis, then the bench
+      11 and 37): built (`missing.openings`), short test passed ("1 ALEX", "4 ALEX");
+      benched together with the learned italics above
 - [ ] De geruchten's section headings (validation, 0 of 21): a narrator's name in capitals
       mid-page ("DOLF"), not under a number, so the label rule doesn't reach it; wait for a
       tuning book that sets headings so

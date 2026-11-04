@@ -39,6 +39,16 @@ EDGE_GAP = 1.5
 # (Hoe wij verdwijnen's, Goede dochter's and Vals alarm's short replies overlap 0.35–0.38;
 # lines a pitch apart don't overlap).
 SAME_LINE = 0.3
+# Where the spotter marks a box above the text of this many sunk pages at one place, the
+# same place on a sunk page it marked nothing at is read too (`openings`).
+OPENING_PLACES = 3
+# A placed box holds print where this share of its pixels is dark (a blank opening's paper
+# reads 0.0, Het schaduwhuis' narrowest chapter number "1" 0.05) and a run of inked rows
+# spans this share of its height (a figure most of it; a speck, Doodskleed's on PDF 18,
+# a fifth).
+INK = 0.02
+INK_SPAN = 0.4
+INK_DPI = 150
 
 
 def _inside(line: Line, box) -> bool:
@@ -105,6 +115,95 @@ def candidates(
             )
         ]
     return found
+
+
+def _middle(page: PageText) -> float:
+    """The middle of the page's text column: of its lines near full width, else the page."""
+    wide = [(ln.x0 + ln.x1) / 2 for ln in page.lines if ln.x1 - ln.x0 > 0.6 * page.width]
+    return median(wide) if wide else page.width / 2
+
+
+def _fitted(doc: pymupdf.Document, number: int, r: Region, floor: float) -> Region | None:
+    """The box moved to the print found within half its height above or below it (never
+    down to `floor`, the page's first line): the longest run of inked rows, if it spans
+    `INK_SPAN` of the box's height and is dark enough (`INK`); else None (a blank place,
+    a speck)."""
+    h = r.y1 - r.y0
+    top, bottom = r.y0 - h / 2, min(r.y1 + h / 2, floor - 1)
+    pix = doc[number - 1].get_pixmap(
+        clip=pymupdf.Rect(r.x0, top, r.x1, bottom), dpi=INK_DPI, colorspace=pymupdf.csGRAY
+    )
+    w, data = pix.width, pix.samples
+    dark = [
+        sum(1 for v in data[y * pix.stride : y * pix.stride + w] if v < 128)
+        for y in range(pix.height)
+    ]
+    runs, start = [], None
+    for y, d in enumerate([*dark, 0]):
+        if d and start is None:
+            start = y
+        elif not d and start is not None:
+            runs.append((start, y))
+            start = None
+    if not runs:
+        return None
+    a, b = max(runs, key=lambda run: run[1] - run[0])
+    scale = (bottom - top) / pix.height
+    if (b - a) * scale < INK_SPAN * h or sum(dark[a:b]) < INK * w * h / scale:
+        return None
+    return replace(r, y0=top + a * scale - 1, y1=min(top + b * scale + 1, floor - 1))
+
+
+def openings(
+    pdf: Path, pages: list[PageText], regions: dict[int, list[Region]]
+) -> dict[int, list[Region]]:
+    """The regions with the spotter's usual box above a sunk opening's text placed on each
+    sunk opening it marked nothing at, where that place holds ink.
+
+    A chapter number the layer lacks is read only where the spotter boxed it; on some
+    openings it boxes nothing (Het schaduwhuis' chapters 1 and 4). The usual box is the
+    one standing, against its page's text column, where boxes stand on `OPENING_PLACES`
+    sunk pages or more; its place is their median. A blank opening (a prologue's) has no
+    ink there and gets no box, nor does a speck; a box found is fitted to its ink
+    (`_fitted`), as openings stand a few points apart.
+    """
+    heights = [ln.y1 - ln.y0 for p in pages for ln in p.lines]
+    if not heights:
+        return regions
+    tol = median(heights)
+    numbers = sunk_pages(pages)
+    sunk = [p for p in pages if p.number in numbers and p.lines]
+    boxes = []  # (page, label, x0, x1 against the column's middle, y0, y1)
+    for p in sunk:
+        mid, top = _middle(p), p.lines[0].y0
+        for r in regions.get(p.number, []):
+            if r.label not in SKIPPED and not r.turned and r.y1 <= top:
+                boxes.append((p.number, r.label, r.x0 - mid, r.x1 - mid, r.y0, r.y1))
+
+    def near(a, b) -> bool:
+        return (
+            abs((a[2] + a[3]) - (b[2] + b[3])) / 2 <= tol
+            and abs((a[4] + a[5]) - (b[4] + b[5])) / 2 <= tol
+        )
+
+    groups = [[b for b in boxes if near(a, b)] for a in boxes]
+    group = max(groups, key=lambda g: len({b[0] for b in g}), default=[])
+    if len({b[0] for b in group}) < OPENING_PLACES:
+        return regions
+    labels = [b[1] for b in group]
+    label = max(set(labels), key=labels.count)
+    place = [median(b[k] for b in group) for k in (2, 3, 4, 5)]
+    out = dict(regions)
+    with pymupdf.open(pdf) as doc:
+        for p in sunk:
+            mid = _middle(p)
+            r = Region(label, 0.0, mid + place[0], place[2], mid + place[1], place[3])
+            here = regions.get(p.number, [])
+            if r.y1 > p.lines[0].y0 or any(_overlap(r, h) for h in here):
+                continue
+            if fitted := _fitted(doc, p.number, r, p.lines[0].y0):
+                out[p.number] = [*here, fitted]
+    return out
 
 
 def edges(page: PageText, regions: list[Region], height: float) -> list[Region]:

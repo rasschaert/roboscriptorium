@@ -161,7 +161,9 @@ The spotter still sees something printed there.
 Where the spotter marks a region one line tall with no text-layer line in it, a
 reader, glm-ocr, reads that region (`missing.py`). Its reading is added to a copy
 of the page as a line of its own, in reading order, so the other models treat
-it like any other line. This happens on scans only.
+it like any other line. Where a chapter opening has nothing marked at the place the
+spotter marks a chapter number on the book's other openings, that place is read too,
+if there is ink there. This happens on scans only.
 
 ### Type, dashes and quotes
 

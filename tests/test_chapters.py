@@ -177,8 +177,10 @@ def test_a_heading_in_its_confirmed_run_is_settled_a_lone_or_misread_one_not():
 
 
 def test_a_number_with_its_label_and_a_recurring_label_are_settled_a_running_head_not():
-    def h(n: int, *parts: str) -> Heading:
-        return Heading(" ".join(parts), [SourceRef(n, i) for i in range(len(parts))], list(parts))
+    def h(n: int, *lines: str) -> Heading:
+        # As reflow sets them: a number and the line under it are one part ("2 ALEX").
+        text = " ".join(lines)
+        return Heading(text, [SourceRef(n, i) for i in range(len(lines))], [text])
 
     blocks = [h(11, "ALEX"), h(20, "2", "ALEX"), h(30, "3", "RENEE"), h(37, "ALEX"),
               h(51, "5", "ALEX"), h(55, "6", "RENEE"), h(66, "7", "ALEX")]  # fmt: skip

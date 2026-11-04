@@ -170,3 +170,46 @@ def test_a_read_line_over_a_misplaced_layer_line_takes_its_place_not_its_neighbo
     page2 = PageText(105, 300, 500, [lines[0], lines[2], Line("‘Dat doet", 25, 122, 60, 132)])
     out2 = missing.add([page2], [(105, gap)], {missing._key(105, gap): "‘Ja.’"})[0]
     assert len(out2.lines) == 4
+
+
+def _opening(number: int) -> PageText:
+    """A sunk opening: its text from y 100."""
+    lines = [Line(f"regel {i} van de tekst", 20, 100 + 15 * i, 320, 110 + 15 * i) for i in range(8)]
+    return PageText(number, 340, 580, lines)
+
+
+def _book(tmp_path, inked: set[int]):
+    """Pages 1–10 ordinary, their text from the top; 11–17 sunk openings."""
+    doc = pymupdf.open()
+    pages = []
+    for n in range(1, 18):
+        doc.new_page(width=340, height=580)
+        if n <= 10:
+            lines = [Line(f"regel {i}", 20, 30 + 15 * i, 320, 40 + 15 * i) for i in range(12)]
+            pages.append(PageText(n, 340, 580, lines))
+        else:
+            pages.append(_opening(n))
+    for n in inked:
+        doc[n - 1].draw_rect(pymupdf.Rect(165, 61, 175, 74), color=(0, 0, 0), fill=(0, 0, 0))
+    doc.save(tmp_path / "source.pdf")
+    return tmp_path / "source.pdf", pages
+
+
+def test_the_spotters_usual_box_over_openings_is_placed_where_it_marked_none(tmp_path):
+    # The spotter boxed the number on 11, 12 and 13 and none on 14; 15 is blank.
+    pdf, pages = _book(tmp_path, inked={11, 12, 13, 14})
+    boxes = ((11, 0), (12, 1), (13, -1))
+    regions = {n: [Region("title", 0.4, 163, 60 + d, 177, 76 + d)] for n, d in boxes}
+    placed = missing.openings(pdf, pages, regions)
+    assert placed[11] == regions[11]
+    assert [(r.label, r.confidence) for r in placed[14]] == [("title", 0.0)]
+    # Fitted to the printed figure, 61–74, a point either side.
+    assert (placed[14][0].y0, placed[14][0].y1) == pytest.approx((60, 75), abs=1)
+    assert 15 not in placed  # no ink at the place: a blank opening gets no box
+    assert (14, placed[14][0]) in missing.candidates(pages, placed, {})
+
+
+def test_two_boxes_over_openings_are_no_usual_place(tmp_path):
+    pdf, pages = _book(tmp_path, inked={11, 12, 14})
+    regions = {n: [Region("title", 0.4, 163, 60, 177, 76)] for n in (11, 12)}
+    assert missing.openings(pdf, pages, regions) == regions

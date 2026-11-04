@@ -414,6 +414,19 @@ high, which DocLayout-YOLO marks and glm-ocr reads right ("1", "2", "3"). Headin
 title in display type may be taller still (Pieter Daens' "Onze doden" under "BOEK VIJF",
 19 pt, p. 527): regions up to five lines tall are read there too.
 
+Where the spotter boxed nothing on a sunk opening, its usual box there is read: the
+place where it boxes something above the text on three sunk openings or more, against
+each page's text column, set on the openings it marked nothing at
+(`missing.openings`). Het schaduwhuis lost chapters 1 and 4 whole so (PDF 11, 37: no
+number in the layer, no box, though six other openings had one). Only where the place
+holds ink, fitted to it: dark pixels at least 2% of the box (a blank opening reads 0.0,
+the narrowest figure, "1", 0.05) in a run of inked rows at least 0.4 of its height, which
+a speck doesn't reach. Over the 39 built books (Een Russische roman, on hold, left out)
+it places eleven boxes in six, by eye all chapter numbers the build lost (Het schaduwhuis
+1 and 4, Het geluid van bananen "I" and "9", Het laatste bevel "3" and "4", The
+Stranger's Child "1" twice, Vuurspel "3" and "7", Hoe wij verdwijnen "5"); the height
+test turned away the one speck (Doodskleed PDF 18). The boxes go to the missing-lines stage only; the sorter sees what the spotter saw.
+
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
 same way: a speck in a page's top corner read "境", kept as the page's first line, then
 read by a page reader as a whole sentence the arbiter took. On a speck glm-ocr may answer with talk rather than a reading: "```markdown", or a letter

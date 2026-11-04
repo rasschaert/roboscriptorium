@@ -206,9 +206,13 @@ def settled(blocks: list[Block]) -> set[SourceRef]:
     out: set[SourceRef] = set()
 
     def lines(h: Heading) -> list[tuple[str, list[SourceRef]]]:
-        # Each part with its own line where they pair up; else the heading as one.
+        # Each part with its own line where they pair up; a number over the lines under
+        # it, which reflow sets as one part ("2 ALEX"), as its first; else the heading.
         if len(h.parts) > 1 and len(h.parts) == len(h.sources):
             return [(t, [s]) for t, s in zip(h.parts, h.sources, strict=True)]
+        first, _, rest = h.text.partition(" ")
+        if len(h.sources) > 1 and rest and value(first) is not None:
+            return [(first, h.sources[:1]), (rest, h.sources[1:])]
         return [(h.text, list(h.sources))]
 
     firsts = [lines(h)[0] for h in headings]

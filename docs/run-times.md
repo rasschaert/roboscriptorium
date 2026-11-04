@@ -649,3 +649,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-04 | bench tuning, learned italics and recurring chapter labels (warm) | 4000 | 12 | 1 |
 | 2026-11-04 | bench tuning, learned italics and recurring chapter labels (warm) | 4000 | 13 | 0 |
 | 2026-11-04 | bench validation, learned italics and recurring chapter labels (warm) | 0 | 4 | 0 |
+| 2026-11-04 | bench tuning, learned italics, labelled chapter numbers settled (warm) | 4000 | 13 | 0 |
