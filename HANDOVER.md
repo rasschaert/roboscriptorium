@@ -6,8 +6,7 @@ end of every session. Updated 2026-11-04 by the session that learned the italics
 
 ## Running
 
-Nothing, unless `robo-italic-trees`' validation half is still going
-(`{ screen -ls || true; } | grep italic`; log `work/runs/italic-trees-validation.log`).
+Nothing.
 
 **The tuning bench of the learned italics and the chapter labels** (2026-11-04,
 `tuning-20261104T092340-ed2234b`, against `tuning-20261103T160749`): italic errors
@@ -15,6 +14,8 @@ Nothing, unless `robo-italic-trees`' validation half is still going
 break changed. The verdict still read WORSE: after review 0.3208 → 0.3213, all from
 Het schaduwhuis' questions 100 → 117, its labelled numbers ("2 ALEX") no longer settled
 by their run. Fixed since (`chapters.settled`, commit 6d98102), not yet benched.
+Validation (`validation-20261104T…`): BETTER, no veto, italic errors 328 → 203, words,
+breaks and headings unchanged.
 
 ## Waiting on the user (2026-11-03)
 
