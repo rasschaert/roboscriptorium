@@ -176,6 +176,22 @@ def test_a_heading_in_its_confirmed_run_is_settled_a_lone_or_misread_one_not():
     assert chapters.settled(blocks) == {SourceRef(1, 0), SourceRef(2, 0), SourceRef(3, 0)}
 
 
+def test_a_number_with_its_label_and_a_recurring_label_are_settled_a_running_head_not():
+    def h(n: int, *parts: str) -> Heading:
+        return Heading(" ".join(parts), [SourceRef(n, i) for i in range(len(parts))], list(parts))
+
+    blocks = [h(11, "ALEX"), h(20, "2", "ALEX"), h(30, "3", "RENEE"), h(37, "ALEX"),
+              h(51, "5", "ALEX"), h(55, "6", "RENEE"), h(66, "7", "ALEX")]  # fmt: skip
+    out = chapters.settled(blocks)
+    assert {SourceRef(n, 0) for n in (20, 30, 51, 55, 66)} <= out
+    # "ALEX" stands under three numbers: settled there and alone; "RENEE" under two only.
+    assert {SourceRef(n, 1) for n in (20, 51, 66)} | {SourceRef(11, 0), SourceRef(37, 0)} <= out
+    assert SourceRef(30, 1) not in out and SourceRef(55, 1) not in out
+    # A title recurring only as a heading's first line (a running head taken for one) is asked.
+    heads = [h(n, "HET SCHADUWHUIS") for n in (60, 61, 62, 63)]
+    assert not chapters.settled(heads)
+
+
 def test_titles_opening_on_years_in_order_and_parts_counted_in_order_are_settled():
     texts = ["Woord vooraf", "BOEK EEN De cijnskiezers", "1840-1884: Aan de Dender",
              "1885: Een ramp", "1886: Jan Byl", "BOEK TWEE", "1887-1888: ‘De Toekomst’",

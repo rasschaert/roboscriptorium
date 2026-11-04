@@ -197,17 +197,31 @@ def value(text: str) -> int | None:
 def settled(blocks: list[Block]) -> set[SourceRef]:
     """The lines of headings their run confirms, so the review needn't ask about them
     (`blocks` after `numbered`): bare chapter numbers each one more than the one before
-    or after; titles opening on a year, at least `MIN_NUMBERED` of them, each later than
-    the one before ("1885: Een ramp" after "1840-1884: Aan de Dender"); parts counted in
-    words in order ("BOEK TWEE" after "BOEK EEN")."""
+    or after, judged on a heading's first line ("2" of "2 ALEX"); a line whose words stand
+    under `RECUR` headings' first lines or more (a narrator's "ALEX"), wherever they
+    stand; titles opening on a year, at least `MIN_NUMBERED` of them, each later than the
+    one before ("1885: Een ramp" after "1840-1884: Aan de Dender"); parts counted in words
+    in order ("BOEK TWEE" after "BOEK EEN")."""
     headings = [b for b in blocks if isinstance(b, Heading)]
     out: set[SourceRef] = set()
-    values = [value(h.text) for h in headings]
-    for k, (h, v) in enumerate(zip(headings, values, strict=True)):
+
+    def lines(h: Heading) -> list[tuple[str, list[SourceRef]]]:
+        # Each part with its own line where they pair up; else the heading as one.
+        if len(h.parts) > 1 and len(h.parts) == len(h.sources):
+            return [(t, [s]) for t, s in zip(h.parts, h.sources, strict=True)]
+        return [(h.text, list(h.sources))]
+
+    firsts = [lines(h)[0] for h in headings]
+    values = [value(t) for t, _ in firsts]
+    for k, ((text, refs), v) in enumerate(zip(firsts, values, strict=True)):
         before = values[k - 1] if k else None
         after = values[k + 1] if k + 1 < len(values) else None
-        if v is not None and (before == v - 1 or after == v + 1) and str(v) == h.text:
-            out |= set(h.sources)
+        if v is not None and (before == v - 1 or after == v + 1) and str(v) == text:
+            out |= set(refs)
+    # Recurring as a heading's second line, never its first: a label, not a running head.
+    labels = Counter(t for h in headings for t, _ in lines(h)[1:])
+    for h in headings:
+        out |= {r for t, refs in lines(h) if labels[t] >= RECUR for r in refs}
     for key in (_year, _part):
         run = [(h, n) for h in headings if (n := key(h.text)) is not None]
         if len(run) >= MIN_NUMBERED or key is _part and len(run) >= 2:
