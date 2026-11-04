@@ -422,10 +422,11 @@ number in the layer, no box, though six other openings had one). Only where the 
 holds ink, fitted to it: dark pixels at least 2% of the box (a blank opening reads 0.0,
 the narrowest figure, "1", 0.05) in a run of inked rows at least 0.4 of its height, which
 a speck doesn't reach. Over the 39 built books (Een Russische roman, on hold, left out)
-it places eleven boxes in six, by eye all chapter numbers the build lost (Het schaduwhuis
-1 and 4, Het geluid van bananen "I" and "9", Het laatste bevel "3" and "4", The
-Stranger's Child "1" twice, Vuurspel "3" and "7", Hoe wij verdwijnen "5"); the height
-test turned away the one speck (Doodskleed PDF 18). The boxes go to the missing-lines stage only; the sorter sees what the spotter saw.
+it places eleven boxes in six, by eye all chapter numbers. Six the build had lost (Het
+schaduwhuis 1 and 4, The Stranger's Child "1" twice, Vuurspel "3" and "7"); five a text
+region's strip above its first line had read already (Het geluid van bananen "I" and
+"9", Het laatste bevel "3" and "4", Hoe wij verdwijnen "5"), and the box stands in for
+the strip, read once. The height test turned away the one speck (Doodskleed PDF 18). The boxes go to the missing-lines stage only; the sorter sees what the spotter saw.
 
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
 same way: a speck in a page's top corner read "境", kept as the page's first line, then
@@ -804,8 +805,8 @@ few degrees off from becoming italic (the user's spot-check of Hoe wij verdwijne
 Benched 2026-11-03 warm: false italics 433 → 331 on tuning, 245 → 162 on validation,
 missed 2,022 → 1,995 and 166 → 166; no book worse by the veto.
 
-**The learned decision** (`italics.Trees`, `ROBO_ITALIC_TREES`, off until its bench says
-otherwise) replaces the cuts with gradient-boosted trees over each word's lean, its
+**The learned decision** (`italics.Trees`, on by default since 2026-11-04; `ROBO_ITALIC_TREES=0`
+for the cuts) replaces the cuts with gradient-boosted trees over each word's lean, its
 neighbours' and the lines' beside it, its line's and its page's share of leaning words,
 its page's upright against the book's, and its letters (stems, diagonals, a diagonal
 capital first, an acute accent). Labels are the golden pairs' aligned words

@@ -562,26 +562,13 @@ also part of the pipeline itself." Before either book goes to review:
       `italic_classes` declared, derived again (2026-11-03)
 - [x] ~~A lone word with a diagonal letter or acute accent held to 12°~~ (2026-11-03, not
       taken): tuning italic errors 2,445 → 2,588; a capital Z or W leans the word ~26°
-- [ ] **Learned italics: bench verdict, then on by default** (2026-11-04). `italics.Trees`
-      built and trained (`experiments/italic_words.py --save`, 21 models in
-      `work/models/italics*.pkl`), off behind `ROBO_ITALIC_TREES`. Offline, each book left
-      out: tuning italic errors 2,123 → 798, validation 283 → 162. The warm bench of it
-      together with the chapter labels below (`work/runs/italic-trees.sh`): tuning italic
-      errors 2,445 → 1,088, headings 104 → 71, no word or break changed; WORSE only by Het
-      schaduwhuis' questions 100 → 117 (labelled numbers unsettled; 6d98102 didn't fix
-      it, the pairing fix of 2026-11-04 evening did: 102 → 69 on the short test).
-      Bench it again; if
-      BETTER with no veto: set `italic_trees = True` in `config.py`, say so in
-      docs/how-it-works.md (Italics) and `docs/pipeline.d2` (the slant node: trees trained
-      on golden books), render the diagram, new baselines. If a book vetoes, read its
-      italic places (`bench-diff`) before anything else
-- [ ] **Chapter labels recurring under headings** (2026-11-04, `chapters.title_lines`
-      "label-recurs", on by default, in the same bench): Het schaduwhuis' "ALEX"/"RENEE"
-      under each number. On its own build 11 of 32 kept before the role widening; benched
-      after it. If the bench shows extra headings in another book, trace them first
-- [ ] Chapter numbers the layer and the spotter both miss (Het schaduwhuis 1 and 4, PDF
-      11 and 37): built (`missing.openings`), short test passed ("1 ALEX", "4 ALEX");
-      benched together with the learned italics above
+- [x] ~~Learned italics on by default~~ (2026-11-04): `italic_trees = True`; tuning italic
+      errors 2,445 → 1,088, validation 328 → 203, BETTER on both, no veto
+- [x] ~~Chapter labels recurring under headings~~ (2026-11-04): Het schaduwhuis' headings
+      32 → 67 of 68, no extra headings in another book
+- [x] ~~Chapter numbers the layer and the spotter both miss~~ (2026-11-04,
+      `missing.openings`): six lost numbers in three books read; Vuurspel's headings 5 → 6
+      of 6 on validation
 - [ ] De geruchten's section headings (validation, 0 of 21): a narrator's name in capitals
       mid-page ("DOLF"), not under a number, so the label rule doesn't reach it; wait for a
       tuning book that sets headings so

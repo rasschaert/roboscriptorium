@@ -237,8 +237,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   sets them in `<i>`; `eval` scores italic words. A slant counts from the page's
   upright (`_upright`); a word leaning alone on few stems needs `LONE_AT`, a run's
   neighbours reach over line ends (`_italic`). `uniform` sets a motto's or
-  dedication's lines in one type where all but one word agree. With `ROBO_ITALIC_TREES=1` the trees in
-  `work/models/italics.pkl` decide instead (`Trees`, `features`, `decide`; trained by
+  dedication's lines in one type where all but one word agree. The trees in
+  `work/models/italics.pkl` decide instead of the cuts (`ROBO_ITALIC_TREES=0` for the cuts) (`Trees`, `features`, `decide`; trained by
   `experiments/italic_words.py --save`, a copy without each tuning book for `bench`).
 - `missing.py`: printed lines the OCR layer lacks (bare chapter numbers,
   page numbers, short lines of dialogue). A layout region about one line tall

@@ -61,8 +61,9 @@ class Settings:
     sorter: bool = True
     sorter_model: str = "work/models/line-roles.pkl"
     # Italic words decided by trees over each word's slant and its neighbours'
-    # (`italics.Trees`) instead of the cuts in `italics._italic`.
-    italic_trees: bool = False
+    # (`italics.Trees`, trained on the golden pairs' words) instead of the cuts in
+    # `italics._italic` (`ROBO_ITALIC_TREES=0`).
+    italic_trees: bool = True
     italic_model: str = "work/models/italics.pkl"
     # The read model names each body page's heading and furniture lines from the page image
     # (`pageroles.py`), an input to the trees, which must be trained with it.

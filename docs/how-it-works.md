@@ -461,8 +461,10 @@ A hyphen at the end of a line stays or goes by evidence, strongest first:
 
 ### Italics, quotes, dashes, ellipses and figures
 
-Plain code finds italic words from the slant of each word's strokes on the page
-image (`italics.py`), and sets every dash between words and every ellipsis in the
+Italic words are found from the slant of each word's strokes on the page image
+(`italics.py`): plain code measures the slant, and trees learned from the golden books'
+words decide from it, the slant of the words around it, its line's and its page's, and
+its letters, which words are italic. Plain code sets every dash between words and every ellipsis in the
 book's one style (`typography.py`): the dash measured on the scan, the ellipsis's gaps
 measured there too (`word . . .` or `word...`) and its glyph read in the text layer,
 either one settled in `book.toml` when it sets it. A straight quote or apostrophe left
