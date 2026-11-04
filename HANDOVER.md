@@ -6,16 +6,19 @@ end of every session. Updated 2026-11-04 by the session that learned the italics
 
 ## Running
 
-Nothing.
+**Stella's rebuild** (2026-11-04 evening, `screen` `robo-stella-rebuild`, log
+`work/runs/stella-rebuild.log`): everything since its 2026-10-24 build, the learned italics
+now on by default. The user asked for it, and for **every text difference to be shown to
+them by eye**, even after the agent's own check: `experiments/rebuild_diff.py work/stella
+work/stella/epubs/stella-2026-10-19-0014.epub [notes.json]` writes
+`work/probes/rebuild-diff/stella/index.html` (crop, old and new words, the agent's note).
+The 10-24 build (text identical to the 10-19 one the user read) is kept in
+`work/probes/stella-rebuild/`.
 
-**The tuning bench of the learned italics and the chapter labels** (2026-11-04,
-`tuning-20261104T092340-ed2234b`, against `tuning-20261103T160749`): italic errors
-2,445 → 1,088, heading errors 104 → 71 (Het schaduwhuis 32 → 65 of 68), not a word or
-break changed. The verdict still read WORSE: after review 0.3208 → 0.3213, all from
-Het schaduwhuis' questions 100 → 117, its labelled numbers ("2 ALEX") no longer settled
-by their run. Fixed since (`chapters.settled`, commit 6d98102), not yet benched.
-Validation (`validation-20261104T…`): BETTER, no veto, italic errors 328 → 203, words,
-breaks and headings unchanged.
+**Benched and taken today** (decisions.md 2026-11-04): learned italics on by default,
+chapter labels, chapter numbers at the spotter's usual opening box, numbers over labels
+settled. Tuning italic errors 2,445 → 1,088, headings 104 → 69; validation 328 → 203,
+53 → 52. New baselines `tuning-20261104T211817`, `validation-20261104T212139`.
 
 ## Waiting on the user (2026-11-03)
 
@@ -44,14 +47,11 @@ breaks and headings unchanged.
 
 ## Next, for the agent
 
-1. Bench tuning again warm with `ROBO_ITALIC_TREES=1` (`work/runs/italic-trees.sh`, ~13 +
-   ~4 min) to confirm Het schaduwhuis' questions back to ~100 and the verdict BETTER;
-   then the learned italics on by default (checklist: "Learned italics: bench verdict,
-   then on by default"), new baselines.
-2. Chapter numbers the layer and the spotter both miss (checklist, same section).
-3. Then the open steps of docs/checklist.md in its order; idle machine time grows the
-   tuning slices. When the user brings the spot-check counts, the book's error estimate
-   with its interval goes in decisions.md and the checklist.
+1. Stella's diff page for the user (above), every difference with the agent's note.
+2. Then the open steps of docs/checklist.md in its order (next: the 59 errors the build
+   made where the layer was right); idle machine time grows the tuning slices. When the
+   user brings the spot-check counts, the book's error estimate with its interval goes in
+   decisions.md and the checklist.
 
 ## Done 2026-11-01 and 02 (decisions.md has every number)
 
