@@ -70,19 +70,44 @@ def test_a_full_stop_for_a_line_end_comma_is_kept_where_a_sentence_can_end():
     a0, a1 = line.index("huis,"), len(line)
     # A capital, a digit or no next line: a sentence may end there.
     for nxt in ("Hand in hand", "1944 was", ""):
-        assert not ocrcheck.stop_for_comma(line, a0, a1, "huis.", nxt, set())
+        assert not ocrcheck.line_end_stop(line, a0, a1, "huis.", nxt, set())
     # A word the book abbreviates ("bijv. de") may stop mid-sentence.
-    assert not ocrcheck.stop_for_comma(line, a0, a1, "huis.", "hand in hand", {"huis"})
+    assert not ocrcheck.line_end_stop(line, a0, a1, "huis.", "hand in hand", {"huis"})
     # Another change than the comma alone, or a comma inside the line, isn't this case.
-    assert not ocrcheck.stop_for_comma(line, a0, a1, "huís.", "hand", set())
-    assert not ocrcheck.stop_for_comma(line + " ze", a0, a1, "huis.", "hand", set())
+    assert not ocrcheck.line_end_stop(line, a0, a1, "huís.", "hand", set())
+    assert not ocrcheck.line_end_stop(line + " ze", a0, a1, "huis.", "hand", set())
 
 
 def test_a_full_stop_for_a_line_end_comma_before_lower_case_is_never_the_print():
     line = "van verbijstering in zijn stem,"
     a0, a1 = line.index("stem,"), len(line)
     for nxt in ("kreeg geen lucht", "‘dat kon ik niet", "(en dan"):
-        assert ocrcheck.stop_for_comma(line, a0, a1, "stem.", nxt, set())
+        assert ocrcheck.line_end_stop(line, a0, a1, "stem.", nxt, set())
+
+
+def test_a_full_stop_added_at_a_line_end_is_kept_where_a_sentence_can_end_or_it_isnt_one():
+    line = "kon ik elk moment in slaap"
+    a0, a1 = line.index("slaap"), len(line)
+    # A capital or no next line; a word the book abbreviates; a stop inside the line;
+    # an ellipsis growing a dot; another change besides the stop.
+    for nxt in ("Vallen deed ik", ""):
+        assert not ocrcheck.line_end_stop(line, a0, a1, "slaap.", nxt, set())
+    assert not ocrcheck.line_end_stop(line, a0, a1, "slaap.", "vallen", {"slaap"})
+    assert not ocrcheck.line_end_stop(line + " nu", a0, a1, "slaap.", "vallen", set())
+    dots = "hij knoeide.."
+    assert not ocrcheck.line_end_stop(dots, 4, len(dots), "knoeide...", "zonder", set())
+    assert not ocrcheck.line_end_stop(line, a0, a1, "slaap!", "vallen", set())
+    assert not ocrcheck.line_end_stop(line, a0, a1, "slaaq.", "vallen", set())
+
+
+def test_a_full_stop_added_at_a_line_end_before_lower_case_is_never_the_print():
+    # The trust data: 11 of 11 never the print ("slaap." / "vallen", "shipped." / "here").
+    line = "kon ik elk moment in slaap"
+    a0, a1 = line.index("slaap"), len(line)
+    for nxt in ("vallen — meer of minder diep", "‘en toen", "(en dan"):
+        assert ocrcheck.line_end_stop(line, a0, a1, "slaap.", nxt, set())
+    quoted = "zei ze: ‘ik weet het’"
+    assert ocrcheck.line_end_stop(quoted, quoted.index("het’"), len(quoted), "het’.", "en", set())
 
 
 def test_an_accent_on_one_letter_of_a_doubled_vowel_is_never_the_print():

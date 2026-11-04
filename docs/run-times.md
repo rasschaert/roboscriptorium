@@ -653,3 +653,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-04 | bench tuning, learned italics, opening boxes, numbers over labels settled (warm) | 4000 | 13 | 0 |
 | 2026-11-04 | bench validation, learned italics, opening boxes, numbers over labels settled (warm) | 0 | 3 | 0 |
 | 2026-11-04 | build stella, all changes since 2026-10-24 (warm) | 67 | 0 | 0 |
+| 2026-11-04 | arbiter offline, leave one out, before the stop-before-lower feature | 0 | 26 | 0 |
+| 2026-11-04 | arbiter offline, leave one out, with the stop-before-lower feature | 0 | 26 | 0 |
+| 2026-11-04 | bench tuning, a stop added at a line end before lower case no version (warm) | 4000 | 13 | 0 |
+| 2026-11-04 | bench validation, a stop added at a line end before lower case no version (warm) | 0 | 3 | 0 |

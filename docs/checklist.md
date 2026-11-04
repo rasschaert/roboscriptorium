@@ -572,10 +572,11 @@ also part of the pipeline itself." Before either book goes to review:
 - [ ] De geruchten's section headings (validation, 0 of 21): a narrator's name in capitals
       mid-page ("DOLF"), not under a number, so the label rule doesn't reach it; wait for a
       tuning book that sets headings so
-- [ ] The 59 errors the build made where the layer was right (decisions.md, 2026-11-03):
-      a stop added after a word mid-sentence by another reader ("leopard.", "the. ground",
-      7) and emphasis accents added or dropped (16, about half the reference's); check
-      the arbiter's features for "a version adds a stop before a lower-case word"
+- [x] ~~Stops added after a word before lower case~~ (2026-11-04, `line_end_stop` widened):
+      4 of the 7 fixed on tuning; "the. ground" (Artemis) is no suspect, from another stage
+- [ ] The rest of the 59 errors the build made where the layer was right (decisions.md,
+      2026-11-03): emphasis accents added or dropped (16, about half the reference's),
+      Thief-Taker's "Bérrén", De vergelding's names
 - [ ] (Low) An accent told from an i-dot or a speck by its shape over its own letter,
       with tesseract's per-letter boxes (`hocr_char_boxes`, real since checked
       2026-11-03); ~50 real accent errors left on tuning
@@ -649,7 +650,7 @@ In this order:
       against the word list. Een Russische roman's became "democratie- en", taken for a
       word left open before "en" (`hyphens._suspended`, "voor- en nadelen"). True by
       definition, so code; no other case in the latest benches
-- [x] ~~A comma at a line's end turned into a stop by the check~~: done 2026-10-24 as a rule true by definition (`ocrcheck.stop_for_comma`; tuning 0.290 → 0.286, 6 fixed, none made). Before it (2026-10-20: decisions.md; the two arbiter features below were tried and NOT taken, tuning 0.29 → 0.30, glued or split words worse; look for another handle, or a rule true by definition): add
+- [x] ~~A comma at a line's end turned into a stop by the check~~: done 2026-10-24 as a rule true by definition (`ocrcheck.line_end_stop`, widened 2026-11-04 to a stop added after the last word; tuning 0.290 → 0.286, 6 fixed, none made). Before it (2026-10-20: decisions.md; the two arbiter features below were tried and NOT taken, tuning 0.29 → 0.30, glued or split words worse; look for another handle, or a rule true by definition): add
       "the next line opens in lower case" and "the span ends its line" as arbiter features at
       the next trust-data rebuild; 22 unasked errors in De vergelding and De kerk van de dode
       meisjes, 7 certain (a stop before lower case). Resolution doesn't help the readers.

@@ -263,8 +263,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `read_model`'s (qwen3.8) of the crop, told the book's typesetting
   (`stages/third-reading.json`; readings by another model or prompt are kept aside
   in `third-reading.<hash>.json` and come back when asked for). A version that only turns
-  the line's closing comma into a stop before a lower-case line is dropped
-  (`stop_for_comma`), unless the book abbreviates the word (`abbreviations`); so is one
+  the line's closing comma into a stop, or only adds one after its last word, before a
+  lower-case line is dropped (`line_end_stop`), unless the book abbreviates the word (`abbreviations`); so is one
   that accents one letter of a doubled a, o or u (`half_accent`) or brings in `~`, `^` or
   `|` (`garbled`). Where a line's readings differ, clef picks from
   the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence. The learned trust

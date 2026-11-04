@@ -244,7 +244,7 @@ def check(
                     alternatives = [
                         v
                         for v in alternatives
-                        if not stop_for_comma(ours, a0, a1, v, around[1], shortened)
+                        if not line_end_stop(ours, a0, a1, v, around[1], shortened)
                         and not half_accent(ours[a0:a1], v)
                         and not garbled(ours[a0:a1], v)
                     ]
@@ -313,14 +313,23 @@ def garbled(ours: str, version: str) -> bool:
     return bool(_GARBLED.search(version)) and not _GARBLED.search(ours)
 
 
-def stop_for_comma(
+def line_end_stop(
     ours: str, a0: int, a1: int, version: str, next_line: str, shortened: set[str]
 ) -> bool:
-    """Whether `version` only turns the comma that ends the line into a full stop while
-    the next line opens in lower case. No sentence ends there, so it is never the print,
-    unless the word is one the book abbreviates (`abbreviations`)."""
+    """Whether `version` only ends the line on a full stop, for its closing comma or after
+    a last word with no mark, while the next line opens in lower case. No sentence ends
+    there, so it is never the print, unless the word is one the book abbreviates
+    (`abbreviations`)."""
     span = ours[a0:a1]
-    if a1 != len(ours.rstrip()) or not span.endswith(",") or version != span[:-1] + ".":
+    if a1 != len(ours.rstrip()):
+        return False
+    if span.endswith(","):
+        stopped = span[:-1] + "."
+    elif span and (span[-1].isalnum() or span[-1] in "’'\"”"):
+        stopped = span + "."
+    else:
+        return False
+    if version != stopped:
         return False
     first = _FIRST_LETTER.match(next_line.strip())
     if not first or not first.group(1).islower():
