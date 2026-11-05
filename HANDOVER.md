@@ -6,14 +6,16 @@ end of every session. Updated 2026-11-04 by the session that learned the italics
 
 ## Running
 
-**The line-role trees retrained with bare page numbers never labelled body** (2026-11-05
-night, `screen` `robo-sorter-folios`, `work/runs/sorter-folios.sh`: offline score, `--save`,
-bench tuning and validation warm). Uncommitted: `sorterdata.folio_label` and its test.
-**The run's `--save` overwrites `work/models/line-roles*.pkl`**: if either bench says WORSE,
-restore the models in use with `cp work/models/line-roles-2026-11-05-bak/*.pkl work/models/`
-before anything else builds. The number-run feature and the plain retrain were not taken
-(decisions.md 2026-11-05). The user is away for many hours (2026-11-04 evening): keep
-working down the checklist, then grow the slices (batch two, commit 3e6177c).
+**Slice growth batch three** (started 2026-11-05 ~02:00, `screen` `robo-grow4`,
+`work/runs/grow4.sh`, log `work/runs/grow4-tuning.log`): nine tuning books scored whole
+(Het schaduwhuis to PDF 328), ~512 pages cold, one book at a time, ~7.7 h; then the trust
+data rebuilt warm for the eight with trust data. Against `tuning-20261104T225300`; the run
+it makes is the new tuning baseline. While it holds Ollama, build no tuning book (the
+bench writes their caches).
+
+The line-role trees in use are the 2026-10-20 ones: three retrains on the grown slices kept
+more stray lines (decisions.md 2026-11-05); `experiments/sorter_keep.py` checks the next
+attempt in a minute. The user is away for many hours (2026-11-04 evening).
 
 Stella's rebuild (2026-11-04 evening) changed no text against the build the user read;
 the user wants every difference of a read book's rebuild shown to them by eye
