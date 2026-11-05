@@ -667,3 +667,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-05 | train_sorter --save, folios never body | 0 | 1 | 0 |
 | 2026-11-05 | bench tuning, line-role trees retrained, folios never body (warm) | 4000 | 13 | 0 |
 | 2026-11-05 | golden overview regenerated (no models) | 0 | 14 | 0 |
+| 2026-11-05 | bench tuning, nine books whole (cold for ~512 new pages, one book at a time) | 512 | 401 | 0 |
