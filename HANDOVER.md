@@ -19,7 +19,7 @@ against `validation-20261104T225622`: the night's four heading changes, committe
 (`chapters.run_gaps`, the sunk-first-line exemption from the repetition rule, titled
 openings in `chapters.openings`, `missing._junk`; decisions.md 2026-11-05). Built as the
 bench builds them they mend Monterosso 7 → 18 of 22, Vals alarm 13 more, Het ijzige land
-22 → 30, Reis 2, Artemis 3. If it says WORSE, read `bench-diff` and revert the culprit.
+22 → 30 and Reis 2; Artemis' three circles are newly read, not yet built. If it says WORSE, read `bench-diff` and revert the culprit.
 
 The line-role trees in use are the 2026-10-20 ones: three retrains on the grown slices kept
 more stray lines (decisions.md 2026-11-05); `experiments/sorter_keep.py` checks the next
