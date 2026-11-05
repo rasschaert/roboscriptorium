@@ -495,7 +495,10 @@ where layout settles the question. The rules don't carry over to unseen books
 books and 29 to 77 on validation, leaving one book out (five English books now, where
 three made them unstable). Three things are enforced in code, being true by definition or
 by every label: text repeated at the pages' edges is furniture (346 labelled lines, none
-body); a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
+body), except a page's first line set well below where running heads stand
+(`page.sunk_first_lines`), which is none: Vals alarm opens 13 chapters on "11 Later",
+"12 Eerder", …, alike within the repeat count's edit budget, and all were running heads
+(2026-11-05; now headings, no other line changed on the books checked, decisions.md); a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
 line costs ten words, a stray folio one or two); and a line the role model wasn't asked
 about, away from the edges and inside a text block the layout model is sure of, stays
 body: the trees dropped such full-width prose (Crime pp. 36, 42 and 98, a whole line

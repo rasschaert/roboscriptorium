@@ -244,12 +244,16 @@ def apply(
         return {}
     probs = sorter.model.predict_proba(_matrix([found[r] for r in refs], sorter.features))
     classes = list(sorter.model.classes_)
+    # A page's first line set well below where running heads stand is none.
+    sunk_first = P.sunk_first_lines(pages)
     out = {}
     for ref, p in zip(refs, probs, strict=True):
         best = classes[int(p.argmax())]
         p_body = float(p[classes.index("body")])
         f = found[ref]
-        repeated = f["repeats"] >= HEADING_MAX_REPEATS
+        repeated = f["repeats"] >= HEADING_MAX_REPEATS and not (
+            ref.line == 0 and ref.page in sunk_first
+        )
         edge = f["i_top"] < P.EDGE_LINES_TOP or f["i_bottom"] < P.EDGE_LINES_BOTTOM
         if repeated and (best == "heading" or edge and f["chars"] >= FURNITURE_CHARS):
             # A heading appears once, and text repeated at the pages' edges is furniture.

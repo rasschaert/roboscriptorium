@@ -75,6 +75,28 @@ def test_a_heading_repeated_on_other_pages_is_a_running_head():
     assert {roles[SourceRef(n, 0)].role for n in range(5, 10)} == {"running_head"}
 
 
+def test_a_labelled_number_opening_sunk_pages_is_no_running_head_though_it_recurs():
+    # Vals alarm: "11 Later", "13 Later" open sunk pages, where no running head stands;
+    # its ordinary pages' text starts at the top.
+    pages = []
+    for n in range(5, 15):
+        lines = [Line(f"Gewone tekst {i}", 10, 30 + 15 * i, 280, 40 + 15 * i) for i in range(12)]
+        pages.append(PageText(n, 300, 500, lines))
+    for n, label in ((20, "11 Later"), (30, "13 Later"), (40, "16 Later"), (50, "21 Later")):
+        lines = [Line(label, 120, 110, 180, 122)]
+        lines += [Line(f"Gewone tekst {i}", 10, 150 + 15 * i, 280, 160 + 15 * i) for i in range(8)]
+        pages.append(PageText(n, 300, 500, lines))
+
+    class Headings(_Trees):
+        def predict_proba(self, X):
+            out = np.tile([0.9, 0.05, 0.05], (len(X), 1))
+            out[X[:, sorter.FEATURES.index("sunk")] == 1.0] = [0.05, 0.9, 0.05]
+            return out
+
+    roles = sorter.apply(sorter.Sorter(Headings()), pages, {}, {})
+    assert {roles[SourceRef(n, 0)].role for n in (20, 30, 40, 50)} == {"chapter_heading"}
+
+
 def test_running_text_away_from_the_edges_is_never_dropped_unasked():
     from roboscriptorium.layout import Region
 
