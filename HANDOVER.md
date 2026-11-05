@@ -40,6 +40,12 @@ Nothing. Baselines `tuning-20261105T081806` (tuning ~4,500 pages since batch thr
 
 ## Next, for the agent
 
+0. **Bench the mid-line stop rule first**: `git apply work/runs/midline-stop.patch`, then
+   `work/runs/midline-stop.sh` (warm, ~17 min; stopped at the user's word when they packed
+   up, 2026-11-05). It widens `ocrcheck.line_end_stop` to a stop added inside a line right
+   before a lower-case letter, no quote mark between (trust data: 30 of 30 never the print,
+   a comma read as that stop 96 of 99); the quote-mark exception keeps the case that sank
+   the 2026-10-24 mid-line try ("stem. ‘dat"). Tests are in the patch.
 1. The open steps of docs/checklist.md in its order. Candidates found tonight: the build's
    own unasked errors (60 on tuning, h read as b: "buis", "bij", "bet", "hidden"); the
    line-role trees retrained without keeping stray lines (checklist, with ideas); De eerlijke
