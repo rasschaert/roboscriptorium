@@ -13,6 +13,14 @@ data rebuilt warm for the eight with trust data. Against `tuning-20261104T225300
 it makes is the new tuning baseline. While it holds Ollama, build no tuning book (the
 bench writes their caches).
 
+**Queued behind it**: `screen` `robo-headings` (`work/runs/headings-after-grow4.sh`) waits
+for `robo-grow4` to end, then benches tuning warm against batch three's run and validation
+against `validation-20261104T225622`: the night's four heading changes, committed unbenched
+(`chapters.run_gaps`, the sunk-first-line exemption from the repetition rule, titled
+openings in `chapters.openings`, `missing._junk`; decisions.md 2026-11-05). Built as the
+bench builds them they mend Monterosso 7 → 18 of 22, Vals alarm 13 more, Het ijzige land
+22 → 30, Reis 2, Artemis 3. If it says WORSE, read `bench-diff` and revert the culprit.
+
 The line-role trees in use are the 2026-10-20 ones: three retrains on the grown slices kept
 more stray lines (decisions.md 2026-11-05); `experiments/sorter_keep.py` checks the next
 attempt in a minute. The user is away for many hours (2026-11-04 evening).
