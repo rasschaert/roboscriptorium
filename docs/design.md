@@ -439,7 +439,11 @@ number is the drawing misread, not a line (`_junk`): Artemis' circled 8, 12 and 
 "ae", "/", "a", and the spotter's boxes around them were left to those lines. Over all
 books about 90 boxes are read so that weren't; a sample of twelve by eye held eleven
 chapter numbers or labels ("EEN", "VIJF", "IV", "13", "41") and a scene break, which reads
-with no letter and is dropped (2026-11-05).
+with no letter and is dropped (2026-11-05). Where glm-ocr answers with talk instead of a reading
+(`missing.talk`), the read model reads the box, and its reading is taken only where it
+reads as a number: on Artemis' circled 11 it reads "11" where glm-ocr says "```markdown";
+on Doodskleed's corner specks it invents sentences ("‘Ik heb het niet gedaan,’ zei hij."
+eight times over 46 such boxes), which a whole-reading fallback would have made lines.
 
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
 same way: a speck in a page's top corner read "境", kept as the page's first line, then

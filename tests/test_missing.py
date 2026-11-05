@@ -232,3 +232,14 @@ def test_junk_the_layer_read_in_the_drawing_neither_blocks_nor_hides_the_placed_
     assert (14, spotted[14][0]) in missing.candidates(pages, spotted, {})
     pages[k] = PageText(14, 340, 580, [replace(junk, text="Io"), *pages[k].lines[1:]])
     assert all(n != 14 for n, _ in missing.candidates(pages, spotted, {}))
+
+
+def test_a_reading_that_is_the_models_talk_goes_to_another_reader_a_reading_or_a_smudge_not():
+    found = [
+        (5, Region("abandon", 0.5, 10, 10, 30, 30)),
+        (6, Region("abandon", 0.5, 10, 10, 30, 30)),
+    ]
+    found += [(7, Region("abandon", 0.5, 10, 10, 30, 30))]
+    readings = {missing._key(*found[0]): "```markdown", missing._key(*found[1]): "11"}
+    readings[missing._key(*found[2])] = "."  # a smudge: no letter, dropped by `add`
+    assert missing.talk(found, readings) == [found[0]]

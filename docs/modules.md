@@ -246,7 +246,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   circle) with no text-layer line in it is read by glm-ocr and added to a copy of the
   page in reading order, before the line roles; on a sunk opening the spotter boxed
   nothing on, its usual box over openings, where that place holds ink (`openings`);
-  above a sunk page's text the layer's short junk in a drawing counts as no line (`_junk`); figures, captions and regions
+  above a sunk page's text the layer's short junk in a drawing counts as no line (`_junk`);
+  where glm-ocr talks instead of reading (`talk`), the read model's reading of the box
+  is taken if it reads as a number; figures, captions and regions
   a human answered are left alone. Scans only; cached in
   `stages/missing-lines.json`. Review answers find their lines again by text
   when lines are added above them.

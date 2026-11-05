@@ -150,6 +150,19 @@ def run(
                 settings.ollama_url,
                 book.stages / "missing-lines.json",
             )
+            if talked := missing.talk(found, readings):
+                # Where glm-ocr talked instead of reading, the read model's reading is taken
+                # only as a number: on specks it invents sentences (Doodskleed).
+                boxes = [(n, (r.x0, r.y0, r.x1, r.y1)) for n, r in talked]
+                again = readers.region_readings(
+                    book.source, boxes, settings.read_model, settings.ollama_url,
+                    book.stages / "question-readings.json", read_prompt(book, whole, style, dots),
+                )  # fmt: skip
+                readings |= {
+                    missing._key(n, r): again[(n, b)]
+                    for (n, r), (_, b) in zip(talked, boxes, strict=True)
+                    if chapters.value(again[(n, b)]) is not None
+                }
             body = missing.add(body, found, readings)
         client = decide.for_model(settings.role_model, settings.ollama_url)
         cache = DecisionCache(book.stages / "decisions.jsonl")

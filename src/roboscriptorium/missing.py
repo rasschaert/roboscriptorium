@@ -285,6 +285,14 @@ def _printed(text: str) -> bool:
     return all(not c.isalpha() or unicodedata.name(c, "").startswith("LATIN") for c in text)
 
 
+def talk(found: list[tuple[int, Region]], readings: dict[str, str]) -> list[tuple[int, Region]]:
+    """The candidates whose reading is the model's talk, not printed text (`_printed`): for
+    another reader. glm-ocr answers "```markdown" on Artemis' circled 11; the read model
+    reads it, but on a corner speck invents a sentence, so the pipeline takes its reading
+    only as a number."""
+    return [(n, r) for n, r in found if not _printed(readings.get(_key(n, r), ""))]
+
+
 def add(
     pages: list[PageText], found: list[tuple[int, Region]], readings: dict[str, str]
 ) -> list[PageText]:
