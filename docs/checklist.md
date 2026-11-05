@@ -575,7 +575,10 @@ also part of the pipeline itself." Before either book goes to review:
       Afscheid's running heads as text. Check each attempt with `experiments/sorter_keep.py`
       (stray lines kept at 0.25: 214 today) before a bench. Ideas: the running head's
       recurrence counted over its chapter rather than the book; the stray lines weighed by
-      the words they add, as the bench counts them
+      the words they add, as the bench counts them. Also the trees' own: Het heft's
+      datelines under its headings ("Februari 1829", "Maart 1829 / Wadham Gardens,
+      Londen") joined to them (the retrain set them back as text), and its "88" mid-page
+      on PDF 92 a heading (0.62)
 - [ ] De geruchten's section headings (validation, 0 of 21): a narrator's name in capitals
       mid-page ("DOLF"), not under a number, so the label rule doesn't reach it; wait for a
       tuning book that sets headings so

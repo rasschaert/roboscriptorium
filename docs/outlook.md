@@ -213,6 +213,20 @@ Don't repeat these without a new reason (details in docs/decisions.md):
 - **An italic cut drawn from the book's own italic runs** (2026-11-03): a book's single
   emphasised words lean less than its runs (Artemis lost 20); the stems a word is
   measured on separate a misread lean from emphasis instead.
+- **An arbiter feature for a stop added before a lower-case word** (2026-11-04): wrong 30 of
+  30 in the trust data mid-line, but the bench's cases sat at line ends, out of the
+  arbiter's sight; offline noise (42 → 41 silent at a question a page). Taken as a rule
+  instead (`line_end_stop`), where the next line is known: 4 unasked words fixed.
+- **A number line's run through the book as a line-role feature** (2026-11-05): tuning
+  errors 354 → 359 offline; Monterosso's mid-page numbers unchanged. Mended by the book's
+  own run instead (`chapters.run_gaps`).
+- **The line-role trees retrained on the grown slices** (2026-11-05), plain, with bare page
+  numbers never labelled body, and with every book weighing alike: each kept more stray
+  lines at the 0.25 keep line (214 → 255, 261, 221), Dolittle's few-page running heads and
+  Afscheid's garbled picture text; the bench vetoed the first two. `experiments/sorter_keep.py`
+  now judges a retrain in a minute.
+- **Tesseract on Artemis' circled chapter numbers** (2026-11-05), as a fallback where
+  glm-ocr talks: it reads none ("aes", "Co)", "=o").
 
 ## Inference speed: what a cold page costs, and what's been tried
 
