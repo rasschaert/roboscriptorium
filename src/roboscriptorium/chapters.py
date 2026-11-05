@@ -41,7 +41,9 @@ _MISREADS = str.maketrans("IilOoSsZz", "111005522")
 
 def openings(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[SourceRef, LineRole]:
     """`roles` with a short line set apart atop a sunk page made a chapter heading, where
-    most of the book's set-apart sunk openings start on one. Returns a new dict."""
+    most of the book's set-apart sunk openings start on one; a title of words too, where
+    most of those headings are words, even one the trees took for body (Reis om mijn
+    schedel's "Een gebaar in het vensterglas", 0.60). Returns a new dict."""
     sunk = P.sunk_pages(pages)
     apart = [p for p in pages if p.number in sunk and P.set_apart_opening(p)]
     if len(apart) < MIN_OPENINGS:
@@ -49,18 +51,20 @@ def openings(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[So
     headed = [p for p in apart if _role(roles, p) == "chapter_heading"]
     if len(headed) < OPENINGS_WITH_HEADING * len(apart):
         return roles
+    titled = sum(1 for p in headed if len(p.lines[0].text.strip()) > NUMBER_CHARS)
+    words = titled > len(headed) / 2
     out = dict(roles)
     for p in apart:
         ref = SourceRef(p.number, 0)
         role = roles.get(ref)
-        if role is None or is_body(role) or role.role == "chapter_heading":
+        if role is None or role.role == "chapter_heading" or is_body(role) and not words:
             continue
         line = p.lines[0]
         text = line.text.strip()
         # A speck in a corner reads as "-" or "." and stands aside; a number is centred.
         full, _ = P.geometry(p)
         if (
-            len(text) <= NUMBER_CHARS
+            (len(text) <= NUMBER_CHARS or words)
             and any(c.isalnum() for c in text)
             and P.centred_on_page(line, p, full)
         ):

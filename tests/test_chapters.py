@@ -87,6 +87,25 @@ def test_a_dropped_short_line_atop_an_opening_is_a_heading_where_the_others_are(
     assert chapters.openings(pages, roles)[SourceRef(51, 0)].role == "artifact"
 
 
+def test_a_title_of_words_atop_an_opening_is_a_heading_where_the_others_are_titles():
+    def titled(number: int, title: str) -> PageText:
+        page = _page(number, None)
+        width = 6 * len(title)
+        head = Line(title, 165 - width / 2, 80, 165 + width / 2, 92)
+        return PageText(number, 330, 450, [head, *page.lines])
+
+    titles = ["De smalfilm", "Ziekenbezoek", "Chrysanten", "Addis Abeba", "Olivecrona"]
+    titles.append("Het vonnis wordt uitgesproken")
+    pages = []
+    for k, title in enumerate(titles):
+        pages += [titled(10 * k + 1, title), _full(10 * k + 2), _full(10 * k + 3)]
+    heading = LineRole("chapter_heading", 0.9, 0.0)
+    roles = {SourceRef(10 * k + 1, 0): heading for k in range(5)}
+    for p_body in (0.44, 0.6):
+        roles[SourceRef(51, 0)] = LineRole("body", p_body, p_body, "trees")
+        assert chapters.openings(pages, roles)[SourceRef(51, 0)].role == "chapter_heading"
+
+
 def test_a_dropped_line_of_a_title_page_set_like_another_title_pages_heading_is_one():
     from roboscriptorium.typestyle import Style
 

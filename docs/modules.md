@@ -392,7 +392,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   apart as an epigraph, a dedication's as a dedication, a table of contents left out (`Paragraph.dedication`, `epigraphs.DEDICATION`), which `epub.py` sets as
   one `div epub:type="dedication"`.
 - `chapters.py`: a book's numbered chapters (`openings`: a short line set apart atop a
-  sunk page is a heading where most of the book's such openings carry one, applied to
+  sunk page is a heading where most of the book's such openings carry one, a title of
+  words too where most of those headings are words, applied to
   the roles after the sorter; `numbered`: each short heading of a run of numbers set to
   its number, old-style look-alikes folded, a lone unreadable one settled by both
   neighbours, on the reflowed blocks; `title_lines`: a dropped line under a heading set

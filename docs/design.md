@@ -726,7 +726,12 @@ clef:27b's vote). `chapters.numbered` sets each short heading of a run (five or 
 half following the one before) to its number: old-style look-alikes folded where they
 fit ("Io" → 10, "S2" → 52), an unreadable one only where both neighbours agree on it
 ("SE" between 50 and 52). Numbering is true by definition, so this is code, not a
-learned decision. A heading's second line likewise: a dropped line under a heading,
+learned decision. In a book whose headed openings are mostly titles of words, a title set
+apart atop a sunk opening is a heading too, even one the trees took for body: Reis om
+mijn schedel's "Een gebaar in het vensterglas" (P(body) 0.60) and "Het vonnis wordt
+uitgesproken" (0.44), six words, which the trees read as a line of text, where its 21
+other titles were headings (2026-11-05; no other line changed on the books checked).
+Its two titles long enough to wrap aren't set apart, and stay lost. A heading's second line likewise: a dropped line under a heading,
 above the page's running text, of four letters or more, is a heading where the book
 sets another heading's second line in the same type (`chapters.title_lines`, after the
 trees). Pieter Daens' trees dropped three of its six part subtitles ("Meervoudig
