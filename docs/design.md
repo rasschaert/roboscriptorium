@@ -738,6 +738,16 @@ narrator, "ALEX" or "RENEE", under every chapter number; the trees call that lin
 head, page number or artifact (0.56–0.91), so all 34 names were lost, and chapters 1 and 4,
 whose numbers the layer lacks, with them. The line under the heading may have any
 furniture role: a running head never sits between a chapter heading and its text.
+A number dropped mid-page that fills a gap in the run is a heading too
+(`chapters.run_gaps`, after the trees): in reading order it reads past the run so far by
+at most three and short of the next heading's number, centred, not the page's printed
+number, and not a page's first or last line (where page numbers stand) unless it opens a
+sunk page; the book needs five numbered headings. Monterosso sets its chapters mid-page
+between white lines; the trees trained without it call them specks (artifact 0.65–1.0),
+and kept 7 of 22. A feature for the run (does a number line continue one) and the trees
+retrained on the grown slices didn't take (decisions.md, 2026-11-05). Short test, built
+as the bench builds it: 7 → 18 of 22 (the other four aren't in the layer); not one line
+changed on the ten validation books, Stella, Hoe wij verdwijnen or Ex-minnaar.
 A heading its run confirms isn't asked in the review (`chapters.settled`): bare numbers
 each one more than the one before or after, titles opening on years in order ("1885:
 Een ramp" after "1840-1884: …", five or more), parts counted in words in order; nor is

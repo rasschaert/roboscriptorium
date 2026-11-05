@@ -30,6 +30,10 @@ MIN_OPENINGS = 5
 # At least this many headings, and half of them following the one before, make a run.
 MIN_NUMBERED = 5
 RULE = "book-openings"
+# A dropped number filling a gap in the run of headings (`run_gaps`) is at most this far
+# past the run's last number: two chapters in a row the layer lost, then this one.
+RUN_GAP = 3
+RUN_RULE = "chapter-run"
 
 # How the layer misreads old-style figures: a 1 as I or l, a 0 as o, a 5 as S, a 2 as Z.
 _MISREADS = str.maketrans("IilOoSsZz", "111005522")
@@ -61,6 +65,56 @@ def openings(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[So
             and P.centred_on_page(line, p, full)
         ):
             out[ref] = LineRole("chapter_heading", role.confidence, 0.0, RULE)
+    return out
+
+
+def run_gaps(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[SourceRef, LineRole]:
+    """`roles` with a dropped line made a chapter heading where it fills a gap in the book's
+    run of numbered headings: in reading order it reads a number past the run so far (by
+    at most `RUN_GAP`) and short of the next heading's, centred, not the page's printed
+    number, and not a page's first or last line, where page numbers stand, unless it opens
+    a sunk page. Monterosso's chapters set mid-page between white lines ("4" between "3"
+    and "5") are dropped as specks by the trees. Needs `MIN_NUMBERED` numbered headings.
+    Returns a new dict."""
+    offset = P.page_offset(pages)
+    sunk = P.sunk_pages(pages)
+    order = [(p, i) for p in pages for i in range(len(p.lines))]
+    anchors = [
+        (k, v)
+        for k, (p, i) in enumerate(order)
+        if (r := roles.get(SourceRef(p.number, i))) is not None
+        and r.role == "chapter_heading"
+        and (v := value(p.lines[i].text)) is not None
+    ]
+    if len(anchors) < MIN_NUMBERED:
+        return roles
+    out = dict(roles)
+    run = None  # the last number of the run, in reading order
+    nxt = iter(anchors + [(len(order), None)])
+    upcoming = next(nxt)
+    for k, (p, i) in enumerate(order):
+        while upcoming[0] < k:
+            upcoming = next(nxt)
+        ref = SourceRef(p.number, i)
+        role = roles.get(ref)
+        v = value(p.lines[i].text)
+        if upcoming[0] == k:
+            run = upcoming[1]
+            continue
+        if role is None or is_body(role) or role.role == "chapter_heading" or v is None:
+            continue
+        edge = i in (0, len(p.lines) - 1) and not (i == 0 and p.number in sunk)
+        full, _ = P.geometry(p)
+        if (
+            run is not None
+            and run < v <= run + RUN_GAP
+            and (upcoming[1] is None or v < upcoming[1])
+            and not edge
+            and not P.printed_page_number(p.lines[i].text.strip(), p, offset)
+            and P.centred_on_page(p.lines[i], p, full)
+        ):
+            out[ref] = LineRole("chapter_heading", role.confidence, 0.0, RUN_RULE)
+            run = v
     return out
 
 

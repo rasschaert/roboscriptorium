@@ -241,3 +241,71 @@ def test_a_heading_running_on_into_the_sentence_below_is_body_a_real_one_stays()
         13, 360, 500, [page.lines[0], Line("A NICE BOTTLE OF", 120, 80, 240, 92), *full]
     )
     assert chapters.running_text([narrow], roles)[SourceRef(13, 1)].role == "chapter_heading"
+
+
+def _mid_page(number: int, *texts: str) -> PageText:
+    """A page of full lines, with each of `texts` as a short centred line in the middle."""
+    lines = [
+        Line(f"tekst {k} van de bladzijde", 20, 40 + 15 * k, 320, 50 + 15 * k) for k in range(6)
+    ]
+    y = 40 + 15 * 6
+    for t in texts:
+        lines.append(Line(t, 165, y, 175, y + 10))
+        y += 15
+    lines += [
+        Line(f"verder {k} op de bladzijde", 20, y + 15 * k, 320, y + 10 + 15 * k) for k in range(6)
+    ]
+    return PageText(number, 340, 580, lines)
+
+
+def _roles(pages: list[PageText], headings: dict[int, str]) -> dict:
+    body = LineRole("body", 0.9, 0.9, "model")
+    out = {}
+    for p in pages:
+        for i, ln in enumerate(p.lines):
+            dropped = len(ln.text) <= 3
+            heading = headings.get(p.number) == ln.text
+            role = "chapter_heading" if heading else "artifact" if dropped else None
+            out[SourceRef(p.number, i)] = LineRole(role, 0.8, 0.1, "trees") if role else body
+    return out
+
+
+def test_a_dropped_number_filling_the_runs_gap_is_a_heading_others_not():
+    # Headings 1, 2, 5, 6, 7 kept; "3" and "4" dropped mid-page between them; then "9".
+    texts = {10: "1", 11: "2", 12: "3", 13: "4", 14: "5", 15: "6", 16: "7", 17: "9", 18: "13"}
+    pages = [_mid_page(n, t) for n, t in texts.items()]
+    roles = _roles(pages, {10: "1", 11: "2", 14: "5", 15: "6", 16: "7"})
+    out = chapters.run_gaps(pages, roles)
+    mid = 6  # each page's number line
+    assert out[SourceRef(12, mid)].role == out[SourceRef(13, mid)].role == "chapter_heading"
+    # Past the run within `RUN_GAP` ("9" after "7") is taken; too far ("13" after "9") not.
+    assert out[SourceRef(17, mid)].role == "chapter_heading"
+    assert out[SourceRef(18, mid)].role == "artifact"
+    assert all(out[SourceRef(p.number, 0)] == roles[SourceRef(p.number, 0)] for p in pages)
+
+
+def test_a_page_number_a_number_off_centre_or_past_the_next_heading_is_no_gap():
+    texts = {10: "1", 11: "2", 14: "5", 15: "6", 16: "7"}
+    pages = [_mid_page(n, t) for n, t in texts.items()]
+    # Page 12 ends on a lone "3" (where its page number would stand); page 13's "4" stands
+    # off the middle; page 14 holds a "6" before its heading "5".
+    last = _mid_page(12)
+    last = PageText(12, 340, 580, [*last.lines, Line("3", 165, 560, 175, 570)])
+    aside = _mid_page(13)
+    aside = PageText(
+        13, 340, 580, [*aside.lines[:6], Line("4", 20, 130, 30, 140), *aside.lines[6:]]
+    )
+    early = _mid_page(14, "6", "5")
+    pages = [pages[0], pages[1], last, aside, early, pages[3], pages[4]]
+    roles = _roles(pages, {10: "1", 11: "2", 14: "5", 15: "6", 16: "7"})
+    out = chapters.run_gaps(pages, roles)
+    assert out[SourceRef(12, len(last.lines) - 1)].role == "artifact"
+    assert out[SourceRef(13, 6)].role == "artifact"
+    assert out[SourceRef(14, 6)].role == "artifact"
+
+
+def test_too_few_numbered_headings_make_no_run():
+    texts = {10: "1", 11: "2", 12: "3", 13: "4"}
+    pages = [_mid_page(n, t) for n, t in texts.items()]
+    roles = _roles(pages, {10: "1", 11: "2", 13: "4"})
+    assert chapters.run_gaps(pages, roles) == roles
