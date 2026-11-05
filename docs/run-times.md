@@ -663,3 +663,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-05 | train_sorter --save on the grown slices' lines (cached) | 0 | 1 | 0 |
 | 2026-11-05 | bench tuning, line-role trees retrained on the grown slices (warm) | 4000 | 13 | 0 |
 | 2026-11-05 | bench validation, line-role trees retrained on the grown slices (warm) | 0 | 4 | 0 |
+| 2026-11-05 | sorter scored, bare folios at page edges never body (cached lines) | 0 | 2 | 0 |
+| 2026-11-05 | train_sorter --save, folios never body | 0 | 1 | 0 |
+| 2026-11-05 | bench tuning, line-role trees retrained, folios never body (warm) | 4000 | 13 | 0 |

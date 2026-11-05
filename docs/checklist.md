@@ -569,6 +569,13 @@ also part of the pipeline itself." Before either book goes to review:
 - [x] ~~Chapter numbers the layer and the spotter both miss~~ (2026-11-04,
       `missing.openings`): six lost numbers in three books read; Vuurspel's headings 5 → 6
       of 6 on validation
+- [ ] Line-role trees that keep the grown slices' gains without keeping stray lines
+      (2026-11-05, decisions.md): retrained on the grown slices they find Monterosso's
+      mid-page chapter numbers (7 → 15 of 22) and Reis' (16 → 19), but keep Dolittle's and
+      Afscheid's running heads as text. Check each attempt with `experiments/sorter_keep.py`
+      (stray lines kept at 0.25: 214 today) before a bench. Ideas: the running head's
+      recurrence counted over its chapter rather than the book; the stray lines weighed by
+      the words they add, as the bench counts them
 - [ ] De geruchten's section headings (validation, 0 of 21): a narrator's name in capitals
       mid-page ("DOLF"), not under a number, so the label rule doesn't reach it; wait for a
       tuning book that sets headings so

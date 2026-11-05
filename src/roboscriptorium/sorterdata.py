@@ -42,12 +42,24 @@ RULES = {"text": "body", "heading": "heading", "dropped": "other"}
 BODY_WEIGHT = float(os.environ.get("SORTER_BODY_WEIGHT", "10"))
 
 
+def folio_label(row: dict) -> str:
+    """A line's label, a bare printed page number at a page's top or foot "other" whatever
+    the aligner matched it to: the aligner takes some for a number in the text nearby (Au
+    pair's "130" on PDF 132), and each such body label, weighing `BODY_WEIGHT`, taught the
+    trees to keep Dolittle's running heads with their page numbers."""
+    f = row["f"]
+    edge = f["i_top"] == 0 or f["i_bottom"] == 0
+    folio = f["page_number"] == 1.0 and f["digits_only"] == 1.0
+    return "other" if edge and folio and row["label"] == "body" else row["label"]
+
+
 def lines(spec: str, rebuild: bool = False) -> list[dict]:
-    """A slice's lines, each with its features, its label and the rules' role, cached."""
+    """A slice's lines, each with its features, its label (`folio_label`) and the rules'
+    role, cached."""
     name, pages, chapters = (spec.split(":") + ["", ""])[:3]
     path = OUT / f"{name}.json"
     if path.exists() and not rebuild:
-        return json.loads(path.read_text())
+        return [r | {"label": folio_label(r)} for r in json.loads(path.read_text())]
     book = Book.load(Path("work") / name)
     settings = replace(Settings.from_env(), sorter=False, page_roles=False)
     stages = pipeline.run(
@@ -81,7 +93,7 @@ def lines(spec: str, rebuild: bool = False) -> list[dict]:
         for ref, f in found.items()
     ]
     write_atomic(path, json.dumps(rows))
-    return rows
+    return [r | {"label": folio_label(r)} for r in rows]
 
 
 def fit(rows: list[dict]) -> sorter.Sorter:

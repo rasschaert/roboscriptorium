@@ -133,3 +133,20 @@ def test_the_page_roles_are_features_only_for_trees_trained_with_them(tmp_path):
     sorter.save(sorter.Sorter(_Trees()), tmp_path / "plain.pkl")
     with pytest.raises(sorter.Mismatch, match="ROBO_PAGE_ROLES"):
         sorter.load(tmp_path / "plain.pkl", page_roles=True)
+
+
+def test_a_bare_page_number_at_a_pages_edge_is_never_a_body_label():
+    from roboscriptorium.sorterdata import folio_label
+
+    def row(label: str, top: int, bottom: int, folio: float, digits: float) -> dict:
+        f = {"i_top": top, "i_bottom": bottom, "page_number": folio, "digits_only": digits}
+        return {"f": f, "label": label}
+
+    assert folio_label(row("body", 30, 0, 1.0, 1.0)) == "other"  # "130" at the foot
+    assert folio_label(row("body", 0, 30, 1.0, 1.0)) == "other"
+    # Not: a line mid-page, a line with words beside its number, one that isn't the page's
+    # number, or a heading label.
+    assert folio_label(row("body", 12, 18, 1.0, 1.0)) == "body"
+    assert folio_label(row("body", 30, 0, 1.0, 0.0)) == "body"
+    assert folio_label(row("body", 30, 0, 0.0, 1.0)) == "body"
+    assert folio_label(row("heading", 0, 30, 1.0, 1.0)) == "heading"
