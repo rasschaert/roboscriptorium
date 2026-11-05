@@ -6,20 +6,10 @@ end of every session. Updated 2026-11-04 by the session that learned the italics
 
 ## Running
 
-**Slice growth batch three** (started 2026-11-05 ~02:00, `screen` `robo-grow4`,
-`work/runs/grow4.sh`, log `work/runs/grow4-tuning.log`): nine tuning books scored whole
-(Het schaduwhuis to PDF 328), ~512 pages cold, one book at a time, ~7.7 h; then the trust
-data rebuilt warm for the eight with trust data. Against `tuning-20261104T225300`; the run
-it makes is the new tuning baseline. While it holds Ollama, build no tuning book (the
-bench writes their caches).
-
-**Queued behind it**: `screen` `robo-headings` (`work/runs/headings-after-grow4.sh`) waits
-for `robo-grow4` to end, then benches tuning warm against batch three's run and validation
-against `validation-20261104T225622`: the night's five heading changes, committed unbenched
-(`chapters.run_gaps`, the sunk-first-line exemption from the repetition rule, titled
-openings in `chapters.openings`, `missing._junk`, the read model's number where glm-ocr talks; decisions.md 2026-11-05). Built as the
-bench builds them they mend Monterosso 7 → 18 of 22, Vals alarm 13 more, Het ijzige land
-22 → 30 and Reis 2; Artemis' three circles are newly read, not yet built. If it says WORSE, read `bench-diff` and revert the culprit.
+**Done overnight (2026-11-05)**: slice growth batch three (nine tuning books whole, tuning
+~4,500 pages), then the night's five heading changes benched and taken: heading errors on
+tuning 75 → 32, no word made (decisions.md). Baselines `tuning-20261105T072224`,
+`validation-20261105T072609`.
 
 The line-role trees in use are the 2026-10-20 ones: three retrains on the grown slices kept
 more stray lines (decisions.md 2026-11-05); `experiments/sorter_keep.py` checks the next
