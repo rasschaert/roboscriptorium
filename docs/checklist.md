@@ -588,9 +588,11 @@ also part of the pipeline itself." Before either book goes to review:
       tuning book that sets headings so
 - [x] ~~Stops added after a word before lower case~~ (2026-11-04, `line_end_stop` widened):
       4 of the 7 fixed on tuning; "the. ground" (Artemis) is no suspect, from another stage
-- [ ] The rest of the 59 errors the build made where the layer was right (decisions.md,
-      2026-11-03): emphasis accents added or dropped (16, about half the reference's),
-      Thief-Taker's "Bérrén", De vergelding's names
+- [ ] The rest of the errors the build makes where the layer was right (60 unasked on
+      tuning, 2026-11-05): emphasis accents added or dropped (16, about half the
+      reference's), punctuation swapped (12), h read as b in Dutch words ("huis" → "buis",
+      "hij" → "bij", "het" → "bet", "bidden" → "hidden", an English word), De vergelding's
+      names ("Bijlsma" → "Bulsma")
 - [ ] (Low) An accent told from an i-dot or a speck by its shape over its own letter,
       with tesseract's per-letter boxes (`hocr_char_boxes`, real since checked
       2026-11-03); ~50 real accent errors left on tuning

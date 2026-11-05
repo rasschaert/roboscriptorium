@@ -2,61 +2,70 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-11-04 by the session that learned the italics.
+end of every session. Updated 2026-11-05 morning by the session that mended the headings.
 
 ## Running
 
-**Done overnight (2026-11-05)**: slice growth batch three (nine tuning books whole, tuning
-~4,500 pages), then the night's five heading changes benched and taken: heading errors on
-tuning 75 → 32, no word made (decisions.md). Baselines `tuning-20261105T072224`,
-`validation-20261105T072609`.
+Nothing. Baselines `tuning-20261105T075718` (tuning ~4,500 pages since batch three),
+`validation-20261105T080033`.
 
-The line-role trees in use are the 2026-10-20 ones: three retrains on the grown slices kept
-more stray lines (decisions.md 2026-11-05); `experiments/sorter_keep.py` checks the next
-attempt in a minute. The user is away for many hours (2026-11-04 evening).
+## Done 2026-11-04 evening to 11-05 morning (decisions.md has every number)
 
-Stella's rebuild (2026-11-04 evening) changed no text against the build the user read;
-the user wants every difference of a read book's rebuild shown to them by eye
-(`experiments/rebuild_diff.py <book> <old.epub> [notes.json]`).
+- **Taken, all benched**:
+  - learned italics on by default (tuning italic errors 2,445 → 1,088, validation 328 → 203);
+  - a number over its label settled ("2 ALEX"): the first fix (6d98102) settled nothing,
+    its test built headings unlike reflow;
+  - chapter numbers read where the spotter's usual box over openings stands, where ink is
+    (`missing.openings`): Het schaduwhuis' chapters 1 and 4;
+  - a full stop added after a line's last word before a lower-case line no version
+    (`ocrcheck.line_end_stop`): 4 unasked words;
+  - five heading changes, heading errors on tuning 75 → 32, no word made:
+    `chapters.run_gaps` (Monterosso's mid-page numbers), a sunk page's first line no running
+    head (Vals alarm's "11 Later", Het ijzige land), titles of words atop openings
+    (`chapters.openings`, Reis), the layer's junk in a drawing no line (`missing._junk`,
+    Artemis' circled numbers), the read model's number where glm-ocr talks;
+  - a line repeated under a page's running head no second running head (Artemis'
+    salutations, 18 words).
+- **Slice growth batch three**: nine tuning books whole (~512 pages, ~6 h cold); its run
+  WORSE on one variant only, from Artemis' salutations, mended since.
+- **Not taken**: an arbiter feature for stops before lower case (out of its sight); a
+  number-run feature for the line-role trees; three retrains of those trees on the grown
+  slices (each keeps more stray lines: Dolittle's running heads, Afscheid's picture text);
+  tesseract on drawn numbers.
+- **New instruments**: `experiments/sorter_keep.py` (line-role trees scored as the build
+  keeps lines, a minute; it foretold both retrains' vetoes); `experiments/rebuild_diff.py`
+  (a read book's rebuild, every changed word beside its scan crop, for the user).
+- **Stella** rebuilt: no text changed against the build the user read.
 
-**Benched and taken today** (decisions.md 2026-11-04): learned italics on by default,
-chapter labels, chapter numbers at the spotter's usual opening box, numbers over labels
-settled. Tuning italic errors 2,445 → 1,088, headings 104 → 69; validation 328 → 203,
-53 → 52. Then a full stop added after a line's last word before a lower-case line no
-version (`line_end_stop`): tuning 4 unasked words fixed, none made. Baselines
-`tuning-20261104T225300`, `validation-20261104T225622`.
+## Next, for the agent
 
-## Waiting on the user (2026-11-03)
+1. The open steps of docs/checklist.md in its order. Candidates found tonight: the build's
+   own unasked errors (60 on tuning, h read as b: "buis", "bij", "bet", "hidden"); the
+   line-role trees retrained without keeping stray lines (checklist, with ideas); De eerlijke
+   vinder's part pages (a drawn numeral on a page the layer holds nothing of).
+2. Idle machine time grows the slices (checklist: ~1,650 pages of room left, nine books);
+   the bench's interval narrows only with the square root of the pages, so weigh it
+   against other uses of the night.
+3. When the user brings the spot-check counts, the book's error estimate with its interval
+   goes in decisions.md and the checklist.
+
+## Waiting on the user
 
 - Hoe wij verdwijnen's **spot-check**: `open work/probes/spot-check/hoe-wij-verdwijnen/index.html`
   (PDF 41, 77, 87, 144, 292; count wrong words, breaks and italics per page); then its
   read-through. The counts are of the build before the "op"/"een" italic fix.
 - Pieter Daens' **review**: 292 questions, `uv run roboscriptorium review work/pieter-daens`.
+- A read book's rebuild that changes text goes to the user by eye, every difference
+  (the user, 2026-11-04): `experiments/rebuild_diff.py <book> <old.epub> [notes.json]`.
 
-## Done 2026-11-03 evening and 11-04 (decisions.md has every number)
+## Done 2026-11-03 evening and 11-04 morning (decisions.md has every number)
 
 - **Not taken**: a lone word with a diagonal letter or acute accent held to 12° (tuning
   italic errors 2,445 → 2,588): a capital Z or W leans the whole word ~26°, past any cut.
-  Patch in `work/probes/italics/`.
-- **Built: the learned italic decision** (`italics.Trees`, `experiments/italic_words.py`):
-  trees over each word's lean, its neighbours', its line's and page's, and its letters,
-  trained on the golden pairs' aligned words. Offline, each book left out: tuning italic
-  errors 2,123 → 798, validation 283 → 162. Lesson: counts of measured words let the
-  trees memorise single pages of other books (whole upright lines set italic); without
-  them, and with each book weighing alike, the trees generalise.
-- **Built: chapter labels** (`chapters.title_lines`): Het schaduwhuis' narrator names under
-  every chapter number, lost because the trees call them running heads, page numbers or
-  artifacts.
-- **Found**: the errors left, sorted (decisions.md 2026-11-03); tesseract's per-letter boxes
-  are real; Het schaduwhuis' chapters 1 and 4 have no number in the layer and none marked
-  by the spotter.
-
-## Next, for the agent
-
-1. The open steps of docs/checklist.md in its order (next: the 59 errors the build
-   made where the layer was right); idle machine time grows the tuning slices. When the
-   user brings the spot-check counts, the book's error estimate with its interval goes in
-   decisions.md and the checklist.
+- **Built: the learned italic decision** (`italics.Trees`): trained on the golden pairs'
+  aligned words. Lesson: counts of measured words let the trees memorise single pages of
+  other books; without them, and with each book weighing alike, the trees generalise.
+- **Built: chapter labels** (`chapters.title_lines`): Het schaduwhuis' narrator names.
 
 ## Done 2026-11-01 and 02 (decisions.md has every number)
 

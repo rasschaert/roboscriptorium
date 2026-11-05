@@ -64,11 +64,12 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
      spacing), Dolittle 0.18 (verse and lines beside drawn initials). The vision judge
      on line crops broke more than it fixed (2026-10-17); a page-level reading of
      breaks is the untried way.
-   - Headings still lost: De eerlijke vinder 0/4 (drawn part numerals), You're Never
-     Weird 3/16 (titles recurring as running heads, bracketed section heads read as
-     specks), Monterosso 14/22 (old-style figures misread). Branches `heading-pairs`
-     (scoring) and `number-lookalikes` (repeats counted at their place, look-alike
-     numbers) wait for the slice growth (checklist).
+   - Headings (2026-11-05, `tuning-20261105T075718`): 32 errors left on tuning, from 104
+     on 2026-11-02. Still lost: De eerlijke vinder 0/4 (drawn part numerals on pages the
+     layer holds nothing of), Monterosso 19/22 (three numbers in neither the layer nor a
+     spotter box), Reis 25/27 (two titles long enough to wrap), Het heft's datelines
+     joined to its headings (the trees'); on validation You're Never Weird 7/16 and
+     De geruchten 0/21 (narrators' names mid-page).
    - Scene breaks, scored since 2026-10-11 in the ten references that record them: 272 of
      295 found, few extra; the rest are page turns geometry can't tell from a paragraph
      running on.
@@ -77,8 +78,9 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
 2. **The errors no question asks about** ("unasked", by kind, in each bench record):
    - Vals alarm: 33 unasked letter errors, its lost full stops (checklist 4, the book teaches itself): only its
      own answers can teach the arbiter.
-   - De eerlijke vinder: unasked 1.02 a page, the most of any ordinary book (words 26,
-     letters 21, extra words 18). Unexamined.
+   - De eerlijke vinder: unasked 0.13 a page on 2026-11-05 (10 places), from 1.02; half
+     made by the build where the layer was right (a diaeresis dropped, "bidden" read
+     "hidden").
    - 11/22/63 and You're Never Weird: ~20 missing words each, likely text in pictures
      or lines the layer lacks.
    - Dolittle: 26 wrong words unasked, old typography.
