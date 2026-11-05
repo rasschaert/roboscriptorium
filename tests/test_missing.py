@@ -213,3 +213,22 @@ def test_two_boxes_over_openings_are_no_usual_place(tmp_path):
     pdf, pages = _book(tmp_path, inked={11, 12, 14})
     regions = {n: [Region("title", 0.4, 163, 60, 177, 76)] for n in (11, 12)}
     assert missing.openings(pdf, pages, regions) == regions
+
+
+def test_junk_the_layer_read_in_the_drawing_neither_blocks_nor_hides_the_placed_box(tmp_path):
+    # Opening 14's drawn number read "ae" by the layer: still placed, and still read.
+    pdf, pages = _book(tmp_path, inked={11, 12, 13, 14})
+    k = next(i for i, p in enumerate(pages) if p.number == 14)
+    junk = Line("ae", 166, 63, 174, 72)
+    pages[k] = PageText(14, 340, 580, [junk, *pages[k].lines])
+    boxes = ((11, 0), (12, 1), (13, -1))
+    regions = {n: [Region("title", 0.4, 163, 60 + d, 177, 76 + d)] for n, d in boxes}
+    placed = missing.openings(pdf, pages, regions)
+    assert [r.confidence for r in placed[14]] == [missing.PLACED]
+    assert (14, placed[14][0]) in missing.candidates(pages, placed, {})
+    # The spotter's own box there is read past the junk too; over a number the layer
+    # read ("Io", 10), the box is left to that line.
+    spotted = {**regions, 14: [Region("title", 0.4, 163, 60, 177, 76)]}
+    assert (14, spotted[14][0]) in missing.candidates(pages, spotted, {})
+    pages[k] = PageText(14, 340, 580, [replace(junk, text="Io"), *pages[k].lines[1:]])
+    assert all(n != 14 for n, _ in missing.candidates(pages, spotted, {}))

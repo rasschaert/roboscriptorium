@@ -20,7 +20,7 @@ from statistics import median
 
 import pymupdf
 
-from roboscriptorium import readers
+from roboscriptorium import chapters, readers
 from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.layout import Region
 from roboscriptorium.page import sunk_pages
@@ -49,6 +49,11 @@ OPENING_PLACES = 3
 INK = 0.02
 INK_SPAN = 0.4
 INK_DPI = 150
+# A placed box's confidence: the spotter gives none of its own boxes 0.
+PLACED = 0.0
+# A layer line this short, reading as no number, above a sunk page's text is a drawing
+# misread ("ae", "/" for Artemis' circled numbers), not a line of text.
+JUNK_CHARS = 3
 
 
 def _inside(line: Line, box) -> bool:
@@ -70,8 +75,9 @@ def candidates(
 ) -> list[tuple[int, Region]]:
     """Line-sized regions holding no text-layer line and not part of one, one per spot
     (the surest); above the text of a sunk page, or on a page the layer holds nothing of,
-    regions up to a few lines tall; and a text region's strip above its first layer line
-    or below its last (`edges`).
+    regions up to a few lines tall, where the layer's junk in a drawing (`_junk`) counts
+    as no line; and a text region's strip above its first layer line or below its last
+    (`edges`).
 
     `answered` holds, per page, the boxes of regions a human typed text for.
     """
@@ -83,22 +89,27 @@ def candidates(
     sunk = sunk_pages(pages)
     found = []
     for page in pages:
+        # Above a sunk page's text the layer's junk in a drawing is no line (`_junk`).
         top = min((ln.y0 for ln in page.lines), default=0.0)
+        if page.number in sunk:
+            top = next((ln.y0 for ln in page.lines if not _junk(ln)), top)
         figures = [r for r in regions.get(page.number, []) if r.label == "figure"]
         kept: list[Region] = []
         for r in sorted(regions.get(page.number, []), key=lambda r: -r.confidence):
             box = (r.x0, r.y0, r.x1, r.y1)
             centre = Line("", *box)
+            above = page.number in sunk and r.y1 <= top
+            lines = [ln for ln in page.lines if not (above and _junk(ln))]
             if (
                 r.label in SKIPPED
                 or r.turned
                 or r.y1 - r.y0 > tallest
-                and not (page.number in sunk and r.y1 <= top and r.y1 - r.y0 <= opening)
+                and not (above and r.y1 - r.y0 <= opening)
                 # A page the layer has nothing of may set its title in display type
                 # (Pieter Daens' "Onze doden" under "BOEK VIJF").
                 and not (not page.lines and r.y1 - r.y0 <= opening)
-                or any(_inside(ln, box) for ln in page.lines)
-                or any(_inside(centre, (ln.x0, ln.y0, ln.x1, ln.y1)) for ln in page.lines)
+                or any(_inside(ln, box) for ln in lines)
+                or any(_inside(centre, (ln.x0, ln.y0, ln.x1, ln.y1)) for ln in lines)
                 or any(_inside(centre, (f.x0, f.y0, f.x1, f.y1)) for f in figures)
                 or any(_inside(centre, b) for b in answered.get(page.number, []))
                 or any(_overlap(r, k) for k in kept)
@@ -115,6 +126,16 @@ def candidates(
             )
         ]
     return found
+
+
+def _junk(line: Line) -> bool:
+    return len(line.text.strip()) <= JUNK_CHARS and chapters.value(line.text) is None
+
+
+def _text_top(page: PageText, r: Region) -> float | None:
+    """Where the page's text starts below `r`: its first line that isn't junk the layer
+    read inside or above it; None when there is none."""
+    return next((ln.y0 for ln in page.lines if not (ln.y0 < r.y1 and _junk(ln))), None)
 
 
 def _middle(page: PageText) -> float:
@@ -165,7 +186,8 @@ def openings(
     one standing, against its page's text column, where boxes stand on `OPENING_PLACES`
     sunk pages or more; its place is their median. A blank opening (a prologue's) has no
     ink there and gets no box, nor does a speck; a box found is fitted to its ink
-    (`_fitted`), as openings stand a few points apart.
+    (`_fitted`), as openings stand a few points apart. Short junk the layer read in the
+    drawing (Artemis' circled "8" read "ae") is no first line of text (`_text_top`).
     """
     heights = [ln.y1 - ln.y0 for p in pages for ln in p.lines]
     if not heights:
@@ -197,11 +219,12 @@ def openings(
     with pymupdf.open(pdf) as doc:
         for p in sunk:
             mid = _middle(p)
-            r = Region(label, 0.0, mid + place[0], place[2], mid + place[1], place[3])
+            r = Region(label, PLACED, mid + place[0], place[2], mid + place[1], place[3])
             here = regions.get(p.number, [])
-            if r.y1 > p.lines[0].y0 or any(_overlap(r, h) for h in here):
+            top = _text_top(p, r)
+            if top is None or r.y1 > top or any(_overlap(r, h) for h in here):
                 continue
-            if fitted := _fitted(doc, p.number, r, p.lines[0].y0):
+            if fitted := _fitted(doc, p.number, r, top):
                 out[p.number] = [*here, fitted]
     return out
 

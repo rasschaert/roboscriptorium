@@ -434,6 +434,12 @@ schaduwhuis 1 and 4, The Stranger's Child "1" twice, Vuurspel "3" and "7"); five
 region's strip above its first line had read already (Het geluid van bananen "I" and
 "9", Het laatste bevel "3" and "4", Hoe wij verdwijnen "5"), and the box stands in for
 the strip, read once. The height test turned away the one speck (Doodskleed PDF 18). The boxes go to the missing-lines stage only; the sorter sees what the spotter saw.
+Above a sunk page's text, a layer line of three characters or fewer that reads as no
+number is the drawing misread, not a line (`_junk`): Artemis' circled 8, 12 and 16 read
+"ae", "/", "a", and the spotter's boxes around them were left to those lines. Over all
+books about 90 boxes are read so that weren't; a sample of twelve by eye held eleven
+chapter numbers or labels ("EEN", "VIJF", "IV", "13", "41") and a scene break, which reads
+with no letter and is dropped (2026-11-05).
 
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
 same way: a speck in a page's top corner read "境", kept as the page's first line, then
