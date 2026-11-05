@@ -442,8 +442,8 @@ chapter numbers or labels ("EEN", "VIJF", "IV", "13", "41") and a scene break, w
 with no letter and is dropped (2026-11-05). Where glm-ocr answers with talk instead of a reading
 (`missing.talk`), the read model reads the box, and its reading is taken only where it
 reads as a number: on Artemis' circled 11 it reads "11" where glm-ocr says "```markdown";
-on Doodskleed's corner specks it invents sentences ("‘Ik heb het niet gedaan,’ zei hij."
-eight times over 46 such boxes), which a whole-reading fallback would have made lines.
+on Doodskleed's corner specks it invents sentences (17 of 35, "‘Ik heb het niet gedaan,’
+zei hij." five times), which a whole-reading fallback would have made lines.
 
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
 same way: a speck in a page's top corner read "境", kept as the page's first line, then
