@@ -1032,3 +1032,12 @@ def test_a_dash_before_a_comma_is_a_dash_whatever_its_kind_a_compound_hyphen_is_
     # A lost comma after the dash is still a difference, and so is a hyphen in a word.
     assert differences("zegd — waarin", "zegd —, waarin") != []
     assert differences("Noord- en Zuid-Holland", "Noord en Zuid-Holland") != []
+
+
+def test_an_h_read_as_b_is_never_the_print_b_read_as_h_or_more_changed_can_be():
+    for ours, version in (("huis", "buis"), ("hij", "bij"), ("het", "bet"), ("he!’", "be!’")):
+        assert ocrcheck.b_for_h(ours, version)
+    # Not: b read as h (the layer's "bet" may be "het"), two letters changed, a capital,
+    # or another length.
+    for ours, version in (("bet", "het"), ("hoh", "bob"), ("Het", "Bet"), ("hij", "bij.")):
+        assert not ocrcheck.b_for_h(ours, version)

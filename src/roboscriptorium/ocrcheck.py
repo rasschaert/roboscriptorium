@@ -247,6 +247,7 @@ def check(
                         if not line_end_stop(ours, a0, a1, v, around[1], shortened)
                         and not half_accent(ours[a0:a1], v)
                         and not garbled(ours[a0:a1], v)
+                        and not b_for_h(ours[a0:a1], v)
                     ]
                     if not alternatives:
                         continue
@@ -311,6 +312,16 @@ def garbled(ours: str, version: str) -> bool:
     """Whether `version` brings in a mark prose doesn't print (`_GARBLED`) that the layer
     lacks."""
     return bool(_GARBLED.search(version)) and not _GARBLED.search(ours)
+
+
+def b_for_h(ours: str, version: str) -> bool:
+    """Whether `version` only reads one of the layer's h's as a b ("huis" → "buis", "hij"
+    → "bij"): in the trust data never the print (0 of 91), where b read as h is now and
+    then (17 of 45, the layer's own "bet" for "het")."""
+    if len(ours) != len(version):
+        return False
+    diff = [(a, b) for a, b in zip(ours, version, strict=True) if a != b]
+    return diff == [("h", "b")]
 
 
 def line_end_stop(

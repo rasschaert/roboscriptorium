@@ -114,7 +114,10 @@ print (`~`, `^`, `|`, `garbled`), on 50 suspects, never right: where the layer w
 wrong (11) a kept version always had it right, so dropping them loses no catch. A
 capital inside a lower-case word ("aaN") is never the print either, but a reader's
 "wA-dienstplicht" for a word set in small capitals was what raised that place's question
-(De vergelding), so it stays a version.
+(De vergelding), so it stays a version. Nor is an h read as a b ("huis" → "buis", "hij" → "bij", `b_for_h`):
+of 91 such versions in the trust data, none was the print, while a b read as h is now and
+then (17 of 45, the layer's own "bet" for "het"); the arbiter had taken it unasked on
+tuning ("buis.", "bij", "bet", "be"). Taken 2026-11-05: 4 unasked words fixed, none made.
 
 **Every body line is read, short ones too.** A dialogue line ending "keek.’" is
 where a closing quote is lost. On Goede dochter pp. 9–64, reading the lines under 12

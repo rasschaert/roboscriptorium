@@ -6,8 +6,8 @@ end of every session. Updated 2026-11-05 morning by the session that mended the 
 
 ## Running
 
-Nothing. Baselines `tuning-20261105T075718` (tuning ~4,500 pages since batch three),
-`validation-20261105T080033`.
+Nothing. Baselines `tuning-20261105T081806` (tuning ~4,500 pages since batch three),
+`validation-20261105T082120`.
 
 ## Done 2026-11-04 evening to 11-05 morning (decisions.md has every number)
 
@@ -25,7 +25,8 @@ Nothing. Baselines `tuning-20261105T075718` (tuning ~4,500 pages since batch thr
     (`chapters.openings`, Reis), the layer's junk in a drawing no line (`missing._junk`,
     Artemis' circled numbers), the read model's number where glm-ocr talks;
   - a line repeated under a page's running head no second running head (Artemis'
-    salutations, 18 words).
+    salutations, 18 words);
+  - an h read as a b no version (`ocrcheck.b_for_h`, 0 of 91 in the trust data): 4 words.
 - **Slice growth batch three**: nine tuning books whole (~512 pages, ~6 h cold); its run
   WORSE on one variant only, from Artemis' salutations, mended since.
 - **Not taken**: an arbiter feature for stops before lower case (out of its sight); a
