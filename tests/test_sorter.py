@@ -172,3 +172,24 @@ def test_a_bare_page_number_at_a_pages_edge_is_never_a_body_label():
     assert folio_label(row("body", 30, 0, 1.0, 0.0)) == "body"
     assert folio_label(row("body", 30, 0, 0.0, 1.0)) == "body"
     assert folio_label(row("heading", 0, 30, 1.0, 1.0)) == "heading"
+
+
+def test_text_recurring_under_a_pages_running_head_is_no_second_running_head():
+    # Artemis: "Dear Kelvin," opens four letters, each just under the running head.
+    pages = []
+    for n in range(5, 25):
+        head = Line("ANDY WEIR" if n % 2 else "ARTEMIS", 100, 10, 200, 20)
+        lines = [head] + [
+            Line(f"Gewone tekst {n} {i}", 10, 40 + 15 * i, 280, 50 + 15 * i) for i in range(8)
+        ]
+        if n in (6, 10, 14, 18):
+            lines[1] = Line("Dear Kelvin,", 10, 40, 80, 50)
+        pages.append(PageText(n, 300, 500, lines))
+
+    class Body(_Trees):
+        def predict_proba(self, X):
+            return np.tile([0.9, 0.05, 0.05], (len(X), 1))
+
+    roles = sorter.apply(sorter.Sorter(Body()), pages, {}, {})
+    assert {roles[SourceRef(n, 0)].role for n in range(5, 25)} == {"running_head"}
+    assert all(SourceRef(n, 1) not in roles for n in (6, 10, 14, 18))

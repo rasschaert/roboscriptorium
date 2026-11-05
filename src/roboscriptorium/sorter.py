@@ -226,6 +226,25 @@ def fingerprint(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()[:12]
 
 
+def _inner_repeats(found: dict[SourceRef, dict[str, float]]) -> set[SourceRef]:
+    """Lines repeated at a page's edge with another repeated line further out at the same
+    edge: a page sets one running head there, so these are text that recurs (Artemis'
+    "Dear Kelvin," under its running head "88 ANDY WEIR", in four letters)."""
+    furniture: dict[tuple[int, str], list[SourceRef]] = {}
+    for ref, f in found.items():
+        if f["repeats"] < HEADING_MAX_REPEATS or f["chars"] < FURNITURE_CHARS:
+            continue
+        if f["i_top"] < P.EDGE_LINES_TOP:
+            furniture.setdefault((ref.page, "top"), []).append(ref)
+        if f["i_bottom"] < P.EDGE_LINES_BOTTOM:
+            furniture.setdefault((ref.page, "bottom"), []).append(ref)
+    inner = set()
+    for (_, edge), refs in furniture.items():
+        refs = sorted(refs, key=lambda r: r.line, reverse=edge == "bottom")
+        inner |= set(refs[1:])
+    return inner
+
+
 def apply(
     sorter: Sorter,
     pages: list[PageText],
@@ -246,13 +265,16 @@ def apply(
     classes = list(sorter.model.classes_)
     # A page's first line set well below where running heads stand is none.
     sunk_first = P.sunk_first_lines(pages)
+    inner = _inner_repeats(found)
     out = {}
     for ref, p in zip(refs, probs, strict=True):
         best = classes[int(p.argmax())]
         p_body = float(p[classes.index("body")])
         f = found[ref]
-        repeated = f["repeats"] >= HEADING_MAX_REPEATS and not (
-            ref.line == 0 and ref.page in sunk_first
+        repeated = (
+            f["repeats"] >= HEADING_MAX_REPEATS
+            and not (ref.line == 0 and ref.page in sunk_first)
+            and ref not in inner
         )
         edge = f["i_top"] < P.EDGE_LINES_TOP or f["i_bottom"] < P.EDGE_LINES_BOTTOM
         if repeated and (best == "heading" or edge and f["chars"] >= FURNITURE_CHARS):

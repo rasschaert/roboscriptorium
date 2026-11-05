@@ -508,7 +508,11 @@ by every label: text repeated at the pages' edges is furniture (346 labelled lin
 body), except a page's first line set well below where running heads stand
 (`page.sunk_first_lines`), which is none: Vals alarm opens 13 chapters on "11 Later",
 "12 Eerder", …, alike within the repeat count's edit budget, and all were running heads
-(2026-11-05; now headings, no other line changed on the books checked, decisions.md); a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
+(2026-11-05; now headings, no other line changed on the books checked, decisions.md),
+and a line repeated at an edge with another repeated line further out at that edge: a page
+sets one running head there (`sorter._inner_repeats`; Artemis' "Dear Kelvin," and "Dear
+Jazz," under "88 ANDY WEIR", nine letters' salutations, were running heads once the book
+was scored whole); a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
 line costs ten words, a stray folio one or two); and a line the role model wasn't asked
 about, away from the edges and inside a text block the layout model is sure of, stays
 body: the trees dropped such full-width prose (Crime pp. 36, 42 and 98, a whole line
