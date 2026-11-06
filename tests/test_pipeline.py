@@ -924,6 +924,8 @@ def test_a_line_of_dots_the_layer_lost_between_lines_is_kept_as_body(tmp_path, m
     monkeypatch.setattr(pipeline.layout, "detect", lambda pdf, numbers, cache: {1: []})
     monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
     monkeypatch.setattr(pipeline.missing.readers, "read_line", lambda png, model, url: "...")
+    # The read model, asked about the quote mark, sees only the dots.
+    monkeypatch.setattr(pipeline.readers, "transcribe", lambda png, model, url, prompt: "...")
     # The line roles take a line with no letter for a speck.
     gaps = pipeline.chapters.run_gaps
 

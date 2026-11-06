@@ -26,3 +26,6 @@ def _default_settings(monkeypatch):
     monkeypatch.setenv("ROBO_SORTER", "0")
     # One process: a test's stand-ins don't reach the bench's worker processes.
     monkeypatch.setenv("ROBO_BENCH_WORKERS", "1")
+    # A closed port: a model call a test forgot to stub fails at once instead of reaching
+    # the machine's Ollama and loading a model.
+    monkeypatch.setenv("ROBO_OLLAMA_URL", "http://127.0.0.1:9")
