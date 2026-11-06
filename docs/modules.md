@@ -247,6 +247,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   page in reading order, before the line roles; on a sunk opening the spotter boxed
   nothing on, its usual box over openings, where that place holds ink (`openings`);
   above a sunk page's text the layer's short junk in a drawing counts as no line (`_junk`);
+  a slot about a line tall between two layer lines that holds ink (`slots`), from which
+  only a line of dots is taken ("‘...’", a silent reply both layer and spotter lose),
+  with the quote marks its ink shows where glm-ocr reads bare dots (`quoted`), and kept
+  as body past the line roles (`slot_lines`);
   where glm-ocr talks instead of reading (`talk`), the read model's reading of the box
   is taken if it reads as a number; figures, captions and regions
   a human answered are left alone. Scans only; cached in
@@ -271,7 +275,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   disputes, is dropped (`line_end_stop`), unless the book abbreviates the word
   (`abbreviations`); so is one that accents one letter of a doubled a, o or u
   (`half_accent`) or brings in `~`, `^` or `|` (`garbled`), or only reads one of the
-  layer's h's as a b (`b_for_h`) or one of its "ij"s as u, ui, y, ii or i (`ij_misread`). Where a
+  layer's h's as a b (`b_for_h`), one of its "ij"s as u, ui, y, ii or i (`ij_misread`), or a
+  quote mark where print never sets one, gluing two words or a closing ’ opening one
+  (`quote_misread`). Where a
   line's readings differ, clef picks from
   the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence. The learned trust
   (`trust.py`, on by default) then fixes, keeps or asks, its substitution table

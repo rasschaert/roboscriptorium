@@ -13,15 +13,18 @@ Figures and captions are left to the figures stage, and regions a human
 answered in the review keep the human's text.
 """
 
+import re
 import unicodedata
 from dataclasses import replace
 from pathlib import Path
 from statistics import median
 
+import numpy as np
 import pymupdf
 
 from roboscriptorium import chapters, readers
 from roboscriptorium.files import read_cache, write_cache
+from roboscriptorium.ir import SourceRef
 from roboscriptorium.layout import Region
 from roboscriptorium.page import sunk_pages
 from roboscriptorium.pdf import Line, PageText
@@ -54,6 +57,21 @@ PLACED = 0.0
 # A layer line this short, reading as no number, above a sunk page's text is a drawing
 # misread ("ae", "/" for Artemis' circled numbers), not a line of text.
 JUNK_CHARS = 3
+# A slot between two layer lines whose tops stand this many line pitches apart is room for
+# one line (`slots`); where it holds ink, a line the layer lost may stand there.
+SLOT_STEPS = (1.6, 2.5)
+# Ink in a slot: pixels this much darker than its paper (the strip's median, a slot being
+# mostly paper; Verminkt prints its dots grey, Het geluid van bananen on grey paper), at
+# least `SLOT_INK` of them at `INK_DPI`, spanning this share of a line height (the lines'
+# own ascenders and descenders reach in 0.1–0.2, a line of dots in quotes 0.7–1.4).
+SLOT_DARK = 60
+SLOT_INK = 20
+SLOT_SPAN = 0.5
+# A reading that is a line of dots, an ellipsis quoted or not: a silent reply ("‘...’").
+DOTS = re.compile(r"[‘’'\"“”„]*(?:\.{3}|…|\. \. \.)[‘’'\"“”]*")
+BARE_DOTS = re.compile(r"\.{3}|…|\. \. \.")
+# A slot's marks are told from its dots at this resolution (`_marks`).
+MARK_DPI = 300
 
 
 def _inside(line: Line, box) -> bool:
@@ -72,12 +90,14 @@ def candidates(
     pages: list[PageText],
     regions: dict[int, list[Region]],
     answered: dict[int, list[tuple[float, float, float, float]]],
+    inked: list[tuple[int, Region]] | None = None,
 ) -> list[tuple[int, Region]]:
     """Line-sized regions holding no text-layer line and not part of one, one per spot
     (the surest); above the text of a sunk page, or on a page the layer holds nothing of,
     regions up to a few lines tall, where the layer's junk in a drawing (`_junk`) counts
-    as no line; and a text region's strip above its first layer line or below its last
-    (`edges`).
+    as no line; a text region's strip above its first layer line or below its last
+    (`edges`); and `inked`, the slots between layer lines that hold ink (`slots`), where no
+    other candidate stands.
 
     `answered` holds, per page, the boxes of regions a human typed text for.
     """
@@ -125,6 +145,12 @@ def candidates(
                 _inside(Line("", e.x0, e.y0, e.x1, e.y1), b) for b in answered.get(page.number, [])
             )
         ]
+    for n, s in inked or []:
+        here = [r for m, r in found if m == n]
+        if not any(_overlap(s, r) for r in here) and not any(
+            _inside(Line("", s.x0, s.y0, s.x1, s.y1), b) for b in answered.get(n, [])
+        ):
+            found.append((n, s))
     return found
 
 
@@ -246,6 +272,141 @@ def edges(page: PageText, regions: list[Region], height: float) -> list[Region]:
     return out
 
 
+def _ink(
+    doc: pymupdf.Document, number: int, box: tuple[float, ...]
+) -> tuple[int, float, tuple[float, float] | None]:
+    """Dark pixels in a strip of the page (`SLOT_DARK`), the height in points of the rows
+    they span, and the left and right edges in points of the columns they span."""
+    page = doc[number - 1]
+    clip = pymupdf.Rect(box) & page.rect
+    if clip.is_empty or clip.height < 1:
+        return 0, 0.0, None
+    pix = page.get_pixmap(clip=clip, dpi=INK_DPI, colorspace=pymupdf.csGRAY)
+    w, data = pix.width, pix.samples
+    rows = [data[y * pix.stride : y * pix.stride + w] for y in range(pix.height)]
+    paper = median(v for row in rows for v in row)
+    marks = [[v < paper - SLOT_DARK for v in row] for row in rows]
+    dark = [sum(row) for row in marks]
+    inked = [y for y, d in enumerate(dark) if d >= 2]
+    if not inked:
+        return sum(dark), 0.0, None
+    span = (inked[-1] - inked[0] + 1) * clip.height / pix.height
+    columns = [x for x in range(w) if any(marks[y][x] for y in inked)]
+    scale = clip.width / w
+    return sum(dark), span, (clip.x0 + columns[0] * scale, clip.x0 + (columns[-1] + 1) * scale)
+
+
+def slots(pdf: Path, pages: list[PageText]) -> list[tuple[int, Region]]:
+    """Slots about one line tall between two layer lines (`SLOT_STEPS`) that hold ink
+    (`SLOT_INK`, `SLOT_SPAN`), narrowed to the ink across, labelled "slot": where a
+    line of dots stood that the layer lost or read as junk ("€" for "‘...’"). A line with
+    no letter or digit counts as none. Only a reading of dots is taken from a slot (`add`):
+    a picture page's slots lie between the layer's junk in a drawing."""
+    out = []
+    with pymupdf.open(pdf) as doc:
+        for page in pages:
+            lines = [ln for ln in page.lines if any(c.isalnum() for c in ln.text)]
+            if len(lines) < 5:
+                continue
+            height = median(ln.y1 - ln.y0 for ln in lines)
+            steps = [b.y0 - a.y0 for a, b in zip(lines, lines[1:], strict=False) if b.y0 > a.y0]
+            if not steps:
+                continue
+            pitch = median(steps)
+            left, right = min(ln.x0 for ln in lines), max(ln.x1 for ln in lines)
+            for a, b in zip(lines, lines[1:], strict=False):
+                if not SLOT_STEPS[0] * pitch <= b.y0 - a.y0 <= SLOT_STEPS[1] * pitch:
+                    continue
+                y0, y1 = a.y1 + 0.15 * height, b.y0 - 0.15 * height
+                if y1 - y0 < 0.5 * height:
+                    continue
+                dark, span, across = _ink(doc, page.number, (left, y0, right, y1))
+                if dark >= SLOT_INK and span >= SLOT_SPAN * height and across:
+                    # Narrowed to its ink, a line's height either side: the line's measures
+                    # and indent are then its own, not the column's.
+                    x0, x1 = max(left, across[0] - height), min(right, across[1] + height)
+                    out.append((page.number, Region("slot", PLACED, x0, y0, x1, y1)))
+    return out
+
+
+def _runs(dark: np.ndarray) -> list[tuple[int, int]]:
+    """The runs of columns holding ink (three pixels or more), left to right."""
+    cols = dark.any(axis=0)
+    out, x = [], 0
+    while x < len(cols):
+        if cols[x]:
+            start = x
+            while x < len(cols) and cols[x]:
+                x += 1
+            if dark[:, start:x].sum() >= 3:
+                out.append((start, x))
+        else:
+            x += 1
+    return out
+
+
+def _marks(doc: pymupdf.Document, number: int, box: tuple[float, ...]) -> tuple[bool, bool]:
+    """Whether a quote mark opens and closes the line of dots in `box`: ink in the top half
+    of its rows (the dots fill the bottom half), left and right of the dots' middle, within
+    the dots' own width of them (a descender of the line above reaches in anywhere; a
+    tight setting puts the marks right over the end dots, so columns alone don't part
+    them)."""
+    page = doc[number - 1]
+    pix = page.get_pixmap(
+        clip=pymupdf.Rect(box) & page.rect, dpi=MARK_DPI, colorspace=pymupdf.csGRAY
+    )
+    img = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.stride)[:, : pix.width]
+    dark = img < np.median(img) - SLOT_DARK
+    rows = np.flatnonzero(dark.any(axis=1))
+    if not rows.size:
+        return False, False
+    mid = (rows[0] + rows[-1] + 1) // 2
+    low = _runs(dark[mid:])
+    if len(low) < 2:
+        return False, False
+    left, right = low[0][0], low[-1][1]
+    width, centre = right - left, (left + right) / 2
+    high = [(a + b) / 2 for a, b in _runs(dark[:mid])]
+    high = [x for x in high if left - width <= x <= right + width]
+    return any(x < centre for x in high), any(x > centre for x in high)
+
+
+def quoted(
+    pdf: Path, found: list[tuple[int, Region]], readings: dict[str, str], single: bool
+) -> dict[str, str]:
+    """The readings with a slot read as bare dots given the quote marks its ink shows
+    (`_marks`), in the book's style (‘ ’ where it opens dialogue with single marks, else
+    “ ”): glm-ocr leaves out the marks of a silent reply ("‘...’"), and without them the
+    line runs into the paragraph above."""
+    bare = [
+        (n, r)
+        for n, r in found
+        if r.label == "slot" and BARE_DOTS.fullmatch(readings.get(_key(n, r), "").strip())
+    ]
+    if not bare:
+        return readings
+    opening, closing = ("‘", "’") if single else ("“", "”")
+    out = dict(readings)
+    with pymupdf.open(pdf) as doc:
+        for n, r in bare:
+            opens, closes = _marks(doc, n, (r.x0, r.y0, r.x1, r.y1))
+            dots = readings[_key(n, r)].strip()
+            out[_key(n, r)] = opening * opens + dots + closing * closes
+    return out
+
+
+def slot_lines(pages: list[PageText], found: list[tuple[int, Region]]) -> set[SourceRef]:
+    """The lines `add` placed from a slot: a line of dots between two lines of a text
+    block, so body text, whatever its few marks look like to the line roles' trees."""
+    boxes = {(n, (r.x0, r.y0, r.x1, r.y1)) for n, r in found if r.label == "slot"}
+    return {
+        SourceRef(page.number, i)
+        for page in pages
+        for i, ln in enumerate(page.lines)
+        if (page.number, (ln.x0, ln.y0, ln.x1, ln.y1)) in boxes and DOTS.fullmatch(ln.text)
+    }
+
+
 def _key(number: int, r: Region) -> str:
     return f"{number}:{r.x0:.0f},{r.y0:.0f},{r.x1:.0f},{r.y1:.0f}"
 
@@ -298,8 +459,9 @@ def add(
 ) -> list[PageText]:
     """Copies of the pages with each read line in reading order (by its middle).
 
-    A reading with no letter or digit (a smudge) is left out, and so is the model's
-    talk rather than a reading (`_printed`). A read line overlapping a layer line by
+    A reading with no letter or digit (a smudge) is left out, and so is the model's talk
+    rather than a reading (`_printed`). A slot (`slots`) gives a line of dots (`DOTS`)
+    and nothing else. A read line overlapping a layer line by
     `SAME_LINE` of its height is that line, its box set too high or low by the layer (a
     short "‘Ja.’" read "qa”" seven points up): it takes the layer line's place, with the
     image's box and the model's reading, rather than standing beside it.
@@ -307,7 +469,11 @@ def add(
     by_page: dict[int, list[Line]] = {}
     for n, r in found:
         text = " ".join(readings.get(_key(n, r), "").split())
-        if any(c.isalnum() for c in text) and _printed(text):
+        if r.label == "slot":
+            taken = bool(DOTS.fullmatch(text))
+        else:
+            taken = any(c.isalnum() for c in text) and _printed(text)
+        if taken:
             by_page.setdefault(n, []).append(Line(text, r.x0, r.y0, r.x1, r.y1))
     out = []
     for page in pages:

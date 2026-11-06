@@ -307,6 +307,20 @@ costs against what it could reach; every reader candidate passes the new-model g
             number, footnote, title, with boxes) as an input to line roles. Qwen's page
             roles, tried so on 2026-10-24, cost more words than they saved; try only on
             the pages where the trees err, first (agent, ~2 h)
+- [ ] Qwen3.8-Flash-Next re-screened as a reader, once the **user**'s download in Unsloth
+      Desktop lands: UD-Q2_K_XL, four shards, ~85 GB, into the Hugging Face cache
+      (`models--unsloth--Qwen3.8-Flash-Next-GGUF`), started 2026-11-06 ~07:25, ~3 h. Unsloth rebuilt every GGUF on 2026-11-04 with "Dynamic
+      V3.1": top-1 agreement IQ1_S 77.3%, Q2_K_XL 82.7%, IQ3_XXS 85.4%. The lookup
+      ("engram") table is now its own file, 28.8 GB at IQ4_NL, which can be read from the
+      SSD. So Q2_K_XL needs about 51 GB in memory without the table. The image encoder
+      (`mmproj-BF16.gguf`) is needed too. Reader set v1 via `openai-local:` in
+      `experiments/tryout.py` (~10 min), thinking off (`reasoning_effort` "none", now
+      "xhigh" by default), Unsloth's no-thinking settings (temperature 0.7, top_p 0.8,
+      top_k 20, presence_penalty 1.5), Ollama's models unloaded first; check the memory
+      it really uses (the docs contradict themselves). Judge it on its own score against
+      qwen3.8:27b (IQ1_S: hard 276/330 against 302, easy 209/220 against 217), and with
+      `experiments/vote_sim.py` (IQ1_S alone right on 4 lines). Result in docs/models.md
+      beside the IQ1_S row (agent, ~1 h)
 - [ ] (Measured 2026-10-24: a line is 52% prefill, 23% decode, so speculative decoding buys little; batching was ruled out; the lever is fewer image reads, decisions.md. Low priority.) Qwen faster on the same output (DeepSeek, Fable, Argon): prefix caching of the fixed
       prompt, batched decoding (mlx-vlm, vllm-mlx), speculative decoding with the text layer
       or glm-ocr as the draft (lossless under greedy decoding); readings must stay identical
@@ -592,9 +606,20 @@ also part of the pipeline itself." Before either book goes to review:
       `line_end_stop`, the next word undisputed): tuning 2 fixed, validation 5, none made
 - [x] ~~An "ij" read as u, ui, y, ii or i no version~~ (2026-11-05, `ij_misread`): De
       vergelding's names, tuning 3 fixed, none made
-- [ ] The rest of the errors the build makes where the layer was right (60 unasked on
-      tuning, 2026-11-05): emphasis accents added or dropped (16, about half the
-      reference's), punctuation swapped (about 10), quote glyphs (6)
+- [x] ~~Lines of dots both layer and spotter lose~~ (2026-11-06, `missing.slots`,
+      `quoted`, `slot_lines`): tuning 4 fixed (Het geluid van bananen), validation 5
+      (Verminkt), none made; Het geluid van bananen's p. 25 and 76 and Vanille's leaders
+      stay lost
+- [x] ~~A quote mark misread from a speck no version~~ (2026-11-06, `quote_misread`):
+      "keek’en" fixed; "de’schaft" (two letters before) stays
+- [ ] Whole lines of text lost inside a block, found in the same inked slots (Afscheid
+      PDF 101, Thief-Taker 131, Het ijzige land 98): a slot's words are not taken today
+      (picture pages' slots read as text); as a lost-line question with glm-ocr's
+      reading proposed, or taken where the line above stops mid-sentence
+- [ ] The rest of the errors the build makes where the layer was right (51 unasked on
+      tuning, 2026-11-06): accents (18) are accent-shaped specks, no cheap signal
+      (decisions.md, 2026-11-06); punctuation swapped (about 10: commas added, 13 of 14
+      wrong, no rule), quote glyphs (6: not by the book's quote style)
 - [ ] (Low) An accent told from an i-dot or a speck by its shape over its own letter,
       with tesseract's per-letter boxes (`hocr_char_boxes`, real since checked
       2026-11-03); ~50 real accent errors left on tuning

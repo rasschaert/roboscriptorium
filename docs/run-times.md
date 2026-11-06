@@ -678,3 +678,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-05 | bench validation, a stop mid-line before a lower-case letter no version (warm) | 0 | 3 | 0 |
 | 2026-11-05 | bench tuning, mid-line stop with the next word undisputed, and an ij misread no version (warm) | 4500 | 12 | 0 |
 | 2026-11-05 | bench validation, mid-line stop with the next word undisputed, and an ij misread no version (warm) | 0 | 3 | 0 |
+| 2026-11-06 | bench tuning, a line of dots read from an inked slot between layer lines (warm) | 4500 | 13 | 0 |
+| 2026-11-06 | bench validation, a line of dots read from an inked slot between layer lines (warm) | 0 | 4 | 0 |
+| 2026-11-06 | bench tuning, dot lines from slots kept as body, a space read as a quote no version (warm) | 4500 | 13 | 0 |
+| 2026-11-06 | bench validation, dot lines from slots kept as body, a space read as a quote no version (warm) | 0 | 3 | 0 |
+| 2026-11-06 | bench tuning, dot lines from slots kept as body with their quote marks, a quote mark misread no version (warm) | 4500 | 13 | 0 |
+| 2026-11-06 | bench validation, dot lines from slots kept as body with their quote marks, a quote mark misread no version (warm) | 0 | 3 | 0 |

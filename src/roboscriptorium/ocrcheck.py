@@ -251,6 +251,7 @@ def check(
                         and not garbled(ours[a0:a1], v)
                         and not b_for_h(ours[a0:a1], v)
                         and not ij_misread(ours[a0:a1], v)
+                        and not quote_misread(ours[a0:a1], v)
                     ]
                     if not alternatives:
                         continue
@@ -341,6 +342,50 @@ def ij_misread(ours: str, version: str) -> bool:
         if any(ours[:at] + m + ours[at + 2 :] == version for m in IJ_MISREADS):
             return True
         at = ours.find("ij", at + 1)
+    return False
+
+
+# What follows an apostrophe joining two words in print: a contraction's end ("you’re",
+# "didn’t", "zo’n", Flemish "’k"), a Dutch diminutive or plural ("baby’tje", "foto’s").
+_JOINED_ENDS = {
+    "s",
+    "t",
+    "m",
+    "d",
+    "n",
+    "k",
+    "r",
+    "re",
+    "ve",
+    "ll",
+    "em",
+    "er",
+    "je",
+    "jes",
+    "tje",
+    "tjes",
+}
+_GLUED = re.compile(r"(\w{3,})['’‘\"“”„](\w+)")
+_BEFORE_WORD = re.compile(r"(?:^|(?<=\s))’(?=\w)")
+
+
+def quote_misread(ours: str, version: str) -> bool:
+    """Whether `version` only adds a quote mark the print never sets so, where the layer has
+    none: one gluing two words ("keeken" or "keek en" → "keek’en"), three letters or more
+    before it and no contraction's end after (`_JOINED_ENDS`); or a closing ’ opening a word
+    that elides nothing ("zet zijn" → "zet ’zijn", `quotes.ELISION`). In the trust data never
+    the print (0 of 13, 0 of 7); a speck read as a mark."""
+    for m in _GLUED.finditer(version):
+        q = m.end(1)
+        if m.group(2).lower() not in _JOINED_ENDS and ours in (
+            version[:q] + version[q + 1 :],
+            version[:q] + " " + version[q + 1 :],
+        ):
+            return True
+    for m in _BEFORE_WORD.finditer(version):
+        q = m.start()
+        if not ELISION.match("'" + version[q + 1 :]) and ours == version[:q] + version[q + 1 :]:
+            return True
     return False
 
 

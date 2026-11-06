@@ -6,8 +6,9 @@ end of every session. Updated 2026-11-05 morning by the session that mended the 
 
 ## Running
 
-Nothing. Baselines `tuning-20261105T081806` (tuning ~4,500 pages since batch three),
-`validation-20261105T082120`.
+No bench. Baselines `tuning-20261106T070031`, `validation-20261106T070331` (the lines of
+dots and the quote rule). The user's download of Qwen3.8-Flash-Next UD-Q2_K_XL (~85 GB,
+Hugging Face cache) runs, watched; its screen is a checklist step.
 
 ## Done 2026-11-04 evening to 11-05 morning (decisions.md has every number)
 

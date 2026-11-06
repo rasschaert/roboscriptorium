@@ -243,3 +243,72 @@ def test_a_reading_that_is_the_models_talk_goes_to_another_reader_a_reading_or_a
     readings = {missing._key(*found[0]): "```markdown", missing._key(*found[1]): "11"}
     readings[missing._key(*found[2])] = "."  # a smudge: no letter, dropped by `add`
     assert missing.talk(found, readings) == [found[0]]
+
+
+def _dialogue(tmp_path):
+    """A page of lines 15 pt apart, two left out after lines 3 and 7: the first slot holds
+    a quoted line of dots, the second is blank paper; a short rule sits in a third."""
+    doc = pymupdf.open()
+    page = doc.new_page(width=340, height=580)
+    rows = [y for y in range(100, 100 + 15 * 14, 15) if y not in (160, 220)]
+    lines = [Line(f"‘regel {i},’ zei ze.", 20, y, 300, y + 11) for i, y in enumerate(rows)]
+    # ‘...’ in the first slot: a quote mark high, three dots on the baseline.
+    page.draw_rect(pymupdf.Rect(21, 161, 23, 165), color=(0, 0, 0), fill=(0, 0, 0))
+    for x in (25, 29, 33):
+        page.draw_rect(pymupdf.Rect(x, 168.5, x + 1.5, 170), color=(0, 0, 0), fill=(0, 0, 0))
+    doc.save(tmp_path / "source.pdf")
+    return tmp_path / "source.pdf", [PageText(1, 340, 580, lines)]
+
+
+def test_a_slot_between_layer_lines_holding_ink_is_read_a_blank_one_not(tmp_path):
+    pdf, pages = _dialogue(tmp_path)
+    found = missing.slots(pdf, pages)
+    assert [(n, r.label) for n, r in found] == [(1, "slot")]
+    assert 155 < found[0][1].y0 < found[0][1].y1 < 175
+    assert found[0] in missing.candidates(pages, {}, {}, found)
+    # The layer's junk for the dots ("€") counts as no line: the slot is still read.
+    junk = Line("€", 25, 168, 34, 171)
+    lines = sorted([*pages[0].lines, junk], key=lambda ln: ln.y0)
+    assert missing.slots(pdf, [replace(pages[0], lines=lines)]) == found
+    # A slot a spotter's region already covers, or a human answered, is read once.
+    spotted = Region("plain text", 0.5, *[found[0][1].x0, 158, found[0][1].x1, 172])
+    assert found[0] not in missing.candidates(pages, {1: [spotted]}, {}, found)
+    answered = {1: [(10, 150, 320, 180)]}
+    assert found[0] not in missing.candidates(pages, {}, answered, found)
+
+
+def test_a_slot_gives_a_line_of_dots_only_and_a_region_its_text():
+    page = _page()
+    slot = Region("slot", missing.PLACED, 20, 190, 300, 201)
+    text = Region("plain text", 0.5, 20, 190, 300, 201)
+    for reading, kept in (("‘...’", True), ("...", True), ("'. . .'", True), ("…", True)):
+        out = missing.add([page], [(22, slot)], {missing._key(22, slot): reading})
+        assert ("‘...’" in [ln.text for ln in out[0].lines]) == (reading == "‘...’")
+        assert len(out[0].lines) == len(page.lines) + kept
+    # A slot's words aren't taken (a picture page's slots), nor a region's bare dots.
+    for region, reading in ((slot, "and so it went"), (slot, "¶"), (text, "...")):
+        out = missing.add([page], [(22, region)], {missing._key(22, region): reading})
+        assert out[0].lines == page.lines
+    out = missing.add([page], [(22, text)], {missing._key(22, text): "and so it went"})
+    assert len(out[0].lines) == len(page.lines) + 1
+
+
+def test_a_slot_read_as_bare_dots_gets_the_quote_marks_its_ink_shows(tmp_path):
+    pdf, pages = _dialogue(tmp_path)
+    found = missing.slots(pdf, pages)
+    key = missing._key(*found[0])
+    # The fixture's slot prints a mark high before its dots and none after.
+    assert missing.quoted(pdf, found, {key: "..."}, single=True)[key] == "‘..."
+    assert missing.quoted(pdf, found, {key: "…"}, single=False)[key] == "“…"
+    # A reading with its marks, or no dots, is left as it is; so is a region's.
+    for reading in ("‘...’", "and so it went"):
+        assert missing.quoted(pdf, found, {key: reading}, single=True)[key] == reading
+    text = (
+        1,
+        Region(
+            "plain text", 0.5, *[found[0][1].x0, found[0][1].y0, found[0][1].x1, found[0][1].y1]
+        ),
+    )
+    assert missing.quoted(pdf, [text], {missing._key(*text): "..."}, True) == {
+        missing._key(*text): "..."
+    }

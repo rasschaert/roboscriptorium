@@ -147,6 +147,9 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   and printed accents differ a little by shape (AUC 0.81 against 0.71 leaving a book out),
   nothing the trees don't already have (silent errors 17 → 18). The arbiter's silent errors
   on the bench are its sureness line's price: 9–11 questions for each one caught past 0.8.
+- **A double quote read as single, judged by the book's quote style** (2026-11-06, no
+  models): the layer's style doesn't predict it (De tuin van de avondnevel opens 81% single,
+  yet the single is wrong 33 of 35 times); decisions.md.
 - **Three questions a page** (2026-10-26, warm benches): the budget binds only on De
   vergelding (8 unasked words caught for 33 questions); tuning no change.
 - **The page readers' spelling of a line-end compound** (2026-10-15, a probe): with the

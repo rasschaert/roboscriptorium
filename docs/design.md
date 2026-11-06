@@ -130,6 +130,15 @@ the print, and the layer never printed "ij" where a bench reference has one of t
 runs); the other way, the layer's "Hy", "ziin" or "mi" set right, is the print 45 times in
 89, so it stays a version. Taken 2026-11-05: tuning 3 unasked words fixed (De vergelding's
 names "Bijlsma" and "Rijsdijk"), none made; validation none to fix.
+Nor is a quote mark a reading adds where the layer has none and print never sets one
+(`quote_misread`, a speck read as a mark): one gluing two words, three letters or more
+before it and no contraction's end, diminutive or plural after ("keeken" or "keek en" →
+"keek’en", but "you’re", "zo’n", "foto’s", "baby’tje", "ma’am" stay versions), 0 of 13
+in the trust data; or a closing ’ opening a word that elides nothing ("zet zijn" →
+"zet ’zijn", but "op ’t" stays), 0 of 7. Both are needed together: with only the glued
+kind dropped, its sibling "zet ’zijn" carried that reader's vote alone and the arbiter
+took it (De vergelding, Afscheid; bench 2026-11-06). "de’schaft" (two letters before)
+stays a version, as "ma’am" does.
 
 **Every body line is read, short ones too.** A dialogue line ending "keek.’" is
 where a closing quote is lost. On Goede dochter pp. 9–64, reading the lines under 12
@@ -459,6 +468,31 @@ with no letter and is dropped (2026-11-05). Where glm-ocr answers with talk inst
 reads as a number: on Artemis' circled 11 it reads "11" where glm-ocr says "```markdown";
 on Doodskleed's corner specks it invents sentences (17 of 35, "‘Ik heb het niet gedaan,’
 zei hij." five times), which a whole-reading fallback would have made lines.
+
+A line of nothing but dots between two lines of a text block (a silent reply, "‘...’") is
+often lost by both: the layer drops it or reads it as junk ("€"), and the spotter boxes the
+block around it. So a slot 1.6 to 2.5 line pitches tall between two layer lines (a line
+with no letter or digit counted as none), across the page's text column, is read by
+glm-ocr where it holds ink: at least 20 pixels darker than the strip's paper by 60 levels
+(its median, as Verminkt prints its dots grey and Het geluid van bananen is on grey paper)
+over rows spanning half a line height (`missing.slots`). Only a reading of dots is taken
+from a slot: the others lie above footnote rules, page numbers, or among a picture page's
+junk. Over the 5,466 pages of both sets 81 slots hold ink
+(`experiments/probe_ink_slots.py`, 2026-11-05), on the pages of most lines of dots the
+benches lost: Verminkt 9 of 9, Het geluid van bananen 4 of 6, Vanille 5 of 9. glm-ocr
+reads both books' "‘...’" as bare dots, "...", leaving out the quote marks. The slot is narrowed to its
+ink, a line height either side, so the line's measures and indent are its own; even so the
+line-role trees, which have seen a line with no letter only as a speck, call each one an
+artifact (0.999 on Het geluid van bananen's four). A line read from a slot is body by what
+a slot is, so it keeps that role past the trees (`missing.slot_lines`): read but dropped,
+the first bench was no change on both sets (2026-11-06). Kept as glm-ocr reads it, bare
+dots ran into the paragraph above ("hoor.’..."), so a slot read as bare dots takes the
+quote marks its ink shows (`missing.quoted`): ink in the top half of its rows, left or
+right of the dots' middle and within the dots' own width of them, in the book's quote
+style. Rows, not columns, part marks from dots: Het geluid van bananen sets each mark
+right over an end dot. The width test leaves out a descender of the line above reaching
+into the slot (Verminkt PDF 248, bare dots in print); every quoted silent reply on both
+books' bench pages shows both marks so.
 
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
 same way: a speck in a page's top corner read "境", kept as the page's first line, then

@@ -140,9 +140,12 @@ def run(
         faint_pages = faint.pages(book.source, body, book.stages / "contrast.json")
     if use_models:
         settings = settings or Settings.from_env()
+        found: list = []
         if regions is not None and ocrcheck.scanned(book.source):
             placed = missing.openings(book.source, body, regions)
-            found = missing.candidates(body, placed, _answered(answers))
+            found = missing.candidates(
+                body, placed, _answered(answers), missing.slots(book.source, body)
+            )
             readings = missing.read(
                 book.source,
                 found,
@@ -163,6 +166,8 @@ def run(
                     for (n, r), (_, b) in zip(talked, boxes, strict=True)
                     if chapters.value(again[(n, b)]) is not None
                 }
+            single = quotes.single_quoted_lines([ln.text for p in whole for ln in p.lines])
+            readings = missing.quoted(book.source, found, readings, single)
             body = missing.add(body, found, readings)
         client = decide.for_model(settings.role_model, settings.ollama_url)
         cache = DecisionCache(book.stages / "decisions.jsonl")
@@ -181,6 +186,9 @@ def run(
         model_roles = chapters.title_lines(body, model_roles, styles)
         model_roles = chapters.running_text(body, model_roles)
         model_roles = chapters.run_gaps(body, model_roles)
+        model_roles |= {
+            ref: LineRole("body", 1.0, 1.0, "slot") for ref in missing.slot_lines(body, found)
+        }
         note_lines = footnotes.lines(body, model_roles, styles, known)
         epigraph_lines = epigraphs.lines(body, model_roles)
         headed = [r.page for r, role in model_roles.items() if role.role == "chapter_heading"]

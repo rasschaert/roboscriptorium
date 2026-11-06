@@ -14,6 +14,7 @@ from roboscriptorium.clients.decide import DecisionClient
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import Line, PageText
+from roboscriptorium.roles import LineRole
 
 LINES = [f"Line {i} of the story goes on and on across the page" for i in range(12)]
 
@@ -906,3 +907,36 @@ def test_a_paragraph_start_an_answer_lost_is_named_one_it_answered_is_not(tmp_pa
     answers = Corrections(tmp_path / "regions.jsonl")
     answers.record(flags.Flag("k", 2, 3, 4, "x\ny", "text", []), "text", "x")
     assert pipeline.lost_breaks(before, after, answers) == [SourceRef(2, 0)]
+
+
+def test_a_line_of_dots_the_layer_lost_between_lines_is_kept_as_body(tmp_path, monkeypatch):
+    _everything_is_body(monkeypatch)
+    lines = [*LINES[:6], "", *LINES[6:]]
+    book = _book(tmp_path, lines=lines)
+    with pymupdf.open(book.source) as doc:
+        page = doc[0]
+        # ‘... on the empty line: a quote mark high, three dots on the baseline.
+        page.draw_rect(pymupdf.Rect(40, 159, 42, 163), color=(0, 0, 0), fill=(0, 0, 0))
+        for x in (45, 50, 55):
+            page.draw_rect(pymupdf.Rect(x, 166.5, x + 2, 168.5), color=(0, 0, 0), fill=(0, 0, 0))
+        doc.saveIncr()
+    monkeypatch.setattr(pipeline.layout, "available", lambda: True)
+    monkeypatch.setattr(pipeline.layout, "detect", lambda pdf, numbers, cache: {1: []})
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    monkeypatch.setattr(pipeline.missing.readers, "read_line", lambda png, model, url: "...")
+    # The line roles take a line with no letter for a speck.
+    gaps = pipeline.chapters.run_gaps
+
+    def specks(body, roles):
+        return gaps(body, roles) | {
+            SourceRef(p.number, i): LineRole("artifact", 0.99, 0.01, "trees")
+            for p in body
+            for i, ln in enumerate(p.lines)
+            if not any(c.isalnum() for c in ln.text)
+        }
+
+    monkeypatch.setattr(pipeline.chapters, "run_gaps", specks)
+    stages = pipeline.run(book, check_ocr=False)
+    # glm-ocr's bare dots get the mark the ink shows, in the book's style (no ‘ in it).
+    assert [ln.text for ln in stages.pages[0].lines][6] == "“..."
+    assert "“..." in " ".join(p.text for p in stages.doc.paragraphs)

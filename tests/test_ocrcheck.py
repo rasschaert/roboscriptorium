@@ -1098,3 +1098,30 @@ def test_an_ij_read_as_another_letter_is_never_the_print_the_other_way_can_be():
         ("zijn", "zun,"),
     ):
         assert not ocrcheck.ij_misread(ours, version)
+
+
+def test_a_quote_mark_gluing_words_or_opening_one_as_a_closing_mark_is_never_the_print():
+    for ours, version in (
+        ("keeken", "keek’en"),
+        ("keek en", "keek'en"),
+        ("wood and", "wood’and"),
+        ("whenever he", "whenever‘he"),
+        ("zet zijn", "zet ’zijn"),
+        ("dat alles", "dat ’alles"),
+    ):
+        assert ocrcheck.quote_misread(ours, version)
+    # Not: a contraction's end, a diminutive or plural, a short word before the mark
+    # ("ma’am"), an elision, an opening mark before a word, or a mark the layer has too.
+    for ours, version in (
+        ("you re", "you’re"),
+        ("didn t", "didn’t"),
+        ("zo n", "zo’n"),
+        ("fotos", "foto’s"),
+        ("babytje", "baby’tje"),
+        ("ma am", "ma’am"),
+        ("op t", "op ’t"),
+        ("zei hij Kom", "zei hij ‘Kom"),
+        ("MOORDENARES .", "MOORDENARES’."),
+        ("keek’en", "keek’an"),
+    ):
+        assert not ocrcheck.quote_misread(ours, version)
