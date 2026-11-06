@@ -30,7 +30,7 @@ from roboscriptorium.trust import fold, rows_from  # noqa: F401 - read by the ex
 # slices are longer or whole, and validation books have data the trainer never trains
 # on (`trainable`). A tuning book left out is in `bench.NO_TRUST_DATA`.
 SPECS = {
-    "goede-dochter--ia-scan": "9-278:1-13",
+    "goede-dochter--ia-scan": "",
     "vals-alarm--ia-scan": "11-188:1-31",
     # Trained on, never scored: without it the arbiter left more errors unasked.
     "the-nature-of-a-crime--doubleday-1924": "",
@@ -38,13 +38,13 @@ SPECS = {
     "reis-om-mijn-schedel--ia-scan": "",
     "afscheid-van-verspilde-tijd--ia-scan": "",
     "metro-2033--ia-scan": "7-263:1-22",
-    "de-cipier--ia-scan": "9-252:1-8",
+    "de-cipier--ia-scan": "",
     "artemis--ia-scan": "",
     "de-tuin-van-de-avondnevel--ia-scan": "11-254:1-16",
     "de-eerlijke-vinder--ia-scan": "",
     "youre-never-weird-on-the-internet--ia-scan": "13-26:1-2",
     "the-thief-takers-apprentice--ia-scan": "11-165:1-48",
-    "het-heft-in-eigen-hand--ia-scan": "9-253:1-11",
+    "het-heft-in-eigen-hand--ia-scan": "",
     "doodskleed--ia-scan": "",
     "het-ijzige-land--ia-scan": "",
     "de-kerk-van-de-dode-meisjes--ia-scan": "11-27:1-3",

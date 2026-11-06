@@ -7,7 +7,14 @@ Qwen3.8-Flash-Next and mended headings and lost blocks.
 
 ## Running
 
-Nothing. Baselines `tuning-20261106T225112` (tuning ~4,500 pages), `validation-20261106T225402`
+- **Slice growth batch four** (screen `robo-grow5`, `work/runs/grow5.sh`, output
+  `work/runs/grow5.out`), started 2026-11-07 ~00:05, ~8.5 h cold: Goede dochter, De cipier
+  and Het heft scored whole (~720 pages more), one book at a time, then their trust data
+  rebuilt. When it ends: the decisions line, the checklist's "Grow the tuning slices
+  further" (room left: Au pair 219, Metro 201, De vergelding 134, Thief-Taker 127, De tuin
+  120, Vals alarm 114), the new baselines here.
+
+Baselines before it: `tuning-20261106T225112` (tuning ~4,500 pages), `validation-20261106T225402`
 (73c256e).
 
 ## Done 2026-11-06 evening
