@@ -73,9 +73,8 @@ def test_a_full_stop_for_a_line_end_comma_is_kept_where_a_sentence_can_end():
         assert not ocrcheck.line_end_stop(line, a0, a1, "huis.", nxt, set())
     # A word the book abbreviates ("bijv. de") may stop mid-sentence.
     assert not ocrcheck.line_end_stop(line, a0, a1, "huis.", "hand in hand", {"huis"})
-    # Another change than the comma alone, or a comma inside the line, isn't this case.
+    # Another change than the comma alone isn't this case.
     assert not ocrcheck.line_end_stop(line, a0, a1, "huís.", "hand", set())
-    assert not ocrcheck.line_end_stop(line + " ze", a0, a1, "huis.", "hand", set())
 
 
 def test_a_full_stop_for_a_line_end_comma_before_lower_case_is_never_the_print():
@@ -93,7 +92,6 @@ def test_a_full_stop_added_at_a_line_end_is_kept_where_a_sentence_can_end_or_it_
     for nxt in ("Vallen deed ik", ""):
         assert not ocrcheck.line_end_stop(line, a0, a1, "slaap.", nxt, set())
     assert not ocrcheck.line_end_stop(line, a0, a1, "slaap.", "vallen", {"slaap"})
-    assert not ocrcheck.line_end_stop(line + " nu", a0, a1, "slaap.", "vallen", set())
     dots = "hij knoeide.."
     assert not ocrcheck.line_end_stop(dots, 4, len(dots), "knoeide...", "zonder", set())
     assert not ocrcheck.line_end_stop(line, a0, a1, "slaap!", "vallen", set())
@@ -1041,3 +1039,62 @@ def test_an_h_read_as_b_is_never_the_print_b_read_as_h_or_more_changed_can_be():
     # or another length.
     for ours, version in (("bet", "het"), ("hoh", "bob"), ("Het", "Bet"), ("hij", "bij.")):
         assert not ocrcheck.b_for_h(ours, version)
+
+
+def test_a_full_stop_inside_a_line_before_a_lower_case_letter_is_never_the_print():
+    # "scherm, en ergens" read "scherm. en", "zich korstjes" read "zich. korstjes".
+    line = "tikte op het scherm, en ergens kwam muziek"
+    a0, a1 = line.index("scherm,"), line.index("scherm,") + len("scherm,")
+    assert ocrcheck.line_end_stop(line, a0, a1, "scherm.", "", set())
+    line = "waarop zich korstjes hebben gevormd"
+    a0, a1 = line.index("zich"), line.index("zich") + 4
+    assert ocrcheck.line_end_stop(line, a0, a1, "zich.", "", set())
+    # Not: a quotation opened in lower case after it (an author's stop), a capital after
+    # it, a word the book abbreviates, or a stop glued to the next word.
+    line = "in zijn stem, ‘dat kon ik niet"
+    a0, a1 = line.index("stem,"), line.index("stem,") + 5
+    assert not ocrcheck.line_end_stop(line, a0, a1, "stem.", "", set())
+    line = "in zijn stem, Dat kon ik niet"
+    assert not ocrcheck.line_end_stop(line, a0, a1, "stem.", "", set())
+    line = "zoon Hein jr, die alles"
+    a0, a1 = line.index("jr,"), line.index("jr,") + 3
+    assert not ocrcheck.line_end_stop(line, a0, a1, "jr.", "", {"jr"})
+    line = "het eind,en dan"
+    a0, a1 = line.index("eind,"), line.index("eind,") + 5
+    assert not ocrcheck.line_end_stop(line, a0, a1, "eind.", "", set())
+
+
+def test_a_full_stop_inside_a_line_is_kept_where_a_reading_disputes_the_next_word():
+    # The layer's "df" and "h" are an opening "'If" and "It": the stop may be the print.
+    line = "There was a long pause, df that’s what"
+    a0, a1 = line.index("pause,"), line.index("pause,") + len("pause,")
+    df = line.index("df")
+    assert ocrcheck.line_end_stop(line, a0, a1, "pause.", "", set())
+    assert not ocrcheck.line_end_stop(line, a0, a1, "pause.", "", set(), [(df, df + 2)])
+    # A difference elsewhere on the line doesn't stand in the way.
+    assert ocrcheck.line_end_stop(line, a0, a1, "pause.", "", set(), [(0, 5)])
+
+
+def test_an_ij_read_as_another_letter_is_never_the_print_the_other_way_can_be():
+    for ours, version in (
+        ("Rijsdijk", "Rusdijk"),
+        ("Rijsdijk", "Rijsduk"),
+        ("dijk", "duik"),
+        ("bij", "by"),
+        ("bekijkt.", "bekiikt."),
+        ("jij", "ji"),
+        ("Bijlsma", "Bulsma"),
+    ):
+        assert ocrcheck.ij_misread(ours, version)
+    # Not: the layer's misreading set right ("Hy" → "Hij", "ziin" → "zijn", "mi" → "mij"),
+    # a capital IJ, two changes, or another change beside it.
+    for ours, version in (
+        ("Hy", "Hij"),
+        ("ziin", "zijn"),
+        ("mi", "mij"),
+        ("IJs", "Us"),
+        ("Rijsdijk", "Rusduk"),
+        ("bij", "by."),
+        ("zijn", "zun,"),
+    ):
+        assert not ocrcheck.ij_misread(ours, version)

@@ -674,3 +674,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-05 | bench validation, a line repeated under a running head no running head (warm) | 0 | 3 | 0 |
 | 2026-11-05 | bench tuning, an h read as b no version (warm) | 4500 | 14 | 0 |
 | 2026-11-05 | bench validation, an h read as b no version (warm) | 0 | 3 | 0 |
+| 2026-11-05 | bench tuning, a stop mid-line before a lower-case letter no version (warm) | 4500 | 12 | 0 |
+| 2026-11-05 | bench validation, a stop mid-line before a lower-case letter no version (warm) | 0 | 3 | 0 |
+| 2026-11-05 | bench tuning, mid-line stop with the next word undisputed, and an ij misread no version (warm) | 4500 | 12 | 0 |
+| 2026-11-05 | bench validation, mid-line stop with the next word undisputed, and an ij misread no version (warm) | 0 | 3 | 0 |

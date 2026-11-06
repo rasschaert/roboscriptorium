@@ -240,14 +240,17 @@ def check(
                     page.lines[k - 1].text if k > 0 else "",
                     page.lines[k + 1].text if k + 1 < len(page.lines) else "",
                 )
-                for a0, a1, alternatives in merged_differences(ours, read, curly):
+                differences = merged_differences(ours, read, curly)
+                for a0, a1, alternatives in differences:
+                    disputed = [(d0, d1) for d0, d1, _ in differences if (d0, d1) != (a0, a1)]
                     alternatives = [
                         v
                         for v in alternatives
-                        if not line_end_stop(ours, a0, a1, v, around[1], shortened)
+                        if not line_end_stop(ours, a0, a1, v, around[1], shortened, disputed)
                         and not half_accent(ours[a0:a1], v)
                         and not garbled(ours[a0:a1], v)
                         and not b_for_h(ours[a0:a1], v)
+                        and not ij_misread(ours[a0:a1], v)
                     ]
                     if not alternatives:
                         continue
@@ -324,16 +327,40 @@ def b_for_h(ours: str, version: str) -> bool:
     return diff == [("h", "b")]
 
 
+# What a reader makes of a printed "ij" ("dijk" → "duk", "duik", "dyk", "diik", "dik").
+IJ_MISREADS = ("u", "ui", "y", "ii", "i")
+
+
+def ij_misread(ours: str, version: str) -> bool:
+    """Whether `version` only reads one of the layer's "ij"s as another letter or two
+    (`IJ_MISREADS`): in the trust data never the print (0 of 68), where the other way,
+    the layer's "Hy", "ziin" or "mi" for "Hij", "zijn" or "mij", it is half the time
+    (45 of 89)."""
+    at = ours.find("ij")
+    while at >= 0:
+        if any(ours[:at] + m + ours[at + 2 :] == version for m in IJ_MISREADS):
+            return True
+        at = ours.find("ij", at + 1)
+    return False
+
+
 def line_end_stop(
-    ours: str, a0: int, a1: int, version: str, next_line: str, shortened: set[str]
+    ours: str,
+    a0: int,
+    a1: int,
+    version: str,
+    next_line: str,
+    shortened: set[str],
+    disputed: list[tuple[int, int]] | None = None,
 ) -> bool:
-    """Whether `version` only ends the line on a full stop, for its closing comma or after
-    a last word with no mark, while the next line opens in lower case. No sentence ends
-    there, so it is never the print, unless the word is one the book abbreviates
-    (`abbreviations`)."""
+    """Whether `version` only ends a word on a full stop, for its comma or after it with no
+    mark, where a lower-case word follows: at the line's end the next line's first, quote
+    marks before it skipped; inside the line the very next letter, so an author's stop
+    before a quotation opened in lower case ("stem. ‘dat") stays a question, and so does a
+    next word a reading disputes (`disputed`, the line's other differences: the layer's
+    "df" and "h" for an opening "'If" and "It"). No sentence ends there, so it is never
+    the print, unless the word is one the book abbreviates (`abbreviations`)."""
     span = ours[a0:a1]
-    if a1 != len(ours.rstrip()):
-        return False
     if span.endswith(","):
         stopped = span[:-1] + "."
     elif span and (span[-1].isalnum() or span[-1] in "’'\"”"):
@@ -342,9 +369,18 @@ def line_end_stop(
         return False
     if version != stopped:
         return False
-    first = _FIRST_LETTER.match(next_line.strip())
-    if not first or not first.group(1).islower():
-        return False
+    rest = ours[a1:]
+    if rest.strip():
+        if not rest[:1].isspace() or not rest.lstrip()[:1].islower():
+            return False
+        w0 = a1 + len(rest) - len(rest.lstrip())
+        w1 = w0 + len(rest.split()[0])
+        if any(d0 < w1 and w0 < d1 for d0, d1 in disputed or ()):
+            return False
+    else:
+        first = _FIRST_LETTER.match(next_line.strip())
+        if not first or not first.group(1).islower():
+            return False
     word = re.findall(r"\w+", span)
     return not word or word[-1].lower() not in shortened
 

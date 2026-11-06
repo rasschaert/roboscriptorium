@@ -219,6 +219,10 @@ Don't repeat these without a new reason (details in docs/decisions.md):
   30 in the trust data mid-line, but the bench's cases sat at line ends, out of the
   arbiter's sight; offline noise (42 → 41 silent at a question a page). Taken as a rule
   instead (`line_end_stop`), where the next line is known: 4 unasked words fixed.
+- **The mid-line stop rule unguarded** (2026-11-05): a stop added right before a lower-case
+  letter inside a line, as the layer reads it: made one error on each set where the layer
+  misread the next word's opening ("df" for "'If", "h" for "It"). Taken with the next word
+  undisputed by any reading.
 - **A number line's run through the book as a line-role feature** (2026-11-05): tuning
   errors 354 → 359 offline; Monterosso's mid-page numbers unchanged. Mended by the book's
   own run instead (`chapters.run_gaps`).

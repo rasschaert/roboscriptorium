@@ -89,7 +89,7 @@ were left out as ties, 44 of them hiding a real lost ellipsis (`kra.` for `kra�
 arbiter then never saw a label for. Folded (2026-10-09): Reis's questions 1.09 → 0.34 a
 page and after review 0.32 → 0.22; the set unchanged by the test.
 
-**A full stop ending a line before a lower-case line is no version.** No
+**A full stop before a lower-case word is no version.** No
 sentence ends where the next line opens in lower case, so a reading that only turns the
 line's closing comma into a stop there, or only adds one after its last word, is dropped
 before judging (`line_end_stop`),
@@ -104,7 +104,13 @@ of 11; before a capital 10 of 21), and the arbiter had taken it unasked four tim
 tuning ("slaap." over "vallen", "shipped." over "here"). An arbiter feature for a stop
 before a lower-case word on the same line moved nothing past noise left out book by book
 (silent errors at a question a page 42 → 41), and the bench's four were all at line ends,
-past what the arbiter sees. Taken: tuning 4 unasked words fixed, none made.
+past what the arbiter sees. Taken: tuning 4 unasked words fixed, none made. Inside a line
+(2026-11-05) the same holds where the very next letter is lower case and no reading
+disputes that word: a stop added there was never the print in the trust data (30 of 30, a
+comma read as a stop 96 of 99). An opening quote right after it ("stem. ‘dat", an author's
+stop) keeps it a question, and so does a next word the readers dispute: the layer's "df"
+and "h" for "'If" and "It" sank the first try (tuning and validation 1 made each). Taken
+2026-11-05 with that guard: tuning 2 unasked words fixed, none made; validation 5 fixed (De kerk van de dode meisjes 4, De geruchten 1), none made.
 
 Two more kinds of reading are never the print, by the same test (wrong in every book's
 trust data, and true by definition): an accent on one letter of a doubled a, o or u
@@ -118,6 +124,12 @@ capital inside a lower-case word ("aaN") is never the print either, but a reader
 of 91 such versions in the trust data, none was the print, while a b read as h is now and
 then (17 of 45, the layer's own "bet" for "het"); the arbiter had taken it unasked on
 tuning ("buis.", "bij", "bet", "be"). Taken 2026-11-05: 4 unasked words fixed, none made.
+Nor is one of the layer's "ij"s read as u, ui, y, ii or i (`ij_misread`: "Rijsdijk" →
+"Rusdijk", "dijk" → "duik", "bij" → "by"): of 68 such versions in the trust data none was
+the print, and the layer never printed "ij" where a bench reference has one of those (40
+runs); the other way, the layer's "Hy", "ziin" or "mi" set right, is the print 45 times in
+89, so it stays a version. Taken 2026-11-05: tuning 3 unasked words fixed (De vergelding's
+names "Bijlsma" and "Rijsdijk"), none made; validation none to fix.
 
 **Every body line is read, short ones too.** A dialogue line ending "keek.’" is
 where a closing quote is lost. On Goede dochter pp. 9–64, reading the lines under 12

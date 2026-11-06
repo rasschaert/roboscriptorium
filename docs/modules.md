@@ -267,9 +267,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   (`stages/third-reading.json`; readings by another model or prompt are kept aside
   in `third-reading.<hash>.json` and come back when asked for). A version that only turns
   the line's closing comma into a stop, or only adds one after its last word, before a
-  lower-case line is dropped (`line_end_stop`), unless the book abbreviates the word (`abbreviations`); so is one
-  that accents one letter of a doubled a, o or u (`half_accent`) or brings in `~`, `^` or
-  `|` (`garbled`), or only reads one of the layer's h's as a b (`b_for_h`). Where a
+  lower-case line, or adds one inside the line right before a lower-case word no reading
+  disputes, is dropped (`line_end_stop`), unless the book abbreviates the word
+  (`abbreviations`); so is one that accents one letter of a doubled a, o or u
+  (`half_accent`) or brings in `~`, `^` or `|` (`garbled`), or only reads one of the
+  layer's h's as a b (`b_for_h`) or one of its "ij"s as u, ui, y, ii or i (`ij_misread`). Where a
   line's readings differ, clef picks from
   the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence. The learned trust
   (`trust.py`, on by default) then fixes, keeps or asks, its substitution table

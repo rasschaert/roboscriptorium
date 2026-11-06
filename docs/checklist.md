@@ -588,13 +588,13 @@ also part of the pipeline itself." Before either book goes to review:
       tuning book that sets headings so
 - [x] ~~Stops added after a word before lower case~~ (2026-11-04, `line_end_stop` widened):
       4 of the 7 fixed on tuning; "the. ground" (Artemis) is no suspect, from another stage
-- [ ] A stop added mid-line right before a lower-case letter no version: written and
-      tested, not benched (`work/runs/midline-stop.patch`, HANDOVER.md has the commands)
+- [x] ~~A stop added mid-line right before a lower-case word no version~~ (2026-11-05,
+      `line_end_stop`, the next word undisputed): tuning 2 fixed, validation 5, none made
+- [x] ~~An "ij" read as u, ui, y, ii or i no version~~ (2026-11-05, `ij_misread`): De
+      vergelding's names, tuning 3 fixed, none made
 - [ ] The rest of the errors the build makes where the layer was right (60 unasked on
       tuning, 2026-11-05): emphasis accents added or dropped (16, about half the
-      reference's), punctuation swapped (12), h read as b in Dutch words ("huis" → "buis",
-      "hij" → "bij", "het" → "bet", "bidden" → "hidden", an English word), De vergelding's
-      names ("Bijlsma" → "Bulsma")
+      reference's), punctuation swapped (about 10), quote glyphs (6)
 - [ ] (Low) An accent told from an i-dot or a speck by its shape over its own letter,
       with tesseract's per-letter boxes (`hocr_char_boxes`, real since checked
       2026-11-03); ~50 real accent errors left on tuning
