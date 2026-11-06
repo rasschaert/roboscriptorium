@@ -708,3 +708,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-06 | bench validation, a text block the layer lost whole read line by line (warm) | 0 | 3 | 0 |
 | 2026-11-06 | bench tuning, a text block the layer lost whole read line by line, none inside a region the layer reads (warm) | 4500 | 12 | 0 |
 | 2026-11-06 | bench validation, a text block the layer lost whole read line by line, none inside a region the layer reads (warm) | 0 | 3 | 0 |
+| 2026-11-06 | bench tuning, subscript digits and the fraction slash folded by the scorer (warm) | 4500 | 12 | 0 |
+| 2026-11-06 | bench validation, subscript digits and the fraction slash folded by the scorer (warm) | 0 | 3 | 0 |

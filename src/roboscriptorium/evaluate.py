@@ -55,6 +55,19 @@ _FOLD = str.maketrans(
         "⁷": "7",
         "⁸": "8",
         "⁹": "9",
+        # A subscript and a fraction's slash, which e-books set in markup ("CO<sub>2</sub>",
+        # "<sup>1</sup>/<sub>6</sub>") and the reference keeps as bare digits.
+        "₀": "0",
+        "₁": "1",
+        "₂": "2",
+        "₃": "3",
+        "₄": "4",
+        "₅": "5",
+        "₆": "6",
+        "₇": "7",
+        "₈": "8",
+        "₉": "9",
+        "⁄": "/",
     }
 )
 _SPACED_DOTS = re.compile(r"\.(?: \.){2,}")
@@ -71,6 +84,8 @@ _FOLD_KINDS = {
     "soft hyphens": re.compile("\u00ad"),
     "nested quote gaps": _NESTED_GAP,
     "superscript digits": re.compile("[⁰¹²³⁴⁵⁶⁷⁸⁹]"),
+    "subscript digits": re.compile("[₀₁₂₃₄₅₆₇₈₉]"),
+    "fraction slashes": re.compile("⁄"),
 }
 
 

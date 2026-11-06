@@ -13,6 +13,13 @@ def test_a_superscript_footnote_mark_is_the_plain_digit_an_epub_may_set():
     assert evaluate.folds(["Hezb⁸ en Kataeb⁴."])["superscript digits"] == 2
 
 
+def test_a_subscript_and_a_fractions_slash_are_the_digits_an_epub_sets_in_markup():
+    assert evaluate.normalise("My CO₂ system") == evaluate.normalise("My CO2 system")
+    assert evaluate.normalise("1⁄₆th of it") == evaluate.normalise("1/6th of it")
+    assert evaluate.folds(["CO₂ en O₂, 1⁄₆th"])["subscript digits"] == 3
+    assert evaluate.folds(["1⁄₆th"])["fraction slashes"] == 1
+
+
 def test_folds_count_each_kind():
     counted = evaluate.folds(["‘No . . . I don’t’", "wait… – go", "a\u00a0b"])
     assert counted == {
@@ -23,6 +30,8 @@ def test_folds_count_each_kind():
         "soft hyphens": 0,
         "nested quote gaps": 0,
         "superscript digits": 0,
+        "subscript digits": 0,
+        "fraction slashes": 0,
     }
 
 
