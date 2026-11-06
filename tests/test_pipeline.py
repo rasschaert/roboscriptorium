@@ -929,8 +929,8 @@ def test_a_line_of_dots_the_layer_lost_between_lines_is_kept_as_body(tmp_path, m
     # The line roles take a line with no letter for a speck.
     gaps = pipeline.chapters.run_gaps
 
-    def specks(body, roles):
-        return gaps(body, roles) | {
+    def specks(body, roles, *rest):
+        return gaps(body, roles, *rest) | {
             SourceRef(p.number, i): LineRole("artifact", 0.99, 0.01, "trees")
             for p in body
             for i, ln in enumerate(p.lines)

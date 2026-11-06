@@ -11,6 +11,7 @@ heading too short to be a title, is the number its neighbours say (`numbered`).
 import re
 import statistics
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import replace
 
 from rapidfuzz.distance import Levenshtein
@@ -72,14 +73,21 @@ def openings(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[So
     return out
 
 
-def run_gaps(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[SourceRef, LineRole]:
+def run_gaps(
+    pages: list[PageText],
+    roles: dict[SourceRef, LineRole],
+    reread: Callable[[set[SourceRef]], dict[SourceRef, str]] | None = None,
+) -> dict[SourceRef, LineRole]:
     """`roles` with a dropped line made a chapter heading where it fills a gap in the book's
     run of numbered headings: in reading order it reads a number past the run so far (by
-    at most `RUN_GAP`) and short of the next heading's, centred, not the page's printed
-    number, and not a page's first or last line, where page numbers stand, unless it opens
-    a sunk page. Monterosso's chapters set mid-page between white lines ("4" between "3"
-    and "5") are dropped as specks by the trees. Needs `MIN_NUMBERED` numbered headings.
-    Returns a new dict."""
+    at most `RUN_GAP`; before the run's first number, within `RUN_GAP` below it) and short
+    of the next heading's, centred, not the page's printed number, and not a page's first
+    or last line, where page numbers stand, unless it opens a sunk page. Monterosso's
+    chapters set mid-page between white lines ("4" between "3" and "5") are dropped as
+    specks by the trees. A line of at most `NUMBER_CHARS` characters that reads as no
+    number ("Kil" for 11, "e," for 2) is read again by `reread`, only where the run has a
+    gap, and counts by that reading. Needs `MIN_NUMBERED` numbered headings. Returns a new
+    dict."""
     offset = P.page_offset(pages)
     sunk = P.sunk_pages(pages)
     order = [(p, i) for p in pages for i in range(len(p.lines))]
@@ -92,6 +100,40 @@ def run_gaps(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[So
     ]
     if len(anchors) < MIN_NUMBERED:
         return roles
+
+    def placed(p: PageText, i: int) -> bool:
+        role = roles.get(SourceRef(p.number, i))
+        if role is None or is_body(role) or role.role == "chapter_heading":
+            return False
+        edge = i in (0, len(p.lines) - 1) and not (i == 0 and p.number in sunk)
+        full, _ = P.geometry(p)
+        return (
+            not edge
+            and not P.printed_page_number(p.lines[i].text.strip(), p, offset)
+            and P.centred_on_page(p.lines[i], p, full)
+        )
+
+    # Where the kept headings may leave a number out: before the run's first one above 1,
+    # between two more than one apart, and after the last.
+    in_gap, before, after = set(), None, iter(anchors + [(len(order), None)])
+    upcoming = next(after)
+    for k in range(len(order)):
+        while upcoming[0] < k:
+            before, upcoming = upcoming[1], next(after)
+        if upcoming[0] == k:
+            continue
+        if upcoming[1] is None or upcoming[1] - (before or 0) > 1:
+            in_gap.add(k)
+    misread = {
+        SourceRef(p.number, i)
+        for k, (p, i) in enumerate(order)
+        if k in in_gap
+        and value(p.lines[i].text) is None
+        and len(p.lines[i].text.strip()) <= NUMBER_CHARS
+        and placed(p, i)
+    }
+    second = reread(misread) if reread is not None and misread else {}
+
     out = dict(roles)
     run = None  # the last number of the run, in reading order
     nxt = iter(anchors + [(len(order), None)])
@@ -100,24 +142,18 @@ def run_gaps(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[So
         while upcoming[0] < k:
             upcoming = next(nxt)
         ref = SourceRef(p.number, i)
-        role = roles.get(ref)
-        v = value(p.lines[i].text)
         if upcoming[0] == k:
             run = upcoming[1]
             continue
-        if role is None or is_body(role) or role.role == "chapter_heading" or v is None:
+        v = value(p.lines[i].text)
+        if v is None and ref in second:
+            v = value(second[ref])
+        if v is None or not placed(p, i):
             continue
-        edge = i in (0, len(p.lines) - 1) and not (i == 0 and p.number in sunk)
-        full, _ = P.geometry(p)
-        if (
-            run is not None
-            and run < v <= run + RUN_GAP
-            and (upcoming[1] is None or v < upcoming[1])
-            and not edge
-            and not P.printed_page_number(p.lines[i].text.strip(), p, offset)
-            and P.centred_on_page(p.lines[i], p, full)
-        ):
-            out[ref] = LineRole("chapter_heading", role.confidence, 0.0, RUN_RULE)
+        after_run = run < v <= run + RUN_GAP if run is not None else False
+        below_first = run is None and upcoming[1] is not None and upcoming[1] - RUN_GAP <= v
+        if (after_run or below_first) and (upcoming[1] is None or v < upcoming[1]):
+            out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, RUN_RULE)
             run = v
     return out
 

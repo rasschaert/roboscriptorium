@@ -202,13 +202,17 @@ weight and capitals, takes the role the sorter gave most of them, so one misjudg
 chapter title follows its siblings.
 
 Those rules were written one book at a time and don't carry over well: on a
-book they weren't written for they found none of its twelve headings. The candidate for the
-job is a set of trees trained on the golden books' lines, labelled body, heading
+book they weren't written for they found none of its twelve headings. The
+job falls to a set of trees trained on the golden books' lines, labelled body, heading
 or other by aligning the scan with its reference text. The trees see what the
 rules see (place on the page, width, indent, gaps, repetition across pages), the
 line's type, the spotter's regions and the sorter's answer, and give every line a
-role. `ROBO_SORTER=1` turns them on; the bench decides whether they become the
-default.
+role. They are the default; `ROBO_SORTER=0` leaves the rules alone.
+
+Last, the book's own run of chapter numbers mends what the trees drop: a short centred
+line standing where the run lacks a number ("10", then nothing, then "12") is a heading
+when it reads as that number. Where the first reading made letters of it ("Kil" for 11),
+glm-ocr reads its crop again, and only there, a handful of lines a book.
 
 ## 3 · Check the OCR
 

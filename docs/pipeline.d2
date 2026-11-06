@@ -95,8 +95,10 @@ understand: 2 · What each line is {
     pick: rules pick\nthe doubtful lines {class: code}
     flash: SORTER clef-flash:9b\ndecides each one {class: decision}
     fix: rules and a style vote\ncorrect it {class: code}
-    tree: SORTER trees trained on golden books\nredecide every line {class: candidate}
-    pick -> flash -> fix -> tree
+    tree: SORTER trees trained on golden books\nredecide every line {class: code}
+    run: rules: the book's run of chapter\nnumbers fills its gaps {class: code}
+    glm: "READER glm-ocr:bf16\nreads a gap's misread number again" {class: ollama}
+    pick -> flash -> fix -> tree -> run -> glm
   }
   s.roles -> m.pick {class: uses}
 }

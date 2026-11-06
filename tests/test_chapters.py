@@ -328,3 +328,57 @@ def test_too_few_numbered_headings_make_no_run():
     pages = [_mid_page(n, t) for n, t in texts.items()]
     roles = _roles(pages, {10: "1", 11: "2", 13: "4"})
     assert chapters.run_gaps(pages, roles) == roles
+
+
+def _asked(readings: dict[SourceRef, str]):
+    """A stand-in reader that answers from `readings` and records what it was asked."""
+    asked: set[SourceRef] = set()
+
+    def reread(refs: set[SourceRef]) -> dict[SourceRef, str]:
+        asked.update(refs)
+        return {r: readings.get(r, "") for r in refs}
+
+    return reread, asked
+
+
+def test_a_misread_line_is_read_again_only_where_the_run_has_a_gap():
+    # Headings 1, 2, 5, 6, 7 kept; "Kil" mid-page between 5 and 6 sits in no gap.
+    texts = {10: "1", 11: "2", 12: "Ej", 14: "5", 15: "Kil", 16: "6", 17: "7"}
+    pages = [_mid_page(n, t) for n, t in texts.items()]
+    roles = _roles(pages, {10: "1", 11: "2", 14: "5", 16: "6", 17: "7"})
+    reread, asked = _asked({SourceRef(12, 6): "3", SourceRef(15, 6): "5"})
+    out = chapters.run_gaps(pages, roles, reread)
+    assert asked == {SourceRef(12, 6)}
+    assert out[SourceRef(12, 6)].role == "chapter_heading"
+    assert out[SourceRef(15, 6)].role == "artifact"
+
+
+def test_a_second_reading_that_isnt_the_gaps_number_leaves_the_line_dropped():
+    texts = {10: "1", 11: "2", 12: "wi", 13: "e,", 14: "5", 15: "6", 16: "7"}
+    pages = [_mid_page(n, t) for n, t in texts.items()]
+    roles = _roles(pages, {10: "1", 11: "2", 14: "5", 15: "6", 16: "7"})
+    # A word, and a number past the next heading's.
+    reread, _ = _asked({SourceRef(12, 6): "wij", SourceRef(13, 6): "8"})
+    out = chapters.run_gaps(pages, roles, reread)
+    assert out[SourceRef(12, 6)].role == out[SourceRef(13, 6)].role == "artifact"
+    assert chapters.run_gaps(pages, roles) == roles
+
+
+def test_the_run_may_start_below_its_first_kept_number():
+    # Chapters 1 and 2 lost: "l" reads as 1, "e," is read again as 2; the run kept starts at 3.
+    texts = {10: "l", 11: "e,", 12: "3", 13: "4", 14: "5", 15: "6", 16: "7"}
+    pages = [_mid_page(n, t) for n, t in texts.items()]
+    roles = _roles(pages, {12: "3", 13: "4", 14: "5", 15: "6", 16: "7"})
+    reread, _ = _asked({SourceRef(11, 6): "2"})
+    out = chapters.run_gaps(pages, roles, reread)
+    assert out[SourceRef(10, 6)].role == out[SourceRef(11, 6)].role == "chapter_heading"
+
+
+def test_a_misread_line_past_the_last_kept_number_is_read_again():
+    texts = {10: "1", 11: "2", 12: "3", 13: "4", 14: "5", 15: "6", 16: "Ej"}
+    pages = [_mid_page(n, t) for n, t in texts.items()]
+    roles = _roles(pages, {10: "1", 11: "2", 12: "3", 13: "4", 14: "5"})
+    reread, asked = _asked({SourceRef(16, 6): "7"})
+    out = chapters.run_gaps(pages, roles, reread)
+    assert SourceRef(16, 6) in asked
+    assert out[SourceRef(15, 6)].role == out[SourceRef(16, 6)].role == "chapter_heading"

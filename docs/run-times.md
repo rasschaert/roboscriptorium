@@ -695,3 +695,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-06 | probe: Qwen3.8-Flash-Next UD-Q2_K_XL, thinking on doubled crops, stopped at 12 lines | 12 | 6 | 0 |
 | 2026-11-06 | bench tuning, a Dutch line-end break between clashing vowels keeps its hyphen, a word after it, no glide before (warm) | 4500 | 12 | 0 |
 | 2026-11-06 | bench validation, a Dutch line-end break between clashing vowels keeps its hyphen, a word after it, no glide before (warm) | 0 | 3 | 0 |
+| 2026-11-06 | bench tuning, a misread line where the chapter run has a gap read again (warm) | 4500 | 13 | 0 |
+| 2026-11-06 | bench validation, a misread line where the chapter run has a gap read again (warm) | 0 | 3 | 0 |

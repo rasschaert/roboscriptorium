@@ -414,7 +414,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   neighbours, on the reflowed blocks; `title_lines`: a dropped line under a heading set
   like another heading's second line, or a short one recurring in one type under three
   headings or more, such as a narrator's name; `run_gaps`: a dropped number mid-page that
-  fills a gap in the run of numbered headings). All return new data.
+  fills a gap in the run of numbered headings, a misread one read again by glm-ocr where the
+  run has a gap, cached in `stages/run-gaps.json`). All return new data.
 - `structure.py`: what a reader would notice in a built document's structure, without a
   model (`findings`: numbered chapters out of their run, a title of words among them, a
   section of fewer than 20 words not set apart); `summary` is the line `build` prints,

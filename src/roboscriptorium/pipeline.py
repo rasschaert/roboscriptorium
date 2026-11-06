@@ -186,7 +186,18 @@ def run(
         model_roles = chapters.openings(body, model_roles)
         model_roles = chapters.title_lines(body, model_roles, styles)
         model_roles = chapters.running_text(body, model_roles)
-        model_roles = chapters.run_gaps(body, model_roles)
+        model_roles = chapters.run_gaps(
+            body,
+            model_roles,
+            lambda refs: readers.line_readings(
+                book.source,
+                body,
+                refs,
+                settings.ocr_model,
+                settings.ollama_url,
+                book.stages / "run-gaps.json",
+            ),  # fmt: skip
+        )
         model_roles |= {
             ref: LineRole("body", 1.0, 1.0, "slot") for ref in missing.slot_lines(body, found)
         }
