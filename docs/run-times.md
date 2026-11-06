@@ -697,3 +697,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-06 | bench validation, a Dutch line-end break between clashing vowels keeps its hyphen, a word after it, no glide before (warm) | 0 | 3 | 0 |
 | 2026-11-06 | bench tuning, a misread line where the chapter run has a gap read again (warm) | 4500 | 13 | 0 |
 | 2026-11-06 | bench validation, a misread line where the chapter run has a gap read again (warm) | 0 | 3 | 0 |
+| 2026-11-06 | bench tuning, a display line under a heading on a page without text is part of it (warm) | 4500 | 13 | 0 |
+| 2026-11-06 | bench validation, a display line under a heading on a page without text is part of it (warm) | 0 | 3 | 0 |

@@ -382,3 +382,59 @@ def test_a_misread_line_past_the_last_kept_number_is_read_again():
     out = chapters.run_gaps(pages, roles, reread)
     assert SourceRef(16, 6) in asked
     assert out[SourceRef(15, 6)].role == out[SourceRef(16, 6)].role == "chapter_heading"
+
+
+def test_a_display_line_under_a_heading_on_a_page_without_text_is_part_of_it():
+    from roboscriptorium.typestyle import Style
+
+    def part(n: int, *lines: str) -> PageText:
+        return PageText(
+            n,
+            300,
+            500,
+            [Line(t, 120, 200 + 22 * k, 180, 216 + 22 * k) for k, t in enumerate(lines)],
+        )
+
+    heading, dropped = LineRole("chapter_heading", 0.9, 0.0), LineRole("artifact", 0.8, 0.01)
+    display = Style(1.4, 1.3, 1.4, False)
+    pages = [part(9, "Boek 3", "Stof"), part(179, "Boek 2", "Wij")]
+    roles = {SourceRef(n, 0): heading for n in (9, 179)} | {
+        SourceRef(n, 1): dropped for n in (9, 179)
+    }
+    styles = {SourceRef(n, i): display for n in (9, 179) for i in range(2)}
+    out = chapters.title_lines(pages, roles, styles)
+    assert out[SourceRef(9, 1)].role == out[SourceRef(179, 1)].role == "chapter_heading"
+
+
+def test_under_a_part_heading_a_motto_a_number_a_speck_or_a_page_of_text_stays_dropped():
+    from roboscriptorium.typestyle import Style
+
+    def part(n: int, *lines: str) -> PageText:
+        return PageText(
+            n,
+            300,
+            500,
+            [Line(t, 120, 200 + 22 * k, 180, 216 + 22 * k) for k, t in enumerate(lines)],
+        )
+
+    heading, dropped = LineRole("chapter_heading", 0.9, 0.0), LineRole("artifact", 0.8, 0.01)
+    display, small = Style(1.4, 1.3, 1.4, False), Style(0.9, 1.0, 1.0, False)
+    cases = {
+        10: (part(10, "Boek 1", "Een korte zin als motto"), display),  # too many words
+        11: (part(11, "Boek 2", "Stof"), small),  # set as small as the text
+        12: (part(12, "Boek 3", "17"), display),  # a number
+        13: (part(13, "Boek 4", "i"), display),  # a speck
+    }
+    pages = [p for p, _ in cases.values()]
+    roles = {SourceRef(n, 0): heading for n in cases} | {SourceRef(n, 1): dropped for n in cases}
+    styles = {SourceRef(n, 0): display for n in cases} | {
+        SourceRef(n, 1): s for n, (_, s) in cases.items()
+    }
+    out = chapters.title_lines(pages, roles, styles)
+    assert all(out[SourceRef(n, 1)].role == "artifact" for n in cases)
+    # A page that goes on into running text is a chapter opening, not a part page.
+    text = PageText(14, 300, 500, [*part(14, "Boek 5", "Stof").lines, *_full(14).lines])
+    body = {SourceRef(14, i): LineRole("body", 0.9, 0.9) for i in range(2, len(text.lines))}
+    roles14 = {SourceRef(14, 0): heading, SourceRef(14, 1): dropped} | body
+    styles14 = {SourceRef(14, 0): display, SourceRef(14, 1): display}
+    assert chapters.title_lines([text], roles14, styles14)[SourceRef(14, 1)].role == "artifact"

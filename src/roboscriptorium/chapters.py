@@ -171,7 +171,10 @@ def title_lines(
     schaduwhuis' narrator, "ALEX" or "RENEE" under each chapter number; then the same
     words opening a page with no heading are one too (a chapter whose number the layer
     lacks). Only lines above the page's running text, of `SUBTITLE_LETTERS` letters or
-    more (a speck "i" is no subtitle). Returns a new dict."""
+    more (a speck "i" is no subtitle). On a page with no running text, a part page, a line
+    of words right under a heading and set larger than the text is part of it ("Stof"
+    under "Boek 3"): a motto is set small, a page number has no letters. Returns a new
+    dict."""
 
     def heading(ref: SourceRef) -> bool:
         return (role := roles.get(ref)) is not None and role.role == "chapter_heading"
@@ -222,6 +225,26 @@ def title_lines(
             out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, "subtitle-alike")
     for ref, _, _ in labels:
         out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, "label-recurs")
+    for p in pages:
+        if any(is_body(roles.get(SourceRef(p.number, i))) for i in range(len(p.lines))):
+            continue
+        for i in range(1, len(p.lines)):
+            ref, line = SourceRef(p.number, i), p.lines[i]
+            role, style = out.get(ref), styles.get(ref)
+            above = out.get(SourceRef(p.number, i - 1))
+            if (
+                above is not None
+                and above.role == "chapter_heading"
+                and role is not None
+                and role.role != "chapter_heading"
+                and style is not None
+                and style.size is not None
+                and style.size >= SAME_SIZE
+                and sum(c.isalpha() for c in line.text) >= PART_TITLE_LETTERS
+                and len(line.text.split()) <= LABEL_WORDS
+                and not P.garbled(line)
+            ):
+                out[ref] = LineRole("chapter_heading", role.confidence, 0.0, "part-page")
     words = {text for _, _, text in labels}
     for p in pages:
         if not p.lines or any(heading(SourceRef(p.number, i)) for i in range(len(p.lines))):
@@ -393,6 +416,9 @@ SUBTITLE_LETTERS = 4
 # most this many words, labels the book's chapters (a narrator's name, a place).
 RECUR = 3
 LABEL_WORDS = 4
+# A part page's title under its heading has at least this many letters ("Wij"); a speck
+# read as one letter has fewer.
+PART_TITLE_LETTERS = 2
 # A heading of a label word and a number as read ("HOOFDSTUK 11", "Hoorpstvk 13").
 _LABELLED = re.compile(r"^([^\W\d_]{4,})\s+([^\s]{1,3})\.?$")
 # A label at least this alike the book's commonest is that label misread ("HoOoeEpstvkK"

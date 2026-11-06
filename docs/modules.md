@@ -413,7 +413,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   its number, old-style look-alikes folded, a lone unreadable one settled by both
   neighbours, on the reflowed blocks; `title_lines`: a dropped line under a heading set
   like another heading's second line, or a short one recurring in one type under three
-  headings or more, such as a narrator's name; `run_gaps`: a dropped number mid-page that
+  headings or more, such as a narrator's name, or a display line right under a heading
+  on a page with no running text, a part page's title; `run_gaps`: a dropped number mid-page that
   fills a gap in the run of numbered headings, a misread one read again by glm-ocr where the
   run has a gap, cached in `stages/run-gaps.json`). All return new data.
 - `structure.py`: what a reader would notice in a built document's structure, without a

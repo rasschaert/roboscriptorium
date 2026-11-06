@@ -821,6 +821,13 @@ narrator, "ALEX" or "RENEE", under every chapter number; the trees call that lin
 head, page number or artifact (0.56–0.91), so all 34 names were lost, and chapters 1 and 4,
 whose numbers the layer lacks, with them. The line under the heading may have any
 furniture role: a running head never sits between a chapter heading and its text.
+On a part page, a page with no running text, a line of words right under a heading and
+set larger than the text is part of that heading (`title_lines`, "part-page"): Het geluid
+van bananen sets "Stof", "Jullie" and "Wij" under "Boek 3", "Boek 1" and "Boek 2"; the trees
+trained without the book call them artifacts (0.76–0.93), and with three titles, one of
+three letters, the other two ways in can't reach them. A motto is set as small as the text,
+a page number has no letters, a speck fewer than two. Tuning heading errors 29 → 26, no
+word changed on either set (2026-11-06).
 A number dropped mid-page that fills a gap in the run is a heading too
 (`chapters.run_gaps`, after the trees): in reading order it reads past the run so far by
 at most three (before the run's first number, within three below it) and short of the

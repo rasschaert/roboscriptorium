@@ -548,16 +548,18 @@ also part of the pipeline itself." Before either book goes to review:
       paragraph is left open and the next opens with the same mark, the print closes the
       first 20 times in 45 on tuning: asking once would leave those 20 unasked
 
+- [x] ~~A part page's title under its "Boek n"~~ (2026-11-06, `title_lines`, "part-page"):
+      Het geluid van bananen 32 → 35 of 36, tuning heading errors 29 → 26, no word changed
 - [x] ~~Misread chapter numbers where the run has a gap~~ (2026-11-06, `chapters.run_gaps`
       reads them again with glm-ocr): Monterosso 19 → 22 of 22, tuning heading errors
       32 → 29, no word changed on either set
 - [ ] Heading errors left on tuning (2026-11-06, `experiments/heading_misses.py` lists them
       by book): De eerlijke vinder's part numerals I–IV, drawn as bars on pages with no
       text (PDF 12, 38, 58, 76): qwen reads the ink "1", "11", "111", "IV", so the run must
-      read them as roman, and the page-kind model calls PDF 12 blank; Het geluid van
-      bananen's part titles "Stof", "Jullie", "Wij" under "Boek n", dropped by the trees
-      trained without the book (artifact 0.76–0.93; `title_lines` needs four letters and
-      three alike); Afscheid's chapters 1 and 2 on openings sunk 0.06 of a page, under
+      read them as roman, and the page-kind model calls PDF 12 blank (low: of the tuning
+      and validation books' body pages, these are the only ones with ink and no text); Doodskleed's two specks read "7" and "3" above a
+      page's first line, made headings: off the run and off-centre (Monterosso's "5" for 15
+      is off the run but centred, and must stay); Afscheid's chapters 1 and 2 on openings sunk 0.06 of a page, under
       `page.SUNK_PAGE_DROP` (0.08), so their misread numbers ("l", "e,") count as page edges
 - [ ] Heading errors the exact count shows (2026-11-02): the first line of text swallowed
       into a heading (Thief-Taker, Dolittle: mended, `chapters.running_text`); Dolittle's chapter subtitles
