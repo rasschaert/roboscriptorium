@@ -684,3 +684,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-06 | bench validation, dot lines from slots kept as body, a space read as a quote no version (warm) | 0 | 3 | 0 |
 | 2026-11-06 | bench tuning, dot lines from slots kept as body with their quote marks, a quote mark misread no version (warm) | 4500 | 13 | 0 |
 | 2026-11-06 | bench validation, dot lines from slots kept as body with their quote marks, a quote mark misread no version (warm) | 0 | 3 | 0 |
+| 2026-11-06 | bench tuning, a lost line of text read from an inked slot (warm) | 4500 | 13 | 0 |
+| 2026-11-06 | bench validation, a lost line of text read from an inked slot (warm) | 0 | 3 | 0 |
+| 2026-11-06 | bench tuning, a lost line of text read from an inked slot, as long as a line of the page (warm) | 4500 | 13 | 0 |
+| 2026-11-06 | bench validation, a lost line of text read from an inked slot, as long as a line of the page (warm) | 0 | 3 | 0 |

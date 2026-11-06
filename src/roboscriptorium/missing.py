@@ -70,6 +70,11 @@ SLOT_SPAN = 0.5
 # A reading that is a line of dots, an ellipsis quoted or not: a silent reply ("‘...’").
 DOTS = re.compile(r"[‘’'\"“”„]*(?:\.{3}|…|\. \. \.)[‘’'\"“”]*")
 BARE_DOTS = re.compile(r"\.{3}|…|\. \. \.")
+# A slot's reading in words is a lost line of the text block when it is at least this
+# share of a line of the page, in length and in characters for its width (`_fills`): lost
+# lines span the column (0.95–1.13 on the benches), a picture page's fragments ("MERRY
+# GOOD MORNING", 0.26) and a lone number ("19") don't.
+SLOT_FILL = 0.8
 # A slot's marks are told from its dots at this resolution (`_marks`).
 MARK_DPI = 300
 
@@ -299,9 +304,10 @@ def _ink(
 def slots(pdf: Path, pages: list[PageText]) -> list[tuple[int, Region]]:
     """Slots about one line tall between two layer lines (`SLOT_STEPS`) that hold ink
     (`SLOT_INK`, `SLOT_SPAN`), narrowed to the ink across, labelled "slot": where a
-    line of dots stood that the layer lost or read as junk ("€" for "‘...’"). A line with
-    no letter or digit counts as none. Only a reading of dots is taken from a slot (`add`):
-    a picture page's slots lie between the layer's junk in a drawing."""
+    line of dots or of text stood that the layer lost or read as junk ("€" for "‘...’").
+    A line with no letter or digit counts as none. From a slot `add` takes a line of dots,
+    or words as long as a line of the page (`SLOT_FILL`): a picture page's slots lie
+    between the layer's junk in a drawing, and read as fragments."""
     out = []
     with pymupdf.open(pdf) as doc:
         for page in pages:
@@ -396,14 +402,14 @@ def quoted(
 
 
 def slot_lines(pages: list[PageText], found: list[tuple[int, Region]]) -> set[SourceRef]:
-    """The lines `add` placed from a slot: a line of dots between two lines of a text
-    block, so body text, whatever its few marks look like to the line roles' trees."""
+    """The lines `add` placed from a slot: a line between two lines of a text block, so
+    body text, whatever a line of dots looks like to the line roles' trees."""
     boxes = {(n, (r.x0, r.y0, r.x1, r.y1)) for n, r in found if r.label == "slot"}
     return {
         SourceRef(page.number, i)
         for page in pages
         for i, ln in enumerate(page.lines)
-        if (page.number, (ln.x0, ln.y0, ln.x1, ln.y1)) in boxes and DOTS.fullmatch(ln.text)
+        if (page.number, (ln.x0, ln.y0, ln.x1, ln.y1)) in boxes
     }
 
 
@@ -454,25 +460,41 @@ def talk(found: list[tuple[int, Region]], readings: dict[str, str]) -> list[tupl
     return [(n, r) for n, r in found if not _printed(readings.get(_key(n, r), ""))]
 
 
+def _fills(text: str, r: Region, page: PageText | None) -> bool:
+    """Whether `text` is as long as a line of the page (`SLOT_FILL` of the median line with
+    a letter) and fills the width of `r` as densely (the page's characters a point, on its
+    lines of 20 or more): a slot is narrowed to its ink, so a short reading ("19") fills a
+    narrow slot, and a picture page's lines are as short as its fragments."""
+    if page is None:
+        return False
+    lengths = [len(ln.text) for ln in page.lines if any(c.isalpha() for c in ln.text)]
+    density = [len(ln.text) / (ln.x1 - ln.x0) for ln in page.lines if len(ln.text) >= 20]
+    return (
+        bool(lengths and density)
+        and len(text) >= SLOT_FILL * median(lengths)
+        and len(text) >= SLOT_FILL * median(density) * (r.x1 - r.x0)
+    )
+
+
 def add(
     pages: list[PageText], found: list[tuple[int, Region]], readings: dict[str, str]
 ) -> list[PageText]:
     """Copies of the pages with each read line in reading order (by its middle).
 
     A reading with no letter or digit (a smudge) is left out, and so is the model's talk
-    rather than a reading (`_printed`). A slot (`slots`) gives a line of dots (`DOTS`)
-    and nothing else. A read line overlapping a layer line by
+    rather than a reading (`_printed`). A slot (`slots`) gives a line of dots (`DOTS`) or
+    a line of words as long as the page's lines (`_fills`). A read line overlapping a layer line by
     `SAME_LINE` of its height is that line, its box set too high or low by the layer (a
     short "‘Ja.’" read "qa”" seven points up): it takes the layer line's place, with the
     image's box and the model's reading, rather than standing beside it.
     """
+    numbered = {page.number: page for page in pages}
     by_page: dict[int, list[Line]] = {}
     for n, r in found:
         text = " ".join(readings.get(_key(n, r), "").split())
+        taken = any(c.isalnum() for c in text) and _printed(text)
         if r.label == "slot":
-            taken = bool(DOTS.fullmatch(text))
-        else:
-            taken = any(c.isalnum() for c in text) and _printed(text)
+            taken = bool(DOTS.fullmatch(text)) or taken and _fills(text, r, numbered.get(n))
         if taken:
             by_page.setdefault(n, []).append(Line(text, r.x0, r.y0, r.x1, r.y1))
     out = []

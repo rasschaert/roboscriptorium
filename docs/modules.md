@@ -248,7 +248,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   nothing on, its usual box over openings, where that place holds ink (`openings`);
   above a sunk page's text the layer's short junk in a drawing counts as no line (`_junk`);
   a slot about a line tall between two layer lines that holds ink (`slots`), from which
-  only a line of dots is taken ("‘...’", a silent reply both layer and spotter lose),
+  a line of dots is taken ("‘...’", a silent reply both layer and spotter lose) or words
+  as long as a line of the page (`SLOT_FILL`),
   with the quote marks its ink shows where glm-ocr reads bare dots (`quoted`), and kept
   as body past the line roles (`slot_lines`);
   where glm-ocr talks instead of reading (`talk`), the read model's reading of the box

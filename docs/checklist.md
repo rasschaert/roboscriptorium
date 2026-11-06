@@ -309,7 +309,8 @@ costs against what it could reach; every reader candidate passes the new-model g
             the pages where the trees err, first (agent, ~2 h)
 - [ ] Qwen3.8-Flash-Next re-screened as a reader, once the **user**'s download in Unsloth
       Desktop lands: UD-Q2_K_XL, four shards, ~85 GB, into the Hugging Face cache
-      (`models--unsloth--Qwen3.8-Flash-Next-GGUF`), started 2026-11-06 ~07:25, ~3 h. Unsloth rebuilt every GGUF on 2026-11-04 with "Dynamic
+      (`models--unsloth--Qwen3.8-Flash-Next-GGUF`); the first try (2026-11-06) failed at
+      ~30 GB, the user restarts it. Unsloth rebuilt every GGUF on 2026-11-04 with "Dynamic
       V3.1": top-1 agreement IQ1_S 77.3%, Q2_K_XL 82.7%, IQ3_XXS 85.4%. The lookup
       ("engram") table is now its own file, 28.8 GB at IQ4_NL, which can be read from the
       SSD. So Q2_K_XL needs about 51 GB in memory without the table. The image encoder
@@ -612,10 +613,10 @@ also part of the pipeline itself." Before either book goes to review:
       stay lost
 - [x] ~~A quote mark misread from a speck no version~~ (2026-11-06, `quote_misread`):
       "keek’en" fixed; "de’schaft" (two letters before) stays
-- [ ] Whole lines of text lost inside a block, found in the same inked slots (Afscheid
-      PDF 101, Thief-Taker 131, Het ijzige land 98): a slot's words are not taken today
-      (picture pages' slots read as text); as a lost-line question with glm-ocr's
-      reading proposed, or taken where the line above stops mid-sentence
+- [x] ~~Whole lines of text lost inside a block, found in the same inked slots~~
+      (2026-11-06, `missing._fills`): nine lines read right by glm-ocr, tuning 103 wrong
+      words fixed (12 unasked), validation 9 (all unasked), none made; Dolittle's short
+      last line of a paragraph stays a question
 - [ ] The rest of the errors the build makes where the layer was right (51 unasked on
       tuning, 2026-11-06): accents (18) are accent-shaped specks, no cheap signal
       (decisions.md, 2026-11-06); punctuation swapped (about 10: commas added, 13 of 14

@@ -277,7 +277,7 @@ def test_a_slot_between_layer_lines_holding_ink_is_read_a_blank_one_not(tmp_path
     assert found[0] not in missing.candidates(pages, {}, answered, found)
 
 
-def test_a_slot_gives_a_line_of_dots_only_and_a_region_its_text():
+def test_a_slot_gives_a_line_of_dots_or_a_full_line_and_a_region_its_text():
     page = _page()
     slot = Region("slot", missing.PLACED, 20, 190, 300, 201)
     text = Region("plain text", 0.5, 20, 190, 300, 201)
@@ -285,7 +285,11 @@ def test_a_slot_gives_a_line_of_dots_only_and_a_region_its_text():
         out = missing.add([page], [(22, slot)], {missing._key(22, slot): reading})
         assert ("‘...’" in [ln.text for ln in out[0].lines]) == (reading == "‘...’")
         assert len(out[0].lines) == len(page.lines) + kept
-    # A slot's words aren't taken (a picture page's slots), nor a region's bare dots.
+    # A slot's words are taken where they fill a line of the page (a lost line), not
+    # where they are a fragment (a picture page's slots), nor a region's bare dots.
+    full = "and so the story went on, she said"
+    out = missing.add([page], [(22, slot)], {missing._key(22, slot): full})
+    assert full in [ln.text for ln in out[0].lines]
     for region, reading in ((slot, "and so it went"), (slot, "¶"), (text, "...")):
         out = missing.add([page], [(22, region)], {missing._key(22, region): reading})
         assert out[0].lines == page.lines

@@ -494,6 +494,18 @@ right over an end dot. The width test leaves out a descender of the line above r
 into the slot (Verminkt PDF 248, bare dots in print); every quoted silent reply on both
 books' bench pages shows both marks so.
 
+A slot can hold a whole line of text the layer lost, too (Glazuur PDF 47, "‘Rustig? Je wilt
+dat ik rustig doe terwijl jij me gewoon laa-", between "…blik aan." and "ten?’"). glm-ocr
+reads such a line right; a picture page's slots read as fragments ("ge beg", "MERRY GOOD
+MORNING" on a Dolittle plate). What parts them is length, measured two ways, both from
+0.8 (`SLOT_FILL`, `_fills`): against the characters the page's lines hold across the slot
+(a lost line 0.95–1.13, a fragment 0.26 or less), and against the page's median line (a
+slot is narrowed to its ink, so the first alone took the read model's "19" from a narrow
+slot in Vanille's margin; a picture page's lines are as short as its fragments, so the
+second alone took "MERRY GOOD MORNING"). On the benches of 2026-11-06, ten such slots,
+all lines the build lost (eight asked as questions, two not); the test takes nine
+(Dolittle's "up; and all the others", a paragraph's short last line, stays a question).
+
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
 same way: a speck in a page's top corner read "境", kept as the page's first line, then
 read by a page reader as a whole sentence the arbiter took. On a speck glm-ocr may answer with talk rather than a reading: "```markdown", or a letter
