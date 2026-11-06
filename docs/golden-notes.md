@@ -36,17 +36,18 @@ its reference, is proposed for retirement or a lesser role. Last reviewed 2026-1
 | Public-domain pages a hosted model may see | The Nature of a Crime, Doctor Dolittle |
 | Line-role training only, words not scored | Steve Jobs (its photo insert); The Nature of a Crime (the arbiter's too) |
 
-**Doubts at the last review** (2026-10-24): no pair past the suspect thresholds (tuning
-layer CER 0.20–1.63% against a median 0.71%, validation 0.08–1.35% against 0.88%; no book
-over 1% of body lines unplaced). Au pair's small capitals (13 unasked errors on the
-bench) are its e-book writing them in lower case: verdicts settle them (HANDOVER.md has
-the batch); until then 13 of the tuning set's ~280 unasked errors measure the reference.
-The quiet set (decisions.md) shows the errors no reader flags are mostly small capitals
-and rare glyphs, which the job rows below already cover. Dolittle's quick slice is 5× its tier's median but
-places every line: a poor layer, kept. Het laatste bevel's EPUB glues words, settled only
-by verdicts; Na die nacht can't have an honest first look. No
-new pairs since 2026-10-20, so the gaps below stand. The checklist ("Trim the sets")
-holds what is done about each.
+**Doubts at the last review** (2026-11-06, on `tuning-20261106T070031` and
+`validation-20261106T070331`, the tuning slices grown to about 4,500 pages): one pair past
+a suspect threshold, Doctor Dolittle, its layer CER 2.32% against a tuning median 0.71%
+(the line 2.12%) since it is scored whole; it places all but 0.5% of its body lines, and
+its 91 errors are the pipeline's, on its job (drawn initials the layer drops, "HAT" for
+"THAT"; plate captions; dashes and compound hyphens), not the edition's: kept, and the
+bench will name it on every run. The rest: tuning 0.19–1.18%, validation 0.08–1.32%
+against 0.88%; no book over 1.1% of body lines unplaced (Goede dochter). Au pair's small
+capitals were settled by verdicts (2026-10-25). Het laatste bevel's EPUB glues words,
+settled only by verdicts; Na die nacht can't have an honest first look. No new pairs
+since 2026-10-20, so the gaps below stand. The checklist ("Trim the sets") holds what is
+done about each.
 
 **Gaps to hunt for**, in order: a book set flush, without paragraph indents, for tuning
 (not Bruna's, whose two books validate; 2026-10-24: every flush-book break error is a start
