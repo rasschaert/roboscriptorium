@@ -75,3 +75,24 @@ def test_build_drafts_a_missing_book_toml_first(monkeypatch, tmp_path):
     assert drafted[1:] == [(Path("boek/source.pdf"), Path("boek"))]
     # Nothing to set up from: a clear error, not a traceback.
     assert CliRunner().invoke(cli.app, ["build", "leeg"]).exit_code != 0
+
+
+def test_doctor_asks_each_decision_model_once_and_skips_one_switched_off(monkeypatch):
+    monkeypatch.setenv("ROBO_CHECK_MODEL", "")
+    monkeypatch.setattr(cli.OllamaClient, "models", lambda self: ["a", "b"])
+    asked = []
+
+    class Client:
+        def __init__(self, model):
+            self.model = model
+
+        def decide(self, state, questions):
+            asked.append(self.model)
+            return {"role": SimpleNamespace(value="page_number", confidence=0.9)}
+
+    monkeypatch.setattr(cli.decide, "for_model", lambda model, url: Client(model))
+    with pytest.raises(typer.Exit) as exit:
+        cli.doctor()
+    assert exit.value.exit_code == 0
+    settings = Settings.from_env()
+    assert asked == list(dict.fromkeys([settings.role_model, settings.judge_model]))

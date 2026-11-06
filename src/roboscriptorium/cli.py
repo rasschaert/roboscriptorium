@@ -52,9 +52,8 @@ def doctor() -> None:
         typer.echo(f"ollama  {settings.ollama_url}  UNREACHABLE: {exc}")
 
     # The decision models the pipeline asks, each on the runtime that serves it.
-    for model in dict.fromkeys(
-        [settings.role_model, settings.judge_model, settings.check_model]
-    ) - {""}:
+    models = [settings.role_model, settings.judge_model, settings.check_model]
+    for model in [m for m in dict.fromkeys(models) if m]:
         try:
             client = decide.for_model(model, settings.ollama_url)
             answer = client.decide(
