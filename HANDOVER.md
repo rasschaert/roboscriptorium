@@ -2,60 +2,55 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-11-05 morning by the session that mended the headings.
+end of every session. Updated 2026-11-06 ~09:30 by the session that read lost lines from
+inked slots.
 
 ## Running
 
-No bench. Baselines `tuning-20261106T080731`, `validation-20261106T081025` (lines of dots and whole lost lines from inked slots, the
-quote rule). The user's Qwen3.8-Flash-Next download failed at ~30 GB; they restart it and
-will say.
+Nothing. Baselines `tuning-20261106T080731` (tuning ~4,500 pages), `validation-20261106T081025`
+(82c1b39).
 
-## Done 2026-11-04 evening to 11-05 morning (decisions.md has every number)
+## Done 2026-11-05 evening to 11-06 morning (decisions.md has every number)
 
-- **Taken, all benched**:
-  - learned italics on by default (tuning italic errors 2,445 → 1,088, validation 328 → 203);
-  - a number over its label settled ("2 ALEX"): the first fix (6d98102) settled nothing,
-    its test built headings unlike reflow;
-  - chapter numbers read where the spotter's usual box over openings stands, where ink is
-    (`missing.openings`): Het schaduwhuis' chapters 1 and 4;
-  - a full stop added after a line's last word before a lower-case line no version
-    (`ocrcheck.line_end_stop`): 4 unasked words;
-  - five heading changes, heading errors on tuning 75 → 32, no word made:
-    `chapters.run_gaps` (Monterosso's mid-page numbers), a sunk page's first line no running
-    head (Vals alarm's "11 Later", Het ijzige land), titles of words atop openings
-    (`chapters.openings`, Reis), the layer's junk in a drawing no line (`missing._junk`,
-    Artemis' circled numbers), the read model's number where glm-ocr talks;
-  - a line repeated under a page's running head no second running head (Artemis'
-    salutations, 18 words);
-  - an h read as a b no version (`ocrcheck.b_for_h`, 0 of 91 in the trust data): 4 words.
-- **Slice growth batch three**: nine tuning books whole (~512 pages, ~6 h cold); its run
-  WORSE on one variant only, from Artemis' salutations, mended since.
-- **Not taken**: an arbiter feature for stops before lower case (out of its sight); a
-  number-run feature for the line-role trees; three retrains of those trees on the grown
-  slices (each keeps more stray lines: Dolittle's running heads, Afscheid's picture text);
-  tesseract on drawn numbers.
-- **New instruments**: `experiments/sorter_keep.py` (line-role trees scored as the build
-  keeps lines, a minute; it foretold both retrains' vetoes); `experiments/rebuild_diff.py`
-  (a read book's rebuild, every changed word beside its scan crop, for the user).
-- **Stella** rebuilt: no text changed against the build the user read.
+- **Taken, all benched, none made an error of its own**:
+  - a full stop added mid-line before an undisputed lower-case word, and an "ij" read as
+    u, ui, y, ii or i, no versions (`ocrcheck.line_end_stop`, `ij_misread`; 17f5504):
+    tuning 5 fixed, validation 5;
+  - lines of dots ("‘...’", a silent reply) read from inked slots between layer lines,
+    kept as body past the line-role trees, with the quote marks their ink shows
+    (`missing.slots`, `slot_lines`, `quoted`), and a quote mark misread from a speck no
+    version (`ocrcheck.quote_misread`; 367085c): tuning 8 fixed, validation 5;
+  - whole lines of text the layer lost, read from the same slots where as long as a line
+    of the page (`missing._fills`; 82c1b39): tuning 103 wrong words fixed (12 unasked,
+    most were lost-line questions the reviewer had to type), validation 9.
+- **Lessons**: dropping one of two sibling readings strengthens the other in the arbiter's
+  eyes (a rule must drop a misread in all its spellings); the line-role trees take any
+  line with no letter for a speck; a slot narrowed to its ink needs its length judged
+  against a whole line too.
+- **Nulls**: the build's 18 accent errors are accent-shaped specks (as 2026-10-26 found);
+  a single quote for a double isn't told by the book's quote style; a comma added after a
+  word is wrong 13 of 14, no rule.
+- **Set review** (87c7dfe): Dolittle past the layer-CER line since scored whole, its errors
+  the pipeline's, kept. Primer errors chart regenerated (0f1a9aa).
 
 ## Next, for the agent
 
-0. **Bench the mid-line stop rule first**: `git apply work/runs/midline-stop.patch`, then
-   `work/runs/midline-stop.sh` (warm, ~17 min; stopped at the user's word when they packed
-   up, 2026-11-05). It widens `ocrcheck.line_end_stop` to a stop added inside a line right
-   before a lower-case letter, no quote mark between (trust data: 30 of 30 never the print,
-   a comma read as that stop 96 of 99); the quote-mark exception keeps the case that sank
-   the 2026-10-24 mid-line try ("stem. ‘dat"). Tests are in the patch.
-1. The open steps of docs/checklist.md in its order. Candidates found tonight: the build's
-   own unasked errors (60 on tuning, h read as b: "buis", "bij", "bet", "hidden"); the
-   line-role trees retrained without keeping stray lines (checklist, with ideas); De eerlijke
-   vinder's part pages (a drawn numeral on a page the layer holds nothing of).
-2. Idle machine time grows the slices (checklist: ~1,650 pages of room left, nine books);
-   the bench's interval narrows only with the square root of the pages, so weigh it
-   against other uses of the night.
-3. When the user brings the spot-check counts, the book's error estimate with its interval
-   goes in decisions.md and the checklist.
+0. **The Dutch vowel-clash hyphen waits as a patch**: `git apply work/runs/vowel-clash.patch`,
+   then `work/runs/vowel-clash2.sh` (warm, ~17 min; stopped at the user's word). A Dutch
+   line-end break between vowels read as one sound joined ("controle-" / "experiment")
+   keeps its hyphen where nothing stronger says (`hyphens.vowel_clash`, the fallback judge
+   of a Dutch book). Its first form fixed 4 (tuning 3, validation "mini-jurk") and made 5,
+   all words broken before a suffix after an i ("vermoei-ender", "Skandi-ers"); the patch
+   asks for a word of four letters or more after the break and no diphthong's closing i
+   before it. If it still makes any, drop it and record the null: it reaches about four
+   places.
+1. The open steps of docs/checklist.md in its order. The unasked errors left on tuning
+   (585 places): stress accents 105 (half the reference's), compound hyphens 86 (line-end
+   breaks, 57 a hyphen lost), letters 76, punctuation 59. Extra text's 969 words are
+   mostly Afscheid's washed-out pages, asked by design.
+2. When the user's Qwen3.8-Flash-Next UD-Q2_K_XL download lands (it failed at ~30 GB and
+   restarts), its re-screen (checklist).
+3. Idle machine time grows the slices (checklist).
 
 ## Waiting on the user
 

@@ -624,6 +624,10 @@ also part of the pipeline itself." Before either book goes to review:
 - [ ] (Low) An accent told from an i-dot or a speck by its shape over its own letter,
       with tesseract's per-letter boxes (`hocr_char_boxes`, real since checked
       2026-11-03); ~50 real accent errors left on tuning
+- [ ] A Dutch line-end break between clashing vowels keeps its hyphen ("controle-" /
+      "experiment"): benched once, 4 fixed, 5 made (words broken before a suffix after an
+      i); the narrower form waits as `work/runs/vowel-clash.patch` with
+      `work/runs/vowel-clash2.sh` (decisions.md, 2026-11-06; agent, ~30 min)
 - [ ] (Low) Line-end compounds by definition: an all-capitals part before a lower-case
       one keeps the hyphen ("NSB-leden"), a stem left open before "en" where the stem
       plus the word after's ending is a word ("voor- en nadelen"); ~5 of 74 on tuning
