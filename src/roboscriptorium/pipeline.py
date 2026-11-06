@@ -1,5 +1,6 @@
 """Run the stages for one book, from source PDF to EPUB."""
 
+import functools
 import json
 import sys
 from collections import Counter
@@ -339,7 +340,9 @@ def run(
         # The suspects of an earlier build with the check would be taken for this one's.
         (book.stages / "ocr-check.json").unlink(missing_ok=True)
 
-    compound = None
+    compound = (
+        functools.partial(hyphens.vowel_clash, known=known) if book.language[:2] == "nl" else None
+    )
     if use_models and hyphens.asked(book.language):
         client = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
         compound = hyphens.Compounds(
@@ -430,7 +433,7 @@ def run(
             ),
         )
     )
-    if compound is not None:
+    if isinstance(compound, hyphens.Compounds):
         compound.save()
     blocks = typography.apply(quotes.curl(blocks), style, dots, book.blank)
     for note, typeset in zip(

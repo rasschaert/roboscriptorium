@@ -952,6 +952,7 @@ where the stronger ones are silent:
 | a capital after the break (`Noord-Holland`) | right on every true capital | a word set in capitals (`WE-` + `RELDGESCHIEDENIS`), 0 of 3: so it no longer counts as one |
 | a hyphen already in the word | `Mens-erger-je-niet`, `good-for-nothing` | kept as a rule it was wrong 8 of 10 (`Zuid-Lon-den`, `Majuba-theeplan-tage`): now only where the parts beside the break are both words and don't make one |
 | in an English book, the judge (clef:27b) asked how the word is spelled in its sentence (`hyphens.Compounds`) | where the rest is silent English compounds keep the hyphen 34 times in 77: the judge is right on 63, joining on 43 | a hyphenated form the reference closes (`timeout`, `bleedthrough`); 13 compounds it still joins |
+| in a Dutch book, vowels beside the break that would read as one sound (`hyphens.vowel_clash`: "controle-" / "experiment", "woede-" / "uitbarsting"), where the part after is a word of four letters or more and no diphthong's closing i stands before the break | Dutch spelling puts a hyphen there in a compound; tuning 3 fixed, validation 1 ("mini-jurk"), none made (2026-11-06) | without the last two conditions it broke words before a suffix ("vermoei-ender", "Skandi-ers": 5 made); a word that isn't a compound takes a diaeresis instead, which `join` sets first only where the word list knows it |
 
 After the change 15 of the 1,574 are wrong (Vals alarm 0, De cipier 1, Goede dochter 2,
 De tuin 2, Artemis 2, Metro 8). What is left is English compounds the list lacks or

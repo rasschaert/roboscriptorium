@@ -776,3 +776,34 @@ def test_a_dropped_sliver_on_a_text_lines_row_doesnt_split_the_run():
         "Hij kn",
         "“Dan g",
     ]
+
+
+def test_a_dutch_break_between_clashing_vowels_keeps_its_hyphen_where_nothing_else_says():
+    from roboscriptorium.hyphens import vowel_clash
+
+    words = {"poëzie", "voetbal", "zeeëend", "experiment", "uitbarsting", "inspecteur", "jurk"}
+    words |= {"ers", "ende", "ender"}  # suffixes the word list holds as words
+    known = lambda w: w.lower() in words  # noqa: E731
+
+    def clash(stem, rest, context):
+        return vowel_clash(stem, rest, context, known)
+
+    for text, nxt, joined in (
+        ("een controle-", "experiment", "een controle-experiment"),
+        ("die woede-", "uitbarsting", "die woede-uitbarsting"),
+        ("de politie-", "inspecteur", "de politie-inspecteur"),
+        # Not: no clash ("voet-" / "bal", "ide-" / "aal"), a diaeresis the list knows
+        # ("poëzie"), the book's own closed spelling.
+        ("de voet-", "bal", "de voetbal"),
+        ("het ide-", "aal", "het ideaal"),
+        ("de po-", "ezie", "de poëzie"),
+        ("een mini-", "jurk", "een mini-jurk"),
+        # Nor a word broken before a suffix, no word of its own ("vermoei-" / "ender").
+        ("nog vermoei-", "ender", "nog vermoeiender"),
+        ("een sproei-", "ende", "een sproeiende"),
+        ("de Skandi-", "ers", "de Skandiers"),
+        ("het victori-", "euze", "het victorieuze"),
+    ):
+        assert join(text, nxt, known=known, compound=clash) == joined
+    seen = Counter({"zeeaap": 2})
+    assert join("een zee-", "aap", seen, known, clash) == "een zeeaap"

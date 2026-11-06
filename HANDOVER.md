@@ -15,6 +15,9 @@ Nothing. Baselines `tuning-20261106T080731` (tuning ~4,500 pages), `validation-2
 - **Qwen3.8-Flash-Next UD-Q2_K_XL rejected** as reader and witness (models.md, decisions.md):
   on the quiet set's lines every reader gets wrong, 0 of 5 plain, 4 of 23 with the crop
   doubled (two real), 2 of 12 thinking; it swaps real words; ~15 s a line from the SSD.
+- **Taken: a Dutch line-end break between clashing vowels keeps its hyphen**
+  (`hyphens.vowel_clash`): tuning 3 fixed, validation 1, none made.
+- **`doctor` runs again** (4dba7ae, broken since 2026-10-24, now tested).
 - **Tests never reach the machine's Ollama** (5afd2b5): `ROBO_OLLAMA_URL` on a closed port in
   every test; one pipeline test had passed only because qwen answered it.
 
@@ -43,15 +46,6 @@ Nothing. Baselines `tuning-20261106T080731` (tuning ~4,500 pages), `validation-2
 
 ## Next, for the agent
 
-0. **The Dutch vowel-clash hyphen waits as a patch**: `git apply work/runs/vowel-clash.patch`,
-   then `work/runs/vowel-clash2.sh` (warm, ~17 min; stopped at the user's word). A Dutch
-   line-end break between vowels read as one sound joined ("controle-" / "experiment")
-   keeps its hyphen where nothing stronger says (`hyphens.vowel_clash`, the fallback judge
-   of a Dutch book). Its first form fixed 4 (tuning 3, validation "mini-jurk") and made 5,
-   all words broken before a suffix after an i ("vermoei-ender", "Skandi-ers"); the patch
-   asks for a word of four letters or more after the break and no diphthong's closing i
-   before it. If it still makes any, drop it and record the null: it reaches about four
-   places.
 1. The open steps of docs/checklist.md in its order. The unasked errors left on tuning
    (585 places): stress accents 105 (half the reference's), compound hyphens 86 (line-end
    breaks, 57 a hyphen lost), letters 76, punctuation 59. Extra text's 969 words are

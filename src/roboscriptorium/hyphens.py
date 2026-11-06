@@ -35,6 +35,31 @@ _DIAERESIS = {"e": "ë", "i": "ï", "o": "ö", "u": "ü"}
 _SUSPENDED_BY = frozenset({"en", "of", "noch", "tot", "and", "or", "nor"})
 
 
+# Two vowels a Dutch compound may not set side by side, read as one sound: its spelling
+# puts a hyphen between the parts ("controle-experiment", "zee-eend", "auto-ongeluk").
+_CLASH = frozenset(
+    {"aa", "ae", "ai", "au", "ee", "ei", "eu", "ie", "ij", "oe", "oi", "oo", "ou", "ui", "uu"}
+)
+
+
+def vowel_clash(
+    stem: str, rest: str, context: str = "", known: Callable[[str], bool] | None = None
+) -> bool:
+    """Whether a Dutch word broken at `stem`-`rest` keeps its hyphen because the vowels
+    beside the break would be read as one sound joined ("woede-" / "uitbarsting",
+    "mini-" / "jurk"): true by Dutch spelling for a compound, so only where `rest` is a
+    word of four letters or more (`known`; the list holds suffixes such as "ers" and
+    "ende" as words), and not after a diphthong's closing i, a glide that clashes with
+    nothing ("vermoei-" / "ender", "sproei-" / "ende"). A word that isn't a compound
+    takes a diaeresis there instead ("poëzie"), which `join` sets first where the word
+    list knows it."""
+    if len(stem) < 2 or len(rest) < 4 or (stem[-1] + rest[0]).lower() not in _CLASH:
+        return False
+    if stem[-1].lower() == "i" and stem[-2].lower() in "aeiou":
+        return False
+    return known is None or known(rest)
+
+
 def asked(language: str) -> bool:
     """Whether a book in this language asks the judge about its undecided hyphens."""
     return language[:2] in LANGUAGES
