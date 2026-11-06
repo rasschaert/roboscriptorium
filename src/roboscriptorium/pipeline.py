@@ -144,9 +144,8 @@ def run(
         found: list = []
         if regions is not None and ocrcheck.scanned(book.source):
             placed = missing.openings(book.source, body, regions)
-            found = missing.candidates(
-                body, placed, _answered(answers), missing.slots(book.source, body)
-            )
+            inked = missing.slots(book.source, body) + missing.blocks(book.source, body, placed)
+            found = missing.candidates(body, placed, _answered(answers), inked)
             readings = missing.read(
                 book.source,
                 found,

@@ -75,6 +75,9 @@ BARE_DOTS = re.compile(r"\.{3}|…|\. \. \.")
 # lines span the column (0.95–1.13 on the benches), a picture page's fragments ("MERRY
 # GOOD MORNING", 0.26) and a lone number ("19") don't.
 SLOT_FILL = 0.8
+# In a lost block, a band of ink shorter than this share of a line's height is part of
+# the line beside it, not a line.
+BLOCK_BAND = 0.4
 # A slot's marks are told from its dots at this resolution (`_marks`).
 MARK_DPI = 300
 
@@ -332,6 +335,106 @@ def slots(pdf: Path, pages: list[PageText]) -> list[tuple[int, Region]]:
                     # and indent are then its own, not the column's.
                     x0, x1 = max(left, across[0] - height), min(right, across[1] + height)
                     out.append((page.number, Region("slot", PLACED, x0, y0, x1, y1)))
+    return out
+
+
+def blocks(
+    pdf: Path, pages: list[PageText], regions: dict[int, list[Region]]
+) -> list[tuple[int, Region]]:
+    """The lines of each text region taller than `MAX_HEIGHT` lines that holds no layer
+    line, found by its ink's rows and labelled "block": a paragraph the layer lost whole
+    (Dolittle's beside a drawn initial, where its page kept only the chapter label). Each
+    is read and placed like any lost line; a band of ink under `BLOCK_BAND` of a line's
+    height (an accent, a descender) joins the band beside it. Where a larger text region
+    around it holds a layer line, the spotter's boxes disagree and none is cut (De stilte
+    van de hel's page of junk, boxed whole and in parts)."""
+    heights = [ln.y1 - ln.y0 for p in pages for ln in p.lines]
+    if not heights:
+        return []
+    height = median(heights)
+    out = []
+    with pymupdf.open(pdf) as doc:
+        for page in pages:
+            for r in regions.get(page.number, []):
+                if r.label != "plain text" or r.turned or r.y1 - r.y0 <= MAX_HEIGHT * height:
+                    continue
+                if _holds_layer(r, page) or any(
+                    q is not r
+                    and q.label == "plain text"
+                    and _covers(q, r)
+                    and _holds_layer(q, page)
+                    for q in regions.get(page.number, [])
+                ):
+                    continue
+                box = (r.x0, r.y0, r.x1, r.y1)
+                out += [(page.number, b) for b in _bands(doc, page.number, box, height)]
+    return out
+
+
+def _holds_layer(r: Region, page: PageText) -> bool:
+    """Whether the middle of a layer line lies in `r`."""
+    return any(
+        r.x0 <= (ln.x0 + ln.x1) / 2 <= r.x1 and r.y0 <= (ln.y0 + ln.y1) / 2 <= r.y1
+        for ln in page.lines
+    )
+
+
+def _covers(outer: Region, inner: Region) -> bool:
+    """Whether `outer` holds at least half of `inner`'s area."""
+    w = min(outer.x1, inner.x1) - max(outer.x0, inner.x0)
+    h = min(outer.y1, inner.y1) - max(outer.y0, inner.y0)
+    area = (inner.x1 - inner.x0) * (inner.y1 - inner.y0)
+    return w > 0 and h > 0 and area > 0 and w * h >= 0.5 * area
+
+
+def _bands(
+    doc: pymupdf.Document, number: int, box: tuple[float, ...], height: float
+) -> list[Region]:
+    """The rows of ink inside `box`, one region each, narrowed to their ink across."""
+    page = doc[number - 1]
+    clip = pymupdf.Rect(box) & page.rect
+    if clip.is_empty:
+        return []
+    pix = page.get_pixmap(clip=clip, dpi=INK_DPI, colorspace=pymupdf.csGRAY)
+    grey = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.stride)
+    grey = grey[:, : pix.width]
+    # The paper is the light end of the block: print covers less of it, but not always half.
+    dark = grey < np.percentile(grey, 90) - SLOT_DARK
+    rows = dark.sum(axis=1) >= 2
+    scale = clip.height / pix.height
+    bands, y = [], 0
+    while y < len(rows):
+        if rows[y]:
+            start = y
+            while y < len(rows) and rows[y]:
+                y += 1
+            bands.append([start, y])
+        else:
+            y += 1
+    # A thin band (an accent over a capital, a descender) joins its nearest neighbour.
+    merged: list[list[int]] = []
+    for b in bands:
+        if (
+            merged
+            and (
+                (b[1] - b[0]) * scale < BLOCK_BAND * height
+                or (merged[-1][1] - merged[-1][0]) * scale < BLOCK_BAND * height
+            )
+            and (b[0] - merged[-1][1]) * scale < BLOCK_BAND * height
+        ):
+            merged[-1][1] = b[1]
+        else:
+            merged.append(b)
+    out = []
+    for y0, y1 in merged:
+        if (y1 - y0) * scale < BLOCK_BAND * height:
+            continue
+        cols = np.flatnonzero(dark[y0:y1].any(axis=0))
+        x0 = clip.x0 + cols[0] * clip.width / pix.width
+        x1 = clip.x0 + (cols[-1] + 1) * clip.width / pix.width
+        top, bottom = clip.y0 + y0 * scale, clip.y0 + y1 * scale
+        pad = 0.15 * height
+        out.append(Region("block", PLACED, x0 - pad, top - pad, x1 + pad, bottom + pad))
     return out
 
 

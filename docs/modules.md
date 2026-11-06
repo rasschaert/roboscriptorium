@@ -253,7 +253,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   a line of dots is taken ("‘...’", a silent reply both layer and spotter lose) or words
   as long as a line of the page (`SLOT_FILL`),
   with the quote marks its ink shows where glm-ocr reads bare dots (`quoted`), and kept
-  as body past the line roles (`slot_lines`);
+  as body past the line roles (`slot_lines`); the lines of a text region several lines
+  tall that holds no layer line, and lies in no larger region that does, found by its
+  ink's rows (`blocks`);
   where glm-ocr talks instead of reading (`talk`), the read model's reading of the box
   is taken if it reads as a number; figures, captions and regions
   a human answered are left alone. Scans only; cached in

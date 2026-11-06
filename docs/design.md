@@ -506,6 +506,20 @@ second alone took "MERRY GOOD MORNING"). On the benches of 2026-11-06, ten such 
 all lines the build lost (eight asked as questions, two not); the test takes nine
 (Dolittle's "up; and all the others", a paragraph's short last line, stays a question).
 
+A whole paragraph can be lost too. Dolittle's PDF 97 kept one layer line, its chapter
+label; the spotter boxed four blocks of text (beside a drawn initial, and below), each
+several lines tall, too tall for a line candidate, so the page lost about 105 words, 81
+of them unasked, and its title "THE MONKEYS' COUNCIL" then measured as wide as the page's
+few short lines and was run into the text. Such a block, with no layer line in it, is cut
+into its lines by the ink's rows (`missing.blocks`; a band under 0.4 of a line's height,
+an accent or a descender, joins its neighbour) and each line read like any lost one. Not
+where a larger region around it holds a layer line: De stilte van de hel's PDF 94 is junk
+the spotter boxed whole and in parts, and cut there the lines were clipped at the nested
+boxes' edges and two ran together (14 wrong words made, 8 unasked, on its first form).
+Over the thirty books these two pages are the only ones with such blocks. Tuning 105
+wrong words fixed (81 unasked), 1 made (the drawn initial's "HEE-CHEE"), heading errors
+23 → 22; validation no change (2026-11-06).
+
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
 same way: a speck in a page's top corner read "境", kept as the page's first line, then
 read by a page reader as a whole sentence the arbiter took. On a speck glm-ocr may answer with talk rather than a reading: "```markdown", or a letter

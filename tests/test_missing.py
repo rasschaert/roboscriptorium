@@ -316,3 +316,49 @@ def test_a_slot_read_as_bare_dots_gets_the_quote_marks_its_ink_shows(tmp_path):
     assert missing.quoted(pdf, [text], {missing._key(*text): "..."}, True) == {
         missing._key(*text): "..."
     }
+
+
+def _lost_block(tmp_path):
+    """A page whose layer holds a heading and lines below, and a block of three printed
+    lines (bars of ink 14 pt apart) beside a picture that the layer lost."""
+    doc = pymupdf.open()
+    page = doc.new_page(width=340, height=580)
+    for y in (150, 164, 178):
+        page.draw_rect(pymupdf.Rect(110, y, 290, y + 9), color=(0, 0, 0), fill=(0, 0, 0))
+    doc.save(tmp_path / "source.pdf")
+    lines = [Line("THE NINTH CHAPTER", 80, 97, 234, 109)]
+    lines += [
+        Line(f"regel {i} van de tekst", 30, 250 + 14 * i, 290, 260 + 14 * i) for i in range(8)
+    ]
+    block = Region("plain text", 0.9, 103, 146, 295, 191)
+    return tmp_path / "source.pdf", [PageText(1, 340, 580, lines)], {1: [block]}
+
+
+def test_a_text_block_the_layer_lost_whole_is_read_line_by_line(tmp_path):
+    pdf, pages, regions = _lost_block(tmp_path)
+    found = missing.blocks(pdf, pages, regions)
+    assert [(n, r.label) for n, r in found] == [(1, "block")] * 3
+    middles = [(r.y0 + r.y1) / 2 for _, r in found]
+    assert all(abs(m - c) < 3 for m, c in zip(middles, (154.5, 168.5, 182.5), strict=True))
+    readings = {missing._key(n, r): f"woord {k}" for k, (n, r) in enumerate(found)}
+    out = missing.add(pages, found, readings)
+    assert [ln.text for ln in out[0].lines][1:4] == ["woord 0", "woord 1", "woord 2"]
+
+
+def test_a_block_the_layer_reads_or_a_one_line_region_is_no_lost_block(tmp_path):
+    pdf, pages, regions = _lost_block(tmp_path)
+    held = [*pages[0].lines, Line("ink here", 110, 164, 290, 173)]
+    held.sort(key=lambda ln: ln.y0)
+    assert missing.blocks(pdf, [replace(pages[0], lines=held)], regions) == []
+    one = {1: [Region("plain text", 0.9, 103, 146, 295, 160)]}
+    assert missing.blocks(pdf, pages, one) == []
+
+
+def test_a_block_inside_a_larger_region_the_layer_reads_is_no_lost_block(tmp_path):
+    # The spotter boxed the same lines twice, and the larger box holds a layer line (junk
+    # read across them): its boxes disagree, so nothing is cut into lines.
+    pdf, pages, regions = _lost_block(tmp_path)
+    junk = Line("ne stem. BIE daar", 110, 186, 290, 196)
+    lines = sorted([*pages[0].lines, junk], key=lambda ln: ln.y0)
+    outer = Region("plain text", 0.9, 100, 140, 300, 200)
+    assert missing.blocks(pdf, [replace(pages[0], lines=lines)], {1: [*regions[1], outer]}) == []
