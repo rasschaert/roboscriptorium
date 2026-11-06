@@ -12,7 +12,9 @@ Qwen3.8-Flash-Next and mended headings and lost blocks.
   and Het heft scored whole (~720 pages more), one book at a time, then their trust data
   rebuilt. When it ends: the decisions line, the checklist's "Grow the tuning slices
   further" (room left: Au pair 219, Metro 201, De vergelding 134, Thief-Taker 127, De tuin
-  120, Vals alarm 114), the new baselines here.
+  120, Vals alarm 114), the new baselines here; then docs/outlook.md's "How close we are"
+  table (dated 2026-10-25, before the grown slices) and the primer's errors chart
+  (`experiments/primer_errors.py`) from the new baselines.
 
 Baselines before it: `tuning-20261106T225112` (tuning ~4,500 pages), `validation-20261106T225402`
 (73c256e).
