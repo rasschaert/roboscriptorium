@@ -483,3 +483,11 @@ def test_a_centred_misreading_a_fitting_number_or_a_flush_left_run_stay_headings
     # A book that sets its numbers flush left: a number off the run there is no outlier.
     pages, roles = _numbers_at(20, texts, {35: ("7", 20)})
     assert chapters.off_run(pages, roles) == roles
+
+
+def test_a_chapter_number_with_a_speck_after_it_still_reads_as_the_number():
+    assert chapters.value("20 ;") == chapters.value("20.") == 20
+    assert chapters.value("2I:") == 21 and chapters.value("7,") == 7
+    # Letters or a second number stay no number.
+    assert chapters.value("20 a") is None and chapters.value("20 21") is None
+    assert chapters.value(";") is None

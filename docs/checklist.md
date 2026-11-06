@@ -548,6 +548,8 @@ also part of the pipeline itself." Before either book goes to review:
       paragraph is left open and the next opens with the same mark, the print closes the
       first 20 times in 45 on tuning: asking once would leave those 20 unasked
 
+- [x] ~~A chapter number with a speck after it~~ (2026-11-06, `chapters.value` leaves out
+      punctuation after the number): Thief-Taker's "20 ;", tuning heading errors 24 → 23
 - [x] ~~Specks read as a number off the run~~ (2026-11-06, `chapters.off_run`): Doodskleed's
       "7" and "3", tuning heading errors 26 → 24, no word changed
 - [x] ~~A part page's title under its "Boek n"~~ (2026-11-06, `title_lines`, "part-page"):
@@ -562,8 +564,8 @@ also part of the pipeline itself." Before either book goes to review:
       and validation books' body pages, these are the only ones with ink and no text);
       Afscheid's chapters 1 and 2 on openings sunk 0.06 of a page, under
       `page.SUNK_PAGE_DROP` (0.08), so their misread numbers ("l", "e,") count as page edges;
-      Het heft's "88" mid-page (PDF 92) a heading; Thief-Taker's "V" (PDF 140) a heading and
-      its 20 lost; Dolittle's title page a heading, "THE MONKEYS' COUNCIL" lost; Metro's
+      Het heft's "88" mid-page (PDF 92) a heading; Thief-Taker's "V" (PDF 140), a speck on a blank
+      page, a heading; Dolittle's title page a heading, "THE MONKEYS' COUNCIL" lost; Metro's
       "CHAPTER 6" read "SRN WEIR", its number lost
 - [ ] Heading errors the exact count shows (2026-11-02): the first line of text swallowed
       into a heading (Thief-Taker, Dolittle: mended, `chapters.running_text`); Dolittle's chapter subtitles

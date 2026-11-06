@@ -42,6 +42,8 @@ CENTRED_SHARE = 0.8
 
 # How the layer misreads old-style figures: a 1 as I or l, a 0 as o, a 5 as S, a 2 as Z.
 _MISREADS = str.maketrans("IilOoSsZz", "111005522")
+# After a chapter number: its stop, or a speck read as punctuation ("20 ;").
+_AFTER = " .,;:'’`"
 
 
 def openings(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[SourceRef, LineRole]:
@@ -341,8 +343,9 @@ def _role(roles: dict[SourceRef, LineRole], page: PageText) -> str:
 
 
 def value(text: str) -> int | None:
-    """The chapter number `text` reads as, its old-style look-alikes folded, or None."""
-    t = text.strip().rstrip(".").translate(_MISREADS)
+    """The chapter number `text` reads as, its old-style look-alikes folded and the
+    punctuation after it left out, or None."""
+    t = text.strip().rstrip(_AFTER).translate(_MISREADS)
     return int(t) if 0 < len(t) <= NUMBER_CHARS and t.isascii() and t.isdigit() else None
 
 
