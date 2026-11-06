@@ -7,15 +7,16 @@ inked slots.
 
 ## Running
 
-- **Qwen3.8-Flash-Next UD-Q2_K_XL screened as a reader** (screen `robo-flashnext`,
-  `work/runs/flashnext.sh`, output `work/runs/flashnext.out`), started 2026-11-06 ~18:50 in
-  Unsloth Studio (context 8192, reasoning budget 0, part of the model read from the SSD;
-  ~10 s a line): the quiet set (~70 min), then reader set v3 and the vote simulation
-  (~2 h 15 min). Ollama stays idle until it ends. Result into docs/models.md beside the
-  IQ1_S row, decisions.md, the checklist step.
-
-Baselines `tuning-20261106T080731` (tuning ~4,500 pages), `validation-20261106T081025`
+Nothing. Baselines `tuning-20261106T080731` (tuning ~4,500 pages), `validation-20261106T081025`
 (82c1b39).
+
+## Done 2026-11-06 evening
+
+- **Qwen3.8-Flash-Next UD-Q2_K_XL rejected** as reader and witness (models.md, decisions.md):
+  on the quiet set's lines every reader gets wrong, 0 of 5 plain, 4 of 23 with the crop
+  doubled (two real), 2 of 12 thinking; it swaps real words; ~15 s a line from the SSD.
+- **Tests never reach the machine's Ollama** (5afd2b5): `ROBO_OLLAMA_URL` on a closed port in
+  every test; one pipeline test had passed only because qwen answered it.
 
 ## Done 2026-11-05 evening to 11-06 morning (decisions.md has every number)
 
@@ -55,9 +56,7 @@ Baselines `tuning-20261106T080731` (tuning ~4,500 pages), `validation-20261106T0
    (585 places): stress accents 105 (half the reference's), compound hyphens 86 (line-end
    breaks, 57 a hyphen lost), letters 76, punctuation 59. Extra text's 969 words are
    mostly Afscheid's washed-out pages, asked by design.
-2. When the user's Qwen3.8-Flash-Next UD-Q2_K_XL download lands (it failed at ~30 GB and
-   restarts), its re-screen (checklist).
-3. Idle machine time grows the slices (checklist).
+2. Idle machine time grows the slices (checklist).
 
 ## Waiting on the user
 
@@ -189,6 +188,7 @@ Baselines `tuning-20261106T080731` (tuning ~4,500 pages), `validation-20261106T0
 
 Gate for a candidate that fits 64 GB, in order:
 1. the quiet set: can it read any of the 23 lines every reader gets wrong? A few minutes;
+   a slow candidate stops after its first 25 lines unless they show a gain;
 2. `experiments/screen_reader.sh <label> <model dir or ollama name>` (the reader set, then
    the vote simulation);
 3. `probe_accent_readers.py`;

@@ -307,21 +307,6 @@ costs against what it could reach; every reader candidate passes the new-model g
             number, footnote, title, with boxes) as an input to line roles. Qwen's page
             roles, tried so on 2026-10-24, cost more words than they saved; try only on
             the pages where the trees err, first (agent, ~2 h)
-- [ ] Qwen3.8-Flash-Next re-screened as a reader, once the **user**'s download in Unsloth
-      Desktop lands: UD-Q2_K_XL, four shards, ~85 GB, into the Hugging Face cache
-      (`models--unsloth--Qwen3.8-Flash-Next-GGUF`); the first try (2026-11-06) failed at
-      ~30 GB, the user restarts it. Unsloth rebuilt every GGUF on 2026-11-04 with "Dynamic
-      V3.1": top-1 agreement IQ1_S 77.3%, Q2_K_XL 82.7%, IQ3_XXS 85.4%. The lookup
-      ("engram") table is now its own file, 28.8 GB at IQ4_NL, which can be read from the
-      SSD. So Q2_K_XL needs about 51 GB in memory without the table. The image encoder
-      (`mmproj-BF16.gguf`) is needed too. Reader set v1 via `openai-local:` in
-      `experiments/tryout.py` (~10 min), thinking off (`reasoning_effort` "none", now
-      "xhigh" by default), Unsloth's no-thinking settings (temperature 0.7, top_p 0.8,
-      top_k 20, presence_penalty 1.5), Ollama's models unloaded first; check the memory
-      it really uses (the docs contradict themselves). Judge it on its own score against
-      qwen3.8:27b (IQ1_S: hard 276/330 against 302, easy 209/220 against 217), and with
-      `experiments/vote_sim.py` (IQ1_S alone right on 4 lines). Result in docs/models.md
-      beside the IQ1_S row (agent, ~1 h)
 - [ ] (Measured 2026-10-24: a line is 52% prefill, 23% decode, so speculative decoding buys little; batching was ruled out; the lever is fewer image reads, decisions.md. Low priority.) Qwen faster on the same output (DeepSeek, Fable, Argon): prefix caching of the fixed
       prompt, batched decoding (mlx-vlm, vllm-mlx), speculative decoding with the text layer
       or glm-ocr as the draft (lossless under greedy decoding); readings must stay identical
@@ -905,6 +890,10 @@ By area, newest first within each; one line a step. Dates and numbers are as rec
 
 ## Measurement
 
+- [x] 2026-11-06 Qwen3.8-Flash-Next UD-Q2_K_XL (Unsloth Studio, part on SSD) as a reader or
+      witness: rejected, on the quiet set's 23 lines every reader gets wrong 0 of 5 plain,
+      4 of 23 with the crop doubled (two real), 2 of 12 thinking, contradicts 3 of 170
+      right lines plain, ~15 s a line (models.md)
 - [x] 2026-10-13 What a perfect reader could still gain (`probe_reader_ceiling.py`): 53
       of 186 wrong words left after review (29%) are undoubted reading errors, under the
       half agreed as the bar; fine-tuning a reader dropped for now

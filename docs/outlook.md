@@ -292,7 +292,7 @@ and reports seconds a line). The reader in use, qwen3.8:27b-nvfp4, reads 436 of 
 hard lines right (CER 0.76%) and 319 of the 320 control lines (0.01%), quote marks wrong
 on 23 and 4, at 1.20 s a line; a candidate must match both strata, quote marks and
 accents included, and be right alone on lines the others miss (docs/models.md has the
-ones that didn't: the q8_0, UD-Q6_K_XL and UD-Q8_K_XL builds, gemma4, a ~1-bit Qwen3.8-Flash-Next, MoE readers).
+ones that didn't: the q8_0, UD-Q6_K_XL and UD-Q8_K_XL builds, gemma4, Qwen3.8-Flash-Next at ~1 and 2 bits, MoE readers).
 Speed is its own pace one request at a time, since no runner tried batches a model this
 size (Unsloth Studio queues requests ahead of its llama-server); it must also fit beside clef:27b and the small models in 64 GB, think nothing and
 write one line. A winner then needs the trust data rebuilt and the arbiter retrained
