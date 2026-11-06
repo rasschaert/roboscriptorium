@@ -2,13 +2,13 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-11-06 ~09:30 by the session that read lost lines from
-inked slots.
+end of every session. Updated 2026-11-06 ~23:55 by the session that screened
+Qwen3.8-Flash-Next and mended headings and lost blocks.
 
 ## Running
 
 Nothing. Baselines `tuning-20261106T225112` (tuning ~4,500 pages), `validation-20261106T225402`
-(e517745).
+(73c256e).
 
 ## Done 2026-11-06 evening
 
@@ -17,6 +17,23 @@ Nothing. Baselines `tuning-20261106T225112` (tuning ~4,500 pages), `validation-2
   doubled (two real), 2 of 12 thinking; it swaps real words; ~15 s a line from the SSD.
 - **Taken: a Dutch line-end break between clashing vowels keeps its hyphen**
   (`hyphens.vowel_clash`): tuning 3 fixed, validation 1, none made.
+- **Taken, every one benched warm, validation no change on each, no heading of the
+  user's four books changed** (decisions.md has the numbers): tuning heading errors
+  32 → 22, unasked wrong words 839 → 755:
+  - a misread chapter number where the run has a gap read again by glm-ocr
+    (`chapters.run_gaps`, `stages/run-gaps.json`): Monterosso 22 of 22;
+  - a display line under a heading on a page without running text is part of it
+    (`title_lines`, "part-page"): Het geluid van bananen's "Stof", "Jullie", "Wij";
+  - a number heading off the run and off the middle is a speck (`chapters.off_run`):
+    Doodskleed's "7" and "3";
+  - punctuation after a chapter number left out of its value: Thief-Taker's "20 ;";
+  - a text block the layer lost whole cut into lines by its ink and read
+    (`missing.blocks`): Dolittle's PDF 97, 105 wrong words fixed (81 unasked);
+  - the scorer folds subscript digits and the fraction slash (Artemis's "CO₂").
+- **Not taken**: a run-on heading measured against the book's full line
+  (`work/runs/book-full.patch`): no longer needed once the lost block is read.
+- **Lesson**: never edit `src/` while a bench runs; its validation half loads the edit.
+- **`experiments/heading_misses.py`** lists each book's missing and extra headings.
 - **`doctor` runs again** (4dba7ae, broken since 2026-10-24, now tested).
 - **Tests never reach the machine's Ollama** (5afd2b5): `ROBO_OLLAMA_URL` on a closed port in
   every test; one pipeline test had passed only because qwen answered it.
