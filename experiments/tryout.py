@@ -327,7 +327,9 @@ def read_openai_local(png: bytes, model: str, prompt: str) -> str:
                 "content": [
                     {
                         "type": "image_url",
-                        "image_url": {"url": "data:image/png;base64," + base64.b64encode(png).decode()},
+                        "image_url": {
+                            "url": "data:image/png;base64," + base64.b64encode(png).decode()
+                        },
                     },
                     {"type": "text", "text": prompt},
                 ],
@@ -336,6 +338,7 @@ def read_openai_local(png: bytes, model: str, prompt: str) -> str:
         "temperature": 0,
         "max_tokens": readers.MAX_LINE_TOKENS,
         "chat_template_kwargs": {"enable_thinking": False},
+        "reasoning_effort": "none",
     }
     resp = httpx.post(OPENAI_LOCAL_URL, json=body, timeout=600)
     resp.raise_for_status()
@@ -393,7 +396,9 @@ def run_reader(model: str) -> None:
         done.update({k: t for k, t in local.items() if k not in done})
         cache.write_text(json.dumps(done, ensure_ascii=False))
         hosted = len(seeded) - len(local)
-        print(f"{label}: {len(local)} of {len(items)} from the book caches ({hosted} hosted, read again)")
+        print(
+            f"{label}: {len(local)} of {len(items)} from the book caches ({hosted} hosted, read again)"
+        )
         incumbents[label] = read_all(label, items, books)
     candidate = read_all(model, items, books)
     layer = {i["id"]: i["layer"] for i in items}

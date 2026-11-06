@@ -7,7 +7,14 @@ inked slots.
 
 ## Running
 
-Nothing. Baselines `tuning-20261106T080731` (tuning ~4,500 pages), `validation-20261106T081025`
+- **Qwen3.8-Flash-Next UD-Q2_K_XL screened as a reader** (screen `robo-flashnext`,
+  `work/runs/flashnext.sh`, output `work/runs/flashnext.out`), started 2026-11-06 ~18:50 in
+  Unsloth Studio (context 8192, reasoning budget 0, part of the model read from the SSD;
+  ~10 s a line): the quiet set (~70 min), then reader set v3 and the vote simulation
+  (~2 h 15 min). Ollama stays idle until it ends. Result into docs/models.md beside the
+  IQ1_S row, decisions.md, the checklist step.
+
+Baselines `tuning-20261106T080731` (tuning ~4,500 pages), `validation-20261106T081025`
 (82c1b39).
 
 ## Done 2026-11-05 evening to 11-06 morning (decisions.md has every number)
