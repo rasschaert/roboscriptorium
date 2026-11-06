@@ -7,8 +7,8 @@ inked slots.
 
 ## Running
 
-Nothing. Baselines `tuning-20261106T204244` (tuning ~4,500 pages), `validation-20261106T204535`
-(3c1c203).
+Nothing. Baselines `tuning-20261106T210104` (tuning ~4,500 pages), `validation-20261106T210402`
+(e3d5739, with the off-run change).
 
 ## Done 2026-11-06 evening
 

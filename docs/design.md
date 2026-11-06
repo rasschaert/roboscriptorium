@@ -842,6 +842,13 @@ and kept 7 of 22. A feature for the run (does a number line continue one) and th
 retrained on the grown slices didn't take (decisions.md, 2026-11-05). Short test, built
 as the bench builds it: 7 → 18 of 22; not one line
 changed on the ten validation books, Stella, Hoe wij verdwijnen or Ex-minnaar.
+A heading that reads as a number off the run (not between its neighbours') and stands off
+the middle where four in five of the run's headings are centred is a speck, dropped
+(`chapters.off_run`, after `run_gaps`): Doodskleed's flecks above a page's first line read
+"7" between chapters 3 and 4 and "3" between 8 and 9, which the trees kept as headings.
+Monterosso's centred "5" for 15 stays, as do an off-centre number the run expects and every
+number of a book that sets them flush left. Tuning heading errors 26 → 24, no word changed
+on either set (2026-11-06).
 A heading its run confirms isn't asked in the review (`chapters.settled`): bare numbers
 each one more than the one before or after, titles opening on years in order ("1885:
 Een ramp" after "1840-1884: …", five or more), parts counted in words in order; nor is

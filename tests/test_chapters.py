@@ -438,3 +438,48 @@ def test_under_a_part_heading_a_motto_a_number_a_speck_or_a_page_of_text_stays_d
     roles14 = {SourceRef(14, 0): heading, SourceRef(14, 1): dropped} | body
     styles14 = {SourceRef(14, 0): display, SourceRef(14, 1): display}
     assert chapters.title_lines([text], roles14, styles14)[SourceRef(14, 1)].role == "artifact"
+
+
+def _numbers_at(x0: float, texts: dict[int, str], extra: dict[int, tuple[str, float]]):
+    """Pages each opening on a number at `x0` (170 is the middle), and pages of text whose
+    first line is a short number at its own x (`extra`)."""
+    pages, headings = [], {}
+    for n, t in texts.items():
+        p = _mid_page(n)
+        pages.append(PageText(n, 340, 580, [Line(t, x0, 20, x0 + 10, 30), *p.lines]))
+        headings[n] = t
+    for n, (t, x) in extra.items():
+        p = _mid_page(n)
+        pages.append(PageText(n, 340, 580, [Line(t, x, 8, x + 6, 16), *p.lines]))
+    pages.sort(key=lambda p: p.number)
+    roles = {}
+    for p in pages:
+        for i in range(len(p.lines)):
+            heading = i == 0 and (p.number in headings or p.number in extra)
+            roles[SourceRef(p.number, i)] = LineRole(
+                "chapter_heading" if heading else "body", 0.8, 0.1, "trees"
+            )
+    return pages, roles
+
+
+def test_a_speck_taken_for_a_number_off_the_run_and_off_centre_is_no_heading():
+    texts = {10: "1", 20: "2", 30: "3", 40: "4", 50: "5", 60: "6"}
+    # "7" between 3 and 4, at the left: a speck.
+    pages, roles = _numbers_at(165, texts, {35: ("7", 74)})
+    out = chapters.off_run(pages, roles)
+    assert out[SourceRef(35, 0)].role == "artifact"
+    assert all(out[SourceRef(n, 0)].role == "chapter_heading" for n in texts)
+
+
+def test_a_centred_misreading_a_fitting_number_or_a_flush_left_run_stay_headings():
+    texts = {10: "1", 20: "2", 30: "3", 40: "4", 50: "5", 60: "6"}
+    # Monterosso's "5" for 15: off the run, but centred like the others.
+    pages, roles = _numbers_at(165, texts, {35: ("9", 165)})
+    assert chapters.off_run(pages, roles) == roles
+    # Off-centre, but the number the run expects there.
+    texts_gap = {10: "1", 20: "2", 30: "3", 50: "5", 60: "6", 70: "7"}
+    pages, roles = _numbers_at(165, texts_gap, {40: ("4", 74)})
+    assert chapters.off_run(pages, roles) == roles
+    # A book that sets its numbers flush left: a number off the run there is no outlier.
+    pages, roles = _numbers_at(20, texts, {35: ("7", 20)})
+    assert chapters.off_run(pages, roles) == roles

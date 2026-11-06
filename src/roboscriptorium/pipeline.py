@@ -198,6 +198,7 @@ def run(
                 book.stages / "run-gaps.json",
             ),  # fmt: skip
         )
+        model_roles = chapters.off_run(body, model_roles)
         model_roles |= {
             ref: LineRole("body", 1.0, 1.0, "slot") for ref in missing.slot_lines(body, found)
         }

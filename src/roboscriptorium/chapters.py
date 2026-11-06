@@ -35,6 +35,10 @@ RULE = "book-openings"
 # past the run's last number: two chapters in a row the layer lost, then this one.
 RUN_GAP = 3
 RUN_RULE = "chapter-run"
+OFF_RUN_RULE = "off-run"
+# The share of a run's numbered headings that must stand centred for an off-centre one
+# off the run to be taken for a speck.
+CENTRED_SHARE = 0.8
 
 # How the layer misreads old-style figures: a 1 as I or l, a 0 as o, a 5 as S, a 2 as Z.
 _MISREADS = str.maketrans("IilOoSsZz", "111005522")
@@ -155,6 +159,37 @@ def run_gaps(
         if (after_run or below_first) and (upcoming[1] is None or v < upcoming[1]):
             out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, RUN_RULE)
             run = v
+    return out
+
+
+def off_run(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[SourceRef, LineRole]:
+    """`roles` with a heading dropped that reads as a number off the book's run (not between
+    its neighbours' numbers) and stands unlike the run's headings, off the middle where at
+    least `CENTRED_SHARE` of them are centred: Doodskleed's specks above a page's first
+    line read "7" between chapters 3 and 4. A misread number set like the others stays
+    (Monterosso's centred "5" for 15), as does an off-centre one the run expects there.
+    Needs `MIN_NUMBERED` numbered headings. Returns a new dict."""
+    numbered_lines = [
+        (SourceRef(p.number, i), v, P.centred_on_page(line, p, P.geometry(p)[0]))
+        for p in pages
+        for i, line in enumerate(p.lines)
+        if (r := roles.get(SourceRef(p.number, i))) is not None
+        and r.role == "chapter_heading"
+        and len(line.text.strip()) <= NUMBER_CHARS
+        and (v := value(line.text)) is not None
+    ]
+    if len(numbered_lines) < MIN_NUMBERED:
+        return roles
+    if sum(c for _, _, c in numbered_lines) < CENTRED_SHARE * len(numbered_lines):
+        return roles
+    out = dict(roles)
+    for k, (ref, v, centred) in enumerate(numbered_lines):
+        before = numbered_lines[k - 1][1] if k > 0 else None
+        after = numbered_lines[k + 1][1] if k + 1 < len(numbered_lines) else None
+        fits = (before is None or v > before) and (after is None or v < after)
+        if not centred and not fits:
+            role = roles[ref]
+            out[ref] = LineRole("artifact", role.confidence, role.p_body, OFF_RUN_RULE)
     return out
 
 
