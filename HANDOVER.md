@@ -21,10 +21,16 @@ gain) and stop the chain (`touch work/runs/panel-night.STOP`, takes effect betwe
 passes) when a judge doesn't pay. If a pass wins, its settings become the defaults
 (config, docs, models.md) in the same change.
 
-Baselines: `tuning-20261107T112939` and `validation-20261107T113253` (the ligature fix
-since: NO CHANGE on both). Waiting on the user: six places to vote on
-(`work/probes/judge-v2/vote-20261107.json`, one review command per book in the session
-report).
+Baselines: `tuning-20261107T141329` and `validation-20261107T141640` (after the ligature
+fix). Don't edit `src/` in the main tree while it runs: each book of the rebuild starts a
+new process that loads it; code work goes in a worktree.
+
+After it: batch five of the slice growth is ready as `work/runs/grow6.patch` (Vals alarm,
+Metro, De tuin, Thief-Taker, Au pair and De vergelding scored whole, ~915 pages; apply
+once the panel's settings are decided, so the new pages' trust data gets its judges);
+then pages below the quality the build supports (checklist). Mistral-Small 3.2 Q8_0 as a
+text judge waits for a gap (`work/runs/judge-mistral.sh`; it didn't fit beside
+autotrust-jev 35B).
 
 ## Done 2026-11-06 evening
 
