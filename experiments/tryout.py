@@ -22,7 +22,8 @@ The judge set (`JUDGE_VERSION`) holds the judges' questions about settled OCR su
 of the tuning books' bench slices (the trust data's labels): the vision judge's state,
 question and crop and the text judge's state and question, exactly as the pipeline asks
 them, captured from a cached build. A model whose name starts `tokens:` is asked the
-text judge's question, any other the vision judge's. `--prompt` adds one of
+text judge's question, any other the vision judge's (`--text`: a decision model without
+vision asked the text judge's). `--prompt` adds one of
 `PROMPT_VARIANTS` to the question's instructions, an A/B of the wording on the same set.
 Two strata per book: suspects the judge in use gets wrong (`JUDGE_HARD` a book) and
 right (`JUDGE_CONTROL`). Each book's share of wrong picks is kept, so the score can be
@@ -655,13 +656,13 @@ def _wide_crop(item: dict) -> bytes:
         return page.get_pixmap(matrix=zoom, clip=clip).tobytes("png")
 
 
-def run_judge(model: str, variant: str = "") -> None:
+def run_judge(model: str, variant: str = "", text_question: bool = False) -> None:
     from roboscriptorium.clients import decide
 
     manifest, items = load_judge_set()
     books = manifest["books"]
     settings = Settings.from_env()
-    text = model.startswith("tokens:")
+    text = model.startswith("tokens:") or text_question
     for i in items:
         i["difference"] = difference_kind(i["state"]["readings"])
         if variant == "wide":
@@ -671,7 +672,7 @@ def run_judge(model: str, variant: str = "") -> None:
         for i in items:
             i["state"], i["questions"] = i["text_state"], i["text_questions"]
             i["incumbent"], i["png"] = i["text_incumbent"], None
-    label = model + (f"+{variant}" if variant else "")
+    label = model + (f"+{variant}" if variant else "") + ("+text" if text_question else "")
     cache = (
         WORK
         / f"judge-v{JUDGE_VERSION}"
@@ -790,4 +791,4 @@ if __name__ == "__main__":
             run_reader(sys.argv[3])
         else:
             variant = sys.argv[sys.argv.index("--prompt") + 1] if "--prompt" in sys.argv else ""
-            run_judge(sys.argv[3], variant)
+            run_judge(sys.argv[3], variant, "--text" in sys.argv)

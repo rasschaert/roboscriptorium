@@ -15,7 +15,7 @@ from dataclasses import dataclass
 from roboscriptorium.hyphens import HYPHENS, Compound, join, spellings
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.page import NUMBERED_WORDS, bare_numeral, digits
-from roboscriptorium.pdf import Line, PageText
+from roboscriptorium.pdf import LIGATURES, Line, PageText
 from roboscriptorium.quotes import close_quotes, open_single, single_quoted
 from roboscriptorium.roles import LineRole, is_body
 
@@ -69,21 +69,9 @@ FOOTER_MAX_CHARS = 4
 # a spaced run (". . .") keeps its space: the typography stage sets the run book-wide.
 _SPACE_BEFORE_PUNCTUATION = re.compile(r"(?<!\.)\s+([,;:.!?])(?=\s|$)(?!\s\.)")
 
-# Typesetting ligatures ("ﬁ", "ﬀ") are glyphs, not letters.
-_LIGATURES = str.maketrans(
-    {
-        "\ufb00": "ff",
-        "\ufb01": "fi",
-        "\ufb02": "fl",
-        "\ufb03": "ffi",
-        "\ufb04": "ffl",
-        "\ufb06": "st",
-    }
-)
-
 
 def tidy(text: str) -> str:
-    return _SPACE_BEFORE_PUNCTUATION.sub(r"\1", text.translate(_LIGATURES))
+    return _SPACE_BEFORE_PUNCTUATION.sub(r"\1", text.translate(LIGATURES))
 
 
 def footer_start(page: PageText) -> int:

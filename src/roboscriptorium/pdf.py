@@ -39,6 +39,17 @@ TEXT_LAYER_VERSION = 8
 # Ligatures a font may put in the Unicode private-use area, where the text layer
 # then holds a code that means nothing outside that font.
 PRIVATE_LIGATURES = {"ff", "fi", "fl", "ffi", "ffl", "fj", "ft", "st", "ct", "Th", "ch", "ck", "tt"}
+# Typesetting ligatures ("ﬁ", "ﬀ") are glyphs, not letters.
+LIGATURES = str.maketrans(
+    {
+        "\ufb00": "ff",
+        "\ufb01": "fi",
+        "\ufb02": "fl",
+        "\ufb03": "ffi",
+        "\ufb04": "ffl",
+        "\ufb06": "st",
+    }
+)
 # Zoom for reading a word with such a glyph: born-digital text renders cleanly.
 PRIVATE_READ_ZOOM = 6
 # The first reading of an image-only PDF: the resolution tesseract reads its pages at,

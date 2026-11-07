@@ -304,6 +304,14 @@ def test_the_read_models_reading_of_a_line_is_checked_like_the_others(tmp_path, 
     assert "English" in prompts[0]
 
 
+def test_a_reading_that_spells_a_word_with_a_ligature_glyph_is_no_suspect(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
+    # Thief-Taker's "fled", which qwen reads with the ligature glyph "ﬂ".
+    lines = [*LINES[:3], "Line 3 of the story fled on across the page", *LINES[4:]]
+    book, _ = _checked_book(tmp_path, monkeypatch, lines, lines[3].replace("fl", "\ufb02"))
+    assert pipeline.run(book).suspects == []
+
+
 def test_a_full_stop_for_a_line_end_comma_before_lower_case_is_no_suspect(tmp_path, monkeypatch):
     monkeypatch.setenv("ROBO_OCR_TRUST", "0")
     lines = [

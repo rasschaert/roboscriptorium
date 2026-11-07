@@ -30,7 +30,7 @@ from roboscriptorium.files import write_atomic
 from roboscriptorium.hyphens import HYPHENS
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
-from roboscriptorium.pdf import PageText, line_words, page_words, spells, spliced
+from roboscriptorium.pdf import LIGATURES, PageText, line_words, page_words, spells, spliced
 from roboscriptorium.quotes import ELISION
 from roboscriptorium.roles import DecisionCache
 
@@ -236,7 +236,11 @@ def check(
             boxes = readers.line_boxes(pdf_page, page)
             for k, line in enumerate(page.lines):
                 ours = line.text
-                others = {n: r.get(SourceRef(page.number, k), "") for n, r in readings.items()}
+                # A reader's ligature glyph spelled out: "ﬂed" and "fled" are one word.
+                others = {
+                    n: r.get(SourceRef(page.number, k), "").translate(LIGATURES)
+                    for n, r in readings.items()
+                }
                 read = [o for o in others.values() if o]
                 around = (
                     page.lines[k - 1].text if k > 0 else "",

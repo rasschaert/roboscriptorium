@@ -33,6 +33,9 @@ def main() -> None:
         if JUDGES[name] and not f.exists():
             del JUDGES[name]
     for extra in sorted((ROOT / "answers").glob("*.json")):
+        # A screen still running would shrink every comparison to its answers so far.
+        if len(json.loads(extra.read_text())) < len(items):
+            continue
         if extra.stem not in JUDGES.values() and "+" not in extra.stem:
             JUDGES[extra.stem] = extra.stem
     answers = {}
@@ -95,7 +98,8 @@ def by_kind() -> None:
             answers[name] = {i["id"]: i["text_incumbent"]["value"] for i in items}
         elif (ROOT / "answers" / f"{stem}.json").exists():
             got = json.loads((ROOT / "answers" / f"{stem}.json").read_text())
-            answers[name] = {k: v["value"] for k, v in got.items()}
+            if len(got) == len(items):
+                answers[name] = {k: v["value"] for k, v in got.items()}
     items = [i for i in items if all(i["id"] in a for a in answers.values())]
     share = sum(b["wrong"] for b in books.values()) / sum(b["settled"] for b in books.values())
     n_hard = sum(i["stratum"] == "hard" for i in items)

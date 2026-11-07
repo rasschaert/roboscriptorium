@@ -721,3 +721,11 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-07 | tryout: judge set v2, clef:27b on a wide crop | 0 | 26 | 0 |
 | 2026-11-07 | tryout: judge set v2, pplx-decider:27b-nvfp4 | 0 | 22 | 0 |
 | 2026-11-07 | tryout: judge set v2, pplx-decider-flash:4b-nvfp4 | 0 | 4 | 0 |
+| 2026-11-07 | tryout: judge set v2, pplx-decider:27b-nvfp4 on a wide crop | 0 | 25 | 0 |
+| 2026-11-07 | tryout: judge set v2, d3:27b-nvfp4 | 0 | 22 | 0 |
+| 2026-11-07 | tryout: judge set v2, d3:9b | 0 | 8 | 0 |
+| 2026-11-07 | tryout: judge set v2, autotrust-jev:9b-nvfp4 | 0 | 0 | 1 |
+| 2026-11-07 | tryout: judge set v2, autotrust-jev:35b-nvfp4 | 0 | 5 | 0 |
+| 2026-11-07 | tryout: judge set v2, autotrust-jev:9b-nvfp4 on the text question | 0 | 4 | 0 |
+| 2026-11-07 | bench tuning, a reading's ligature glyph spelled out before the OCR check compares (warm) | 5200 | 18 | 0 |
+| 2026-11-07 | bench validation, a reading's ligature glyph spelled out before the OCR check compares (warm) | 0 | 3 | 0 |
