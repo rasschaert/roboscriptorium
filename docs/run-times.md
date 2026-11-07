@@ -716,3 +716,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-07 | tryout: build judge set v2 (both judges' questions, 20 tuning books, warm) | 5200 | 30 | 0 |
 | 2026-11-07 | bench tuning, a heading that is its page's printed number made the page number (warm) | 5200 | 16 | 0 |
 | 2026-11-07 | bench validation, a heading that is its page's printed number made the page number (warm) | 0 | 3 | 0 |
+| 2026-11-07 | tryout: judge set v2, clef:27b told the kinds of OCR error | 0 | 30 | 0 |

@@ -1,0 +1,7082 @@
+{
+ "role": "judge",
+ "version": 2,
+ "created": "2026-11-07T11:04:00+00:00",
+ "commit": "5f2f954",
+ "incumbent": "clef:27b",
+ "text_incumbent": "tokens:hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M",
+ "strata": {
+  "hard": 25,
+  "control": 25,
+  "seed": 0
+ },
+ "books": {
+  "goede-dochter--ia-scan": {
+   "spec": "goede-dochter--ia-scan",
+   "settled": 4457,
+   "wrong": 269
+  },
+  "vals-alarm--ia-scan": {
+   "spec": "vals-alarm--ia-scan:11-188:1-31",
+   "settled": 1433,
+   "wrong": 219
+  },
+  "reis-om-mijn-schedel--ia-scan": {
+   "spec": "reis-om-mijn-schedel--ia-scan",
+   "settled": 1064,
+   "wrong": 54
+  },
+  "the-story-of-doctor-dolittle--stokes-1920": {
+   "spec": "the-story-of-doctor-dolittle--stokes-1920",
+   "settled": 613,
+   "wrong": 50
+  },
+  "the-thief-takers-apprentice--ia-scan": {
+   "spec": "the-thief-takers-apprentice--ia-scan:11-165:1-48",
+   "settled": 801,
+   "wrong": 113
+  },
+  "afscheid-van-verspilde-tijd--ia-scan": {
+   "spec": "afscheid-van-verspilde-tijd--ia-scan",
+   "settled": 385,
+   "wrong": 20
+  },
+  "metro-2033--ia-scan": {
+   "spec": "metro-2033--ia-scan:7-263:1-22",
+   "settled": 1176,
+   "wrong": 56
+  },
+  "de-cipier--ia-scan": {
+   "spec": "de-cipier--ia-scan",
+   "settled": 2142,
+   "wrong": 146
+  },
+  "artemis--ia-scan": {
+   "spec": "artemis--ia-scan",
+   "settled": 1204,
+   "wrong": 98
+  },
+  "de-tuin-van-de-avondnevel--ia-scan": {
+   "spec": "de-tuin-van-de-avondnevel--ia-scan:11-254:1-16",
+   "settled": 3003,
+   "wrong": 399
+  },
+  "het-heft-in-eigen-hand--ia-scan": {
+   "spec": "het-heft-in-eigen-hand--ia-scan",
+   "settled": 3737,
+   "wrong": 434
+  },
+  "doodskleed--ia-scan": {
+   "spec": "doodskleed--ia-scan",
+   "settled": 1683,
+   "wrong": 175
+  },
+  "het-ijzige-land--ia-scan": {
+   "spec": "het-ijzige-land--ia-scan",
+   "settled": 1702,
+   "wrong": 150
+  },
+  "de-eerlijke-vinder--ia-scan": {
+   "spec": "de-eerlijke-vinder--ia-scan",
+   "settled": 791,
+   "wrong": 73
+  },
+  "monterosso-mon-amour--ia-scan": {
+   "spec": "monterosso-mon-amour--ia-scan",
+   "settled": 445,
+   "wrong": 31
+  },
+  "het-geluid-van-bananen--ia-scan": {
+   "spec": "het-geluid-van-bananen--ia-scan",
+   "settled": 2116,
+   "wrong": 164
+  },
+  "het-schaduwhuis--ia-scan": {
+   "spec": "het-schaduwhuis--ia-scan:9-328:1-91",
+   "settled": 1955,
+   "wrong": 101
+  },
+  "au-pair--ia-scan": {
+   "spec": "au-pair--ia-scan:7-230:1-44",
+   "settled": 1279,
+   "wrong": 52
+  },
+  "de-vergelding--ia-scan": {
+   "spec": "de-vergelding--ia-scan:9-253:1-10",
+   "settled": 2665,
+   "wrong": 467
+  },
+  "glazuur--ia-scan": {
+   "spec": "glazuur--ia-scan",
+   "settled": 2054,
+   "wrong": 128
+  }
+ },
+ "items": [
+  {
+   "id": "goede-dochter--ia-scan:371:16:33",
+   "stratum": "hard",
+   "crop": "6e49b0841a6049ce",
+   "question_sha": "08a3f339cb2b9dd4",
+   "text_sha": "1649870c80629fe7"
+  },
+  {
+   "id": "goede-dochter--ia-scan:406:18:0",
+   "stratum": "hard",
+   "crop": "20c3475bcf9f4842",
+   "question_sha": "1b72a6880e152af9",
+   "text_sha": "2d33936180e2e038"
+  },
+  {
+   "id": "goede-dochter--ia-scan:59:9:55",
+   "stratum": "hard",
+   "crop": "ea84c55eafbef02f",
+   "question_sha": "64f74e9c49946dcf",
+   "text_sha": "2c320fd32a578841"
+  },
+  {
+   "id": "goede-dochter--ia-scan:259:4:45",
+   "stratum": "hard",
+   "crop": "779ca70363d46896",
+   "question_sha": "9f9997bf54137a6b",
+   "text_sha": "e51e0d6938f20a53"
+  },
+  {
+   "id": "goede-dochter--ia-scan:496:9:0",
+   "stratum": "hard",
+   "crop": "73e9a6a36e0dc338",
+   "question_sha": "6c13bc35850402be",
+   "text_sha": "fd38e053f89ec12b"
+  },
+  {
+   "id": "goede-dochter--ia-scan:483:26:0",
+   "stratum": "hard",
+   "crop": "8796c6f979f8d196",
+   "question_sha": "12c9079314b641b8",
+   "text_sha": "fe53241e3cefa252"
+  },
+  {
+   "id": "goede-dochter--ia-scan:386:10:48",
+   "stratum": "hard",
+   "crop": "fd6e93d91f6afaa8",
+   "question_sha": "d5095aed9fb4defc",
+   "text_sha": "1d10032ac62283d4"
+  },
+  {
+   "id": "goede-dochter--ia-scan:303:27:53",
+   "stratum": "hard",
+   "crop": "0a9b9a996679ebbc",
+   "question_sha": "525b38db45099c00",
+   "text_sha": "455cb9805f92b05e"
+  },
+  {
+   "id": "goede-dochter--ia-scan:469:5:0",
+   "stratum": "hard",
+   "crop": "f0e80c7d007d9600",
+   "question_sha": "087bc802d6ca1c65",
+   "text_sha": "7d98c77aabeda7dc"
+  },
+  {
+   "id": "goede-dochter--ia-scan:347:1:15",
+   "stratum": "hard",
+   "crop": "564f066f9d45f836",
+   "question_sha": "5dd711a6bf127a31",
+   "text_sha": "3bd9b4cdebe35c06"
+  },
+  {
+   "id": "goede-dochter--ia-scan:221:30:29",
+   "stratum": "hard",
+   "crop": "3fb552a4f84aa633",
+   "question_sha": "d715dd4a1762dc01",
+   "text_sha": "cf0370db47d7b055"
+  },
+  {
+   "id": "goede-dochter--ia-scan:147:19:45",
+   "stratum": "hard",
+   "crop": "ec54bb16631ec78b",
+   "question_sha": "f84785cdd1105521",
+   "text_sha": "26ced9ce99761b8d"
+  },
+  {
+   "id": "goede-dochter--ia-scan:284:7:67",
+   "stratum": "hard",
+   "crop": "f657bfb7d8fa1c02",
+   "question_sha": "af2a6269566b8d8e",
+   "text_sha": "e635a4ca095be253"
+  },
+  {
+   "id": "goede-dochter--ia-scan:493:13:11",
+   "stratum": "hard",
+   "crop": "b011e03fcadc340d",
+   "question_sha": "a027ecf488d339b2",
+   "text_sha": "3314cd158b67b769"
+  },
+  {
+   "id": "goede-dochter--ia-scan:366:30:14",
+   "stratum": "hard",
+   "crop": "f5d28e3f1ffa68b1",
+   "question_sha": "070af6f145dd55e3",
+   "text_sha": "f9a3d54d2e294426"
+  },
+  {
+   "id": "goede-dochter--ia-scan:69:0:38",
+   "stratum": "hard",
+   "crop": "ab43bd4ec00e2df7",
+   "question_sha": "92f60a3e24eb9f25",
+   "text_sha": "f1b1ffff9bf736f0"
+  },
+  {
+   "id": "goede-dochter--ia-scan:306:11:62",
+   "stratum": "hard",
+   "crop": "71be495c839bf977",
+   "question_sha": "e4cb84c46b648390",
+   "text_sha": "2d877e930cfe2406"
+  },
+  {
+   "id": "goede-dochter--ia-scan:380:26:15",
+   "stratum": "hard",
+   "crop": "2ab47486591de004",
+   "question_sha": "939e1c82bee21633",
+   "text_sha": "c0bd2414eac5bd83"
+  },
+  {
+   "id": "goede-dochter--ia-scan:141:31:51",
+   "stratum": "hard",
+   "crop": "3b624c7d7dc455f4",
+   "question_sha": "74abcb4e8d1eda40",
+   "text_sha": "518cce00639c0ce7"
+  },
+  {
+   "id": "goede-dochter--ia-scan:443:6:58",
+   "stratum": "hard",
+   "crop": "aa2d4aa000e878b7",
+   "question_sha": "b5df60a17051f4ed",
+   "text_sha": "1096024e41ae8cbe"
+  },
+  {
+   "id": "goede-dochter--ia-scan:271:3:0",
+   "stratum": "hard",
+   "crop": "4ab859f1e48ce482",
+   "question_sha": "959496968fdd079c",
+   "text_sha": "483f5311ec8f19e2"
+  },
+  {
+   "id": "goede-dochter--ia-scan:342:30:17",
+   "stratum": "hard",
+   "crop": "d0021ab1225f039e",
+   "question_sha": "49ebc343904ac0e4",
+   "text_sha": "d8a0276705328726"
+  },
+  {
+   "id": "goede-dochter--ia-scan:498:28:21",
+   "stratum": "hard",
+   "crop": "62bce6b2882a435e",
+   "question_sha": "d4693f83034e4ece",
+   "text_sha": "7a8e5fc7ca82337e"
+  },
+  {
+   "id": "goede-dochter--ia-scan:301:27:37",
+   "stratum": "hard",
+   "crop": "21548b32661b7fe2",
+   "question_sha": "ea805b14398b169d",
+   "text_sha": "5cd60985d8957a05"
+  },
+  {
+   "id": "goede-dochter--ia-scan:437:18:19",
+   "stratum": "hard",
+   "crop": "cda0d31e15f57541",
+   "question_sha": "7158f06f02b9b462",
+   "text_sha": "bd48ca1022e82925"
+  },
+  {
+   "id": "goede-dochter--ia-scan:157:16:8",
+   "stratum": "control",
+   "crop": "0c60e837bbe93bbe",
+   "question_sha": "1025b67cbdfd6794",
+   "text_sha": "7abc587b4c6deb5d"
+  },
+  {
+   "id": "goede-dochter--ia-scan:310:14:52",
+   "stratum": "control",
+   "crop": "f80e52d010f63f3f",
+   "question_sha": "aea92bb323d68fb5",
+   "text_sha": "9ff4b33f5e833c41"
+  },
+  {
+   "id": "goede-dochter--ia-scan:114:16:0",
+   "stratum": "control",
+   "crop": "48f9a6f6fb22d636",
+   "question_sha": "a02ff109072cfd1d",
+   "text_sha": "a6a6fb16bf32fbd7"
+  },
+  {
+   "id": "goede-dochter--ia-scan:91:26:0",
+   "stratum": "control",
+   "crop": "9af05447c70e529b",
+   "question_sha": "890377b43c36a884",
+   "text_sha": "2748c4d380779209"
+  },
+  {
+   "id": "goede-dochter--ia-scan:329:2:39",
+   "stratum": "control",
+   "crop": "b71d8f90f52a40b6",
+   "question_sha": "e2050ccd9e2511a3",
+   "text_sha": "86fd607ed2736fab"
+  },
+  {
+   "id": "goede-dochter--ia-scan:469:24:38",
+   "stratum": "control",
+   "crop": "7f76ddcaebf0efc8",
+   "question_sha": "eb9b27f51a80b06e",
+   "text_sha": "604d2c7585761da2"
+  },
+  {
+   "id": "goede-dochter--ia-scan:115:15:33",
+   "stratum": "control",
+   "crop": "d90a63ce3f36f444",
+   "question_sha": "862d21a4ef819057",
+   "text_sha": "58dc514a910c68e1"
+  },
+  {
+   "id": "goede-dochter--ia-scan:351:10:45",
+   "stratum": "control",
+   "crop": "631df273e478727a",
+   "question_sha": "72d3a4f7f0ec2848",
+   "text_sha": "8f230dc6a2402cb1"
+  },
+  {
+   "id": "goede-dochter--ia-scan:435:14:0",
+   "stratum": "control",
+   "crop": "5859d10d316286ef",
+   "question_sha": "5b3bbb82769c72e6",
+   "text_sha": "7f235b0755634d92"
+  },
+  {
+   "id": "goede-dochter--ia-scan:317:2:47",
+   "stratum": "control",
+   "crop": "cb6a7b6e85bcf647",
+   "question_sha": "0eb22906ecba700a",
+   "text_sha": "b1797a0a592f7ff5"
+  },
+  {
+   "id": "goede-dochter--ia-scan:208:26:39",
+   "stratum": "control",
+   "crop": "baa6499c4df66f27",
+   "question_sha": "14ce5b76658ddc6e",
+   "text_sha": "03cbc145f9c09c79"
+  },
+  {
+   "id": "goede-dochter--ia-scan:474:29:16",
+   "stratum": "control",
+   "crop": "999d45b9ae47a5a1",
+   "question_sha": "e297fd4bc17aa650",
+   "text_sha": "395f41050e7183cf"
+  },
+  {
+   "id": "goede-dochter--ia-scan:442:8:47",
+   "stratum": "control",
+   "crop": "99b92b414c5cc878",
+   "question_sha": "78a4fa5b7327ef19",
+   "text_sha": "591ae40af3d9e7e1"
+  },
+  {
+   "id": "goede-dochter--ia-scan:272:21:46",
+   "stratum": "control",
+   "crop": "02594f5079229a7b",
+   "question_sha": "eadf9198ae743f1f",
+   "text_sha": "83c115e54e291b8b"
+  },
+  {
+   "id": "goede-dochter--ia-scan:83:27:33",
+   "stratum": "control",
+   "crop": "f3c457eb472664ee",
+   "question_sha": "b4688008d5f7ac8d",
+   "text_sha": "81bf47c3c1066968"
+  },
+  {
+   "id": "goede-dochter--ia-scan:27:6:12",
+   "stratum": "control",
+   "crop": "3c5f96c9224833a8",
+   "question_sha": "e2919c21d1ad7046",
+   "text_sha": "824f2b137dc7224a"
+  },
+  {
+   "id": "goede-dochter--ia-scan:110:6:27",
+   "stratum": "control",
+   "crop": "609f73629922cd83",
+   "question_sha": "3b9c8a061ff9153b",
+   "text_sha": "b35ea9e73822bf31"
+  },
+  {
+   "id": "goede-dochter--ia-scan:394:3:0",
+   "stratum": "control",
+   "crop": "757f53688f2298b1",
+   "question_sha": "2e1f1c5f2f10e47d",
+   "text_sha": "1f77e47c293ed024"
+  },
+  {
+   "id": "goede-dochter--ia-scan:12:29:22",
+   "stratum": "control",
+   "crop": "70e58367ffb168c9",
+   "question_sha": "628f62d7ba13daef",
+   "text_sha": "b0e456172013157e"
+  },
+  {
+   "id": "goede-dochter--ia-scan:489:11:8",
+   "stratum": "control",
+   "crop": "ed4eee5f8b715af9",
+   "question_sha": "a351edf953bdc69c",
+   "text_sha": "de6dce4fdf1ef86a"
+  },
+  {
+   "id": "goede-dochter--ia-scan:331:27:66",
+   "stratum": "control",
+   "crop": "8d06d3e106eff16e",
+   "question_sha": "869805bfcc914441",
+   "text_sha": "f5c167dbe4f74876"
+  },
+  {
+   "id": "goede-dochter--ia-scan:258:1:22",
+   "stratum": "control",
+   "crop": "994adaa942eac8d7",
+   "question_sha": "b884ce28d0d02b3d",
+   "text_sha": "41d0d7d9f5f14b35"
+  },
+  {
+   "id": "goede-dochter--ia-scan:324:19:49",
+   "stratum": "control",
+   "crop": "1bfa7e87275f7664",
+   "question_sha": "902bcb4ec75329e6",
+   "text_sha": "75b404688cde69d0"
+  },
+  {
+   "id": "goede-dochter--ia-scan:84:4:58",
+   "stratum": "control",
+   "crop": "f6a18c661c5638ef",
+   "question_sha": "4f8096639e53788c",
+   "text_sha": "3ade9c0460cd3560"
+  },
+  {
+   "id": "goede-dochter--ia-scan:193:32:0",
+   "stratum": "control",
+   "crop": "8e6c7430e3dd3589",
+   "question_sha": "327a890651c35a79",
+   "text_sha": "f564f68ce11f86f2"
+  },
+  {
+   "id": "vals-alarm--ia-scan:126:12:28",
+   "stratum": "hard",
+   "crop": "0a50a5ef0ea56215",
+   "question_sha": "cc256dad51c2b507",
+   "text_sha": "a1c450c591fac1d6"
+  },
+  {
+   "id": "vals-alarm--ia-scan:64:16:34",
+   "stratum": "hard",
+   "crop": "b6b67907c2dddeee",
+   "question_sha": "80bbf9ceeb03ab04",
+   "text_sha": "9a3e8026b3f8c7e8"
+  },
+  {
+   "id": "vals-alarm--ia-scan:76:8:15",
+   "stratum": "hard",
+   "crop": "9984746387cddb14",
+   "question_sha": "010e86ddf960b9f5",
+   "text_sha": "6a1acf49aea50d46"
+  },
+  {
+   "id": "vals-alarm--ia-scan:175:1:19",
+   "stratum": "hard",
+   "crop": "770ca73b8b6ac8ca",
+   "question_sha": "fb23d9d3bc5b417e",
+   "text_sha": "778a8a7d244db554"
+  },
+  {
+   "id": "vals-alarm--ia-scan:51:10:22",
+   "stratum": "hard",
+   "crop": "1c804852fa20bfea",
+   "question_sha": "caa40a88e464fad7",
+   "text_sha": "921dc575baba2faa"
+  },
+  {
+   "id": "vals-alarm--ia-scan:183:14:40",
+   "stratum": "hard",
+   "crop": "8222199a4e0bb564",
+   "question_sha": "09fbe6fbfb929497",
+   "text_sha": "f3aa7767dd3432fc"
+  },
+  {
+   "id": "vals-alarm--ia-scan:122:7:50",
+   "stratum": "hard",
+   "crop": "4a131faecfa1f558",
+   "question_sha": "efe4f330f5fcc739",
+   "text_sha": "1acbc7cf133089e2"
+  },
+  {
+   "id": "vals-alarm--ia-scan:105:32:0",
+   "stratum": "hard",
+   "crop": "5984d5d951ed98b7",
+   "question_sha": "fcae7667747e4140",
+   "text_sha": "7045a0a4fd0513dc"
+  },
+  {
+   "id": "vals-alarm--ia-scan:43:12:39",
+   "stratum": "hard",
+   "crop": "9daa9546794df8bf",
+   "question_sha": "606f6073423da289",
+   "text_sha": "b95d6a2d918b0f1e"
+  },
+  {
+   "id": "vals-alarm--ia-scan:41:23:46",
+   "stratum": "hard",
+   "crop": "25b681ddc3a49813",
+   "question_sha": "d118b2c15c209d94",
+   "text_sha": "1b1db7fec5a58f8d"
+  },
+  {
+   "id": "vals-alarm--ia-scan:87:15:35",
+   "stratum": "hard",
+   "crop": "f6b1233e103a321a",
+   "question_sha": "3e4adf515af342f2",
+   "text_sha": "3816434ba63c48da"
+  },
+  {
+   "id": "vals-alarm--ia-scan:118:15:56",
+   "stratum": "hard",
+   "crop": "459cfa4f6f09450b",
+   "question_sha": "c815eeb9a4f3e633",
+   "text_sha": "da1423b218e89849"
+  },
+  {
+   "id": "vals-alarm--ia-scan:114:25:44",
+   "stratum": "hard",
+   "crop": "e070b820e5ba8710",
+   "question_sha": "cc579276d6a06b79",
+   "text_sha": "98e1cdf5f57ecadb"
+  },
+  {
+   "id": "vals-alarm--ia-scan:44:16:14",
+   "stratum": "hard",
+   "crop": "ff0e6e52730c8bf1",
+   "question_sha": "0eb89bf3f8c5caba",
+   "text_sha": "952fdd6184ed38cf"
+  },
+  {
+   "id": "vals-alarm--ia-scan:82:26:47",
+   "stratum": "hard",
+   "crop": "280cb2088f712403",
+   "question_sha": "04b26b7a6605081c",
+   "text_sha": "9967dcea0761a737"
+  },
+  {
+   "id": "vals-alarm--ia-scan:122:26:52",
+   "stratum": "hard",
+   "crop": "ee9bd0fb2a14c5fe",
+   "question_sha": "d0fc8f32ed0dbcbb",
+   "text_sha": "1e20486273d72d0a"
+  },
+  {
+   "id": "vals-alarm--ia-scan:81:21:37",
+   "stratum": "hard",
+   "crop": "7dba3afabf7f941a",
+   "question_sha": "5fd91ac4102d3c42",
+   "text_sha": "1dfa07b0e06a6496"
+  },
+  {
+   "id": "vals-alarm--ia-scan:151:17:25",
+   "stratum": "hard",
+   "crop": "1b1daec42f16c5d1",
+   "question_sha": "3f6a73bf3ea57ca3",
+   "text_sha": "8c22e21f398cb4da"
+  },
+  {
+   "id": "vals-alarm--ia-scan:48:10:27",
+   "stratum": "hard",
+   "crop": "12d5ca65a0d61690",
+   "question_sha": "2d47b5ace5c91a04",
+   "text_sha": "02c90f080f507b8f"
+  },
+  {
+   "id": "vals-alarm--ia-scan:122:15:12",
+   "stratum": "hard",
+   "crop": "00241f491822a91d",
+   "question_sha": "66c7cceb84f09fd8",
+   "text_sha": "5945bec0545eaa46"
+  },
+  {
+   "id": "vals-alarm--ia-scan:88:5:16",
+   "stratum": "hard",
+   "crop": "09f27b28cbb1f445",
+   "question_sha": "31a78a31d6a6596d",
+   "text_sha": "6b2be8a4a37e1b96"
+  },
+  {
+   "id": "vals-alarm--ia-scan:121:27:17",
+   "stratum": "hard",
+   "crop": "cea77e7b6f459e26",
+   "question_sha": "c2934fe9458f35f5",
+   "text_sha": "0c17b9ef85694f11"
+  },
+  {
+   "id": "vals-alarm--ia-scan:60:13:9",
+   "stratum": "hard",
+   "crop": "fa313213eaba4443",
+   "question_sha": "be5dcec454f0c622",
+   "text_sha": "e00957bcb86a2b3c"
+  },
+  {
+   "id": "vals-alarm--ia-scan:131:8:51",
+   "stratum": "hard",
+   "crop": "26a9571c08d69d18",
+   "question_sha": "0f96910c04a0e463",
+   "text_sha": "b2ab8520893917b1"
+  },
+  {
+   "id": "vals-alarm--ia-scan:167:8:48",
+   "stratum": "hard",
+   "crop": "80b7ba444ed1993f",
+   "question_sha": "a4f0b4f01db7e761",
+   "text_sha": "ad063868e4a4c850"
+  },
+  {
+   "id": "vals-alarm--ia-scan:187:3:0",
+   "stratum": "control",
+   "crop": "ae7710d55c3d70e8",
+   "question_sha": "e1eead59526d6945",
+   "text_sha": "12546f4aacb20f6f"
+  },
+  {
+   "id": "vals-alarm--ia-scan:102:23:39",
+   "stratum": "control",
+   "crop": "2ab92fc355a4d313",
+   "question_sha": "5ce092fb7bda9c23",
+   "text_sha": "d1b4aad366d138ae"
+  },
+  {
+   "id": "vals-alarm--ia-scan:146:29:45",
+   "stratum": "control",
+   "crop": "7b0482b146d44991",
+   "question_sha": "7bddc90fe05d54ba",
+   "text_sha": "d2731274b4172c9c"
+  },
+  {
+   "id": "vals-alarm--ia-scan:47:4:14",
+   "stratum": "control",
+   "crop": "ad091ad1a7bda885",
+   "question_sha": "f7e31a1cc35a77b3",
+   "text_sha": "eb9d67621e63ea33"
+  },
+  {
+   "id": "vals-alarm--ia-scan:126:17:5",
+   "stratum": "control",
+   "crop": "7130001c348de314",
+   "question_sha": "5d1e759341103e0f",
+   "text_sha": "c67e184de1181bb2"
+  },
+  {
+   "id": "vals-alarm--ia-scan:107:28:23",
+   "stratum": "control",
+   "crop": "902b443c809c8a5a",
+   "question_sha": "99a1887ba2c19fe6",
+   "text_sha": "babcf3a043a1bd73"
+  },
+  {
+   "id": "vals-alarm--ia-scan:184:21:8",
+   "stratum": "control",
+   "crop": "755663617e5d7fc1",
+   "question_sha": "7ccced502f7e73fb",
+   "text_sha": "fc146eaca915b432"
+  },
+  {
+   "id": "vals-alarm--ia-scan:88:15:17",
+   "stratum": "control",
+   "crop": "3c595bf28c369d83",
+   "question_sha": "bc599905df57a2a6",
+   "text_sha": "7648346c029a5c63"
+  },
+  {
+   "id": "vals-alarm--ia-scan:103:1:58",
+   "stratum": "control",
+   "crop": "a1fd5c623abfb104",
+   "question_sha": "0945a58ef7ff65b4",
+   "text_sha": "f85ffa8ae63a6a5a"
+  },
+  {
+   "id": "vals-alarm--ia-scan:75:9:21",
+   "stratum": "control",
+   "crop": "23fec11feaffcd20",
+   "question_sha": "05de5dede49dad2c",
+   "text_sha": "d16e94e8b795e12d"
+  },
+  {
+   "id": "vals-alarm--ia-scan:76:19:25",
+   "stratum": "control",
+   "crop": "34d28b9622b1a815",
+   "question_sha": "52b64a1513f8ced7",
+   "text_sha": "920490387a7313d4"
+  },
+  {
+   "id": "vals-alarm--ia-scan:75:25:13",
+   "stratum": "control",
+   "crop": "9d368ca5d2021dc9",
+   "question_sha": "be01c527d5c84a8d",
+   "text_sha": "1886d6a3f64aa111"
+  },
+  {
+   "id": "vals-alarm--ia-scan:25:11:10",
+   "stratum": "control",
+   "crop": "1ea3e212ccd6bb46",
+   "question_sha": "fa7fb5d91c902301",
+   "text_sha": "ae807e091c5feb56"
+  },
+  {
+   "id": "vals-alarm--ia-scan:93:28:18",
+   "stratum": "control",
+   "crop": "edb952a433e8e777",
+   "question_sha": "ffdeabb53803f329",
+   "text_sha": "f2c7c3c66e4e866b"
+  },
+  {
+   "id": "vals-alarm--ia-scan:155:10:45",
+   "stratum": "control",
+   "crop": "e9f5f4464b8397a1",
+   "question_sha": "b63aeae54a78f180",
+   "text_sha": "624f91d6f189cdea"
+  },
+  {
+   "id": "vals-alarm--ia-scan:38:9:43",
+   "stratum": "control",
+   "crop": "7cb609c8a95ec272",
+   "question_sha": "c6eae644e5182ee2",
+   "text_sha": "4a4e7c647af6671e"
+  },
+  {
+   "id": "vals-alarm--ia-scan:45:27:22",
+   "stratum": "control",
+   "crop": "503d97e67195c241",
+   "question_sha": "1fa87488eace5a68",
+   "text_sha": "579a8d450e98b4ab"
+  },
+  {
+   "id": "vals-alarm--ia-scan:57:28:0",
+   "stratum": "control",
+   "crop": "5259795bae95bc76",
+   "question_sha": "2ad8d6485f59f024",
+   "text_sha": "1fb6cfc102254e0d"
+  },
+  {
+   "id": "vals-alarm--ia-scan:60:23:4",
+   "stratum": "control",
+   "crop": "10ebf967320926af",
+   "question_sha": "8744c55f9c9f1c86",
+   "text_sha": "b2d88043cc2a4408"
+  },
+  {
+   "id": "vals-alarm--ia-scan:29:12:8",
+   "stratum": "control",
+   "crop": "4d5a2fcd4d61b873",
+   "question_sha": "807e5de21a623a5e",
+   "text_sha": "95391be9f605f5bd"
+  },
+  {
+   "id": "vals-alarm--ia-scan:43:25:26",
+   "stratum": "control",
+   "crop": "3be6dfb9b153cccc",
+   "question_sha": "4d1c9c0a0e9d9afe",
+   "text_sha": "7597266a122f750e"
+  },
+  {
+   "id": "vals-alarm--ia-scan:174:14:24",
+   "stratum": "control",
+   "crop": "bc5b3158954138ba",
+   "question_sha": "750c214c46648cfe",
+   "text_sha": "b52f30085cbda5bb"
+  },
+  {
+   "id": "vals-alarm--ia-scan:128:9:49",
+   "stratum": "control",
+   "crop": "d23561818ff335df",
+   "question_sha": "34832a933b855832",
+   "text_sha": "4e148704d5016187"
+  },
+  {
+   "id": "vals-alarm--ia-scan:171:16:29",
+   "stratum": "control",
+   "crop": "675e531507290fad",
+   "question_sha": "8702961432c3b673",
+   "text_sha": "73e56265b9eb59e0"
+  },
+  {
+   "id": "vals-alarm--ia-scan:96:29:12",
+   "stratum": "control",
+   "crop": "624c83769458657a",
+   "question_sha": "70f14553fcf989dc",
+   "text_sha": "23fcdc1876eaee56"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:186:26:45",
+   "stratum": "hard",
+   "crop": "f265d4ad1311cea4",
+   "question_sha": "d426c03e4c0b0460",
+   "text_sha": "3e8f3a6c7bb02081"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:243:5:34",
+   "stratum": "hard",
+   "crop": "522d67308e291d53",
+   "question_sha": "0e12896fae243ab2",
+   "text_sha": "7fc387af6dd9c0bb"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:122:28:45",
+   "stratum": "hard",
+   "crop": "87306b06dd625d05",
+   "question_sha": "87bfd332b091d534",
+   "text_sha": "43765cef55c1d3c8"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:104:18:0",
+   "stratum": "hard",
+   "crop": "105c0bf488990ce5",
+   "question_sha": "f0ed13958196d0ac",
+   "text_sha": "a39f607102168b0f"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:217:15:0",
+   "stratum": "hard",
+   "crop": "50c235ae6d578036",
+   "question_sha": "e843df4780bba99e",
+   "text_sha": "8e38fd7b515ab5c2"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:203:23:9",
+   "stratum": "hard",
+   "crop": "99863640266f9d7e",
+   "question_sha": "a98f3241230d11e5",
+   "text_sha": "6c4d92fc0c7ab255"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:157:13:30",
+   "stratum": "hard",
+   "crop": "b7acd86f5f18cdc0",
+   "question_sha": "e4f46d5faa5af4a7",
+   "text_sha": "6fd66244a9d6666c"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:231:0:0",
+   "stratum": "hard",
+   "crop": "4e0b95bf3dbf0a2b",
+   "question_sha": "88dd56cbad721850",
+   "text_sha": "eb9339f734ee6acc"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:128:27:17",
+   "stratum": "hard",
+   "crop": "3edb547a1b39bb2c",
+   "question_sha": "ee2801cf11180edf",
+   "text_sha": "199915697ac4964d"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:161:13:0",
+   "stratum": "hard",
+   "crop": "088aefcfb7c0fef0",
+   "question_sha": "8768fe0dc596b784",
+   "text_sha": "f7bf7c9200b9193c"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:176:12:23",
+   "stratum": "hard",
+   "crop": "7725a8ead25e6854",
+   "question_sha": "74b7eb49ca78e730",
+   "text_sha": "7da9251709a92edb"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:217:2:41",
+   "stratum": "hard",
+   "crop": "5074d6e39431e892",
+   "question_sha": "5a66fb1ce05f190b",
+   "text_sha": "defb58f48b97bc15"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:217:2:27",
+   "stratum": "hard",
+   "crop": "5074d6e39431e892",
+   "question_sha": "5a66fb1ce05f190b",
+   "text_sha": "defb58f48b97bc15"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:143:6:33",
+   "stratum": "hard",
+   "crop": "1449c94636902bec",
+   "question_sha": "721520f61ff352f6",
+   "text_sha": "f6b4dcc3c50fd686"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:40:20:20",
+   "stratum": "hard",
+   "crop": "81b95253183dc89e",
+   "question_sha": "fd4bce9c313e2481",
+   "text_sha": "c202df966432858b"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:142:2:47",
+   "stratum": "hard",
+   "crop": "86e93ff808bb6d8f",
+   "question_sha": "c59eadb89023cf7e",
+   "text_sha": "48d2073e1fab0584"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:53:13:0",
+   "stratum": "hard",
+   "crop": "cf548dcc7e0cb53f",
+   "question_sha": "c4f7961df7cb60b0",
+   "text_sha": "85ee012c4deb5d0f"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:237:7:16",
+   "stratum": "hard",
+   "crop": "a55d1095ca301b8b",
+   "question_sha": "1a9d36dc38ec1f3a",
+   "text_sha": "6204e7019e5fb83c"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:143:0:43",
+   "stratum": "hard",
+   "crop": "450550ca734ffe64",
+   "question_sha": "02094f9c87334b64",
+   "text_sha": "85752cc844dd40ae"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:92:2:0",
+   "stratum": "hard",
+   "crop": "0e9ee6884d2674e7",
+   "question_sha": "ce0d6e1aa9b3aded",
+   "text_sha": "741414c243477f8d"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:243:10:22",
+   "stratum": "hard",
+   "crop": "fd58685e095866b8",
+   "question_sha": "dfc79a350f435418",
+   "text_sha": "7e2ed8f5bdbe9c18"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:27:5:31",
+   "stratum": "hard",
+   "crop": "a506916ba6177edf",
+   "question_sha": "82c17b191a296baa",
+   "text_sha": "6c639cf5c345275e"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:222:10:9",
+   "stratum": "hard",
+   "crop": "ac85d4cbed9378da",
+   "question_sha": "5e7067e970715f59",
+   "text_sha": "f764936d74130455"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:39:12:25",
+   "stratum": "hard",
+   "crop": "142a3e838f88d9a9",
+   "question_sha": "ebc9096d61778fd7",
+   "text_sha": "708308a61ded9110"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:216:26:0",
+   "stratum": "hard",
+   "crop": "8fe6ca34e8b57172",
+   "question_sha": "fabfde7ac6c28f33",
+   "text_sha": "ade2fd4592023642"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:72:27:24",
+   "stratum": "control",
+   "crop": "060c8e1024894c03",
+   "question_sha": "6ce6636071b8f291",
+   "text_sha": "f51ba70ac3940ac8"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:105:24:0",
+   "stratum": "control",
+   "crop": "9db9dd1cc0d376f1",
+   "question_sha": "401a3453bc3c9b44",
+   "text_sha": "86513338c2c6316a"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:210:19:42",
+   "stratum": "control",
+   "crop": "8e0e8a571b0513c6",
+   "question_sha": "8819d10e30b22482",
+   "text_sha": "fd93b60125c7b0c3"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:63:7:48",
+   "stratum": "control",
+   "crop": "4d01dc24ef09635d",
+   "question_sha": "bf32d971ff7ef4dc",
+   "text_sha": "16a0808bae2402b1"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:100:4:4",
+   "stratum": "control",
+   "crop": "c17029d87236b54c",
+   "question_sha": "8fdcf50e807bcdf0",
+   "text_sha": "f35020191eb523be"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:118:0:60",
+   "stratum": "control",
+   "crop": "09776f68f0ac618e",
+   "question_sha": "074b4ad5c24631e9",
+   "text_sha": "5125698aa6041841"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:216:10:6",
+   "stratum": "control",
+   "crop": "c110c88dc05e39f6",
+   "question_sha": "ae2698933c5041d9",
+   "text_sha": "842b9357b5b84e8c"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:33:7:54",
+   "stratum": "control",
+   "crop": "e235e3996d447e1e",
+   "question_sha": "0593b76da74e3aac",
+   "text_sha": "39e12848326bf97f"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:44:26:5",
+   "stratum": "control",
+   "crop": "c6575f7e45cf1985",
+   "question_sha": "d4c7185c18a5c73f",
+   "text_sha": "0a798190b9ffe77b"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:207:27:18",
+   "stratum": "control",
+   "crop": "5b75a9724c65040f",
+   "question_sha": "c04bd9e8ddf465ef",
+   "text_sha": "fac9577afa913064"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:58:6:0",
+   "stratum": "control",
+   "crop": "cc9021d569805a0c",
+   "question_sha": "038fd00583311dbb",
+   "text_sha": "341cbdf561f06476"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:226:5:14",
+   "stratum": "control",
+   "crop": "23a92f004d4dc1c3",
+   "question_sha": "e8ea1a0cec62b1fa",
+   "text_sha": "513a45cb14c80c3c"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:189:14:0",
+   "stratum": "control",
+   "crop": "b9f2db63931d0eb1",
+   "question_sha": "bbb9127396a36330",
+   "text_sha": "f0939f134ad28eac"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:72:12:43",
+   "stratum": "control",
+   "crop": "d40e0bb11c15be1b",
+   "question_sha": "f21d4c8f4118a957",
+   "text_sha": "a5dbadb6a80d1747"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:27:1:36",
+   "stratum": "control",
+   "crop": "eb1fdc4b3f9adf84",
+   "question_sha": "25d1f401ead7915b",
+   "text_sha": "ebd735a50f1fbba8"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:216:13:50",
+   "stratum": "control",
+   "crop": "6e1bc7204edc948e",
+   "question_sha": "1a0d3899d012f8bc",
+   "text_sha": "f89a9013954627bd"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:154:8:28",
+   "stratum": "control",
+   "crop": "efe816ce14d47aaf",
+   "question_sha": "aba7658f46d5fbfb",
+   "text_sha": "22ed30a6a77c1ee5"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:169:29:47",
+   "stratum": "control",
+   "crop": "268fae5c2709616a",
+   "question_sha": "9163d929e7b58a45",
+   "text_sha": "39b9f7ece84dbc39"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:238:6:41",
+   "stratum": "control",
+   "crop": "ccd3dcc808456623",
+   "question_sha": "e682ade3a033e154",
+   "text_sha": "251bbb23eed0adfa"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:242:25:55",
+   "stratum": "control",
+   "crop": "8e6b902181a02491",
+   "question_sha": "a54f2e83e1698777",
+   "text_sha": "97ac7e8c002ede67"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:142:17:37",
+   "stratum": "control",
+   "crop": "d56af09e476695ab",
+   "question_sha": "4f5c21b95c7f404b",
+   "text_sha": "06540342825acf30"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:159:22:10",
+   "stratum": "control",
+   "crop": "08845cfb223e6b0d",
+   "question_sha": "691e52fdb51cb440",
+   "text_sha": "5b40e387f1f6ad50"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:184:20:20",
+   "stratum": "control",
+   "crop": "9c6a9bd89e2d044f",
+   "question_sha": "ad1444f211924403",
+   "text_sha": "e783f703c7119302"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:36:10:9",
+   "stratum": "control",
+   "crop": "d89e6099f8d7ffd3",
+   "question_sha": "f17d82626cf13756",
+   "text_sha": "46e9491f125337bf"
+  },
+  {
+   "id": "reis-om-mijn-schedel--ia-scan:23:5:11",
+   "stratum": "control",
+   "crop": "80b2d8d31a0e9160",
+   "question_sha": "1ca95ace8a7dc027",
+   "text_sha": "68226e8d676d50e3"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:54:21:0",
+   "stratum": "hard",
+   "crop": "c61212c0924caba7",
+   "question_sha": "3e0ee92031cff961",
+   "text_sha": "e599425f6ae4b2ff"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:175:2:0",
+   "stratum": "hard",
+   "crop": "55a54b47542bcca8",
+   "question_sha": "f51309a9404842f3",
+   "text_sha": "9d92f33c48ea9ddd"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:72:8:16",
+   "stratum": "hard",
+   "crop": "380b58dcc0e20a9f",
+   "question_sha": "b23bf1383f1d53b3",
+   "text_sha": "ec8a6feecac2f97f"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:164:9:32",
+   "stratum": "hard",
+   "crop": "29c4c51758235d33",
+   "question_sha": "ffdfcfcd0a45e7d7",
+   "text_sha": "3c94aec320d722fa"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:159:7:42",
+   "stratum": "hard",
+   "crop": "03135d5f22772e81",
+   "question_sha": "4a5dd23473bb0238",
+   "text_sha": "dd77dfb4492dc475"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:196:2:0",
+   "stratum": "hard",
+   "crop": "8dfc3b949bb9c604",
+   "question_sha": "618811f2042e582a",
+   "text_sha": "9571a00e1f83b20c"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:117:18:4",
+   "stratum": "hard",
+   "crop": "8bc6381c487f33b5",
+   "question_sha": "60a9756ac357f048",
+   "text_sha": "4bcca9c1463572d7"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:47:11:34",
+   "stratum": "hard",
+   "crop": "e0eaf65b513268bf",
+   "question_sha": "ab742223d0adccff",
+   "text_sha": "d83179988441713f"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:113:21:4",
+   "stratum": "hard",
+   "crop": "0e6ca4b509501fa7",
+   "question_sha": "e2c7eb074e8c3273",
+   "text_sha": "173a6bf1bfa04865"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:183:8:13",
+   "stratum": "hard",
+   "crop": "b40a7d117760954f",
+   "question_sha": "c5ca8ccf75001b4d",
+   "text_sha": "fb24fe4b0ea1015e"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:34:13:0",
+   "stratum": "hard",
+   "crop": "0a786e5b09f5ac8b",
+   "question_sha": "399a602e7c7833c2",
+   "text_sha": "ebf9485da77b1c08"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:189:17:4",
+   "stratum": "hard",
+   "crop": "8d157c54ff0868c5",
+   "question_sha": "e76d5b5200e27f4c",
+   "text_sha": "c6d37be2cca0bb03"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:31:22:35",
+   "stratum": "hard",
+   "crop": "3474bf9921c9c88c",
+   "question_sha": "265a5fe2844c78ac",
+   "text_sha": "e0a0edd8e17beb1c"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:191:3:24",
+   "stratum": "hard",
+   "crop": "cf9b8090ff1bab81",
+   "question_sha": "061eabfd4e3d42c9",
+   "text_sha": "c0de6367d2121c5d"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:69:20:4",
+   "stratum": "hard",
+   "crop": "9ff63dde59c02e86",
+   "question_sha": "949058b08dd94570",
+   "text_sha": "b9dedefddad50b6a"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:193:10:0",
+   "stratum": "hard",
+   "crop": "939826f4f36fc5db",
+   "question_sha": "8147b5da70ff2607",
+   "text_sha": "6315cdee512062ab"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:140:14:0",
+   "stratum": "hard",
+   "crop": "c9e796691ed2adc1",
+   "question_sha": "bb13c3c8ef0500b9",
+   "text_sha": "83df74599fc41703"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:73:24:6",
+   "stratum": "hard",
+   "crop": "ccf441cc8346a305",
+   "question_sha": "7adbb31e82ba9307",
+   "text_sha": "d9714ff4c68de900"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:34:17:0",
+   "stratum": "hard",
+   "crop": "07ac589d48ddcb28",
+   "question_sha": "a3bef36a545a7cad",
+   "text_sha": "60636a379c3ef7b6"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:132:4:36",
+   "stratum": "hard",
+   "crop": "79854ab74424afd7",
+   "question_sha": "39b1ff33ba360725",
+   "text_sha": "a6ecfdda12056190"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:104:23:45",
+   "stratum": "hard",
+   "crop": "6b8e7f97f79c8e68",
+   "question_sha": "b233793abc5bf751",
+   "text_sha": "2c922f927e1ca352"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:31:17:32",
+   "stratum": "hard",
+   "crop": "c56123c89e5de461",
+   "question_sha": "fd54eed09c882335",
+   "text_sha": "cd315d123dc2f15c"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:85:19:38",
+   "stratum": "hard",
+   "crop": "b5aba2021b5b6db9",
+   "question_sha": "c57e552af536a311",
+   "text_sha": "d20504faf9bfe0ee"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:141:12:39",
+   "stratum": "hard",
+   "crop": "b7c977a4baf4451b",
+   "question_sha": "67c71cb515114df7",
+   "text_sha": "0534424b6c907ed5"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:94:2:31",
+   "stratum": "hard",
+   "crop": "7665c57702f0fcc1",
+   "question_sha": "d048ac60bdffbc96",
+   "text_sha": "95099b030f141506"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:51:19:22",
+   "stratum": "control",
+   "crop": "ad74c3eed3d3312e",
+   "question_sha": "f5aa5009763a228b",
+   "text_sha": "821d5ed66a301d3e"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:108:14:6",
+   "stratum": "control",
+   "crop": "fcdb0317282d444c",
+   "question_sha": "056701dae799ee23",
+   "text_sha": "8b23104fbc3722af"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:39:24:0",
+   "stratum": "control",
+   "crop": "e3e0c9c7427d4c41",
+   "question_sha": "26105f6dd02a7668",
+   "text_sha": "b594ced16019d8ed"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:93:20:7",
+   "stratum": "control",
+   "crop": "a5e1b68e59ed183c",
+   "question_sha": "004ae99207601832",
+   "text_sha": "56b3f27a372c1c33"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:40:3:27",
+   "stratum": "control",
+   "crop": "e4f84c18d0faf64a",
+   "question_sha": "957d149c12891486",
+   "text_sha": "8368328e064166a9"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:124:19:26",
+   "stratum": "control",
+   "crop": "1781fca778893a7c",
+   "question_sha": "34c363669aea3d24",
+   "text_sha": "1f2514f00dcdb2c6"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:141:2:15",
+   "stratum": "control",
+   "crop": "7592f63d4489904c",
+   "question_sha": "c6c7bee61bb25497",
+   "text_sha": "5f62a6245a7cdd2d"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:167:9:3",
+   "stratum": "control",
+   "crop": "c68b7e450dbbfe64",
+   "question_sha": "cd7ad4be4bbe84d3",
+   "text_sha": "e506c7a8affec7bf"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:78:20:17",
+   "stratum": "control",
+   "crop": "f2ef3a63a752e04d",
+   "question_sha": "410808a154fc91d9",
+   "text_sha": "3c62bb8adcfe64f3"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:38:24:18",
+   "stratum": "control",
+   "crop": "ca447e304c5aaa6c",
+   "question_sha": "5ba13d662111a5f8",
+   "text_sha": "9c0f549872fef3bc"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:181:10:0",
+   "stratum": "control",
+   "crop": "186f85382ff2e936",
+   "question_sha": "79bd3e297e0f0a01",
+   "text_sha": "aee1c14a9ec927a0"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:174:19:5",
+   "stratum": "control",
+   "crop": "97fdf8f7c69c3496",
+   "question_sha": "80d4865f2e7d93a3",
+   "text_sha": "68b988f5c16546cb"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:34:14:14",
+   "stratum": "control",
+   "crop": "1c39a2e9e8616e24",
+   "question_sha": "8e29dff2d188e578",
+   "text_sha": "57fd28ea18b66028"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:153:19:36",
+   "stratum": "control",
+   "crop": "dc9fb1aa9413062b",
+   "question_sha": "4570ce37931229dd",
+   "text_sha": "ca855eb6692fcc20"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:85:22:25",
+   "stratum": "control",
+   "crop": "f186a78aa8e56bfc",
+   "question_sha": "2985fd9d491c53e9",
+   "text_sha": "e97a971d934254c7"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:142:23:31",
+   "stratum": "control",
+   "crop": "d24d1289c32f8bb4",
+   "question_sha": "e1633cef47591ea5",
+   "text_sha": "abe9e1562094a7c8"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:175:15:10",
+   "stratum": "control",
+   "crop": "8715c7e615227e9a",
+   "question_sha": "b8a6da2157ce4985",
+   "text_sha": "a0d8462898b14333"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:74:15:20",
+   "stratum": "control",
+   "crop": "4df4cad5ebee9c99",
+   "question_sha": "e0d05ce215645b48",
+   "text_sha": "8cfef05b4637624a"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:86:3:0",
+   "stratum": "control",
+   "crop": "0fad9ae89252c394",
+   "question_sha": "08fc408525b06965",
+   "text_sha": "59eb6176403b2f65"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:38:10:0",
+   "stratum": "control",
+   "crop": "5cfdb3719345d446",
+   "question_sha": "ffe1d3eb91d3662d",
+   "text_sha": "ebabe5113326417d"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:72:17:28",
+   "stratum": "control",
+   "crop": "2ac2e6ed5513e463",
+   "question_sha": "cb90d2a15b7bcc03",
+   "text_sha": "be1c58faca437991"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:73:16:9",
+   "stratum": "control",
+   "crop": "aa0097ba99f521c3",
+   "question_sha": "b71bd2beda9a6c4a",
+   "text_sha": "fbf5d106d73e0619"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:137:5:0",
+   "stratum": "control",
+   "crop": "f25c52e5f0c3ab22",
+   "question_sha": "c9b08d88f9666771",
+   "text_sha": "d5b18a6cef2286d6"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:191:22:0",
+   "stratum": "control",
+   "crop": "c40dafc0bad04da0",
+   "question_sha": "22130298ed8d1e96",
+   "text_sha": "548941424ce5e69a"
+  },
+  {
+   "id": "the-story-of-doctor-dolittle--stokes-1920:105:9:0",
+   "stratum": "control",
+   "crop": "ece417f1fdb0e9b2",
+   "question_sha": "1cd27a3d9e0bd06d",
+   "text_sha": "6a68a27a4614ccd3"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:38:2:0",
+   "stratum": "hard",
+   "crop": "186597686bf75b9d",
+   "question_sha": "9d75d13c024b41c4",
+   "text_sha": "5e0349dcdcdbe297"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:118:17:28",
+   "stratum": "hard",
+   "crop": "349bedb678cbfac3",
+   "question_sha": "f2ac94e2ebb88ba4",
+   "text_sha": "53709ace7709add4"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:79:10:10",
+   "stratum": "hard",
+   "crop": "45f126bd2a9de7ef",
+   "question_sha": "fae8d9f9aad98b6a",
+   "text_sha": "fbc70e68c6c66867"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:127:1:19",
+   "stratum": "hard",
+   "crop": "8750cdbac0e55941",
+   "question_sha": "3fdcca02310fc425",
+   "text_sha": "29368689c12113ba"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:44:5:21",
+   "stratum": "hard",
+   "crop": "071c2a8a981e93c1",
+   "question_sha": "ac87574057a279b1",
+   "text_sha": "ad5e7d8dd59817ff"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:16:13:30",
+   "stratum": "hard",
+   "crop": "a7a299192ab31c9f",
+   "question_sha": "817327a2257a4709",
+   "text_sha": "c68ec574ad69f434"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:91:1:16",
+   "stratum": "hard",
+   "crop": "66116f77a1f6fddb",
+   "question_sha": "5845aa18fce6fdab",
+   "text_sha": "a4a008a932123a9e"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:130:7:33",
+   "stratum": "hard",
+   "crop": "3ef4b33d6de17a44",
+   "question_sha": "9b7ca8ca266ba816",
+   "text_sha": "cab114edd8021cce"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:76:5:22",
+   "stratum": "hard",
+   "crop": "bab6d20e36c507cf",
+   "question_sha": "224e0baef9bce68e",
+   "text_sha": "1512a6a46fbebc46"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:109:2:50",
+   "stratum": "hard",
+   "crop": "bd1c9e447ebc292b",
+   "question_sha": "a6e3c03674b52b99",
+   "text_sha": "486f91bfae2331b2"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:94:5:16",
+   "stratum": "hard",
+   "crop": "c9adbc691c1e409b",
+   "question_sha": "417e0028ff0e1e1d",
+   "text_sha": "c359eddcd0fa136a"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:56:6:31",
+   "stratum": "hard",
+   "crop": "e69deca311e1b861",
+   "question_sha": "69e61cf654eac7b6",
+   "text_sha": "e83914109b95b63e"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:126:5:21",
+   "stratum": "hard",
+   "crop": "350ab55570691898",
+   "question_sha": "2d4443d68f289c89",
+   "text_sha": "ac839bc7f90e8bff"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:68:29:22",
+   "stratum": "hard",
+   "crop": "7d4ebf63e2c2bf7e",
+   "question_sha": "5c44bb4e83d60df7",
+   "text_sha": "320016c5ebe89515"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:73:11:9",
+   "stratum": "hard",
+   "crop": "355510d4113dee4a",
+   "question_sha": "c4c0a41f02423dc9",
+   "text_sha": "eeffe3d9c31dedf6"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:126:7:24",
+   "stratum": "hard",
+   "crop": "87ddce0bdb36b9c6",
+   "question_sha": "06c605f078d635f3",
+   "text_sha": "ef9a1bdf89043d44"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:53:2:17",
+   "stratum": "hard",
+   "crop": "c2ec1e2e2f714c0e",
+   "question_sha": "4479ae9aa72a9de8",
+   "text_sha": "7fd14087bb1e9ddc"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:42:8:43",
+   "stratum": "hard",
+   "crop": "d4e3cb927fc31216",
+   "question_sha": "fcf2ffec9193b33b",
+   "text_sha": "abcb258af59a2421"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:107:9:13",
+   "stratum": "hard",
+   "crop": "b4f30c028912dc6e",
+   "question_sha": "089ebe39a3c84e99",
+   "text_sha": "175581c597a8ce55"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:130:19:0",
+   "stratum": "hard",
+   "crop": "73b3aaa5e255cc3a",
+   "question_sha": "e77ef6fa7c6b9d24",
+   "text_sha": "a5d41e47f80ba25e"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:157:11:8",
+   "stratum": "hard",
+   "crop": "01b778ac1a67a918",
+   "question_sha": "147ef9a60fbf01cb",
+   "text_sha": "8fe275a6aa8919ae"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:83:1:12",
+   "stratum": "hard",
+   "crop": "fe82a65575fbf838",
+   "question_sha": "71d2163376fb2769",
+   "text_sha": "d67e2772e0917e9d"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:34:4:20",
+   "stratum": "hard",
+   "crop": "3f0971f06b5655c0",
+   "question_sha": "203f840d0644d3f8",
+   "text_sha": "d9f445d1010f33d8"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:62:8:26",
+   "stratum": "hard",
+   "crop": "c05d4b0a6358957b",
+   "question_sha": "48fa5a5ca352acfa",
+   "text_sha": "278fdb9a14dace5f"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:30:4:26",
+   "stratum": "hard",
+   "crop": "f9da06bddb887830",
+   "question_sha": "cedd60617c226cd3",
+   "text_sha": "45218d19d182f3fa"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:133:24:19",
+   "stratum": "control",
+   "crop": "d42c38b28c23561a",
+   "question_sha": "29d0f40d6a666172",
+   "text_sha": "8a79cffd362ea35e"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:71:28:0",
+   "stratum": "control",
+   "crop": "1c8724e32c91b848",
+   "question_sha": "71c969eb8a488cea",
+   "text_sha": "6acc2796531ba071"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:44:1:0",
+   "stratum": "control",
+   "crop": "c62b3a78248d5b0e",
+   "question_sha": "92370b8bb79469e9",
+   "text_sha": "0656617e24c20e90"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:66:21:25",
+   "stratum": "control",
+   "crop": "3cf0d444e337e922",
+   "question_sha": "30f89008f7016603",
+   "text_sha": "ae62e0154bbcfea5"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:120:24:0",
+   "stratum": "control",
+   "crop": "a07edb3b070b775b",
+   "question_sha": "722a49b107003db9",
+   "text_sha": "92d1cdac5f9f89c1"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:88:17:29",
+   "stratum": "control",
+   "crop": "faf28085a5f0e04a",
+   "question_sha": "0d08de6d10c58daa",
+   "text_sha": "c2e3b02f9ecf7858"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:151:33:43",
+   "stratum": "control",
+   "crop": "632487662c990f32",
+   "question_sha": "aa6f0daf152c4742",
+   "text_sha": "48d3ee69be3be78e"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:72:30:0",
+   "stratum": "control",
+   "crop": "faca5c7702bcaafc",
+   "question_sha": "2a7b091003798380",
+   "text_sha": "23f32facc58e1204"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:91:13:0",
+   "stratum": "control",
+   "crop": "483b39a3612ee5c8",
+   "question_sha": "e25db913494b7775",
+   "text_sha": "8af4fe779ed3087a"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:149:0:0",
+   "stratum": "control",
+   "crop": "2a26e421f914b183",
+   "question_sha": "4f0ab2ff00349ee5",
+   "text_sha": "fbda1b15d58ba214"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:159:2:19",
+   "stratum": "control",
+   "crop": "436c35be17ac56d8",
+   "question_sha": "610bd474d1a21d2b",
+   "text_sha": "8b84d14ee2805e7a"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:156:24:0",
+   "stratum": "control",
+   "crop": "3c9fb6c9c931f336",
+   "question_sha": "483286387337612a",
+   "text_sha": "b88c2defd25b6728"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:43:8:0",
+   "stratum": "control",
+   "crop": "0862c9137fb78e5b",
+   "question_sha": "cb5fa2e7aed7eb4f",
+   "text_sha": "8f64e56f32f58d55"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:75:7:46",
+   "stratum": "control",
+   "crop": "4fdd924b815b93e2",
+   "question_sha": "d46de53cbaf16ad1",
+   "text_sha": "cc3a02bedee70714"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:102:14:0",
+   "stratum": "control",
+   "crop": "803ea5f56aaea567",
+   "question_sha": "ddaaa998fc0e85e7",
+   "text_sha": "7ef44797c8c265a9"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:108:3:0",
+   "stratum": "control",
+   "crop": "f183f4bddeed09f7",
+   "question_sha": "a72d4129e6ddbee5",
+   "text_sha": "c59f5c40dbca6f01"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:162:1:31",
+   "stratum": "control",
+   "crop": "0980de306360cfb5",
+   "question_sha": "a716f2f8b6783218",
+   "text_sha": "c1f4cca7ee93bd8f"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:35:10:18",
+   "stratum": "control",
+   "crop": "b9c83748a096e2ce",
+   "question_sha": "57d773eb525f65bb",
+   "text_sha": "249dbf92bc0d5064"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:13:2:48",
+   "stratum": "control",
+   "crop": "2735862ec685a532",
+   "question_sha": "4d064ea461bf2871",
+   "text_sha": "11f7f8303373c23a"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:149:33:48",
+   "stratum": "control",
+   "crop": "8e4f71c835f16238",
+   "question_sha": "65cc10e180a5975d",
+   "text_sha": "2212709ca8471b89"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:57:8:4",
+   "stratum": "control",
+   "crop": "fbdcca00d4b3029a",
+   "question_sha": "3c97094660f210fb",
+   "text_sha": "e5bf17bf0ece37f1"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:82:14:4",
+   "stratum": "control",
+   "crop": "f5f28dd0d061294e",
+   "question_sha": "35246df6890dda5d",
+   "text_sha": "6441ac93e11081a6"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:51:15:48",
+   "stratum": "control",
+   "crop": "2dc745b74be537ef",
+   "question_sha": "3986c8037ecaec57",
+   "text_sha": "a121f3f20494bb3d"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:62:6:32",
+   "stratum": "control",
+   "crop": "85eca605fd49fbd2",
+   "question_sha": "ac85002d718d72bd",
+   "text_sha": "589ea3aae94efbab"
+  },
+  {
+   "id": "the-thief-takers-apprentice--ia-scan:160:2:0",
+   "stratum": "control",
+   "crop": "131abd78b2227264",
+   "question_sha": "78e0c268e0903ad7",
+   "text_sha": "3b70bc13d6e674fb"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:102:5:24",
+   "stratum": "hard",
+   "crop": "1fdf54a310168219",
+   "question_sha": "338f7de2c7d9a363",
+   "text_sha": "4afdb5f259f3a506"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:93:34:14",
+   "stratum": "hard",
+   "crop": "93cb2128d30e8c53",
+   "question_sha": "194c1747a05862fd",
+   "text_sha": "64fd742a508a4a81"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:101:32:14",
+   "stratum": "hard",
+   "crop": "80af9191e6933919",
+   "question_sha": "32a7ddc0b5b91977",
+   "text_sha": "81468bd5f15bf8a6"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:39:32:13",
+   "stratum": "hard",
+   "crop": "3a313be5fc8dac9d",
+   "question_sha": "7e4a4c9ac6f7d2dc",
+   "text_sha": "ee8381a2948d81db"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:119:32:16",
+   "stratum": "hard",
+   "crop": "0db3c6c3880cf1d9",
+   "question_sha": "ed46b9c86e6d184d",
+   "text_sha": "367229f0e90743b7"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:116:19:49",
+   "stratum": "hard",
+   "crop": "b7768ac04cbae9b5",
+   "question_sha": "bfa5fcd439be5eeb",
+   "text_sha": "acf0b0900a6dc196"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:91:34:14",
+   "stratum": "hard",
+   "crop": "66e7d2e9df093d4b",
+   "question_sha": "af94e170c849923f",
+   "text_sha": "f85124bac56bafb2"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:81:32:10",
+   "stratum": "hard",
+   "crop": "834e342797fd4f8e",
+   "question_sha": "f9dbd6fbd7073047",
+   "text_sha": "fc2c600a881d21ff"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:55:32:15",
+   "stratum": "hard",
+   "crop": "38412b2ba7db9f77",
+   "question_sha": "33c93d31db9d2866",
+   "text_sha": "e77eb3b508f890d7"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:87:34:11",
+   "stratum": "hard",
+   "crop": "17f2fffc46b69cc4",
+   "question_sha": "514fcae7f1e53826",
+   "text_sha": "8bc0e2abce24935c"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:9:32:17",
+   "stratum": "hard",
+   "crop": "32c651fe99cc5d2e",
+   "question_sha": "1d8eae290cfb883b",
+   "text_sha": "f49575f34edf97de"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:41:13:50",
+   "stratum": "hard",
+   "crop": "84b9cdf1bbe17205",
+   "question_sha": "861ef8a66b21a8e3",
+   "text_sha": "d91a3f4135381653"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:67:34:18",
+   "stratum": "hard",
+   "crop": "654f79a59bd5b24b",
+   "question_sha": "bdb70e0296aa7792",
+   "text_sha": "68385dd82330f51d"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:102:30:35",
+   "stratum": "hard",
+   "crop": "5113b658ac3feef3",
+   "question_sha": "27434a0a667dfb6e",
+   "text_sha": "4160fade16246d63"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:79:32:12",
+   "stratum": "hard",
+   "crop": "f0a4398066c3d7f6",
+   "question_sha": "0843a974300203e8",
+   "text_sha": "569560188aff6cd7"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:105:22:59",
+   "stratum": "hard",
+   "crop": "e362c3edfa92945a",
+   "question_sha": "db311606bcfde5e3",
+   "text_sha": "19d70b13575640af"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:41:34:16",
+   "stratum": "hard",
+   "crop": "44c7275354fa4e73",
+   "question_sha": "c751d3b0e89cb4c0",
+   "text_sha": "7cf4306859c5ff77"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:49:14:38",
+   "stratum": "hard",
+   "crop": "33d90ef07e44557c",
+   "question_sha": "04839df8b3272e5d",
+   "text_sha": "b0977467f4bc45e6"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:43:34:16",
+   "stratum": "hard",
+   "crop": "583e43d31277a7dd",
+   "question_sha": "025de438d6be73b3",
+   "text_sha": "06944a88018e9ad3"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:123:32:13",
+   "stratum": "hard",
+   "crop": "cd9b616d5458c447",
+   "question_sha": "124397a2645fc498",
+   "text_sha": "13f3f70b61fd61ca"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:17:32:18",
+   "stratum": "control",
+   "crop": "05758bb2fec892ce",
+   "question_sha": "59d5507201b44271",
+   "text_sha": "fda0ca23f879739f"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:87:19:3",
+   "stratum": "control",
+   "crop": "7e12574b727e49b7",
+   "question_sha": "4cb6a2159744999e",
+   "text_sha": "401b2d28ab0e03c0"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:56:6:15",
+   "stratum": "control",
+   "crop": "6f6579612df83f1b",
+   "question_sha": "bc27bd682409ae36",
+   "text_sha": "a1fe0cf5d9f260b0"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:54:8:4",
+   "stratum": "control",
+   "crop": "1fd5314e2d63e6cf",
+   "question_sha": "6490ba70459f2d4c",
+   "text_sha": "ef6f5c30ad364786"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:81:8:17",
+   "stratum": "control",
+   "crop": "16d0fa564ca7e3ff",
+   "question_sha": "7894302f5f31f0f2",
+   "text_sha": "3df9eed9d2bd04cb"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:19:5:24",
+   "stratum": "control",
+   "crop": "61c03aa9bd2a0613",
+   "question_sha": "d7ec4f5431dbec27",
+   "text_sha": "3dc1b0c81a2f55ed"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:68:15:20",
+   "stratum": "control",
+   "crop": "38699719d9efdaa5",
+   "question_sha": "3eec24ea101a9318",
+   "text_sha": "b4c655015868481a"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:39:19:5",
+   "stratum": "control",
+   "crop": "44426aa1b0722c6c",
+   "question_sha": "480d3a04d7aaf362",
+   "text_sha": "96d2fb62442c1054"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:93:30:33",
+   "stratum": "control",
+   "crop": "e470ed9455fd7900",
+   "question_sha": "7ef07df74348da06",
+   "text_sha": "69c22be1c301deb5"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:105:18:33",
+   "stratum": "control",
+   "crop": "f7332485224c5fdc",
+   "question_sha": "e51b7a050d724537",
+   "text_sha": "f9b548e77dc1e4e7"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:24:25:44",
+   "stratum": "control",
+   "crop": "ae29bb211673ee36",
+   "question_sha": "0053f33e2cd6df5d",
+   "text_sha": "4d72a5b75d1afbd6"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:27:34:15",
+   "stratum": "control",
+   "crop": "84540dda6f745b5b",
+   "question_sha": "6dbad354ff051365",
+   "text_sha": "2677973709a3fd0c"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:13:18:0",
+   "stratum": "control",
+   "crop": "e09c56e7157aaa9e",
+   "question_sha": "e41e20b0e295e6c5",
+   "text_sha": "6c6861e02a7b3317"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:67:14:37",
+   "stratum": "control",
+   "crop": "b93c465224c95a41",
+   "question_sha": "3d9cfbcd43425ae7",
+   "text_sha": "6dd1b6ceb0cb2672"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:119:4:0",
+   "stratum": "control",
+   "crop": "634bf4273dce7d2a",
+   "question_sha": "07b5f28d8092278c",
+   "text_sha": "3b336b3acd67a5e9"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:68:17:53",
+   "stratum": "control",
+   "crop": "cf66bb7ce576410d",
+   "question_sha": "42a41a5d58676bd5",
+   "text_sha": "61895bd9e4a4e03f"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:54:19:30",
+   "stratum": "control",
+   "crop": "be1e2168928c70a8",
+   "question_sha": "c1ccecb3004a50fd",
+   "text_sha": "78b19aeacd00644a"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:11:16:38",
+   "stratum": "control",
+   "crop": "0e3480d567e269bd",
+   "question_sha": "9dd69b3937312f08",
+   "text_sha": "57de3a8838cf0274"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:41:3:18",
+   "stratum": "control",
+   "crop": "d5b964c38a827320",
+   "question_sha": "117f57edaad79cc2",
+   "text_sha": "8f26dc5c4cc7615d"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:116:21:27",
+   "stratum": "control",
+   "crop": "66fe4f69b0e1b512",
+   "question_sha": "7ee2ad53e482f3bb",
+   "text_sha": "4d6e328bd2ec4882"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:92:32:24",
+   "stratum": "control",
+   "crop": "0b9fe86ac705ef35",
+   "question_sha": "8f8ade6c4ae4d5a3",
+   "text_sha": "e7e0def403120784"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:103:15:62",
+   "stratum": "control",
+   "crop": "7df7943a262438e2",
+   "question_sha": "d714fe72517720e9",
+   "text_sha": "492d89bc3d9a0c89"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:25:20:27",
+   "stratum": "control",
+   "crop": "bc205b1108453941",
+   "question_sha": "8406340d77a3e818",
+   "text_sha": "090ab8990f795be5"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:39:20:59",
+   "stratum": "control",
+   "crop": "838499418d38c868",
+   "question_sha": "20dfda12ca344307",
+   "text_sha": "2e6b3a3d1dcfd2e1"
+  },
+  {
+   "id": "afscheid-van-verspilde-tijd--ia-scan:26:28:40",
+   "stratum": "control",
+   "crop": "5fa2e7ce4a30a9d3",
+   "question_sha": "b77ebfbb93752f96",
+   "text_sha": "0d95a05ca75a0abe"
+  },
+  {
+   "id": "metro-2033--ia-scan:192:17:14",
+   "stratum": "hard",
+   "crop": "09ae57d83b243cd9",
+   "question_sha": "0f48de9d04e154ee",
+   "text_sha": "a9e43af517b7c8e0"
+  },
+  {
+   "id": "metro-2033--ia-scan:200:6:62",
+   "stratum": "hard",
+   "crop": "735ed0a075c2ff70",
+   "question_sha": "1f0d2606770811ec",
+   "text_sha": "6924e10dfb050874"
+  },
+  {
+   "id": "metro-2033--ia-scan:70:38:51",
+   "stratum": "hard",
+   "crop": "810896102ee774fb",
+   "question_sha": "a0139a5e185cfa00",
+   "text_sha": "99c54b52c8c1a57d"
+  },
+  {
+   "id": "metro-2033--ia-scan:99:21:10",
+   "stratum": "hard",
+   "crop": "53621d46a44dd7a8",
+   "question_sha": "e6a3ebf32f06af01",
+   "text_sha": "d48475d21d133745"
+  },
+  {
+   "id": "metro-2033--ia-scan:88:15:41",
+   "stratum": "hard",
+   "crop": "b2f425d829ef86a8",
+   "question_sha": "4be7884541fe3390",
+   "text_sha": "e57b052a601827fa"
+  },
+  {
+   "id": "metro-2033--ia-scan:203:7:27",
+   "stratum": "hard",
+   "crop": "41366541f92c1eb0",
+   "question_sha": "fcfe365689ec949d",
+   "text_sha": "358ff01c20181d9c"
+  },
+  {
+   "id": "metro-2033--ia-scan:66:3:38",
+   "stratum": "hard",
+   "crop": "a43a449ad44e70f2",
+   "question_sha": "78d07f65f032bf0b",
+   "text_sha": "3978909c3c74b276"
+  },
+  {
+   "id": "metro-2033--ia-scan:43:34:26",
+   "stratum": "hard",
+   "crop": "f339be5329dc4e58",
+   "question_sha": "9e88c76358db9b62",
+   "text_sha": "a44386ad15d38ce3"
+  },
+  {
+   "id": "metro-2033--ia-scan:154:6:55",
+   "stratum": "hard",
+   "crop": "685aece78679a948",
+   "question_sha": "68e0ece6c5c43365",
+   "text_sha": "4aeb5a8af4ec11ed"
+  },
+  {
+   "id": "metro-2033--ia-scan:130:31:58",
+   "stratum": "hard",
+   "crop": "1bc5be757b4955cb",
+   "question_sha": "91e7a5146c0c3dc2",
+   "text_sha": "1e6a74d12bf667c3"
+  },
+  {
+   "id": "metro-2033--ia-scan:198:29:64",
+   "stratum": "hard",
+   "crop": "75502449cb46abd0",
+   "question_sha": "00eb2ad577080582",
+   "text_sha": "aef1a52a6b2fa847"
+  },
+  {
+   "id": "metro-2033--ia-scan:27:31:10",
+   "stratum": "hard",
+   "crop": "289edfd1f55b5287",
+   "question_sha": "997ac01ff7a27ad6",
+   "text_sha": "253cc9709cd0e723"
+  },
+  {
+   "id": "metro-2033--ia-scan:15:35:17",
+   "stratum": "hard",
+   "crop": "4836ed0c0c648ab2",
+   "question_sha": "7b3a35bd8c269289",
+   "text_sha": "720b98551000a796"
+  },
+  {
+   "id": "metro-2033--ia-scan:242:31:62",
+   "stratum": "hard",
+   "crop": "d9b9512517c8410c",
+   "question_sha": "13b43a9223a3a962",
+   "text_sha": "164b9ec35bd895e1"
+  },
+  {
+   "id": "metro-2033--ia-scan:146:20:30",
+   "stratum": "hard",
+   "crop": "0cfc09e3cf2b55bc",
+   "question_sha": "aa874d3f9f844d60",
+   "text_sha": "4a92c3ddc2db6e62"
+  },
+  {
+   "id": "metro-2033--ia-scan:45:21:55",
+   "stratum": "hard",
+   "crop": "76c2f98a8c489927",
+   "question_sha": "984abaaddb777f86",
+   "text_sha": "080f5451e0474bb4"
+  },
+  {
+   "id": "metro-2033--ia-scan:85:30:62",
+   "stratum": "hard",
+   "crop": "f6b3cd552a67e85d",
+   "question_sha": "cf6242ae1ed6bbc1",
+   "text_sha": "66adc5fa638c7151"
+  },
+  {
+   "id": "metro-2033--ia-scan:47:24:0",
+   "stratum": "hard",
+   "crop": "f53e0ba48c1ef55b",
+   "question_sha": "dfa2af6d7a0a7101",
+   "text_sha": "26ade134e7024c6a"
+  },
+  {
+   "id": "metro-2033--ia-scan:169:7:46",
+   "stratum": "hard",
+   "crop": "f58a2b0e9b095a28",
+   "question_sha": "3e7b12bede41ae64",
+   "text_sha": "271a86aed00526e4"
+  },
+  {
+   "id": "metro-2033--ia-scan:125:14:56",
+   "stratum": "hard",
+   "crop": "182a77e73e863058",
+   "question_sha": "4f0d546682d7a238",
+   "text_sha": "f430715a37201624"
+  },
+  {
+   "id": "metro-2033--ia-scan:210:4:5",
+   "stratum": "hard",
+   "crop": "b5e2075bde4148c3",
+   "question_sha": "f833ff5689bf83ef",
+   "text_sha": "4ef2b2f54f31e6dd"
+  },
+  {
+   "id": "metro-2033--ia-scan:58:3:12",
+   "stratum": "hard",
+   "crop": "9f40e179f26dc69a",
+   "question_sha": "fba4c8f0eceb9b20",
+   "text_sha": "d3d7dabf5ab4e6db"
+  },
+  {
+   "id": "metro-2033--ia-scan:200:20:46",
+   "stratum": "hard",
+   "crop": "a0481ace29a13513",
+   "question_sha": "491b575cd270cc1a",
+   "text_sha": "c2846a355d785c91"
+  },
+  {
+   "id": "metro-2033--ia-scan:201:15:41",
+   "stratum": "hard",
+   "crop": "db85984e91315bd7",
+   "question_sha": "2401789003f6e355",
+   "text_sha": "3120ced4eb985b25"
+  },
+  {
+   "id": "metro-2033--ia-scan:21:24:14",
+   "stratum": "hard",
+   "crop": "e4d0761a3f8c0fb7",
+   "question_sha": "c91062fc7798e419",
+   "text_sha": "be46b2b913e7c72a"
+  },
+  {
+   "id": "metro-2033--ia-scan:24:35:32",
+   "stratum": "control",
+   "crop": "e43edee85a3110a1",
+   "question_sha": "1b99c454afe388ca",
+   "text_sha": "08e55a35e81a43c7"
+  },
+  {
+   "id": "metro-2033--ia-scan:91:7:40",
+   "stratum": "control",
+   "crop": "ca24be15987db781",
+   "question_sha": "36513dc9ad294910",
+   "text_sha": "fdb5e3767e2220ae"
+  },
+  {
+   "id": "metro-2033--ia-scan:113:29:0",
+   "stratum": "control",
+   "crop": "0284c11ed69c1c97",
+   "question_sha": "7e52d71db927cac0",
+   "text_sha": "1c1803a138ea1172"
+  },
+  {
+   "id": "metro-2033--ia-scan:135:38:0",
+   "stratum": "control",
+   "crop": "41918df686e385dd",
+   "question_sha": "a7878070553dfb82",
+   "text_sha": "4cf2f30b61ab68ff"
+  },
+  {
+   "id": "metro-2033--ia-scan:167:38:64",
+   "stratum": "control",
+   "crop": "41a660a79c23fedb",
+   "question_sha": "eb8ea95a573d02a5",
+   "text_sha": "aa1f9b7b568a6113"
+  },
+  {
+   "id": "metro-2033--ia-scan:24:40:0",
+   "stratum": "control",
+   "crop": "89577b1e615e6803",
+   "question_sha": "9b44b7e1cd5b463f",
+   "text_sha": "fbf03e3ced165a93"
+  },
+  {
+   "id": "metro-2033--ia-scan:241:10:0",
+   "stratum": "control",
+   "crop": "80ad3bbef1061ec3",
+   "question_sha": "bc4ab59b51a78b73",
+   "text_sha": "3189f8dcfd2ebfbd"
+  },
+  {
+   "id": "metro-2033--ia-scan:216:2:0",
+   "stratum": "control",
+   "crop": "78c6c135f81591e2",
+   "question_sha": "00f8060a0589362e",
+   "text_sha": "c720681c16fd85d0"
+  },
+  {
+   "id": "metro-2033--ia-scan:201:34:0",
+   "stratum": "control",
+   "crop": "83692fa2d8eba795",
+   "question_sha": "69fd153095a3bb94",
+   "text_sha": "4412a74c790a0178"
+  },
+  {
+   "id": "metro-2033--ia-scan:169:5:61",
+   "stratum": "control",
+   "crop": "7acf22b44dedf6d4",
+   "question_sha": "c768cbf472df4f40",
+   "text_sha": "c3da42c094aa7553"
+  },
+  {
+   "id": "metro-2033--ia-scan:259:38:48",
+   "stratum": "control",
+   "crop": "78d57b8a012f16dd",
+   "question_sha": "86d64d64652c0e21",
+   "text_sha": "35048cb5aba55821"
+  },
+  {
+   "id": "metro-2033--ia-scan:76:12:51",
+   "stratum": "control",
+   "crop": "4f47c657a161c5e1",
+   "question_sha": "99642a63a42f4341",
+   "text_sha": "d9ccb7a114fa4f04"
+  },
+  {
+   "id": "metro-2033--ia-scan:91:23:28",
+   "stratum": "control",
+   "crop": "18e8d279804e7fca",
+   "question_sha": "8c80b398f15c8d14",
+   "text_sha": "c97f82a7db860edb"
+  },
+  {
+   "id": "metro-2033--ia-scan:169:38:61",
+   "stratum": "control",
+   "crop": "2c0aa0888f806f83",
+   "question_sha": "eef02d063e557b3b",
+   "text_sha": "ea3c8c1c46a98721"
+  },
+  {
+   "id": "metro-2033--ia-scan:126:31:0",
+   "stratum": "control",
+   "crop": "84f591ba96acc9d4",
+   "question_sha": "27aaec95c0838907",
+   "text_sha": "f36d758381b073f9"
+  },
+  {
+   "id": "metro-2033--ia-scan:11:0:43",
+   "stratum": "control",
+   "crop": "a61ccdd847af53d4",
+   "question_sha": "964dac327a6cf7a3",
+   "text_sha": "dd367b10795717bd"
+  },
+  {
+   "id": "metro-2033--ia-scan:61:14:0",
+   "stratum": "control",
+   "crop": "70f4df901c404411",
+   "question_sha": "96dcbf0511310372",
+   "text_sha": "da1b7d3d340904b9"
+  },
+  {
+   "id": "metro-2033--ia-scan:64:7:43",
+   "stratum": "control",
+   "crop": "6b3112bf0c7e0a87",
+   "question_sha": "d6301de6c968853f",
+   "text_sha": "c7b24b8e8e6ca376"
+  },
+  {
+   "id": "metro-2033--ia-scan:119:23:24",
+   "stratum": "control",
+   "crop": "9a480e3ccc7b6f9a",
+   "question_sha": "18fa1cd0e905aba8",
+   "text_sha": "824ba0e1efc58277"
+  },
+  {
+   "id": "metro-2033--ia-scan:145:12:52",
+   "stratum": "control",
+   "crop": "6e9363d0b36f2b21",
+   "question_sha": "1ba3c846eb64277c",
+   "text_sha": "b1aa45d783f427a8"
+  },
+  {
+   "id": "metro-2033--ia-scan:147:19:59",
+   "stratum": "control",
+   "crop": "c393eea30e67d387",
+   "question_sha": "8792bdb04891ec83",
+   "text_sha": "fd4bba674363a0a8"
+  },
+  {
+   "id": "metro-2033--ia-scan:168:8:31",
+   "stratum": "control",
+   "crop": "e21a073f2ca6d169",
+   "question_sha": "cd384d45e24319bd",
+   "text_sha": "1aada9a2d1689551"
+  },
+  {
+   "id": "metro-2033--ia-scan:44:2:57",
+   "stratum": "control",
+   "crop": "9deb3cda5e94c8a6",
+   "question_sha": "7828ec0ecc17f304",
+   "text_sha": "de69c25fddadb899"
+  },
+  {
+   "id": "metro-2033--ia-scan:147:26:31",
+   "stratum": "control",
+   "crop": "996bfe6088ea9beb",
+   "question_sha": "1ae6ef7cb6f3fce4",
+   "text_sha": "cefc549c7f77cebb"
+  },
+  {
+   "id": "metro-2033--ia-scan:24:21:0",
+   "stratum": "control",
+   "crop": "8f97fb9d192135c9",
+   "question_sha": "780adf9df40848a5",
+   "text_sha": "aa0e25b5d89ec1ad"
+  },
+  {
+   "id": "de-cipier--ia-scan:49:34:37",
+   "stratum": "hard",
+   "crop": "e52defa1b8a98bc1",
+   "question_sha": "7156b7ccb3c23a6a",
+   "text_sha": "310243bb2355265a"
+  },
+  {
+   "id": "de-cipier--ia-scan:225:24:15",
+   "stratum": "hard",
+   "crop": "5f4a6498931038ad",
+   "question_sha": "7f40924befd32cb5",
+   "text_sha": "83d1f7eb43ecb9ba"
+  },
+  {
+   "id": "de-cipier--ia-scan:147:16:43",
+   "stratum": "hard",
+   "crop": "33874febe3c46554",
+   "question_sha": "953bedfef0cc60ea",
+   "text_sha": "a0a214c880c2508d"
+  },
+  {
+   "id": "de-cipier--ia-scan:143:22:0",
+   "stratum": "hard",
+   "crop": "137dd7047942bd85",
+   "question_sha": "0919b826996629c9",
+   "text_sha": "6986b1c34cab821a"
+  },
+  {
+   "id": "de-cipier--ia-scan:242:18:0",
+   "stratum": "hard",
+   "crop": "984603d350167dd4",
+   "question_sha": "2c8760d7dfaa6144",
+   "text_sha": "151035c492992924"
+  },
+  {
+   "id": "de-cipier--ia-scan:307:17:35",
+   "stratum": "hard",
+   "crop": "35bf59302fa969b5",
+   "question_sha": "2cd5dae77bbf7368",
+   "text_sha": "37068e36b5808b0f"
+  },
+  {
+   "id": "de-cipier--ia-scan:331:2:60",
+   "stratum": "hard",
+   "crop": "3855a8c6ece4e8e2",
+   "question_sha": "eccd69c9508fa47c",
+   "text_sha": "e9034dfa9c5ff055"
+  },
+  {
+   "id": "de-cipier--ia-scan:132:23:7",
+   "stratum": "hard",
+   "crop": "7186ebac98f989eb",
+   "question_sha": "7674b6166aecb875",
+   "text_sha": "1daa8f55b6d265ae"
+  },
+  {
+   "id": "de-cipier--ia-scan:248:6:0",
+   "stratum": "hard",
+   "crop": "042b321928e080cf",
+   "question_sha": "b7463b38f5e977f9",
+   "text_sha": "aa4f7f9751681519"
+  },
+  {
+   "id": "de-cipier--ia-scan:112:9:42",
+   "stratum": "hard",
+   "crop": "a07a7fa442da8875",
+   "question_sha": "dc922114eeb837c5",
+   "text_sha": "181814c5b143ed56"
+  },
+  {
+   "id": "de-cipier--ia-scan:379:8:0",
+   "stratum": "hard",
+   "crop": "41f3f17c9dcec11b",
+   "question_sha": "ab5fa9d73d9653b3",
+   "text_sha": "b309bfff3031a8f4"
+  },
+  {
+   "id": "de-cipier--ia-scan:199:24:12",
+   "stratum": "hard",
+   "crop": "c16797e367ecc222",
+   "question_sha": "41c64e7ba9ed352a",
+   "text_sha": "d268bd21abed848e"
+  },
+  {
+   "id": "de-cipier--ia-scan:57:16:34",
+   "stratum": "hard",
+   "crop": "a3c12121625e2b79",
+   "question_sha": "32ccbca6b2afaf18",
+   "text_sha": "b92d566d602297f9"
+  },
+  {
+   "id": "de-cipier--ia-scan:271:22:0",
+   "stratum": "hard",
+   "crop": "9f8b16a43a298de4",
+   "question_sha": "4bad2a7ce4834fe7",
+   "text_sha": "9a4acd3a1bb25c35"
+  },
+  {
+   "id": "de-cipier--ia-scan:155:22:0",
+   "stratum": "hard",
+   "crop": "c053be217d9c0060",
+   "question_sha": "6be46b55dd67ba61",
+   "text_sha": "56070759ade76e8f"
+  },
+  {
+   "id": "de-cipier--ia-scan:74:16:13",
+   "stratum": "hard",
+   "crop": "be9e13228ca938fe",
+   "question_sha": "5941e31a3b9dd00a",
+   "text_sha": "7d1bb07bd43cc22f"
+  },
+  {
+   "id": "de-cipier--ia-scan:269:22:0",
+   "stratum": "hard",
+   "crop": "6c468a3887e569e7",
+   "question_sha": "8b2ab36131e7120b",
+   "text_sha": "68a8ecd5ec97ac19"
+  },
+  {
+   "id": "de-cipier--ia-scan:332:26:20",
+   "stratum": "hard",
+   "crop": "2d21a280bce1e2c2",
+   "question_sha": "7246b1a7596b1795",
+   "text_sha": "0fc08e751f11bdde"
+  },
+  {
+   "id": "de-cipier--ia-scan:290:16:0",
+   "stratum": "hard",
+   "crop": "a66cf8f0ad331367",
+   "question_sha": "74191c3edb9bf160",
+   "text_sha": "819a320cbebe7d07"
+  },
+  {
+   "id": "de-cipier--ia-scan:473:6:46",
+   "stratum": "hard",
+   "crop": "f2b8e8e1de649894",
+   "question_sha": "cc9656ad09fe458a",
+   "text_sha": "89b3ccc0a211c438"
+  },
+  {
+   "id": "de-cipier--ia-scan:171:16:32",
+   "stratum": "hard",
+   "crop": "bcf86a3f203fd163",
+   "question_sha": "6000d6d106c36c59",
+   "text_sha": "0387cc098c91a9d9"
+  },
+  {
+   "id": "de-cipier--ia-scan:58:20:41",
+   "stratum": "hard",
+   "crop": "f0f1784e622f182f",
+   "question_sha": "921bedb56ec461e7",
+   "text_sha": "ff4cb472a17f9306"
+  },
+  {
+   "id": "de-cipier--ia-scan:440:18:60",
+   "stratum": "hard",
+   "crop": "0cf152af7be3dad7",
+   "question_sha": "bc8026e3b33ccf05",
+   "text_sha": "3dea19fea8fb3bb6"
+  },
+  {
+   "id": "de-cipier--ia-scan:230:11:47",
+   "stratum": "hard",
+   "crop": "a061305d2f248648",
+   "question_sha": "d36b7491348a1a43",
+   "text_sha": "764a490bef9c35b1"
+  },
+  {
+   "id": "de-cipier--ia-scan:371:4:22",
+   "stratum": "hard",
+   "crop": "c3350b7cdc0e96f4",
+   "question_sha": "cf1d2ae6a7f9492d",
+   "text_sha": "33cc6f9f9b36fd7a"
+  },
+  {
+   "id": "de-cipier--ia-scan:249:20:38",
+   "stratum": "control",
+   "crop": "67afe01ff480aa90",
+   "question_sha": "77762fb7e2e345d9",
+   "text_sha": "79ae69721625039e"
+  },
+  {
+   "id": "de-cipier--ia-scan:247:13:6",
+   "stratum": "control",
+   "crop": "e54464ce834e6d3b",
+   "question_sha": "75db88715c712da9",
+   "text_sha": "2b1afccfe20c2d91"
+  },
+  {
+   "id": "de-cipier--ia-scan:184:8:0",
+   "stratum": "control",
+   "crop": "996a30bc38f4f74a",
+   "question_sha": "e9ad5465d01b3ace",
+   "text_sha": "a411aceabae0a8f2"
+  },
+  {
+   "id": "de-cipier--ia-scan:418:13:50",
+   "stratum": "control",
+   "crop": "a194cb7dc216fc16",
+   "question_sha": "b160fdfd9828eb3a",
+   "text_sha": "6568a205868c8679"
+  },
+  {
+   "id": "de-cipier--ia-scan:393:4:32",
+   "stratum": "control",
+   "crop": "8b8cc2ffcfc48f22",
+   "question_sha": "406815e4093672f1",
+   "text_sha": "c211dc3f23d497bd"
+  },
+  {
+   "id": "de-cipier--ia-scan:401:17:40",
+   "stratum": "control",
+   "crop": "9bf48c962154930c",
+   "question_sha": "1637f2a895d6693c",
+   "text_sha": "129c1106bca7eef7"
+  },
+  {
+   "id": "de-cipier--ia-scan:187:8:32",
+   "stratum": "control",
+   "crop": "05602968c7b28e4f",
+   "question_sha": "e5fc64faa5ef6ad1",
+   "text_sha": "0ee046b97334b347"
+  },
+  {
+   "id": "de-cipier--ia-scan:73:13:48",
+   "stratum": "control",
+   "crop": "b607a1ddfe147ed2",
+   "question_sha": "987bd6a83babaaf6",
+   "text_sha": "b21bb3271557e3b0"
+  },
+  {
+   "id": "de-cipier--ia-scan:249:5:8",
+   "stratum": "control",
+   "crop": "813fafd0e752524e",
+   "question_sha": "4f786fc9a7c3438b",
+   "text_sha": "90b8d35d75d6c997"
+  },
+  {
+   "id": "de-cipier--ia-scan:70:1:19",
+   "stratum": "control",
+   "crop": "47e35ca6b256740c",
+   "question_sha": "632452b3efe89c9d",
+   "text_sha": "462e174afb442d93"
+  },
+  {
+   "id": "de-cipier--ia-scan:342:24:0",
+   "stratum": "control",
+   "crop": "e264b1de6e757270",
+   "question_sha": "15eb9db124c8e92e",
+   "text_sha": "0b3f0dd18b39b1df"
+  },
+  {
+   "id": "de-cipier--ia-scan:256:25:22",
+   "stratum": "control",
+   "crop": "80a32e8340efbe9d",
+   "question_sha": "e61fc57c89c2e5f1",
+   "text_sha": "598c3be50a363bd3"
+  },
+  {
+   "id": "de-cipier--ia-scan:226:31:52",
+   "stratum": "control",
+   "crop": "0c52b7047ac640b1",
+   "question_sha": "7b6529714f503366",
+   "text_sha": "a65d268bc618e226"
+  },
+  {
+   "id": "de-cipier--ia-scan:28:23:18",
+   "stratum": "control",
+   "crop": "0e92254d4832457d",
+   "question_sha": "ac4fff205caea1d0",
+   "text_sha": "36bf91fa4475f4a0"
+  },
+  {
+   "id": "de-cipier--ia-scan:166:1:14",
+   "stratum": "control",
+   "crop": "e5a243e2e09f7187",
+   "question_sha": "7f3c86470e97b5c0",
+   "text_sha": "38eb11ba40128089"
+  },
+  {
+   "id": "de-cipier--ia-scan:182:24:9",
+   "stratum": "control",
+   "crop": "1ad762a85b069ff4",
+   "question_sha": "d54017ea6f605759",
+   "text_sha": "c608ba20c015de45"
+  },
+  {
+   "id": "de-cipier--ia-scan:359:5:23",
+   "stratum": "control",
+   "crop": "932dd24b513b54d7",
+   "question_sha": "9a4ae454b91a6fa5",
+   "text_sha": "6db29c1e3a2bdc64"
+  },
+  {
+   "id": "de-cipier--ia-scan:339:6:0",
+   "stratum": "control",
+   "crop": "254af5d6b9717cd9",
+   "question_sha": "8f3269fde3e1684a",
+   "text_sha": "d8ed5b0a37959218"
+  },
+  {
+   "id": "de-cipier--ia-scan:439:25:11",
+   "stratum": "control",
+   "crop": "2eced814cc22f7e3",
+   "question_sha": "1f380edcf636b817",
+   "text_sha": "d9065d64afdf7549"
+  },
+  {
+   "id": "de-cipier--ia-scan:91:2:41",
+   "stratum": "control",
+   "crop": "caacf84689e60a1e",
+   "question_sha": "df6208470c208012",
+   "text_sha": "32b48be556314943"
+  },
+  {
+   "id": "de-cipier--ia-scan:448:29:0",
+   "stratum": "control",
+   "crop": "cc861d537bf910d2",
+   "question_sha": "d65075c556ff277b",
+   "text_sha": "a65a4c844b79417c"
+  },
+  {
+   "id": "de-cipier--ia-scan:97:20:0",
+   "stratum": "control",
+   "crop": "51d853534ae72f3e",
+   "question_sha": "7afac1de75555e53",
+   "text_sha": "3c19be13ce127f95"
+  },
+  {
+   "id": "de-cipier--ia-scan:310:25:43",
+   "stratum": "control",
+   "crop": "11a0da43a73fb3ee",
+   "question_sha": "ec969b70eb920129",
+   "text_sha": "6d14e128598022a1"
+  },
+  {
+   "id": "de-cipier--ia-scan:282:12:15",
+   "stratum": "control",
+   "crop": "38420e4272c40069",
+   "question_sha": "203b46333c24743b",
+   "text_sha": "9b20df0e444cd338"
+  },
+  {
+   "id": "de-cipier--ia-scan:200:31:16",
+   "stratum": "control",
+   "crop": "3a230238577de5db",
+   "question_sha": "58303318db4756e0",
+   "text_sha": "1ecf75e0ac450c0b"
+  },
+  {
+   "id": "artemis--ia-scan:259:15:24",
+   "stratum": "hard",
+   "crop": "01c1b48ccdcfd678",
+   "question_sha": "f95af6edcdb5de9b",
+   "text_sha": "7ad1edbc9b9b2f6b"
+  },
+  {
+   "id": "artemis--ia-scan:32:9:62",
+   "stratum": "hard",
+   "crop": "3d817509db09b8e0",
+   "question_sha": "213a1275ccc61499",
+   "text_sha": "c586005d60f3eb19"
+  },
+  {
+   "id": "artemis--ia-scan:30:32:51",
+   "stratum": "hard",
+   "crop": "5516aa7c56515bf5",
+   "question_sha": "79c07f772a3e69a6",
+   "text_sha": "ab002c0f1074f08b"
+  },
+  {
+   "id": "artemis--ia-scan:32:9:17",
+   "stratum": "hard",
+   "crop": "3d817509db09b8e0",
+   "question_sha": "213a1275ccc61499",
+   "text_sha": "c586005d60f3eb19"
+  },
+  {
+   "id": "artemis--ia-scan:74:31:44",
+   "stratum": "hard",
+   "crop": "2e54933af36b738c",
+   "question_sha": "aa7a31d998da7216",
+   "text_sha": "a5152cf91ed7dfda"
+  },
+  {
+   "id": "artemis--ia-scan:89:22:17",
+   "stratum": "hard",
+   "crop": "57f29fc06736de14",
+   "question_sha": "a651156e1d1fa36c",
+   "text_sha": "5f1146f9673ea22a"
+  },
+  {
+   "id": "artemis--ia-scan:30:6:0",
+   "stratum": "hard",
+   "crop": "4b670db056b082a7",
+   "question_sha": "5a4c56395569d3b1",
+   "text_sha": "2d47dc051beec7c7"
+  },
+  {
+   "id": "artemis--ia-scan:159:7:0",
+   "stratum": "hard",
+   "crop": "c2897b704c6743cb",
+   "question_sha": "dbc44802db2fee9f",
+   "text_sha": "33b40f12adf8d744"
+  },
+  {
+   "id": "artemis--ia-scan:16:13:0",
+   "stratum": "hard",
+   "crop": "0455d7ae8021d4ae",
+   "question_sha": "6823cee59b3f3cd3",
+   "text_sha": "23132e4d307ae0f7"
+  },
+  {
+   "id": "artemis--ia-scan:34:6:0",
+   "stratum": "hard",
+   "crop": "4c7e9d6873e0a8ed",
+   "question_sha": "bc8bafb5468d1361",
+   "text_sha": "2d5a6216c2704c63"
+  },
+  {
+   "id": "artemis--ia-scan:168:4:55",
+   "stratum": "hard",
+   "crop": "17a556383964b97a",
+   "question_sha": "d64bcff54c927771",
+   "text_sha": "fbfbb8b876517ffc"
+  },
+  {
+   "id": "artemis--ia-scan:223:10:54",
+   "stratum": "hard",
+   "crop": "e54fbad647cab2a2",
+   "question_sha": "1953b09e3938f324",
+   "text_sha": "03741efffd20f3b4"
+  },
+  {
+   "id": "artemis--ia-scan:216:9:15",
+   "stratum": "hard",
+   "crop": "5b102724ff34939f",
+   "question_sha": "70e94b30afa6407a",
+   "text_sha": "f85f0ed25b544399"
+  },
+  {
+   "id": "artemis--ia-scan:120:14:9",
+   "stratum": "hard",
+   "crop": "7f0eb0532da7ff58",
+   "question_sha": "186fca611cd486b0",
+   "text_sha": "bae7706d5915e37d"
+  },
+  {
+   "id": "artemis--ia-scan:194:11:38",
+   "stratum": "hard",
+   "crop": "edb8156c2ccb094b",
+   "question_sha": "a816344a8063846c",
+   "text_sha": "b25c286ff01f2e91"
+  },
+  {
+   "id": "artemis--ia-scan:206:18:6",
+   "stratum": "hard",
+   "crop": "3433a627b5ae1ad9",
+   "question_sha": "0a70117569af250f",
+   "text_sha": "9bee3e8ab9ad0211"
+  },
+  {
+   "id": "artemis--ia-scan:234:11:35",
+   "stratum": "hard",
+   "crop": "e4d5d36839a757c1",
+   "question_sha": "90667a9d0f8ed8e4",
+   "text_sha": "a60e8f4d50f06a06"
+  },
+  {
+   "id": "artemis--ia-scan:88:14:33",
+   "stratum": "hard",
+   "crop": "afb4970e4e878ed5",
+   "question_sha": "b558912ce0a0b068",
+   "text_sha": "87a42557eadc06c4"
+  },
+  {
+   "id": "artemis--ia-scan:191:17:33",
+   "stratum": "hard",
+   "crop": "ea31f758a817d955",
+   "question_sha": "fb81ebf865700887",
+   "text_sha": "b0ec93c1ce27e740"
+  },
+  {
+   "id": "artemis--ia-scan:311:15:19",
+   "stratum": "hard",
+   "crop": "ff9fb5a41aecae5b",
+   "question_sha": "0d283d20e214edee",
+   "text_sha": "48ffedd2451dc8c5"
+  },
+  {
+   "id": "artemis--ia-scan:151:14:0",
+   "stratum": "hard",
+   "crop": "da4a33bbe98afdd0",
+   "question_sha": "8088ab5397c0cd79",
+   "text_sha": "99cfa658d9cc0625"
+  },
+  {
+   "id": "artemis--ia-scan:310:9:28",
+   "stratum": "hard",
+   "crop": "58482f3d496a6bc3",
+   "question_sha": "d46835340caeab92",
+   "text_sha": "58556e57d9fb2639"
+  },
+  {
+   "id": "artemis--ia-scan:97:17:13",
+   "stratum": "hard",
+   "crop": "fde93dc4d20a9423",
+   "question_sha": "d5799ad10be8d715",
+   "text_sha": "de68bb10823bdec6"
+  },
+  {
+   "id": "artemis--ia-scan:312:11:34",
+   "stratum": "hard",
+   "crop": "abce2bd92f661bbf",
+   "question_sha": "fad4a3f0280b6aa1",
+   "text_sha": "28b8b14b2c7056c6"
+  },
+  {
+   "id": "artemis--ia-scan:58:9:0",
+   "stratum": "hard",
+   "crop": "f88728d1b25f9a2d",
+   "question_sha": "0ff1d0c3758eef82",
+   "text_sha": "812c3e940ae3cd2a"
+  },
+  {
+   "id": "artemis--ia-scan:252:1:35",
+   "stratum": "control",
+   "crop": "bac25004f5f82482",
+   "question_sha": "e337ce5fc6f096fc",
+   "text_sha": "bcb2cebfd37095a9"
+  },
+  {
+   "id": "artemis--ia-scan:119:32:6",
+   "stratum": "control",
+   "crop": "0b8bdd8d01a49b65",
+   "question_sha": "801eca3f9f710016",
+   "text_sha": "ab47be1351e546ef"
+  },
+  {
+   "id": "artemis--ia-scan:208:11:8",
+   "stratum": "control",
+   "crop": "cbf19bca9aca51f0",
+   "question_sha": "57e9e6e0114f00b3",
+   "text_sha": "ba6fb3f9ad3d895c"
+  },
+  {
+   "id": "artemis--ia-scan:79:25:5",
+   "stratum": "control",
+   "crop": "c59b2cbd11992834",
+   "question_sha": "f4256af212c5595e",
+   "text_sha": "1a37adbc2c04d138"
+  },
+  {
+   "id": "artemis--ia-scan:56:10:0",
+   "stratum": "control",
+   "crop": "afb544b061e1c4f3",
+   "question_sha": "9b9aeab1e574c2dd",
+   "text_sha": "eb1371dbfb4b5155"
+  },
+  {
+   "id": "artemis--ia-scan:33:23:58",
+   "stratum": "control",
+   "crop": "16b41a75033c300a",
+   "question_sha": "e253587a86ebc6f3",
+   "text_sha": "89ceadf9bee09c01"
+  },
+  {
+   "id": "artemis--ia-scan:310:4:0",
+   "stratum": "control",
+   "crop": "d1ac9d53040cff5c",
+   "question_sha": "5b3c6069d7b09a19",
+   "text_sha": "956a1278b8f6abb5"
+  },
+  {
+   "id": "artemis--ia-scan:268:33:44",
+   "stratum": "control",
+   "crop": "188c3caaaad0fb95",
+   "question_sha": "21ed73ec6e98d1b0",
+   "text_sha": "8635c4dba5c067e0"
+  },
+  {
+   "id": "artemis--ia-scan:123:6:4",
+   "stratum": "control",
+   "crop": "4f06149f7e55b5d6",
+   "question_sha": "3e7e5464069ba1a3",
+   "text_sha": "04fbef4eccf3e041"
+  },
+  {
+   "id": "artemis--ia-scan:80:16:5",
+   "stratum": "control",
+   "crop": "42efa05a30c7c0c1",
+   "question_sha": "56e210396ddeffd7",
+   "text_sha": "1426e71067cb63c9"
+  },
+  {
+   "id": "artemis--ia-scan:296:2:37",
+   "stratum": "control",
+   "crop": "c04f4646f977ff3a",
+   "question_sha": "e0f09493523d8a4a",
+   "text_sha": "a705be5a39e97aa7"
+  },
+  {
+   "id": "artemis--ia-scan:225:33:0",
+   "stratum": "control",
+   "crop": "7c22550e364ba3b4",
+   "question_sha": "4a9d7eea72bd4e68",
+   "text_sha": "a74b8f94cc504ecb"
+  },
+  {
+   "id": "artemis--ia-scan:155:2:41",
+   "stratum": "control",
+   "crop": "0a0b1fb657a9af17",
+   "question_sha": "0ab431855269ff73",
+   "text_sha": "6d9c2c37def5ba3d"
+  },
+  {
+   "id": "artemis--ia-scan:123:22:42",
+   "stratum": "control",
+   "crop": "40ac42c9796f8a11",
+   "question_sha": "f329f1939875eb3b",
+   "text_sha": "6dcf2d03469bfd7e"
+  },
+  {
+   "id": "artemis--ia-scan:42:29:34",
+   "stratum": "control",
+   "crop": "d6246135c8d25313",
+   "question_sha": "48fc8ce924040c3e",
+   "text_sha": "7fade4c04533ebcd"
+  },
+  {
+   "id": "artemis--ia-scan:133:14:21",
+   "stratum": "control",
+   "crop": "a21668b78f1cc665",
+   "question_sha": "0ea3a99e357e362f",
+   "text_sha": "adc1ea372640898d"
+  },
+  {
+   "id": "artemis--ia-scan:100:13:38",
+   "stratum": "control",
+   "crop": "6cab82e369e0e5e8",
+   "question_sha": "1c2393942427a11a",
+   "text_sha": "4d1db707983b7b07"
+  },
+  {
+   "id": "artemis--ia-scan:77:3:53",
+   "stratum": "control",
+   "crop": "37dd3540a371d064",
+   "question_sha": "d24b54a8d0064ab0",
+   "text_sha": "b6a6b16df9c1d82f"
+  },
+  {
+   "id": "artemis--ia-scan:122:18:4",
+   "stratum": "control",
+   "crop": "987dcad3198829b6",
+   "question_sha": "8962b299a965bf4a",
+   "text_sha": "9298a9b48abc4c8d"
+  },
+  {
+   "id": "artemis--ia-scan:273:31:8",
+   "stratum": "control",
+   "crop": "a6e72d5141fdf482",
+   "question_sha": "d6c2b65796272fb7",
+   "text_sha": "c5f2ccd076e99e76"
+  },
+  {
+   "id": "artemis--ia-scan:215:32:38",
+   "stratum": "control",
+   "crop": "1252c624051f6f27",
+   "question_sha": "a6c46beae32f0824",
+   "text_sha": "5d45fa16c191a3ad"
+  },
+  {
+   "id": "artemis--ia-scan:209:2:14",
+   "stratum": "control",
+   "crop": "12fc8368cbb575d2",
+   "question_sha": "e492aba5c7a0e46d",
+   "text_sha": "01844985dcdf2886"
+  },
+  {
+   "id": "artemis--ia-scan:101:10:32",
+   "stratum": "control",
+   "crop": "5fdb614e5ec44bf8",
+   "question_sha": "2510e110d38b9d8e",
+   "text_sha": "28fa58dcbc71a132"
+  },
+  {
+   "id": "artemis--ia-scan:290:18:0",
+   "stratum": "control",
+   "crop": "12b03aef83457103",
+   "question_sha": "4a676238f07430bb",
+   "text_sha": "3d96d6f7741dcee3"
+  },
+  {
+   "id": "artemis--ia-scan:101:3:67",
+   "stratum": "control",
+   "crop": "983106395a4b6149",
+   "question_sha": "a036566925450984",
+   "text_sha": "3564e5350401b089"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:176:28:19",
+   "stratum": "hard",
+   "crop": "8f35d2b4fb7cba7f",
+   "question_sha": "a05357c3449268f6",
+   "text_sha": "10834a0ac820259e"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:130:13:55",
+   "stratum": "hard",
+   "crop": "7c65cfcf59e4767f",
+   "question_sha": "df9827c8be34e3ea",
+   "text_sha": "e1fc96532c51cb0f"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:199:14:6",
+   "stratum": "hard",
+   "crop": "5a8d63b6af5d4c6e",
+   "question_sha": "3a18223a0e2217a7",
+   "text_sha": "8c7958c2c823246b"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:215:4:20",
+   "stratum": "hard",
+   "crop": "ffa4ce59f2fa119b",
+   "question_sha": "f65271cafa0be477",
+   "text_sha": "ed0250c77c4cf9bf"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:136:1:18",
+   "stratum": "hard",
+   "crop": "9f4067dfaf02b89a",
+   "question_sha": "63f350f1974e0e40",
+   "text_sha": "320bfafc1c5d39a2"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:159:5:45",
+   "stratum": "hard",
+   "crop": "77d377b35b6d81d5",
+   "question_sha": "159d8d973e325a99",
+   "text_sha": "fe3b9daf2a5571fe"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:150:6:58",
+   "stratum": "hard",
+   "crop": "2f292714c51ab0ee",
+   "question_sha": "4d35db42a5242fca",
+   "text_sha": "d7cde47fc8afb97e"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:212:17:56",
+   "stratum": "hard",
+   "crop": "3908960e7beffc5d",
+   "question_sha": "bf0c6c65b1e433dc",
+   "text_sha": "6fad6ebe9a6ff18d"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:105:7:27",
+   "stratum": "hard",
+   "crop": "d5d4495bf3c52826",
+   "question_sha": "16964793a99eb579",
+   "text_sha": "a3a57bc8769fb563"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:150:25:35",
+   "stratum": "hard",
+   "crop": "df3e455d94154c6a",
+   "question_sha": "83455c1117adb1fc",
+   "text_sha": "12958c4fa2330fdb"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:199:12:37",
+   "stratum": "hard",
+   "crop": "0c1ab1fe6991e863",
+   "question_sha": "67c5067a12a42cc0",
+   "text_sha": "67ad679198704887"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:209:23:54",
+   "stratum": "hard",
+   "crop": "30ef2d74c2d48772",
+   "question_sha": "2b02dd44bf4472b7",
+   "text_sha": "216d141e3022f786"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:68:14:40",
+   "stratum": "hard",
+   "crop": "4cfb639b66e9d06e",
+   "question_sha": "a07b593ddf849f3e",
+   "text_sha": "596ae10252d15c56"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:162:28:23",
+   "stratum": "hard",
+   "crop": "1907630ca49c1732",
+   "question_sha": "a6f0fc1607f9c37e",
+   "text_sha": "d0d698221c74f8ea"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:192:8:13",
+   "stratum": "hard",
+   "crop": "1cb7059743890a76",
+   "question_sha": "0022fef321ac9be1",
+   "text_sha": "88c596ee86c90bb0"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:75:0:47",
+   "stratum": "hard",
+   "crop": "7f174558be832895",
+   "question_sha": "d218eaf76069bf14",
+   "text_sha": "6879da516aaa495e"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:15:19:4",
+   "stratum": "hard",
+   "crop": "54729aac075a282b",
+   "question_sha": "90d3aaea38f08ac5",
+   "text_sha": "57d73ebfaa3346cb"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:108:27:37",
+   "stratum": "hard",
+   "crop": "914b7bbb16b3ae61",
+   "question_sha": "51db5237e73378aa",
+   "text_sha": "a52a6ada1499dec5"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:220:25:31",
+   "stratum": "hard",
+   "crop": "08ac9360dcf71d2e",
+   "question_sha": "48b723e92c5b42af",
+   "text_sha": "4d3b188d1a5374ea"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:233:5:0",
+   "stratum": "hard",
+   "crop": "a75804fbd9a0026e",
+   "question_sha": "fa35b3f68ad55851",
+   "text_sha": "918785c1406ee94f"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:103:18:12",
+   "stratum": "hard",
+   "crop": "6757b855fe0ac70e",
+   "question_sha": "5a271faa6f2ee635",
+   "text_sha": "bc2b4f0332b5daf1"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:104:29:44",
+   "stratum": "hard",
+   "crop": "14a5d52ee605b474",
+   "question_sha": "6e2ebe3aa616ec4c",
+   "text_sha": "af4337ef2cae73b3"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:24:27:13",
+   "stratum": "hard",
+   "crop": "4e7a8562d24cf8a2",
+   "question_sha": "31ecc8abc22d8808",
+   "text_sha": "edab9b33f05f05da"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:160:11:49",
+   "stratum": "hard",
+   "crop": "6349165f300e2d1d",
+   "question_sha": "916efded781a957d",
+   "text_sha": "386f46a22edd75c6"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:52:1:49",
+   "stratum": "hard",
+   "crop": "b82759e8e06975e2",
+   "question_sha": "59110ad68be5eaa2",
+   "text_sha": "4ed06af7b4599656"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:111:19:28",
+   "stratum": "control",
+   "crop": "b9d970120d42cd4f",
+   "question_sha": "f566fc02f8e5f0f3",
+   "text_sha": "5b54cf38a33b98e1"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:238:32:54",
+   "stratum": "control",
+   "crop": "0db21c85e24de0f1",
+   "question_sha": "f04f1cf83b29d585",
+   "text_sha": "c02f860776015edd"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:74:21:14",
+   "stratum": "control",
+   "crop": "3d1f0b5634022347",
+   "question_sha": "f23d317674d8da18",
+   "text_sha": "ef20a7efa0282ca1"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:155:4:32",
+   "stratum": "control",
+   "crop": "8722384ac9510226",
+   "question_sha": "96a4ed3db4b40daf",
+   "text_sha": "11c5c46014a4a56b"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:228:6:0",
+   "stratum": "control",
+   "crop": "79acbb30001d3edd",
+   "question_sha": "0e71b85a587d56ac",
+   "text_sha": "075e8974adacc4f7"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:126:0:0",
+   "stratum": "control",
+   "crop": "d17679db08cbfedd",
+   "question_sha": "93e85d825276d9ee",
+   "text_sha": "a3a7094de35f9526"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:191:21:27",
+   "stratum": "control",
+   "crop": "7af6bee78acbd3c8",
+   "question_sha": "57459c1eabaa8cfc",
+   "text_sha": "7b2299862a64c270"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:39:27:63",
+   "stratum": "control",
+   "crop": "29330be1f3e40154",
+   "question_sha": "d5241e2dd2659f64",
+   "text_sha": "d3d3d48f5aaa9505"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:48:9:29",
+   "stratum": "control",
+   "crop": "b59fdf1d904f4615",
+   "question_sha": "27b4a0043968c492",
+   "text_sha": "6956156077ef8523"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:206:20:51",
+   "stratum": "control",
+   "crop": "474e8dc00d00cd97",
+   "question_sha": "5ab063ada28cf3e9",
+   "text_sha": "31ae2b91f1eee651"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:30:9:11",
+   "stratum": "control",
+   "crop": "21d2b2869a9dd798",
+   "question_sha": "04679e9b2a8acb8f",
+   "text_sha": "c0c977b264c619b8"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:100:6:46",
+   "stratum": "control",
+   "crop": "c5d35742d02a6c5f",
+   "question_sha": "2240cda74c6b10ed",
+   "text_sha": "d6bb19179800d309"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:64:31:27",
+   "stratum": "control",
+   "crop": "ee372db840898148",
+   "question_sha": "ed59d9175d411a62",
+   "text_sha": "87493e266edb4d93"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:30:26:6",
+   "stratum": "control",
+   "crop": "97d09de874c4c616",
+   "question_sha": "5227bf2ee03d30a4",
+   "text_sha": "72d7011f485f8732"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:127:18:0",
+   "stratum": "control",
+   "crop": "3ee536c79ed483b6",
+   "question_sha": "25c62b67c4ec1c48",
+   "text_sha": "e52361c27ca89838"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:18:25:3",
+   "stratum": "control",
+   "crop": "b6169f0adf02a9c5",
+   "question_sha": "b58e84c69f9007a1",
+   "text_sha": "726d371d99a47f45"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:180:21:31",
+   "stratum": "control",
+   "crop": "6f5b43f43e5bcb4f",
+   "question_sha": "4dfb198011355a5d",
+   "text_sha": "3c7d1df8e875e895"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:137:33:41",
+   "stratum": "control",
+   "crop": "0d03dae6a7b57dc4",
+   "question_sha": "89c119fcd594b56f",
+   "text_sha": "369d7d0498feff8e"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:75:20:0",
+   "stratum": "control",
+   "crop": "264b5abd656fb3ad",
+   "question_sha": "420e599b599f43bd",
+   "text_sha": "ad59239e0c781f39"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:72:15:28",
+   "stratum": "control",
+   "crop": "000bbbb304c8ebaf",
+   "question_sha": "0e9ba3a1932e1e37",
+   "text_sha": "ad8c3fc42a907f37"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:187:10:65",
+   "stratum": "control",
+   "crop": "86e0197e69d9d1e6",
+   "question_sha": "6f40341f71f1d046",
+   "text_sha": "865701f60264549f"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:152:24:25",
+   "stratum": "control",
+   "crop": "41fec3c2b955bd2c",
+   "question_sha": "eb122b721ec3c39f",
+   "text_sha": "29364540b935a8f6"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:202:12:33",
+   "stratum": "control",
+   "crop": "f4018b50dab7b688",
+   "question_sha": "363db1618fe89d97",
+   "text_sha": "f558f681d3864fe4"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:156:17:24",
+   "stratum": "control",
+   "crop": "96edc205815905a8",
+   "question_sha": "243cfeb8aed07d73",
+   "text_sha": "cf5a78f2d3b1937d"
+  },
+  {
+   "id": "de-tuin-van-de-avondnevel--ia-scan:210:1:25",
+   "stratum": "control",
+   "crop": "5ffe5f9897d16347",
+   "question_sha": "92a0b3a255864557",
+   "text_sha": "3cc816a2972b8e1e"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:339:21:14",
+   "stratum": "hard",
+   "crop": "c3392a364b4e7455",
+   "question_sha": "92a7682a4a439572",
+   "text_sha": "f3f8c9c3075e7c60"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:29:27:51",
+   "stratum": "hard",
+   "crop": "6098f406ec3257c7",
+   "question_sha": "7f7a48616bf84ab5",
+   "text_sha": "22bd52faa219d790"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:362:23:62",
+   "stratum": "hard",
+   "crop": "e7b1a0bec6899ca8",
+   "question_sha": "04b0e68a3701ac84",
+   "text_sha": "b90057135722aee1"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:69:15:52",
+   "stratum": "hard",
+   "crop": "a3fe6dfbe5deafaa",
+   "question_sha": "7705ae132d931738",
+   "text_sha": "677bf864b3773101"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:427:15:6",
+   "stratum": "hard",
+   "crop": "eeffd80ba1fd2e78",
+   "question_sha": "69a6cac232448a86",
+   "text_sha": "86c91f29b7a6bc9b"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:495:10:0",
+   "stratum": "hard",
+   "crop": "ae065aab38aa356b",
+   "question_sha": "e940c5c72a4a3554",
+   "text_sha": "765b2605c195b72c"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:499:4:17",
+   "stratum": "hard",
+   "crop": "39138491c3e27b34",
+   "question_sha": "6f54420bf10b69c4",
+   "text_sha": "aac868025b697bde"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:345:26:20",
+   "stratum": "hard",
+   "crop": "d088dcf4c4dfe0e1",
+   "question_sha": "e8bcd2be71f8c34b",
+   "text_sha": "8314a4626e454358"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:481:30:0",
+   "stratum": "hard",
+   "crop": "f91741b65bda1945",
+   "question_sha": "ad8ff3ec25fcfee2",
+   "text_sha": "0db6964908127d49"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:374:18:10",
+   "stratum": "hard",
+   "crop": "757d69ea235a3c06",
+   "question_sha": "5cf7aee3fc7b5a73",
+   "text_sha": "b00b2558d09d14f4"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:59:17:44",
+   "stratum": "hard",
+   "crop": "51010544efd2529e",
+   "question_sha": "7c5b6b93940b8fd1",
+   "text_sha": "84fa4662494d7458"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:473:22:27",
+   "stratum": "hard",
+   "crop": "98124820b93dcefd",
+   "question_sha": "201f12ab9c84292e",
+   "text_sha": "04d427eb9d4d9d35"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:270:14:38",
+   "stratum": "hard",
+   "crop": "022286915446c5c9",
+   "question_sha": "77501ca85bc456a6",
+   "text_sha": "0fe41ae1ead3b5dc"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:481:9:22",
+   "stratum": "hard",
+   "crop": "eeb7ba5bd1bad4bf",
+   "question_sha": "23064aea04d8d0be",
+   "text_sha": "135d81d3b8f94840"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:143:17:12",
+   "stratum": "hard",
+   "crop": "ca0b91feee59f683",
+   "question_sha": "489bb2ece0e265de",
+   "text_sha": "858c02660ff38e1f"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:177:4:30",
+   "stratum": "hard",
+   "crop": "e0e161bd87d9eb87",
+   "question_sha": "1abe2b58f44f8de0",
+   "text_sha": "96a6ce26564438fa"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:350:29:11",
+   "stratum": "hard",
+   "crop": "49e75665e55ce990",
+   "question_sha": "d6ad7663d211ca25",
+   "text_sha": "9b04ca879d7d8bec"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:373:12:25",
+   "stratum": "hard",
+   "crop": "05056a72f1de99cd",
+   "question_sha": "d4846d23fd7b0767",
+   "text_sha": "500ba6e942f4fe1d"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:266:16:0",
+   "stratum": "hard",
+   "crop": "844cb736fc92d5af",
+   "question_sha": "ef748ab669129076",
+   "text_sha": "852fbedead462bc3"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:508:11:55",
+   "stratum": "hard",
+   "crop": "1ae7bd19f943f547",
+   "question_sha": "120ac4a131fb335b",
+   "text_sha": "0891b4f39405e7ea"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:323:13:16",
+   "stratum": "hard",
+   "crop": "1c4101c018bfed5e",
+   "question_sha": "872f0c6d535309a5",
+   "text_sha": "36b0f3450973eb5c"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:514:7:17",
+   "stratum": "hard",
+   "crop": "1be314e981ac0421",
+   "question_sha": "a4649e9910049bfe",
+   "text_sha": "532ef7a5110dd134"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:495:5:30",
+   "stratum": "hard",
+   "crop": "9669eb37be2f3621",
+   "question_sha": "886af0b1860ef252",
+   "text_sha": "d567963d7fbc9f7a"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:238:19:53",
+   "stratum": "hard",
+   "crop": "97a0be775334ad8a",
+   "question_sha": "6d8ad38ef94f0d19",
+   "text_sha": "61518a6ffc87c8cc"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:378:19:8",
+   "stratum": "hard",
+   "crop": "08388a3934e72bb8",
+   "question_sha": "688eb274dbb553ed",
+   "text_sha": "92cd4c0dd7d5c9e5"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:370:13:40",
+   "stratum": "control",
+   "crop": "a87828e67e18dfc1",
+   "question_sha": "3f21b3f6be083fd4",
+   "text_sha": "062154d175c3717e"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:152:12:0",
+   "stratum": "control",
+   "crop": "63376a7827cb3c04",
+   "question_sha": "fa9ad074b15f92c4",
+   "text_sha": "17a7307c52584708"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:509:18:23",
+   "stratum": "control",
+   "crop": "9308b0e0fc84cd02",
+   "question_sha": "8772421e1b38a9a9",
+   "text_sha": "12eb7265b93320b6"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:23:10:38",
+   "stratum": "control",
+   "crop": "6dca0868fab0b0d6",
+   "question_sha": "2d047c2af5f8d16d",
+   "text_sha": "9ec27c690b7d1f76"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:418:19:0",
+   "stratum": "control",
+   "crop": "91447a06ff687341",
+   "question_sha": "021f37d65c59cae8",
+   "text_sha": "fec71fb19179e259"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:9:4:13",
+   "stratum": "control",
+   "crop": "7ca02f9cf9e588d1",
+   "question_sha": "d0836f5b2a6191d6",
+   "text_sha": "22782bbd44ff7b9c"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:479:19:0",
+   "stratum": "control",
+   "crop": "c06ed1ec846239b9",
+   "question_sha": "77c5e01c8c685381",
+   "text_sha": "646ec76f26f29a80"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:125:7:9",
+   "stratum": "control",
+   "crop": "ed232ee45f07867b",
+   "question_sha": "6099670640aa4932",
+   "text_sha": "6afd9006ccc61425"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:192:12:40",
+   "stratum": "control",
+   "crop": "3758d683d3db4fe5",
+   "question_sha": "5ff241be0572b852",
+   "text_sha": "2d2934bca304cfe2"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:336:4:0",
+   "stratum": "control",
+   "crop": "291957564599e859",
+   "question_sha": "70ba1dbd6ab904ff",
+   "text_sha": "b76f5691309b661f"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:361:11:51",
+   "stratum": "control",
+   "crop": "ff7e33e8ebf67bbc",
+   "question_sha": "3dce753ca73d42a3",
+   "text_sha": "62df1caf5d1da677"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:164:21:46",
+   "stratum": "control",
+   "crop": "269ae4b0db6f55cb",
+   "question_sha": "4fbd07ea7a0d4590",
+   "text_sha": "41b2a4816b9be0d4"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:209:0:45",
+   "stratum": "control",
+   "crop": "666816fafca8e9a5",
+   "question_sha": "8c76f469edce7147",
+   "text_sha": "4e5ecb56abacb2b1"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:52:10:12",
+   "stratum": "control",
+   "crop": "0290223d13487022",
+   "question_sha": "bdcad8b778f5e2de",
+   "text_sha": "602d271f33dbd458"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:324:14:0",
+   "stratum": "control",
+   "crop": "51fe89abc01420a1",
+   "question_sha": "aa067b96ec2716a8",
+   "text_sha": "a49e90171cf14582"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:170:0:34",
+   "stratum": "control",
+   "crop": "32cb202168640909",
+   "question_sha": "97cc64e89ebbc62f",
+   "text_sha": "5edaa4e90e117043"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:192:18:37",
+   "stratum": "control",
+   "crop": "f92379b854483fac",
+   "question_sha": "9fe8be3691b4ba3f",
+   "text_sha": "84a75d71386b9854"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:496:29:13",
+   "stratum": "control",
+   "crop": "cd1426ea81b70411",
+   "question_sha": "4e7c61492ea9fbc7",
+   "text_sha": "f162cc4c44fc2e91"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:267:17:41",
+   "stratum": "control",
+   "crop": "793dcf58065a35d5",
+   "question_sha": "cdd25fbdd585de84",
+   "text_sha": "82370b921ee6dd49"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:247:11:55",
+   "stratum": "control",
+   "crop": "d9a665049afa2d85",
+   "question_sha": "e26bb82db34f4094",
+   "text_sha": "6732a77fbf1c5e4b"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:246:25:53",
+   "stratum": "control",
+   "crop": "e224c229f496d601",
+   "question_sha": "89e57e716993db3e",
+   "text_sha": "099bdeb8d4d60c53"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:50:14:8",
+   "stratum": "control",
+   "crop": "e7d41a04ab63756c",
+   "question_sha": "67329c864ca49f9c",
+   "text_sha": "aca5b8cb37cfc5ee"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:115:27:29",
+   "stratum": "control",
+   "crop": "f3287d8d5855c68c",
+   "question_sha": "4bce7aa920b8a6f2",
+   "text_sha": "bf2d4a889375aeff"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:406:10:23",
+   "stratum": "control",
+   "crop": "0f7cc3fd6dd643f3",
+   "question_sha": "e243888a24eb4188",
+   "text_sha": "7caa90160ba88def"
+  },
+  {
+   "id": "het-heft-in-eigen-hand--ia-scan:88:15:24",
+   "stratum": "control",
+   "crop": "91d507269f94e8cd",
+   "question_sha": "713e82c94d19b73b",
+   "text_sha": "2c38d1204c295a20"
+  },
+  {
+   "id": "doodskleed--ia-scan:111:17:52",
+   "stratum": "hard",
+   "crop": "aaa106a21173b04f",
+   "question_sha": "c6368c919550f1dc",
+   "text_sha": "d29c4bd456a147c5"
+  },
+  {
+   "id": "doodskleed--ia-scan:129:29:51",
+   "stratum": "hard",
+   "crop": "bdba75310c470f8a",
+   "question_sha": "ec971ad8112d2a91",
+   "text_sha": "766327ddec1d4192"
+  },
+  {
+   "id": "doodskleed--ia-scan:145:3:33",
+   "stratum": "hard",
+   "crop": "cd6a3328604949d5",
+   "question_sha": "440a1deab69b3969",
+   "text_sha": "73ff2517e626bab5"
+  },
+  {
+   "id": "doodskleed--ia-scan:49:15:27",
+   "stratum": "hard",
+   "crop": "93114c8ba8c4015f",
+   "question_sha": "0ecbecfd210c84ec",
+   "text_sha": "29044b380221c8fa"
+  },
+  {
+   "id": "doodskleed--ia-scan:38:24:4",
+   "stratum": "hard",
+   "crop": "715c0252d1e2ac8a",
+   "question_sha": "cc064f0cde19a066",
+   "text_sha": "f596bd2425f88f57"
+  },
+  {
+   "id": "doodskleed--ia-scan:205:25:22",
+   "stratum": "hard",
+   "crop": "db783e2349fefa19",
+   "question_sha": "105eb4371258b0ee",
+   "text_sha": "934af334f688203d"
+  },
+  {
+   "id": "doodskleed--ia-scan:187:15:24",
+   "stratum": "hard",
+   "crop": "f28922214d71c385",
+   "question_sha": "d576e464dd0b96e1",
+   "text_sha": "06a9068d8bf1768e"
+  },
+  {
+   "id": "doodskleed--ia-scan:75:30:28",
+   "stratum": "hard",
+   "crop": "ee93e88209f1d37a",
+   "question_sha": "8fbcc0bddf163c63",
+   "text_sha": "f0fce8257971e98d"
+  },
+  {
+   "id": "doodskleed--ia-scan:207:28:29",
+   "stratum": "hard",
+   "crop": "3ef459924df4f784",
+   "question_sha": "3f46c3a29eab4508",
+   "text_sha": "2eef2375a642e5f0"
+  },
+  {
+   "id": "doodskleed--ia-scan:254:27:6",
+   "stratum": "hard",
+   "crop": "f6e9a6ac0e3023d1",
+   "question_sha": "28f67e607a99e8c6",
+   "text_sha": "9aee47d91c856bdd"
+  },
+  {
+   "id": "doodskleed--ia-scan:57:26:17",
+   "stratum": "hard",
+   "crop": "d794eead1dbcb3cf",
+   "question_sha": "b61b6c3d12672885",
+   "text_sha": "38697554e9faf811"
+  },
+  {
+   "id": "doodskleed--ia-scan:79:31:31",
+   "stratum": "hard",
+   "crop": "f0331287879bda8a",
+   "question_sha": "a493086c5c776c4b",
+   "text_sha": "c7533dad123a86b2"
+  },
+  {
+   "id": "doodskleed--ia-scan:153:30:29",
+   "stratum": "hard",
+   "crop": "b1730c755d1a463e",
+   "question_sha": "e4e6e7084c7210e3",
+   "text_sha": "55a3fd32bce0ecd6"
+  },
+  {
+   "id": "doodskleed--ia-scan:185:28:31",
+   "stratum": "hard",
+   "crop": "51ca24f0bba2b799",
+   "question_sha": "c9e5a761a87c4a97",
+   "text_sha": "acf9544d875ccb25"
+  },
+  {
+   "id": "doodskleed--ia-scan:272:8:7",
+   "stratum": "hard",
+   "crop": "f82483754bf68f0d",
+   "question_sha": "53e39bd81d4e69a9",
+   "text_sha": "282f1cf64ed3e3d6"
+  },
+  {
+   "id": "doodskleed--ia-scan:256:13:0",
+   "stratum": "hard",
+   "crop": "e728cc1d926b905e",
+   "question_sha": "8bcbaa3911d97fb4",
+   "text_sha": "d0752b5da4f51624"
+  },
+  {
+   "id": "doodskleed--ia-scan:201:15:31",
+   "stratum": "hard",
+   "crop": "0a1907f1cfc71232",
+   "question_sha": "4c0abc0b3f840a59",
+   "text_sha": "275147cb42ad7b3e"
+  },
+  {
+   "id": "doodskleed--ia-scan:170:7:0",
+   "stratum": "hard",
+   "crop": "633190c316818cbd",
+   "question_sha": "99f94225773aa809",
+   "text_sha": "b421f7a482a7bbb2"
+  },
+  {
+   "id": "doodskleed--ia-scan:199:4:40",
+   "stratum": "hard",
+   "crop": "b6ac7e4eb9036786",
+   "question_sha": "aeb630c84fd3ac9f",
+   "text_sha": "b2b0d2a90d6fd2fc"
+  },
+  {
+   "id": "doodskleed--ia-scan:45:31:19",
+   "stratum": "hard",
+   "crop": "927cee1ac2907047",
+   "question_sha": "c9a36c604efc0801",
+   "text_sha": "e4e39a5e12f35c8f"
+  },
+  {
+   "id": "doodskleed--ia-scan:63:31:27",
+   "stratum": "hard",
+   "crop": "1599bf6f2dda4bae",
+   "question_sha": "40f6e03024e24677",
+   "text_sha": "40be6edea467ef04"
+  },
+  {
+   "id": "doodskleed--ia-scan:201:18:30",
+   "stratum": "hard",
+   "crop": "6bbb3af85d8147ca",
+   "question_sha": "54408cf7f98fc3c4",
+   "text_sha": "8148b69a51af4ecf"
+  },
+  {
+   "id": "doodskleed--ia-scan:263:23:49",
+   "stratum": "hard",
+   "crop": "f37944c948e01687",
+   "question_sha": "5b32e8d47a20c262",
+   "text_sha": "f62f41668c4edd47"
+  },
+  {
+   "id": "doodskleed--ia-scan:33:31:22",
+   "stratum": "hard",
+   "crop": "d11e18e50f407ad0",
+   "question_sha": "36bcad863b59803e",
+   "text_sha": "3dcd83fcf2e16537"
+  },
+  {
+   "id": "doodskleed--ia-scan:38:17:62",
+   "stratum": "hard",
+   "crop": "542cf8a07688bc06",
+   "question_sha": "8935bf57cb563f84",
+   "text_sha": "bd506ddddc6b612e"
+  },
+  {
+   "id": "doodskleed--ia-scan:234:3:0",
+   "stratum": "control",
+   "crop": "d86bd30086b8f3f8",
+   "question_sha": "792de5eff38fa442",
+   "text_sha": "90ab261c0b674e73"
+  },
+  {
+   "id": "doodskleed--ia-scan:243:0:54",
+   "stratum": "control",
+   "crop": "698cd59712327eb0",
+   "question_sha": "d863b433ca72183c",
+   "text_sha": "553e19cc72142515"
+  },
+  {
+   "id": "doodskleed--ia-scan:60:9:12",
+   "stratum": "control",
+   "crop": "b35dafbf0984de85",
+   "question_sha": "3e715819ca4e2001",
+   "text_sha": "3bb127296e39bf01"
+  },
+  {
+   "id": "doodskleed--ia-scan:250:5:9",
+   "stratum": "control",
+   "crop": "8bf11a25b375f120",
+   "question_sha": "8b64cf0090395384",
+   "text_sha": "d57d572734ebe6f7"
+  },
+  {
+   "id": "doodskleed--ia-scan:129:19:0",
+   "stratum": "control",
+   "crop": "5e08b48098b05ee6",
+   "question_sha": "f6f76a2060f8870d",
+   "text_sha": "bc678e08d0c14341"
+  },
+  {
+   "id": "doodskleed--ia-scan:51:31:30",
+   "stratum": "control",
+   "crop": "c82582c249978acf",
+   "question_sha": "c2d527661c3c67da",
+   "text_sha": "e4a33ef0277c3a1e"
+  },
+  {
+   "id": "doodskleed--ia-scan:275:11:54",
+   "stratum": "control",
+   "crop": "5762cc91e2e15027",
+   "question_sha": "4d46574413f438f7",
+   "text_sha": "6580d01e7e56ba36"
+  },
+  {
+   "id": "doodskleed--ia-scan:215:7:0",
+   "stratum": "control",
+   "crop": "4f6c16d4ec7d253a",
+   "question_sha": "223239802d367978",
+   "text_sha": "8b2673d4bd647be8"
+  },
+  {
+   "id": "doodskleed--ia-scan:254:31:16",
+   "stratum": "control",
+   "crop": "5868f0df2826dbf7",
+   "question_sha": "3e605fb2bd519fc4",
+   "text_sha": "1d4bcf4c22234b1f"
+  },
+  {
+   "id": "doodskleed--ia-scan:139:6:41",
+   "stratum": "control",
+   "crop": "78bad804f1ad4a9c",
+   "question_sha": "d509e718ce0be2de",
+   "text_sha": "f5f647e70c01f8ba"
+  },
+  {
+   "id": "doodskleed--ia-scan:84:10:5",
+   "stratum": "control",
+   "crop": "6bccdb9b86d29782",
+   "question_sha": "0256cec393368fde",
+   "text_sha": "9e70e40ab3e502a2"
+  },
+  {
+   "id": "doodskleed--ia-scan:153:19:56",
+   "stratum": "control",
+   "crop": "5d5c59cfe8f855f8",
+   "question_sha": "495b6679dbb521fa",
+   "text_sha": "b8753495ea6bcf58"
+  },
+  {
+   "id": "doodskleed--ia-scan:192:7:0",
+   "stratum": "control",
+   "crop": "142d09e982b57bfc",
+   "question_sha": "a1ff64a21b3a210f",
+   "text_sha": "09cb44660fe00906"
+  },
+  {
+   "id": "doodskleed--ia-scan:53:7:0",
+   "stratum": "control",
+   "crop": "11f003e05e16cdea",
+   "question_sha": "c798e53a79bc1969",
+   "text_sha": "4ffe2fd3da8db67a"
+  },
+  {
+   "id": "doodskleed--ia-scan:36:4:0",
+   "stratum": "control",
+   "crop": "f7ec1ed9a8761c86",
+   "question_sha": "db2cf74f0f8d9c27",
+   "text_sha": "6c879454cf6dcca9"
+  },
+  {
+   "id": "doodskleed--ia-scan:241:3:27",
+   "stratum": "control",
+   "crop": "aba0610c681b22ab",
+   "question_sha": "cee0616371e6e3a1",
+   "text_sha": "2782e2cd287854d1"
+  },
+  {
+   "id": "doodskleed--ia-scan:276:4:5",
+   "stratum": "control",
+   "crop": "56785c64431abb62",
+   "question_sha": "37ae7c3e341b0442",
+   "text_sha": "a4d549a4d9e0f28b"
+  },
+  {
+   "id": "doodskleed--ia-scan:183:20:42",
+   "stratum": "control",
+   "crop": "47f2ef0b73225ddc",
+   "question_sha": "2399b575c9d379c2",
+   "text_sha": "aaa88801922487d6"
+  },
+  {
+   "id": "doodskleed--ia-scan:242:24:0",
+   "stratum": "control",
+   "crop": "ff583bf17cad13b7",
+   "question_sha": "2d5314ce2297c6ba",
+   "text_sha": "8c9245929a980647"
+  },
+  {
+   "id": "doodskleed--ia-scan:251:20:32",
+   "stratum": "control",
+   "crop": "7dd15172671994e1",
+   "question_sha": "23bdf13e46e1bf38",
+   "text_sha": "6e6d9b317b9b30d7"
+  },
+  {
+   "id": "doodskleed--ia-scan:135:31:0",
+   "stratum": "control",
+   "crop": "05eb8e275800c26d",
+   "question_sha": "147d1d851671ad07",
+   "text_sha": "c829b3606f574608"
+  },
+  {
+   "id": "doodskleed--ia-scan:255:16:60",
+   "stratum": "control",
+   "crop": "d9866b0eeeb7da58",
+   "question_sha": "bb6873508789ddc8",
+   "text_sha": "4cf1ff07c282fff3"
+  },
+  {
+   "id": "doodskleed--ia-scan:58:29:56",
+   "stratum": "control",
+   "crop": "f82a0d8e2136473e",
+   "question_sha": "4a45c40893143960",
+   "text_sha": "4c5ab182ca54f13e"
+  },
+  {
+   "id": "doodskleed--ia-scan:270:4:40",
+   "stratum": "control",
+   "crop": "c2d7fb1547e48e7f",
+   "question_sha": "342742ddd3fb6065",
+   "text_sha": "ada901e4a4f7e81f"
+  },
+  {
+   "id": "doodskleed--ia-scan:281:2:0",
+   "stratum": "control",
+   "crop": "44a765ae2a9aee03",
+   "question_sha": "c29af3d6a245ad41",
+   "text_sha": "69a6c7baa59f9c06"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:168:20:38",
+   "stratum": "hard",
+   "crop": "4423f5eb784ae1bd",
+   "question_sha": "cdc67887a32d5218",
+   "text_sha": "e594340eb61bc624"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:84:22:20",
+   "stratum": "hard",
+   "crop": "20d40d8473da88ae",
+   "question_sha": "55739099dc182f15",
+   "text_sha": "378b4895e8b048fc"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:213:13:43",
+   "stratum": "hard",
+   "crop": "5177df2d75554dfd",
+   "question_sha": "54de03c6bb72c0ab",
+   "text_sha": "691e3e6b9cc1fd15"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:328:27:16",
+   "stratum": "hard",
+   "crop": "e3d71c32e69f764f",
+   "question_sha": "9c5786ce5959db78",
+   "text_sha": "77fc14651b982c33"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:83:13:17",
+   "stratum": "hard",
+   "crop": "3775a8f5be96574a",
+   "question_sha": "a0de09cbd64ca241",
+   "text_sha": "f08a3719106d4b0e"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:281:4:12",
+   "stratum": "hard",
+   "crop": "de609bf87c1db24c",
+   "question_sha": "894878927dc3a444",
+   "text_sha": "0aaee15385479bbd"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:124:9:13",
+   "stratum": "hard",
+   "crop": "d7cb78568bbdda41",
+   "question_sha": "6ab50178ade1a73e",
+   "text_sha": "55b9cbd19c307918"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:34:5:5",
+   "stratum": "hard",
+   "crop": "9e31d33715f06d66",
+   "question_sha": "5008dbe2fdf1d4b0",
+   "text_sha": "a59fe1940dde08ea"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:213:15:31",
+   "stratum": "hard",
+   "crop": "5c2fcd2369a9ad7c",
+   "question_sha": "6c4860706ede8b17",
+   "text_sha": "7a62dabc44fe16bb"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:238:5:46",
+   "stratum": "hard",
+   "crop": "18e5ade5f74f4b88",
+   "question_sha": "1332793bb27f377e",
+   "text_sha": "82371b91f648fad1"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:201:15:37",
+   "stratum": "hard",
+   "crop": "876c7182b1a3dd80",
+   "question_sha": "ebaeb7508bea911b",
+   "text_sha": "d6b2777fef402007"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:300:27:4",
+   "stratum": "hard",
+   "crop": "6e2e02bd84b7c56a",
+   "question_sha": "06c2b0d8f380da34",
+   "text_sha": "3b74c7119d48292f"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:242:4:10",
+   "stratum": "hard",
+   "crop": "ac78c4a87bda7752",
+   "question_sha": "8deed0adb20f47b5",
+   "text_sha": "4a0ef64cf3e988a1"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:189:6:6",
+   "stratum": "hard",
+   "crop": "8881e1da9ff104f9",
+   "question_sha": "36039d3b5a9ca890",
+   "text_sha": "909b1bf3ae59c42b"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:62:26:43",
+   "stratum": "hard",
+   "crop": "0d18f0d5d245bcef",
+   "question_sha": "44ee6ae217d97d51",
+   "text_sha": "247fbdb3a8e166bd"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:39:18:12",
+   "stratum": "hard",
+   "crop": "9c0814fa2fbc0484",
+   "question_sha": "aeb72a14feab41b0",
+   "text_sha": "92f23588517d61ee"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:34:14:16",
+   "stratum": "hard",
+   "crop": "609a4f2562595f98",
+   "question_sha": "e5780545d4bc7cb9",
+   "text_sha": "905772731cad5f1c"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:262:10:27",
+   "stratum": "hard",
+   "crop": "fb14d5f4e7fa1133",
+   "question_sha": "9a1e013e810b2f3e",
+   "text_sha": "f7a10bf7b29c4a28"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:154:26:3",
+   "stratum": "hard",
+   "crop": "ba62d78a4f5b82be",
+   "question_sha": "70bd4db5e32e79f4",
+   "text_sha": "81d19e74029fdddb"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:27:7:20",
+   "stratum": "hard",
+   "crop": "98c915859095b701",
+   "question_sha": "367e046756e22800",
+   "text_sha": "8c233d56517ddc61"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:138:3:0",
+   "stratum": "hard",
+   "crop": "ca3eb785ac2bf3f3",
+   "question_sha": "dbf7f780dffeb7a0",
+   "text_sha": "3f332dc57849b07b"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:139:23:6",
+   "stratum": "hard",
+   "crop": "0329fdca9495fbca",
+   "question_sha": "688bbfb4410f71ed",
+   "text_sha": "b337495b810a517f"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:70:16:22",
+   "stratum": "hard",
+   "crop": "8ae6b25a5b4bcc53",
+   "question_sha": "b101d23d2dcdf1ea",
+   "text_sha": "82558ecbc748cca0"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:317:15:0",
+   "stratum": "hard",
+   "crop": "8874a605172a45da",
+   "question_sha": "e629d863aaefdb45",
+   "text_sha": "bf89e7666e1303d8"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:216:24:8",
+   "stratum": "hard",
+   "crop": "5250294820bbe028",
+   "question_sha": "6eab098eb5ef788e",
+   "text_sha": "56852e98fd480a7c"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:263:10:23",
+   "stratum": "control",
+   "crop": "1ce811029b56495b",
+   "question_sha": "1acd78d932c386c8",
+   "text_sha": "278a587af3e85e87"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:207:1:29",
+   "stratum": "control",
+   "crop": "61c7f0a68583a01c",
+   "question_sha": "e4ee57040b9d9474",
+   "text_sha": "0ebb8054d6a6be2e"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:295:16:0",
+   "stratum": "control",
+   "crop": "eb180a3cb8a60475",
+   "question_sha": "2e40614c332c47b8",
+   "text_sha": "4a14e359db0f6264"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:215:18:9",
+   "stratum": "control",
+   "crop": "052b802edf94d60a",
+   "question_sha": "e052e8fcf07ae99a",
+   "text_sha": "b514923cfd89e44c"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:176:17:45",
+   "stratum": "control",
+   "crop": "6369a2ed9dfdaed6",
+   "question_sha": "3daf289ed63b910d",
+   "text_sha": "fd35285be89a6395"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:209:29:10",
+   "stratum": "control",
+   "crop": "686dc7baf166e915",
+   "question_sha": "a33187e50c121a17",
+   "text_sha": "86ce836c28a05a36"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:129:11:26",
+   "stratum": "control",
+   "crop": "c32b188cceeb15ec",
+   "question_sha": "c71aebe5a03880bb",
+   "text_sha": "4538b18878c0803d"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:57:22:0",
+   "stratum": "control",
+   "crop": "1aecd971a06b6f78",
+   "question_sha": "4532dd0db15162db",
+   "text_sha": "8e9ed4ada13d9566"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:68:21:18",
+   "stratum": "control",
+   "crop": "482f0a6e4f826c79",
+   "question_sha": "eb2a8179aa11a7ab",
+   "text_sha": "4ed8c54b910934de"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:178:22:23",
+   "stratum": "control",
+   "crop": "7566915ff1c51611",
+   "question_sha": "63ef2ace0d057c76",
+   "text_sha": "fde4b5fabc5f5cc0"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:239:3:20",
+   "stratum": "control",
+   "crop": "a998cacdaa8e5bc8",
+   "question_sha": "d42ce43d9346b1f4",
+   "text_sha": "74142b120dc36937"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:177:0:0",
+   "stratum": "control",
+   "crop": "0a34f0168680f678",
+   "question_sha": "d8a145ba80f5c657",
+   "text_sha": "6384339ecf7bb614"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:45:15:19",
+   "stratum": "control",
+   "crop": "30773d816642bd33",
+   "question_sha": "f36d71128ca1028f",
+   "text_sha": "437f90287304221c"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:51:4:9",
+   "stratum": "control",
+   "crop": "eaa0d22dcdc94293",
+   "question_sha": "fc0e7f30641c4177",
+   "text_sha": "eec02ca4e5df0b1a"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:174:26:12",
+   "stratum": "control",
+   "crop": "4642dd53b5e57305",
+   "question_sha": "e0dfc000a5911ae2",
+   "text_sha": "4b4069bde19b0239"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:35:28:0",
+   "stratum": "control",
+   "crop": "3a4c9886300365bb",
+   "question_sha": "b26f914ffa48af94",
+   "text_sha": "99e1d63c2d399616"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:50:8:42",
+   "stratum": "control",
+   "crop": "7fc331d5c43d3b88",
+   "question_sha": "9f14861b8f7dac53",
+   "text_sha": "cb937fd8f754a52f"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:174:25:29",
+   "stratum": "control",
+   "crop": "3232735f18a4acad",
+   "question_sha": "5ac1c6f9b0754a3c",
+   "text_sha": "88a43ed64266fe4e"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:73:17:47",
+   "stratum": "control",
+   "crop": "8c15ae4602f811a3",
+   "question_sha": "83555b0ea29cc7a0",
+   "text_sha": "8375f47ce792424e"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:313:22:0",
+   "stratum": "control",
+   "crop": "faa2c1b407d3f6e9",
+   "question_sha": "c85f9b5cd92a2640",
+   "text_sha": "3a2d89efcf7a48d6"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:25:23:46",
+   "stratum": "control",
+   "crop": "7bcd9f6189433728",
+   "question_sha": "fcd62c1cd36aa4a3",
+   "text_sha": "4f7be24d4c2b9395"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:188:22:15",
+   "stratum": "control",
+   "crop": "004a947c4722ecca",
+   "question_sha": "0b588e3a68dc0473",
+   "text_sha": "e5054aee17675430"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:181:10:18",
+   "stratum": "control",
+   "crop": "9a97760eb1e34233",
+   "question_sha": "f5eb85be8abd3b7e",
+   "text_sha": "c4ce60a995a63037"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:292:10:0",
+   "stratum": "control",
+   "crop": "2a6deb88efcae825",
+   "question_sha": "86df82acc196e329",
+   "text_sha": "fadc821cbf5ea11f"
+  },
+  {
+   "id": "het-ijzige-land--ia-scan:175:5:9",
+   "stratum": "control",
+   "crop": "1fbf1ca0d05bf8c5",
+   "question_sha": "0b391b1084411438",
+   "text_sha": "e8c8da9efcd13514"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:16:20:36",
+   "stratum": "hard",
+   "crop": "0840ebacf1a3a6e5",
+   "question_sha": "ceba3a98e0841bc3",
+   "text_sha": "9b67d39b6001f951"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:83:7:30",
+   "stratum": "hard",
+   "crop": "0930b30eccbfb05a",
+   "question_sha": "7b4a120925991284",
+   "text_sha": "98e45f44bf5eff02"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:56:24:8",
+   "stratum": "hard",
+   "crop": "628f6db0fd4fca9e",
+   "question_sha": "c2ffc96a603b8b6c",
+   "text_sha": "d670cc8443507a71"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:46:8:49",
+   "stratum": "hard",
+   "crop": "78b3637a36b7f34a",
+   "question_sha": "ac9dde0a5dc03d90",
+   "text_sha": "7497facb17131e02"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:28:7:4",
+   "stratum": "hard",
+   "crop": "072d02729cf81425",
+   "question_sha": "dec4c07589c6d839",
+   "text_sha": "6a93baad47f8abc0"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:63:12:13",
+   "stratum": "hard",
+   "crop": "7ee7cd0f0b5efb96",
+   "question_sha": "e130f8b52be5d8c3",
+   "text_sha": "496e3a540e6da312"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:26:13:38",
+   "stratum": "hard",
+   "crop": "e319784dbf5a4cc1",
+   "question_sha": "8f6673da9d8f2dbe",
+   "text_sha": "2401ecdcad0d0c1c"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:35:4:39",
+   "stratum": "hard",
+   "crop": "4c452c0f13663574",
+   "question_sha": "7f35249c30bc5fde",
+   "text_sha": "911fa779c15dfeed"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:87:17:23",
+   "stratum": "hard",
+   "crop": "7f364ce79e1910d2",
+   "question_sha": "0a240d1c8aa7c2b0",
+   "text_sha": "bc72b9bea855c6a7"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:95:20:40",
+   "stratum": "hard",
+   "crop": "2a3e6f8d4326e9c2",
+   "question_sha": "3a311a766b8721aa",
+   "text_sha": "1f18c306a598ef85"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:39:3:8",
+   "stratum": "hard",
+   "crop": "68e826a6edd176d4",
+   "question_sha": "158aaa35d379e371",
+   "text_sha": "60a505ce450c8011"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:83:0:25",
+   "stratum": "hard",
+   "crop": "9f52041e478604f3",
+   "question_sha": "f375edb951cbe993",
+   "text_sha": "9d416a580c4d22a0"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:31:8:3",
+   "stratum": "hard",
+   "crop": "8f1c36ceae76867d",
+   "question_sha": "974e5e5250c1e499",
+   "text_sha": "4bbcdf7b0bde3916"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:14:17:36",
+   "stratum": "hard",
+   "crop": "54acc0a2bc6a2026",
+   "question_sha": "369cf72dd06f6a2a",
+   "text_sha": "6a728c518e9bbaf9"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:73:12:9",
+   "stratum": "hard",
+   "crop": "3c190de81799690c",
+   "question_sha": "3afbba43677a45e8",
+   "text_sha": "b8c54cc29b2b453f"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:34:12:0",
+   "stratum": "hard",
+   "crop": "fa6b57c2151bf600",
+   "question_sha": "84d17fb80b843d86",
+   "text_sha": "5e13f6e40ed2d309"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:72:9:4",
+   "stratum": "hard",
+   "crop": "01065c29bab64584",
+   "question_sha": "7731c183bf2b9e44",
+   "text_sha": "d6f17f9aeb9b670d"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:39:7:22",
+   "stratum": "hard",
+   "crop": "02d2158b7a4e4402",
+   "question_sha": "d4257f55f449c3e8",
+   "text_sha": "78e7fdb53061e555"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:16:27:25",
+   "stratum": "hard",
+   "crop": "7acdda0fe46cc3fd",
+   "question_sha": "53d2ecf518950453",
+   "text_sha": "8428cbdade451659"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:55:6:23",
+   "stratum": "hard",
+   "crop": "dd945d70bb333274",
+   "question_sha": "a766edacaa66ee97",
+   "text_sha": "f40395f58683e912"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:87:3:11",
+   "stratum": "hard",
+   "crop": "d4a21eba72d0a28d",
+   "question_sha": "bacfdbdf3f842e6b",
+   "text_sha": "c34c579c8dfeb468"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:33:7:13",
+   "stratum": "hard",
+   "crop": "93b2b4ced8bc957d",
+   "question_sha": "0f29bcb78c8108b0",
+   "text_sha": "4b4bd72642f75ceb"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:79:14:24",
+   "stratum": "hard",
+   "crop": "e09356a382c7dab4",
+   "question_sha": "8e9b60f7ae19e1d0",
+   "text_sha": "389bc181b799e362"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:71:9:15",
+   "stratum": "hard",
+   "crop": "1869a4ce0c30ba0e",
+   "question_sha": "3f0ef57ca19a7acb",
+   "text_sha": "09237f55726ba57d"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:59:23:17",
+   "stratum": "hard",
+   "crop": "47b119e69fb2253d",
+   "question_sha": "d9922ca826a61b5e",
+   "text_sha": "fbac070aadd18fff"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:90:15:28",
+   "stratum": "control",
+   "crop": "6df70546efa52938",
+   "question_sha": "cecf935a01263d25",
+   "text_sha": "7f7aac3759d1ad78"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:26:15:0",
+   "stratum": "control",
+   "crop": "d0c61d3da2ee0f4e",
+   "question_sha": "7aad258c9485d54e",
+   "text_sha": "d78249622f5cbdae"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:13:20:11",
+   "stratum": "control",
+   "crop": "46c55dcaa6e1bf64",
+   "question_sha": "5a1392068e166672",
+   "text_sha": "d421717a3c80f5f3"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:47:12:21",
+   "stratum": "control",
+   "crop": "443a1d6c5fd22cb1",
+   "question_sha": "92a1844c1dbc7e93",
+   "text_sha": "af93d835c598e551"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:53:5:22",
+   "stratum": "control",
+   "crop": "fc3ce2da5d74edd2",
+   "question_sha": "3acaf38da24ecd95",
+   "text_sha": "7f49bf5da3b2254e"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:94:28:43",
+   "stratum": "control",
+   "crop": "a0f07b7998a61b55",
+   "question_sha": "b9c2981357c64297",
+   "text_sha": "7160727a654f3a51"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:15:17:4",
+   "stratum": "control",
+   "crop": "0c4c72421aafb51f",
+   "question_sha": "a169f9a7e6e390dd",
+   "text_sha": "9a90aaf6ef6f13e7"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:81:34:13",
+   "stratum": "control",
+   "crop": "cef37aa807b58e6c",
+   "question_sha": "428f9e004cad8981",
+   "text_sha": "906f63ca159ca0ce"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:41:34:45",
+   "stratum": "control",
+   "crop": "327dd640fa4b7059",
+   "question_sha": "2d956c8d14afbeba",
+   "text_sha": "2f0817ed44621168"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:29:13:7",
+   "stratum": "control",
+   "crop": "3b03c013dc037613",
+   "question_sha": "1c8e99f8751c2c00",
+   "text_sha": "b10b8a79b29246c1"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:35:28:49",
+   "stratum": "control",
+   "crop": "fd541897d3a7b8fb",
+   "question_sha": "6b8334aaa8ead412",
+   "text_sha": "339e20c9826e5fea"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:63:14:7",
+   "stratum": "control",
+   "crop": "f48774da44161254",
+   "question_sha": "333bc8551c5fd7fe",
+   "text_sha": "f5fe715a43a0726c"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:25:10:0",
+   "stratum": "control",
+   "crop": "138563e2a4f9365e",
+   "question_sha": "0012f00902d48605",
+   "text_sha": "ca5e2a1149f4460a"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:65:15:0",
+   "stratum": "control",
+   "crop": "bfe1ec70760dde1e",
+   "question_sha": "cb9571b5d12ce96e",
+   "text_sha": "7029f8236823fdb1"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:51:11:0",
+   "stratum": "control",
+   "crop": "5bcbeb7f09d96909",
+   "question_sha": "56ec718de8217b50",
+   "text_sha": "9aae2437477b6812"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:44:24:0",
+   "stratum": "control",
+   "crop": "3d814e8d42647fb6",
+   "question_sha": "2c12dd97da303ce0",
+   "text_sha": "59bafc852df9e563"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:27:7:12",
+   "stratum": "control",
+   "crop": "ff46fb387f320afd",
+   "question_sha": "6de501d0a0bd5d82",
+   "text_sha": "ecabea1393238bbe"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:15:20:36",
+   "stratum": "control",
+   "crop": "7d18a400fa460bf9",
+   "question_sha": "a2a5cfdc70f51402",
+   "text_sha": "3277cfe402c52be8"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:39:16:4",
+   "stratum": "control",
+   "crop": "d23cb00ee6867f47",
+   "question_sha": "f48725660c8d16b1",
+   "text_sha": "802192dd57894a2d"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:52:32:0",
+   "stratum": "control",
+   "crop": "282b37cf7bbd3514",
+   "question_sha": "bd7b278e5cb267ec",
+   "text_sha": "fc125bc82f9be399"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:51:2:37",
+   "stratum": "control",
+   "crop": "3b83f81f0f522144",
+   "question_sha": "573bcc1976ae6902",
+   "text_sha": "ba9d0bfa92c9f5e2"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:65:12:8",
+   "stratum": "control",
+   "crop": "d0a19c2642d991a3",
+   "question_sha": "e0716ed481a7c584",
+   "text_sha": "6a2f66fd6528769c"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:47:11:20",
+   "stratum": "control",
+   "crop": "2e3b6065b2ee00be",
+   "question_sha": "529c2d234a9cc9f7",
+   "text_sha": "1195ce9e639e3e59"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:47:17:0",
+   "stratum": "control",
+   "crop": "083219a1f77cc062",
+   "question_sha": "39d5d5a1f41c6521",
+   "text_sha": "6def70edd10a244b"
+  },
+  {
+   "id": "de-eerlijke-vinder--ia-scan:78:8:0",
+   "stratum": "control",
+   "crop": "bef963c2c6404ca1",
+   "question_sha": "671f46350ee65e96",
+   "text_sha": "af44cce049951bc3"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:63:9:36",
+   "stratum": "hard",
+   "crop": "1b9e04cca6372956",
+   "question_sha": "683f6a8251d5c5ba",
+   "text_sha": "6eae43107c478ea8"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:41:15:32",
+   "stratum": "hard",
+   "crop": "798054ac43a3c48c",
+   "question_sha": "9b00ffce3f10e15d",
+   "text_sha": "16c213f9614aaee4"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:31:1:30",
+   "stratum": "hard",
+   "crop": "992092d309b3ebf6",
+   "question_sha": "516d887037e5a6e4",
+   "text_sha": "a3e680ff4452805f"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:60:26:5",
+   "stratum": "hard",
+   "crop": "42b73fc4bb0ccb71",
+   "question_sha": "4e2a53284c84bdd8",
+   "text_sha": "a510e256d5676a77"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:22:5:11",
+   "stratum": "hard",
+   "crop": "efba06a20c7abd8d",
+   "question_sha": "4c8098b6904ec38f",
+   "text_sha": "faeda6ffe317e337"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:23:14:50",
+   "stratum": "hard",
+   "crop": "4c1eded5e394eb9f",
+   "question_sha": "183a00c200369f24",
+   "text_sha": "380f957d918dcde5"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:60:11:12",
+   "stratum": "hard",
+   "crop": "8a7c64fb898a57c3",
+   "question_sha": "f58a34c601bf701c",
+   "text_sha": "d1959c933b60cf5c"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:76:9:37",
+   "stratum": "hard",
+   "crop": "421f9ade42cfb7f9",
+   "question_sha": "fc8c9f2634c0413d",
+   "text_sha": "c0f6f887040140bc"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:37:24:46",
+   "stratum": "hard",
+   "crop": "c21608931da9d460",
+   "question_sha": "ae8ddba1030830e5",
+   "text_sha": "44ecfd9f2c1463b0"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:78:21:7",
+   "stratum": "hard",
+   "crop": "32a53ce8ed1f42a9",
+   "question_sha": "93990bf8db29aceb",
+   "text_sha": "1049991e5166a3fe"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:50:21:10",
+   "stratum": "hard",
+   "crop": "3e9f20fc15d05c5a",
+   "question_sha": "b98965993eb394e0",
+   "text_sha": "591e31d9d7463ca9"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:23:19:3",
+   "stratum": "hard",
+   "crop": "705b13ec435e1d17",
+   "question_sha": "14809e1ce7e5ef54",
+   "text_sha": "eb9dcd9f899a34cf"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:62:3:0",
+   "stratum": "hard",
+   "crop": "78fa2bccecbb653a",
+   "question_sha": "a3c05b9020ed5a94",
+   "text_sha": "cf8c474ea54fda5e"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:33:11:35",
+   "stratum": "hard",
+   "crop": "3ca3deba722619d3",
+   "question_sha": "647cbb2369aba4f5",
+   "text_sha": "f1759a56c25284c0"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:84:19:7",
+   "stratum": "hard",
+   "crop": "edb9118b3e8febde",
+   "question_sha": "8b0b9d585368d94d",
+   "text_sha": "f0909853dbc624ef"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:68:14:15",
+   "stratum": "hard",
+   "crop": "a662f7c8de6e5280",
+   "question_sha": "043c4acf372c914d",
+   "text_sha": "b3de38b4072c3051"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:74:1:0",
+   "stratum": "hard",
+   "crop": "a99258dc7a8cfdbd",
+   "question_sha": "b705d95ffb140a58",
+   "text_sha": "e70300586cfebd08"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:91:29:57",
+   "stratum": "hard",
+   "crop": "278a4aa86a7fc2d7",
+   "question_sha": "8d8c210e5cb1995e",
+   "text_sha": "9e3a283ce6bcac42"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:74:17:0",
+   "stratum": "hard",
+   "crop": "4e478cb26f430827",
+   "question_sha": "2006570d97f25392",
+   "text_sha": "4a771bb17743603e"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:67:28:28",
+   "stratum": "hard",
+   "crop": "c03c540e58835580",
+   "question_sha": "f4b861e869a2ee58",
+   "text_sha": "5bf1da8d25acb581"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:65:11:46",
+   "stratum": "hard",
+   "crop": "0fbd8c2629bd7d01",
+   "question_sha": "16cd8f689a284bb8",
+   "text_sha": "d9c8425fb003a8c8"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:32:22:13",
+   "stratum": "hard",
+   "crop": "e1eed1ca326271fd",
+   "question_sha": "54cd5abda3651b09",
+   "text_sha": "acaa80e10f9ccf6d"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:17:29:32",
+   "stratum": "hard",
+   "crop": "2ed66cdc70d2900b",
+   "question_sha": "413687f6d5c8a367",
+   "text_sha": "b6aecef8455bf709"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:51:26:43",
+   "stratum": "hard",
+   "crop": "fd7bb6f6a67fd5df",
+   "question_sha": "eecff58b064c2729",
+   "text_sha": "cba43c8425e064f8"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:44:22:6",
+   "stratum": "hard",
+   "crop": "363b175d56c9ea29",
+   "question_sha": "c08ac5e461e2f2ce",
+   "text_sha": "a648c129a962e38d"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:12:26:0",
+   "stratum": "control",
+   "crop": "0876f919e9fc7781",
+   "question_sha": "e29f468ef93f6ddb",
+   "text_sha": "fac710546f7bf7e0"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:56:26:5",
+   "stratum": "control",
+   "crop": "3b317e737e63d499",
+   "question_sha": "58006b255dd9cf46",
+   "text_sha": "940d811a1f52a8f8"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:21:32:35",
+   "stratum": "control",
+   "crop": "3c31a3538986c653",
+   "question_sha": "d401e55d4c527fdb",
+   "text_sha": "5a7ade88048946c1"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:88:10:33",
+   "stratum": "control",
+   "crop": "cea517ed5085c9ae",
+   "question_sha": "ffde044051edd3a9",
+   "text_sha": "fb3d7058228904a8"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:21:24:32",
+   "stratum": "control",
+   "crop": "1fec285492d53256",
+   "question_sha": "c4cbb0f08467fb88",
+   "text_sha": "07ae5ed9160324bb"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:29:20:0",
+   "stratum": "control",
+   "crop": "90c4364932a08ecf",
+   "question_sha": "48bab41425cbaed2",
+   "text_sha": "a142e497cfa4043e"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:59:4:33",
+   "stratum": "control",
+   "crop": "3c28e89d073e5f71",
+   "question_sha": "ca2ce221dcdac602",
+   "text_sha": "ec812c2f458bc44d"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:49:0:10",
+   "stratum": "control",
+   "crop": "379df99b010930c9",
+   "question_sha": "85578cacdbb59359",
+   "text_sha": "b7ee3622bbf3763f"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:74:16:51",
+   "stratum": "control",
+   "crop": "8953aa585fcdfc7f",
+   "question_sha": "8f47e527170fcc9d",
+   "text_sha": "02e962b06ff589b4"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:58:29:5",
+   "stratum": "control",
+   "crop": "03c4b8fbd509d937",
+   "question_sha": "97dd34f063122b84",
+   "text_sha": "38ba185187f58260"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:91:4:21",
+   "stratum": "control",
+   "crop": "bd9a035e3b8801c5",
+   "question_sha": "374ee4efa17bdabe",
+   "text_sha": "fc9990a62b46cf06"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:30:26:16",
+   "stratum": "control",
+   "crop": "ed20be7bf10601bf",
+   "question_sha": "7f8e283bb8e755bd",
+   "text_sha": "3b9708c1fbd1d860"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:78:16:35",
+   "stratum": "control",
+   "crop": "e78bfc0b3c572db0",
+   "question_sha": "6783d6017ea3b059",
+   "text_sha": "85658c17ad15296c"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:59:6:0",
+   "stratum": "control",
+   "crop": "b492eb387e88c4f5",
+   "question_sha": "94124060c0209e0d",
+   "text_sha": "e2f43ccd53c70371"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:47:32:0",
+   "stratum": "control",
+   "crop": "24827b2e8f1cf6d3",
+   "question_sha": "2103355a1bef71d1",
+   "text_sha": "563e0a77f46814c8"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:82:18:17",
+   "stratum": "control",
+   "crop": "8ce50dd25fed6096",
+   "question_sha": "fa749c1ceae59ac5",
+   "text_sha": "91a119c2bbe27d54"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:52:20:11",
+   "stratum": "control",
+   "crop": "65bcef093121060c",
+   "question_sha": "13828399f6a09d07",
+   "text_sha": "9ff4c8443d595f01"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:23:2:0",
+   "stratum": "control",
+   "crop": "44f3afea93579d1d",
+   "question_sha": "5cc24a9e6d139471",
+   "text_sha": "d869a0ad980d38dc"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:40:12:0",
+   "stratum": "control",
+   "crop": "0bcb75dd52e2c5c6",
+   "question_sha": "b9bfa78a9a025735",
+   "text_sha": "2fa55809e923ec36"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:61:8:31",
+   "stratum": "control",
+   "crop": "43b173ce2090583b",
+   "question_sha": "a2b4ef2c96b6c456",
+   "text_sha": "a9f0983d23948c98"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:82:1:49",
+   "stratum": "control",
+   "crop": "820893b457f84d00",
+   "question_sha": "43645c3f952745e7",
+   "text_sha": "8d9d9e360ff1b385"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:54:32:0",
+   "stratum": "control",
+   "crop": "be5abbb988f59528",
+   "question_sha": "6cdb7fa91d7f9dd1",
+   "text_sha": "6c729e8efccd351c"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:72:23:0",
+   "stratum": "control",
+   "crop": "7c4a960bcc0b43a5",
+   "question_sha": "65c8ac5408b8d4e6",
+   "text_sha": "5d781967350ddcab"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:20:23:0",
+   "stratum": "control",
+   "crop": "b9abfe337254240f",
+   "question_sha": "00dc0a116175b466",
+   "text_sha": "91e2e7695ba93a0e"
+  },
+  {
+   "id": "monterosso-mon-amour--ia-scan:55:15:0",
+   "stratum": "control",
+   "crop": "8f57c70345d8c128",
+   "question_sha": "aae579065d22631e",
+   "text_sha": "a35933aaf7c4e9fc"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:236:10:13",
+   "stratum": "hard",
+   "crop": "1dde7c18fd013f63",
+   "question_sha": "825f392d91a5f7aa",
+   "text_sha": "a7cdba2a99be4098"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:17:24:29",
+   "stratum": "hard",
+   "crop": "aad41f08b551f977",
+   "question_sha": "55d65fde0eb70516",
+   "text_sha": "7b616e3bed585caf"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:239:1:24",
+   "stratum": "hard",
+   "crop": "c9d5bc3aa353f172",
+   "question_sha": "d826a9389d0e7716",
+   "text_sha": "23937a80dbde246a"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:208:16:23",
+   "stratum": "hard",
+   "crop": "565467689f8bc092",
+   "question_sha": "414c0fba45025f64",
+   "text_sha": "27a01319f274782f"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:245:6:0",
+   "stratum": "hard",
+   "crop": "fe76ca90bafe3671",
+   "question_sha": "569447ad1c2eb692",
+   "text_sha": "657eefa33815d7b4"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:134:1:4",
+   "stratum": "hard",
+   "crop": "39bd0795dcf60ce7",
+   "question_sha": "9af2e012066e95ee",
+   "text_sha": "3eb6c585892550df"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:226:10:57",
+   "stratum": "hard",
+   "crop": "645d153b532b41fd",
+   "question_sha": "0bb4574669f918ac",
+   "text_sha": "d8473a949b1fcc26"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:191:14:55",
+   "stratum": "hard",
+   "crop": "bcf62b88a871b7fa",
+   "question_sha": "0be685405df16fa7",
+   "text_sha": "f8d1fde9e28699f9"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:257:27:13",
+   "stratum": "hard",
+   "crop": "e1d19ef8c55be737",
+   "question_sha": "01ed6b42668c34a6",
+   "text_sha": "8f1c5a0c37718bc8"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:68:16:55",
+   "stratum": "hard",
+   "crop": "163bcc7de379b94a",
+   "question_sha": "aecc0921d8b0ef03",
+   "text_sha": "0ed2ba33b32cd194"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:123:4:4",
+   "stratum": "hard",
+   "crop": "e3700b4631a73b40",
+   "question_sha": "5c20fd00ec5fcaf5",
+   "text_sha": "05098d75b84397f5"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:84:1:22",
+   "stratum": "hard",
+   "crop": "e336176737d963ac",
+   "question_sha": "df832d8785f332ee",
+   "text_sha": "6bacc501c0c69bac"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:188:16:54",
+   "stratum": "hard",
+   "crop": "d29ae27a814d32f7",
+   "question_sha": "ce9dacd8f7043114",
+   "text_sha": "6fd1267706c8e59c"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:84:15:15",
+   "stratum": "hard",
+   "crop": "b7fbbae11df872f8",
+   "question_sha": "f24adcfec2c6cebd",
+   "text_sha": "5ff9f01015a6b720"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:294:25:43",
+   "stratum": "hard",
+   "crop": "5943bd4d65848e20",
+   "question_sha": "0368801ae17c6479",
+   "text_sha": "19cf76338f3de9a7"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:106:1:38",
+   "stratum": "hard",
+   "crop": "29419d7504c96cbd",
+   "question_sha": "d0846898cd747eca",
+   "text_sha": "47c5a179ca4aeead"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:246:24:54",
+   "stratum": "hard",
+   "crop": "306fdb913ac543f6",
+   "question_sha": "90f91604fbff5c5a",
+   "text_sha": "7baf82c52f011f52"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:234:13:3",
+   "stratum": "hard",
+   "crop": "ef8834b654e93945",
+   "question_sha": "f42e303c2ddf43db",
+   "text_sha": "1a8d19d15f84f94c"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:309:3:34",
+   "stratum": "hard",
+   "crop": "e05de3b1ed89c570",
+   "question_sha": "f1560e806748dd14",
+   "text_sha": "6083d7afd24d4998"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:240:1:24",
+   "stratum": "hard",
+   "crop": "69e26b0480dccb31",
+   "question_sha": "ea66f2f2cf7bc804",
+   "text_sha": "2b6f265dbbddc554"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:243:0:4",
+   "stratum": "hard",
+   "crop": "a8b8424cb227cafa",
+   "question_sha": "30d8e951a5a9788e",
+   "text_sha": "052e749ebc794612"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:115:18:38",
+   "stratum": "hard",
+   "crop": "1c5dc9f3e920e323",
+   "question_sha": "bc8b870f7cc7b2da",
+   "text_sha": "d8aba3c3b0e11fb0"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:152:7:59",
+   "stratum": "hard",
+   "crop": "d96f7f603727e9d8",
+   "question_sha": "9e68dada1223ea6f",
+   "text_sha": "a88096b7958a431b"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:249:4:4",
+   "stratum": "hard",
+   "crop": "c9d74421124962aa",
+   "question_sha": "832e1ea041ddd7f5",
+   "text_sha": "266a468bc126d398"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:216:15:6",
+   "stratum": "hard",
+   "crop": "507db54a71c629a8",
+   "question_sha": "ca8fdd09ece8def8",
+   "text_sha": "c376994c73856b93"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:319:11:0",
+   "stratum": "control",
+   "crop": "6e660f9916c1eb5d",
+   "question_sha": "00c8b48f549ddf93",
+   "text_sha": "458224b9514e21b7"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:201:28:25",
+   "stratum": "control",
+   "crop": "c357b4f767f23366",
+   "question_sha": "5063f055b179cd48",
+   "text_sha": "33f78d6669006403"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:72:21:15",
+   "stratum": "control",
+   "crop": "f0ae08ded724d8d5",
+   "question_sha": "576bdd6b3b0483ba",
+   "text_sha": "15a1d9cefabeaca6"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:151:22:61",
+   "stratum": "control",
+   "crop": "9e1ca163c707fbb8",
+   "question_sha": "0014ee82d098d233",
+   "text_sha": "cd6db4eb9ba40627"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:177:8:30",
+   "stratum": "control",
+   "crop": "eef3a58353eaffbb",
+   "question_sha": "6e3443af4624a1e4",
+   "text_sha": "c4bb83cb4d76543b"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:238:1:0",
+   "stratum": "control",
+   "crop": "343cbf5ce9ed5967",
+   "question_sha": "e171e4b9618b7b2c",
+   "text_sha": "07e1308722041eaf"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:239:7:46",
+   "stratum": "control",
+   "crop": "430a96fbe0622274",
+   "question_sha": "746d13fa013211c5",
+   "text_sha": "43b249a011401214"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:52:18:14",
+   "stratum": "control",
+   "crop": "f60f3498657d4ef9",
+   "question_sha": "5d2a7fbbae9eb35e",
+   "text_sha": "d983ec9af182a223"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:189:16:0",
+   "stratum": "control",
+   "crop": "d1b5cb55f702f8be",
+   "question_sha": "3e8be3a1986a28a6",
+   "text_sha": "01f97e94dd959ff3"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:271:22:25",
+   "stratum": "control",
+   "crop": "dc36737ddba692f9",
+   "question_sha": "0de43aca08201b97",
+   "text_sha": "0804dbe51afafaf8"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:96:19:26",
+   "stratum": "control",
+   "crop": "6db14216f1bcafe7",
+   "question_sha": "1da0aa5ef89e221b",
+   "text_sha": "4e96d5736c91c889"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:130:14:45",
+   "stratum": "control",
+   "crop": "495e4207d145e7e6",
+   "question_sha": "3c01fd6dd37a6956",
+   "text_sha": "560d46f8e18a28b7"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:15:5:57",
+   "stratum": "control",
+   "crop": "d1c54877c9a6878a",
+   "question_sha": "4cb9ede428a1616e",
+   "text_sha": "2be6917fe44e210d"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:290:0:17",
+   "stratum": "control",
+   "crop": "eae87efed6e0ecff",
+   "question_sha": "de13cfdba98f4f47",
+   "text_sha": "f9de125286b0afaf"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:254:0:16",
+   "stratum": "control",
+   "crop": "4bfec0e5dbd45239",
+   "question_sha": "74efd4839b171be4",
+   "text_sha": "a915ae1b926e7155"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:173:8:17",
+   "stratum": "control",
+   "crop": "f5404bdb0174f213",
+   "question_sha": "8584d73de8be3fc3",
+   "text_sha": "c81ad60a2c466909"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:235:8:12",
+   "stratum": "control",
+   "crop": "cf9f0e7d4ad1903d",
+   "question_sha": "2fd903cbb237eca1",
+   "text_sha": "aa53239ffd214e61"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:177:6:31",
+   "stratum": "control",
+   "crop": "b254433c1ddb12ad",
+   "question_sha": "42862aa081c2c001",
+   "text_sha": "802b15123d6b78c7"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:17:3:9",
+   "stratum": "control",
+   "crop": "04c94c0f91c6e247",
+   "question_sha": "b15ae9fb407d179f",
+   "text_sha": "58a796442f62f554"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:100:21:18",
+   "stratum": "control",
+   "crop": "243d34903d3ddd8f",
+   "question_sha": "979132cd0b7a9be9",
+   "text_sha": "1ac4e57e4a0e0e80"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:131:13:31",
+   "stratum": "control",
+   "crop": "5142f7f4f81b3694",
+   "question_sha": "407fd2b0f3b80c96",
+   "text_sha": "a79113e773fb8e32"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:62:5:40",
+   "stratum": "control",
+   "crop": "0f16621547105f5d",
+   "question_sha": "6f9ab1e22ff44519",
+   "text_sha": "c841500bf7583d56"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:274:24:28",
+   "stratum": "control",
+   "crop": "98749948186a0a79",
+   "question_sha": "ca4da5251f7d28f5",
+   "text_sha": "16d6544ee2e72ec6"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:237:19:44",
+   "stratum": "control",
+   "crop": "36fed9e6bcabe906",
+   "question_sha": "84c1b8c7464a0633",
+   "text_sha": "afa41d99f8c8014f"
+  },
+  {
+   "id": "het-geluid-van-bananen--ia-scan:132:4:6",
+   "stratum": "control",
+   "crop": "dbc2beec8bd16b3b",
+   "question_sha": "d52afaf8d51f1ab7",
+   "text_sha": "558f6f468b833aab"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:230:12:33",
+   "stratum": "hard",
+   "crop": "166960318eadc32a",
+   "question_sha": "fb691a9844db9f55",
+   "text_sha": "dc5013635087106e"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:247:16:0",
+   "stratum": "hard",
+   "crop": "4f23fcf5a5829a91",
+   "question_sha": "cc3b60c47ebe3070",
+   "text_sha": "25bc966ab91c667f"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:95:3:27",
+   "stratum": "hard",
+   "crop": "bbe3cb16a74679db",
+   "question_sha": "56ed238a6239659f",
+   "text_sha": "698d1881a1a773cc"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:196:24:23",
+   "stratum": "hard",
+   "crop": "cf1eba13ca738ac7",
+   "question_sha": "0e6b5635710f7460",
+   "text_sha": "e1a324890f90f6fe"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:281:3:47",
+   "stratum": "hard",
+   "crop": "6173b46313f6e33e",
+   "question_sha": "21d93d82b9771511",
+   "text_sha": "df9ee4eeb31c040a"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:208:30:0",
+   "stratum": "hard",
+   "crop": "4e06f882f7c07a5f",
+   "question_sha": "612e6d162d407ee7",
+   "text_sha": "9f0e29f762a0bd21"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:56:21:11",
+   "stratum": "hard",
+   "crop": "6c91ef89d7274b43",
+   "question_sha": "5a2b77767648ca00",
+   "text_sha": "e8cad540578721d5"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:276:18:20",
+   "stratum": "hard",
+   "crop": "c68ec09cdefbfc79",
+   "question_sha": "db2274e0664cdc9f",
+   "text_sha": "0dd187f38e8bbbb2"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:228:6:0",
+   "stratum": "hard",
+   "crop": "85d4ad47c460d8dd",
+   "question_sha": "d78462788d36d361",
+   "text_sha": "52427fafa0e0f60c"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:118:18:8",
+   "stratum": "hard",
+   "crop": "ce3974a6c2a406d1",
+   "question_sha": "49178ed1aeb1b678",
+   "text_sha": "1608eff5ac5cab2f"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:319:0:15",
+   "stratum": "hard",
+   "crop": "5ca4d09adaa650ec",
+   "question_sha": "d42d4fcde0243398",
+   "text_sha": "3bd6fed8c039f615"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:195:31:28",
+   "stratum": "hard",
+   "crop": "93b8068e84bd3069",
+   "question_sha": "4f276ad84137f32e",
+   "text_sha": "8c19230c55310461"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:141:31:13",
+   "stratum": "hard",
+   "crop": "b01b7600a8f199b1",
+   "question_sha": "84eef1c1410a0c80",
+   "text_sha": "4c648afdb75fc460"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:253:15:0",
+   "stratum": "hard",
+   "crop": "9527c25d2a553375",
+   "question_sha": "3d582360fe91706b",
+   "text_sha": "5fb255e2b461c956"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:29:15:0",
+   "stratum": "hard",
+   "crop": "174a8e422037ab2f",
+   "question_sha": "982ddc9014d80a3b",
+   "text_sha": "1b8fe7742ca4e3ca"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:85:0:12",
+   "stratum": "hard",
+   "crop": "79a2a55d1d65f806",
+   "question_sha": "606477f1f0a4c2aa",
+   "text_sha": "a4056e86a6010cfe"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:135:30:0",
+   "stratum": "hard",
+   "crop": "157268bfe55a00ee",
+   "question_sha": "f768993a6a2cb61b",
+   "text_sha": "483044ed5cd66ac7"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:33:19:14",
+   "stratum": "hard",
+   "crop": "9b5812c32d4cb278",
+   "question_sha": "73dd97a778aeb9fa",
+   "text_sha": "6e813d239a2caef8"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:15:35:0",
+   "stratum": "hard",
+   "crop": "712913dc6f449e94",
+   "question_sha": "256c381bb7b3a694",
+   "text_sha": "c4a290b8b8b9d7b4"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:123:8:34",
+   "stratum": "hard",
+   "crop": "25c8ad2c9257fec7",
+   "question_sha": "779c04511a5108c7",
+   "text_sha": "aef2cb9c4c64b2a0"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:194:16:31",
+   "stratum": "hard",
+   "crop": "dc9f54351242593f",
+   "question_sha": "d2a2d23ebde2dbd1",
+   "text_sha": "02e9304967d182a0"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:228:21:0",
+   "stratum": "hard",
+   "crop": "033b1cd77ef3c753",
+   "question_sha": "4b2558b8ef65f7c6",
+   "text_sha": "809e582818173cff"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:239:18:50",
+   "stratum": "hard",
+   "crop": "2e3e5f38eafd2a39",
+   "question_sha": "c203acc332a876c0",
+   "text_sha": "3a6ccd0f1eb267b5"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:277:10:43",
+   "stratum": "hard",
+   "crop": "4c443df7e843cdd6",
+   "question_sha": "f09afde8d3170d44",
+   "text_sha": "ef75ad73a6a866b5"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:201:14:0",
+   "stratum": "hard",
+   "crop": "ed54e92fc27249fc",
+   "question_sha": "130076d6d591498a",
+   "text_sha": "bcad3425c0057e9a"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:48:17:33",
+   "stratum": "control",
+   "crop": "4be10524db0c7217",
+   "question_sha": "95eac82f7c238e7f",
+   "text_sha": "71c9bfdcf9497a14"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:265:24:0",
+   "stratum": "control",
+   "crop": "d4214af634d37a2d",
+   "question_sha": "c0e4943fc1cd6ae7",
+   "text_sha": "0b95fc355dd472d7"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:103:12:27",
+   "stratum": "control",
+   "crop": "3ee4ec253b8d0e9d",
+   "question_sha": "7663e357bf774402",
+   "text_sha": "2a5b50c7a111379a"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:136:12:37",
+   "stratum": "control",
+   "crop": "577e04d38ed0d12c",
+   "question_sha": "b526cf55f8301ad5",
+   "text_sha": "9eeead29bb8afc07"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:116:0:58",
+   "stratum": "control",
+   "crop": "9ac354cb171f5b87",
+   "question_sha": "67af832e34015685",
+   "text_sha": "905955c7e037eb16"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:312:23:0",
+   "stratum": "control",
+   "crop": "1ccf06a3897fc295",
+   "question_sha": "b40ee9583ee0e9bc",
+   "text_sha": "054ae600117085e9"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:271:21:58",
+   "stratum": "control",
+   "crop": "23c9f0f8855c528f",
+   "question_sha": "c1a18e399806d0d5",
+   "text_sha": "2db3e7883d3e2bd5"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:242:14:3",
+   "stratum": "control",
+   "crop": "5434b9970c559394",
+   "question_sha": "30cd8d04376ff038",
+   "text_sha": "e968f473c55dac23"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:85:0:0",
+   "stratum": "control",
+   "crop": "131c14cb922aa5fb",
+   "question_sha": "8822fbf6f47e86ed",
+   "text_sha": "85e90cd298b94026"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:220:24:0",
+   "stratum": "control",
+   "crop": "b7735e093f24a623",
+   "question_sha": "0813343567695c3a",
+   "text_sha": "9cf36f0fc41caacf"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:42:7:17",
+   "stratum": "control",
+   "crop": "c5508ca89e22b5b3",
+   "question_sha": "670fe890a8dc3959",
+   "text_sha": "2a6e7252a9fb22f3"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:22:12:39",
+   "stratum": "control",
+   "crop": "87f1770146a1e41e",
+   "question_sha": "a7726be5ce24852e",
+   "text_sha": "20ab0319538772ad"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:37:21:57",
+   "stratum": "control",
+   "crop": "969c8191728fbb38",
+   "question_sha": "f3904aab572e38a4",
+   "text_sha": "124925d725479eb7"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:284:20:46",
+   "stratum": "control",
+   "crop": "ba569d7657bc5dcf",
+   "question_sha": "0c1839dec9989ce2",
+   "text_sha": "ad700b5ef2f47c07"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:107:5:0",
+   "stratum": "control",
+   "crop": "bc371d149b03f89e",
+   "question_sha": "2bcf705d52c7d788",
+   "text_sha": "d63a3bf1c6d1d5e9"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:122:20:9",
+   "stratum": "control",
+   "crop": "9f18a9cbdf81a33b",
+   "question_sha": "ac023cc471a73e4e",
+   "text_sha": "76da9554751452de"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:196:27:33",
+   "stratum": "control",
+   "crop": "6f90728fb057f3bd",
+   "question_sha": "e0073ffb56501e69",
+   "text_sha": "ae4df9f54f0ebba2"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:133:20:0",
+   "stratum": "control",
+   "crop": "900ebfbf1f6f6cbb",
+   "question_sha": "414d57ee60d80bdb",
+   "text_sha": "0bac1e84bba26169"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:55:24:0",
+   "stratum": "control",
+   "crop": "a536336504e69e07",
+   "question_sha": "f5ac74eb6de353b8",
+   "text_sha": "050ddb54bab49e9e"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:195:27:45",
+   "stratum": "control",
+   "crop": "f1c976169aec99f6",
+   "question_sha": "ad75a165c4bac96f",
+   "text_sha": "7639bb56b32df77e"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:309:1:0",
+   "stratum": "control",
+   "crop": "8ae37d7ef643e80e",
+   "question_sha": "db29abbcf898886e",
+   "text_sha": "394705538a58099e"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:102:1:41",
+   "stratum": "control",
+   "crop": "51c41716b483db27",
+   "question_sha": "795123fce760df66",
+   "text_sha": "b0caa293fb0246c7"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:321:9:25",
+   "stratum": "control",
+   "crop": "e9c3a36c8fe9a0b2",
+   "question_sha": "e45b27b0f4348248",
+   "text_sha": "5d485a163bba3c68"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:273:21:0",
+   "stratum": "control",
+   "crop": "28860c787ca1916a",
+   "question_sha": "0038a7031c7c79cb",
+   "text_sha": "a8835590eb82c8f1"
+  },
+  {
+   "id": "het-schaduwhuis--ia-scan:72:0:33",
+   "stratum": "control",
+   "crop": "dc99a8f9e0596d4f",
+   "question_sha": "de63a5fd69b0be33",
+   "text_sha": "ddfb23131645a637"
+  },
+  {
+   "id": "au-pair--ia-scan:28:33:14",
+   "stratum": "hard",
+   "crop": "a14e5ee43f283fe0",
+   "question_sha": "e65bbbd5a5ab7770",
+   "text_sha": "a9dd1b7f3d6bec5c"
+  },
+  {
+   "id": "au-pair--ia-scan:116:14:0",
+   "stratum": "hard",
+   "crop": "d2baca1706ed7c52",
+   "question_sha": "970a254f24f23147",
+   "text_sha": "9a5c965c3ab39c96"
+  },
+  {
+   "id": "au-pair--ia-scan:84:33:12",
+   "stratum": "hard",
+   "crop": "5ca6865c95883698",
+   "question_sha": "efa57ec7496a68ed",
+   "text_sha": "e3c746413c708e0c"
+  },
+  {
+   "id": "au-pair--ia-scan:200:26:12",
+   "stratum": "hard",
+   "crop": "4026a6908c2fa0f6",
+   "question_sha": "99f26ce684bc31ca",
+   "text_sha": "8a57233c28081e94"
+  },
+  {
+   "id": "au-pair--ia-scan:130:35:24",
+   "stratum": "hard",
+   "crop": "e8ed45844ecf3bc7",
+   "question_sha": "2f3eb8dc2733ed6e",
+   "text_sha": "c43cafc8f2dcf12c"
+  },
+  {
+   "id": "au-pair--ia-scan:44:2:21",
+   "stratum": "hard",
+   "crop": "4baeeb470428dfc4",
+   "question_sha": "a24785004377fcda",
+   "text_sha": "9464f5eea6814f0c"
+  },
+  {
+   "id": "au-pair--ia-scan:145:18:24",
+   "stratum": "hard",
+   "crop": "eb6a8fa38f641e0a",
+   "question_sha": "cd1cfd0999c38869",
+   "text_sha": "03ce5918e66ea60a"
+  },
+  {
+   "id": "au-pair--ia-scan:184:25:20",
+   "stratum": "hard",
+   "crop": "92122fced15f4d91",
+   "question_sha": "137ea41c42d37cbb",
+   "text_sha": "39771d7c7b14e22e"
+  },
+  {
+   "id": "au-pair--ia-scan:156:30:46",
+   "stratum": "hard",
+   "crop": "fa495b36d169f6d2",
+   "question_sha": "5762f6a71b98c65b",
+   "text_sha": "d7790763e4c6d4af"
+  },
+  {
+   "id": "au-pair--ia-scan:69:21:55",
+   "stratum": "hard",
+   "crop": "e2449c7669abd01b",
+   "question_sha": "27970728c3bd6190",
+   "text_sha": "ff60c21233e6c861"
+  },
+  {
+   "id": "au-pair--ia-scan:132:11:0",
+   "stratum": "hard",
+   "crop": "dede67290be73bb0",
+   "question_sha": "6d7a8d7502f196b8",
+   "text_sha": "2ec52282fb78c4b3"
+  },
+  {
+   "id": "au-pair--ia-scan:43:24:4",
+   "stratum": "hard",
+   "crop": "8a5d1f8ccd8cda41",
+   "question_sha": "5a2b718a1c8b05ad",
+   "text_sha": "6cb72ad13c35e7e3"
+  },
+  {
+   "id": "au-pair--ia-scan:221:15:52",
+   "stratum": "hard",
+   "crop": "521fe53ae32716cd",
+   "question_sha": "f9002cbe33d9aed1",
+   "text_sha": "bb7b29656fdf98c1"
+  },
+  {
+   "id": "au-pair--ia-scan:156:33:34",
+   "stratum": "hard",
+   "crop": "f78d7089051ec466",
+   "question_sha": "2d2c980da78d25fc",
+   "text_sha": "47a1d03dfc95444b"
+  },
+  {
+   "id": "au-pair--ia-scan:113:31:6",
+   "stratum": "hard",
+   "crop": "01db6081472f8763",
+   "question_sha": "812d10382b41f004",
+   "text_sha": "a3879f0554bae5ce"
+  },
+  {
+   "id": "au-pair--ia-scan:84:19:16",
+   "stratum": "hard",
+   "crop": "28456310a77bdae8",
+   "question_sha": "b8a86990ae4278a9",
+   "text_sha": "87bd00801be00f7b"
+  },
+  {
+   "id": "au-pair--ia-scan:199:35:41",
+   "stratum": "hard",
+   "crop": "dc89ae1a2d3adf0e",
+   "question_sha": "4c215792bd601df7",
+   "text_sha": "5452510aa5912b76"
+  },
+  {
+   "id": "au-pair--ia-scan:121:8:21",
+   "stratum": "hard",
+   "crop": "40e083ea9e98a466",
+   "question_sha": "03862d8986d4e21f",
+   "text_sha": "426141a4e5af0497"
+  },
+  {
+   "id": "au-pair--ia-scan:107:14:0",
+   "stratum": "hard",
+   "crop": "b041f27ef5d334af",
+   "question_sha": "e8880b2f568bb274",
+   "text_sha": "0cb0df4b19ba115a"
+  },
+  {
+   "id": "au-pair--ia-scan:182:9:22",
+   "stratum": "hard",
+   "crop": "e8c13aaea5b90304",
+   "question_sha": "a464cd049ec3d0a9",
+   "text_sha": "6ee5cbfb7629124f"
+  },
+  {
+   "id": "au-pair--ia-scan:56:27:15",
+   "stratum": "hard",
+   "crop": "3a9db5149c536778",
+   "question_sha": "cfa69d7f62be65e9",
+   "text_sha": "43ecd96e1ab3bd8e"
+  },
+  {
+   "id": "au-pair--ia-scan:20:8:29",
+   "stratum": "hard",
+   "crop": "38c21d29ac61d4ac",
+   "question_sha": "27419ae7f3198652",
+   "text_sha": "1fc20b8a33dfa20c"
+  },
+  {
+   "id": "au-pair--ia-scan:97:29:61",
+   "stratum": "hard",
+   "crop": "86b01ecdb9ffcc3f",
+   "question_sha": "a3e111117ac7803b",
+   "text_sha": "52651884457aca5f"
+  },
+  {
+   "id": "au-pair--ia-scan:125:29:0",
+   "stratum": "hard",
+   "crop": "316923cd851e3f27",
+   "question_sha": "7e37ae6766f75d68",
+   "text_sha": "4fd805f6631e5964"
+  },
+  {
+   "id": "au-pair--ia-scan:67:15:54",
+   "stratum": "hard",
+   "crop": "4adcdbad5cf6b44f",
+   "question_sha": "554e1eb64e81accd",
+   "text_sha": "928dcb3cfbb86fc2"
+  },
+  {
+   "id": "au-pair--ia-scan:151:6:50",
+   "stratum": "control",
+   "crop": "852adc5d0a10e98b",
+   "question_sha": "e20f61a9535a6f2f",
+   "text_sha": "f3c4c57a1ee21a45"
+  },
+  {
+   "id": "au-pair--ia-scan:228:9:35",
+   "stratum": "control",
+   "crop": "88cdf3eafa2a067c",
+   "question_sha": "b0dd38a5ab653804",
+   "text_sha": "5a98c91b8c82fcc1"
+  },
+  {
+   "id": "au-pair--ia-scan:175:8:10",
+   "stratum": "control",
+   "crop": "335937da6d1cae4a",
+   "question_sha": "91e0e93ac7753c83",
+   "text_sha": "9b61aede4056572c"
+  },
+  {
+   "id": "au-pair--ia-scan:65:24:0",
+   "stratum": "control",
+   "crop": "75c50d31abf73854",
+   "question_sha": "2a8215dd2e740d21",
+   "text_sha": "c8baa2a347039a60"
+  },
+  {
+   "id": "au-pair--ia-scan:219:16:30",
+   "stratum": "control",
+   "crop": "4b731755f566f6b1",
+   "question_sha": "ea6d9a8a1f912f4b",
+   "text_sha": "e8376410cbf5e6b3"
+  },
+  {
+   "id": "au-pair--ia-scan:120:24:0",
+   "stratum": "control",
+   "crop": "67e5b02117e31993",
+   "question_sha": "224f03b5da4d52f3",
+   "text_sha": "66b76bfcbbb9ced4"
+  },
+  {
+   "id": "au-pair--ia-scan:129:25:48",
+   "stratum": "control",
+   "crop": "c5c538c2c73a6fb0",
+   "question_sha": "b620d229134bada3",
+   "text_sha": "5a8eb168522a9356"
+  },
+  {
+   "id": "au-pair--ia-scan:176:14:5",
+   "stratum": "control",
+   "crop": "4c3cfa12bdc90da7",
+   "question_sha": "1eae89813a957620",
+   "text_sha": "57e7d314c12869bb"
+  },
+  {
+   "id": "au-pair--ia-scan:155:19:0",
+   "stratum": "control",
+   "crop": "5066cc02f7fadc26",
+   "question_sha": "2dfdfb5d85d4b5f6",
+   "text_sha": "7bbaea09118d156e"
+  },
+  {
+   "id": "au-pair--ia-scan:99:13:16",
+   "stratum": "control",
+   "crop": "fbbb1b10c5837750",
+   "question_sha": "f65ff3220776d65d",
+   "text_sha": "299bee610b5f80a0"
+  },
+  {
+   "id": "au-pair--ia-scan:177:19:43",
+   "stratum": "control",
+   "crop": "b6f881e5f04540a5",
+   "question_sha": "58528c306a6905d7",
+   "text_sha": "0391bc15945fc4d0"
+  },
+  {
+   "id": "au-pair--ia-scan:181:8:17",
+   "stratum": "control",
+   "crop": "a505d1160bd546ec",
+   "question_sha": "142097fb722aa9fe",
+   "text_sha": "bd22db779b6111d9"
+  },
+  {
+   "id": "au-pair--ia-scan:189:1:18",
+   "stratum": "control",
+   "crop": "d031f16e005edf4a",
+   "question_sha": "33c95256fbd6c3d6",
+   "text_sha": "aaa36a3245676e11"
+  },
+  {
+   "id": "au-pair--ia-scan:123:24:0",
+   "stratum": "control",
+   "crop": "4085b4ecaf91c7d7",
+   "question_sha": "f6ab442481c17b11",
+   "text_sha": "eb959ea2afbe9263"
+  },
+  {
+   "id": "au-pair--ia-scan:184:21:0",
+   "stratum": "control",
+   "crop": "7dbe1444ca3e0e95",
+   "question_sha": "0b0eccf48b6e06f9",
+   "text_sha": "e6e4c278ae7b920a"
+  },
+  {
+   "id": "au-pair--ia-scan:37:2:53",
+   "stratum": "control",
+   "crop": "30712cb358d2e730",
+   "question_sha": "ace3b8412bbe2832",
+   "text_sha": "2501c692dca89027"
+  },
+  {
+   "id": "au-pair--ia-scan:161:2:45",
+   "stratum": "control",
+   "crop": "d671a3285c83dd62",
+   "question_sha": "870986a6791f5a94",
+   "text_sha": "d4832a81959d292b"
+  },
+  {
+   "id": "au-pair--ia-scan:120:27:10",
+   "stratum": "control",
+   "crop": "4c9560285fff817f",
+   "question_sha": "a025337a7d3b8345",
+   "text_sha": "7cfb8c7222ce3334"
+  },
+  {
+   "id": "au-pair--ia-scan:66:10:55",
+   "stratum": "control",
+   "crop": "e74324a38aa16a9c",
+   "question_sha": "7f759bcdbff86272",
+   "text_sha": "3ceed229c85a6df3"
+  },
+  {
+   "id": "au-pair--ia-scan:185:33:13",
+   "stratum": "control",
+   "crop": "37641c05f1afca51",
+   "question_sha": "6e0f33ad51005cee",
+   "text_sha": "cda3c2a553cd590b"
+  },
+  {
+   "id": "au-pair--ia-scan:33:27:19",
+   "stratum": "control",
+   "crop": "b19597323fb18b46",
+   "question_sha": "95c28c2de0325e94",
+   "text_sha": "88202f8cb32f91cc"
+  },
+  {
+   "id": "au-pair--ia-scan:98:23:0",
+   "stratum": "control",
+   "crop": "e4ce7577787c2687",
+   "question_sha": "d723530893f16cce",
+   "text_sha": "c15d14362087152d"
+  },
+  {
+   "id": "au-pair--ia-scan:19:32:6",
+   "stratum": "control",
+   "crop": "a9db6f60a8a5ff45",
+   "question_sha": "895ec637f984d7dd",
+   "text_sha": "51e01eaf5525b8c1"
+  },
+  {
+   "id": "au-pair--ia-scan:129:32:21",
+   "stratum": "control",
+   "crop": "0ac20050f81ac63d",
+   "question_sha": "c55ea1116367d04b",
+   "text_sha": "190ce1f8038033c0"
+  },
+  {
+   "id": "au-pair--ia-scan:176:7:0",
+   "stratum": "control",
+   "crop": "02387c0d09830b06",
+   "question_sha": "3341cde3046b2083",
+   "text_sha": "1b71be3a5f81d69e"
+  },
+  {
+   "id": "de-vergelding--ia-scan:44:23:5",
+   "stratum": "hard",
+   "crop": "90a2c731fc92b56e",
+   "question_sha": "92788cf0fdd20bf3",
+   "text_sha": "69a355c06e3dcf9c"
+  },
+  {
+   "id": "de-vergelding--ia-scan:211:11:24",
+   "stratum": "hard",
+   "crop": "46a2e09457bcfb99",
+   "question_sha": "a843b1dc43c379f5",
+   "text_sha": "b801116c9eecfbc3"
+  },
+  {
+   "id": "de-vergelding--ia-scan:15:2:60",
+   "stratum": "hard",
+   "crop": "ecc45d94bfeaa3a5",
+   "question_sha": "c75d739b9c4cc0b7",
+   "text_sha": "032e2ea52eac2717"
+  },
+  {
+   "id": "de-vergelding--ia-scan:187:0:0",
+   "stratum": "hard",
+   "crop": "e4ee8c107e9fb5e7",
+   "question_sha": "ddba612c34692f02",
+   "text_sha": "096e0877dff72700"
+  },
+  {
+   "id": "de-vergelding--ia-scan:102:18:38",
+   "stratum": "hard",
+   "crop": "2296c16b11d3c463",
+   "question_sha": "de228dbf0c185157",
+   "text_sha": "9d6f2c9b8f111958"
+  },
+  {
+   "id": "de-vergelding--ia-scan:30:5:51",
+   "stratum": "hard",
+   "crop": "b1dcd23e04ca8a0e",
+   "question_sha": "d312f1bd32de818f",
+   "text_sha": "77da1a1d0583945a"
+  },
+  {
+   "id": "de-vergelding--ia-scan:114:31:46",
+   "stratum": "hard",
+   "crop": "a3a00ad5cc7d4854",
+   "question_sha": "10c8f580f084e6e7",
+   "text_sha": "07d37992933d1d83"
+  },
+  {
+   "id": "de-vergelding--ia-scan:198:30:25",
+   "stratum": "hard",
+   "crop": "4e901943cdce874e",
+   "question_sha": "0c96d66599816d62",
+   "text_sha": "35467e9c1f58c039"
+  },
+  {
+   "id": "de-vergelding--ia-scan:34:4:53",
+   "stratum": "hard",
+   "crop": "6b9da9ec699a5f3f",
+   "question_sha": "ec1dfc5eb58c7ad4",
+   "text_sha": "1f2d5a2c91561a6d"
+  },
+  {
+   "id": "de-vergelding--ia-scan:156:1:11",
+   "stratum": "hard",
+   "crop": "5cb7c1164eaeac3c",
+   "question_sha": "6356d7e205c8c7fc",
+   "text_sha": "9215cb90b256d5b8"
+  },
+  {
+   "id": "de-vergelding--ia-scan:114:29:0",
+   "stratum": "hard",
+   "crop": "6c3876ab52085bc3",
+   "question_sha": "4c7097b1c431183c",
+   "text_sha": "89a156bed9d29924"
+  },
+  {
+   "id": "de-vergelding--ia-scan:44:29:41",
+   "stratum": "hard",
+   "crop": "bde3e7d87644805c",
+   "question_sha": "b1d4c97d04b7ba7e",
+   "text_sha": "f8638836ad6f131e"
+  },
+  {
+   "id": "de-vergelding--ia-scan:14:32:54",
+   "stratum": "hard",
+   "crop": "ac75c59b6ccbb2d3",
+   "question_sha": "49775486d7678808",
+   "text_sha": "1c37e2a22fea765c"
+  },
+  {
+   "id": "de-vergelding--ia-scan:38:31:24",
+   "stratum": "hard",
+   "crop": "a028bb2ee508d09d",
+   "question_sha": "7d1723fe0e9d0caa",
+   "text_sha": "dd38319ad2ba6a35"
+  },
+  {
+   "id": "de-vergelding--ia-scan:24:4:45",
+   "stratum": "hard",
+   "crop": "857bb68c1677092b",
+   "question_sha": "299e8de0203a2e7e",
+   "text_sha": "02c8d8053a396784"
+  },
+  {
+   "id": "de-vergelding--ia-scan:34:25:47",
+   "stratum": "hard",
+   "crop": "dce4e4ec36e455aa",
+   "question_sha": "b7a127f729553f8f",
+   "text_sha": "68916151c141679a"
+  },
+  {
+   "id": "de-vergelding--ia-scan:114:14:31",
+   "stratum": "hard",
+   "crop": "e266426c9408e59c",
+   "question_sha": "7639d7befb327edf",
+   "text_sha": "413e1e6cb420d4bf"
+  },
+  {
+   "id": "de-vergelding--ia-scan:14:4:37",
+   "stratum": "hard",
+   "crop": "104c96e8396c308a",
+   "question_sha": "e42abe79e4457fa4",
+   "text_sha": "523139c1e36d0cc4"
+  },
+  {
+   "id": "de-vergelding--ia-scan:38:15:4",
+   "stratum": "hard",
+   "crop": "6afc680e95b4d76f",
+   "question_sha": "9b4dda33e4a89eeb",
+   "text_sha": "10a02dd400d1ecc4"
+  },
+  {
+   "id": "de-vergelding--ia-scan:203:4:31",
+   "stratum": "hard",
+   "crop": "a49877d2940aa913",
+   "question_sha": "fe9bd240873af281",
+   "text_sha": "47ae3879287e7478"
+  },
+  {
+   "id": "de-vergelding--ia-scan:114:21:43",
+   "stratum": "hard",
+   "crop": "34b6b914ae984ed9",
+   "question_sha": "6c5218a2c196233d",
+   "text_sha": "30228af871265e96"
+  },
+  {
+   "id": "de-vergelding--ia-scan:114:33:54",
+   "stratum": "hard",
+   "crop": "dd44985376f74dc7",
+   "question_sha": "f17a95775265eb3c",
+   "text_sha": "3961a23c093d7273"
+  },
+  {
+   "id": "de-vergelding--ia-scan:38:20:35",
+   "stratum": "hard",
+   "crop": "51542185437c7fd5",
+   "question_sha": "8abb6fcdbf5be3c7",
+   "text_sha": "bd1c44396867572f"
+  },
+  {
+   "id": "de-vergelding--ia-scan:142:25:52",
+   "stratum": "hard",
+   "crop": "3497b4aeacc893ff",
+   "question_sha": "ccd6a232ed9a9dea",
+   "text_sha": "e322d54ce99a1ba9"
+  },
+  {
+   "id": "de-vergelding--ia-scan:240:1:8",
+   "stratum": "hard",
+   "crop": "8b8d74fe6f05c926",
+   "question_sha": "50a3e0bb78edf40c",
+   "text_sha": "aeac2ee2a2bfc258"
+  },
+  {
+   "id": "de-vergelding--ia-scan:80:12:22",
+   "stratum": "control",
+   "crop": "b47a0381cc76b158",
+   "question_sha": "a0631d8852d5604e",
+   "text_sha": "071e50ca42512cfb"
+  },
+  {
+   "id": "de-vergelding--ia-scan:46:9:14",
+   "stratum": "control",
+   "crop": "f401b4dcc9f450bb",
+   "question_sha": "3cc48042d449bc81",
+   "text_sha": "49ac9ee5b25ed557"
+  },
+  {
+   "id": "de-vergelding--ia-scan:108:24:41",
+   "stratum": "control",
+   "crop": "704c84a043e169f8",
+   "question_sha": "97df8cd3f74d3ce4",
+   "text_sha": "cbf8518c116ec2e9"
+  },
+  {
+   "id": "de-vergelding--ia-scan:64:4:0",
+   "stratum": "control",
+   "crop": "32e034c114901533",
+   "question_sha": "4143b2871955d5c3",
+   "text_sha": "4ea93b85673ca312"
+  },
+  {
+   "id": "de-vergelding--ia-scan:38:13:33",
+   "stratum": "control",
+   "crop": "417534f64454b374",
+   "question_sha": "1910cf5d4ecfcb63",
+   "text_sha": "22f9678a68535780"
+  },
+  {
+   "id": "de-vergelding--ia-scan:181:28:11",
+   "stratum": "control",
+   "crop": "a3ad3bee80674da0",
+   "question_sha": "2a0885c0a9087939",
+   "text_sha": "d4387493d75713e4"
+  },
+  {
+   "id": "de-vergelding--ia-scan:198:5:45",
+   "stratum": "control",
+   "crop": "aba9a3fe66d6ebb9",
+   "question_sha": "b3361e3a2998e9f7",
+   "text_sha": "23d34b0ca5e55d1b"
+  },
+  {
+   "id": "de-vergelding--ia-scan:117:11:35",
+   "stratum": "control",
+   "crop": "72e7e4d73cccc729",
+   "question_sha": "d2a4bed3413238de",
+   "text_sha": "92fd45a2f9311d31"
+  },
+  {
+   "id": "de-vergelding--ia-scan:160:26:4",
+   "stratum": "control",
+   "crop": "9b458ea3f86c5694",
+   "question_sha": "c1cf057f36405967",
+   "text_sha": "bbc7fe7c5cb3c948"
+  },
+  {
+   "id": "de-vergelding--ia-scan:56:3:48",
+   "stratum": "control",
+   "crop": "b94d972ba7da0e1f",
+   "question_sha": "89bbc670737afa01",
+   "text_sha": "b141bc097dba9f9a"
+  },
+  {
+   "id": "de-vergelding--ia-scan:117:23:18",
+   "stratum": "control",
+   "crop": "d6504d322022234f",
+   "question_sha": "34d27105e0cbe912",
+   "text_sha": "a7ad7a7486a6f8c6"
+  },
+  {
+   "id": "de-vergelding--ia-scan:174:24:37",
+   "stratum": "control",
+   "crop": "cc17885e1ffc8934",
+   "question_sha": "d39eb9374a8d0078",
+   "text_sha": "afe8b833ab3dda24"
+  },
+  {
+   "id": "de-vergelding--ia-scan:182:13:0",
+   "stratum": "control",
+   "crop": "6450075773bd0df2",
+   "question_sha": "0471719d12efa724",
+   "text_sha": "715746881bdcfbcc"
+  },
+  {
+   "id": "de-vergelding--ia-scan:50:24:42",
+   "stratum": "control",
+   "crop": "d0012a277665c212",
+   "question_sha": "42a6feb956ef0c94",
+   "text_sha": "f2d34417f8560519"
+  },
+  {
+   "id": "de-vergelding--ia-scan:189:7:13",
+   "stratum": "control",
+   "crop": "2b7eb5b85aab1aed",
+   "question_sha": "f23f4694e03feccf",
+   "text_sha": "51b9fb59ab682b86"
+  },
+  {
+   "id": "de-vergelding--ia-scan:50:12:23",
+   "stratum": "control",
+   "crop": "18f1c3b9ad5f8d7f",
+   "question_sha": "1936df6d9fff67f1",
+   "text_sha": "0db68bfef78ef7d7"
+  },
+  {
+   "id": "de-vergelding--ia-scan:245:33:21",
+   "stratum": "control",
+   "crop": "5e2ea6571b94a9c3",
+   "question_sha": "688ea07e0bbe1c32",
+   "text_sha": "144537d290ae7b43"
+  },
+  {
+   "id": "de-vergelding--ia-scan:114:20:51",
+   "stratum": "control",
+   "crop": "beeb4251a84b3d24",
+   "question_sha": "a78d2867a53e7c90",
+   "text_sha": "f04ac0065e9eedb8"
+  },
+  {
+   "id": "de-vergelding--ia-scan:43:0:41",
+   "stratum": "control",
+   "crop": "3d3949e25e061807",
+   "question_sha": "18deee464eaef776",
+   "text_sha": "b308be8a08b330d7"
+  },
+  {
+   "id": "de-vergelding--ia-scan:72:0:35",
+   "stratum": "control",
+   "crop": "9fe739c77a358c83",
+   "question_sha": "f0045f1534d8ed56",
+   "text_sha": "4b5f09aca9814239"
+  },
+  {
+   "id": "de-vergelding--ia-scan:62:24:52",
+   "stratum": "control",
+   "crop": "8fec9e634ef34afc",
+   "question_sha": "2693ac64446fc6ac",
+   "text_sha": "24751741d2f92337"
+  },
+  {
+   "id": "de-vergelding--ia-scan:187:2:55",
+   "stratum": "control",
+   "crop": "a3811cebaad47b85",
+   "question_sha": "0003f65434dbecfa",
+   "text_sha": "c4775abb5b0bfb18"
+  },
+  {
+   "id": "de-vergelding--ia-scan:134:20:23",
+   "stratum": "control",
+   "crop": "e011bb0381bfe148",
+   "question_sha": "844ceb3b4c9d6efd",
+   "text_sha": "988a3f5b7e5dd760"
+  },
+  {
+   "id": "de-vergelding--ia-scan:164:17:0",
+   "stratum": "control",
+   "crop": "fc1a8c5778bc7874",
+   "question_sha": "2263f64f7f2470ae",
+   "text_sha": "2dc40573c5866c88"
+  },
+  {
+   "id": "de-vergelding--ia-scan:175:14:45",
+   "stratum": "control",
+   "crop": "01fbe0ea25423099",
+   "question_sha": "2ae777d6b8a9982f",
+   "text_sha": "d1c42e1c57d86057"
+  },
+  {
+   "id": "glazuur--ia-scan:263:28:7",
+   "stratum": "hard",
+   "crop": "2390557d4b8e0715",
+   "question_sha": "6552579bc905a48f",
+   "text_sha": "2853edd3574c6bb1"
+  },
+  {
+   "id": "glazuur--ia-scan:127:21:39",
+   "stratum": "hard",
+   "crop": "3b092c3e93ab3f83",
+   "question_sha": "5dd4eccc0cdb0fc7",
+   "text_sha": "a32a850e0f31b3e7"
+  },
+  {
+   "id": "glazuur--ia-scan:202:24:42",
+   "stratum": "hard",
+   "crop": "4b59fdf398718bb1",
+   "question_sha": "f186d9808a4864b5",
+   "text_sha": "6d09a930316d9bdd"
+  },
+  {
+   "id": "glazuur--ia-scan:81:9:25",
+   "stratum": "hard",
+   "crop": "899262bb07c844fb",
+   "question_sha": "82071b8b2e5b3d00",
+   "text_sha": "c22b6880d36820b8"
+  },
+  {
+   "id": "glazuur--ia-scan:221:28:21",
+   "stratum": "hard",
+   "crop": "62df91cdac6a05c1",
+   "question_sha": "17ff32ace6b392f8",
+   "text_sha": "08113e5891383d9c"
+  },
+  {
+   "id": "glazuur--ia-scan:75:14:10",
+   "stratum": "hard",
+   "crop": "6e8451c7e503fa6a",
+   "question_sha": "adcb36333a61422b",
+   "text_sha": "d47a371bc15b8e42"
+  },
+  {
+   "id": "glazuur--ia-scan:140:10:30",
+   "stratum": "hard",
+   "crop": "7444d99e7f5a94a9",
+   "question_sha": "7f1be99fa0001863",
+   "text_sha": "2d485c6da49efa14"
+  },
+  {
+   "id": "glazuur--ia-scan:254:27:7",
+   "stratum": "hard",
+   "crop": "fb923616751737fa",
+   "question_sha": "ea5d791f55f08f5c",
+   "text_sha": "f06b8623a70a5ffd"
+  },
+  {
+   "id": "glazuur--ia-scan:76:23:50",
+   "stratum": "hard",
+   "crop": "f534ae253163d386",
+   "question_sha": "982312e7c45ac191",
+   "text_sha": "960948354374f725"
+  },
+  {
+   "id": "glazuur--ia-scan:174:2:6",
+   "stratum": "hard",
+   "crop": "bb23d950dace484c",
+   "question_sha": "52657afa81a06990",
+   "text_sha": "6f45659a4554a2d6"
+  },
+  {
+   "id": "glazuur--ia-scan:197:26:51",
+   "stratum": "hard",
+   "crop": "ad44582795194d14",
+   "question_sha": "1411fbd2ab96d197",
+   "text_sha": "9bff8decebbcbb62"
+  },
+  {
+   "id": "glazuur--ia-scan:19:7:27",
+   "stratum": "hard",
+   "crop": "2537c35e589f2fa5",
+   "question_sha": "8d37dfacbc5831bd",
+   "text_sha": "351a71ac8ebb9c86"
+  },
+  {
+   "id": "glazuur--ia-scan:246:3:12",
+   "stratum": "hard",
+   "crop": "f16b072187d7351d",
+   "question_sha": "688e52ed8719f7b4",
+   "text_sha": "863511184c53481b"
+  },
+  {
+   "id": "glazuur--ia-scan:268:6:8",
+   "stratum": "hard",
+   "crop": "8bc52aa09f6cb0b5",
+   "question_sha": "3488cdbc7200a6d6",
+   "text_sha": "be2f1a26c0c3d2b2"
+  },
+  {
+   "id": "glazuur--ia-scan:16:24:24",
+   "stratum": "hard",
+   "crop": "a2b7aea28b62cee9",
+   "question_sha": "d0b51257c1822443",
+   "text_sha": "1c3fc910816d72e4"
+  },
+  {
+   "id": "glazuur--ia-scan:81:25:31",
+   "stratum": "hard",
+   "crop": "ff5981862a039b82",
+   "question_sha": "c334c3a830846397",
+   "text_sha": "552bbe2153d045fb"
+  },
+  {
+   "id": "glazuur--ia-scan:179:19:50",
+   "stratum": "hard",
+   "crop": "4c594d135703fe74",
+   "question_sha": "b06a02cac9fbab86",
+   "text_sha": "76a9025b9cc78a14"
+  },
+  {
+   "id": "glazuur--ia-scan:22:20:0",
+   "stratum": "hard",
+   "crop": "6ee68f350c869dc3",
+   "question_sha": "9297d8f7e54aec6a",
+   "text_sha": "c8898f3d4f8de3e6"
+  },
+  {
+   "id": "glazuur--ia-scan:65:27:38",
+   "stratum": "hard",
+   "crop": "b3ea88a0112b67a0",
+   "question_sha": "18ac1378d692ed41",
+   "text_sha": "0b0849c3d9f4c8ef"
+  },
+  {
+   "id": "glazuur--ia-scan:123:26:23",
+   "stratum": "hard",
+   "crop": "5eb5e7f8a099b8c8",
+   "question_sha": "f82e0df6f6566ca6",
+   "text_sha": "1b97d6b4d7bae06e"
+  },
+  {
+   "id": "glazuur--ia-scan:19:7:36",
+   "stratum": "hard",
+   "crop": "3dcf22cc4fb24e3b",
+   "question_sha": "983e0cafcad56d02",
+   "text_sha": "00212411f1a0d170"
+  },
+  {
+   "id": "glazuur--ia-scan:206:33:0",
+   "stratum": "hard",
+   "crop": "b5fdae30d0d68290",
+   "question_sha": "3cf159ab64bff0f1",
+   "text_sha": "fc1a0516b0e987c8"
+  },
+  {
+   "id": "glazuur--ia-scan:239:3:33",
+   "stratum": "hard",
+   "crop": "30b47019bcf63d59",
+   "question_sha": "88e5e00c2a8b31dd",
+   "text_sha": "c29f18b8e0407db2"
+  },
+  {
+   "id": "glazuur--ia-scan:188:2:43",
+   "stratum": "hard",
+   "crop": "09eb93ba12c0f29d",
+   "question_sha": "2c6028f4168541a7",
+   "text_sha": "346815c09f17ef88"
+  },
+  {
+   "id": "glazuur--ia-scan:64:11:7",
+   "stratum": "hard",
+   "crop": "00624537da886bf2",
+   "question_sha": "6de771899197bccf",
+   "text_sha": "2af89cad346ef28b"
+  },
+  {
+   "id": "glazuur--ia-scan:88:3:37",
+   "stratum": "control",
+   "crop": "60f0f4909069e141",
+   "question_sha": "638e93a3aabcb127",
+   "text_sha": "6f468b58e16fe4d1"
+  },
+  {
+   "id": "glazuur--ia-scan:186:8:3",
+   "stratum": "control",
+   "crop": "44982e3a2be089ad",
+   "question_sha": "4e910fbcadafa0dc",
+   "text_sha": "8d783315a3e7d5a6"
+  },
+  {
+   "id": "glazuur--ia-scan:104:33:0",
+   "stratum": "control",
+   "crop": "eb79438e2d381ff8",
+   "question_sha": "a01f3533171a1dc7",
+   "text_sha": "2346f33b5c4389fc"
+  },
+  {
+   "id": "glazuur--ia-scan:186:15:45",
+   "stratum": "control",
+   "crop": "700d4cbed05696c3",
+   "question_sha": "7bda7444930eccc0",
+   "text_sha": "5a9d476eef3400eb"
+  },
+  {
+   "id": "glazuur--ia-scan:41:28:4",
+   "stratum": "control",
+   "crop": "1841aeb09ed76bfe",
+   "question_sha": "7b5b84453baef9b1",
+   "text_sha": "826ee4f9bebfffe0"
+  },
+  {
+   "id": "glazuur--ia-scan:206:20:28",
+   "stratum": "control",
+   "crop": "40d7ceb1a425727a",
+   "question_sha": "4b90ae3021eb00f5",
+   "text_sha": "4970aa9eff7b2e76"
+  },
+  {
+   "id": "glazuur--ia-scan:251:13:31",
+   "stratum": "control",
+   "crop": "61232ffdbd332c8e",
+   "question_sha": "9fbed2dd2c1a7ca8",
+   "text_sha": "4dc7f6cb4b2ee99f"
+  },
+  {
+   "id": "glazuur--ia-scan:163:22:32",
+   "stratum": "control",
+   "crop": "580b09f440c86b33",
+   "question_sha": "5c9ef4c26b8f1ab9",
+   "text_sha": "82855c5ae4dbf0c7"
+  },
+  {
+   "id": "glazuur--ia-scan:218:24:52",
+   "stratum": "control",
+   "crop": "30b31fdbfdd29a1a",
+   "question_sha": "3e078bdc12c5d9b9",
+   "text_sha": "0fe67170aa35542c"
+  },
+  {
+   "id": "glazuur--ia-scan:99:17:39",
+   "stratum": "control",
+   "crop": "8c5d2798324930be",
+   "question_sha": "7f3636a8769e2bfa",
+   "text_sha": "a016b83464442bc2"
+  },
+  {
+   "id": "glazuur--ia-scan:222:27:17",
+   "stratum": "control",
+   "crop": "b3d56c3917641e6d",
+   "question_sha": "e7d5e64436a0a743",
+   "text_sha": "f9424a8480d54a83"
+  },
+  {
+   "id": "glazuur--ia-scan:254:25:53",
+   "stratum": "control",
+   "crop": "a1e9afcc21dc069b",
+   "question_sha": "bd6860adeab80cbf",
+   "text_sha": "3585d56c1f4ed52b"
+  },
+  {
+   "id": "glazuur--ia-scan:255:33:0",
+   "stratum": "control",
+   "crop": "b7b9dd83f3505725",
+   "question_sha": "6401f42586dcaa71",
+   "text_sha": "1b5d0e396e222a20"
+  },
+  {
+   "id": "glazuur--ia-scan:121:5:0",
+   "stratum": "control",
+   "crop": "31fb270a1415af8a",
+   "question_sha": "2aef7b7cb250b44b",
+   "text_sha": "b1007fe1fae43fa2"
+  },
+  {
+   "id": "glazuur--ia-scan:134:25:42",
+   "stratum": "control",
+   "crop": "9ec380d376c93e90",
+   "question_sha": "29035f06e086e431",
+   "text_sha": "9dcb1984fcac95d4"
+  },
+  {
+   "id": "glazuur--ia-scan:151:10:41",
+   "stratum": "control",
+   "crop": "404fc7f1e375e866",
+   "question_sha": "f1ef1854ae5ca47f",
+   "text_sha": "f840b5f18bd28d1d"
+  },
+  {
+   "id": "glazuur--ia-scan:33:5:32",
+   "stratum": "control",
+   "crop": "80b2c7572bc9214d",
+   "question_sha": "e2ec222e1a24fb2a",
+   "text_sha": "a3e70e4f58eaba1b"
+  },
+  {
+   "id": "glazuur--ia-scan:191:7:0",
+   "stratum": "control",
+   "crop": "c0ef927d022ca6d2",
+   "question_sha": "195ff1b130c12d11",
+   "text_sha": "4e7f0799c6080dc2"
+  },
+  {
+   "id": "glazuur--ia-scan:204:30:30",
+   "stratum": "control",
+   "crop": "5e1503877e05e37b",
+   "question_sha": "555a79bcf8b9af18",
+   "text_sha": "5bf71f0a2a1672b5"
+  },
+  {
+   "id": "glazuur--ia-scan:164:5:26",
+   "stratum": "control",
+   "crop": "82822792447d81b6",
+   "question_sha": "0febeda4a9a90cd9",
+   "text_sha": "b8428dcf48fcf80f"
+  },
+  {
+   "id": "glazuur--ia-scan:198:4:9",
+   "stratum": "control",
+   "crop": "aa7646f5fd2b2973",
+   "question_sha": "d65e466d289aa63c",
+   "text_sha": "1eb305fa406688b7"
+  },
+  {
+   "id": "glazuur--ia-scan:194:6:5",
+   "stratum": "control",
+   "crop": "f0aa0c3ff1ca8fef",
+   "question_sha": "bcbf4616b7de063c",
+   "text_sha": "979eb5b0374ac6aa"
+  },
+  {
+   "id": "glazuur--ia-scan:172:26:39",
+   "stratum": "control",
+   "crop": "335ff6fab3f49e77",
+   "question_sha": "eee5b5c7fb727a27",
+   "text_sha": "dda8033963693e44"
+  },
+  {
+   "id": "glazuur--ia-scan:270:12:39",
+   "stratum": "control",
+   "crop": "ec010000e074e0ef",
+   "question_sha": "fab970efd077b28c",
+   "text_sha": "ff39bacfc4654c9b"
+  },
+  {
+   "id": "glazuur--ia-scan:215:3:0",
+   "stratum": "control",
+   "crop": "2059f4a163f10452",
+   "question_sha": "afd51d83005356b1",
+   "text_sha": "6a2515c68500a5a4"
+  }
+ ]
+}

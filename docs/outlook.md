@@ -143,6 +143,11 @@ each new local vision model.
 
 Don't repeat these without a new reason (details in docs/decisions.md):
 
+- **The judges told the kinds of OCR error** (2026-11-07, judge set v2): clef:27b fixes a
+  fifth of its wrong picks and breaks 3% of its right ones, a net loss once weighted to
+  how rarely it errs; Winnow-12B loses on both. The two wordings disagreeing says little
+  the arbiter doesn't already read from clef's confidence.
+
 - **The page readers as two more line readers for the arbiter** (2026-10-14/15, a night
   of compute): tuning no change, validation mixed. Split into lines, a page reading
   can't carry the join errors it catches; the arbiter takes its versions wrongly on

@@ -629,13 +629,9 @@ also part of the pipeline itself." Before either book goes to review:
       (2026-11-06, `missing._fills`): nine lines read right by glm-ocr, tuning 103 wrong
       words fixed (12 unasked), validation 9 (all unasked), none made; Dolittle's short
       last line of a paragraph stays a question
-- [ ] The judges told the kinds of OCR error (2026-11-07, decisions.md): the vision and text
-      judges' questions name none; a vendor post found concrete error kinds the largest gain
-      for every model, decision models included. A/B on the frozen judge set (`tryout.py run
-      judge`): the question plus the kinds this pipeline sees (a speck read as an accent or a
-      mark, a stop read as a comma, letters merged or split, a space lost or added, a quote
-      mark's shape) and what is never an error (the author's own spelling); then the trust
-      data rebuilt and the arbiter retrained if it wins (agent, ~1 h, after a model run)
+- [x] ~~The judges told the kinds of OCR error~~ (2026-11-07, judge set v2): not taken.
+      clef:27b weighted 91.3% → 89.9% (91 hard picks fixed, 16 right ones broken, all at
+      low confidence); Winnow-12B worse on both halves, stopped at 525 of 995
 - [ ] The rest of the errors the build makes where the layer was right (51 unasked on
       tuning, 2026-11-06): accents (18) are accent-shaped specks, no cheap signal
       (decisions.md, 2026-11-06); punctuation swapped (about 10: commas added, 13 of 14

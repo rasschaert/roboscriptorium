@@ -7,7 +7,7 @@ wins goes on to a trust-data rebuild, a retrain and `bench`. Roles: reader, judg
     uv run python experiments/tryout.py prune reader      # the last set less retired books
     uv run python experiments/tryout.py run reader <model> [--glm]
     uv run python experiments/tryout.py build judge       # from cached suspects
-    uv run python experiments/tryout.py run judge <model>
+    uv run python experiments/tryout.py run judge <model> [--prompt <variant>]
 
 The reader set (`READER_VERSION`) holds body lines of the tuning books' bench slices,
 each line's crop cut as the OCR check cuts it and saved as a PNG, and its printed text
@@ -18,9 +18,12 @@ without the books whose scan is gone, the same crops and ids, readings carried o
 The manifest in git (tryouts/reader-v<N>.json) holds
 only ids and hashes; crops, texts and readings stay in work/tryout/.
 
-The judge set (`JUDGE_VERSION`) holds the vision judge's questions about settled OCR
-suspects of the tuning books' bench slices (the trust data's labels): the state, the
-question and the crop exactly as the pipeline asks them, captured from a cached build.
+The judge set (`JUDGE_VERSION`) holds the judges' questions about settled OCR suspects
+of the tuning books' bench slices (the trust data's labels): the vision judge's state,
+question and crop and the text judge's state and question, exactly as the pipeline asks
+them, captured from a cached build. A model whose name starts `tokens:` is asked the
+text judge's question, any other the vision judge's. `--prompt` adds one of
+`PROMPT_VARIANTS` to the question's instructions, an A/B of the wording on the same set.
 Two strata per book: suspects the judge in use gets wrong (`JUDGE_HARD` a book) and
 right (`JUDGE_CONTROL`). Each book's share of wrong picks is kept, so the score can be
 weighted back to how often the judge in use errs.
@@ -60,7 +63,7 @@ from roboscriptorium import readers  # noqa: E402
 
 READER_VERSION = 3
 HARD, CONTROL = 30, 20
-JUDGE_VERSION = 1
+JUDGE_VERSION = 2
 JUDGE_HARD, JUDGE_CONTROL = 25, 25
 SEED = 0
 QUOTES = "'\"‘’“”‚„«»"
@@ -452,15 +455,18 @@ def build_judge() -> None:
         sys.exit(f"{manifest_path} exists: a set never changes; bump JUDGE_VERSION")
     (root / "crops").mkdir(parents=True, exist_ok=True)
     settings = Settings.from_env()
-    asked = {}  # (page, line, versions) -> (state, questions, png, answer)
+    asked = {}  # (page, line, versions) -> (state, questions, png, answer, text question)
     real_ask = ocrcheck._ask
+    last = []  # the vision question last asked: the text judge is asked right after it
 
     def capture(client, cache, state, questions, image=None):
         answer = real_ask(client, cache, state, questions, image)
         if client.model == settings.judge_model and image is not None:
-            asked[(state["page"], state["line"], tuple(state["readings"]))] = (
-                state, questions, image(), answer,
-            )  # fmt: skip
+            key = (state["page"], state["line"], tuple(state["readings"]))
+            asked[key] = (state, questions, image(), answer, None)
+            last[:] = [key]
+        elif client.model == settings.check_model and image is None and last:
+            asked[last[0]] = (*asked[last[0]][:4], (state, questions, answer))
         return answer
 
     ocrcheck._ask = capture
@@ -483,7 +489,7 @@ def build_judge() -> None:
         books[name] = {"spec": spec, "settled": len(hard) + len(control), "wrong": len(hard)}
         chosen = [("hard", x) for x in rng.sample(hard, min(JUDGE_HARD, len(hard)))]
         chosen += [("control", x) for x in rng.sample(control, min(JUDGE_CONTROL, len(control)))]
-        for stratum, (row, (state, questions, png, answer)) in chosen:
+        for stratum, (row, (state, questions, png, answer, text)) in chosen:
             s = row["suspect"]
             item_id = f"{name}:{s['page']}:{s['line']}:{s['start']}"
             (root / "crops" / f"{sha(item_id)}.png").write_bytes(png)
@@ -498,6 +504,16 @@ def build_judge() -> None:
                     "incumbent": answer,
                     "crop": sha(png),
                     "question_sha": sha(json.dumps([state, questions], sort_keys=True)),
+                    **(
+                        {
+                            "text_state": text[0],
+                            "text_questions": text[1],
+                            "text_incumbent": text[2],
+                            "text_sha": sha(json.dumps(text[:2], sort_keys=True)),
+                        }
+                        if text
+                        else {}
+                    ),
                 }
             )
         print(f"{name}: {len(hard)} wrong of {books[name]['settled']} settled; {len(chosen)} kept")
@@ -511,9 +527,13 @@ def build_judge() -> None:
         "created": datetime.now(UTC).isoformat(timespec="seconds"),
         "commit": _commit(),
         "incumbent": settings.judge_model,
+        "text_incumbent": settings.check_model,
         "strata": {"hard": JUDGE_HARD, "control": JUDGE_CONTROL, "seed": SEED},
         "books": books,
-        "items": [{k: i[k] for k in ("id", "stratum", "crop", "question_sha")} for i in items],
+        "items": [
+            {k: i[k] for k in ("id", "stratum", "crop", "question_sha", "text_sha") if k in i}
+            for i in items
+        ],
     }
     manifest_path.write_text(json.dumps(manifest, indent=1) + "\n")
     print(f"{len(items)} suspects; manifest {manifest_path}")
@@ -529,23 +549,66 @@ def load_judge_set() -> tuple[dict, list[dict]]:
         png = (root / "crops" / f"{sha(item['id'])}.png").read_bytes()
         m = want[item["id"]]
         question = sha(json.dumps([item["state"], item["questions"]], sort_keys=True))
-        if sha(png) != m["crop"] or question != m["question_sha"]:
+        text = sha(json.dumps([item.get("text_state"), item.get("text_questions")], sort_keys=True))
+        if (
+            sha(png) != m["crop"]
+            or question != m["question_sha"]
+            or ("text_sha" in m and text != m["text_sha"])
+        ):
             sys.exit(f"{item['id']} differs from the manifest: the set changed under its version")
         item["png"] = png
     return manifest, data["items"]
 
 
-def run_judge(model: str) -> None:
+# The kinds of slip each judge makes most on the trust data (2026-11-07, 27,338 settled
+# suspects): the vision judge a stop, comma or colon for a speck or for each other,
+# look-alike letters, a lost diaeresis; the text judge look-alike letters, punctuation,
+# accents.
+PROMPT_VARIANTS = {
+    "kinds": {
+        "vision": (
+            " Scans mislead in known ways: a speck of dirt looks like a full stop, comma, "
+            "colon or accent; a full stop and a comma look alike; letters look alike in "
+            "print (c and e, h and b, rn and m, a doubled letter and a single one); a "
+            "diaeresis (ï, ë) is easily missed. Look closely at the small marks."
+        ),
+        "text": (
+            " OCR goes wrong in known ways: letters that look alike in print swapped (c "
+            "and e, h and b, rn and m), a letter doubled or dropped, a diaeresis (ï, ë) "
+            "lost or added, a full stop read as a comma or the reverse. The author's own "
+            "spelling and wording are never wrong: choose what the book prints, not what "
+            "reads better."
+        ),
+    },
+}
+
+
+def _prompted(questions: dict, variant: str, kind: str) -> dict:
+    """The questions with the variant's words added to each one's instructions."""
+    if not variant:
+        return questions
+    extra = PROMPT_VARIANTS[variant][kind]
+    return {n: {**q, "instructions": q["instructions"] + extra} for n, q in questions.items()}
+
+
+def run_judge(model: str, variant: str = "") -> None:
     from roboscriptorium.clients import decide
 
     manifest, items = load_judge_set()
     books = manifest["books"]
     settings = Settings.from_env()
+    text = model.startswith("tokens:")
+    if text:
+        items = [i for i in items if "text_state" in i]
+        for i in items:
+            i["state"], i["questions"] = i["text_state"], i["text_questions"]
+            i["incumbent"], i["png"] = i["text_incumbent"], None
+    label = model + (f"+{variant}" if variant else "")
     cache = (
         WORK
         / f"judge-v{JUDGE_VERSION}"
         / "answers"
-        / f"{model.replace(':', '_').replace('/', '_')}.json"
+        / f"{label.replace(':', '_').replace('/', '_')}.json"
     )
     cache.parent.mkdir(parents=True, exist_ok=True)
     done = json.loads(cache.read_text()) if cache.exists() else {}
@@ -561,15 +624,17 @@ def run_judge(model: str) -> None:
     seconds = []
     for n, i in enumerate(todo, 1):
         start = datetime.now(UTC)
-        a = client.decide(i["state"], i["questions"], image_png=i["png"])["reading"]
+        questions = _prompted(i["questions"], variant, "text" if text else "vision")
+        a = client.decide(i["state"], questions, image_png=i["png"])["reading"]
         seconds.append((datetime.now(UTC) - start).total_seconds())
         done[i["id"]] = {"value": a.value, "confidence": a.confidence}
         if n % 25 == 0 or n == len(todo):
             cache.write_text(json.dumps(done))
             print(f"{n}/{len(todo)}", flush=True)
     incumbent = {i["id"]: i["incumbent"] for i in items}
-    rows = [_judge_score(f"{model} (candidate)", done, items, books)]
-    rows.append(_judge_score(f"{manifest['incumbent']} (in use)", incumbent, items, books))
+    rows = [_judge_score(f"{label} (candidate)", done, items, books)]
+    in_use = manifest["text_incumbent"] if text else manifest["incumbent"]
+    rows.append(_judge_score(f"{in_use} (in use)", incumbent, items, books))
     for r in rows:
         print(
             f"{r['name']:40} hard {r['hard']:>3}/{r['hard_n']}  control {r['control']:>3}/"
@@ -582,7 +647,7 @@ def run_judge(model: str) -> None:
         "set_version": JUDGE_VERSION,
         "at": datetime.now(UTC).isoformat(timespec="seconds"),
         "commit": _commit(),
-        "candidate": model,
+        "candidate": label,
         "digests": _digests([model]) if not model.startswith("llama:") else {},
         "seconds": statistics.median(seconds) if seconds else None,
         "rows": rows,
@@ -629,4 +694,8 @@ if __name__ == "__main__":
     elif command == "prune" and role == "reader":
         prune_reader()
     elif command == "run":
-        run_reader(sys.argv[3]) if role == "reader" else run_judge(sys.argv[3])
+        if role == "reader":
+            run_reader(sys.argv[3])
+        else:
+            variant = sys.argv[sys.argv.index("--prompt") + 1] if "--prompt" in sys.argv else ""
+            run_judge(sys.argv[3], variant)

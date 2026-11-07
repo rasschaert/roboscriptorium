@@ -41,7 +41,8 @@ the first new signal tried since the 25th.
 **Would move it up:** the judge prompt paying on the bench; Stella's read-through finding
 few errors the bench can't see.
 **Would move it down:** the judge prompt trading picks it fixes for picks it breaks (its
-interim count: 58 of 320 hard suspects right, 10 of 305 right ones lost).
+interim count: 58 of 320 hard suspects right, 10 of 305 right ones lost). Later that day it
+did (decisions.md): no new signal for the arbiter from it, and the second row stays at ~40%.
 
 ## 2026-10-25, morning: 6.5/10 (unchanged; the reasons sharper)
 
