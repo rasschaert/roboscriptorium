@@ -636,10 +636,18 @@ also part of the pipeline itself." Before either book goes to review:
       for line roles. Each on judge set v2: `tryout.py run judge <model>` (replace clef?),
       `judge_combine.py` with its answers as the second (add it beside clef?), then
       `--prompt wide`; the hints only for the best. ~30 min a run for a 27B
-- [ ] What the review shows of a contested place (2026-11-07: six places the narrow crop
-      couldn't settle were plain from the whole line and its sentence, for the agent and the
-      user alike): check whether a golden book's question and an OCR suspect's crop show
-      the whole line with the lines around it, and widen them where not
+- [ ] Pages below the quality the build supports (the user, 2026-11-07, of De vergelding's
+      PDF 114: "below the threshold of quality that roboscriptorium supports"), found by
+      the machine, not listed by hand. The ink-against-paper contrast (`faint.py`) doesn't
+      separate them (De kerk's pages at 42 read perfectly, De vergelding's at 36 and 42
+      don't: blurred, not pale); the readers' disagreement does: suspects a line against
+      the book's median put De vergelding's PDF 38 (26×, clef sure 0.20), 34 (20×), 80, 36,
+      54 (9–12×) on top of all 23 books, then a gap. Such a page (≥ 8×, ≥ 30 suspects)
+      named by `build` like missing pages and left out of the bench's score. After the
+      judge panel's benches, which run against today's scoring
+- [x] ~~What the review shows of a contested place~~ (2026-11-07): already the whole line
+      and one line either side (`review.CROP_CONTEXT_LINES`); only the judges see the
+      suspect alone, which the panel's wide-crop judge tests
 - [x] ~~The judges told the kinds of OCR error~~ (2026-11-07, judge set v2): not taken.
       clef:27b weighted 91.3% → 89.9% (91 hard picks fixed, 16 right ones broken, all at
       low confidence); Winnow-12B worse on both halves, stopped at 525 of 995
