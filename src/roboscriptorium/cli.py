@@ -53,7 +53,10 @@ def doctor() -> None:
         typer.echo(f"ollama  {settings.ollama_url}  UNREACHABLE: {exc}")
 
     # The decision models the pipeline asks, each on the runtime that serves it.
+    alarms = [spec.partition("@")[0] for spec in settings.alarm_models]
+    llamas = [m.removeprefix("llama:") for m in alarms if m.startswith("llama:")]
     models = [settings.role_model, settings.judge_model, settings.check_model]
+    models += [m for m in alarms if not m.startswith("llama:")]
     for model in [m for m in dict.fromkeys(models) if m]:
         try:
             client = decide.for_model(model, settings.ollama_url)
@@ -70,20 +73,20 @@ def doctor() -> None:
         except httpx.HTTPError as exc:
             ok = False
             typer.echo(f"decide  {model}  FAILED: {exc}")
-    if settings.alarm_model:
+    for alarm in llamas:
         try:
-            client = llama.ReadoutClient(settings.alarm_model, settings.llama_url)
+            client = llama.ReadoutClient(alarm, settings.llama_url)
             question = decide.choice(
                 "Which colour is a clear daytime sky?", {"blue": "", "red": ""}
             )
             answer = client.decide({}, {"q": question})["q"]
             typer.echo(
-                f"llama   {settings.alarm_model}  {settings.llama_url}  smoke test: "
+                f"llama   {alarm}  {settings.llama_url}  smoke test: "
                 f"{answer.value} ({answer.confidence:.2f})"
             )
         except (httpx.HTTPError, OSError) as exc:
             ok = False
-            typer.echo(f"llama   {settings.alarm_model}  {settings.llama_url}  FAILED: {exc}")
+            typer.echo(f"llama   {alarm}  {settings.llama_url}  FAILED: {exc}")
 
     raise typer.Exit(0 if ok else 1)
 
@@ -595,16 +598,18 @@ def _model_versions(settings: Settings) -> dict[str, str]:
             out[m["name"]] = ",".join(sorted({*out.get(m["name"], "").split(","), digest} - {""}))
     except httpx.HTTPError:
         pass
+    alarms = [spec.partition("@")[0] for spec in settings.alarm_models]
     used = {
         settings.role_model, settings.check_model, settings.judge_model,
         settings.ocr_model, settings.read_model,
+        *(m for m in alarms if not m.startswith("llama:")),
     }  # fmt: skip
     served = {name: name.removeprefix(decide.TokenClient.PREFIX) for name in used - {""}}
     versions = {name: out.get(served[name], "?") for name in sorted(served)}
-    if settings.alarm_model:
-        size = settings.alarm_model.removeprefix("imajev-")
+    for alarm in (m.removeprefix("llama:") for m in alarms if m.startswith("llama:")):
+        size = alarm.removeprefix("imajev-")
         readout = llama.READOUTS / f"{size}-decision_readout.safetensors"
-        versions[settings.alarm_model] = sha256(readout)[:12] if readout.exists() else "?"
+        versions[alarm] = sha256(readout)[:12] if readout.exists() else "?"
     return versions
 
 

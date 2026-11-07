@@ -81,6 +81,19 @@ class DecisionClient:
         return {name: Answer.from_json(a) for name, a in resp.json()["answers"].items()}
 
 
+class Wide:
+    """A decision model asked about the suspect with its line around it (`<model>@wide`):
+    its votes and cached answers go under that name, its requests to the model."""
+
+    def __init__(self, inner, name: str, wide: float):
+        self.model = name
+        self.wide = wide
+        self._inner = inner
+
+    def decide(self, state, questions, model=None, image_png=None):
+        return self._inner.decide(state, questions, image_png=image_png)
+
+
 class HostedClient:
     """A local decision model's questions answered by a hosted build of it (`via`,
     `openrouter:<model>@<provider tag>`), under the local model's name, so the

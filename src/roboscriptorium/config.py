@@ -26,10 +26,11 @@ class Settings:
     # Judges the OCR check's suspects from the crop; better than role_model at that,
     # worse at line roles.
     judge_model: str = "clef:27b"
-    # A second vision judge on the OCR check's suspects: a decision model on Ollama, or
-    # `llama:<name>` served by llama.cpp at llama_url (`clients/llama.py`, imajev-4b); a
-    # vote for the arbiter, "" for none. Asked only where the vision judge is less sure
-    # than `alarm_below` (1.0: always).
+    # Second vision judges on the OCR check's suspects, comma-separated: decision models
+    # on Ollama, or `llama:<name>` served by llama.cpp at llama_url (`clients/llama.py`,
+    # imajev-4b); `<model>@wide` asks one on the suspect with its line around it. Each
+    # is a vote for the arbiter, "" for none. Asked only where the vision judge is less
+    # sure than `alarm_below` (1.0: always).
     alarm_model: str = ""
     alarm_below: float = 1.0
     llama_url: str = "http://127.0.0.1:8092"
@@ -80,6 +81,11 @@ class Settings:
     # where the judge agrees below this, the suspect stays asked.
     context_min: float = 0.0
 
+    @property
+    def alarm_models(self) -> tuple[str, ...]:
+        """The second vision judges, each as named in `alarm_model` (with its `@wide`)."""
+        return tuple(m.strip() for m in self.alarm_model.split(",") if m.strip())
+
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
             raise ValueError(f"ROBO_OCR_ASK_BELOW={self.ocr_ask_below}: a probability in (0, 1]")
@@ -87,7 +93,7 @@ class Settings:
             raise ValueError(f"ROBO_ALARM_BELOW={self.alarm_below}: a confidence in (0, 1]")
         if self.ocr_questions_per_page < 0:
             raise ValueError(f"ROBO_OCR_QUESTIONS={self.ocr_questions_per_page}: not below 0")
-        judges = [m for m in (self.judge_model, self.check_model, self.alarm_model) if m]
+        judges = [m for m in (self.judge_model, self.check_model, *self.alarm_models) if m]
         if len(set(judges)) < len(judges):
             # Votes are kept by model name, so two judges by one name would be one vote.
             raise ValueError(f"the judges must be different models, not {judges}")

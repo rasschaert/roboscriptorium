@@ -114,8 +114,14 @@ HELD_OUT = {spec.split("--")[0] for spec in [*bench.SETS["validation"], *bench.F
 def judges(settings: Settings) -> set[str]:
     """The judges a build with these settings asks: votes of any other model in the data
     (an alarm tried and left off) would train the arbiter on a vote it never gets."""
-    models = {settings.judge_model, settings.check_model, settings.alarm_model}
+    models = {settings.judge_model, settings.check_model, *settings.alarm_models}
     return (models | {"word list"}) - {""}
+
+
+def seats(settings: Settings) -> int:
+    """The judge seats an arbiter for these settings reads: the vision and text judges
+    and each second vision judge, at least `trust.SEATS`."""
+    return max(trust.SEATS, 2 + len(settings.alarm_models))
 
 
 def readings(settings: Settings) -> set[str]:
@@ -174,6 +180,7 @@ def models_to_save(
     path: Path,
     score,
     readings: tuple[str, ...] = trust.READINGS,
+    seats: int = trust.SEATS,
 ) -> list[tuple]:
     """The arbiter the pipeline uses, trained on every trainable book (the books labelled
     by a reviewer's answers too), and a copy without each tuning book, which `bench`
@@ -192,6 +199,7 @@ def models_to_save(
             [r["right"] for r in every],
             [r["book"] for r in every],
             readings,
+            seats,
         )
         sure, hit = [], []
         for held in names:

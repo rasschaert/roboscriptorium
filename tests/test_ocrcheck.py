@@ -355,7 +355,7 @@ def test_a_second_vision_judge_is_asked_the_same_question_and_only_votes(monkeyp
     line = "Toen kwam lemand binnen"
     (choice, chosen, votes), confidence = ocrcheck._decide(
         None, 1, 0, line, 10, 16, ["Iemand"], (0, 0, 1, 1), "nld", clef, winnow, None,
-        vouched=1, alarm=imajev,
+        vouched=1, alarms=[imajev],
     )  # fmt: skip
     (_, s1, q1), _, (_, s3, q3) = asked
     assert (s1, q1) == (s3, q3)
@@ -381,10 +381,38 @@ def test_the_second_vision_judge_is_asked_only_where_the_first_is_unsure(monkeyp
         asked = []
         (_, _, votes), confidence = ocrcheck._decide(
             None, 1, 0, line, 10, 16, ["Iemand"], (0, 0, 1, 1), "nld", clef, winnow, None,
-            alarm=pplx, alarm_below=0.5,
+            alarms=[pplx], alarm_below=0.5,
         )  # fmt: skip
         assert ("pplx" in asked) == wanted
         assert ("pplx" in votes) == ("pplx" in confidence) == wanted
+
+
+def test_each_second_vision_judge_votes_and_a_wide_one_sees_the_line_around(monkeypatch):
+    from types import SimpleNamespace
+
+    from roboscriptorium.clients import decide
+
+    asked = []
+
+    def ask(client, cache, state, questions, image=None):
+        asked.append((client.model, questions["reading"]["instructions"]))
+        return {"value": {"pplx@wide": "b"}.get(client.model, "a"), "confidence": 0.6}
+
+    crops = []
+    monkeypatch.setattr(ocrcheck, "_ask", ask)
+    monkeypatch.setattr(ocrcheck, "_crop", lambda page, box, wide=0: crops.append(wide))
+    clef, winnow = SimpleNamespace(model="clef"), SimpleNamespace(model="winnow")
+    jev = SimpleNamespace(model="jev")
+    wide = decide.Wide(SimpleNamespace(model="pplx"), "pplx@wide", ocrcheck.WIDE)
+    line = "Toen kwam lemand binnen"
+    (_, _, votes), confidence = ocrcheck._decide(
+        None, 1, 0, line, 10, 16, ["Iemand"], (0, 0, 1, 1), "nld", clef, winnow, None,
+        alarms=[jev, wide],
+    )  # fmt: skip
+    assert votes["jev"] == "lemand" and votes["pplx@wide"] == "Iemand"
+    assert confidence["jev"] == confidence["pplx@wide"] == 0.6
+    told = dict(asked)
+    assert told["jev"] == told["clef"] and told["pplx@wide"] == told["clef"] + ocrcheck.WIDE_NOTE
 
 
 def test_the_vision_judge_is_told_the_books_style_and_the_text_judge_isnt(monkeypatch):

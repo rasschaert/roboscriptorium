@@ -36,7 +36,7 @@ from roboscriptorium import trust
 from roboscriptorium.book import Book
 from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
-from roboscriptorium.trustdata import HELD_OUT, SPECS, models_to_save, rows_of, trainable, usable, weighed
+from roboscriptorium.trustdata import HELD_OUT, SPECS, models_to_save, rows_of, seats, trainable, usable, weighed
 
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
 MODELS = {
@@ -49,6 +49,7 @@ MODELS = {
 
 _SETTINGS = Settings.from_env()
 READINGS = weighed(_SETTINGS)
+SEATS = seats(_SETTINGS)
 
 
 def matrix(rows: list[dict], pairs: trust.Pairs) -> tuple[np.ndarray, list[int]]:
@@ -56,7 +57,7 @@ def matrix(rows: list[dict], pairs: trust.Pairs) -> tuple[np.ndarray, list[int]]
     X, owner = [], []
     for i, r in enumerate(rows):
         for k in range(len(r["right"])):
-            X.append(trust.features(r["s"], k, pairs, READINGS))
+            X.append(trust.features(r["s"], k, pairs, READINGS, SEATS))
             owner.append(i)
     return np.array(X), owner
 
@@ -100,7 +101,7 @@ def scored(make, train_names, rows):
     suspects, right = [r["s"] for r in train], [r["right"] for r in train]
     names = [n for n in train_names for _ in books[n]]
     pairs = trust.pairs_table(suspects, right, names)
-    X, y = trust.training_matrix(suspects, right, names, READINGS)
+    X, y = trust.training_matrix(suspects, right, names, READINGS, SEATS)
     Xt, owner = matrix(rows, pairs)
     return per_suspect(rows, make().fit(X, y).predict_proba(Xt)[:, 1], owner)
 
@@ -127,7 +128,7 @@ if "--save" in sys.argv:
     if missing and "--partial" not in sys.argv:
         sys.exit(f"not saving: tuning data missing or stale for {', '.join(missing)} (--partial to save anyway)")
     path = Path(_SETTINGS.ocr_trust_model)
-    models = models_to_save(books, path, lambda names, rows: scored(MODELS["trees"], names, rows), READINGS)
+    models = models_to_save(books, path, lambda names, rows: scored(MODELS["trees"], names, rows), READINGS, SEATS)
     calibration = models[0][1].calibration
     grid = (0.5, 0.7, 0.8, 0.9, 0.95, 0.99)
     print("raw sureness → right:", ", ".join(f"{g} → {calibration.predict([g])[0]:.3f}" for g in grid))

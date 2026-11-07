@@ -204,3 +204,22 @@ def test_a_change_its_readers_were_right_about_in_the_books_answers_settles_its_
     letters = replace(accent("cen", "een", True))
     many = trust.rows_from([letters] * 9, {(3, 0, 4): "zat een daar"})
     assert trust.by_book([letters], trust.book_buckets(many), 0.8)[0].choice == "review"
+
+
+def test_an_arbiter_with_more_judge_seats_reads_each_and_loads_with_them(tmp_path):
+    s = replace(
+        _suspect("lemand", "Iemand", "Iemand", 0.9),
+        votes={"vision": "Iemand", "text": "Iemand", "jev": "lemand", "d3": "Iemand"},
+        confidence={"vision": 0.9, "text": 0.9, "jev": 0.7, "d3": 0.6},
+        judges=("vision", "text", "jev", "d3", "pplx@wide"),
+    )
+    # Three seats read as before: the fourth and fifth judges aren't seen.
+    assert len(trust.features(s, 1)) == trust.FEATURES == trust.width()
+    f = trust.features(s, 1, seats=5)
+    assert len(f) == trust.width(seats=5) == trust.FEATURES + 6
+    # The seats in order: jev against it, d3 for it, pplx@wide not asked (all zeros).
+    assert f[-12:-3] == [0.0, -0.7, 0.0, 1.0, 0.6, 0.0, 0.0, 0.0, 0.0]
+    model = trust.train([s] * 30, [[False, True]] * 30, seats=5)
+    trust.save(model, tmp_path / "m.pkl")
+    loaded = trust.load(tmp_path / "m.pkl")
+    assert loaded.seats == 5 and trust.probabilities(loaded, s).shape == (2,)

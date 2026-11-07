@@ -17,8 +17,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `clients/llama.py`: imajev, a vision decision model whose trained readout a GGUF
   lacks, on llama-server (`ROBO_LLAMA_URL`); as `ROBO_ALARM_MODEL=llama:imajev-4b` it is the
   OCR check's second vision judge, asked clef's question, a vote for the arbiter only.
-  `ROBO_ALARM_MODEL` takes a decision model on Ollama too, and `ROBO_ALARM_BELOW` asks it
-  only where clef is less sure than that.
+  `ROBO_ALARM_MODEL` takes decision models on Ollama too, several comma-separated (a
+  panel), `<model>@wide` one asked on the suspect with 40 pt of its line either side
+  (`clients/decide.Wide`, `ocrcheck.WIDE`); `ROBO_ALARM_BELOW` asks them only where clef
+  is less sure than that.
 - `clients/ollama.py`: a thin httpx client for Ollama's own API (`doctor` lists the
   models with it). Decision models answer through `clients/decide.py` (or
   `clients/llama.py`), hosted models through `clients/openrouter.py`; the line readers
@@ -337,7 +339,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   their best version. The budget is book-wide (questions per page ×
   pages), so a bad page can take more than one. On by default (`ROBO_OCR_TRUST=0`
   for the fixed rule); a missing model, or one saved for another version or
-  feature width (`MODEL_VERSION`, `FEATURES`), stops the build. The model lives
+  feature width (`MODEL_VERSION`, `FEATURES`), stops the build. It reads the judges by
+  seat (vision, text, then each second vision judge); a panel of more second judges
+  gets more seats (`trust.SEATS`, 3, and up; `trustdata.seats`), recorded with the model. The model lives
   in `work/models/ocr-trust.pkl`, trained by `experiments/train_ocr_trust.py
   --save` on the tuning books' suspects, never the validation ones (it refuses while a
   tuning book's data is missing or built before the current readings)

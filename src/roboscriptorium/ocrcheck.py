@@ -44,6 +44,14 @@ CROP_PAD = 4  # points around the suspect words
 # A judge's answer on a crop is cached with the crop's settings. Answers cached without
 # them were all made at this zoom and padding, and stand for that crop.
 UNKEYED_CROP = {"zoom": 4, "pad": 4}
+# A wide view (`<model>@wide`): this many points of the line either side of the suspect,
+# and the question told so (judge set v2, 2026-11-07: pplx-decider 27B wrong on spaces
+# 1.1% so, against 9.6% on the suspect alone).
+WIDE = 40
+WIDE_NOTE = (
+    " The image shows a stretch of the line: the text in question stands in its middle, "
+    "between the words around it."
+)
 # Curly quotes as straight ones, and a not sign (some OCR layers' line-end hyphen) as a
 # hyphen, one character for one, so offsets stay put.
 _FOLD = str.maketrans("‘’“”¬", "''\"\"-")
@@ -218,14 +226,15 @@ def check(
     cache: DecisionCache,
     lexicon: Lexicon | None = None,
     style: str = "",
-    alarm=None,
+    alarms=(),
     alarm_below: float = 1.0,
 ) -> list[Suspect]:
     """Suspects where any other reading (by name) differs from the text layer, each with a
     decision. `style` tells the vision judges how the book is set (`quotes.style_note`).
-    `alarm`, a second vision judge, is asked the vision judge's question where that judge
-    is less sure than `alarm_below`; its pick is a vote for the arbiter, not part of the
-    fixed rule, and a suspect it wasn't asked about has no vote of it."""
+    `alarms`, second vision judges, are asked the vision judge's question where that
+    judge is less sure than `alarm_below` (one with a `wide` view on the suspect with its
+    line around it); each pick is a vote for the arbiter, not part of the fixed rule, and
+    a suspect one wasn't asked about has no vote of it."""
     suspects = []
     curly = curly_book(pages)
     shortened = abbreviations(pages)
@@ -270,7 +279,7 @@ def check(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache, around,
                         lexicon.vouches(read_as, continues) if lexicon else None,
-                        joined, style, alarm, alarm_below,
+                        joined, style, alarms, alarm_below,
                     )  # fmt: skip
                     support = {
                         n: supports(ours, other, a0, a1, versions, curly)
@@ -294,7 +303,7 @@ def check(
                             support,
                             known,
                             joined,
-                            tuple(m.model for m in (vision, reader, alarm) if m is not None),
+                            tuple(m.model for m in (vision, reader, *alarms) if m is not None),
                         )  # fmt: skip
                     )
     return suspects
@@ -579,7 +588,7 @@ def _combined(ours: str, versions: list[str]) -> str | None:
 
 def _decide(
     pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache, around=("", ""),
-    vouched: int | None = None, joined: str = "", style: str = "", alarm=None,
+    vouched: int | None = None, joined: str = "", style: str = "", alarms=(),
     alarm_below: float = 1.0,
 ) -> tuple[tuple[str, str | None, dict[str, str]], dict[str, float]]:  # fmt: skip
     """\"ours\", \"other\" with the chosen version, or \"review\", with each model's pick;
@@ -646,8 +655,14 @@ def _decide(
     if reader is not None:
         votes[reader.model] = pick(read["value"])
         confidence[reader.model] = read["confidence"]
-    if alarm is not None and seen["confidence"] < alarm_below:
-        alarmed = _ask(alarm, cache, state, question, image=lambda: _crop(pdf_page, box))
+    for alarm in alarms if seen["confidence"] < alarm_below else ():
+        wide = getattr(alarm, "wide", 0)
+        asked = question
+        if wide:
+            asked = {
+                n: {**q, "instructions": q["instructions"] + WIDE_NOTE} for n, q in question.items()
+            }
+        alarmed = _ask(alarm, cache, state, asked, image=lambda w=wide: _crop(pdf_page, box, w))
         votes[alarm.model] = pick(alarmed["value"])
         confidence[alarm.model] = alarmed["confidence"]
     if vouched is not None:
@@ -687,6 +702,8 @@ def _ask(
     key = DecisionCache.key(client.model, questions, state)
     if image is not None:
         crop = {"zoom": CROP_ZOOM, "pad": CROP_PAD}
+        if wide := getattr(client, "wide", 0):
+            crop["wide"] = wide
         readout = getattr(client, "fingerprint", "")
         keyed = {**state, "crop": crop, **({"readout": readout} if readout else {})}
         unkeyed = key if crop == UNKEYED_CROP and not readout else None
@@ -703,8 +720,11 @@ def _ask(
     return answer
 
 
-def _crop(pdf_page: pymupdf.Page, box) -> bytes:
-    clip = pymupdf.Rect(box) + (-CROP_PAD, -CROP_PAD, CROP_PAD, CROP_PAD)
+def _crop(pdf_page: pymupdf.Page, box, wide: float = 0) -> bytes:
+    """The suspect's words, padded by `CROP_PAD`, or by `wide` points of its line either
+    side (within the page), as judge set v2's wide crop."""
+    side = wide or CROP_PAD
+    clip = (pymupdf.Rect(box) + (-side, -CROP_PAD, side, CROP_PAD)) & pdf_page.rect
     return pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip).tobytes(
         "png"
     )

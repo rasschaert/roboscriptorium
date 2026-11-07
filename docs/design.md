@@ -170,6 +170,12 @@ back a version, so these are left to trust and the bench, with no rule of their 
   2026-10-24): tuning after review 0.282 → 0.316 [+0.02, +0.05], 164 wrong words made
   against 79 fixed, questions down on most books: without it the arbiter is surer and
   wrong more often.
+- *A panel of second vision judges is on trial* (2026-11-07, `ROBO_ALARM_MODEL`, off until
+  benched): on judge set v2 autotrust-jev 35B (another model family), d3 9B (the least
+  often sure and wrong) and pplx-decider 27B on a wide crop together tell clef's wrong
+  picks apart at AUC 0.949 against clef's own confidence's 0.822; the vision judges share
+  half their mistakes, so these three were chosen for the mistakes they don't share
+  (models.md, decisions.md). Each takes a seat of its own in the arbiter.
 - *imajev-4b, a second vision judge, is not used* (`ROBO_ALARM_MODEL=llama:imajev-4b`, off). Asked clef's
   question on the crop, it is right alone on 85% and a sharper alarm than winnow-ollama:e4b
   where it speaks (clef wrong on 37% of their disagreements against 5% of their

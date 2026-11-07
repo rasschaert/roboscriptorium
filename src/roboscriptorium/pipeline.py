@@ -296,15 +296,10 @@ def run(
                             book.stages / f"page-reading-{name}.json",
                         )  # fmt: skip
             judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
-            alarm = None
-            if settings.alarm_model.startswith("llama:"):
-                name = settings.alarm_model.removeprefix("llama:")
-                alarm = llama.ReadoutClient(name, settings.llama_url)
-            elif settings.alarm_model:
-                alarm = decide.for_model(settings.alarm_model, settings.ollama_url)
+            alarms = [_alarm(spec, settings) for spec in settings.alarm_models]
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
-                book_style(book, whole, style, dots), alarm, settings.alarm_below,
+                book_style(book, whole, style, dots), alarms, settings.alarm_below,
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:
@@ -503,6 +498,21 @@ def run(
         repeated_pages=repeated,
         missing_pages=scanpages.gaps(whole),
     )
+
+
+def _alarm(spec: str, settings: Settings):
+    """A second vision judge's client from its name in `alarm_model`: `llama:<name>` on
+    llama.cpp, else a decision model on Ollama; `@wide` views the suspect with its line."""
+    name, _, view = spec.partition("@")
+    if name.startswith("llama:"):
+        client = llama.ReadoutClient(name.removeprefix("llama:"), settings.llama_url)
+    else:
+        client = decide.for_model(name, settings.ollama_url)
+    if view == "wide":
+        return decide.Wide(client, spec, ocrcheck.WIDE)
+    if view:
+        raise ValueError(f"ROBO_ALARM_MODEL: {spec!r}, a view other than @wide")
+    return client
 
 
 def _apart(

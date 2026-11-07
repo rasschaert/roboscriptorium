@@ -45,10 +45,15 @@ READINGS = ("glm", "tess", "qwen")
 PAGE_READINGS = ("glm-page", "qwen-page")
 
 
-def width(readings: tuple[str, ...] = READINGS) -> int:
-    """The length of `features` over these readings; a saved model of another width
-    can't score them."""
-    return 23 + len(readings)
+# Judge seats the arbiter reads by default: the vision judge, the text judge and one
+# second vision judge. A panel of more second vision judges takes more seats.
+SEATS = 3
+
+
+def width(readings: tuple[str, ...] = READINGS, seats: int = SEATS) -> int:
+    """The length of `features` over these readings and judge seats; a saved model of
+    another width can't score them."""
+    return 23 + len(readings) + 3 * (seats - SEATS)
 
 
 FEATURES = width()
@@ -71,6 +76,8 @@ class Trust:
     calibration: object | None = None
     # The readings whose support it was trained on, in feature order.
     readings: tuple[str, ...] = READINGS
+    # The judge seats it reads (`SEATS` and up).
+    seats: int = SEATS
 
 
 def sureness(trust: Trust, p: np.ndarray) -> float:
@@ -247,7 +254,11 @@ def prior(s: Suspect, k: int, pairs: Pairs) -> list[float]:
 
 
 def features(
-    s: Suspect, k: int, pairs: Pairs | None = None, readings: tuple[str, ...] = READINGS
+    s: Suspect,
+    k: int,
+    pairs: Pairs | None = None,
+    readings: tuple[str, ...] = READINGS,
+    seats: int = SEATS,
 ) -> list[float]:
     """Version k of a suspect (0 is the text layer's), as the model sees it."""
     versions = [s.ours, *s.others]
@@ -270,8 +281,8 @@ def features(
         float(len(v) - len(ours)),
     ]
     picks = []
-    judges = s.judged_by[:3]
-    for model in judges + [""] * (3 - len(judges)):
+    judges = s.judged_by[:seats]
+    for model in judges + [""] * (seats - len(judges)):
         picked = s.votes.get(model) == v
         c = s.confidence.get(model, 0.0)
         f += [float(picked), c if picked else -c, float(s.votes.get(model) == "")]
@@ -284,7 +295,7 @@ def features(
 def probabilities(trust: Trust, s: Suspect) -> np.ndarray:
     """Each version's probability of being what the scan prints, summing to one."""
     n = 1 + len(s.others)
-    X = np.array([features(s, k, trust.pairs, trust.readings) for k in range(n)])
+    X = np.array([features(s, k, trust.pairs, trust.readings, trust.seats) for k in range(n)])
     p = trust.model.predict_proba(X)[:, 1]
     return p / max(p.sum(), 1e-9)
 
@@ -294,6 +305,7 @@ def training_matrix(
     right: list[list[bool]],
     books: list[str],
     readings: tuple[str, ...] = READINGS,
+    seats: int = SEATS,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Feature rows and labels for every version of the training suspects. Each book's
     suspects get their priors from the other training books only, as a scored book's
@@ -310,7 +322,7 @@ def training_matrix(
             if b != book:
                 continue
             for k, hit in enumerate(ok):
-                X.append(features(s, k, table, readings))
+                X.append(features(s, k, table, readings, seats))
                 y.append(int(hit))
     return np.array(X), np.array(y)
 
@@ -320,6 +332,7 @@ def train(
     right: list[list[bool]],
     books: list[str] | None = None,
     readings: tuple[str, ...] = READINGS,
+    seats: int = SEATS,
 ) -> Trust:
     """Trees over the labelled suspects, with the substitution priors from the same
     (`books` names each suspect's book; without it no pair reaches `MIN_BOOKS`), weighing
@@ -327,12 +340,12 @@ def train(
     from sklearn.ensemble import HistGradientBoostingClassifier
 
     books = books or [""] * len(suspects)
-    X, y = training_matrix(suspects, right, books, readings)
+    X, y = training_matrix(suspects, right, books, readings, seats)
     pairs = pairs_table(suspects, right, books)
     model = HistGradientBoostingClassifier(
         max_depth=3, min_samples_leaf=20, l2_regularization=1.0, random_state=0
     )
-    return Trust(model.fit(X, y), pairs, readings=readings)
+    return Trust(model.fit(X, y), pairs, readings=readings, seats=seats)
 
 
 def save(trust: Trust, path: Path) -> None:
@@ -342,6 +355,7 @@ def save(trust: Trust, path: Path) -> None:
         "pairs": trust.pairs,
         "calibration": trust.calibration,
         "readings": trust.readings,
+        "seats": trust.seats,
     }
     write_atomic(path, pickle.dumps(blob))
 
@@ -358,14 +372,15 @@ def load(path: Path) -> Trust | None:
     blob = pickle.loads(path.read_bytes())
     model = blob["model"]
     readings = tuple(blob.get("readings", READINGS))
-    if blob.get("version") != MODEL_VERSION or model.n_features_in_ != width(readings):
+    seats = blob.get("seats", SEATS)
+    if blob.get("version") != MODEL_VERSION or model.n_features_in_ != width(readings, seats):
         raise Mismatch(
             f"The trust model {path} is version {blob.get('version')} with "
             f"{model.n_features_in_} features; this code needs version {MODEL_VERSION} with "
-            f"{width(readings)}. Retrain it (experiments/train_ocr_trust.py --save) or set "
+            f"{width(readings, seats)}. Retrain it (experiments/train_ocr_trust.py --save) or set "
             "ROBO_OCR_TRUST=0 for the fixed rule."
         )
-    return Trust(model, blob.get("pairs", {}), blob.get("calibration"), readings)
+    return Trust(model, blob.get("pairs", {}), blob.get("calibration"), readings, seats)
 
 
 def without(path: Path, book: str) -> Path:
