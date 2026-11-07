@@ -866,6 +866,11 @@ on either set (2026-11-06). A short heading that reads as no number at all goes 
 way where it stands under half the median height of the run's numbers (`SPECK_HEIGHT`):
 Thief-Taker's "V", a 6 pt speck on the blank page after a part title, against chapter
 numbers 14 pt tall; a part numeral drawn as large as the numbers stays.
+A heading that is a bare number at its page's foot, or at its head on a page not sunk,
+and reads as the number the book's page offset says is printed there, is that page's
+number (`chapters.folios`): Het heft's "88" under a chapter's short last page (PDF 92),
+which the trees trained without the book call a heading. A sunk opening's first line
+stays, though its chapter number match the page's.
 A heading its run confirms isn't asked in the review (`chapters.settled`): bare numbers
 each one more than the one before or after, titles opening on years in order ("1885:
 Een ramp" after "1840-1884: …", five or more), parts counted in words in order; nor is

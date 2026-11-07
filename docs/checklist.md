@@ -570,9 +570,8 @@ also part of the pipeline itself." Before either book goes to review:
       and validation books' body pages, these are the only ones with ink and no text);
       Afscheid's chapters 1 and 2 on openings sunk 0.06 of a page, under
       `page.SUNK_PAGE_DROP` (0.08), so their misread numbers ("l", "e,") count as page edges;
-      Het heft's "88" (PDF 92) a heading: the page's own printed number (88, PDF 92 less the
-      book's offset of 4), at the foot like every page's around it, on a chapter's short last
-      page; Thief-Taker's "V" (PDF 140, a speck 6 pt tall against numbers 14 pt: mended
+      Het heft's "88" (PDF 92, its own printed number at the foot of a chapter's short last
+      page: mended 2026-11-07, `chapters.folios`); Thief-Taker's "V" (PDF 140, a speck 6 pt tall against numbers 14 pt: mended
       2026-11-07, `off_run`'s `SPECK_HEIGHT`); Dolittle's title page a heading, and the drawn initial C
       of PDF 97 left off ("HEE-CHEE"); Het geluid van bananen's "8°" for the ordinal "8e" (4); Metro's
       "CHAPTER 6" read "SRN WEIR", its number lost

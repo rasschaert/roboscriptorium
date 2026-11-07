@@ -11,6 +11,38 @@ commercial e-book; a careful edition like Standard Ebooks is nearer one in 10,00
 Each entry is a judgment, not a measurement: the numbers it rests on are in
 [outlook.md](outlook.md) and [decisions.md](decisions.md). Newest first.
 
+## 2026-11-07, midday: 7/10 (up from 6.5)
+
+| Goal | Chance |
+| --- | --- |
+| Modern prose, clean IA scan, commercial-e-book quality with a light review | ~85% (was ~80%) |
+| The same books with no human at all, ≤ 1 wrong word in 1,000 | ~40% |
+| Universal, unattended, on today's local models | ~20% |
+| The same by 2030 | ~60–70% |
+
+**Where it stands:** tuning 0.27 wrong words a page after review over ~5,200 pages
+(0.277 over ~3,100 on 2026-10-25), validation 0.45 (0.502); before review 0.74 a page,
+unasked 0.17; tuning's heading errors 32 → 20 in two days.
+
+**Up:** validation, which nothing is chosen on, moved a tenth (0.502 → 0.45), and tuning
+held its level while growing by two thirds into harder pages (front matter, part pages,
+picture pages). Each gain was a general repair the build now makes on every book, found
+by reading its own errors: chapter numbers read by their run, lost text blocks read line
+by line, specks and page numbers no longer headings, a scan's repeated pages left out.
+None was fitted to one book, and none moved a heading of the user's own books.
+
+**Not up:** much of today's drop in tuning's wrong words (0.876 → 0.740 before review)
+is a fairer score, not better reading: Goede dochter's scan repeats two pages and lacks
+two. The reading itself moves slowly: a new reader (Qwen3.8-Flash-Next) failed its screen,
+and the errors no reader doubts are where they were. The second row waits on that, and
+on the arbiter's new signal; the judges told the kinds of OCR error (in its A/B now) is
+the first new signal tried since the 25th.
+
+**Would move it up:** the judge prompt paying on the bench; Stella's read-through finding
+few errors the bench can't see.
+**Would move it down:** the judge prompt trading picks it fixes for picks it breaks (its
+interim count: 58 of 320 hard suspects right, 10 of 305 right ones lost).
+
 ## 2026-10-25, morning: 6.5/10 (unchanged; the reasons sharper)
 
 | Goal | Chance |

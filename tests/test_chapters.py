@@ -525,3 +525,47 @@ def test_a_chapter_number_with_a_speck_after_it_still_reads_as_the_number():
     # Letters or a second number stay no number.
     assert chapters.value("20 a") is None and chapters.value("20 21") is None
     assert chapters.value(";") is None
+
+
+def _numbered_pages(heading: dict[int, tuple[str, int]]):
+    """Pages 10–20 of text, each with its printed number (the PDF's less 4) at its foot,
+    called a page number; on the pages of `heading`, a line (text, y) called a heading."""
+    pages, roles = [], {}
+    for n in range(10, 21):
+        lines = [
+            Line(f"tekst {k} van de bladzijde", 20, 40 + 15 * k, 320, 50 + 15 * k)
+            for k in range(30)
+        ]
+        lines.append(Line(str(n - 4), 165, 560, 175, 570))
+        if n in heading:
+            text, y = heading[n]
+            lines = [ln for ln in lines if ln.y0 >= y + 30] if y > 100 else lines
+            lines.insert(0, Line(text, 165, y, 175, y + 10))
+        page = PageText(n, 340, 580, lines)
+        pages.append(page)
+        for i, ln in enumerate(page.lines):
+            role = "body"
+            if ln.text == str(n - 4) and i == len(page.lines) - 1:
+                role = "page_number"
+            if n in heading and i == 0:
+                role = "chapter_heading"
+            roles[SourceRef(n, i)] = LineRole(role, 0.9, 0.1, "trees")
+    return pages, roles
+
+
+def test_a_heading_that_is_its_pages_printed_number_is_the_page_number():
+    pages, roles = _numbered_pages({})
+    # Het heft's "88": the trees call PDF 15's own number, at its foot, a heading.
+    foot = SourceRef(15, len(pages[5].lines) - 1)
+    roles[foot] = LineRole("chapter_heading", 0.9, 0.1, "trees")
+    out = chapters.folios(pages, roles)
+    assert out[foot].role == "page_number" and out[foot].rule == chapters.FOLIO_RULE
+
+
+def test_a_chapter_number_atop_a_sunk_opening_stays_though_it_match_the_folio():
+    # Chapter 11 opens sunk on PDF 15, which prints 11; another number on a page's head
+    # that isn't the page's own stays too.
+    pages, roles = _numbered_pages({15: ("11", 200), 17: ("4", 40)})
+    out = chapters.folios(pages, roles)
+    assert out[SourceRef(15, 0)].role == "chapter_heading"
+    assert out[SourceRef(17, 0)].role == "chapter_heading"

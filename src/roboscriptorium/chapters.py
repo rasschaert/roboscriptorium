@@ -36,6 +36,7 @@ RULE = "book-openings"
 RUN_GAP = 3
 RUN_RULE = "chapter-run"
 OFF_RUN_RULE = "off-run"
+FOLIO_RULE = "folio"
 # The share of a run's numbered headings that must stand centred for an off-centre one
 # off the run to be taken for a speck.
 CENTRED_SHARE = 0.8
@@ -209,6 +210,29 @@ def off_run(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[Sou
         if not centred and not fits:
             role = roles[ref]
             out[ref] = LineRole("artifact", role.confidence, role.p_body, OFF_RUN_RULE)
+    return out
+
+
+def folios(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[SourceRef, LineRole]:
+    """`roles` with a heading that is its page's printed number made a page number: a bare
+    number at the page's foot, or at its head on a page not sunk, that the book's page
+    offset says is printed there (Het heft's "88" under a chapter's short last page, PDF
+    92). A sunk opening's first line stays, though its chapter number match. Returns a new
+    dict."""
+    offset = P.page_offset(pages)
+    if offset is None:
+        return roles
+    sunk = P.sunk_pages(pages)
+    out = dict(roles)
+    for p in pages:
+        last = len(p.lines) - 1
+        for i in {0, last} - ({0} if p.number in sunk else set()):
+            ref = SourceRef(p.number, i)
+            role = roles.get(ref)
+            text = p.lines[i].text.strip() if p.lines else ""
+            if role is not None and role.role == "chapter_heading" and P.digits(text):
+                if P.printed_page_number(text, p, offset):
+                    out[ref] = LineRole("page_number", role.confidence, role.p_body, FOLIO_RULE)
     return out
 
 

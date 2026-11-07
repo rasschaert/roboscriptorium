@@ -422,7 +422,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   headings or more, such as a narrator's name, or a display line right under a heading
   on a page with no running text, a part page's title; `off_run`: a number heading off the run and off the middle,
   where the run's are centred, dropped as a speck, as is a short heading that reads as no
-  number under half the numbers' height; `run_gaps`: a dropped number mid-page that
+  number under half the numbers' height; `folios`: a bare-number heading at a page's edge
+  that is the page's printed number made a page number; `run_gaps`: a dropped number mid-page that
   fills a gap in the run of numbered headings, a misread one read again by glm-ocr where the
   run has a gap, cached in `stages/run-gaps.json`). All return new data.
 - `structure.py`: what a reader would notice in a built document's structure, without a

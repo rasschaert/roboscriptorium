@@ -7,15 +7,13 @@ Qwen3.8-Flash-Next and mended headings and lost blocks.
 
 ## Running
 
-Nothing. Baselines: `tuning-20261107T103010` (tuning ~5,200 pages, 20 books; wrong words
-0.740 a page, questions 0.645, unasked 0.170), `validation-20261107T103308`.
+The judge A/B (screen `robo-judge-ab`, `work/runs/judge-ab.sh`): clef:27b, then Winnow-12B,
+told the kinds of OCR error, on judge set v2. Baselines: `tuning-20261107T112939` (tuning
+~5,200 pages, 20 books; wrong words 0.740 a page, questions 0.645, unasked 0.170, heading
+errors 20), `validation-20261107T113253`.
 
 Next: the judges told the kinds of OCR error (checklist, "The judges told the kinds of OCR
-error"): `experiments/tryout.py build judge` makes judge set v2 from the warm caches (both
-judges' questions), then `run judge clef:27b --prompt kinds` and `run judge
-tokens:hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M --prompt kinds`. Then docs/outlook.md's "How
-close we are" table and the primer's errors chart (`experiments/primer_errors.py`) from the
-new baselines.
+error"): judge set v2 is built (995 suspects, both judges' questions); the A/B is running.
 
 ## Done 2026-11-06 evening
 
