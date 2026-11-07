@@ -7,13 +7,24 @@ Qwen3.8-Flash-Next and mended headings and lost blocks.
 
 ## Running
 
-The judge A/B (screen `robo-judge-ab`, `work/runs/judge-ab.sh`): clef:27b, then Winnow-12B,
-told the kinds of OCR error, on judge set v2. Baselines: `tuning-20261107T112939` (tuning
-~5,200 pages, 20 books; wrong words 0.740 a page, questions 0.645, unasked 0.170, heading
-errors 20), `validation-20261107T113253`.
+**The judge panel, in three passes** (screen `robo-panel-night`, `work/runs/panel-night.sh`,
+output `work/runs/panel-night.out`; the user chose the full panel on every suspect,
+2026-11-07): pass p1 autotrust-jev 35B, p2 + d3 9B, p3 + pplx-decider 27B on the wide
+crop (`ROBO_ALARM_MODEL`, comma-separated, `@wide`). Each pass rebuilds every book's trust
+data into `work/probes/ocr-trust-p<n>/` (one new judge asked cold, the earlier ones cached:
+one new model loaded at a time), trains `work/models/ocr-trust-p<n>.pkl`, benches tuning
+(`work/probes/ocr-trust-p<n>/runs/bench-tuning.log`) and validation
+(`work/runs/panel-p<n>-validation.log`). Production is untouched. ~3 h, ~6 h, ~18 h of
+judging, started ~19:00 Saturday. The user: "know when to fold 'em": after each pass,
+check each judge's contribution on real books (its own catches by kind, the arbiter's
+gain) and stop the chain (`touch work/runs/panel-night.STOP`, takes effect between
+passes) when a judge doesn't pay. If a pass wins, its settings become the defaults
+(config, docs, models.md) in the same change.
 
-Next: the judges told the kinds of OCR error (checklist, "The judges told the kinds of OCR
-error"): judge set v2 is built (995 suspects, both judges' questions); the A/B is running.
+Baselines: `tuning-20261107T112939` and `validation-20261107T113253` (the ligature fix
+since: NO CHANGE on both). Waiting on the user: six places to vote on
+(`work/probes/judge-v2/vote-20261107.json`, one review command per book in the session
+report).
 
 ## Done 2026-11-06 evening
 
