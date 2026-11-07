@@ -219,11 +219,13 @@ def check(
     lexicon: Lexicon | None = None,
     style: str = "",
     alarm=None,
+    alarm_below: float = 1.0,
 ) -> list[Suspect]:
     """Suspects where any other reading (by name) differs from the text layer, each with a
     decision. `style` tells the vision judges how the book is set (`quotes.style_note`).
-    `alarm`, a second vision judge, is asked the vision judge's question; its pick is a
-    vote for the arbiter, not part of the fixed rule."""
+    `alarm`, a second vision judge, is asked the vision judge's question where that judge
+    is less sure than `alarm_below`; its pick is a vote for the arbiter, not part of the
+    fixed rule, and a suspect it wasn't asked about has no vote of it."""
     suspects = []
     curly = curly_book(pages)
     shortened = abbreviations(pages)
@@ -264,7 +266,7 @@ def check(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache, around,
                         lexicon.vouches(read_as, continues) if lexicon else None,
-                        joined, style, alarm,
+                        joined, style, alarm, alarm_below,
                     )  # fmt: skip
                     support = {
                         n: supports(ours, other, a0, a1, versions, curly)
@@ -574,6 +576,7 @@ def _combined(ours: str, versions: list[str]) -> str | None:
 def _decide(
     pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache, around=("", ""),
     vouched: int | None = None, joined: str = "", style: str = "", alarm=None,
+    alarm_below: float = 1.0,
 ) -> tuple[tuple[str, str | None, dict[str, str]], dict[str, float]]:  # fmt: skip
     """\"ours\", \"other\" with the chosen version, or \"review\", with each model's pick;
     and each model's confidence in it.
@@ -639,7 +642,7 @@ def _decide(
     if reader is not None:
         votes[reader.model] = pick(read["value"])
         confidence[reader.model] = read["confidence"]
-    if alarm is not None:
+    if alarm is not None and seen["confidence"] < alarm_below:
         alarmed = _ask(alarm, cache, state, question, image=lambda: _crop(pdf_page, box))
         votes[alarm.model] = pick(alarmed["value"])
         confidence[alarm.model] = alarmed["confidence"]

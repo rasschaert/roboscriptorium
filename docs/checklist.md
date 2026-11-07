@@ -629,6 +629,13 @@ also part of the pipeline itself." Before either book goes to review:
       (2026-11-06, `missing._fills`): nine lines read right by glm-ocr, tuning 103 wrong
       words fixed (12 unasked), validation 9 (all unasked), none made; Dolittle's short
       last line of a paragraph stays a question
+- [ ] New vision decision models as judges (the user, 2026-11-07: Ollama lists many now;
+      none pulled yet; the user pulls): pplx-decider:27b-nvfp4 (from Qwen3.8-27B) first,
+      then autotrust-jev:35b-nvfp4 (another family), d3:27b-nvfp4; the small ones
+      (pplx-decider-flash:4b-nvfp4, d3:9b, autotrust-jev:9b-nvfp4) as an alarm on clef or
+      for line roles. Each on judge set v2: `tryout.py run judge <model>` (replace clef?),
+      `judge_combine.py` with its answers as the second (add it beside clef?), then
+      `--prompt wide`; the hints only for the best. ~30 min a run for a 27B
 - [x] ~~The judges told the kinds of OCR error~~ (2026-11-07, judge set v2): not taken.
       clef:27b weighted 91.3% → 89.9% (91 hard picks fixed, 16 right ones broken, all at
       low confidence); Winnow-12B worse on both halves, stopped at 525 of 995

@@ -583,12 +583,76 @@ PROMPT_VARIANTS = {
 }
 
 
-def _prompted(questions: dict, variant: str, kind: str) -> dict:
+# "targeted": only the kind of slip the versions differ by, named to both judges.
+TARGETED = {
+    "punctuation": (
+        " The versions differ only in punctuation: a speck of dirt can look like a full stop, "
+        "comma or colon, and a full stop and a comma look alike. Look closely at the marks."
+    ),
+    "accent": (
+        " The versions differ only in an accent: a speck can look like an accent, and a "
+        "diaeresis (ï, ë) is easily missed. Look closely above the letters."
+    ),
+    "space": " The versions differ only in a space: look at the gap between the letters.",
+    "case": " The versions differ only in capitals: compare the letters' height.",
+    "letters": (
+        " The versions differ in letters that look alike in print (c and e, h and b, rn and "
+        "m, a doubled letter and a single one). Look closely at each letter's shape."
+    ),
+}
+_MARKS = set(".,;:!?'’‘\"“”«»-–—…()")
+# A wide crop's words beyond the suspect's on either side, in points.
+WIDE = 40
+
+
+def _strip_accents(t: str) -> str:
+    import unicodedata
+
+    return "".join(c for c in unicodedata.normalize("NFD", t) if not unicodedata.combining(c))
+
+
+def difference_kind(versions: list[str]) -> str:
+    """What the versions differ by: punctuation, accent, space, case, or letters."""
+    if len({"".join(c for c in v if c not in _MARKS) for v in versions}) == 1:
+        return "punctuation"
+    if len({_strip_accents(v) for v in versions}) == 1:
+        return "accent"
+    if len({v.replace(" ", "") for v in versions}) == 1:
+        return "space"
+    if len({v.lower() for v in versions}) == 1:
+        return "case"
+    return "letters"
+
+
+def _prompted(questions: dict, variant: str, kind: str, item: dict) -> dict:
     """The questions with the variant's words added to each one's instructions."""
     if not variant:
         return questions
-    extra = PROMPT_VARIANTS[variant][kind]
+    if variant == "targeted":
+        extra = TARGETED[item["difference"]]
+    elif variant == "wide":
+        extra = (
+            " The image shows a stretch of the line: the text in question stands in its "
+            "middle, between the words around it."
+        )
+    else:
+        extra = PROMPT_VARIANTS[variant][kind]
     return {n: {**q, "instructions": q["instructions"] + extra} for n, q in questions.items()}
+
+
+def _wide_crop(item: dict) -> bytes:
+    """The suspect's crop with `WIDE` points of its line on either side."""
+    import pymupdf
+
+    from roboscriptorium import ocrcheck
+
+    state = item["state"]
+    with pymupdf.open(Path("work") / item["book"] / "source.pdf") as doc:
+        page = doc[state["page"] - 1]
+        pad = ocrcheck.CROP_PAD
+        clip = (pymupdf.Rect(state["box"]) + (-WIDE, -pad, WIDE, pad)) & page.rect
+        zoom = pymupdf.Matrix(ocrcheck.CROP_ZOOM, ocrcheck.CROP_ZOOM)
+        return page.get_pixmap(matrix=zoom, clip=clip).tobytes("png")
 
 
 def run_judge(model: str, variant: str = "") -> None:
@@ -598,6 +662,10 @@ def run_judge(model: str, variant: str = "") -> None:
     books = manifest["books"]
     settings = Settings.from_env()
     text = model.startswith("tokens:")
+    for i in items:
+        i["difference"] = difference_kind(i["state"]["readings"])
+        if variant == "wide":
+            i["png"] = _wide_crop(i)
     if text:
         items = [i for i in items if "text_state" in i]
         for i in items:
@@ -624,7 +692,7 @@ def run_judge(model: str, variant: str = "") -> None:
     seconds = []
     for n, i in enumerate(todo, 1):
         start = datetime.now(UTC)
-        questions = _prompted(i["questions"], variant, "text" if text else "vision")
+        questions = _prompted(i["questions"], variant, "text" if text else "vision", i)
         a = client.decide(i["state"], questions, image_png=i["png"])["reading"]
         seconds.append((datetime.now(UTC) - start).total_seconds())
         done[i["id"]] = {"value": a.value, "confidence": a.confidence}
@@ -642,6 +710,30 @@ def run_judge(model: str, variant: str = "") -> None:
         )
     if seconds:
         print(f"{statistics.median(seconds):.2f} s a question (median of {len(seconds)})")
+    # Which errors, not only how many: wrong by what the versions differ in, weighted to
+    # the real mix of suspects (`experiments/judge_overlap.py` has the rest).
+    share = sum(b["wrong"] for b in books.values()) / sum(b["settled"] for b in books.values())
+    n_hard = sum(i["stratum"] == "hard" for i in items)
+    weight = {
+        i["id"]: share / n_hard if i["stratum"] == "hard" else (1 - share) / (len(items) - n_hard)
+        for i in items
+    }
+    letters = "abcdefg"
+    for kind in sorted({i["difference"] for i in items}):
+        these = [i for i in items if i["difference"] == kind]
+        total = sum(weight[i["id"]] for i in these)
+        cells = []
+        for name, got in ((label, done), (in_use, incumbent)):
+            bad = sum(
+                weight[i["id"]]
+                for i in these
+                if not (
+                    got[i["id"]]["value"] in letters
+                    and i["right"][letters.index(got[i["id"]]["value"])]
+                )
+            )
+            cells.append(f"{name} wrong {bad / total:5.1%}")
+        print(f"  {kind:12} ({total:4.0%} of suspects)  " + "   ".join(cells))
     result = {
         "role": "judge",
         "set_version": JUDGE_VERSION,

@@ -26,10 +26,12 @@ class Settings:
     # Judges the OCR check's suspects from the crop; better than role_model at that,
     # worse at line roles.
     judge_model: str = "clef:27b"
-    # A second vision judge on the OCR check's suspects, served by llama.cpp at llama_url
-    # (`clients/llama.py`): a vote for the arbiter, "" for none. imajev-4b disagrees with
-    # clef where clef is wrong 34% of the time and where it is right 4.6% (judge set v1).
+    # A second vision judge on the OCR check's suspects: a decision model on Ollama, or
+    # `llama:<name>` served by llama.cpp at llama_url (`clients/llama.py`, imajev-4b); a
+    # vote for the arbiter, "" for none. Asked only where the vision judge is less sure
+    # than `alarm_below` (1.0: always).
     alarm_model: str = ""
+    alarm_below: float = 1.0
     llama_url: str = "http://127.0.0.1:8092"
     # A hosted build of judge_model that answers in its place (`openrouter:…`, used only
     # when the user asks), its answers cached under judge_model's name. "" for none.
@@ -81,6 +83,8 @@ class Settings:
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
             raise ValueError(f"ROBO_OCR_ASK_BELOW={self.ocr_ask_below}: a probability in (0, 1]")
+        if not 0 < self.alarm_below <= 1:
+            raise ValueError(f"ROBO_ALARM_BELOW={self.alarm_below}: a confidence in (0, 1]")
         if self.ocr_questions_per_page < 0:
             raise ValueError(f"ROBO_OCR_QUESTIONS={self.ocr_questions_per_page}: not below 0")
         judges = [m for m in (self.judge_model, self.check_model, self.alarm_model) if m]
@@ -107,6 +111,7 @@ class Settings:
             page_readers=_flag("ROBO_PAGE_READERS", defaults.page_readers),
             judge_model=os.environ.get("ROBO_JUDGE_MODEL", defaults.judge_model),
             alarm_model=os.environ.get("ROBO_ALARM_MODEL", defaults.alarm_model),
+            alarm_below=float(os.environ.get("ROBO_ALARM_BELOW", defaults.alarm_below)),
             llama_url=os.environ.get("ROBO_LLAMA_URL", defaults.llama_url),
             judge_via=os.environ.get("ROBO_JUDGE_VIA", defaults.judge_via),
             ocr_trust=_flag("ROBO_OCR_TRUST", defaults.ocr_trust),

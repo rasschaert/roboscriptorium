@@ -15,8 +15,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `/api/generate`, and the next token's log-probabilities over the option labels;
   needs no decision capability, so a plain GGUF (Winnow-12B) serves.
 - `clients/llama.py`: imajev, a vision decision model whose trained readout a GGUF
-  lacks, on llama-server (`ROBO_LLAMA_URL`); as `ROBO_ALARM_MODEL` it is the OCR check's
-  second vision judge, asked clef's question, a vote for the arbiter only.
+  lacks, on llama-server (`ROBO_LLAMA_URL`); as `ROBO_ALARM_MODEL=llama:imajev-4b` it is the
+  OCR check's second vision judge, asked clef's question, a vote for the arbiter only.
+  `ROBO_ALARM_MODEL` takes a decision model on Ollama too, and `ROBO_ALARM_BELOW` asks it
+  only where clef is less sure than that.
 - `clients/ollama.py`: a thin httpx client for Ollama's own API (`doctor` lists the
   models with it). Decision models answer through `clients/decide.py` (or
   `clients/llama.py`), hosted models through `clients/openrouter.py`; the line readers

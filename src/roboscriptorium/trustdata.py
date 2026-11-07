@@ -154,9 +154,13 @@ def usable(name: str, settings: Settings) -> str:
     rows = load(name)
     if any(not readings(settings) <= set(r["suspect"]["support"]) for r in rows):
         return "built before the current readings"
-    # Data without one of these settings' judges would train its slot on nothing.
+    # Data without one of these settings' judges would train its slot on nothing. A judge
+    # asked only where the vision judge was unsure (`alarm_below`) is among a suspect's
+    # judges without a vote on the others.
     asked = judges(settings) - {"word list"}
-    if any(not asked <= set(r["suspect"]["votes"]) for r in rows):
+    if any(
+        not asked <= set(r["suspect"]["votes"]) | set(r["suspect"].get("judges", ())) for r in rows
+    ):
         return "built without one of the current judges"
     return ""
 

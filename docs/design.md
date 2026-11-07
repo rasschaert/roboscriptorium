@@ -170,7 +170,7 @@ back a version, so these are left to trust and the bench, with no rule of their 
   2026-10-24): tuning after review 0.282 → 0.316 [+0.02, +0.05], 164 wrong words made
   against 79 fixed, questions down on most books: without it the arbiter is surer and
   wrong more often.
-- *imajev-4b, a second vision judge, is not used* (`ROBO_ALARM_MODEL`, off). Asked clef's
+- *imajev-4b, a second vision judge, is not used* (`ROBO_ALARM_MODEL=llama:imajev-4b`, off). Asked clef's
   question on the crop, it is right alone on 85% and a sharper alarm than winnow-ollama:e4b
   where it speaks (clef wrong on 37% of their disagreements against 5% of their
   agreements) but it speaks less (904 disagreements against that winnow's 2,049), and as the arbiter's third

@@ -365,6 +365,28 @@ def test_a_second_vision_judge_is_asked_the_same_question_and_only_votes(monkeyp
     assert votes["imajev"] == "Iemand" and confidence["imajev"] == 0.7
 
 
+def test_the_second_vision_judge_is_asked_only_where_the_first_is_unsure(monkeypatch):
+    from types import SimpleNamespace
+
+    def ask(client, cache, state, questions, image=None):
+        asked.append(client.model)
+        return {"value": "a", "confidence": sure[client.model]}
+
+    monkeypatch.setattr(ocrcheck, "_ask", ask)
+    clef, winnow = SimpleNamespace(model="clef"), SimpleNamespace(model="winnow")
+    pplx = SimpleNamespace(model="pplx")
+    line = "Toen kwam lemand binnen"
+    sure = {"winnow": 0.9, "pplx": 0.8}
+    for sure["clef"], wanted in ((0.8, False), (0.3, True)):
+        asked = []
+        (_, _, votes), confidence = ocrcheck._decide(
+            None, 1, 0, line, 10, 16, ["Iemand"], (0, 0, 1, 1), "nld", clef, winnow, None,
+            alarm=pplx, alarm_below=0.5,
+        )  # fmt: skip
+        assert ("pplx" in asked) == wanted
+        assert ("pplx" in votes) == ("pplx" in confidence) == wanted
+
+
 def test_the_vision_judge_is_told_the_books_style_and_the_text_judge_isnt(monkeypatch):
     from types import SimpleNamespace
 

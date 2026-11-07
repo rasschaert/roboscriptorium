@@ -297,11 +297,14 @@ def run(
                         )  # fmt: skip
             judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
             alarm = None
-            if settings.alarm_model:
-                alarm = llama.ReadoutClient(settings.alarm_model, settings.llama_url)
+            if settings.alarm_model.startswith("llama:"):
+                name = settings.alarm_model.removeprefix("llama:")
+                alarm = llama.ReadoutClient(name, settings.llama_url)
+            elif settings.alarm_model:
+                alarm = decide.for_model(settings.alarm_model, settings.ollama_url)
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
-                book_style(book, whole, style, dots), alarm,
+                book_style(book, whole, style, dots), alarm, settings.alarm_below,
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:
