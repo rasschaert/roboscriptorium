@@ -46,6 +46,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   layered one. The scan's dash and ellipsis style is measured on the PDF's own words only:
   tesseract glues most dashes to their neighbours. A bare
   number far from the rest of its line becomes a line of its own (`_apart`).
+- `scanpages.py`: pages a scan holds twice (`repeats`, left out of the body before any
+  other stage) or lacks (`gaps`, from a lasting jump in the printed page numbers),
+  without a model; `Stages.repeated_pages` and `missing_pages` hold them and `build`
+  prints them (`summary`).
 - `page.py`: what a page's layout says without a model, shared by roles,
   flags and reflow: geometry, edge lines, text repeated across pages, sunk
   pages, printed page numbers, heading labels and numerals, garbled lines.
@@ -417,7 +421,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   like another heading's second line, or a short one recurring in one type under three
   headings or more, such as a narrator's name, or a display line right under a heading
   on a page with no running text, a part page's title; `off_run`: a number heading off the run and off the middle,
-  where the run's are centred, dropped as a speck; `run_gaps`: a dropped number mid-page that
+  where the run's are centred, dropped as a speck, as is a short heading that reads as no
+  number under half the numbers' height; `run_gaps`: a dropped number mid-page that
   fills a gap in the run of numbered headings, a misread one read again by glm-ocr where the
   run has a gap, cached in `stages/run-gaps.json`). All return new data.
 - `structure.py`: what a reader would notice in a built document's structure, without a

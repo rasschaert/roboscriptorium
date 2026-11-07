@@ -302,7 +302,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | --- | --- |
 | `cli.py`, `config.py`, `book.py`, `files.py` | the CLI, settings, a book directory and its `book.toml`, atomic cache writes |
 | `clients/` | Ollama (`ollama.py`), decision models on `/v1/systemone` (`decide.py`), imajev on llama-server (`llama.py`), a hosted model (`openrouter.py`), retries (`retry.py`) |
-| `pdf.py`, `page.py` | the text layer as visual lines with boxes (tesseract's for an image-only scan); what a page's layout says without a model |
+| `pdf.py`, `page.py`, `scanpages.py` | the text layer as visual lines with boxes (tesseract's for an image-only scan); what a page's layout says without a model; pages a scan holds twice (left out) or lacks (named) |
 | `layout.py`, `typestyle.py`, `faint.py` | DocLayout-YOLO regions; each line's type against the body; washed-out pages |
 | `missing.py` | printed lines the layer lacks, read by glm-ocr |
 | `roles.py`, `sorter.py`, `sorterdata.py`, `pageroles.py` | line roles: a decision model plus rules, then learned trees (`ROBO_SORTER=0` turns them off); the trees' training data; the read model's heading and furniture lines per page, an input to the trees (`ROBO_PAGE_ROLES=1`, off) |

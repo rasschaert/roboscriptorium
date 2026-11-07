@@ -145,6 +145,12 @@ Each line gets an identity, `SourceRef`: its page and line number. That identity
 follows the line through every later stage. A fix, an answer or a score always
 refers back to the line as the text layer had it.
 
+A library scan sometimes holds a page twice, or skips one. `scanpages.py` compares
+each page's text with the dozen pages before it: a page that repeats one is left out
+of the build. Where the printed page numbers jump ahead of the PDF's and stay ahead,
+pages are missing from the scan; no build can read them, so `build` names them, for a
+reader to look up in another copy.
+
 ### The spotter
 
 The spotter (`layout.py`) looks at each page image and marks figures, captions,

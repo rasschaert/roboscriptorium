@@ -485,6 +485,40 @@ def test_a_centred_misreading_a_fitting_number_or_a_flush_left_run_stay_headings
     assert chapters.off_run(pages, roles) == roles
 
 
+def _with_line(pages, roles, number: int, text: str, height: float):
+    """A page of text opening on a centred heading `text` this tall."""
+    p = _mid_page(number)
+    pages = sorted(
+        [*pages, PageText(number, 340, 580, [Line(text, 165, 8, 171, 8 + height), *p.lines])],
+        key=lambda q: q.number,
+    )
+    roles = dict(roles)
+    for i in range(len(pages[[q.number for q in pages].index(number)].lines)):
+        roles[SourceRef(number, i)] = LineRole(
+            "chapter_heading" if i == 0 else "body", 0.8, 0.1, "trees"
+        )
+    return pages, roles
+
+
+def test_a_short_heading_as_tall_as_the_run_stays_though_it_reads_as_no_number():
+    texts = {10: "1", 20: "2", 30: "3", 40: "4", 50: "5", 60: "6"}
+    pages, roles = _numbers_at(165, texts, {})
+    # A part's numeral drawn as large as the chapter numbers ("IV"), a short title ("Een").
+    for n, t in ((35, "IV"), (45, "Een")):
+        pages, roles = _with_line(pages, roles, n, t, 10)
+    assert chapters.off_run(pages, roles) == roles
+
+
+def test_a_short_speck_under_half_the_runs_height_is_no_heading():
+    texts = {10: "1", 20: "2", 30: "3", 40: "4", 50: "5", 60: "6"}
+    pages, roles = _numbers_at(165, texts, {})
+    # Thief-Taker's "V": 6 pt against chapter numbers 14 pt tall.
+    pages, roles = _with_line(pages, roles, 35, "V", 4)
+    out = chapters.off_run(pages, roles)
+    assert out[SourceRef(35, 0)].role == "artifact"
+    assert all(out[SourceRef(n, 0)].role == "chapter_heading" for n in texts)
+
+
 def test_a_chapter_number_with_a_speck_after_it_still_reads_as_the_number():
     assert chapters.value("20 ;") == chapters.value("20.") == 20
     assert chapters.value("2I:") == 21 and chapters.value("7,") == 7

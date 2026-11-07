@@ -21,6 +21,7 @@ from roboscriptorium import (
     pipeline,
     quality,
     review,
+    scanpages,
     structure,
 )
 from roboscriptorium.book import Book
@@ -105,6 +106,8 @@ def build(
             f"answers merged {len(stages.lost_breaks)} paragraphs with the one before: {where}"
         )
     typer.echo(structure.summary(structure.findings(doc)))
+    if scan := scanpages.summary(stages.repeated_pages, stages.missing_pages):
+        typer.echo(scan)
     if (last := epubdiff.against_last(book.epub_path, book.epubs)) is not None:
         changes, previous = last
         typer.echo(f"{epubdiff.summary(changes)} ({previous.name})")

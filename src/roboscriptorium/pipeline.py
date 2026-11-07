@@ -30,6 +30,7 @@ from roboscriptorium import (
     parabreaks,
     quotes,
     readers,
+    scanpages,
     scanstyle,
     sorter,
     structure,
@@ -90,6 +91,10 @@ class Stages:
     # Last lines of paragraphs whose open quote the read model's reading closed
     # (`quotes.closed_at_end`): a doubt there about only that mark is settled.
     quotes_closed: set[SourceRef] = field(default_factory=set)
+    # Body pages that repeat an earlier page, left out (each with the page it repeats),
+    # and the printed pages the scan lacks (`scanpages`), over the whole body.
+    repeated_pages: dict[int, int] = field(default_factory=dict)
+    missing_pages: list[scanpages.Gap] = field(default_factory=list)
     # Paragraph starts the build without answers has and the build with them lost, on
     # lines no answer is about (`lost_breaks`): an answer should never merge paragraphs.
     lost_breaks: list[SourceRef] = field(default_factory=list)
@@ -113,7 +118,10 @@ def run(
     # How the book is set is read on its whole body, so a slice is read and set as the
     # book is, and shares its readings.
     whole = [p for p in layer if book.body_pages[0] <= p.number <= book.body_pages[1]]
-    body = [p for p in layer if first <= p.number <= last]
+    # A page the scan holds twice is read once (`scanpages`).
+    repeated = scanpages.repeats(whole)
+    whole = [p for p in whole if p.number not in repeated]
+    body = [p for p in layer if first <= p.number <= last and p.number not in repeated]
 
     roles = model_roles = None
     prompt = ""
@@ -488,6 +496,8 @@ def run(
         prompt,
         quotes_closed=closed,
         lost_breaks=lost_breaks(unanswered, built, answers),
+        repeated_pages=repeated,
+        missing_pages=scanpages.gaps(whole),
     )
 
 

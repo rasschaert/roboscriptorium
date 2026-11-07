@@ -56,7 +56,9 @@ def test_build_drafts_a_missing_book_toml_first(monkeypatch, tmp_path):
         "run",
         lambda book, pages: (
             built.append(book.root)
-            or SimpleNamespace(doc=SimpleNamespace(blocks=[]), lost_breaks=[])
+            or SimpleNamespace(
+                doc=SimpleNamespace(blocks=[]), lost_breaks=[], repeated_pages={}, missing_pages=[]
+            )
         ),
     )
     monkeypatch.setattr(cli.structure, "findings", lambda doc: [])

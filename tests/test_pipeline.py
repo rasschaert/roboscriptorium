@@ -1,6 +1,7 @@
 """The stages together, from a PDF to the document, with a mock model server."""
 
 import json
+import random
 from dataclasses import replace
 
 import httpx
@@ -17,6 +18,7 @@ from roboscriptorium.pdf import Line, PageText
 from roboscriptorium.roles import LineRole
 
 LINES = [f"Line {i} of the story goes on and on across the page" for i in range(12)]
+STORY_WORDS = "the a story went on and over across page house night garden door said".split()
 
 
 def _book(tmp_path, indented: tuple[int, ...] = (), lines: list[str] = LINES) -> Book:
@@ -777,14 +779,18 @@ def test_a_dropped_chapter_number_atop_an_opening_is_read_by_the_books_run(tmp_p
     _no_layout(monkeypatch)
     doc = pymupdf.open()
     numbers = [*map(str, range(1, 10)), "Io", "zi", "I2"]
+    # Each page's text its own, as a book's are: a page alike to one before is a repeat
+    # the scan holds twice (`scanpages`).
+    words = random.Random(0).choices(STORY_WORDS, k=200 * len(numbers))
+    lines = iter(" ".join(words[k : k + 10]) for k in range(0, len(words), 10))
     for number in numbers:
         opening = doc.new_page(width=400, height=600)
         opening.insert_text((195, 140), number, fontsize=11)
-        for i, text in enumerate(LINES[:8]):
-            opening.insert_text((40, 200 + 18 * i), text, fontsize=11)
+        for i in range(8):
+            opening.insert_text((40, 200 + 18 * i), next(lines), fontsize=11)
         full = doc.new_page(width=400, height=600)
-        for i, text in enumerate(LINES):
-            full.insert_text((40, 60 + 18 * i), text, fontsize=11)
+        for i in range(len(LINES)):
+            full.insert_text((40, 60 + 18 * i), next(lines), fontsize=11)
     doc.save(tmp_path / "source.pdf")
     (tmp_path / "book.toml").write_text(
         f'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, {2 * len(numbers)}]\n'

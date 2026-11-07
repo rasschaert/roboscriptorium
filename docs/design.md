@@ -862,7 +862,10 @@ the middle where four in five of the run's headings are centred is a speck, drop
 "7" between chapters 3 and 4 and "3" between 8 and 9, which the trees kept as headings.
 Monterosso's centred "5" for 15 stays, as do an off-centre number the run expects and every
 number of a book that sets them flush left. Tuning heading errors 26 → 24, no word changed
-on either set (2026-11-06).
+on either set (2026-11-06). A short heading that reads as no number at all goes the same
+way where it stands under half the median height of the run's numbers (`SPECK_HEIGHT`):
+Thief-Taker's "V", a 6 pt speck on the blank page after a part title, against chapter
+numbers 14 pt tall; a part numeral drawn as large as the numbers stays.
 A heading its run confirms isn't asked in the review (`chapters.settled`): bare numbers
 each one more than the one before or after, titles opening on years in order ("1885:
 Een ramp" after "1840-1884: …", five or more), parts counted in words in order; nor is
@@ -882,6 +885,24 @@ Thief-Taker's first lines headings ("1 BERREN The crowd had come… Most of") an
 Dolittle's ("THE SEVENTH CHAPTER UEEN ERMINTRUDE had"); the full trees, trained on those
 books, did not, which hid it from a plain rebuild. Found by reading the
 book: no golden pair prints its numbers so, which the bench can't yet see.
+
+## Pages a scan holds twice or lacks
+
+**A library scan can repeat a page or skip some**, and a reader of the built book would
+notice both. Goede dochter's scan holds printed pages 214–215 twice (PDF 216–217 and
+218–219) and lacks 286–287; scored whole (2026-11-07) the repeat set ~726 words twice and
+the gap lost 636, most of its 0.88% CER. `scanpages.repeats` compares each body page's
+text with the twelve before it (`fuzz.ratio` 90 or more, both pages 400 characters or
+longer, so part titles and blank pages, alike by design, are no repeats); the pipeline
+leaves a repeat out before any other stage reads it. `scanpages.gaps` finds where the
+printed page numbers run ahead of the PDF's: the offset drops and three numbered pages
+on either side agree on it, the old offset doesn't return in the dozen numbered pages
+after, and at most 32 pages are lost (Steve Jobs' layer reads 512–514 as "912"–"914",
+which a gap of 400 pages would otherwise be). No build can read pages
+the scan lacks, so `build` names them, for a reader to look up in another copy; on a
+golden pair a verdict ("edition": the scan prints nothing there) takes their text out
+of the reference. Over every book's text layer only Goede dochter has either
+(`experiments/scan_defects.py`, 2026-11-07).
 
 ## The structure check
 

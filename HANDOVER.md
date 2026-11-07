@@ -7,17 +7,15 @@ Qwen3.8-Flash-Next and mended headings and lost blocks.
 
 ## Running
 
-- **Slice growth batch four** (screen `robo-grow5`, `work/runs/grow5.sh`, output
-  `work/runs/grow5.out`), started 2026-11-07 ~00:05, ~8.5 h cold: Goede dochter, De cipier
-  and Het heft scored whole (~720 pages more), one book at a time, then their trust data
-  rebuilt. When it ends: the decisions line, the checklist's "Grow the tuning slices
-  further" (room left: Au pair 219, Metro 201, De vergelding 134, Thief-Taker 127, De tuin
-  120, Vals alarm 114), the new baselines here; then docs/outlook.md's "How close we are"
-  table (dated 2026-10-25, before the grown slices) and the primer's errors chart
-  (`experiments/primer_errors.py`) from the new baselines.
+Nothing. Baselines: `tuning-20261107T103010` (tuning ~5,200 pages, 20 books; wrong words
+0.740 a page, questions 0.645, unasked 0.170), `validation-20261107T103308`.
 
-Baselines before it: `tuning-20261106T225112` (tuning ~4,500 pages), `validation-20261106T225402`
-(73c256e).
+Next: the judges told the kinds of OCR error (checklist, "The judges told the kinds of OCR
+error"): `experiments/tryout.py build judge` makes judge set v2 from the warm caches (both
+judges' questions), then `run judge clef:27b --prompt kinds` and `run judge
+tokens:hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M --prompt kinds`. Then docs/outlook.md's "How
+close we are" table and the primer's errors chart (`experiments/primer_errors.py`) from the
+new baselines.
 
 ## Done 2026-11-06 evening
 

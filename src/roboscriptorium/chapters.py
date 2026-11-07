@@ -39,6 +39,9 @@ OFF_RUN_RULE = "off-run"
 # The share of a run's numbered headings that must stand centred for an off-centre one
 # off the run to be taken for a speck.
 CENTRED_SHARE = 0.8
+# A short heading that reads as no number and stands under this share of the run's
+# numbers' median height is a speck (Thief-Taker's "V", 6 pt against 14 pt).
+SPECK_HEIGHT = 0.5
 
 # How the layer misreads old-style figures: a 1 as I or l, a 0 as o, a 5 as S, a 2 as Z.
 _MISREADS = str.maketrans("IilOoSsZz", "111005522")
@@ -170,7 +173,9 @@ def off_run(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[Sou
     least `CENTRED_SHARE` of them are centred: Doodskleed's specks above a page's first
     line read "7" between chapters 3 and 4. A misread number set like the others stays
     (Monterosso's centred "5" for 15), as does an off-centre one the run expects there.
-    Needs `MIN_NUMBERED` numbered headings. Returns a new dict."""
+    A short heading that reads as no number is dropped where it stands under
+    `SPECK_HEIGHT` of the run's numbers' median height. Needs `MIN_NUMBERED` numbered
+    headings. Returns a new dict."""
     numbered_lines = [
         (SourceRef(p.number, i), v, P.centred_on_page(line, p, P.geometry(p)[0]))
         for p in pages
@@ -182,9 +187,21 @@ def off_run(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[Sou
     ]
     if len(numbered_lines) < MIN_NUMBERED:
         return roles
-    if sum(c for _, _, c in numbered_lines) < CENTRED_SHARE * len(numbered_lines):
-        return roles
     out = dict(roles)
+    lines = {SourceRef(p.number, i): line for p in pages for i, line in enumerate(p.lines)}
+    tall = statistics.median(lines[ref].y1 - lines[ref].y0 for ref, _, _ in numbered_lines)
+    for ref, line in lines.items():
+        role = roles.get(ref)
+        if (
+            role is not None
+            and role.role == "chapter_heading"
+            and len(line.text.strip()) <= NUMBER_CHARS
+            and value(line.text) is None
+            and line.y1 - line.y0 < SPECK_HEIGHT * tall
+        ):
+            out[ref] = LineRole("artifact", role.confidence, role.p_body, OFF_RUN_RULE)
+    if sum(c for _, _, c in numbered_lines) < CENTRED_SHARE * len(numbered_lines):
+        return out
     for k, (ref, v, centred) in enumerate(numbered_lines):
         before = numbered_lines[k - 1][1] if k > 0 else None
         after = numbered_lines[k + 1][1] if k + 1 < len(numbered_lines) else None

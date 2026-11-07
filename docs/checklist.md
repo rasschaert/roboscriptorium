@@ -66,9 +66,10 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       `work/runs/grow3.sh`, and the read caches resume. Resumed 2026-11-02 (the user away,
       "do whatever you think is productive"), one book at a time, against today's baseline;
       done 2026-11-03. Batch three 2026-11-05: nine books whole (~512 pages, ~6 h cold),
-      tuning ~4,500 pages. Room left (~1,650 pages): Goede dochter 230, De cipier 230,
-      Het heft 261, Au pair 219, Metro 201, De vergelding 134, Thief-Taker 127, De tuin
-      120, Vals alarm 114 (each to end on a chapter, `experiments/chapter_pages.py`). Gain: the bench's interval, about
+      tuning ~4,500 pages. Batch four 2026-11-07: Goede dochter, De cipier and Het heft
+      whole (~720 pages, 11 h cold), tuning ~5,200 pages. Room left (~915 pages): Au pair
+      219, Metro 201, De vergelding 134, Thief-Taker 127, De tuin 120, Vals alarm 114 (each
+      to end on a chapter, `experiments/chapter_pages.py`). Gain: the bench's interval, about
       ±0.010 at 2,271 pages, narrows with the square root of the pages (about ±0.007 at
       ~4,000); more pages did not make a better arbiter (decisions.md, 2026-10-25).
 
@@ -492,6 +493,9 @@ motto as running text, and Pieter Daens' `init` took the publisher's ads for tex
 agent found them by reading the EPUB; the user: "ideally that detection and the fix is
 also part of the pipeline itself." Before either book goes to review:
 
+- [x] ~~A scan that repeats or skips pages~~ (2026-11-07, `scanpages.py`): Goede dochter's
+      repeated PDF 218–219 left out, its missing printed 286–287 named by `build` and taken
+      out of its reference by a verdict; its wrong words 3.22 → 0.48 a page
 - [x] Chapter numbers (2026-11-01, `chapters.py`): all 52 of Hoe wij verdwijnen right on
       its warm rebuild; the five dropped ones read right by the readers once kept
 - [x] Front matter (2026-11-01, `pagekinds.set_apart`): the page-kind model asked about
@@ -566,8 +570,10 @@ also part of the pipeline itself." Before either book goes to review:
       and validation books' body pages, these are the only ones with ink and no text);
       Afscheid's chapters 1 and 2 on openings sunk 0.06 of a page, under
       `page.SUNK_PAGE_DROP` (0.08), so their misread numbers ("l", "e,") count as page edges;
-      Het heft's "88" mid-page (PDF 92) a heading; Thief-Taker's "V" (PDF 140), a speck on a blank
-      page, a heading; Dolittle's title page a heading, and the drawn initial C
+      Het heft's "88" (PDF 92) a heading: the page's own printed number (88, PDF 92 less the
+      book's offset of 4), at the foot like every page's around it, on a chapter's short last
+      page; Thief-Taker's "V" (PDF 140, a speck 6 pt tall against numbers 14 pt: mended
+      2026-11-07, `off_run`'s `SPECK_HEIGHT`); Dolittle's title page a heading, and the drawn initial C
       of PDF 97 left off ("HEE-CHEE"); Het geluid van bananen's "8°" for the ordinal "8e" (4); Metro's
       "CHAPTER 6" read "SRN WEIR", its number lost
 - [ ] Heading errors the exact count shows (2026-11-02): the first line of text swallowed

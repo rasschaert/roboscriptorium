@@ -710,3 +710,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-06 | bench validation, a text block the layer lost whole read line by line, none inside a region the layer reads (warm) | 0 | 3 | 0 |
 | 2026-11-06 | bench tuning, subscript digits and the fraction slash folded by the scorer (warm) | 4500 | 12 | 0 |
 | 2026-11-06 | bench validation, subscript digits and the fraction slash folded by the scorer (warm) | 0 | 3 | 0 |
+| 2026-11-07 | bench tuning, Goede dochter, De cipier and Het heft whole (cold for ~720 new pages, one book at a time) | 720 | 669 | 0 |
+| 2026-11-07 | bench tuning, a repeated scan page left out, a short speck under half the chapter numbers' height no heading, Goede dochter's missing pages a verdict (warm) | 5200 | 15 | 0 |
+| 2026-11-07 | bench validation, a repeated scan page left out, a short speck under half the chapter numbers' height no heading (warm) | 0 | 3 | 0 |
