@@ -636,6 +636,10 @@ also part of the pipeline itself." Before either book goes to review:
       for line roles. Each on judge set v2: `tryout.py run judge <model>` (replace clef?),
       `judge_combine.py` with its answers as the second (add it beside clef?), then
       `--prompt wide`; the hints only for the best. ~30 min a run for a 27B
+- [ ] What the review shows of a contested place (2026-11-07: six places the narrow crop
+      couldn't settle were plain from the whole line and its sentence, for the agent and the
+      user alike): check whether a golden book's question and an OCR suspect's crop show
+      the whole line with the lines around it, and widen them where not
 - [x] ~~The judges told the kinds of OCR error~~ (2026-11-07, judge set v2): not taken.
       clef:27b weighted 91.3% → 89.9% (91 hard picks fixed, 16 right ones broken, all at
       low confidence); Winnow-12B worse on both halves, stopped at 525 of 995
