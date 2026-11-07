@@ -713,3 +713,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-07 | bench tuning, Goede dochter, De cipier and Het heft whole (cold for ~720 new pages, one book at a time) | 720 | 669 | 0 |
 | 2026-11-07 | bench tuning, a repeated scan page left out, a short speck under half the chapter numbers' height no heading, Goede dochter's missing pages a verdict (warm) | 5200 | 15 | 0 |
 | 2026-11-07 | bench validation, a repeated scan page left out, a short speck under half the chapter numbers' height no heading (warm) | 0 | 3 | 0 |
+| 2026-11-07 | tryout: build judge set v2 (both judges' questions, 20 tuning books, warm) | 5200 | 30 | 0 |

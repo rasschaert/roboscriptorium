@@ -8,22 +8,28 @@ this file when they move.
 
 ## How close we are
 
-Bench totals (`tuning-20261025T103637`, seven slices grown to about 170 pages and Au pair's
-verdicts on 2026-10-25; `validation-20261024T202747`): tuning **0.277**, validation **0.502** wrong words a
-page after review; paragraph breaks set wrong about 0.04 and 0.196 a page. Per book, wrong words a page before review, questions a page, wrong
-words after review, breaks set wrong a page (validation books marked *v*):
+Bench totals (`tuning-20261107T103010`, tuning grown to ~5,200 pages; `validation-20261107T103308`): tuning **0.27**, validation **0.45** wrong words a
+page after review; paragraph breaks set wrong about 0.04 and 0.19 a page. Per book, wrong
+words a page before review, questions a page, wrong words after review, breaks set wrong a
+page (validation books marked *v*):
 
 | Kind of book | Books (before · questions · after · breaks) |
 | --- | --- |
-| Clean scan, modern Dutch prose (Stella's kind) | Reis 0.08 · 0.25 · 0.04 · 0.04; Vals alarm 0.32 · 0.40 · 0.11 · 0.03; Goede dochter 0.49 · 0.49 · 0.27 · 0.01; De cipier 0.23 · 0.28 · 0.16 · 0.01; Het schaduwhuis 0.29 · 0.46 · 0.20 · 0.02; Het ijzige land 0.34 · 0.37 · 0.16 · 0.02; De eerlijke vinder 0.34 · 0.55 · 0.22 · 0.05; Glazuur 0.49 · 0.42 · 0.22 · 0.08; Au pair 0.19 · 0.63 · 0.19 · 0.01 (its small capitals settled); Doodskleed 0.57 · 0.95 · 0.40 · 0.01; Het geluid van bananen 0.51 · 0.79 · 0.31 · 0.08; De vergelding 0.79 · 0.80 · 0.62 · 0.04; De kerk *v* 0.40 · 0.66 · 0.32 · 0.02; Verminkt *v* 0.97 · 0.66 · 0.59 · 0.15 |
-| The same, chosen for their trouble | Het heft 0.30 · 0.33 · 0.20 · 0.00 (its washed-out lines); De tuin 0.68 · 0.70 · 0.25 · 0.01; Monterosso 0.27 · 0.53 · 0.30 · 0.01 (small capitals, old-style figures); Het laatste bevel *v* 0.65 · 0.35 · 0.46 · 0.00 (its EPUB glues words); De geruchten *v* 0.91 · 0.49 · 0.86 · 0.01 (small-capital names) |
-| Unindented Dutch | Vuurspel *v* 0.39 · 0.51 · 0.24 · 0.42; De stilte *v* 0.88 · 0.40 · 0.33 · 0.29; Vanille en andere smaken *v* 1.56 · 0.73 · 0.96 · 0.83 (a rekeyed reference) |
-| Clean scan, modern English prose | Metro 0.27 · 0.44 · 0.21 · 0.02; Artemis 0.57 · 0.51 · 0.30 · 0.18; Thief-Taker 0.66 · 0.68 · 0.36 · 0.16; Normal People *v* 0.15 · 0.11 · 0.16 · 0.07; The Stranger's Child *v* 0.65 · 0.51 · 0.45 · 0.01 |
-| Old typography, plates | Dolittle 0.76 · 1.26 · 0.42 · 0.19 |
+| Clean scan, modern Dutch prose (Stella's kind) | Reis 0.18 · 0.31 · 0.12 · 0.07; Vals alarm 0.20 · 0.26 · 0.13 · 0.02; Goede dochter 0.48 · 0.49 · 0.24 · 0.01; De cipier 0.20 · 0.21 · 0.12 · 0.01; Het schaduwhuis 0.37 · 0.53 · 0.21 · 0.01; Het ijzige land 0.22 · 0.33 · 0.13 · 0.02; De eerlijke vinder 0.20 · 0.44 · 0.21 · 0.05; Glazuur 0.24 · 0.25 · 0.15 · 0.04; Au pair 0.29 · 0.42 · 0.23 · 0.00; Doodskleed 0.62 · 0.95 · 0.38 · 0.01; Het geluid van bananen 0.57 · 0.74 · 0.26 · 0.06; De vergelding 0.51 · 0.75 · 0.41 · 0.00; De kerk *v* 0.34 · 0.35 · 0.23 · 0.02; Verminkt *v* 0.89 · 0.64 · 0.56 · 0.12 |
+| The same, chosen for their trouble | Het heft 0.25 · 0.37 · 0.13 · 0.00 (its washed-out lines); De tuin 0.63 · 0.68 · 0.27 · 0.01; Monterosso 0.26 · 0.26 · 0.25 · 0.00 (small capitals, old-style figures); Het laatste bevel *v* 0.54 · 0.25 · 0.34 · 0.00 (its EPUB glues words); De geruchten *v* 0.88 · 0.47 · 0.83 · 0.01 (small-capital names) |
+| Unindented Dutch | Vuurspel *v* 0.36 · 0.45 · 0.22 · 0.42; De stilte *v* 0.88 · 0.26 · 0.31 · 0.29; Vanille en andere smaken *v* 1.91 · 0.80 · 0.77 · 0.81 (a rekeyed reference) |
+| Clean scan, modern English prose | Metro 0.42 · 0.39 · 0.28 · 0.02; Artemis 0.56 · 0.51 · 0.27 · 0.22; Thief-Taker 0.48 · 0.68 · 0.33 · 0.11; Normal People *v* 0.15 · 0.11 · 0.16 · 0.07; The Stranger's Child *v* 0.66 · 0.44 · 0.44 · 0.01 |
+| Old typography, plates | Dolittle 1.13 · 1.05 · 0.72 · 0.13 |
 | Busy layout, pictures | You're Never Weird *v* 0.93 · 1.11 · 0.66 · 0.16 |
-| Washed-out scan | Afscheid 9.11 · 3.42 · 0.60 · 0.00 (typed pages) |
+| Washed-out scan | Afscheid 6.97 · 3.29 · 0.62 · 0.00 (typed pages) |
 
-The sets changed since the last table (2026-10-18): Au pair, De vergelding, Glazuur and
+Since the last table (2026-10-25, tuning 0.277, validation 0.502): the slices grew from
+~3,100 to ~5,200 pages (bigger slices hold more front matter, picture pages and chapter
+openings, so a book's figures move with its slice as well as with the build); among the
+build's changes (decisions.md has each with its numbers): chapter numbers read by their
+run, lost text blocks read line by line, the hyphen kept between clashing Dutch vowels, a
+scan's repeated pages left out. The table before that (2026-10-18) had
+other sets: Au pair, De vergelding, Glazuur and
 Het schaduwhuis joined tuning, Verminkt, De geruchten and Vanille validation, Crime is
 trained on but no longer scored, and several pairs were retired (decisions.md), so the
 totals don't compare with earlier ones.
