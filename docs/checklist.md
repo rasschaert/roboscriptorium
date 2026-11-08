@@ -629,6 +629,13 @@ also part of the pipeline itself." Before either book goes to review:
       (2026-11-06, `missing._fills`): nine lines read right by glm-ocr, tuning 103 wrong
       words fixed (12 unasked), validation 9 (all unasked), none made; Dolittle's short
       last line of a paragraph stays a question
+- [ ] Small capitals as a version for the judges, again with the judge panel (2026-11-08):
+      null on 2026-10-20 (0 of 11 known small-caps errors fixed on 36 pages) partly because
+      the arbiter didn't take the judges' capitals ("VTM", Verminkt p. 251, asked anyway); the
+      panel's judges read capitals better (autotrust-jev and d3 3.7% wrong, clef 4.9%) and
+      set Het ijzige land's small-capital headings as printed. Rebase branch `small-caps`
+      (`5fb536c`, one commit) on main and rerun `experiments/probe_small_caps.py` with the
+      winning panel; after the panel decision, before the compound hyphens (~30 min)
 - [ ] New vision decision models as judges (the user, 2026-11-07: Ollama lists many now;
       none pulled yet; the user pulls): pplx-decider:27b-nvfp4 (from Qwen3.8-27B) first,
       then autotrust-jev:35b-nvfp4 (another family), d3:27b-nvfp4; the small ones
