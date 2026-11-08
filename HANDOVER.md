@@ -7,14 +7,22 @@ Qwen3.8-Flash-Next and mended headings and lost blocks.
 
 ## Running
 
-Night of 2026-11-08 (screens `robo-p3-ask`, `robo-val-09`, `robo-pass4`; one watcher,
-`work/runs/watch-p3.sh`, restarts Ollama itself on a stall): pass 3 benched at 0.85
-(tuning), validation at 0.9 for passes 2 and 3; **pass 4** (pass 2's panel plus
-autotrust-jev 9B asked the text question, `@text`, branch `text-seat` in worktree
-`../robo-text`, run from the main tree with `PYTHONPATH` on the worktree's `src`, its own
-trust data `work/probes/ocr-trust-p4/` and arbiter `ocr-trust-p4.pkl`, at 0.9). The panel
-chain `robo-panel-night` was stopped on purpose: its remaining steps ran at 0.8.
+Night of 2026-11-08, updated ~23:30 (screens `robo-val-09`, `robo-pass4`; one watcher,
+`work/runs/watch-p3.sh`, restarts Ollama itself on a stall): **pass 3's validation at 0.9**
+(`work/runs/val-09-p3.log`, pplx-decider cold on the validation books; pass 2's at 0.9 is
+in, BETTER); **pass 4** (pass 2's panel plus autotrust-jev 9B asked the text question,
+`@text`, branch `text-seat` in worktree `../robo-text`, run from the main tree with
+`PYTHONPATH` on the worktree's `src`, its own trust data `work/probes/ocr-trust-p4/` and
+arbiter `ocr-trust-p4.pkl`, at 0.9; Goede dochter's rebuild done 23:13, then the other
+books, training, tuning and validation benches, `work/runs/pass4.out`).
 
+**Ready to merge once `src/` is free** (pass 3's validation reads the main tree's `src`):
+- branch `hyphen-rules` (worktree `../robo-hyph`): suspended hyphens with a closed form,
+  abbreviations in capitals. Tuning BETTER, validation NO CHANGE (decisions.md
+  2026-11-08); the one error it made ("vij- and tegen") fixed after the bench.
+- branch `poor-pages` (worktree `../robo-poor`): pages too poor to read named by `build`
+  and left out of the bench's score (`scanpages.poor`). Merge after the panel decision,
+  since it changes what the bench counts; its decisions.md line is written at the merge.
 
 **The judge panel, in three passes** (screen `robo-panel-night`, `work/runs/panel-night.sh`,
 output `work/runs/panel-night.out`; the user chose the full panel on every suspect,
