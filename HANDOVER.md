@@ -16,13 +16,15 @@ in, BETTER); **pass 4** (pass 2's panel plus autotrust-jev 9B asked the text que
 arbiter `ocr-trust-p4.pkl`, at 0.9; Goede dochter's rebuild done 23:13, then the other
 books, training, tuning and validation benches, `work/runs/pass4.out`).
 
-**Ready to merge once `src/` is free** (pass 3's validation reads the main tree's `src`):
-- branch `hyphen-rules` (worktree `../robo-hyph`): suspended hyphens with a closed form,
-  abbreviations in capitals. Tuning BETTER, validation NO CHANGE (decisions.md
-  2026-11-08); the one error it made ("vij- and tegen") fixed after the bench.
-- branch `poor-pages` (worktree `../robo-poor`): pages too poor to read named by `build`
-  and left out of the bench's score (`scanpages.poor`). Merge after the panel decision,
-  since it changes what the bench counts; its decisions.md line is written at the merge.
+**Merges go through the worktree `../robo-merge`** (branch `merge-hyph`, pushed to
+`origin/main` as `HEAD:main`), so the main tree's `src/` stays as pass 3's validation
+loaded it. The main tree is behind `origin/main` until then: once `robo-val-09` ends,
+`git pull --ff-only` there, and commit nothing in the main tree meanwhile.
+- merged 2026-11-09: branch `hyphen-rules` (suspended hyphens with a closed form,
+  abbreviations in capitals; tuning BETTER, validation NO CHANGE).
+- waiting: branch `poor-pages` (worktree `../robo-poor`): pages too poor to read named by
+  `build` and left out of the bench's score (`scanpages.poor`). Merge after the panel
+  decision, since it changes what the bench counts; its decisions.md line at the merge.
 
 **The judge panel, in three passes** (screen `robo-panel-night`, `work/runs/panel-night.sh`,
 output `work/runs/panel-night.out`; the user chose the full panel on every suspect,
