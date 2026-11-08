@@ -447,6 +447,8 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   every other model's requests without ever timing out (2026-11-08, two hours). A run in
   flight resumes from its caches. Watchers on model runs report a stall (no answer cached
   for 20 minutes), and a stall with a runner stuck stopping is restarted, not waited on.
+  Never with sudo (the user: it needs them at the keyboard): Ollama runs as the user, and
+  the script needs no elevated rights.
   Context length 32k in the
   app's settings; `OLLAMA_NUM_PARALLEL=4` (`launchctl setenv`, read when the app starts).
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
