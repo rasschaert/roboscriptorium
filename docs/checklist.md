@@ -693,9 +693,10 @@ also part of the pipeline itself." Before either book goes to review:
 - [x] ~~A Dutch line-end break between clashing vowels keeps its hyphen~~ (2026-11-06,
       `hyphens.vowel_clash`, a word of four letters or more after the break, no glide
       before it): tuning 3 fixed, validation 1 ("mini-jurk"), none made
-- [ ] (Low) Line-end compounds by definition: an all-capitals part before a lower-case
-      one keeps the hyphen ("NSB-leden"), a stem left open before "en" where the stem
-      plus the word after's ending is a word ("voor- en nadelen"); ~5 of 74 on tuning
+- [x] ~~(Low) Line-end compounds by definition~~ (2026-11-08, branch `hyphen-rules`, merged
+      once `src/` is free): an all-capitals part before a lower-case one keeps the hyphen
+      ("NSB-leden"), a stem left open before "en" where the word after is a compound whose
+      end joins the stem ("voor- en achterbank"); tuning 8 fixed, validation no change
 
 ## 3. The user's books after Stella
 
