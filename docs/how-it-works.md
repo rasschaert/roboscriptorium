@@ -149,7 +149,9 @@ A library scan sometimes holds a page twice, or skips one. `scanpages.py` compar
 each page's text with the dozen pages before it: a page that repeats one is left out
 of the build. Where the printed page numbers jump ahead of the PDF's and stay ahead,
 pages are missing from the scan; no build can read them, so `build` names them, for a
-reader to look up in another copy.
+reader to look up in another copy. A page the readers disagree on line after line, 1.5
+suspects a line or more, is printed too poorly to read (blurred, not pale): it is built
+and named, and the bench leaves it out of its score.
 
 ### The spotter
 

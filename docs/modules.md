@@ -52,8 +52,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   number far from the rest of its line becomes a line of its own (`_apart`).
 - `scanpages.py`: pages a scan holds twice (`repeats`, left out of the body before any
   other stage) or lacks (`gaps`, from a lasting jump in the printed page numbers),
-  without a model; `Stages.repeated_pages` and `missing_pages` hold them and `build`
-  prints them (`summary`).
+  without a model, or prints too poorly to read (`poor`, 1.5 or more OCR-check suspects a
+  line); `Stages.repeated_pages`, `missing_pages` and `poor_pages` hold them and `build`
+  prints them (`summary`). The bench leaves a poor page out of its score.
 - `page.py`: what a page's layout says without a model, shared by roles,
   flags and reflow: geometry, edge lines, text repeated across pages, sunk
   pages, printed page numbers, heading labels and numerals, garbled lines.

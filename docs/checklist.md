@@ -668,15 +668,11 @@ also part of the pipeline itself." Before either book goes to review:
       for line roles. Each on judge set v2: `tryout.py run judge <model>` (replace clef?),
       `judge_combine.py` with its answers as the second (add it beside clef?), then
       `--prompt wide`; the hints only for the best. ~30 min a run for a 27B
-- [ ] Pages below the quality the build supports (the user, 2026-11-07, of De vergelding's
-      PDF 114: "below the threshold of quality that roboscriptorium supports"), found by
-      the machine, not listed by hand. The ink-against-paper contrast (`faint.py`) doesn't
-      separate them (De kerk's pages at 42 read perfectly, De vergelding's at 36 and 42
-      don't: blurred, not pale); the readers' disagreement does: suspects a line against
-      the book's median put De vergelding's PDF 38 (26×, clef sure 0.20), 34 (20×), 80, 36,
-      54 (9–12×) on top of all 23 books, then a gap. Such a page (≥ 8×, ≥ 30 suspects)
-      named by `build` like missing pages and left out of the bench's score. After the
-      judge panel's benches, which run against today's scoring
+- [x] ~~Pages below the quality the build supports~~ (2026-11-08, `scanpages.poor`, branch
+      `poor-pages`, merged after the panel's benches, which run against today's scoring):
+      1.5 or more OCR-check suspects a line on a page of ten lines or more; De vergelding's
+      nine blurred pages (1.54–6.0), the next page anywhere 1.24 (Verminkt's Polish). Named
+      by `build`, out of the bench's score
 - [x] ~~What the review shows of a contested place~~ (2026-11-07): already the whole line
       and one line either side (`review.CROP_CONTEXT_LINES`); only the judges see the
       suspect alone, which the panel's wide-crop judge tests

@@ -897,7 +897,7 @@ Dolittle's ("THE SEVENTH CHAPTER UEEN ERMINTRUDE had"); the full trees, trained 
 books, did not, which hid it from a plain rebuild. Found by reading the
 book: no golden pair prints its numbers so, which the bench can't yet see.
 
-## Pages a scan holds twice or lacks
+## Pages a scan holds twice, lacks or prints too poorly
 
 **A library scan can repeat a page or skip some**, and a reader of the built book would
 notice both. Goede dochter's scan holds printed pages 214–215 twice (PDF 216–217 and
@@ -914,6 +914,18 @@ the scan lacks, so `build` names them, for a reader to look up in another copy; 
 golden pair a verdict ("edition": the scan prints nothing there) takes their text out
 of the reference. Over every book's text layer only Goede dochter has either
 (`experiments/scan_defects.py`, 2026-11-07).
+
+**A page printed too poorly to read is named and left out of the score** (the user,
+2026-11-07, of De vergelding's PDF 114: "below the threshold of quality that
+roboscriptorium supports"). Ink against paper (`faint.py`) doesn't find them: they are
+blurred, not pale (De kerk's pages at a contrast of 42 read perfectly, De vergelding's at
+36 and 42 don't). The readers' disagreement does: `scanpages.poor` names a page of ten
+lines or more with 1.5 OCR-check suspects a line. Over all 25 books' caches (2026-11-08)
+De vergelding's nine blurred pages hold 1.54–6.0 a line, the next page anywhere 1.24
+(Verminkt's sharp Polish passages, which the readers disagree on for their language).
+`build` names them; the bench leaves their pages, errors and questions out, so a pair
+isn't scored on print no reader could read. The cut depends on how many readers and
+judges raise suspects: a panel that raises more moves it, so it is measured again then.
 
 ## The structure check
 
