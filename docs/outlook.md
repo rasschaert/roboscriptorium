@@ -141,7 +141,8 @@ each new local vision model.
 
 ## Tried, and why it didn't help
 
-Don't repeat these without a new reason (details in docs/decisions.md):
+Don't repeat these without a new reason (details in docs/decisions.md). A better model in
+the place an idea failed on is one (AGENTS.md, "A null result is a null for its models"):
 
 - **The judges told the kinds of OCR error** (2026-11-07, judge set v2): clef:27b fixes a
   fifth of its wrong picks and breaks 3% of its right ones, a net loss once weighted to

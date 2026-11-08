@@ -147,6 +147,14 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.
+- **A null result is a null for its models, not forever** (the user, 2026-11-08). An idea
+  that didn't pay may have failed on the judge, reader or arbiter of its day: record with
+  every null which component it failed on ("the arbiter didn't take the judges' capitals").
+  When that component changes (a new model screened in, a new panel, a retrained arbiter),
+  go through the nulls it blocked (docs/outlook.md, "Tried, and why it didn't help";
+  docs/decisions.md) and retest the cheap ones. A better model in the bottleneck's place
+  is the "new reason" the outlook asks for. The small-capitals version, null on 2026-10-20
+  for want of judges the arbiter trusted, came back up when the judge panel arrived.
 - **The shortest test that answers the question** (the user, 2026-10-15). Whether an
   idea or fix works is shown on the pages it touches (a targeted build of those pages,
   their errors fixed against broken), in minutes, not by a full bench. The full bench
