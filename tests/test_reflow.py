@@ -810,10 +810,13 @@ def test_a_dutch_break_between_clashing_vowels_keeps_its_hyphen_where_nothing_el
 
 
 def test_a_word_left_open_whose_closed_form_is_a_word_too():
-    knows = {"vooren", "voor", "kant", "voorkant", "kinderen", "kinder", "boeken",
-             "kinderboeken", "jeugdboeken", "waren", "achterkant"}.__contains__  # fmt: skip
-    # Not left open: the stem joins nothing at the end of the word after "en".
+    knows = {"vooren", "voor", "kant", "voorkant", "kinderen", "kinder", "boeken", "jeugd",
+             "kinderboeken", "jeugdboeken", "waren", "achter", "achterkant", "vijand", "te",
+             "gen", "vijgen", "tegen"}.__contains__  # fmt: skip
+    # Not left open: the stem joins nothing at the end of the word after "en"; the word
+    # after the conjunction is no compound ("vijgen" from "te|gen").
     assert join("haar kinder-", "en waren blij", known=knows) == "haar kinderen waren blij"
+    assert join("de vij-", "and tegen te houden", known=knows) == "de vijand tegen te houden"
     # Left open: "voorkant", "kinderboeken".
     assert join("de voor-", "en achterkant", known=knows) == "de voor- en achterkant"
     assert join("de kinder-", "en jeugdboeken", known=knows) == "de kinder- en jeugdboeken"

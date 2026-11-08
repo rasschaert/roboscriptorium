@@ -200,9 +200,13 @@ def _suspended(
 
 
 def _joins_end(stem: str, word: str, known: Callable[[str], bool]) -> bool:
-    """Whether `stem` joined to the end of `word` makes a word, that end a word of at
-    least three letters ("voor" with "achterkant": "kant", "voorkant")."""
-    return any(known(word[k:]) and known(stem + word[k:]) for k in range(1, len(word) - 2))
+    """Whether `word` is a compound of two words of at least three letters whose end, joined
+    to `stem`, makes a word too ("voor" with "achter|kant": "voorkant"). "tegen" is no
+    compound, so "vij-" / "and tegen" isn't left open for "vijgen"."""
+    return any(
+        known(word[:k]) and known(word[k:]) and known(stem + word[k:])
+        for k in range(3, len(word) - 2)
+    )
 
 
 def _hyphen_stays(
