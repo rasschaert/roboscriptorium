@@ -636,6 +636,14 @@ also part of the pipeline itself." Before either book goes to review:
       set Het ijzige land's small-capital headings as printed. Rebase branch `small-caps`
       (`5fb536c`, one commit) on main and rerun `experiments/probe_small_caps.py` with the
       winning panel; after the panel decision, before the compound hyphens (~30 min)
+- [ ] Past nulls the judge panel may turn (2026-11-08; the ones whose stated bottleneck was
+      the judges or the arbiter), after the small-capitals retest: the hints about kinds of
+      OCR error (`tryout.py --prompt kinds|targeted`) on autotrust-jev, d3 and pplx-decider,
+      untested so far (~15–30 min each, judge set v2); d3 and autotrust-jev as the line-end
+      hyphen judge on the 542 undecided Dutch breaks and the English ones (Qwen found none of
+      14 real Dutch hyphens, 2026-10-24; offline probe); more labelled suspects for the
+      arbiter (null 2026-10-25 for lack of new features) comes with batch five; the page
+      readers as line readers (2026-10-14/15) only if the cheap ones pay
 - [ ] New vision decision models as judges (the user, 2026-11-07: Ollama lists many now;
       none pulled yet; the user pulls): pplx-decider:27b-nvfp4 (from Qwen3.8-27B) first,
       then autotrust-jev:35b-nvfp4 (another family), d3:27b-nvfp4; the small ones
