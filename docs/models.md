@@ -66,8 +66,9 @@ schedel before choosing an OCR model.
 How the models in use are installed and served, where it isn't a plain `ollama pull`.
 AGENTS.md (Environment) keeps the machine's rules.
 
-- **Ollama 0.40.9** since 2026-10-22 or 23 (updated without a record; 0.40.6 from 2026-10-18,
-  0.40.3 before, 0.35.1 before 2026-10-06). Since
+- **Ollama, not pinned** (the user, 2026-11-08): it updates itself; 0.40.15 on 2026-11-08,
+  0.40.9 from 2026-10-22 or 23, 0.40.6 from 2026-10-18, 0.40.3 before, 0.35.1 before
+  2026-10-06. Since
   0.40.4 a decision model made from a GGUF by a Modelfile is refused ("a format that is
   no longer supported", ollama/ollama#18917: it needs llama.cpp's decision metadata in
   the GGUF itself), which retired winnow-ollama:e4b; imajev:4b, off, is made so too.

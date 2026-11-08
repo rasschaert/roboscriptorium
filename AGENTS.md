@@ -438,10 +438,11 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   model run waits while the battery is under 30%, checking hourly
   (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
   job started another way).
-- Ollama 0.40.9 (Homebrew's `ollama-app` cask, and the `ollama` formula for the CLI) at
-  `http://127.0.0.1:11434`, the app's automatic updates off: an update is checked with
-  `roboscriptorium doctor` and the decision models' answers re-asked (docs/models.md,
-  Setup) before a long run relies on it. Context length 32k in the
+- Ollama (Homebrew's `ollama-app` cask, and the `ollama` formula for the CLI) at
+  `http://127.0.0.1:11434`, not pinned: it updates itself (the user, 2026-11-08). After an
+  update, `roboscriptorium doctor` checks that the decision models still answer before a
+  long run relies on them (0.40.4 refused GGUF-made decision models, docs/models.md, Setup).
+  Context length 32k in the
   app's settings; `OLLAMA_NUM_PARALLEL=4` (`launchctl setenv`, read when the app starts).
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
   `pdftotext`, `pdfimages`), epubcheck, d2, llama.cpp's `llama-server` (all Homebrew where
