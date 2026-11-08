@@ -807,3 +807,26 @@ def test_a_dutch_break_between_clashing_vowels_keeps_its_hyphen_where_nothing_el
         assert join(text, nxt, known=known, compound=clash) == joined
     seen = Counter({"zeeaap": 2})
     assert join("een zee-", "aap", seen, known, clash) == "een zeeaap"
+
+
+def test_a_word_left_open_whose_closed_form_is_a_word_too():
+    knows = {"vooren", "voor", "kant", "voorkant", "kinderen", "kinder", "boeken", "jeugd",
+             "kinderboeken", "jeugdboeken", "waren", "achter", "achterkant", "vijand", "te",
+             "gen", "vijgen", "tegen"}.__contains__  # fmt: skip
+    # Not left open: the stem joins nothing at the end of the word after "en"; the word
+    # after the conjunction is no compound ("vijgen" from "te|gen").
+    assert join("haar kinder-", "en waren blij", known=knows) == "haar kinderen waren blij"
+    assert join("de vij-", "and tegen te houden", known=knows) == "de vijand tegen te houden"
+    # Left open: "voorkant", "kinderboeken".
+    assert join("de voor-", "en achterkant", known=knows) == "de voor- en achterkant"
+    assert join("de kinder-", "en jeugdboeken", known=knows) == "de kinder- en jeugdboeken"
+
+
+def test_an_abbreviation_in_capitals_before_a_word_keeps_its_hyphen():
+    known = {"sporen", "leden", "amsterdamse", "damse"}.__contains__
+    # Not kept: a word in capitals broken in capitals, a capital that starts a word.
+    assert join("DE VER-", "HAALEN", known=known) == "DE VERHAALEN"
+    assert join("de Amster-", "damse gracht", known=known) == "de Amsterdamse gracht"
+    # Kept: "DNA-sporen", "NSB-leden".
+    assert join("de DNA-", "sporen", known=known) == "de DNA-sporen"
+    assert join("de NSB-", "leden", known=known) == "de NSB-leden"

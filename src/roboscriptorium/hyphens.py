@@ -186,14 +186,27 @@ def _suspended(
     known: Callable[[str], bool] | None,
 ) -> bool:
     """Whether the hyphen leaves `stem` open before a conjunction ("voor-" / "en
-    nadelen"), not breaking a word that happens to go on with one ("Toron-" / "to")."""
+    nadelen"), not breaking a word that happens to go on with one ("Toron-" / "to").
+    Where the closed form is a word too ("voor" + "en", "kinder" + "en"), the stem must
+    join the end of the word after the conjunction ("voor- en achterkant": "voorkant";
+    "kinder- en jeugdboeken": "kinderboeken")."""
     words = nxt.split()
     if len(words) < 2 or words[0] not in _SUSPENDED_BY or rest != words[0]:
         return False
     closed = (stem + rest).lower()
-    if seen and seen[closed]:
-        return False
-    return known is None or not known(stem + rest)
+    if (seen and seen[closed]) or (known is not None and known(stem + rest)):
+        return known is not None and _joins_end(stem, _WORD.sub("", words[1]), known)
+    return True
+
+
+def _joins_end(stem: str, word: str, known: Callable[[str], bool]) -> bool:
+    """Whether `word` is a compound of two words of at least three letters whose end, joined
+    to `stem`, makes a word too ("voor" with "achter|kant": "voorkant"). "tegen" is no
+    compound, so "vij-" / "and tegen" isn't left open for "vijgen"."""
+    return any(
+        known(word[:k]) and known(word[k:]) and known(stem + word[k:])
+        for k in range(3, len(word) - 2)
+    )
 
 
 def _hyphen_stays(
@@ -213,6 +226,10 @@ def _hyphen_stays(
         return known(hyphenated)
     if not nxt[:1].islower():
         return not (len(rest) > 1 and rest.isupper())
+    # An abbreviation in capitals before a word keeps its hyphen ("DNA-sporen",
+    # "NSB-leden"); a word in capitals broken at the line's end goes on in capitals.
+    if len(stem) > 1 and stem.isalpha() and stem.isupper():
+        return True
     if "-" in stem or "-" in rest:
         # Within a chain, the book's spelling of the parts beside the break.
         before, after = stem.rsplit("-", 1)[-1].lower(), rest.split("-", 1)[0].lower()

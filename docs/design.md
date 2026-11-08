@@ -1014,6 +1014,7 @@ where the stronger ones are silent:
 | the book's own spelling inside lines (`spellings`), counted over the book's whole body (a slice's pages as built, the rest as the layer reads them: `pipeline._book_spellings`) | 12 of 12 right where it spoke; counted over a bench slice only, it was silent on words the book hyphenates elsewhere (3 of 27 compounds closed wrongly, tuning compound hyphens 0.023 → 0.020 once the whole body counts) | silent on a word printed once (24 of those 27 compounds) |
 | the word list knows exactly one of the two forms | fixes 7 wrong calls, breaks none where the book is silent | knows a closed form the print hyphenates (`faceplate`, `northernmost`: 3); knows both (`make-up`, `makeup`) |
 | a capital after the break (`Noord-Holland`) | right on every true capital | a word set in capitals (`WE-` + `RELDGESCHIEDENIS`), 0 of 3: so it no longer counts as one |
+| an abbreviation in capitals before a lowercase word (`DNA-` + `sporen`, `NSB-` + `leden`) | Dutch spelling hyphenates it; tuning 2026-11-08: 5 fixed ("SA-mannen", "CRIS-zoekvraag"), none made | a word in capitals broken in capitals is no abbreviation and goes on in capitals (`VER-` + `HAALEN`) |
 | a hyphen already in the word | `Mens-erger-je-niet`, `good-for-nothing` | kept as a rule it was wrong 8 of 10 (`Zuid-Lon-den`, `Majuba-theeplan-tage`): now only where the parts beside the break are both words and don't make one |
 | in an English book, the judge (clef:27b) asked how the word is spelled in its sentence (`hyphens.Compounds`) | where the rest is silent English compounds keep the hyphen 34 times in 77: the judge is right on 63, joining on 43 | a hyphenated form the reference closes (`timeout`, `bleedthrough`); 13 compounds it still joins |
 | in a Dutch book, vowels beside the break that would read as one sound (`hyphens.vowel_clash`: "controle-" / "experiment", "woede-" / "uitbarsting"), where the part after is a word of four letters or more and no diphthong's closing i stands before the break | Dutch spelling puts a hyphen there in a compound; tuning 3 fixed, validation 1 ("mini-jurk"), none made (2026-11-06) | without the last two conditions it broke words before a suffix ("vermoei-ender", "Skandi-ers": 5 made); a word that isn't a compound takes a diaeresis instead, which `join` sets first only where the word list knows it |
@@ -1051,7 +1052,12 @@ diaeresis ("democratie-" / "en"), which the break drops, is joined with it
 definition, so code; it ran ahead of the next case, which took "democratie- en" for a
 word left open); a word left open before
 a conjunction ("in-" / "en uitvoer", "pre-" / "and post-war") keeps its hyphen and the
-space after it, unless the book or the word list knows the closed form ("Toron-" / "to");
+space after it. Where the book or the word list knows the closed form too ("vooren",
+"kinderen"), it stays open only if the word after the conjunction is a compound of two
+words of three letters or more whose end joins the stem ("voor- en achter|bank":
+"voorbank"; "kinder- en jeugd|centrum"); else it joins ("Toron-" / "to", "kinder-" / "en
+waren", "vij-" / "and tegen", where "te|gen" is no compound). Tuning (2026-11-08): three
+such words fixed, none made once the compound test was added; validation prints none;
 a line ending in a digit
 and a hyphen before a line starting with a digit is a number range broken at the end
 ("1914-" / "1918"), kept closed for the typography stage's range rule; and whether the
