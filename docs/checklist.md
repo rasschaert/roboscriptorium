@@ -644,10 +644,11 @@ also part of the pipeline itself." Before either book goes to review:
       null on today's arbiter (decisions.md, 2026-11-08). Its signal is real on readers'
       real-word swaps ("wegkwijnen" over "wegwijken"), but the trees pay for any extra
       columns about as much; retest when the arbiter's training data grows or it changes kind
-- [ ] The line-end join's book spellings counted from the text after the OCR check, not the
-      raw layer (a misread mid-line occurrence then still counts); never the join's own
-      decisions fed back. The join already asks the book first ("Númen-" / "or" is joined
-      when the book prints "Númenor" inside a line)
+- [x] ~~The line-end join's book spellings counted from the text after the OCR check~~
+      (2026-11-08): already so (`pipeline._book_spellings`: the pages being built after the
+      check and the answers; only a bench slice's other pages as the layer reads them, which
+      no build checks). The join asks the book first ("Númen-" / "or" joins where the book
+      prints "Númenor" inside a line)
 - [ ] Past nulls the judge panel may turn (2026-11-08; the ones whose stated bottleneck was
       the judges or the arbiter), after the small-capitals retest: the hints about kinds of
       OCR error (`tryout.py --prompt kinds|targeted`) on autotrust-jev, d3 and pplx-decider,
