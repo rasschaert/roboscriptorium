@@ -636,6 +636,10 @@ also part of the pipeline itself." Before either book goes to review:
       set Het ijzige land's small-capital headings as printed. Rebase branch `small-caps`
       (`5fb536c`, one commit) on main and rerun `experiments/probe_small_caps.py` with the
       winning panel; after the panel decision, before the compound hyphens (~30 min)
+- [ ] autotrust-jev 9B as a second text judge (2026-11-08: beside the judge panel it lifts
+      telling clef's wrong picks apart +0.011 [+0.003, +0.019], the only candidate that does):
+      a panel seat that asks the text judge's question (`ROBO_ALARM_MODEL` `<model>@text`, an
+      arbiter seat of its own), then a pass like the panel's (fast: ~0.2 s a question)
 - [ ] Past nulls the judge panel may turn (2026-11-08; the ones whose stated bottleneck was
       the judges or the arbiter), after the small-capitals retest: the hints about kinds of
       OCR error (`tryout.py --prompt kinds|targeted`) on autotrust-jev, d3 and pplx-decider,
