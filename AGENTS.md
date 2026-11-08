@@ -442,6 +442,11 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   `http://127.0.0.1:11434`, not pinned: it updates itself (the user, 2026-11-08). After an
   update, `roboscriptorium doctor` checks that the decision models still answer before a
   long run relies on them (0.40.4 refused GGUF-made decision models, docs/models.md, Setup).
+  **Agents may quit, kill and restart Ollama at will** (the user, 2026-11-08: "now and
+  forever"), with `experiments/ollama-restart.sh`: a runner stuck in "Stopping..." holds up
+  every other model's requests without ever timing out (2026-11-08, two hours). A run in
+  flight resumes from its caches. Watchers on model runs report a stall (no answer cached
+  for 20 minutes), and a stall with a runner stuck stopping is restarted, not waited on.
   Context length 32k in the
   app's settings; `OLLAMA_NUM_PARALLEL=4` (`launchctl setenv`, read when the app starts).
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
