@@ -640,6 +640,15 @@ also part of the pipeline itself." Before either book goes to review:
       telling clef's wrong picks apart +0.011 [+0.003, +0.019], the only candidate that does):
       a panel seat that asks the text judge's question (`ROBO_ALARM_MODEL` `<model>@text`, an
       arbiter seat of its own), then a pass like the panel's (fast: ~0.2 s a question)
+- [ ] The book's own vocabulary as an arbiter feature (the user's idea, 2026-11-08: "if a
+      line splits on Númen- and continues with or, roboscriptorium would know that Númenor
+      is a term that occurs in the book"): per version of a suspect, how often the book
+      prints its words elsewhere, a vote the arbiter weighs (not a suspect generator, which
+      drowned in real-word twins on 2026-10-23: 34 errors in 4,802 flags). Offline first:
+      the trust data, the arbiter retrained held out, silent errors at the rule's questions
+      (`train_ocr_trust.py` without `--save`); a bench if it pays. Also: the line-end join's
+      book spellings counted from the text after the OCR check, not the raw layer (a misread
+      mid-line occurrence then still counts); never the join's own decisions fed back
 - [ ] Past nulls the judge panel may turn (2026-11-08; the ones whose stated bottleneck was
       the judges or the arbiter), after the small-capitals retest: the hints about kinds of
       OCR error (`tryout.py --prompt kinds|targeted`) on autotrust-jev, d3 and pplx-decider,
