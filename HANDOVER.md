@@ -7,6 +7,15 @@ Qwen3.8-Flash-Next and mended headings and lost blocks.
 
 ## Running
 
+Night of 2026-11-08 (screens `robo-p3-ask`, `robo-val-09`, `robo-pass4`; one watcher,
+`work/runs/watch-p3.sh`, restarts Ollama itself on a stall): pass 3 benched at 0.85
+(tuning), validation at 0.9 for passes 2 and 3; **pass 4** (pass 2's panel plus
+autotrust-jev 9B asked the text question, `@text`, branch `text-seat` in worktree
+`../robo-text`, run from the main tree with `PYTHONPATH` on the worktree's `src`, its own
+trust data `work/probes/ocr-trust-p4/` and arbiter `ocr-trust-p4.pkl`, at 0.9). The panel
+chain `robo-panel-night` was stopped on purpose: its remaining steps ran at 0.8.
+
+
 **The judge panel, in three passes** (screen `robo-panel-night`, `work/runs/panel-night.sh`,
 output `work/runs/panel-night.out`; the user chose the full panel on every suspect,
 2026-11-07): pass p1 autotrust-jev 35B, p2 + d3 9B, p3 + pplx-decider 27B on the wide
