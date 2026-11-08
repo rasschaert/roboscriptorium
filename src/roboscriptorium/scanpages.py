@@ -1,10 +1,13 @@
-"""Pages a scan repeats or lacks, found from the text layer without a model.
+"""Pages a scan repeats, lacks or prints too poorly to read, found without a model.
 
 A library scan can hold a page twice (Goede dochter's PDF 218–219 repeat 216–217) or
 skip pages (its printed 286–287). A repeat is left out of the build; a gap can only be
-reported, so a reader can look the pages up in another copy.
+reported, so a reader can look the pages up in another copy. A page the readers disagree
+on line after line (De vergelding's blurred PDF 38, 34, 114) is below the quality the
+build supports: it is built, named, and left out of the bench's score.
 """
 
+from collections import Counter
 from dataclasses import dataclass
 
 from rapidfuzz import fuzz
@@ -27,6 +30,13 @@ GAP_HOLD = 3
 GAP_RETURN = 12
 # ... and at most this many pages are lost: a signature or two.
 MAX_GAP = 32
+# A page is too poor to read with at least this many OCR-check suspects a line. On all 25
+# books' caches (2026-11-08) De vergelding's nine blurred pages hold 1.54–6.0 a line, the
+# next page anywhere 1.24 (Verminkt's sharp Polish passages, which the readers disagree on
+# for their language, not their print).
+POOR_SUSPECTS = 1.5
+# ... on a page of at least this many lines: a short page's rate is a handful of suspects.
+POOR_MIN_LINES = 10
 
 
 @dataclass(frozen=True)
@@ -79,12 +89,29 @@ def gaps(pages: list[PageText]) -> list[Gap]:
     return out
 
 
-def summary(repeated: dict[int, int], missing: list[Gap]) -> str:
-    """One line on what the scan repeats and lacks, or "" when neither."""
+def poor(pages: list[PageText], suspect_pages: list[int]) -> dict[int, float]:
+    """Each page printed too poorly to read, with its suspects a line; `suspect_pages`
+    holds the page of each of the OCR check's suspects."""
+    count = Counter(suspect_pages)
+    rates = {p.number: count[p.number] / len(p.lines) for p in pages}
+    return {
+        p.number: rates[p.number]
+        for p in pages
+        if len(p.lines) >= POOR_MIN_LINES and rates[p.number] >= POOR_SUSPECTS
+    }
+
+
+def summary(
+    repeated: dict[int, int], missing: list[Gap], poor: dict[int, float] | None = None
+) -> str:
+    """One line on what the scan repeats, lacks and prints too poorly, or "" when none."""
     parts = [f"PDF {n} repeats PDF {m}, left out" for n, m in sorted(repeated.items())]
     parts += [
         f"printed {g.first}" + (f"–{g.last}" if g.last > g.first else "")
         + f" not in the scan (before PDF {g.before})"
         for g in missing
     ]  # fmt: skip
+    if poor:
+        listed = ", ".join(f"{n} ({r:.1f} a line)" for n, r in sorted(poor.items()))
+        parts.append(f"PDF {listed} too poor to read, out of the bench's score")
     return "scan: " + "; ".join(parts) if parts else ""

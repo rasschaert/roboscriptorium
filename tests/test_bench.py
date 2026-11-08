@@ -218,7 +218,12 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
         p = garbled if "garbled" in spec else clean
         roles = {SourceRef(11, k): body for k in range(len(p.lines))}
         stages = SimpleNamespace(
-            pages=[p], corrected=[p], model_roles=roles, suspects=[], ocr_decider="fixed rule"
+            pages=[p],
+            corrected=[p],
+            model_roles=roles,
+            suspects=[],
+            ocr_decider="fixed rule",
+            poor_pages={},
         )
         name = spec.split(":")[0].split("/")[-1]
         return scoring.Scored(name, f"book {name}", stages, reference, [], [], 0)

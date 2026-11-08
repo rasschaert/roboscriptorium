@@ -52,3 +52,14 @@ def test_one_misread_number_or_an_unnumbered_page_is_no_gap():
         pages[8:11] = [_page(n, n, n - 4 + jump) for n in range(18, 21)]
         assert scanpages.gaps(pages) == []
     assert scanpages.summary({}, []) == ""
+
+
+def test_a_page_the_readers_disagree_on_line_after_line_is_too_poor():
+    pages = [_page(n, n) for n in range(10, 14)] + [_page(14, 14, short=True)]
+    # 30 lines a page: PDF 11 holds 60 suspects (2.0 a line), PDF 12 holds 44 (1.47),
+    # the short PDF 14 holds 6 of its 2 lines and is too short to tell.
+    suspects = [11] * 60 + [12] * 44 + [10] * 3 + [14] * 6
+    assert scanpages.poor(pages, suspects) == {11: 2.0}
+    assert scanpages.summary({}, [], {11: 2.0}) == (
+        "scan: PDF 11 (2.0 a line) too poor to read, out of the bench's score"
+    )
