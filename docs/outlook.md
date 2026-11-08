@@ -144,6 +144,12 @@ each new local vision model.
 Don't repeat these without a new reason (details in docs/decisions.md). A better model in
 the place an idea failed on is one (AGENTS.md, "A null result is a null for its models"):
 
+- **The book's own vocabulary as arbiter columns** (2026-11-08, the user's idea; failed on
+  the arbiter): the book's word counts rescue readers' real-word swaps ("wegkwijnen" over
+  "wegwijken") about 25 times over a random-column control, but the trees pay about as
+  much for any added column at 23 books of training data; silent errors at the rule's
+  questions 30 → 28 to 30. Retest when the trust data grows or the arbiter changes kind.
+
 - **The judges told the kinds of OCR error** (2026-11-07, judge set v2): clef:27b fixes a
   fifth of its wrong picks and breaks 3% of its right ones, a net loss once weighted to
   how rarely it errs; Winnow-12B loses on both. The two wordings disagreeing says little
