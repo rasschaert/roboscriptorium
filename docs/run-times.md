@@ -729,3 +729,90 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-07 | tryout: judge set v2, autotrust-jev:9b-nvfp4 on the text question | 0 | 4 | 0 |
 | 2026-11-07 | bench tuning, a reading's ligature glyph spelled out before the OCR check compares (warm) | 5200 | 18 | 0 |
 | 2026-11-07 | bench validation, a reading's ligature glyph spelled out before the OCR check compares (warm) | 0 | 3 | 0 |
+| 2026-11-07 | trust data, goede-dochter--ia-scan | 500 | 22 | 0 |
+| 2026-11-07 | trust data, vals-alarm--ia-scan | 178 | 7 | 0 |
+| 2026-11-07 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 2 | 0 |
+| 2026-11-07 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 4 | 0 |
+| 2026-11-07 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 6 | 0 |
+| 2026-11-07 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 2 | 0 |
+| 2026-11-07 | trust data, metro-2033--ia-scan | 257 | 8 | 0 |
+| 2026-11-07 | trust data, de-cipier--ia-scan | 474 | 12 | 0 |
+| 2026-11-07 | trust data, artemis--ia-scan | 305 | 7 | 0 |
+| 2026-11-07 | trust data, de-tuin-van-de-avondnevel--ia-scan | 244 | 16 | 0 |
+| 2026-11-07 | trust data, de-eerlijke-vinder--ia-scan | 84 | 4 | 0 |
+| 2026-11-07 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 1 | 0 |
+| 2026-11-07 | trust data, the-thief-takers-apprentice--ia-scan | 155 | 4 | 0 |
+| 2026-11-07 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 20 | 0 |
+| 2026-11-07 | trust data, doodskleed--ia-scan | 276 | 9 | 0 |
+| 2026-11-07 | trust data, het-ijzige-land--ia-scan | 318 | 11 | 0 |
+| 2026-11-07 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 1 | 0 |
+| 2026-11-07 | trust data, vuurspel--ia-scan | 21 | 2 | 0 |
+| 2026-11-07 | trust data, monterosso-mon-amour--ia-scan | 88 | 2 | 0 |
+| 2026-11-07 | trust data, het-geluid-van-bananen--ia-scan | 315 | 11 | 0 |
+| 2026-11-07 | trust data, het-schaduwhuis--ia-scan | 320 | 10 | 0 |
+| 2026-11-07 | trust data, stella | 67 | 1 | 0 |
+| 2026-11-07 | trust data, ex-minnaar | 273 | 13 | 0 |
+| 2026-11-07 | train arbiter after the rebuild | 0 | 24 | 0 |
+| 2026-11-07 | bench tuning after the rebuild | 5293 | 30 | 0 |
+| 2026-11-07 | bench validation, judge panel p1 (autotrust-jev:35b-nvfp4) | 0 | 27 | 0 |
+| 2026-11-07 | trust data, goede-dochter--ia-scan | 500 | 39 | 0 |
+| 2026-11-07 | trust data, vals-alarm--ia-scan | 178 | 13 | 0 |
+| 2026-11-07 | bench tuning, judge panel p1 (autotrust-jev), asking below 0.85 (warm) | 5200 | 16 | 0 |
+| 2026-11-07 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 15 | 0 |
+| 2026-11-07 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 14 | 0 |
+| 2026-11-07 | bench tuning, judge panel p1 (autotrust-jev), asking below 0.9 (warm) | 5200 | 16 | 0 |
+| 2026-11-07 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 10 | 0 |
+| 2026-11-07 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 4 | 0 |
+| 2026-11-07 | bench tuning, today's arbiter asking below 0.85 (warm) | 5200 | 16 | 0 |
+| 2026-11-07 | trust data, metro-2033--ia-scan | 257 | 12 | 0 |
+| 2026-11-07 | bench tuning, today's arbiter asking below 0.9 (warm) | 5200 | 16 | 0 |
+| 2026-11-07 | trust data, de-cipier--ia-scan | 474 | 20 | 0 |
+| 2026-11-07 | trust data, artemis--ia-scan | 305 | 11 | 0 |
+| 2026-11-07 | trust data, de-tuin-van-de-avondnevel--ia-scan | 244 | 27 | 0 |
+| 2026-11-07 | trust data, de-eerlijke-vinder--ia-scan | 84 | 7 | 0 |
+| 2026-11-07 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 1 | 0 |
+| 2026-11-07 | trust data, the-thief-takers-apprentice--ia-scan | 155 | 7 | 0 |
+| 2026-11-07 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 34 | 0 |
+| 2026-11-07 | trust data, doodskleed--ia-scan | 276 | 15 | 0 |
+| 2026-11-07 | trust data, het-ijzige-land--ia-scan | 318 | 17 | 0 |
+| 2026-11-07 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 2 | 0 |
+| 2026-11-07 | trust data, vuurspel--ia-scan | 21 | 2 | 0 |
+| 2026-11-07 | trust data, monterosso-mon-amour--ia-scan | 88 | 4 | 0 |
+| 2026-11-08 | trust data, het-geluid-van-bananen--ia-scan | 315 | 19 | 0 |
+| 2026-11-08 | trust data, het-schaduwhuis--ia-scan | 320 | 18 | 0 |
+| 2026-11-08 | trust data, stella | 67 | 2 | 0 |
+| 2026-11-08 | trust data, ex-minnaar | 273 | 23 | 0 |
+| 2026-11-08 | train arbiter after the rebuild | 0 | 24 | 0 |
+| 2026-11-08 | bench tuning after the rebuild | 5293 | 55 | 0 |
+| 2026-11-08 | bench tuning, judge panel p2 (autotrust-jev, d3), asking below 0.85 (warm) | 5200 | 16 | 0 |
+| 2026-11-08 | bench tuning, judge panel p2 (autotrust-jev, d3), asking below 0.9 (warm) | 5200 | 16 | 0 |
+| 2026-11-08 | bench validation, judge panel p2 (autotrust-jev:35b-nvfp4,d3:9b) | 0 | 56 | 0 |
+| 2026-11-08 | bench validation, judge panel p2, asking below 0.85 (warm) | 0 | 3 | 0 |
+| 2026-11-08 | trust data, goede-dochter--ia-scan | 500 | 114 | 0 |
+| 2026-11-08 | trust data, vals-alarm--ia-scan | 178 | 36 | 0 |
+| 2026-11-08 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 7 | 0 |
+| 2026-11-08 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 18 | 0 |
+| 2026-11-08 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 28 | 0 |
+| 2026-11-08 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 10 | 0 |
+| 2026-11-08 | trust data, metro-2033--ia-scan | 257 | 32 | 0 |
+| 2026-11-08 | trust data, de-cipier--ia-scan | 474 | 55 | 0 |
+| 2026-11-08 | trust data, artemis--ia-scan | 305 | 32 | 0 |
+| 2026-11-08 | trust data, de-tuin-van-de-avondnevel--ia-scan | 244 | 78 | 0 |
+| 2026-11-08 | trust data, de-eerlijke-vinder--ia-scan | 84 | 20 | 0 |
+| 2026-11-08 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 2 | 0 |
+| 2026-11-08 | trust data, the-thief-takers-apprentice--ia-scan | 155 | 20 | 0 |
+| 2026-11-08 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 97 | 0 |
+| 2026-11-08 | trust data, doodskleed--ia-scan | 276 | 43 | 0 |
+| 2026-11-08 | trust data, het-ijzige-land--ia-scan | 318 | 45 | 0 |
+| 2026-11-08 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 5 | 0 |
+| 2026-11-08 | trust data, vuurspel--ia-scan | 21 | 5 | 0 |
+| 2026-11-08 | trust data, monterosso-mon-amour--ia-scan | 88 | 12 | 0 |
+| 2026-11-08 | trust data, het-geluid-van-bananen--ia-scan | 315 | 57 | 0 |
+| 2026-11-08 | trust data, het-schaduwhuis--ia-scan | 320 | 50 | 0 |
+| 2026-11-08 | trust data, stella | 67 | 6 | 0 |
+| 2026-11-08 | trust data, ex-minnaar | 273 | 71 | 0 |
+| 2026-11-08 | train arbiter after the rebuild | 0 | 24 | 0 |
+| 2026-11-08 | tryout: judge set v2, d1:3b | 0 | 7 | 0 |
+| 2026-11-08 | bench tuning, judge panel p3 (+ pplx wide), asking below 0.9 (warm) | 5200 | 279 | 0 |
+| 2026-11-08 | tryout: judge set v2, d1-omni:2b | 0 | 2 | 0 |
+| 2026-11-08 | bench validation, judge panel p2, asking below 0.9 (warm) | 0 | 13 | 0 |
