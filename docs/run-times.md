@@ -817,3 +817,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-08 | tryout: judge set v2, d1-omni:2b | 0 | 2 | 0 |
 | 2026-11-08 | bench validation, judge panel p2, asking below 0.9 (warm) | 0 | 13 | 0 |
 | 2026-11-08 | bench tuning, judge panel p3 (+ pplx wide), asking below 0.85 (warm) | 5200 | 19 | 0 |
+| 2026-11-08 | bench tuning, a suspended hyphen whose closed form is a word, an abbreviation in capitals keeps its hyphen (warm) | 5200 | 17 | 0 |
+| 2026-11-08 | bench validation, the same hyphen rules (warm) | 0 | 3 | 0 |
