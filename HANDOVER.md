@@ -25,7 +25,7 @@ Baselines: `tuning-20261107T141329` and `validation-20261107T141640` (after the 
 fix). Don't edit `src/` in the main tree while it runs: each book of the rebuild starts a
 new process that loads it; code work goes in a worktree.
 
-When pass 3's benches are in: apply the bar set in decisions.md (2026-11-08, "What counts as a real gain for pass 3") and make the winning panel the default (config, docs, models.md; the user takes the slow seat if pass 3 clears it); bring the user the asking threshold (0.85 or 0.9) with its numbers; then a new dated entry in docs/optimism.md from the real numbers (the user asked, 2026-11-08): wrong words a page after review and unasked errors on both sets before and after the panel, per 1,000 words against the goal rows.
+When pass 3's benches are in: apply the bar set in decisions.md (2026-11-08, "What counts as a real gain for pass 3") and make the winning panel the default (config, docs, models.md; the user takes the slow seat if pass 3 clears it); set `ROBO_OCR_ASK_BELOW`'s default to 0.9 (the user's choice, decisions.md 2026-11-08) with it; then a new dated entry in docs/optimism.md from the real numbers (the user asked, 2026-11-08): wrong words a page after review and unasked errors on both sets before and after the panel, per 1,000 words against the goal rows.
 
 After it: batch five of the slice growth is ready as `work/runs/grow6.patch` (Vals alarm,
 Metro, De tuin, Thief-Taker, Au pair and De vergelding scored whole, ~915 pages; apply
