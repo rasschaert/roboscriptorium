@@ -504,6 +504,30 @@ def test_each_second_vision_judge_votes_and_a_wide_one_sees_the_line_around(monk
     assert told["jev"] == told["clef"] and told["pplx@wide"] == told["clef"] + ocrcheck.WIDE_NOTE
 
 
+def test_a_text_seat_is_asked_the_text_judges_question_without_the_scan(monkeypatch):
+    from types import SimpleNamespace
+
+    from roboscriptorium.clients import decide
+
+    asked = []
+
+    def ask(client, cache, state, questions, image=None):
+        asked.append((client.model, state, questions, image))
+        return {"value": "a", "confidence": 0.7}
+
+    monkeypatch.setattr(ocrcheck, "_ask", ask)
+    clef, winnow = SimpleNamespace(model="clef"), SimpleNamespace(model="winnow")
+    jev = decide.Text(SimpleNamespace(model="jev"), "jev@text")
+    line = "Toen kwam lemand binnen"
+    (_, _, votes), confidence = ocrcheck._decide(
+        None, 1, 0, line, 10, 16, ["Iemand"], (0, 0, 1, 1), "nld", clef, winnow, None,
+        alarms=[jev],
+    )  # fmt: skip
+    by = {m: (s, q, img) for m, s, q, img in asked}
+    assert by["jev@text"][:2] == by["winnow"][:2] and by["jev@text"][2] is None
+    assert votes["jev@text"] == "lemand" and confidence["jev@text"] == 0.7
+
+
 def test_the_vision_judge_is_told_the_books_style_and_the_text_judge_isnt(monkeypatch):
     from types import SimpleNamespace
 

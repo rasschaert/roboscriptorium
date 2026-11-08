@@ -29,7 +29,8 @@ class Settings:
     # Second vision judges on the OCR check's suspects, comma-separated: decision models
     # on Ollama, or `llama:<name>` served by llama.cpp at llama_url (`clients/llama.py`,
     # imajev-4b); `<model>@wide` asks one on the suspect with its line around it;
-    # `render` is no model: each version drawn in the book's typeface and laid over the
+    # `<model>@text` asks it the text judge's question (the sentence, no scan); `render`
+    # is no model: each version drawn in the book's typeface and laid over the
     # scan (`rendercheck.py`, with the fonts in `fonts`). Each
     # is a vote for the arbiter, "" for none. Asked only where the vision judge is less
     # sure than `alarm_below` (1.0: always). autotrust-jev 35B and d3 9B: the arbiter

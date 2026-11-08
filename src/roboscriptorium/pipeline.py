@@ -573,8 +573,9 @@ def _alarm(spec: str, settings: Settings, book: Book, pages: list[PageText]):
     """A second vision judge's client from its name in `alarm_model`: `llama:<name>` on
     llama.cpp, `render` the fit of each version drawn in `book`'s typeface (matched on
     `pages`, its whole body, or book.toml's), else a
-    decision model on Ollama; `@wide` views the suspect with its line. None for `render`
-    without a font folder: the build goes on without its vote."""
+    decision model on Ollama; `@wide` views the suspect with its line, `@text` reads the
+    sentence as the text judge does. None for `render` without a font folder: the build
+    goes on without its vote."""
     name, _, view = spec.partition("@")
     if spec == rendercheck.MODEL:
         library = Path(settings.fonts)
@@ -595,8 +596,10 @@ def _alarm(spec: str, settings: Settings, book: Book, pages: list[PageText]):
         client = decide.for_model(name, settings.ollama_url)
     if view == "wide":
         return decide.Wide(client, spec, ocrcheck.WIDE)
+    if view == "text":
+        return decide.Text(client, spec)
     if view:
-        raise ValueError(f"ROBO_ALARM_MODEL: {spec!r}, a view other than @wide")
+        raise ValueError(f"ROBO_ALARM_MODEL: {spec!r}, a view other than @wide or @text")
     return client
 
 

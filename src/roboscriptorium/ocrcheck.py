@@ -850,24 +850,21 @@ def _decide(
         around = (around[0], around[1].split(maxsplit=1)[1] if " " in around[1].strip() else "")
     intro = "Two OCR readings" if len(lines) == 2 else "Several OCR readings"
     read = {"value": "", "confidence": 0.0}
-    if reader is not None:
-        read = _ask(
-            reader,
-            cache,
-            {
-                "line before": around[0],
-                **dict(zip(letters, lines, strict=True)),
-                "line after": around[1],
-            },
-            {
-                "reading": decide.choice(
-                    f"{intro} of the same line of a printed {language} book differ. "
-                    "Which is the correct transcription, as printed, read between "
-                    "the line before and the line after?",
-                    {c: f"“{line}”" for c, line in zip(letters, lines, strict=True)},
-                )
-            },
+    text_state = {
+        "line before": around[0],
+        **dict(zip(letters, lines, strict=True)),
+        "line after": around[1],
+    }
+    text_question = {
+        "reading": decide.choice(
+            f"{intro} of the same line of a printed {language} book differ. "
+            "Which is the correct transcription, as printed, read between "
+            "the line before and the line after?",
+            {c: f"“{line}”" for c, line in zip(letters, lines, strict=True)},
         )
+    }
+    if reader is not None:
+        read = _ask(reader, cache, text_state, text_question)
     pick = lambda value: versions[letters.index(value)] if value in letters else ""  # noqa: E731
     votes = {vision.model: pick(seen["value"])}
     confidence = {vision.model: seen["confidence"]}
@@ -875,6 +872,12 @@ def _decide(
         votes[reader.model] = pick(read["value"])
         confidence[reader.model] = read["confidence"]
     for alarm in alarms if seen["confidence"] < alarm_below else ():
+        if getattr(alarm, "text", False):
+            # A second text judge, asked the text judge's question.
+            alarmed = _ask(alarm, cache, text_state, text_question)
+            votes[alarm.model] = pick(alarmed["value"])
+            confidence[alarm.model] = alarmed["confidence"]
+            continue
         wide = getattr(alarm, "wide", 0)
         asked = question
         if wide:

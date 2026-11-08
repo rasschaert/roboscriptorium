@@ -94,6 +94,21 @@ class Wide:
         return self._inner.decide(state, questions, image_png=image_png)
 
 
+class Text:
+    """A decision model asked the text judge's question (`<model>@text`): the sentence,
+    not the scan. Its votes and cached answers go under that name, its requests to the
+    model."""
+
+    text = True
+
+    def __init__(self, inner, name: str):
+        self.model = name
+        self._inner = inner
+
+    def decide(self, state, questions, model=None, image_png=None):
+        return self._inner.decide(state, questions)
+
+
 class HostedClient:
     """A local decision model's questions answered by a hosted build of it (`via`,
     `openrouter:<model>@<provider tag>`), under the local model's name, so the
