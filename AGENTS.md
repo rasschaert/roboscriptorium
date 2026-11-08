@@ -389,6 +389,18 @@ reader or judge reaches the arbiter only after the trust data is rebuilt and the
 retrained. Record the verdict in [docs/models.md](docs/models.md): the model for each
 role is chosen by its score on golden pages, then pinned (never `latest`).
 
+**Never dismiss a model on its own score** (the user, 2026-11-08: "it doesn't matter how
+poorly they score individually. there is strength in numbers"; a mistake made too often).
+A model wrong far more often than the incumbent can still be worth a seat, if its
+mistakes fall elsewhere. The second question is answered by what the model adds to the
+panel, not by its accuracy: on the judge set, which of the panel's shared misses it gets
+right, and how much it lifts telling the incumbent's wrong picks apart, alone and together
+with the other weak candidates (`experiments/judge_overlap.py`, `judge_sheet.py`,
+`judge_combine_many.py`). d1 3B and d1-omni 2B, 64–72% right alone, together with
+autotrust-jev 9B on the text question lifted that from 0.949 to 0.959. A weak model is
+dropped only when it adds nothing to any combination, and the verdict in models.md says
+which test it failed.
+
 Two kinds of model, used for different jobs:
 
 - **Decision models ("System One")**, on Ollama's `/v1/systemone`. Answer bounded
