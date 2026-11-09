@@ -11,6 +11,50 @@ commercial e-book; a careful edition like Standard Ebooks is nearer one in 10,00
 Each entry is a judgment, not a measurement: the numbers it rests on are in
 [outlook.md](outlook.md) and [decisions.md](decisions.md). Newest first.
 
+## 2026-11-09, night: 7/10 (held; the numbers under it firmer)
+
+| Goal | Chance |
+| --- | --- |
+| Modern prose, clean IA scan, commercial-e-book quality with a light review | ~85% |
+| The same books with no human at all, ≤ 1 wrong word in 1,000 | ~40% |
+| Universal, unattended, on today's local models | ~20% |
+| The same by 2030 | ~65–70% (was ~60–70%) |
+
+**Where it stands** (production since tonight: autotrust-jev 35B and d3 9B judging beside
+clef, the arbiter asking below 0.9; a page is about 300 words):
+
+| | Tuning, 5,274 pages | Validation, 889 pages |
+| --- | --- | --- |
+| Wrong words a page before review | 0.738 → 0.770 | 0.755 → 0.706 |
+| Questions a page | 0.645 → 0.759 | 0.487 → 0.584 |
+| Wrong words no question asks about, a page | 0.169 → 0.147 (1 in ~2,000 words) | 0.374 → 0.326 (1 in ~900) |
+| Wrong words a page after review, with the reviewer's slips | 0.271 → 0.267 (~0.9 in 1,000) | 0.451 → 0.418 (~1.4 in 1,000) |
+
+(Before the arrow, the arbiter of the 7th at 0.8; set means over books.) Tuning's before
+review rises at 0.9 because the surer threshold leaves more of the arbiter's picks for the
+reviewer, who then settles them: the after-review line is the one that counts.
+
+**Up:** the first new signal the arbiter took since October, and it held on the books
+nothing was chosen on: a seventh fewer silent errors on tuning, an eighth fewer on
+validation, validation after review down 7%. It came from models that go wrong in
+different places, which says a panel can keep growing as models come out; most of the
+year's gain should come from there. Line-end hyphens that are the word's own
+("SA-mannen", "voor- en achterbank") now come out right where the print sets them.
+
+**Not up:** the price is questions (+18% a page on tuning, the user's choice of 0.9), and
+validation is still about 1.4 wrong words in 1,000 after review, half again the
+commercial line. The third vision judge (pplx-decider) and the book's own vocabulary
+both carried real signal the arbiter couldn't use: at 23 books of training data its
+trees pay for every new column about as much as the column earns. That is the
+bottleneck now, more than the judges. The no-human row waits on the same thing, and on
+errors no reader doubts, which no judge ever sees.
+
+**Would move it up:** more training data for the arbiter (batch five of the slices, the
+user's verdicts), then the signals that came back null tonight tried again on it;
+autotrust-jev 9B as a text judge (pass 4, benched by morning) paying on the bench.
+**Would move it down:** pass 4 adding questions without fewer silent errors, the way
+pass 3 did; Stella's or Ex-minnaar's reading finding errors the bench can't see.
+
 ## 2026-11-07, midday: 7/10 (up from 6.5)
 
 | Goal | Chance |
