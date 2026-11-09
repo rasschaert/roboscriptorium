@@ -7,12 +7,12 @@ worked on small capitals; the older sections from 2026-11-06.
 
 ## Running
 
-- **Nervous System, cold build** (the user's first English book, 2026-11-09, asked for
-  before the small-capitals work resumes): `robo-nervous-build`, started ~18:50, ~4–5 h,
-  output `work/runs/nervous-build.log`. Then: sample its questions, and compare the build
-  with the second scan (checklist, "Nervous System built cold"). The user's other
-  Python job, `run_pipeline.py`, ended 18:37; check `pgrep -f run_pipeline.py` before
-  starting another model job beside the build.
+- **Nervous System, cold build** (the user's first English book, 2026-11-09): started
+  ~18:50, stopped in the judging at 23:13 and resumed on the new judge order (9e54a90:
+  judges one at a time over the book) as `robo-nervous-build`, log
+  `work/runs/nervous-build2.log`. Then: sample its questions, and compare the build with
+  the second scan (checklist, "Nervous System built cold"). Check how much faster the
+  judging ran (decisions a minute, Ollama's model loads) and record it in decisions.md.
 - **Queued after it, overnight** (the user, 2026-11-09): `robo-queue-20261109`
   (`work/runs/queue-20261109.sh`, log `work/runs/queue-20261109.out`) waits for the Nervous
   build and for no `run_pipeline.py`, then builds *Going into a Dark House* (PDF 7–193,
