@@ -444,3 +444,33 @@ def test_lines_in_a_table_the_layout_model_is_sure_of_are_asked_about():
     # A running head the model half-heartedly calls a table is not asked about.
     unsure = Region("table", 0.52, 80, 370, 269, 515)
     assert not [f for f in flags.find([page], {}, {11: [unsure]}) if "table" in f.reasons]
+
+
+def _openings(words: list[str]) -> tuple[list[PageText], dict]:
+    from roboscriptorium.roles import LineRole
+
+    pages, roles = [], {}
+    for n, word in enumerate(words, start=1):
+        lines = [
+            Line("CHAPTER", 150, 60, 230, 72),
+            Line(f"{word} the rest of it went on", 40, 120, 340, 132),
+        ]
+        pages.append(PageText(n, 378, 624, lines))
+        roles[SourceRef(n, 0)] = LineRole("chapter_heading", 0.9, 0.0, "")
+        roles[SourceRef(n, 1)] = LineRole("body", 0.9, 0.9, "")
+    return pages, roles
+
+
+def test_a_book_opening_its_sections_in_capitals_is_not_asked_about_lost_initials():
+    known = {"lying", "that", "while", "almost", "patrons", "back"}.__contains__
+    pages, roles = _openings(["LYING", "THAT", "WHILE", "ALMOST", "PATRONS", "BACK", "YING"])
+    asked = [f.page for f in flags.find(pages, roles, known=known) if "initial-lost" in f.reasons]
+    # The one that isn't a word is still asked.
+    assert asked == [7]
+
+
+def test_lost_initials_leaving_fragments_are_all_asked():
+    known = {"hat", "our", "arch"}.__contains__
+    pages, roles = _openings(["HAT", "NCE", "UEEN", "OHN", "OUR", "VERYTHING", "ARCH"])
+    asked = [f.page for f in flags.find(pages, roles, known=known) if "initial-lost" in f.reasons]
+    assert asked == [1, 2, 3, 4, 5, 6, 7]

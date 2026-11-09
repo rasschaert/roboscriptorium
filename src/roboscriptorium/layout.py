@@ -10,6 +10,7 @@ caption, kept as one region marked `turned`. Which way it reads is left to OCR:
 the model labels the strip under a figure a caption whichever side is up.
 """
 
+import importlib.util
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -40,11 +41,9 @@ class Region:
 
 
 def available() -> bool:
-    try:
-        import doclayout_yolo  # noqa: F401
-    except ImportError:
-        return False
-    return True
+    """Whether the layout model's package is installed, found without importing it:
+    importing it loads PyTorch, 3 s a build even when every page is cached."""
+    return importlib.util.find_spec("doclayout_yolo") is not None
 
 
 def detect(pdf: Path, numbers: list[int], cache: Path) -> dict[int, list[Region]]:

@@ -156,6 +156,38 @@ def _initial_lost(page: PageText, i: int, roles: dict[SourceRef, LineRole]) -> b
     return bool(above) and above[-1] == "heading"
 
 
+# A book opens its sections in capitals, not on drawn initials, when it does so this many
+# times or more and the word list knows the first word of this share of them.
+CAPITAL_OPENINGS = 5
+CAPITAL_KNOWN = 0.8
+
+
+def _first_word(text: str) -> str:
+    words = text.split()
+    return words[0].strip(_QUOTES + ".,;:!?") if words else ""
+
+
+def capital_openings(
+    pages: list[PageText], roles: dict[SourceRef, LineRole], known
+) -> set[SourceRef]:
+    """The section openings in capitals not to ask about as lost initials: where the book
+    sets its openings in capitals (`CAPITAL_OPENINGS`, `CAPITAL_KNOWN`), each whose first
+    word the word list knows. Nervous System opens every section so ("LYING IN BED");
+    Dolittle's lost initials leave fragments ("NCE upon a time", "UEEN", "OHN")."""
+    if known is None:
+        return set()
+    openings = [
+        (SourceRef(page.number, i), _first_word(page.lines[i].text))
+        for page in pages
+        for i in range(len(page.lines))
+        if _initial_lost(page, i, roles) and _first_word(page.lines[i].text).isupper()
+    ]
+    knows = [ref for ref, word in openings if known(word.lower())]
+    if len(openings) < CAPITAL_OPENINGS or len(knows) < CAPITAL_KNOWN * len(openings):
+        return set()
+    return set(knows)
+
+
 def _set_apart(page: PageText, i: int) -> bool:
     lines = page.lines
     if len(lines) < 4 or i in (0, len(lines) - 1):
@@ -514,8 +546,12 @@ def find(
     faint: set[int] | None = None,
     epigraph: set[SourceRef] | None = None,
     headings: set[SourceRef] | None = None,
+    known=None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.
+
+    `known` (a word list's test) tells a book that opens its sections in capitals from
+    one whose drawn initials are lost (`capital_openings`).
 
     Lines set apart as an `epigraph` (`epigraphs.lines`) aren't asked about for what
     every motto is (`_EPIGRAPH_TRAITS`); any other doubt about them still is.
@@ -541,6 +577,7 @@ def find(
         and ref.line < len(page.lines)
         and _capitals((ln := page.lines[ref.line]).text)
     ]
+    styled = capital_openings(pages, roles, known)
     for page in pages:
         if page.number in (faint or set()) and page.lines:
             flags.append(_washed_out_flag(page, roles))
@@ -550,7 +587,7 @@ def find(
         for i in range(len(page.lines)):
             if SourceRef(page.number, i) in (quotes or set()):
                 line_reasons.setdefault(i, []).append("quotes")
-            if _initial_lost(page, i, roles):
+            if _initial_lost(page, i, roles) and SourceRef(page.number, i) not in styled:
                 line_reasons.setdefault(i, []).append("initial-lost")
         if any(r.turned for r in regions) or sideways(page):
             if not any(r.turned for r in regions):

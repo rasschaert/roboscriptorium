@@ -1123,6 +1123,17 @@ Nothing carries Blackpool Libraries' on its own. The layout model calls the labe
 running head called one at 0.52: too few to learn a decision from, so it is asked, not
 dropped (handholding first). The reviewer marks the lines as not part of the book.
 
+## A book that opens its sections in capitals has no lost initials to ask about
+
+**A section opening in capitals is asked as a lost drawn initial only where the book
+doesn't set its openings so** (`flags.capital_openings`). A drawn initial the layer can't
+read leaves its word without a first letter ("NCE upon a time", "UEEN", Dolittle). Nervous
+System sets every section's first words in capitals ("LYING IN BED", "THAT WAS MY SECOND
+NIGHT"), and all 17 openings were asked. Where a book opens five or more sections in
+capitals and the word list knows the first word of 80% of them, those whose first word it
+knows aren't asked; one it doesn't know still is. Dolittle's fragments keep it far below
+the share. Nervous System's questions 87 → 70.
+
 ## The review shows what the book will print
 
 A single-quoted book's questions show their readings with its own opening mark

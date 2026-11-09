@@ -14,6 +14,7 @@ from roboscriptorium import (
     disagreements,
     flags,
     layout,
+    ocr,
     ocrcheck,
     ocrdoubts,
     pipeline,
@@ -32,6 +33,7 @@ from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import Chapter, load_chapters, unmarked
 from roboscriptorium.ir import Document, SourceRef
+from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText
 
 
@@ -183,6 +185,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
             if c.action == "heading"
             for i in range(c.first, c.last + 1)
         },
+        (lex.knows if (lex := Lexicon.load(ocr.language(book.language))) else None),
     )
     found = flags.structural(
         stages.pages, stages.model_roles, structure.findings(stages.doc), found
