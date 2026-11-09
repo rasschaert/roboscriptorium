@@ -7,8 +7,13 @@ that put the judge panel in production; the rest from 2026-11-06.
 
 ## Running
 
-Nothing. Mistral-Small 3.2 finished its judge answers and is not taken: nothing beside
-Winnow (decisions.md 2026-11-09). The user needs the laptop around 9:00.
+**Small capitals** (the user, 2026-11-09: "the new detected silent errors SWAT-team and
+USB-stick worry me. we need to nail this"). Branch `small-caps` (worktree
+`../roboscriptorium-caps`) with numbers left alone: tuning NO CHANGE, 4 fixed, 2 made, both
+asked (decisions.md). It reaches only places a reader already disputes; half the silent
+small-capital errors have no suspect. Running: `experiments/probe_caps_lower.py ask` (screen
+`caps-lower-ask`): do the vision judges tell small capitals from lower case where every
+reader reads lower case? Then, if they do, a doubt raised on such pieces.
 
 **Pass 4 not taken** (decisions.md 2026-11-09): tuning cleared the bar, validation's unasked
 places rose 170 → 178. Branch `text-seat` (worktree `../robo-text`) and its arbiter
