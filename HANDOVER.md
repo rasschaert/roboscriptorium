@@ -2,40 +2,66 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Running and production updated 2026-11-09 ~06:30 by the session
-that put the judge panel in production; the rest from 2026-11-06.
+end of every session. Top sections rewritten 2026-11-09 ~09:45 by the session that
+worked on small capitals; the older sections from 2026-11-06.
 
 ## Running
 
-**Small capitals** (the user, 2026-11-09: "the new detected silent errors SWAT-team and
-USB-stick worry me. we need to nail this"). Branch `small-caps` (worktree
-`../roboscriptorium-caps`) with numbers left alone: tuning NO CHANGE, 4 fixed, 2 made, both
-asked (decisions.md). It reaches only places a reader already disputes; half the silent
-small-capital errors have no suspect. The vision judges pass (two of three: 39 of 57 small capitals, 0 of 150 lower case;
-decisions.md). The doubts are on the branch behind `ROBO_LOWER_CAPITALS` (ec6443f).
+Nothing. Ollama holds no models. **No heavy work during the user's working day**
+(the user, 2026-11-09: "the memory pressure is too great. can we hold off on the heavy
+work until i get done with my dayjob?"): builds, benches, probes with models and batch
+five wait until they say they're done. Light work only meanwhile (docs, analysis of
+results on disk, code checked by unit tests).
 
-**Paused 2026-11-09 ~09:30 at the user's request** (memory pressure during their working
-day: no heavy work until they're done). Stopped mid-way: the short test through the
-arbiter, 11 of 19 books done; it resumes from its caches:
+**How to work with the user** (2026-11-09, memory `no-foreground-waits`): never wait on a
+run in the foreground. Start it detached with its watcher, say so, and end the turn. Keep
+turns short and report each result as it comes: "going incommunicative for an hour is not
+polite."
 
-    experiments/detached.sh caps-lower-short experiments/timed.sh "probe: lower-case small capitals, short test off and on" 120 work/runs/caps-lower-short.log uv run --project ../roboscriptorium-caps python experiments/probe_caps_lower_short.py
+## Next, in order, once the user frees the machine
 
-Then the wide crop (`probe_caps_lower.py ask`, tight answers cached), `bench tuning` with
-the flag, validation, merge, and batch five after it (the user said go, 2026-11-09).
+1. **Small capitals, nailed** (the user, 2026-11-09: "the new detected silent errors
+   SWAT-team and USB-stick worry me. we need to nail this"; checklist step "Small
+   capitals, nailed"). Branch `small-caps`, worktree `../roboscriptorium-caps`, pushed:
+   - the capitals version with numbers left alone (562c9b0): tuning NO CHANGE, 4 fixed
+     (SWAT-team, USB-stick), 2 made, both asked;
+   - doubts on lower-case pieces no reading disputes, behind `ROBO_LOWER_CAPITALS`, off
+     (ec6443f): the vision judges, two of three agreeing, call 39 of 57 small capitals and
+     0 of 150 lower-case pieces (decisions.md, `experiments/probe_caps_lower.py`).
 
-**Pass 4 not taken** (decisions.md 2026-11-09): tuning cleared the bar, validation's unasked
-places rose 170 → 178. Branch `text-seat` (worktree `../robo-text`) and its arbiter
-`work/models/ocr-trust-p4*.pkl` with data `work/probes/ocr-trust-p4/` are kept for a retest
-once batch five grows the trust data.
+   Steps:
+   a. Resume the short test through the arbiter (stopped at 11 of 19 books; resumes from
+      its caches; ~20 min), with a watcher:
 
-**Production since 2026-11-09** (decisions.md): autotrust-jev 35B and d3 9B beside clef,
-asking below 0.9; the arbiter before kept as `work/models/ocr-trust-p0*.pkl` and
-`work/probes/ocr-trust-p0/`. Merged tonight: the hyphen rules, pages too poor to read, heading capitals by the book's run (tuning BETTER, 72 words fixed, none made).
+          experiments/detached.sh caps-lower-short experiments/timed.sh "probe: lower-case small capitals, short test off and on" 120 work/runs/caps-lower-short.log uv run --project ../roboscriptorium-caps python experiments/probe_caps_lower_short.py
 
-After it: batch five of the slice growth is ready as `work/runs/grow6.patch` (Vals alarm,
-Metro, De tuin, Thief-Taker, Au pair and De vergelding scored whole, ~915 pages, ~14 h
-cold): it holds Ollama and the battery, so it starts only when the user says so. It also
-grows the trust data pass 4 and the vocabulary probe failed on.
+      Compare off and on with the scratch comparison (rewrite it: places keyed by book,
+      page, got, want; fixed, made, silent↔asked).
+   b. The wide crop for the lone O, U, V all three judges miss ("o-benen", "u-bocht",
+      "v-hals"): `uv run python experiments/probe_caps_lower.py ask 150` (copy
+      `work/probes/caps-lower/answers.jsonl` aside first; tight answers are cached, ~10 min),
+      then `report`.
+   c. `bench tuning` with `ROBO_LOWER_CAPITALS=1` on the branch against
+      `work/bench/tuning-20261109T072931-39ba40e-dirty.json` (cold for ~1,100 new suspects,
+      about an hour), then validation; merge if neither says worse. If the arbiter keeps or
+      asks what the judges call capitals, the doubts reach it only after batch five's trust
+      data holds them and the arbiter is retrained.
+2. **Batch five** (the user said go, 2026-11-09): `work/runs/grow6.patch`, Vals alarm, Metro,
+   De tuin, Thief-Taker, Au pair and De vergelding scored whole, ~915 pages, ~14 h cold.
+   After the small-capitals merge, overnight. Then retest pass 4 (branch `text-seat`,
+   worktree `../robo-text`, arbiter `work/models/ocr-trust-p4*.pkl`, data
+   `work/probes/ocr-trust-p4/`) and the vocabulary feature on the grown trust data.
+3. Hints for the new judges (which kinds of OCR error to look for, tried only with clef),
+   then d3 and autotrust-jev as the line-end hyphen judge; then the whole-page readers
+   retested as line readers.
+
+## Production
+
+Since 2026-11-09 (decisions.md): autotrust-jev 35B and d3 9B beside clef, asking below
+0.9; the arbiter before kept as `work/models/ocr-trust-p0*.pkl` and
+`work/probes/ocr-trust-p0/`. Merged that night: the hyphen rules, pages too poor to read,
+heading capitals by the book's run (tuning BETTER, 72 words fixed, none made). Not taken:
+pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text judge.
 
 ## Done 2026-11-06 evening
 
@@ -261,7 +287,7 @@ Ask before a download over 1 GB. A model outside Ollama gets its own environment
 
 ## Worktrees
 
-`../roboscriptorium-caps` holds the unmerged `small-caps` branch (null result); `-py315` two
+`../roboscriptorium-caps` holds the unmerged `small-caps` branch (in progress, see Next); `../robo-text` the `text-seat` branch (pass 4, kept); `-py315` two
 untracked scratch files.
 
 ## How to run things
