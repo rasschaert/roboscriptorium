@@ -167,3 +167,18 @@ def test_a_page_under_the_running_head_past_the_end_carries_the_text_on():
     out = pagekinds.run_on(kinds, pages)
     assert out[21] == "text" and out[22] == "praise"
     assert pagekinds.ends(out) == (1, 21)
+
+
+def test_the_text_proper_starts_after_the_title_page_the_model_is_sure_of():
+    kinds = {1: "cover", 2: "about-author", 3: "also-by", 4: "title", 5: "colophon"}
+    kinds |= {6: "dedication", 7: "text", 8: "text"}
+    out = pagekinds.after_title(kinds, {4: "title", 5: "colophon"})
+    assert out[2] == "about-author (before the title page)"
+    assert pagekinds.ends(out) == (6, 8)
+
+
+def test_an_unsure_colophon_after_the_dedication_moves_nothing():
+    kinds = {1: "cover", 2: "title", 3: "colophon", 4: "dedication", 5: "colophon", 6: "text"}
+    # Page 5 was called a colophon below `SURE_FRONT`: it isn't in `sure`.
+    out = pagekinds.after_title(kinds, {2: "title", 3: "colophon"})
+    assert pagekinds.ends(out) == (4, 6)

@@ -37,6 +37,9 @@ WALK = 40
 # A running head: a page's first line, letters only, opening this many pages or more.
 HEAD_PAGES = 10
 HEAD_WORDS = 8
+# How sure the model must be of a title or copyright page for the text proper to start
+# after it: Een Russische roman's p. 8, called a colophon at 0.38, is blank.
+SURE_FRONT = 0.5
 
 # Words that name a page's kind in its first lines, Dutch and English.
 NAMES = {
@@ -222,8 +225,8 @@ def edge_pages(total: int) -> set[int]:
 def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, str]:
     """Each page's kind: the model's from either edge inward (`edge_pages`, then on until
     `RUN` pages in a row go into the EPUB), the signals' for the rest, a page they can't
-    tell counting as text; then the text carried on over pages under its running heads
-    (`run_on`). The model's answers are kept in `cache` by page, so a rerun asks only
+    tell counting as text; nothing before the front's title page (`after_title`); then the
+    text carried on over pages under its running heads (`run_on`). The model's answers are kept in `cache` by page, so a rerun asks only
     what is new."""
     total = len(pages)
     kept = json.loads(cache.read_text()) if cache.exists() else {}
@@ -256,7 +259,23 @@ def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, st
         if n not in out:
             g = guess(by[n], (n - 1) / max(1, total - 1))
             out[n] = "text" if g == "?" else g
-    return run_on(out, pages)
+    sure = {int(n): a[0] for n, a in answers.items() if n.isdigit() and a[1] >= SURE_FRONT}
+    return run_on(after_title(out, sure), pages)
+
+
+def after_title(kinds: dict[int, str], sure: dict[int, str]) -> dict[int, str]:
+    """`kinds` with every page before the front's last title or copyright page that the
+    model is sure of (`sure`: page → kind) kept out of the text proper, its kind marked so:
+    the text proper never starts before the title page (Going into a Dark House prints its
+    author's blurb before it, Dolittle and Metro a frontispiece or an inside flap)."""
+    front = [n for n, k in sure.items() if k in ("title", "colophon") and n <= WALK]
+    if not front:
+        return kinds
+    last = max(front)
+    return {
+        n: f"{k} (before the title page)" if n < last and fate(k) == "in" else k
+        for n, k in kinds.items()
+    }
 
 
 def _letters(text: str) -> str:

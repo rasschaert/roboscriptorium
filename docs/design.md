@@ -791,6 +791,15 @@ the ends, so a half-title in the head's words ("Artemis") stays out, and never a
 the head alone. On the 27 labelled books the ends are unchanged (23 first, 22 last right);
 Nervous System's last end is right.
 
+**Nor does the text proper start before the title page** (`pagekinds.after_title`). Going
+into a Dark House prints its author's blurb before the title page (PDF 3, "about the
+author", which goes into a book), so the text started there and took the also-by list,
+title and copyright pages with it; Dolittle, Metro and Afscheid started early on a
+frontispiece or an inside flap the same way. Pages before the front's last title or
+copyright page stay out, where the model is sure of that page (0.5 or more: Een Russische
+roman's blank p. 8, called a colophon at 0.38, would cut its dedication). First ends right
+on the 27 labelled books 23 → 26, last ends unchanged (22).
+
 ## Mottos and dedications: the page-kind model on short pages
 
 **A short page inside the text proper is asked what it is.** Hoe wij verdwijnen's

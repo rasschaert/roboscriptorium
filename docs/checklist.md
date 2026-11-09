@@ -1214,6 +1214,9 @@ many the layer had wrong.
 - [x] 2026-11-09 `init` carries the text on over a page under the book's running head
       (`pagekinds.run_on`): Nervous System's last end right (PDF 290), the 27 labelled books
       unchanged (23 first, 22 last); the neighbours' kinds told to the model were null
+- [x] 2026-11-09 `init` starts the text proper after the front's title or copyright page
+      (`pagekinds.after_title`): first ends right 23 → 26 of 27, Going into a Dark House's
+      author blurb before its title page left out
 
 ## Reviews of the build
 
