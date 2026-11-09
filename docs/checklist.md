@@ -729,8 +729,10 @@ In this order:
       each disagreement sorted into our error, the witness's OCR slip or an edition edit,
       on scan 1's crop. The raw layers disagree at 845 places over the body, real words
       at ~150, and the two OCRs misread different letters ("Tm" against "Bums"): if our
-      errors show up among them, it becomes a reading the arbiter can weigh, which needs a
-      golden pair with two scans of one setting to train on (IA often holds two)
+      errors show up among them, it becomes a reading the arbiter can weigh, trained on
+      Dolittle's three public second scans (`work/candidates/second-scans/`). First measure on
+      Dolittle (2026-11-09, decisions.md): 3–4 of its 26 unasked errors read right by the
+      witness, the rest shared by the setting (drop capitals, line-end hyphens)
 - [ ] `init` took the acknowledgements' second page (Nervous System, PDF 290, printed
       278: two credits under a running head) for praise and ended the text a page early:
       the page-kind model should see the page before as context, or a page under the same
