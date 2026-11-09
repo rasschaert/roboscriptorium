@@ -7,11 +7,18 @@ worked on small capitals; the older sections from 2026-11-06.
 
 ## Running
 
-Nothing. Ollama holds no models. **No heavy work during the user's working day**
-(the user, 2026-11-09: "the memory pressure is too great. can we hold off on the heavy
-work until i get done with my dayjob?"): builds, benches, probes with models and batch
-five wait until they say they're done. Light work only meanwhile (docs, analysis of
-results on disk, code checked by unit tests).
+- **Nervous System, cold build** (the user's first English book, 2026-11-09, asked for
+  before the small-capitals work resumes): `robo-nervous-build`, started ~18:50, ~4–5 h,
+  output `work/runs/nervous-build.log`. Then: sample its questions, and compare the build
+  with the second scan (checklist, "Nervous System built cold"). The user's other
+  Python job, `run_pipeline.py`, ended 18:37; check `pgrep -f run_pipeline.py` before
+  starting another model job beside the build.
+
+**No heavy work during the user's working day** (the user, 2026-11-09: "the memory
+pressure is too great. can we hold off on the heavy work until i get done with my
+dayjob?"): builds, benches, probes with models and batch five wait until they say
+they're done. Light work only meanwhile (docs, analysis of results on disk, code checked
+by unit tests).
 
 **How to work with the user** (2026-11-09, memory `no-foreground-waits`): never wait on a
 run in the foreground. Start it detached with its watcher, say so, and end the turn. Keep

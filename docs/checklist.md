@@ -698,7 +698,7 @@ also part of the pipeline itself." Before either book goes to review:
 
 ## 3. The user's books after Stella
 
-Dutch books the user wants as EPUBs, none with a reference EPUB, each an IA Scribe
+Books the user wants as EPUBs (Dutch, and one English), none with a reference EPUB, each an IA Scribe
 scan with its own hidden layer (Stella's format), in `work/<name>/` with a `book.toml`.
 In this order:
 
@@ -709,6 +709,7 @@ In this order:
 | Emmanuel Carrère, *Andere levens dan het mijne* (De Arbeiderspers, tr. Floor Borsboom) | `andere-levens` | 248 (9–244) | 360 ppi | library copy; French names and accents |
 | Emmanuel Carrère, *Een Russische roman* (De Arbeiderspers, tr. Marianne Kaas) | `een-russische-roman` | 276 (7–271) | 360 ppi | library copy; seven parts, each a small number atop its own page (pp. 7, 47, 131, 169, 233, 259, …) with pencil marks the layer reads as noise (pre-check, no OCR check: part "1" read "I" and dropped as a page number; the marks kept as running text, "Fyarvin er pan ee Ka": see what the full build asks, then decide on a rule); p. 272 show-through only |
 | Mirko Bonné, *Hoe wij verdwijnen* (Querido 2011, tr. Elly Schippers; added 2026-11-01) | `hoe-wij-verdwijnen` | 300 (9–295, by `init`) | IA Scribe | dedication (p. 9) and a Camus motto (p. 11) before the text; timed end to end, `init` to EPUB |
+| Jan Lars Jensen, *Nervous System* (Icon Books UK 2007; added 2026-11-09), the first English one | `nervous-system` | 296 (11–290, by `init`, the end moved one page) | IA Scribe, 360 ppi, Milton Keynes library copy | a library label on the dedication page (p. 11); four part pages; small capitals (RCMP, TV, CBC); "A Note to Readers of the UK Edition" (pp. 285–288) only in this edition; a second scan of the same setting (US Carroll & Graf 2005, 500 ppi, ABBYY layer) in `work/nervous-system--scan2/`, four PDF pages earlier, a few words localised ("RCMP" → "police", "page" → "shelver", "May" → "November") |
 | Louis Paul Boon, *Pieter Daens* (Singel Pockets 1997; added 2026-11-01) | `pieter-daens` | 804 (body about 9–787: foreword to sources) | IA Scribe, Leeds library copy | six parts ("Boek een" … "Boek zes") and chapters headed by years; a motto (p. 7); a two-page table of contents (pp. 11–12) to leave out; the layer lacks "Boek vijf / Onze doden" (p. 527, printed 525); show-through read as text on pp. 8, 14; verse (p. 354); a sources list at the end; timed end to end |
 
 - [x] Hoe wij verdwijnen reviewed by the user (2026-11-02, 53 answers in two rounds; the
@@ -722,6 +723,18 @@ In this order:
       reviews, rebuild, epubcheck, a **spot-check** (5 random pages drawn by a script,
       the **user** marks every wrong word, break and italic against the scan, ~15–20
       min: the book's own error estimate with its interval), **user** reads the EPUB
+- [ ] Nervous System built cold (started 2026-11-09 ~18:50, ~4–5 h), its questions
+      sampled, then a second scan of the same setting as a witness: the built text
+      aligned word by word with the US scan's layer (same line breaks, PDF offset 4),
+      each disagreement sorted into our error, the witness's OCR slip or an edition edit,
+      on scan 1's crop. The raw layers disagree at 845 places over the body, real words
+      at ~150, and the two OCRs misread different letters ("Tm" against "Bums"): if our
+      errors show up among them, it becomes a reading the arbiter can weigh, which needs a
+      golden pair with two scans of one setting to train on (IA often holds two)
+- [ ] `init` took the acknowledgements' second page (Nervous System, PDF 290, printed
+      278: two credits under a running head) for praise and ended the text a page early:
+      the page-kind model should see the page before as context, or a page under the same
+      running head as the text continues it
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are
