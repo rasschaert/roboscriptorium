@@ -18,7 +18,7 @@ from roboscriptorium.clients import openrouter
 from roboscriptorium.clients.retry import patiently
 from roboscriptorium.files import read_cache, write_atomic, write_cache
 from roboscriptorium.ir import SourceRef
-from roboscriptorium.pdf import PageText, line_words, page_words, spells
+from roboscriptorium.pdf import PDF_LOCK, PageText, line_words, page_words, spells
 
 # The resolution a line's crop is rendered at (`ROBO_READER_DPI`). Line readings at another one
 # carry it in the prompt they are cached under, so they never mix with the 300 dpi ones.
@@ -140,7 +140,7 @@ def line_readings(
         done = raw["lines"]
         read_by = raw.get("via", {})
 
-    with pymupdf.open(pdf) as doc:
+    with PDF_LOCK, pymupdf.open(pdf) as doc:
         boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
 
     def span(page: PageText, k: int) -> tuple[float, float]:
@@ -163,17 +163,19 @@ def line_readings(
             blob["via"] = read_by
         write_atomic(cache, json.dumps(blob, ensure_ascii=False))
 
-    # PyMuPDF isn't thread-safe: crops are rendered here, a batch at a time, and
-    # only the model calls run in the pool.
+    # PyMuPDF isn't thread-safe: crops are rendered here, a batch at a time under
+    # `PDF_LOCK` (another reader may run beside this one), and only the model calls run
+    # in the pool.
     reader = via or model
     workers = HOSTED_WORKERS if openrouter.hosted(reader) else READ_WORKERS
-    with pymupdf.open(pdf) as doc, ThreadPoolExecutor(workers) as pool:
+    with ThreadPoolExecutor(workers) as pool:
         for start in range(0, len(todo), SAVE_EVERY):
             batch = todo[start : start + SAVE_EVERY]
-            crops = [
-                _line_crop(doc, page.number, boxes[page.number][k], span(page, k))
-                for page, k in batch
-            ]
+            with PDF_LOCK, pymupdf.open(pdf) as doc:
+                crops = [
+                    _line_crop(doc, page.number, boxes[page.number][k], span(page, k))
+                    for page, k in batch
+                ]
             if prompt:
                 texts = pool.map(lambda png: transcribe(png, reader, ollama_url, prompt), crops)
             else:
@@ -219,7 +221,7 @@ def tesseract_readings(
 ) -> dict[SourceRef, str]:
     """Tesseract's reading of each checked line: its words whose centres fall in the line."""
     words = tesseract_words(pdf, [p.number for p in pages], lang, cache)
-    with pymupdf.open(pdf) as doc:
+    with PDF_LOCK, pymupdf.open(pdf) as doc:
         boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
     out = {}
     for page in pages:
@@ -239,11 +241,13 @@ def tesseract_words(
         done = {int(n): [tuple(w) for w in ws] for n, ws in raw["pages"].items()}
     todo = [n for n in numbers if n not in done]
     if todo:
-        # Pages are rendered on this thread (PyMuPDF isn't thread-safe); tesseract runs pooled.
-        with pymupdf.open(pdf) as doc, ThreadPoolExecutor(TESSERACT_WORKERS) as pool:
+        # Pages are rendered on this thread under `PDF_LOCK` (PyMuPDF isn't thread-safe);
+        # tesseract runs pooled.
+        with ThreadPoolExecutor(TESSERACT_WORKERS) as pool:
             for start in range(0, len(todo), TESSERACT_WORKERS):
                 batch = todo[start : start + TESSERACT_WORKERS]
-                images = [doc[n - 1].get_pixmap(dpi=DPI).tobytes("png") for n in batch]
+                with PDF_LOCK, pymupdf.open(pdf) as doc:
+                    images = [doc[n - 1].get_pixmap(dpi=DPI).tobytes("png") for n in batch]
                 read = pool.map(lambda png: _tesseract_page(png, lang), images)
                 for n, page_words in zip(batch, read, strict=True):
                     done[n] = page_words

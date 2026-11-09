@@ -4,6 +4,7 @@ import functools
 import json
 import sys
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
@@ -263,31 +264,40 @@ def run(
                 if settings.check_model
                 else None
             )
-            readings = {
-                "glm": readers.line_readings(
-                    book.source,
-                    body,
-                    kept,
-                    settings.ocr_model,
-                    settings.ollama_url,
-                    book.stages / "second-reading.json",
-                ),
-                "tess": readers.tesseract_readings(
-                    book.source, body, kept, lang, book.stages / "tesseract.json"
-                ),
-            }
-            if settings.read_model:
-                prompt = read_prompt(book, whole, style, dots)
-                readings["qwen"] = readers.line_readings(
-                    book.source,
-                    body,
-                    kept,
-                    settings.read_model,
-                    settings.ollama_url,
-                    book.stages / "third-reading.json",
-                    prompt,
-                    settings.read_via,
+            # glm-ocr (llama.cpp) and tesseract (the CPU) read beside Qwen (MLX): the
+            # models fit in memory together, and each reading is independent of the others.
+            with ThreadPoolExecutor(1) as side:
+                first = side.submit(
+                    lambda: {
+                        "glm": readers.line_readings(
+                            book.source,
+                            body,
+                            kept,
+                            settings.ocr_model,
+                            settings.ollama_url,
+                            book.stages / "second-reading.json",
+                        ),
+                        "tess": readers.tesseract_readings(
+                            book.source, body, kept, lang, book.stages / "tesseract.json"
+                        ),
+                    }
                 )
+                qwen = None
+                if settings.read_model:
+                    prompt = read_prompt(book, whole, style, dots)
+                    qwen = readers.line_readings(
+                        book.source,
+                        body,
+                        kept,
+                        settings.read_model,
+                        settings.ollama_url,
+                        book.stages / "third-reading.json",
+                        prompt,
+                        settings.read_via,
+                    )
+                readings = first.result()
+            if qwen is not None:
+                readings["qwen"] = qwen
             if settings.page_readers:
                 for name, model in (
                     ("glm-page", settings.ocr_model),

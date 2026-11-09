@@ -283,7 +283,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   whole line with every source's version (`line_doubts`).
 - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)
   against glm-ocr's reading of each body line's crop (short lines too) (`ROBO_OCR_MODEL`),
-  cached in `stages/second-reading.json`, tesseract's of the page, and
+  cached in `stages/second-reading.json`, tesseract's of the page (both on a side thread
+  while Qwen reads), and
   `read_model`'s (qwen3.8) of the crop, told the book's typesetting
   (`stages/third-reading.json`; readings by another model or prompt are kept aside
   in `third-reading.<hash>.json` and come back when asked for). A version that only turns
