@@ -425,3 +425,22 @@ def test_a_line_asked_for_is_a_region_whose_answer_applies_without_asking_again(
     answers.record(asked, "text", "Waar zijn de hete zomers van mijn")
     fixed, _, applied = corrections.apply([page], {}, Corrections(tmp_path / "regions.jsonl"))
     assert applied == 1 and fixed[0].lines[3].text == "Waar zijn de hete zomers van mijn"
+
+
+def test_lines_in_a_table_the_layout_model_is_sure_of_are_asked_about():
+    from roboscriptorium.layout import Region
+
+    lines = [
+        Line("This book is dedicated to my wife Michelle,", 105, 146, 273, 157),
+        Line("Milton Keynes", 90, 381, 181, 395),
+        Line("Askews Aug-2009", 90, 447, 245, 461),
+    ]
+    page = PageText(11, 378, 624, lines)
+    label = Region("table", 0.97, 80, 370, 269, 515)
+    found = flags.find([page], {}, {11: [label]})
+    assert [(f.first, f.last, f.reasons) for f in found if "table" in f.reasons] == [
+        (1, 2, ["table"])
+    ]
+    # A running head the model half-heartedly calls a table is not asked about.
+    unsure = Region("table", 0.52, 80, 370, 269, 515)
+    assert not [f for f in flags.find([page], {}, {11: [unsure]}) if "table" in f.reasons]

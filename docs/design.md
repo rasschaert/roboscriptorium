@@ -1112,6 +1112,17 @@ and a hyphen before a line starting with a digit is a number range broken at the
 next line starts lowercase is asked of the letter itself (`str.islower`), not of a Latin-1
 range that took "ĳ" and "ç" for capitals and kept the hyphen.
 
+## A table on a text page is asked about
+
+**Lines inside a table the layout model is sure of (0.8 or more) are a review question**
+(`flags`, reason "table"). A library copy carries the library's label stuck on a page:
+Nervous System's dedication page holds Milton Keynes Council's ("Milton Keynes / Council /
+Askews Aug-2009"), and the build kept its words as dedication lines; The Loudest Sound and
+Nothing carries Blackpool Libraries' on its own. The layout model calls the label a table
+(0.97). Over every book's text range there were two tables, this label and a Dolittle
+running head called one at 0.52: too few to learn a decision from, so it is asked, not
+dropped (handholding first). The reviewer marks the lines as not part of the book.
+
 ## The review shows what the book will print
 
 A single-quoted book's questions show their readings with its own opening mark

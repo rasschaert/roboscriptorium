@@ -62,7 +62,11 @@ REASONS = {
     "number-out-of-run": "a chapter number that doesn't follow the one before: one may be missing",
     "title-among-numbers": "a heading of words between numbered chapters",
     "short-section": "a section of only a line or two: split off, or a heading that isn't one",
+    "table": "a table to the layout model: in a novel, often a library's label stuck on the page",
 }
+# A table the layout model is at least this sure of is asked about: Nervous System's
+# library label on its dedication page 0.97, a Dolittle running head called one 0.52.
+TABLE_CONFIDENCE = 0.8
 # A page's text is sideways when most of its lines are scraps of this many
 # characters or fewer, stacked in one column this narrow (in points).
 SIDEWAYS_MAX_CHARS = 3
@@ -382,6 +386,9 @@ def _layout(
             flags.append(_box_flag(page, region, inside, "picture"))
         elif region.turned:
             flags.append(_box_flag(page, region, inside, "rotated"))
+        elif region.label == "table" and inside and region.confidence >= TABLE_CONFIDENCE:
+            for i in inside:
+                reasons.setdefault(i, []).append("table")
         elif region.label in ("figure_caption", "title") and inside:
             reason = "caption" if region.label == "figure_caption" else "layout-title"
             for i in inside:
