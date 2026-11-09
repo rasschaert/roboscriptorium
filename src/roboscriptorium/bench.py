@@ -258,7 +258,11 @@ def _book_record(
         run.errors,
         run.found,
     )
-    numbers = [p.number for p in stages.pages if p.lines]
+    # A page printed too poorly to read is built but not scored (`scanpages.poor`).
+    poor = set(stages.poor_pages)
+    numbers = [p.number for p in stages.pages if p.lines and p.number not in poor]
+    errors = [e for e in errors if e.page not in poor]
+    found = [f for f in found if f.page not in poor]
     body = (
         None
         if stages.model_roles is None
@@ -273,6 +277,7 @@ def _book_record(
         "ocr_decider": stages.ocr_decider,
         "ocr_trust_model": own.ocr_trust_model,
         "ocr_suspects": dict(Counter(s.choice for s in stages.suspects)),
+        "poor_pages": sorted(poor),
         "read_via": scoring.read_via(book, {p.number for p in stages.pages}),
         "italics_scored": not scoring.italics_unlike(book),
         "breaks_scored": not scoring.breaks_unlike(book),

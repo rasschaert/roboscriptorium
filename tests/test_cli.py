@@ -57,7 +57,11 @@ def test_build_drafts_a_missing_book_toml_first(monkeypatch, tmp_path):
         lambda book, pages: (
             built.append(book.root)
             or SimpleNamespace(
-                doc=SimpleNamespace(blocks=[]), lost_breaks=[], repeated_pages={}, missing_pages=[]
+                doc=SimpleNamespace(blocks=[]),
+                lost_breaks=[],
+                repeated_pages={},
+                missing_pages=[],
+                poor_pages={},
             )
         ),
     )

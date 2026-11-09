@@ -95,6 +95,9 @@ class Stages:
     # and the printed pages the scan lacks (`scanpages`), over the whole body.
     repeated_pages: dict[int, int] = field(default_factory=dict)
     missing_pages: list[scanpages.Gap] = field(default_factory=list)
+    # Body pages printed too poorly to read, with their suspects a line (`scanpages.poor`):
+    # built, and left out of the bench's score.
+    poor_pages: dict[int, float] = field(default_factory=dict)
     # Paragraph starts the build without answers has and the build with them lost, on
     # lines no answer is about (`lost_breaks`): an answer should never merge paragraphs.
     lost_breaks: list[SourceRef] = field(default_factory=list)
@@ -497,6 +500,7 @@ def run(
         lost_breaks=lost_breaks(unanswered, built, answers),
         repeated_pages=repeated,
         missing_pages=scanpages.gaps(whole),
+        poor_pages=scanpages.poor(body, [s.page for s in suspects]),
     )
 
 
