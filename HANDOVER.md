@@ -2,22 +2,40 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Top sections rewritten 2026-11-09 ~09:45 by the session that
-worked on small capitals; the older sections from 2026-11-06.
+end of every session. Top sections rewritten 2026-11-10 ~00:30 by the session that built
+the user's English books; the older sections from 2026-11-09 morning.
 
-## Running
+## Running (overnight 2026-11-09/10, the user away from ~07:00–08:00)
 
-- **Nervous System, cold build** (the user's first English book, 2026-11-09): started
-  ~18:50, stopped in the judging at 23:13 and resumed on the new judge order (9e54a90:
-  judges one at a time over the book) as `robo-nervous-build`, log
-  `work/runs/nervous-build2.log`. Then: sample its questions, and compare the build with
-  the second scan (checklist, "Nervous System built cold"). Check how much faster the
-  judging ran (decisions a minute, Ollama's model loads) and record it in decisions.md.
-- **Queued after it, overnight** (the user, 2026-11-09): `robo-queue-20261109`
-  (`work/runs/queue-20261109.sh`, log `work/runs/queue-20261109.out`) waits for the Nervous
-  build and for no `run_pipeline.py`, then builds *Going into a Dark House* (PDF 7–193,
-  ~3 h) and *The Loudest Sound and Nothing* from its scan 2 (PDF 7–243, ~3.5 h; scan 1 in
-  `work/candidates/incoming/loudest-1/` the witness); both short-story collections.
+Two detached screens, one model job at a time, each with its output in `work/runs/`:
+
+1. `robo-queue-20261109` (`queue-20261109.sh`): *Going into a Dark House* (started 23:28,
+   log `going-build.log`), then *The Loudest Sound and Nothing* from its scan 2
+   (`loudest-build.log`; scan 1 in `work/candidates/incoming/loudest-1/` the witness).
+2. `robo-night-20261110` (`night-20261110.sh`, `.out`): waits for the queue, then
+   `bench tuning` and `bench validation` warm on main against production
+   (`tuning-20261109T035156`, `validation-20261108T212607`) to confirm the night's
+   changes, then **batch five** from worktree `../robo-grow6` (branch `grow6`, pushed:
+   `grow6.patch` committed) cold with one book at a time, then its trust data rebuilt.
+   **When the user leaves for work, stop it** (`experiments/stop-run.sh night-20261110`):
+   no heavy work in the day. It resumes from its caches; restart from the step it reached.
+
+**Done tonight** (decisions.md 2026-11-09/10 has the numbers): Nervous System built and
+checked (epubcheck clean; 70 questions after the fixes, sampled; waits on the user's
+review); the judges asked one at a time over the book (judging ~10× faster: 585 model
+reloads an hour had eaten it); the text layer's cache now hits; the arbiter scores a book
+in one call; `init` keeps a page under the running head past the end and starts after the
+title page; a table on a text page (a library label) is asked; no lost-initial questions
+where a book opens sections in capitals. Nulls: the page-kind model told its neighbours'
+kinds; washed-out pages asked their kind (it called faint print blank); the second scan as
+a witness (two errors in 756 places on Nervous System).
+
+**Next for these books:** when each build ends, check its ends, story-title headings and
+library label (The Loudest Sound and Nothing has Blackpool's on PDF 7), sample its questions
+(`experiments/sample_questions.py`), and list them for the user's review. Not yet built:
+glm-ocr and tesseract beside Qwen (~10–14 min a cold book, the code review's item); a
+cold bench must stay one book at a time (`ROBO_BENCH_WORKERS=1`), or the judges of
+parallel books evict each other.
 
 **No heavy work during the user's working day** (the user, 2026-11-09: "the memory
 pressure is too great. can we hold off on the heavy work until i get done with my
