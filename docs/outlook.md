@@ -294,7 +294,11 @@ five others), so a rerun of cached lines is free even without the pipeline's cac
   a call and clef:27b (nvfp4, the MLX runner) 1.25 s, one or four at a time alike;
   choices and confidences identical. Their calls stay one after another.
 
-**Done, in place:** `OLLAMA_NUM_PARALLEL=4` (docs/models.md, Setup) halves glm-ocr's
+**Done, in place:** the judges asked one at a time over the whole book, not suspect by
+suspect (2026-11-09): the four judges (clef 27B, Winnow 12B, autotrust-jev 35B, d3 9B, whose
+model file sets a 262k context) overflow the 51.8 GB Ollama gives the GPU, so each suspect
+evicted and reloaded them, 585 loads in an hour of Nervous System's build at 4–7 s each.
+`OLLAMA_NUM_PARALLEL=4` (docs/models.md, Setup) halves glm-ocr's
 time a line (0.19 → 0.09 at four at a time, readings identical); the pipeline's four
 threads already send that many. The same four slots did nothing for a 27B GGUF
 (qwen3.8:27b-q8_0, 2.2 s a line at 1 to 16 at a time), so batching is a property to

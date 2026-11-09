@@ -234,7 +234,46 @@ def check(
     `alarms`, second vision judges, are asked the vision judge's question where that
     judge is less sure than `alarm_below` (one with a `wide` view on the suspect with its
     line around it); each pick is a vote for the arbiter, not part of the fixed rule, and
-    a suspect one wasn't asked about has no vote of it."""
+    a suspect one wasn't asked about has no vote of it.
+
+    The judges answer one at a time over the whole book, each into `cache`, before the
+    pass that decides reads every answer back: the four don't fit in the GPU's memory
+    together, and asked suspect by suspect they evicted each other on every call
+    (Nervous System, 2026-11-09: 585 model loads an hour, 4–7 s each)."""
+    args = (pdf, pages, readings, lang)
+    rest = (cache, lexicon, style)
+    judges = [m for m in (vision, reader, *alarms) if m is not None]
+    for live in judges[:-1]:
+        later = lambda m, live=live: m if m is None or m is live else _Later(m)  # noqa: E731
+        _check(*args, later(vision), later(reader), *rest, tuple(map(later, alarms)), alarm_below)
+    return _check(*args, vision, reader, *rest, alarms, alarm_below)
+
+
+class _Later:
+    """A judge whose turn hasn't come: it answers from the cache where it can, and
+    otherwise with nothing, which is never cached (`_ask`)."""
+
+    def __init__(self, client):
+        self._client = client
+
+    def __getattr__(self, name):
+        return getattr(self._client, name)
+
+
+def _check(
+    pdf: Path,
+    pages: list[PageText],
+    readings: dict[str, dict[SourceRef, str]],
+    lang: str,
+    vision,
+    reader,
+    cache: DecisionCache,
+    lexicon: Lexicon | None,
+    style: str,
+    alarms,
+    alarm_below: float,
+) -> list[Suspect]:
+    """`check`'s pass over the book with the judges as given."""
     suspects = []
     curly = curly_book(pages)
     shortened = abbreviations(pages)
@@ -711,6 +750,8 @@ def _ask(
         answer = cache.get(key) or (cache.get(unkeyed) if unkeyed else None)
     else:
         answer = cache.get(key)
+    if answer is None and isinstance(client, _Later):
+        return {"value": "", "confidence": 0.0}
     if answer is None:
         a = client.decide(state, questions, image_png=image() if image else None)["reading"]
         answer = {"value": a.value, "confidence": a.confidence}

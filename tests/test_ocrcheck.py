@@ -1175,3 +1175,47 @@ def test_a_quote_mark_gluing_words_or_opening_one_as_a_closing_mark_is_never_the
         ("keek’en", "keek’an"),
     ):
         assert not ocrcheck.quote_misread(ours, version)
+
+
+def test_the_judges_answer_one_at_a_time_over_the_book_and_decide_as_before(tmp_path):
+    from types import SimpleNamespace
+
+    from roboscriptorium.pdf import read_text_layer
+    from roboscriptorium.roles import DecisionCache
+
+    pdf = tmp_path / "book.pdf"
+    doc = pymupdf.open()
+    for opening in ("Toen", "Daar"):
+        doc.new_page(width=300, height=400).insert_text(
+            (20, 50), f"{opening} kwam lemand binnen", fontsize=11
+        )
+    doc.save(pdf)
+    pages = read_text_layer(pdf)
+    readings = {
+        "glm": {SourceRef(p.number, 0): p.lines[0].text.replace("lemand", "Iemand") for p in pages}
+    }
+    calls = []
+
+    class Judge:
+        def __init__(self, model, value, sure):
+            self.model, self.value, self.sure = model, value, sure
+
+        def decide(self, state, questions, image_png=None):
+            calls.append(self.model)
+            return {"reading": SimpleNamespace(value=self.value, confidence=self.sure)}
+
+    def run(cache):
+        judges = Judge("clef", "b", 0.6), Judge("winnow", "b", 0.9), Judge("jev", "a", 0.7)
+        return ocrcheck.check(pdf, pages, readings, "nld", *judges[:2], DecisionCache(cache),
+                              alarms=judges[2:], alarm_below=0.9)  # fmt: skip
+
+    phased = run(tmp_path / "a.jsonl")
+    assert calls == ["clef", "clef", "winnow", "winnow", "jev", "jev"]
+    calls.clear()
+    # The same suspects, votes and choices as one pass with every answer already cached.
+    assert run(tmp_path / "a.jsonl") == phased and not calls
+    assert [(s.page, s.choice, s.chosen) for s in phased] == [
+        (1, "other", "Iemand"),
+        (2, "other", "Iemand"),
+    ]
+    assert phased[0].votes == {"clef": "Iemand", "winnow": "Iemand", "jev": "lemand"}

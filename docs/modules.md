@@ -296,7 +296,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   quote mark where print never sets one, gluing two words or a closing ’ opening one
   (`quote_misread`). Where a
   line's readings differ, clef picks from
-  the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence. The learned trust
+  the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence. The judges answer one at a
+  time over the whole book (each other judge a `_Later`, answering from the cache or with an
+  uncached nothing), then a last pass decides from the cache: four judges don't fit in the
+  GPU's memory at once. The learned trust
   (`trust.py`, on by default) then fixes, keeps or asks, its substitution table
   extended with the book's own answers (`corrections.answered`, `trust.with_answers`);
   an asked place whose kind of change its readers were reliably right about in those
