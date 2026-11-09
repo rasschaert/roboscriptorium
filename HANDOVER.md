@@ -7,10 +7,8 @@ that put the judge panel in production; the rest from 2026-11-06.
 
 ## Running
 
-Morning of 2026-11-09 (screen `judge-mistral`, ~1 h): Mistral-Small 3.2 Q8_0 finishing
-its answers on judge set v2 (`work/runs/judge-mistral.log`), resuming from its 125 cached;
-then `judge_overlap.py` and `judge_panel_bootstrap.py` with it before any verdict. The user
-needs the laptop around 9:00.
+Nothing. Mistral-Small 3.2 finished its judge answers and is not taken: nothing beside
+Winnow (decisions.md 2026-11-09). The user needs the laptop around 9:00.
 
 **Pass 4 not taken** (decisions.md 2026-11-09): tuning cleared the bar, validation's unasked
 places rose 170 → 178. Branch `text-seat` (worktree `../robo-text`) and its arbiter

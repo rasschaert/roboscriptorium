@@ -848,3 +848,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-09 | bench validation, judge panel p4 (p2 + autotrust-jev 9B text), asking below 0.9 | 0 | 25 | 0 |
 | 2026-11-09 | bench tuning, production after the night's merges (warm) | 5200 | 13 | 1 |
 | 2026-11-09 | bench tuning, production after the night's merges (warm) | 5200 | 15 | 0 |
+| 2026-11-09 | tryout: judge set v2, Mistral-Small-3.2-24B Q8_0 on the text question | 0 | 13 | 0 |
