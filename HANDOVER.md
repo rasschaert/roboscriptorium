@@ -2,35 +2,29 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Running and production updated 2026-11-09 ~03:30 by the session
+end of every session. Running and production updated 2026-11-09 ~06:30 by the session
 that put the judge panel in production; the rest from 2026-11-06.
 
 ## Running
 
-Night of 2026-11-09 (screen `robo-pass4`; watcher `work/runs/watch-p3.sh` running under
-nohup, its events in `work/runs/watch.log`, restarting Ollama itself on a stall): **pass 4**,
-production's panel plus autotrust-jev 9B asked the text question (`@text`, branch
-`text-seat` in worktree `../robo-text`, run from the main tree with `PYTHONPATH` on the
-worktree's `src`, its own trust data `work/probes/ocr-trust-p4/` and arbiter
-`ocr-trust-p4.pkl`, at 0.9). Rebuild, training, tuning bench against pass 2's
-(`tuning-20261108T014201`), then validation (`work/runs/p4-validation.log`); ~06:00–07:00.
-Take it if, against pass 2 at 0.9, tuning's unasked places fall at least 2% with unasked
-words not up and questions up no more than 2%, and validation isn't worse (the bar pass 3
-failed): then merge `text-seat`, add `autotrust-jev:9b-nvfp4@text` to `alarm_model`, and
-install `ocr-trust-p4*.pkl` and its data as production the way pass 2's were
-(decisions.md 2026-11-09).
+Morning of 2026-11-09 (screen `judge-mistral`, ~1 h): Mistral-Small 3.2 Q8_0 finishing
+its answers on judge set v2 (`work/runs/judge-mistral.log`), resuming from its 125 cached;
+then `judge_overlap.py` and `judge_panel_bootstrap.py` with it before any verdict. The user
+needs the laptop around 9:00.
+
+**Pass 4 not taken** (decisions.md 2026-11-09): tuning cleared the bar, validation's unasked
+places rose 170 → 178. Branch `text-seat` (worktree `../robo-text`) and its arbiter
+`work/models/ocr-trust-p4*.pkl` with data `work/probes/ocr-trust-p4/` are kept for a retest
+once batch five grows the trust data.
 
 **Production since 2026-11-09** (decisions.md): autotrust-jev 35B and d3 9B beside clef,
 asking below 0.9; the arbiter before kept as `work/models/ocr-trust-p0*.pkl` and
-`work/probes/ocr-trust-p0/`. Merged tonight: the hyphen rules, pages too poor to read.
+`work/probes/ocr-trust-p0/`. Merged tonight: the hyphen rules, pages too poor to read, heading capitals by the book's run (tuning BETTER, 72 words fixed, none made).
 
 After it: batch five of the slice growth is ready as `work/runs/grow6.patch` (Vals alarm,
-Metro, De tuin, Thief-Taker, Au pair and De vergelding scored whole, ~915 pages; the
-panel is decided, so it goes once pass 4 frees Ollama; the user needs the laptop around
-9:00, so start it then only if they say so). Mistral-Small 3.2 Q8_0 as a text judge was
-stopped at 125 of judge set v2's 995 on its own score, before the rule "never dismiss a
-model on its own score": finish its answers (`work/runs/judge-mistral.sh`, ~1 h) and run
-`judge_panel_bootstrap.py` with it before calling it unfit.
+Metro, De tuin, Thief-Taker, Au pair and De vergelding scored whole, ~915 pages, ~14 h
+cold): it holds Ollama and the battery, so it starts only when the user says so. It also
+grows the trust data pass 4 and the vocabulary probe failed on.
 
 ## Done 2026-11-06 evening
 

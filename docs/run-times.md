@@ -842,3 +842,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-09 | trust data, het-geluid-van-bananen--ia-scan | 315 | 9 | 0 |
 | 2026-11-09 | trust data, het-schaduwhuis--ia-scan | 320 | 8 | 0 |
 | 2026-11-09 | trust data, stella | 67 | 1 | 0 |
+| 2026-11-09 | trust data, ex-minnaar | 273 | 11 | 0 |
+| 2026-11-09 | train arbiter after the rebuild | 0 | 23 | 0 |
+| 2026-11-09 | bench tuning after the rebuild | 5293 | 29 | 0 |
+| 2026-11-09 | bench validation, judge panel p4 (p2 + autotrust-jev 9B text), asking below 0.9 | 0 | 25 | 0 |
+| 2026-11-09 | bench tuning, production after the night's merges (warm) | 5200 | 13 | 1 |
+| 2026-11-09 | bench tuning, production after the night's merges (warm) | 5200 | 15 | 0 |
