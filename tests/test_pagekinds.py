@@ -134,3 +134,36 @@ def test_a_long_page_before_the_first_heading_is_asked_one_after_it_is_not(tmp_p
     out = pagekinds.set_apart(tmp_path / "w" / "b" / "source.pdf", pages, 300, client, cache, {7})
     assert out == {7: "epigraph"}
     assert [c.split(" ")[0] for c in client.calls] == ["7"]
+
+
+def _headed(number: int, head: str, lines: int) -> PageText:
+    rows = [head] + ["a line of running text"] * (lines - 1)
+    return PageText(
+        number, 280, 500, [Line(t, 10, 20 + i * 12, 250, 30 + i * 12) for i, t in enumerate(rows)]
+    )
+
+
+def test_a_half_title_that_shares_the_running_heads_words_stays_out():
+    # The half-title "Nervous System" sits before a blank page: not next to the text.
+    pages = [_headed(1, "Nervous System", 3), _page(2, 0)]
+    pages += [
+        _headed(n, "JAN LARS JENSEN" if n % 2 else "NERVOUS SYSTEM", 25) for n in range(3, 30)
+    ]
+    kinds = {1: "half-title", 2: "blank"} | {n: "text" for n in range(3, 30)}
+    assert pagekinds.run_on(kinds, pages) == kinds
+
+
+def test_a_lone_head_without_text_under_it_stays_out():
+    pages = [_headed(n, "JAN LARS JENSEN", 25) for n in range(1, 21)]
+    pages.append(_headed(21, "JAN LARS JENSEN", 1))
+    kinds = {n: "text" for n in range(1, 21)} | {21: "blank"}
+    assert pagekinds.run_on(kinds, pages)[21] == "blank"
+
+
+def test_a_page_under_the_running_head_past_the_end_carries_the_text_on():
+    pages = [_headed(n, "JAN LARS JENSEN" if n % 2 else "NERVOUS SYSTEM", 25) for n in range(1, 21)]
+    pages += [_headed(21, "JAN LARS JENSEN", 4), _page(22, 30)]
+    kinds = {n: "text" for n in range(1, 20)} | {20: "acknowledgements", 21: "praise", 22: "praise"}
+    out = pagekinds.run_on(kinds, pages)
+    assert out[21] == "text" and out[22] == "praise"
+    assert pagekinds.ends(out) == (1, 21)

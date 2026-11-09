@@ -19,6 +19,7 @@ import hashlib
 import json
 import re
 import statistics
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -33,6 +34,9 @@ from roboscriptorium.pdf import PageText, render_png
 EDGE = 8
 RUN = 3
 WALK = 40
+# A running head: a page's first line, letters only, opening this many pages or more.
+HEAD_PAGES = 10
+HEAD_WORDS = 8
 
 # Words that name a page's kind in its first lines, Dutch and English.
 NAMES = {
@@ -218,8 +222,9 @@ def edge_pages(total: int) -> set[int]:
 def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, str]:
     """Each page's kind: the model's from either edge inward (`edge_pages`, then on until
     `RUN` pages in a row go into the EPUB), the signals' for the rest, a page they can't
-    tell counting as text. The model's answers are kept in `cache` by page, so a rerun
-    asks only what is new."""
+    tell counting as text; then the text carried on over pages under its running heads
+    (`run_on`). The model's answers are kept in `cache` by page, so a rerun asks only
+    what is new."""
     total = len(pages)
     kept = json.loads(cache.read_text()) if cache.exists() else {}
     asked_of = f"{TAG}:{getattr(client, 'model', '')}"
@@ -251,6 +256,48 @@ def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, st
         if n not in out:
             g = guess(by[n], (n - 1) / max(1, total - 1))
             out[n] = "text" if g == "?" else g
+    return run_on(out, pages)
+
+
+def _letters(text: str) -> str:
+    return re.sub(r"[^a-z]", "", text.lower())
+
+
+def running_heads(pages: list[PageText]) -> set[str]:
+    """The book's running heads: short first lines (`HEAD_WORDS` words at most), letters
+    only, that open `HEAD_PAGES` pages or more."""
+    seen = Counter(
+        _letters(p.lines[0].text)
+        for p in pages
+        if p.lines and len(p.lines[0].text.split()) <= HEAD_WORDS
+    )
+    return {k for k, n in seen.items() if len(k) >= 4 and n >= HEAD_PAGES}
+
+
+def run_on(kinds: dict[int, str], pages: list[PageText]) -> dict[int, str]:
+    """`kinds` with the text proper carried on past either end over each page that opens
+    on one of the book's running heads and holds more than it: a running head is printed
+    on the book's own pages only (Nervous System's acknowledgements end on a page of two
+    credits under the author's name, which the model calls praise). Only page by page from
+    the ends, so a half-title that shares the head's words stays out."""
+    heads = running_heads(pages)
+    by = {p.number: p for p in pages}
+    out = dict(kinds)
+    if not heads or not any(fate(k) == "in" for k in out.values()):
+        return out
+
+    def carries(n: int) -> bool:
+        page = by.get(n)
+        lines = [ln for ln in page.lines if ln.text.strip()] if page else []
+        return len(lines) >= 3 and _letters(lines[0].text) in heads and fate(out[n]) != "in"
+
+    first, last = ends(out)
+    while carries(first - 1):
+        first -= 1
+        out[first] = "text"
+    while carries(last + 1):
+        last += 1
+        out[last] = "text"
     return out
 
 

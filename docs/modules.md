@@ -193,7 +193,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   colophon, foreword, text, afterword, ads … Signals first (a page's words, number-only lines,
   centred lines, the name its first lines carry), a decision model (`role_model`, asked
   `QUESTION` with the page image) for the `EDGE` pages at either edge and on inward until
-  `RUN` pages in a row go into the EPUB (at most `WALK`), cached by page. `ends`
+  `RUN` pages in a row go into the EPUB (at most `WALK`), cached by page; `run_on` then carries
+  the text past either end over pages that open on one of the book's running heads
+  (`running_heads`) and hold more than it. `ends`
   is the first and last page whose kind goes into the EPUB (`fate`); `page_label` names a page by
   both numbers, "PDF page 9 (the page prints 7)", the PDF's own (what `body_pages` and `--pages`
   take) and the printed one, or says the page prints none.

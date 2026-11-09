@@ -778,6 +778,19 @@ two letters or more, no garbled line and some lower case, and finds none in any 
 slice (both NO CHANGE). The word list isn't asked: mottos are often in another
 language, as this one is.
 
+## The text proper's ends: pages under the book's running head
+
+**`init` carries the text on over a page past either end that opens on the book's running
+head** (`pagekinds.run_on`). Nervous System's acknowledgements end on a page of two credit
+lines under "JAN LARS JENSEN" (PDF 290, printed 278); the page-kind model called it praise
+(0.23) and cut the page. Telling the model the kinds either side of an unsure page did not
+help (null, decisions.md 2026-11-09). A running head is printed on the book's own pages
+only, so a page that opens on one (a short first line, at most eight words, opening ten
+pages or more) and holds more than it continues the text. Only page by page outward from
+the ends, so a half-title in the head's words ("Artemis") stays out, and never a page with
+the head alone. On the 27 labelled books the ends are unchanged (23 first, 22 last right);
+Nervous System's last end is right.
+
 ## Mottos and dedications: the page-kind model on short pages
 
 **A short page inside the text proper is asked what it is.** Hoe wij verdwijnen's
