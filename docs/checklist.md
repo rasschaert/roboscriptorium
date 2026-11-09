@@ -639,10 +639,9 @@ also part of the pipeline itself." Before either book goes to review:
       set Het ijzige land's small-capital headings as printed. Rebase branch `small-caps`
       (`5fb536c`, one commit) on main and rerun `experiments/probe_small_caps.py` with the
       winning panel; after the panel decision, before the compound hyphens (~30 min)
-- [ ] autotrust-jev 9B as a second text judge (2026-11-08: beside the judge panel it lifts
-      telling clef's wrong picks apart +0.011 [+0.003, +0.019], the only candidate that does):
-      a panel seat that asks the text judge's question (`ROBO_ALARM_MODEL` `<model>@text`, an
-      arbiter seat of its own), then a pass like the panel's (fast: ~0.2 s a question)
+- [x] ~~autotrust-jev 9B as a second text judge~~ (2026-11-09, pass 4): not taken. Tuning
+      unasked 551 → 535, validation 170 → 178 (decisions.md); failed on the arbiter's 23
+      books, branch `text-seat` kept for a retest after batch five
 - [x] ~~The book's own vocabulary as an arbiter feature~~ (the user's idea, 2026-11-08):
       null on today's arbiter (decisions.md, 2026-11-08). Its signal is real on readers'
       real-word swaps ("wegkwijnen" over "wegwijken"), but the trees pay for any extra
