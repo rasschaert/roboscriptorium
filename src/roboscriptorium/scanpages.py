@@ -93,12 +93,10 @@ def poor(pages: list[PageText], suspect_pages: list[int]) -> dict[int, float]:
     """Each page printed too poorly to read, with its suspects a line; `suspect_pages`
     holds the page of each of the OCR check's suspects."""
     count = Counter(suspect_pages)
-    rates = {p.number: count[p.number] / len(p.lines) for p in pages}
-    return {
-        p.number: rates[p.number]
-        for p in pages
-        if len(p.lines) >= POOR_MIN_LINES and rates[p.number] >= POOR_SUSPECTS
+    rates = {
+        p.number: count[p.number] / len(p.lines) for p in pages if len(p.lines) >= POOR_MIN_LINES
     }
+    return {n: r for n, r in rates.items() if r >= POOR_SUSPECTS}
 
 
 def summary(
