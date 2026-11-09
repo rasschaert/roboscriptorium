@@ -294,10 +294,27 @@ def features(
 
 def probabilities(trust: Trust, s: Suspect) -> np.ndarray:
     """Each version's probability of being what the scan prints, summing to one."""
-    n = 1 + len(s.others)
-    X = np.array([features(s, k, trust.pairs, trust.readings, trust.seats) for k in range(n)])
-    p = trust.model.predict_proba(X)[:, 1]
-    return p / max(p.sum(), 1e-9)
+    return all_probabilities(trust, [s])[0]
+
+
+def all_probabilities(trust: Trust, suspects: list[Suspect]) -> list[np.ndarray]:
+    """`probabilities` for each suspect, the model asked once for all their versions:
+    asked suspect by suspect it spent 8 s a book starting threads (Dolittle, 740)."""
+    sizes = [1 + len(s.others) for s in suspects]
+    rows = [
+        features(s, k, trust.pairs, trust.readings, trust.seats)
+        for s, n in zip(suspects, sizes, strict=True)
+        for k in range(n)
+    ]
+    if not rows:
+        return []
+    p = trust.model.predict_proba(np.array(rows))[:, 1]
+    out, at = [], 0
+    for n in sizes:
+        part = p[at : at + n]
+        out.append(part / max(part.sum(), 1e-9))
+        at += n
+    return out
 
 
 def training_matrix(
@@ -409,7 +426,7 @@ def decide(
     more (`sureness`); the others
     take their most likely version. A suspect whose versions the vision judge saw none of
     (`unseen`) is asked first and never takes another reading's version."""
-    scored = [(probabilities(trust, s), s) for s in suspects]
+    scored = list(zip(all_probabilities(trust, suspects), suspects, strict=True))
     sure = [sureness(trust, p) for p, _ in scored]
     # Calibration is a step function: the raw sureness orders a step's suspects.
     order = sorted(

@@ -136,3 +136,14 @@ def test_a_running_head_keeps_its_page_number():
         pdf.Line("sat down under the tree to think it over.", 34, 44, 276, 55),
     ]
     assert [ln.text for ln in pdf._visual_lines(words)][0] == "THE STORY OF DOCTOR DOLITTLE 23"
+
+
+def test_a_scan_with_its_own_layer_is_read_once_and_then_from_the_cache(tmp_path, monkeypatch):
+    doc = pymupdf.open()
+    doc.new_page(width=400, height=200).insert_text((40, 60), "Printed text", fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    cache = tmp_path / "textlayer.json"
+    first = pdf.cached_text_layer(tmp_path / "source.pdf", cache, "eng")
+    monkeypatch.setattr(pdf, "read_text_layer", lambda *a: 1 / 0)
+    assert pdf.cached_text_layer(tmp_path / "source.pdf", cache, "eng") == first
+    assert pdf.cached_text_layer(tmp_path / "source.pdf", cache) == first

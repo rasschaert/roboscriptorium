@@ -358,7 +358,10 @@ def cached_text_layer(pdf: Path, cache: Path, lang: str | None = None) -> list[P
             return pages
         lang = lang or raw.get("first_reader") or None
     pages = read_text_layer(pdf, lang)
-    payload = {"first_reader": lang or "", "pages": [asdict(p) for p in pages]}
+    # The first reader is named only where it read: a scan with its own layer has none, and
+    # naming one there made every later call take the cache for stale and read it again.
+    first = lang if lang and any(p.words for p in pages) else ""
+    payload = {"first_reader": first, "pages": [asdict(p) for p in pages]}
     write_cache(cache, TEXT_LAYER_VERSION, payload, indent=1)
     return pages
 
