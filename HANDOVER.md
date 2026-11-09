@@ -2,56 +2,35 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Updated 2026-11-06 ~23:55 by the session that screened
-Qwen3.8-Flash-Next and mended headings and lost blocks.
+end of every session. Running and production updated 2026-11-09 ~03:30 by the session
+that put the judge panel in production; the rest from 2026-11-06.
 
 ## Running
 
-Night of 2026-11-08, updated ~23:30 (screens `robo-val-09`, `robo-pass4`; one watcher,
-`work/runs/watch-p3.sh`, restarts Ollama itself on a stall): **pass 3's validation at 0.9**
-(`work/runs/val-09-p3.log`, pplx-decider cold on the validation books; pass 2's at 0.9 is
-in, BETTER); **pass 4** (pass 2's panel plus autotrust-jev 9B asked the text question,
-`@text`, branch `text-seat` in worktree `../robo-text`, run from the main tree with
-`PYTHONPATH` on the worktree's `src`, its own trust data `work/probes/ocr-trust-p4/` and
-arbiter `ocr-trust-p4.pkl`, at 0.9; Goede dochter's rebuild done 23:13, then the other
-books, training, tuning and validation benches, `work/runs/pass4.out`).
+Night of 2026-11-09 (screen `robo-pass4`; watcher `work/runs/watch-p3.sh` running under
+nohup, its events in `work/runs/watch.log`, restarting Ollama itself on a stall): **pass 4**,
+production's panel plus autotrust-jev 9B asked the text question (`@text`, branch
+`text-seat` in worktree `../robo-text`, run from the main tree with `PYTHONPATH` on the
+worktree's `src`, its own trust data `work/probes/ocr-trust-p4/` and arbiter
+`ocr-trust-p4.pkl`, at 0.9). Rebuild, training, tuning bench against pass 2's
+(`tuning-20261108T014201`), then validation (`work/runs/p4-validation.log`); ~06:00–07:00.
+Take it if, against pass 2 at 0.9, tuning's unasked places fall at least 2% with unasked
+words not up and questions up no more than 2%, and validation isn't worse (the bar pass 3
+failed): then merge `text-seat`, add `autotrust-jev:9b-nvfp4@text` to `alarm_model`, and
+install `ocr-trust-p4*.pkl` and its data as production the way pass 2's were
+(decisions.md 2026-11-09).
 
-**Merges go through the worktree `../robo-merge`** (branch `merge-hyph`, pushed to
-`origin/main` as `HEAD:main`), so the main tree's `src/` stays as pass 3's validation
-loaded it. The main tree is behind `origin/main` until then: once `robo-val-09` ends,
-`git pull --ff-only` there, and commit nothing in the main tree meanwhile.
-- merged 2026-11-09: branch `hyphen-rules` (suspended hyphens with a closed form,
-  abbreviations in capitals; tuning BETTER, validation NO CHANGE).
-- waiting: branch `poor-pages` (worktree `../robo-poor`): pages too poor to read named by
-  `build` and left out of the bench's score (`scanpages.poor`). Merge after the panel
-  decision, since it changes what the bench counts; its decisions.md line at the merge.
-
-**The judge panel, in three passes** (screen `robo-panel-night`, `work/runs/panel-night.sh`,
-output `work/runs/panel-night.out`; the user chose the full panel on every suspect,
-2026-11-07): pass p1 autotrust-jev 35B, p2 + d3 9B, p3 + pplx-decider 27B on the wide
-crop (`ROBO_ALARM_MODEL`, comma-separated, `@wide`). Each pass rebuilds every book's trust
-data into `work/probes/ocr-trust-p<n>/` (one new judge asked cold, the earlier ones cached:
-one new model loaded at a time), trains `work/models/ocr-trust-p<n>.pkl`, benches tuning
-(`work/probes/ocr-trust-p<n>/runs/bench-tuning.log`) and validation
-(`work/runs/panel-p<n>-validation.log`). Production is untouched. ~3 h, ~6 h, ~18 h of
-judging, started ~19:00 Saturday. The user: "know when to fold 'em": after each pass,
-check each judge's contribution on real books (its own catches by kind, the arbiter's
-gain) and stop the chain (`touch work/runs/panel-night.STOP`, takes effect between
-passes) when a judge doesn't pay. If a pass wins, its settings become the defaults
-(config, docs, models.md) in the same change.
-
-Baselines: `tuning-20261107T141329` and `validation-20261107T141640` (after the ligature
-fix). Don't edit `src/` in the main tree while it runs: each book of the rebuild starts a
-new process that loads it; code work goes in a worktree.
-
-When pass 3's benches are in: apply the bar set in decisions.md (2026-11-08, "What counts as a real gain for pass 3") and make the winning panel the default (config, docs, models.md; the user takes the slow seat if pass 3 clears it); set `ROBO_OCR_ASK_BELOW`'s default to 0.9 (the user's choice, decisions.md 2026-11-08) with it; then a new dated entry in docs/optimism.md from the real numbers (the user asked, 2026-11-08): wrong words a page after review and unasked errors on both sets before and after the panel, per 1,000 words against the goal rows.
+**Production since 2026-11-09** (decisions.md): autotrust-jev 35B and d3 9B beside clef,
+asking below 0.9; the arbiter before kept as `work/models/ocr-trust-p0*.pkl` and
+`work/probes/ocr-trust-p0/`. Merged tonight: the hyphen rules, pages too poor to read.
 
 After it: batch five of the slice growth is ready as `work/runs/grow6.patch` (Vals alarm,
-Metro, De tuin, Thief-Taker, Au pair and De vergelding scored whole, ~915 pages; apply
-once the panel's settings are decided, so the new pages' trust data gets its judges);
-then pages below the quality the build supports (checklist). Mistral-Small 3.2 Q8_0 as a
-text judge waits for a gap (`work/runs/judge-mistral.sh`; it didn't fit beside
-autotrust-jev 35B).
+Metro, De tuin, Thief-Taker, Au pair and De vergelding scored whole, ~915 pages; the
+panel is decided, so it goes once pass 4 frees Ollama; the user needs the laptop around
+9:00, so start it then only if they say so). Mistral-Small 3.2 Q8_0 as a text judge was
+stopped at 125 of judge set v2's 995 on its own score, before the rule "never dismiss a
+model on its own score": finish its answers (`work/runs/judge-mistral.sh`, ~1 h) and run
+`judge_panel_bootstrap.py` with it before calling it unfit.
 
 ## Done 2026-11-06 evening
 
