@@ -34,6 +34,37 @@ def test_an_all_capitals_version_is_added_only_for_a_short_word_mixing_case():
     assert _versions("op ocMw af", "op ocmw af") == [["ocmw", "OCMW"]]
 
 
+def test_lower_case_small_capitals_raise_a_doubt_only_where_no_word_or_contraction_fits():
+    from collections import Counter
+
+    words = Counter({"zo": 40, "even": 30, "foto": 9, "album": 3, "wa": 1, "it": 300})
+
+    def doubts(line):
+        return [(line[a0:a1], v) for a0, a1, v in ocrcheck.capitals_doubts(line, [], words)]
+
+    # Contractions, words the book uses, long parts, words with a vowel, capitals: none.
+    assert doubts("I didn't say it's what you're after, ’s avonds") == []
+    assert doubts("zo-even een foto-album van de bijeenkomst") == []
+    assert doubts("de Waffen-SS en een U-bocht") == []
+    assert doubts("en het was een mooie dag") == []
+    # A short joined part, or a short word without a vowel.
+    assert doubts("de usb-stick bij de ss-chef") == [
+        ("usb-stick", ["USB-stick"]),
+        ("ss-chef", ["SS-chef", "ss-CHEF"]),
+    ]
+    assert doubts("een u-bocht, de ss. En de wa-dienstplicht") == [
+        ("u-bocht,", ["U-bocht,"]),
+        ("ss.", ["SS."]),
+        ("wa-dienstplicht", ["WA-dienstplicht"]),
+    ]
+    assert doubts("drie sd’ers in een stationcar/suv-hybride") == [
+        ("sd’ers", ["SD’ers"]),
+        ("stationcar/suv-hybride", ["stationcar/SUV-hybride"]),
+    ]
+    # A span a reading already disputes is left to that suspect.
+    assert ocrcheck.capitals_doubts("de usb-stick lag", [(3, 12)], words) == []
+
+
 def test_differences_are_whole_words():
     assert _spans("up if they come", "up—if they come") == [("up if", "up—if")]
     assert _spans("say, Tolly wants", "say, ‘Polly wants") == [("Tolly", "‘Polly")]

@@ -34,6 +34,9 @@ class Settings:
     # trained with their votes leaves about a tenth fewer errors unasked (docs/design.md).
     alarm_model: str = "autotrust-jev:35b-nvfp4,d3:9b"
     alarm_below: float = 1.0
+    # Doubts raised where small capitals may have been read in lower case though every
+    # reading agrees ("ss", "usb-stick"; `ocrcheck.capitals_doubts`).
+    lower_capitals: bool = False
     llama_url: str = "http://127.0.0.1:8092"
     # A hosted build of judge_model that answers in its place (`openrouter:…`, used only
     # when the user asks), its answers cached under judge_model's name. "" for none.
@@ -123,6 +126,7 @@ class Settings:
             judge_model=os.environ.get("ROBO_JUDGE_MODEL", defaults.judge_model),
             alarm_model=os.environ.get("ROBO_ALARM_MODEL", defaults.alarm_model),
             alarm_below=float(os.environ.get("ROBO_ALARM_BELOW", defaults.alarm_below)),
+            lower_capitals=_flag("ROBO_LOWER_CAPITALS", defaults.lower_capitals),
             llama_url=os.environ.get("ROBO_LLAMA_URL", defaults.llama_url),
             judge_via=os.environ.get("ROBO_JUDGE_VIA", defaults.judge_via),
             ocr_trust=_flag("ROBO_OCR_TRUST", defaults.ocr_trust),
