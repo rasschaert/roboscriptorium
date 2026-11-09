@@ -144,6 +144,12 @@ each new local vision model.
 Don't repeat these without a new reason (details in docs/decisions.md). A better model in
 the place an idea failed on is one (AGENTS.md, "A null result is a null for its models"):
 
+- **pplx-decider 27B on a wide crop as a third vision judge** (2026-11-09, pass 3; failed
+  on the arbiter's use of a third vision seat): at 0.85 it cleared the bar by a hair on
+  tuning, at the user's 0.9 it left more silent errors than pass 2 on both sets (tuning
+  551 → 567, validation 170 → 176 places) and doubled De kerk's questions. It buys fewer
+  questions, not fewer errors. Retest when the arbiter changes kind or learns per book.
+
 - **The book's own vocabulary as arbiter columns** (2026-11-08, the user's idea; failed on
   the arbiter): the book's word counts rescue readers' real-word swaps ("wegkwijnen" over
   "wegwijken") about 25 times over a random-column control, but the trees pay about as

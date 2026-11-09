@@ -97,4 +97,5 @@ def test_doctor_asks_each_decision_model_once_and_skips_one_switched_off(monkeyp
         cli.doctor()
     assert exit.value.exit_code == 0
     settings = Settings.from_env()
-    assert asked == list(dict.fromkeys([settings.role_model, settings.judge_model]))
+    expected = [settings.role_model, settings.judge_model, *settings.alarm_models]
+    assert asked == list(dict.fromkeys(expected))

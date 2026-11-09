@@ -340,6 +340,7 @@ def test_a_full_stop_for_a_line_end_comma_before_a_capital_is_a_suspect(tmp_path
 def test_the_ocr_check_runs_without_a_text_judge(tmp_path, monkeypatch):
     monkeypatch.setenv("ROBO_OCR_TRUST", "0")
     monkeypatch.setenv("ROBO_CHECK_MODEL", "")
+    monkeypatch.setenv("ROBO_ALARM_MODEL", "")
     book, _ = _checked_book(tmp_path, monkeypatch)
     (suspect,) = pipeline.run(book).suspects
     assert suspect.others == ("stony",) and len(suspect.votes) == 1

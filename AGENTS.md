@@ -376,7 +376,7 @@ user refer to it by that role (docs/how-it-works.md):
 | spotter | DocLayout-YOLO | marks figures, captions, titles and furniture on the page image |
 | reader | glm-ocr, tesseract, qwen3.8 | reads text from the scan (also a line the layer missed) |
 | sorter | clef-flash:9b | decides each doubtful line's role; guesses a drawn initial |
-| judge | clef:27b, Winnow-12B, the word list | picks a version of a suspect |
+| judge | clef:27b, autotrust-jev 35B, d3 9B, Winnow-12B, the word list | picks a version of a suspect |
 | arbiter | the trust model (`trust.py`) | fixes, keeps or asks, weighing readers and judges |
 | reviewer | the user | answers what the arbiter is unsure of |
 

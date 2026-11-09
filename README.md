@@ -55,6 +55,8 @@ ollama pull glm-ocr:bf16
 ollama pull qwen3.8:27b-nvfp4
 ollama pull clef:27b
 ollama pull clef-flash:9b
+ollama pull autotrust-jev:35b-nvfp4
+ollama pull d3:9b
 ollama pull hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M
 ```
 

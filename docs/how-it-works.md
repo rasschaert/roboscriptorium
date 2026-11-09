@@ -59,7 +59,7 @@ handled yet, nor any input but PDF.
 | spotter | DocLayout-YOLO | marks figures, captions, titles and page furniture on each page image | vision model |
 | readers | glm-ocr, tesseract, qwen3.8 | read the text again from the scan | generative models and a classic OCR program |
 | sorter | clef-flash:9b | decides what each doubtful line is | decision model |
-| judges | clef:27b, Winnow-12B, the word list | each pick a version of a suspect | decision models and plain code |
+| judges | clef:27b, autotrust-jev 35B, d3 9B, Winnow-12B, the word list | each pick a version of a suspect | decision models and plain code |
 | arbiter | the trust model (`trust.py`) | fixes, keeps, or asks about each suspect | trees trained on golden books |
 | reviewer | you | answer what the arbiter is unsure of | a person |
 
@@ -83,7 +83,7 @@ time. tesseract is a classic OCR program, and reads the whole page.
 The sorter and the AI judges are decision models. Each answers a question whose
 options are fixed in advance, such as "which of these versions does the crop
 show?", with a probability for each option. They write no text, so there is no
-prose to parse. clef and clef-flash run on Ollama's `/v1/systemone` endpoint; winnow
+prose to parse. clef, clef-flash, autotrust-jev and d3 run on Ollama's `/v1/systemone` endpoint; winnow
 is asked the same questions through the probabilities Ollama gives the first letter of
 its answer, one label per option.
 
@@ -259,10 +259,15 @@ Two differences in one line make two suspects, and each is decided on its own.
 
 ### The judges pick
 
-Every suspect goes to the three judges.
+Every suspect goes to the five judges.
 
 clef:27b looks at the crop of that place on the scan and picks the version it
 shows. It is told the book's typesetting, and it is usually right.
+
+autotrust-jev 35B and d3 9B are asked the same question on the same crop. Each is
+about as good as clef alone, but they go wrong in different places: where all three
+agree the version is nearly always the print, and where one stands apart the arbiter
+learned whom to believe for that kind of difference.
 
 winnow (Winnow-12B) reads only the sentence and picks the version that reads well.
 Right on four suspects in five, it is weaker than clef alone and there mostly as an
@@ -294,7 +299,7 @@ always glm-ocr's.
 With every version scored, the arbiter sorts the book's suspects by how sure it is
 of its best version. It asks the reviewer about the least sure ones, up to a budget
 of questions per page. The budget is counted over the whole book, so a bad page can
-get several questions and a clean page none. A suspect whose best version it gives 80%
+get several questions and a clean page none. A suspect whose best version it gives 90%
 or more is never asked, budget or not: those it nearly always gets right, and a
 question isn't free: the reviewer slips too, and their time counts (the bench prices
 20 questions at one wrong word).

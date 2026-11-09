@@ -661,13 +661,11 @@ also part of the pipeline itself." Before either book goes to review:
       readings are cached, so the cost is the panel's judges on the new suspects they raise,
       a trust-data rebuild with `ROBO_PAGE_READERS=1` in its own folder, the arbiter retrained
       and both benches against the winning panel
-- [ ] New vision decision models as judges (the user, 2026-11-07: Ollama lists many now;
-      none pulled yet; the user pulls): pplx-decider:27b-nvfp4 (from Qwen3.8-27B) first,
-      then autotrust-jev:35b-nvfp4 (another family), d3:27b-nvfp4; the small ones
-      (pplx-decider-flash:4b-nvfp4, d3:9b, autotrust-jev:9b-nvfp4) as an alarm on clef or
-      for line roles. Each on judge set v2: `tryout.py run judge <model>` (replace clef?),
-      `judge_combine.py` with its answers as the second (add it beside clef?), then
-      `--prompt wide`; the hints only for the best. ~30 min a run for a 27B
+- [x] ~~New vision decision models as judges~~ (2026-11-09): autotrust-jev 35B and d3 9B
+      taken beside clef, asking below 0.9 (decisions.md); pplx-decider on the wide crop not
+      taken (pass 3); the rest screened and set aside on the panel test (models.md). Still
+      open from it: the hints for the new judges and line roles for the small ones, under
+      "Past nulls the judge panel may turn"
 - [ ] Pages below the quality the build supports (the user, 2026-11-07, of De vergelding's
       PDF 114: "below the threshold of quality that roboscriptorium supports"), found by
       the machine, not listed by hand. The ink-against-paper contrast (`faint.py`) doesn't

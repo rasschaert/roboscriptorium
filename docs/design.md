@@ -148,7 +148,7 @@ alone, and the layer was right on all eight: on a tiny crop it returns `?`, `‘
 markdown fence. clef was right on all 14 settled ones, and trust sees which readings
 back a version, so these are left to trust and the bench, with no rule of their own.
 
-**Two judges where the readings differ.**
+**Judges where the readings differ.**
 
 - *clef:27b looks at the crop.* It is the judge that is usually right: 4,846 of
   5,412 alone (90%, trust data of 14 books, 2026-10-09). Told the book's typesetting
@@ -170,12 +170,16 @@ back a version, so these are left to trust and the bench, with no rule of their 
   2026-10-24): tuning after review 0.282 → 0.316 [+0.02, +0.05], 164 wrong words made
   against 79 fixed, questions down on most books: without it the arbiter is surer and
   wrong more often.
-- *A panel of second vision judges is on trial* (2026-11-07, `ROBO_ALARM_MODEL`, off until
-  benched): on judge set v2 autotrust-jev 35B (another model family), d3 9B (the least
-  often sure and wrong) and pplx-decider 27B on a wide crop together tell clef's wrong
-  picks apart at AUC 0.949 against clef's own confidence's 0.822; the vision judges share
-  half their mistakes, so these three were chosen for the mistakes they don't share
-  (models.md, decisions.md). Each takes a seat of its own in the arbiter.
+- *autotrust-jev 35B and d3 9B, two more vision judges* (`alarm_model`, 2026-11-09), each
+  asked clef's question on the crop and given a seat of its own in the arbiter. The
+  vision judges share half their mistakes; these were chosen on judge set v2 for the ones
+  they don't share (autotrust-jev another model family, d3 the least often sure and
+  wrong; models.md). The arbiter retrained on their votes, at the user's 0.9: tuning
+  unasked errors 640 → 551 places and 823 → 711 words against today's arbiter at 0.8;
+  validation BETTER, after review 0.45 → 0.42 wrong words a page, unasked 189 → 170
+  places and 323 → 283 words. pplx-decider 27B on the wide crop as a third added nothing
+  at 0.9 (tuning 551 → 567 places, validation 170 → 176, De kerk's questions doubled:
+  vetoed); autotrust-jev 9B as a text judge is benched next (checklist).
 - *imajev-4b, a second vision judge, is not used* (`ROBO_ALARM_MODEL=llama:imajev-4b`, off). Asked clef's
   question on the crop, it is right alone on 85% and a sharper alarm than winnow-ollama:e4b
   where it speaks (clef wrong on 37% of their disagreements against 5% of their
@@ -236,7 +240,10 @@ which may be several on one bad page; a per-page cap would spend questions on
 clean pages.
 
 **A suspect the arbiter is sure of isn't asked, budget or not** (`ocr_ask_below`,
-0.8). Most books filled their budget with suspects the arbiter gave 0.9 or more
+0.9). With the judge panel the user chose 0.9 over 0.85 (2026-11-08): on tuning 0.759
+questions a page against 0.627, for 551 unasked error places against 622, a trade of
+their time for silent errors the bench's test doesn't weigh. Before the panel it was 0.8:
+most books filled their budget with suspects the arbiter gave 0.9 or more
 (Crime 68 of its 94 questions, De cipier 44 of 84), and nearly all of those it had
 right. At 0.8, `bench tuning` 0.50 → 0.48 wrong words a page after review, validation
 0.75 → 0.79 (no change by the test), with questions about halved: Goede dochter 1.24 →

@@ -30,8 +30,9 @@ class Settings:
     # on Ollama, or `llama:<name>` served by llama.cpp at llama_url (`clients/llama.py`,
     # imajev-4b); `<model>@wide` asks one on the suspect with its line around it. Each
     # is a vote for the arbiter, "" for none. Asked only where the vision judge is less
-    # sure than `alarm_below` (1.0: always).
-    alarm_model: str = ""
+    # sure than `alarm_below` (1.0: always). autotrust-jev 35B and d3 9B: the arbiter
+    # trained with their votes leaves about a tenth fewer errors unasked (docs/design.md).
+    alarm_model: str = "autotrust-jev:35b-nvfp4,d3:9b"
     alarm_below: float = 1.0
     llama_url: str = "http://127.0.0.1:8092"
     # A hosted build of judge_model that answers in its place (`openrouter:…`, used only
@@ -56,9 +57,9 @@ class Settings:
     ocr_questions_per_page: float = 1.0
     # Within that budget, a suspect whose likeliest version is right with at least this
     # chance (the trust model's calibrated sureness) is decided, not asked (1.0: every
-    # one may be asked). 0.8 about halves the questions at the same wrong words after
-    # review (docs/design.md).
-    ocr_ask_below: float = 0.8
+    # one may be asked). 0.9: the user's trade of questions for silent errors
+    # (docs/design.md).
+    ocr_ask_below: float = 0.9
     # Line roles from trees over layout, type and the role model's answer (`sorter.py`)
     # on top of the rules in `roles.py` (docs/design.md, "Line roles").
     sorter: bool = True

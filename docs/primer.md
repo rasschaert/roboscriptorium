@@ -72,6 +72,10 @@ combine several that fail in different ways, and learn how far to believe each.*
 
 - *clef* looks at the crop of the page and picks the version that matches what's
   printed. It is usually right.
+- *autotrust-jev* and *d3*, two more models of other families, are asked the same
+  question on the same crop. None of the three is much better than the others alone;
+  together they matter because they go wrong in different places (since 2026-11-09:
+  about a seventh fewer errors left that nobody asks you about).
 - *winnow* reads only the sentence and picks the version that reads best. Alone it is
   right four times in five, less than clef, but when it disagrees with clef, clef is
   wrong much more often, so it works as an alarm.
@@ -96,7 +100,7 @@ an accent, a missing space), and it outputs one honest probability per version.
 
 Then:
 
-- if the arbiter is at least 80% sure of a version, it applies it (or keeps the text
+- if the arbiter is at least 90% sure of a version, it applies it (or keeps the text
   layer's, when that's the winner);
 - if not, it **asks you**. The review page shows the question beside the scan, and one
   key answers it.
@@ -359,7 +363,7 @@ that's a measurement run, not an improvement.
 | text layer | the scan's own hidden OCR reading; the starting point |
 | reader | a model or program that reads text off the image (glm-ocr, tesseract, qwen) |
 | suspect, version | a place where readings differ; each way of reading it |
-| judge | a model that picks a version (clef, winnow, the word list) |
+| judge | a model that picks a version (clef, autotrust-jev, d3, winnow, the word list) |
 | context judge | a thinking model that settles a question from the text around it (being tried) |
 | arbiter | the trained model that weighs readers and judges and fixes, keeps or asks |
 | spotter | the layout model that marks pictures, captions and titles |
