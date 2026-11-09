@@ -596,11 +596,15 @@ _WORDS = re.compile(r"[^\W_]+")
 
 def _small_capitals(word: str) -> str | None:
     """The all-capitals form of a short word that small capitals could be read as
-    ("vTM" → "VTM", "LC1" → "LCI": a 1 or 0 among capitals is an I or O), else None."""
+    ("vTM" → "VTM", "LC1" → "LCI": a 1 or 0 among more capitals is an I or O), else None.
+    A word of more digits than letters is a number ("11", "10D") and stays one."""
     if not 2 <= len(word) <= 5:
         return None
     if word.isalpha():
         return word.upper() if word[1:] != word[1:].lower() else None
+    letters = sum(c.isalpha() for c in word)
+    if letters <= len(word) - letters:
+        return None
     if word.isalnum() and set(word) & set("10") and word.translate(_LOOKALIKE).isupper():
         return word.translate(_LOOKALIKE)
     return None

@@ -22,6 +22,11 @@ def test_an_all_capitals_version_is_added_only_for_a_short_word_mixing_case():
     assert _versions("zei Tolly", "zei Polly") == [["Polly"]]
     assert _versions("bij McDonald thuis", "bij McDonalds thuis") == [["McDonalds"]]
     assert _versions("de voc was", "de voe was") == [["voe"]]
+    # Numbers stay numbers, with or without a letter after them.
+    assert [ocrcheck._small_capitals(w) for w in ("11", "111", "10", "11D", "10F", "A1")] == [
+        None
+    ] * 6
+    assert ocrcheck._small_capitals("LC1") == "LCI"
     # Small capitals read in mixed case or with a digit for a letter.
     assert _versions("bij de vTM nieuws", "bij de VTM nieuws") == [["VTM"]]
     assert _versions("bij de vTM nieuws", "bij de vIM nieuws") == [["vIM", "VTM"]]
