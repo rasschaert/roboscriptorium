@@ -736,9 +736,10 @@ In this order:
       Dolittle (2026-11-09, decisions.md): 3–4 of its 26 unasked errors read right by the
       witness, the rest shared by the setting (drop capitals, line-end hyphens)
 - [ ] `init` took the acknowledgements' second page (Nervous System, PDF 290, printed
-      278: two credits under a running head) for praise and ended the text a page early:
-      the page-kind model should see the page before as context, or a page under the same
-      running head as the text continues it
+      278: two credits under a running head) for praise and ended the text a page early.
+      Telling clef-flash the neighbours' kinds was null (2026-11-09, decisions.md); left:
+      a page under the same running head as the text continues it, or a stronger
+      page-kind model
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are
