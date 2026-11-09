@@ -725,16 +725,11 @@ In this order:
       reviews, rebuild, epubcheck, a **spot-check** (5 random pages drawn by a script,
       the **user** marks every wrong word, break and italic against the scan, ~15–20
       min: the book's own error estimate with its interval), **user** reads the EPUB
-- [ ] Nervous System built cold (started 2026-11-09 ~18:50, ~4–5 h), its questions
-      sampled, then a second scan of the same setting as a witness: the built text
-      aligned word by word with the US scan's layer (same line breaks, PDF offset 4),
-      each disagreement sorted into our error, the witness's OCR slip or an edition edit,
-      on scan 1's crop. The raw layers disagree at 845 places over the body, real words
-      at ~150, and the two OCRs misread different letters ("Tm" against "Bums"): if our
-      errors show up among them, it becomes a reading the arbiter can weigh, trained on
-      Dolittle's three public second scans (`work/candidates/second-scans/`). First measure on
-      Dolittle (2026-11-09, decisions.md): 3–4 of its 26 unasked errors read right by the
-      witness, the rest shared by the setting (drop capitals, line-end hyphens)
+- [x] Nervous System built cold (2026-11-09, judging finished on the new judge order;
+      epubcheck clean): 520 OCR suspects, 285 fixed, 23 asked. The second scan as a
+      witness found two of our errors in 756 disagreements (decisions.md): not a stage
+- [ ] Nervous System: its review questions sampled, then **user** reviews; the library
+      label on the dedication page is now asked (reason "table")
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are
