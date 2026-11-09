@@ -11,9 +11,17 @@ that put the judge panel in production; the rest from 2026-11-06.
 USB-stick worry me. we need to nail this"). Branch `small-caps` (worktree
 `../roboscriptorium-caps`) with numbers left alone: tuning NO CHANGE, 4 fixed, 2 made, both
 asked (decisions.md). It reaches only places a reader already disputes; half the silent
-small-capital errors have no suspect. Running: `experiments/probe_caps_lower.py ask` (screen
-`caps-lower-ask`): do the vision judges tell small capitals from lower case where every
-reader reads lower case? Then, if they do, a doubt raised on such pieces.
+small-capital errors have no suspect. The vision judges pass (two of three: 39 of 57 small capitals, 0 of 150 lower case;
+decisions.md). The doubts are on the branch behind `ROBO_LOWER_CAPITALS` (ec6443f).
+
+**Paused 2026-11-09 ~09:30 at the user's request** (memory pressure during their working
+day: no heavy work until they're done). Stopped mid-way: the short test through the
+arbiter, 11 of 19 books done; it resumes from its caches:
+
+    experiments/detached.sh caps-lower-short experiments/timed.sh "probe: lower-case small capitals, short test off and on" 120 work/runs/caps-lower-short.log uv run --project ../roboscriptorium-caps python experiments/probe_caps_lower_short.py
+
+Then the wide crop (`probe_caps_lower.py ask`, tight answers cached), `bench tuning` with
+the flag, validation, merge, and batch five after it (the user said go, 2026-11-09).
 
 **Pass 4 not taken** (decisions.md 2026-11-09): tuning cleared the bar, validation's unasked
 places rose 170 → 178. Branch `text-seat` (worktree `../robo-text`) and its arbiter

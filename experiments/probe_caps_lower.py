@@ -151,25 +151,25 @@ def ask(cap: int):
     random.Random(0).shuffle(neg)
     take = [r for r in rows if r["truth"]] + neg[:cap]
     cache = DecisionCache(OUT / "decisions.jsonl")
-    clients = {}
-    for j in JUDGES:
-        inner = decide.for_model(j, settings.ollama_url)
-        clients[j] = inner
-        clients[j + "@wide"] = decide.Wide(inner, j + "@wide", ocrcheck.WIDE)
     docs = {}
     votes = [{} for _ in take]
-    for name, client in clients.items():
+    for j in JUDGES:
+        tight = decide.for_model(j, settings.ollama_url)
+        wide = decide.Wide(tight, j + "@wide", ocrcheck.WIDE)
         for i, r in enumerate(take):
             src = scoring.parse_spec(f"work/{r['book']}")[0] / "source.pdf"
             doc = docs.setdefault(r["book"], pymupdf.open(src))
-            # The OCR check's own question and crops: ours, then the capitals.
+            # The OCR check's own question: the judge on the suspect's crop, and as a
+            # second judge on the wide crop with its line, as the pipeline asks them.
             (_, _, v), conf = ocrcheck._decide(
                 doc[r["page"] - 1], r["page"], r["line"], r["text"], r["start"], r["end"],
-                [r["caps"]], tuple(r["box"]), "nl", client, None, cache,
+                [r["caps"]], tuple(r["box"]), "nl", tight, None, cache, alarms=[wide],
             )  # fmt: skip
-            votes[i][name] = {"pick": v[client.model], "confidence": conf[client.model]}
-        right = sum((x[name]["pick"] == r["caps"]) == r["truth"] for x, r in zip(votes, take))
-        print(f"{name}: {right}/{len(take)} right", flush=True)
+            for name in (j, j + "@wide"):
+                votes[i][name] = {"pick": v[name], "confidence": conf[name]}
+        for name in (j, j + "@wide"):
+            right = sum((x[name]["pick"] == r["caps"]) == r["truth"] for x, r in zip(votes, take))
+            print(f"{name}: {right}/{len(take)} right", flush=True)
     out = [{**r, "votes": v, "kept": keep(r, words[r["book"]])} for r, v in zip(take, votes)]
     (OUT / "answers.jsonl").write_text(
         "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in out)

@@ -632,13 +632,15 @@ also part of the pipeline itself." Before either book goes to review:
       (2026-11-06, `missing._fills`): nine lines read right by glm-ocr, tuning 103 wrong
       words fixed (12 unasked), validation 9 (all unasked), none made; Dolittle's short
       last line of a paragraph stays a question
-- [ ] Small capitals as a version for the judges, again with the judge panel (2026-11-08):
-      null on 2026-10-20 (0 of 11 known small-caps errors fixed on 36 pages) partly because
-      the arbiter didn't take the judges' capitals ("VTM", Verminkt p. 251, asked anyway); the
-      panel's judges read capitals better (autotrust-jev and d3 3.7% wrong, clef 4.9%) and
-      set Het ijzige land's small-capital headings as printed. Rebase branch `small-caps`
-      (`5fb536c`, one commit) on main and rerun `experiments/probe_small_caps.py` with the
-      winning panel; after the panel decision, before the compound hyphens (~30 min)
+- [ ] Small capitals, nailed (the user, 2026-11-09: "the new detected silent errors SWAT-team
+      and USB-stick worry me. we need to nail this"). Branch `small-caps`: the capitals
+      version with numbers left alone (tuning no change, 4 fixed, 2 made, asked), and doubts
+      raised on lower-case pieces no reading disputes (`ROBO_LOWER_CAPITALS`; the judges,
+      two of three, 39 of 57 small capitals and 0 of 150 lower case). Next: the short test
+      through the arbiter (`experiments/probe_caps_lower_short.py`, running), then the
+      judges' wide crop for the lone O, U and V; then `bench tuning` with the flag (cold for
+      ~1,100 new suspects, ~1 h), validation, merge; before batch five, so its trust data
+      holds the new suspects and the arbiter retrained on it can learn them
 - [x] ~~autotrust-jev 9B as a second text judge~~ (2026-11-09, pass 4): not taken. Tuning
       unasked 551 → 535, validation 170 → 178 (decisions.md); failed on the arbiter's 23
       books, branch `text-seat` kept for a retest after batch five
