@@ -575,11 +575,9 @@ also part of the pipeline itself." Before either book goes to review:
       2026-11-07, `off_run`'s `SPECK_HEIGHT`); Dolittle's title page a heading, and the drawn initial C
       of PDF 97 left off ("HEE-CHEE"); Het geluid van bananen's "8°" for the ordinal "8e" (4); Metro's
       "CHAPTER 6" read "SRN WEIR", its number lost
-- [ ] A heading suspect whose versions differ only in case settled by the book's other
-      headings (2026-11-09, pass 4: Het ijzige land's drawn "HOOFDSTUK 33", read
-      "ELO@EDSEWiKucdid" by the layer, judges split "HOOFDSTUK 33" / "Hoofdstuk 33", asked
-      while chapters 32 and 34 print in capitals). True by the book's own run, so code; a
-      short test on that page, then tuning
+- [x] ~~A heading suspect whose versions differ only in case settled by the book's other
+      headings~~ (2026-11-09, `chapters.heading_case`): Het ijzige land's six asked headings,
+      nothing else in any book's cached suspects; benched with production's tuning run
 - [ ] Heading errors the exact count shows (2026-11-02): the first line of text swallowed
       into a heading (Thief-Taker, Dolittle: mended, `chapters.running_text`); Dolittle's chapter subtitles
       missing (13 of 14 mended, `chapters.title_lines`; "THE MONKEYS' COUNCIL" left); Metro's "CHAPTER The
