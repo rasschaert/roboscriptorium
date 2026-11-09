@@ -819,3 +819,26 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-08 | bench tuning, judge panel p3 (+ pplx wide), asking below 0.85 (warm) | 5200 | 19 | 0 |
 | 2026-11-08 | bench tuning, a suspended hyphen whose closed form is a word, an abbreviation in capitals keeps its hyphen (warm) | 5200 | 17 | 0 |
 | 2026-11-08 | bench validation, the same hyphen rules (warm) | 0 | 3 | 0 |
+| 2026-11-08 | trust data, goede-dochter--ia-scan | 500 | 50 | 0 |
+| 2026-11-08 | trust data, vals-alarm--ia-scan | 178 | 15 | 0 |
+| 2026-11-08 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 3 | 0 |
+| 2026-11-08 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 7 | 0 |
+| 2026-11-08 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 12 | 0 |
+| 2026-11-08 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 5 | 0 |
+| 2026-11-09 | trust data, metro-2033--ia-scan | 257 | 13 | 0 |
+| 2026-11-09 | trust data, de-cipier--ia-scan | 474 | 23 | 0 |
+| 2026-11-09 | trust data, artemis--ia-scan | 305 | 12 | 0 |
+| 2026-11-09 | trust data, de-tuin-van-de-avondnevel--ia-scan | 244 | 32 | 0 |
+| 2026-11-09 | trust data, de-eerlijke-vinder--ia-scan | 84 | 8 | 0 |
+| 2026-11-09 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 1 | 0 |
+| 2026-11-09 | trust data, the-thief-takers-apprentice--ia-scan | 155 | 8 | 0 |
+| 2026-11-09 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 38 | 0 |
+| 2026-11-09 | trust data, doodskleed--ia-scan | 276 | 16 | 0 |
+| 2026-11-09 | bench validation, judge panel p3, asking below 0.9 (pplx cold) | 0 | 243 | 0 |
+| 2026-11-09 | trust data, het-ijzige-land--ia-scan | 318 | 9 | 0 |
+| 2026-11-09 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 1 | 0 |
+| 2026-11-09 | trust data, vuurspel--ia-scan | 21 | 1 | 0 |
+| 2026-11-09 | trust data, monterosso-mon-amour--ia-scan | 88 | 2 | 0 |
+| 2026-11-09 | trust data, het-geluid-van-bananen--ia-scan | 315 | 9 | 0 |
+| 2026-11-09 | trust data, het-schaduwhuis--ia-scan | 320 | 8 | 0 |
+| 2026-11-09 | trust data, stella | 67 | 1 | 0 |
