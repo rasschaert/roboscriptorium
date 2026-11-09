@@ -344,6 +344,7 @@ def run(
                         sure=lambda s: float(trust.probabilities(arbiter, s).max()),
                         min_sure=settings.context_min,
                     )  # fmt: skip
+                taught = chapters.heading_case(taught, body)
                 done = {(page, line) for page, line, _ in labels}
                 decided = taught
                 suspects = [

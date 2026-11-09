@@ -884,6 +884,13 @@ and reads as the number the book's page offset says is printed there, is that pa
 number (`chapters.folios`): Het heft's "88" under a chapter's short last page (PDF 92),
 which the trees trained without the book call a heading. A sunk opening's first line
 stays, though its chapter number match the page's.
+A numbered heading the OCR check would ask about only for its capitals takes the book's
+(`chapters.heading_case`): where two or more other lines carry the label, all set alike,
+the versions with that label agree on the number, and one of them sets it so. Het ijzige
+land draws its "HOOFDSTUK" in display letters the layer misreads ("ELO@EDSEWiKucdid"); the
+judges split on "HOOFDSTUK 33" against "Hoofdstuk 33", and six of its headings were
+asked, one counted by the bench as a heading lost and one spurious (2026-11-09). Over every
+book's cached suspects it changes those six and nothing else.
 A heading its run confirms isn't asked in the review (`chapters.settled`): bare numbers
 each one more than the one before or after, titles opening on years in order ("1885:
 Een ramp" after "1840-1884: …", five or more), parts counted in words in order; nor is

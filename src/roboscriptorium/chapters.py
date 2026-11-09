@@ -343,6 +343,42 @@ def title_lines(
 # A heading line at least this share of the page's full line runs as wide as text; so
 # does one ending within `FLUSH` of a full line of the text's right edge, as beside a
 # drawn initial ("UEEN ERMINTRUDE had" by its "Q").
+# A heading's capitals follow the book's other headings with the same label once this
+# many of them set it alike.
+CASE_HEADINGS = 2
+_LABEL = re.compile(r"^([^\W\d_]+)\s+(\d+)$")
+
+
+def heading_case(suspects: list, pages: list[PageText]) -> list:
+    """Asked whole-line suspects that are a numbered heading ("HOOFDSTUK 33" against
+    "Hoofdstuk 33") settled by the book's own run: where at least `CASE_HEADINGS` lines of
+    `pages` carry the label, all set alike, the versions with that label agree on the
+    number, and exactly one of them sets it so. A misread version ("HOorDsTuK 33") is no
+    label the book prints and doesn't count. A book sets its chapter labels one way, so
+    this is code. Returns changed copies."""
+    labels: dict[str, Counter] = {}
+    for page in pages:
+        for line in page.lines:
+            if m := _LABEL.match(line.text.strip()):
+                labels.setdefault(m[1].casefold(), Counter())[m[1]] += 1
+    out = []
+    for s in suspects:
+        out.append(s)
+        if s.choice != "review" or s.start != 0 or s.end < len(s.original.rstrip()):
+            continue
+        found = [(v, m) for v in s.others if (m := _LABEL.match(v.strip()))]
+        seen = {m[1].casefold(): labels.get(m[1].casefold(), Counter()) for _, m in found}
+        # The versions that carry a label the book prints elsewhere, all one way.
+        used = [(v, m) for v, m in found if seen[m[1].casefold()].total() >= CASE_HEADINGS]
+        if len({m[1].casefold() for _, m in used}) != 1 or len({m[2] for _, m in used}) != 1:
+            continue
+        book = seen[used[0][1][1].casefold()]
+        picks = {v for v, m in used if m[1] in book}
+        if len(book) == 1 and len(picks) == 1:
+            out[-1] = replace(s, choice="other", chosen=next(iter(picks)))
+    return out
+
+
 RUNS_WIDE = 0.8
 FLUSH = 0.03
 _RUNS_ON = re.compile(r"[^\W\d_,;:-]$|[,;:-]$")

@@ -1,5 +1,7 @@
 """Chapter numbers: the book's run of numbered chapters, read where the layer can't."""
 
+from dataclasses import replace
+
 from roboscriptorium import chapters
 from roboscriptorium.ir import Heading, Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText
@@ -569,3 +571,42 @@ def test_a_chapter_number_atop_a_sunk_opening_stays_though_it_match_the_folio():
     out = chapters.folios(pages, roles)
     assert out[SourceRef(15, 0)].role == "chapter_heading"
     assert out[SourceRef(17, 0)].role == "chapter_heading"
+
+
+def _heading_suspect(versions, original="ELO@EDSEWiKucdid", choice="review"):
+    from roboscriptorium.ocrcheck import Suspect
+
+    end = len(original)
+    return Suspect(1, 0, original, 0, end, original, tuple(versions), (0, 0, 1, 1), choice)
+
+
+def _pages_with(*headings):
+    return [PageText(n, 340, 580, [Line(h, 100, 50, 200, 60), Line("tekst " * 9, 40, 80, 300, 90)])
+            for n, h in enumerate(headings, start=2)]  # fmt: skip
+
+
+def test_a_headings_capitals_follow_the_books_other_headings():
+    pages = _pages_with("HOOFDSTUK 32", "HOOFDSTUK 34")
+    s = _heading_suspect(["HOOFDSTUK 33", "HOorDsTuK 33", "Hoofdstuk 33"])
+    (out,) = chapters.heading_case([s], pages)
+    assert (out.choice, out.chosen) == ("other", "HOOFDSTUK 33")
+    # The book sets its labels in small letters: that version.
+    (out,) = chapters.heading_case([s], _pages_with("Hoofdstuk 32", "Hoofdstuk 34"))
+    assert out.chosen == "Hoofdstuk 33"
+
+
+def test_a_heading_is_left_asked_where_the_book_or_the_versions_dont_settle_it():
+    alike = _pages_with("HOOFDSTUK 32", "HOOFDSTUK 34")
+    cases = [
+        # The versions disagree on the number.
+        ([_heading_suspect(["HOOFDSTUK 33", "Hoofdstuk 38"])], alike),
+        # The book sets the label two ways, or prints it once.
+        ([_heading_suspect(["HOOFDSTUK 33", "Hoofdstuk 33"])],
+         _pages_with("HOOFDSTUK 32", "Hoofdstuk 34")),
+        ([_heading_suspect(["HOOFDSTUK 33", "Hoofdstuk 33"])], _pages_with("HOOFDSTUK 32")),
+        # Not asked, or not the whole line.
+        ([_heading_suspect(["HOOFDSTUK 33", "Hoofdstuk 33"], choice="ours")], alike),
+        ([replace(_heading_suspect(["HOOFDSTUK 33", "Hoofdstuk 33"]), end=4)], alike),
+    ]  # fmt: skip
+    for suspects, pages in cases:
+        assert chapters.heading_case(suspects, pages) == suspects

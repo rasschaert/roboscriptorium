@@ -432,7 +432,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   number under half the numbers' height; `folios`: a bare-number heading at a page's edge
   that is the page's printed number made a page number; `run_gaps`: a dropped number mid-page that
   fills a gap in the run of numbered headings, a misread one read again by glm-ocr where the
-  run has a gap, cached in `stages/run-gaps.json`). All return new data.
+  run has a gap, cached in `stages/run-gaps.json`; `heading_case`: an asked heading whose
+  versions differ only in capitals set as the book's other headings with that label, on the
+  OCR check's decided suspects). All return new data.
 - `structure.py`: what a reader would notice in a built document's structure, without a
   model (`findings`: numbered chapters out of their run, a title of words among them, a
   section of fewer than 20 words not set apart); `summary` is the line `build` prints,
