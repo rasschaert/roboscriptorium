@@ -13,6 +13,9 @@ worked on small capitals; the older sections from 2026-11-06.
   with the second scan (checklist, "Nervous System built cold"). The user's other
   Python job, `run_pipeline.py`, ended 18:37; check `pgrep -f run_pipeline.py` before
   starting another model job beside the build.
+- **Queued after it, overnight** (the user, 2026-11-09): `init` and a cold build of
+  *Going into a Dark House* (~3 h) and *The Loudest Sound and Nothing* from its scan 2
+  (~3.5 h; scan 1 the witness); both short-story collections (checklist, the user's books).
 
 **No heavy work during the user's working day** (the user, 2026-11-09: "the memory
 pressure is too great. can we hold off on the heavy work until i get done with my

@@ -698,7 +698,7 @@ also part of the pipeline itself." Before either book goes to review:
 
 ## 3. The user's books after Stella
 
-Books the user wants as EPUBs (Dutch, and one English), none with a reference EPUB, each an IA Scribe
+Books the user wants as EPUBs (Dutch, and since 2026-11-09 three English), none with a reference EPUB, each an IA Scribe
 scan with its own hidden layer (Stella's format), in `work/<name>/` with a `book.toml`.
 In this order:
 
@@ -710,6 +710,8 @@ In this order:
 | Emmanuel Carrère, *Een Russische roman* (De Arbeiderspers, tr. Marianne Kaas) | `een-russische-roman` | 276 (7–271) | 360 ppi | library copy; seven parts, each a small number atop its own page (pp. 7, 47, 131, 169, 233, 259, …) with pencil marks the layer reads as noise (pre-check, no OCR check: part "1" read "I" and dropped as a page number; the marks kept as running text, "Fyarvin er pan ee Ka": see what the full build asks, then decide on a rule); p. 272 show-through only |
 | Mirko Bonné, *Hoe wij verdwijnen* (Querido 2011, tr. Elly Schippers; added 2026-11-01) | `hoe-wij-verdwijnen` | 300 (9–295, by `init`) | IA Scribe | dedication (p. 9) and a Camus motto (p. 11) before the text; timed end to end, `init` to EPUB |
 | Jan Lars Jensen, *Nervous System* (Icon Books UK 2007; added 2026-11-09), the first English one | `nervous-system` | 296 (11–290, by `init`, the end moved one page) | IA Scribe, 360 ppi, Milton Keynes library copy | a library label on the dedication page (p. 11); four part pages; small capitals (RCMP, TV, CBC); "A Note to Readers of the UK Edition" (pp. 285–288) only in this edition; a second scan of the same setting (US Carroll & Graf 2005, 500 ppi, ABBYY layer) in `work/nervous-system--scan2/`, four PDF pages earlier, a few words localised ("RCMP" → "police", "page" → "shelver", "May" → "November") |
+| Jane Gardam, *Going into a Dark House* (Abacus 1997 printing; added 2026-11-09) | `going-into-a-dark-house` (scan in `work/candidates/incoming/`) | 196 | IA Scribe 5.2 | short stories: story titles as headings, a contents page |
+| Clare Wigfall, *The Loudest Sound and Nothing* (Faber 2007; added 2026-11-09) | `loudest-sound-and-nothing` (scans in `work/candidates/incoming/loudest-{1,2}/`) | 244 | built from scan 2 (IA Scribe 4.4, first printing 2007); scan 1 (Lura-recoded, ABBYY layer, paperback 2008) the same setting at the same PDF pages (190 of 194 text pages match) as a witness | short stories |
 | Louis Paul Boon, *Pieter Daens* (Singel Pockets 1997; added 2026-11-01) | `pieter-daens` | 804 (body about 9–787: foreword to sources) | IA Scribe, Leeds library copy | six parts ("Boek een" … "Boek zes") and chapters headed by years; a motto (p. 7); a two-page table of contents (pp. 11–12) to leave out; the layer lacks "Boek vijf / Onze doden" (p. 527, printed 525); show-through read as text on pp. 8, 14; verse (p. 354); a sources list at the end; timed end to end |
 
 - [x] Hoe wij verdwijnen reviewed by the user (2026-11-02, 53 answers in two rounds; the
