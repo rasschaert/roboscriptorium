@@ -794,6 +794,13 @@ In this order:
       Nothing, PDF 57): the heading's lines and the opening's should split where the type
       changes from the title's to the text's capitals; check the heading-title rules
       (`chapters.title_lines`) against it
+      Traced 2026-11-10 from the caches, no models: no rule does it. The line-role trees call
+      "SHE FOUND HER AT THE SWIMMING POOL." a heading at 0.68 (the sorter alone said heading
+      at 0.22), where they call "THEY STARTED TO DISAPPEAR IN FEBRUARY." (PDF 111, the same
+      type and place) body at 0.89; the openings that run on mid-sentence are caught by
+      `chapters.running_text`, these two end their sentence. So it is the trees' to learn: a
+      line in small capitals at the text's leading above body, flush right, as the book's
+      other openings are. It joins the short-story labels the step above waits for
 - [x] Washed-out cards (the user, 2026-11-10, reviewing Nervous System: "what a mess"):
       the read model reads only lines holding ink, and a reading repeating a sentence is
       never offered (decisions.md); whether `faint.pages` should tell mottled paper from
