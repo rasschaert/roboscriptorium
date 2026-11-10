@@ -22,9 +22,15 @@ one, and don't pull or reset it from origin.
 
 **The quote check as a reader of the OCR check** (`quotes.duel_readings`,
 `ROBO_QUOTE_READER=1`, off; checklist "One path for every doubt", decisions.md 2026-11-10).
-Short test done on copies of three books (`experiments/probe_quote_reader.py`, results in
+Short test on copies of three books (`experiments/probe_quote_reader.py`, results in
 `work/probes/quote-reader/<book>.json`): The Loudest Sound and Nothing's quote lines 81 → 12,
-Nervous System's 6 → 3, the judges right on every kept place checked by eye. Two guesses
+Nervous System's 6 → 3, the judges right on every kept place checked by eye. **De tuin (PDF 11–254) looks worse with the setting on and was not analysed**
+(the user had to go): OCR questions 83 → 111, quote lines 146 → 80, unpaired marks left
+72 → 88, fixed 2,156 → 2,143, 24 paragraphs changed, several of the first six for the
+worse ("Voor alles.’" → "Voor alles?", "zou...’" → "ZOU...", closing marks lost). Start
+there: `work/probes/quote-reader/de-tuin-van-de-avondnevel--ia-scan.json`, key `changed`,
+each against its crop and the reference; find why a quote reading on a line changes what
+the arbiter picks for the line's other suspects. No bench before that is understood. Nothing is running. Two guesses
 were narrowed after that run (no opened reading on a paragraph that opens on a mark, none
 for a mark opening a word), so next, in order: (1) the short test again, warm, ~15 min:
 

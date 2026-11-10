@@ -860,3 +860,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-10 | The Loudest Sound and Nothing end to end: build after init, cold | 237 | 148 | 0 |
 | 2026-11-10 | bench tuning, the night's changes of 2026-11-09 (warm) | 5293 | 4 | 0 |
 | 2026-11-10 | bench validation, the night's changes of 2026-11-09 (warm) | 0 | 1 | 0 |
+| 2026-11-10 | probe: the quote check as a reader, off and on, Nervous System, Loudest Sound, De tuin's tuning slice (warm but for the new suspects) | 780 | 45 | 0 |
