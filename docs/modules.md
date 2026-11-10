@@ -230,6 +230,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   speech closed on a letter at a paragraph's end (a lost stop); a mark left open right
   after a word is placed where it stands, not at the end. Found on the
   text before a human's answers (`Stages.quote_lines`) and flagged as `quotes`.
+  `duel_readings` turns those places, found on the layer's own paragraphs, into readings
+  of their lines for the OCR check (readers `quotes`, `quotes-open`; `ROBO_QUOTE_READER=1`,
+  off); a paragraph judged so is left out of `quote_lines` (`pipeline._dueled`).
   Each such line (short ones too) is read by `read_model` (qwen3.8) with the book's
   typesetting in the prompt (`style_prompt`: quote marks, ellipsis, dashes); its
   marks on the OCR-checked line's letters (`proposed`) become the question's second

@@ -83,7 +83,13 @@ def doubts(suspects: list[Suspect]) -> list[Doubt]:
 
 
 # The second readings' names in `Suspect.support`, as the review shows them.
-READER_NAMES = {"glm": "glm-ocr", "qwen": "Qwen", "tess": "tesseract"}
+READER_NAMES = {
+    "glm": "glm-ocr",
+    "qwen": "Qwen",
+    "tess": "tesseract",
+    "quotes": "quote check",
+    "quotes-open": "quote check, opened",
+}
 
 
 def line_doubts(suspects: list[Suspect]) -> list[Doubt]:

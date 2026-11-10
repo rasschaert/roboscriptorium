@@ -166,6 +166,71 @@ def unbalanced(paragraphs: list[Paragraph]) -> list[Place]:
     return out
 
 
+# The quote check as two readers of the OCR check: a line with its closing mark added,
+# its stop put back or its unpaired closing mark gone (`READER`), and a paragraph's first
+# line with the opening mark an unpaired closing one lacks (`OPENED`).
+READER = "quotes"
+OPENED = "quotes-open"
+# The problems those readings answer; "no closing" names no line to read otherwise.
+DUELED = ("open at end", "no stop at end", "no opening")
+_OPENERS = {"’": "‘", "”": "“", "'": "‘"}
+
+
+def duel_readings(
+    paragraphs: list[Paragraph], lines: dict[SourceRef, str]
+) -> dict[str, dict[SourceRef, str]]:
+    """What the unpaired marks of each paragraph say its lines print, as readings of those
+    lines (`lines`, each line's text) by reader: a quote open at the end closes after the
+    last line; speech closed right after a letter has a stop before the mark; a closing
+    mark with nothing open is a speck (the line without it, `READER`) or lost its opening
+    mark (the first line with it, `OPENED`). The first problem to speak for a line has it."""
+    out: dict[str, dict[SourceRef, str]] = {READER: {}, OPENED: {}}
+    for p in paragraphs:
+        if not p.sources or not any(c in p.text for c in "‘’“”"):
+            continue
+        last = p.sources[-1]
+        end = lines.get(last, "").rstrip()
+        for offset, why in problems(p.text):
+            if why == "open at end" and end and p.text.rstrip().endswith(end[-3:]):
+                closed = [m for m in PAIRS.values() if not _open_at_end(p.text.rstrip() + m)]
+                if len(closed) == 1:
+                    out[READER].setdefault(last, end + closed[0])
+            elif why == "no stop at end" and end.endswith(p.text[offset]):
+                out[READER].setdefault(last, end[:-1] + "." + end[-1])
+            elif why == "no opening" and (at := _line_of(p, offset, lines)):
+                ref, k = at
+                out[READER].setdefault(ref, lines[ref][:k] + lines[ref][k + 1 :])
+                first = lines.get(p.sources[0], "")
+                if first.strip() and p.text[offset] in _OPENERS:
+                    out[OPENED].setdefault(p.sources[0], _OPENERS[p.text[offset]] + first.lstrip())
+    return out
+
+
+def _open_at_end(text: str) -> bool:
+    return any(why == "open at end" for _, why in problems(text))
+
+
+def _line_of(
+    p: Paragraph, offset: int, lines: dict[SourceRef, str]
+) -> tuple[SourceRef, int] | None:
+    """The line holding the mark at `offset` of the paragraph's text and the mark's place
+    in it, counted by the marks like it before; None where the lines hold another number
+    of them than the paragraph (a line joined otherwise)."""
+    mark = p.text[offset]
+    before = p.text[:offset].count(mark)
+    if sum(lines.get(ref, "").count(mark) for ref in p.sources) != p.text.count(mark):
+        return None
+    for ref in p.sources:
+        text = lines.get(ref, "")
+        if before < text.count(mark):
+            at = -1
+            for _ in range(before + 1):
+                at = text.index(mark, at + 1)
+            return ref, at
+        before -= text.count(mark)
+    return None
+
+
 _LETTERS = re.compile(r"[^\W_]+")
 
 

@@ -2,8 +2,8 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Top sections rewritten 2026-11-10 ~00:30 by the session that built
-the user's English books; the older sections from 2026-11-09 morning.
+end of every session. Top sections rewritten 2026-11-10 (~00:30 and ~07:45); the older sections from
+2026-11-09 morning.
 
 ## Running
 
@@ -19,6 +19,15 @@ to force-push):** worktree `../roboscriptorium-caps`, eaf169f, every fix of the 
 its three commits and a repair (the lower-case doubt passed through both halves of the
 split OCR check), 688 tests passing. GitHub still has the old branch: work from the local
 one, and don't pull or reset it from origin.
+
+**One path for every doubt, its first step coded and off** (2026-11-10 morning, checklist
+"One path for every doubt"): the quote check's unpaired marks as readings in the OCR check
+(`quotes.duel_readings`, `ROBO_QUOTE_READER=1`). Untested with models. First thing once the
+user frees the machine, before small capitals: its short test on De tuin and Nervous System
+(build with the setting off and on; count quote and OCR questions, look at each fix against
+its crop), then a warm `bench tuning` on main as the baseline and one with
+`ROBO_QUOTE_READER=1` against it (cold only for the new suspects), then validation. Next
+kinds for the same path, not started: garbled lines, headings, specks, washed-out pages.
 
 **The user is reviewing Nervous System** (started 2026-11-10 ~06:40, answers in
 `work/nervous-system/review/regions.jsonl`). Their first card, PDF 13, was "a mess": fixed

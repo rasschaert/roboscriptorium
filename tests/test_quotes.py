@@ -304,3 +304,45 @@ def test_a_quote_cards_reading_takes_its_lines_curly_marks():
     reading = 'They\'ll see it," she said. "They won\'t even notice."'
     found = quotes.readings(checked, checked, reading, "...", False)
     assert all('"' not in t and "'" not in t for t in found.values())
+
+
+def _lines(*texts: str) -> tuple[Paragraph, dict[SourceRef, str]]:
+    refs = [SourceRef(1, i) for i in range(len(texts))]
+    return Paragraph(" ".join(texts), refs), dict(zip(refs, texts, strict=True))
+
+
+def test_a_paired_paragraph_gives_the_ocr_check_no_reading():
+    p, lines = _lines("‘The animals’ language is hard,’ he said,", "and it’s late in the ’80s.")
+    assert quotes.duel_readings([p], lines) == {quotes.READER: {}, quotes.OPENED: {}}
+
+
+def test_a_quote_open_at_the_end_reads_its_last_line_closed_in_its_own_mark():
+    p, lines = _lines("He said: “It goes on", "and on.")
+    found = quotes.duel_readings([p], lines)
+    assert found == {quotes.READER: {SourceRef(1, 1): "and on.”"}, quotes.OPENED: {}}
+
+
+def test_speech_closed_on_a_letter_reads_with_a_stop_before_the_mark():
+    p, lines = _lines("He looked up. ‘It goes on and", "on and on’")
+    assert quotes.duel_readings([p], lines)[quotes.READER] == {SourceRef(1, 1): "on and on.’"}
+
+
+def test_a_closing_mark_with_nothing_open_reads_as_a_speck_or_as_a_lost_opening():
+    p, lines = _lines("It goes on, he said,", "and on.’ And that", "was that.")
+    found = quotes.duel_readings([p], lines)
+    assert found[quotes.READER] == {SourceRef(1, 1): "and on. And that"}
+    assert found[quotes.OPENED] == {SourceRef(1, 0): "‘It goes on, he said,"}
+
+
+def test_the_second_unpaired_mark_of_a_line_is_the_one_taken_out():
+    p, lines = _lines("‘Yes,’ he said. And on.’ So it", "went.")
+    assert quotes.duel_readings([p], lines)[quotes.READER] == {
+        SourceRef(1, 0): "‘Yes,’ he said. And on. So it"
+    }
+
+
+def test_a_mark_whose_line_cant_be_told_gives_no_reading():
+    p, lines = _lines("It goes on, he said,", "and on.’ And that")
+    # The paragraph's text holds a mark its lines don't (a line joined otherwise).
+    lines[SourceRef(1, 1)] = "and on. And that"
+    assert quotes.duel_readings([p], lines) == {quotes.READER: {}, quotes.OPENED: {}}

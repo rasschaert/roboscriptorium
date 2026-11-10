@@ -720,6 +720,12 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       the closing mark. The judges vote on the crop, the arbiter decides; a quote problem that
       went through the duel is no longer asked by the quote check (`quote_lines` less the lines
       with a `quotes` suspect). Arbiter features see `quotes` only through votes until retrained
+      **Coded 2026-11-10, off** (`quotes.duel_readings`, `ROBO_QUOTE_READER=1`; design.md,
+      Quote questions). Left, once the machine is free: the short test (De tuin, which loses
+      the most closing quotes, and Nervous System: quote questions and OCR questions with the
+      setting off and on, each fix against its crop), then `bench tuning` off and on from one
+      commit, then validation; on by default if neither says worse. Then the trust data
+      rebuilt with the two readers and the arbiter retrained to weigh them
 - [ ] Every card shows every reader's reading and every judge's vote, as the OCR check's do
 - [ ] Measure: the questions a book like Nervous System leaves, by kind, and the silent errors
       on the benches before and after; the user sees the count and why each kind is still asked

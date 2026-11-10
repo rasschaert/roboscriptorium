@@ -304,6 +304,35 @@ def test_the_read_models_reading_of_a_line_is_checked_like_the_others(tmp_path, 
     assert "English" in prompts[0]
 
 
+def test_an_unpaired_quote_goes_through_the_ocr_check_and_is_not_asked_apart(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
+    # One paragraph whose quote never closes; every reader reads the lines as the layer.
+    lines = ["‘" + LINES[0], *LINES[1:]]
+    book, _ = _checked_book(tmp_path, monkeypatch, LINES, lines[3])
+    read = pipeline.cached_text_layer
+
+    def opened(*args):
+        (page,) = read(*args)
+        return [replace(page, lines=[replace(page.lines[0], text=lines[0]), *page.lines[1:]])]
+
+    monkeypatch.setattr(pipeline, "cached_text_layer", opened)
+    layer = iter(lines)
+    monkeypatch.setattr(pipeline.readers, "read_line", lambda png, model, url: next(layer))
+    stages = pipeline.run(book)
+    assert stages.suspects == [] and SourceRef(1, 11) in stages.quote_lines
+
+    monkeypatch.setenv("ROBO_QUOTE_READER", "1")
+    layer = iter(lines)
+    monkeypatch.setattr(pipeline.readers, "read_line", lambda png, model, url: next(layer))
+    stages = pipeline.run(book)
+    (suspect,) = stages.suspects
+    assert (suspect.line, suspect.ours, suspect.others) == (11, "page", ("page’",))
+    assert suspect.support["quotes"] == (False, True)
+    assert suspect.support["glm"] == (True, False)
+    # The judges kept the layer's line: decided, so the quote check asks nothing.
+    assert suspect.choice == "ours" and stages.quote_lines == set()
+
+
 def test_a_reading_that_spells_a_word_with_a_ligature_glyph_is_no_suspect(tmp_path, monkeypatch):
     monkeypatch.setenv("ROBO_OCR_TRUST", "0")
     # Thief-Taker's "fled", which qwen reads with the ligature glyph "ﬂ".

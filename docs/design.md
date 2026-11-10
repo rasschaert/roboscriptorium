@@ -447,6 +447,23 @@ above, out of view. A mark left open right after a word is asked at the mark ins
 Bench (2026-10-11): tuning **better** 0.33 → 0.32 [−0.03, −0.00] for no more questions
 (Afscheid 0.58 → 0.45), validation no change.
 
+**The quote check as a reader of the OCR check** (`quotes.duel_readings`,
+`ROBO_QUOTE_READER=1`, off until benched; the user, 2026-11-10: a question is asked to
+settle who is right, after everyone's opinion has "duked it out"). A quote question shows
+the layer and the read model only, and no judge or arbiter has weighed it. With the
+setting on, the layer's paragraphs are reflowed before the OCR check (no models), and
+what each unpaired mark says its line prints becomes a reading of that line: a quote
+open at the end, the last line closed in the open mark; speech closed on a letter, a stop
+before the mark; a closing mark with nothing open, the line without it (reader `quotes`)
+and the paragraph's first line opened (reader `quotes-open`). The judges vote on the crop,
+the arbiter fixes, keeps or asks, and the card shows the reading as "quote check" beside
+the others. A paragraph whose problems all went this way gets no quote question of its
+own; an opening mark inside an open quotation ("no closing") names no line to read
+otherwise and is still asked by the quote check. The arbiter doesn't weigh these two
+readers' support until its trust data holds them and it is retrained: until then it sees
+them through the judges' votes. On the three English books of the user's as built, 72 of
+79 unpaired marks are of the three kinds read this way. Not benched yet.
+
 ## Missing lines
 
 A layout region with no text-layer line in it is read by glm-ocr only when it is about

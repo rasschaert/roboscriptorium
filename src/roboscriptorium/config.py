@@ -75,6 +75,10 @@ class Settings:
     # The vision judge says which lines start a paragraph where it is sure
     # (`parabreaks.py`). Off: it broke more starts than it fixed (docs/design.md).
     break_judge: bool = False
+    # The quote check's unpaired marks reach the OCR check as readings of their lines
+    # (`quotes.duel_readings`), judged and decided like any other; the quote check then
+    # asks nothing of its own about those paragraphs.
+    quote_reader: bool = False
     # A thinking model that settles the arbiter's questions from the text around them
     # where it picks the arbiter's likeliest version (`contextjudge.py`; "" for none).
     context_model: str = ""
@@ -133,6 +137,7 @@ class Settings:
             italic_model=os.environ.get("ROBO_ITALIC_MODEL", defaults.italic_model),
             page_roles=_flag("ROBO_PAGE_ROLES", defaults.page_roles),
             break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
+            quote_reader=_flag("ROBO_QUOTE_READER", defaults.quote_reader),
             context_model=os.environ.get("ROBO_CONTEXT_MODEL", defaults.context_model),
             context_min=float(os.environ.get("ROBO_CONTEXT_MIN", defaults.context_min)),
         )

@@ -153,6 +153,9 @@ def run(
     dedication_lines: set[SourceRef] = set()
     if ocrcheck.scanned(book.source):
         faint_pages = faint.pages(book.source, body, book.stages / "contrast.json")
+    compound = (
+        functools.partial(hyphens.vowel_clash, known=known) if book.language[:2] == "nl" else None
+    )
     if use_models:
         settings = settings or Settings.from_env()
         found: list = []
@@ -313,6 +316,22 @@ def run(
                             book.source, body, kept, model, settings.ollama_url,
                             book.stages / f"page-reading-{name}.json",
                         )  # fmt: skip
+            if settings.quote_reader:
+                # The layer's own paragraphs, before any fix: where their quote marks
+                # don't pair up, what the pairing says the line prints is one more reading.
+                early = reflow(
+                    body,
+                    _apart(body, model_roles, note_lines, epigraph_lines, dedication_lines),
+                    known,
+                    compound,
+                    _book_spellings(whole, body),
+                )
+                texts = {
+                    SourceRef(p.number, i): ln.text for p in body for i, ln in enumerate(p.lines)
+                }
+                paired = quotes.duel_readings([b for b in early if isinstance(b, Paragraph)], texts)
+                for name, lines in paired.items():
+                    readings[name] = {ref: text for ref, text in lines.items() if ref in kept}
             judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
             alarms = [_alarm(spec, settings) for spec in settings.alarm_models]
             suspects = ocrcheck.check(
@@ -377,9 +396,6 @@ def run(
         # The suspects of an earlier build with the check would be taken for this one's.
         (book.stages / "ocr-check.json").unlink(missing_ok=True)
 
-    compound = (
-        functools.partial(hyphens.vowel_clash, known=known) if book.language[:2] == "nl" else None
-    )
     if use_models and hyphens.asked(book.language):
         client = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
         compound = hyphens.Compounds(
@@ -422,9 +438,18 @@ def run(
         if isinstance(b, Paragraph) and quotes.problems(b.text)
         for ref in b.sources
     } | {SourceRef(c.page, i) for c in answers.by_key.values() for i in range(c.first, c.last + 1)}
+    # A paragraph whose unpaired marks went through the OCR check as readings
+    # (`quotes.duel_readings`) was judged and decided there: no question of its own.
+    dueled = {
+        SourceRef(s.page, s.line)
+        for s in suspects
+        if any(any(s.support.get(name, ())[1:]) for name in (quotes.READER, quotes.OPENED))
+    }
     quote_lines = {
         ref
-        for place in quotes.unbalanced([b for b in unanswered if isinstance(b, Paragraph)])
+        for place in quotes.unbalanced(
+            [b for b in unanswered if isinstance(b, Paragraph) and not _dueled(b, dueled)]
+        )
         if any(ref in still for ref in place.sources)
         for ref in place.sources
         if ref.page not in faint_pages
@@ -547,6 +572,15 @@ def _apart(
     roles = with_role(pages, roles, note_lines, footnotes.ROLE)
     roles = with_role(pages, roles, epigraph_lines, epigraphs.ROLE)
     return with_role(pages, roles, dedication_lines, epigraphs.DEDICATION)
+
+
+def _dueled(p: Paragraph, dueled: set[SourceRef]) -> bool:
+    """Whether every unpaired quote mark of the paragraph was a reading in the OCR check:
+    one of its lines has such a suspect (`dueled`), and each of its problems is of a kind
+    those readings answer."""
+    return bool(dueled.intersection(p.sources)) and all(
+        why in quotes.DUELED for _, why in quotes.problems(p.text)
+    )
 
 
 # The rule of a line on a page left out of the book (`pagekinds.set_apart`): the review
