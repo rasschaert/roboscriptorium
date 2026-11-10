@@ -728,8 +728,15 @@ In this order:
 - [x] Nervous System built cold (2026-11-09, judging finished on the new judge order;
       epubcheck clean): 520 OCR suspects, 285 fixed, 23 asked. The second scan as a
       witness found two of our errors in 756 disagreements (decisions.md): not a stage
-- [ ] Nervous System: its review questions sampled, then **user** reviews; the library
-      label on the dedication page is now asked (reason "table")
+- [ ] **Nervous System's review, paused by the user after 10 of 70** (2026-11-10: "this is
+      wasting my precious time with something i expect roboscriptorium to handle deftly and
+      confidently"). Before asking again, every question sorted by what raised it, and each
+      kind the machine could settle fixed at its source: the arbiter's pick bringing a
+      straight quote into a curly book and the quote check then asking (PDF 37, 120, 201,
+      235); a typed in-word apostrophe warned about; the 21 heading questions on a book whose
+      headings are all right; the 22 OCR doubts. Then the count per kind, shown to the user
+      with why each is still asked. The same for Going into a Dark House and The Loudest
+      Sound and Nothing before they are reviewed
 - [ ] **Short-story collections: a running head per story** (found 2026-11-10 on Going into
       a Dark House, 165 questions): each story's title stands atop its odd pages, the book's
       on the even ones. The line-role trees, trained on novels only, call the story heads body
