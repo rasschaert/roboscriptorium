@@ -855,3 +855,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-09 | bench tuning, small capitals on production | 5200 | 15 | 0 |
 | 2026-11-09 | probe: small capitals read lower, vision judges | 207 | 15 | 0 |
 | 2026-11-09 | init ends with unsure page kinds asked again (27 labelled books, beside the Nervous build) | 0 | 19 | 0 |
+| 2026-11-09 | Nervous System build resumed in the judging, judges one at a time (warm readings) | 280 | 14 | 0 |
+| 2026-11-10 | Going into a Dark House end to end: build after init, cold | 187 | 148 | 0 |
+| 2026-11-10 | The Loudest Sound and Nothing end to end: build after init, cold | 237 | 148 | 0 |
+| 2026-11-10 | bench tuning, the night's changes of 2026-11-09 (warm) | 5293 | 4 | 0 |
+| 2026-11-10 | bench validation, the night's changes of 2026-11-09 (warm) | 0 | 1 | 0 |
