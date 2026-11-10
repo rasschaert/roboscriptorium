@@ -1134,6 +1134,17 @@ capitals and the word list knows the first word of 80% of them, those whose firs
 knows aren't asked; one it doesn't know still is. Dolittle's fragments keep it far below
 the share. Nervous System's questions 87 → 70.
 
+## Marks on a dedication or motto page
+
+**A line on a page set apart that the book's type couldn't print is left off it**
+(`pipeline._kept_apart`). Such a page's lines skip the line roles' judgement, so specks the
+layer reads as letters went into the book: Going into a Dark House's dedication read "t ee",
+"ua)", "x ih", "i ee" from marks along its edge. A line narrower than four of the book's
+letters is a mark where its characters can't fit it, it stands over twice a line's height,
+or it holds no word (the word list knows "ee" and "ua", so all three tests are needed);
+"For" or "To" alone on a line stays. Reading such pages with the OCR check was tried and
+not taken: on a show-through page called a motto, Qwen invented a sentence.
+
 ## The review shows what the book will print
 
 A single-quoted book's questions show their readings with its own opening mark
