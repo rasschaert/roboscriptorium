@@ -383,6 +383,16 @@ def test_a_lower_case_acronym_no_reading_disputes_is_a_suspect_only_when_asked_f
     assert "usb-stick" in stages.corrected[0].lines[5].text
 
 
+def test_a_lower_case_acronym_on_a_line_no_reader_read_is_no_suspect(tmp_path, monkeypatch):
+    monkeypatch.setenv("ROBO_OCR_TRUST", "0")
+    monkeypatch.setenv("ROBO_LOWER_CAPITALS", "1")
+    lines = [*LINES[:5], "Line 5 of the usb-stick goes on and on across the page", *LINES[6:]]
+    book, _ = _checked_book(tmp_path, monkeypatch, lines)
+    unread = iter([*lines[:5], "", *lines[6:]])
+    monkeypatch.setattr(pipeline.readers, "read_line", lambda png, model, url: next(unread))
+    assert [s.line for s in pipeline.run(book).suspects] == [3]
+
+
 def test_a_disputed_lower_case_acronym_gets_its_capitals_only_when_asked_for(tmp_path, monkeypatch):
     monkeypatch.setenv("ROBO_OCR_TRUST", "0")
     lines = [*LINES[:3], "Line 3 of the ver goes on and on across the page", *LINES[4:]]

@@ -317,7 +317,9 @@ def _check(
                         for d0, d1, vs in differences
                     ]
                     taken = [(d0, d1) for d0, d1, _ in differences]
-                    differences += capitals_doubts(ours, taken, counts)
+                    # Agreement needs readings: a line no reader read raises no doubt.
+                    if read:
+                        differences += capitals_doubts(ours, taken, counts)
                 for a0, a1, alternatives in differences:
                     disputed = [(d0, d1) for d0, d1, _ in differences if (d0, d1) != (a0, a1)]
                     alternatives = [
@@ -728,8 +730,12 @@ def capitals_versions(ours: str, versions: list[str], words: Counter) -> list[st
     that form is a version already. Where the layer reads "ver" and a reader "vcr", the
     scan's "VCR" is neither, and the judges can only pick among the versions. Not from
     a reading that splits or glues the span's words ("gevlu cht"), nor from a token of
-    more than two such pieces (a stutter, "a-a-a-f")."""
+    more than two such pieces (a stutter, "a-a-a-f"). None where a version holds a word
+    in capitals already ("csc", "cbc", "CBC"): the judges have capitals to pick, and
+    another ("CSC") would split them."""
     out: list[str] = []
+    if any(len(w) > 1 and w.isupper() for v in (ours, *versions) for w in _LETTERS.findall(v)):
+        return out
     seen = {_alike(v) for v in (ours, *versions)}
     for piece in (ours, *versions):
         if piece.count(" ") != ours.count(" "):

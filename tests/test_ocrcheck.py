@@ -79,6 +79,8 @@ def test_a_disputed_span_gets_capitals_only_for_a_reading_small_capitals_could_b
     assert more("don't", "dont") == []
     assert more("zo-even", "zo—even") == []
     assert more("tv.", "TV.") == []
+    assert more("csc.", "cbc.", "CBC.") == []
+    assert more("sr", "sF", "sf", "SF") == []
     assert more("Tv", "TV", "tv") == []
     assert more("mijn", "míjn", "mýjn") == []
     assert more("gevlucht.", "gevlu cht.") == []
