@@ -14,6 +14,12 @@ and De vergelding remain. Resume it, the next night the user frees the machine, 
 caches with steps 3 and 4 of `work/runs/night-20261110.sh` (the benches of steps 1 and 2 are
 done, NO CHANGE): against `work/bench/tuning-20261110T032819-e3e0a01-dirty.json`.
 
+**Branch `small-caps` was rebased on main on 2026-11-10 (local only, by the user's choice not
+to force-push):** worktree `../roboscriptorium-caps`, eaf169f, every fix of the night plus
+its three commits and a repair (the lower-case doubt passed through both halves of the
+split OCR check), 688 tests passing. GitHub still has the old branch: work from the local
+one, and don't pull or reset it from origin.
+
 **The user is reviewing Nervous System** (started 2026-11-10 ~06:40, answers in
 `work/nervous-system/review/regions.jsonl`). Their first card, PDF 13, was "a mess": fixed
 in 47ecbef (washed-out cards read only inked lines; no repeating readings). A review server
