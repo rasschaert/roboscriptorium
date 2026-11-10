@@ -17,6 +17,7 @@ PDFs, whose text is exact, aren't checked.
 import functools
 import json
 import re
+import unicodedata
 from collections import Counter
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
@@ -311,6 +312,10 @@ def _check(
                 )
                 differences = merged_differences(ours, read, curly)
                 if lower_capitals:
+                    differences = [
+                        (d0, d1, [*vs, *capitals_versions(ours[d0:d1], vs, counts)])
+                        for d0, d1, vs in differences
+                    ]
                     taken = [(d0, d1) for d0, d1, _ in differences]
                     differences += capitals_doubts(ours, taken, counts)
                 for a0, a1, alternatives in differences:
@@ -642,13 +647,18 @@ def _capitals(ours: str, versions: list[str]) -> str | None:
     return None
 
 
-_VOWELS = frozenset("aeiouyàáâäèéêëìíîïòóôöùúûü")
+_VOWELS = frozenset("aeiouy")
 # A token: letters joined by hyphens, apostrophes or slashes ("ss-chef", "suv/mpv").
 _TOKEN = re.compile(r"[^\W\d_]+(?:[-'’/][^\W\d_]+)*")
 _LETTERS = re.compile(r"[^\W\d_]+")
 _CONTRACTION = re.compile(r"[’'](?:t|re|ll|ve|d|m)\b")
 # A word the book prints this often on its own, in lower case, is a word ("zo-", "foto-").
 COMMON = 3
+
+
+def _vowels(part: str) -> bool:
+    """Whether a part holds a vowel, accented or in a ligature ("ý", "ĳ") too."""
+    return bool(_VOWELS & set(unicodedata.normalize("NFKD", part)))
 
 
 def book_words(pages: list[PageText]) -> Counter:
@@ -666,11 +676,12 @@ def capital_pieces(token: str, words: Counter) -> list[tuple[int, int]]:
     """The pieces of a token small capitals may have been read as in lower case: a part of
     one to four letters joined to another ("ss-chef", "u-bocht", "usb-stick"), or a word of
     two to five letters with no vowel ("ss", "cv"). Not a contraction's part ("don't",
-    "'s") nor a part with a vowel the book prints `COMMON` times on its own ("zo-")."""
+    "'s"), a lone letter elided before an apostrophe ("z'n", "l'eau") nor a part with a
+    vowel the book prints `COMMON` times on its own ("zo-")."""
     parts = list(_LETTERS.finditer(token))
     if len(parts) == 1:
         p = parts[0][0]
-        return [(0, len(p))] if p.islower() and 2 <= len(p) <= 5 and not set(p) & _VOWELS else []
+        return [(0, len(p))] if p.islower() and 2 <= len(p) <= 5 and not _vowels(p) else []
     out = []
     for m in parts:
         p, rest = m[0], token[m.end() :]
@@ -680,7 +691,9 @@ def capital_pieces(token: str, words: Counter) -> list[tuple[int, int]]:
             continue
         if _CONTRACTION.match(rest) or (p.endswith("n") and re.match(r"[’']t\b", rest)):
             continue
-        if set(p) & _VOWELS and len(p) > 1 and words[p] >= COMMON:
+        if len(p) == 1 and rest[:1] in ("’", "'"):
+            continue
+        if _vowels(p) and len(p) > 1 and words[p] >= COMMON:
             continue
         out.append((m.start(), m.end()))
     return out
@@ -706,6 +719,31 @@ def capitals_doubts(
         out.append((a0, a1, [span[: at + p0] + span[at + p0 : at + p1].upper() + span[at + p1 :]
                              for p0, p1 in pieces]))  # fmt: skip
         taken = [*taken, (a0, a1)]
+    return out
+
+
+def capitals_versions(ours: str, versions: list[str], words: Counter) -> list[str]:
+    """More versions of a span the readings dispute: each reading with a piece small
+    capitals may have been read as in lower case (`capital_pieces`) in capitals, unless
+    that form is a version already. Where the layer reads "ver" and a reader "vcr", the
+    scan's "VCR" is neither, and the judges can only pick among the versions. Not from
+    a reading that splits or glues the span's words ("gevlu cht"), nor from a token of
+    more than two such pieces (a stutter, "a-a-a-f")."""
+    out: list[str] = []
+    seen = {_alike(v) for v in (ours, *versions)}
+    for piece in (ours, *versions):
+        if piece.count(" ") != ours.count(" "):
+            continue
+        for m in _TOKEN.finditer(piece):
+            if m.start() and piece[m.start() - 1] in "‘’'":
+                continue
+            pieces = capital_pieces(m[0], words)
+            for p0, p1 in pieces if len(pieces) <= 2 else ():
+                a, b = m.start() + p0, m.start() + p1
+                form = piece[:a] + piece[a:b].upper() + piece[b:]
+                if _alike(form) not in seen:
+                    seen.add(_alike(form))
+                    out.append(form)
     return out
 
 

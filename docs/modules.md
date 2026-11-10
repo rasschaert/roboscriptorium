@@ -308,7 +308,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   case (`_capitals`: "vTM" → "VTM", "LC1" → "LCI"; a number stays one). With
   `ROBO_LOWER_CAPITALS` a short lower-case piece no reading disputes ("ss", "usb-stick",
   "u-bocht") is a suspect of its own, its capitals the other version (`capitals_doubts`,
-  `capital_pieces`, the book's word counts from `book_words`). Where a line's readings
+  `capital_pieces`, the book's word counts from `book_words`), and a disputed span's
+  reading with such a piece gets it in capitals as one more version (`capitals_versions`:
+  "ver" against "vcr" gains "VCR"). Where a line's readings
   differ, clef picks from
   the crop and winnow (`ROBO_CHECK_MODEL`) from the sentence. The learned trust
   (`trust.py`, on by default) then fixes, keeps or asks, its substitution table

@@ -92,6 +92,14 @@ digit for a letter, or in lower case ("vTM", "LC1" for "LCI", "ss" for "SS"). Tw
   slices that is 54 of 57 small capitals and 1,100 lower-case pieces; the vision judges,
   two of three agreeing, call 39 of the 57 capitals and none of 150 lower-case ones
   (`experiments/probe_caps_lower.py`). A long mixed-case name ("McDonald") gets none.
+- Where the readings dispute a span and one of them reads such a lower-case piece, the
+  print's capitals are still no version: Nervous System's "VCR" is "ver" in the layer
+  and "vcr" in the read model, so the judges took "vcr" on one page and the reviewer
+  typed "VCR" on another. With the same setting each reading's piece in capitals is one
+  more version (`ocrcheck.capitals_versions`); not from a reading that splits the span's
+  words, a lone letter before an apostrophe ("z'n") or a stutter ("a-a-a-f"). On the
+  tuning books' cached suspects that is 450 of 37,712; whether the judges take the
+  capitals where they are printed and nowhere else is not measured yet.
 
 Five richer prompts on the reader set (hosted, 330 hard lines) each fixed about as many
 lines as they broke: "never correct or modernise" 2 against 5, the lines above and

@@ -47,6 +47,7 @@ def test_lower_case_small_capitals_raise_a_doubt_only_where_no_word_or_contracti
     assert doubts("zo-even een foto-album van de bijeenkomst") == []
     assert doubts("de Waffen-SS en een U-bocht") == []
     assert doubts("en het was een mooie dag") == []
+    assert doubts("met z’n vriend, m'n zĳ en l’eau") == []
     # A short joined part, or a short word without a vowel.
     assert doubts("de usb-stick bij de ss-chef") == [
         ("usb-stick", ["USB-stick"]),
@@ -63,6 +64,31 @@ def test_lower_case_small_capitals_raise_a_doubt_only_where_no_word_or_contracti
     ]
     # A span a reading already disputes is left to that suspect.
     assert ocrcheck.capitals_doubts("de usb-stick lag", [(3, 12)], words) == []
+
+
+def test_a_disputed_span_gets_capitals_only_for_a_reading_small_capitals_could_be():
+    from collections import Counter
+
+    words = Counter({"zo": 40, "even": 30, "ver": 5})
+
+    def more(ours, *versions):
+        return ocrcheck.capitals_versions(ours, list(versions), words)
+
+    # Words with a vowel, a contraction, a word the book uses, capitals already read: none.
+    assert more("ver.", "var.") == []
+    assert more("don't", "dont") == []
+    assert more("zo-even", "zo—even") == []
+    assert more("tv.", "TV.") == []
+    assert more("Tv", "TV", "tv") == []
+    assert more("mijn", "míjn", "mýjn") == []
+    assert more("gevlucht.", "gevlu cht.") == []
+    assert more("I’ll", "I ‘ll") == []
+    assert more("a-a-a-f…", "a-a-a-f..") == []
+    # A reading without a vowel, or with a short joined part, in capitals.
+    assert more("ver.", "vcr.") == ["VCR."]
+    assert more("ver. “Her", "“Her", "vcr. “Her") == ["VCR. “Her"]
+    assert more("tv,", "tv.") == ["TV,", "TV."]
+    assert more("usb-stick", "usb-stiek") == ["USB-stick", "USB-stiek"]
 
 
 def test_differences_are_whole_words():

@@ -644,6 +644,11 @@ also part of the pipeline itself." Before either book goes to review:
       Nervous System is a test book for it (the user, 2026-11-10: PDF 158 line 8, small
       capitals "VCR" read "ver."): it sets every acronym in small capitals (TV, RCMP, CBC, VCR,
       GP, ER, OJ, FBI, ID), and the US scan's layer writes them in lower case, which finds them
+      (`experiments/probe_caps_nervous.py`, no models: 26 of 30 right in the build, "tv" twice
+      and "vcr" wrong unasked, "ver."/"vcr." asked; the doubt reaches both "tv", and a
+      disputed span's reading now gets its capitals as a version, `capitals_versions`, which
+      reaches both VCR; RCMP is "police" in the UK edition). Its short test: PDF 43, 47, 59
+      and 158 built with the setting on, in a copy under `work/probes/caps-lower/`
 - [x] ~~autotrust-jev 9B as a second text judge~~ (2026-11-09, pass 4): not taken. Tuning
       unasked 551 → 535, validation 170 → 178 (decisions.md); failed on the arbiter's 23
       books, branch `text-seat` kept for a retest after batch five
