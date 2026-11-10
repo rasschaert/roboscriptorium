@@ -7,7 +7,25 @@ end of every session. Top sections rewritten 2026-11-10 (~00:30 and ~07:45); the
 
 ## Running
 
-Nothing. **Batch five was stopped at ~06:50 on 2026-11-10** (the user leaving for work): its
+**Since 2026-11-10 ~23:55** (the user: the machine is free; small capitals first, "that
+branch has been open for too long", force-push of `small-caps` allowed):
+
+- screen `robo-caps-20261110` (`work/runs/caps-20261110.sh`, the code of
+  `../roboscriptorium-caps`, rebased on main that evening, 699 tests passing when run from
+  this checkout): Nervous System whole on a copy with `ROBO_LOWER_CAPITALS`
+  (`work/runs/caps-nervous-short.log`), then the short test through the arbiter on the
+  tuning books, one book at a time (`caps-lower-short.log`; then
+  `probe_caps_lower_short.py compare`), then the judges on the wide crop (`caps-wide.log`;
+  the tight answers kept as `work/probes/caps-lower/answers-tight.jsonl`; then
+  `probe_caps_lower.py report`).
+- screen `robo-quote-reader-2` waits for it, then runs the quote reader's short test again
+  on the three books after 6b57830 (`work/runs/quote-reader.log`). Don't edit `src/` on
+  main while it runs.
+
+Then: a tuning bench of `ROBO_LOWER_CAPITALS=1` on the branch and validation, merge if
+neither is worse; batch five's cold bench for the rest of the night.
+
+**Batch five was stopped at ~06:50 on 2026-11-10** (the user leaving for work): its
 cold bench (`night-20261110.sh` step 3, worktree `../robo-grow6`, branch `grow6` rebased on
 main) had finished Vals alarm and was on The Thief-Taker's Apprentice; Metro, De tuin, Au pair
 and De vergelding remain. Resume it, the next night the user frees the machine, from its
