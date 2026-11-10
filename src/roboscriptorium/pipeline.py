@@ -329,7 +329,9 @@ def run(
                 texts = {
                     SourceRef(p.number, i): ln.text for p in body for i, ln in enumerate(p.lines)
                 }
-                paired = quotes.duel_readings([b for b in early if isinstance(b, Paragraph)], texts)
+                paired = quotes.duel_readings(
+                    [b for b in early if isinstance(b, Paragraph)], texts, readings.values()
+                )
                 for name, lines in paired.items():
                     readings[name] = {ref: text for ref, text in lines.items() if ref in kept}
             judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)

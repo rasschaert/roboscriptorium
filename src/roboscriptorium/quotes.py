@@ -18,6 +18,8 @@ proposes the line with its marks (`proposed`); the letters stay the text layer's
 """
 
 import re
+from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass, replace
 
 from rapidfuzz.distance import Levenshtein
@@ -177,15 +179,21 @@ _OPENERS = {"’": "‘", "”": "“", "'": "‘"}
 
 
 def duel_readings(
-    paragraphs: list[Paragraph], lines: dict[SourceRef, str]
+    paragraphs: list[Paragraph],
+    lines: dict[SourceRef, str],
+    others: Iterable[dict[SourceRef, str]] = (),
 ) -> dict[str, dict[SourceRef, str]]:
     """What the unpaired marks of each paragraph say its lines print, as readings of those
     lines (`lines`, each line's text) by reader: a quote open at the end closes after the
     last line; speech closed right after a letter has a stop before the mark; a closing
     mark with nothing open is a speck (the line without it, `READER`) or lost its opening
     mark (the first line with it, `OPENED`, unless that line opens on a mark already); not
-    one opening a word. The first problem to speak for a line has it."""
+    one opening a word. The first problem to speak for a line has it. Where another
+    reading of the last line (`others`) ends it paired already, the line ends as that
+    reading has it: a version of its own would only split the judges ("alles?’" beside
+    "alles.’")."""
     out: dict[str, dict[SourceRef, str]] = {READER: {}, OPENED: {}}
+    others = list(others)
     for p in paragraphs:
         if not p.sources or not any(c in p.text for c in "‘’“”"):
             continue
@@ -195,9 +203,13 @@ def duel_readings(
             if why == "open at end" and end and p.text.rstrip().endswith(end[-3:]):
                 closed = [m for m in PAIRS.values() if not _open_at_end(p.text.rstrip() + m)]
                 if len(closed) == 1:
-                    out[READER].setdefault(last, end + closed[0])
+                    ends = re.compile(re.escape(closed[0]) + "$")
+                    read = _ended(end, last, others, ends)
+                    out[READER].setdefault(last, read or end + closed[0])
             elif why == "no stop at end" and end.endswith(p.text[offset]):
-                out[READER].setdefault(last, end[:-1] + "." + end[-1])
+                ends = re.compile("[.!?…]" + re.escape(end[-1]) + "$")
+                read = _ended(end, last, others, ends)
+                out[READER].setdefault(last, read or end[:-1] + "." + end[-1])
             elif why == "no opening" and (at := _line_of(p, offset, lines)):
                 ref, k = at
                 if lines[ref][k + 1 : k + 2].isalnum():
@@ -210,6 +222,24 @@ def duel_readings(
                 if first.strip() and not opens and p.text[offset] in _OPENERS:
                     out[OPENED].setdefault(p.sources[0], _OPENERS[p.text[offset]] + first.lstrip())
     return out
+
+
+_LAST_WORD = re.compile(r"\S+$")
+
+
+def _ended(
+    end: str, ref: SourceRef, others: list[dict[SourceRef, str]], ends: re.Pattern
+) -> str | None:
+    """The line with its last word as most of the other readings that end it as `ends`
+    asks have it; None where none does."""
+    words = Counter(
+        m[0]
+        for reading in others
+        if (m := _LAST_WORD.search(reading.get(ref, "").rstrip())) and ends.search(m[0])
+    )
+    if not words:
+        return None
+    return _LAST_WORD.sub(lambda _: words.most_common(1)[0][0], end)
 
 
 def _open_at_end(text: str) -> bool:

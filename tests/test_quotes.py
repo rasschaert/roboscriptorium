@@ -357,3 +357,35 @@ def test_a_mark_opening_a_word_is_no_speck_and_no_quotations_end():
 def test_a_paragraph_opening_on_a_mark_is_not_opened_again():
     p, lines = _lines("‘Yes,’ he said. And on.’ So it", "went.")
     assert quotes.duel_readings([p], lines)[quotes.OPENED] == {}
+
+
+def test_a_reading_that_leaves_the_quote_open_changes_nothing_of_the_closed_line():
+    p, lines = _lines("He said: “It goes on", "and on?")
+    # One reads another stop, one closes in the other mark: neither pairs the quote.
+    others = [{SourceRef(1, 1): "and on."}, {SourceRef(1, 1): "and on.’"}]
+    assert quotes.duel_readings([p], lines, others)[quotes.READER] == {SourceRef(1, 1): "and on?”"}
+
+
+def test_a_quote_open_at_the_end_ends_as_the_readings_that_close_it():
+    p, lines = _lines("He said: “It goes on", "and on?")
+    others = [
+        {SourceRef(1, 1): "and on.”"},
+        {SourceRef(1, 1): "and on."},
+        {SourceRef(1, 1): "and on.”"},
+        {SourceRef(1, 1): "and on!”"},
+    ]
+    assert quotes.duel_readings([p], lines, others)[quotes.READER] == {SourceRef(1, 1): "and on.”"}
+
+
+def test_a_reading_of_another_line_is_not_the_last_lines_end():
+    p, lines = _lines("He said: “It goes on", "and on?")
+    others = [{SourceRef(1, 0): "He said: “It goes on.”"}]
+    assert quotes.duel_readings([p], lines, others)[quotes.READER] == {SourceRef(1, 1): "and on?”"}
+
+
+def test_speech_closed_on_a_letter_ends_as_the_reading_with_a_stop_before_the_mark():
+    p, lines = _lines("He looked up. ‘It goes on and", "on and on’")
+    others = [{SourceRef(1, 1): "on and on?’"}, {SourceRef(1, 1): "on and on."}]
+    assert quotes.duel_readings([p], lines, others)[quotes.READER] == {
+        SourceRef(1, 1): "on and on?’"
+    }

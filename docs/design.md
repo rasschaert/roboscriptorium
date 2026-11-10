@@ -455,7 +455,11 @@ setting on, the layer's paragraphs are reflowed before the OCR check (no models)
 what each unpaired mark says its line prints becomes a reading of that line: a quote
 open at the end, the last line closed in the open mark; speech closed on a letter, a stop
 before the mark; a closing mark with nothing open, the line without it (reader `quotes`)
-and the paragraph's first line opened (reader `quotes-open`). The judges vote on the crop,
+and the paragraph's first line opened (reader `quotes-open`). Where another reading of
+the last line already ends it paired ("alles.’" for the layer's "alles?"), the quote
+check's line ends as that reading does: its own version ("alles?’", the layer's misread
+with the mark) is a fourth choice that splits the judges, and on De tuin it turned eleven
+right fixes into questions. The judges vote on the crop,
 the arbiter fixes, keeps or asks, and the card shows the reading as "quote check" beside
 the others. A paragraph whose problems all went this way gets no quote question of its
 own; an opening mark inside an open quotation ("no closing") names no line to read
