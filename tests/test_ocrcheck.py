@@ -91,6 +91,9 @@ def test_a_disputed_span_gets_capitals_only_for_a_reading_small_capitals_could_b
     assert more("ver. “Her", "“Her", "vcr. “Her") == ["VCR. “Her"]
     assert more("tv,", "tv.") == ["TV,", "TV."]
     assert more("usb-stick", "usb-stiek") == ["USB-stick", "USB-stiek"]
+    # No more versions than the judges have options for: seven with the layer's.
+    assert more("tv,", "tv.", "tv;", "tv:", "tv!", "tv?") == ["TV,"]
+    assert more("tv,", "tv.", "tv;", "tv:", "tv!", "tv?", "tv…") == []
 
 
 def test_differences_are_whole_words():

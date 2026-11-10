@@ -649,6 +649,8 @@ def _capitals(ours: str, versions: list[str]) -> str | None:
     return None
 
 
+# The judges' options, one a version: a suspect holds no more versions than these.
+LETTERS = "abcdefg"
 _VOWELS = frozenset("aeiouy")
 # A token: letters joined by hyphens, apostrophes or slashes ("ss-chef", "suv/mpv").
 _TOKEN = re.compile(r"[^\W\d_]+(?:[-'’/][^\W\d_]+)*")
@@ -730,7 +732,8 @@ def capitals_versions(ours: str, versions: list[str], words: Counter) -> list[st
     that form is a version already. Where the layer reads "ver" and a reader "vcr", the
     scan's "VCR" is neither, and the judges can only pick among the versions. Not from
     a reading that splits or glues the span's words ("gevlu cht"), nor from a token of
-    more than two such pieces (a stutter, "a-a-a-f"). None where a version holds a word
+    more than two such pieces (a stutter, "a-a-a-f"), and no more than the judges have
+    options left for. None where a version holds a word
     in capitals already ("csc", "cbc", "CBC"): the judges have capitals to pick, and
     another ("CSC") would split them."""
     out: list[str] = []
@@ -750,7 +753,7 @@ def capitals_versions(ours: str, versions: list[str], words: Counter) -> list[st
                 if _alike(form) not in seen:
                     seen.add(_alike(form))
                     out.append(form)
-    return out
+    return out[: max(0, len(LETTERS) - 1 - len(versions))]
 
 
 _TRAILING = re.compile(r"^(.*?)([.,;:!?…]*)([’”'\"]*)$", re.S)
@@ -801,7 +804,7 @@ def _decide(
     judge isn't: told the style, it picked right less often.
     """
     versions = [ours[a0:a1], *others]
-    letters = "abcdefg"[: len(versions)]
+    letters = LETTERS[: len(versions)]
     state = {"page": number, "line": k, "readings": versions, "box": [round(v, 1) for v in box]}
     question = {
         "reading": decide.choice(
