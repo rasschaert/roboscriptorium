@@ -17,6 +17,8 @@ Two detached screens, one model job at a time, each with its output in `work/run
    (`tuning-20261109T035156`, `validation-20261108T212607`) to confirm the night's
    changes, then **batch five** from worktree `../robo-grow6` (branch `grow6`, pushed:
    `grow6.patch` committed) cold with one book at a time, then its trust data rebuilt.
+   Status 05:30: both benches NO CHANGE (decisions.md); batch five cold since 04:29, on its
+   first book (Vals alarm), log `work/runs/grow6-tuning.log`.
    **When the user leaves for work, stop it** (`experiments/stop-run.sh night-20261110`):
    no heavy work in the day. It resumes from its caches; restart from the step it reached.
 
