@@ -641,6 +641,9 @@ also part of the pipeline itself." Before either book goes to review:
       judges' wide crop for the lone O, U and V; then `bench tuning` with the flag (cold for
       ~1,100 new suspects, ~1 h), validation, merge; before batch five, so its trust data
       holds the new suspects and the arbiter retrained on it can learn them
+      Nervous System is a test book for it (the user, 2026-11-10: PDF 158 line 8, small
+      capitals "VCR" read "ver."): it sets every acronym in small capitals (TV, RCMP, CBC, VCR,
+      GP, ER, OJ, FBI, ID), and the US scan's layer writes them in lower case, which finds them
 - [x] ~~autotrust-jev 9B as a second text judge~~ (2026-11-09, pass 4): not taken. Tuning
       unasked 551 → 535, validation 170 → 178 (decisions.md); failed on the arbiter's 23
       books, branch `text-seat` kept for a retest after batch five
