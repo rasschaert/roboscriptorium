@@ -775,6 +775,12 @@ In this order:
       tesseract and all four judges on "“Okay.”", only glm-ocr and Qwen without the stop):
       read the arbiter's sureness on Nervous System's 22 asked suspects, and whether English
       books have too little trust data
+- [ ] **Bulleted lists** (the user, 2026-11-10, reviewing Nervous System PDF 117: "should i
+      use a ■ here?"). The book sets lists with small square bullets (PDF 117, 259); the layer
+      reads each bullet as "e", "¢" or "*", one line is asked and the rest go into the text
+      silently ("e new organs in the body…"). Detect a list from the scan (a small mark left of
+      an indented run of lines), build it as an EPUB list, and drop the misread markers; the
+      reviewer answers the text without the marker meanwhile
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are
