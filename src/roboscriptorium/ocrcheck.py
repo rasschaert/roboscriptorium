@@ -32,6 +32,7 @@ from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import LIGATURES, PageText, line_words, page_words, spells, spliced
 from roboscriptorium.quotes import ELISION
+from roboscriptorium.quotes import reading_curled as _curled
 from roboscriptorium.roles import DecisionCache
 
 # The fixed rule: the judge must be at least this sure, and agree with the text model.
@@ -586,22 +587,6 @@ def curly_book(pages: list[PageText]) -> bool:
     """Whether the layer sets more curly quote marks than straight ones."""
     text = "".join(ln.text for p in pages for ln in p.lines)
     return sum(text.count(c) for c in "‘’“”") > sum(text.count(c) for c in "'\"")
-
-
-def _curled(text: str, ends_line: bool = False) -> str:
-    """Straight quotes as curly ones: opening at a word's start, closing elsewhere; an
-    apostrophe eliding letters ("nog 's", "je 'm") is ’ wherever it stands. Where `text`
-    ends its line, a quote with nothing after it closes, against the word before it
-    (a reader's "up . . . '" is "up . . .’")."""
-    if ends_line:
-        text = re.sub(r"\s*(['\"])(\s*)$", r"\1\2", text)
-        text = re.sub(r"(\S)'(\s*)$", r"\1’\2", text)
-        text = re.sub(r'(\S)"(\s*)$', r"\1”\2", text)
-    text = re.sub(
-        r"(^|\s)'", lambda m: m[1] + ("’" if ELISION.match(text, m.end() - 1) else "‘"), text
-    )
-    text = re.sub(r"(^|\s)\"", r"\1“", text)
-    return text.replace("'", "’").replace('"', "”")
 
 
 _TRAILING = re.compile(r"^(.*?)([.,;:!?…]*)([’”'\"]*)$", re.S)

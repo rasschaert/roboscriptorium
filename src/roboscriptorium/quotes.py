@@ -327,6 +327,22 @@ def combined(ours: str, reading: str) -> str:
 KINDS = ("OCR check", "scan reading", "marks combined")
 
 
+def reading_curled(text: str, ends_line: bool = False) -> str:
+    """Straight quotes as curly ones: opening at a word's start, closing elsewhere; an
+    apostrophe eliding letters ("nog 's", "je 'm") is ’ wherever it stands. Where `text`
+    ends its line, a quote with nothing after it closes, against the word before it
+    (a reader's "up . . . '" is "up . . .’")."""
+    if ends_line:
+        text = re.sub(r"\s*(['\"])(\s*)$", r"\1\2", text)
+        text = re.sub(r"(\S)'(\s*)$", r"\1’\2", text)
+        text = re.sub(r'(\S)"(\s*)$', r"\1”\2", text)
+    text = re.sub(
+        r"(^|\s)'", lambda m: m[1] + ("’" if ELISION.match(text, m.end() - 1) else "‘"), text
+    )
+    text = re.sub(r"(^|\s)\"", r"\1“", text)
+    return text.replace("'", "’").replace('"', "”")
+
+
 def readings(layer: str, checked: str, reading: str, ellipsis: str, single: bool) -> dict[str, str]:
     """A quote-flagged line's readings beside the layer's, by kind, each where it differs
     from those before it: the line as the OCR check left it (its fixed letters with the
@@ -334,6 +350,10 @@ def readings(layer: str, checked: str, reading: str, ellipsis: str, single: bool
     (`proposed`), and, for a nested quotation, those combined (`combined`, `nested`)."""
     out: dict[str, str] = {}
     seen = {layer}
+    # The read model writes straight marks though told the book's curly ones (Nervous
+    # System PDF 120's closing quote): curled as the line sets them.
+    if sum(checked.count(c) for c in "‘’“”") > sum(checked.count(c) for c in "'\""):
+        reading = reading_curled(reading, True)
     scan = proposed(checked, reading, ellipsis)
     both = combined(checked, scan)
     if single:

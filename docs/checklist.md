@@ -793,6 +793,11 @@ In this order:
       ".."). The book sets one stop or its measured ellipsis (". . .", `typography`), never two
       dots: a ".." that isn't the ellipsis with a dot lost is a stop and a speck. Counterexamples
       first: an ellipsis read short, an abbreviation's stop ending a sentence
+- [ ] **A quote card shows only the OCR check's line and the read model's marks** (the user,
+      2026-11-10, Nervous System PDF 120: "where are the other model's readings?"). By design
+      (`pipeline.proposals`, `quotes.readings`), but glm-ocr's and tesseract's readings of the
+      same lines are cached: offer them as witnesses of the marks, with their votes. The same
+      card kept a speck read as " ." after the closing quote ("notice.” .")
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are

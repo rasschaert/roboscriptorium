@@ -297,3 +297,10 @@ def test_a_quote_open_at_the_end_is_closed_where_the_reading_adds_only_that_mark
     ]:
         q = Paragraph(text, [SourceRef(50, 3), end])
         assert closed_at_end([q], {end: {"checked": reading}}, lines) == ([q], set())
+
+
+def test_a_quote_cards_reading_takes_its_lines_curly_marks():
+    checked = "“They’ll see it,” she said. “They won’t even notice.” ."
+    reading = 'They\'ll see it," she said. "They won\'t even notice."'
+    found = quotes.readings(checked, checked, reading, "...", False)
+    assert all('"' not in t and "'" not in t for t in found.values())

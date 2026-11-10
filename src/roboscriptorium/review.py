@@ -25,7 +25,7 @@ from urllib.parse import parse_qs, urlparse
 
 import pymupdf
 
-from roboscriptorium import corrections, errata, ocr, ocrcheck
+from roboscriptorium import corrections, errata, ocr, quotes
 from roboscriptorium import flags as F
 from roboscriptorium.corrections import ACTIONS, Correction, Corrections
 from roboscriptorium.disagreements import UNSURE, Disagreement, Verdicts
@@ -448,10 +448,10 @@ def combinations(texts: list[str], limit: int) -> list[str]:
 def curled_answer(text: str | None, lines: list[str]) -> str | None:
     """A typed answer with its straight quote marks curled, where the book's line or its
     readings set curly ones: the reviewer types "I'll" and means "I’ll", as the pipeline
-    would curl it (`ocrcheck._curled`); asking them to retype it cost their time."""
+    would curl it (`quotes.reading_curled`); asking them to retype it cost their time."""
     if not text or not any(c in ln for ln in lines for c in _CURLY):
         return text
-    return "\n".join(ocrcheck._curled(row, True) for row in text.split("\n"))
+    return "\n".join(quotes.reading_curled(row, True) for row in text.split("\n"))
 
 
 def doubtful(line: str, readings: list[dict], action: str, text: str | None) -> str:
