@@ -712,6 +712,14 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       any other), a heading (asked only where the role evidence is split), a speck (read as
       a hyphen, a second stop, a quote mark). The arbiter learns the new kinds from labels:
       the user's answers of 2026-11-10 and the golden books' places of each kind
+      The quote check first (design, 2026-11-10, not yet coded): reflow the layer early (no
+      models), find `quotes.problems` per paragraph, and turn each into a reading of its line
+      for the OCR check as reader `quotes`: open at the end → the last line with the closing
+      mark; a closing mark with nothing open → the line without it (a speck), and the first
+      line with an opening mark as a second reading; speech ending on a letter → a stop before
+      the closing mark. The judges vote on the crop, the arbiter decides; a quote problem that
+      went through the duel is no longer asked by the quote check (`quote_lines` less the lines
+      with a `quotes` suspect). Arbiter features see `quotes` only through votes until retrained
 - [ ] Every card shows every reader's reading and every judge's vote, as the OCR check's do
 - [ ] Measure: the questions a book like Nervous System leaves, by kind, and the silent errors
       on the benches before and after; the user sees the count and why each kind is still asked
