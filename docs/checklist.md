@@ -788,6 +788,11 @@ In this order:
       hyphen alone before a line's first word is never print in a book whose dashes are long
       and spaced and whose lines never open on a dash elsewhere; a book that opens dialogue
       with a dash (Dutch) keeps it. Counterexamples first: dialogue dashes in the tuning books
+- [ ] **A speck read as a second full stop** (label from the user, 2026-11-10: Nervous System
+      PDF 119 line 25, "system.. He added", the layer, glm-ocr, tesseract, clef and d3 all read
+      ".."). The book sets one stop or its measured ellipsis (". . .", `typography`), never two
+      dots: a ".." that isn't the ellipsis with a dot lost is a stop and a speck. Counterexamples
+      first: an ellipsis read short, an abbreviation's stop ending a sentence
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are
