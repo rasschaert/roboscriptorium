@@ -2,6 +2,8 @@
 
 import functools
 import json
+import re
+import statistics
 import sys
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
@@ -225,11 +227,14 @@ def run(
             book.stages / "short-pages.json",
             {p.number for p in body if headed and p.number < min(headed)},
         )
+        size = type_size(whole)
         for page in body:
             refs = {
                 SourceRef(page.number, i)
                 for i in range(len(page.lines))
-                if _kept_apart(page.lines[i], model_roles.get(SourceRef(page.number, i)))
+                if _kept_apart(
+                    page.lines[i], model_roles.get(SourceRef(page.number, i)), size, known
+                )
             }
             if apart.get(page.number) == "epigraph":
                 epigraph_lines |= refs
@@ -566,11 +571,46 @@ def lost_breaks(unanswered: list, built: list, answers: Corrections) -> list[Sou
     )
 
 
-def _kept_apart(line: Line, role: LineRole | None) -> bool:
+# A line on a page set apart narrower than this many of the book's letters is a mark, not
+# print, where its characters can't fit it (under `SPECK_DENSE` of a letter each), it
+# stands over `SPECK_TALL` of the book's lines high, or it holds no word: Going into a
+# Dark House's dedication page reads "t ee", "x ih", "ua)" and "i ee" (36 points tall)
+# from marks along its edge, 4 to 17 points wide.
+SPECK_LETTERS = 4
+SPECK_DENSE = 0.6
+SPECK_TALL = 2.0
+
+
+def type_size(pages: list[PageText]) -> tuple[float, float]:
+    """The book's width of a letter and height of a line, in points, over its lines of
+    more than 30 letters."""
+    long = [ln for p in pages for ln in p.lines if len(ln.text) > 30]
+    letters = sum(len(ln.text) for ln in long)
+    if not letters:
+        return 0.0, 0.0
+    return sum(ln.x1 - ln.x0 for ln in long) / letters, statistics.median(
+        ln.y1 - ln.y0 for ln in long
+    )
+
+
+def _kept_apart(
+    line: Line, role: LineRole | None, size: tuple[float, float] = (0.0, 0.0), known=None
+) -> bool:
     """Whether a line of a motto's or dedication's page belongs to it: not a page number,
-    running head or garbled speck. The sorter may call an attribution an artifact."""
+    running head, garbled speck, nor a narrow mark the book's type couldn't print
+    (`SPECK_LETTERS`). The sorter may call an attribution an artifact."""
     furniture = role is not None and role.role in ("page_number", "running_head")
-    return not furniture and not garbled(line)
+    if furniture or garbled(line):
+        return False
+    letter, height = size
+    width = line.x1 - line.x0
+    if known is None or not letter or width >= SPECK_LETTERS * letter:
+        return True
+    chars = len(line.text.replace(" ", ""))
+    dense = width < SPECK_DENSE * letter * chars
+    tall = line.y1 - line.y0 > SPECK_TALL * height
+    wordless = not any(known(w.lower()) for w in re.findall(r"[^\W\d_]{2,}", line.text))
+    return not (dense or tall or wordless)
 
 
 def proposals(

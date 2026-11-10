@@ -957,3 +957,26 @@ def test_a_line_of_dots_the_layer_lost_between_lines_is_kept_as_body(tmp_path, m
     # glm-ocr's bare dots get the mark the ink shows, in the book's style (no ‘ in it).
     assert [ln.text for ln in stages.pages[0].lines][6] == "“..."
     assert "“..." in " ".join(p.text for p in stages.doc.paragraphs)
+
+
+def test_a_mark_too_narrow_for_its_letters_is_left_off_a_dedication_page():
+    from roboscriptorium.pdf import Line
+
+    # The word list knows "ee", "ua" and "ih" (abbreviations), as the real one does.
+    known = {"for", "to", "and", "ee", "ua", "ih"}.__contains__
+    size = (4.8, 12.0)
+    # Going into a Dark House PDF 7: marks along the edge, a few points wide.
+    for text, x0, y0, x1, y1 in (
+        ("t ee", 303, 170, 307, 190),
+        ("x ih", 302, 197, 310, 213),
+        ("ua)", 302, 189, 310, 202),
+        ("i ee", 293, 189, 310, 225),
+        ("|", 301, 249, 309, 258),
+    ):
+        assert not pipeline._kept_apart(Line(text, x0, y0, x1, y1), None, size, known)
+    # One-word lines of a dedication are as narrow, but print.
+    assert pipeline._kept_apart(Line("For", 140, 100, 155, 114), None, size, known)
+    assert pipeline._kept_apart(Line("To", 140, 100, 150, 114), None, size, known)
+    assert pipeline._kept_apart(Line("Tim, Kim and Imogen", 90, 116, 224, 129), None, size, known)
+    # Without a word list nothing narrow is left out.
+    assert pipeline._kept_apart(Line("t ee", 303, 170, 307, 190), None, size, None)
