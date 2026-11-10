@@ -8,22 +8,24 @@ end of every session. Top sections rewritten 2026-11-10 (~00:30 and ~07:45); the
 ## Running
 
 **Since 2026-11-10 ~23:55** (the user: the machine is free; small capitals first, "that
-branch has been open for too long", force-push of `small-caps` allowed):
+branch has been open for too long", force-push of `small-caps` allowed). Results so far in
+decisions.md, 2026-11-11 (small capitals: on the branch's copy).
 
-- screen `robo-caps-20261110` (`work/runs/caps-20261110.sh`, the code of
-  `../roboscriptorium-caps`, rebased on main that evening, 699 tests passing when run from
-  this checkout): Nervous System whole on a copy with `ROBO_LOWER_CAPITALS`
-  (`work/runs/caps-nervous-short.log`), then the short test through the arbiter on the
-  tuning books, one book at a time (`caps-lower-short.log`; then
-  `probe_caps_lower_short.py compare`), then the judges on the wide crop (`caps-wide.log`;
-  the tight answers kept as `work/probes/caps-lower/answers-tight.jsonl`; then
-  `probe_caps_lower.py report`).
-- screen `robo-quote-reader-2` waits for it, then runs the quote reader's short test again
-  on the three books after 6b57830 (`work/runs/quote-reader.log`). Don't edit `src/` on
-  main while it runs.
+- screen `robo-caps-bench-20261111` (`work/runs/caps-bench-20261111.sh`): `bench tuning`
+  on main as the baseline (warm), then the `small-caps` worktree with
+  `ROBO_LOWER_CAPITALS=1` against it (cold for the new suspects, one book at a time), then
+  the same pair on validation. Logs `work/runs/{base,caps}-{tuning,validation}.log`.
+- screen `robo-quote-bench-20261111` waits for it: the `quote-reader` worktree
+  (`../robo-quote`, 88a2dda, local) with `ROBO_QUOTE_READER=1` against the same baselines
+  (the runs named `*38c86cf*`), logs `work/runs/quote-{tuning,validation}.log`.
+- Don't edit `src/` on main, in `../roboscriptorium-caps` or in `../robo-quote` while
+  these run.
 
-Then: a tuning bench of `ROBO_LOWER_CAPITALS=1` on the branch and validation, merge if
-neither is worse; batch five's cold bench for the rest of the night.
+Then, small capitals: if neither bench is worse, rebuild the trust data with the doubts
+in it (`ROBO_TRUST_DATA=work/probes/ocr-trust-caps ROBO_LOWER_CAPITALS=1`,
+`experiments/rebuild-trust.sh`), retrain the arbiter and bench again: today it asks where
+all four judges say capitals ("tv", "VCR" on Nervous System), never having seen such a
+doubt. Then merge. Batch five's cold bench after that.
 
 **Batch five was stopped at ~06:50 on 2026-11-10** (the user leaving for work): its
 cold bench (`night-20261110.sh` step 3, worktree `../robo-grow6`, branch `grow6` rebased on
