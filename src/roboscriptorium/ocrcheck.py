@@ -250,8 +250,16 @@ def check(
     judges = [m for m in (vision, reader, *alarms) if m is not None]
     for live in judges[:-1]:
         later = lambda m, live=live: m if m is None or m is live else _Later(m)  # noqa: E731
-        _check(*args, later(vision), later(reader), *rest, tuple(map(later, alarms)), alarm_below)
-    return _check(*args, vision, reader, *rest, alarms, alarm_below)
+        _check(
+            *args,
+            later(vision),
+            later(reader),
+            *rest,
+            tuple(map(later, alarms)),
+            alarm_below,
+            lower_capitals,
+        )
+    return _check(*args, vision, reader, *rest, alarms, alarm_below, lower_capitals)
 
 
 class _Later:
@@ -277,6 +285,7 @@ def _check(
     style: str,
     alarms,
     alarm_below: float,
+    lower_capitals: bool = False,
 ) -> list[Suspect]:
     """`check`'s pass over the book with the judges as given."""
     suspects = []
