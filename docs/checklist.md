@@ -696,6 +696,24 @@ also part of the pipeline itself." Before either book goes to review:
       ("NSB-leden"), a stem left open before "en" where the word after is a compound whose
       end joins the stem ("voor- en achterbank"); tuning 8 fixed, validation no change
 
+## One path for every doubt (the user, 2026-11-10, first)
+
+The user, reviewing Nervous System: "when you ask me for review, it's to settle who is right.
+i should be offered everyone's opinion and they should already have 'duked it out'. only when
+their differences can't be settled, it goes to me. that's the whole point, no?" The OCR check
+works so; the quote check, garbled lines, headings and washed-out pages raise questions on
+side paths that skip the judges and the arbiter, and their cards show one or two readings.
+
+- [ ] Every doubt becomes a suspect on the OCR check's path: unpaired quote marks (the lines'
+      readings by every reader, the marks judged), a garbled line (its readings judged as
+      any other), a heading (asked only where the role evidence is split), a speck (read as
+      a hyphen, a second stop, a quote mark). The arbiter learns the new kinds from labels:
+      the user's answers of 2026-11-10 and the golden books' places of each kind
+- [ ] Every card shows every reader's reading and every judge's vote, as the OCR check's do
+- [ ] Measure: the questions a book like Nervous System leaves, by kind, and the silent errors
+      on the benches before and after; the user sees the count and why each kind is still asked
+      before reviewing again
+
 ## 3. The user's books after Stella
 
 Books the user wants as EPUBs (Dutch, and since 2026-11-09 three English), none with a reference EPUB, each an IA Scribe
