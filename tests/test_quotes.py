@@ -346,3 +346,14 @@ def test_a_mark_whose_line_cant_be_told_gives_no_reading():
     # The paragraph's text holds a mark its lines don't (a line joined otherwise).
     lines[SourceRef(1, 1)] = "and on. And that"
     assert quotes.duel_readings([p], lines) == {quotes.READER: {}, quotes.OPENED: {}}
+
+
+def test_a_mark_opening_a_word_is_no_speck_and_no_quotations_end():
+    p, lines = _lines("He came ’cross the field", "and went home.")
+    assert quotes.problems(p.text)
+    assert quotes.duel_readings([p], lines) == {quotes.READER: {}, quotes.OPENED: {}}
+
+
+def test_a_paragraph_opening_on_a_mark_is_not_opened_again():
+    p, lines = _lines("‘Yes,’ he said. And on.’ So it", "went.")
+    assert quotes.duel_readings([p], lines)[quotes.OPENED] == {}

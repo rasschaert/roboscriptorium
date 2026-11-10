@@ -183,7 +183,8 @@ def duel_readings(
     lines (`lines`, each line's text) by reader: a quote open at the end closes after the
     last line; speech closed right after a letter has a stop before the mark; a closing
     mark with nothing open is a speck (the line without it, `READER`) or lost its opening
-    mark (the first line with it, `OPENED`). The first problem to speak for a line has it."""
+    mark (the first line with it, `OPENED`, unless that line opens on a mark already); not
+    one opening a word. The first problem to speak for a line has it."""
     out: dict[str, dict[SourceRef, str]] = {READER: {}, OPENED: {}}
     for p in paragraphs:
         if not p.sources or not any(c in p.text for c in "‘’“”"):
@@ -199,9 +200,14 @@ def duel_readings(
                 out[READER].setdefault(last, end[:-1] + "." + end[-1])
             elif why == "no opening" and (at := _line_of(p, offset, lines)):
                 ref, k = at
+                if lines[ref][k + 1 : k + 2].isalnum():
+                    # A mark opening a word elides letters ("’bout") or is an opening
+                    # mark misread: neither a speck nor a quotation's end.
+                    continue
                 out[READER].setdefault(ref, lines[ref][:k] + lines[ref][k + 1 :])
                 first = lines.get(p.sources[0], "")
-                if first.strip() and p.text[offset] in _OPENERS:
+                opens = first.lstrip()[:1] in "‘“'\""
+                if first.strip() and not opens and p.text[offset] in _OPENERS:
                     out[OPENED].setdefault(p.sources[0], _OPENERS[p.text[offset]] + first.lstrip())
     return out
 

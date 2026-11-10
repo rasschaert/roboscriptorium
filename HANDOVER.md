@@ -20,14 +20,31 @@ its three commits and a repair (the lower-case doubt passed through both halves 
 split OCR check), 688 tests passing. GitHub still has the old branch: work from the local
 one, and don't pull or reset it from origin.
 
-**One path for every doubt, its first step coded and off** (2026-11-10 morning, checklist
-"One path for every doubt"): the quote check's unpaired marks as readings in the OCR check
-(`quotes.duel_readings`, `ROBO_QUOTE_READER=1`). Untested with models. First thing once the
-user frees the machine, before small capitals: its short test on De tuin and Nervous System
-(build with the setting off and on; count quote and OCR questions, look at each fix against
-its crop), then a warm `bench tuning` on main as the baseline and one with
-`ROBO_QUOTE_READER=1` against it (cold only for the new suspects), then validation. Next
-kinds for the same path, not started: garbled lines, headings, specks, washed-out pages.
+**The quote check as a reader of the OCR check** (`quotes.duel_readings`,
+`ROBO_QUOTE_READER=1`, off; checklist "One path for every doubt", decisions.md 2026-11-10).
+Short test done on copies of three books (`experiments/probe_quote_reader.py`, results in
+`work/probes/quote-reader/<book>.json`): The Loudest Sound and Nothing's quote lines 81 → 12,
+Nervous System's 6 → 3, the judges right on every kept place checked by eye. Two guesses
+were narrowed after that run (no opened reading on a paragraph that opens on a mark, none
+for a mark opening a word), so next, in order: (1) the short test again, warm, ~15 min:
+
+    experiments/detached.sh quote-reader experiments/timed.sh "probe: the quote check as a reader, off and on, after the narrowing (warm)" 780 work/runs/quote-reader.log uv run python experiments/probe_quote_reader.py nervous-system loudest-sound-and-nothing de-tuin-van-de-avondnevel--ia-scan:11-254
+
+(delete the three copies' folders first only if the books were rebuilt since; the copies
+hold the judges' answers); (2) De tuin's changed paragraphs against its reference; (3) a
+warm `bench tuning` on main as the baseline, one with `ROBO_QUOTE_READER=1` against it,
+then validation: the user's go needed for the benches. Next kinds for the same path, not
+started: garbled lines, headings, specks, washed-out pages.
+
+**Two sessions, one machine** (the user, 2026-11-10: this session, on main, schedules model
+time; the session `smallcaps` works in `../roboscriptorium-caps`). It was shut down for the
+day with its branch at bd1b511 or later, local only, and three short runs approved but not
+started: Nervous System whole on a copy with `ROBO_LOWER_CAPITALS` on (~20 min,
+`experiments/probe_caps_nervous_short.py`), the short test through the arbiter on the tuning
+books (~20 min), the wide-crop probe (~10 min). Its finding from caches: of Nervous System's
+30 small-capital acronyms the build has 26 right; "tv" wrong unasked on PDF 43 and 59, "vcr"
+on PDF 47, PDF 158 asked; the UK scan has no "RCMP". Both changes want a cold bench on the
+same night and baseline: decide the order with the user.
 
 **The user is reviewing Nervous System** (started 2026-11-10 ~06:40, answers in
 `work/nervous-system/review/regions.jsonl`). Their first card, PDF 13, was "a mess": fixed
