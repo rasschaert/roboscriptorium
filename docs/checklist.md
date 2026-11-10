@@ -730,6 +730,17 @@ In this order:
       witness found two of our errors in 756 disagreements (decisions.md): not a stage
 - [ ] Nervous System: its review questions sampled, then **user** reviews; the library
       label on the dedication page is now asked (reason "table")
+- [ ] **Short-story collections: a running head per story** (found 2026-11-10 on Going into
+      a Dark House, 165 questions): each story's title stands atop its odd pages, the book's
+      on the even ones. The line-role trees, trained on novels only, call the story heads body
+      at 0.5–0.75 ("Blue Poppies", "Bevis" kept, some glued to a story's first words), and
+      took the book's title as a story heading on PDF 128; the layout model calls every
+      story head a title (64 "layout-title" questions). The review catches them, a key each.
+      Needs labels: a golden pair that is a short-story collection (gaps to hunt), then the
+      role trees retrained. The Loudest Sound and Nothing is the next to show it
+- [ ] Going into a Dark House: **user** reviews (165 questions; the dedication's "- For" has
+      a speck before it, and PDF 90's show-through stands as a garbled motto, not asked:
+      the page-kind model calls show-through a motto)
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are
