@@ -25,7 +25,7 @@ from urllib.parse import parse_qs, urlparse
 
 import pymupdf
 
-from roboscriptorium import corrections, errata, ocr
+from roboscriptorium import corrections, errata, ocr, ocrcheck
 from roboscriptorium import flags as F
 from roboscriptorium.corrections import ACTIONS, Correction, Corrections
 from roboscriptorium.disagreements import UNSURE, Disagreement, Verdicts
@@ -445,6 +445,15 @@ def combinations(texts: list[str], limit: int) -> list[str]:
     return out
 
 
+def curled_answer(text: str | None, lines: list[str]) -> str | None:
+    """A typed answer with its straight quote marks curled, where the book's line or its
+    readings set curly ones: the reviewer types "I'll" and means "I’ll", as the pipeline
+    would curl it (`ocrcheck._curled`); asking them to retype it cost their time."""
+    if not text or not any(c in ln for ln in lines for c in _CURLY):
+        return text
+    return "\n".join(ocrcheck._curled(row, True) for row in text.split("\n"))
+
+
 def doubtful(line: str, readings: list[dict], action: str, text: str | None) -> str:
     """Why an answer deserves a second look before it is saved, or "" when it doesn't.
 
@@ -596,7 +605,7 @@ class RegionReview:
             flag = next(f for f in self.regions if f.key == body["key"])
             line, readings, page = flag.text, flag.readings, flag.page
         turn = int(body.get("turn") or 0)
-        text = body.get("text")
+        text = curled_answer(body.get("text"), [line, *(g["text"] for g in readings)])
         if place and (why := self.golden.refused(body["key"], action, text)):
             return {"warning": why, "refused": True}
         if not body.get("confirm") and (why := doubtful(line, readings, action, text)):

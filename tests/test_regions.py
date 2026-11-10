@@ -197,12 +197,10 @@ def test_an_answer_that_matches_no_reading_is_queried_once_then_saved(tmp_path):
     # … and saved when the reviewer confirms it.
     out = page_review.record({"key": "k1", "action": "text", "text": typed, "confirm": True})
     assert out["text"] == typed
-    # A straight quote in a book set with curly ones is a slip, whatever the readings.
+    # A straight quote in a book set with curly ones is curled, as the pipeline would.
     straight = "De sheriff stuurt een patrouillewagen,' zei ze."
-    assert (
-        "straight quote"
-        in page_review.record({"key": "k1", "action": "text", "text": straight})["warning"]
-    )
+    saved = page_review.record({"key": "k1", "action": "text", "text": straight})
+    assert "warning" not in saved and saved["text"] == doubt.readings[1]["text"]
     # Spacing and quote glyphs alone don't make a typed line a stranger.
     spaced = "De sheriff  stuurt een patrouillewagen,’ zei ze. "
     assert "warning" not in page_review.record({"key": "k1", "action": "text", "text": spaced})
@@ -500,3 +498,16 @@ def test_a_washed_out_page_offers_only_its_inked_lines_reading(tmp_path, monkeyp
     doc.save(tmp_path / "source.pdf")
     lines = [Line("PART ONE", 60, 68, 140, 84), Line("ie ; “| — wr", 40, 200, 200, 212)]
     assert faint.inked(tmp_path / "source.pdf", PageText(1, 300, 400, lines)) == {0}
+
+
+def test_a_typed_answer_takes_the_books_curly_quotes():
+    from roboscriptorium import review
+
+    line = "She frowned. “T’'ll call the doctor in Emerg and see what he says.”"
+    typed = 'She frowned. "I\'ll call the doctor in Emerg and see what he says."'
+    assert review.curled_answer(typed, [line]) == (
+        "She frowned. “I’ll call the doctor in Emerg and see what he says.”"
+    )
+    assert not review.doubtful(line, [], "text", review.curled_answer(typed, [line]))
+    # A book set in straight marks keeps the reviewer's.
+    assert review.curled_answer(typed, ['She frowned. "T\'ll call."']) == typed

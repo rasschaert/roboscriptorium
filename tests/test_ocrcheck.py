@@ -1219,3 +1219,17 @@ def test_the_judges_answer_one_at_a_time_over_the_book_and_decide_as_before(tmp_
         (2, "other", "Iemand"),
     ]
     assert phased[0].votes == {"clef": "Iemand", "winnow": "Iemand", "jev": "lemand"}
+
+
+def test_a_fix_takes_its_lines_curly_quotes():
+    line = "“T thought I'd check in on you before the weekend,” he said."
+    s = Suspect(201, 10, line, 0, 2, "“T", ('"I',), (0, 0, 1, 1), "other", '"I', {})
+    assert ocrcheck.fixed_text(s, line) == "“I"
+    # A closing quote at the line's end closes.
+    end = '“Yes,” he said, “so be it."'
+    t = Suspect(1, 0, end, 22, 26, 'it."', ('it."',), (0, 0, 1, 1), "other", 'it."', {})
+    assert ocrcheck.fixed_text(t, end).endswith("”")
+    # A line that sets straight marks keeps them.
+    plain = "He said, \"so be it\" and 'went'."
+    u = Suspect(1, 0, plain, 0, 2, "He", ('"He',), (0, 0, 1, 1), "other", '"He', {})
+    assert ocrcheck.fixed_text(u, plain) == '"He'

@@ -799,7 +799,18 @@ def fixed_text(s: Suspect, text: str) -> str:
     joins = bool(s.known) and s.known[0] is True and bool(s.joined)
     if last and joins and s.chosen == s.ours[:-1] and s.ours.endswith(text[-1]):
         return s.ours
-    return s.chosen
+    return _in_lines_quotes(s.chosen, text, s.end)
+
+
+def _in_lines_quotes(chosen: str, text: str, end: int) -> str:
+    """The chosen version with straight quote marks curled where its line sets more curly
+    ones than straight: a reader writes straight marks, and Nervous System's "“T thought
+    I'd" fixed to '"I' left an opening quote the quote check then asked about."""
+    curly = sum(text.count(c) for c in "‘’“”")
+    straight = sum(text.count(c) for c in "'\"")
+    if not any(c in chosen for c in "'\"") or curly <= straight:
+        return chosen
+    return _curled(chosen, not text[end:].strip())
 
 
 def save(suspects: list[Suspect], path: Path) -> None:
