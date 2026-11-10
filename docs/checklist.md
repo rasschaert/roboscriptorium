@@ -763,6 +763,18 @@ In this order:
       the read model reads only lines holding ink, and a reading repeating a sentence is
       never offered (decisions.md); whether `faint.pages` should tell mottled paper from
       faint print is left open: contrast can't (both under 17 grey levels)
+- [ ] **Line boxes off their ink** (the user, 2026-11-10, reviewing Nervous System PDF 92:
+      "the yellow box is drawn wrong"). The layer puts "“Okay.”" at y 179–190 where the
+      scan prints it at ~186–195, 6 points high, so the review's box and the crops the
+      readers and judges see cut through the line: glm-ocr and Qwen dropped its full stop,
+      and every judge and the layer agreeing on "“Okay.”" still left a question. Measure how
+      often (a first count with a shifted-box test found none, so the test is wrong: fit
+      each box to the ink band nearest it instead), then fit boxes to the ink before
+      cropping; upstream of every reader, so through the frozen tryout sets and a bench
+- [ ] **The arbiter asks where every judge and the layer agree** (same card: text layer,
+      tesseract and all four judges on "“Okay.”", only glm-ocr and Qwen without the stop):
+      read the arbiter's sureness on Nervous System's 22 asked suspects, and whether English
+      books have too little trust data
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are
