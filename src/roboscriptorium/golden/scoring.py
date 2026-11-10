@@ -4,6 +4,7 @@ experiments share. A spec names a golden scan and the slice scored,
 
 import difflib
 import json
+import re
 from collections import Counter
 from dataclasses import replace
 from pathlib import Path
@@ -12,6 +13,7 @@ from typing import NamedTuple
 from roboscriptorium import (
     chapters,
     disagreements,
+    faint,
     flags,
     layout,
     ocr,
@@ -328,7 +330,16 @@ def _read_unread(book: Book, stages: pipeline.Stages, found: list[Flag]) -> list
         for f in found
         if not f.readings and f.last < f.first and f.box and "missing-text" in f.reasons
     ]
-    refs = {SourceRef(f.page, k) for f in lines for k in range(f.first, f.last + 1)}
+    # On a washed-out page only the lines holding ink are read: over bare paper or
+    # show-through the read model invents a page of text (Nervous System PDF 13).
+    washed = {f.page for f in lines if "washed-out" in f.reasons}
+    ink = {n: faint.inked(book.source, pages[n]) for n in washed}
+    refs = {
+        SourceRef(f.page, k)
+        for f in lines
+        for k in range(f.first, f.last + 1)
+        if f.page not in washed or k in ink[f.page]
+    }
     read = readers.line_readings(
         book.source,
         [pages[n] for n in sorted({f.page for f in lines})],
@@ -349,8 +360,10 @@ def _read_unread(book: Book, stages: pipeline.Stages, found: list[Flag]) -> list
     out = []
     for f in found:
         if f in lines:
-            text = "\n".join(read.get(SourceRef(f.page, k), "") for k in range(f.first, f.last + 1))
-            f = _with_reading(f, f.text, text)
+            got = [read.get(SourceRef(f.page, k), "") for k in range(f.first, f.last + 1)]
+            if f.page in washed:
+                got = [g for g in got if g.strip()]
+            f = _with_reading(f, f.text, "\n".join(got))
         elif f in regions and (text := boxes.get((f.page, f.box), "")):
             f = _with_reading(f, None, text)
         out.append(f)
@@ -362,9 +375,27 @@ def _one_line(page, box) -> bool:
     return bool(heights) and box[3] - box[1] <= _ONE_LINE * heights[len(heights) // 2]
 
 
+# A sentence of this many words or more, read this many times in one reading, is the read
+# model repeating itself, not a page of prose: Nervous System PDF 13 read "Now, what do
+# you think of that?" some twenty times over bare paper.
+REPEAT_WORDS = 4
+REPEAT_TIMES = 3
+
+
+def repeats(text: str) -> bool:
+    """Whether `text` holds one sentence `REPEAT_TIMES` times or more (`REPEAT_WORDS`)."""
+    sentences = [
+        " ".join(re.sub(r"[^\w\s]", " ", s).lower().split())
+        for s in re.split(r"(?<=[.?!])[”’\"']?\s+", text)
+    ]
+    seen = Counter(s for s in sentences if len(s.split()) >= REPEAT_WORDS)
+    return any(n >= REPEAT_TIMES for n in seen.values())
+
+
 def _with_reading(f: Flag, layer: str | None, text: str) -> Flag:
-    """`f` with the read model's `text` as a reading, after the layer's where there is one."""
-    if not text.strip():
+    """`f` with the read model's `text` as a reading, after the layer's where there is one;
+    none where the reading repeats itself (`repeats`)."""
+    if not text.strip() or repeats(text):
         return f
     if layer is None:
         return replace(f, readings=[{"text": text, "votes": ["Qwen"]}])

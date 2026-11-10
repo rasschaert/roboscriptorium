@@ -1,3 +1,5 @@
+import pymupdf
+
 from roboscriptorium import corrections, flags
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.ir import SourceRef
@@ -474,3 +476,27 @@ def test_lost_initials_leaving_fragments_are_all_asked():
     pages, roles = _openings(["HAT", "NCE", "UEEN", "OHN", "OUR", "VERYTHING", "ARCH"])
     asked = [f.page for f in flags.find(pages, roles, known=known) if "initial-lost" in f.reasons]
     assert asked == [1, 2, 3, 4, 5, 6, 7]
+
+
+def test_a_reading_that_repeats_a_sentence_is_never_offered():
+    from roboscriptorium.golden import scoring
+
+    invented = " ".join(["“Now, what do you think of that?” said the old man."] * 3)
+    assert scoring.repeats(invented)
+    # Prose that says a short thing twice, or repeats short replies, is prose.
+    prose = (
+        "“Yes.” “Yes.” “Yes.” She looked at me. “Now, what do you think of that?” "
+        "I didn’t answer. “Now, what do you think of that?” she asked again."
+    )
+    assert not scoring.repeats(prose)
+
+
+def test_a_washed_out_page_offers_only_its_inked_lines_reading(tmp_path, monkeypatch):
+    from roboscriptorium import faint
+
+    doc = pymupdf.open()
+    page = doc.new_page(width=300, height=400)
+    page.insert_text((60, 80), "PART ONE", fontsize=14)
+    doc.save(tmp_path / "source.pdf")
+    lines = [Line("PART ONE", 60, 68, 140, 84), Line("ie ; “| — wr", 40, 200, 200, 212)]
+    assert faint.inked(tmp_path / "source.pdf", PageText(1, 300, 400, lines)) == {0}

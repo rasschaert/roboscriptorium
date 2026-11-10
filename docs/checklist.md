@@ -752,15 +752,10 @@ In this order:
       Nothing, PDF 57): the heading's lines and the opening's should split where the type
       changes from the title's to the text's capitals; check the heading-title rules
       (`chapters.title_lines`) against it
-- [ ] **Washed-out cards that waste the reviewer's time** (the user, 2026-11-10, reviewing
-      Nervous System: "what a mess"). PDF 13, a part page with crisp print on tinted, mottled
-      paper with show-through, was called washed out (`faint.py`), so the whole page became one
-      card with the layer's garbage as reading a. And Qwen's whole-region reading invented a page
-      of "Now, what do you think of that?" as reading b. (1) Washed out should mean faint print,
-      not mottled paper: check `faint.pages` against Nervous System PDF 13, 150 and 284 and
-      Afscheid's faint pages. (2) A reading far longer than the layer's, or repeating its lines,
-      is never offered. Short test on Nervous System's three cards and Going into a Dark House
-      PDF 90
+- [x] Washed-out cards (the user, 2026-11-10, reviewing Nervous System: "what a mess"):
+      the read model reads only lines holding ink, and a reading repeating a sentence is
+      never offered (decisions.md); whether `faint.pages` should tell mottled paper from
+      faint print is left open: contrast can't (both under 17 grey levels)
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are

@@ -1145,6 +1145,19 @@ or it holds no word (the word list knows "ee" and "ua", so all three tests are n
 "For" or "To" alone on a line stays. Reading such pages with the OCR check was tried and
 not taken: on a show-through page called a motto, Qwen invented a sentence.
 
+## A washed-out page's card offers only what holds ink
+
+**On a washed-out page the read model reads only the lines whose boxes hold ink, and a
+reading that repeats a sentence three times is never offered** (`faint.inked`,
+`scoring.repeats`). The washed-out check measures the whole page, so a part page with crisp
+print on mottled paper (Nervous System PDF 13) is one too: its layer is guesses over bare
+paper. Asked to read each of those 33 line boxes, Qwen invented a page of "Now, what do you
+think of that?", offered beside the layer's garbage, and the reviewer had to type "PART ONE
+The Singing Marksman" (the user: "what a mess"). Ink is 30 grey levels or more between the
+paper and a line's darkest ink, the washed-out check's own line: print measures 50–93,
+show-through and faint print under 17. Now the card reads the two inked lines; a blank page
+or faint print gets no reading to pick, and the reviewer drops or types it, as designed.
+
 ## The review shows what the book will print
 
 A single-quoted book's questions show their readings with its own opening mark

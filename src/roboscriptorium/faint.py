@@ -15,7 +15,7 @@ import numpy as np
 import pymupdf
 
 from roboscriptorium.files import read_cache, write_cache
-from roboscriptorium.pdf import PageText
+from roboscriptorium.pdf import PDF_LOCK, PageText
 
 VERSION = 1
 DPI = 60
@@ -37,6 +37,25 @@ def contrast(page: pymupdf.Page, lines: list) -> float:
     ]
     inked = np.concatenate([a.ravel() for a in inked if a.size])
     return float(np.percentile(grey, 50) - np.percentile(inked, 5))
+
+
+def inked(pdf: Path, page: PageText) -> set[int]:
+    """The lines of `page` whose boxes hold ink: `FAINT_BELOW` grey levels or more between
+    the paper and the line's darkest ink. On a washed-out page the others are the layer's
+    guesses over bare paper or show-through, where a reader invents text."""
+    with PDF_LOCK, pymupdf.open(pdf) as doc:
+        pix = doc[page.number - 1].get_pixmap(dpi=DPI, colorspace=pymupdf.csGRAY)
+    grey = np.frombuffer(pix.samples, np.uint8).reshape(pix.h, pix.w)
+    paper = np.percentile(grey, 50)
+    zoom = DPI / 72
+    out = set()
+    for k, ln in enumerate(page.lines):
+        box = grey[
+            int(ln.y0 * zoom) : int(ln.y1 * zoom) + 1, int(ln.x0 * zoom) : int(ln.x1 * zoom) + 1
+        ]
+        if box.size and paper - np.percentile(box, 5) >= FAINT_BELOW:
+            out.add(k)
+    return out
 
 
 def pages(pdf: Path, body: list[PageText], cache: Path) -> set[int]:
