@@ -203,12 +203,10 @@ def duel_readings(
             if why == "open at end" and end and p.text.rstrip().endswith(end[-3:]):
                 closed = [m for m in PAIRS.values() if not _open_at_end(p.text.rstrip() + m)]
                 if len(closed) == 1:
-                    ends = re.compile(re.escape(closed[0]) + "$")
-                    read = _ended(end, last, others, ends)
+                    read = _ended(p.text, end, last, others)
                     out[READER].setdefault(last, read or end + closed[0])
             elif why == "no stop at end" and end.endswith(p.text[offset]):
-                ends = re.compile("[.!?…]" + re.escape(end[-1]) + "$")
-                read = _ended(end, last, others, ends)
+                read = _ended(p.text, end, last, others)
                 out[READER].setdefault(last, read or end[:-1] + "." + end[-1])
             elif why == "no opening" and (at := _line_of(p, offset, lines)):
                 ref, k = at
@@ -227,15 +225,20 @@ def duel_readings(
 _LAST_WORD = re.compile(r"\S+$")
 
 
-def _ended(
-    end: str, ref: SourceRef, others: list[dict[SourceRef, str]], ends: re.Pattern
-) -> str | None:
-    """The line with its last word as most of the other readings that end it as `ends`
-    asks have it; None where none does."""
+def _ended(text: str, end: str, ref: SourceRef, others: list[dict[SourceRef, str]]) -> str | None:
+    """The line with its last word as most of the other readings have it whose last word
+    leaves the paragraph (`text`) fewer unpaired marks; None where none does ("one.’"
+    for "one.”" closes the outer quote and opens the inner one)."""
+    text = text.rstrip()
+    ours = _LAST_WORD.search(end)
+    if not ours or not text.endswith(ours[0]):
+        return None
+    stem, unpaired = text[: len(text) - len(ours[0])], len(problems(text))
     words = Counter(
         m[0]
         for reading in others
-        if (m := _LAST_WORD.search(reading.get(ref, "").rstrip())) and ends.search(m[0])
+        if (m := _LAST_WORD.search(reading.get(ref, "").rstrip()))
+        and len(problems(stem + m[0])) < unpaired
     )
     if not words:
         return None

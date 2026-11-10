@@ -389,3 +389,11 @@ def test_speech_closed_on_a_letter_ends_as_the_reading_with_a_stop_before_the_ma
     assert quotes.duel_readings([p], lines, others)[quotes.READER] == {
         SourceRef(1, 1): "on and on?’"
     }
+
+
+def test_a_reading_that_closes_the_outer_quote_over_the_inner_one_is_not_the_lines_end():
+    p, lines = _lines("‘He said, “I think you", "would, my little one.”")
+    others = [{SourceRef(1, 1): "would, my little one.’"}]
+    assert quotes.duel_readings([p], lines, others)[quotes.READER] == {
+        SourceRef(1, 1): "would, my little one.”’"
+    }
