@@ -793,6 +793,12 @@ In this order:
       ".."). The book sets one stop or its measured ellipsis (". . .", `typography`), never two
       dots: a ".." that isn't the ellipsis with a dot lost is a stop and a speck. Counterexamples
       first: an ellipsis read short, an abbreviation's stop ending a sentence
+- [ ] **A speck read as a quote mark after a word** (label from the user, 2026-11-10: Nervous
+      System PDF 138 lines 8–10, "disaster’" where the print has "disaster" and a speck; the US
+      scan's layer reads "disaster", so the witness agrees). It unbalanced the paragraph's
+      quotes, so the quote card asked. With the stray hyphen and the second stop: specks the
+      readers turn into marks, the pairs of quotes the book's paragraphs must make (an extra
+      closing mark where nothing opens) and the witness are the evidence to settle them
 - [ ] **A quote card shows only the OCR check's line and the read model's marks** (the user,
       2026-11-10, Nervous System PDF 120: "where are the other model's readings?"). By design
       (`pipeline.proposals`, `quotes.readings`), but glm-ocr's and tesseract's readings of the
