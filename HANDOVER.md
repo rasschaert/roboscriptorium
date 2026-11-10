@@ -5,22 +5,20 @@ user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it 
 end of every session. Top sections rewritten 2026-11-10 ~00:30 by the session that built
 the user's English books; the older sections from 2026-11-09 morning.
 
-## Running (overnight 2026-11-09/10, the user away from ~07:00–08:00)
+## Running
 
-Two detached screens, one model job at a time, each with its output in `work/runs/`:
+Nothing. **Batch five was stopped at ~06:50 on 2026-11-10** (the user leaving for work): its
+cold bench (`night-20261110.sh` step 3, worktree `../robo-grow6`, branch `grow6` rebased on
+main) had finished Vals alarm and was on The Thief-Taker's Apprentice; Metro, De tuin, Au pair
+and De vergelding remain. Resume it, the next night the user frees the machine, from its
+caches with steps 3 and 4 of `work/runs/night-20261110.sh` (the benches of steps 1 and 2 are
+done, NO CHANGE): against `work/bench/tuning-20261110T032819-e3e0a01-dirty.json`.
 
-1. `robo-queue-20261109` is done: *Going into a Dark House* (01:56, 165 questions) and *The
-   Loudest Sound and Nothing* (04:24, 136 questions), both epubcheck clean, sampled, and
-   waiting on the user's review (checklist).
-2. `robo-night-20261110` (`night-20261110.sh`, `.out`): waits for the queue, then
-   `bench tuning` and `bench validation` warm on main against production
-   (`tuning-20261109T035156`, `validation-20261108T212607`) to confirm the night's
-   changes, then **batch five** from worktree `../robo-grow6` (branch `grow6`, pushed:
-   `grow6.patch` committed) cold with one book at a time, then its trust data rebuilt.
-   Status 06:30: both benches NO CHANGE (decisions.md); batch five cold since 04:29: Vals
-   alarm done, Thief-Taker in progress, then Metro, De tuin, Au pair, De vergelding; log `work/runs/grow6-tuning.log`.
-   **When the user leaves for work, stop it** (`experiments/stop-run.sh night-20261110`):
-   no heavy work in the day. It resumes from its caches; restart from the step it reached.
+**The user is reviewing Nervous System** (started 2026-11-10 ~06:40, answers in
+`work/nervous-system/review/regions.jsonl`). Their first card, PDF 13, was "a mess": fixed
+in 47ecbef (washed-out cards read only inked lines; no repeating readings). A review server
+started before that commit shows the old cards: restart it (answers are kept). Then Going
+into a Dark House and The Loudest Sound and Nothing (checklist, the user's books).
 
 **Done tonight** (decisions.md 2026-11-09/10 has the numbers): Nervous System built and
 checked (epubcheck clean; 70 questions after the fixes, sampled; waits on the user's
