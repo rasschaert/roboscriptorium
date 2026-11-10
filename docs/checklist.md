@@ -741,6 +741,17 @@ In this order:
 - [ ] Going into a Dark House: **user** reviews (165 questions; the dedication's "- For" has
       a speck before it, and PDF 90's show-through stands as a garbled motto, not asked:
       the page-kind model calls show-through a motto)
+- [ ] The Loudest Sound and Nothing: **user** reviews (built 2026-11-10 04:24, epubcheck
+      clean, 136 questions sampled: 61 OCR doubts, 35 quotes, 20 headings). Its headings
+      are all asked where wrong: Blackpool's label ("BLACKPOOL LIBRARIES", "00430050" as a
+      heading, PDF 7, a table at 0.95), the half-title (PDF 11), "The Numbers / NUMBERS",
+      a story's first line in capitals swallowed into its heading ("Caro at the Pool / SHE
+      FOUND HER AT THE SWIMMING POOL."), show-through on PDF 182. Its running heads (author
+      and book title) stayed out of the text
+- [ ] A story's first line set in capitals taken into its heading (The Loudest Sound and
+      Nothing, PDF 57): the heading's lines and the opening's should split where the type
+      changes from the title's to the text's capitals; check the heading-title rules
+      (`chapters.title_lines`) against it
 - [ ] Other editions as an error finder (the user, 2026-10-18): not a pipeline stage but
       an instrument for a book with no reference, so its errors are found and fixed by
       pipeline changes measured on the golden books. The built EPUB's paragraphs are

@@ -9,13 +9,9 @@ the user's English books; the older sections from 2026-11-09 morning.
 
 Two detached screens, one model job at a time, each with its output in `work/runs/`:
 
-1. `robo-queue-20261109` (`queue-20261109.sh`): *Going into a Dark House* done 01:56
-   (epubcheck clean, 165 questions sampled, waits on the user's review; its per-story
-   running heads are the checklist's "Short-story collections"), then *The Loudest Sound
-   and Nothing* from its scan 2, started 01:56, in Qwen's reading at 03:00, done ~04:15
-   (`loudest-build.log`; scan 1 in `work/candidates/incoming/loudest-1/` the witness).
-   When it ends: check its ends, story heads, Blackpool's library label (PDF 7), sample
-   its questions.
+1. `robo-queue-20261109` is done: *Going into a Dark House* (01:56, 165 questions) and *The
+   Loudest Sound and Nothing* (04:24, 136 questions), both epubcheck clean, sampled, and
+   waiting on the user's review (checklist).
 2. `robo-night-20261110` (`night-20261110.sh`, `.out`): waits for the queue, then
    `bench tuning` and `bench validation` warm on main against production
    (`tuning-20261109T035156`, `validation-20261108T212607`) to confirm the night's
