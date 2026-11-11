@@ -11,21 +11,27 @@ end of every session. Top sections rewritten 2026-11-10 (~00:30 and ~07:45); the
 branch has been open for too long", force-push of `small-caps` allowed). Results so far in
 decisions.md, 2026-11-11 (small capitals: on the branch's copy).
 
-- screen `robo-caps-bench-20261111` (`work/runs/caps-bench-20261111.sh`): `bench tuning`
-  on main as the baseline (warm), then the `small-caps` worktree with
-  `ROBO_LOWER_CAPITALS=1` against it (cold for the new suspects, one book at a time), then
-  the same pair on validation. Logs `work/runs/{base,caps}-{tuning,validation}.log`.
-- screen `robo-quote-bench-20261111` waits for it: the `quote-reader` worktree
-  (`../robo-quote`, 88a2dda, local) with `ROBO_QUOTE_READER=1` against the same baselines
-  (the runs named `*38c86cf*`), logs `work/runs/quote-{tuning,validation}.log`.
-- Don't edit `src/` on main, in `../roboscriptorium-caps` or in `../robo-quote` while
-  these run.
+- screen `robo-caps-arbiter-20261111` (`work/runs/caps-arbiter-20261111.sh`, started
+  ~02:30 on 2026-11-11, the code of `../roboscriptorium-caps` at bc2afb3, local): `bench
+  tuning` and `validation` with `ROBO_LOWER_CAPITALS=1` after the pruning
+  (`caps2-*.log`); the trust data rebuilt with the doubts in
+  `work/probes/ocr-trust-caps` (`caps-trustdata.log`); an arbiter trained on it, saved as
+  `work/models/ocr-trust-caps*.pkl` beside production's (`caps-train.log`); both benches
+  with it (`caps3-*.log`). Baselines: `work/bench/tuning-20261110T234355-38c86cf-dirty.json`
+  and `work/bench/validation-20261111T010443-64c17a2-dirty.json` (main, that night).
+- Don't edit `src/` in `../roboscriptorium-caps` while it runs.
 
-Then, small capitals: if neither bench is worse, rebuild the trust data with the doubts
-in it (`ROBO_TRUST_DATA=work/probes/ocr-trust-caps ROBO_LOWER_CAPITALS=1`,
-`experiments/rebuild-trust.sh`), retrain the arbiter and bench again: today it asks where
-all four judges say capitals ("tv", "VCR" on Nervous System), never having seen such a
-doubt. Then merge. Batch five's cold bench after that.
+The first benches of the night (before the pruning; `caps-{tuning,validation}.log`):
+tuning NO CHANGE, case errors down (3 unasked fixed, 10 unasked now asked, 12 right
+fixes turned questions by an extra capitals version); validation WORSE on the many-slips
+line (Verminkt's "zn"/"zijn" four times asked beside "ZN"). Merge only if the pruned
+runs are no worse; with the retrained arbiter the merge sets
+`ocr_trust_model` to the new files (or renames them over production's, the old kept).
+
+**Waiting, not queued: the quote reader's benches** (`work/runs/quote-bench-20261111.sh`,
+the `quote-reader` worktree `../robo-quote` at 88a2dda with `ROBO_QUOTE_READER=1`, the
+same baselines). Its suspects on tuning run to thousands, hours cold: start it once
+small capitals is settled, then batch five's cold bench.
 
 **Batch five was stopped at ~06:50 on 2026-11-10** (the user leaving for work): its
 cold bench (`night-20261110.sh` step 3, worktree `../robo-grow6`, branch `grow6` rebased on
