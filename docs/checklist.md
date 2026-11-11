@@ -57,11 +57,6 @@ The weekend's order (the user left it to the agent): each step feeds the next.
    held back, not retired (the user, 2026-10-23: its files kept, `bench.RESERVE`). Left: Het
    laatste bevel's glued words as verdicts (the user's time). Verminkt sliced to 7–100 (2026-10-23,
    `scoring.cut_to_pages`).
-- [ ] The bench's italic count without the words' spelling (found 2026-11-11): an italic
-      word set italic but misread counts as an italic error, so the count rises with the
-      questions (an asked suspect keeps the layer's text: 1,278 → 1,304 between asking
-      below 0.9 and 0.95 with the same slants) and flipped the verdict on three arbiter
-      runs. Count a word's slant by its place, whatever its letters. Agent, short
 - [ ] Grow the tuning slices further whenever the machine is idle (the user, 2026-10-25,
       until told to stop; the user's other work comes first). Done 2026-10-26: eleven slices,
       ~860 pages (13 h cold), tuning now ~3,100 pages. Paused 2026-10-26 at the user's
@@ -95,6 +90,8 @@ The weekend's order (the user left it to the agent): each step feeds the next.
       geruchten, Verminkt whole. Na die nacht is held back (a sibling of two
       tuning books; `bench.RESERVE`). De tunnels stays role training (an EPUB that can't score
       words). New pairs the user finds go through the same flow
+- [x] The bench's italic count by a word's place, whatever its letters (2026-11-11): it
+      rose with the questions asked and flipped three verdicts (decisions.md)
 - [x] Error categories tracked per run (2026-10-17): 16 causes read from an error's two
       sides alone (`errorlog.cause`), chosen from stage (a)'s 618 saved errors across 23
       books; each run's record keeps them by book, `bench` and `bench-diff` print each
