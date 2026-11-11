@@ -98,8 +98,28 @@ digit for a letter, or in lower case ("vTM", "LC1" for "LCI", "ss" for "SS"). Tw
   typed "VCR" on another. With the same setting each reading's piece in capitals is one
   more version (`ocrcheck.capitals_versions`); not from a reading that splits the span's
   words, a lone letter before an apostrophe ("z'n") or a stutter ("a-a-a-f"). On the
-  tuning books' cached suspects that is 450 of 37,712; whether the judges take the
-  capitals where they are printed and nowhere else is not measured yet.
+  tuning books' cached suspects that is 450 of 37,712.
+
+A doubt needs a line the readers read (a washed-out page raises none). An added version
+is one more choice for the judges, and a wrong one splits them and turns a right fix
+into a question, so none is added where a version already holds a word in capitals
+("CSC" beside "CBC"), none from the layer's reading for a piece another version reads
+otherwise ("HDNG" beside "hang", "ZN" beside "zijn"), none for a word or token with an
+accent (0 of 17 right in the tuning books' trust data), and never more than the judges'
+seven options. About one added capitals version in a hundred is the print's, spread
+over every shape of piece, so the judges separate them, not a rule. The text judge
+keeps its seat on them: it reads no crop, but knows "UV-licht" from the sentence where
+the vision judges see a lower-case shape, and without its vote the hard ones go
+unasked.
+
+Benched 2026-11-11 with the setting on (decisions.md): tuning no change, unasked errors
+524 → 512 ("SWAT-team", "USB-stick", "RVS", "SD’ers" fixed; "SS", "UV-licht", "CV",
+"V-vormig" asked), none made unasked, questions 3,356 → 3,410; validation no error place
+changed, nine more questions. On Nervous System "tv" twice and "VCR" are asked with all
+four judges on the capitals, "SF" fixed. Not reached: a lone small capital with the
+lower case's shape ("v-hals", "u-bocht", "o-benen"), on the tight crop or the wide one.
+The arbiter retrained with the doubts fixes more of them unasked but lets more errors of
+other kinds through (unasked 545), so production's arbiter decides them.
 
 Five richer prompts on the reader set (hosted, 330 hard lines) each fixed about as many
 lines as they broke: "never correct or modernise" 2 against 5, the lines above and
