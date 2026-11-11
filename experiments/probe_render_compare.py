@@ -36,7 +36,7 @@ def book_font(name: str) -> tuple[ImageFont.FreeTypeFont, dict]:
     plain = re.compile(r"regular|roman", re.I)
     entry = next((e for e in ranked if not HEAVY.search(e["name"])
                   or plain.search(Path(e["file"]).stem)), ranked[0])
-    path = Path.home() / "Fonts" / entry["file"]
+    path = match.LIBRARY / entry["file"]
     return ImageFont.truetype(str(path), match.RENDER_PX), entry
 
 

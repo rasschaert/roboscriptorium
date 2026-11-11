@@ -480,6 +480,10 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   once they are pulled again.
 - Models set up by hand (Winnow-12B, `imajev:4b`, imajev on `llama-server`, the
   DocLayout-YOLO weights): [docs/models.md](docs/models.md), Setup.
+- Fonts: `work/fonts/`, the user's library of book typefaces (2,419 OpenType and TrueType
+  files, 407 MB: Adobe Font Folio 11 and `extra/` with Quadraat, Scala and Swift), for
+  drawing a reading as the book prints it (`experiments/probe_font_match.py`). Licensed:
+  never in git, like the books.
 - Word lists: `work/lexicon/{nld,eng}-words.txt`, built by `lexicon.py` from the tessdata
   models with `combine_tessdata` and `dawg2wordlist` (both come with Homebrew's
   tesseract).

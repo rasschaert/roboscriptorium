@@ -22,6 +22,8 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from roboscriptorium import pdf
 
+# The font library: licensed fonts, kept with the books, out of git.
+LIBRARY = Path("work/fonts")
 OUT = Path("work/probes/font-match")
 DPI = 400
 WORDS = 240
@@ -186,7 +188,7 @@ def sheet(book: str, words, ranked: list[dict], fonts: dict) -> None:
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    library = Path.home() / "Fonts"
+    library = LIBRARY
     if "--fonts" in args:
         library = Path(args.pop(args.index("--fonts") + 1))
         args.remove("--fonts")

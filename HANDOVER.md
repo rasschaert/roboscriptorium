@@ -15,7 +15,7 @@ lays it over the scan (decisions.md, the last entries of 2026-11-11; the checkli
 CPU only, no models: `experiments/probe_font_match.py` over every book with trust data
 (output `work/probes/font-match/golden-run.log`, one JSON and one sheet a book). Next:
 `uv run python experiments/probe_render_compare.py <book> …` on those books. The fonts
-are the user's, in `~/Fonts` (outside the repo, never copied in). The user offered
+are the user's library, copied to `work/fonts/` (gitignored: licensed, never in git). The user offered
 model time once the first session's runs end (about 04:30), for the trust data with
 the new judge's votes if the golden books bear it out.
 

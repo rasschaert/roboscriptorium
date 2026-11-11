@@ -295,7 +295,7 @@ are under Done, "Architecture probes".
             (model time: the user offered the machine once the night's runs end)
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
             for the shapes the book can't supply. The family is found for eight of the
-            user's ten books (the user's library in `~/Fonts`: Quadraat, Janson Text
+            user's ten books (the user's library, in `work/fonts/`: Quadraat, Janson Text
             four times, Trump Mediaeval, Minion, Sabon); Ex-minnaar and Going into a
             Dark House undecided. Left: the weight, the italic and small-capital cuts
             (which word is set in which), and the two undecided books

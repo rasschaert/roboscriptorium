@@ -1842,3 +1842,8 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   typeface matched (running), then the same test on their ~30,000 labelled places by
   kind of error and by where the judges were wrong; if it holds, the fit as a judge's
   vote with its margin in the trust data, the arbiter retrained, both benches.
+- 2026-11-11: **The font library lives in `work/fonts/`** (the user: a path in their home
+  folder "is not very portable for future collaborators"): the 2,419 OpenType and
+  TrueType files of their library, 407 MB, copied beside the books; gitignored with the
+  rest of `work/`, since the fonts are licensed. The probes read them there
+  (`probe_font_match.LIBRARY`); a font match's JSON names each font by its path under it.
