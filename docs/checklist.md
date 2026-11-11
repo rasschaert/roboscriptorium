@@ -290,10 +290,14 @@ are under Done, "Architecture probes".
             labelled suspects, how often the better fit is the print, above all where
             the judges were wrong or the arbiter asked; and how many suspects need a
             shape the book never prints elsewhere (a lone í, "VTM" in small capitals)
-      - [ ] **Matched-font rendering** (the user's): the typeface found from the
-            harvested letters (and the colophon, where it names one), or its closest
-            digital cut, for the shapes the book can't supply; fitted to the book's
-            weight and ink spread on its common letters. Sized by the count above
+      - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
+            for the shapes the book can't supply. The family is found for eight of the
+            user's ten books (2026-11-11, `probe_font_match.py`, the user's library in
+            `~/Fonts`: Quadraat, Janson Text four times, Trump Mediaeval, Minion,
+            Sabon); Ex-minnaar and Going into a Dark House undecided. Left: the weight
+            and the two undecided books, from single letters once own-type templates
+            exist; the drawing fitted to the book's ink spread; then the test on
+            suspects that need a shape the book never prints elsewhere
       - [ ] **Leftover ink**: the agreed reading drawn and taken from the scan; ink left
             over raises a suspect where every reading agrees (a missed stress accent, a
             speck). Tried first on the six known stress accents and the quiet set

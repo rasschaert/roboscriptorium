@@ -1785,3 +1785,25 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   model here; there is no room. The pipeline's readers at 450 dpi were not taken as
   a swap on 2026-10-22, which stands. The other variants (contrast, crop padding,
   prompt wording) were not read. The checklist's per-book settings step is dropped.
+- 2026-11-11: **A book's typeface can be found from its scan: eight of the user's ten
+  books named, the first step of matched-font rendering** (the user's idea of render
+  and compare; `experiments/probe_font_match.py`, no models, about two minutes a book).
+  240 plain lower-case words of five letters or more are cut from twelve pages of the
+  scan, each drawn in every font of the user's library (2,317 with Latin letters: Adobe
+  Font Folio 11 and a folder with Quadraat, Scala and Swift, outside the repo) and laid
+  over the scan's word at its height; a font's score is the mean correlation, at the
+  letter spacing (0.92–1.08) and stroke thickening (−3 to +5 scan pixels) that suit it.
+  Best and next family: Stella Quadraat 0.66 (Life 0.61); Nervous System Janson Text
+  0.75 (Galliard 0.74); Andere levens Janson Text 0.83 (Garamond Premier 0.76); Een
+  Russische roman Janson Text 0.85 (Adobe Caslon 0.75); Hoe wij verdwijnen Janson Text
+  0.82 (Garamond Premier 0.74); De kus in de nacht Trump Mediaeval 0.76 (Quadraat 0.63);
+  Pieter Daens Minion condensed 0.76 (weights within 0.01 of each other); The Loudest
+  Sound and Nothing Sabon 0.76 (Minister 0.71). Undecided: Ex-minnaar (Galliard 0.692,
+  Bembo 0.685) and Going into a Dark House (Bembo 0.663, Fournier 0.662, Dante 0.656),
+  the two blurriest scans. Learned on the way: the layer's word boxes cut through
+  letters, so a word must be cut along its ink (the first run, on the boxes, ranked
+  bold sans-serifs first); a scan's ink is heavier than a clean drawing, so a bold cut
+  scores level with its regular: the family is found, the weight not yet. The right
+  font scores 0.66–0.85, enough to name a family, not to settle a contested word:
+  that needs the drawing fitted to the book's ink on its own letters (own-type
+  templates). By eye beforehand the agent had guessed Scala for Stella: wrong.
