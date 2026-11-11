@@ -2,7 +2,7 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Top sections rewritten 2026-11-11 (~05:50); the older sections
+end of every session. Top sections rewritten 2026-11-11 (~18:30); the older sections
 from 2026-11-09 and 2026-11-10.
 
 ## Running
@@ -10,7 +10,8 @@ from 2026-11-09 and 2026-11-10.
 **Night of 2026-11-10/11** (the user: the machine is free; small capitals first, then the
 quote reader, then batch five). decisions.md, 2026-11-11, has every number.
 
-**Batch five runs since 2026-11-11 13:54** (the user: model time until told otherwise),
+**Batch five runs since 2026-11-11 13:54** (Vals alarm and The Thief-Taker's Apprentice
+done, on Metro 2033 at 18:25; De tuin, Au pair and De vergelding remain) (the user: model time until told otherwise),
 screen `robo-grow6-20261111`, script `work/runs/grow6-20261111.sh`, output in
 `work/runs/grow6-20261111.out`, log `work/runs/grow6-tuning.log`: the worktree
 `../robo-grow6` (branch `grow6`, rebased on main e0273b4) benched cold, one book at a
@@ -21,16 +22,31 @@ the six grown books' trust data rebuilt. Stop it with
 The day's warm benches are done (decisions.md, 2026-11-11): the baseline with the
 lower-case doubts on (validation's is `validation-20261111T115733-e0273b4-dirty.json`);
 the quote reader with its kept question, still not taken (16 asked places unasked on
-tuning); the steadier arbiter (`work/models/ocr-trust-steady*.pkl`), level with
-production's when it asks below 0.93. **Waiting on the user: whether production
-switches to it at 0.93** (tuning 18 fewer questions and 6 fewer unasked errors,
-validation 29 more questions and 3 fewer unasked).
+tuning, not read place by place; next: trust data with the two quote readers and the
+arbiter retrained on them).
 
-The quote reader as first benched: tuning WORSE, validation NO CHANGE; 75 and 6 asked
-error places went unasked (decisions.md). The arbiter's code now trains ten seeds with a
-smooth calibration (`trust.Trees`, `trust.Curve`): **a retraining (`train_ocr_trust.py
---save`, `rebuild-trust.sh`) writes that kind of arbiter over production's**, so don't
-retrain into `work/models/ocr-trust.pkl` before the steadier arbiter's bench is read.
+**Production is switching to the steadier arbiter** (the user, 2026-11-11: "switch and
+use 20"): twenty trainings averaged and a smooth calibration (`trust.Trees`,
+`trust.Curve`, on main; design.md has why), asking below 0.93. Trained:
+`work/models/ocr-trust-steady20*.pkl` (the ten-seed one is `ocr-trust-steady*.pkl`).
+Validation at 0.93: NO CHANGE (548 questions, 167 unasked, 170 asked). Left, in order:
+1. once batch five's bench (step 1 of its script) has ended, bench tuning warm, about
+   16 minutes, with `ROBO_OCR_ASK_BELOW=0.93
+   ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-steady20.pkl` against
+   `work/bench/tuning-20261111T115457-e0273b4.json` (production there: 3,410 questions,
+   512 unasked, 1,240 asked; the ten-seed arbiter at 0.93: 3,392, 506, 1,221);
+2. if level: copy production's `work/models/ocr-trust*.pkl` aside, put the steady20
+   files in their place, set `ocr_ask_below` to 0.93 in `config.py`, and bring
+   design.md (the asking line), modules.md (it still says 0.8), the checklist, README
+   and how-it-works along; tests, commit, push;
+3. fast-forward main to `italics-by-place` (worktree `../roboscriptorium-caps`, 35ff49d,
+   pushed: the bench's italic score pairs misread words by place; check `git diff
+   --stat main italics-by-place` first) and bench main, tuning and validation, for a
+   fresh baseline: older runs count italics the old way;
+4. then weigh batch five's retraining against that baseline.
+
+**A retraining (`train_ocr_trust.py --save`, `rebuild-trust.sh`) writes the new kind of
+arbiter over production's** `work/models/ocr-trust.pkl`: not before step 2.
 
 Found at ~06:00: retraining is exact (the arbiter trained again on
 production's trust data is production's file byte for byte), and the control's 15 more
@@ -40,29 +56,18 @@ arbiter against another is noise at that size: bring the arbiter's variance down
 
 **Small capitals: the lower-case doubts are on by default** (`ROBO_LOWER_CAPITALS`, the
 user's call on 2026-11-11: about 1.7% more questions; on tuning unasked errors
-524 → 512, none made unasked; validation nine more questions, no place changed). The
-change sits on the branch `small-caps` until the quote reader's benches end (they load
-main's code and compare with the doubts off); then fast-forward main to it and bench
-main, tuning and validation, for the new baseline (warm, about 20 minutes).
-The checklist step "Small capitals, nailed" lists what is left. The worktree
-`../roboscriptorium-caps` (branch `small-caps`, merged, pushed) can go; the night's trust
-data and arbiters (`work/probes/ocr-trust-{caps,ctl}`, `work/models/ocr-trust-{caps,ctl,rep}*.pkl`)
-are not in use.
+524 → 512, none made unasked; validation nine more questions, no place changed), on
+main, and the day's baseline has them. The checklist step "Small capitals, nailed" lists
+what is left. The night's trust data and arbiters (`work/probes/ocr-trust-{caps,ctl}`,
+`work/models/ocr-trust-{caps,ctl,rep}*.pkl`) are not in use.
 
-**The quote check as a reader: fixed twice, not benched** (`ROBO_QUOTE_READER=1`, off).
+**The quote check as a reader: benched twice, not taken** (`ROBO_QUOTE_READER=1`, off).
 Both fixes are on main (6b57830: a last line another reading already ends paired takes
 that reading's end; De tuin's fixes 2,143 → 2,155 against 2,156 off, OCR questions
 111 → 98 against 83, quote lines 146 → 80; 023e983: only where that leaves the
 paragraph fewer unpaired marks, The Loudest Sound and Nothing's "one.”’"). The worktree
-`../robo-quote` (branch `quote-reader`, merged) can go. Its benches are the run above. Still asked by the quote check itself: a mark opening a word
+`../robo-quote` (branch `quote-reader`, merged) can go. Still asked by the quote check itself: a mark opening a word
 ("’bout", 40 lines in The Loudest Sound and Nothing).
-
-**Batch five was stopped at ~06:50 on 2026-11-10** (the user leaving for work): its
-cold bench (`night-20261110.sh` step 3, worktree `../robo-grow6`, branch `grow6` rebased on
-main) had finished Vals alarm and was on The Thief-Taker's Apprentice; Metro, De tuin, Au pair
-and De vergelding remain. Resume it, the next night the user frees the machine, from its
-caches with steps 3 and 4 of `work/runs/night-20261110.sh` (the benches of steps 1 and 2 are
-done, NO CHANGE): against `work/bench/tuning-20261110T032819-e3e0a01-dirty.json`.
 
 **The user is reviewing Nervous System** (started 2026-11-10 ~06:40, answers in
 `work/nervous-system/review/regions.jsonl`). Their first card, PDF 13, was "a mess": fixed

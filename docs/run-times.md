@@ -895,3 +895,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-11 | bench tuning, the arbiter of ten seeds with a smooth calibration, asking below 0.93 (warm) | 5293 | 16 | 0 |
 | 2026-11-11 | bench tuning, the arbiter of ten seeds with a smooth calibration, asking below 0.95 (warm) | 5293 | 17 | 0 |
 | 2026-11-11 | bench validation, the arbiter of ten seeds with a smooth calibration, asking below 0.93 (warm) | 0 | 1 | 0 |
+| 2026-11-11 | arbiter trained, twenty seeds and the smooth calibration, with a copy without each tuning book (CPU) | 0 | 75 | 0 |
+| 2026-11-11 | bench validation, the arbiter of twenty seeds with a smooth calibration, asking below 0.93 (warm) | 0 | 1 | 0 |

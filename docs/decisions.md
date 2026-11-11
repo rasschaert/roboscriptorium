@@ -1757,3 +1757,13 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   without each tuning book and their calibration, some 380 trainings; estimated, not
   timed), and nothing a build would notice.
 
+- 2026-11-11: **Production switches to the steadier arbiter, twenty seeds, asking below
+  0.93** (the user: "switch and use 20"). Trained on production's trust data
+  (`work/models/ocr-trust-steady20*.pkl`, the arbiter and its 18 copies without a book,
+  75 minutes; a raw sureness of 0.9 is right 92.4% of the time). Validation asking
+  below 0.93 against the day's baseline: NO CHANGE, 548 questions against production's
+  518, unasked 167 against 170, asked 170 against 160, as the ten-seed arbiter had it
+  (547, 167, 171). Its tuning bench waits for batch five's cold bench, which writes
+  the same books' caches; production's files and the default threshold change once it
+  reads level. Why twenty trainings and a smooth calibration: design.md, "The arbiter's
+  trees are twenty trainings averaged".

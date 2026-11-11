@@ -307,12 +307,33 @@ applies; picture text is that book's known gap. 0.9 asks more for no gain (tunin
 validation 0.80). The bench's test counts wrong words, not the reviewer's time, so the
 user chose it (2026-10-09).
 
-**The arbiter's sureness is calibrated**, so that line holds through retrains: an isotonic
-map, fitted on each training book scored by trees trained on the others, from how sure
+**The arbiter's sureness is calibrated**, so that line holds through retrains: a map,
+fitted on each training book scored by trees trained on the others, from how sure
 the trees are of a suspect's likeliest version to how often it was the print
-(`trust.sureness`). It changed little on today's arbiter (raw 0.8 was right 83% of the
-time, 0.9 95%), and the bench saw no change (tuning 0.56 → 0.57, validation 0.80 → 0.80,
-2026-10-09); its worth is that 0.8 means four in five after the next retrain too.
+(`trust.sureness`, `trust.calibrate`). The map is a smooth curve (`trust.Curve`, a
+logistic over the log odds of the raw sureness), not an isotonic one. An isotonic map is
+a staircase, and the asking line sits on one of its steps: over nine trainings on the
+same books, each with a random 0.25% of the suspects left out, the suspects under 0.9
+ran from 1,197 to 1,859 and the wrong picks left unasked from 97 to 163. The curve has
+two numbers to fit, so the same nine trainings ask 1,245 to 1,282 and leave 155 to 159
+(`experiments/probe_trust_calibration.py`, 2026-11-11). A curve reads the same raw
+sureness as another chance than the staircase did, so the asking line is chosen again
+with it (decisions.md, 2026-11-11).
+
+**The arbiter's trees are twenty trainings averaged** (`trust.Trees`, each from its own
+seed). One training picks, by its seed, which suspects it stops early on, and a few
+suspects more or fewer in the training data shift that: between two retrainings on
+data differing in 72 suspects of 30,647, 15 more errors went unasked and 36 questions
+moved, which is as large as the changes a retraining is benched for. Measured by
+leaving 0.25% of the suspects out (`experiments/probe_trust_variance.py`,
+`probe_trust_seeds.py`; 29,173 suspects, each tuning book scored by the others' trees):
+with one seed 42 suspects change their pick and 926 their place among the asked; with
+five 21 and 431; ten 17 and 304; fifteen 16.5 and 247; twenty 15.5 and 221. Accuracy
+is the same from five seeds on (wrong picks 481 with one, 474 to 475 after). The gain
+falls as one over the root of the number, so twenty is where another five buy little;
+each five cost about 2.2 s per arbiter trained, a quarter of an hour on a full
+retraining and nothing in a build. Not taken: training without early stopping (926 →
+708), ten bags of the suspects (467).
 
 **Doubts are asked per line** (the user, 2026-10-16: "you ask me what the line says …
 don't ask me twice"). One question per line, however many places in it are in doubt;
