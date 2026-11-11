@@ -10,14 +10,18 @@ from 2026-11-09 and 2026-11-10.
 **Night of 2026-11-10/11** (the user: the machine is free; small capitals first, then the
 quote reader, then batch five). decisions.md, 2026-11-11, has every number.
 
-- screen `robo-quote-bench-20261111` (`work/runs/quote-bench-20261111.sh`, started 06:00
-  on 2026-11-11, main's code, don't edit `src/` while it runs): `bench tuning` then
-  `validation` with `ROBO_QUOTE_READER=1`, one book at a time, against the runs of the
-  same code with it off (`work/bench/tuning-20261111T043034-38a18c1-dirty.json`,
-  `validation-20261111T043308-38a18c1-dirty.json`). Hours cold; logs
-  `work/runs/quote-{tuning,validation}.log`. If the user's working day starts first, stop
-  it (`experiments/stop-run.sh quote-bench-20261111`) and start the same script again at
-  night: it resumes from the judges' cached answers.
+Nothing runs. **The quote reader's benches were stopped at 07:30 on 2026-11-11** for the
+user's working day (the standing rule below), 13 of tuning's 20 books judged (the last
+finished: Het ijzige land). Start the same script again the next time the machine is
+free; it resumes from the judges' cached answers:
+
+    experiments/detached.sh quote-bench-20261111 work/runs/quote-bench-20261111.sh
+
+(main's code, `ROBO_QUOTE_READER=1`, one book at a time, against the runs of the same
+code with it off: `work/bench/tuning-20261111T043034-38a18c1-dirty.json` and
+`validation-20261111T043308-38a18c1-dirty.json`; logs `work/runs/quote-{tuning,validation}.log`.
+Don't edit `src/` on main while it runs, and if main's code changed since, bench main
+with the setting off first for the baseline.) With a watcher, as always.
 
 Found at ~06:00: retraining is exact (the arbiter trained again on
 production's trust data is production's file byte for byte), and the control's 15 more
