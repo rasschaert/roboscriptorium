@@ -145,6 +145,23 @@ each new local vision model.
 Don't repeat these without a new reason (details in docs/decisions.md). A better model in
 the place an idea failed on is one (AGENTS.md, "A null result is a null for its models"):
 
+- **A lone small capital with the lower case's shape** ("v-hals", "u-bocht", "o-benen";
+  2026-11-11; failed on the vision judges): no judge tells it from lower case, on the
+  suspect's crop or with its line. Retest with each new vision judge.
+
+- **A reader of the finished text, the proofreader** (2026-10-08 and 2026-10-11; failed
+  on the text model that proposes: gemma4, then qwen3.8 with clef filtering): about one
+  catch per 100 paragraphs against as many false questions. Rerun
+  `experiments/probe_text_reader.py` (~25 min) when a stronger text model comes; build it
+  only if the catches outnumber the false questions.
+
+- **An accent told from an i-dot or a speck by its shape, and the per-book alphabet**
+  (2026-10-21 to 26, the user's idea; failed on the layer's and tesseract's letter
+  boxes, which don't tie a mark to its letter): AUC 0.66–0.76 at line level, and the
+  mark's shape adds nothing to the arbiter's trees. About 50 real accent errors left on
+  tuning, with the stress accents the largest class no question asks about. Retest when
+  a reader gives letter positions.
+
 - **pplx-decider 27B on a wide crop as a third vision judge** (2026-11-09, pass 3; failed
   on the arbiter's use of a third vision seat): at 0.85 it cleared the bar by a hair on
   tuning, at the user's 0.9 it left more silent errors than pass 2 on both sets (tuning

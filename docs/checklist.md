@@ -62,18 +62,23 @@ their differences can't be settled, it goes to me. that's the whole point, no?" 
 works so; the quote check, garbled lines, headings and washed-out pages raise questions on
 side paths that skip the judges and the arbiter, and their cards show one or two readings.
 
-- [ ] The quote check as a reader in the OCR check (`ROBO_QUOTE_READER=1`, off; design.md,
-      Quote questions). Benched twice on tuning, not taken: the arbiter was never trained
-      on its two readings, so asked places go unasked (decisions.md, 2026-11-11). Left:
-      the trust data rebuilt with the two quote readers, the arbiter retrained to weigh
-      them, then `bench tuning` and `validation`; on by default if neither says worse.
-      Then whether `quotes.closed_at_end` is still needed (it added a ’ the print lacks,
-      The Loudest Sound and Nothing, PDF 235), and the mark opening a word ("’bout", 40
-      lines in that book) the quote check still asks itself
+- [ ] The quote check as a reader in the OCR check (`ROBO_QUOTE_READER=1`, off;
+      design.md, Quote questions). Benched twice on tuning, not taken: the arbiter was
+      never trained on its two readings, so asked places go unasked (decisions.md,
+      2026-11-11). Left: the trust data rebuilt with the two quote readers, the arbiter
+      retrained to weigh them, then `bench tuning` and `validation`; on by default if
+      neither says worse. Then whether `quotes.closed_at_end` is still needed (it added
+      a ’ the print lacks, The Loudest Sound and Nothing, PDF 235), the mark opening a
+      word ("’bout", 40 lines in that book) the quote check still asks itself, and
+      nested quotes by the book's own habit, not assumed as the outer mark's opposite
+      (De tuin sets “ alone 147 times)
 - [ ] The other doubts as suspects on the same path: a garbled line (its readings judged
       as any other), a heading (asked only where the role evidence is split), a speck
-      read as a mark (the three below). The arbiter learns the new kinds from labels: the
-      user's answers of 2026-11-10 and the golden books' places of each kind
+      read as a mark (the three below). The arbiter learns the new kinds from labels:
+      the user's answers of 2026-11-10 and the golden books' places of each kind. For
+      specks the golden pairs give labels by the thousand: a reader's character absent
+      from the reference, aligned to an ink blob, is a speck, and a mark the reference
+      confirms is ink (~1 day; three pages were too few, 2026-10-21)
       - [ ] A speck read as a hyphen before a line's first word (Nervous System PDF 118
             line 2, "- I followed"; Going into a Dark House PDF 7, "- For"). A hyphen
             alone before a line's first word is never print in a book whose dashes are
@@ -92,8 +97,11 @@ side paths that skip the judges and the arbiter, and their cards show one or two
 - [ ] Every card shows every reader's reading and every judge's vote, as the OCR check's
       do. A quote card shows only the OCR check's line and the read model's marks (the
       user, Nervous System PDF 120: "where are the other model's readings?"), though
-      glm-ocr's and tesseract's readings of the same lines are cached; the same card kept
-      a speck read as " ." after the closing quote ("notice.” .")
+      glm-ocr's and tesseract's readings of the same lines are cached; the same card
+      kept a speck read as " ." after the closing quote ("notice.” ."). With the
+      redesign, for the **user**'s say: same-page reference crops beside a punctuation,
+      accent or small-capital question (this printer's comma and full stop, a plain i
+      and an accented vowel), and an answer propagated to the word's other occurrences
 - [ ] The arbiter asks where every judge and the layer agree (Nervous System PDF 92: the
       layer, tesseract and all four judges on "“Okay.”", only glm-ocr and Qwen without
       the stop): read its sureness on that book's 22 asked suspects, and whether English
@@ -116,13 +124,12 @@ side paths that skip the judges and the arbiter, and their cards show one or two
 
 On by default since 2026-11-11: an all-capitals version of a mixed-case word, and doubts
 on lower-case pieces no reading disputes (design.md, "Small capitals get an all-capitals
-version"). Left:
+version"). Left, beside a lone small capital no judge tells from lower case (outlook.md,
+"Tried"):
 
 - [ ] The arbiter fixing where the judges agree on capitals, instead of asking: a
       retrained one does. It waits for the steadier arbiter (In flight) and comes with
       batch five's retraining
-- [ ] A lone small capital with the lower case's shape ("v-hals", "u-bocht", "o-benen"):
-      no judge tells it, on a tight crop or a wide one; retest with each new vision judge
 
 ## The user's books
 
@@ -188,27 +195,17 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       misprints
 - [ ] Ex-minnaar: rebuilt with everything since 2026-10-16 and its questions sampled
       again, then the **user**'s review and the fixes it teaches. Its poem on p. 50
-      (title taken for a chapter heading, lines joined) waits on verse. Whether OmniPage
-      earns a place as another reading: only if the questions show the readers stuck
-      together
+      (title taken for a chapter heading, lines joined) waits on verse
 - [ ] De kus in de nacht built, once the review's questions are worth the user's time
 - [ ] The structure check's findings walked in the review page (every kind, its crop)
       before the next review (`flags.structural`)
-- [ ] Other editions as an error finder (the user, 2026-10-18): an instrument for a book
-      with no reference, not a stage. A thinking model reads each paragraph beside the
-      other editions' and flags reading errors, each checked on a crop
-      (`experiments/probe_translation_check.py`). On Stella, hosted, it caught 29 of 31
-      planted word errors and none of 6 lost accents. Next: the Carrère books
-      (`work/<book>/editions/`, French and English, ~$3 each, hosted: the user's
-      permission for that use first)
-- [ ] What the pipeline should do with a PDF's embedded images (the user, 2026-10-19:
-      "have a good think"). The washed-out pages of Een Russische roman and Afscheid are
-      lost in the PDF itself. Each a cheap probe first: (1) would the 360 ppi mask alone
-      read better or worse than the composited render on ordinary pages (the frozen
-      reader set)? (2) a page washed out in the PDF may be fine in Internet Archive's
-      full-resolution originals: read those instead where they can be had; (3) whether
-      `faint.py` should say "lost in this PDF" against "faint in print" (contrast can't
-      tell mottled paper from faint print), and what the review offers for each
+- [ ] A washed-out page says which it is (the user, 2026-10-19, on a PDF's embedded
+      images: "have a good think"): "lost in this PDF" (Een Russische roman's and
+      Afscheid's pages, where the mask holds speckle and the background smudge) against
+      "faint in print", and what the review offers for each. Contrast can't tell mottled
+      paper from faint print. The rest is answered: the mask shows no more than the
+      render the readers get (2026-10-23), and a lent item's full-resolution originals
+      can't be had (2026-10-11)
 - [ ] Een Russische roman, when it comes off hold: check that its lines lost inside
       text blocks (pp. 133, 175) are now read (`missing._fills`, 2026-11-06), and count
       the footnotes lost or made over the golden books with notes (its p. 270 note's
@@ -216,23 +213,15 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 
 ## Headings and line roles
 
-- [ ] Heading errors left on tuning (`experiments/heading_misses.py` lists them by book):
-      - De eerlijke vinder's part numerals I–IV (0 of 4), drawn as bars on pages with no
-        text (PDF 12, 38, 58, 76): qwen reads the ink "1", "11", "111", "IV", so the
-        run must read them as roman, and the page-kind model calls PDF 12 blank; its
-        mottos beside the numerals are not caught either
-      - Afscheid's chapters 1 and 2, on openings sunk 0.06 of a page, under
-        `page.SUNK_PAGE_DROP` (0.08), so their misread numbers ("l", "e,") count as
-        page edges
-      - Dolittle: its title page a heading, the drawn initial C of PDF 97 left off
-        ("HEE-CHEE"), "THE MONKEYS' COUNCIL" missing, headings found but not set as
-        printed (7)
-      - Metro's "CHAPTER 6" read "SRN WEIR", and "CHAPTER The Rights of the Strong"
-        lacking its 7
-      - Het geluid van bananen's "8°" for the ordinal "8e" (4)
-      - Het ijzige land's chapters 1, 3, 7, 8 lost (flagged by the structure check)
-      - Thief-Taker's headings found but not set as printed (6); De cipier's lost scene
-        break
+- [ ] Heading errors left on tuning, about twenty (low; `experiments/heading_misses.py`
+      lists them by book). Each is one book's case, so they are mended only where one
+      cause covers several or the trees can learn it, not by a rule a book: drawn part
+      numerals read as digits (De eerlijke vinder's I–IV, 0 of 4, on pages the page-kind
+      model calls blank), numbers on openings sunk less than `page.SUNK_PAGE_DROP`
+      (Afscheid's chapters 1 and 2), headings found but not set as printed (Dolittle 7,
+      Thief-Taker 6), a number misread or lost beside its title (Metro's "CHAPTER 6" and
+      7, Het geluid van bananen's "8°"), Het ijzige land's chapters 1, 3, 7, 8,
+      Dolittle's title page and drawn initial, De cipier's lost scene break
 - [ ] Line-role trees that keep the grown slices' gains without keeping stray lines
       (decisions.md, 2026-11-05): retrained on the grown slices they find Monterosso's
       mid-page chapter numbers (7 → 15 of 22) and Reis' (16 → 19), but keep Dolittle's
@@ -241,25 +230,12 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       Ideas: the running head's recurrence counted over its chapter, not the book; the
       stray lines weighed by the words they add, as the bench counts them. Also theirs:
       Het heft's datelines under its headings ("Februari 1829") joined to them
-- [ ] De laatste roker (Hermans) as line-role training (`sorterdata.EXTRA`): its
-      manifest and reference first
-- [ ] Section headings that are a narrator's name in capitals mid-page (De geruchten,
-      validation, "DOLF": 0 of 21), not under a number, so no rule reaches them: waits
-      for a tuning book that sets headings so (**user**, the gaps to hunt for)
-- [ ] You're Never Weird's headings (validation: 5 of 16; bracketed sections, "- 1 -"
-      numbers) and p. 47's picture text read into the body: not chosen on; a tuning
-      book with such headings would teach it
 - [ ] Scene breaks the build misses: 23 of 295 (Reis 14, De eerlijke vinder 7). Reis's
       are page tops after a full page whose last line ends a sentence at the margin, the
       next opening flush: the same geometry as a paragraph running on, so only the text
       can tell (a sorter question, "a new scene?"). Het heft (`P_plat`), Villa
       (`Tekst_6-Na-witregel`) and Artemis (`noindent_topspace1`) undeclared, unsure on
       the scan
-- [ ] Structure findings repaired where the book's own evidence settles them, beyond
-      the chapter numbers
-- [ ] Dolittle's captions scored: derive them into the reference, or leave caption lines
-      out of the score as footnotes are (19 words on tuning, all asked; low)
-- [ ] `init`: Thief-Taker's "about the author" page (PDF 295) called a back cover (low)
 
 ## Paragraphs, verse and lists
 
@@ -279,7 +255,9 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 
 About 85% of the wrong words left after review were never suspects: every reading agreed
 on them. On tuning, 2026-11-06: stress accents 105 (half the reference's), compound
-hyphens 86 (line-end breaks), letters 76, punctuation 59.
+hyphens 86 (line-end breaks), letters 76, punctuation 59. What was tried on them
+without effect, and what each would need to be tried again, is in
+[outlook.md](outlook.md) ("Tried, and why it didn't help").
 
 - [ ] Past nulls the judge panel may turn (2026-11-08; the ones whose stated bottleneck
       was the judges or the arbiter), in this order: the hints about kinds of OCR error
@@ -291,42 +269,8 @@ hyphens 86 (line-end breaks), letters 76, punctuation 59.
       readings are cached, so the cost is the panel's judges on the new suspects, a
       trust-data rebuild with `ROBO_PAGE_READERS=1` in its own folder, the arbiter
       retrained and both benches)
-- [ ] The errors the build makes where the layer was right (51 unasked on tuning,
-      2026-11-06): accents (18) are accent-shaped specks, no cheap signal; punctuation
-      swapped (about 10: commas added, 13 of 14 wrong, no rule); quote glyphs (6: not
-      told by the book's quote style)
-- [ ] Accents and specks. An accent told from an i-dot or a speck by its shape over its
-      own letter, with tesseract's per-letter boxes (`hocr_char_boxes`); ~50 real
-      accent errors left on tuning (low: at line level the shape gives AUC 0.66–0.76,
-      2026-10-24). Emphasis accents and the dotless ı need each mark tied to its
-      letter: a reader that gives letter positions is the way in. The per-book alphabet
-      (the user, 2026-10-21: glyph blobs as templates, odd glyphs clustered) is parked
-      until then
-- [ ] Speck labels harvested from the golden pairs: every reader's character absent
-      from the reference, aligned to an ink blob, is a speck; every mark the reference
-      confirms is ink. Labels from every book for a speck classifier, which needs more
-      scans than the three pages tried (2026-10-21; ~1 day)
-- [ ] A detector for errors every reading shares (the user, 2026-10-12): a small model
-      over every word, trained leave-one-out on the golden books' silent errors, raising
-      suspects where the readings agree; asked only, never fixed unasked, and it ships
-      only if `bench tuning` improves with no veto and validation doesn't worsen. Its
-      features so far are null (the word list for lost spaces, tesseract's confidence,
-      accent variants; 2026-10-16); for lost spaces the gap measured on the scan is the
-      feature to try. Waits for a stronger reader
-- [ ] A reader of the finished text (the proofreader): probed twice, about one catch per
-      100 paragraphs against as many false questions. Rerun the probe
-      (`experiments/probe_text_reader.py`, ~25 min) whenever a stronger text model
-      comes; build it only if the catches outnumber the false questions
-- [ ] Nested quotes by the book's own habit, learned from the book, not assumed as the
-      outer mark's opposite (De tuin sets “ alone 147 times; ~35 words)
-- [ ] Line-end compound hyphens (Dutch: 14 real hyphens in 542 undecided breaks; no cue
-      in qwen, clef or the cheap signals, 2026-10-24): learned from the compounds the
-      books print unbroken mid-line needs a feature none of these has (low; the panel's
-      hyphen probe above comes first)
 - [ ] De vergelding's own arbiter: it has the most unsure suspects and was never trained
       on; comes with its trust data (In flight)
-- [ ] Glyph-level checks (pairwise classifiers for confusable letters, glyph clusters
-      with one label each): only after the accent and speck steps above
 
 ## Assumptions to test (quick probes, minutes to an hour each)
 
@@ -341,39 +285,14 @@ are under Done, "Architecture probes".
       126 of 126 against the pipeline's 110), but the trees trained with page features
       go wrong on picture pages, mottos and an epigraph's attribution. Before another
       bench: the trees retrained with picture pages and mottos labelled
-- [ ] Per-book settings and extra witnesses (the user, 2026-10-22: do some books respond
-      better to some settings, and can a quick pre-pass tell which?). So far dpi
-      differences are noise but perhaps for Reis om mijn schedel and Artemis. Read each
-      variant (dpi, contrast, crop padding, prompt wording) once over the reader set's
-      850 lines, then score it two ways:
-      - [ ] does *agreement* with an independent reader predict the setting that scores
-            best?
-      - [ ] as an extra *witness* in the vote simulation (`vote_sim.py`), screened first
-            on the quiet set: every reader is wrong together on 23 lines, so a witness
-            can add a handful
-      - [ ] only if the first shows a signal: a per-book pre-pass (20–30 pages through
-            the variants, the setting with the most agreement kept), learned from the
-            golden books
-- [ ] Whole-page reading with the page before as context, for paragraphs that cross a
-      page: 14 of the 78 paragraph-break errors on tuning sit on a page's first line
-      (low)
-- [ ] LightOnOCR-3's grounding mode (labelled page blocks with boxes) as an input to
-      line roles: only on the pages where the trees err, first (~2 h; its weights must
-      be pulled again)
-- [ ] New OCR models as witnesses, each through the gate (`HANDOVER.md`, "When a new
-      vision model appears": the quiet set first, in minutes), and only for a reason
-      beyond its benchmark: dots.mocr (3B), Chandra OCR 2 (5.3B), HunyuanOCR (1B),
-      PaddleOCR-VL-1.6 (~1 h each; low, a line witness can add a handful)
-- [ ] Two-line crops at each line break as a decision for clef: of 236 unasked errors 2
-      span a join, so little for a crop to see (low)
-
-## The reviewer's time
-
-- [ ] Identical questions batched into one card (saves 30 of 456 OCR cards on tuning,
-      7%), same-page reference crops beside a punctuation, accent or small-capital
-      question (this printer's comma and full stop, a plain i and an accented vowel),
-      answers propagated to every other occurrence of the word. A design, then the
-      **user**'s say
+- [ ] Per-book settings (the user, 2026-10-22: do some books respond better to some
+      settings, and can a quick pre-pass tell which?). So far the dpi differences are
+      noise, but perhaps for Reis om mijn schedel and Artemis. The one test: does a
+      setting's *agreement* with an independent reader predict the setting that scores
+      best on the reader set? The dpi readings exist (300, 450 and 600 dpi, 50 lines of
+      each of 16 books), so no models. A signal: a per-book pre-pass learned from the
+      golden books becomes a step. None: dropped, with the variants as extra witnesses
+      (a witness can add a handful: the quiet set's 23 lines)
 
 ## Starting from a PDF alone
 
@@ -381,42 +300,23 @@ are under Done, "Architecture probes".
       2026-10-21): the first and last page of the text proper shown with their crops,
       each named by both numbers ("PDF page 9 (the page prints 7)", or that it prints
       none), with whatever else the draft `book.toml` marks to confirm
-- [ ] The contents page read for the book's structure and its chapters' names
-- [ ] An image-only scan's ellipsis measured on the image for typography alone, not for
-      the readers' prompt (told ". . .", they read Vanille worse; 2026-10-24)
 
 ## Golden books and the bench
 
-- [ ] **user**: golden pairs for the gaps (golden-notes.md, "Gaps to hunt for"): a book
-      set flush for tuning, a short-story collection, narrators' names as section
-      headings, text wrapped around pictures (Dolittle's case). From before: De
-      Arbeiderspers, Prometheus/Ooievaar or Vrijdag; a Kosmos book for later, beyond
-      prose
-- [ ] A pair with old-style chapter numbers over sunk openings added to the gaps to
-      hunt for (golden-notes.md)
-- [ ] **user**: verdicts on the tuning books (`review` on each), the disagreements the
-      arbiter's labels sit on first: hours, spread out, whenever convenient
+- [ ] **user**: golden pairs for the gaps (golden-notes.md, "Gaps to hunt for"): first a
+      book set flush for tuning and a short-story collection; then section headings
+      without numbers, text wrapped around pictures. From before: De Arbeiderspers,
+      Prometheus/Ooievaar or Vrijdag; a Kosmos book for later, beyond prose
 - [ ] **user**: verdicts on the unasked errors that look like the reference's, not the
       build's (~20 min): spaces no print sets ("gezicht ."), words run together
       ("’snachts"), a print line-end hyphen left in ("na-iviteit"); Het laatste bevel's
       glued words among them. The list is from 2026-10-19
       (`work/probes/unasked/candidates-20261019.json`): made again from the fresh
-      baseline first, then one command a book (`experiments/review_batch_commands.py`)
-- [ ] JP2s as the image source for public-domain books: on Crime's 50 reader-set lines
-      both readers err about a fifth less (2026-10-11). No use for the user's books (a
-      borrowed item offers no downloads); later
+      baseline first, each place checked on its crop by the agent, and only what a crop
+      doesn't settle brought to the user, one command a book
+      (`experiments/review_batch_commands.py`)
 - [ ] `golden check <pdf> <epub>` writing a draft manifest, once a batch of candidates
       comes
-
-## Speed
-
-- [ ] Qwen faster on the same output: a line is 52% prefill and 23% decode, so
-      speculative decoding buys little, and batching was ruled out; the lever is fewer
-      image reads (prefix caching of the fixed prompt; Qwen on fewer lines: quote
-      marks, disagreements). Readings must stay identical on the frozen set. Only if
-      cold runs become the bottleneck (low)
-- [ ] MiniCPM-V 4.6 as a faster reader: the readers already cover nearly every line, so
-      it pays only by speed
 
 ## Housekeeping
 
@@ -435,12 +335,6 @@ are under Done, "Architecture probes".
 
 ## Later
 
-- [ ] Surya's layout model as a second spotter: screen it on the drawn numerals
-      DocLayout-YOLO misses and the figure pages
-- [ ] Heading tags from Granite-Docling-258M: only if the page-level role pass comes back
-- [ ] Per-book image tuning for pale or tinted scans: null on normal pages so far
-- [ ] Het Kindeken Jezus as a golden book, only if the image probe looks
-      language-dependent
 - [ ] French, the user's idea (2026-10-09); not yet (2026-10-10: no French books to
       make). It brings its own typography (« », a thin space before `; : ! ?`, dialogue
       dashes) that `quotes.py`, `typography.py` and the arbiter's training data would
@@ -454,6 +348,13 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## The user's books
 
+- [x] 2026-10-19 Other editions as an error finder (the user, 2026-10-18;
+      `experiments/probe_translation_check.py`, hosted): an instrument for a book with
+      no reference. Stella: one reading error ("trofik") in 46 flags, and 29 of 31
+      planted word errors caught, none of 6 lost accents; Andere levens: one silent
+      error ("LC1" for "LCI"); Een Russische roman: the hyphenated chains, the diaeresis
+      and the footnote mark, all mended since. For another book: the user's permission
+      for the hosted run first
 - [x] Nervous System built cold (2026-11-09, judging finished on the new judge order;
       epubcheck clean): 520 OCR suspects, 285 fixed, 23 asked. The second scan as a
       witness found two of our errors in 756 disagreements (decisions.md): not a stage
@@ -472,6 +373,15 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Structure and line roles
 
+- [x] ~~Structure findings repaired where the book's own evidence settles them, beyond
+      the chapter numbers~~ (dropped 2026-11-11): no case behind it; a finding that
+      shows one becomes its own step
+- [x] ~~De geruchten's narrator names as section headings (0 of 21) and You're Never
+      Weird's bracketed sections (5 of 16)~~ (moved 2026-11-11): validation books, so
+      not chosen on; a tuning book with such headings is on the gaps to hunt for
+      (golden-notes.md)
+- [x] ~~De laatste roker as line-role training~~ (dropped 2026-11-11): another novel,
+      where the trees lack short stories and picture pages
 - [x] ~~A heading suspect whose versions differ only in case settled by the book's other
       headings~~ (2026-11-09, `chapters.heading_case`): Het ijzige land's six asked
       headings, nothing else in any book's cached suspects; benched with production's
@@ -574,6 +484,18 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Words, quotes and typography
 
+- [x] ~~An accent told from an i-dot or a speck by its shape; the per-book alphabet~~
+      (the user, 2026-10-21; parked 2026-11-11): at line level the shape gives AUC
+      0.66–0.76; emphasis accents and the dotless ı need each mark tied to its letter,
+      so a reader that gives letter positions (outlook.md, "Tried")
+- [x] ~~The errors the build makes where the layer was right~~ (51 unasked on tuning,
+      2026-11-06; closed 2026-11-11): accents (18) are accent-shaped specks with no
+      cheap signal, commas added are wrong 13 of 14 with no rule, quote glyphs (6)
+      aren't told by the book's quote style; the specks go to "One path for every doubt"
+- [x] ~~Line-end compound hyphens learned from the compounds the books print unbroken~~
+      (dropped 2026-11-11): 14 real hyphens in 542 undecided Dutch breaks, and qwen,
+      clef and the cheap cues tell none apart; the judge panel's hyphen probe is the
+      last try
 - [x] ~~The line-end join's book spellings counted from the text after the OCR check~~
       (2026-11-08): already so (`pipeline._book_spellings`: the pages being built after
       the check and the answers; only a bench slice's other pages as the layer reads
@@ -677,6 +599,13 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Trust data, the judges and the arbiter
 
+- [x] ~~A lone small capital with the lower case's shape ("v-hals", "u-bocht")~~ (parked
+      2026-11-11): no judge tells it, on a tight crop or a wide one; retest with each
+      new vision judge (outlook.md, "Tried")
+- [x] ~~A detector for errors every reading shares~~ (the user, 2026-10-12; parked
+      2026-11-11): its features were null (the word list for lost spaces, tesseract's
+      confidence, accent variants; 2026-10-16); the lever is a stronger reader
+      (outlook.md, "The errors every reading shares")
 - [x] 2026-11-11 The arbiter's variance brought down: retraining is exact, and one
       retraining differed from the next by some fifteen unasked errors for 72 changed
       suspects; twenty trainings averaged and a smooth calibration steady it
@@ -779,6 +708,13 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## The reviewer
 
+- [x] ~~Identical questions batched into one card~~ (dropped 2026-11-11 as a step of its
+      own): 30 of 456 OCR cards on tuning, 7%; with the cards' redesign under "One path
+      for every doubt"
+- [x] ~~A reader of the finished text (the proofreader)~~ (parked 2026-11-11): probed
+      twice, about one catch per 100 paragraphs against as many false questions; rerun
+      `experiments/probe_text_reader.py` when a stronger text model comes (outlook.md,
+      "Tried")
 - [x] Washed-out cards (the user, 2026-11-10, reviewing Nervous System: "what a mess"):
       the read model reads only lines holding ink, and a reading repeating a sentence is
       never offered (decisions.md); whether `faint.pages` should tell mottled paper from
@@ -848,6 +784,13 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Starting from a PDF alone
 
+- [x] ~~An image-only scan's ellipsis measured on the image for typography alone~~
+      (dropped 2026-11-11): none of the books to make is image-only
+- [x] ~~The contents page read for the book's structure and its chapters' names~~
+      (dropped 2026-11-11): the chapters come from their run (`chapters.py`); no book
+      has needed it
+- [x] ~~`init`: Thief-Taker's "about the author" page (PDF 295) called a back cover~~
+      (dropped 2026-11-11): one page, a page too many is mild
 - [x] 2026-11-09 `init` carries the text on over a page under the book's running head
       (`pagekinds.run_on`): Nervous System's last end right (PDF 290), the 27 labelled
       books unchanged (23 first, 22 last); the neighbours' kinds told to the model were
@@ -885,6 +828,26 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Architecture probes
 
+- [x] ~~Surya as a second spotter, heading tags from Granite-Docling, per-book image
+      tuning for pale scans, Het Kindeken Jezus as a golden book~~ (dropped 2026-11-11):
+      each waited on a result that didn't come (image tuning null on normal pages)
+- [x] ~~Glyph-level checks (pairwise classifiers for confusable letters, glyph
+      clusters)~~ (dropped 2026-11-11): they waited on the accent-shape probes, which
+      were too weak (outlook.md, "Tried")
+- [x] ~~Two-line crops at each line break as a decision for clef~~ (dropped 2026-11-11):
+      of 236 unasked errors on tuning 2 span a join; the compound hyphens sit at line
+      ends, where the scan can't show whose the hyphen is
+- [x] ~~New OCR models as witnesses, as a step~~ (dropped 2026-11-11): every reader is
+      wrong together on 23 lines of the tuning slices, so a line witness can add a
+      handful; a new model goes through the gate in HANDOVER.md ("When a new vision
+      model appears") and AGENTS.md's two questions. Not screened: dots.mocr, Chandra
+      OCR 2, HunyuanOCR, PaddleOCR-VL-1.6
+- [x] ~~LightOnOCR-3's grounding mode as an input to line roles~~ (dropped 2026-11-11):
+      Qwen's page roles, the stronger version of the idea, cost more words than they
+      saved, and its weights are deleted
+- [x] ~~Whole-page reading with the page before as context~~ (dropped 2026-11-11): 14 of
+      the 78 paragraph-break errors on tuning sit on a page's first line, and a
+      whole-page reading starts from more errors than the pipeline
 - [x] ~~The text layer as a second reader only~~: closed 2026-10-24 on the evidence
       above: a whole-page reading starts from more errors than the pipeline (Qwen 76
       wrong words over 19 pages against 27, glm-ocr 103) while the layer reads 0.21% CER
@@ -1035,6 +998,14 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Measurement
 
+- [x] ~~Qwen faster on the same output; MiniCPM-V 4.6 as a faster reader~~ (dropped
+      2026-11-11): a line is 52% prefill and 23% decode, batching was ruled out, and
+      speed is not the bottleneck (outlook.md, Inference speed)
+- [x] ~~JP2s as the image source for public-domain books~~ (dropped 2026-11-11): both
+      readers err about a fifth less on Crime's 50 lines (2026-10-11), but a lent item
+      offers no downloads, so no book to make can use them
+- [x] ~~Dolittle's captions scored or left out of the score~~ (dropped 2026-11-11): 19
+      words on tuning, all asked
 - [x] ~~Pages below the quality the build supports~~ (2026-11-08, `scanpages.poor`,
       branch `poor-pages`, merged after the panel's benches, which run against today's
       scoring): 1.5 or more OCR-check suspects a line on a page of ten lines or more; De
@@ -1121,6 +1092,9 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Golden books
 
+- [x] 2026-11-11 The gaps to hunt for (golden-notes.md) name a short-story collection,
+      section headings without numbers, text wrapped around pictures and old-style
+      chapter numbers over sunk openings
 - [x] 2026-10-24 and 2026-11-06 Set reviews: no pair retired; Dolittle past the
       layer-CER line since scored whole, its errors the pipeline's, kept
 - [x] 2026-10-23 The sets trimmed (the user, 2026-10-18: "trim the fat"): Afscheid's

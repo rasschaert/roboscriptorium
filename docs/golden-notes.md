@@ -55,7 +55,13 @@ after a full line, which only a learned model can find, and with no flush book i
 no such change can be chosen); a second scan without a text layer, of Stella's kind (a
 lent IA book with its layer stripped would do); a scan whose text layer is poor all
 through (an old Scribe or a low resolution), so the layer is the worst reading rather
-than a good one; a non-fiction pair with numbered chapters, sub-heads and a closing notes section (Vanille's 1 of 15 headings, 2026-10-20: no tuning book teaches the sorter such headings); then, once prose is done, verse, two columns and tables. Another clean
+than a good one; a non-fiction pair with numbered chapters, sub-heads and a closing notes section (Vanille's 1 of 15 headings, 2026-10-20: no tuning book teaches the sorter such headings); a short-story collection (2026-11-10: a
+running head per story, which the line-role trees, trained on novels, keep as text); a
+book whose section headings are words without a number (De geruchten's narrator names,
+0 of 21; You're Never Weird's bracketed sections, 5 of 16: both validate, so neither can
+be chosen on); a book with text wrapped around pictures (Dolittle's case) and one with
+old-style chapter numbers over sunk openings (Hoe wij verdwijnen's first build misread
+them); then, once prose is done, verse, two columns and tables. Another clean
 modern Dutch book adds pages, not information: take one only for a trait above.
 
 ## A reference's manifest keys
