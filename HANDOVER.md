@@ -10,14 +10,11 @@ from 2026-11-09 and 2026-11-10.
 **Night of 2026-11-10/11** (the user: the machine is free; small capitals first, then the
 quote reader, then batch five). decisions.md, 2026-11-11, has every number.
 
-- screen `robo-arbiter-rep-20261111` (`work/runs/arbiter-rep-20261111.sh`, started ~05:45):
-  the arbiter trained again on production's own trust data (`work/probes/ocr-trust`, read
-  only), saved as `work/models/ocr-trust-rep*.pkl`, then `bench tuning` with it
-  (`rep-train.log`, `rep-tuning.log`). It answers why a retrained arbiter leaves more
-  errors unasked than production's (524 on tuning): the control retrained on nearly the
-  same data left 539. If the reproduction gives 524, a handful of changed suspects moves
-  the trees that much; if not, the code changed what the arbiter sees since 2026-11-08.
-  Don't edit `src/` on main while it runs.
+Nothing runs. Found at ~06:00: retraining is exact (the arbiter trained again on
+production's trust data is production's file byte for byte), and the control's 15 more
+unasked errors came from 72 suspects of 30,647 whose versions differ. So one retrained
+arbiter against another is noise at that size: bring the arbiter's variance down
+(seeds or bags averaged) before weighing the next retraining, batch five's included.
 
 **Small capitals: merged into main with the setting off** (321849d). Waiting on the user:
 whether `ROBO_LOWER_CAPITALS` goes on by default (about 1.7% more questions; on tuning
@@ -28,13 +25,12 @@ data and arbiters (`work/probes/ocr-trust-{caps,ctl}`, `work/models/ocr-trust-{c
 are not in use.
 
 **The quote check as a reader: fixed twice, not benched** (`ROBO_QUOTE_READER=1`, off).
-Main has the first fix (6b57830: a last line another reading already ends paired takes
+Both fixes are on main (6b57830: a last line another reading already ends paired takes
 that reading's end; De tuin's fixes 2,143 → 2,155 against 2,156 off, OCR questions
-111 → 98 against 83, quote lines 146 → 80). The second is on branch `quote-reader`
-(worktree `../robo-quote`, 88a2dda, local, not rebased on the merge): that end is taken
-only where it leaves the paragraph fewer unpaired marks (The Loudest Sound and Nothing's
-"one.”’"). Next: rebase it on main, merge it (off by default, unit-tested), then its
-benches: `work/runs/quote-bench-20261111.sh` (point it at main; baselines
+111 → 98 against 83, quote lines 146 → 80; 023e983: only where that leaves the
+paragraph fewer unpaired marks, The Loudest Sound and Nothing's "one.”’"). The worktree
+`../robo-quote` (branch `quote-reader`, merged) can go. Next its benches:
+`work/runs/quote-bench-20261111.sh` (point it at main; baselines
 `work/bench/tuning-20261110T234355-38c86cf-dirty.json` and
 `work/bench/validation-20261111T010443-64c17a2-dirty.json`, or a fresh baseline of main
 after the merge). Its suspects on tuning run to thousands: hours cold, a night's job,

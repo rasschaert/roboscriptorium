@@ -883,3 +883,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-11 | bench tuning, small-caps branch without the doubts, the control arbiter (warm) | 5293 | 16 | 0 |
 | 2026-11-11 | bench tuning, small-caps branch with the lower-case doubts off (warm but for changed suspects) | 5293 | 16 | 0 |
 | 2026-11-11 | bench validation, small-caps branch with the lower-case doubts off (warm but for changed suspects) | 0 | 2 | 0 |
+| 2026-11-11 | train arbiter on production's trust data again (reproduction) | 0 | 23 | 0 |

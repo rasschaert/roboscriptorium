@@ -644,9 +644,10 @@ also part of the pipeline itself." Before either book goes to review:
       - the default: 1.7% more questions against those unasked errors, the user's call
         (asked 2026-11-11)
       - the arbiter fixing where the judges agree on capitals instead of asking: a
-        retrained one does, but any retraining on today's trust data leaves more errors
-        unasked than production's arbiter (control: 539 against 524); find why first
-        (the same retraining from main's code), also before batch five retrains
+        retrained one does, but one retraining differs from the next by some fifteen
+        unasked errors on tuning for 72 changed suspects (decisions.md, 2026-11-11), so
+        first bring the arbiter's variance down (trees averaged over seeds or bags), also
+        before batch five retrains
       - a lone small capital with the lower case's shape ("v-hals", "u-bocht", "o-benen"):
         no judge tells it, tight crop or wide; retest with a new vision judge
 - [x] ~~autotrust-jev 9B as a second text judge~~ (2026-11-09, pass 4): not taken. Tuning
