@@ -81,8 +81,9 @@ class Trust:
 
 
 # One seed's trees change their picks and their sureness with a quarter of a percent of
-# the training suspects; ten averaged move a third as much (docs/design.md).
-SEEDS = 10
+# the training suspects; twenty averaged move a third as much in picks and a quarter as
+# much in what is asked, and more seeds add little (docs/design.md).
+SEEDS = 20
 
 
 class Trees:
