@@ -1756,6 +1756,13 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   trained, about a quarter of an hour on a full retraining (the arbiter, its copy
   without each tuning book and their calibration, some 380 trainings; estimated, not
   timed), and nothing a build would notice.
+- 2026-11-11: **The bench counts an italic word by its place, whatever its letters**
+  (`evaluate.score`: the words of a differing stretch of equal length are paired in
+  order). A misread word set italic where the reference is italic counted as an italic
+  error, so the count rose with the questions asked and decided the verdict three times
+  today. A glued or split italic word has no place of its own and still counts. Runs
+  before this change count italics the old way: compare italic errors only between
+  runs made after it.
 
 - 2026-11-11: **Production switches to the steadier arbiter, twenty seeds, asking below
   0.93** (the user: "switch and use 20"). Trained on production's trust data

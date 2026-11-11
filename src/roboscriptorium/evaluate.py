@@ -14,7 +14,8 @@ Metrics:
   many it sets elsewhere.
 - Headings: how many reference chapter headings the output has (matched in order,
   fuzzily), how many of those letter for letter, and how many output headings match none.
-- Italics: precision and recall of italic words, over the words that align.
+- Italics: precision and recall of italic words by their place, whatever their letters:
+  a misread word set italic where the reference is italic counts as right.
 
 Headings are left out of the text comparison on both sides.
 """
@@ -301,6 +302,9 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     # Align on words, then count character edits inside the differing stretches.
     char_edits, confusions = 0, Counter()
     out_to_ref: dict[int, int] = {}
+    # The same, with the words of a differing stretch of equal length paired in order:
+    # a misread word still stands in its reference word's place.
+    placed: dict[int, int] = {}
     ops = Levenshtein.opcodes(out_words, ref_words)
     i = 0
     while i < len(ops):
@@ -308,6 +312,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         if op.tag == "equal":
             for k in range(op.src_end - op.src_start):
                 out_to_ref[op.src_start + k] = op.dest_start + k
+                placed[op.src_start + k] = op.dest_start + k
             i += 1
             continue
         # Consecutive edits are one differing stretch: a word split in two comes back as
@@ -320,6 +325,8 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         want = " ".join(ref_words[d0:d1])
         char_edits += Levenshtein.distance(got, want) + (s0 == s1) + (d0 == d1)
         confusions[(got, want)] += 1
+        if s1 - s0 == d1 - d0:
+            placed.update({s0 + k: d0 + k for k in range(s1 - s0)})
         i += 1
     ref_chars = sum(len(w) + 1 for w in ref_words)
     # An untitled chapter (a text without headings) expects none.
@@ -334,7 +341,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     ]
     ref_italic = _italic_words(ref_paragraphs, ref_marks)
     out_italic = _italic_words([b.text for b in doc.paragraphs], [b.italic for b in doc.paragraphs])
-    hit_italic = {out_to_ref[i] for i in out_italic if i in out_to_ref} & ref_italic
+    hit_italic = {placed[i] for i in out_italic if i in placed} & ref_italic
 
     ref_bare = [w for p in reference for para in p.paragraphs for w in _bare_words(para)]
     out_bare = [w for b in doc.paragraphs for w in _bare_words(b.text)]

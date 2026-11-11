@@ -79,6 +79,21 @@ def test_italic_words_are_scored_over_aligned_words():
     assert (s.italic_precision, s.italic_recall) == (0.5, 0.5)
 
 
+def test_a_misread_italic_word_is_italic_in_the_right_place():
+    reference = [Chapter("I", ["it was truly remarkable, and so"], [frozenset({2, 3})])]
+    doc = Document("T", "A", "en", [Paragraph("it was truly rernarkable, and so", italic=(2, 3))])
+    s = evaluate.score(doc, reference)
+    assert (s.italic_precision, s.italic_recall) == (1.0, 1.0)
+
+
+def test_a_glued_italic_word_has_no_place_to_count_in():
+    reference = [Chapter("I", ["it was truly remarkable, and so"], [frozenset({2, 3})])]
+    doc = Document("T", "A", "en", [Paragraph("it was trulyremarkable, and so", italic=(2,))])
+    s = evaluate.score(doc, reference)
+    assert (s.italic_expected, s.italic_output) == (2, 1)
+    assert (s.italic_precision, s.italic_recall) == (0.0, 0.0)
+
+
 def test_the_ink_threshold_follows_a_pale_scan():
     import numpy as np
 
