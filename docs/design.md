@@ -519,7 +519,10 @@ own; an opening mark inside an open quotation ("no closing") names no line to re
 otherwise and is still asked by the quote check. The arbiter doesn't weigh these two
 readers' support until its trust data holds them and it is retrained: until then it sees
 them through the judges' votes. On the three English books of the user's as built, 72 of
-79 unpaired marks are of the three kinds read this way. Not benched yet.
+79 unpaired marks are of the three kinds read this way. Benched 2026-11-11: tuning WORSE,
+75 error places asked without it go unasked with it, because a paragraph whose marks
+all became readings loses its quote question whatever the arbiter then decides
+(decisions.md); it stays off until a paragraph left unpaired is still asked.
 
 ## Missing lines
 

@@ -442,11 +442,13 @@ def run(
         for ref in b.sources
     } | {SourceRef(c.page, i) for c in answers.by_key.values() for i in range(c.first, c.last + 1)}
     # A paragraph whose unpaired marks went through the OCR check as readings
-    # (`quotes.duel_readings`) was judged and decided there: no question of its own.
+    # (`quotes.duel_readings`) and are asked there has no question of its own. One the
+    # OCR check decided and left unpaired is still asked here.
     dueled = {
         SourceRef(s.page, s.line)
         for s in suspects
-        if any(any(s.support.get(name, ())[1:]) for name in (quotes.READER, quotes.OPENED))
+        if s.choice == "review"
+        and any(any(s.support.get(name, ())[1:]) for name in (quotes.READER, quotes.OPENED))
     }
     quote_lines = {
         ref
@@ -578,9 +580,9 @@ def _apart(
 
 
 def _dueled(p: Paragraph, dueled: set[SourceRef]) -> bool:
-    """Whether every unpaired quote mark of the paragraph was a reading in the OCR check:
-    one of its lines has such a suspect (`dueled`), and each of its problems is of a kind
-    those readings answer."""
+    """Whether every unpaired quote mark of the paragraph is asked by the OCR check: one
+    of its lines has a suspect with the quote check's reading that goes to review
+    (`dueled`), and each of its problems is of a kind those readings answer."""
     return bool(dueled.intersection(p.sources)) and all(
         why in quotes.DUELED for _, why in quotes.problems(p.text)
     )

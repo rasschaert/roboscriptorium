@@ -304,7 +304,9 @@ def test_the_read_models_reading_of_a_line_is_checked_like_the_others(tmp_path, 
     assert "English" in prompts[0]
 
 
-def test_an_unpaired_quote_goes_through_the_ocr_check_and_is_not_asked_apart(tmp_path, monkeypatch):
+def test_an_unpaired_quote_goes_through_the_ocr_check_and_is_still_asked_if_left_unpaired(
+    tmp_path, monkeypatch
+):
     monkeypatch.setenv("ROBO_OCR_TRUST", "0")
     # One paragraph whose quote never closes; every reader reads the lines as the layer.
     lines = ["‘" + LINES[0], *LINES[1:]]
@@ -329,8 +331,9 @@ def test_an_unpaired_quote_goes_through_the_ocr_check_and_is_not_asked_apart(tmp
     assert (suspect.line, suspect.ours, suspect.others) == (11, "page", ("page’",))
     assert suspect.support["quotes"] == (False, True)
     assert suspect.support["glm"] == (True, False)
-    # The judges kept the layer's line: decided, so the quote check asks nothing.
-    assert suspect.choice == "ours" and stages.quote_lines == set()
+    # The judges kept the layer's line and its paragraph is still unpaired: the quote
+    # check asks it all the same.
+    assert suspect.choice == "ours" and SourceRef(1, 11) in stages.quote_lines
 
 
 def test_a_reading_that_spells_a_word_with_a_ligature_glyph_is_no_suspect(tmp_path, monkeypatch):

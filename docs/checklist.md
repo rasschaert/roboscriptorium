@@ -728,10 +728,12 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       **Coded 2026-11-10, off** (`quotes.duel_readings`, `ROBO_QUOTE_READER=1`; design.md,
       Quote questions). Short test (`experiments/probe_quote_reader.py`, decisions.md): The
       Loudest Sound and Nothing's quote lines 81 → 12 with the judges right on 14 of 14
-      checked, Nervous System's 6 → 3. Left: the short test again after the narrowing
-      (warm, ~15 min), De tuin's changed paragraphs against its reference, then `bench
-      tuning` off and on from one commit, then validation; on by default if neither says
-      worse. A wrong silent fix seen on the way: `quotes.closed_at_end` added a ’ the print
+      checked, Nervous System's 6 → 3. **Benched 2026-11-11: tuning WORSE** (75 asked
+      error places go unasked: a paragraph whose marks all became readings loses its
+      quote question whatever the arbiter decides; decisions.md). Left: a paragraph the
+      OCR check leaves unpaired is asked all the same, through the OCR check's question;
+      short test on De tuin, Het heft and Au pair, then `bench tuning` and validation
+      again; on by default if neither says worse. A wrong silent fix seen on the way: `quotes.closed_at_end` added a ’ the print
       lacks (The Loudest Sound, PDF 235); with the reader on that paragraph skips it, so
       check whether `closed_at_end` is still needed at all once the reader is on. Then the trust data
       rebuilt with the two readers and the arbiter retrained to weigh them
