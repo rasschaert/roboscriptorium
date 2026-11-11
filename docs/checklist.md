@@ -637,12 +637,10 @@ also part of the pipeline itself." Before either book goes to review:
       capitals get an all-capitals version"; decisions.md): the capitals version of a
       mixed-case word is on (tuning no change, unasked 524 → 521, validation no change);
       the doubts on lower-case pieces no reading disputes and the capitals of a disputed
-      lower-case reading are behind `ROBO_LOWER_CAPITALS`, off. With it on: tuning no
+      lower-case reading (`ROBO_LOWER_CAPITALS`) are on since 2026-11-11, the user's call. With them: tuning no
       change, unasked 524 → 512, none made unasked, questions +1.6%; validation no error
       place changed, nine more questions (its verdict WORSE for those); Nervous System's
       "tv" twice and "VCR" asked, "SF" fixed. Left:
-      - the default: 1.7% more questions against those unasked errors, the user's call
-        (asked 2026-11-11)
       - the arbiter fixing where the judges agree on capitals instead of asking: a
         retrained one does, but one retraining differs from the next by some fifteen
         unasked errors on tuning for 72 changed suspects (decisions.md, 2026-11-11), so

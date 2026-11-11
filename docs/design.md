@@ -82,7 +82,7 @@ digit for a letter, or in lower case ("vTM", "LC1" for "LCI", "ss" for "SS"). Tw
   2026-11-09).
 - Where no reading disputes it, every reader having read the small capitals in lower
   case alike (half the silent small-capital errors on tuning had no suspect at all),
-  `ocrcheck.capitals_doubts` raises a doubt of its own (`ROBO_LOWER_CAPITALS`): a part of
+  `ocrcheck.capitals_doubts` raises a doubt of its own (`ROBO_LOWER_CAPITALS`, on; `=0` turns it off): a part of
   one to four lower-case letters joined by a hyphen, apostrophe or slash ("ss-chef",
   "u-bocht"), or a word of two to five letters with no vowel ("ss", "cv"), with its
   capitals as the one other version. Not a contraction's part, nor a part with a vowel

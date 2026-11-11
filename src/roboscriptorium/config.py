@@ -35,8 +35,9 @@ class Settings:
     alarm_model: str = "autotrust-jev:35b-nvfp4,d3:9b"
     alarm_below: float = 1.0
     # Doubts raised where small capitals may have been read in lower case though every
-    # reading agrees ("ss", "usb-stick"; `ocrcheck.capitals_doubts`).
-    lower_capitals: bool = False
+    # reading agrees ("ss", "usb-stick"; `ocrcheck.capitals_doubts`). About 1.7% more
+    # questions for the small capitals no reader disputes (docs/design.md).
+    lower_capitals: bool = True
     llama_url: str = "http://127.0.0.1:8092"
     # A hosted build of judge_model that answers in its place (`openrouter:…`, used only
     # when the user asks), its answers cached under judge_model's name. "" for none.

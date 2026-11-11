@@ -30,10 +30,13 @@ unasked errors came from 72 suspects of 30,647 whose versions differ. So one ret
 arbiter against another is noise at that size: bring the arbiter's variance down
 (seeds or bags averaged) before weighing the next retraining, batch five's included.
 
-**Small capitals: merged into main with the setting off** (321849d). Waiting on the user:
-whether `ROBO_LOWER_CAPITALS` goes on by default (about 1.7% more questions; on tuning
-unasked errors 524 → 512, none made unasked; validation nine more questions, no place
-changed). The checklist step "Small capitals, nailed" lists what is left. The worktree
+**Small capitals: the lower-case doubts are on by default** (`ROBO_LOWER_CAPITALS`, the
+user's call on 2026-11-11: about 1.7% more questions; on tuning unasked errors
+524 → 512, none made unasked; validation nine more questions, no place changed). The
+change sits on the branch `small-caps` until the quote reader's benches end (they load
+main's code and compare with the doubts off); then fast-forward main to it and bench
+main, tuning and validation, for the new baseline (warm, about 20 minutes).
+The checklist step "Small capitals, nailed" lists what is left. The worktree
 `../roboscriptorium-caps` (branch `small-caps`, merged, pushed) can go; the night's trust
 data and arbiters (`work/probes/ocr-trust-{caps,ctl}`, `work/models/ocr-trust-{caps,ctl,rep}*.pkl`)
 are not in use.
