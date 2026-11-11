@@ -861,3 +861,25 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-10 | bench tuning, the night's changes of 2026-11-09 (warm) | 5293 | 4 | 0 |
 | 2026-11-10 | bench validation, the night's changes of 2026-11-09 (warm) | 0 | 1 | 0 |
 | 2026-11-10 | probe: the quote check as a reader, off and on, Nervous System, Loudest Sound, De tuin's tuning slice (warm but for the new suspects) | 780 | 45 | 0 |
+| 2026-11-11 | probe: small capitals, Nervous System whole on a copy with ROBO_LOWER_CAPITALS (warm but for the new suspects) | 280 | 9 | 0 |
+| 2026-11-11 | probe: lower-case small capitals, short test off and on (one book at a time) | 120 | 15 | 1 |
+| 2026-11-11 | probe: lower-case small capitals, the judges on the wide crop (tight answers cached) | 0 | 9 | 0 |
+| 2026-11-11 | probe: lower-case small capitals, short test off and on (one book at a time, five books' answers cached) | 120 | 8 | 0 |
+| 2026-11-11 | probe: the quote check as a reader, off and on, after it takes a pairing reading's end (warm but for the new suspects) | 780 | 4 | 0 |
+| 2026-11-11 | bench tuning, main as the baseline for small capitals and the quote reader (warm) | 5293 | 4 | 0 |
+| 2026-11-11 | bench tuning, small-caps branch with ROBO_LOWER_CAPITALS (cold for the new suspects, one book at a time) | 5293 | 80 | 0 |
+| 2026-11-11 | bench validation, main as the baseline for small capitals and the quote reader (warm) | 0 | 1 | 0 |
+| 2026-11-11 | bench validation, small-caps branch with ROBO_LOWER_CAPITALS (cold for the new suspects, one book at a time) | 0 | 25 | 0 |
+| 2026-11-11 | bench tuning, small-caps branch with ROBO_LOWER_CAPITALS after the pruning (warm but for changed suspects) | 5293 | 20 | 0 |
+| 2026-11-11 | bench validation, small-caps branch with ROBO_LOWER_CAPITALS after the pruning (warm but for changed suspects) | 0 | 3 | 0 |
+| 2026-11-11 | trust data rebuilt with ROBO_LOWER_CAPITALS, every book (warm where the benches reached) | 0 | 27 | 0 |
+| 2026-11-11 | train arbiter on the trust data with lower-case doubts | 0 | 24 | 0 |
+| 2026-11-11 | bench tuning, small-caps branch with ROBO_LOWER_CAPITALS and the arbiter retrained on its doubts (warm) | 5293 | 16 | 0 |
+| 2026-11-11 | bench validation, small-caps branch with ROBO_LOWER_CAPITALS and the arbiter retrained on its doubts (warm) | 0 | 3 | 0 |
+| 2026-11-11 | bench tuning, small-caps branch with ROBO_LOWER_CAPITALS after the accent pruning (warm but for changed suspects) | 5293 | 17 | 0 |
+| 2026-11-11 | bench validation, small-caps branch with ROBO_LOWER_CAPITALS after the accent pruning (warm but for changed suspects) | 0 | 2 | 0 |
+| 2026-11-11 | trust data rebuilt without the lower-case doubts, the retraining's control (warm) | 0 | 13 | 0 |
+| 2026-11-11 | train arbiter on the control trust data | 0 | 23 | 0 |
+| 2026-11-11 | bench tuning, small-caps branch without the doubts, the control arbiter (warm) | 5293 | 16 | 0 |
+| 2026-11-11 | bench tuning, small-caps branch with the lower-case doubts off (warm but for changed suspects) | 5293 | 16 | 0 |
+| 2026-11-11 | bench validation, small-caps branch with the lower-case doubts off (warm but for changed suspects) | 0 | 2 | 0 |

@@ -633,17 +633,22 @@ also part of the pipeline itself." Before either book goes to review:
       words fixed (12 unasked), validation 9 (all unasked), none made; Dolittle's short
       last line of a paragraph stays a question
 - [ ] Small capitals, nailed (the user, 2026-11-09: "the new detected silent errors SWAT-team
-      and USB-stick worry me. we need to nail this"). Branch `small-caps`: the capitals
-      version with numbers left alone (tuning no change, 4 fixed, 2 made, asked), and doubts
-      raised on lower-case pieces no reading disputes (`ROBO_LOWER_CAPITALS`; the judges,
-      two of three, 39 of 57 small capitals and 0 of 150 lower case). Next: the short test
-      through the arbiter (`experiments/probe_caps_lower_short.py`, running), then the
-      judges' wide crop for the lone O, U and V; then `bench tuning` with the flag (cold for
-      ~1,100 new suspects, ~1 h), validation, merge; before batch five, so its trust data
-      holds the new suspects and the arbiter retrained on it can learn them
-      Nervous System is a test book for it (the user, 2026-11-10: PDF 158 line 8, small
-      capitals "VCR" read "ver."): it sets every acronym in small capitals (TV, RCMP, CBC, VCR,
-      GP, ER, OJ, FBI, ID), and the US scan's layer writes them in lower case, which finds them
+      and USB-stick worry me. we need to nail this"). Merged 2026-11-11 (design.md, "Small
+      capitals get an all-capitals version"; decisions.md): the capitals version of a
+      mixed-case word is on (tuning no change, unasked 524 → 521, validation no change);
+      the doubts on lower-case pieces no reading disputes and the capitals of a disputed
+      lower-case reading are behind `ROBO_LOWER_CAPITALS`, off. With it on: tuning no
+      change, unasked 524 → 512, none made unasked, questions +1.6%; validation no error
+      place changed, nine more questions (its verdict WORSE for those); Nervous System's
+      "tv" twice and "VCR" asked, "SF" fixed. Left:
+      - the default: 1.7% more questions against those unasked errors, the user's call
+        (asked 2026-11-11)
+      - the arbiter fixing where the judges agree on capitals instead of asking: a
+        retrained one does, but any retraining on today's trust data leaves more errors
+        unasked than production's arbiter (control: 539 against 524); find why first
+        (the same retraining from main's code), also before batch five retrains
+      - a lone small capital with the lower case's shape ("v-hals", "u-bocht", "o-benen"):
+        no judge tells it, tight crop or wide; retest with a new vision judge
 - [x] ~~autotrust-jev 9B as a second text judge~~ (2026-11-09, pass 4): not taken. Tuning
       unasked 551 → 535, validation 170 → 178 (decisions.md); failed on the arbiter's 23
       books, branch `text-seat` kept for a retest after batch five

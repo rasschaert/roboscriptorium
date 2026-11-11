@@ -68,6 +68,59 @@ against 0, CER 0.21% against 0.10%), and the newest open models that might
 (DeepSeek V4.1, GLM-5.3, MiMo 2.6, Step 3.7) are 200–760B, too big for this machine.
 
 Its prompt is the book's style and an instruction to transcribe exactly, nothing more.
+
+**Small capitals get an all-capitals version.** The judges pick among the readings of a
+span, and a word set in small capitals comes out of every reader in mixed case, with a
+digit for a letter, or in lower case ("vTM", "LC1" for "LCI", "ss" for "SS"). Two ways in:
+
+- Where a reading already disputes a span, a short word in it (two to five letters) that
+  mixes case inside, or has a 1 or 0 among capitals, gets its all-capitals form (1 → I,
+  0 → O) as one more version (`ocrcheck._capitals`). A word of more digits than letters
+  is a number and gets none: "11" offered as "II" was taken by the judges on De
+  vergelding's pages and Monterosso's room numbers (tuning WORSE, 26 words made); with
+  numbers left alone, tuning no change, "SWAT-team" and "USB-stick" fixed (decisions.md,
+  2026-11-09).
+- Where no reading disputes it, every reader having read the small capitals in lower
+  case alike (half the silent small-capital errors on tuning had no suspect at all),
+  `ocrcheck.capitals_doubts` raises a doubt of its own (`ROBO_LOWER_CAPITALS`): a part of
+  one to four lower-case letters joined by a hyphen, apostrophe or slash ("ss-chef",
+  "u-bocht"), or a word of two to five letters with no vowel ("ss", "cv"), with its
+  capitals as the one other version. Not a contraction's part, nor a part with a vowel
+  the book prints three times on its own ("zo-", "foto-"). Text can't decide it: the
+  word list holds "ss" and "SS" alike, and Dutch spelling writes "usb-stick" and "cv" in
+  lower case, so a publisher's small capitals are seen only on the scan. On the tuning
+  slices that is 54 of 57 small capitals and 1,100 lower-case pieces; the vision judges,
+  two of three agreeing, call 39 of the 57 capitals and none of 150 lower-case ones
+  (`experiments/probe_caps_lower.py`). A long mixed-case name ("McDonald") gets none.
+- Where the readings dispute a span and one of them reads such a lower-case piece, the
+  print's capitals are still no version: Nervous System's "VCR" is "ver" in the layer
+  and "vcr" in the read model, so the judges took "vcr" on one page and the reviewer
+  typed "VCR" on another. With the same setting each reading's piece in capitals is one
+  more version (`ocrcheck.capitals_versions`); not from a reading that splits the span's
+  words, a lone letter before an apostrophe ("z'n") or a stutter ("a-a-a-f"). On the
+  tuning books' cached suspects that is 450 of 37,712.
+
+A doubt needs a line the readers read (a washed-out page raises none). An added version
+is one more choice for the judges, and a wrong one splits them and turns a right fix
+into a question, so none is added where a version already holds a word in capitals
+("CSC" beside "CBC"), none from the layer's reading for a piece another version reads
+otherwise ("HDNG" beside "hang", "ZN" beside "zijn"), none for a word or token with an
+accent (0 of 17 right in the tuning books' trust data), and never more than the judges'
+seven options. About one added capitals version in a hundred is the print's, spread
+over every shape of piece, so the judges separate them, not a rule. The text judge
+keeps its seat on them: it reads no crop, but knows "UV-licht" from the sentence where
+the vision judges see a lower-case shape, and without its vote the hard ones go
+unasked.
+
+Benched 2026-11-11 with the setting on (decisions.md): tuning no change, unasked errors
+524 → 512 ("SWAT-team", "USB-stick", "RVS", "SD’ers" fixed; "SS", "UV-licht", "CV",
+"V-vormig" asked), none made unasked, questions 3,356 → 3,410; validation no error place
+changed, nine more questions. On Nervous System "tv" twice and "VCR" are asked with all
+four judges on the capitals, "SF" fixed. Not reached: a lone small capital with the
+lower case's shape ("v-hals", "u-bocht", "o-benen"), on the tight crop or the wide one.
+The arbiter retrained with the doubts fixes more of them unasked but lets more errors of
+other kinds through (unasked 545), so production's arbiter decides them.
+
 Five richer prompts on the reader set (hosted, 330 hard lines) each fixed about as many
 lines as they broke: "never correct or modernise" 2 against 5, the lines above and
 below 5 against 5, both 4 against 3, the layer's own reading 10 against 13 (it copies

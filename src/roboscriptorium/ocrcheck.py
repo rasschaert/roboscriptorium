@@ -17,6 +17,8 @@ PDFs, whose text is exact, aren't checked.
 import functools
 import json
 import re
+import unicodedata
+from collections import Counter
 from dataclasses import asdict, dataclass, field, replace
 from pathlib import Path
 
@@ -229,9 +231,12 @@ def check(
     style: str = "",
     alarms=(),
     alarm_below: float = 1.0,
+    lower_capitals: bool = False,
 ) -> list[Suspect]:
     """Suspects where any other reading (by name) differs from the text layer, each with a
-    decision. `style` tells the vision judges how the book is set (`quotes.style_note`).
+    decision, and with `lower_capitals` where small capitals may have been read in lower
+    case though no reading disputes it (`capitals_doubts`). `style` tells the vision
+    judges how the book is set (`quotes.style_note`).
     `alarms`, second vision judges, are asked the vision judge's question where that
     judge is less sure than `alarm_below` (one with a `wide` view on the suspect with its
     line around it); each pick is a vote for the arbiter, not part of the fixed rule, and
@@ -246,8 +251,16 @@ def check(
     judges = [m for m in (vision, reader, *alarms) if m is not None]
     for live in judges[:-1]:
         later = lambda m, live=live: m if m is None or m is live else _Later(m)  # noqa: E731
-        _check(*args, later(vision), later(reader), *rest, tuple(map(later, alarms)), alarm_below)
-    return _check(*args, vision, reader, *rest, alarms, alarm_below)
+        _check(
+            *args,
+            later(vision),
+            later(reader),
+            *rest,
+            tuple(map(later, alarms)),
+            alarm_below,
+            lower_capitals,
+        )
+    return _check(*args, vision, reader, *rest, alarms, alarm_below, lower_capitals)
 
 
 class _Later:
@@ -273,11 +286,13 @@ def _check(
     style: str,
     alarms,
     alarm_below: float,
+    lower_capitals: bool = False,
 ) -> list[Suspect]:
     """`check`'s pass over the book with the judges as given."""
     suspects = []
     curly = curly_book(pages)
     shortened = abbreviations(pages)
+    counts = book_words(pages) if lower_capitals else Counter()
     with pymupdf.open(pdf) as doc:
         for page in pages:
             pdf_page = doc[page.number - 1]
@@ -296,6 +311,15 @@ def _check(
                     page.lines[k + 1].text if k + 1 < len(page.lines) else "",
                 )
                 differences = merged_differences(ours, read, curly)
+                if lower_capitals:
+                    differences = [
+                        (d0, d1, [*vs, *capitals_versions(ours[d0:d1], vs, counts)])
+                        for d0, d1, vs in differences
+                    ]
+                    taken = [(d0, d1) for d0, d1, _ in differences]
+                    # Agreement needs readings: a line no reader read raises no doubt.
+                    if read:
+                        differences += capitals_doubts(ours, taken, counts)
                 for a0, a1, alternatives in differences:
                     disputed = [(d0, d1) for d0, d1, _ in differences if (d0, d1) != (a0, a1)]
                     alternatives = [
@@ -570,6 +594,8 @@ def merged_differences(
                 versions.append(piece)
         if versions and (both := _combined(ours[g0:g1], versions)):
             versions.append(both)
+        if versions and (capitals := _capitals(ours[g0:g1], versions)):
+            versions.append(capitals)
         if versions:
             out.append((g0, g1, versions))
     return out
@@ -587,6 +613,161 @@ def curly_book(pages: list[PageText]) -> bool:
     """Whether the layer sets more curly quote marks than straight ones."""
     text = "".join(ln.text for p in pages for ln in p.lines)
     return sum(text.count(c) for c in "‘’“”") > sum(text.count(c) for c in "'\"")
+
+
+_WORDS = re.compile(r"[^\W_]+")
+
+
+def _small_capitals(word: str) -> str | None:
+    """The all-capitals form of a short word that small capitals could be read as
+    ("vTM" → "VTM", "LC1" → "LCI": a 1 or 0 among more capitals is an I or O), else None.
+    A word of more digits than letters is a number ("11", "10D") and stays one, and one
+    with an accent is a word ("nIét"): no capitals of the tuning books' trust data that
+    held an accent were the print's (0 of 17)."""
+    if not 2 <= len(word) <= 5 or _accented(word):
+        return None
+    if word.isalpha():
+        return word.upper() if word[1:] != word[1:].lower() else None
+    letters = sum(c.isalpha() for c in word)
+    if letters <= len(word) - letters:
+        return None
+    if word.isalnum() and set(word) & set("10") and word.translate(_LOOKALIKE).isupper():
+        return word.translate(_LOOKALIKE)
+    return None
+
+
+_LOOKALIKE = str.maketrans("10", "IO")
+
+
+def _capitals(ours: str, versions: list[str]) -> str | None:
+    """One more version of a span: its first short word that mixes case inside, or a digit
+    among capitals, in capitals, unless that form is already a version. The judges can only
+    pick among the readings, and none has the capitals small capitals were set in."""
+    for piece in (ours, *versions):
+        form = _WORDS.sub(lambda m: _small_capitals(m[0]) or m[0], piece)
+        if form != piece:
+            folded = [_alike(v) for v in (ours, *versions)]
+            return form if _alike(form) not in folded else None
+    return None
+
+
+# The judges' options, one a version: a suspect holds no more versions than these.
+LETTERS = "abcdefg"
+_VOWELS = frozenset("aeiouy")
+# A token: letters joined by hyphens, apostrophes or slashes ("ss-chef", "suv/mpv").
+_TOKEN = re.compile(r"[^\W\d_]+(?:[-'’/][^\W\d_]+)*")
+_LETTERS = re.compile(r"[^\W\d_]+")
+_CONTRACTION = re.compile(r"[’'](?:t|re|ll|ve|d|m)\b")
+# A word the book prints this often on its own, in lower case, is a word ("zo-", "foto-").
+COMMON = 3
+
+
+def _accented(part: str) -> bool:
+    return any(unicodedata.normalize("NFD", c) != c for c in part)
+
+
+def _vowels(part: str) -> bool:
+    """Whether a part holds a vowel, accented or in a ligature ("ý", "ĳ") too."""
+    return bool(_VOWELS & set(unicodedata.normalize("NFKD", part)))
+
+
+def book_words(pages: list[PageText]) -> Counter:
+    """How often each word stands alone in the pages, as read."""
+    return Counter(
+        t
+        for page in pages
+        for line in page.lines
+        for t in (w.strip(".,;:!?…“”‘’'\"()[]«»—–-") for w in line.text.split())
+        if t.isalpha()
+    )
+
+
+def capital_pieces(token: str, words: Counter) -> list[tuple[int, int]]:
+    """The pieces of a token small capitals may have been read as in lower case: a part of
+    one to four letters joined to another ("ss-chef", "u-bocht", "usb-stick"), or a word of
+    two to five letters with no vowel ("ss", "cv"). Not a contraction's part ("don't",
+    "'s"), a lone letter elided before an apostrophe ("z'n", "l'eau"), a part with a
+    vowel the book prints `COMMON` times on its own ("zo-"); none of a token with an
+    accent ("café-inboedel", "één-nul")."""
+    if _accented(token):
+        return []
+    parts = list(_LETTERS.finditer(token))
+    if len(parts) == 1:
+        p = parts[0][0]
+        return [(0, len(p))] if p.islower() and 2 <= len(p) <= 5 and not _vowels(p) else []
+    out = []
+    for m in parts:
+        p, rest = m[0], token[m.end() :]
+        if not p.islower() or len(p) > 4:
+            continue
+        if m.start() and token[m.start() - 1] in "’'":
+            continue
+        if _CONTRACTION.match(rest) or (p.endswith("n") and re.match(r"[’']t\b", rest)):
+            continue
+        if len(p) == 1 and rest[:1] in ("’", "'"):
+            continue
+        if _vowels(p) and len(p) > 1 and words[p] >= COMMON:
+            continue
+        out.append((m.start(), m.end()))
+    return out
+
+
+def capitals_doubts(
+    ours: str, taken: list[tuple[int, int]], words: Counter
+) -> list[tuple[int, int, list[str]]]:
+    """Spans of a line no reading disputes (outside `taken`) where small capitals may have
+    been read in lower case, each with its capitals as the one other version. Every reader
+    reads small capitals as lower case alike ("ss", "usb-stick"), so no difference raises
+    them; the vision judges see which the scan prints. A token with two such pieces
+    ("ss-chef") gets a version for each, as either may be the capitals."""
+    out = []
+    for m in _TOKEN.finditer(ours):
+        pieces = capital_pieces(m[0], words)
+        if not pieces:
+            continue
+        a0, a1 = _word_span(ours, m.start(), m.end())
+        if any(t0 < a1 and a0 < t1 for t0, t1 in taken):
+            continue
+        span, at = ours[a0:a1], m.start() - a0
+        out.append((a0, a1, [span[: at + p0] + span[at + p0 : at + p1].upper() + span[at + p1 :]
+                             for p0, p1 in pieces]))  # fmt: skip
+        taken = [*taken, (a0, a1)]
+    return out
+
+
+def capitals_versions(ours: str, versions: list[str], words: Counter) -> list[str]:
+    """More versions of a span the readings dispute: each reading with a piece small
+    capitals may have been read as in lower case (`capital_pieces`) in capitals, unless
+    that form is a version already. Where the layer reads "ver" and a reader "vcr", the
+    scan's "VCR" is neither, and the judges can only pick among the versions. Not from
+    a reading that splits or glues the span's words ("gevlu cht"), nor from a token of
+    more than two such pieces (a stutter, "a-a-a-f"), and no more than the judges have
+    options left for. None where a version holds a word
+    in capitals already ("csc", "cbc", "CBC"): the judges have capitals to pick, and
+    another ("CSC") would split them. None from the layer's reading for a piece whose
+    letters another version reads otherwise ("hdng" beside "hang", "zn" beside "zijn"):
+    its capitals are a misreading's."""
+    out: list[str] = []
+    if any(len(w) > 1 and w.isupper() for v in (ours, *versions) for w in _LETTERS.findall(v)):
+        return out
+    seen = {_alike(v) for v in (ours, *versions)}
+    read = [{w.lower() for w in _LETTERS.findall(v)} for v in versions]
+    for piece in (ours, *versions):
+        if piece.count(" ") != ours.count(" "):
+            continue
+        for m in _TOKEN.finditer(piece):
+            if m.start() and piece[m.start() - 1] in "‘’'":
+                continue
+            pieces = capital_pieces(m[0], words)
+            for p0, p1 in pieces if len(pieces) <= 2 else ():
+                a, b = m.start() + p0, m.start() + p1
+                if piece is ours and not all(piece[a:b] in letters for letters in read):
+                    continue
+                form = piece[:a] + piece[a:b].upper() + piece[b:]
+                if _alike(form) not in seen:
+                    seen.add(_alike(form))
+                    out.append(form)
+    return out[: max(0, len(LETTERS) - 1 - len(versions))]
 
 
 _TRAILING = re.compile(r"^(.*?)([.,;:!?…]*)([’”'\"]*)$", re.S)
@@ -637,7 +818,7 @@ def _decide(
     judge isn't: told the style, it picked right less often.
     """
     versions = [ours[a0:a1], *others]
-    letters = "abcdefg"[: len(versions)]
+    letters = LETTERS[: len(versions)]
     state = {"page": number, "line": k, "readings": versions, "box": [round(v, 1) for v in box]}
     question = {
         "reading": decide.choice(

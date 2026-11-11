@@ -339,6 +339,7 @@ def run(
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, whole, style, dots), alarms, settings.alarm_below,
+                settings.lower_capitals,
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:
