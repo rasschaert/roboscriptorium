@@ -280,6 +280,23 @@ models could do. Each probe asks whether that still holds, on a few golden pages
 the architecture"). Record each result, null ones too. The probes already answered
 are under Done, "Architecture probes".
 
+- [ ] **Render and compare** (the user's idea, 2026-11-11): a judge that knows no
+      language. Each version of a suspect is drawn as the book would print it and laid
+      over the scan; the version whose drawing fits the ink where the versions differ
+      gets the vote, and the arbiter learns its trust from the golden books. Aimed at
+      specks, small capitals, ligatures, accents. Two sources for the drawing, named so:
+      - [ ] **Own-type templates**: letters, ligatures and marks cut from the book's own
+            uncontested words, same scan and ink. First test, no models (~1 day): on the
+            labelled suspects, how often the better fit is the print, above all where
+            the judges were wrong or the arbiter asked; and how many suspects need a
+            shape the book never prints elsewhere (a lone í, "VTM" in small capitals)
+      - [ ] **Matched-font rendering** (the user's): the typeface found from the
+            harvested letters (and the colophon, where it names one), or its closest
+            digital cut, for the shapes the book can't supply; fitted to the book's
+            weight and ink spread on its common letters. Sized by the count above
+      - [ ] **Leftover ink**: the agreed reading drawn and taken from the scan; ink left
+            over raises a suspect where every reading agrees (a missed stress accent, a
+            speck). Tried first on the six known stress accents and the quiet set
 - [ ] Qwen's page roles as an input to the trees (`pageroles.py`, `ROBO_PAGE_ROLES`,
       off; not taken twice, 2026-10-24 and 25). A strong signal on plain pages (headings
       126 of 126 against the pipeline's 110), but the trees trained with page features
