@@ -1807,3 +1807,38 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   font scores 0.66–0.85, enough to name a family, not to settle a contested word:
   that needs the drawing fitted to the book's ink on its own letters (own-type
   templates). By eye beforehand the agent had guessed Scala for Stella: wrong.
+- 2026-11-11: **Render and compare, the user's idea: a judge that knows no language.
+  First test on Stella: the better fit is the print on 9 of 9 labelled places, where
+  each judge has 5 or 6** (`experiments/probe_render_compare.py`, no models, seconds a
+  book once its font is matched). The idea (the user, 2026-11-11): every reader and
+  judge is a language model and they fail together, reading what makes sense; most of
+  their mistakes are plain to a person looking at the ink. So take a contested place,
+  draw each version as the book would print it, lay the drawings over the scan, and let
+  the better fit vote, "as if you were to ask someone who can't read to compare two
+  pictures". It should help with specks, small capitals, ligatures, accents; not with
+  line-end hyphens, paragraph breaks, washed-out pages or anything the ink doesn't
+  show. Its parts, by the names agreed: **matched-font rendering** (the user's: the
+  drawing in the book's typeface, found from the scan; the entry above), **own-type
+  templates** (the drawing from letters cut out of the book's own uncontested words:
+  the real ink, but no rare shapes, as the user pointed out: a lone í, "VTM" in small
+  capitals, which is where the readers struggle most, so the font is the main road
+  and the book's letters calibrate it), **leftover ink** (the agreed reading drawn and
+  taken from the scan: what is left raises a suspect where every reading agrees, the
+  85% of errors no question asks about; not built). How the test works: a suspect's
+  box is its span's box in the layer; the span's ink is cut along the blank around it
+  (`probe_font_match.word_ink`), each version is drawn whole in the book's regular cut
+  (Stella: Quadraat) with the font's fitted stroke thickening, scaled to the ink's
+  height and laid over it at the best of fifteen stretches (0.86–1.14); the fit is the
+  correlation of the two, blurred a little. Stella's nine settled places (labelled by
+  the user's answers), fit of each version, the print first: "íéts" 0.88 against
+  "iéts" 0.86 and "féts" 0.73; "ís" 0.91, "is" 0.85; "gestuit" 0.91, "gestuït" 0.88;
+  "grof werk" 0.84, "grofwerk" 0.77; "trof ik" 0.83, "trofik" 0.64; "wat er" 0.90,
+  "water" 0.53; "besef een" 0.91, "besefeen" 0.66; "omging." 0.93, "omgeving." 0.58;
+  "Ze" 0.92, "ze" 0.51. Every place a judge missed, the fit has right (clef 4 misses,
+  the others 3 each), among them both stress accents the user corrected by hand and
+  both glued words that were Stella's unasked errors. Accent margins are thin (0.02 to
+  0.06), spaces and letters wide (0.07 to 0.4). Nine places in one book whose typeface
+  the library holds exactly: encouraging, not proof. Next: every golden book's
+  typeface matched (running), then the same test on their ~30,000 labelled places by
+  kind of error and by where the judges were wrong; if it holds, the fit as a judge's
+  vote with its margin in the trust data, the arbiter retrained, both benches.

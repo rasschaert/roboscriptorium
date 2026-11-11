@@ -280,24 +280,29 @@ models could do. Each probe asks whether that still holds, on a few golden pages
 the architecture"). Record each result, null ones too. The probes already answered
 are under Done, "Architecture probes".
 
-- [ ] **Render and compare** (the user's idea, 2026-11-11): a judge that knows no
-      language. Each version of a suspect is drawn as the book would print it and laid
-      over the scan; the version whose drawing fits the ink where the versions differ
-      gets the vote, and the arbiter learns its trust from the golden books. Aimed at
-      specks, small capitals, ligatures, accents. Two sources for the drawing, named so:
-      - [ ] **Own-type templates**: letters, ligatures and marks cut from the book's own
-            uncontested words, same scan and ink. First test, no models (~1 day): on the
-            labelled suspects, how often the better fit is the print, above all where
-            the judges were wrong or the arbiter asked; and how many suspects need a
-            shape the book never prints elsewhere (a lone í, "VTM" in small capitals)
+- [ ] **Render and compare** (the user's idea, 2026-11-11; decisions.md of that day has
+      the idea whole): a judge that knows no language. Each version of a suspect is
+      drawn as the book would print it and laid over the scan's ink; the better fit gets
+      the vote, and the arbiter learns its trust from the golden books. Aimed at specks,
+      small capitals, ligatures, accents. First test, Stella: the print on 9 of 9
+      labelled places, each judge 5 or 6 (`probe_render_compare.py`). In order:
+      - [ ] The golden books' typefaces matched (`probe_font_match.py`, ~2 min a book,
+            results in `work/probes/font-match/`), then the test on their labelled
+            places: by kind of error, where the judges were wrong, where the arbiter
+            asks, and by how well the book's typeface was matched
+      - [ ] If it holds: the fit as one more judge (`ocrcheck`), its vote and margin in
+            the trust data, the arbiter retrained, `bench tuning` and `validation`
+            (model time: the user offered the machine once the night's runs end)
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
             for the shapes the book can't supply. The family is found for eight of the
-            user's ten books (2026-11-11, `probe_font_match.py`, the user's library in
-            `~/Fonts`: Quadraat, Janson Text four times, Trump Mediaeval, Minion,
-            Sabon); Ex-minnaar and Going into a Dark House undecided. Left: the weight
-            and the two undecided books, from single letters once own-type templates
-            exist; the drawing fitted to the book's ink spread; then the test on
-            suspects that need a shape the book never prints elsewhere
+            user's ten books (the user's library in `~/Fonts`: Quadraat, Janson Text
+            four times, Trump Mediaeval, Minion, Sabon); Ex-minnaar and Going into a
+            Dark House undecided. Left: the weight, the italic and small-capital cuts
+            (which word is set in which), and the two undecided books
+      - [ ] **Own-type templates**: letters, ligatures and marks cut from the book's own
+            uncontested words, same scan and ink: to fit the matched font to the book's
+            ink (accent margins are thin: 0.02–0.06), and for a book whose typeface the
+            library lacks
       - [ ] **Leftover ink**: the agreed reading drawn and taken from the scan; ink left
             over raises a suspect where every reading agrees (a missed stress accent, a
             speck). Tried first on the six known stress accents and the quiet set
