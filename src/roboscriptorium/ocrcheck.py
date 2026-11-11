@@ -735,11 +735,14 @@ def capitals_versions(ours: str, versions: list[str], words: Counter) -> list[st
     more than two such pieces (a stutter, "a-a-a-f"), and no more than the judges have
     options left for. None where a version holds a word
     in capitals already ("csc", "cbc", "CBC"): the judges have capitals to pick, and
-    another ("CSC") would split them."""
+    another ("CSC") would split them. None from the layer's reading for a piece whose
+    letters another version reads otherwise ("hdng" beside "hang", "zn" beside "zijn"):
+    its capitals are a misreading's."""
     out: list[str] = []
     if any(len(w) > 1 and w.isupper() for v in (ours, *versions) for w in _LETTERS.findall(v)):
         return out
     seen = {_alike(v) for v in (ours, *versions)}
+    read = [{w.lower() for w in _LETTERS.findall(v)} for v in versions]
     for piece in (ours, *versions):
         if piece.count(" ") != ours.count(" "):
             continue
@@ -749,6 +752,8 @@ def capitals_versions(ours: str, versions: list[str], words: Counter) -> list[st
             pieces = capital_pieces(m[0], words)
             for p0, p1 in pieces if len(pieces) <= 2 else ():
                 a, b = m.start() + p0, m.start() + p1
+                if piece is ours and not all(piece[a:b] in letters for letters in read):
+                    continue
                 form = piece[:a] + piece[a:b].upper() + piece[b:]
                 if _alike(form) not in seen:
                     seen.add(_alike(form))

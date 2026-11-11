@@ -81,6 +81,11 @@ def test_a_disputed_span_gets_capitals_only_for_a_reading_small_capitals_could_b
     assert more("tv.", "TV.") == []
     assert more("csc.", "cbc.", "CBC.") == []
     assert more("sr", "sF", "sf", "SF") == []
+    # The layer's piece another version reads otherwise: no capitals of the misreading.
+    assert more("hdng", "hang") == []
+    assert more("zn", "zijn") == []
+    assert more("rrr?", "11F?") == []
+    assert more("p-day", "d-day") == ["p-DAY", "D-day", "d-DAY"]
     assert more("Tv", "TV", "tv") == []
     assert more("mijn", "míjn", "mýjn") == []
     assert more("gevlucht.", "gevlu cht.") == []
