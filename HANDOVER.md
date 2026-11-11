@@ -10,7 +10,16 @@ from 2026-11-09 and 2026-11-10.
 **Night of 2026-11-10/11** (the user: the machine is free; small capitals first, then the
 quote reader, then batch five). decisions.md, 2026-11-11, has every number.
 
-Nothing runs. Found at ~06:00: retraining is exact (the arbiter trained again on
+- screen `robo-quote-bench-20261111` (`work/runs/quote-bench-20261111.sh`, started 06:00
+  on 2026-11-11, main's code, don't edit `src/` while it runs): `bench tuning` then
+  `validation` with `ROBO_QUOTE_READER=1`, one book at a time, against the runs of the
+  same code with it off (`work/bench/tuning-20261111T043034-38a18c1-dirty.json`,
+  `validation-20261111T043308-38a18c1-dirty.json`). Hours cold; logs
+  `work/runs/quote-{tuning,validation}.log`. If the user's working day starts first, stop
+  it (`experiments/stop-run.sh quote-bench-20261111`) and start the same script again at
+  night: it resumes from the judges' cached answers.
+
+Found at ~06:00: retraining is exact (the arbiter trained again on
 production's trust data is production's file byte for byte), and the control's 15 more
 unasked errors came from 72 suspects of 30,647 whose versions differ. So one retrained
 arbiter against another is noise at that size: bring the arbiter's variance down
@@ -29,12 +38,7 @@ Both fixes are on main (6b57830: a last line another reading already ends paired
 that reading's end; De tuin's fixes 2,143 → 2,155 against 2,156 off, OCR questions
 111 → 98 against 83, quote lines 146 → 80; 023e983: only where that leaves the
 paragraph fewer unpaired marks, The Loudest Sound and Nothing's "one.”’"). The worktree
-`../robo-quote` (branch `quote-reader`, merged) can go. Next its benches:
-`work/runs/quote-bench-20261111.sh` (point it at main; baselines
-`work/bench/tuning-20261110T234355-38c86cf-dirty.json` and
-`work/bench/validation-20261111T010443-64c17a2-dirty.json`, or a fresh baseline of main
-after the merge). Its suspects on tuning run to thousands: hours cold, a night's job,
-one book at a time. Still asked by the quote check itself: a mark opening a word
+`../robo-quote` (branch `quote-reader`, merged) can go. Its benches are the run above. Still asked by the quote check itself: a mark opening a word
 ("’bout", 40 lines in The Loudest Sound and Nothing).
 
 **Batch five was stopped at ~06:50 on 2026-11-10** (the user leaving for work): its
