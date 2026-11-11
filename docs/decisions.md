@@ -1743,4 +1743,17 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   differ from the reference counts as wrongly italic, and an asked suspect keeps the
   layer's letters. The bench's verdict flipped on that count three times today
   (checklist: the italic count without the words' spelling).
+- 2026-11-11: **How many seeds the arbiter averages: the gain thins out by twenty** (the
+  user: try 15, then 20, and say where the returns diminish;
+  `experiments/probe_trust_seeds.py`, no models, each tuning book scored by the other
+  books' trees, five trainings, four of them with 0.25% of the suspects left out).
+  Suspects whose pick changes, and whose place among the asked changes, under the
+  left-out suspects: 1 seed 42 and 926; 5 seeds 21 and 431; 10 seeds 17 and 304; 15
+  seeds 16.5 and 247; 20 seeds 15.5 and 221. The asked changes fall about as one over
+  the root of the number, so halving twenty's takes eighty. Accuracy doesn't move:
+  wrong picks 481 with one seed, 475, 475, 475, 474 from five on, silent errors at the
+  rule's questions 26 throughout. Each further five seeds cost 2.2 s per arbiter
+  trained, about a quarter of an hour on a full retraining (the arbiter, its copy
+  without each tuning book and their calibration, some 380 trainings; estimated, not
+  timed), and nothing a build would notice.
 
