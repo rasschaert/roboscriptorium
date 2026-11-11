@@ -2,36 +2,44 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Top sections rewritten 2026-11-10 (~00:30 and ~07:45); the older sections from
-2026-11-09 morning.
+end of every session. Top sections rewritten 2026-11-11 (~05:50); the older sections
+from 2026-11-09 and 2026-11-10.
 
 ## Running
 
-**Since 2026-11-10 ~23:55** (the user: the machine is free; small capitals first, "that
-branch has been open for too long", force-push of `small-caps` allowed). Results so far in
-decisions.md, 2026-11-11 (small capitals: on the branch's copy).
+**Night of 2026-11-10/11** (the user: the machine is free; small capitals first, then the
+quote reader, then batch five). decisions.md, 2026-11-11, has every number.
 
-- screen `robo-caps-arbiter-20261111` (`work/runs/caps-arbiter-20261111.sh`, started
-  ~02:30 on 2026-11-11, the code of `../roboscriptorium-caps` at bc2afb3, local): `bench
-  tuning` and `validation` with `ROBO_LOWER_CAPITALS=1` after the pruning
-  (`caps2-*.log`); the trust data rebuilt with the doubts in
-  `work/probes/ocr-trust-caps` (`caps-trustdata.log`); an arbiter trained on it, saved as
-  `work/models/ocr-trust-caps*.pkl` beside production's (`caps-train.log`); both benches
-  with it (`caps3-*.log`). Baselines: `work/bench/tuning-20261110T234355-38c86cf-dirty.json`
-  and `work/bench/validation-20261111T010443-64c17a2-dirty.json` (main, that night).
-- Don't edit `src/` in `../roboscriptorium-caps` while it runs.
+- screen `robo-arbiter-rep-20261111` (`work/runs/arbiter-rep-20261111.sh`, started ~05:45):
+  the arbiter trained again on production's own trust data (`work/probes/ocr-trust`, read
+  only), saved as `work/models/ocr-trust-rep*.pkl`, then `bench tuning` with it
+  (`rep-train.log`, `rep-tuning.log`). It answers why a retrained arbiter leaves more
+  errors unasked than production's (524 on tuning): the control retrained on nearly the
+  same data left 539. If the reproduction gives 524, a handful of changed suspects moves
+  the trees that much; if not, the code changed what the arbiter sees since 2026-11-08.
+  Don't edit `src/` on main while it runs.
 
-The first benches of the night (before the pruning; `caps-{tuning,validation}.log`):
-tuning NO CHANGE, case errors down (3 unasked fixed, 10 unasked now asked, 12 right
-fixes turned questions by an extra capitals version); validation WORSE on the many-slips
-line (Verminkt's "zn"/"zijn" four times asked beside "ZN"). Merge only if the pruned
-runs are no worse; with the retrained arbiter the merge sets
-`ocr_trust_model` to the new files (or renames them over production's, the old kept).
+**Small capitals: merged into main with the setting off** (321849d). Waiting on the user:
+whether `ROBO_LOWER_CAPITALS` goes on by default (about 1.7% more questions; on tuning
+unasked errors 524 → 512, none made unasked; validation nine more questions, no place
+changed). The checklist step "Small capitals, nailed" lists what is left. The worktree
+`../roboscriptorium-caps` (branch `small-caps`, merged, pushed) can go; the night's trust
+data and arbiters (`work/probes/ocr-trust-{caps,ctl}`, `work/models/ocr-trust-{caps,ctl,rep}*.pkl`)
+are not in use.
 
-**Waiting, not queued: the quote reader's benches** (`work/runs/quote-bench-20261111.sh`,
-the `quote-reader` worktree `../robo-quote` at 88a2dda with `ROBO_QUOTE_READER=1`, the
-same baselines). Its suspects on tuning run to thousands, hours cold: start it once
-small capitals is settled, then batch five's cold bench.
+**The quote check as a reader: fixed twice, not benched** (`ROBO_QUOTE_READER=1`, off).
+Main has the first fix (6b57830: a last line another reading already ends paired takes
+that reading's end; De tuin's fixes 2,143 → 2,155 against 2,156 off, OCR questions
+111 → 98 against 83, quote lines 146 → 80). The second is on branch `quote-reader`
+(worktree `../robo-quote`, 88a2dda, local, not rebased on the merge): that end is taken
+only where it leaves the paragraph fewer unpaired marks (The Loudest Sound and Nothing's
+"one.”’"). Next: rebase it on main, merge it (off by default, unit-tested), then its
+benches: `work/runs/quote-bench-20261111.sh` (point it at main; baselines
+`work/bench/tuning-20261110T234355-38c86cf-dirty.json` and
+`work/bench/validation-20261111T010443-64c17a2-dirty.json`, or a fresh baseline of main
+after the merge). Its suspects on tuning run to thousands: hours cold, a night's job,
+one book at a time. Still asked by the quote check itself: a mark opening a word
+("’bout", 40 lines in The Loudest Sound and Nothing).
 
 **Batch five was stopped at ~06:50 on 2026-11-10** (the user leaving for work): its
 cold bench (`night-20261110.sh` step 3, worktree `../robo-grow6`, branch `grow6` rebased on
@@ -40,51 +48,13 @@ and De vergelding remain. Resume it, the next night the user frees the machine, 
 caches with steps 3 and 4 of `work/runs/night-20261110.sh` (the benches of steps 1 and 2 are
 done, NO CHANGE): against `work/bench/tuning-20261110T032819-e3e0a01-dirty.json`.
 
-**Branch `small-caps` was rebased on main on 2026-11-10 (local only, by the user's choice not
-to force-push):** worktree `../roboscriptorium-caps`, eaf169f, every fix of the night plus
-its three commits and a repair (the lower-case doubt passed through both halves of the
-split OCR check), 688 tests passing. GitHub still has the old branch: work from the local
-one, and don't pull or reset it from origin.
-
-**The quote check as a reader of the OCR check** (`quotes.duel_readings`,
-`ROBO_QUOTE_READER=1`, off; checklist "One path for every doubt", decisions.md 2026-11-10).
-Short test on copies of three books (`experiments/probe_quote_reader.py`, results in
-`work/probes/quote-reader/<book>.json`): The Loudest Sound and Nothing's quote lines 81 → 12,
-Nervous System's 6 → 3, the judges right on every kept place checked by eye. **De tuin (PDF 11–254) looks worse with the setting on and was not analysed**
-(the user had to go): OCR questions 83 → 111, quote lines 146 → 80, unpaired marks left
-72 → 88, fixed 2,156 → 2,143, 24 paragraphs changed, several of the first six for the
-worse ("Voor alles.’" → "Voor alles?", "zou...’" → "ZOU...", closing marks lost). Start
-there: `work/probes/quote-reader/de-tuin-van-de-avondnevel--ia-scan.json`, key `changed`,
-each against its crop and the reference; find why a quote reading on a line changes what
-the arbiter picks for the line's other suspects. No bench before that is understood. Nothing is running. Two guesses
-were narrowed after that run (no opened reading on a paragraph that opens on a mark, none
-for a mark opening a word), so next, in order: (1) the short test again, warm, ~15 min:
-
-    experiments/detached.sh quote-reader experiments/timed.sh "probe: the quote check as a reader, off and on, after the narrowing (warm)" 780 work/runs/quote-reader.log uv run python experiments/probe_quote_reader.py nervous-system loudest-sound-and-nothing de-tuin-van-de-avondnevel--ia-scan:11-254
-
-(delete the three copies' folders first only if the books were rebuilt since; the copies
-hold the judges' answers); (2) De tuin's changed paragraphs against its reference; (3) a
-warm `bench tuning` on main as the baseline, one with `ROBO_QUOTE_READER=1` against it,
-then validation: the user's go needed for the benches. Next kinds for the same path, not
-started: garbled lines, headings, specks, washed-out pages.
-
-**Two sessions, one machine** (the user, 2026-11-10: this session, on main, schedules model
-time; the session `smallcaps` works in `../roboscriptorium-caps`). It was shut down for the
-day with its branch at bd1b511 or later, local only, and three short runs approved but not
-started: Nervous System whole on a copy with `ROBO_LOWER_CAPITALS` on (~20 min,
-`experiments/probe_caps_nervous_short.py`), the short test through the arbiter on the tuning
-books (~20 min), the wide-crop probe (~10 min). Its finding from caches: of Nervous System's
-30 small-capital acronyms the build has 26 right; "tv" wrong unasked on PDF 43 and 59, "vcr"
-on PDF 47, PDF 158 asked; the UK scan has no "RCMP". Both changes want a cold bench on the
-same night and baseline: decide the order with the user.
-
 **The user is reviewing Nervous System** (started 2026-11-10 ~06:40, answers in
 `work/nervous-system/review/regions.jsonl`). Their first card, PDF 13, was "a mess": fixed
 in 47ecbef (washed-out cards read only inked lines; no repeating readings). A review server
 started before that commit shows the old cards: restart it (answers are kept). Then Going
 into a Dark House and The Loudest Sound and Nothing (checklist, the user's books).
 
-**Done tonight** (decisions.md 2026-11-09/10 has the numbers): Nervous System built and
+**Done the night of 2026-11-09/10** (decisions.md has the numbers): Nervous System built and
 checked (epubcheck clean; 70 questions after the fixes, sampled; waits on the user's
 review); the judges asked one at a time over the book (judging ~10× faster: 585 model
 reloads an hour had eaten it); the text layer's cache now hits; the arbiter scores a book
@@ -114,35 +84,12 @@ polite."
 
 ## Next, in order, once the user frees the machine
 
-1. **Small capitals, nailed** (the user, 2026-11-09: "the new detected silent errors
-   SWAT-team and USB-stick worry me. we need to nail this"; checklist step "Small
-   capitals, nailed"). Branch `small-caps`, worktree `../roboscriptorium-caps`, pushed:
-   - the capitals version with numbers left alone (562c9b0): tuning NO CHANGE, 4 fixed
-     (SWAT-team, USB-stick), 2 made, both asked;
-   - doubts on lower-case pieces no reading disputes, behind `ROBO_LOWER_CAPITALS`, off
-     (ec6443f): the vision judges, two of three agreeing, call 39 of 57 small capitals and
-     0 of 150 lower-case pieces (decisions.md, `experiments/probe_caps_lower.py`).
-
-   Steps:
-   a. Resume the short test through the arbiter (stopped at 11 of 19 books; resumes from
-      its caches; ~20 min), with a watcher:
-
-          experiments/detached.sh caps-lower-short experiments/timed.sh "probe: lower-case small capitals, short test off and on" 120 work/runs/caps-lower-short.log uv run --project ../roboscriptorium-caps python experiments/probe_caps_lower_short.py
-
-      Compare off and on with the scratch comparison (rewrite it: places keyed by book,
-      page, got, want; fixed, made, silent↔asked).
-   b. The wide crop for the lone O, U, V all three judges miss ("o-benen", "u-bocht",
-      "v-hals"): `uv run python experiments/probe_caps_lower.py ask 150` (copy
-      `work/probes/caps-lower/answers.jsonl` aside first; tight answers are cached, ~10 min),
-      then `report`.
-   c. `bench tuning` with `ROBO_LOWER_CAPITALS=1` on the branch against
-      `work/bench/tuning-20261109T072931-39ba40e-dirty.json` (cold for ~1,100 new suspects,
-      about an hour), then validation; merge if neither says worse. If the arbiter keeps or
-      asks what the judges call capitals, the doubts reach it only after batch five's trust
-      data holds them and the arbiter is retrained.
+1. **The quote reader's benches**, then the small-capitals default once the user answers
+   (Running, above).
 2. **Batch five** (the user said go, 2026-11-09): `work/runs/grow6.patch`, Vals alarm, Metro,
    De tuin, Thief-Taker, Au pair and De vergelding scored whole, ~915 pages, ~14 h cold.
-   After the small-capitals merge, overnight. Then retest pass 4 (branch `text-seat`,
+   Overnight. Before its arbiter is retrained, read the reproduction's result (Running,
+   above): a plain retraining was worse than production's arbiter. Then retest pass 4 (branch `text-seat`,
    worktree `../robo-text`, arbiter `work/models/ocr-trust-p4*.pkl`, data
    `work/probes/ocr-trust-p4/`) and the vocabulary feature on the grown trust data.
 3. Hints for the new judges (which kinds of OCR error to look for, tried only with clef),
@@ -381,7 +328,7 @@ Ask before a download over 1 GB. A model outside Ollama gets its own environment
 
 ## Worktrees
 
-`../roboscriptorium-caps` holds the unmerged `small-caps` branch (in progress, see Next); `../robo-text` the `text-seat` branch (pass 4, kept); `-py315` two
+`../roboscriptorium-caps` holds the `small-caps` branch (merged 2026-11-11, can go); `../robo-quote` the `quote-reader` branch (see Running); `../robo-text` the `text-seat` branch (pass 4, kept); `-py315` two
 untracked scratch files.
 
 ## How to run things
