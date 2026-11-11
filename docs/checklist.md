@@ -312,13 +312,12 @@ are under Done, "Architecture probes".
 
 ## Housekeeping
 
-- [ ] Worktrees and branches: `../robo-quote` (`quote-reader`) and `../robo-phased`
-      (`quote-cards`) hold merged branches and can go once checked for uncommitted work
-      (`git worktree remove` without `--force`); `../roboscriptorium-caps` holds
-      `italics-by-place` and `../robo-grow6` `grow6` until they are merged;
-      `../robo-text` (`text-seat`) stays for the retest; `../roboscriptorium-py315` has
-      two untracked scratch files. Merged branches can be deleted; `cutoff-dash`,
-      `qwen-second-look` and `trial-merge` are unmerged experiments, not taken
+- [ ] Worktrees and branches: `../roboscriptorium-caps` holds `italics-by-place` and
+      `../robo-grow6` `grow6` until they are merged; `../robo-text` (`text-seat`) stays
+      for the retest; `../roboscriptorium-py315` has two untracked scratch files. The 24
+      branches merged into main can be deleted; `cutoff-dash`, `qwen-second-look` and
+      `trial-merge` are unmerged experiments, not taken (the merged worktrees
+      `../robo-quote` and `../robo-phased` were removed 2026-11-11)
 - [ ] **user**: disk. `work/models/mlx-env` (809 MB), `~/models/roboscriptorium/lighton-env`
       (767 MB) and `work/models/ocr-trust-grown*.pkl` stay until the user says they can go
 - [ ] Python 3.15 once PyTorch publishes cp315 wheels (pytorch/pytorch#184352): with
