@@ -10,10 +10,11 @@ from 2026-11-09 and 2026-11-10.
 **Night of 2026-11-10/11** (the user: the machine is free; small capitals first, then the
 quote reader, then batch five). decisions.md, 2026-11-11, has every number.
 
-Nothing runs. **The quote reader's benches were stopped at 07:30 on 2026-11-11** for the
-user's working day (the standing rule below), 13 of tuning's 20 books judged (the last
-finished: Het ijzige land). Start the same script again the next time the machine is
-free; it resumes from the judges' cached answers:
+**The quote reader's benches run again since 09:57 on 2026-11-11** (the user: model time
+until told otherwise), screen `robo-quote-bench-20261111`, output in
+`work/runs/quote-bench-20261111.out`. They were stopped at 07:30 with 13 of tuning's 20
+books judged and resume from the judges' cached answers. If stopped again
+(`experiments/stop-run.sh quote-bench-20261111`), the same script resumes them:
 
     experiments/detached.sh quote-bench-20261111 work/runs/quote-bench-20261111.sh
 
