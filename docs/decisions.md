@@ -1644,3 +1644,19 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   (tuning unasked 524 → 512, none made unasked). The benches of the quote check as a
   reader, in flight, compare with the doubts off on both sides; the next baseline is
   main with them on.
+- 2026-11-11: **Ten seeds averaged cut the arbiter's churn under a small change of its
+  data to a third; the fifteen unasked errors between retrainings look like a moved
+  asking point, not churn** (`experiments/probe_trust_variance.py`, no models, each
+  tuning book scored by the other books' arbiter, 29,173 suspects; trained four times
+  more with a random 0.25% of the suspects left out, the size of the 72 changed
+  suspects). Suspects whose pick changes, and whose place among the asked changes at
+  the rule's number of questions: as made (early stopping, one seed) 42 and 926;
+  without early stopping 40 and 708; ten seeds averaged 17 and 304; ten bootstrap
+  samples of suspects without early stopping 23 and 467. The silent errors at that
+  fixed number of questions hardly moved in any variant (24 to 28, sd under 1). So at
+  a fixed number of questions a retraining swaps which suspects are asked but not how
+  many errors go unasked; between the production arbiter and the control the number
+  asked itself moved (1,226 → 1,190, unasked 524 → 539), which points at the
+  calibration and its asking threshold as the part to steady, beside the trees. Next:
+  the arbiter as ten seeds averaged, and its calibration checked for how far the
+  number asked moves under the same change, then benched against production's.
