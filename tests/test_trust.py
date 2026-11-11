@@ -223,3 +223,29 @@ def test_an_arbiter_with_more_judge_seats_reads_each_and_loads_with_them(tmp_pat
     trust.save(model, tmp_path / "m.pkl")
     loaded = trust.load(tmp_path / "m.pkl")
     assert loaded.seats == 5 and trust.probabilities(loaded, s).shape == (2,)
+
+
+def test_the_trees_are_several_seeds_averaged():
+    rng = np.random.default_rng(0)
+    X = rng.random((400, 3))
+    y = (X[:, 0] + 0.3 * rng.random(400) > 0.6).astype(int)
+    trees = trust.Trees(seeds=3).fit(X, y)
+    assert len(trees.models) == 3 and trees.n_features_in_ == 3
+    each = [m.predict_proba(X) for m in trees.models]
+    assert np.allclose(trees.predict_proba(X), np.mean(each, axis=0))
+
+
+def test_the_calibration_is_a_smooth_curve_that_rises_with_sureness():
+    rng = np.random.default_rng(0)
+    sure = rng.uniform(0.5, 1.0, 2000)
+    right = rng.random(2000) < sure
+    curve = trust.calibrate(sure.tolist(), right.tolist())
+    grid = np.linspace(0.5, 0.999, 50)
+    chance = curve.predict(grid)
+    assert np.all(np.diff(chance) > 0)
+    assert abs(float(curve.predict([0.9])[0]) - 0.9) < 0.05
+
+
+def test_a_calibration_of_only_right_picks_is_sure_and_of_only_wrong_ones_is_not():
+    assert trust.calibrate([0.6, 0.9], [True, True]).predict([0.7])[0] > 0.99
+    assert trust.calibrate([0.6, 0.9], [False, False]).predict([0.7])[0] < 0.01

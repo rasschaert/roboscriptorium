@@ -1660,3 +1660,43 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   calibration and its asking threshold as the part to steady, beside the trees. Next:
   the arbiter as ten seeds averaged, and its calibration checked for how far the
   number asked moves under the same change, then benched against production's.
+- 2026-11-11: **The quote check as a reader: tuning WORSE, not taken as it is; the leak
+  is the question it drops** (`ROBO_QUOTE_READER=1` against the same code with it off,
+  both with the lower-case doubts off; `work/bench/tuning-20261111T110515-6fd050e.json`).
+  After review 0.26 → 0.27 wrong words a page (interval +0.01, +0.01), De tuin worse on
+  its own; fixed 10 wrong words (4 unasked), made 38 (10 unasked). The made ones matter
+  less than this: 75 error places that were asked are now unasked, none the other way
+  (unasked 521 → 603; Het heft 15, De tuin 12, Au pair 11, Goede dochter 10, Vals alarm
+  and Het geluid 7 each), nearly all a mark missing at a paragraph's end or start
+  ("houtsneden." for "houtsneden.'", "Als for '"Als) or a stop before it. Off, the quote
+  check asked those paragraphs. On, a paragraph whose unpaired marks all became readings
+  gets no quote question, and the arbiter, which has never been trained on these two
+  readers, keeps the layer or takes another reading without asking (its choice "ours" or
+  "other" on most of them): fewer questions for more silent errors, which the user
+  refuses. Au pair's questions 0.46 → 0.21 a page for unasked 0.14 → 0.19 shows the
+  trade. Failed on: the arbiter (untrained for the readers) and the rule that a duel
+  ends the quote check's question. Next, cheap: a paragraph the OCR check leaves with
+  unpaired marks is asked all the same, through the OCR check's own question with every
+  opinion on the card, so only what the judges and the arbiter settle into paired marks
+  stops being asked; short test on De tuin, Het heft and Au pair, then the bench again.
+- 2026-11-11: **The arbiter's asking point is what moves between retrainings: the
+  isotonic calibration's steps** (`experiments/probe_trust_calibration.py` on what
+  `probe_trust_variance.py` kept: nine trainings, the full one and eight with 0.25% of
+  the suspects left out, each tuning suspect scored by the other books' arbiter, asked
+  under a calibrated 0.9). One seed with the isotonic map as made: 1,392 asked, between
+  1,197 and 1,859 over the perturbed trainings, unasked errors 142, between 97 and 163.
+  Fifty isotonic maps of bootstrap samples averaged: asked 1,213–1,648. A logistic curve
+  over the sureness's log odds: asked 1,256, between 1,240 and 1,272, unasked 160,
+  between 150 and 163. With ten seeds averaged: isotonic 1,215–1,678 asked, the curve
+  1,245–1,282 with unasked 155–159. The ranking is the same under every calibration, so
+  they differ only in where the 0.9 line falls; the steps put it somewhere else each
+  time, which is the fifteen unasked errors for 36 questions between production's
+  arbiter and the control. Built, not yet in use: `trust.Trees` (ten seeds averaged)
+  and `trust.calibrate` as that curve (`trust.Curve`); an arbiter trained so on
+  production's data is `work/models/ocr-trust-steady*.pkl` (raw 0.9 → 0.924 right).
+  Next: benched against production's arbiter with `ROBO_OCR_ASK_BELOW` set so it asks
+  no fewer questions.
+- 2026-11-11: The quote check as a reader keeps its quote question where the OCR check
+  decided a paragraph's marks but left them unpaired (`pipeline._dueled` counts only a
+  suspect that goes to review). Not benched yet.
+

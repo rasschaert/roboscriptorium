@@ -27,7 +27,6 @@ from collections import Counter
 from pathlib import Path
 
 import numpy as np
-from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
@@ -41,9 +40,7 @@ from roboscriptorium.trustdata import HELD_OUT, SPECS, models_to_save, rows_of, 
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
 MODELS = {
     "logistic": lambda: make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000)),
-    "trees": lambda: HistGradientBoostingClassifier(
-        max_depth=3, min_samples_leaf=20, l2_regularization=1.0, random_state=0
-    ),
+    "trees": trust.Trees,
 }
 
 

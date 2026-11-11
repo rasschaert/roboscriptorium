@@ -69,7 +69,7 @@ Pairs = dict[str, tuple[int, int]]
 class Trust:
     """The trees, the substitution priors they were trained with, and the calibration of
     their sureness: how often a suspect's likeliest version was right, by how sure the
-    trees were, on books they weren't trained on (isotonic; None leaves it raw)."""
+    trees were, on books they weren't trained on (`calibrate`; None leaves it raw)."""
 
     model: object
     pairs: Pairs
@@ -80,6 +80,52 @@ class Trust:
     seats: int = SEATS
 
 
+# One seed's trees change their picks and their sureness with a quarter of a percent of
+# the training suspects; ten averaged move a third as much (docs/design.md).
+SEEDS = 10
+
+
+class Trees:
+    """Boosted trees of several seeds, their probabilities averaged."""
+
+    def __init__(self, seeds: int = SEEDS) -> None:
+        self.seeds = seeds
+        self.models: list = []
+        self.n_features_in_ = 0
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> "Trees":
+        from sklearn.ensemble import HistGradientBoostingClassifier
+
+        self.models = [
+            HistGradientBoostingClassifier(
+                max_depth=3, min_samples_leaf=20, l2_regularization=1.0, random_state=seed
+            ).fit(X, y)
+            for seed in range(self.seeds)
+        ]
+        self.n_features_in_ = X.shape[1]
+        return self
+
+    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        return np.mean([m.predict_proba(X) for m in self.models], axis=0)
+
+
+def _log_odds(sure: np.ndarray) -> np.ndarray:
+    s = np.clip(np.asarray(sure, dtype=float), 1e-6, 1 - 1e-6)
+    return np.log(s / (1 - s))
+
+
+@dataclass
+class Curve:
+    """A logistic curve from the trees' sureness (its log odds) to the chance of being
+    right."""
+
+    slope: float
+    offset: float
+
+    def predict(self, sure) -> np.ndarray:
+        return 1 / (1 + np.exp(-(self.slope * _log_odds(sure) + self.offset)))
+
+
 def sureness(trust: Trust, p: np.ndarray) -> float:
     """The chance that the likeliest of these version probabilities is the print."""
     if trust.calibration is None:
@@ -87,12 +133,19 @@ def sureness(trust: Trust, p: np.ndarray) -> float:
     return float(trust.calibration.predict([p.max()])[0])
 
 
-def calibrate(sure: list[float], right: list[bool]):
-    """An isotonic map from the trees' sureness to how often they were right."""
-    from sklearn.isotonic import IsotonicRegression
+def calibrate(sure: list[float], right: list[bool]) -> Curve:
+    """A smooth map from the trees' sureness to how often they were right. A smooth one
+    because the asking threshold sits on it: an isotonic map's steps put the threshold
+    elsewhere with each retraining (docs/design.md)."""
+    from sklearn.linear_model import LogisticRegression
 
-    iso = IsotonicRegression(y_min=0.0, y_max=1.0, out_of_bounds="clip")
-    return iso.fit(np.array(sure), np.array(right, dtype=float))
+    hit = np.array(right, dtype=int)
+    if hit.min() == hit.max():
+        # Every pick right, or every pick wrong: no curve to fit.
+        return Curve(0.0, 20.0 if hit.max() else -20.0)
+    model = LogisticRegression(C=1e6, max_iter=1000)
+    model.fit(_log_odds(np.array(sure))[:, None], hit)
+    return Curve(float(model.coef_[0][0]), float(model.intercept_[0]))
 
 
 def _plain(text: str) -> str:
@@ -354,15 +407,10 @@ def train(
     """Trees over the labelled suspects, with the substitution priors from the same
     (`books` names each suspect's book; without it no pair reaches `MIN_BOOKS`), weighing
     the support of these `readings`."""
-    from sklearn.ensemble import HistGradientBoostingClassifier
-
     books = books or [""] * len(suspects)
     X, y = training_matrix(suspects, right, books, readings, seats)
     pairs = pairs_table(suspects, right, books)
-    model = HistGradientBoostingClassifier(
-        max_depth=3, min_samples_leaf=20, l2_regularization=1.0, random_state=0
-    )
-    return Trust(model.fit(X, y), pairs, readings=readings, seats=seats)
+    return Trust(Trees().fit(X, y), pairs, readings=readings, seats=seats)
 
 
 def save(trust: Trust, path: Path) -> None:
@@ -428,7 +476,7 @@ def decide(
     (`unseen`) is asked first and never takes another reading's version."""
     scored = list(zip(all_probabilities(trust, suspects), suspects, strict=True))
     sure = [sureness(trust, p) for p, _ in scored]
-    # Calibration is a step function: the raw sureness orders a step's suspects.
+    # The raw sureness orders suspects a calibration maps to the same chance.
     order = sorted(
         range(len(scored)),
         key=lambda i: (not unseen(scored[i][1]), sure[i], scored[i][0].max()),

@@ -7,13 +7,17 @@ the bench by fifteen unasked errors), several times. Per variant: the silent err
 range over the perturbed trainings, the share of scored suspects whose pick changes,
 whose place among the asked changes, and the mean move in sureness.
 
-    uv run python experiments/probe_trust_variance.py [repeats]
+    uv run python experiments/probe_trust_variance.py [repeats [variants, by number]]
+
+Each run's sureness and right picks go to work/probes/trust-variance/variant-<n>.npz
+(the first row the full training), for `probe_trust_calibration.py`.
 
 No models; about half an hour.
 """
 
 import sys
 import time
+from pathlib import Path
 
 import numpy as np
 from sklearn.ensemble import HistGradientBoostingClassifier
@@ -26,6 +30,7 @@ SETTINGS = Settings.from_env()
 READINGS, SEATS = weighed(SETTINGS), seats(SETTINGS)
 REPEATS = int(sys.argv[1]) if len(sys.argv) > 1 else 4
 DROP = 0.0025
+OUT = Path("work/probes/trust-variance")
 BAGS = 10
 
 
@@ -132,10 +137,14 @@ drops = [
 ]
 
 
+# Each run's sureness and whether its pick was right, per suspect, for the calibration.
+KEPT: list[tuple[np.ndarray, np.ndarray]] = []
+
+
 def run(make, drop):
     """Every book's outcome with the arbiter of the other books, `drop` left out of
     their suspects."""
-    picks, asks, sures, silent = [], [], [], 0
+    picks, asks, sures, hits, silent = [], [], [], [], 0
     for name in names:
         train, of = [], []
         for n in names:
@@ -149,11 +158,17 @@ def run(make, drop):
         picks.append(pick)
         asks.append(ask)
         sures.append(sure)
+        hits.append(np.array([r["right"][k] for r, k in zip(test, pick, strict=True)]))
         silent += wrong
+    KEPT.append((np.concatenate(sures), np.concatenate(hits)))
     return np.concatenate(picks), np.concatenate(asks), np.concatenate(sures), silent
 
 
-for label, make in VARIANTS.items():
+only = sys.argv[2].split(",") if len(sys.argv) > 2 else None
+for at, (label, make) in enumerate(VARIANTS.items()):
+    if only and str(at) not in only:
+        continue
+    KEPT.clear()
     began = time.time()
     pick0, asked0, sure0, silent0 = run(make, {})
     silents, picks, asks, moves = [], [], [], []
@@ -169,4 +184,9 @@ for label, make in VARIANTS.items():
         f"(max {max(picks)}); asked changed {np.mean(asks):.1f} (max {max(asks)}); "
         f"sureness moved {np.mean(moves):.4f}; {time.time() - began:.0f}s",
         flush=True,
+    )
+    np.savez(
+        OUT / f"variant-{at}.npz",
+        sure=np.array([k[0] for k in KEPT]),
+        hit=np.array([k[1] for k in KEPT]),
     )
