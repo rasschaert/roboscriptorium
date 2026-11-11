@@ -285,14 +285,6 @@ are under Done, "Architecture probes".
       126 of 126 against the pipeline's 110), but the trees trained with page features
       go wrong on picture pages, mottos and an epigraph's attribution. Before another
       bench: the trees retrained with picture pages and mottos labelled
-- [ ] Per-book settings (the user, 2026-10-22: do some books respond better to some
-      settings, and can a quick pre-pass tell which?). So far the dpi differences are
-      noise, but perhaps for Reis om mijn schedel and Artemis. The one test: does a
-      setting's *agreement* with an independent reader predict the setting that scores
-      best on the reader set? The dpi readings exist (300, 450 and 600 dpi, 50 lines of
-      each of 16 books), so no models. A signal: a per-book pre-pass learned from the
-      golden books becomes a step. None: dropped, with the variants as extra witnesses
-      (a witness can add a handful: the quiet set's 23 lines)
 
 ## Starting from a PDF alone
 
@@ -828,6 +820,13 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Architecture probes
 
+- [x] ~~Per-book settings: a pre-pass that picks each book's reader resolution~~ (the
+      user, 2026-10-22; NOT TAKEN 2026-11-11, `probe_setting_agreement.py`, no models):
+      the resolution at which the read model agrees most with glm-ocr does follow its
+      score (r = +0.72 over 32 book-settings), but there is nothing to win: every book
+      at 450 dpi reads 758 of 800 lines right, each at the setting agreeing most 759,
+      each at its best 765, a setting drawn at random 748–760. Contrast, crop and prompt
+      variants were not read: as witnesses they can add a handful (the quiet set)
 - [x] ~~Surya as a second spotter, heading tags from Granite-Docling, per-book image
       tuning for pale scans, Het Kindeken Jezus as a golden book~~ (dropped 2026-11-11):
       each waited on a result that didn't come (image tuning null on normal pages)

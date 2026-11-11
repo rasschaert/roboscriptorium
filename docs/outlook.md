@@ -145,6 +145,12 @@ each new local vision model.
 Don't repeat these without a new reason (details in docs/decisions.md). A better model in
 the place an idea failed on is one (AGENTS.md, "A null result is a null for its models"):
 
+- **A pre-pass that picks each book's reader resolution** (2026-11-11, the user's
+  question of 2026-10-22; no room, not a model's failure): the resolution agreeing most
+  with glm-ocr follows the score (r = +0.72), but each book at its best setting reads
+  765 of 800 lines against 758 for every book at 450 dpi, and the pre-pass gets 759.
+  Retest only if a setting appears that helps some books by many lines and hurts others.
+
 - **A lone small capital with the lower case's shape** ("v-hals", "u-bocht", "o-benen";
   2026-11-11; failed on the vision judges): no judge tells it from lower case, on the
   suspect's crop or with its line. Retest with each new vision judge.

@@ -1767,3 +1767,21 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   the same books' caches; production's files and the default threshold change once it
   reads level. Why twenty trainings and a smooth calibration: design.md, "The arbiter's
   trees are twenty trainings averaged".
+- 2026-11-11: **A book's best reader resolution can be told without a reference, and
+  it isn't worth telling: not taken** (`experiments/probe_setting_agreement.py`, no
+  models; the reader set's 800 lines, 50 of each of 16 books, read by the read model
+  at 300, 450 and 600 dpi on 2026-10-22; the user's question of that day, whether a
+  quick pre-pass could pick a book's settings). Lines read right with every book at
+  300 dpi: 747; at 450: 758; at 600: 757. Each book at the resolution where the read
+  model agrees most with glm-ocr's reading at 300 dpi: 759, a best setting picked for
+  11 of 16 books; by agreement with the text layer: 749, 7 of 16. Each book at its
+  best setting, which needs the reference: 765. A setting drawn at random per book:
+  median 754, 95% between 748 and 760. Agreement with glm-ocr does follow the score
+  (lines gained over 300 dpi against agreement gained, 32 book-settings: r = +0.72;
+  with the layer −0.37, the layer sharing the errors a sharper crop mends), so the
+  signal is real, but the prize is 7 lines in 800 over one fixed setting, on a set
+  that is 60% hard lines, and the pre-pass wins 1 of them. A book's best resolution
+  differs from the others' by one to three lines of fifty: noise. Nothing failed on a
+  model here; there is no room. The pipeline's readers at 450 dpi were not taken as
+  a swap on 2026-10-22, which stands. The other variants (contrast, crop padding,
+  prompt wording) were not read. The checklist's per-book settings step is dropped.
