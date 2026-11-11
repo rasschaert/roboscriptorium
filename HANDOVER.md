@@ -57,7 +57,7 @@ arbiter against another is noise at that size: bring the arbiter's variance down
 **Small capitals: the lower-case doubts are on by default** (`ROBO_LOWER_CAPITALS`, the
 user's call on 2026-11-11: about 1.7% more questions; on tuning unasked errors
 524 → 512, none made unasked; validation nine more questions, no place changed), on
-main, and the day's baseline has them. The checklist step "Small capitals, nailed" lists
+main, and the day's baseline has them. The checklist section "Small capitals" lists
 what is left. The night's trust data and arbiters (`work/probes/ocr-trust-{caps,ctl}`,
 `work/models/ocr-trust-{caps,ctl,rep}*.pkl`) are not in use.
 
@@ -227,10 +227,6 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
   (~585 pages), eleven more on the 26th (~860 pages, 13 h cold). On the pages both runs
   share: no change. Tuning went from ~1,700 to ~3,100 pages, and the after-review interval
   should narrow from ±0.010 to about ±0.008.
-- **Batch two paused** at the user's request, minutes into Goede dochter: thirteen slices to
-  about 220–270 pages, ~925 pages, ~14 h. Its ranges are in commit 3e6177c, taken back out of
-  `bench.SETS` so the baseline and the sets agree. The checklist step "Grow the tuning slices
-  further" says how to resume (reapply, run `work/runs/grow3.sh`).
 - **Not taken**: the arbiter retrained on the grown slices (more unasked errors; the second time
   more rows haven't helped, so the arbiter needs a new signal, not more data); page roles on
   the grown slices, and withheld on picture pages (no change; the harm is in the line-role
@@ -307,8 +303,8 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
 6. **Page roles need the line-role trees retrained** with picture pages and mottos labelled
    (Dolittle's picture-page lines go wrong under the trees trained with page features, whatever
    qwen says); only then bench page roles again.
-7. **Grow the slices again** when the machine is idle (checklist, "Grow the tuning slices
-   further"): batch two is ready in commit 3e6177c.
+7. **The slices are grown as far as the listed room goes** once batch five ends
+   (checklist, "In flight").
 
 ## When a new vision model appears
 
