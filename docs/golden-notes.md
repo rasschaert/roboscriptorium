@@ -46,8 +46,8 @@ bench will name it on every run. The rest: tuning 0.19â€“1.18%, validation 0.08â
 against 0.88%; no book over 1.1% of body lines unplaced (Goede dochter). Au pair's small
 capitals were settled by verdicts (2026-10-25). Het laatste bevel's EPUB glues words,
 settled only by verdicts; Na die nacht can't have an honest first look. No new pairs
-since 2026-10-20, so the gaps below stand. The checklist ("Trim the sets") holds what is
-done about each.
+since 2026-10-20, so the gaps below stand. The checklist (Done, "The sets trimmed"; "Golden books and the
+bench" for the verdicts still open) holds what is done about each.
 
 **Gaps to hunt for**, in order: a book set flush, without paragraph indents, for tuning
 (not Bruna's, whose two books validate; 2026-10-24: every flush-book break error is a start

@@ -232,7 +232,8 @@ back a version, so these are left to trust and the bench, with no rule of their 
   validation BETTER, after review 0.45 → 0.42 wrong words a page, unasked 189 → 170
   places and 323 → 283 words. pplx-decider 27B on the wide crop as a third added nothing
   at 0.9 (tuning 551 → 567 places, validation 170 → 176, De kerk's questions doubled:
-  vetoed); autotrust-jev 9B as a text judge is benched next (checklist).
+  vetoed); autotrust-jev 9B as a text judge was benched and not taken (2026-11-09); its retest
+  after batch five is in the checklist.
 - *imajev-4b, a second vision judge, is not used* (`ROBO_ALARM_MODEL=llama:imajev-4b`, off). Asked clef's
   question on the crop, it is right alone on 85% and a sharper alarm than winnow-ollama:e4b
   where it speaks (clef wrong on 37% of their disagreements against 5% of their

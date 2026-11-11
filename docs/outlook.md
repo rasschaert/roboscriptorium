@@ -82,7 +82,7 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
    - Footnotes are taken out of the text (2026-10-11; Reis 7 of 8). Not handled: verse,
      tables, block quotes, epigraphs.
 2. **The errors no question asks about** ("unasked", by kind, in each bench record):
-   - Vals alarm: 33 unasked letter errors, its lost full stops (checklist 4, the book teaches itself): only its
+   - Vals alarm: 33 unasked letter errors, its lost full stops (the book teaches itself, `trust.with_answers`): only its
      own answers can teach the arbiter.
    - De eerlijke vinder: unasked 0.13 a page on 2026-11-05 (10 places), from 1.02; half
      made by the build where the layer was right (a diaeresis dropped, "bidden" read
@@ -106,7 +106,8 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
    text on them. A human types them, or the book is rescanned.
 6. **Better pixels.** Every reader and judge sees crops of a heavily compressed PDF
    (Crime's is 3 MB for 138 pages). Internet Archive's page images are about 13× the
-   data and its ABBYY reading gives a confidence per letter (checklist 7). Only the
+   data and its ABBYY reading gives a confidence per letter (private on lent scans, so dropped; the page
+   images are in the checklist, "JP2s as the image source"). Only the
    public-domain books have them: Crime and Dolittle so far.
 
 ## What the second review's ideas did (2026-10-09)
