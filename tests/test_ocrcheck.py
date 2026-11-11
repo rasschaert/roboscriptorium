@@ -48,6 +48,7 @@ def test_lower_case_small_capitals_raise_a_doubt_only_where_no_word_or_contracti
     assert doubts("de Waffen-SS en een U-bocht") == []
     assert doubts("en het was een mooie dag") == []
     assert doubts("met z’n vriend, m'n zĳ en l’eau") == []
+    assert doubts("de café-inboedel en één-nul") == []
     # A short joined part, or a short word without a vowel.
     assert doubts("de usb-stick bij de ss-chef") == [
         ("usb-stick", ["USB-stick"]),
@@ -1321,3 +1322,8 @@ def test_a_fix_takes_its_lines_curly_quotes():
     plain = "He said, \"so be it\" and 'went'."
     u = Suspect(1, 0, plain, 0, 2, "He", ('"He',), (0, 0, 1, 1), "other", '"He', {})
     assert ocrcheck.fixed_text(u, plain) == '"He'
+
+
+def test_a_mixed_case_word_with_an_accent_gets_no_capitals_version():
+    assert ocrcheck._capitals("niet", ["níet", "nIét"]) is None
+    assert ocrcheck._capitals("ALLEs", ["ALtEs"]) == "ALLES"

@@ -621,8 +621,10 @@ _WORDS = re.compile(r"[^\W_]+")
 def _small_capitals(word: str) -> str | None:
     """The all-capitals form of a short word that small capitals could be read as
     ("vTM" → "VTM", "LC1" → "LCI": a 1 or 0 among more capitals is an I or O), else None.
-    A word of more digits than letters is a number ("11", "10D") and stays one."""
-    if not 2 <= len(word) <= 5:
+    A word of more digits than letters is a number ("11", "10D") and stays one, and one
+    with an accent is a word ("nIét"): no capitals of the tuning books' trust data that
+    held an accent were the print's (0 of 17)."""
+    if not 2 <= len(word) <= 5 or _accented(word):
         return None
     if word.isalpha():
         return word.upper() if word[1:] != word[1:].lower() else None
@@ -660,6 +662,10 @@ _CONTRACTION = re.compile(r"[’'](?:t|re|ll|ve|d|m)\b")
 COMMON = 3
 
 
+def _accented(part: str) -> bool:
+    return any(unicodedata.normalize("NFD", c) != c for c in part)
+
+
 def _vowels(part: str) -> bool:
     """Whether a part holds a vowel, accented or in a ligature ("ý", "ĳ") too."""
     return bool(_VOWELS & set(unicodedata.normalize("NFKD", part)))
@@ -680,8 +686,11 @@ def capital_pieces(token: str, words: Counter) -> list[tuple[int, int]]:
     """The pieces of a token small capitals may have been read as in lower case: a part of
     one to four letters joined to another ("ss-chef", "u-bocht", "usb-stick"), or a word of
     two to five letters with no vowel ("ss", "cv"). Not a contraction's part ("don't",
-    "'s"), a lone letter elided before an apostrophe ("z'n", "l'eau") nor a part with a
-    vowel the book prints `COMMON` times on its own ("zo-")."""
+    "'s"), a lone letter elided before an apostrophe ("z'n", "l'eau"), a part with a
+    vowel the book prints `COMMON` times on its own ("zo-"); none of a token with an
+    accent ("café-inboedel", "één-nul")."""
+    if _accented(token):
+        return []
     parts = list(_LETTERS.finditer(token))
     if len(parts) == 1:
         p = parts[0][0]
