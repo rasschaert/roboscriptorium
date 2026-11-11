@@ -65,8 +65,7 @@ what is left. The night's trust data and arbiters (`work/probes/ocr-trust-{caps,
 Both fixes are on main (6b57830: a last line another reading already ends paired takes
 that reading's end; De tuin's fixes 2,143 → 2,155 against 2,156 off, OCR questions
 111 → 98 against 83, quote lines 146 → 80; 023e983: only where that leaves the
-paragraph fewer unpaired marks, The Loudest Sound and Nothing's "one.”’"). The worktree
-`../robo-quote` (branch `quote-reader`, merged) can go. Still asked by the quote check itself: a mark opening a word
+paragraph fewer unpaired marks, The Loudest Sound and Nothing's "one.”’"). Still asked by the quote check itself: a mark opening a word
 ("’bout", 40 lines in The Loudest Sound and Nothing).
 
 **The user is reviewing Nervous System** (started 2026-11-10 ~06:40, answers in
@@ -345,7 +344,7 @@ Ask before a download over 1 GB. A model outside Ollama gets its own environment
 
 ## Worktrees
 
-`../roboscriptorium-caps` holds the `small-caps` branch (merged 2026-11-11, can go); `../robo-quote` the `quote-reader` branch (see Running); `../robo-text` the `text-seat` branch (pass 4, kept); `-py315` two
+`../roboscriptorium-caps` holds the `italics-by-place` branch (see Running); `../robo-grow6` the `grow6` branch (batch five, in use); `../robo-text` the `text-seat` branch (pass 4, kept); `-py315` two
 untracked scratch files.
 
 ## How to run things
