@@ -886,3 +886,12 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-11 | train arbiter on production's trust data again (reproduction) | 0 | 23 | 0 |
 | 2026-11-11 | bench tuning, the quote check as a reader (cold for its suspects, one book at a time) | 5293 | 127 | 0 |
 | 2026-11-11 | bench validation, the quote check as a reader (cold for its suspects, one book at a time) | 0 | 33 | 0 |
+| 2026-11-11 | bench tuning, main with the lower-case doubts on by default (warm) | 5293 | 16 | 0 |
+| 2026-11-11 | bench validation, main with the lower-case doubts on by default (warm) | 0 | 2 | 0 |
+| 2026-11-11 | bench tuning, the quote check as a reader, unpaired paragraphs still asked (cold for new suspects) | 5293 | 17 | 0 |
+| 2026-11-11 | bench validation, the quote check as a reader, unpaired paragraphs still asked (cold for new suspects) | 0 | 3 | 0 |
+| 2026-11-11 | bench tuning, the arbiter of ten seeds with a smooth calibration (warm) | 5293 | 16 | 0 |
+| 2026-11-11 | bench validation, the arbiter of ten seeds with a smooth calibration (warm) | 0 | 2 | 0 |
+| 2026-11-11 | bench tuning, the arbiter of ten seeds with a smooth calibration, asking below 0.93 (warm) | 5293 | 16 | 0 |
+| 2026-11-11 | bench tuning, the arbiter of ten seeds with a smooth calibration, asking below 0.95 (warm) | 5293 | 17 | 0 |
+| 2026-11-11 | bench validation, the arbiter of ten seeds with a smooth calibration, asking below 0.93 (warm) | 0 | 1 | 0 |

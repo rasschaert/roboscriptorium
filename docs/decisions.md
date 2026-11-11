@@ -1702,4 +1702,39 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
 - 2026-11-11: The quote check as a reader on validation, same comparison: NO CHANGE
   (after review 0.42 → 0.42; fixed 3 wrong words, made 3, none unasked), and six asked
   error places unasked (170 → 176), none the other way: the same leak, smaller.
+- 2026-11-11: **The day's baseline, main with the lower-case doubts on by default**
+  (`work/bench/tuning-20261111T115457-e0273b4.json`,
+  `validation-20261111T115733-e0273b4-dirty.json`), against the runs with them off:
+  tuning NO CHANGE (fixed 2 unasked, made 7 asked), validation WORSE with no error place
+  changed, as on the branch the night before. Tuning: 3,410 questions, 512 unasked error
+  places, 1,240 asked.
+- 2026-11-11: **The quote check as a reader with its quote question kept: still not
+  taken.** Tuning WORSE against the day's baseline (after review 0.26 → 0.26, interval
+  +0.00 to +0.01; italic errors 1,278 → 1,282): asked error places gone unasked 75 → 16,
+  none the other way, unasked 512 → 535 with the places it makes. Validation WORSE with
+  no asked place gone unasked (170 → 170), fixed 3 and made 3, all asked. The sixteen are
+  a mark or a stop missing at a paragraph's end ("houtsneden." for "houtsneden.'",
+  "trouwt." for "trouwt.'") and a nested opening ('"Als); not yet read place by place,
+  the likely path a pairing the arbiter applies that balances the paragraph otherwise
+  than the print. Failed on: the arbiter, never trained on the quote check's readings.
+- 2026-11-11: **The steadier arbiter (ten seeds averaged, a logistic calibration) is as
+  accurate as production's, at another asking point** (`work/models/ocr-trust-steady*.pkl`,
+  trained on production's data; tuning against the day's baseline). Asking below 0.9:
+  3,088 questions, unasked 538, asked 1,079, after review 0.25 (BETTER, by ten fewer
+  italic errors; 182 wrong words fixed that were asked, 22 made unasked); validation NO
+  CHANGE, unasked 170 → 176, asked 160 → 153. Asking below 0.93: 3,392 questions,
+  unasked 506, asked 1,221, after review 0.25 (WORSE by four more italic errors, words
+  no change). So at 0.93 it asks 18 fewer questions and leaves 6 fewer errors unasked
+  than production at 0.9: level, as the same ranking under another calibration should
+  be. Its worth is that the point stays put through a retraining. The bench's verdict
+  on these runs hung on the italic count both ways, which words decided otherwise
+  moved by ten.
+- 2026-11-11: The steadier arbiter's asking point, more thresholds. Tuning asking below
+  0.95: 3,693 questions, unasked 477, asked 1,371 (italic errors 1,278 → 1,304, which
+  rise with the questions: 1,268 at 0.9, 1,282 at 0.93; not looked into). Validation
+  asking below 0.93: NO CHANGE, 547 questions against production's 518, unasked 167
+  against 170, asked 171 against 160. So 0.93 is level with production on tuning
+  (18 fewer questions, 6 fewer unasked) and asks 29 more questions for 3 fewer unasked
+  on validation. Taking it is the user's call (asked 2026-11-11); production's arbiter
+  stays until then.
 

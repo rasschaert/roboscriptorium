@@ -10,14 +10,21 @@ from 2026-11-09 and 2026-11-10.
 **Night of 2026-11-10/11** (the user: the machine is free; small capitals first, then the
 quote reader, then batch five). decisions.md, 2026-11-11, has every number.
 
-**The day's chain runs since 2026-11-11 ~12:45** (the user: model time until told
-otherwise), screen `robo-day-20261111`, script `work/runs/day-20261111.sh`, output in
-`work/runs/day-20261111.out`, logs `work/runs/day-*.log`. From main with the lower-case
-doubts on by default: the new baseline (tuning, validation), then the quote check as a
-reader with its kept quote question against it, then the steadier arbiter
-(`ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-steady.pkl`) against it. Don't edit `src/`
-on main while it runs. Stop it with `experiments/stop-run.sh day-20261111`; the same
-script resumes from the caches.
+**Batch five runs since 2026-11-11 13:54** (the user: model time until told otherwise),
+screen `robo-grow6-20261111`, script `work/runs/grow6-20261111.sh`, output in
+`work/runs/grow6-20261111.out`, log `work/runs/grow6-tuning.log`: the worktree
+`../robo-grow6` (branch `grow6`, rebased on main e0273b4) benched cold, one book at a
+time, against the day's baseline `work/bench/tuning-20261111T115457-e0273b4.json`, then
+the six grown books' trust data rebuilt. Stop it with
+`experiments/stop-run.sh grow6-20261111`; the same script resumes from the caches.
+
+The day's warm benches are done (decisions.md, 2026-11-11): the baseline with the
+lower-case doubts on (validation's is `validation-20261111T115733-e0273b4-dirty.json`);
+the quote reader with its kept question, still not taken (16 asked places unasked on
+tuning); the steadier arbiter (`work/models/ocr-trust-steady*.pkl`), level with
+production's when it asks below 0.93. **Waiting on the user: whether production
+switches to it at 0.93** (tuning 18 fewer questions and 6 fewer unasked errors,
+validation 29 more questions and 3 fewer unasked).
 
 The quote reader as first benched: tuning WORSE, validation NO CHANGE; 75 and 6 asked
 error places went unasked (decisions.md). The arbiter's code now trains ten seeds with a
