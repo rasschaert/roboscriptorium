@@ -1699,4 +1699,7 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
 - 2026-11-11: The quote check as a reader keeps its quote question where the OCR check
   decided a paragraph's marks but left them unpaired (`pipeline._dueled` counts only a
   suspect that goes to review). Not benched yet.
+- 2026-11-11: The quote check as a reader on validation, same comparison: NO CHANGE
+  (after review 0.42 → 0.42; fixed 3 wrong words, made 3, none unasked), and six asked
+  error places unasked (170 → 176), none the other way: the same leak, smaller.
 

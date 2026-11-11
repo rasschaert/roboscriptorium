@@ -10,19 +10,20 @@ from 2026-11-09 and 2026-11-10.
 **Night of 2026-11-10/11** (the user: the machine is free; small capitals first, then the
 quote reader, then batch five). decisions.md, 2026-11-11, has every number.
 
-**The quote reader's benches run again since 09:57 on 2026-11-11** (the user: model time
-until told otherwise), screen `robo-quote-bench-20261111`, output in
-`work/runs/quote-bench-20261111.out`. They were stopped at 07:30 with 13 of tuning's 20
-books judged and resume from the judges' cached answers. If stopped again
-(`experiments/stop-run.sh quote-bench-20261111`), the same script resumes them:
+**The day's chain runs since 2026-11-11 ~12:45** (the user: model time until told
+otherwise), screen `robo-day-20261111`, script `work/runs/day-20261111.sh`, output in
+`work/runs/day-20261111.out`, logs `work/runs/day-*.log`. From main with the lower-case
+doubts on by default: the new baseline (tuning, validation), then the quote check as a
+reader with its kept quote question against it, then the steadier arbiter
+(`ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-steady.pkl`) against it. Don't edit `src/`
+on main while it runs. Stop it with `experiments/stop-run.sh day-20261111`; the same
+script resumes from the caches.
 
-    experiments/detached.sh quote-bench-20261111 work/runs/quote-bench-20261111.sh
-
-(main's code, `ROBO_QUOTE_READER=1`, one book at a time, against the runs of the same
-code with it off: `work/bench/tuning-20261111T043034-38a18c1-dirty.json` and
-`validation-20261111T043308-38a18c1-dirty.json`; logs `work/runs/quote-{tuning,validation}.log`.
-Don't edit `src/` on main while it runs, and if main's code changed since, bench main
-with the setting off first for the baseline.) With a watcher, as always.
+The quote reader as first benched: tuning WORSE, validation NO CHANGE; 75 and 6 asked
+error places went unasked (decisions.md). The arbiter's code now trains ten seeds with a
+smooth calibration (`trust.Trees`, `trust.Curve`): **a retraining (`train_ocr_trust.py
+--save`, `rebuild-trust.sh`) writes that kind of arbiter over production's**, so don't
+retrain into `work/models/ocr-trust.pkl` before the steadier arbiter's bench is read.
 
 Found at ~06:00: retraining is exact (the arbiter trained again on
 production's trust data is production's file byte for byte), and the control's 15 more
