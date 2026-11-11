@@ -1847,3 +1847,35 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   TrueType files of their library, 407 MB, copied beside the books; gitignored with the
   rest of `work/`, since the fonts are licensed. The probes read them there
   (`probe_font_match.LIBRARY`); a font match's JSON names each font by its path under it.
+- 2026-11-12: **Render and compare on the golden books: 94% on De tuin and De cipier
+  once a version is drawn the way the book sets it; of the judges' misses it has
+  nineteen in twenty right** (`experiments/probe_render_compare.py`, no models; the
+  trust data's settled places the text layer has words for). Three versions of the
+  method, each failure read from its examples: (1) the word's ink cut along its layer
+  box and each drawing scaled to the ink's height: 68% over eleven books (16,312
+  places), punctuation 53%: a closing quote the layer missed lay outside the box, and
+  a word without tall letters was scaled wrongly ("reverse.’" fit −0.05). (2) A strip
+  of the line from the blank before the place to the blank after it, every version
+  drawn at the book's type size (the median of scan word height over drawn height),
+  the fit the cosine of strip and drawing at the best position and stretch, so ink the
+  drawing lacks and ink it adds both count: 73% (14,781 places), letters 91%, accents
+  91%, spaces 88%, five books at 88–95%, but punctuation 58% and case 56%, De tuin 38%
+  and Vals alarm 47%. Read from the strips: those two books set a closing quote right
+  over the stop before it ("nemen.’"), where the font draws it after, so the print's
+  version came out too wide; and small capitals ("PC", "DS") drawn as full capitals
+  were too big, so the lower-case version fitted. (3) Each version drawn the ways a
+  book may set it, the best counting: as the font spaces it, the quote pulled over the
+  stop (three kerns), a run of capitals at small-capital size (0.74 and 0.82): De tuin
+  38% → 94% (2,063 places; punctuation 94%, letters 95%, accents 97%, case 20 of 20),
+  De cipier 91% → 93% (2,099; letters 97%, accents 99%, case 59 of 61, punctuation
+  86%), Stella 9 of 9. Over the two books the judges alone: clef 90%, autotrust-jev
+  95%, d3 96%, Winnow 79%; of clef's 407 misses the fit has 390 right, of
+  autotrust-jev's 192, 181, of d3's 157, 149; where every judge is wrong, 12 of 15.
+  So it is level with the best judge and fails elsewhere, which is what a seat on the
+  panel needs. Not yet shown: that the extra drawings don't simply favour the version
+  with a quote or capitals (the print has them in all but a handful of these places,
+  so the counterexamples are 2 to 4 a book); the arbiter's leave-one-book-out test
+  will say. The two 1920s books, whose typeface the library lacks (best fit 0.50 and
+  0.55), still scored 79% and 81% under (2). Running: all eighteen matched books
+  under (3). Next: the fit and its margin as a judge's vote in the trust data, the
+  arbiter retrained, both benches.

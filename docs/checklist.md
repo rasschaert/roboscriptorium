@@ -285,7 +285,9 @@ are under Done, "Architecture probes".
       drawn as the book would print it and laid over the scan's ink; the better fit gets
       the vote, and the arbiter learns its trust from the golden books. Aimed at specks,
       small capitals, ligatures, accents. First test, Stella: the print on 9 of 9
-      labelled places, each judge 5 or 6 (`probe_render_compare.py`). In order:
+      labelled places, each judge 5 or 6; De tuin and De cipier 94% and 93% of 4,162,
+      with nineteen in twenty of the judges' misses right (`probe_render_compare.py`,
+      decisions.md 2026-11-12). In order:
       - [ ] The golden books' typefaces matched (`probe_font_match.py`, ~2 min a book,
             results in `work/probes/font-match/`), then the test on their labelled
             places: by kind of error, where the judges were wrong, where the arbiter
