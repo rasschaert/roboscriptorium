@@ -1737,4 +1737,10 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   (18 fewer questions, 6 fewer unasked) and asks 29 more questions for 3 fewer unasked
   on validation. Taking it is the user's call (asked 2026-11-11); production's arbiter
   stays until then.
+- 2026-11-11: The italic errors that rose with the questions are misread words, not
+  slants: the books' italic output is the same word for word (Goede dochter 1,404,
+  Het geluid 13,202), only the precision falls, because an italic word whose letters
+  differ from the reference counts as wrongly italic, and an asked suspect keeps the
+  layer's letters. The bench's verdict flipped on that count three times today
+  (checklist: the italic count without the words' spelling).
 
