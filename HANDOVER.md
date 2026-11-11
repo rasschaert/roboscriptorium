@@ -44,6 +44,16 @@ Validation at 0.93: NO CHANGE (548 questions, 167 unasked, 170 asked). Left, in 
    --stat main italics-by-place` first) and bench main, tuning and validation, for a
    fresh baseline: older runs count italics the old way;
 4. then weigh batch five's retraining against that baseline.
+5. last (the user, 2026-11-11, through the checklist session): the agent's half of the
+   checklist step "verdicts on the unasked errors that look like the reference's, not
+   the build's" (Golden books and the bench). From the fresh tuning and validation
+   baselines, list the unasked errors that look like the e-book departing from its
+   print (a space no print sets, words run together, a line-end hyphen left in, Het
+   laatste bevel's glued words; the stale list is
+   `work/probes/unasked/candidates-20261019.json`, decisions.md of 2026-10-19 says how
+   it was made); settle on the scan crop what the crop settles; write the rest as
+   `review --only` lists, one command a book (`experiments/review_batch_commands.py`),
+   under "Waiting on the user" here, and update the checklist step. No models.
 
 **A retraining (`train_ocr_trust.py --save`, `rebuild-trust.sh`) writes the new kind of
 arbiter over production's** `work/models/ocr-trust.pkl`: not before step 2.
