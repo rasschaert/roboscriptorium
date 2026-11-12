@@ -55,6 +55,17 @@ def test_a_dash_by_a_quote_or_the_paragraphs_edge_takes_only_its_open_side():
     assert styled("en dan —", EN_WORD)[0] == "en dan –"
 
 
+def test_a_dash_before_a_word_opening_on_an_apostrophe_keeps_its_space():
+    # The counterexamples first: a closing quote, before a space, a mark or the end.
+    assert styled("‘Ik zei toch —’ zei ze", EN_WORD)[0] == "‘Ik zei toch\u00a0–’ zei ze"
+    assert styled("‘Ik zei toch —’, zei ze", EN_WORD)[0] == "‘Ik zei toch\u00a0–’, zei ze"
+    assert styled("‘Ik zei toch —'", EN_WORD)[0] == "‘Ik zei toch\u00a0–'"
+    # Reis om mijn schedel p. 184, Au pair p. 328.
+    assert styled("Maar ’s avonds —’s avonds?", EN_WORD)[0] == "Maar ’s avonds\u00a0– ’s avonds?"
+    assert styled("beschadigd —’t gebouw", EN_WORD)[0] == "beschadigd\u00a0– ’t gebouw"
+    assert styled("beschadigd — ’t gebouw", EM_GLUED)[0] == "beschadigd—’t gebouw"
+
+
 def test_italic_marks_follow_their_words_when_words_split_or_join():
     p = Paragraph("hij las Ulysses—een boek", italic=(2,))
     (out,) = apply([p], EN_WORD)

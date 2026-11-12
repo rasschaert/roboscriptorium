@@ -75,7 +75,9 @@ def styled(text: str, style: DashStyle) -> tuple[str, list[int]]:
         prev = text[m.start() - 1] if m.start() > 0 else ""
         nxt = text[m.end()] if m.end() < len(text) else ""
         lead = before if prev and prev not in "‘“'\"([" else ""
-        trail = after if nxt and nxt not in "’”'\".,;:!?)]…" else ""
+        # An apostrophe opening a word ("– ’s avonds") closes nothing.
+        word = nxt in "’'" and text[m.end() + 1 : m.end() + 2].isalpha()
+        trail = after if nxt and (word or nxt not in "’”'\".,;:!?)]…") else ""
         at = len("".join(out)) + len(lead)
         where += [at] * (m.end() - m.start())
         out.append(lead + style.dash + trail)
