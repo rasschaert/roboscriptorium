@@ -39,16 +39,16 @@ Every book's typeface is in
 
 **Night of 2026-11-11/12.** decisions.md, 2026-11-12, has every number.
 
-**Morning of 2026-11-12: branch `spacing` waits for a bench** (worktree
-`../robo-spacing`, four commits, 728 tests; run its tests from the main checkout,
-where the models are). Four repairs to spacing the build sets wrong (decisions.md,
-2026-11-12): chain hyphens beside a short word, a false paragraph after a dash the
-layer missed, an ellipsis after a closing quote, a dash before "’s". Nothing is benched:
-the bench rewrites the books' stage caches from reflow on, and the second session's
-render-judge run (screen `robo-render-judge`, to about 10:30) builds from them. When it
-has ended: warm `bench tuning` and `bench validation` from the worktree against the
-latest baselines made with production's arbiter, `bench-diff` for what was fixed and
-made, then rebase on main, fast-forward, and tick the checklist line.
+**Morning of 2026-11-12: four spacing repairs are on main** (chain hyphens beside a
+short word, a false paragraph after a dash the layer missed, an ellipsis after a
+closing quote, a dash before "’s"; decisions.md, 2026-11-12). Tuning BETTER (38 fixed,
+1 made), validation NO CHANGE (7 fixed, none made). The baselines for the next change,
+production's arbiter with the repairs in:
+`work/bench/tuning-20261112T070759-f8e7ab1-dirty.json` and
+`validation-20261112T070923-f8e7ab1-dirty.json`. The worktrees `../robo-spacing`
+(branch `spacing`, merged) and `../robo-base` (detached, the baseline's checkout) can go.
+Left of the spacing step: a dash before a closing quote, which needs the scan
+(checklist, "Errors no question asks about").
 
 **Batch five is done**: six books scored whole, NO CHANGE, tuning now 6,180 pages. Its
 slices are on main. The trust data of the four grown books that train (Vals alarm, Metro 2033, De

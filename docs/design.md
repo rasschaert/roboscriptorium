@@ -499,6 +499,18 @@ apart when tight, 0.91–1.21 when spaced. The scan sets the gaps; the layer sti
 between the glyph and three tight dots, which look alike on paper. Of the 26 golden
 books only The Stranger's Child changed.
 
+Two places keep their own spacing against the book's style (2026-11-12). After a
+closing quote an ellipsis stands on its own, between two quotations ("ver zijn.’ ...
+‘Nee"), and a tightly set book spaces it still: the layer's space stays there (10 of
+the 25 such ellipses in the references are spaced, and the layers show a space only in
+the two books that print one). And a dash, which takes no space before a closing
+quote, takes the book's before an apostrophe that opens a word ("– ’s avonds",
+"– ’t gebouw"): a letter right after the mark tells the two apart. Not settled: a dash
+before a closing quote that a book sets closed on both sides ("Dud—’") or spaced on
+both ("Granny – ’"); the scan tells them apart where the layer can't
+(`experiments/probe_dash_before_quote.py`, decisions.md 2026-11-12), and the styling
+doesn't look at the scan yet.
+
 Straight quotes and apostrophes are the layer's, never the print's: a printed book sets
 curly ones. `quotes.curl` curls what is left of them after the answers, by place: opening
 after a space, bracket, dash or opening mark, closing elsewhere, `’` inside a word and
@@ -815,7 +827,12 @@ counts, not only a sentence's end: in justified text a line stops short only at 
 paragraph's end, so a salutation ("Dear Kelvin,") and a dateline ("Shatila, 15 juli 1982")
 before a letter's flush body start one too. Breaks a page, tuning 0.057 → 0.045 (Artemis's
 letters 0.34 → 0.18, Het geluid van bananen 0.088 → 0.044), validation 0.202 → 0.196, words
-unchanged.
+unchanged. A line ending on a dash is full when it stops no more than two and a half of
+its own average characters short (`reflow.DASH_WIDTH`): where the layer misses the dash
+and another reading restores it, the line's box still ends before it. Dolittle's layer
+does so nine times ("he mumbled—" / "underdone roast beef"), 1.9–2.3 characters short
+with no indent after; the 24 paragraphs over all golden books that really end on a
+dash are followed by an indent or fall 14 characters or more short (2026-11-12).
 
 **A scene break is white space of two lines, or an ornament line.** Over 1.8 pitches
 after a sentence (one blank line is two pitches), or a line of three ornament marks or
@@ -1190,7 +1207,7 @@ where the stronger ones are silent:
 | the word list knows exactly one of the two forms | fixes 7 wrong calls, breaks none where the book is silent | knows a closed form the print hyphenates (`faceplate`, `northernmost`: 3); knows both (`make-up`, `makeup`) |
 | a capital after the break (`Noord-Holland`) | right on every true capital | a word set in capitals (`WE-` + `RELDGESCHIEDENIS`), 0 of 3: so it no longer counts as one |
 | an abbreviation in capitals before a lowercase word (`DNA-` + `sporen`, `NSB-` + `leden`) | Dutch spelling hyphenates it; tuning 2026-11-08: 5 fixed ("SA-mannen", "CRIS-zoekvraag"), none made | a word in capitals broken in capitals is no abbreviation and goes on in capitals (`VER-` + `HAALEN`) |
-| a hyphen already in the word | `Mens-erger-je-niet`, `good-for-nothing` | kept as a rule it was wrong 8 of 10 (`Zuid-Lon-den`, `Majuba-theeplan-tage`): now only where the parts beside the break are both words and don't make one |
+| a hyphen already in the word | `Mens-erger-je-niet`, `good-for-nothing` | kept as a rule it was wrong 8 of 10 (`Zuid-Lon-den`, `Majuba-theeplan-tage`): now only where the parts beside the break are both words and don't make one, however short ("second-" / "to-last", "glas-in-" / "loodramen"), or one part said again ("doenk-" / "doenk-doenk"). A floor of three letters on the parts closed 12 of 13 such chains wrongly; without it, of 200 chain breaks over every golden book 9 are wrong where 21 were (2026-11-12; `experiments/probe_chain_breaks.py`), one of them made: "orang-ou-tangs", both halves in the English list |
 | in an English book, the judge (clef:27b) asked how the word is spelled in its sentence (`hyphens.Compounds`) | where the rest is silent English compounds keep the hyphen 34 times in 77: the judge is right on 63, joining on 43 | a hyphenated form the reference closes (`timeout`, `bleedthrough`); 13 compounds it still joins |
 | in a Dutch book, vowels beside the break that would read as one sound (`hyphens.vowel_clash`: "controle-" / "experiment", "woede-" / "uitbarsting"), where the part after is a word of four letters or more and no diphthong's closing i stands before the break | Dutch spelling puts a hyphen there in a compound; tuning 3 fixed, validation 1 ("mini-jurk"), none made (2026-11-06) | without the last two conditions it broke words before a suffix ("vermoei-ender", "Skandi-ers": 5 made); a word that isn't a compound takes a diaeresis instead, which `join` sets first only where the word list knows it |
 

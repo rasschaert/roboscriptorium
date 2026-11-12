@@ -266,12 +266,6 @@ without effect, and what each would need to be tried again, is in
 - [ ] Spacing the build sets against the print, read off the crops of 223 unasked
       places (2026-11-12, decisions.md; `work/probes/unasked/spacing-20261112/`), each a
       repair with its counterexamples tested:
-      - on branch `spacing` (worktree `../robo-spacing`), to bench warm on tuning and
-        validation and merge if it holds: a chain broken beside a short word keeps its
-        hyphen ("second-to-last", 13 of 200 chain breaks fixed, 1 made); a line ending
-        on a dash its box leaves out doesn't start a paragraph (Dolittle, 9); an
-        ellipsis after a closing quote keeps the layer's space (Verminkt); a dash
-        before a word opening on an apostrophe keeps its space ("– ’s avonds", 4)
       - a dash before a closing quote set closed ("Dud—’") or spaced on both sides
         ("Granny – ’") where the book's other dashes take a space on one side (16, The
         Stranger's Child): the scan tells them apart, the layer doesn't (decisions.md,
@@ -524,6 +518,12 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Words, quotes and typography
 
+- [x] 2026-11-12 Four repairs to spacing the build set wrong, read off the crops of the
+      unasked places: a chain broken beside a short word keeps its hyphen
+      ("second-to-last"), a line ending on a dash its box leaves out doesn't start a
+      paragraph (Dolittle, 9), an ellipsis after a closing quote keeps the layer's
+      space, a dash before a word opening on an apostrophe keeps its space. Tuning
+      BETTER (38 fixed, 1 made), validation no change (7 fixed, none made)
 - [x] ~~An accent told from an i-dot or a speck by its shape; the per-book alphabet~~
       (the user, 2026-10-21; parked 2026-11-11): at line level the shape gives AUC
       0.66–0.76; emphasis accents and the dotless ı need each mark tied to its letter,

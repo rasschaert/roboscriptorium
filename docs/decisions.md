@@ -2072,3 +2072,17 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   "Godverdegodverdegodverdegodver" 7) and no count of parts separates the three glued
   lines (4, 6, 9). Failed on the signal, not on a model: the line's letters per point
   against its page's would be the next thing to try.
+- 2026-11-12: **The four spacing repairs, warm benches: tuning BETTER, validation NO
+  CHANGE; merged** (fresh baselines from main's commit, then the branch, production's
+  arbiter; `work/bench/tuning-20261112T070321` → `tuning-20261112T070759`,
+  `validation-20261112T070845` → `validation-20261112T070923`, all `-f8e7ab1-dirty`,
+  the later of each built from the branch). Tuning: 38 wrong words fixed (32 unasked),
+  1 made ("orang-ou-tangs", Dolittle, the one the probe foretold); dash or dot spacing
+  0.022 → 0.016 a page [−0.010, −0.003], compound hyphens 0.022 → 0.021
+  [−0.002, −0.000], questions unchanged; by book Dolittle 18 fixed, Reis om mijn
+  schedel 4, Goede dochter 4, Metro 2033 3, Artemis 3, Het heft 2. Dolittle's nine
+  paragraphs ending on a restored dash are one. Validation: 7 fixed (all unasked: six
+  of Verminkt's ellipses after a closing quote, "laag-bij-de-gronds"), none made. What
+  paid: the paragraph after a missed dash and the chains, about equally; the ellipsis
+  on the one book that prints so; the apostrophe on four places. The latest runs are
+  the baselines for what comes next.
