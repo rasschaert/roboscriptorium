@@ -21,15 +21,16 @@ It is in the pipeline as a judge, off by default (`rendercheck.py`,
 `ROBO_ALARM_MODEL=…,render`; docs/design.md, "Render and compare"). The one book that got worse in
 the arbiter test, Het geluid van bananen, is explained and mended (an ellipsis's dots
 cut off: 79 → 93% of its places).
-**In flight since 2026-11-12 07:35, about three hours:** screen `robo-render-judge`
+**In flight since 2026-11-12 08:11, about two and a half hours:** screen `robo-render-judge`
 (script `work/runs/render-judge.sh`, logs `work/runs/render-judge-*.log`; stop with
 `experiments/stop-run.sh render-judge`): typefaces matched for 33 books, the trust data
 rebuilt through the build with the judge into `work/probes/ocr-trust-render2/`, two
 arbiters trained on it (`work/models/ocr-trust-render*.pkl` with the vote,
 `ocr-trust-render-ctl*.pkl` the control without), then `bench tuning` and `validation`
-of each, asking below 0.93, against the grown5 arbiter's runs
-(`work/bench/tuning-20261112T050659-…` and `validation-20261112T050748-…`). Read the
-vote's bench against the control's: questions, unasked, and the italic line before the
+of each, asking below 0.93: the control's against the grown5 arbiter's runs
+(`work/bench/tuning-20261112T050659-…` and `validation-20261112T050748-…`, made before
+the spacing repairs), the vote's against the control's. Read the vote's bench against
+the control's: questions, unasked, and the italic line before the
 verdict. Production's arbiter files are not touched.
 Every book's typeface is in
 `work/probes/font-match/`. The fonts are the user's library, copied to `work/fonts/`

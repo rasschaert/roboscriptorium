@@ -2086,3 +2086,19 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   paid: the paragraph after a missed dash and the chains, about equally; the ellipsis
   on the one book that prints so; the apostrophe on four places. The latest runs are
   the baselines for what comes next.
+- 2026-11-12: **Render and compare through the build: two faults the rebuilt trust data
+  showed, both mended before any arbiter trained on them.** (1) Where the judge had no
+  ink to compare it answered with an empty value, which `ocrcheck._decide` reads as the
+  first option: a vote for the layer's version at confidence 0, on 1,128 of De tuin's
+  suspects, 852 of Het schaduwhuis's, 795 of Metro 2033's. It now answers "neither",
+  which is no vote. (2) Those books are set tight: their word spaces are narrower than
+  the blank the cut looks for (a fifth of the line's height), so the strip ran into the
+  next words and was given up. It now ends at the widest blank before a third of the
+  layer's next word. On the rebuilt places: De tuin 78 → 93% (no pick on 35 of 4,546),
+  Het schaduwhuis 80 → 92%, Vuurspel 80 → 93%, Het geluid van bananen 91 → 92.5%, De
+  cipier 96%; Metro 2033 stays at 72% with real votes on all but 15 (its typeface match
+  is weak, Warnock Display 0.725: still to look at). Found by reading each book's share
+  right and its zero-confidence votes in the rebuilt data, not the total (87.9%, which
+  looked like the probe's). The run was restarted at 08:11 on main with robo1's spacing
+  repairs in; the judge's benches compare against its control's, same code both sides.
+
