@@ -2163,3 +2163,33 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   chose among; a build without a font folder says so and goes on without the judge.
   The trust data and the arbiter get a second round with these
   (`work/runs/render-judge2.sh`).
+- 2026-11-12: **Render and compare through the bench, first round: BETTER on tuning,
+  vetoed by one validation book; its confidence now counts how well the pick fits.**
+  Two arbiters trained on the same trust data (`work/probes/ocr-trust-render2/`), one
+  with the vote and one without (212 minutes side by side), both asking below 0.93.
+  Tuning, 6,180 pages, the vote against its control
+  (`work/bench/tuning-20261112T225133` against `…T224052`): questions 3,983 → 3,570,
+  wrong words left unasked 715 → 687, wrong words before review 3,442 → 3,148, after
+  review 0.24 → 0.23 a page [-0.02, -0.01], italic errors 1,244 → 1,226, headings 29
+  both. Place by place 577 wrong words fixed and 279 made (unasked: 46 and 27); stress
+  accents 99 fixed and 9 made, punctuation 115 and 35, dots and stops 76 and 28, quote
+  marks even (72 and 73); De vergelding (14 and 26), Glazuur, Au pair and Monterosso
+  lose a little, Metro 2033 in its weak face is nearly even (52 and 43). Validation,
+  889 pages (`validation-20261112T225600` against `…T224139`): WORSE by the rule, after
+  review 0.41 both [-0.02, +0.03], questions 545 → 502, unasked 268 → 278; 68 fixed and
+  99 made, of which Het laatste bevel 9 and 40 (wrong words 0.57 → 0.90 a page, glued
+  or split words 14 fixed and 38 made over the set) and Verminkt 15 and 24; Vuurspel,
+  De kerk van de dode meisjes and You're Never Weird are better. Het laatste bevel and
+  Verminkt are the two books matched to ITC Legacy Serif, and the first draws its own
+  plain words worst of all 33 books (0.79, the tuning books 0.86–0.97): the library
+  lacks its face, and the judge's confidence, the margin alone, didn't say so. On the
+  labelled places in five faces a book (38,485 picks, each book left out in turn,
+  `experiments/render_confidence.py`) the margin tells right picks from wrong at AUC
+  0.73, the best version's fit at 0.69, the two together at 0.80, calibrated across
+  books (95% sure or more: the print 97.6%; under 60%: 54%). The judge's confidence is
+  now that probability (`rendercheck.sureness`, `FITS` 5). Not taken on validation's
+  word: the design was made on tuning's labelled places, validation only said where to
+  look. The second round, stopped at its start and restarted with it
+  (`work/runs/render-judge2.sh`), carries the typefaces by the judge's fit, the new
+  drawings and this confidence together, against the same control.
+
