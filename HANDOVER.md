@@ -32,6 +32,14 @@ of each, asking below 0.93: the control's against the grown5 arbiter's runs
 the spacing repairs), the vote's against the control's. Read the vote's bench against
 the control's: questions, unasked, and the italic line before the
 verdict. Production's arbiter files are not touched.
+**The user, 2026-11-12 08:45: render and compare goes on by default, and future sessions
+explore tactics to improve it** (the checklist, "New tactics to make it better"). When
+the run's benches are read and the vote's are not worse than its control's: `render`
+added to `alarm_model` in `config.py`, `work/models/ocr-trust-render*.pkl` put in
+production's place (the files there kept beside them), the diagram, how-it-works, the
+README's models and AGENTS.md's judge row updated, benches as fresh baselines. First
+tactic to take: Metro 2033 is drawn in Warnock Display (72% of its places) where Minion
+Medium and Adobe Hebrew, tied with it on word shapes, give 88% (decisions.md).
 Every book's typeface is in
 `work/probes/font-match/`. The fonts are the user's library, copied to `work/fonts/`
 (gitignored: licensed, never in git).

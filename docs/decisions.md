@@ -2117,3 +2117,17 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   ones benched. To undo: copy the backup folder's files back and set
   `ROBO_OCR_ASK_BELOW=0.9`. From here a retraining with `--save` writes over this
   arbiter, as it should.
+- 2026-11-12: **Metro 2033: the word-shape score can't choose among near-tied typefaces;
+  the places can.** The match's three leaders tie (Warnock Display 0.725, Minion Medium
+  0.725, Adobe Hebrew Regular 0.722) and it took Warnock Display. Judged on the book's
+  2,089 labelled places in each face: Warnock Display 72.1%, Warnock Light 82.1%,
+  Minion Medium 87.9%, Adobe Hebrew Regular 88.5%. A font-finding site the user tried on
+  a crop said Adobe Devanagari (added to `work/fonts/extra/`): 0.713 on the words, 75.2%
+  of the places at no ink spread, 77.5% at +3. So the face should be chosen, among the
+  best few by word shape, by how well it tells the book's places apart (without labels:
+  on places where every judge agrees). Not built; the run in flight has Metro in Warnock
+  Display. The user, the same morning: render and compare "is very promising, i'd like
+  it turned on by default and i'd like future sessions to explore new tactics to improve
+  it further". It goes on by default with the arbiter trained on its vote once the run's
+  benches are read (work/runs/render-judge.sh); the tactics are in the checklist.
+

@@ -291,10 +291,20 @@ are under Done, "Architecture probes".
             and the fit built in as a judge, off by default (`rendercheck.py`,
             `ROBO_ALARM_MODEL=…,render`; decisions.md 2026-11-12)
       - [ ] Its vote and margin in the trust data, the arbiter retrained, `bench
-            tuning` and `validation`
-      - [x] Why Het geluid van bananen got worse with the vote: an ellipsis's dots
-            stood as far apart as word spaces and the place's ink was cut after the
-            first (79 → 93% once it runs on through dots; decisions.md 2026-11-12)
+            tuning` and `validation` (in flight, `work/runs/render-judge.sh`); then
+            **on by default** (the user, 2026-11-12): `render` in `alarm_model`, the
+            arbiter trained with its vote in production's place, the diagram,
+            how-it-works and the judge's row in AGENTS.md
+      - [ ] **New tactics to make it better** (the user, 2026-11-12: future sessions
+            explore them; each is a probe on the labelled places first):
+            the typeface chosen among the best few by how well it tells the book's
+            places apart, on places where every judge agrees (Metro 2033: 72% in the
+            face the word shapes chose, 88% in two that tied with it); the best few
+            faces voting together; the match's fit as an arbiter feature, so a weak
+            match is trusted less; ligatures drawn as the font's ligatures; the ink
+            spread and blur fitted to each scan more finely; a word's cut chosen per
+            place (italic, bold, small capitals); the kerning and spacing ways learnt
+            from the book's uncontested words instead of fixed lists
       - [ ] A raised ordinal drawn raised ("14e" loses to "14°", 12 places in Het geluid
             van bananen)
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
