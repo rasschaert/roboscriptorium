@@ -66,16 +66,9 @@ ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-grown5.pkl`, tuning against
 `tuning-20261112T021546-7e3d354-dirty.json` and validation against
 `validation-20261112T021713-7e3d354-dirty.json` (the twenty seeds on the old data).
 
-**Last for the night** (the user, 2026-11-11, through the checklist session): the
-agent's half of the checklist step "verdicts on the unasked errors that look like the
-reference's, not the build's" (Golden books and the bench). From the fresh baselines,
-list the unasked errors that look like the e-book departing from its print (a space no
-print sets, words run together, a line-end hyphen left in, Het laatste bevel's glued
-words; the stale list is `work/probes/unasked/candidates-20261019.json`, decisions.md
-of 2026-10-19 says how it was made); settle on the scan crop what the crop settles;
-write the rest as `review --only` lists, one command a book
-(`experiments/review_batch_commands.py`), under "Waiting on the user" here, and update
-the checklist step. No models.
+**Done for the night's last step** (the unasked errors that look like the reference's):
+223 places read on their crops, 58 for the user to confirm (below, "Waiting on the
+user"), 75 the build's, now steps in the checklist ("Errors no question asks about").
 
 **A retraining with `--save` and no `ROBO_OCR_TRUST_MODEL` (`train_ocr_trust.py`,
 `rebuild-trust.sh`) writes the new kind of arbiter over production's**
@@ -222,6 +215,48 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
 
 ## Waiting on the user
 
+- **58 unasked errors that look like the e-book's, to confirm** (~15 min; decisions.md,
+  2026-11-12). In each the agent read the print as ours has it; the answer is still the
+  user's. Once batch five's slices are on main (the whole-book commands need them):
+
+  ```sh
+  # 11 places
+  uv run roboscriptorium review work/the-thief-takers-apprentice--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 8 places
+  uv run roboscriptorium review work/de-stilte-van-de-hel--ia-scan --pages 11-101 --chapters 1-15 --only work/probes/unasked/candidates-20261112.json
+  # 8 places
+  uv run roboscriptorium review work/metro-2033--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 7 places
+  uv run roboscriptorium review work/de-geruchten--ia-scan --pages 9-97 --chapters 2-22 --only work/probes/unasked/candidates-20261112.json
+  # 3 places
+  uv run roboscriptorium review work/afscheid-van-verspilde-tijd--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 3 places
+  uv run roboscriptorium review work/het-ijzige-land--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 3 places
+  uv run roboscriptorium review work/verminkt--ia-scan --pages 7-100 --only work/probes/unasked/candidates-20261112.json
+  # 2 places
+  uv run roboscriptorium review work/vanille-en-andere-smaken--dbnl-scan --pages 9-79 --chapters 1-16 --only work/probes/unasked/candidates-20261112.json
+  # 2 places
+  uv run roboscriptorium review work/vuurspel--ia-scan --pages 9-111 --chapters 1-6 --only work/probes/unasked/candidates-20261112.json
+  # 2 places
+  uv run roboscriptorium review work/de-vergelding--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 2 places
+  uv run roboscriptorium review work/het-laatste-bevel--ia-scan --pages 9-100 --chapters 1-5 --only work/probes/unasked/candidates-20261112.json
+  # 1 places
+  uv run roboscriptorium review work/artemis--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 1 places
+  uv run roboscriptorium review work/au-pair--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 1 places
+  uv run roboscriptorium review work/het-heft-in-eigen-hand--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 1 places
+  uv run roboscriptorium review work/normal-people--ia-scan --pages 146-232 --chapters 23-31 --only work/probes/unasked/candidates-20261112.json
+  # 1 places
+  uv run roboscriptorium review work/monterosso-mon-amour--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 1 places
+  uv run roboscriptorium review work/reis-om-mijn-schedel--ia-scan --only work/probes/unasked/candidates-20261112.json
+  # 1 places
+  uv run roboscriptorium review work/goede-dochter--ia-scan --only work/probes/unasked/candidates-20261112.json
+  ```
 - Hoe wij verdwijnen's **spot-check**: `open work/probes/spot-check/hoe-wij-verdwijnen/index.html`
   (PDF 41, 77, 87, 144, 292; count wrong words, breaks and italics per page); then its
   read-through. The counts are of the build before the "op"/"een" italic fix.

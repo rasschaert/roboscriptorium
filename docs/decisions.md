@@ -1914,3 +1914,26 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   170 → 167, asked 160 → 170, italics 195 → 195. Production's arbiter is unchanged:
   the agent had told the user it would stop on a verdict of WORSE, so the switch waits
   for their word on this one place.
+- 2026-11-12: **The unasked errors that differ only in spaces or hyphens, each read on
+  its crop: a quarter are the reference's, a third the build's** (the user's step for the
+  night; `experiments/unasked_spacing_sheets.py`, no models, the fresh baselines of
+  tuning and validation). Of 755 unasked error places, 223 have the reference's letters
+  with other spaces or hyphens. Read on sheets of their scan lines
+  (`work/probes/unasked/spacing-20261112/`, `readings.json` has each reading): **58
+  where the print is as ours has it** and the e-book departs (a space before a closing
+  quote after a word the print broke over two lines, 11 in The Thief-Taker's Apprentice
+  and 5 in Metro 2033; "BBS 'en" for the small capitals' "BBS’en"; "algauw", "zoiets",
+  "'snachts", "een.22" run together; "te voorschijn" where the print has one word
+  inside the line; "leerlingJager", "guilttrip", "politieinspecteur" with the line-end
+  hyphen dropped); **75 the build's** (a hyphen at a line end that belongs to the word,
+  dropped, 17; words glued or split, 11; a dash at a line's end joined with a space, 9;
+  the space beside an ellipsis or between a dash and a quote lost, 17; a space set
+  before a closed dash, 8; a line-end hyphen kept inside a word, 5; a speck read as a
+  hyphen, 4; a space before a mark lost, 4); **70 hyphens at the print's line end**
+  that no crop settles ("non-/reactive": Artemis's and Metro 2033's e-books keep them,
+  "night-gown", "paper-backs", which looks like the e-book's doing, but the print
+  can't say), and **20 the spacing beside an ellipsis**. Counting each spelling
+  elsewhere in the book's reference settled none of the line-end ones: nearly all occur
+  once. Nothing was left that a crop doesn't settle, so the user gets the 58 to confirm
+  (verdicts stay theirs), `work/probes/unasked/candidates-20261112.json`. The build's
+  75 are steps in the checklist.

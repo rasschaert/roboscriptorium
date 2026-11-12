@@ -269,6 +269,21 @@ without effect, and what each would need to be tried again, is in
       retrained and both benches)
 - [ ] De vergelding's own arbiter: it has the most unsure suspects and was never trained
       on; comes with its trust data (In flight)
+- [ ] Spacing the build sets against the print, read off the crops of 223 unasked
+      places (2026-11-12, decisions.md; `work/probes/unasked/spacing-20261112/`), each a
+      repair with its counterexamples tested, by how many places it leaves:
+      - a line-end hyphen that belongs to the word, dropped (17: "je-bent-gebeld-briefje",
+        "glas-in-loodramen", "second-to-last"): a word already holding a hyphen keeps
+        the one at its line end
+      - a dash at a line's end or start joined to the next word with a space (9, Dolittle:
+        "mumbled— "underdone"): a line join at a closed dash adds none
+      - a space set before a dash the print sets closed before a closing quote (8, Goede
+        dochter and The Stranger's Child: "Dud —’"), in books whose other dashes are spaced
+      - the space between a spaced dash and the mark after it lost (8: "Granny – ’",
+        "– ’s avonds") and the space beside an ellipsis lost (9, Verminkt: "verwond.’ ...")
+      - a line-end hyphen kept inside a word (5: "brab-bel", "sexy-er", "zig-zag-ging"),
+        a speck read as a hyphen (4: "was-time", "doordat-hij"), a space the print sets
+        before a mark lost (4: "Paulina :"), Het laatste bevel's tight lines glued (4)
 
 ## Assumptions to test (quick probes, minutes to an hour each)
 
@@ -325,14 +340,17 @@ are under Done, "Architecture probes".
       book set flush for tuning and a short-story collection; then section headings
       without numbers, text wrapped around pictures. From before: De Arbeiderspers,
       Prometheus/Ooievaar or Vrijdag; a Kosmos book for later, beyond prose
-- [ ] **user**: verdicts on the unasked errors that look like the reference's, not the
-      build's (~20 min): spaces no print sets ("gezicht ."), words run together
-      ("’snachts"), a print line-end hyphen left in ("na-iviteit"); Het laatste bevel's
-      glued words among them. The list is from 2026-10-19
-      (`work/probes/unasked/candidates-20261019.json`): made again from the fresh
-      baseline first, each place checked on its crop by the agent, and only what a crop
-      doesn't settle brought to the user, one command a book
-      (`experiments/review_batch_commands.py`)
+- [ ] **user**: 58 unasked errors that look like the reference's, to confirm
+      (~15 min, one `review --only` command a book in HANDOVER.md, "Waiting on the
+      user"; once batch five's slices are on main). Of the 223 unasked places that
+      differ from the reference only in spaces or hyphens (fresh baselines, 2026-11-12),
+      each read on its crop by the agent: in 58 the print is as ours has it (a space
+      before a mark the print doesn't set, words the e-book runs together or splits, a
+      hyphen the print sets inside the line); 75 are the build's (Errors no question
+      asks about); 70 are hyphens at the print's line end, which no crop settles; 20 are
+      the spacing beside an ellipsis. The readings:
+      `work/probes/unasked/spacing-20261112/readings.json`
+      (`experiments/unasked_spacing_sheets.py`)
 - [ ] `golden check <pdf> <epub>` writing a draft manifest, once a batch of candidates
       comes
 
