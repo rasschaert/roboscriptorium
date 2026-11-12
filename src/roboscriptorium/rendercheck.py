@@ -25,6 +25,7 @@ from scipy.signal import fftconvolve
 from roboscriptorium import pdf as pdflayer
 from roboscriptorium.clients.decide import Answer
 from roboscriptorium.files import write_atomic
+from roboscriptorium.pdf import PageText
 
 # The judge's name among the second vision judges (`ROBO_ALARM_MODEL=…,render`).
 MODEL = "render"
@@ -151,22 +152,23 @@ def word_ink(page: pymupdf.Page, word: tuple) -> np.ndarray | None:
     return _trimmed(grey[top:bottom, left:right])
 
 
-def scan_words(pdf: Path, first: int, last: int, count: int) -> list[tuple[str, np.ndarray]]:
+def scan_words(pdf: Path, pages: list[PageText], count: int) -> list[tuple[str, np.ndarray]]:
     """Plain lower-case words of five letters or more, with their ink, from up to twelve
-    pages across `first`–`last`, away from the range's ends where it is long enough."""
+    of `pages`, away from their ends where there are enough. An image-only page's words
+    are its first reading's."""
     rng = random.Random(0)
-    inner = range(first + 2, last - 1) or range(first, last + 1)
-    numbers = rng.sample(inner, min(12, len(inner)))
+    inner = pages[2:-2] or pages
+    sample = rng.sample(inner, min(12, len(inner)))
     found = []
     with pdflayer.PDF_LOCK, pymupdf.open(pdf) as doc:
-        for number in numbers:
-            page = doc[number - 1]
+        for text in sample:
+            page = doc[text.number - 1]
             words = [
                 w
-                for w in pdflayer.page_words(page)
+                for w in pdflayer.page_words(page, text)
                 if len(w[4]) >= 5 and w[4].isalpha() and w[4].islower() and w[4].isascii()
             ]
-            for w in rng.sample(words, min(len(words), count // len(numbers) + 4)):
+            for w in rng.sample(words, min(len(words), count // len(sample) + 4)):
                 cut = word_ink(page, w)
                 if cut is not None and cut.shape[0] > 20:
                     found.append((w[4], cut))
@@ -255,9 +257,9 @@ def em_size(words: list[tuple[str, np.ndarray]], font: ImageFont.FreeTypeFont) -
     return RENDER_PX * float(np.median(ratios))
 
 
-def match(pdf: Path, first: int, last: int, library: Path, cache: Path | None = None) -> Match:
-    """The book's typeface among the library's fonts, by the scan's words on pages
-    `first`–`last`: every font on a few words, then the best on all of them. A match
+def match(pdf: Path, pages: list[PageText], library: Path, cache: Path | None = None) -> Match:
+    """The book's typeface among the library's fonts, by the scan's words on `pages`:
+    every font on a few words, then the best on all of them. A match
     in `cache` is kept whatever pages it was made from: a book is set in one typeface,
     and a slice of it must be judged as the whole is."""
     key = {"version": VERSION}
@@ -266,7 +268,7 @@ def match(pdf: Path, first: int, last: int, library: Path, cache: Path | None = 
         if held.get("key") == key and (library / held["match"]["file"]).exists():
             return Match(**held["match"])
     fonts = library_fonts(library)
-    words = scan_words(pdf, first, last, WORDS)
+    words = scan_words(pdf, pages, WORDS)
     if not fonts or not words:
         raise ValueError(
             f"no typeface to match: {len(fonts)} fonts in {library}, {len(words)} words"
@@ -298,15 +300,16 @@ def match(pdf: Path, first: int, last: int, library: Path, cache: Path | None = 
     return found
 
 
-def place_ink(page: pymupdf.Page, box) -> np.ndarray | None:
+def place_ink(page: pymupdf.Page, box, text: PageText | None = None) -> np.ndarray | None:
     """The ink at a suspect's box, as a strip of its line (0–1, not trimmed): everything
     between the blank before the layer's words there and the blank after them, so a mark
-    the layer missed beside a word is in it and its neighbours' letters aren't. None
-    where the layer has no words."""
+    the layer missed beside a word is in it and its neighbours' letters aren't. On an
+    image-only page the words are its first reading's (`text`). None where there are no
+    words."""
     bx0, by0, bx1, by1 = box
     span = [
         w
-        for w in pdflayer.page_words(page)
+        for w in pdflayer.page_words(page, text)
         if bx0 - 1 <= (w[0] + w[2]) / 2 <= bx1 + 1 and by0 <= (w[1] + w[3]) / 2 <= by1
     ]
     if not span:
@@ -402,8 +405,9 @@ class Judge:
 
     model = MODEL
 
-    def __init__(self, pdf: Path, face: Face, found: Match):
+    def __init__(self, pdf: Path, face: Face, found: Match, pages: list[PageText] = ()):
         self._pdf, self._face, self._match = pdf, face, found
+        self._texts = {p.number: p for p in pages}
         # Part of each answer's cache key: another typeface or size is another judge.
         self.fingerprint = found.fingerprint
 
@@ -411,7 +415,7 @@ class Judge:
         versions = state["readings"]
         letters = [c for c in questions["reading"]["criteria"] if c != "neither"]
         with pdflayer.PDF_LOCK, pymupdf.open(self._pdf) as doc:
-            ink = place_ink(doc[state["page"] - 1], state["box"])
+            ink = place_ink(doc[state["page"] - 1], state["box"], self._texts.get(state["page"]))
         if ink is None:
             return {"reading": Answer("choice", "", 0.0, {})}
         scores = fits(self._face, self._match.spread, self._match.size, ink, versions)
@@ -421,10 +425,9 @@ class Judge:
         return {"reading": Answer("choice", letters[order[0]], sure, {})}
 
 
-def judge(pdf: Path, first: int, last: int, library: Path, cache: Path) -> Judge:
-    """The judge for a book, its typeface matched from pages `first`–`last` (and kept in
-    `cache`)."""
+def judge(pdf: Path, pages: list[PageText], library: Path, cache: Path) -> Judge:
+    """The judge for a book, its typeface matched from `pages` (and kept in `cache`)."""
     if not library.is_dir():
         raise ValueError(f"the judge {MODEL!r} draws with the fonts in {library}: no such folder")
-    found = match(pdf, first, last, library, cache)
-    return Judge(pdf, Face.from_file(library / found.file), found)
+    found = match(pdf, pages, library, cache)
+    return Judge(pdf, Face.from_file(library / found.file), found, pages)

@@ -8,7 +8,7 @@ kept in each book's stages/typeface.json), so a rebuild or a bench doesn't wait 
 import sys
 from pathlib import Path
 
-from roboscriptorium import bench, rendercheck
+from roboscriptorium import bench, ocr, pdf, rendercheck
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.trustdata import SPECS
@@ -20,6 +20,9 @@ if __name__ == "__main__":
         sys.exit()
     for name in sys.argv[1:]:
         book = Book.load(Path("work") / name)
-        found = rendercheck.match(book.source, *book.body_pages, Path(Settings.from_env().fonts),
-                                  book.stages / "typeface.json")
+        layer = pdf.cached_text_layer(book.source, book.stages / "textlayer.json",
+                                      ocr.language(book.language))
+        first, last = book.body_pages
+        found = rendercheck.match(book.source, [p for p in layer if first <= p.number <= last],
+                                  Path(Settings.from_env().fonts), book.stages / "typeface.json")
         print(f"{name}: {found.name} {found.fit:.3f}, ink {found.spread:+d}, {found.size:.0f} px", flush=True)

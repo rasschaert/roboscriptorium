@@ -20,7 +20,7 @@ left out in turn: 26 → 19 at the rule's questions, 480/189/103/31 → 438/153/
 It is in the pipeline as a judge, off by default (`rendercheck.py`,
 `ROBO_ALARM_MODEL=…,render`; docs/design.md, "Render and compare"). One book got worse in
 the arbiter test, Het geluid van bananen; not yet explained (not its font cut).
-**In flight since 2026-11-12 07:40, about three hours:** screen `robo-render-judge`
+**In flight since 2026-11-12 07:20, about three hours:** screen `robo-render-judge`
 (script `work/runs/render-judge.sh`, logs `work/runs/render-judge-*.log`; stop with
 `experiments/stop-run.sh render-judge`): typefaces matched for 33 books, the trust data
 rebuilt through the build with the judge into `work/probes/ocr-trust-render2/`, two

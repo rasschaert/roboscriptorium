@@ -8,6 +8,7 @@ from PIL import ImageFont
 from roboscriptorium import ocrcheck, pipeline, rendercheck
 from roboscriptorium.clients import decide
 from roboscriptorium.config import Settings
+from roboscriptorium.pdf import PageText
 from roboscriptorium.roles import DecisionCache
 
 LINE = "there the quick {} jumps over them"
@@ -26,7 +27,7 @@ def _scan(tmp_path, word: str):
 
 def _judge(path) -> rendercheck.Judge:
     face = rendercheck.Face(lambda px: ImageFont.load_default(px))
-    words = rendercheck.scan_words(path, 1, 1, 20)
+    words = rendercheck.scan_words(path, [PageText(1, 400, 120, [])], 20)
     found = rendercheck.Match("default", "default", 0.5, 0, rendercheck.em_size(words, face.at()))
     return rendercheck.Judge(path, face, found)
 
@@ -98,7 +99,7 @@ def test_the_build_makes_the_judge_from_its_name_and_needs_the_fonts(tmp_path):
 
     settings = Settings(alarm_model="render", fonts=str(tmp_path / "no-fonts"))
     with pytest.raises(ValueError, match="no such folder"):
-        pipeline._alarm("render", settings, Book())
+        pipeline._alarm("render", settings, Book(), [])
 
 
 def test_a_books_match_is_kept_for_any_slice_of_it(tmp_path):
@@ -108,4 +109,23 @@ def test_a_books_match_is_kept_for_any_slice_of_it(tmp_path):
     cache = tmp_path / "typeface.json"
     held = rendercheck.Match("face.otf", "Face", 0.7, 3, 50.0)
     cache.write_text(json.dumps({"key": {"version": rendercheck.VERSION}, "match": asdict(held)}))
-    assert rendercheck.match(tmp_path / "none.pdf", 40, 60, library, cache) == held
+    assert rendercheck.match(tmp_path / "none.pdf", [], library, cache) == held
+
+
+def test_an_image_only_pages_words_are_its_first_readings(tmp_path):
+    path, box = _scan(tmp_path, "world")
+    with pymupdf.open(path) as doc:
+        words = tuple(tuple(w) for w in doc[0].get_text("words"))
+        doc[0].add_redact_annot(doc[0].rect)
+        doc[0].apply_redactions(images=pymupdf.PDF_REDACT_IMAGE_NONE)
+        pix = pymupdf.open(path)[0].get_pixmap(dpi=300)
+        doc[0].insert_image(doc[0].rect, pixmap=pix)
+        bare = tmp_path / "image-only.pdf"
+        doc.save(bare)
+    with pymupdf.open(bare) as doc:
+        assert not doc[0].get_text("words")
+    text = PageText(1, 400, 120, [], words=words)
+    judge = rendercheck.Judge(bare, *(lambda j: (j._face, j._match))(_judge(path)), [text])
+    state = {"page": 1, "line": 0, "readings": ["wor1d", "world"], "box": list(box)}
+    assert judge.decide(state, _question(["wor1d", "world"]))["reading"].value == "b"
+    assert rendercheck.scan_words(bare, [text], 20)
