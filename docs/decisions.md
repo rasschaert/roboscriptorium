@@ -1987,3 +1987,17 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   has more and 89% of 209 when it has fewer; in capitals 88% of 585 and 95% of 363.
   Next: the font pick mended, the fit built into `ocrcheck` as a judge, the trust data
   rebuilt, the arbiter retrained, the benches.
+- 2026-11-12: **Render and compare is in the pipeline as a judge, off by default**
+  (`rendercheck.py`: `ROBO_ALARM_MODEL=…,render`, fonts from `ROBO_FONTS`; docs/design.md,
+  "Render and compare"). It answers the vision judges' question from the suspect's page
+  and box, so `ocrcheck`, the trust data and the arbiter take it as one more second
+  judge, unchanged. A book's typeface is matched once into `stages/typeface.json`
+  (about two to five minutes). Against the probe on Afscheid van verspilde tijd: the
+  same typeface (Life Roman), the same pick on 369 of 374 places, the print on 96% as
+  before. **A Medium weight now counts as a text cut**: passing over it drew five books
+  in a second-best face. Retried, the four comparable books go from 81% to 85% of
+  11,122 places (Goede dochter 77 → 86% in Minion Medium for Warnock Display, Het heft
+  85 → 88%, Het geluid van bananen 78 → 79%, Het schaduwhuis 88 → 86% in Garamond
+  Premier Medium Caption for Janson). Het geluid van bananen, the book the vote made
+  worse in the arbiter test, hardly moves: its cut was not the cause, still to find.
+  Next: the trust data rebuilt with the vote, the arbiter retrained, the benches.

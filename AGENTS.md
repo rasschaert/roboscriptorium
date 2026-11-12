@@ -314,7 +314,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 | `layout.py`, `typestyle.py`, `faint.py` | DocLayout-YOLO regions; each line's type against the body; washed-out pages |
 | `missing.py` | printed lines the layer lacks, read by glm-ocr |
 | `roles.py`, `sorter.py`, `sorterdata.py`, `pageroles.py` | line roles: a decision model plus rules, then learned trees (`ROBO_SORTER=0` turns them off); the trees' training data; the read model's heading and furniture lines per page, an input to the trees (`ROBO_PAGE_ROLES=1`, off) |
-| `readers.py`, `pagereader.py`, `ocrcheck.py`, `ocrdoubts.py`, `trust.py`, `trustdata.py`, `contextjudge.py`, `lexicon.py` | more readings of each body line (two of them from whole-page readings), judges where they differ, the review's questions about them, the learned trust that fixes, keeps or asks, and its training data; a thinking model settling questions from the text around them (off); the word list |
+| `readers.py`, `pagereader.py`, `ocrcheck.py`, `ocrdoubts.py`, `trust.py`, `trustdata.py`, `contextjudge.py`, `rendercheck.py`, `lexicon.py` | more readings of each body line (two of them from whole-page readings), judges where they differ (one, off by default, by drawing each version in the book's typeface over the scan), the review's questions about them, the learned trust that fixes, keeps or asks, and its training data; a thinking model settling questions from the text around them (off); the word list |
 | `corrections.py`, `errata.py`, `quotes.py` | the reviewer's answers applied; the misprints they correct; unpaired quotes as questions with a proposed reading |
 | `footnotes.py`, `epigraphs.py`, `chapters.py` | footnotes at a page's foot taken out of the running text and linked to their marks; a motto or a dedication on a page of its own set apart (`pagekinds.set_apart` asks the page-kind model about short pages); a book's numbered chapters read by their run |
 | `reflow.py`, `hyphens.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; lines joined and their end hyphens kept or dropped, by the book's spellings, the word list and the judge; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |
@@ -482,7 +482,7 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   DocLayout-YOLO weights): [docs/models.md](docs/models.md), Setup.
 - Fonts: `work/fonts/`, the user's library of book typefaces (2,419 OpenType and TrueType
   files, 407 MB: Adobe Font Folio 11 and `extra/` with Quadraat, Scala and Swift), for
-  drawing a reading as the book prints it (`experiments/probe_font_match.py`). Licensed:
+  drawing a reading as the book prints it (`rendercheck.py`, `ROBO_FONTS`). Licensed:
   never in git, like the books.
 - Word lists: `work/lexicon/{nld,eng}-words.txt`, built by `lexicon.py` from the tessdata
   models with `combine_tessdata` and `dawg2wordlist` (both come with Homebrew's

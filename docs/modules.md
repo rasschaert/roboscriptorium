@@ -369,6 +369,17 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   settings name. An ablation (another reader set, say) keeps its data and models apart:
   `ROBO_TRUST_DATA` for the data folder, `ROBO_OCR_TRUST_MODEL` for the model, whose
   leave-one-out copies sit beside it.
+- `rendercheck.py`: render and compare, the judge `render` among the second vision
+  judges (`ROBO_ALARM_MODEL=…,render`; off by default). `match` finds the book's
+  typeface in the font library (`ROBO_FONTS`, `work/fonts`): 240 lower-case words of
+  the text layer cut out along their ink, every font on 40 of them, the best 40 fonts
+  on all, the best text cut (not bold or italic) kept with its ink spread and the
+  book's type size in `stages/typeface.json` (about two minutes a book, once). `Judge`
+  answers `ocrcheck._decide`'s question from the suspect's page and box: the ink
+  between the blanks around the layer's words there, each version drawn (`drawings`)
+  and laid over it at the best position and stretch (`fits`), the best fit's letter as
+  its pick and the margin as its confidence. No pick where the layer has no words. Its
+  answers are cached with the others, keyed by the typeface and size.
 - `contextjudge.py`: the context judge, off unless `ROBO_CONTEXT_MODEL` names a model, and only where the arbiter is at
   least `ROBO_CONTEXT_MIN` sure of its likeliest version (default 0).
   After the arbiter, each suspect it would ask (but one no judge saw a version of) goes

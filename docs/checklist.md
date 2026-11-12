@@ -299,10 +299,13 @@ are under Done, "Architecture probes".
             the print on 87% of 26,309 over 23 books; as one more vote the arbiter's
             silent errors fall at every budget (26 → 19 at the rule's questions,
             189 → 153 at a question every four pages; decisions.md 2026-11-12)
-      - [ ] The font pick mended (`book_font` passes over a Medium cut as heavy: Het
-            geluid van bananen, the one book that got worse, was drawn condensed)
-      - [ ] The fit as one more judge (`ocrcheck`), its vote and margin in the trust
-            data, the arbiter retrained, `bench tuning` and `validation`
+      - [x] The font pick mended (a Medium weight is a text cut: four books 81 → 85%)
+            and the fit built in as a judge, off by default (`rendercheck.py`,
+            `ROBO_ALARM_MODEL=…,render`; decisions.md 2026-11-12)
+      - [ ] Its vote and margin in the trust data, the arbiter retrained, `bench
+            tuning` and `validation`
+      - [ ] Why Het geluid van bananen gets worse with the vote (the print on 79% of
+            its places in Minion Medium Caption, 0.78; not the cut)
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
             for the shapes the book can't supply. The family is found for eight of the
             user's ten books (the user's library, in `work/fonts/`: Quadraat, Janson Text

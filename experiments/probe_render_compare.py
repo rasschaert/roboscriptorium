@@ -30,7 +30,7 @@ import probe_font_match as match  # noqa: E402
 from roboscriptorium import pdf, trustdata  # noqa: E402
 
 OUT = Path("work/probes/render-compare")
-HEAVY = re.compile(r"Bold|Black|Semibold|Demi|Italic|Heavy|Medium", re.I)
+HEAVY = re.compile(r"Bold|Black|Semibold|Demi|Italic|Heavy", re.I)
 STRETCHES = np.linspace(0.92, 1.08, 5)
 # A blank this wide, in line heights, parts a word from its neighbour.
 WORD_GAP = 0.2

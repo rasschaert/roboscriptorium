@@ -28,7 +28,9 @@ class Settings:
     judge_model: str = "clef:27b"
     # Second vision judges on the OCR check's suspects, comma-separated: decision models
     # on Ollama, or `llama:<name>` served by llama.cpp at llama_url (`clients/llama.py`,
-    # imajev-4b); `<model>@wide` asks one on the suspect with its line around it. Each
+    # imajev-4b); `<model>@wide` asks one on the suspect with its line around it;
+    # `render` is no model: each version drawn in the book's typeface and laid over the
+    # scan (`rendercheck.py`, with the fonts in `fonts`). Each
     # is a vote for the arbiter, "" for none. Asked only where the vision judge is less
     # sure than `alarm_below` (1.0: always). autotrust-jev 35B and d3 9B: the arbiter
     # trained with their votes leaves about a tenth fewer errors unasked (docs/design.md).
@@ -39,6 +41,8 @@ class Settings:
     # questions for the small capitals no reader disputes (docs/design.md).
     lower_capitals: bool = True
     llama_url: str = "http://127.0.0.1:8092"
+    # The font library the judge `render` draws with: a folder of .otf and .ttf files.
+    fonts: str = "work/fonts"
     # A hosted build of judge_model that answers in its place (`openrouter:…`, used only
     # when the user asks), its answers cached under judge_model's name. "" for none.
     judge_via: str = ""
@@ -129,6 +133,7 @@ class Settings:
             alarm_below=float(os.environ.get("ROBO_ALARM_BELOW", defaults.alarm_below)),
             lower_capitals=_flag("ROBO_LOWER_CAPITALS", defaults.lower_capitals),
             llama_url=os.environ.get("ROBO_LLAMA_URL", defaults.llama_url),
+            fonts=os.environ.get("ROBO_FONTS", defaults.fonts),
             judge_via=os.environ.get("ROBO_JUDGE_VIA", defaults.judge_via),
             ocr_trust=_flag("ROBO_OCR_TRUST", defaults.ocr_trust),
             ocr_trust_model=os.environ.get("ROBO_OCR_TRUST_MODEL", defaults.ocr_trust_model),

@@ -376,6 +376,34 @@ page at its first page, an afterword just past it. Those are as much the range's
 convention as the models' errors, and one wrong end cuts or pads a book, so a model
 would need a human to confirm both ends anyway.
 
+## Render and compare
+
+**A judge that knows no language** (`rendercheck.py`, the user's idea, 2026-11-11; the
+judge `render` in `ROBO_ALARM_MODEL`, off until benched). The vision judges read a crop
+and the text judge a sentence; all four lean on what a word should be, so they share
+misses where the print is unusual: a speck read as a mark, small capitals, an accent, a
+stop against a comma. This judge draws each version of a suspect in the book's
+typeface, at the book's size, lays it over the scan's ink and votes for the better fit,
+with the margin over the next version as its confidence. The typeface is found from the
+scan: words of the text layer cut out along their ink, drawn in every font of a library
+(`ROBO_FONTS`, licensed files out of git) and ranked by fit. A version is drawn the ways
+a book may set it: as the font spaces it, with a closing quote kerned over the stop
+before it, with a run of capitals as small capitals.
+
+Its failure: a typeface the library lacks or matches poorly (the fit is the print on
+77–97% of a book's labelled places, lowest where the match is weak), and a place the
+text layer has no words for, where it has no vote. The arbiter weighs it like any judge.
+
+The measurement (`experiments/probe_render_compare.py`, 2026-11-12, no models): the
+print on 87% of 26,309 labelled places over 23 books (punctuation 83%, letters,
+accents, spaces and case 89–92%), and on most of what each judge misses (of clef's
+misses 1,820 of 2,102, of d3's 976 of 1,177; where every judge is wrong, 89 of 120).
+As one more vote in the trust data, each book scored by an arbiter trained without
+it, the trees' silent errors fall at every budget: 26 → 19 at the fixed rule's
+questions, 480 / 189 / 103 / 31 → 438 / 153 / 83 / 25 at 0 / 0.25 / 0.5 / 1 question
+a page. The extra drawings don't favour the version that has them (a closing quote:
+right on 82% where the print has more, 89% where it has fewer). Not benched yet.
+
 ## Context judge
 
 **A thinking model that settles questions from the text around them** (`contextjudge.py`,
