@@ -76,6 +76,13 @@ combine several that fail in different ways, and learn how far to believe each.*
   question on the same crop. None of the three is much better than the others alone;
   together they matter because they go wrong in different places (since 2026-11-09:
   about a seventh fewer errors left that nobody asks you about).
+- *render and compare* knows no language at all. It finds the book's typeface in a
+  library of fonts, draws each version in it at the book's size, lays the drawings over
+  the scan's ink and picks the one that fits best. The other judges lean on what a
+  word ought to be, so they share mistakes where the print is unusual (a speck, small
+  capitals, an accent, a stop against a comma); this one only looks at ink, and is
+  right on most of what each of them misses (2026-11-12: the print on about nine
+  places in ten, and fewer unasked errors at every number of questions).
 - *winnow* reads only the sentence and picks the version that reads best. Alone it is
   right four times in five, less than clef, but when it disagrees with clef, clef is
   wrong much more often, so it works as an alarm.
@@ -363,7 +370,8 @@ that's a measurement run, not an improvement.
 | text layer | the scan's own hidden OCR reading; the starting point |
 | reader | a model or program that reads text off the image (glm-ocr, tesseract, qwen) |
 | suspect, version | a place where readings differ; each way of reading it |
-| judge | a model that picks a version (clef, autotrust-jev, d3, winnow, the word list) |
+| judge | a model or program that picks a version (clef, autotrust-jev, d3, render and compare, winnow, the word list) |
+| render and compare | the judge that draws each version in the book's typeface and lays it over the scan |
 | context judge | a thinking model that settles a question from the text around it (being tried) |
 | arbiter | the trained model that weighs readers and judges and fixes, keeps or asks |
 | spotter | the layout model that marks pictures, captions and titles |

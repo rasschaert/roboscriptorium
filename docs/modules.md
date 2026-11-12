@@ -370,7 +370,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `ROBO_TRUST_DATA` for the data folder, `ROBO_OCR_TRUST_MODEL` for the model, whose
   leave-one-out copies sit beside it.
 - `rendercheck.py`: render and compare, the judge `render` among the second vision
-  judges (`ROBO_ALARM_MODEL=…,render`; off by default). `match` finds the book's
+  judges (`ROBO_ALARM_MODEL=…,render`). `match` finds the book's
   typeface in the font library (`ROBO_FONTS`, `work/fonts`): 240 lower-case words of
   the text layer cut out along their ink, every font on 40 of them, the best 40 fonts
   on all, the best text cut (not bold or italic) kept with its ink spread and the

@@ -384,7 +384,7 @@ would need a human to confirm both ends anyway.
 ## Render and compare
 
 **A judge that knows no language** (`rendercheck.py`, the user's idea, 2026-11-11; the
-judge `render` in `ROBO_ALARM_MODEL`, off until benched). The vision judges read a crop
+judge `render` in `ROBO_ALARM_MODEL`). The vision judges read a crop
 and the text judge a sentence; all four lean on what a word should be, so they share
 misses where the print is unusual: a speck read as a mark, small capitals, an accent, a
 stop against a comma. This judge draws each version of a suspect in the book's
@@ -393,11 +393,24 @@ with the margin over the next version as its confidence. The typeface is found f
 scan: words of the text layer cut out along their ink, drawn in every font of a library
 (`ROBO_FONTS`, licensed files out of git) and ranked by fit. A version is drawn the ways
 a book may set it: as the font spaces it, with a closing quote kerned over the stop
-before it, with a run of capitals as small capitals.
+before it, with an ellipsis's dots apart, with a run of capitals as small capitals.
+
+How a place's ink is cut decides more than the drawing does. The strip runs from the
+blank before the layer's words there to the blank after them, so a mark the layer
+missed beside a word is in it. It runs on through ink no bigger than a dot: one book
+sets an ellipsis's dots as far apart as its narrow word spaces, and cut after the
+first dot a single stop fitted better than the ellipsis (Het geluid van bananen, 79%
+of its places before, 93% after). On a line set too tight for such a blank it ends at
+the widest blank before the layer's next word (De tuin 78 → 93%). Where there is no
+ink to compare the judge answers "neither", which is no vote: an empty answer read as
+a vote for the layer's version. An image-only scan's words are its first reading's.
 
 Its failure: a typeface the library lacks or matches poorly (the fit is the print on
-77–97% of a book's labelled places, lowest where the match is weak), and a place the
-text layer has no words for, where it has no vote. The arbiter weighs it like any judge.
+72–97% of a book's labelled places, lowest where the match is weak), and a place the
+text layer has no words for, where it has no vote. The word-shape score can't choose
+among near-tied faces: Metro 2033's three leaders (0.722–0.725) give 72%, 88% and 88%
+of its places, and the match took the first. A raised ordinal ("14e") is drawn full
+size and loses to "14°". The arbiter weighs it like any judge.
 
 The measurement (`experiments/probe_render_compare.py`, 2026-11-12, no models): the
 print on 87% of 26,309 labelled places over 23 books (punctuation 83%, letters,
@@ -407,7 +420,9 @@ As one more vote in the trust data, each book scored by an arbiter trained witho
 it, the trees' silent errors fall at every budget: 26 → 19 at the fixed rule's
 questions, 480 / 189 / 103 / 31 → 438 / 153 / 83 / 25 at 0 / 0.25 / 0.5 / 1 question
 a page. The extra drawings don't favour the version that has them (a closing quote:
-right on 82% where the print has more, 89% where it has fewer). Not benched yet.
+right on 82% where the print has more, 89% where it has fewer). Those numbers are the
+first version's, before the cut was mended; the bench of the build with it is in
+decisions.md, 2026-11-12.
 
 ## Context judge
 

@@ -37,7 +37,11 @@ explore tactics to improve it** (the checklist, "New tactics to make it better")
 the run's benches are read and the vote's are not worse than its control's: `render`
 added to `alarm_model` in `config.py`, `work/models/ocr-trust-render*.pkl` put in
 production's place (the files there kept beside them), the diagram, how-it-works, the
-README's models and AGENTS.md's judge row updated, benches as fresh baselines. First
+README's models and AGENTS.md's judge row updated, benches as fresh baselines. The docs already describe it as a judge in use (the user, 2026-11-12: "be optimistic
+and assume that it will be accepted"): README, primer, how-it-works, the diagram,
+models.md, design.md and AGENTS.md's judge row run ahead of `config.py` until the switch;
+if the benches say no, those are the places to take it back out. Before the switch, a
+build without a font folder must not fail: `rendercheck.judge` raises today. First
 tactic to take: Metro 2033 is drawn in Warnock Display (72% of its places) where Minion
 Medium and Adobe Hebrew, tied with it on word shapes, give 88% (decisions.md).
 Every book's typeface is in

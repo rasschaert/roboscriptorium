@@ -59,7 +59,7 @@ handled yet, nor any input but PDF.
 | spotter | DocLayout-YOLO | marks figures, captions, titles and page furniture on each page image | vision model |
 | readers | glm-ocr, tesseract, qwen3.8 | read the text again from the scan | generative models and a classic OCR program |
 | sorter | clef-flash:9b | decides what each doubtful line is | decision model |
-| judges | clef:27b, autotrust-jev 35B, d3 9B, Winnow-12B, the word list | each pick a version of a suspect | decision models and plain code |
+| judges | clef:27b, autotrust-jev 35B, d3 9B, render and compare, Winnow-12B, the word list | each pick a version of a suspect | decision models and plain code |
 | arbiter | the trust model (`trust.py`) | fixes, keeps, or asks about each suspect | trees trained on golden books |
 | reviewer | you | answer what the arbiter is unsure of | a person |
 
@@ -261,7 +261,7 @@ Two differences in one line make two suspects, and each is decided on its own.
 
 ### The judges pick
 
-Every suspect goes to the five judges.
+Every suspect goes to the six judges.
 
 clef:27b looks at the crop of that place on the scan and picks the version it
 shows. It is told the book's typesetting, and it is usually right.
@@ -270,6 +270,18 @@ autotrust-jev 35B and d3 9B are asked the same question on the same crop. Each i
 about as good as clef alone, but they go wrong in different places: where all three
 agree the version is nearly always the print, and where one stands apart the arbiter
 learned whom to believe for that kind of difference.
+
+Render and compare (`rendercheck.py`) is no model and knows no language. Once per
+book it finds the typeface: a few hundred words of the text layer are cut from the scan
+along their ink, drawn in every font of a library (`work/fonts`, the user's own, never
+in git), and the fonts ranked by how well the drawings lie over the ink; the best text
+cut is kept with the book's type size and how heavily the scan's ink spreads. For a
+suspect it cuts the ink at that place, from the blank before it to the blank after,
+draws each version the ways a book may set it (as the font spaces it, a closing quote
+tucked over the stop before it, an ellipsis with its dots apart, capitals as small
+capitals), slides each drawing over the ink and votes for the one that fits best; the
+margin over the next is its confidence. Where the text layer has no words at the
+place it has no vote. It is weakest where the library lacks the book's typeface.
 
 winnow (Winnow-12B) reads only the sentence and picks the version that reads well.
 Right on four suspects in five, it is weaker than clef alone and there mostly as an

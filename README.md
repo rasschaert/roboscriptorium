@@ -60,7 +60,11 @@ ollama pull d3:9b
 ollama pull hf.co/Piotr1215/Winnow-12B-GGUF:Q4_K_M
 ```
 
-Also tesseract and epubcheck (`brew install tesseract epubcheck`).
+Also tesseract and epubcheck (`brew install tesseract epubcheck`), and a folder of
+book typefaces as .otf or .ttf files in `work/fonts/` (or wherever `ROBO_FONTS` points):
+one of the judges draws each doubtful reading in the book's typeface and lays it over
+the scan. Fonts are licensed, so none come with the project; the more text faces the
+folder holds, the likelier a book's own is among them.
 [docs/models.md](docs/models.md) (Setup) has how each model is served.
 
 ```sh
