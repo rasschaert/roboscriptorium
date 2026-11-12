@@ -388,8 +388,13 @@ judge `render` in `ROBO_ALARM_MODEL`). The vision judges read a crop
 and the text judge a sentence; all four lean on what a word should be, so they share
 misses where the print is unusual: a speck read as a mark, small capitals, an accent, a
 stop against a comma. This judge draws each version of a suspect in the book's
-typeface, at the book's size, lays it over the scan's ink and votes for the better fit,
-with the margin over the next version as its confidence. The typeface is found from the
+typeface, at the book's size, lays it over the scan's ink and votes for the better fit.
+Its confidence is the probability that the pick is the print, a logistic model of how
+well the best version fits and its margin over the next (`sureness`,
+`experiments/render_confidence.py`): leaving each book out in turn the margin alone
+tells right picks from wrong at AUC 0.73, the fit alone 0.69, both 0.80, and a pick
+held 95% sure or more is the print 97.6% of the time, one under 60% sure 54%. So a
+typeface that suits a book poorly lowers every vote's weight by itself. The typeface is found from the
 scan: words of the text layer cut out along their ink, drawn in every font of a library
 (`ROBO_FONTS`, licensed files out of git) and ranked by fit. Word shapes tie between
 faces that draw a suspect very differently, so the best five text cuts are ranked again

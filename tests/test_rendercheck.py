@@ -186,6 +186,13 @@ def test_digits_are_drawn_in_the_fonts_other_figures_too_and_an_ordinals_ending_
     assert raised.shape[1] < level.shape[1]
 
 
+def test_a_pick_is_surer_the_better_it_fits_and_the_wider_its_margin():
+    sure = rendercheck.sureness
+    assert 0 < sure(0.5, 0.0) < sure(0.5, 0.05) < sure(0.9, 0.05) < sure(0.9, 0.2) < 1
+    # A good fit with no margin is a coin toss at best; a poor fit is doubted whatever the margin.
+    assert sure(0.95, 0.0) < 0.75 and sure(0.6, 0.1) < 0.85 < sure(0.95, 0.1)
+
+
 def test_a_font_without_other_figures_has_none(tmp_path):
     (tmp_path / "helv.otf").write_bytes(pymupdf.Font("helv").buffer)
     (tmp_path / "broken.otf").write_bytes(b"no font")

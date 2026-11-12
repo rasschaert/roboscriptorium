@@ -1,6 +1,7 @@
 """Render and compare: a judge that knows no language. Each version of a suspect is drawn
 in the book's typeface, at the book's size, and laid over the scan's ink; the version
-that fits best gets the vote, and the margin over the next is its confidence.
+that fits best gets the vote; how well it fits and its margin over the next make its
+confidence (`sureness`).
 
 The typeface is found from the scan (`match`): words of the text layer are cut out along
 their ink, drawn in every font of a library, and the fonts ranked by how well the
@@ -13,6 +14,7 @@ suspect's page and box alone, so it sits beside them as one more vote for the ar
 """
 
 import json
+import math
 import random
 import re
 from dataclasses import asdict, dataclass
@@ -34,7 +36,7 @@ MODEL = "render"
 # The cached match's format.
 VERSION = 2
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 4
+FITS = 5
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
@@ -61,8 +63,10 @@ SMALL_CAPS = (0.74, 0.82)
 # An ordinal's ending set as a superscript ("14ᵉ"): its share of the size, and how far
 # up, in ems.
 SUPERSCRIPT = ((0.6, 0.3), (0.7, 0.25))
-# A margin this wide between the best fit and the next is a confidence of 1.
-SURE_MARGIN = 0.25
+# How sure a pick is: a logistic model of whether it is the print, from the best version's
+# fit and the logarithm of its margin over the next (intercept, fit, log margin), fitted
+# on labelled places by `experiments/render_confidence.py`.
+SURENESS = (-1.007, 6.903, 0.718)
 _NOT_TEXT = re.compile(r"Bold|Black|Semibold|Demi|Italic|Heavy", re.I)
 _PLAIN = re.compile(r"regular|roman", re.I)
 _STOP_QUOTE = re.compile(r"([.,…])([’”'\"])")
@@ -612,6 +616,14 @@ def fits(face: Face, spread: int, size: float, ink: np.ndarray, versions: list[s
     return out
 
 
+def sureness(fit: float, margin: float) -> float:
+    """The probability that the best-fitting version is the print (`SURENESS`): low
+    where even it lies poorly over the ink (a typeface that doesn't suit the book, a
+    place cut wrong) or the next version fits nearly as well."""
+    intercept, by_fit, by_margin = SURENESS
+    return 1 / (1 + math.exp(-(intercept + by_fit * fit + by_margin * math.log(margin + 1e-3))))
+
+
 class Judge:
     """The fit as a second vision judge (`ocrcheck._decide`'s `alarms`): asked the vision
     judges' question, it answers with the option whose version fits the scan best, from
@@ -636,8 +648,7 @@ class Judge:
             return {"reading": Answer("choice", "neither", 0.0, {})}
         scores = fits(self._face, self._match.spread, self._match.size, ink, versions)
         order = sorted(range(len(versions)), key=lambda i: -scores[i])
-        margin = scores[order[0]] - scores[order[1]]
-        sure = min(1.0, margin / SURE_MARGIN)
+        sure = sureness(scores[order[0]], scores[order[0]] - scores[order[1]])
         return {"reading": Answer("choice", letters[order[0]], sure, {})}
 
 

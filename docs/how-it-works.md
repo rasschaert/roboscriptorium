@@ -282,8 +282,8 @@ can overrule it. For a
 suspect it cuts the ink at that place, from the blank before it to the blank after,
 draws each version the ways a book may set it (as the font spaces it, a closing quote
 tucked over the stop before it, an ellipsis with its dots apart, capitals as small
-capitals, an ordinal's ending as a superscript, digits as old-style figures), slides each drawing over the ink and votes for the one that fits best; the
-margin over the next is its confidence. Where the text layer has no words at the
+capitals, an ordinal's ending as a superscript, digits as old-style figures), slides each drawing over the ink and votes for the one that fits best; how
+well it fits and how far ahead of the next it is make its confidence. Where the text layer has no words at the
 place it has no vote. It is weakest where the library lacks the book's typeface.
 
 winnow (Winnow-12B) reads only the sentence and picks the version that reads well.
