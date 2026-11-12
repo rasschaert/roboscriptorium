@@ -34,6 +34,8 @@ HEAVY = re.compile(r"Bold|Black|Semibold|Demi|Italic|Heavy", re.I)
 STRETCHES = np.linspace(0.92, 1.08, 5)
 # A blank this wide, in line heights, parts a word from its neighbour.
 WORD_GAP = 0.2
+# Ink no wider and hardly taller than this, in line heights, is a dot.
+DOT = 0.16
 # The fit's name as a judge in the trust data (`ROBO_ALARM_MODEL=…,render`).
 JUDGE = "render"
 
@@ -73,7 +75,7 @@ def place_ink(page, layer, span, s) -> np.ndarray | None:
     x0, y0 = min(w[0] for w in span), min(w[1] for w in span)
     x1, y1 = max(w[2] for w in span), max(w[3] for w in span)
     high = y1 - y0
-    clip = pymupdf.Rect(x0 - high * 2.5, y0 - high * 0.3, x1 + high * 2.5, y1 + high * 0.3)
+    clip = pymupdf.Rect(x0 - high * 4, y0 - high * 0.3, x1 + high * 4, y1 + high * 0.3)
     clip &= page.rect
     pix = page.get_pixmap(dpi=match.DPI, clip=clip, colorspace=pymupdf.csGRAY)
     grey = 1.0 - np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width) / 255.0
@@ -83,15 +85,43 @@ def place_ink(page, layer, span, s) -> np.ndarray | None:
     grey = np.clip((grey - paper) / (dark - paper), 0, 1).astype(np.float32)
     scale = match.DPI / 72
     left, right = round((x0 - clip.x0) * scale), round((x1 - clip.x0) * scale)
-    cols = (grey > 0.5).any(0)
+    mask = grey > 0.5
+    cols = mask.any(0)
     gap = max(4, round(high * scale * WORD_GAP))
-    # Outward from just inside the span's box to the first blank as wide as a word space.
+    dot = max(3, round(high * scale * DOT))
+
+    def is_dot(c0: int, c1: int) -> bool:
+        rows = np.where(mask[:, c0:c1].any(1))[0]
+        return 0 < c1 - c0 <= dot and len(rows) and rows[-1] - rows[0] < dot * 1.5
+
+    # Outward from just inside the span's box to the first blank as wide as a word space,
+    # and on through an ellipsis's dots, which stand as far apart as narrow word spaces.
     a = min(left + gap, right)
-    while a > 0 and cols[max(0, a - gap) : a].any():
-        a -= 1
+    while True:
+        while a > 0 and cols[max(0, a - gap) : a].any():
+            a -= 1
+        e = a
+        while e > 0 and not cols[e - 1]:
+            e -= 1
+        f = e
+        while f > 0 and cols[f - 1]:
+            f -= 1
+        if not (e > 0 and a - e < 2 * gap and is_dot(f, e)):
+            break
+        a = f
     b = max(right - gap, left)
-    while b < len(cols) and cols[b : b + gap].any():
-        b += 1
+    while True:
+        while b < len(cols) and cols[b : b + gap].any():
+            b += 1
+        e = b
+        while e < len(cols) and not cols[e]:
+            e += 1
+        f = e
+        while f < len(cols) and cols[f]:
+            f += 1
+        if not (e < len(cols) and e - b < 2 * gap and is_dot(e, f)):
+            break
+        b = f
     if a <= 0 or b >= len(cols) or b - a < 6:
         return None
     return grey[:, max(0, a - gap) : b + gap]
@@ -104,6 +134,9 @@ KERNS = (-0.12, -0.22, -0.32)
 SMALL_CAPS = (0.74, 0.82)
 _STOP_QUOTE = re.compile(r"([.,…])([’”'\"])")
 _CAPITALS = re.compile(r"[A-ZÀ-Þ]{2,}")
+# An ellipsis set with its dots apart: the blank between two dots, in ems.
+DOT_GAPS = (0.08, 0.16, 0.26, 0.4)
+_DOTS = re.compile(r"\.\.\.|…")
 
 
 def _sized(font, scale: float):
@@ -133,6 +166,11 @@ def drawings(font, version: str) -> list[np.ndarray]:
     if m := _STOP_QUOTE.search(version):
         for kern in KERNS:
             ways.append([(version[: m.end(1)], 1.0, 0.0), (version[m.end(1) :], 1.0, kern)])
+    if m := _DOTS.search(version):
+        dots = [".", ".", "."]
+        for gap in DOT_GAPS:
+            ways.append([(version[: m.start()], 1.0, 0.0), (dots[0], 1.0, 0.0),
+                         *((d, 1.0, gap) for d in dots[1:]), (version[m.end():], 1.0, gap / 2)])
     if _CAPITALS.search(version):
         for small in SMALL_CAPS:
             way, at = [], 0

@@ -129,3 +129,21 @@ def test_an_image_only_pages_words_are_its_first_readings(tmp_path):
     state = {"page": 1, "line": 0, "readings": ["wor1d", "world"], "box": list(box)}
     assert judge.decide(state, _question(["wor1d", "world"]))["reading"].value == "b"
     assert rendercheck.scan_words(bare, [text], 20)
+
+
+@pytest.mark.parametrize(
+    ("printed", "versions", "picked"),
+    [
+        ("world. . .", ["world.", "world..."], "b"),
+        ("world.", ["world.", "world..."], "a"),
+    ],
+)
+def test_an_ellipsis_with_its_dots_apart_is_read_whole(tmp_path, printed, versions, picked):
+    path = tmp_path / "dots.pdf"
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=120)
+    page.insert_text((30, 60), f"there the quick {printed}  He jumps", fontname="helv", fontsize=14)
+    box = next(w[:4] for w in page.get_text("words") if w[4].startswith("world"))
+    doc.save(path)
+    state = {"page": 1, "line": 0, "readings": versions, "box": [round(v, 1) for v in box]}
+    assert _judge(path).decide(state, _question(versions))["reading"].value == picked

@@ -29,8 +29,10 @@ from roboscriptorium.pdf import PageText
 
 # The judge's name among the second vision judges (`ROBO_ALARM_MODEL=…,render`).
 MODEL = "render"
-# The cached match's format, and part of the judge's answers' cache key.
+# The cached match's format.
 VERSION = 1
+# How a place is cut and drawn: part of the judge's answers' cache key.
+FITS = 2
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
@@ -42,6 +44,10 @@ STRETCHES = (0.92, 0.96, 1.0, 1.04, 1.08)
 SPREADS = (-3, 0, 3, 5)
 # A blank this wide, in line heights, parts a word from its neighbour.
 WORD_GAP = 0.2
+# Ink no wider and hardly taller than this, in line heights, is a dot.
+DOT = 0.16
+# An ellipsis set with its dots apart: the blank between two dots, in ems.
+DOT_GAPS = (0.08, 0.16, 0.26, 0.4)
 # A closing quote set over the stop before it, as some books kern it: how far left, in ems.
 KERNS = (-0.12, -0.22, -0.32)
 # Small capitals drawn as capitals at this share of their size.
@@ -52,6 +58,7 @@ _NOT_TEXT = re.compile(r"Bold|Black|Semibold|Demi|Italic|Heavy", re.I)
 _PLAIN = re.compile(r"regular|roman", re.I)
 _STOP_QUOTE = re.compile(r"([.,…])([’”'\"])")
 _CAPITALS = re.compile(r"[A-ZÀ-Þ]{2,}")
+_DOTS = re.compile(r"\.\.\.|…")
 _BLUR = ImageFilter.GaussianBlur(1.5)
 
 
@@ -86,7 +93,7 @@ class Match:
 
     @property
     def fingerprint(self) -> str:
-        return f"{VERSION}:{self.file}:{self.spread}:{self.size:.1f}"
+        return f"{FITS}:{self.file}:{self.spread}:{self.size:.1f}"
 
 
 def _levelled(grey: np.ndarray) -> np.ndarray | None:
@@ -317,22 +324,50 @@ def place_ink(page: pymupdf.Page, box, text: PageText | None = None) -> np.ndarr
     x0, y0 = min(w[0] for w in span), min(w[1] for w in span)
     x1, y1 = max(w[2] for w in span), max(w[3] for w in span)
     high = y1 - y0
-    clip = pymupdf.Rect(x0 - high * 2.5, y0 - high * 0.3, x1 + high * 2.5, y1 + high * 0.3)
+    clip = pymupdf.Rect(x0 - high * 4, y0 - high * 0.3, x1 + high * 4, y1 + high * 0.3)
     clip &= page.rect
     grey = _clip_ink(page, clip)
     if grey is None:
         return None
     scale = DPI / 72
     left, right = round((x0 - clip.x0) * scale), round((x1 - clip.x0) * scale)
-    cols = (grey > 0.5).any(0)
+    mask = grey > 0.5
+    cols = mask.any(0)
     gap = max(4, round(high * scale * WORD_GAP))
-    # Outward from just inside the span's box to the first blank as wide as a word space.
+    dot = max(3, round(high * scale * DOT))
+
+    def is_dot(c0: int, c1: int) -> bool:
+        rows = np.where(mask[:, c0:c1].any(1))[0]
+        return 0 < c1 - c0 <= dot and len(rows) > 0 and rows[-1] - rows[0] < dot * 1.5
+
+    # Outward from just inside the span's box to the first blank as wide as a word space,
+    # and on through an ellipsis's dots, which stand as far apart as narrow word spaces.
     a = min(left + gap, right)
-    while a > 0 and cols[max(0, a - gap) : a].any():
-        a -= 1
+    while True:
+        while a > 0 and cols[max(0, a - gap) : a].any():
+            a -= 1
+        e = a
+        while e > 0 and not cols[e - 1]:
+            e -= 1
+        f = e
+        while f > 0 and cols[f - 1]:
+            f -= 1
+        if not (e > 0 and a - e < 2 * gap and is_dot(f, e)):
+            break
+        a = f
     b = max(right - gap, left)
-    while b < len(cols) and cols[b : b + gap].any():
-        b += 1
+    while True:
+        while b < len(cols) and cols[b : b + gap].any():
+            b += 1
+        e = b
+        while e < len(cols) and not cols[e]:
+            e += 1
+        f = e
+        while f < len(cols) and cols[f]:
+            f += 1
+        if not (e < len(cols) and e - b < 2 * gap and is_dot(e, f)):
+            break
+        b = f
     if a <= 0 or b >= len(cols) or b - a < 6:
         return None
     return grey[:, max(0, a - gap) : b + gap]
@@ -354,11 +389,23 @@ def _pieces(face: Face, pieces: list[tuple[str, float, float]]) -> np.ndarray | 
 
 def drawings(face: Face, version: str) -> list[np.ndarray]:
     """The ways a book may set a version: as the font spaces it; with a closing quote
-    kerned over the stop before it; with a run of capitals as small capitals."""
+    kerned over the stop before it; with an ellipsis's dots apart; with a run of
+    capitals as small capitals."""
     ways = [[(version, 1.0, 0.0)]]
     if m := _STOP_QUOTE.search(version):
         for kern in KERNS:
             ways.append([(version[: m.end(1)], 1.0, 0.0), (version[m.end(1) :], 1.0, kern)])
+    if m := _DOTS.search(version):
+        for gap in DOT_GAPS:
+            ways.append(
+                [
+                    (version[: m.start()], 1.0, 0.0),
+                    (".", 1.0, 0.0),
+                    (".", 1.0, gap),
+                    (".", 1.0, gap),
+                    (version[m.end() :], 1.0, gap / 2),
+                ]
+            )
     if _CAPITALS.search(version):
         for small in SMALL_CAPS:
             way, at = [], 0
