@@ -2130,4 +2130,36 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   it turned on by default and i'd like future sessions to explore new tactics to improve
   it further". It goes on by default with the arbiter trained on its vote once the run's
   benches are read (work/runs/render-judge.sh); the tactics are in the checklist.
-
+- 2026-11-12: **Render and compare, the first tactics: near-tied typefaces settled by
+  the judge's own fit; old-style figures and superscript ordinals; the typeface in
+  book.toml and `init`.** Probes on up to 400 labelled places a book, 23 books, the
+  five best text cuts of each book's word-shape ranking
+  (`experiments/probe_face_by_places.py`, `probe_face_by_words.py`, no models). The
+  face ranked first is the print on 90.0% of a book's places on average (worst book
+  Metro 2033, 67%); the best of the five on 91.7% (worst 82%). Chosen without labels:
+  by agreement with clef, autotrust-jev and d3 where they are of one mind 91.7%; by
+  the mean margin 90.9%; by how well the best version lies over the ink 91.0%; by the
+  judge's fit on 150 plain words of the layer, which needs no suspects, 91.1% (Metro
+  87%, Het ijzige land 94.0 → 96.7%, De tuin 93.8 → 95.2%, none more than half a point
+  down). Taken: the plain-word choice (`rendercheck.near_ties`, `word_strips`,
+  `place_fit`), since `init` can make it. Where the model judges are split the choice
+  by agreement moves nothing (757 of 881 places either way): the gain sits where they
+  agree. **Null: the faces voting together** (three or five, plain or weighed by
+  margin) 90.5–91.3%, no better than one well chosen; it failed on the faces
+  themselves, whose mistakes fall together. Rematched, 13 of 33 books change face,
+  most by a hair between cuts of one family (Minion's and Chaparral's optical sizes,
+  Adobe Hebrew, Thai and Arabic, whose Latin letters are Minion's); Metro 2033 goes
+  from Warnock Display to Adobe Hebrew Regular, Het schaduwhuis from Garamond Premier
+  to Janson Text, Dolittle from Quadraat to Minion Medium Caption. **Digits**: Het
+  geluid van bananen prints "14ᵉ maart" in old-style figures with a superscript e, and
+  the judge, drawing lining figures and a full-size e, picked "14°" on 10 of 14. The
+  drawing library applies no font features (Pillow without libraqm), but Adobe's fonts
+  keep their old-style figures at code points of their own (found through the `onum`
+  table with fontTools, `other_figures`); with those and the ending drawn as a
+  superscript, of 478 labelled places with a digit in a version 20 are fixed and 4 made
+  (an old-style zero is an "o": "’70" against "’7o", "z0" against "zo"); the print
+  where it has a digit 53 → 71 of 118, where it has none 328 → 326 of 360. `FITS` is 4.
+  book.toml's `typeface` overrules the match and `init` drafts it with the faces it
+  chose among; a build without a font folder says so and goes on without the judge.
+  The trust data and the arbiter get a second round with these
+  (`work/runs/render-judge2.sh`).

@@ -295,28 +295,26 @@ are under Done, "Architecture probes".
             **on by default** (the user, 2026-11-12): `render` in `alarm_model`, the
             arbiter trained with its vote in production's place, the diagram,
             how-it-works and the judge's row in AGENTS.md
-      - [ ] **New tactics to make it better** (the user, 2026-11-12: future sessions
-            explore them; each is a probe on the labelled places first):
-            the typeface chosen among the best few by how well it tells the book's
-            places apart, on places where every judge agrees (Metro 2033: 72% in the
-            face the word shapes chose, 88% in two that tied with it); the best few
-            faces voting together; the match's fit as an arbiter feature, so a weak
-            match is trusted less; ligatures drawn as the font's ligatures; the ink
-            spread and blur fitted to each scan more finely; a word's cut chosen per
-            place (italic, bold, small capitals); the kerning and spacing ways learnt
-            from the book's uncontested words instead of fixed lists
-      - [ ] **The typeface as part of `init`** (the user, 2026-11-12: "can we somehow
-            make this task something that the pipeline can reliably do? we could then
-            make it part of the init process"). The match is code already and runs
-            unasked on a book's first build with the judge (`rendercheck.match`, two to
-            five minutes, kept in `stages/typeface.json`); what was done by hand on
-            2026-11-12 was choosing among its near-ties (Metro 2033). So: `init` runs
-            the match and drafts a `typeface` key in `book.toml`, naming the face and
-            its fit, which a person can overrule; the build reads the key before
-            matching; and the choice among the best few is made by the places (the
-            first of the tactics above), so no one has to
-      - [ ] A raised ordinal drawn raised ("14e" loses to "14°", 12 places in Het geluid
-            van bananen)
+      - [x] The typeface chosen among near-ties: the best five text cuts ranked again
+            by the judge's own fit on 150 plain words (90.0 → 91.1% of labelled places
+            over 23 books, Metro 2033 67 → 87%; the best of the five 91.7%). Null: the
+            best few faces voting together (decisions.md 2026-11-12)
+      - [x] **The typeface as part of `init`** (the user, 2026-11-12): `init` runs the
+            match and drafts book.toml's `typeface` with the faces it chose among; the
+            build reads the key before matching
+      - [x] An ordinal's ending drawn as a superscript and digits in the font's
+            old-style figures (20 of 478 labelled places with a digit fixed, 4 made)
+      - [ ] The second round: trust data and arbiter with the new typefaces and
+            drawings, benched against the first round's control (in flight,
+            `work/runs/render-judge2.sh`)
+      - [ ] **More tactics** (the user, 2026-11-12: future sessions explore them; each
+            is a probe on the labelled places first): the match's fit as an arbiter
+            feature, so a weak match is trusted less; font features in the drawing
+            (libraqm or HarfBuzz: real ligatures, small capitals and old-style figures
+            for every font, not only those with code points for them); the ink spread
+            and blur fitted to each scan more finely; a word's cut chosen per place
+            (italic, bold, small capitals); the kerning and spacing ways learnt from
+            the book's uncontested words instead of fixed lists
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
             for the shapes the book can't supply. The family is found for eight of the
             user's ten books (the user's library, in `work/fonts/`: Quadraat, Janson Text
