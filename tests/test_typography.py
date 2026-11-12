@@ -152,6 +152,19 @@ def test_after_a_question_mark_an_ellipsis_keeps_the_layers_space():
     assert ellipsised("Waar … Ik zocht", GLYPH)[0] == "Waar… Ik zocht"
 
 
+def test_after_a_closing_quote_an_ellipsis_keeps_the_layers_space():
+    tight = EllipsisStyle("...", False)
+    # The counterexamples first: none where the layer has none, and after a word or
+    # inside the quotation the book's style still decides.
+    assert ellipsised("‘Nee’... zei ze", tight)[0] == "‘Nee’... zei ze"
+    assert ellipsised("mijn dochter ... mijn", tight)[0] == "mijn dochter... mijn"
+    assert ellipsised("weet ik niet ...’ Hij", tight)[0] == "weet ik niet...’ Hij"
+    # Verminkt p. 52: a pause between two quotations.
+    assert ellipsised("ver zijn.’ ... ‘Nee, ik", tight)[0] == "ver zijn.’\u00a0... ‘Nee, ik"
+    # A spaced book sets its space there whatever the layer kept.
+    assert ellipsised("ver zijn.’... ‘Nee", SPACED)[0] == "ver zijn.’\u00a0.\u00a0.\u00a0. ‘Nee"
+
+
 def _scan(tmp_path, printed: str, layer: str, font: str = "tiro"):
     """A one-page scan of `printed` lines (an image, as a scan is) under an invisible text
     layer reading `layer` on the same lines, both in `font`."""
