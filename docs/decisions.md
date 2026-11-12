@@ -2013,5 +2013,5 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   loses to "14°", 12 places in that book). The same morning the judge learnt to read an
   image-only scan (Vanille en andere smaken has no text layer: the words are its first
   reading's), which stopped the first start of the run through the build. That run
-  (`work/runs/render-judge.sh`) was restarted at 08:10 with both.
+  (`work/runs/render-judge.sh`) was restarted at 07:35 with both.
 
