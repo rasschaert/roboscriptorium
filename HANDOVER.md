@@ -6,7 +6,7 @@ end of every session. Top sections rewritten 2026-11-12 (the first by the second
 09:00, the next by the first at ~08:30); the older sections
 from 2026-11-09 and 2026-11-10.
 
-## Render and compare: pick up here (the second session, ended 2026-11-12 09:00, nothing running)
+## Render and compare: pick up here (the third session, 2026-11-12 evening, two runs in flight)
 
 **What it is.** The user's idea (2026-11-11): a judge that knows no language. Each
 version of a suspect is drawn in the book's typeface and laid over the scan's ink; the
@@ -24,53 +24,69 @@ production's arbiter was trained without its vote. The docs (README, primer,
 how-it-works, the diagram, models.md, AGENTS.md's judge row) already describe it as in
 use, at the user's word ("be optimistic"); they run ahead of the code until step 3.
 
-**Nothing runs.** The run was stopped at the user's word on 2026-11-12, 08:55, half an
-hour into its trainings (script `work/runs/render-judge.sh`, logs
-`work/runs/render-judge-*.log`). Done and kept: every book's typeface
-(`stages/typeface.json`) and the trust data rebuilt with the vote
-(`work/probes/ocr-trust-render2/`, 23 books). Not made: the two arbiters,
-`work/models/ocr-trust-render*.pkl` (with the vote) and `ocr-trust-render-ctl*.pkl` (the
-control, same data without it; about 100 minutes side by side, CPU, printing nothing
-until they save), and the four warm benches asking below 0.93: the control's tuning and
-validation, then the vote's against the control's files.
+**Running since 2026-11-12, about 19:45 (the third session), two screens, both with
+watchers.**
+
+- `robo-render-judge` (`work/runs/render-judge.sh`, its trust-data step commented out:
+  the 23 files were there): the two arbiters side by side
+  (`work/models/ocr-trust-render*.pkl` with the vote, `ocr-trust-render-ctl*.pkl`
+  without), then four warm benches asking below 0.93: the control's tuning and
+  validation, then the vote's against the control's files (named on the "control runs:"
+  line of `work/runs/render-judge.out`). Logs `work/runs/render-judge-*.log`.
+- `robo-render-judge2` (`work/runs/render-judge2.sh`) waits for the first, then runs
+  the second round with **the worktree `../robo-render`'s code** (branch
+  `render-default`, see below) on this checkout's data: the new typefaces
+  (`work/probes/typeface-v2/<book>.json`) copied over each book's
+  `stages/typeface.json` (the old kept as `typeface-v1.json`), the trust data rebuilt
+  into `work/probes/ocr-trust-render3/`, the arbiter `work/models/ocr-trust-render3*.pkl`
+  trained, and bench tuning and validation against the first round's control. Logs
+  `work/runs/render-judge2-*.log`. Run no other bench until both screens are gone.
+
+**The branch `render-default`, worktree `../robo-render`: done, tested (736 pass there),
+NOT COMMITTED** (1Password was locked all evening; the user knows). Stage by name and
+commit there, then merge to main once both screens are gone (never edit `src/` on main
+while a bench runs). It holds:
+
+- near-tied typefaces settled by the judge's own fit on 150 plain words
+  (`rendercheck.near_ties`, `word_strips`, `place_fit`; 90.0 → 91.1% of labelled places
+  on average over 23 books, Metro 2033 67 → 87%; `experiments/probe_face_by_places.py`,
+  `probe_face_by_words.py`, outputs in `work/probes/face-by-places/`);
+- book.toml's `typeface`, which `init` drafts with the faces it chose among;
+- digits drawn in the font's old-style figures too, an ordinal's ending as a
+  superscript (20 of 478 labelled places with a digit fixed, 4 made); `FITS` is 4;
+- a build without a font folder says so and goes on without the judge;
+- the tests no longer need `work/models/italics.pkl` (`ROBO_ITALIC_TREES=0` in
+  conftest), so a worktree's suite passes without `work/`; AGENTS.md has the
+  `uv run --project ../<worktree>` pattern;
+- design.md, modules.md, how-it-works.md, README and AGENTS.md updated. **Not yet
+  written: the decisions.md entry and the checklist's ticks** (the numbers above, the
+  null of several faces voting together at 90.5–91.3%, and which books changed
+  typeface: compare `work/probes/typeface-v2/` with each `typeface-v1.json`).
 
 **Pick up in this order.**
 
-1. **Start the run again**, about two hours, CPU only, with a watcher:
-   `experiments/detached.sh render-judge work/runs/render-judge.sh`. Its first two
-   steps redo themselves from caches (the typefaces in a minute; the trust data in
-   about 18, or comment that step out: the 23 files are there). The vote's benches
-   take "the newest tuning and validation file in `work/bench`" as their control, so
-   run no other bench meanwhile.
-2. **Read the vote's benches against the control's** (`render-judge-tuning.log`,
-   `render-judge-validation.log`): questions, unasked, asked, and the italic line
-   before the verdict (an asked split word counts three italic errors). Tuning
-   chooses, validation only vetoes; a handful of unasked places either way is within
-   what one training differs from another. Record it in decisions.md and outlook.md.
-3. **If the vote's are not worse, switch it on** (the user asked for it; if they are
-   worse, show the user the numbers instead):
-   - first make a build without a font folder go on without the vote, with a line
-     saying so (`rendercheck.judge` raises today, and `trustdata.usable` must still
-     accept the data);
-   - `alarm_model = "autotrust-jev:35b-nvfp4,d3:9b,render"` in `config.py`;
-   - copy `work/models/ocr-trust.pkl` and its `-without-` files aside, put the
-     `ocr-trust-render*` set in their place, and `work/probes/ocr-trust-render2/` in
-     place of `work/probes/ocr-trust/` (the old one kept beside it);
-   - warm `bench tuning` and `validation` as the new baselines; the checklist ticked;
-     design.md's last paragraph, models.md's row and optimism.md given the bench's
-     numbers. If it is not taken, take it back out of the docs named above.
-4. **Then the tactics**, each as a probe on the labelled places first (the checklist,
-   "Render and compare", has the list):
-   - **the typeface chosen by the places, not the word shapes.** Metro 2033's three
-     leading faces tie at 0.72 and give 72%, 88% and 88% of its places; the match took
-     the 72% one (Warnock Display). Choose among the best few by how well each tells
-     apart the places every judge agrees on. The run above has Metro in the weak face;
-   - **the typeface as part of `init`** (the user's ask): `init` runs the match and
-     drafts a `typeface` key in `book.toml` that a person can overrule, and the build
-     reads it before matching;
-   - a raised ordinal drawn raised; the best few faces voting together; the match's
-     fit as an arbiter feature; own-type templates for a book whose face the library
-     lacks; leftover ink, to raise suspects where every reading agrees.
+1. **Read the first round** (`render-judge-tuning.log`, `render-judge-validation.log`
+   against the control's): questions, unasked, asked, and the italic line before the
+   verdict (an asked split word counts three italic errors). Tuning chooses, validation
+   only vetoes; a handful of unasked places either way is within what one training
+   differs from another. Then **the second round** the same way
+   (`render-judge2-*.log`): it is the one to switch on if it is no worse than the first.
+   Record both in decisions.md and outlook.md.
+2. **If the vote's are not worse, switch it on** (the user asked for it; if they are
+   worse, show the user the numbers instead): merge `render-default`;
+   `alarm_model = "autotrust-jev:35b-nvfp4,d3:9b,render"` in `config.py`; copy
+   `work/models/ocr-trust.pkl` and its `-without-` files aside, put the chosen
+   `ocr-trust-render*` set in their place, and its trust data folder in place of
+   `work/probes/ocr-trust/` (the old one kept beside it); warm `bench tuning` and
+   `validation` as the new baselines; the checklist ticked; design.md's last
+   paragraph, models.md's row and optimism.md given the bench's numbers. If it is not
+   taken, take it back out of the docs that describe it as in use.
+3. **Then the remaining tactics** (the checklist, "Render and compare"): the match's
+   fit as an arbiter feature; own-type templates for a book whose face the library
+   lacks; leftover ink; a word's cut chosen per place. Old-style figures only work for
+   fonts that keep them at code points of their own: the drawing library applies no
+   font features (Pillow without libraqm), which would also give real ligatures and
+   small capitals.
 
 **How to measure a change to the judge without a bench.** The rebuilt trust data holds
 every labelled place: run the judge over a book's rows and count how often its pick is
