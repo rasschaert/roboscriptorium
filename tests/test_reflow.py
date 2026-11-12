@@ -428,8 +428,26 @@ def test_a_hyphen_already_in_the_word_keeps_the_breaks_only_between_words():
     assert join("de Yasukuni-tem-", "pel", known=known) == "de Yasukuni-tempel"
     assert join("Majuba-theeplan-", "tage", known=known) == "Majuba-theeplantage"
     assert join("Serpukhovsko-Timiryazev-", "skaya", known=known) == "Serpukhovsko-Timiryazevskaya"
-    # Without a word list the old rule stands: the hyphen stays.
+    # Without a word list the hyphen stays.
     assert join("Zuid-Lon-", "den") == "Zuid-Lon-den"
+
+
+def test_a_chain_broken_beside_a_short_word_keeps_its_hyphen():
+    words = {"be", "sprekingen", "besprekingen", "se", "ries", "series", "ni", "in", "to"}
+    words |= {"second", "last", "glas", "loodramen", "my", "boyfriend", "stealing"}
+    known = lambda w: w.lower() in words  # noqa: E731
+    # The counterexamples first: a word broken after two letters that the list knows
+    # whole, and one whose second half is no word.
+    assert join("Merdeka-be-", "sprekingen", known=known) == "Merdeka-besprekingen"
+    assert join("tv-se-", "ries", known=known) == "tv-series"
+    assert join("meester-ni-", "washi", known=known) == "meester-niwashi"
+    assert join("mini-in-", "farctje", known=known) == "mini-infarctje"
+    # Two words beside the break, one of them short.
+    assert join("the second-", "to-last", known=known) == "the second-to-last"
+    assert join("met glas-in-", "loodramen", known=known) == "met glas-in-loodramen"
+    assert join("the stealing-my-", "boyfriend", known=known) == "the stealing-my-boyfriend"
+    # A sound said again, though no word.
+    assert join("het gestage doenk-", "doenk-doenk", known=known) == "het gestage doenk-doenk-doenk"
 
 
 def test_a_chain_broken_at_its_own_hyphen_keeps_it_where_the_book_prints_its_parts():

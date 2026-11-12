@@ -238,9 +238,10 @@ def _hyphen_stays(
         if known is None:
             return True
         # The parts beside the break: a word of their own ("Lon" + "den") was broken
-        # there; two words ("erger" + "je") were joined by the hyphen.
+        # there; two words ("erger" + "je", "second" + "to") were joined by the hyphen,
+        # as was a sound said again ("doenk" + "doenk").
         before, after = stem.rsplit("-", 1)[-1], rest.split("-", 1)[0]
         if known(before + after):
             return False
-        return min(len(before), len(after)) >= 3 and known(before) and known(after)
+        return before.lower() == after.lower() or (known(before) and known(after))
     return compound is not None and bool(stem) and bool(rest) and compound(stem, rest, context)
