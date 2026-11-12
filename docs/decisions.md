@@ -1879,3 +1879,19 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   0.55), still scored 79% and 81% under (2). Running: all eighteen matched books
   under (3). Next: the fit and its margin as a judge's vote in the trust data, the
   arbiter retrained, both benches.
+- 2026-11-12: **Batch five of the slice growth: six books scored whole, NO CHANGE**
+  (Vals alarm, The Thief-Taker's Apprentice, Metro 2033, De tuin van de avondnevel, Au
+  pair, De vergelding; 915 pages more, 779 minutes cold, one book at a time, against
+  the baseline of 2026-11-11 on the old slices). Tuning is now 6,180 pages for 5,265:
+  questions 3,410 → 4,011 (0.648 → 0.649 a page), unasked error places 512 → 585
+  (0.097 → 0.095 a page), asked 1,240 → 1,436, after review 0.26 → 0.25; headings
+  570 of 584 → 711 of 731, heading and italic errors unmoved. The new pages read as
+  the old ones do. Only De vergelding moved, the others to the second decimal not at
+  all: unasked 0.20 → 0.16 a page and questions 0.36 → 0.48 (both intervals clear of
+  zero), its later pages asking more and leaving less. With these the room to grow
+  that was listed is used up. The trust data of the four that train was rebuilt over
+  their whole books (Vals alarm 2,540 suspects, Metro 2033 2,193, De tuin 4,546, The
+  Thief-Taker's Apprentice 1,659); Au pair and De vergelding have none
+  (`bench.NO_TRUST_DATA`), and the run's script, which named them too, stopped there:
+  nothing lost, the list was wrong. The arbiter retrained on the four is weighed
+  after production's switch to the steadier arbiter.
