@@ -2001,3 +2001,17 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   Premier Medium Caption for Janson). Het geluid van bananen, the book the vote made
   worse in the arbiter test, hardly moves: its cut was not the cause, still to find.
   Next: the trust data rebuilt with the vote, the arbiter retrained, the benches.
+- 2026-11-12: **Why render and compare made Het geluid van bananen worse: its ellipsis.**
+  The book sets an ellipsis's dots 14–15 scan pixels apart, word spaces from 15; the
+  strip of ink cut for a place ended at the first blank of 12, after the first dot, so
+  "aan." fitted the ink (0.93) better than "aan..." (0.70), with a wide margin: of its
+  434 misses 386 were punctuation, and its surest quarter was right on only 80%. The
+  strip now runs on through ink no wider or taller than a dot (`rendercheck.place_ink`),
+  and an ellipsis is also drawn with its dots apart. Probe: Het geluid van bananen
+  79 → 93% of its places (punctuation 72 → 93%, surest quarter 96%), De cipier
+  93 → 96%, Artemis 91 → 93%. Not mended: a raised ordinal ("14e" drawn full size
+  loses to "14°", 12 places in that book). The same morning the judge learnt to read an
+  image-only scan (Vanille en andere smaken has no text layer: the words are its first
+  reading's), which stopped the first start of the run through the build. That run
+  (`work/runs/render-judge.sh`) was restarted at 08:10 with both.
+

@@ -910,3 +910,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-12 | bench validation, the arbiter retrained on batch five's trust data, asking below 0.93 (warm) | 0 | 1 | 0 |
 | 2026-11-12 | arbiter scored leaving one book out, the same data without render and compare (CPU) | 0 | 186 | 0 |
 | 2026-11-12 | typefaces matched for 33 books, six at a time (CPU) | 0 | 29 | 1 |
+| 2026-11-12 | typefaces matched for 33 books, six at a time (CPU) | 0 | 0 | 0 |
+| 2026-11-12 | typefaces matched for 33 books, six at a time (CPU) | 0 | 0 | 0 |

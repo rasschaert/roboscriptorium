@@ -18,9 +18,10 @@ left out in turn: 26 → 19 at the rule's questions, 480/189/103/31 → 438/153/
 0/0.25/0.5/1 a page; logs `work/runs/render-arbiter-{with,without}.log`, votes in
 `work/probes/ocr-trust-render/`, made from the trust data before batch five's rebuild).
 It is in the pipeline as a judge, off by default (`rendercheck.py`,
-`ROBO_ALARM_MODEL=…,render`; docs/design.md, "Render and compare"). One book got worse in
-the arbiter test, Het geluid van bananen; not yet explained (not its font cut).
-**In flight since 2026-11-12 07:20, about three hours:** screen `robo-render-judge`
+`ROBO_ALARM_MODEL=…,render`; docs/design.md, "Render and compare"). The one book that got worse in
+the arbiter test, Het geluid van bananen, is explained and mended (an ellipsis's dots
+cut off: 79 → 93% of its places).
+**In flight since 2026-11-12 08:10, about three hours:** screen `robo-render-judge`
 (script `work/runs/render-judge.sh`, logs `work/runs/render-judge-*.log`; stop with
 `experiments/stop-run.sh render-judge`): typefaces matched for 33 books, the trust data
 rebuilt through the build with the judge into `work/probes/ocr-trust-render2/`, two

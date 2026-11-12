@@ -304,8 +304,11 @@ are under Done, "Architecture probes".
             `ROBO_ALARM_MODEL=…,render`; decisions.md 2026-11-12)
       - [ ] Its vote and margin in the trust data, the arbiter retrained, `bench
             tuning` and `validation`
-      - [ ] Why Het geluid van bananen gets worse with the vote (the print on 79% of
-            its places in Minion Medium Caption, 0.78; not the cut)
+      - [x] Why Het geluid van bananen got worse with the vote: an ellipsis's dots
+            stood as far apart as word spaces and the place's ink was cut after the
+            first (79 → 93% once it runs on through dots; decisions.md 2026-11-12)
+      - [ ] A raised ordinal drawn raised ("14e" loses to "14°", 12 places in Het geluid
+            van bananen)
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
             for the shapes the book can't supply. The family is found for eight of the
             user's ten books (the user's library, in `work/fonts/`: Quadraat, Janson Text
