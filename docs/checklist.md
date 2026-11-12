@@ -15,8 +15,8 @@ What runs right now and what waits on the user: `HANDOVER.md`.
 **The plan now** (2026-11-11). Stella, the target book, is done: reviewed, rebuilt and
 read through by the user without an error (2026-10-31). The order from here:
 
-1. what is in flight: batch five of the slice growth, production's switch to the
-   steadier arbiter, a fresh baseline, batch five's retraining;
+1. what is in flight: production's switch to the steadier arbiter (the user's word),
+   the grown slices and the italic count onto main, batch five's retraining;
 2. one path for every doubt (the user, 2026-11-10: first), and with it the questions
    that made the user stop Nervous System's review;
 3. small capitals, what is left of them;
@@ -31,28 +31,26 @@ last on 2026-11-06, so next by 2026-11-13).
 
 In this order; `HANDOVER.md` has the paths and the commands.
 
-- [ ] Batch five of the slice growth (running since 2026-11-11 13:54): Vals alarm, The
-      Thief-Taker's Apprentice, Metro 2033, De tuin van de avondnevel, Au pair and De
-      vergelding scored whole (~915 pages, ~14 h cold), one book at a time against the
-      day's baseline, then the six books' trust data rebuilt. With it the room to grow
-      that was listed is used up
-- [ ] Production switches to the steadier arbiter (the user, 2026-11-11: "switch and use
-      20"): twenty trainings averaged and a smooth calibration, asking below 0.93.
-      Validation: no change. Left: `bench tuning` warm (~16 min) once batch five's bench
-      has ended; if level with production, the switch (production's files kept aside,
-      `ocr_ask_below` 0.93, the docs and tests brought along); if not, the numbers go to
-      the user first
-- [ ] The bench's italic count by a word's place, whatever its letters (branch
-      `italics-by-place`, done there): merged after the switch, then `bench tuning` and
-      `validation` for a fresh baseline (~20 min warm): older runs count italics the
-      old way
-- [ ] Batch five's retraining weighed: the arbiter retrained on the grown books' pages
-      (~1 h 15 min, no models) and benched against that fresh baseline
+- [ ] **user**: the word to switch production to the steadier arbiter (their choice of
+      2026-11-11: twenty trainings averaged, a smooth calibration, asking below 0.93).
+      Benched on the grown set with italics by place: tuning better in words, 14
+      questions and 9 unasked places fewer, and WORSE by the bench's rule for one asked
+      split italic word ("EenVandaag", Vals alarm); validation no change (decisions.md,
+      2026-11-12). Then the agent: production's files kept aside, `ocr_ask_below` 0.93,
+      the docs and tests brought along
+- [ ] The branches `grow6` (batch five's slices) and `italics-by-place` (the bench's
+      italic count by a word's place), both rebased and benched from their worktrees,
+      fast-forwarded onto main once nothing loads main's code; the fresh baselines are
+      made (HANDOVER.md has their files)
+- [ ] Batch five's retraining weighed: the arbiter of twenty seeds retrained on the
+      trust data with four books rebuilt whole (training since 2026-11-12 03:16,
+      `work/models/ocr-trust-grown5*.pkl`), benched asking below 0.93 against the
+      twenty seeds trained on the old slices
 - [ ] After batch five, the two nulls that waited for it: autotrust-jev 9B as a second
       text judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
       170 → 178) and the book's own vocabulary as an arbiter feature (null 2026-11-08)
 - [ ] Trust data for the tuning books that have none (`bench.NO_TRUST_DATA`: Au pair, De
-      vergelding, Glazuur), as far as batch five's rebuild leaves any out
+      vergelding, Glazuur); batch five's rebuild left all three out
 
 ## One path for every doubt (the user, 2026-11-10, first)
 
@@ -1048,6 +1046,10 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       better, a book gaining any vetoes (`bench.heading_errors`)
 - [x] The bench counts headings set letter for letter beside those found, and prints the
       totals over all books when they move (2026-11-01, `bench.heading_totals`)
+- [x] 2026-11-12 Batch five of the slice growth: Vals alarm, The Thief-Taker's
+      Apprentice, Metro 2033, De tuin van de avondnevel, Au pair and De vergelding scored
+      whole (915 pages, 13 h cold): no change, tuning now 6,180 pages; the room to grow
+      that was listed is used up
 - [x] 2026-10-25 to 2026-11-07 The tuning slices grown in four batches while the machine
       was idle (the user, 2026-10-25), from ~1,700 to ~5,200 pages: the bench's interval
       narrows with the square root of the pages (about ±0.010 at 2,271 pages); more

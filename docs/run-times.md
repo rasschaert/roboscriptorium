@@ -899,3 +899,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-11 | bench validation, the arbiter of twenty seeds with a smooth calibration, asking below 0.93 (warm) | 0 | 1 | 0 |
 | 2026-11-12 | render and compare over every book with trust data, its votes written (CPU) | 0 | 20 | 0 |
 | 2026-11-12 | bench tuning, batch five: six books whole (cold for the pages left, one book at a time) | 915 | 779 | 0 |
+| 2026-11-12 | arbiter scored leaving one book out, with render and compare as a judge (CPU) | 0 | 98 | 0 |
+| 2026-11-12 | bench tuning on batch five's slices, the arbiter of twenty seeds with a smooth calibration, asking below 0.93 (warm) | 0 | 4 | 0 |
+| 2026-11-12 | bench tuning, baseline with italics counted by place, batch five's slices (warm) | 0 | 4 | 0 |
+| 2026-11-12 | bench tuning, the arbiter of twenty seeds asking below 0.93, italics by place (warm) | 0 | 4 | 0 |
+| 2026-11-12 | bench validation, baseline with italics counted by place, batch five's slices (warm) | 0 | 1 | 0 |
+| 2026-11-12 | bench validation, the arbiter of twenty seeds asking below 0.93, italics by place (warm) | 0 | 1 | 0 |

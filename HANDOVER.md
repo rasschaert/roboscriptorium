@@ -2,7 +2,7 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Top sections rewritten 2026-11-11 (~18:30); the older sections
+end of every session. Top sections rewritten 2026-11-12 (~03:30); the older sections
 from 2026-11-09 and 2026-11-10.
 
 ## The second session (robo2), 2026-11-11 evening
@@ -25,56 +25,65 @@ becomes a judge in `ocrcheck` and the benches decide. Every book's typeface is i
 
 ## Running
 
-**Night of 2026-11-10/11** (the user: the machine is free; small capitals first, then the
-quote reader, then batch five). decisions.md, 2026-11-11, has every number.
+**Night of 2026-11-11/12.** decisions.md, 2026-11-12, has every number.
 
-**Batch five runs since 2026-11-11 13:54** (Vals alarm and The Thief-Taker's Apprentice
-done, on Metro 2033 at 18:25; De tuin, Au pair and De vergelding remain) (the user: model time until told otherwise),
-screen `robo-grow6-20261111`, script `work/runs/grow6-20261111.sh`, output in
-`work/runs/grow6-20261111.out`, log `work/runs/grow6-tuning.log`: the worktree
-`../robo-grow6` (branch `grow6`, rebased on main e0273b4) benched cold, one book at a
-time, against the day's baseline `work/bench/tuning-20261111T115457-e0273b4.json`, then
-the six grown books' trust data rebuilt. Stop it with
-`experiments/stop-run.sh grow6-20261111`; the same script resumes from the caches.
+**Batch five is done**: six books scored whole, NO CHANGE, tuning now 6,180 pages. Its
+slices are on the branch `grow6` (worktree `../robo-grow6`, rebased on main), not on
+main yet. The trust data of the four grown books that train (Vals alarm, Metro 2033, De
+tuin, The Thief-Taker's Apprentice) is rebuilt over their whole books.
 
-The day's warm benches are done (decisions.md, 2026-11-11): the baseline with the
-lower-case doubts on (validation's is `validation-20261111T115733-e0273b4-dirty.json`);
-the quote reader with its kept question, still not taken (16 asked places unasked on
+**Waiting on the user: the word to switch production's arbiter.** They chose the
+steadier one on 2026-11-11 ("switch and use 20": twenty trainings averaged, a smooth
+calibration, asking below 0.93; `work/models/ocr-trust-steady20*.pkl`). Benched on the
+grown set with italics counted by place, it is better in words on tuning (questions
+4,011 → 3,997, unasked 585 → 576) and no change on validation, but the bench's verdict
+on tuning is WORSE for one place: Vals alarm's italic "EenVandaag", which it asks
+about where production fixed it, and whose two layer words count as three italic
+errors until answered. The agent had said it would stop on WORSE, so production is
+unchanged. On their word: copy production's `work/models/ocr-trust*.pkl` aside, put
+the steady20 files in their place, set `ocr_ask_below` to 0.93 in `config.py`, bring
+design.md (the asking line), modules.md (it still says 0.8), README and how-it-works
+along; tests, commit, push.
+
+**Fresh baselines** (production's arbiter at 0.9, batch five's slices, italics by
+place; made from the worktree `../roboscriptorium-caps`, branch `italics-by-place`
+rebased on `grow6`): `work/bench/tuning-20261112T021125-7e3d354-dirty.json` and
+`validation-20261112T021634-7e3d354-dirty.json`. The twenty seeds at 0.93 against them:
+`tuning-20261112T021546-7e3d354-dirty.json`, `validation-20261112T021713-7e3d354-dirty.json`.
+
+**Still to land on main**: `grow6` and `italics-by-place` (one commit each on top of
+main; main has moved since, so rebase `grow6` on main and `italics-by-place` on
+`grow6` again, check `git diff --stat main italics-by-place`, run the tests, then
+fast-forward main and push). Held back while the second session's run loaded main's
+code (it changes `bench.SETS` and `trustdata.SPECS`).
+
+**Batch five's retraining runs since 03:16** (screen `robo-train-grown5`, script
+`work/runs/train-grown5.sh`, log `work/runs/train-grown5.log`, CPU only, about 75
+minutes or more beside the second session's run): the arbiter of twenty seeds on the
+rebuilt trust data, into `work/models/ocr-trust-grown5*.pkl`. Then bench it warm from
+`../roboscriptorium-caps` with `ROBO_OCR_ASK_BELOW=0.93
+ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-grown5.pkl`, tuning against
+`tuning-20261112T021546-7e3d354-dirty.json` and validation against
+`validation-20261112T021713-7e3d354-dirty.json` (the twenty seeds on the old data).
+
+**Last for the night** (the user, 2026-11-11, through the checklist session): the
+agent's half of the checklist step "verdicts on the unasked errors that look like the
+reference's, not the build's" (Golden books and the bench). From the fresh baselines,
+list the unasked errors that look like the e-book departing from its print (a space no
+print sets, words run together, a line-end hyphen left in, Het laatste bevel's glued
+words; the stale list is `work/probes/unasked/candidates-20261019.json`, decisions.md
+of 2026-10-19 says how it was made); settle on the scan crop what the crop settles;
+write the rest as `review --only` lists, one command a book
+(`experiments/review_batch_commands.py`), under "Waiting on the user" here, and update
+the checklist step. No models.
+
+**A retraining with `--save` and no `ROBO_OCR_TRUST_MODEL` (`train_ocr_trust.py`,
+`rebuild-trust.sh`) writes the new kind of arbiter over production's**
+`work/models/ocr-trust.pkl`: not before the switch.
+
+The quote reader with its kept question is still not taken (16 asked places unasked on
 tuning, not read place by place; next: trust data with the two quote readers and the
 arbiter retrained on them).
-
-**Production is switching to the steadier arbiter** (the user, 2026-11-11: "switch and
-use 20"): twenty trainings averaged and a smooth calibration (`trust.Trees`,
-`trust.Curve`, on main; design.md has why), asking below 0.93. Trained:
-`work/models/ocr-trust-steady20*.pkl` (the ten-seed one is `ocr-trust-steady*.pkl`).
-Validation at 0.93: NO CHANGE (548 questions, 167 unasked, 170 asked). Left, in order:
-1. once batch five's bench (step 1 of its script) has ended, bench tuning warm, about
-   16 minutes, with `ROBO_OCR_ASK_BELOW=0.93
-   ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-steady20.pkl` against
-   `work/bench/tuning-20261111T115457-e0273b4.json` (production there: 3,410 questions,
-   512 unasked, 1,240 asked; the ten-seed arbiter at 0.93: 3,392, 506, 1,221);
-2. if level: copy production's `work/models/ocr-trust*.pkl` aside, put the steady20
-   files in their place, set `ocr_ask_below` to 0.93 in `config.py`, and bring
-   design.md (the asking line), modules.md (it still says 0.8), the checklist, README
-   and how-it-works along; tests, commit, push;
-3. fast-forward main to `italics-by-place` (worktree `../roboscriptorium-caps`, 35ff49d,
-   pushed: the bench's italic score pairs misread words by place; check `git diff
-   --stat main italics-by-place` first) and bench main, tuning and validation, for a
-   fresh baseline: older runs count italics the old way;
-4. then weigh batch five's retraining against that baseline.
-5. last (the user, 2026-11-11, through the checklist session): the agent's half of the
-   checklist step "verdicts on the unasked errors that look like the reference's, not
-   the build's" (Golden books and the bench). From the fresh tuning and validation
-   baselines, list the unasked errors that look like the e-book departing from its
-   print (a space no print sets, words run together, a line-end hyphen left in, Het
-   laatste bevel's glued words; the stale list is
-   `work/probes/unasked/candidates-20261019.json`, decisions.md of 2026-10-19 says how
-   it was made); settle on the scan crop what the crop settles; write the rest as
-   `review --only` lists, one command a book (`experiments/review_batch_commands.py`),
-   under "Waiting on the user" here, and update the checklist step. No models.
-
-**A retraining (`train_ocr_trust.py --save`, `rebuild-trust.sh`) writes the new kind of
-arbiter over production's** `work/models/ocr-trust.pkl`: not before step 2.
 
 Found at ~06:00: retraining is exact (the arbiter trained again on
 production's trust data is production's file byte for byte), and the control's 15 more

@@ -1895,3 +1895,22 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   (`bench.NO_TRUST_DATA`), and the run's script, which named them too, stopped there:
   nothing lost, the list was wrong. The arbiter retrained on the four is weighed
   after production's switch to the steadier arbiter.
+- 2026-11-12: **The arbiter of twenty seeds asking below 0.93, on batch five's slices
+  with italics counted by place: better in words, WORSE by one asked split word**
+  (the branches `grow6` and `italics-by-place` rebased on main, benched warm from the
+  worktree; production's arbiter at 0.9 is the fresh baseline,
+  `work/bench/tuning-20261112T021125-7e3d354-dirty.json` and
+  `validation-20261112T021634-7e3d354-dirty.json`). Tuning, 6,180 pages: questions
+  4,011 → 3,997, unasked 585 → 576, asked 1,436 → 1,425; after review 0.25 → 0.25
+  with the interval clear of zero at every slip rate ([-0.01, -0.00]); 84 wrong words
+  fixed (11 unasked), 66 made (7 unasked); headings 26 → 26. Italic errors
+  1,245 → 1,248, which alone makes the verdict WORSE: all three are Vals alarm's
+  "EenVandaag" (PDF 280, italic in the print), which the layer reads "Een Vandaag";
+  production fixed it, the twenty seeds ask, and until answered the layer's two italic
+  words match nothing (one more italic word out, one fewer right). The slants are
+  the same in both runs; a split or glued italic word is the case the count by place
+  cannot pair (design.md, Measuring). Counted the old way the same two runs read
+  1,405 → 1,410. Validation, 889 pages: NO CHANGE, questions 518 → 548, unasked
+  170 → 167, asked 160 → 170, italics 195 → 195. Production's arbiter is unchanged:
+  the agent had told the user it would stop on a verdict of WORSE, so the switch waits
+  for their word on this one place.
