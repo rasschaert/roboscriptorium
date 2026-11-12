@@ -59,7 +59,7 @@ def test_where_the_layer_has_no_words_it_picks_nothing(tmp_path):
     path, _ = _scan(tmp_path, "world")
     state = {"page": 1, "line": 0, "readings": ["world", "wor1d"], "box": [30, 90, 80, 110]}
     answer = _judge(path).decide(state, _question(["world", "wor1d"]))["reading"]
-    assert (answer.value, answer.confidence) == ("", 0.0)
+    assert (answer.value, answer.confidence) == ("neither", 0.0)
 
 
 def test_its_pick_is_a_vote_beside_the_vision_judges(tmp_path):
@@ -147,3 +147,36 @@ def test_an_ellipsis_with_its_dots_apart_is_read_whole(tmp_path, printed, versio
     doc.save(path)
     state = {"page": 1, "line": 0, "readings": versions, "box": [round(v, 1) for v in box]}
     assert _judge(path).decide(state, _question(versions))["reading"].value == picked
+
+
+def test_no_ink_to_compare_is_no_vote(tmp_path):
+    path, _ = _scan(tmp_path, "world")
+
+    class Vision:
+        model = "vision"
+
+        def decide(self, state, questions, image_png=None):
+            return {"reading": decide.Answer("choice", "b", 0.6, {})}
+
+    with pymupdf.open(path) as doc:
+        (_, _, votes), _ = ocrcheck._decide(
+            doc[0], 1, 0, LINE.format("world"), 16, 21, ["wor1d"], (30, 90, 80, 110), "en",
+            Vision(), None, DecisionCache(tmp_path / "decisions.jsonl"),
+            alarms=[_judge(path)],
+        )  # fmt: skip
+    assert votes == {"vision": "wor1d", "render": ""}
+
+
+def test_on_a_tightly_set_line_the_strip_ends_before_the_next_word(tmp_path):
+    path = tmp_path / "tight.pdf"
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=120)
+    x = 30.0
+    for word in ("there", "the", "quick", "world", "jumps", "over"):
+        page.insert_text((x, 60), word, fontname="helv", fontsize=14)
+        x += pymupdf.get_text_length(word, "helv", 14) + 2.6
+    box = next(w[:4] for w in page.get_text("words") if w[4] == "world")
+    doc.save(path)
+    versions = ["wor1d", "world"]
+    state = {"page": 1, "line": 0, "readings": versions, "box": [round(v, 1) for v in box]}
+    assert _judge(path).decide(state, _question(versions))["reading"].value == "b"

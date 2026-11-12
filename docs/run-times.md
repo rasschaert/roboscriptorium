@@ -912,3 +912,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-12 | typefaces matched for 33 books, six at a time (CPU) | 0 | 29 | 1 |
 | 2026-11-12 | typefaces matched for 33 books, six at a time (CPU) | 0 | 0 | 0 |
 | 2026-11-12 | typefaces matched for 33 books, six at a time (CPU) | 0 | 0 | 0 |
+| 2026-11-12 | trust data rebuilt with the judge render, six books at a time (warm) | 0 | 18 | 0 |
+| 2026-11-12 | bench tuning, baseline before the spacing repairs (warm) | 0 | 5 | 0 |
+| 2026-11-12 | bench tuning, the four spacing repairs (warm) | 0 | 5 | 0 |
+| 2026-11-12 | bench validation, baseline before the spacing repairs (warm) | 0 | 1 | 0 |
+| 2026-11-12 | bench validation, the four spacing repairs (warm) | 0 | 1 | 0 |

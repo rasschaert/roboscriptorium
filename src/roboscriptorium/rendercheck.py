@@ -32,7 +32,7 @@ MODEL = "render"
 # The cached match's format.
 VERSION = 1
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 2
+FITS = 3
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
@@ -310,13 +310,15 @@ def match(pdf: Path, pages: list[PageText], library: Path, cache: Path | None = 
 def place_ink(page: pymupdf.Page, box, text: PageText | None = None) -> np.ndarray | None:
     """The ink at a suspect's box, as a strip of its line (0–1, not trimmed): everything
     between the blank before the layer's words there and the blank after them, so a mark
-    the layer missed beside a word is in it and its neighbours' letters aren't. On an
-    image-only page the words are its first reading's (`text`). None where there are no
-    words."""
+    the layer missed beside a word is in it and its neighbours' letters aren't. Where a
+    line is set too tight for such a blank, the strip ends at the widest blank before
+    the layer's next word. On an image-only page the words are its first reading's
+    (`text`). None where there are no words."""
     bx0, by0, bx1, by1 = box
+    words = pdflayer.page_words(page, text)
     span = [
         w
-        for w in pdflayer.page_words(page, text)
+        for w in words
         if bx0 - 1 <= (w[0] + w[2]) / 2 <= bx1 + 1 and by0 <= (w[1] + w[3]) / 2 <= by1
     ]
     if not span:
@@ -368,9 +370,44 @@ def place_ink(page: pymupdf.Page, box, text: PageText | None = None) -> np.ndarr
         if not (e < len(cols) and e - b < 2 * gap and is_dot(e, f)):
             break
         b = f
-    if a <= 0 or b >= len(cols) or b - a < 6:
+    # How far the strip may reach: a third into the layer's words either side on the
+    # line; a mark the layer holds apart (an ellipsis's dot) is no word.
+    line = [w for w in words if y0 <= (w[1] + w[3]) / 2 <= y1 and any(c.isalnum() for c in w[4])]
+    before = max((w for w in line if w[2] <= x0 + 1), key=lambda w: w[2], default=None)
+    after = min((w for w in line if w[0] >= x1 - 1), key=lambda w: w[0], default=None)
+    low = round((before[2] - (before[2] - before[0]) / 3 - clip.x0) * scale) if before else 0
+    top = round((after[0] + (after[2] - after[0]) / 3 - clip.x0) * scale) if after else len(cols)
+    low, top = max(low, 0), min(top, len(cols))
+    lead = trail = gap
+    if a <= low:
+        blank = _widest_blank(cols, low, min(left + gap, right))
+        if blank is None:
+            return None
+        a, lead = blank[1], min(gap, blank[1] - blank[0])
+    if b >= top:
+        blank = _widest_blank(cols, max(right - gap, left), top)
+        if blank is None:
+            return None
+        b, trail = blank[0], min(gap, blank[1] - blank[0])
+    if b - a < 6:
         return None
-    return grey[:, max(0, a - gap) : b + gap]
+    return grey[:, max(0, a - lead) : b + trail]
+
+
+def _widest_blank(cols: np.ndarray, start: int, end: int) -> tuple[int, int] | None:
+    """The widest run of columns without ink in `start`–`end`, as (first, past the last)."""
+    best, at = None, start
+    while at < end:
+        if cols[at]:
+            at += 1
+            continue
+        stop = at
+        while stop < end and not cols[stop]:
+            stop += 1
+        if best is None or stop - at > best[1] - best[0]:
+            best = (at, stop)
+        at = stop
+    return best
 
 
 def _pieces(face: Face, pieces: list[tuple[str, float, float]]) -> np.ndarray | None:
@@ -448,7 +485,7 @@ class Judge:
     """The fit as a second vision judge (`ocrcheck._decide`'s `alarms`): asked the vision
     judges' question, it answers with the option whose version fits the scan best, from
     the suspect's page and box in the question's state. It takes no crop. Where the
-    layer has no words at the box it picks nothing."""
+    layer has no words at the box it answers "neither", which is no vote."""
 
     model = MODEL
 
@@ -464,7 +501,8 @@ class Judge:
         with pdflayer.PDF_LOCK, pymupdf.open(self._pdf) as doc:
             ink = place_ink(doc[state["page"] - 1], state["box"], self._texts.get(state["page"]))
         if ink is None:
-            return {"reading": Answer("choice", "", 0.0, {})}
+            # "neither" is no pick; an empty value would read as the first version.
+            return {"reading": Answer("choice", "neither", 0.0, {})}
         scores = fits(self._face, self._match.spread, self._match.size, ink, versions)
         order = sorted(range(len(versions)), key=lambda i: -scores[i])
         margin = scores[order[0]] - scores[order[1]]
