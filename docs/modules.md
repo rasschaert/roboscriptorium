@@ -374,7 +374,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   typeface in the font library (`ROBO_FONTS`, `work/fonts`): 240 lower-case words of
   the text layer cut out along their ink, every font on 40 of them, the best 40 fonts
   on all, the best text cut (not bold or italic) kept with its ink spread and the
-  book's type size in `stages/typeface.json` (about two minutes a book, once). `Judge`
+  book's type size in `stages/typeface.json` (two to five minutes a book, once, whatever slice is built; `experiments/match_typefaces.py` does it ahead of a run). `Judge`
   answers `ocrcheck._decide`'s question from the suspect's page and box: the ink
   between the blanks around the layer's words there, each version drawn (`drawings`)
   and laid over it at the best position and stretch (`fits`), the best fit's letter as

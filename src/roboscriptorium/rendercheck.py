@@ -257,8 +257,10 @@ def em_size(words: list[tuple[str, np.ndarray]], font: ImageFont.FreeTypeFont) -
 
 def match(pdf: Path, first: int, last: int, library: Path, cache: Path | None = None) -> Match:
     """The book's typeface among the library's fonts, by the scan's words on pages
-    `first`–`last`: every font on a few words, then the best on all of them."""
-    key = {"version": VERSION, "pages": [first, last]}
+    `first`–`last`: every font on a few words, then the best on all of them. A match
+    in `cache` is kept whatever pages it was made from: a book is set in one typeface,
+    and a slice of it must be judged as the whole is."""
+    key = {"version": VERSION}
     if cache is not None and cache.exists():
         held = json.loads(cache.read_text())
         if held.get("key") == key and (library / held["match"]["file"]).exists():

@@ -1,3 +1,6 @@
+import json
+from dataclasses import asdict
+
 import pymupdf
 import pytest
 from PIL import ImageFont
@@ -96,3 +99,13 @@ def test_the_build_makes_the_judge_from_its_name_and_needs_the_fonts(tmp_path):
     settings = Settings(alarm_model="render", fonts=str(tmp_path / "no-fonts"))
     with pytest.raises(ValueError, match="no such folder"):
         pipeline._alarm("render", settings, Book())
+
+
+def test_a_books_match_is_kept_for_any_slice_of_it(tmp_path):
+    library = tmp_path / "fonts"
+    library.mkdir()
+    (library / "face.otf").write_bytes(b"")
+    cache = tmp_path / "typeface.json"
+    held = rendercheck.Match("face.otf", "Face", 0.7, 3, 50.0)
+    cache.write_text(json.dumps({"key": {"version": rendercheck.VERSION}, "match": asdict(held)}))
+    assert rendercheck.match(tmp_path / "none.pdf", 40, 60, library, cache) == held
