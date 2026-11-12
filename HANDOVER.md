@@ -11,15 +11,19 @@ A second session worked beside the first: the checklist rewritten and pruned (82
 steps to 47), the per-book settings test (null), and **render and compare**, the user's
 idea of a judge that draws each version of a contested place in the book's typeface and
 lays it over the scan (decisions.md, the entries of 2026-11-11 and 12; the checklist,
-"Render and compare", has the steps in order). State on 2026-11-12, 01:15: the print on
-87% of 22,769 labelled places over 18 books, and on most of what each judge misses.
-**In flight, CPU only, no models:** screen `robo-render-arbiter` (script
-`work/runs/render-arbiter.sh`, output `work/runs/render-arbiter.out`, about two to three
-hours): the fit's votes written into `work/probes/ocr-trust-render/` as a judge named
-`render`, then `train_ocr_trust.py` without `--save`, with the vote
-(`work/runs/render-arbiter-with.log`) and without it (`…-without.log`). Compare the
-trees' silent errors at each budget of questions; if the vote lowers them, the fit
-becomes a judge in `ocrcheck` and the benches decide. Every book's typeface is in
+"Render and compare", has the steps in order). State on 2026-11-12, 06:30: the
+print on 87% of 26,309 labelled places over 23 books, and **as one more judge's vote it
+lowers the arbiter's silent errors at every budget of questions** (trees, 23 books, each
+left out in turn: 26 → 19 at the rule's questions, 480/189/103/31 → 438/153/83/25 at
+0/0.25/0.5/1 a page; logs `work/runs/render-arbiter-{with,without}.log`, votes in
+`work/probes/ocr-trust-render/`, made from the trust data before batch five's rebuild).
+One book got worse, Het geluid van bananen, drawn in a condensed cut. **Next, in
+order:** `book_font` in `experiments/probe_render_compare.py` mended and that book
+retried; the fit built into `ocrcheck` as a judge with its reason in docs/design.md;
+the trust data rebuilt and the arbiter retrained (against
+`work/models/ocr-trust-grown5.pkl`, asking below 0.93); `bench tuning`, then
+`validation`. Nothing of it runs now.
+Every book's typeface is in
 `work/probes/font-match/`. The fonts are the user's library, copied to `work/fonts/`
 (gitignored: licensed, never in git).
 

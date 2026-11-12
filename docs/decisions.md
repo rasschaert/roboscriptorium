@@ -1963,3 +1963,27 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   "EenVandaag" as the other twenty seeds, so the bench's rule still reads WORSE against
   production by those three italic errors. Proposed to the user as the arbiter to
   switch to, in place of the one trained on the old slices.
+- 2026-11-12: **Render and compare as a judge lowers the arbiter's silent errors at
+  every budget of questions** (`probe_render_compare.py --votes`, then
+  `train_ocr_trust.py` twice on the same copy of the trust data,
+  `work/probes/ocr-trust-render/`, 23 books, each scored by an arbiter trained without
+  it; logs `work/runs/render-arbiter-{with,without}.log`; 20 + 95 + 186 minutes, CPU).
+  The vote is the better-fitting version, its confidence the margin over the next
+  (times four, capped at 1). The fit alone is the print on 87% of 26,309 labelled
+  places. Trees, silent errors summed over the books, without the vote → with it: at
+  the fixed rule's questions (6,801) 26 → 19; at 0 / 0.25 / 0.5 / 1 question a page
+  480 / 189 / 103 / 31 → 438 / 153 / 83 / 25. The logistic arbiter: 25 → 22, and
+  518 / 206 / 104 / 33 → 487 / 183 / 87 / 38. With one more training book left out
+  the trees' silent errors at the rule's questions range 20–31 without and 14–21 with.
+  Better or level on most books (De cipier 28/3/1/0 → 10/0/0/0, Doodskleed
+  79/45/26/3 → 63/30/15/3, Artemis 6 → 3 at the rule's questions); **worse on one**,
+  Het geluid van bananen (49/22/10/4 → 66/40/22/8), which the probe drew in Minion
+  Condensed Caption: `book_font` passes over the best match, Minion Medium Caption,
+  as heavy. The copy was made before the four grown books' trust data was rebuilt
+  (02:53), so both trainings read the old slices. The doubt left open on 2026-11-12
+  (do the extra drawings, a closing quote kerned over the stop and capitals at
+  small-capital size, favour the version that has them?) is answered no: where the
+  versions differ in closing quotes the fit is right on 82% of 4,967 when the print
+  has more and 89% of 209 when it has fewer; in capitals 88% of 585 and 95% of 363.
+  Next: the font pick mended, the fit built into `ocrcheck` as a judge, the trust data
+  rebuilt, the arbiter retrained, the benches.

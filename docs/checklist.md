@@ -295,13 +295,14 @@ are under Done, "Architecture probes".
       labelled places, each judge 5 or 6; De tuin and De cipier 94% and 93% of 4,162,
       with nineteen in twenty of the judges' misses right (`probe_render_compare.py`,
       decisions.md 2026-11-12). In order:
-      - [ ] The golden books' typefaces matched (`probe_font_match.py`, ~2 min a book,
-            results in `work/probes/font-match/`), then the test on their labelled
-            places: by kind of error, where the judges were wrong, where the arbiter
-            asks, and by how well the book's typeface was matched
-      - [ ] If it holds: the fit as one more judge (`ocrcheck`), its vote and margin in
-            the trust data, the arbiter retrained, `bench tuning` and `validation`
-            (model time: the user offered the machine once the night's runs end)
+      - [x] The golden books' typefaces matched and the test on their labelled places:
+            the print on 87% of 26,309 over 23 books; as one more vote the arbiter's
+            silent errors fall at every budget (26 → 19 at the rule's questions,
+            189 → 153 at a question every four pages; decisions.md 2026-11-12)
+      - [ ] The font pick mended (`book_font` passes over a Medium cut as heavy: Het
+            geluid van bananen, the one book that got worse, was drawn condensed)
+      - [ ] The fit as one more judge (`ocrcheck`), its vote and margin in the trust
+            data, the arbiter retrained, `bench tuning` and `validation`
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
             for the shapes the book can't supply. The family is found for eight of the
             user's ten books (the user's library, in `work/fonts/`: Quadraat, Janson Text

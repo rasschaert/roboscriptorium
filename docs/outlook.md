@@ -53,6 +53,12 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
 
 ## Where there is room, by expected gain
 
+0. **Render and compare, a judge that knows no language (probe, not built).** Each
+   version of a suspect drawn in the book's typeface and laid over the scan: the print
+   on 87% of 26,309 labelled places, and on most of what each judge misses. As one more
+   vote it lowers the arbiter's silent errors at every budget, each book left out in
+   turn (26 → 19 at the rule's questions, 189 → 153 at a question every four pages;
+   2026-11-12). Not benched yet. Weak where the typeface match is weak.
 0. **The page readings where they can reach the gain (readings cached, not built).**
    glm-ocr and Qwen agreeing against the build point at 60 errors no question asks,
    about a quarter of what's left after review, mostly at line joins and page numbers.
