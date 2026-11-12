@@ -12,7 +12,7 @@ from collections import Counter
 from collections.abc import Callable
 from dataclasses import dataclass
 
-from roboscriptorium.hyphens import HYPHENS, Compound, join, spellings
+from roboscriptorium.hyphens import DASHES, HYPHENS, Compound, join, spellings
 from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.page import NUMBERED_WORDS, bare_numeral, digits
 from roboscriptorium.pdf import LIGATURES, Line, PageText
@@ -40,6 +40,9 @@ MARGIN_WINDOW = 5
 # JUSTIFIED_SLACK points of the margin.
 SHORT_LINE = 0.02
 JUSTIFIED_SLACK = 3.0
+# A line ending on a dash may stop this many of its average characters short and still
+# be full: its box in the layer leaves out a dash only another reading saw.
+DASH_WIDTH = 2.5
 JUSTIFIED_SHARE = 0.6
 # Lines ending mid-sentence needed to tell; the page's run stands in for a window
 # with fewer.
@@ -201,7 +204,10 @@ def _short_end(lines: list[Line], k: int, margin: float) -> bool:
     ends = sorted(ln.x1 for ln in inner)
     right = ends[len(ends) // 2]
     justified = sum(abs(right - ln.x1) < JUSTIFIED_SLACK for ln in inner)
-    return justified >= JUSTIFIED_SHARE * len(inner) and right - lines[k].x1 > SHORT_LINE * (
+    line, text = lines[k], lines[k].text.rstrip()
+    if text.endswith(DASHES) and right - line.x1 <= DASH_WIDTH * (line.x1 - line.x0) / len(text):
+        return False
+    return justified >= JUSTIFIED_SHARE * len(inner) and right - line.x1 > SHORT_LINE * (
         right - margin
     )
 

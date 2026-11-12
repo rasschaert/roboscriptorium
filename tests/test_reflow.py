@@ -262,6 +262,25 @@ def test_dialogue_short_lines_dont_hide_that_the_text_is_justified():
     ]
 
 
+def test_a_line_ending_on_a_dash_its_box_leaves_out_continues_the_paragraph():
+    body = [
+        ("Ze zweeg en keek uit het raam naar de", 250),
+        ("tuin, waar de regen al de hele dag viel", 250),
+        ("op het gras en op de oude appelboom", 250),
+    ]
+    tail = [("‘en dat is nog lang niet alles,’ zei hij", 250), ("zacht tegen haar.", 110)]
+    # The counterexamples first: a line that far short without a dash ends its paragraph,
+    # and so does one ending on a dash much further short.
+    plain = [*body, ("‘Dat is een goed idee,’ zei de dokter", 238), *tail]
+    assert len(reflow([_justified(5, plain)])) == 2
+    far = [*body, ("‘Dat is een goed idee,’ zei hij—", 200), *tail]
+    assert len(reflow([_justified(5, far)])) == 2
+    # Dolittle p. 145: the layer's box ends before the dash, two characters short.
+    dash = [*body, ("‘Dat is een goed idee,’ zei de dokter—", 238), *tail]
+    paragraphs = reflow([_justified(5, dash)])
+    assert len(paragraphs) == 1 and "dokter—‘en dat" in paragraphs[0].text
+
+
 def test_any_short_line_ends_a_paragraph_only_in_justified_text():
     letter = [
         ("Ze schreef hem die avond nog een brief", 250),
