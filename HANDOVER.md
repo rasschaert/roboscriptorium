@@ -40,11 +40,16 @@ Every book's typeface is in
 
 **Night of 2026-11-11/12.** decisions.md, 2026-11-12, has every number.
 
+**The first session ended for the day on 2026-11-12, about 08:30, at the user's word.**
+Nothing of its own runs. Next for it, by the checklist: the nulls that waited for
+batch five, trust data for Au pair, De vergelding and Glazuur, the quote check as a
+reader; all need the models, free once the second session's run ends.
+
 **Morning of 2026-11-12: four spacing repairs are on main** (chain hyphens beside a
 short word, a false paragraph after a dash the layer missed, an ellipsis after a
 closing quote, a dash before "’s"; decisions.md, 2026-11-12). Tuning BETTER (38 fixed,
-1 made), validation NO CHANGE (7 fixed, none made). The baselines for the next change,
-production's arbiter with the repairs in:
+1 made), validation NO CHANGE (7 fixed, none made). The latest runs with the repairs in,
+made with the old arbiter at 0.9 (before the switch below):
 `work/bench/tuning-20261112T070759-f8e7ab1-dirty.json` and
 `validation-20261112T070923-f8e7ab1-dirty.json`. The worktrees `../robo-spacing`
 (branch `spacing`, merged) and `../robo-base` (detached, the baseline's checkout) can go.
@@ -55,18 +60,13 @@ Left of the spacing step: a dash before a closing quote, which needs the scan
 slices are on main. The trust data of the four grown books that train (Vals alarm, Metro 2033, De
 tuin, The Thief-Taker's Apprentice) is rebuilt over their whole books.
 
-**Waiting on the user: the word to switch production's arbiter.** They chose the
-steadier one on 2026-11-11 ("switch and use 20": twenty trainings averaged, a smooth
-calibration, asking below 0.93; `work/models/ocr-trust-steady20*.pkl`). Benched on the
-grown set with italics counted by place, it is better in words on tuning (questions
-4,011 → 3,997, unasked 585 → 576) and no change on validation, but the bench's verdict
-on tuning is WORSE for one place: Vals alarm's italic "EenVandaag", which it asks
-about where production fixed it, and whose two layer words count as three italic
-errors until answered. The agent had said it would stop on WORSE, so production is
-unchanged. On their word: copy production's `work/models/ocr-trust*.pkl` aside, put
-the steady20 files in their place, set `ocr_ask_below` to 0.93 in `config.py`, bring
-design.md (the asking line), modules.md (it still says 0.8), README and how-it-works
-along; tests, commit, push.
+**Production's arbiter is switched** (the user, 2026-11-12: "switch to retrained"):
+`work/models/ocr-trust*.pkl` are the `ocr-trust-grown5` files (twenty trainings
+averaged, a smooth calibration, batch five's trust data), `ocr_ask_below` defaults to
+0.93, and the old arbiter is in `work/models/ocr-trust-backup-20261112/`. Not benched
+after the copy (the same files were benched under their own name). The next bench on
+main is the first with it as the default: it will differ from baselines made with
+the old arbiter, so make a fresh baseline first.
 
 **Fresh baselines** (production's arbiter at 0.9, batch five's slices, italics by
 place; made from the worktree `../roboscriptorium-caps`, branch `italics-by-place`
@@ -78,21 +78,9 @@ rebased on `grow6`): `work/bench/tuning-20261112T021125-7e3d354-dirty.json` and
 the worktrees `../robo-grow6` and `../roboscriptorium-caps` hold merged branches and
 can go.
 
-**Batch five's retraining is weighed**: the arbiter of twenty seeds trained on the
-rebuilt trust data (`work/models/ocr-trust-grown5*.pkl`) is BETTER on tuning than the
-twenty seeds on the old slices (questions 3,997 → 3,971, unasked 576 → 564) and no
-change on validation (`work/bench/tuning-20261112T050659-28768e9-dirty.json`,
-`validation-20261112T050748-28768e9-dirty.json`). The agent proposes it as the arbiter
-production switches to: on the user's word the grown5 files go in production's place,
-not the steady20 ones.
-
 **Done for the night's last step** (the unasked errors that look like the reference's):
 223 places read on their crops, 58 for the user to confirm (below, "Waiting on the
 user"), 75 the build's, now steps in the checklist ("Errors no question asks about").
-
-**A retraining with `--save` and no `ROBO_OCR_TRUST_MODEL` (`train_ocr_trust.py`,
-`rebuild-trust.sh`) writes the new kind of arbiter over production's**
-`work/models/ocr-trust.pkl`: not before the switch.
 
 The quote reader with its kept question is still not taken (16 asked places unasked on
 tuning, not read place by place; next: trust data with the two quote readers and the

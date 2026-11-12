@@ -319,7 +319,12 @@ ran from 1,197 to 1,859 and the wrong picks left unasked from 97 to 163. The cur
 two numbers to fit, so the same nine trainings ask 1,245 to 1,282 and leave 155 to 159
 (`experiments/probe_trust_calibration.py`, 2026-11-11). A curve reads the same raw
 sureness as another chance than the staircase did, so the asking line is chosen again
-with it (decisions.md, 2026-11-11).
+with it (decisions.md, 2026-11-11): 0.93, where the curve asks about as much as the
+staircase did at the user's 0.9 (at 0.9 it asked 322 questions fewer and left 26 more
+errors unasked, the trade the user refuses; at 0.95, 283 more questions for 35 fewer).
+In production since 2026-11-12, with the trees below, trained on batch five's trust
+data: against the staircase arbiter at 0.9 on the same pages, tuning's questions
+4,011 → 3,971 and unasked errors 585 → 564, validation's 518 → 546 and 170 → 166.
 
 **The arbiter's trees are twenty trainings averaged** (`trust.Trees`, each from its own
 seed). One training picks, by its seed, which suspects it stops early on, and a few

@@ -2101,4 +2101,19 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   right and its zero-confidence votes in the rebuilt data, not the total (87.9%, which
   looked like the probe's). The run was restarted at 08:11 on main with robo1's spacing
   repairs in; the judge's benches compare against its control's, same code both sides.
-
+- 2026-11-12: **Production's arbiter switched to the retrained one of twenty seeds,
+  asking below 0.93** (the user: "switch to retrained"). `work/models/ocr-trust.pkl`
+  and its 18 `-without-<book>` files are now the `ocr-trust-grown5` set (twenty
+  trainings averaged, the smooth calibration, trained on batch five's trust data,
+  33,387 suspects); the staircase arbiter of 2026-11-08 is kept in
+  `work/models/ocr-trust-backup-20261112/`. `ocr_ask_below` defaults to 0.93. On the
+  same pages (benches of this morning, the retrained one benched against the twenty
+  seeds on the old slices, not against production directly): tuning questions
+  4,011 → 3,971, unasked errors 585 → 564; validation questions 518 → 546, unasked
+  170 → 166. Known when chosen: by the bench's rule the steadier arbiters read WORSE
+  against production for one place, Vals alarm's italic "EenVandaag" (p. 280), which
+  they ask about where the old one fixed it and which counts as three italic errors
+  until answered. Not benched again after the copy: the files are byte for byte the
+  ones benched. To undo: copy the backup folder's files back and set
+  `ROBO_OCR_ASK_BELOW=0.9`. From here a retraining with `--save` writes over this
+  arbiter, as it should.

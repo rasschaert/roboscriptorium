@@ -65,9 +65,9 @@ class Settings:
     ocr_questions_per_page: float = 1.0
     # Within that budget, a suspect whose likeliest version is right with at least this
     # chance (the trust model's calibrated sureness) is decided, not asked (1.0: every
-    # one may be asked). 0.9: the user's trade of questions for silent errors
-    # (docs/design.md).
-    ocr_ask_below: float = 0.9
+    # one may be asked). 0.93 on the smooth calibration asks about as much as the user's
+    # trade of questions for silent errors did (docs/design.md).
+    ocr_ask_below: float = 0.93
     # Line roles from trees over layout, type and the role model's answer (`sorter.py`)
     # on top of the rules in `roles.py` (docs/design.md, "Line roles").
     sorter: bool = True

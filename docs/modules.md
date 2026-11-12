@@ -354,7 +354,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   for its exact substitution (`pair`: how often `|`→`I` was the print in the training
   books, pairs seen in two books or more, saved with the model);
   the least sure suspects are asked up to `ROBO_OCR_QUESTIONS` per page, except
-  one whose best version is right with a chance of `ROBO_OCR_ASK_BELOW` (0.8) or more
+  one whose best version is right with a chance of `ROBO_OCR_ASK_BELOW` (0.93) or more
   (its sureness calibrated on books it wasn't trained on, `trust.sureness`); the rest take
   their best version. The budget is book-wide (questions per page ×
   pages), so a bad page can take more than one. On by default (`ROBO_OCR_TRUST=0`

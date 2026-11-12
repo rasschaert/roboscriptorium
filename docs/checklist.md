@@ -30,16 +30,6 @@ last on 2026-11-06, so next by 2026-11-13).
 
 In this order; `HANDOVER.md` has the paths and the commands.
 
-- [ ] **user**: the word to switch production to the steadier arbiter (their choice of
-      2026-11-11: twenty trainings averaged, a smooth calibration, asking below 0.93),
-      and to which: the one trained on batch five's data (`ocr-trust-grown5`, better
-      on tuning than the one on the old slices, no change on validation; the agent's
-      proposal) or the one on the old slices (`ocr-trust-steady20`).
-      Benched on the grown set with italics by place: tuning better in words, 14
-      questions and 9 unasked places fewer, and WORSE by the bench's rule for one asked
-      split italic word ("EenVandaag", Vals alarm); validation no change (decisions.md,
-      2026-11-12). Then the agent: production's files kept aside, `ocr_ask_below` 0.93,
-      the docs and tests brought along
 - [ ] After batch five, the two nulls that waited for it: autotrust-jev 9B as a second
       text judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
       170 → 178) and the book's own vocabulary as an arbiter feature (null 2026-11-08)
@@ -639,6 +629,9 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Trust data, the judges and the arbiter
 
+- [x] 2026-11-12 Production's arbiter is twenty trainings averaged with a smooth
+      calibration, trained on batch five's trust data, asking below 0.93 (the user's
+      choice; the old one kept in `work/models/ocr-trust-backup-20261112/`)
 - [x] ~~A lone small capital with the lower case's shape ("v-hals", "u-bocht")~~ (parked
       2026-11-11): no judge tells it, on a tight crop or a wide one; retest with each
       new vision judge (outlook.md, "Tried")
