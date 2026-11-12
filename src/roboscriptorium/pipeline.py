@@ -336,7 +336,11 @@ def run(
                 for name, lines in paired.items():
                     readings[name] = {ref: text for ref, text in lines.items() if ref in kept}
             judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
-            alarms = [_alarm(spec, settings, book, whole) for spec in settings.alarm_models]
+            alarms = [
+                alarm
+                for spec in settings.alarm_models
+                if (alarm := _alarm(spec, settings, book, whole)) is not None
+            ]
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, whole, style, dots), alarms, settings.alarm_below,
@@ -554,12 +558,22 @@ def run(
 def _alarm(spec: str, settings: Settings, book: Book, pages: list[PageText]):
     """A second vision judge's client from its name in `alarm_model`: `llama:<name>` on
     llama.cpp, `render` the fit of each version drawn in `book`'s typeface (matched on
-    `pages`, its whole body), else a
-    decision model on Ollama; `@wide` views the suspect with its line."""
+    `pages`, its whole body, or book.toml's), else a
+    decision model on Ollama; `@wide` views the suspect with its line. None for `render`
+    without a font folder: the build goes on without its vote."""
     name, _, view = spec.partition("@")
     if spec == rendercheck.MODEL:
+        library = Path(settings.fonts)
+        if not library.is_dir():
+            print(
+                f"No font folder {library}: built without the judge {rendercheck.MODEL!r}, "
+                "which draws each reading in the book's typeface. Put book typefaces "
+                "(.otf, .ttf) there, or set ROBO_FONTS.",
+                file=sys.stderr,
+            )
+            return None
         return rendercheck.judge(
-            book.source, pages, Path(settings.fonts), book.stages / "typeface.json"
+            book.source, pages, library, book.stages / "typeface.json", book.typeface
         )
     if name.startswith("llama:"):
         client = llama.ReadoutClient(name.removeprefix("llama:"), settings.llama_url)

@@ -50,6 +50,10 @@ class Draft:
     last: int
     title_lines: list[str]
     front: dict[str, str] = field(default_factory=dict)
+    # The faces the typeface match chose among (`rendercheck.near`), the chosen one's
+    # file in `typeface`; empty without a font folder.
+    typeface: str = ""
+    faces: list[dict] = field(default_factory=list)
 
 
 def slug(stem: str) -> str:
@@ -154,7 +158,24 @@ cover_page = {d.cover or 1}
 #   first: {first}
 #   last:  {last}
 body_pages = [{d.first}, {d.last}]
-"""
+{_typeface(d)}"""
+
+
+def _faces(d: Draft) -> str:
+    """The faces the match chose among, the chosen first, each with its fit on plain words."""
+    order = sorted(d.faces, key=lambda f: f["file"] != d.typeface)
+    return "; ".join(f"{f['name']} {f['place_fit']:.3f}" for f in order)
+
+
+def _typeface(d: Draft) -> str:
+    if not d.typeface:
+        return ""
+    return (
+        "# The typeface, matched on the scan among the font folder's files: a judge draws each\n"
+        "# reading in it. To overrule it, name another file of that folder. How well each\n"
+        f"# of the best draws the book's words (0–1): {_faces(d)}\n"
+        f'typeface = "{_q(d.typeface)}"\n'
+    )
 
 
 def report(d: Draft) -> str:
@@ -188,6 +209,8 @@ def report(d: Draft) -> str:
         f"- On the title page: {'; '.join(d.title_lines) or 'no title page found'}.",
         f"- Read from the title and copyright pages (confirm): {_front(d)}.",
         f"- Kinds found: {', '.join(f'{k} {n}' for k, n in counts.most_common())}.",
+        f"- Typeface, with how well each of the best draws the book's words: "
+        f"{_faces(d) or 'not matched (no font folder)'}.",
         "",
     ]
     return "\n".join(lines)

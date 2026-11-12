@@ -91,15 +91,18 @@ def test_a_text_cut_is_preferred_to_a_better_fitting_bold_or_italic():
     assert rendercheck.text_cut(ranked[::2])["name"] == "Face Bold"
 
 
-def test_the_build_makes_the_judge_from_its_name_and_needs_the_fonts(tmp_path):
+def test_a_build_without_the_font_folder_goes_on_without_the_judge(tmp_path, capsys):
     class Book:
         source = tmp_path / "source.pdf"
         body_pages = (1, 1)
         stages = tmp_path
+        typeface = None
 
     settings = Settings(alarm_model="render", fonts=str(tmp_path / "no-fonts"))
+    assert pipeline._alarm("render", settings, Book(), []) is None
+    assert "without the judge 'render'" in capsys.readouterr().err
     with pytest.raises(ValueError, match="no such folder"):
-        pipeline._alarm("render", settings, Book(), [])
+        rendercheck.judge(Book.source, [], tmp_path / "no-fonts", tmp_path / "typeface.json")
 
 
 def test_a_books_match_is_kept_for_any_slice_of_it(tmp_path):
@@ -108,8 +111,92 @@ def test_a_books_match_is_kept_for_any_slice_of_it(tmp_path):
     (library / "face.otf").write_bytes(b"")
     cache = tmp_path / "typeface.json"
     held = rendercheck.Match("face.otf", "Face", 0.7, 3, 50.0)
-    cache.write_text(json.dumps({"key": {"version": rendercheck.VERSION}, "match": asdict(held)}))
+    key = {"version": rendercheck.VERSION, "typeface": None}
+    cache.write_text(json.dumps({"key": key, "match": asdict(held)}))
     assert rendercheck.match(tmp_path / "none.pdf", [], library, cache) == held
+
+
+def _library(tmp_path):
+    """A font folder with the two faces PyMuPDF carries: a sans (the scan's) and a serif."""
+    library = tmp_path / "fonts"
+    library.mkdir()
+    for name in ("helv", "tiro"):
+        (library / f"{name}.otf").write_bytes(pymupdf.Font(name).buffer)
+    return library
+
+
+def test_the_match_is_the_face_the_scan_is_set_in_and_names_what_it_chose_among(tmp_path):
+    path, _ = _scan(tmp_path, "world")
+    cache = tmp_path / "typeface.json"
+    found = rendercheck.match(path, [PageText(1, 400, 120, [])], _library(tmp_path), cache)
+    assert found.file == "helv.otf" and found.size > 20
+    tried = rendercheck.near(cache)
+    assert [f["file"] for f in tried] == ["helv.otf", "tiro.otf"]
+    assert tried[0]["place_fit"] > tried[1]["place_fit"] > 0
+
+
+def test_book_tomls_typeface_overrules_the_match_and_must_be_in_the_folder(tmp_path):
+    path, _ = _scan(tmp_path, "world")
+    library, cache = _library(tmp_path), tmp_path / "typeface.json"
+    pages = [PageText(1, 400, 120, [])]
+    assert rendercheck.match(path, pages, library, cache).file == "helv.otf"
+    assert rendercheck.match(path, pages, library, cache, "tiro.otf").file == "tiro.otf"
+    # The key gone again, the book is matched again.
+    assert rendercheck.match(path, pages, library, cache).file == "helv.otf"
+    with pytest.raises(ValueError, match="no file in"):
+        rendercheck.match(path, pages, library, cache, "gone.otf")
+
+
+def test_near_ties_are_the_best_text_cuts_and_the_judges_fit_chooses_among_them(tmp_path):
+    ranked = [
+        {"file": "a/Face-Bold.otf", "name": "Face Bold", "fit": 0.8},
+        {"file": "a/Face-Medium.otf", "name": "Face Medium", "fit": 0.79},
+        {"file": "a/Other.otf", "name": "Other Regular", "fit": 0.7},
+    ]
+    assert [e["name"] for e in rendercheck.near_ties(ranked)] == ["Face Medium", "Other Regular"]
+    assert rendercheck.near_ties(ranked[:1]) == ranked[:1]
+    path, _ = _scan(tmp_path, "world")
+    strips = rendercheck.word_strips(path, [PageText(1, 400, 120, [])], 24)
+    assert {"there", "quick", "world"} <= {word for word, _ in strips}
+    sans, serif = (
+        rendercheck.Face(lambda px, n=n: ImageFont.truetype(_font(n), px)) for n in ("helv", "tiro")
+    )
+    words = rendercheck.scan_words(path, [PageText(1, 400, 120, [])], 20)
+    fit = {
+        face: rendercheck.place_fit(face, 0, rendercheck.em_size(words, face.at()), strips)
+        for face in (sans, serif)
+    }
+    assert fit[sans] > fit[serif]
+    assert rendercheck.place_fit(sans, 0, 50.0, []) == 0.0
+
+
+def test_digits_are_drawn_in_the_fonts_other_figures_too_and_an_ordinals_ending_as_a_superscript():
+    plain = rendercheck.Face(lambda px: ImageFont.load_default(px))
+    # A stand-in for old-style figures: the digits drawn as other marks.
+    old = rendercheck.Face(lambda px: ImageFont.load_default(px), [{ord("1"): ord("x")}])
+    assert len(rendercheck.drawings(plain, "in 1914")) == 1
+    assert len(rendercheck.drawings(old, "in 1914")) == 2
+    assert len(rendercheck.drawings(old, "in time")) == 1
+    # A superscript only after a digit: "je" and "twee" are words.
+    assert len(rendercheck.drawings(plain, "14e")) == 1 + len(rendercheck.SUPERSCRIPT)
+    assert len(rendercheck.drawings(plain, "de 2de keer")) == 1 + len(rendercheck.SUPERSCRIPT)
+    for word in ("je", "twee", "14 en", "e14"):
+        assert len(rendercheck.drawings(plain, word)) == 1
+    raised, level = rendercheck.drawings(plain, "14e")[1], rendercheck.drawings(plain, "14e")[0]
+    assert raised.shape[1] < level.shape[1]
+
+
+def test_a_font_without_other_figures_has_none(tmp_path):
+    (tmp_path / "helv.otf").write_bytes(pymupdf.Font("helv").buffer)
+    (tmp_path / "broken.otf").write_bytes(b"no font")
+    assert rendercheck.other_figures(tmp_path / "helv.otf") == []
+    assert rendercheck.other_figures(tmp_path / "broken.otf") == []
+
+
+def _font(name: str):
+    import io
+
+    return io.BytesIO(pymupdf.Font(name).buffer)
 
 
 def test_an_image_only_pages_words_are_its_first_readings(tmp_path):

@@ -164,6 +164,11 @@ def _initialise(pdf: Path, root: Path, language: str | None = None) -> Path:
     if language:
         d.language = language
     d.front = bookinit.read_front(source, kinds, settings.read_model, settings.ollama_url)
+    if Path(settings.fonts).is_dir():
+        held = root / "stages" / "typeface.json"
+        body = [p for p in pages if d.first <= p.number <= d.last]
+        d.typeface = rendercheck.match(source, body, Path(settings.fonts), held).file
+        d.faces = rendercheck.near(held)
     out = root / "init"
     out.mkdir(exist_ok=True)
     (out / "report.md").write_text(bookinit.report(d))
@@ -174,6 +179,8 @@ def _initialise(pdf: Path, root: Path, language: str | None = None) -> Path:
     typer.echo(f"language {d.language}; {len(pages)} PDF pages")
     typer.echo(f"text starts at {pagekinds.page_label(d.first, d.offset)}")
     typer.echo(f"text ends at   {pagekinds.page_label(d.last, d.offset)}")
+    if d.typeface:
+        typer.echo(f"typeface: {bookinit._faces(d)}")
     typer.echo(
         f"draft: {drafted}; report: {out / 'report.md'}; pages around both ends: {out / 'ends.png'}"
     )

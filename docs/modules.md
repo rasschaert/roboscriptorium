@@ -206,7 +206,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `init/report.md` and `init/ends.png`, the pages around both ends with both their numbers. The read
   model also reads the title, author and translator off the title and copyright pages
   (`read_front`); they go in the draft marked to confirm, and both ends are always shown for
-  confirmation.
+  confirmation. Where there is a font folder the typeface is matched (`rendercheck.match`) and
+  drafted as `typeface`, with the faces it was chosen among in a comment and in the report.
 - `flags.py`: regions a human should check, i.e. what isn't plain running
   text: headings, lines dropped mid-page or without the model being sure,
   garbled text, centred or set-apart lines. Page furniture (repeated running
@@ -373,8 +374,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   judges (`ROBO_ALARM_MODEL=…,render`). `match` finds the book's
   typeface in the font library (`ROBO_FONTS`, `work/fonts`): 240 lower-case words of
   the text layer cut out along their ink, every font on 40 of them, the best 40 fonts
-  on all, the best text cut (not bold or italic) kept with its ink spread and the
-  book's type size in `stages/typeface.json` (two to five minutes a book, once, whatever slice is built; `experiments/match_typefaces.py` does it ahead of a run). `Judge`
+  on all, and of the best five text cuts (not bold or italic) the one that draws 150
+  plain words best as the judge fits them (`near_ties`, `word_strips`, `place_fit`),
+  kept with its ink spread, the book's type size and the faces it was chosen among in
+  `stages/typeface.json`; book.toml's `typeface` (a file of the library, drafted by
+  `init`) is taken instead (two to five minutes a book, once, whatever slice is built; `experiments/match_typefaces.py` does it ahead of a run). `Judge`
   answers `ocrcheck._decide`'s question from the suspect's page and box: the ink
   between the blanks around the layer's words there, each version drawn (`drawings`)
   and laid over it at the best position and stretch (`fits`), the best fit's letter as

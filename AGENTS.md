@@ -86,7 +86,12 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **`work/` holds what git doesn't** (books, caches, review answers, the verdicts on
   every golden book in copyright), and an agent destroyed it once (2026-10-11) by
   committing a symlink in its place and merging it. Never symlink, copy or move it into
-  a worktree or branch; stage files by name, never `git add -A`.
+  a worktree or branch; stage files by name, never `git add -A`. A worktree's code runs
+  on the real data from the main checkout: `uv run --project ../<worktree> python …`
+  there (relative `work/` paths resolve in the main checkout, the code is the
+  worktree's); its tests need no `work/` at all. Give such a run its own output
+  folder under `work/probes/` when a run in flight reads the stage caches it would
+  rewrite.
 - **Read `HANDOVER.md` at the start of a session** and rewrite it at the end of one.
   Choose what to work on from docs/checklist.md (the order) and docs/outlook.md (the
   room left).
@@ -508,6 +513,8 @@ dash_spacing = "thin"  # … and their gaps ("none", "thin", "word"); else measu
 ellipsis = "..."       # optional: "…", "..." or ". . ." …
 ellipsis_space = false # … and a space before it; else measured on the scan
 blank = "..."          # optional: what a printed blank ("het __plein") becomes
+typeface = "Adobe Font Folio 11/Western Fonts/Sabon/SabonLTStd-Roman.otf"  # optional: a
+                       # file in work/fonts, drafted by `init`; else matched on the scan
 ```
 
 ```sh

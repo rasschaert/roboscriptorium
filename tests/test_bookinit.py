@@ -90,6 +90,27 @@ def test_the_title_author_and_translator_come_from_the_models_json_and_go_in_the
     assert bookinit.parse_front("no json here") == {}
 
 
+def test_the_matched_typeface_goes_in_the_draft_with_the_faces_it_was_chosen_among():
+    import tomllib
+
+    d = _draft()
+    assert "typeface" not in bookinit.toml(d) and "not matched" in bookinit.report(d)
+    d.typeface = "Minion Pro/MinionPro-Medium.otf"
+    d.faces = [
+        {
+            "file": "Warnock/Disp.otf",
+            "name": "Warnock Pro Display",
+            "fit": 0.725,
+            "place_fit": 0.859,
+        },
+        {"file": d.typeface, "name": "Minion Pro Medium", "fit": 0.7249, "place_fit": 0.882},
+    ]
+    text = bookinit.toml(d)
+    assert tomllib.loads(text)["typeface"] == d.typeface
+    assert "Minion Pro Medium 0.882; Warnock Pro Display 0.859" in text
+    assert "Minion Pro Medium 0.882; Warnock Pro Display 0.859" in bookinit.report(d)
+
+
 def test_the_front_pages_are_the_title_page_else_the_half_title_and_the_copyright_page():
     assert bookinit.front_pages({1: "cover", 2: "half-title", 3: "colophon", 4: "text"}) == [2, 3]
     assert bookinit.front_pages({2: "half-title", 3: "title", 4: "colophon"}) == [3, 4]

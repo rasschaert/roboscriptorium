@@ -39,6 +39,9 @@ class Book:
     # in the text: "..." as the author's publisher sets it in its e-books. Unset, the
     # blank stays as the readers read it, a run of underscores.
     blank: str | None = None
+    # The typeface it is set in: a font file in the font folder (`Settings.fonts`), which
+    # the judge `render` draws with. Matched on the scan when unset.
+    typeface: str | None = None
     # Who translated it, as the colophon names them ("" when it isn't a translation).
     translator: str = ""
 
@@ -61,6 +64,7 @@ class Book:
             ellipsis=data.get("ellipsis"),
             ellipsis_space=data.get("ellipsis_space"),
             blank=data.get("blank"),
+            typeface=data.get("typeface"),
             translator=data.get("translator", ""),
         )
 

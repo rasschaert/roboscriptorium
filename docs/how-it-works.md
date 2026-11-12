@@ -274,12 +274,15 @@ learned whom to believe for that kind of difference.
 Render and compare (`rendercheck.py`) is no model and knows no language. Once per
 book it finds the typeface: a few hundred words of the text layer are cut from the scan
 along their ink, drawn in every font of a library (`work/fonts`, the user's own, never
-in git), and the fonts ranked by how well the drawings lie over the ink; the best text
-cut is kept with the book's type size and how heavily the scan's ink spreads. For a
+in git), and the fonts ranked by how well the drawings lie over the ink; of the best
+five text cuts, the one that draws a sample of the book's plain words best is kept
+with the book's type size and how heavily the scan's ink spreads. `init` writes that
+choice into `book.toml` as `typeface`, with the runners-up beside it, where a person
+can overrule it. For a
 suspect it cuts the ink at that place, from the blank before it to the blank after,
 draws each version the ways a book may set it (as the font spaces it, a closing quote
 tucked over the stop before it, an ellipsis with its dots apart, capitals as small
-capitals), slides each drawing over the ink and votes for the one that fits best; the
+capitals, an ordinal's ending as a superscript, digits as old-style figures), slides each drawing over the ink and votes for the one that fits best; the
 margin over the next is its confidence. Where the text layer has no words at the
 place it has no vote. It is weakest where the library lacks the book's typeface.
 

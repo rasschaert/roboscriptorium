@@ -4,8 +4,9 @@ that fits best gets the vote, and the margin over the next is its confidence.
 
 The typeface is found from the scan (`match`): words of the text layer are cut out along
 their ink, drawn in every font of a library, and the fonts ranked by how well the
-drawings lie over the ink. The library is a folder of OpenType and TrueType files
-(`Settings.fonts`), out of git.
+drawings lie over the ink; the best few are then ranked again by the judge's own fit on
+plain words, which tells apart faces whose word shapes tie. The library is a folder of
+OpenType and TrueType files (`Settings.fonts`), out of git.
 
 The judge (`Judge`) answers the vision judges' question (`ocrcheck._decide`) from the
 suspect's page and box alone, so it sits beside them as one more vote for the arbiter.
@@ -19,6 +20,7 @@ from pathlib import Path
 
 import numpy as np
 import pymupdf
+from fontTools.ttLib import TTFont
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from scipy.signal import fftconvolve
 
@@ -30,15 +32,19 @@ from roboscriptorium.pdf import PageText
 # The judge's name among the second vision judges (`ROBO_ALARM_MODEL=…,render`).
 MODEL = "render"
 # The cached match's format.
-VERSION = 1
+VERSION = 2
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 3
+FITS = 4
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
 WORDS = 240
 FIRST_PASS = 40
 KEPT = 40
+# The best text cuts of the word-shape ranking, which the judge's own fit chooses among.
+NEAR = 5
+# Plain words of the layer that choice is made on.
+SETTLE_WORDS = 150
 STRETCHES = (0.92, 0.96, 1.0, 1.04, 1.08)
 # Ink spread: a drawing's strokes thinned or thickened by this many scan pixels.
 SPREADS = (-3, 0, 3, 5)
@@ -52,6 +58,9 @@ DOT_GAPS = (0.08, 0.16, 0.26, 0.4)
 KERNS = (-0.12, -0.22, -0.32)
 # Small capitals drawn as capitals at this share of their size.
 SMALL_CAPS = (0.74, 0.82)
+# An ordinal's ending set as a superscript ("14ᵉ"): its share of the size, and how far
+# up, in ems.
+SUPERSCRIPT = ((0.6, 0.3), (0.7, 0.25))
 # A margin this wide between the best fit and the next is a confidence of 1.
 SURE_MARGIN = 0.25
 _NOT_TEXT = re.compile(r"Bold|Black|Semibold|Demi|Italic|Heavy", re.I)
@@ -59,19 +68,51 @@ _PLAIN = re.compile(r"regular|roman", re.I)
 _STOP_QUOTE = re.compile(r"([.,…])([’”'\"])")
 _CAPITALS = re.compile(r"[A-ZÀ-Þ]{2,}")
 _DOTS = re.compile(r"\.\.\.|…")
+_ORDINAL = re.compile(r"(?<=\d)(?:e|de|ste)\b")
 _BLUR = ImageFilter.GaussianBlur(1.5)
 
 
-class Face:
-    """A font, drawn at any size. `load(px)` gives it at `px` pixels an em."""
+def other_figures(path: Path) -> list[dict[int, int]]:
+    """The font's figures other than its default ones (old-style, or lining where the
+    default is old-style), each set as a translation of the digits to the code points
+    the font keeps them at. Only sets the font gives code points (Adobe's fonts do, in
+    the private-use area) can be drawn: the drawing library applies no font features."""
+    try:
+        font = TTFont(path, lazy=True)
+        gsub, cmap = font["GSUB"].table, font.getBestCmap()
+    except Exception:  # noqa: BLE001  (a font without the table, or one fontTools can't read)
+        return []
+    codes = {name: code for code, name in cmap.items()}
+    digits = {cmap[ord(d)]: ord(d) for d in "0123456789" if ord(d) in cmap}
+    sets = []
+    for tag in ("onum", "lnum"):
+        figures = {}
+        for record in gsub.FeatureList.FeatureRecord:
+            if record.FeatureTag != tag:
+                continue
+            for index in record.Feature.LookupListIndex:
+                for sub in gsub.LookupList.Lookup[index].SubTable:
+                    mapping = getattr(getattr(sub, "ExtSubTable", sub), "mapping", {})
+                    for plain, other in mapping.items():
+                        if plain in digits and other in codes:
+                            figures[digits[plain]] = codes[other]
+        if len(figures) == 10 and figures not in sets:
+            sets.append(figures)
+    return sets
 
-    def __init__(self, load):
+
+class Face:
+    """A font, drawn at any size. `load(px)` gives it at `px` pixels an em; `figures`
+    are its other sets of digits (`other_figures`)."""
+
+    def __init__(self, load, figures: list[dict[int, int]] = ()):
         self._load = load
         self._cuts: dict[int, ImageFont.FreeTypeFont] = {}
+        self.figures = list(figures)
 
     @classmethod
     def from_file(cls, path: Path) -> "Face":
-        return cls(lambda px: ImageFont.truetype(str(path), px))
+        return cls(lambda px: ImageFont.truetype(str(path), px), other_figures(path))
 
     def at(self, scale: float = 1.0) -> ImageFont.FreeTypeFont:
         px = round(RENDER_PX * scale)
@@ -245,13 +286,50 @@ def library_fonts(library: Path) -> dict[str, ImageFont.FreeTypeFont]:
     return fonts
 
 
+def _is_text(entry: dict) -> bool:
+    return not _NOT_TEXT.search(entry["name"]) or bool(_PLAIN.search(Path(entry["file"]).stem))
+
+
 def text_cut(ranked: list[dict]) -> dict:
     """Of fonts ranked by fit, the best that is a text cut: neither bold nor italic by its
     name, or regular by its file's."""
-    for entry in ranked:
-        if not _NOT_TEXT.search(entry["name"]) or _PLAIN.search(Path(entry["file"]).stem):
-            return entry
-    return ranked[0]
+    return next((entry for entry in ranked if _is_text(entry)), ranked[0])
+
+
+def near_ties(ranked: list[dict], count: int = NEAR) -> list[dict]:
+    """The best `count` text cuts of fonts ranked by fit, best first; the best font alone
+    where none is a text cut."""
+    return [entry for entry in ranked if _is_text(entry)][:count] or ranked[:1]
+
+
+def word_strips(pdf: Path, pages: list[PageText], count: int) -> list[tuple[str, np.ndarray]]:
+    """Plain words of four letters or more from up to fifteen of `pages`, each with its
+    ink as the judge cuts a place (`place_ink`)."""
+    rng = random.Random(1)
+    found = []
+    with pdflayer.PDF_LOCK, pymupdf.open(pdf) as doc:
+        sample = rng.sample(pages, min(15, len(pages)))
+        for text in sample:
+            page = doc[text.number - 1]
+            words = [
+                w for w in pdflayer.page_words(page, text) if len(w[4]) >= 4 and w[4].isalpha()
+            ]
+            for w in rng.sample(words, min(len(words), count // len(sample) + 4)):
+                ink = place_ink(page, w[:4], text)
+                if ink is not None:
+                    found.append((w[4], ink))
+    rng.shuffle(found)
+    return found[:count]
+
+
+def place_fit(
+    face: "Face", spread: int, size: float, strips: list[tuple[str, np.ndarray]]
+) -> float:
+    """How well a face draws the book's plain words, as the judge fits a version (`fits`):
+    the mean over `strips`, 0 without any."""
+    if not strips:
+        return 0.0
+    return float(np.mean([fits(face, spread, size, ink, [word])[0] for word, ink in strips]))
 
 
 def em_size(words: list[tuple[str, np.ndarray]], font: ImageFont.FreeTypeFont) -> float:
@@ -264,17 +342,31 @@ def em_size(words: list[tuple[str, np.ndarray]], font: ImageFont.FreeTypeFont) -
     return RENDER_PX * float(np.median(ratios))
 
 
-def match(pdf: Path, pages: list[PageText], library: Path, cache: Path | None = None) -> Match:
+def match(
+    pdf: Path,
+    pages: list[PageText],
+    library: Path,
+    cache: Path | None = None,
+    typeface: str | None = None,
+) -> Match:
     """The book's typeface among the library's fonts, by the scan's words on `pages`:
-    every font on a few words, then the best on all of them. A match
-    in `cache` is kept whatever pages it was made from: a book is set in one typeface,
-    and a slice of it must be judged as the whole is."""
-    key = {"version": VERSION}
+    every font on a few words, the best on all of them, and of those the best few text
+    cuts on how the judge itself fits plain words (`place_fit`). `typeface`, a font file
+    in the library (book.toml's key), is taken instead of a choice. A match in `cache`
+    is kept whatever pages it was made from: a book is set in one typeface, and a slice
+    of it must be judged as the whole is."""
+    key = {"version": VERSION, "typeface": typeface}
     if cache is not None and cache.exists():
         held = json.loads(cache.read_text())
         if held.get("key") == key and (library / held["match"]["file"]).exists():
             return Match(**held["match"])
-    fonts = library_fonts(library)
+    if typeface is not None and not (library / typeface).is_file():
+        raise ValueError(f"book.toml's typeface {typeface!r} is no file in {library}")
+    fonts = (
+        library_fonts(library)
+        if typeface is None
+        else {typeface: ImageFont.truetype(str(library / typeface), RENDER_PX)}
+    )
     words = scan_words(pdf, pages, WORDS)
     if not fonts or not words:
         raise ValueError(
@@ -294,17 +386,38 @@ def match(pdf: Path, pages: list[PageText], library: Path, cache: Path | None = 
             {"file": name, "name": " ".join(fonts[name].getname()), "fit": fit, "spread": spread}
         )
     ranked.sort(key=lambda e: -e["fit"])
-    entry = text_cut(ranked)
+    near = near_ties(ranked)
+    strips = word_strips(pdf, pages, SETTLE_WORDS) if len(near) > 1 else []
+    for entry in near:
+        entry["size"] = em_size(words[:80], fonts[entry["file"]])
+        entry["place_fit"] = place_fit(
+            Face.from_file(library / entry["file"]), entry["spread"], entry["size"], strips
+        )
+    # `max` keeps the first of equals: the better word shapes.
+    entry = max(near, key=lambda e: e["place_fit"])
     found = Match(
         entry["file"],
         entry["name"],
         round(entry["fit"], 4),
         entry["spread"],
-        round(em_size(words[:80], fonts[entry["file"]]), 2),
+        round(entry["size"], 2),
     )
     if cache is not None:
-        write_atomic(cache, json.dumps({"key": key, "match": asdict(found)}, indent=1))
+        tried = [
+            {"file": e["file"], "name": e["name"], "fit": round(e["fit"], 4),
+             "place_fit": round(e["place_fit"], 4)}
+            for e in near
+        ]  # fmt: skip
+        write_atomic(
+            cache, json.dumps({"key": key, "match": asdict(found), "near": tried}, indent=1)
+        )
     return found
+
+
+def near(cache: Path) -> list[dict]:
+    """The faces a cached match chose among, best word shapes first: each its file, name,
+    word fit and the judge's fit on plain words."""
+    return json.loads(cache.read_text()).get("near", []) if cache.exists() else []
 
 
 def place_ink(page: pymupdf.Page, box, text: PageText | None = None) -> np.ndarray | None:
@@ -410,15 +523,17 @@ def _widest_blank(cols: np.ndarray, start: int, end: int) -> tuple[int, int] | N
     return best
 
 
-def _pieces(face: Face, pieces: list[tuple[str, float, float]]) -> np.ndarray | None:
-    """Pieces of text drawn on one baseline: each (text, scale, shift before it in ems)."""
-    width = int(sum(face.at(sc).getlength(tx) for tx, sc, _ in pieces)) + RENDER_PX
+def _pieces(face: Face, pieces: list[tuple]) -> np.ndarray | None:
+    """Pieces of text drawn in a row: each (text, scale, shift before it in ems), and
+    how far above the baseline in ems where it is a superscript."""
+    width = int(sum(face.at(p[1]).getlength(p[0]) for p in pieces)) + RENDER_PX
     image = Image.new("L", (width, RENDER_PX * 2), 255)
     draw, x = ImageDraw.Draw(image), RENDER_PX // 4
-    for text, scale, shift in pieces:
+    for text, scale, shift, *rise in pieces:
         cut = face.at(scale)
         x += shift * RENDER_PX
-        draw.text((x, RENDER_PX * 1.3), text, font=cut, fill=0, anchor="ls")
+        up = rise[0] * RENDER_PX if rise else 0
+        draw.text((x, RENDER_PX * 1.3 - up), text, font=cut, fill=0, anchor="ls")
         x += cut.getlength(text)
     grey = _levelled(_darkness(image))
     return None if grey is None else _trimmed(grey)
@@ -427,7 +542,8 @@ def _pieces(face: Face, pieces: list[tuple[str, float, float]]) -> np.ndarray | 
 def drawings(face: Face, version: str) -> list[np.ndarray]:
     """The ways a book may set a version: as the font spaces it; with a closing quote
     kerned over the stop before it; with an ellipsis's dots apart; with a run of
-    capitals as small capitals."""
+    capitals as small capitals; with an ordinal's ending as a superscript; each of these in the
+    font's other figures where the version has digits."""
     ways = [[(version, 1.0, 0.0)]]
     if m := _STOP_QUOTE.search(version):
         for kern in KERNS:
@@ -454,6 +570,21 @@ def drawings(face: Face, version: str) -> list[np.ndarray]:
             if at < len(version):
                 way.append((version[at:], 1.0, 0.0))
             ways.append(way)
+    if m := _ORDINAL.search(version):
+        for small, rise in SUPERSCRIPT:
+            ways.append(
+                [
+                    (version[: m.start()], 1.0, 0.0),
+                    (m.group(), small, 0.0, rise),
+                    (version[m.end() :], 1.0, 0.0),
+                ]
+            )
+    if any(c.isdigit() for c in version):
+        ways += [
+            [(piece[0].translate(figures), *piece[1:]) for piece in way]
+            for figures in face.figures
+            for way in list(ways)
+        ]
     return [g for g in (_pieces(face, way) for way in ways) if g is not None]
 
 
@@ -510,9 +641,12 @@ class Judge:
         return {"reading": Answer("choice", letters[order[0]], sure, {})}
 
 
-def judge(pdf: Path, pages: list[PageText], library: Path, cache: Path) -> Judge:
-    """The judge for a book, its typeface matched from `pages` (and kept in `cache`)."""
+def judge(
+    pdf: Path, pages: list[PageText], library: Path, cache: Path, typeface: str | None = None
+) -> Judge:
+    """The judge for a book, its typeface matched from `pages` (and kept in `cache`), or
+    `typeface` where book.toml names one."""
     if not library.is_dir():
         raise ValueError(f"the judge {MODEL!r} draws with the fonts in {library}: no such folder")
-    found = match(pdf, pages, library, cache)
+    found = match(pdf, pages, library, cache, typeface)
     return Judge(pdf, Face.from_file(library / found.file), found, pages)

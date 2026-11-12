@@ -391,9 +391,15 @@ stop against a comma. This judge draws each version of a suspect in the book's
 typeface, at the book's size, lays it over the scan's ink and votes for the better fit,
 with the margin over the next version as its confidence. The typeface is found from the
 scan: words of the text layer cut out along their ink, drawn in every font of a library
-(`ROBO_FONTS`, licensed files out of git) and ranked by fit. A version is drawn the ways
-a book may set it: as the font spaces it, with a closing quote kerned over the stop
-before it, with an ellipsis's dots apart, with a run of capitals as small capitals.
+(`ROBO_FONTS`, licensed files out of git) and ranked by fit. Word shapes tie between
+faces that draw a suspect very differently, so the best five text cuts are ranked again
+by the judge's own fit: 150 plain words of the layer, each cut as a suspect is and drawn
+at the book's size. book.toml's `typeface`, which `init` drafts from the match, overrules
+it. A version is drawn the ways a book may set it: as the font spaces it, with a closing
+quote kerned over the stop before it, with an ellipsis's dots apart, with a run of
+capitals as small capitals, with an ordinal's ending as a superscript ("14ᵉ"), and with digits in
+the font's old-style figures where it has them at code points of their own (Adobe's do).
+Without a font folder the build says so and goes on without this judge's vote.
 
 How a place's ink is cut decides more than the drawing does. The strip runs from the
 blank before the layer's words there to the blank after them, so a mark the layer
@@ -407,10 +413,19 @@ a vote for the layer's version. An image-only scan's words are its first reading
 
 Its failure: a typeface the library lacks or matches poorly (the fit is the print on
 72–97% of a book's labelled places, lowest where the match is weak), and a place the
-text layer has no words for, where it has no vote. The word-shape score can't choose
-among near-tied faces: Metro 2033's three leaders (0.722–0.725) give 72%, 88% and 88%
-of its places, and the match took the first. A raised ordinal ("14e") is drawn full
-size and loses to "14°". The arbiter weighs it like any judge.
+text layer has no words for, where it has no vote. An old-style zero is an "o" to it
+("’70" against "’7o"). The arbiter weighs it like any judge.
+
+The choice among near-ties (`experiments/probe_face_by_places.py`,
+`probe_face_by_words.py`, 2026-11-12, up to 400 labelled places a book, 23 books): the
+face the word shapes rank first is the print on 90.0% of a book's places on average
+(Metro 2033 67%, its three leaders tied at 0.722–0.725); the best of the five on 91.7%;
+the one the judge's fit on plain words chooses on 91.1% (Metro 87%, no book more than
+half a point down). Choosing by agreement with the model judges where they are of one
+mind reaches the 91.7%, but needs their votes first, which `init` doesn't have. The
+five faces voting together: 90.5–91.3%, no better than one well chosen. Old-style
+figures and the superscript ending, on the 478 labelled places with a digit in a version:
+20 fixed, 4 made (the zero).
 
 The measurement (`experiments/probe_render_compare.py`, 2026-11-12, no models): the
 print on 87% of 26,309 labelled places over 23 books (punctuation 83%, letters,
