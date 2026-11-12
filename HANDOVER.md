@@ -6,7 +6,7 @@ end of every session. Top sections rewritten 2026-11-12 (the first by the second
 09:00, the next by the first at ~08:30); the older sections
 from 2026-11-09 and 2026-11-10.
 
-## Render and compare: pick up here (the second session, ended 2026-11-12 09:00)
+## Render and compare: pick up here (the second session, ended 2026-11-12 09:00, nothing running)
 
 **What it is.** The user's idea (2026-11-11): a judge that knows no language. Each
 version of a suspect is drawn in the book's typeface and laid over the scan's ink; the
@@ -24,25 +24,24 @@ production's arbiter was trained without its vote. The docs (README, primer,
 how-it-works, the diagram, models.md, AGENTS.md's judge row) already describe it as in
 use, at the user's word ("be optimistic"); they run ahead of the code until step 3.
 
-**In flight when the session ended:** screen `robo-render-judge`, started 08:11, CPU
-only (script `work/runs/render-judge.sh`, logs `work/runs/render-judge-*.log`, stop with
-`experiments/stop-run.sh render-judge`). The user took the laptop along, so it may have
-paused or died: `screen -ls`, then `tail -8 docs/run-times.md`. Done: typefaces matched
-(each book's `stages/typeface.json`), the trust data rebuilt with the vote
-(`work/probes/ocr-trust-render2/`, 23 books). Under way at 09:00: two trainings side by
-side, about 100 minutes, which print nothing until they save:
+**Nothing runs.** The run was stopped at the user's word on 2026-11-12, 08:55, half an
+hour into its trainings (script `work/runs/render-judge.sh`, logs
+`work/runs/render-judge-*.log`). Done and kept: every book's typeface
+(`stages/typeface.json`) and the trust data rebuilt with the vote
+(`work/probes/ocr-trust-render2/`, 23 books). Not made: the two arbiters,
 `work/models/ocr-trust-render*.pkl` (with the vote) and `ocr-trust-render-ctl*.pkl` (the
-control, same data without it). Then four warm benches asking below 0.93: the control's
-tuning and validation, then the vote's against the control's files.
+control, same data without it; about 100 minutes side by side, CPU, printing nothing
+until they save), and the four warm benches asking below 0.93: the control's tuning and
+validation, then the vote's against the control's files.
 
 **Pick up in this order.**
 
-1. **See where the run stopped.** If the screen is gone and the benches are missing,
-   start it again: `experiments/detached.sh render-judge work/runs/render-judge.sh`
-   with a watcher. The typeface and trust-data steps redo themselves in minutes from
-   caches; if both sets of `.pkl` files exist (19 each), comment the two training
-   steps out of the script first. The vote's benches take "the newest tuning and
-   validation file in `work/bench`" as their control, so run no other bench meanwhile.
+1. **Start the run again**, about two hours, CPU only, with a watcher:
+   `experiments/detached.sh render-judge work/runs/render-judge.sh`. Its first two
+   steps redo themselves from caches (the typefaces in a minute; the trust data in
+   about 18, or comment that step out: the 23 files are there). The vote's benches
+   take "the newest tuning and validation file in `work/bench`" as their control, so
+   run no other bench meanwhile.
 2. **Read the vote's benches against the control's** (`render-judge-tuning.log`,
    `render-judge-validation.log`): questions, unasked, asked, and the italic line
    before the verdict (an asked split word counts three italic errors). Tuning
