@@ -1937,3 +1937,22 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   once. Nothing was left that a crop doesn't settle, so the user gets the 58 to confirm
   (verdicts stay theirs), `work/probes/unasked/candidates-20261112.json`. The build's
   75 are steps in the checklist.
+- 2026-11-12: **Batch five's retraining: the arbiter trained on the grown books' pages
+  is BETTER on tuning, no change on validation** (`work/models/ocr-trust-grown5*.pkl`,
+  twenty seeds, 33,387 suspects for about 29,000, the trust data of Vals alarm, Metro
+  2033, De tuin and The Thief-Taker's Apprentice rebuilt whole; 166 minutes beside
+  another training; a raw 0.9 is right 92.4% as before). Asking below 0.93, against
+  the twenty seeds trained on the old slices, same pages and italics by place. Tuning:
+  questions 3,997 → 3,971, unasked 576 → 564, asked 1,425 → 1,459, after review
+  0.25 → 0.25 with the interval clear of zero at every slip rate; wrong words fixed 51
+  (8 unasked), made 76 (7 unasked): it asks about more of its errors and leaves fewer
+  unasked. Goede dochter asks less (0.73 → 0.67 a page), De tuin more (0.68 → 0.72);
+  italics 1,248 → 1,248. Validation: NO CHANGE, questions 548 → 546, unasked
+  167 → 166, asked 170 → 179. Against production's arbiter at 0.9 on the same pages:
+  tuning questions 4,011 → 3,971 and unasked 585 → 564, validation questions
+  518 → 546 and unasked 170 → 166. The first retraining on grown slices to come out
+  ahead: the two before it (2026-10-25, 2026-11-10) were weighed as one training
+  against another, a difference the seeds alone made. It carries the same asked
+  "EenVandaag" as the other twenty seeds, so the bench's rule still reads WORSE against
+  production by those three italic errors. Proposed to the user as the arbiter to
+  switch to, in place of the one trained on the old slices.

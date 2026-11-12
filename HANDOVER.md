@@ -57,14 +57,13 @@ main; main has moved since, so rebase `grow6` on main and `italics-by-place` on
 fast-forward main and push). Held back while the second session's run loaded main's
 code (it changes `bench.SETS` and `trustdata.SPECS`).
 
-**Batch five's retraining runs since 03:16** (screen `robo-train-grown5`, script
-`work/runs/train-grown5.sh`, log `work/runs/train-grown5.log`, CPU only, about 75
-minutes or more beside the second session's run): the arbiter of twenty seeds on the
-rebuilt trust data, into `work/models/ocr-trust-grown5*.pkl`. Then bench it warm from
-`../roboscriptorium-caps` with `ROBO_OCR_ASK_BELOW=0.93
-ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-grown5.pkl`, tuning against
-`tuning-20261112T021546-7e3d354-dirty.json` and validation against
-`validation-20261112T021713-7e3d354-dirty.json` (the twenty seeds on the old data).
+**Batch five's retraining is weighed**: the arbiter of twenty seeds trained on the
+rebuilt trust data (`work/models/ocr-trust-grown5*.pkl`) is BETTER on tuning than the
+twenty seeds on the old slices (questions 3,997 → 3,971, unasked 576 → 564) and no
+change on validation (`work/bench/tuning-20261112T050659-28768e9-dirty.json`,
+`validation-20261112T050748-28768e9-dirty.json`). The agent proposes it as the arbiter
+production switches to: on the user's word the grown5 files go in production's place,
+not the steady20 ones.
 
 **Done for the night's last step** (the unasked errors that look like the reference's):
 223 places read on their crops, 58 for the user to confirm (below, "Waiting on the

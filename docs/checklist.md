@@ -32,7 +32,10 @@ last on 2026-11-06, so next by 2026-11-13).
 In this order; `HANDOVER.md` has the paths and the commands.
 
 - [ ] **user**: the word to switch production to the steadier arbiter (their choice of
-      2026-11-11: twenty trainings averaged, a smooth calibration, asking below 0.93).
+      2026-11-11: twenty trainings averaged, a smooth calibration, asking below 0.93),
+      and to which: the one trained on batch five's data (`ocr-trust-grown5`, better
+      on tuning than the one on the old slices, no change on validation; the agent's
+      proposal) or the one on the old slices (`ocr-trust-steady20`).
       Benched on the grown set with italics by place: tuning better in words, 14
       questions and 9 unasked places fewer, and WORSE by the bench's rule for one asked
       split italic word ("EenVandaag", Vals alarm); validation no change (decisions.md,
@@ -42,10 +45,6 @@ In this order; `HANDOVER.md` has the paths and the commands.
       italic count by a word's place), both rebased and benched from their worktrees,
       fast-forwarded onto main once nothing loads main's code; the fresh baselines are
       made (HANDOVER.md has their files)
-- [ ] Batch five's retraining weighed: the arbiter of twenty seeds retrained on the
-      trust data with four books rebuilt whole (training since 2026-11-12 03:16,
-      `work/models/ocr-trust-grown5*.pkl`), benched asking below 0.93 against the
-      twenty seeds trained on the old slices
 - [ ] After batch five, the two nulls that waited for it: autotrust-jev 9B as a second
       text judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
       170 → 178) and the book's own vocabulary as an arbiter feature (null 2026-11-08)
@@ -1064,6 +1063,9 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       better, a book gaining any vetoes (`bench.heading_errors`)
 - [x] The bench counts headings set letter for letter beside those found, and prints the
       totals over all books when they move (2026-11-01, `bench.heading_totals`)
+- [x] 2026-11-12 Batch five's retraining weighed: the arbiter of twenty seeds trained on
+      the four rebuilt books is better on tuning (unasked 576 → 564, 26 questions
+      fewer) and no change on validation; the first retraining on grown slices ahead
 - [x] 2026-11-12 Batch five of the slice growth: Vals alarm, The Thief-Taker's
       Apprentice, Metro 2033, De tuin van de avondnevel, Au pair and De vergelding scored
       whole (915 pages, 13 h cold): no change, tuning now 6,180 pages; the room to grow
@@ -1071,8 +1073,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 - [x] 2026-10-25 to 2026-11-07 The tuning slices grown in four batches while the machine
       was idle (the user, 2026-10-25), from ~1,700 to ~5,200 pages: the bench's interval
       narrows with the square root of the pages (about ±0.010 at 2,271 pages); more
-      pages did not make a better arbiter (decisions.md, 2026-10-25). Batch five is
-      under In flight
+      pages did not make a better arbiter (decisions.md, 2026-10-25)
 - [x] ~~ABBYY's letter confidence as an arbiter feature~~: dropped 2026-10-24 without a
       probe: only the public-domain items (Crime, Dolittle) have their `_abbyy.gz`; a
       lending-library scan (Stella, the user's books, every other pair) keeps it
