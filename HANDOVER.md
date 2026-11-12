@@ -17,12 +17,19 @@ lowers the arbiter's silent errors at every budget of questions** (trees, 23 boo
 left out in turn: 26 → 19 at the rule's questions, 480/189/103/31 → 438/153/83/25 at
 0/0.25/0.5/1 a page; logs `work/runs/render-arbiter-{with,without}.log`, votes in
 `work/probes/ocr-trust-render/`, made from the trust data before batch five's rebuild).
-One book got worse, Het geluid van bananen, drawn in a condensed cut. **Next, in
-order:** `book_font` in `experiments/probe_render_compare.py` mended and that book
-retried; the fit built into `ocrcheck` as a judge with its reason in docs/design.md;
-the trust data rebuilt and the arbiter retrained (against
-`work/models/ocr-trust-grown5.pkl`, asking below 0.93); `bench tuning`, then
-`validation`. Nothing of it runs now.
+It is in the pipeline as a judge, off by default (`rendercheck.py`,
+`ROBO_ALARM_MODEL=…,render`; docs/design.md, "Render and compare"). One book got worse in
+the arbiter test, Het geluid van bananen; not yet explained (not its font cut).
+**In flight since 2026-11-12 07:40, about three hours:** screen `robo-render-judge`
+(script `work/runs/render-judge.sh`, logs `work/runs/render-judge-*.log`; stop with
+`experiments/stop-run.sh render-judge`): typefaces matched for 33 books, the trust data
+rebuilt through the build with the judge into `work/probes/ocr-trust-render2/`, two
+arbiters trained on it (`work/models/ocr-trust-render*.pkl` with the vote,
+`ocr-trust-render-ctl*.pkl` the control without), then `bench tuning` and `validation`
+of each, asking below 0.93, against the grown5 arbiter's runs
+(`work/bench/tuning-20261112T050659-…` and `validation-20261112T050748-…`). Read the
+vote's bench against the control's: questions, unasked, and the italic line before the
+verdict. Production's arbiter files are not touched.
 Every book's typeface is in
 `work/probes/font-match/`. The fonts are the user's library, copied to `work/fonts/`
 (gitignored: licensed, never in git).
