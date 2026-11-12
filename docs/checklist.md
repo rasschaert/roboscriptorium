@@ -305,6 +305,16 @@ are under Done, "Architecture probes".
             spread and blur fitted to each scan more finely; a word's cut chosen per
             place (italic, bold, small capitals); the kerning and spacing ways learnt
             from the book's uncontested words instead of fixed lists
+      - [ ] **The typeface as part of `init`** (the user, 2026-11-12: "can we somehow
+            make this task something that the pipeline can reliably do? we could then
+            make it part of the init process"). The match is code already and runs
+            unasked on a book's first build with the judge (`rendercheck.match`, two to
+            five minutes, kept in `stages/typeface.json`); what was done by hand on
+            2026-11-12 was choosing among its near-ties (Metro 2033). So: `init` runs
+            the match and drafts a `typeface` key in `book.toml`, naming the face and
+            its fit, which a person can overrule; the build reads the key before
+            matching; and the choice among the best few is made by the places (the
+            first of the tactics above), so no one has to
       - [ ] A raised ordinal drawn raised ("14e" loses to "14°", 12 places in Het geluid
             van bananen)
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
