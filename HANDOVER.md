@@ -24,28 +24,28 @@ production's arbiter was trained without its vote. The docs (README, primer,
 how-it-works, the diagram, models.md, AGENTS.md's judge row) already describe it as in
 use, at the user's word ("be optimistic"); they run ahead of the code until step 3.
 
-**Running since 2026-11-12, about 19:45 (the third session), two screens, both with
-watchers.**
+**Running since 2026-11-13, about 00:15 (the third session), one screen with a
+watcher: `robo-render-judge2`** (`work/runs/render-judge2.sh`), the second round, with
+**the worktree `../robo-render`'s code** (branch `render-default`) on this checkout's
+data: the new typefaces (`work/probes/typeface-v2/<book>.json`, copied over each book's
+`stages/typeface.json`, the old kept as `typeface-v1.json`), the trust data rebuilt into
+`work/probes/ocr-trust-render3/` (~25 min), the arbiter
+`work/models/ocr-trust-render3*.pkl` trained (~170 min), then bench tuning and
+validation against the first round's control
+(`work/bench/tuning-20261112T224052-9e63951-dirty.json`,
+`validation-20261112T224139-9e63951-dirty.json`). Logs `work/runs/render-judge2-*.log`.
+Run no other bench until the screen is gone.
 
-- `robo-render-judge` (`work/runs/render-judge.sh`, its trust-data step commented out:
-  the 23 files were there): the two arbiters side by side
-  (`work/models/ocr-trust-render*.pkl` with the vote, `ocr-trust-render-ctl*.pkl`
-  without), then four warm benches asking below 0.93: the control's tuning and
-  validation, then the vote's against the control's files (named on the "control runs:"
-  line of `work/runs/render-judge.out`). Logs `work/runs/render-judge-*.log`.
-- `robo-render-judge2` (`work/runs/render-judge2.sh`) waits for the first, then runs
-  the second round with **the worktree `../robo-render`'s code** (branch
-  `render-default`, see below) on this checkout's data: the new typefaces
-  (`work/probes/typeface-v2/<book>.json`) copied over each book's
-  `stages/typeface.json` (the old kept as `typeface-v1.json`), the trust data rebuilt
-  into `work/probes/ocr-trust-render3/`, the arbiter `work/models/ocr-trust-render3*.pkl`
-  trained, and bench tuning and validation against the first round's control. Logs
-  `work/runs/render-judge2-*.log`. Run no other bench until both screens are gone.
+**The first round is read** (decisions.md, 2026-11-12, on the branch): the vote is
+BETTER on tuning (questions 3,983 → 3,570, unasked wrong words 715 → 687) and WORSE by
+the rule on validation, through one book whose typeface the library lacks (Het laatste
+bevel). Hence the judge's confidence now counts how well its pick fits
+(`rendercheck.sureness`), in the second round. The first round's arbiters:
+`work/models/ocr-trust-render*.pkl` and `ocr-trust-render-ctl*.pkl`.
 
 **The branch `render-default`, worktree `../robo-render`: done, tested (736 pass there),
-NOT COMMITTED** (1Password was locked all evening; the user knows). Stage by name and
-commit there, then merge to main once both screens are gone (never edit `src/` on main
-while a bench runs). It holds:
+committed and pushed, not merged.** Merge to main once the screen is gone (never edit
+`src/` on main while a bench runs). It holds:
 
 - near-tied typefaces settled by the judge's own fit on 150 plain words
   (`rendercheck.near_ties`, `word_strips`, `place_fit`; 90.0 → 91.1% of labelled places
@@ -58,20 +58,18 @@ while a bench runs). It holds:
 - the tests no longer need `work/models/italics.pkl` (`ROBO_ITALIC_TREES=0` in
   conftest), so a worktree's suite passes without `work/`; AGENTS.md has the
   `uv run --project ../<worktree>` pattern;
-- design.md, modules.md, how-it-works.md, README and AGENTS.md updated. **Not yet
-  written: the decisions.md entry and the checklist's ticks** (the numbers above, the
-  null of several faces voting together at 90.5–91.3%, and which books changed
-  typeface: compare `work/probes/typeface-v2/` with each `typeface-v1.json`).
+- the judge's confidence as the probability its pick is the print, from the fit and
+  the margin (`experiments/render_confidence.py`; `FITS` is 5);
+- design.md, modules.md, how-it-works.md, README, AGENTS.md, decisions.md and the
+  checklist updated.
 
 **Pick up in this order.**
 
-1. **Read the first round** (`render-judge-tuning.log`, `render-judge-validation.log`
-   against the control's): questions, unasked, asked, and the italic line before the
-   verdict (an asked split word counts three italic errors). Tuning chooses, validation
-   only vetoes; a handful of unasked places either way is within what one training
-   differs from another. Then **the second round** the same way
-   (`render-judge2-*.log`): it is the one to switch on if it is no worse than the first.
-   Record both in decisions.md and outlook.md.
+1. **Read the second round** (`render-judge2-tuning.log`,
+   `render-judge2-validation.log`, against the control's): questions, unasked, asked,
+   and the italic line before the verdict (an asked split word counts three italic
+   errors). Tuning chooses, validation only vetoes; look at Het laatste bevel and
+   Verminkt first. Record it in decisions.md and outlook.md.
 2. **If the vote's are not worse, switch it on** (the user asked for it; if they are
    worse, show the user the numbers instead): merge `render-default`;
    `alarm_model = "autotrust-jev:35b-nvfp4,d3:9b,render"` in `config.py`; copy
