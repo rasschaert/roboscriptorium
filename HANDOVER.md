@@ -28,8 +28,7 @@ becomes a judge in `ocrcheck` and the benches decide. Every book's typeface is i
 **Night of 2026-11-11/12.** decisions.md, 2026-11-12, has every number.
 
 **Batch five is done**: six books scored whole, NO CHANGE, tuning now 6,180 pages. Its
-slices are on the branch `grow6` (worktree `../robo-grow6`, rebased on main), not on
-main yet. The trust data of the four grown books that train (Vals alarm, Metro 2033, De
+slices are on main. The trust data of the four grown books that train (Vals alarm, Metro 2033, De
 tuin, The Thief-Taker's Apprentice) is rebuilt over their whole books.
 
 **Waiting on the user: the word to switch production's arbiter.** They chose the
@@ -51,11 +50,9 @@ rebased on `grow6`): `work/bench/tuning-20261112T021125-7e3d354-dirty.json` and
 `validation-20261112T021634-7e3d354-dirty.json`. The twenty seeds at 0.93 against them:
 `tuning-20261112T021546-7e3d354-dirty.json`, `validation-20261112T021713-7e3d354-dirty.json`.
 
-**Still to land on main**: `grow6` and `italics-by-place` (one commit each on top of
-main; main has moved since, so rebase `grow6` on main and `italics-by-place` on
-`grow6` again, check `git diff --stat main italics-by-place`, run the tests, then
-fast-forward main and push). Held back while the second session's run loaded main's
-code (it changes `bench.SETS` and `trustdata.SPECS`).
+**Batch five's slices and the italic count by place are on main** (2026-11-12 06:15);
+the worktrees `../robo-grow6` and `../roboscriptorium-caps` hold merged branches and
+can go.
 
 **Batch five's retraining is weighed**: the arbiter of twenty seeds trained on the
 rebuilt trust data (`work/models/ocr-trust-grown5*.pkl`) is BETTER on tuning than the
@@ -216,7 +213,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
 
 - **58 unasked errors that look like the e-book's, to confirm** (~15 min; decisions.md,
   2026-11-12). In each the agent read the print as ours has it; the answer is still the
-  user's. Once batch five's slices are on main (the whole-book commands need them):
+  user's:
 
   ```sh
   # 11 places
@@ -373,8 +370,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
 6. **Page roles need the line-role trees retrained** with picture pages and mottos labelled
    (Dolittle's picture-page lines go wrong under the trees trained with page features, whatever
    qwen says); only then bench page roles again.
-7. **The slices are grown as far as the listed room goes** once batch five ends
-   (checklist, "In flight").
+7. **The slices are grown as far as the listed room goes** (batch five, 2026-11-12).
 
 ## When a new vision model appears
 
@@ -415,7 +411,7 @@ Ask before a download over 1 GB. A model outside Ollama gets its own environment
 
 ## Worktrees
 
-`../roboscriptorium-caps` holds the `italics-by-place` branch (see Running); `../robo-grow6` the `grow6` branch (batch five, in use); `../robo-text` the `text-seat` branch (pass 4, kept); `-py315` two
+`../roboscriptorium-caps` holds the `italics-by-place` branch and `../robo-grow6` the `grow6` branch, both merged (can go); `../robo-text` the `text-seat` branch (pass 4, kept); `-py315` two
 untracked scratch files.
 
 ## How to run things

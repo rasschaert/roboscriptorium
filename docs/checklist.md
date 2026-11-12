@@ -15,8 +15,7 @@ What runs right now and what waits on the user: `HANDOVER.md`.
 **The plan now** (2026-11-11). Stella, the target book, is done: reviewed, rebuilt and
 read through by the user without an error (2026-10-31). The order from here:
 
-1. what is in flight: production's switch to the steadier arbiter (the user's word),
-   the grown slices and the italic count onto main, batch five's retraining;
+1. what is in flight: production's switch to the steadier arbiter (the user's word);
 2. one path for every doubt (the user, 2026-11-10: first), and with it the questions
    that made the user stop Nervous System's review;
 3. small capitals, what is left of them;
@@ -41,10 +40,6 @@ In this order; `HANDOVER.md` has the paths and the commands.
       split italic word ("EenVandaag", Vals alarm); validation no change (decisions.md,
       2026-11-12). Then the agent: production's files kept aside, `ocr_ask_below` 0.93,
       the docs and tests brought along
-- [ ] The branches `grow6` (batch five's slices) and `italics-by-place` (the bench's
-      italic count by a word's place), both rebased and benched from their worktrees,
-      fast-forwarded onto main once nothing loads main's code; the fresh baselines are
-      made (HANDOVER.md has their files)
 - [ ] After batch five, the two nulls that waited for it: autotrust-jev 9B as a second
       text judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
       170 → 178) and the book's own vocabulary as an arbiter feature (null 2026-11-08)
@@ -341,7 +336,7 @@ are under Done, "Architecture probes".
       Prometheus/Ooievaar or Vrijdag; a Kosmos book for later, beyond prose
 - [ ] **user**: 58 unasked errors that look like the reference's, to confirm
       (~15 min, one `review --only` command a book in HANDOVER.md, "Waiting on the
-      user"; once batch five's slices are on main). Of the 223 unasked places that
+      user"). Of the 223 unasked places that
       differ from the reference only in spaces or hyphens (fresh baselines, 2026-11-12),
       each read on its crop by the agent: in 58 the print is as ours has it (a space
       before a mark the print doesn't set, words the e-book runs together or splits, a
@@ -1063,6 +1058,8 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       better, a book gaining any vetoes (`bench.heading_errors`)
 - [x] The bench counts headings set letter for letter beside those found, and prints the
       totals over all books when they move (2026-11-01, `bench.heading_totals`)
+- [x] 2026-11-12 The bench's italic count by a word's place, whatever its letters, and
+      batch five's slices, on main; fresh baselines made (HANDOVER.md has their files)
 - [x] 2026-11-12 Batch five's retraining weighed: the arbiter of twenty seeds trained on
       the four rebuilt books is better on tuning (unasked 576 → 564, 26 questions
       fewer) and no change on validation; the first retraining on grown slices ahead
