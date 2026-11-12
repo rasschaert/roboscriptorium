@@ -10,14 +10,18 @@ from 2026-11-09 and 2026-11-10.
 A second session worked beside the first: the checklist rewritten and pruned (82 open
 steps to 47), the per-book settings test (null), and **render and compare**, the user's
 idea of a judge that draws each version of a contested place in the book's typeface and
-lays it over the scan (decisions.md, the last entries of 2026-11-11; the checklist,
-"Render and compare", has the steps in order). State: Stella 9 of 9 right. In flight,
-CPU only, no models: `experiments/probe_font_match.py` over every book with trust data
-(output `work/probes/font-match/golden-run.log`, one JSON and one sheet a book). Next:
-`uv run python experiments/probe_render_compare.py <book> …` on those books. The fonts
-are the user's library, copied to `work/fonts/` (gitignored: licensed, never in git). The user offered
-model time once the first session's runs end (about 04:30), for the trust data with
-the new judge's votes if the golden books bear it out.
+lays it over the scan (decisions.md, the entries of 2026-11-11 and 12; the checklist,
+"Render and compare", has the steps in order). State on 2026-11-12, 01:15: the print on
+87% of 22,769 labelled places over 18 books, and on most of what each judge misses.
+**In flight, CPU only, no models:** screen `robo-render-arbiter` (script
+`work/runs/render-arbiter.sh`, output `work/runs/render-arbiter.out`, about two to three
+hours): the fit's votes written into `work/probes/ocr-trust-render/` as a judge named
+`render`, then `train_ocr_trust.py` without `--save`, with the vote
+(`work/runs/render-arbiter-with.log`) and without it (`…-without.log`). Compare the
+trees' silent errors at each budget of questions; if the vote lowers them, the fit
+becomes a judge in `ocrcheck` and the benches decide. Every book's typeface is in
+`work/probes/font-match/`. The fonts are the user's library, copied to `work/fonts/`
+(gitignored: licensed, never in git).
 
 ## Running
 

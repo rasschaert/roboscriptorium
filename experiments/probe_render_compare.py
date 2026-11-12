@@ -2,12 +2,14 @@
 version of a contested place in the book's matched font, and laying it over the scan, pick
 the print? On the trust data's labelled suspects, against the judges. No models.
 
-    uv run python experiments/probe_render_compare.py <book> [more …]
+    uv run python experiments/probe_render_compare.py <book> [more …] [--votes <folder>]
 
 A book needs its font match first (`probe_font_match.py`, work/probes/font-match/<book>.json).
 Only places the text layer has words for are tried: their boxes give the place's ink: a strip of the line from the blank before the place to the blank after it. Each
 version is drawn whole at the book's type size and laid over the strip where it fits best.
-Writes work/probes/render-compare/<book>.json, one row a suspect.
+Writes work/probes/render-compare/<book>.json, one row a suspect; `--votes` also writes
+the book's trust data into <folder> with the fit as a judge named "render", for
+`ROBO_TRUST_DATA=<folder> ROBO_ALARM_MODEL=<the others>,render train_ocr_trust.py`.
 """
 
 import json
@@ -32,6 +34,8 @@ HEAVY = re.compile(r"Bold|Black|Semibold|Demi|Italic|Heavy|Medium", re.I)
 STRETCHES = np.linspace(0.92, 1.08, 5)
 # A blank this wide, in line heights, parts a word from its neighbour.
 WORD_GAP = 0.2
+# The fit's name as a judge in the trust data (`ROBO_ALARM_MODEL=…,render`).
+JUDGE = "render"
 
 
 def book_font(name: str) -> tuple[ImageFont.FreeTypeFont, dict]:
@@ -186,8 +190,7 @@ def fits(font, spread: int, size: float, ink: np.ndarray, versions: list[str]) -
 def run(name: str) -> list[dict]:
     font, entry = book_font(name)
     size = em_size(name, font)
-    rows = [r for r in trustdata.load(name) if r["settled"] and any(r["right"])
-            and not all(r["right"])]
+    rows = [r for r in trustdata.load(name) if r["settled"]]
     by_page = defaultdict(list)
     for r in rows:
         by_page[r["suspect"]["page"]].append(r)
@@ -207,13 +210,15 @@ def run(name: str) -> list[dict]:
                 versions = [s["ours"], *s["others"]]
                 scores = fits(font, entry["spread"], size, ink, versions)
                 order = sorted(range(len(versions)), key=lambda i: -scores[i])
-                truth = versions[r["right"].index(True)]
-                wrong = next(v for v, ok in zip(versions, r["right"]) if not ok)
+                told = any(r["right"]) and not all(r["right"])
+                truth = versions[r["right"].index(True)] if told else ""
+                wrong = next((v for v, ok in zip(versions, r["right"]) if not ok), "")
                 out.append({
-                    "page": number, "line": s["line"], "versions": versions,
+                    "page": number, "line": s["line"], "start": s["start"], "told": told,
+                    "versions": versions,
                     "right": r["right"], "fits": [round(x, 4) for x in scores],
                     "picked": order[0], "margin": round(scores[order[0]] - scores[order[1]], 4),
-                    "kind": kind(truth, wrong),
+                    "kind": kind(truth, wrong) if told else "",
                     "votes": {j: (v in versions and r["right"][versions.index(v)])
                               for j, v in s["votes"].items() if v},
                 })
@@ -224,7 +229,23 @@ def run(name: str) -> list[dict]:
     return out
 
 
+def with_votes(name: str, rows: list[dict], folder: Path) -> None:
+    """The book's trust data with the fit as one more judge (`JUDGE`): its pick as the
+    vote, its margin over the next version as the confidence."""
+    fit = {(r["page"], r["line"], r["start"]): r for r in rows}
+    data = trustdata.load(name)
+    for row in data:
+        s = row["suspect"]
+        s["judges"] = [*s.get("judges", []), JUDGE]
+        if r := fit.get((s["page"], s["line"], s["start"])):
+            s["votes"][JUDGE] = r["versions"][r["picked"]]
+            s["confidence"][JUDGE] = min(1.0, r["margin"] * 4)
+    folder.mkdir(parents=True, exist_ok=True)
+    (folder / f"{name}.json").write_text(json.dumps(data, ensure_ascii=False))
+
+
 def report(label: str, rows: list[dict]) -> None:
+    rows = [r for r in rows if r["told"]]
     if not rows:
         return
     ok = [r["right"][r["picked"]] for r in rows]
@@ -258,10 +279,16 @@ def report(label: str, rows: list[dict]) -> None:
 
 if __name__ == "__main__":
     everything = []
-    for arg in sys.argv[1:]:
+    args = sys.argv[1:]
+    votes = Path(args.pop(args.index("--votes") + 1)) if "--votes" in args else None
+    if votes:
+        args.remove("--votes")
+    for arg in args:
         name = Path(arg).name
         rows = run(name)
+        if votes:
+            with_votes(name, rows, votes)
         report(name, rows)
         everything += rows
-    if len(sys.argv) > 2:
+    if len(args) > 1:
         report("all books", everything)
