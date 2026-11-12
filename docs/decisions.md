@@ -2014,4 +2014,61 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   image-only scan (Vanille en andere smaken has no text layer: the words are its first
   reading's), which stopped the first start of the run through the build. That run
   (`work/runs/render-judge.sh`) was restarted at 07:35 with both.
-
+- 2026-11-12: **The spacing the build sets wrong: four repairs on branch `spacing`, not
+  benched yet** (worktree `../robo-spacing`, 728 tests; the bench rewrites the books'
+  caches from reflow on, so it waits for the render judge's run to end). Each was read
+  off the crops of the unasked spacing places and has its counterexamples tested.
+  (1) **A chain broken beside a short word keeps its hyphen** (`hyphens._hyphen_stays`):
+  the parts beside the break had to be words of three letters or more, so "second-" /
+  "to-last" came out "secondto-last"; now they only have to be words the list knows,
+  with the word they would make together unknown, and a part said again ("doenk-" /
+  "doenk-doenk") keeps its hyphen. `experiments/probe_chain_breaks.py` over every
+  golden book, 200 line-end hyphens inside a chain with a one-way reference: 21 wrong →
+  9, 13 fixed, 1 made ("orang-ou-tangs", both halves in the English list). The null of
+  2026-10-19 ("too few cases to decide", 2 of 11) fell to batch five's pages: 12 of the
+  13 two-letter cases now on file keep their chain. Still wrong: "peper-en-zoutkleurig"
+  and "oog-neersla-momentjes" (a half the list lacks), and five chains the reference
+  closes ("huis-aan-huisrapport"). (2) **A line ending on a dash its box leaves out
+  doesn't end a paragraph** (`reflow._short_end`): Dolittle's layer misses the dash at
+  nine line ends, another reading restores it, and the line's box stays a dash short,
+  which in justified text without indents read as a sentence's short last line; the
+  next line became a paragraph ("he mumbled—" / "underdone roast beef"), scored as a
+  paragraph error and a space after a closed dash. Over every golden book's paragraphs
+  ending on a dash, those nine fall 1.9–2.3 of the line's average characters short
+  with no indent after; the 24 real ones have an indent after them or fall 14
+  characters or more short. The allowance is 2.5. (3) **An ellipsis after a closing
+  quote keeps the layer's space** (`typography.ellipsised`): a tightly set book still
+  spaces one standing between two quotations ("ver zijn.’ ... ‘Nee", Verminkt); in the
+  references 10 of 25 such ellipses are spaced. (4) **A dash before a word opening on
+  an apostrophe keeps its space** (`typography.styled`): "– ’s avonds" came out
+  "–’s avonds", the apostrophe taken for a closing quote; four places in the built
+  books (Reis om mijn schedel twice, Au pair, Metro 2033's "– ’scuse").
+- 2026-11-12: **A dash before a closing quote: the layer can't say how it is spaced, the
+  scan can** (`experiments/probe_dash_before_quote.py`, no models,
+  `work/probes/dash-before-quote.jsonl`). The styling gives such a dash the book's
+  space on its open side only ("toch –’"), which is what Goede dochter (108 of 110),
+  Het heft (29) and Het schaduwhuis (42) print; The Stranger's Child sets it closed
+  where speech is cut off ("Dud—’", 11) and spaced on both sides elsewhere
+  ("Granny – ’", 16), the 16 unasked errors of this kind. The layer's own spacing is no
+  guide: Goede dochter's glues the dash to the word 21 times where its reference closes
+  2. On the scan, 111 such dashes measured (`scanstyle._measure`, blank beside the
+  stroke in letters): The Stranger's Child's closed ones have 0.30–0.41 before the dash
+  and its spaced ones 0.56–0.75, against the book's usual 0.94; after the dash, a
+  closing quote stands 0.61–0.82 off where the print spaces both sides and 0.00–0.27
+  where it doesn't (0.38–0.48 in the closed ones), in every book. As shares of the
+  book's own dash gap the classes part near a half (closed at most 0.51, spaced at
+  least 0.52 on the left, 0.65 on the right), with two dashes measured at 0.00 where
+  ink touches. Not built: the styling works on text and would need each dash's place
+  on the scan, and the two classes that would gain sit almost wholly in one validation
+  book, so a threshold chosen on them would be chosen on validation. Wants a tuning
+  book that sets its cut-off speech closed.
+- 2026-11-12: **Long unknown words that split into known ones don't find a line the
+  layer glued: null** (no models). Het laatste bevel's tight lines come out as one word
+  ("elkaarenliepdaarnanogsteedsingedachtenverzonkennaar"): every reader reads them so,
+  three of four judges pick the fully glued version and the arbiter fixes to it. Words
+  of 18 letters or more that the list lacks and that split into three or more words
+  it knows: 304 over all golden books, 8 of them errors; Dutch compounds and names
+  split as well ("rioolwaterzuiveringsinstallatie" 5, "Krasnopresnenskaya" 7,
+  "Godverdegodverdegodverdegodver" 7) and no count of parts separates the three glued
+  lines (4, 6, 9). Failed on the signal, not on a model: the line's letters per point
+  against its page's would be the next thing to try.

@@ -265,19 +265,23 @@ without effect, and what each would need to be tried again, is in
       on; comes with its trust data (In flight)
 - [ ] Spacing the build sets against the print, read off the crops of 223 unasked
       places (2026-11-12, decisions.md; `work/probes/unasked/spacing-20261112/`), each a
-      repair with its counterexamples tested, by how many places it leaves:
-      - a line-end hyphen that belongs to the word, dropped (17: "je-bent-gebeld-briefje",
-        "glas-in-loodramen", "second-to-last"): a word already holding a hyphen keeps
-        the one at its line end
-      - a dash at a line's end or start joined to the next word with a space (9, Dolittle:
-        "mumbled— "underdone"): a line join at a closed dash adds none
-      - a space set before a dash the print sets closed before a closing quote (8, Goede
-        dochter and The Stranger's Child: "Dud —’"), in books whose other dashes are spaced
-      - the space between a spaced dash and the mark after it lost (8: "Granny – ’",
-        "– ’s avonds") and the space beside an ellipsis lost (9, Verminkt: "verwond.’ ...")
-      - a line-end hyphen kept inside a word (5: "brab-bel", "sexy-er", "zig-zag-ging"),
+      repair with its counterexamples tested:
+      - on branch `spacing` (worktree `../robo-spacing`), to bench warm on tuning and
+        validation and merge if it holds: a chain broken beside a short word keeps its
+        hyphen ("second-to-last", 13 of 200 chain breaks fixed, 1 made); a line ending
+        on a dash its box leaves out doesn't start a paragraph (Dolittle, 9); an
+        ellipsis after a closing quote keeps the layer's space (Verminkt); a dash
+        before a word opening on an apostrophe keeps its space ("– ’s avonds", 4)
+      - a dash before a closing quote set closed ("Dud—’") or spaced on both sides
+        ("Granny – ’") where the book's other dashes take a space on one side (16, The
+        Stranger's Child): the scan tells them apart, the layer doesn't (decisions.md,
+        2026-11-12); needs each dash's place on the scan in the styling, and a tuning
+        book that prints so to choose the line on
+      - single slips with no rule in common, the readers' and the arbiter's to catch: a
+        line-end hyphen kept inside a word (5: "brab-bel", "sexy-er", "zig-zag-ging"),
         a speck read as a hyphen (4: "was-time", "doordat-hij"), a space the print sets
-        before a mark lost (4: "Paulina :"), Het laatste bevel's tight lines glued (4)
+        before a mark lost (4: "Paulina :"), Het laatste bevel's tight lines glued (4;
+        splitting long unknown words by the word list doesn't find them, decisions.md)
 
 ## Assumptions to test (quick probes, minutes to an hour each)
 
