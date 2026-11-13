@@ -1,5 +1,6 @@
 import json
 from dataclasses import asdict
+from pathlib import Path
 
 import pymupdf
 import pytest
@@ -295,3 +296,60 @@ def test_on_a_tightly_set_line_the_strip_ends_before_the_next_word(tmp_path):
     versions = ["wor1d", "world"]
     state = {"page": 1, "line": 0, "readings": versions, "box": [round(v, 1) for v in box]}
     assert _judge(path).decide(state, _question(versions))["reading"].value == "b"
+
+
+def _kerned_font(tmp_path) -> Path:
+    """A font of boxes for "A", "V" and "’", whose GPOS pulls "V" and "’" in after "A"."""
+    from fontTools.feaLib.builder import addOpenTypeFeaturesFromString
+    from fontTools.fontBuilder import FontBuilder
+    from fontTools.pens.ttGlyphPen import TTGlyphPen
+
+    def box(width):
+        pen = TTGlyphPen(None)
+        pen.moveTo((50, 0))
+        pen.lineTo((50, 700))
+        pen.lineTo((width - 50, 700))
+        pen.lineTo((width - 50, 0))
+        pen.closePath()
+        return pen.glyph()
+
+    names = [".notdef", "A", "V", "quoteright"]
+    fb = FontBuilder(1000, isTTF=True)
+    fb.setupGlyphOrder(names)
+    fb.setupCharacterMap({ord("A"): "A", ord("V"): "V", ord("’"): "quoteright"})
+    fb.setupGlyf({n: box(600) for n in names})
+    fb.setupHorizontalMetrics({n: (600, 50) for n in names})
+    fb.setupHorizontalHeader(ascent=800, descent=-200)
+    fb.setupNameTable({"familyName": "Kerned", "styleName": "Regular"})
+    fb.setupOS2()
+    fb.setupPost()
+    addOpenTypeFeaturesFromString(
+        fb.font, "feature kern { pos A V -200; pos A quoteright -300; } kern;"
+    )
+    path = tmp_path / "kerned.ttf"
+    fb.save(str(path))
+    return path
+
+
+def test_a_kerned_face_draws_each_character_where_the_fonts_gpos_puts_it(tmp_path):
+    path = _kerned_font(tmp_path)
+    at, advance = rendercheck.kerner(path)("AV’")
+    assert at == [0.0, 0.4, 1.0] and advance == 1.6
+    assert rendercheck.kerner(path)("") == ([], 0.0)
+    plain = rendercheck.Face.from_file(path)
+    kerned = rendercheck.Face.from_file(path, kerning=True)
+    # The drawing library rounds each advance to a whole pixel.
+    assert plain.length("AV") == pytest.approx(1.2 * plain.at().size, abs=2)
+    assert kerned.length("AV") == pytest.approx(1.0 * kerned.at().size)
+    # The first way is the text as the font spaces it (capitals add small-capital ways).
+    wide, narrow = rendercheck.drawings(plain, "AV")[0], rendercheck.drawings(kerned, "AV")[0]
+    assert narrow.shape[1] < wide.shape[1]
+
+
+def test_the_kerning_is_settled_on_words_with_a_stop_or_quote_mark():
+    assert all(rendercheck._marked(w) for w in ("zei.", "hem’,", "‘Nee!", "zo’n"))
+    assert not any(rendercheck._marked(w) for w in ("zei", "1914.", "a.", "co-op.", "—zei"))
+    assert rendercheck._plain("woord") and not rendercheck._plain("zei.")
+    held = rendercheck.Match("face.otf", "Face", 0.7, 3, 50.0)
+    assert not held.kerning
+    assert held.fingerprint != rendercheck.Match("face.otf", "Face", 0.7, 3, 50.0, True).fingerprint

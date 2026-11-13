@@ -16,6 +16,7 @@ dependencies = [
     "scikit-learn>=1.9.1",
     "scipy>=1.18.1",
     "typer>=0.27.2",
+    "uharfbuzz>=0.57.0",
 ]
 
 [project.scripts]

@@ -6,8 +6,10 @@ confidence (`sureness`).
 The typeface is found from the scan (`match`): words of the text layer are cut out along
 their ink, drawn in every font of a library, and the fonts ranked by how well the
 drawings lie over the ink; the best few are then ranked again by the judge's own fit on
-plain words, which tells apart faces whose word shapes tie. The library is a folder of
-OpenType and TrueType files (`Settings.fonts`), out of git.
+plain words, which tells apart faces whose word shapes tie. Last, the judge's fit on words
+with a stop or quote mark tells whether the book kerns as its font does: some prints do,
+others set a closing quote far looser than the font's own kerning pulls it in. The
+library is a folder of OpenType and TrueType files (`Settings.fonts`), out of git.
 
 The judge (`Judge`) answers the vision judges' question (`ocrcheck._decide`) from the
 suspect's page and box alone, so it sits beside them as one more vote for the arbiter.
@@ -23,6 +25,7 @@ from pathlib import Path
 
 import numpy as np
 import pymupdf
+import uharfbuzz as hb
 from fontTools.ttLib import TTFont
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 from scipy.signal import fftconvolve
@@ -35,9 +38,9 @@ from roboscriptorium.pdf import PageText
 # The judge's name among the second vision judges (`ROBO_ALARM_MODEL=…,render`).
 MODEL = "render"
 # The cached match's format.
-VERSION = 2
+VERSION = 3
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 6
+FITS = 7
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
@@ -46,8 +49,11 @@ FIRST_PASS = 40
 KEPT = 40
 # The best text cuts of the word-shape ranking, which the judge's own fit chooses among.
 NEAR = 5
-# Plain words of the layer that choice is made on.
+# Plain words of the layer that choice is made on, and as many words with a stop or quote
+# mark that the choice to kern is made on.
 SETTLE_WORDS = 150
+# The marks a word may carry to settle the kerning: where prints and fonts part most.
+MARKS = frozenset("’‘'”“\".,;:!?")
 STRETCHES = (0.92, 0.96, 1.0, 1.04, 1.08)
 # Ink spread: a drawing's strokes thinned or thickened by this many scan pixels.
 SPREADS = (-3, 0, 3, 5)
@@ -109,18 +115,58 @@ def other_figures(path: Path) -> list[dict[int, int]]:
     return sets
 
 
+def kerner(path: Path):
+    """The font's own layout of a text (OpenType kerning included, which the drawing
+    library leaves out): each character's place from the start, and the text's advance,
+    in ems. Ligatures are left out: the characters are drawn one by one."""
+    font = hb.Font(hb.Face(hb.Blob.from_file_path(str(path))))
+    upem = font.face.upem
+
+    def layout(text: str) -> tuple[list[float], float]:
+        if not text:
+            return [], 0.0
+        buf = hb.Buffer()
+        buf.add_codepoints([ord(c) for c in text])
+        buf.guess_segment_properties()
+        hb.shape(font, buf, {"liga": False, "clig": False, "dlig": False})
+        at, pen = [None] * len(text), 0
+        for info, pos in zip(buf.glyph_infos, buf.glyph_positions, strict=True):
+            if at[info.cluster] is None:
+                at[info.cluster] = (pen + pos.x_offset) / upem
+            pen += pos.x_advance
+        # A character shaped into another's glyph sits where that glyph does.
+        for i in range(len(text)):
+            if at[i] is None:
+                at[i] = at[i - 1] if i else 0.0
+        return at, pen / upem
+
+    return layout
+
+
 class Face:
     """A font, drawn at any size. `load(px)` gives it at `px` pixels an em; `figures`
-    are its other sets of digits (`other_figures`)."""
+    are its other sets of digits (`other_figures`); `layout`, where given, places each
+    character as the font kerns it (`kerner`)."""
 
-    def __init__(self, load, figures: list[dict[int, int]] = ()):
+    def __init__(self, load, figures: list[dict[int, int]] = (), layout=None):
         self._load = load
         self._cuts: dict[int, ImageFont.FreeTypeFont] = {}
         self.figures = list(figures)
+        self.layout = layout
 
     @classmethod
-    def from_file(cls, path: Path) -> "Face":
-        return cls(lambda px: ImageFont.truetype(str(path), px), other_figures(path))
+    def from_file(cls, path: Path, kerning: bool = False) -> "Face":
+        return cls(
+            lambda px: ImageFont.truetype(str(path), px),
+            other_figures(path),
+            kerner(path) if kerning else None,
+        )
+
+    def length(self, text: str, scale: float = 1.0) -> float:
+        """How far `text` advances, in pixels at `scale`."""
+        if self.layout is None:
+            return self.at(scale).getlength(text)
+        return self.layout(text)[1] * self.at(scale).size
 
     def at(self, scale: float = 1.0) -> ImageFont.FreeTypeFont:
         px = round(RENDER_PX * scale)
@@ -139,10 +185,12 @@ class Match:
     fit: float
     spread: int
     size: float
+    # Whether the book is set with the font's own kerning (`match`).
+    kerning: bool = False
 
     @property
     def fingerprint(self) -> str:
-        return f"{FITS}:{self.file}:{self.spread}:{self.size:.1f}"
+        return f"{FITS}:{self.file}:{self.spread}:{self.size:.1f}:{int(self.kerning)}"
 
 
 def _levelled(grey: np.ndarray) -> np.ndarray | None:
@@ -310,18 +358,32 @@ def near_ties(ranked: list[dict], count: int = NEAR) -> list[dict]:
     return [entry for entry in ranked if _is_text(entry)][:count] or ranked[:1]
 
 
-def word_strips(pdf: Path, pages: list[PageText], count: int) -> list[tuple[str, np.ndarray]]:
-    """Plain words of four letters or more from up to fifteen of `pages`, each with its
-    ink as the judge cuts a place (`place_ink`)."""
+def _plain(word: str) -> bool:
+    return len(word) >= 4 and word.isalpha()
+
+
+def _marked(word: str) -> bool:
+    return (
+        sum(c.isalpha() for c in word) >= 3
+        and bool(MARKS & set(word))
+        and all(c.isalpha() or c in MARKS for c in word)
+    )
+
+
+def word_strips(
+    pdf: Path, pages: list[PageText], count: int, marked: bool = False
+) -> list[tuple[str, np.ndarray]]:
+    """Plain words of four letters or more from up to fifteen of `pages`, or with
+    `marked` words of letters with a stop or quote mark (`MARKS`), each with its ink as
+    the judge cuts a place (`place_ink`)."""
+    keep = _marked if marked else _plain
     rng = random.Random(1)
     found = []
     with pdflayer.PDF_LOCK, pymupdf.open(pdf) as doc:
         sample = rng.sample(pages, min(15, len(pages)))
         for text in sample:
             page = doc[text.number - 1]
-            words = [
-                w for w in pdflayer.page_words(page, text) if len(w[4]) >= 4 and w[4].isalpha()
-            ]
+            words = [w for w in pdflayer.page_words(page, text) if keep(w[4])]
             for w in rng.sample(words, min(len(words), count // len(sample) + 4)):
                 ink = place_ink(page, w[:4], text)
                 if ink is not None:
@@ -359,7 +421,10 @@ def match(
 ) -> Match:
     """The book's typeface among the library's fonts, by the scan's words on `pages`:
     every font on a few words, the best on all of them, and of those the best few text
-    cuts on how the judge itself fits plain words (`place_fit`). `typeface`, a font file
+    cuts on how the judge itself fits plain words (`place_fit`); then whether the book
+    is set with the font's own kerning, by the judge's fit on words with a stop or quote
+    mark, drawn kerned and not (on 22 golden books it picked the better for 19,
+    decisions.md 2026-11-14). `typeface`, a font file
     in the library (book.toml's key), is taken instead of a choice. A match in `cache`
     is kept whatever pages it was made from: a book is set in one typeface, and a slice
     of it must be judged as the whole is."""
@@ -403,12 +468,23 @@ def match(
         )
     # `max` keeps the first of equals: the better word shapes.
     entry = max(near, key=lambda e: e["place_fit"])
+    marked = word_strips(pdf, pages, SETTLE_WORDS, marked=True)
+    kerned = {
+        k: place_fit(
+            Face.from_file(library / entry["file"], kerning=k),
+            entry["spread"],
+            entry["size"],
+            marked,
+        )
+        for k in (False, True)
+    }
     found = Match(
         entry["file"],
         entry["name"],
         round(entry["fit"], 4),
         entry["spread"],
         round(entry["size"], 2),
+        kerned[True] > kerned[False],
     )
     if cache is not None:
         tried = [
@@ -416,8 +492,13 @@ def match(
              "place_fit": round(e["place_fit"], 4)}
             for e in near
         ]  # fmt: skip
+        kerning = {"words": len(marked), "plain": round(kerned[False], 4),
+                   "kerned": round(kerned[True], 4)}  # fmt: skip
         write_atomic(
-            cache, json.dumps({"key": key, "match": asdict(found), "near": tried}, indent=1)
+            cache,
+            json.dumps(
+                {"key": key, "match": asdict(found), "near": tried, "kerning": kerning}, indent=1
+            ),
         )
     return found
 
@@ -534,15 +615,19 @@ def _widest_blank(cols: np.ndarray, start: int, end: int) -> tuple[int, int] | N
 def _pieces(face: Face, pieces: list[tuple]) -> np.ndarray | None:
     """Pieces of text drawn in a row: each (text, scale, shift before it in ems), and
     how far above the baseline in ems where it is a superscript."""
-    width = int(sum(face.at(p[1]).getlength(p[0]) for p in pieces)) + RENDER_PX
+    width = int(sum(face.length(p[0], p[1]) for p in pieces)) + RENDER_PX
     image = Image.new("L", (width, RENDER_PX * 2), 255)
     draw, x = ImageDraw.Draw(image), RENDER_PX // 4
     for text, scale, shift, *rise in pieces:
         cut = face.at(scale)
         x += shift * RENDER_PX
-        up = rise[0] * RENDER_PX if rise else 0
-        draw.text((x, RENDER_PX * 1.3 - up), text, font=cut, fill=0, anchor="ls")
-        x += cut.getlength(text)
+        y = RENDER_PX * 1.3 - (rise[0] * RENDER_PX if rise else 0)
+        if face.layout is None:
+            draw.text((x, y), text, font=cut, fill=0, anchor="ls")
+        else:
+            for c, at in zip(text, face.layout(text)[0], strict=True):
+                draw.text((x + at * cut.size, y), c, font=cut, fill=0, anchor="ls")
+        x += face.length(text, scale)
     grey = _levelled(_darkness(image))
     return None if grey is None else _trimmed(grey)
 
@@ -670,4 +755,4 @@ def judge(
     if not library.is_dir():
         raise ValueError(f"the judge {MODEL!r} draws with the fonts in {library}: no such folder")
     found = match(pdf, pages, library, cache, typeface)
-    return Judge(pdf, Face.from_file(library / found.file), found, pages)
+    return Judge(pdf, Face.from_file(library / found.file, found.kerning), found, pages)
