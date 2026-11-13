@@ -2192,4 +2192,26 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   look. The second round, stopped at its start and restarted with it
   (`work/runs/render-judge2.sh`), carries the typefaces by the judge's fit, the new
   drawings and this confidence together, against the same control.
+- 2026-11-13: **Render and compare by kind of difference, and a probe of judging only
+  where two versions differ: a small gain, uneven by book, not taken yet.** On the
+  rebuilt trust data (`work/probes/ocr-trust-render3/`, the typefaces by the judge's
+  fit and the new drawings) the judge's pick is the print on 92.3% of 34,205 labelled
+  places (91.3% before; Metro 2033 72.1 → 88.6%, Het heft in eigen hand 95.3 → 93.5%,
+  its face switched on a hair between two cuts with Minion's letters). By kind, on
+  two-version places, beside clef, autotrust-jev and d3: accents 95.4% (86.1, 90.0,
+  83.4), spaces 92.6% (87.4, 93.8, 91.2), letters 95.0% (94.5, 97.3, 96.6), case 96.5%
+  (97.1, 95.5, 97.7), punctuation 91.2% (95.7, 96.1, 96.8): its strength is accents,
+  its weakness punctuation, where a mark changes little of a word's ink. The probe
+  (`experiments/probe_render_difference.py`, up to 600 two-version places a book, 22
+  books, 10,517 places): both versions laid letter on letter (anchored on their shared
+  start or end) and compared with the scan only where their drawings differ. As a
+  squared error it is far worse (punctuation 59% on Het geluid van bananen, where the
+  whole strip gives 93%): a drawn mark a pixel off is punished twice, so the version
+  without the mark wins. Split into drawing without ink and ink without drawing, with
+  a logistic model of the two versions' differences (each book left out), it picks the
+  print on 93.3% against the whole strip's 92.6% (punctuation 91.1 → 92.2%, accents
+  94.1 → 95.9%, letters and spaces +0.2 and +0.7, case 98.0 → 97.6%), but unevenly:
+  eight books lose up to three points (De cipier 96.5 → 93.5%), others gain up to six.
+  Not taken into the pick. Next for it: the two local sums as features the arbiter
+  reads beside the vote, where a gain that depends on the book can be weighed.
 

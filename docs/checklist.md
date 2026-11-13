@@ -307,9 +307,14 @@ are under Done, "Architecture probes".
       - [ ] The second round: trust data and arbiter with the new typefaces and
             drawings, benched against the first round's control (in flight,
             `work/runs/render-judge2.sh`)
+      - [x] The judge's confidence as the probability its pick is the print, from how
+            well the pick fits and its margin (AUC 0.80 against the margin's 0.73): a
+            typeface that suits a book poorly lowers its votes' weight
       - [ ] **More tactics** (the user, 2026-11-12: future sessions explore them; each
-            is a probe on the labelled places first): the match's fit as an arbiter
-            feature, so a weak match is trusted less; font features in the drawing
+            is a probe on the labelled places first): punctuation, its weakest kind
+            (91% against the model judges' 96%): the two versions compared only where
+            their drawings differ (probed 2026-11-13: 92.6 → 93.3% of places as the
+            pick, uneven by book; next as features for the arbiter); font features in the drawing
             (libraqm or HarfBuzz: real ligatures, small capitals and old-style figures
             for every font, not only those with code points for them); the ink spread
             and blur fitted to each scan more finely; a word's cut chosen per place
