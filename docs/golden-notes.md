@@ -17,7 +17,7 @@ than the pipeline.
 
 Reviewed at every set review (AGENTS.md, Golden books). A pair keeps its place while it
 has a job here no other pair does better; one whose job is gone, or whose score measures
-its reference, is proposed for retirement or a lesser role. Last reviewed 2026-10-24.
+its reference, is proposed for retirement or a lesser role. Last reviewed 2026-11-14.
 
 | Job | Pairs |
 | --- | --- |
@@ -36,18 +36,19 @@ its reference, is proposed for retirement or a lesser role. Last reviewed 2026-1
 | Public-domain pages a hosted model may see | The Nature of a Crime, Doctor Dolittle |
 | Line-role training only, words not scored | Steve Jobs (its photo insert); The Nature of a Crime (the arbiter's too) |
 
-**Doubts at the last review** (2026-11-06, on `tuning-20261106T070031` and
-`validation-20261106T070331`, the tuning slices grown to about 4,500 pages): one pair past
-a suspect threshold, Doctor Dolittle, its layer CER 2.32% against a tuning median 0.71%
-(the line 2.12%) since it is scored whole; it places all but 0.5% of its body lines, and
-its 91 errors are the pipeline's, on its job (drawn initials the layer drops, "HAT" for
-"THAT"; plate captions; dashes and compound hyphens), not the edition's: kept, and the
-bench will name it on every run. The rest: tuning 0.19–1.18%, validation 0.08–1.32%
-against 0.88%; no book over 1.1% of body lines unplaced (Goede dochter). Au pair's small
-capitals were settled by verdicts (2026-10-25). Het laatste bevel's EPUB glues words,
-settled only by verdicts; Na die nacht can't have an honest first look. No new pairs
-since 2026-10-20, so the gaps below stand. The checklist (Done, "The sets trimmed"; "Golden books and the
-bench" for the verdicts still open) holds what is done about each.
+**Doubts at the last review** (2026-11-14, on `tuning-20261113T090608` and
+`validation-20261113T090701`, the render vote on): no pair past a suspect threshold.
+Layer CER tuning 0.19–1.39% against a median 0.70%, validation 0.08–1.32% against 0.88%;
+no book over 0.82% of body lines unplaced (De geruchten). Doctor Dolittle, past the line
+on 2026-11-06, is back under it on the same pages (2.32% → 1.39%): its PDF 97, the text
+block the layer lost, is read since (`missing.blocks`; 105 errors there → 1). No pair added
+or retired since 2026-10-20; batch five grew six tuning slices (2026-11-09); Na die nacht
+stays in reserve. Au pair's small capitals were settled by verdicts (2026-10-25); Het
+laatste bevel's glued words and the 58 unasked places that look like the e-book's
+(HANDOVER.md, Waiting on the user) wait on verdicts. Het laatste bevel and Verminkt have
+no typeface in the font library, so the render vote fits them worse (0.79 and 0.83 on
+plain words, the tuning books 0.86–0.97); both validate, so that weakens their veto on a
+change to the render judge only. The gaps below stand.
 
 **Gaps to hunt for**, in order: a book set flush, without paragraph indents, for tuning
 (not Bruna's, whose two books validate; 2026-10-24: every flush-book break error is a start

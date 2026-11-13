@@ -2337,4 +2337,11 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   `save_models` puts them in place together at the end, so an interrupted run still
   leaves no mix of old and new. The rule is in AGENTS.md; the other long runs to check
   are the checklist's first step.
-
+- 2026-11-14: **Set review** (AGENTS.md, Golden books; due 2026-11-13). On the
+  render-vote baselines (`tuning-20261113T090608`, `validation-20261113T090701`) no pair
+  past a suspect threshold: layer CER tuning 0.19–1.39% (median 0.70%), validation
+  0.08–1.32% (median 0.88%); highest unplaced De geruchten 0.82%. Doctor Dolittle, the
+  one suspect on 2026-11-06, fell from 2.32% to 1.39% on the same pages: its lost text
+  block on PDF 97 is read since (`missing.blocks`, 105 errors there → 1). Nothing added
+  or retired; the gaps stand. Het laatste bevel and Verminkt, without their typeface in
+  the library, are weaker vetoes for a change to the render judge (golden-notes.md).
