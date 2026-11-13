@@ -458,7 +458,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   words too where most of those headings are words, applied to
   the roles after the sorter; `numbered`: each short heading of a run of numbers set to
   its number, old-style look-alikes folded, a lone unreadable one settled by both
-  neighbours, on the reflowed blocks; `title_lines`: a dropped line under a heading set
+  neighbours, on the reflowed blocks; numbers after a label ("HOOFDSTUK 12") and before
+  a title of words ("30 ALEX") run the same way, and a heading whose label is garbled
+  takes the book's where its number is the one the run lacks; `title_lines`: a dropped line under a heading set
   like another heading's second line, or a short one recurring in one type under three
   headings or more, such as a narrator's name, or a display line right under a heading
   on a page with no running text, a part page's title; `off_run`: a number heading off the run and off the middle,
