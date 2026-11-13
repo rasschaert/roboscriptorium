@@ -15,6 +15,10 @@ the pipeline uses (ROBO_OCR_TRUST=1); with a copy trained without each tuning bo
 which `roboscriptorium bench` scores that book with. It refuses while a tuning book's
 data is missing or stale (`--partial` saves anyway).
 
+Without `--save`, each book's scores are kept as they come in
+`work/probes/loo-scoring/<key>.json`, the key naming the data and settings, so a run
+stopped and started again goes on from them.
+
 Only books whose data exists and was built with every current reading are used:
 loading a missing one would start a cold build of it. Validation books are scored but
 never trained on, here as in `--save`. Per book it also prints how often each judge
@@ -22,6 +26,8 @@ picks the labelled version: a book where winnow, which reads only the sentence, 
 clef, which reads the crop, has a reference more standard than its print.
 """
 
+import hashlib
+import json
 import sys
 from collections import Counter
 from pathlib import Path
@@ -35,6 +41,7 @@ from roboscriptorium import trust
 from roboscriptorium.book import Book
 from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
+from roboscriptorium.files import write_atomic
 from roboscriptorium.trustdata import HELD_OUT, SPECS, models_to_save, rows_of, save_models, seats, trainable, usable, weighed
 
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
@@ -137,6 +144,38 @@ if "--save" in sys.argv:
         print(f"trained on {n} suspects, without {without}: {out}")
     sys.exit()
 
+_KEY = hashlib.sha256(
+    repr(
+        (trust.MODEL_VERSION, READINGS, SEATS, list(MODELS), BUDGETS, sorted(books.items()),
+         f"{_SETTINGS.judge_model},{_SETTINGS.check_model},{_SETTINGS.alarm_model}")
+    ).encode()
+).hexdigest()[:16]  # fmt: skip
+_MEMO = Path("work/probes/loo-scoring") / f"{_KEY}.json"
+_memo = json.loads(_MEMO.read_text()) if _MEMO.exists() else {}
+if _memo:
+    print(f"resuming from {_MEMO}: {len(_memo)} scores kept")
+
+
+def remember(key: str, compute, *args):
+    """`compute(*args)`, kept in `_MEMO` as soon as it is known."""
+    if key not in _memo:
+        _memo[key] = compute(*args)
+        write_atomic(_MEMO, json.dumps(_memo))
+    return _memo[key]
+
+
+def model_cells(name, rows, make, asked, pages):
+    """Silent errors at the rule's number of questions, and at each budget."""
+    ps = scored(make, [n for n in books if n != name and trainable(n)], rows)
+    return silent_at(rows, ps, asked), [silent_at(rows, ps, int(b * pages)) for b in BUDGETS]
+
+
+def silent_without(name, drop, rows, asked):
+    """Silent errors of the trees trained without `name` and `drop` too."""
+    names = [n for n in books if n not in (name, drop) and trainable(n)]
+    return silent_at(rows, scored(MODELS["trees"], names, rows), asked)
+
+
 totals: Counter = Counter()
 print(f"{'book':30} {'pages':>5} {'rule silent/asked':>18}  "
       + "  ".join(f"{m}: silent at rule's questions (budget 0/.25/.5/1)" for m in MODELS))  # fmt: skip
@@ -147,9 +186,7 @@ for name, rows in books.items():
     pages = pages_of(name)
     cells = []
     for label, make in MODELS.items():
-        ps = scored(make, [n for n in books if n != name and trainable(n)], rows)
-        same = silent_at(rows, ps, asked)
-        curve = [silent_at(rows, ps, int(b * pages)) for b in BUDGETS]
+        same, curve = remember(f"{name}|{label}", model_cells, name, rows, make, asked, pages)
         totals[label] += same
         cells.append(f"{same:3} ({'/'.join(map(str, curve))})")
     tag = " held out" if name.split("--")[0] in HELD_OUT else ""
@@ -160,7 +197,7 @@ print("\nstability (trees, silent at the rule's questions, one more training boo
 for name, rows in books.items():
     asked = rule(rows)[1]
     spread = [
-        silent_at(rows, scored(MODELS["trees"], [n for n in books if n not in (name, drop) and trainable(n)], rows), asked)
+        remember(f"{name}|without|{drop}", silent_without, name, drop, rows, asked)
         for drop in books
         if drop != name and trainable(drop)
     ]

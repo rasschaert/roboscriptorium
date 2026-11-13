@@ -32,9 +32,11 @@ last on 2026-11-14, so next by 2026-11-21).
       practices). Done: the arbiter's training (`trustdata.models_to_save`); the italic
       trees, collection and `--save` (2026-11-14, each stopped midway and started
       again in a test); the line-role trees need nothing (each book's lines cached as
-      it finishes, the training a minute). To check, each by stopping it midway and
-      starting it again: the leave-one-out scoring in
-      `train_ocr_trust.py` without `--save`, `match_typefaces.py` and the trust data
+      it finishes, the training a minute); the leave-one-out scoring in
+      `train_ocr_trust.py` without `--save` keeps each score in
+      `work/probes/loo-scoring/` (2026-11-14, not yet stopped and restarted on a real
+      run). To check, each by stopping it midway and starting it again:
+      `match_typefaces.py` and the trust data
       build (a file a book: resumable between books, not within one), `bench` (a
       stopped bench keeps its stage caches but no partial result file)
 
