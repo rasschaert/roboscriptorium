@@ -64,6 +64,33 @@ by default" again.
   judging only where two versions' drawings differ (92.6 → 93.3% of places, uneven by
   book: next as arbiter features, for punctuation, the judge's weakest kind).
 
+**Running since 2026-11-13 02:55, one screen with a watcher: `robo-render-judge5`**
+(`work/runs/render-judge5.sh`, about four hours; "all steps done" in
+`work/runs/render-judge5.out` when it ends). Run no other bench meanwhile.
+
+1. Main's fresh baselines, default settings (`work/runs/baseline-20261113-*.log`; the
+   two files are named on the "baselines:" line of the `.out`). Compare later changes
+   on main with these.
+2. A retest of a null of 2026-10-20 (three arbiters ago): the arbiter trained on Au
+   pair, De vergelding and Glazuur too, 26 books. They are the tuning books it never
+   trained on, scored with the full model, and the three that lost a little with the
+   render vote. With **the worktree `../robo-render`'s code** (its local branch
+   `render-default`, one commit past main, pushed as `trust-26`: the three in
+   `trustdata.SPECS`, `bench.NO_TRUST_DATA` empty): trust data into
+   `work/probes/ocr-trust-render4/`, two arbiters side by side
+   (`work/models/ocr-trust-render4*.pkl` with the vote, `ocr-trust-render4-ctl*.pkl`
+   without), the control's benches, then the vote's against them
+   (`work/runs/render-judge5-*.log`).
+
+   To read: the three books are scored by an arbiter that never saw them from here
+   on, so their own figures move for that reason; compare the two new arms with each
+   other (the vote's verdict against its control), and the new control with tonight's
+   (`tuning-20261113T013157`, `validation-20261113T013243`) on the other books only
+   (`bench-diff`). Taken only if tuning is no worse; then the branch's commit goes to
+   main and the checklist's "Trust data for the tuning books that have none" is ticked.
+   The remote branch `render-default` is the pre-rebase copy of what is on main: it can
+   be deleted.
+
 **Next for it** (the checklist, "Render and compare", "More tactics"): the
 where-they-differ sums as arbiter features; font features in the drawing (Pillow has no
 libraqm here: real ligatures, small capitals, old-style figures for every font); books
