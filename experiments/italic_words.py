@@ -9,14 +9,20 @@ compares their errors with the cuts' on the same words, at several chances. `--s
 writes the model trained on every tuning book and one without each of them (`bench`
 scores a tuning book with the copy that never saw it).
 
+Both resume: collecting skips the books an unfinished run of the same code and books
+finished (`run.txt`), and `--save` keeps each model in `<model>.training/` until all are
+trained, then puts them in place together.
+
     uv run python experiments/italic_words.py [tuning|validation]
     uv run python experiments/italic_words.py --train tuning
     uv run python experiments/italic_words.py --save
 """
 
+import hashlib
 import json
+import subprocess
 import sys
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
 import numpy as np
@@ -24,8 +30,10 @@ from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import bench, evaluate, italics
 from roboscriptorium.config import Settings
+from roboscriptorium.files import write_atomic
 from roboscriptorium.golden import scoring
 from roboscriptorium.ir import SourceRef
+from roboscriptorium.trustdata import staging
 
 OUT = Path("work/probes/italic-words")
 
@@ -63,25 +71,23 @@ def book(spec: str) -> str:
             for d in range(op.src_end - op.src_start):
                 to_ref[op.src_start + d] = op.dest_start + d
 
-    OUT.mkdir(parents=True, exist_ok=True)
-    n = 0
-    with open(OUT / f"{name}.jsonl", "w") as fh:
-        for w, (ref, i) in enumerate(where):
-            if w not in to_ref:
-                continue
-            row = dict(rows[ref][i])
-            row |= {
-                "book": name,
-                "page": ref.page,
-                "line": ref.line,
-                "i": i,
-                "word": words[w],
-                "label": to_ref[w] in ref_italic,
-                "rule": i in cut.get(ref, frozenset()),
-            }
-            fh.write(json.dumps(row) + "\n")
-            n += 1
-    return f"{name}: {n} words, {len(ref_italic)} italic in reference"
+    out = []
+    for w, (ref, i) in enumerate(where):
+        if w not in to_ref:
+            continue
+        row = dict(rows[ref][i])
+        row |= {
+            "book": name,
+            "page": ref.page,
+            "line": ref.line,
+            "i": i,
+            "word": words[w],
+            "label": to_ref[w] in ref_italic,
+            "rule": i in cut.get(ref, frozenset()),
+        }
+        out.append(json.dumps(row) + "\n")
+    write_atomic(OUT / f"{name}.jsonl", "".join(out))
+    return f"{name}: {len(out)} words, {len(ref_italic)} italic in reference"
 
 
 def _load(books: list[str]) -> dict[str, list[dict]]:
@@ -145,15 +151,68 @@ def validate(tuning: list[str], validation: list[str]) -> None:
 
 
 def save(tuning: list[str]) -> None:
+    """Each model is kept in `staging(path)` as it finishes and taken up again by a run on
+    the same data; all are put in place together at the end."""
     data = _load(tuning)
     path = Path(Settings().italic_model)
-    italics.save(_fit(data), path)
-    print("saved", path)
-    for held in tuning:
-        # A tuning book with no rows (its italics unlike its print) never trained it.
-        copy = italics.without(path, held)
-        italics.save(_fit({b: rs for b, rs in data.items() if b != held}), copy)
-        print("saved", copy)
+    held_dir = staging(path)
+    files = sorted((b, (OUT / f"{b}.jsonl").stat()) for b in data)
+    made_of = hashlib.sha256(
+        repr(
+            (
+                italics.MODEL_VERSION,
+                italics.FEATURES,
+                [(b, f.st_size, f.st_mtime_ns) for b, f in files],
+            )
+        ).encode()
+    ).hexdigest()
+    note = held_dir / "made-of.txt"
+    if not (note.exists() and note.read_text() == made_of):
+        # Another training's leftovers: models of other data are not these models.
+        for old in held_dir.glob("*.pkl") if held_dir.is_dir() else ():
+            old.unlink()
+        write_atomic(note, made_of)
+    # A tuning book with no rows (its italics unlike its print) never trained its copy.
+    targets = [(path, data)] + [
+        (italics.without(path, b), {k: rs for k, rs in data.items() if k != b}) for b in tuning
+    ]
+    for target, rows in targets:
+        kept = held_dir / target.name
+        if not kept.exists():
+            italics.save(_fit(rows), kept)
+        print("trained", target.name, flush=True)
+    for target, _ in targets:
+        write_atomic(target, (held_dir / target.name).read_bytes())
+        (held_dir / target.name).unlink()
+        print("saved", target)
+    note.unlink()
+    held_dir.rmdir()
+
+
+def _code_key(specs: list[str]) -> str:
+    """What decides a collection run's rows: the commit, uncommitted code, the slices."""
+    head = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True).stdout
+    diff = subprocess.run(["git", "diff", "HEAD", "--", "src"], capture_output=True).stdout
+    return hashlib.sha256(repr((head, diff, specs)).encode()).hexdigest()
+
+
+def collect(specs: list[str]) -> None:
+    """Every slice's rows; a run stopped and started again on the same code and slices
+    skips the books it finished (`run.txt`: the run's key, then a finished book a line)."""
+    key = _code_key(specs)
+    run = OUT / "run.txt"
+    lines = run.read_text().splitlines() if run.exists() else []
+    done = set(lines[1:]) if lines[:1] == [key] else set()
+    write_atomic(run, "\n".join([key, *sorted(done)]) + "\n")
+    todo = [s for s in specs if s.split(":")[0] not in done]
+    if done:
+        print(f"resuming: {len(done)} books done, {len(todo)} to go", flush=True)
+    with ProcessPoolExecutor(bench.workers()) as pool:
+        for job in as_completed({pool.submit(book, s): s for s in todo}):
+            print(job.result(), flush=True)
+            done.add(job.result().split(":")[0])
+            write_atomic(run, "\n".join([key, *sorted(done)]) + "\n")
+    run.unlink()
 
 
 def _names(set_name: str) -> list[str]:
@@ -169,10 +228,7 @@ def main() -> None:
     elif args[:1] == ["--save"]:
         save(_names("tuning"))
     else:
-        specs = [s for name in (args or ["tuning"]) for s in bench.SETS[name]]
-        with ProcessPoolExecutor(bench.workers()) as pool:
-            for line in pool.map(book, specs):
-                print(line, flush=True)
+        collect([s for name in (args or ["tuning"]) for s in bench.SETS[name]])
 
 
 if __name__ == "__main__":

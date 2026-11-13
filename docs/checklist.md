@@ -29,15 +29,25 @@ last on 2026-11-14, so next by 2026-11-21).
 ## In flight
 
 - [ ] **Every long run resumable** (the user, 2026-11-13; AGENTS.md, Engineering
-      practices). Done: the arbiter's training (`trustdata.models_to_save`). To check,
-      each by stopping it midway and starting it again: the line-role trees
-      (`train_sorter.py`, `sorterdata.models_to_save` saves at the end too), the italic
-      trees (`italic_words.py --save`), the leave-one-out scoring in
+      practices). Done: the arbiter's training (`trustdata.models_to_save`); the italic
+      trees, collection and `--save` (2026-11-14, each stopped midway and started
+      again in a test); the line-role trees need nothing (each book's lines cached as
+      it finishes, the training a minute). To check, each by stopping it midway and
+      starting it again: the leave-one-out scoring in
       `train_ocr_trust.py` without `--save`, `match_typefaces.py` and the trust data
       build (a file a book: resumable between books, not within one), `bench` (a
       stopped bench keeps its stage caches but no partial result file)
 
 In this order; `HANDOVER.md` has the paths and the commands.
+
+- [ ] **Both learned trees retrained on the grown slices.** The italic trees
+      (`work/probes/italic-words/`, 2026-11-04) and the line-role trees
+      (`work/probes/sorter/`, 2026-11-05) were trained before batches four and five
+      scored nine tuning books whole (~1,600 pages); the arbiter was retrained on them,
+      these never. From the stage caches, no models, CPU: `italic_words.py tuning` and
+      `validation`, `--save`; `train_sorter.py --rebuild --save`; then warm `bench
+      tuning` and `validation` against the render-vote baselines. Not beside another
+      CPU training. ~30 min plus the benches (15)
 
 - [ ] After batch five, the two nulls that waited for it: autotrust-jev 9B as a second
       text judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
