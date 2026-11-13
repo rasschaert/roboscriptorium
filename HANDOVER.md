@@ -7,7 +7,11 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**First thing next session: run `uv run ruff format . && uv run ruff check . && uv run pytest`.** The last commit (resumable arbiter training) went in at the user's word without the full suite; only `tests/test_trustdata.py` was run (3 passed).
+**Running since 2026-11-14 (fourth session):** `train-differ`, the arbiter with
+`render-differ` in `render`'s place (step 1 below), ~85 min, CPU only; the worktree
+`../robo-render` rebased on main (563bf21), so the training resumes if stopped. Output in
+`work/runs/train-differ.out`, models in `work/models/ocr-trust-differ.pkl.training/`.
+The full suite passed on main first (741 passed).
 
 ## Render and compare: on by default since 2026-11-13 (the third session, ended 11:10)
 
