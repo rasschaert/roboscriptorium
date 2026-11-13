@@ -2214,4 +2214,34 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   eight books lose up to three points (De cipier 96.5 → 93.5%), others gain up to six.
   Not taken into the pick. Next for it: the two local sums as features the arbiter
   reads beside the vote, where a gain that depends on the book can be weighed.
+- 2026-11-13: **Render and compare, second round (typefaces by the judge's fit,
+  old-style figures and superscript ordinals, confidence from the fit): tuning BETTER,
+  validation no clear change in words and WORSE by the rule on two italic errors; left
+  off by default for the user to decide.** One arbiter trained on the rebuilt trust
+  data (`work/probes/ocr-trust-render3/`, `work/models/ocr-trust-render3*.pkl`, 75
+  minutes alone), benched against the first round's control arbiter, both arms with the
+  branch's code, asking below 0.93. Tuning, 6,180 pages
+  (`tuning-20261113T013700` against `…T013157`): questions 3,983 → 3,454 (−13%), wrong
+  words left unasked 715 → 678, before review 3,442 → 3,074, after review 0.24 → 0.22
+  a page [-0.03, -0.02], italic errors 1,244 → 1,227, headings 29 both; unasked a page
+  at a question every four pages 0.250 → 0.191, every two 0.151 → 0.119. Against the
+  first round's vote: questions 3,570 → 3,454, unasked 687 → 678. Validation, 889 pages
+  (`validation-20261113T013748` against `…T013243`): after review 0.41 → 0.42
+  [-0.01, +0.04], questions 545 → 486 (−11%), unasked 268 → 283, before review
+  614 → 620, headings 52 both, italic errors 195 → 197, which is what the rule calls
+  worse; at fixed budgets 0.526 → 0.514, 0.368 → 0.379 and 0.301 → 0.318 unasked a
+  page. Het laatste bevel, the first round's loser, is level after review
+  (0.35 → 0.33) with the new confidence; Verminkt's unasked rise (0.34 → 0.47), its
+  face switched between two that fit it alike (0.831). Read: the vote orders suspects
+  better on the twenty tuning books, each scored by an arbiter that never saw it, and
+  on validation trades one question in nine for about fifteen unasked wrong words,
+  inside the interval. Two things found on the way, both the pipeline's now: a place
+  set taller than 1.3 lines of the text is display type and gets no vote from this
+  judge (104 of 35,582 suspects; no change on the bench); and a heading whose label is
+  garbled past recognising takes the book's label where its number is the one the
+  chapter run lacks, between two chapters or right after the last (Het ijzige land's
+  "Fea bib Sulillae 37": whether it came out right had hung on the arbiter fixing the
+  label instead of asking, which is what first made this round read WORSE on tuning).
+  Misread on the way: the heading list's "HOOFDSTUK 6 for 5" was the alignment's
+  artefact, not an error; diff the two builds' heading lists before believing a miss.
 

@@ -304,9 +304,15 @@ are under Done, "Architecture probes".
             build reads the key before matching
       - [x] An ordinal's ending drawn as a superscript and digits in the font's
             old-style figures (20 of 478 labelled places with a digit fixed, 4 made)
-      - [ ] The second round: trust data and arbiter with the new typefaces and
-            drawings, benched against the first round's control (in flight,
-            `work/runs/render-judge2.sh`)
+      - [x] The second round: trust data and arbiter with the new typefaces, drawings
+            and confidence, benched against the first round's control: tuning BETTER
+            (questions −13%, unasked 715 → 678), validation no clear change in words,
+            WORSE by the rule on two italic errors (decisions.md 2026-11-13)
+      - [ ] **user**: on by default or not, on those numbers. If yes: `render` in
+            `alarm_model`, `ocr-trust-render3*` in production's place with its trust
+            data, fresh baselines; if no, the docs that describe it as in use
+            (README, primer, how-it-works, the diagram, models.md, AGENTS.md's judge
+            row) say "off by default" again
       - [x] The judge's confidence as the probability its pick is the print, from how
             well the pick fits and its margin (AUC 0.80 against the margin's 0.73): a
             typeface that suits a book poorly lowers its votes' weight

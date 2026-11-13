@@ -53,12 +53,18 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
 
 ## Where there is room, by expected gain
 
-0. **Render and compare, a judge that knows no language (probe, not built).** Each
-   version of a suspect drawn in the book's typeface and laid over the scan: the print
-   on 87% of 26,309 labelled places, and on most of what each judge misses. As one more
-   vote it lowers the arbiter's silent errors at every budget, each book left out in
-   turn (26 → 19 at the rule's questions, 189 → 153 at a question every four pages;
-   2026-11-12). Not benched yet. Weak where the typeface match is weak.
+0. **Render and compare, a judge that knows no language (built, benched, off by
+   default until the user decides).** Each version of a suspect drawn in the book's
+   typeface and laid over the scan: the print on 92.3% of 34,205 labelled places, best
+   of all judges on accents (95% against 83–90%), weakest on punctuation (91% against
+   96%). Benched against a control arbiter trained on the same data without its vote
+   (2026-11-13): tuning BETTER, questions 3,983 → 3,454, wrong words left unasked
+   715 → 678, at a question every four pages 0.250 → 0.191 unasked a page; validation
+   no clear change in words (after review 0.41 → 0.42 [-0.01, +0.04], questions
+   545 → 486, unasked 268 → 283) and WORSE by the rule on two italic errors. Room left:
+   punctuation (the versions compared only where they differ, as arbiter features),
+   books whose typeface the library lacks (Het laatste bevel, Verminkt), font features
+   in the drawing.
 0. **The page readings where they can reach the gain (readings cached, not built).**
    glm-ocr and Qwen agreeing against the build point at 60 errors no question asks,
    about a quarter of what's left after review, mostly at line joins and page numbers.
