@@ -32,12 +32,15 @@ from roboscriptorium.clients.decide import Answer
 from roboscriptorium.files import write_atomic
 from roboscriptorium.pdf import PageText
 
-# The judge's name among the second vision judges (`ROBO_ALARM_MODEL=…,render`).
+# The judges' names among the second vision judges (`ROBO_ALARM_MODEL=…,render`): the
+# whole place's fit, and the two best-fitting versions compared where they differ.
 MODEL = "render"
+DIFFER = "render-differ"
+MODELS = (MODEL, DIFFER)
 # The cached match's format.
 VERSION = 2
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 6
+FITS = 7
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
@@ -68,6 +71,13 @@ SUPERSCRIPT = ((0.6, 0.3), (0.7, 0.25))
 # fit and the logarithm of its margin over the next (intercept, fit, log margin), fitted
 # on labelled places by `experiments/render_confidence.py`.
 SURENESS = (-1.007, 6.903, 0.718)
+# Which of two versions is the print, from where their drawings differ: a logistic model
+# of the first's less the second's share of drawing without ink under it and of ink it
+# doesn't draw (no intercept: the order means nothing), fitted on labelled places by
+# `experiments/probe_render_difference.py --fit`.
+DIFFERENCE = (-5.061, -19.857)
+# Drawings differ where their darkness is this far apart (of 255).
+APART = 64
 # A place this many times taller than the book's lines is set in display type (a chapter
 # heading), which the judge, drawing at the text's size, can't compare.
 DISPLAY = 1.3
@@ -550,7 +560,7 @@ def _pieces(face: Face, pieces: list[tuple]) -> np.ndarray | None:
 def drawings(face: Face, version: str) -> list[np.ndarray]:
     """The ways a book may set a version: as the font spaces it; with a closing quote
     kerned over the stop before it; with an ellipsis's dots apart; with a run of
-    capitals as small capitals; with an ordinal's ending as a superscript; each of these in the
+    capitals as small capitals; with an ordinal's ending as a superscript; each of these in
     font's other figures where the version has digits."""
     ways = [[(version, 1.0, 0.0)]]
     if m := _STOP_QUOTE.search(version):
@@ -620,6 +630,83 @@ def fits(face: Face, spread: int, size: float, ink: np.ndarray, versions: list[s
     return out
 
 
+def _laid(face: Face, spread: int, size: float, canvas, energy, version, anchor=None):
+    """The version's best-fitting drawing on the padded strip `canvas`: its fit, the
+    drawing laid there, and where (top, left, width, stretch). With `anchor` (stretch,
+    top, left or None, right or None) it is laid at that stretch within a few pixels of
+    that corner, so two versions sharing a start or an end lie letter on letter."""
+    best = (0.0, None, None)
+    slack = max(2, round(size * 0.06))
+    for glyphs in drawings(face, version):
+        high = max(4, round(glyphs.shape[0] * size / RENDER_PX))
+        for stretch in STRETCHES if anchor is None else (anchor[0],):
+            wide = max(4, round(glyphs.shape[1] * size / RENDER_PX * stretch))
+            if high > canvas.shape[0] or wide > canvas.shape[1]:
+                continue
+            sized = _spread(_picture(glyphs).resize((wide, high)), spread)
+            mine = np.asarray(sized.filter(_BLUR), np.float32)
+            over = fftconvolve(canvas, mine[::-1, ::-1], mode="valid")
+            if anchor is not None:
+                _, top, left, right = anchor
+                x0 = left if left is not None else right - wide
+                ys = slice(max(0, top - 3 * slack), top + 3 * slack + 1)
+                xs = slice(max(0, x0 - slack), max(0, x0 + slack + 1))
+                window = np.full_like(over, -np.inf)
+                window[ys, xs] = over[ys, xs]
+                over = window
+                if not np.isfinite(over).any():
+                    continue
+            y, x = np.unravel_index(over.argmax(), over.shape)
+            fit = float(over[y, x]) / (energy * float((mine * mine).sum()) + 1e-6) ** 0.5
+            if fit > best[0]:
+                laid = np.zeros_like(canvas)
+                laid[y : y + high, x : x + wide] = mine
+                best = (fit, laid, (int(y), int(x), wide, stretch))
+    return best
+
+
+def _shared(a: str, b: str) -> tuple[int, int]:
+    """How many characters two versions share at their start and at their end."""
+    limit = min(len(a), len(b))
+    start = next((i for i in range(limit) if a[i] != b[i]), limit)
+    end = next((i for i in range(limit) if a[-1 - i] != b[-1 - i]), limit)
+    return start, end
+
+
+def difference(
+    face: Face, spread: int, size: float, ink: np.ndarray, first: str, second: str
+) -> tuple[float, float] | None:
+    """Two versions compared with the scan only where their drawings differ: the
+    first's less the second's share, on those pixels, of drawing without ink under it
+    and of ink it doesn't draw. Each is laid where it fits best and the other letter on
+    letter with it (anchored on their shared start or end); the better-fitting of the
+    two layings counts. None where nothing differs or a version can't be laid."""
+    strip = np.asarray(_picture(ink).filter(_BLUR), np.float32)
+    pad = (round(size * 1.2), round(size * 3))
+    canvas = np.pad(strip, ((pad[0], pad[0]), (pad[1], pad[1])))
+    energy = float((strip * strip).sum())
+    start, end = _shared(first, second)
+    best = None
+    for versions, sign in (((first, second), 1), ((second, first), -1)):
+        fit, a, at = _laid(face, spread, size, canvas, energy, versions[0])
+        if a is None:
+            continue
+        y, x, wide, stretch = at
+        anchor = (stretch, y, x, None) if start >= end else (stretch, y, None, x + wide)
+        _, b, _ = _laid(face, spread, size, canvas, energy, versions[1], anchor)
+        if b is None:
+            continue
+        differ = np.abs(a - b) > APART
+        n = int(differ.sum())
+        if not n:
+            continue
+        bare = [float((np.clip(d - canvas, 0, None) * differ).sum()) / n / 255 for d in (a, b)]
+        undrawn = [float((np.clip(canvas - d, 0, None) * differ).sum()) / n / 255 for d in (a, b)]
+        if best is None or fit > best[0]:
+            best = (fit, sign * (bare[0] - bare[1]), sign * (undrawn[0] - undrawn[1]))
+    return None if best is None else best[1:]
+
+
 def sureness(fit: float, margin: float) -> float:
     """The probability that the best-fitting version is the print (`SURENESS`): low
     where even it lies poorly over the ink (a typeface that doesn't suit the book, a
@@ -662,12 +749,51 @@ class Judge:
         return {"reading": Answer("choice", letters[order[0]], sure, {})}
 
 
+class Differ(Judge):
+    """The second judge of the two: of the two versions that fit the place best, the
+    one the scan agrees with where their drawings differ (`difference`), a comma against
+    a stop being a few pixels of a word's ink. No vote where `Judge` has none, or
+    nothing differs."""
+
+    model = DIFFER
+
+    def decide(self, state: dict, questions: dict, image_png: bytes | None = None) -> dict:
+        none = {"reading": Answer("choice", "neither", 0.0, {})}
+        versions = state["readings"]
+        letters = [c for c in questions["reading"]["criteria"] if c != "neither"]
+        high = state["box"][3] - state["box"][1]
+        if self._line is not None and high > DISPLAY * self._line:
+            return none
+        with pdflayer.PDF_LOCK, pymupdf.open(self._pdf) as doc:
+            ink = place_ink(doc[state["page"] - 1], state["box"], self._texts.get(state["page"]))
+        if ink is None:
+            return none
+        spread, size = self._match.spread, self._match.size
+        scores = fits(self._face, spread, size, ink, versions)
+        a, b = sorted(range(len(versions)), key=lambda i: -scores[i])[:2]
+        if not scores[b]:
+            return none
+        told = difference(self._face, spread, size, ink, versions[a], versions[b])
+        if told is None:
+            return none
+        by_bare, by_undrawn = DIFFERENCE
+        first = 1 / (1 + math.exp(-(by_bare * told[0] + by_undrawn * told[1])))
+        pick, sure = (a, first) if first >= 0.5 else (b, 1 - first)
+        return {"reading": Answer("choice", letters[pick], sure, {})}
+
+
 def judge(
-    pdf: Path, pages: list[PageText], library: Path, cache: Path, typeface: str | None = None
+    pdf: Path,
+    pages: list[PageText],
+    library: Path,
+    cache: Path,
+    typeface: str | None = None,
+    model: str = MODEL,
 ) -> Judge:
-    """The judge for a book, its typeface matched from `pages` (and kept in `cache`), or
-    `typeface` where book.toml names one."""
+    """The judge `model` for a book, its typeface matched from `pages` (and kept in
+    `cache`), or `typeface` where book.toml names one."""
     if not library.is_dir():
-        raise ValueError(f"the judge {MODEL!r} draws with the fonts in {library}: no such folder")
+        raise ValueError(f"the judge {model!r} draws with the fonts in {library}: no such folder")
     found = match(pdf, pages, library, cache, typeface)
-    return Judge(pdf, Face.from_file(library / found.file), found, pages)
+    kind = Differ if model == DIFFER else Judge
+    return kind(pdf, Face.from_file(library / found.file), found, pages)

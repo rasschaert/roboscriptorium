@@ -62,6 +62,45 @@ def test_where_the_layer_has_no_words_it_picks_nothing(tmp_path):
     assert (answer.value, answer.confidence) == ("neither", 0.0)
 
 
+def _differ(path) -> rendercheck.Differ:
+    """The differing judge in the scan's own face: a mark is a few pixels, which a
+    stand-in face doesn't put where the print does."""
+    face = rendercheck.Face(lambda px: ImageFont.truetype(_font("helv"), px))
+    words = rendercheck.scan_words(path, [PageText(1, 400, 120, [])], 20)
+    found = rendercheck.Match("helv", "helv", 0.9, 0, rendercheck.em_size(words, face.at()))
+    return rendercheck.Differ(path, face, found)
+
+
+@pytest.mark.parametrize(
+    ("printed", "versions", "picked"),
+    [
+        ("world,", ["world.", "world,"], "b"),
+        ("world.", ["world.", "world,"], "a"),
+        ("world", ["world", "world."], "a"),
+        ("world.", ["world", "world."], "b"),
+        ("wor1d", ["world", "wor1d"], "b"),
+    ],
+)
+def test_the_differing_judge_picks_by_where_two_versions_differ(
+    tmp_path, printed, versions, picked
+):
+    path, box = _scan(tmp_path, printed)
+    differ = _differ(path)
+    state = {"page": 1, "line": 0, "readings": versions, "box": [round(v, 1) for v in box]}
+    answer = differ.decide(state, _question(versions))["reading"]
+    assert answer.value == picked and 0.5 <= answer.confidence <= 1
+    assert differ.model == "render-differ"
+
+
+def test_the_differing_judge_has_no_vote_where_nothing_differs_or_nothing_is_printed(tmp_path):
+    path, box = _scan(tmp_path, "world")
+    differ = _differ(path)
+    same = {"page": 1, "line": 0, "readings": ["world", "world"], "box": list(box)}
+    assert differ.decide(same, _question(["world", "world"]))["reading"].value == "neither"
+    empty = {"page": 1, "line": 0, "readings": ["world", "wor1d"], "box": [30, 90, 80, 110]}
+    assert differ.decide(empty, _question(["world", "wor1d"]))["reading"].value == "neither"
+
+
 def test_a_place_in_display_type_is_not_its_to_judge(tmp_path):
     from roboscriptorium.pdf import Line
 

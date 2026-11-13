@@ -54,7 +54,9 @@ def doctor() -> None:
         typer.echo(f"ollama  {settings.ollama_url}  UNREACHABLE: {exc}")
 
     # The decision models the pipeline asks, each on the runtime that serves it.
-    alarms = [spec.partition("@")[0] for spec in settings.alarm_models if spec != rendercheck.MODEL]
+    alarms = [
+        spec.partition("@")[0] for spec in settings.alarm_models if spec not in rendercheck.MODELS
+    ]
     llamas = [m.removeprefix("llama:") for m in alarms if m.startswith("llama:")]
     models = [settings.role_model, settings.judge_model, settings.check_model]
     models += [m for m in alarms if not m.startswith("llama:")]
@@ -606,7 +608,9 @@ def _model_versions(settings: Settings) -> dict[str, str]:
             out[m["name"]] = ",".join(sorted({*out.get(m["name"], "").split(","), digest} - {""}))
     except httpx.HTTPError:
         pass
-    alarms = [spec.partition("@")[0] for spec in settings.alarm_models if spec != rendercheck.MODEL]
+    alarms = [
+        spec.partition("@")[0] for spec in settings.alarm_models if spec not in rendercheck.MODELS
+    ]
     used = {
         settings.role_model, settings.check_model, settings.judge_model,
         settings.ocr_model, settings.read_model,
