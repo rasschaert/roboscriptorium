@@ -37,7 +37,10 @@ def _text(block: dict) -> str:
     if "parts" in block:
         return f"<h3>{text}</h3>"
     kind = " epigraph" if block.get("epigraph") else " dedication" if block.get("dedication") else ""
-    return f'<p class="{kind.strip()}">{text}</p>'
+    # A scene break before the paragraph and its first line set flush, as the EPUB has them.
+    rule = '<hr class="break">' if block.get("break_before") else ""
+    kind += " opening" if block.get("opening") else ""
+    return f'{rule}<p class="{kind.strip()}">{text}</p>'
 
 
 def main(book_dir: str, n: int = PAGES) -> None:
@@ -71,10 +74,12 @@ section {{ max-width: 70em; margin: 2em auto; border-top: 1px solid var(--line);
 .pair img {{ max-width: 100%; width: 30em; border: 1px solid var(--line); }}
 .text {{ flex: 1; min-width: 18em; }} .text p {{ margin: 0; text-indent: 1.5em; }}
 .epigraph, .dedication {{ margin: 0.6em 0 0.6em 2em; text-indent: 0; color: var(--muted); }}
+.text hr.break {{ border: 0; height: 1.5em; margin: 0; }} .text p.opening {{ text-indent: 0; }}
 </style></head><body><header><h1>{html.escape(book.title)}: spot-check</h1>
 <p>{len(chosen)} random pages of the text proper. On each, compare the scan with the
 paragraphs beside it and count every wrong word (a letter, accent, mark or space), every
-paragraph break that is wrong or missing, and every italic word set wrong. A paragraph
+paragraph break that is wrong or missing, and every italic word set wrong. A blank line
+here is a scene break the build set. A paragraph
 shown here may run onto the next page or start on the one before: judge only the words on
 this scan. Tell me the counts per page, with a word or two about each.</p></header>
 {''.join(sections)}</body></html>"""
