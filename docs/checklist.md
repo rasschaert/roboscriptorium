@@ -340,9 +340,9 @@ are under Done, "Architecture probes".
       - [ ] **The font's kerning, chosen per book** (probed 2026-11-14: 92.6 → 93.5% of
             10,528 labelled places, Vals alarm, De tuin, Het heft and You're Never Weird
             4–5 points each; decisions.md). Each character drawn at `uharfbuzz`'s
-            position; the typeface match chooses kerned or not by the fit on its plain
-            words (to check against the per-book best first: on the contested places the
-            choice was right for 19 of 22 books); `FITS` bumped; trust data rebuilt, the
+            position; the typeface match chooses kerned or not by the fit on 150 words
+            with a stop or quote mark (93.46%, right for 19 of 22 books; plain words
+            choose worse, 93.0%); `FITS` bumped; trust data rebuilt, the
             arbiter retrained, `bench tuning` and `validation`. After the second render
             judge's bench (whichever judge stays gets it). ~1 h code, ~3 h runs
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,

@@ -2374,3 +2374,13 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   at every place: 93.6%, but keeps half of Goede dochter's and Metro's losses.
   `uharfbuzz` (a wheel) gives the same positions with no loader path, so the pipeline
   needs no setup for it.
+- 2026-11-14: **The kerning chosen before any suspect: on words with a stop or quote
+  mark.** Choosing kerned or not per book by the mean fit on 150 plain words (as the
+  typeface match settles near-ties) gives 93.0% of the 10,528 places (93.4% with a
+  margin tuned on these books): plain words have no quotes, and the quotes decide the
+  losses. On 150 uncontested words of letters with a stop or quote mark it gives 93.46%
+  (93.47% with a margin of 0.001, so none is needed), against 93.52% from the contested
+  places' own fit and 93.81% for the best per book; right for 19 of 22 books, the misses
+  Monterosso (97.1 → 95.2), Doctor Dolittle and The Nature of a Crime (gains of 2–3
+  points not taken). `probe_render_raqm.py --plain`,
+  `work/probes/render-raqm/plain.jsonl`.
