@@ -953,3 +953,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-13 | bench validation, chapter numbers before a title by their run, production's arbiter (warm) | 0 | 1 | 0 |
 | 2026-11-13 | bench tuning with the judge render, against production's arbiter, both with the chapter run for titled numbers (warm) | 0 | 4 | 0 |
 | 2026-11-13 | bench validation with the judge render, against production's arbiter, both with the chapter run for titled numbers (warm) | 0 | 1 | 0 |
+| 2026-11-13 | trust data rebuilt with both render judges, six books at a time (warm but for their fits) | 0 | 37 | 0 |

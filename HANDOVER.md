@@ -6,7 +6,7 @@ end of every session. Top sections rewritten 2026-11-12 (the first by the second
 09:00, the next by the first at ~08:30); the older sections
 from 2026-11-09 and 2026-11-10.
 
-## Render and compare: waits on the user's decision (the third session, ended 2026-11-13 ~03:00)
+## Render and compare: on by default since 2026-11-13 (the third session)
 
 **What it is.** The user's idea (2026-11-11): a judge that knows no language. Each
 version of a suspect is drawn in the book's typeface and laid over the scan's ink; the
@@ -14,36 +14,35 @@ better fit gets the vote (`rendercheck.py`, the judge `render`, fonts in `work/f
 docs/design.md, "Render and compare", has how it works; decisions.md, 2026-11-11 to 13,
 every number.
 
-**Where it stands.** Built, on main, **off by default**: `config.py`'s `alarm_model`
-lacks it and production's arbiter was trained without its vote. The user asked for it on
-by default (2026-11-12) if its benches were not worse. They are BETTER on tuning and, by
-the bench's rule, WORSE on validation (two italic errors; no clear change in words), so
-the numbers went to the user instead (the last message of the session):
+**Where it stands.** On by default (the user, 2026-11-13: "let's turn it on by default
+but also keep working on the weak spots"): `render` in `config.py`'s `alarm_model`;
+`work/models/ocr-trust*.pkl` are the `ocr-trust-render3` set and `work/probes/ocr-trust/`
+its trust data. The arbiter before: `work/models/ocr-trust-backup-20261113/`, its data
+`work/probes/ocr-trust-before-render-20261113/`. Against production before the switch:
+tuning BETTER (after review 0.24 → 0.22, questions 3,971 → 3,454, unasked 713 → 678),
+validation no clear change in words (0.41 → 0.42 [-0.02, +0.03], questions 546 → 486,
+unasked 272 → 283), worse by the rule on italics 195 → 197.
 
-| | control | with the vote |
-| --- | --- | --- |
-| tuning, 6,180 pages: questions | 3,983 | 3,454 |
-| tuning: wrong words left unasked | 715 | 678 |
-| tuning: after review, a page | 0.24 | 0.22 [-0.03, -0.02] |
-| validation, 889 pages: questions | 545 | 486 |
-| validation: wrong words left unasked | 268 | 283 |
-| validation: after review, a page | 0.41 | 0.42 [-0.01, +0.04] |
-| validation: italic errors | 195 | 197 |
+**Running, two screens with watchers** (2026-11-13, 09:20):
 
-The runs: `work/bench/tuning-20261113T013157` (control) and `…T013700` (the vote),
-`validation-20261113T013243` and `…T013748`, all `-9f70cd3-dirty.json`. The arbiters:
-`work/models/ocr-trust-render3*.pkl` (with the vote, trust data
-`work/probes/ocr-trust-render3/`) and `ocr-trust-render-ctl*.pkl` (the control, data
-`ocr-trust-render2/` read without the vote).
-
-**If the user says on:** `alarm_model = "autotrust-jev:35b-nvfp4,d3:9b,render"` in
-`config.py`; copy `work/models/ocr-trust.pkl` and its `-without-` files aside, put the
-`ocr-trust-render3*` set in their place and `work/probes/ocr-trust-render3/` in place
-of `work/probes/ocr-trust/` (the old one kept beside it); warm `bench tuning` and
-`validation` as the new baselines; the checklist ticked; models.md's row and
-optimism.md given the bench's numbers. **If off:** the docs that describe it as in use
-(README, primer, how-it-works, the diagram, models.md, AGENTS.md's judge row) say "off
-by default" again.
+- `robo-render-judge7` (`work/runs/render-judge7.sh`, CPU only; "all steps done" in its
+  `.out`): a candidate, **the worktree `../robo-render`'s code** (branch
+  `render-differ`, one commit past main as it was at 08:00; rebase it before merging):
+  a second render judge, `render-differ`, which compares the two best-fitting versions
+  only where their drawings differ. On 27,491 labelled two-version places it is ahead
+  of the first on every kind (punctuation 93.1% against 90.7%, accents 96.5 against
+  95.0) and errs elsewhere. Trust data with both votes in
+  `work/probes/ocr-trust-render5/`, the arbiter `work/models/ocr-trust-render5*.pkl`,
+  then bench tuning and validation against production before the switch
+  (`tuning-20261113T061845`, `validation-20261113T061931`;
+  `work/runs/render-judge7-*.log`). Read it against the first judge alone: the runs
+  made right after those two baselines, and the new baselines below. Taken only if
+  tuning is better than the first judge alone and validation is no worse; then
+  `alarm_model` gains `render-differ` and the render5 set takes production's place.
+- `robo-baseline-render` (`work/runs/baseline-render.sh`) waits for the first, then
+  makes main's baselines with the vote on by default; the two files are named on the
+  "baselines:" line of `work/runs/baseline-render.out`. Compare later changes with
+  those. Run no other bench until both screens are gone.
 
 **Done this session, all on main** (decisions.md, 2026-11-12 and 13):
 
@@ -63,19 +62,6 @@ by default" again.
 - Nulls and not-yets: several faces voting together (no better than one well chosen);
   judging only where two versions' drawings differ (92.6 → 93.3% of places, uneven by
   book: next as arbiter features, for punctuation, the judge's weakest kind).
-
-**Running since 2026-11-13 08:10, one screen with a watcher: `robo-render-judge7`**
-(`work/runs/render-judge7.sh`, about two hours, CPU only; "all steps done" in its
-`.out`). A candidate, **the worktree `../robo-render`'s code** (branch `render-differ`,
-one commit past main): a second render judge, `render-differ`, which compares the two
-best-fitting versions only where their drawings differ (punctuation is the first
-judge's weakest kind; the probe is in decisions.md, 2026-11-13). Trust data with both
-votes into `work/probes/ocr-trust-render5/`, the arbiter
-`work/models/ocr-trust-render5*.pkl`, then bench tuning and validation against
-production's baselines below (`work/runs/render-judge7-*.log`). To read: against
-production, and against the first judge alone on the same baselines (the runs made
-right after the two baselines). Taken to main only if tuning is better than the first
-judge alone; either way the switch-on is the user's. Run no other bench meanwhile.
 
 The night's results, all in decisions.md, 2026-11-13:
 
