@@ -495,8 +495,9 @@ def numbered(blocks: list[Block]) -> list[Block]:
     folded ("Io" → "10") where it fits the run, and a short heading that doesn't read as
     a number ("SE", "zi") where both its neighbours agree on it. Headings with a title
     of words are left out of the run. Labelled numbers ("HOOFDSTUK II") run the same way,
-    their label set as the book's commonest spelling of it ("Hoorpstuk 6"). Returns a new
-    list."""
+    their label set as the book's commonest spelling of it ("Hoorpstuk 6"), and a heading
+    whose label is past recognising takes it where its number is the one the run lacks
+    there. Returns a new list."""
     out = list(blocks)
     at = [
         i
@@ -517,10 +518,25 @@ def numbered(blocks: list[Block]) -> list[Block]:
         return out
     common = Counter(label for _, label, _ in labelled).most_common(1)[0][0]
     alike = [(i, n) for i, label, n in labelled if _same_label(label, common)]
-    for (i, _), number in zip(alike, _settle([value(n) for _, n in alike]), strict=True):
+    numbers = _settle([value(n) for _, n in alike])
+    for (i, _), number in zip(alike, numbers, strict=True):
         text = f"{common} {number}" if number is not None else None
         if text is not None and text != blocks[i].text:
             out[i] = replace(blocks[i], text=text, parts=[text])
+    # A heading between two of the run that ends on the one number they lack is that
+    # chapter, its label misread past recognising ("Fea bib Sulillae 37").
+    placed = {i: number for (i, _), number in zip(alike, numbers, strict=True)}
+    run = sorted(placed)
+    for before, after in zip(run, run[1:], strict=False):
+        lacking = placed[before] + 1 if placed[before] is not None else None
+        between = [i for i in range(before + 1, after) if isinstance(blocks[i], Heading)]
+        if lacking is None or placed[after] != lacking + 1 or len(between) != 1:
+            continue
+        words = blocks[between[0]].text.split()
+        garbled = len(words) > 1 and words[0].lower() not in _PARTS
+        if garbled and value(words[-1]) == lacking:
+            text = f"{common} {lacking}"
+            out[between[0]] = replace(blocks[between[0]], text=text, parts=[text])
     return out
 
 

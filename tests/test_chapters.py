@@ -325,6 +325,23 @@ def test_a_page_number_a_number_off_centre_or_past_the_next_heading_is_no_gap():
     assert out[SourceRef(14, 6)].role == "artifact"
 
 
+def test_a_garbled_label_before_the_number_the_run_lacks_is_that_chapter():
+    def run(*middle: str) -> list[str]:
+        texts = ["HOOFDSTUK 1", "HOOFDSTUK 2", "HOOFDSTUK 3", *middle, "HOOFDSTUK 5",
+                 "HOOFDSTUK 6"]  # fmt: skip
+        blocks = [Heading(t, [SourceRef(k, 0)], [t]) for k, t in enumerate(texts, 1)]
+        return [b.text for b in chapters.numbered(blocks)]
+
+    assert run("Fea bib Sulillae 4")[3] == "HOOFDSTUK 4"
+    # Not where the number isn't the one lacking, the run has no gap there, a part
+    # opens, a title merely ends on the number, or two headings stand in the gap.
+    assert run("Fea bib Sulillae 7")[3] == "Fea bib Sulillae 7"
+    assert run("HOOFDSTUK 4", "Brief van 5")[4] == "Brief van 5"
+    assert run("Deel 4")[3] == "Deel 4"
+    assert run("Fea bib 4", "Naschrift 4")[3:5] == ["Fea bib 4", "Naschrift 4"]
+    assert run("1984")[3] == "1984"
+
+
 def test_too_few_numbered_headings_make_no_run():
     texts = {10: "1", 11: "2", 12: "3", 13: "4"}
     pages = [_mid_page(n, t) for n, t in texts.items()]
