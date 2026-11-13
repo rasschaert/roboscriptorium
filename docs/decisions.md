@@ -2345,3 +2345,15 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   block on PDF 97 is read since (`missing.blocks`, 105 errors there → 1). Nothing added
   or retired; the gaps stand. Het laatste bevel and Verminkt, without their typeface in
   the library, are weaker vetoes for a change to the render judge (golden-notes.md).
+- 2026-11-14: **Every long run resumable: done.** The italic trees' collection wrote
+  each book's rows straight into its file and redid every book on each start, so a stop
+  left a cut-off file that `--save` then trained on as whole; it now writes each book
+  whole and skips the books an unfinished run of the same code finished, and `--save`
+  keeps each model in `<model>.training/` until all are trained (both tested by stopping
+  midway). The arbiter's leave-one-out scoring (98–186 min, nothing kept until it
+  printed) keeps each score in `work/probes/loo-scoring/<key>.json`. Left as they are:
+  the line-role trees, `match_typefaces.py` and the trust data (cached a book), and
+  `bench`, whose stage caches make a rerun 4–13 minutes warm: partial results kept
+  across a stop could mix records from before and after a code edit. Found with it: both
+  learned trees predate batches four and five (~1,600 labelled pages), a retraining now
+  on the checklist.

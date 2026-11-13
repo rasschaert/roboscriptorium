@@ -28,18 +28,6 @@ last on 2026-11-14, so next by 2026-11-21).
 
 ## In flight
 
-- [ ] **Every long run resumable** (the user, 2026-11-13; AGENTS.md, Engineering
-      practices). Done: the arbiter's training (`trustdata.models_to_save`); the italic
-      trees, collection and `--save` (2026-11-14, each stopped midway and started
-      again in a test); the line-role trees need nothing (each book's lines cached as
-      it finishes, the training a minute); the leave-one-out scoring in
-      `train_ocr_trust.py` without `--save` keeps each score in
-      `work/probes/loo-scoring/` (2026-11-14, not yet stopped and restarted on a real
-      run). To check, each by stopping it midway and starting it again:
-      `match_typefaces.py` and the trust data
-      build (a file a book: resumable between books, not within one), `bench` (a
-      stopped bench keeps its stage caches but no partial result file)
-
 In this order; `HANDOVER.md` has the paths and the commands.
 
 - [ ] **Both learned trees retrained on the grown slices.** The italic trees
@@ -1090,6 +1078,13 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Measurement
 
+- [x] Every long run resumable (2026-11-14; the user, 2026-11-13): the arbiter's
+      training, its leave-one-out scoring (`work/probes/loo-scoring/`), the italic
+      trees' collection and training keep each piece as it finishes. Need nothing: the
+      line-role trees (lines cached a book, a minute's training), `match_typefaces.py`
+      (under a minute, cached a book), the trust data (a file a book, the stage and
+      answer caches within one). `bench` keeps no partial result: a stopped warm bench
+      reruns in 4–13 minutes, and kept records could mix code before and after an edit
 - [x] ~~Qwen faster on the same output; MiniCPM-V 4.6 as a faster reader~~ (dropped
       2026-11-11): a line is 52% prefill and 23% decode, batching was ruled out, and
       speed is not the bottleneck (outlook.md, Inference speed)
