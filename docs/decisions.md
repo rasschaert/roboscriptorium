@@ -2295,4 +2295,13 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   with an arbiter that then reads an empty seat; `doctor` names the folder and its
   fonts. The tests run without a font folder. To undo: the backup's files back,
   `ROBO_ALARM_MODEL=autotrust-jev:35b-nvfp4,d3:9b`, the old trust data folder back.
+- 2026-11-13: **Hoe wij verdwijnen's spot-check, by the user: five pages, no wrong word,
+  no wrong paragraph break, two italic errors.** PDF pages 41, 77, 87, 144 and 292 of
+  the build of 2026-11-03, with no review answers in it (a book of the user's, 300
+  pages). The two errors are the lone leaning words "op" (PDF 41) and "een" (PDF 144),
+  which the user had reported that day and the rule taken then removed; the build of
+  2026-11-06 sets both upright (checked in `stages/document.json` and the EPUB). Five
+  pages are about 1,500 words: no error seen says under one wrong word a page with
+  some confidence, no more than that; the tuning books' unasked rate (0.11 a page)
+  would show one error in about nine pages.
 

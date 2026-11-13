@@ -326,9 +326,9 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
   # 1 places
   uv run roboscriptorium review work/goede-dochter--ia-scan --only work/probes/unasked/candidates-20261112.json
   ```
-- Hoe wij verdwijnen's **spot-check**: `open work/probes/spot-check/hoe-wij-verdwijnen/index.html`
-  (PDF 41, 77, 87, 144, 292; count wrong words, breaks and italics per page); then its
-  read-through. The counts are of the build before the "op"/"een" italic fix.
+- Hoe wij verdwijnen's spot-check is done (2026-11-13: nothing wrong on its five pages
+  but the two italics fixed since). Its read-through waits on the user's word (no full
+  read-throughs soon).
 - Pieter Daens' **review**: 292 questions, `uv run roboscriptorium review work/pieter-daens`.
 - A read book's rebuild that changes text goes to the user by eye, every difference
   (the user, 2026-11-04): `experiments/rebuild_diff.py <book> <old.epub> [notes.json]`.

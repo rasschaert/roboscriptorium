@@ -171,9 +171,9 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       "The Numbers / NUMBERS", show-through on PDF 182); the machine should settle them
 - [ ] **user**: Pieter Daens' review, 292 questions (`uv run roboscriptorium review
       work/pieter-daens`)
-- [ ] **user**: Hoe wij verdwijnen's spot-check, PDF pages 41, 77, 87, 144, 292
-      (`work/probes/spot-check/hoe-wij-verdwijnen/index.html`); the counts are of the
-      build before the "op"/"een" italic fix
+- [x] **user**: Hoe wij verdwijnen's spot-check, PDF pages 41, 77, 87, 144, 292: no
+      wrong word and no wrong break on the five pages; two italic errors ("op", "een"),
+      both of the build of 2026-11-03 and gone since (2026-11-13)
 - [ ] **user**: Andere levens' seven candidate misprints, saved as printed
       (`work/probes/carrere-editions/andere-levens-checked.md`): which, if any, are
       misprints
