@@ -6,85 +6,68 @@ end of every session. Top sections rewritten 2026-11-12 (the first by the second
 09:00, the next by the first at ~08:30); the older sections
 from 2026-11-09 and 2026-11-10.
 
-## Render and compare: pick up here (the third session, 2026-11-12 evening, two runs in flight)
+## Render and compare: waits on the user's decision (the third session, ended 2026-11-13 ~03:00)
 
 **What it is.** The user's idea (2026-11-11): a judge that knows no language. Each
 version of a suspect is drawn in the book's typeface and laid over the scan's ink; the
-better fit gets the vote. It is in the pipeline as `rendercheck.py`, the judge `render`
-among the second vision judges, with the fonts in `work/fonts/` (the user's library,
-out of git). docs/design.md, "Render and compare", has how it works and where it fails;
-decisions.md, the entries of 2026-11-11 and 12, every number. First test: as one more
-vote the arbiter's silent errors fell at every budget (26 → 19 at the rule's questions,
-23 books, each left out in turn).
+better fit gets the vote (`rendercheck.py`, the judge `render`, fonts in `work/fonts/`).
+docs/design.md, "Render and compare", has how it works; decisions.md, 2026-11-11 to 13,
+every number.
 
-**The user's word, 2026-11-12:** "render and compare is very promising, i'd like it
-turned on by default and i'd like future sessions to explore new tactics to improve it
-further". It is **not on by default yet**: `config.py`'s `alarm_model` lacks it and
-production's arbiter was trained without its vote. The docs (README, primer,
-how-it-works, the diagram, models.md, AGENTS.md's judge row) already describe it as in
-use, at the user's word ("be optimistic"); they run ahead of the code until step 3.
+**Where it stands.** Built, on main, **off by default**: `config.py`'s `alarm_model`
+lacks it and production's arbiter was trained without its vote. The user asked for it on
+by default (2026-11-12) if its benches were not worse. They are BETTER on tuning and, by
+the bench's rule, WORSE on validation (two italic errors; no clear change in words), so
+the numbers went to the user instead (the last message of the session):
 
-**Running since 2026-11-13, about 00:15 (the third session), one screen with a
-watcher: `robo-render-judge2`** (`work/runs/render-judge2.sh`), the second round, with
-**the worktree `../robo-render`'s code** (branch `render-default`) on this checkout's
-data: the new typefaces (`work/probes/typeface-v2/<book>.json`, copied over each book's
-`stages/typeface.json`, the old kept as `typeface-v1.json`), the trust data rebuilt into
-`work/probes/ocr-trust-render3/` (~25 min), the arbiter
-`work/models/ocr-trust-render3*.pkl` trained (~170 min), then bench tuning and
-validation against the first round's control
-(`work/bench/tuning-20261112T224052-9e63951-dirty.json`,
-`validation-20261112T224139-9e63951-dirty.json`). Logs `work/runs/render-judge2-*.log`.
-Run no other bench until the screen is gone.
+| | control | with the vote |
+| --- | --- | --- |
+| tuning, 6,180 pages: questions | 3,983 | 3,454 |
+| tuning: wrong words left unasked | 715 | 678 |
+| tuning: after review, a page | 0.24 | 0.22 [-0.03, -0.02] |
+| validation, 889 pages: questions | 545 | 486 |
+| validation: wrong words left unasked | 268 | 283 |
+| validation: after review, a page | 0.41 | 0.42 [-0.01, +0.04] |
+| validation: italic errors | 195 | 197 |
 
-**The first round is read** (decisions.md, 2026-11-12, on the branch): the vote is
-BETTER on tuning (questions 3,983 → 3,570, unasked wrong words 715 → 687) and WORSE by
-the rule on validation, through one book whose typeface the library lacks (Het laatste
-bevel). Hence the judge's confidence now counts how well its pick fits
-(`rendercheck.sureness`), in the second round. The first round's arbiters:
-`work/models/ocr-trust-render*.pkl` and `ocr-trust-render-ctl*.pkl`.
+The runs: `work/bench/tuning-20261113T013157` (control) and `…T013700` (the vote),
+`validation-20261113T013243` and `…T013748`, all `-9f70cd3-dirty.json`. The arbiters:
+`work/models/ocr-trust-render3*.pkl` (with the vote, trust data
+`work/probes/ocr-trust-render3/`) and `ocr-trust-render-ctl*.pkl` (the control, data
+`ocr-trust-render2/` read without the vote).
 
-**The branch `render-default`, worktree `../robo-render`: done, tested (736 pass there),
-committed and pushed, not merged.** Merge to main once the screen is gone (never edit
-`src/` on main while a bench runs). It holds:
+**If the user says on:** `alarm_model = "autotrust-jev:35b-nvfp4,d3:9b,render"` in
+`config.py`; copy `work/models/ocr-trust.pkl` and its `-without-` files aside, put the
+`ocr-trust-render3*` set in their place and `work/probes/ocr-trust-render3/` in place
+of `work/probes/ocr-trust/` (the old one kept beside it); warm `bench tuning` and
+`validation` as the new baselines; the checklist ticked; models.md's row and
+optimism.md given the bench's numbers. **If off:** the docs that describe it as in use
+(README, primer, how-it-works, the diagram, models.md, AGENTS.md's judge row) say "off
+by default" again.
 
-- near-tied typefaces settled by the judge's own fit on 150 plain words
-  (`rendercheck.near_ties`, `word_strips`, `place_fit`; 90.0 → 91.1% of labelled places
-  on average over 23 books, Metro 2033 67 → 87%; `experiments/probe_face_by_places.py`,
-  `probe_face_by_words.py`, outputs in `work/probes/face-by-places/`);
-- book.toml's `typeface`, which `init` drafts with the faces it chose among;
-- digits drawn in the font's old-style figures too, an ordinal's ending as a
-  superscript (20 of 478 labelled places with a digit fixed, 4 made); `FITS` is 4;
-- a build without a font folder says so and goes on without the judge;
-- the tests no longer need `work/models/italics.pkl` (`ROBO_ITALIC_TREES=0` in
-  conftest), so a worktree's suite passes without `work/`; AGENTS.md has the
-  `uv run --project ../<worktree>` pattern;
+**Done this session, all on main** (decisions.md, 2026-11-12 and 13):
+
+- near-tied typefaces settled by the judge's own fit on plain words (Metro 2033
+  72 → 89% of its labelled places); each book's `stages/typeface.json` is the new
+  match, the old kept as `typeface-v1.json`;
+- book.toml's `typeface`, drafted by `init` with the faces it chose among;
+- digits in the font's old-style figures, an ordinal's ending as a superscript;
 - the judge's confidence as the probability its pick is the print, from the fit and
-  the margin (`experiments/render_confidence.py`; `FITS` is 5);
-- design.md, modules.md, how-it-works.md, README, AGENTS.md, decisions.md and the
-  checklist updated.
+  the margin (`experiments/render_confidence.py`);
+- no vote on a place set taller than a line of the text (display type);
+- a build without a font folder goes on without the judge;
+- a heading with a garbled label takes the book's where its number is the one the
+  chapter run lacks (`chapters.numbered`);
+- the tests need no `work/` (`ROBO_ITALIC_TREES=0` in conftest); a worktree's code
+  runs on this checkout's data with `uv run --project ../<worktree>` (AGENTS.md).
+- Nulls and not-yets: several faces voting together (no better than one well chosen);
+  judging only where two versions' drawings differ (92.6 → 93.3% of places, uneven by
+  book: next as arbiter features, for punctuation, the judge's weakest kind).
 
-**Pick up in this order.**
-
-1. **Read the second round** (`render-judge2-tuning.log`,
-   `render-judge2-validation.log`, against the control's): questions, unasked, asked,
-   and the italic line before the verdict (an asked split word counts three italic
-   errors). Tuning chooses, validation only vetoes; look at Het laatste bevel and
-   Verminkt first. Record it in decisions.md and outlook.md.
-2. **If the vote's are not worse, switch it on** (the user asked for it; if they are
-   worse, show the user the numbers instead): merge `render-default`;
-   `alarm_model = "autotrust-jev:35b-nvfp4,d3:9b,render"` in `config.py`; copy
-   `work/models/ocr-trust.pkl` and its `-without-` files aside, put the chosen
-   `ocr-trust-render*` set in their place, and its trust data folder in place of
-   `work/probes/ocr-trust/` (the old one kept beside it); warm `bench tuning` and
-   `validation` as the new baselines; the checklist ticked; design.md's last
-   paragraph, models.md's row and optimism.md given the bench's numbers. If it is not
-   taken, take it back out of the docs that describe it as in use.
-3. **Then the remaining tactics** (the checklist, "Render and compare"): the match's
-   fit as an arbiter feature; own-type templates for a book whose face the library
-   lacks; leftover ink; a word's cut chosen per place. Old-style figures only work for
-   fonts that keep them at code points of their own: the drawing library applies no
-   font features (Pillow without libraqm), which would also give real ligatures and
-   small capitals.
+**Next for it** (the checklist, "Render and compare", "More tactics"): the
+where-they-differ sums as arbiter features; font features in the drawing (Pillow has no
+libraqm here: real ligatures, small capitals, old-style figures for every font); books
+whose typeface the library lacks (Het laatste bevel, Verminkt: own-type templates).
 
 **How to measure a change to the judge without a bench.** The rebuilt trust data holds
 every labelled place: run the judge over a book's rows and count how often its pick is
@@ -94,10 +77,11 @@ does it by kind of error with the probe's own copy of the code; the pipeline's j
 share, not the total: the total hid 2,800 false votes on 2026-11-12. A change to how a
 place is cut or drawn bumps `rendercheck.FITS`, which is in the answers' cache key.
 
-**Left as it is.** The two user's books without a settled typeface (Ex-minnaar, Going
-into a Dark House); the probes' outputs in `work/probes/font-match/` and
-`render-compare/`; four other worktrees (`../robo-grow6`, `../robo-text`,
-`../roboscriptorium-caps`, `../roboscriptorium-py315`), not this session's.
+**Left as it is.** The probes' outputs in `work/probes/` (`font-match/`,
+`render-compare/`, `face-by-places/`, `render-difference/`, `typeface-v2/`); the
+worktree `../robo-render` (branch `render-default`, merged: can go); four other
+worktrees (`../robo-grow6`, `../robo-text`, `../roboscriptorium-caps`,
+`../roboscriptorium-py315`), not this session's.
 
 ## Running
 

@@ -919,3 +919,24 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-12 | bench validation, the four spacing repairs (warm) | 0 | 1 | 0 |
 | 2026-11-12 | typefaces matched for 33 books, six at a time (CPU) | 0 | 0 | 0 |
 | 2026-11-12 | trust data rebuilt with the judge render, six books at a time (warm) | 0 | 18 | 0 |
+| 2026-11-12 | typefaces matched for 33 books, six at a time (CPU) | 0 | 0 | 0 |
+| 2026-11-12 | arbiter trained on the same data without render, the control (CPU) | 0 | 212 | 0 |
+| 2026-11-12 | arbiter trained with the judge render, beside its control (CPU) | 0 | 212 | 0 |
+| 2026-11-12 | bench tuning, the control arbiter of the render test, asking below 0.93 (warm) | 0 | 4 | 0 |
+| 2026-11-12 | bench validation, the control arbiter of the render test, asking below 0.93 (warm) | 0 | 1 | 0 |
+| 2026-11-12 | bench tuning with the judge render, against its control, asking below 0.93 (warm but for its fits) | 0 | 10 | 0 |
+| 2026-11-12 | bench validation with the judge render, against its control, asking below 0.93 (warm but for its fits) | 0 | 4 | 0 |
+| 2026-11-13 | trust data rebuilt with the judge render, typefaces by the judge's fit, six books at a time (warm but for its fits) | 0 | 18 | 0 |
+| 2026-11-13 | arbiter trained with the judge render, second round (CPU) | 0 | 77 | 0 |
+| 2026-11-13 | bench tuning with the judge render, second round, against the control, asking below 0.93 (warm but for its fits) | 0 | 10 | 0 |
+| 2026-11-13 | bench validation with the judge render, second round, against the control, asking below 0.93 (warm but for its fits) | 0 | 4 | 0 |
+| 2026-11-13 | bench tuning with the judge render, no vote on display type, against the control, asking below 0.93 (warm but for its fits) | 0 | 15 | 0 |
+| 2026-11-13 | bench validation with the judge render, no vote on display type, against the control, asking below 0.93 (warm but for its fits) | 0 | 4 | 0 |
+| 2026-11-13 | bench tuning, the control arbiter of the render test, the branch's code (warm) | 0 | 4 | 0 |
+| 2026-11-13 | bench validation, the control arbiter of the render test, the branch's code (warm) | 0 | 1 | 0 |
+| 2026-11-13 | bench tuning with the judge render, the branch's code, against its control (warm) | 0 | 4 | 0 |
+| 2026-11-13 | bench validation with the judge render, the branch's code, against its control (warm) | 0 | 1 | 0 |
+| 2026-11-13 | bench tuning, the control arbiter of the render test, the branch's code (warm) | 0 | 4 | 0 |
+| 2026-11-13 | bench validation, the control arbiter of the render test, the branch's code (warm) | 0 | 1 | 0 |
+| 2026-11-13 | bench tuning with the judge render, the branch's code, against its control (warm) | 0 | 4 | 0 |
+| 2026-11-13 | bench validation with the judge render, the branch's code, against its control (warm) | 0 | 1 | 0 |
