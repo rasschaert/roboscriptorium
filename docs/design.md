@@ -404,6 +404,11 @@ it. A version is drawn the ways a book may set it: as the font spaces it, with a
 quote kerned over the stop before it, with an ellipsis's dots apart, with a run of
 capitals as small capitals, with an ordinal's ending as a superscript ("14ᵉ"), and with digits in
 the font's old-style figures where it has them at code points of their own (Adobe's do).
+Where the book is set with the font's own kerning, each character is drawn where the
+font's OpenType kerning puts it (`kerner`, through HarfBuzz: the drawing library applies
+none of it). Whether it is, the match settles per book by the judge's fit on 150 words
+of the layer with a stop or quote mark, drawn kerned and not: prints part most from
+their font at a closing quote, which some set far looser than the font pulls it in.
 Without a font folder the build says so and goes on without this judge's vote.
 
 How a place's ink is cut decides more than the drawing does. The strip runs from the
@@ -431,6 +436,16 @@ mind reaches the 91.7%, but needs their votes first, which `init` doesn't have. 
 five faces voting together: 90.5–91.3%, no better than one well chosen. Old-style
 figures and the superscript ending, on the 478 labelled places with a digit in a version:
 20 fixed, 4 made (the zero).
+
+The kerning (`experiments/probe_render_raqm.py`, 2026-11-14, 10,528 labelled
+two-version places over 22 books): drawn as the font spaces them, without its kerning,
+the pick is the print on 92.6%; kerned everywhere 91.1%, for it cuts both ways (Vals
+alarm 92.2 → 97.2%, De tuin 93.0 → 97.2, but Goede dochter 91.3 → 74.1 and Metro
+89.2 → 69.6, where a closing quote is set looser than the font kerns it). Chosen per book
+on words with a stop or quote mark: 93.46%, the better of the two for 19 of 22 books
+(the best per book 93.81%). Plain words choose worse (93.0%): they have no quotes.
+Ligatures add nothing (93.1 → 93.3% on 4,167 places), so characters are drawn one by
+one.
 
 The measurement (`experiments/probe_render_compare.py`, 2026-11-12, no models): the
 print on 87% of 26,309 labelled places over 23 books (punctuation 83%, letters,

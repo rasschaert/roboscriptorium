@@ -376,7 +376,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   the text layer cut out along their ink, every font on 40 of them, the best 40 fonts
   on all, and of the best five text cuts (not bold or italic) the one that draws 150
   plain words best as the judge fits them (`near_ties`, `word_strips`, `place_fit`),
-  kept with its ink spread, the book's type size and the faces it was chosen among in
+  then whether the book is set with the font's own kerning, by the fit on 150 words with
+  a stop or quote mark drawn kerned (`kerner`, HarfBuzz's positions) and not; kept with
+  its ink spread, the book's type size, the kerning and the faces it was chosen among in
   `stages/typeface.json`; book.toml's `typeface` (a file of the library, drafted by
   `init`) is taken instead (two to five minutes a book, once, whatever slice is built; `experiments/match_typefaces.py` does it ahead of a run). `Judge`
   answers `ocrcheck._decide`'s question from the suspect's page and box: the ink
