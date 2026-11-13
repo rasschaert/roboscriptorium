@@ -62,6 +62,27 @@ def test_where_the_layer_has_no_words_it_picks_nothing(tmp_path):
     assert (answer.value, answer.confidence) == ("neither", 0.0)
 
 
+def test_a_place_in_display_type_is_not_its_to_judge(tmp_path):
+    from roboscriptorium.pdf import Line
+
+    path, box = _scan(tmp_path, "world")
+    high = box[3] - box[1]
+    held = _judge(path)
+
+    def judge(line_height: float) -> rendercheck.Judge:
+        lines = [Line("there the quick world jumps", 30, 50, 300, 50 + line_height)] * 3
+        return rendercheck.Judge(path, held._face, held._match, [PageText(1, 400, 120, lines)])
+
+    state = {"page": 1, "line": 0, "readings": ["world", "wor1d"], "box": list(box)}
+    question = _question(["world", "wor1d"])
+    # A line of the text, a little taller or shorter than its neighbours: judged.
+    assert judge(high).decide(state, question)["reading"].value == "a"
+    assert judge(high * 0.85).decide(state, question)["reading"].value == "a"
+    # Twice as tall as the book's lines: a heading, no vote.
+    answer = judge(high / 2).decide(state, question)["reading"]
+    assert (answer.value, answer.confidence) == ("neither", 0.0)
+
+
 def test_its_pick_is_a_vote_beside_the_vision_judges(tmp_path):
     path, box = _scan(tmp_path, "world")
 

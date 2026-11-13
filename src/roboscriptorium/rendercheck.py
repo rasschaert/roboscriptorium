@@ -17,6 +17,7 @@ import json
 import math
 import random
 import re
+import statistics
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -36,7 +37,7 @@ MODEL = "render"
 # The cached match's format.
 VERSION = 2
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 5
+FITS = 6
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
@@ -67,6 +68,9 @@ SUPERSCRIPT = ((0.6, 0.3), (0.7, 0.25))
 # fit and the logarithm of its margin over the next (intercept, fit, log margin), fitted
 # on labelled places by `experiments/render_confidence.py`.
 SURENESS = (-1.007, 6.903, 0.718)
+# A place this many times taller than the book's lines is set in display type (a chapter
+# heading), which the judge, drawing at the text's size, can't compare.
+DISPLAY = 1.3
 _NOT_TEXT = re.compile(r"Bold|Black|Semibold|Demi|Italic|Heavy", re.I)
 _PLAIN = re.compile(r"regular|roman", re.I)
 _STOP_QUOTE = re.compile(r"([.,…])([’”'\"])")
@@ -628,19 +632,25 @@ class Judge:
     """The fit as a second vision judge (`ocrcheck._decide`'s `alarms`): asked the vision
     judges' question, it answers with the option whose version fits the scan best, from
     the suspect's page and box in the question's state. It takes no crop. Where the
-    layer has no words at the box it answers "neither", which is no vote."""
+    layer has no words at the box, or the box is taller than a line of the text
+    (`DISPLAY`: a heading in display type), it answers "neither", which is no vote."""
 
     model = MODEL
 
     def __init__(self, pdf: Path, face: Face, found: Match, pages: list[PageText] = ()):
         self._pdf, self._face, self._match = pdf, face, found
         self._texts = {p.number: p for p in pages}
+        heights = [ln.y1 - ln.y0 for p in pages for ln in p.lines if ln.text.strip()]
+        self._line = statistics.median(heights) if heights else None
         # Part of each answer's cache key: another typeface or size is another judge.
         self.fingerprint = found.fingerprint
 
     def decide(self, state: dict, questions: dict, image_png: bytes | None = None) -> dict:
         versions = state["readings"]
         letters = [c for c in questions["reading"]["criteria"] if c != "neither"]
+        high = state["box"][3] - state["box"][1]
+        if self._line is not None and high > DISPLAY * self._line:
+            return {"reading": Answer("choice", "neither", 0.0, {})}
         with pdflayer.PDF_LOCK, pymupdf.open(self._pdf) as doc:
             ink = place_ink(doc[state["page"] - 1], state["box"], self._texts.get(state["page"]))
         if ink is None:
