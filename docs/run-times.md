@@ -940,3 +940,16 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-13 | bench validation, the control arbiter of the render test, the branch's code (warm) | 0 | 1 | 0 |
 | 2026-11-13 | bench tuning with the judge render, the branch's code, against its control (warm) | 0 | 4 | 0 |
 | 2026-11-13 | bench validation with the judge render, the branch's code, against its control (warm) | 0 | 1 | 0 |
+| 2026-11-13 | bench tuning, baseline on main: render judge's branch merged, production's arbiter asking below 0.93 (warm) | 0 | 4 | 0 |
+| 2026-11-13 | bench validation, baseline on main: render judge's branch merged, production's arbiter asking below 0.93 (warm) | 0 | 1 | 0 |
+| 2026-11-13 | trust data for 26 books with the judge render, the three tuning books without any among them, six at a time (warm but for its fits) | 0 | 8 | 0 |
+| 2026-11-13 | arbiter trained on 26 books without render, the control (CPU) | 0 | 245 | 0 |
+| 2026-11-13 | arbiter trained on 26 books with the judge render, beside its control (CPU) | 0 | 246 | 0 |
+| 2026-11-13 | bench tuning, the control arbiter trained on 26 books (warm) | 0 | 4 | 0 |
+| 2026-11-13 | bench validation, the control arbiter trained on 26 books (warm) | 0 | 1 | 0 |
+| 2026-11-13 | bench tuning with the judge render, the arbiter trained on 26 books, against its control (warm) | 0 | 4 | 0 |
+| 2026-11-13 | bench validation with the judge render, the arbiter trained on 26 books, against its control (warm) | 0 | 1 | 0 |
+| 2026-11-13 | bench tuning, chapter numbers before a title by their run, production's arbiter (warm) | 0 | 4 | 0 |
+| 2026-11-13 | bench validation, chapter numbers before a title by their run, production's arbiter (warm) | 0 | 1 | 0 |
+| 2026-11-13 | bench tuning with the judge render, against production's arbiter, both with the chapter run for titled numbers (warm) | 0 | 4 | 0 |
+| 2026-11-13 | bench validation with the judge render, against production's arbiter, both with the chapter run for titled numbers (warm) | 0 | 1 | 0 |

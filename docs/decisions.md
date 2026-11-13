@@ -2244,4 +2244,41 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   label instead of asking, which is what first made this round read WORSE on tuning).
   Misread on the way: the heading list's "HOOFDSTUK 6 for 5" was the alignment's
   artefact, not an error; diff the two builds' heading lists before believing a miss.
+- 2026-11-13: **The arbiter trained on Au pair, De vergelding and Glazuur too, retested
+  with the judge panel, twenty seeds and the render vote: NOT TAKEN again.** A null of
+  2026-10-20, three arbiters ago; the three are the tuning books without trust data
+  (`bench.NO_TRUST_DATA`) and lost a little with the render vote. Trust data for 26
+  books (`work/probes/ocr-trust-render4/`), two arbiters side by side
+  (`work/models/ocr-trust-render4*.pkl`, `…-ctl*.pkl`, about four hours), benched warm.
+  On the 17 other tuning books, 5,105 pages, the 26-book arbiter against the 23-book
+  one: without the vote questions 3,429 → 3,600 and unasked wrong words 598 → 577, with
+  it 2,957 → 3,145 and 564 → 551; validation without the vote 545 → 569 and
+  268 → 265, with it 486 → 527 and 283 → 273. It asks about one question in twenty
+  more for about one unasked word in thirty fewer: a place further along the same
+  trade-off, which `ROBO_OCR_ASK_BELOW` buys without retraining; tuning after review
+  0.24 both. It failed on the arbiter again: more books move its threshold, not its
+  ordering. The three stay in `NO_TRUST_DATA`; the candidate is the branch `trust-26`.
+- 2026-11-13: **The render vote with a second pair of arbiters: tuning BETTER again,
+  validation NO CHANGE.** The 26-book arbiters above, the vote against its control:
+  tuning after review 0.24 → 0.22 [-0.03, -0.01], questions 4,167 → 3,647, unasked
+  696 → 658, headings 32 both, italics 1,247 → 1,233; validation 0.41 → 0.41
+  [-0.01, +0.02], questions 569 → 527, unasked 265 → 273, italics 197 both. And the
+  23-book arbiter with the vote against production's on main, both with the chapter
+  run below (`tuning-20261113T061845` and the run after it; validation `…T061931`):
+  tuning BETTER, 0.24 → 0.22 [-0.03, -0.01], headings 26 both, italics 1,247 → 1,227;
+  validation WORSE by the rule on italics 195 → 197, after review 0.41 → 0.42
+  [-0.02, +0.03], De kerk van de dode meisjes and Vuurspel clearly better. Three
+  comparisons, two trainings: the tuning gain repeats each time; validation never
+  moves in words and tips on two italic errors or none.
+- 2026-11-13: **Chapter numbers before a title of words run too** (`chapters.numbered`,
+  `_NUMBER_FIRST`). Het schaduwhuis's chapter 30, "50 ALEX" in the layer between
+  "29 RENEE" and "31 ALEX": production's arbiter fixes the digit, every arbiter
+  retrained on 2026-11-12 and 13 leaves it, with the render vote or without (heading
+  errors 26 → 29 against production, which read as the vote's fault until the control
+  was compared with production too). Numbers before a title are now settled by their
+  run as bare and labelled ones are, the titles untouched. With production's arbiter:
+  tuning and validation NO CHANGE (headings 26 and 52, nothing moved); with the
+  retrained arbiters the heading is right again (29 → 26). Lesson: a retrained arbiter
+  is compared with production as well as with its control; the control hides what the
+  retraining itself changed.
 

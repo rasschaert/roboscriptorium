@@ -33,8 +33,10 @@ In this order; `HANDOVER.md` has the paths and the commands.
 - [ ] After batch five, the two nulls that waited for it: autotrust-jev 9B as a second
       text judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
       170 → 178) and the book's own vocabulary as an arbiter feature (null 2026-11-08)
-- [ ] Trust data for the tuning books that have none (`bench.NO_TRUST_DATA`: Au pair, De
-      vergelding, Glazuur); batch five's rebuild left all three out
+- [x] Trust data for the tuning books that have none (`bench.NO_TRUST_DATA`: Au pair, De
+      vergelding, Glazuur): built and trained on, with the judge panel and with the
+      render vote, not taken again (2026-11-13: it asks more and leaves a little less,
+      a move along the trade-off; the three stay out, branch `trust-26`)
 
 ## One path for every doubt (the user, 2026-11-10, first)
 
