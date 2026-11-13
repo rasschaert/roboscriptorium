@@ -523,14 +523,17 @@ def numbered(blocks: list[Block]) -> list[Block]:
         text = f"{common} {number}" if number is not None else None
         if text is not None and text != blocks[i].text:
             out[i] = replace(blocks[i], text=text, parts=[text])
-    # A heading between two of the run that ends on the one number they lack is that
-    # chapter, its label misread past recognising ("Fea bib Sulillae 37").
+    # A heading that ends on the number the run lacks, alone between two of the run or
+    # the first after its last, is that chapter, its label misread past recognising
+    # ("Fea bib Sulillae 37").
     placed = {i: number for (i, _), number in zip(alike, numbers, strict=True)}
     run = sorted(placed)
-    for before, after in zip(run, run[1:], strict=False):
+    for before, after in zip(run, [*run[1:], None], strict=True):
         lacking = placed[before] + 1 if placed[before] is not None else None
-        between = [i for i in range(before + 1, after) if isinstance(blocks[i], Heading)]
-        if lacking is None or placed[after] != lacking + 1 or len(between) != 1:
+        end = len(blocks) if after is None else after
+        between = [i for i in range(before + 1, end) if isinstance(blocks[i], Heading)]
+        closed = len(between) == 1 and placed[after] == lacking + 1 if after else bool(between)
+        if lacking is None or not closed:
             continue
         words = blocks[between[0]].text.split()
         garbled = len(words) > 1 and words[0].lower() not in _PARTS

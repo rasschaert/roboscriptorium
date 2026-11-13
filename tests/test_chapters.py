@@ -340,6 +340,17 @@ def test_a_garbled_label_before_the_number_the_run_lacks_is_that_chapter():
     assert run("Deel 4")[3] == "Deel 4"
     assert run("Fea bib 4", "Naschrift 4")[3:5] == ["Fea bib 4", "Naschrift 4"]
     assert run("1984")[3] == "1984"
+    # The run's last chapter, with no chapter after it to close the gap: the first
+    # heading after the run, not a later one, and not an epilogue.
+    last = ["HOOFDSTUK 1", "HOOFDSTUK 2", "HOOFDSTUK 3", "HOOFDSTUK 4", "HOOFDSTUK 5"]
+
+    def end(*after: str) -> list[str]:
+        blocks = [Heading(t, [SourceRef(k, 0)], [t]) for k, t in enumerate([*last, *after], 1)]
+        return [b.text for b in chapters.numbered(blocks)][5:]
+
+    assert end("Fea bib Sulillae 6", "EPILOOG") == ["HOOFDSTUK 6", "EPILOOG"]
+    assert end("EPILOOG", "Fea bib Sulillae 6") == ["EPILOOG", "Fea bib Sulillae 6"]
+    assert end("Brief van 8") == ["Brief van 8"]
 
 
 def test_too_few_numbered_headings_make_no_run():
