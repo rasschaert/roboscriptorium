@@ -33,8 +33,9 @@ class Settings:
     # scan (`rendercheck.py`, with the fonts in `fonts`). Each
     # is a vote for the arbiter, "" for none. Asked only where the vision judge is less
     # sure than `alarm_below` (1.0: always). autotrust-jev 35B and d3 9B: the arbiter
-    # trained with their votes leaves about a tenth fewer errors unasked (docs/design.md).
-    alarm_model: str = "autotrust-jev:35b-nvfp4,d3:9b"
+    # trained with their votes leaves about a tenth fewer errors unasked; with `render`
+    # too it asks about an eighth fewer questions on tuning (docs/design.md).
+    alarm_model: str = "autotrust-jev:35b-nvfp4,d3:9b,render"
     alarm_below: float = 1.0
     # Doubts raised where small capitals may have been read in lower case though every
     # reading agrees ("ss", "usb-stick"; `ocrcheck.capitals_doubts`). About 1.7% more

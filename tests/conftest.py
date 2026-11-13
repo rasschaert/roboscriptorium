@@ -26,6 +26,9 @@ def _default_settings(monkeypatch):
     monkeypatch.setenv("ROBO_SORTER", "0")
     # The same for the italic trees: tests run on the slant cuts.
     monkeypatch.setenv("ROBO_ITALIC_TREES", "0")
+    # No font folder: the judge `render` is left out, as on a machine without the
+    # fonts. A test of it makes its own judge.
+    monkeypatch.setenv("ROBO_FONTS", "no-fonts-in-tests")
     # One process: a test's stand-ins don't reach the bench's worker processes.
     monkeypatch.setenv("ROBO_BENCH_WORKERS", "1")
     # A closed port: a model call a test forgot to stub fails at once instead of reaching

@@ -290,7 +290,7 @@ are under Done, "Architecture probes".
             silent errors fall at every budget (26 → 19 at the rule's questions,
             189 → 153 at a question every four pages; decisions.md 2026-11-12)
       - [x] The font pick mended (a Medium weight is a text cut: four books 81 → 85%)
-            and the fit built in as a judge, off by default (`rendercheck.py`,
+            and the fit built in as a judge (`rendercheck.py`,
             `ROBO_ALARM_MODEL=…,render`; decisions.md 2026-11-12)
       - [ ] Its vote and margin in the trust data, the arbiter retrained, `bench
             tuning` and `validation` (in flight, `work/runs/render-judge.sh`); then
@@ -310,11 +310,11 @@ are under Done, "Architecture probes".
             and confidence, benched against the first round's control: tuning BETTER
             (questions −13%, unasked 715 → 678), validation no clear change in words,
             WORSE by the rule on two italic errors (decisions.md 2026-11-13)
-      - [ ] **user**: on by default or not, on those numbers. If yes: `render` in
-            `alarm_model`, `ocr-trust-render3*` in production's place with its trust
-            data, fresh baselines; if no, the docs that describe it as in use
-            (README, primer, how-it-works, the diagram, models.md, AGENTS.md's judge
-            row) say "off by default" again
+      - [x] **On by default** (the user, 2026-11-13: "let's turn it on by default but
+            also keep working on the weak spots"): `render` in `alarm_model`, the
+            arbiter trained with its vote and its trust data in production's place
+            (the old in `work/models/ocr-trust-backup-20261113/` and
+            `work/probes/ocr-trust-before-render-20261113/`)
       - [x] The judge's confidence as the probability its pick is the print, from how
             well the pick fits and its margin (AUC 0.80 against the margin's 0.73): a
             typeface that suits a book poorly lowers its votes' weight

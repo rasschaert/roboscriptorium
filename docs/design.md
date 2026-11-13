@@ -441,8 +441,16 @@ it, the trees' silent errors fall at every budget: 26 → 19 at the fixed rule's
 questions, 480 / 189 / 103 / 31 → 438 / 153 / 83 / 25 at 0 / 0.25 / 0.5 / 1 question
 a page. The extra drawings don't favour the version that has them (a closing quote:
 right on 82% where the print has more, 89% where it has fewer). Those numbers are the
-first version's, before the cut was mended; the bench of the build with it is in
-decisions.md, 2026-11-12.
+first version's, before the cut was mended.
+
+On the bench (2026-11-13, against production's arbiter, which has no such vote):
+tuning BETTER, after review 0.24 → 0.22 a page [-0.03, -0.01], questions
+3,971 → 3,454, wrong words left unasked 713 → 678; validation no clear change in
+words (0.41 → 0.42 [-0.02, +0.03], questions 546 → 486, unasked 272 → 283) and worse
+by the rule on italic errors 195 → 197. The same on tuning with a second pair of
+arbiters, validation then no change. On by default since 2026-11-13 at the user's word,
+with its weak spots (punctuation, books whose typeface the library lacks) still being
+worked on.
 
 ## Context judge
 

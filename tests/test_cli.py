@@ -101,5 +101,8 @@ def test_doctor_asks_each_decision_model_once_and_skips_one_switched_off(monkeyp
         cli.doctor()
     assert exit.value.exit_code == 0
     settings = Settings.from_env()
-    expected = [settings.role_model, settings.judge_model, *settings.alarm_models]
+    # The judge `render` is no model: nothing to ask.
+    models = [m for m in settings.alarm_models if m != "render"]
+    assert "render" in settings.alarm_models
+    expected = [settings.role_model, settings.judge_model, *models]
     assert asked == list(dict.fromkeys(expected))

@@ -11,6 +11,17 @@ commercial e-book; a careful edition like Standard Ebooks is nearer one in 10,00
 Each entry is a judgment, not a measurement: the numbers it rests on are in
 [outlook.md](outlook.md) and [decisions.md](decisions.md). Newest first.
 
+## 2026-11-13, morning: 7/10 (held; a new kind of judge under it)
+
+Render and compare, the user's idea of 2026-11-11, is in use: a judge that knows no
+language, drawing each reading in the book's typeface over the scan. On tuning it takes
+one question in eight away and a twentieth of the unasked wrong words (after review
+0.24 → 0.22 a page); validation doesn't move in words. It doesn't move the chances by
+itself: the errors no reading doubts are still the wall. What it changes is the kind of
+evidence the arbiter has: the first judge that fails for other reasons than the models
+do (best of all on accents, worst on punctuation), built from the scan and a font
+folder, with no model to wait for. The chances stand as on 2026-11-09.
+
 ## 2026-11-09, night: 7/10 (held; the numbers under it firmer)
 
 | Goal | Chance |

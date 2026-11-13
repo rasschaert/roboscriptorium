@@ -2281,4 +2281,18 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   retrained arbiters the heading is right again (29 → 26). Lesson: a retrained arbiter
   is compared with production as well as with its control; the control hides what the
   retraining itself changed.
+- 2026-11-13: **Render and compare is on by default** (the user, on the numbers above:
+  "let's turn it on by default but also keep working on the weak spots").
+  `alarm_model` is `autotrust-jev:35b-nvfp4,d3:9b,render`; `work/models/ocr-trust.pkl`
+  and its 18 `-without-<book>` files are the `ocr-trust-render3` set (trained on 23
+  books with the vote, twenty seeds), `work/probes/ocr-trust/` is that arbiter's trust
+  data. Kept: the arbiter before in `work/models/ocr-trust-backup-20261113/`, its data
+  in `work/probes/ocr-trust-before-render-20261113/`. Known when chosen: tuning BETTER
+  against production (after review 0.24 → 0.22, questions 3,971 → 3,454, unasked
+  713 → 678); validation no clear change in words (0.41 → 0.42 [-0.02, +0.03],
+  questions 546 → 486, unasked 272 → 283) and worse by the rule on italics 195 → 197.
+  A build on a machine without the font folder says so and goes on without the judge,
+  with an arbiter that then reads an empty seat; `doctor` names the folder and its
+  fonts. The tests run without a font folder. To undo: the backup's files back,
+  `ROBO_ALARM_MODEL=autotrust-jev:35b-nvfp4,d3:9b`, the old trust data folder back.
 

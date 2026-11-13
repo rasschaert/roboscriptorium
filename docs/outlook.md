@@ -53,8 +53,8 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
 
 ## Where there is room, by expected gain
 
-0. **Render and compare, a judge that knows no language (built, benched, off by
-   default until the user decides).** Each version of a suspect drawn in the book's
+0. **Render and compare, a judge that knows no language (in use since 2026-11-13, its
+   weak spots still open).** Each version of a suspect drawn in the book's
    typeface and laid over the scan: the print on 92.3% of 34,205 labelled places, best
    of all judges on accents (95% against 83–90%), weakest on punctuation (91% against
    96%). Benched against a control arbiter trained on the same data without its vote

@@ -74,6 +74,11 @@ def doctor() -> None:
         except httpx.HTTPError as exc:
             ok = False
             typer.echo(f"decide  {model}  FAILED: {exc}")
+    if rendercheck.MODEL in settings.alarm_models:
+        # No model: it draws with the font folder, and a build without one leaves it out.
+        fonts = Path(settings.fonts)
+        found = f"{len(rendercheck.library_fonts(fonts))} fonts" if fonts.is_dir() else "NO FOLDER"
+        typer.echo(f"render  {fonts}  {found} (a build without them leaves this judge out)")
     for alarm in llamas:
         try:
             client = llama.ReadoutClient(alarm, settings.llama_url)
