@@ -2303,5 +2303,9 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   2026-11-06 sets both upright (checked in `stages/document.json` and the EPUB). Five
   pages are about 1,500 words: no error seen says under one wrong word a page with
   some confidence, no more than that; the tuning books' unasked rate (0.11 a page)
-  would show one error in about nine pages.
+  would show one error in about nine pages. The page didn't show the build's scene breaks
+  (PDF 41 and 87 have one each, which the user saw in the scan and missed beside it):
+  `experiments/spot_check.py` now sets them as the EPUB does, a blank line and a flush
+  first line, and the user confirmed the five pages again on the page made from the
+  build of 2026-11-06: nothing wrong.
 
