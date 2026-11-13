@@ -495,7 +495,8 @@ def numbered(blocks: list[Block]) -> list[Block]:
     folded ("Io" → "10") where it fits the run, and a short heading that doesn't read as
     a number ("SE", "zi") where both its neighbours agree on it. Headings with a title
     of words are left out of the run. Labelled numbers ("HOOFDSTUK II") run the same way,
-    their label set as the book's commonest spelling of it ("Hoorpstuk 6"), and a heading
+    their label set as the book's commonest spelling of it ("Hoorpstuk 6"); so do numbers
+    before a title of words ("50 ALEX" between "29 RENEE" and "31 ALEX"); and a heading
     whose label is past recognising takes it where its number is the one the run lacks
     there. Returns a new list."""
     out = list(blocks)
@@ -507,6 +508,18 @@ def numbered(blocks: list[Block]) -> list[Block]:
     for i, number in zip(at, _settle([value(blocks[i].text) for i in at]), strict=True):
         if number is not None and str(number) != blocks[i].text:
             out[i] = replace(blocks[i], text=str(number), parts=[str(number)])
+    # A number before a title of words ("30 ALEX", a narrator's name under each): the
+    # numbers run the same way, the titles untouched.
+    titled = [
+        (i, m.group(1), m.group(2))
+        for i, b in enumerate(blocks)
+        if isinstance(b, Heading) and (m := _NUMBER_FIRST.match(b.text.strip()))
+    ]
+    read = [value(n) for _, n, _ in titled]
+    for (i, was, title), number in zip(titled, _settle(read), strict=True):
+        if number is not None and str(number) != was:
+            parts = [str(number) if part == was else part for part in blocks[i].parts]
+            out[i] = replace(blocks[i], text=f"{number} {title}", parts=parts)
     labelled = [
         (i, m.group(1), m.group(2))
         for i, b in enumerate(blocks)
@@ -555,6 +568,8 @@ LABEL_WORDS = 4
 PART_TITLE_LETTERS = 2
 # A heading of a label word and a number as read ("HOOFDSTUK 11", "Hoorpstvk 13").
 _LABELLED = re.compile(r"^([^\W\d_]{4,})\s+([^\s]{1,3})\.?$")
+# A heading of a number as read and a title of words after it ("30 ALEX", "Io Renee").
+_NUMBER_FIRST = re.compile(r"^([^\s]{1,3})\.?\s+([^\W\d_].*)$")
 # A label at least this alike the book's commonest is that label misread ("HoOoeEpstvkK"
 # 0.5, "Hoorpstuk" 0.78); another word is far below ("Proloog" 0.11).
 LABEL_ALIKE = 0.5

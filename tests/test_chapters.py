@@ -325,6 +325,24 @@ def test_a_page_number_a_number_off_centre_or_past_the_next_heading_is_no_gap():
     assert out[SourceRef(14, 6)].role == "artifact"
 
 
+def test_numbers_before_a_title_of_words_run_too_and_the_titles_stay():
+    texts = ["PROLOOG", "1 ALEX", "2 ALEX", "3 RENEE", "4 ALEX", "50 ALEX", "6 RENEE", "Io ALEX"]
+    blocks = [Heading(t, [SourceRef(k, 0)], t.split(" ", 1)) for k, t in enumerate(texts, 1)]
+    out = chapters.numbered([*blocks, Heading("11 ALEX", [SourceRef(9, 0)], ["11", "ALEX"])])
+    assert [b.text for b in out][4:8] == ["4 ALEX", "5 ALEX", "6 RENEE", "10 ALEX"]
+    assert out[5].parts == ["5", "ALEX"] and out[0].text == "PROLOOG"
+    # Too few to run, numbers that don't run, or a title that only starts on a short
+    # word: as read.
+    few = [Heading(t, [], [t]) for t in ["1 ALEX", "2 ALEX", "50 ALEX"]]
+    assert [b.text for b in chapters.numbered(few)] == ["1 ALEX", "2 ALEX", "50 ALEX"]
+    loose = ["De brief", "In het bos", "Op zee", "Na de storm", "Het einde", "Zo was het"]
+    blocks = [Heading(t, [], [t]) for t in loose]
+    assert [b.text for b in chapters.numbered(blocks)] == loose
+    years = ["12 mei", "3 juni", "40 dagen later", "7 juli", "19 augustus", "2 september"]
+    blocks = [Heading(t, [], [t]) for t in years]
+    assert [b.text for b in chapters.numbered(blocks)] == years
+
+
 def test_a_garbled_label_before_the_number_the_run_lacks_is_that_chapter():
     def run(*middle: str) -> list[str]:
         texts = ["HOOFDSTUK 1", "HOOFDSTUK 2", "HOOFDSTUK 3", *middle, "HOOFDSTUK 5",
