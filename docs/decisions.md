@@ -2327,4 +2327,14 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   `validation-20261113T090701-fbff45c-dirty.json` (against production before the
   switch: tuning BETTER, 0.24 → 0.22 after review; validation worse by the rule on
   italics 195 → 197, words 0.41 → 0.42 [-0.02, +0.03], as benched before the switch).
+- 2026-11-13: **A training lost five minutes from its end; trainings resume now.** The
+  arbiter with `render-differ` in `render`'s place was stopped at the session's end, 80
+  minutes into about 85, at the user's word to stop the screens, without the agent
+  saying what that would cost; `models_to_save` held all 19 models in memory until the
+  last was trained, so nothing was left. It now keeps each model in
+  `<path>.training/` as it finishes, with a hash of what it was trained on (the data,
+  readings, seats, judges), and a run started again on the same takes them up;
+  `save_models` puts them in place together at the end, so an interrupted run still
+  leaves no mix of old and new. The rule is in AGENTS.md; the other long runs to check
+  are the checklist's first step.
 

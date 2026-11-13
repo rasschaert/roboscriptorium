@@ -104,6 +104,9 @@ get renumbered. Don't add a file to this table without a job no other file has.
   slower: a careful edition takes people weeks, so hours of machine time per book are
   cheap. Cache slow stages per book so reruns stay cheap, and run long builds in the
   background.
+- **A run in flight is the user's time already spent.** Stopping one that can't resume
+  throws it away: see "Every long run can be stopped and picked up" below, and tell the
+  user the cost before stopping, even when told to stop.
 - **Time long runs and give an estimate first.** Run anything over a few minutes through
   `experiments/timed.sh` (label, pages, log file, command), which appends its minutes to
   docs/run-times.md; before starting one, say how long it should take from that table.
@@ -239,6 +242,14 @@ mistake it prevents; check a change against them before committing.
   calls.
 - **Caches survive interruption.** Write them whole (`files.write_atomic`), skip a
   cut-off last line in append-only logs, and version their format.
+- **Every long run can be stopped and picked up** (the user, 2026-11-13: "make anything
+  resumable … time is rare and valuable"). A run of more than a few minutes keeps each
+  finished piece as it goes (a model, a book, a page) and, started again, goes on from
+  them; a run that saves only at its end is a bug to fix before it is next used. An
+  arbiter training stopped five minutes short of its 85 lost all of them that day
+  (`trustdata.models_to_save` now keeps each model in `<path>.training/`).
+- **Before stopping a run, say what stopping costs**: how far it is, against how long
+  its like took (docs/run-times.md), and whether it resumes. Then stop it, or ask.
 - **Keep what you'll need again under `work/`, never in a session scratchpad.** A
   scratchpad disappears with the session. Source EPUBs live in
   `work/.cache/gutenberg/<ebook>.epub` and `work/.cache/publisher/<golden>.epub` (checked

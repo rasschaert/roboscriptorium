@@ -28,6 +28,15 @@ last on 2026-11-06, so next by 2026-11-13).
 
 ## In flight
 
+- [ ] **Every long run resumable** (the user, 2026-11-13; AGENTS.md, Engineering
+      practices). Done: the arbiter's training (`trustdata.models_to_save`). To check,
+      each by stopping it midway and starting it again: the line-role trees
+      (`train_sorter.py`, `sorterdata.models_to_save` saves at the end too), the italic
+      trees (`italic_words.py --save`), the leave-one-out scoring in
+      `train_ocr_trust.py` without `--save`, `match_typefaces.py` and the trust data
+      build (a file a book: resumable between books, not within one), `bench` (a
+      stopped bench keeps its stage caches but no partial result file)
+
 In this order; `HANDOVER.md` has the paths and the commands.
 
 - [ ] After batch five, the two nulls that waited for it: autotrust-jev 9B as a second

@@ -7,6 +7,8 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
+**First thing next session: run `uv run ruff format . && uv run ruff check . && uv run pytest`.** The last commit (resumable arbiter training) went in at the user's word without the full suite; only `tests/test_trustdata.py` was run (3 passed).
+
 ## Render and compare: on by default since 2026-11-13 (the third session, ended 11:10)
 
 **What it is.** The user's idea (2026-11-11): a judge that knows no language. Each
@@ -38,9 +40,13 @@ only where their drawings differ and is the better judge on every kind (punctuat
 screen stopped). **Next for the render judge, in this order:**
 
 1. **The second judge in the first one's place** (not beside it: that is what the null
-   above asks for). Its training was stopped 80 minutes in, unsaved (26 seats' worth of
-   leave-one-out copies take longer than the 75 minutes of the smaller arbiter: allow
-   two hours). Start it again, CPU only, training only (it touches no book caches):
+   above asks for). Its training was stopped 80 minutes into about 85 at the session's
+   end and lost whole: the script saved only at its end. **That is mended on main**
+   (each model is kept in `<path>.training/` as it finishes and a restart goes on from
+   them; AGENTS.md, "Every long run can be stopped and picked up"; the checklist's first
+   step lists the other runs to check). The worktree's branch doesn't have the mending
+   until it is rebased on main: rebase first. Then start it, CPU only, training only
+   (it touches no book caches), about 85 minutes:
    `experiments/detached.sh train-differ work/runs/train-differ.sh`, with a watcher;
    it saves `work/models/ocr-trust-differ*.pkl` from `work/probes/ocr-trust-render5/`
    with the worktree `../robo-render`'s code (branch `render-differ`, one commit past

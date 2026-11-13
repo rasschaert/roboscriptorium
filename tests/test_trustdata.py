@@ -47,3 +47,51 @@ def test_the_arbiter_is_saved_whole_and_without_each_tuning_book(tmp_path):
     assert [m[2] for m in models] == [60, 30, 30]
     assert all("vuurspel--ia-scan" not in names for names in asked)
     assert all(m[1].calibration is not None for m in models)
+
+
+def test_a_training_stopped_midway_goes_on_from_the_models_it_finished(tmp_path, monkeypatch):
+    books = {
+        "a--scan": [_row("a--scan", k % 3 > 0) for k in range(30)],
+        "b--scan": [_row("b--scan", k % 4 > 0) for k in range(30)],
+    }
+    path = tmp_path / "ocr-trust.pkl"
+    trained = []
+    train = trust.train
+
+    def counted(suspects, *rest):
+        trained.append(len(suspects))
+        if stop_after is not None and len(trained) > stop_after:
+            raise KeyboardInterrupt
+        return train(suspects, *rest)
+
+    def score(names, rows):
+        return [np.array([0.8, 0.2]) for _ in rows]
+
+    monkeypatch.setattr(trust, "train", counted)
+    stop_after = 2
+    try:
+        trustdata.models_to_save(books, path, score)
+    except KeyboardInterrupt:
+        pass
+    # Two were finished and kept; none is in its place yet.
+    held = trustdata.staging(path)
+    assert sorted(p.name for p in held.glob("*.pkl")) == [
+        "ocr-trust-without-a--scan.pkl",
+        "ocr-trust.pkl",
+    ]
+    assert not path.exists()
+    stop_after, trained[:] = None, []
+    models = trustdata.models_to_save(books, path, score)
+    assert trained == [30] and len(models) == 3
+    assert all(m[1].calibration is not None for m in models)
+    trustdata.save_models(models, path)
+    assert path.exists() and trust.without(path, "b--scan").exists() and not held.exists()
+    # Other data, or other settings, is another training: nothing is taken up.
+    trustdata.models_to_save(books, path, score)
+    trained[:] = []
+    books["b--scan"] = books["b--scan"][:20]
+    trustdata.models_to_save(books, path, score)
+    assert len(trained) == 3
+    trained[:] = []
+    trustdata.models_to_save(books, path, score, key="other judges")
+    assert len(trained) == 3

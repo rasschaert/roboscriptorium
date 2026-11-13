@@ -35,7 +35,7 @@ from roboscriptorium import trust
 from roboscriptorium.book import Book
 from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
-from roboscriptorium.trustdata import HELD_OUT, SPECS, models_to_save, rows_of, seats, trainable, usable, weighed
+from roboscriptorium.trustdata import HELD_OUT, SPECS, models_to_save, rows_of, save_models, seats, trainable, usable, weighed
 
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
 MODELS = {
@@ -125,12 +125,15 @@ if "--save" in sys.argv:
     if missing and "--partial" not in sys.argv:
         sys.exit(f"not saving: tuning data missing or stale for {', '.join(missing)} (--partial to save anyway)")
     path = Path(_SETTINGS.ocr_trust_model)
-    models = models_to_save(books, path, lambda names, rows: scored(MODELS["trees"], names, rows), READINGS, SEATS)
+    # Finished models wait in `<path>.training/`: a run stopped and started again goes on
+    # from them (the judges are part of what they were trained on).
+    models = models_to_save(books, path, lambda names, rows: scored(MODELS["trees"], names, rows), READINGS, SEATS,
+                            key=f"{_SETTINGS.judge_model},{_SETTINGS.check_model},{_SETTINGS.alarm_model}")
     calibration = models[0][1].calibration
     grid = (0.5, 0.7, 0.8, 0.9, 0.95, 0.99)
     print("raw sureness → right:", ", ".join(f"{g} → {calibration.predict([g])[0]:.3f}" for g in grid))
-    for out, model, n, without in models:
-        trust.save(model, out)
+    save_models(models, path)
+    for out, _, n, without in models:
         print(f"trained on {n} suspects, without {without}: {out}")
     sys.exit()
 

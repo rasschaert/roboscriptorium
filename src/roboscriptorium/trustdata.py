@@ -7,6 +7,7 @@ reading said about each, and which version makes the line read as printed
 trained on by `experiments/train_ocr_trust.py` (`save`).
 """
 
+import hashlib
 import json
 import os
 from dataclasses import replace
@@ -175,38 +176,75 @@ def trainable(name: str) -> bool:
     return name.split("--")[0] not in HELD_OUT
 
 
+def staging(path: Path) -> Path:
+    """Where a training run keeps its finished models until all are done."""
+    return path.with_name(f"{path.name}.training")
+
+
 def models_to_save(
     books: dict[str, list[dict]],
     path: Path,
     score,
     readings: tuple[str, ...] = trust.READINGS,
     seats: int = trust.SEATS,
+    key: str = "",
 ) -> list[tuple]:
     """The arbiter the pipeline uses, trained on every trainable book (the books labelled
     by a reviewer's answers too), and a copy without each tuning book, which `bench`
-    scores that book with: (path, model,
-    suspects trained on, book left out). Each one's sureness is calibrated on its
-    training books, each scored by `score(names, rows)` trained on the others, as a new
-    book is scored. All are trained before any is written, so an interrupted run leaves
-    no mix of old and new."""
+    scores that book with: (path, model, suspects trained on, book left out). Each one's
+    sureness is calibrated on its training books, each scored by `score(names, rows)`
+    trained on the others, as a new book is scored.
+
+    None is written to its place here, so an interrupted run leaves no mix of old and
+    new; each is kept as it finishes in `staging(path)`, and a run started again on
+    the same data, readings, seats and `key` (whatever else decides the training: the
+    caller's settings) takes those up instead of training them again."""
     tuning = [n for n in books if trainable(n) and SPECS.get(n) != "answers"]
+    held = staging(path)
+    made_of = hashlib.sha256(
+        repr((trust.MODEL_VERSION, readings, seats, key, sorted(books.items()))).encode()
+    ).hexdigest()
+    note = held / "made-of.txt"
+    if not (note.exists() and note.read_text() == made_of):
+        # Another training's leftovers: models of other data are not these models.
+        for old in held.glob("*.pkl") if held.is_dir() else ():
+            old.unlink()
+        held.mkdir(parents=True, exist_ok=True)
+        write_atomic(note, made_of)
     out = []
     for without in [None, *tuning]:
         names = [n for n in books if n != without and trainable(n)]
         every = [r for name in names for r in books[name]]
-        model = trust.train(
-            [r["s"] for r in every],
-            [r["right"] for r in every],
-            [r["book"] for r in every],
-            readings,
-            seats,
-        )
-        sure, hit = [], []
-        for held in names:
-            rows = books[held]
-            for r, ps in zip(rows, score([n for n in names if n != held], rows), strict=True):
-                sure.append(float(ps.max()))
-                hit.append(bool(r["right"][int(ps.argmax())]))
-        model.calibration = trust.calibrate(sure, hit)
-        out.append((trust.without(path, without) if without else path, model, len(every), without))
+        target = trust.without(path, without) if without else path
+        kept = held / target.name
+        model = trust.load(kept) if kept.exists() else None
+        if model is None:
+            model = trust.train(
+                [r["s"] for r in every],
+                [r["right"] for r in every],
+                [r["book"] for r in every],
+                readings,
+                seats,
+            )
+            sure, hit = [], []
+            for left in names:
+                rows = books[left]
+                scores = score([n for n in names if n != left], rows)
+                for r, ps in zip(rows, scores, strict=True):
+                    sure.append(float(ps.max()))
+                    hit.append(bool(r["right"][int(ps.argmax())]))
+            model.calibration = trust.calibrate(sure, hit)
+            trust.save(model, kept)
+        out.append((target, model, len(every), without))
     return out
+
+
+def save_models(models: list[tuple], path: Path) -> None:
+    """`models_to_save`'s models written to their places, then the staging emptied."""
+    for target, model, _, _ in models:
+        trust.save(model, target)
+    held = staging(path)
+    for done in [held / target.name for target, *_ in models] + [held / "made-of.txt"]:
+        done.unlink(missing_ok=True)
+    if held.is_dir() and not any(held.iterdir()):
+        held.rmdir()
