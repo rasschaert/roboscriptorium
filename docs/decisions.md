@@ -2357,3 +2357,20 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   across a stop could mix records from before and after a code edit. Found with it: both
   learned trees predate batches four and five (~1,600 labelled pages), a retraining now
   on the checklist.
+- 2026-11-14: **Render and compare with the font's own kerning: per book, a gain**
+  (`experiments/probe_render_raqm.py`; the checklist, "More tactics", font features).
+  Pillow's basic engine applies no kerning to an OpenType font whose kerning is in GPOS
+  (Adobe's are); raqm does (Pillow has it once FriBiDi is on the loader's path:
+  Homebrew's, passed with `uv run --env-file`, as `uv`, a hardened binary, drops
+  `DYLD_*`). On 10,528 labelled two-version places over 22 books, the pick is the print:
+  basic 92.6%, kerned 91.1%, kerning off but ligatures on 93.3% of 4,167 (on 7 books,
+  against 93.1%: ligatures add nothing). Kerning cuts both ways by book: Vals alarm 92.2
+  → 97.2%, You're Never Weird 84.7 → 89.4, Het heft 93.5 → 97.7, De tuin 93.0 → 97.2,
+  but Goede dochter 91.3 → 74.1 and Metro 89.2 → 69.6, where the font pulls a closing
+  quote in far tighter than the print sets it (Minion's ".’" 46 → 32 units an em of
+  100). One engine a book, the one whose winning drawings fit the scan better on average
+  (no labels), gives 93.5% against the best per book's 93.8%; wrong only for Doctor
+  Dolittle, The Nature of a Crime and Doodskleed, each by under 3 points. Both drawings
+  at every place: 93.6%, but keeps half of Goede dochter's and Metro's losses.
+  `uharfbuzz` (a wheel) gives the same positions with no loader path, so the pipeline
+  needs no setup for it.
