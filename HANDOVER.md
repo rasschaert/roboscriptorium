@@ -64,8 +64,20 @@ by default" again.
   judging only where two versions' drawings differ (92.6 → 93.3% of places, uneven by
   book: next as arbiter features, for punctuation, the judge's weakest kind).
 
-**Nothing runs** (2026-11-13, 07:45). The night's results, all in decisions.md,
-2026-11-13:
+**Running since 2026-11-13 08:10, one screen with a watcher: `robo-render-judge7`**
+(`work/runs/render-judge7.sh`, about two hours, CPU only; "all steps done" in its
+`.out`). A candidate, **the worktree `../robo-render`'s code** (branch `render-differ`,
+one commit past main): a second render judge, `render-differ`, which compares the two
+best-fitting versions only where their drawings differ (punctuation is the first
+judge's weakest kind; the probe is in decisions.md, 2026-11-13). Trust data with both
+votes into `work/probes/ocr-trust-render5/`, the arbiter
+`work/models/ocr-trust-render5*.pkl`, then bench tuning and validation against
+production's baselines below (`work/runs/render-judge7-*.log`). To read: against
+production, and against the first judge alone on the same baselines (the runs made
+right after the two baselines). Taken to main only if tuning is better than the first
+judge alone; either way the switch-on is the user's. Run no other bench meanwhile.
+
+The night's results, all in decisions.md, 2026-11-13:
 
 - **Main's baselines**, production's arbiter, default settings, with the chapter run
   for titled numbers: `work/bench/tuning-20261113T061845-58a5710-dirty.json` and
