@@ -2,11 +2,12 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. Top sections rewritten 2026-11-12 (the first by the second session at
-09:00, the next by the first at ~08:30); the older sections
-from 2026-11-09 and 2026-11-10.
+end of every session. The first section rewritten 2026-11-13, 11:10, by the third
+session; "Running" below it is of 2026-11-12, and what it says of production's arbiter
+and of baselines is superseded by the first section; the older sections are from
+2026-11-09 and 2026-11-10.
 
-## Render and compare: on by default since 2026-11-13 (the third session)
+## Render and compare: on by default since 2026-11-13 (the third session, ended 11:10)
 
 **What it is.** The user's idea (2026-11-11): a judge that knows no language. Each
 version of a suspect is drawn in the book's typeface and laid over the scan's ink; the
@@ -33,24 +34,48 @@ only where their drawings differ and is the better judge on every kind (punctuat
 93.1% against 90.7%), but as a second vote it moved the bench by a training's noise
 (tuning unasked 678 → 666, questions 3,453 → 3,485): the two agree on 94–99% of places.
 
-**Running since 2026-11-13 09:50, one screen with a watcher: `robo-train-differ`**
-(`work/runs/train-differ.sh`, about 80 minutes, CPU, training only): the arbiter with
-`render-differ` **in the first judge's place**, from `work/probes/ocr-trust-render5/`,
-saved as `work/models/ocr-trust-differ*.pkl`. No bench is chained: **the user is
-reviewing** (the 58 confirmations, below), and a review builds the book, so bench only
-once they say they are done. Then, with the worktree `../robo-render`'s code (rebase
-its branch `render-differ` on main first):
+**Nothing runs** (the session ended 2026-11-13, 11:10, at the user's word; every
+screen stopped). **Next for the render judge, in this order:**
 
-```sh
-ROBO_OCR_ASK_BELOW=0.93 ROBO_TRUST_DATA=work/probes/ocr-trust-render5 \
-ROBO_ALARM_MODEL=autotrust-jev:35b-nvfp4,d3:9b,render-differ \
-ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-differ.pkl \
-uv run --project ../robo-render roboscriptorium bench tuning \
-  --against work/bench/tuning-20261113T090608-fbff45c-dirty.json
-```
+1. **The second judge in the first one's place** (not beside it: that is what the null
+   above asks for). Its training was stopped 80 minutes in, unsaved (26 seats' worth of
+   leave-one-out copies take longer than the 75 minutes of the smaller arbiter: allow
+   two hours). Start it again, CPU only, training only (it touches no book caches):
+   `experiments/detached.sh train-differ work/runs/train-differ.sh`, with a watcher;
+   it saves `work/models/ocr-trust-differ*.pkl` from `work/probes/ocr-trust-render5/`
+   with the worktree `../robo-render`'s code (branch `render-differ`, one commit past
+   main as it was at 08:00 on 2026-11-13: rebase it on main first, then check the
+   script's `--project ../robo-render` still resolves). Then, once no review is open:
 
-and the same for validation against its baseline. Taken only if tuning is better than
-the baseline and validation no worse.
+   ```sh
+   ROBO_OCR_ASK_BELOW=0.93 ROBO_TRUST_DATA=work/probes/ocr-trust-render5 \
+   ROBO_ALARM_MODEL=autotrust-jev:35b-nvfp4,d3:9b,render-differ \
+   ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-differ.pkl \
+   uv run --project ../robo-render roboscriptorium bench tuning \
+     --against work/bench/tuning-20261113T090608-fbff45c-dirty.json
+   ```
+
+   and the same for validation against `validation-20261113T090701-fbff45c-dirty.json`
+   (through `experiments/timed.sh` in a screen). Taken only if tuning is better than
+   the baseline and validation no worse; record it either way.
+2. **Books whose typeface the library lacks** (Het laatste bevel, Verminkt: the judge's
+   fit on their plain words is 0.79 and 0.83, the tuning books' 0.86–0.97): own-type
+   templates, or no vote under a fit the tuning books never reach.
+3. **Font features in the drawing** (Pillow has no libraqm here): real ligatures, small
+   capitals and old-style figures for every font, not only Adobe's.
+
+**The user's reviews** (2026-11-13). Hoe wij verdwijnen's spot-check is done: its five
+pages are clean in the current build (decisions.md). The 58 confirmations (below,
+"Waiting on the user") were handed over at 09:55 with the commands, The Thief-Taker's
+Apprentice first; no verdict file had changed by 11:10, so take them as not started.
+A review builds its book: run no bench while one is open, and ask before starting one.
+Pieter Daens and Nervous System are held back on purpose: rebuild them with the render
+judge on and sample their questions first (`experiments/sample_questions.py`), they
+should ask fewer.
+
+**The spot-check page** (`experiments/spot_check.py`) now shows scene breaks and flush
+openings as the EPUB sets them and greys the words a paragraph has on another page:
+the user could not tell either from the old page.
 
 **Done this session, all on main** (decisions.md, 2026-11-12 and 13):
 
@@ -101,7 +126,10 @@ place is cut or drawn bumps `rendercheck.FITS`, which is in the answers' cache k
 
 **Left as it is.** The probes' outputs in `work/probes/` (`font-match/`,
 `render-compare/`, `face-by-places/`, `render-difference/`, `typeface-v2/`); the
-worktree `../robo-render` (branch `render-default`, merged: can go); four other
+worktree `../robo-render` (branch `render-differ`, the candidate above: keep); the
+remote branches `trust-26` (the arbiter on 26 books, not taken) and `chapter-runs`
+(merged); two shells of an earlier session still watching a `train-grown5` screen that
+is long gone (pids 77861, 77862: harmless, not this session's to kill); four other
 worktrees (`../robo-grow6`, `../robo-text`, `../roboscriptorium-caps`,
 `../roboscriptorium-py315`), not this session's.
 

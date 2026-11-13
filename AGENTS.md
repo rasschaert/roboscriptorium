@@ -226,6 +226,12 @@ mistake it prevents; check a change against them before committing.
   page numbers, not inside lines; the night still went to the line-reader design they
   had just shown couldn't reach it (no change on tuning). Before spending a night, ask
   whether today's findings still point at the run queued yesterday.
+- **Compare a retrained arbiter with production too, not only with its control.** A
+  control trained beside it shares whatever the retraining itself changed: Het
+  schaduwhuis's "50 ALEX" came with every arbiter retrained on 2026-11-12 and 13 and
+  read as the new judge's fault until the control was benched against production. And
+  before believing a heading miss, diff the two builds' heading lists: an alignment
+  of found against expected can name the wrong heading.
 - **Measure on every golden book, not the one you're fixing.** A line-grouping change
   that helped Dolittle doubled Sense's CER.
 - **Shared resources are shared deliberately.** PyMuPDF isn't thread-safe: hold
