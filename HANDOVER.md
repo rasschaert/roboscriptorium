@@ -13,6 +13,15 @@ and of baselines is superseded by the first section; the older sections are from
 `work/runs/train-differ.out`, models in `work/models/ocr-trust-differ.pkl.training/`.
 The full suite passed on main first (741 passed).
 
+**Queued, both waiting on the training and on no review being open** (a review builds
+its book; both runs rewrite book caches):
+`experiments/detached.sh differ-bench work/runs/differ-bench.sh` (render-differ in
+render's place, ~20 min warm), then `experiments/detached.sh kern-chain
+work/runs/kern-chain.sh` (the render judge with the font's kerning chosen per book,
+branch `render-kern`, worktree `../robo-kern`: typefaces matched again, trust data,
+arbiter, benches; ~3 h; it keeps each book's old match as `stages/typeface-v2.json`, to
+copy back if the branch is not taken). The kerning probe: decisions.md, 2026-11-14.
+
 ## Render and compare: on by default since 2026-11-13 (the third session, ended 11:10)
 
 **What it is.** The user's idea (2026-11-11): a judge that knows no language. Each

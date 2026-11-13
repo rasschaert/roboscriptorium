@@ -343,8 +343,10 @@ are under Done, "Architecture probes".
             position; the typeface match chooses kerned or not by the fit on 150 words
             with a stop or quote mark (93.46%, right for 19 of 22 books; plain words
             choose worse, 93.0%); `FITS` bumped; trust data rebuilt, the
-            arbiter retrained, `bench tuning` and `validation`. After the second render
-            judge's bench (whichever judge stays gets it). ~1 h code, ~3 h runs
+            arbiter retrained, `bench tuning` and `validation`. Code done on branch
+            `render-kern` (`../robo-kern`; it reproduces the probe within 0.4 points on
+            four books); the runs are `work/runs/kern-chain.sh`, after the second render
+            judge's bench (whichever judge stays gets the kerning). ~3 h
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
             for the shapes the book can't supply. The family is found for eight of the
             user's ten books (the user's library, in `work/fonts/`: Quadraat, Janson Text
