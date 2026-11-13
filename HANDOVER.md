@@ -23,26 +23,34 @@ tuning BETTER (after review 0.24 → 0.22, questions 3,971 → 3,454, unasked 71
 validation no clear change in words (0.41 → 0.42 [-0.02, +0.03], questions 546 → 486,
 unasked 272 → 283), worse by the rule on italics 195 → 197.
 
-**Running, two screens with watchers** (2026-11-13, 09:20):
+**Baselines with the vote on by default** (compare later changes with these):
+`work/bench/tuning-20261113T090608-fbff45c-dirty.json` and
+`validation-20261113T090701-fbff45c-dirty.json`.
 
-- `robo-render-judge7` (`work/runs/render-judge7.sh`, CPU only; "all steps done" in its
-  `.out`): a candidate, **the worktree `../robo-render`'s code** (branch
-  `render-differ`, one commit past main as it was at 08:00; rebase it before merging):
-  a second render judge, `render-differ`, which compares the two best-fitting versions
-  only where their drawings differ. On 27,491 labelled two-version places it is ahead
-  of the first on every kind (punctuation 93.1% against 90.7%, accents 96.5 against
-  95.0) and errs elsewhere. Trust data with both votes in
-  `work/probes/ocr-trust-render5/`, the arbiter `work/models/ocr-trust-render5*.pkl`,
-  then bench tuning and validation against production before the switch
-  (`tuning-20261113T061845`, `validation-20261113T061931`;
-  `work/runs/render-judge7-*.log`). Read it against the first judge alone: the runs
-  made right after those two baselines, and the new baselines below. Taken only if
-  tuning is better than the first judge alone and validation is no worse; then
-  `alarm_model` gains `render-differ` and the render5 set takes production's place.
-- `robo-baseline-render` (`work/runs/baseline-render.sh`) waits for the first, then
-  makes main's baselines with the vote on by default; the two files are named on the
-  "baselines:" line of `work/runs/baseline-render.out`. Compare later changes with
-  those. Run no other bench until both screens are gone.
+**A second render judge beside the first, `render-differ`: not taken** (branch
+`render-differ`; decisions.md, 2026-11-13). It compares the two best-fitting versions
+only where their drawings differ and is the better judge on every kind (punctuation
+93.1% against 90.7%), but as a second vote it moved the bench by a training's noise
+(tuning unasked 678 → 666, questions 3,453 → 3,485): the two agree on 94–99% of places.
+
+**Running since 2026-11-13 09:50, one screen with a watcher: `robo-train-differ`**
+(`work/runs/train-differ.sh`, about 80 minutes, CPU, training only): the arbiter with
+`render-differ` **in the first judge's place**, from `work/probes/ocr-trust-render5/`,
+saved as `work/models/ocr-trust-differ*.pkl`. No bench is chained: **the user is
+reviewing** (the 58 confirmations, below), and a review builds the book, so bench only
+once they say they are done. Then, with the worktree `../robo-render`'s code (rebase
+its branch `render-differ` on main first):
+
+```sh
+ROBO_OCR_ASK_BELOW=0.93 ROBO_TRUST_DATA=work/probes/ocr-trust-render5 \
+ROBO_ALARM_MODEL=autotrust-jev:35b-nvfp4,d3:9b,render-differ \
+ROBO_OCR_TRUST_MODEL=work/models/ocr-trust-differ.pkl \
+uv run --project ../robo-render roboscriptorium bench tuning \
+  --against work/bench/tuning-20261113T090608-fbff45c-dirty.json
+```
+
+and the same for validation against its baseline. Taken only if tuning is better than
+the baseline and validation no worse.
 
 **Done this session, all on main** (decisions.md, 2026-11-12 and 13):
 

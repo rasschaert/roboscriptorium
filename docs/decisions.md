@@ -2308,4 +2308,23 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   `experiments/spot_check.py` now sets them as the EPUB does, a blank line and a flush
   first line, and the user confirmed the five pages again on the page made from the
   build of 2026-11-06: nothing wrong.
+- 2026-11-13: **A second render judge beside the first (`render-differ`): NOT TAKEN, no
+  gain past a training's noise.** The two best-fitting versions compared only where
+  their drawings differ, as a vote of its own (branch `render-differ`; trust data
+  `work/probes/ocr-trust-render5/`, arbiter `work/models/ocr-trust-render5*.pkl`). On
+  27,491 labelled two-version places it is the better judge on every kind (punctuation
+  93.1% against 90.7%, letters 95.5 against 94.1, accents 96.5 against 95.0, spaces
+  92.8 against 92.2, case 96.6 against 96.3), and one of the two is right on 94.5% of
+  punctuation. On the bench, against the first judge alone on the same baselines:
+  tuning questions 3,453 → 3,485, unasked wrong words 678 → 666, before review
+  3,074 → 3,064, unasked at a question every two pages 0.119 → 0.115; validation
+  questions 486 → 492, unasked 283 → 285. It failed on the arbiter: the two votes
+  agree on 94–99% of places, and a second vote that repeats the first adds little for
+  the trees to weigh. Next: the second judge in the first one's place, not beside it
+  (training started 2026-11-13 09:50, `work/models/ocr-trust-differ*.pkl`).
+- 2026-11-13: **Main's baselines with render and compare on by default**:
+  `work/bench/tuning-20261113T090608-fbff45c-dirty.json` and
+  `validation-20261113T090701-fbff45c-dirty.json` (against production before the
+  switch: tuning BETTER, 0.24 → 0.22 after review; validation worse by the rule on
+  italics 195 → 197, words 0.41 → 0.42 [-0.02, +0.03], as benched before the switch).
 
