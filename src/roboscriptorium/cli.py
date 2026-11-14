@@ -248,6 +248,7 @@ def golden_derive(name: str, epub: Path | None = None) -> None:
             markup_spaces=ref.markup_spaces,
             single_quotes=ref.single_quotes,
             hidden=ref.hidden_classes,
+            stray_spaces=ref.stray_spaces,
         )
     else:
         epub = epub or gutenberg.download(

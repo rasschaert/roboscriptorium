@@ -2384,3 +2384,19 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   Monterosso (97.1 → 95.2), Doctor Dolittle and The Nature of a Crime (gains of 2–3
   points not taken). `probe_render_raqm.py --plain`,
   `work/probes/render-raqm/plain.jsonl`.
+- 2026-11-14: **The e-books' stray spaces at stops and quotes: a manifest key, not
+  questions** (`stray_spaces`). The user answered The Thief-Taker's Apprentice's 11
+  confirmations: every one the e-book's space between a stop and its closing quote
+  ("properly. ’"), every one an edition difference, and asked why the machine needed
+  them asked. 26 of the 58 places handed over on 2026-11-12 were that one pattern. They
+  are slips, not a house style (The Thief-Taker's e-book sets 1,434 closing quotes tight
+  and 12 spaced), so the key drops them at derive: a space between a stop and its
+  closing quote, before ?!,;:, and after the quotes that open a paragraph; a
+  mid-paragraph opening mark keeps its space, since Goede dochter's e-book sets ‘ for a
+  closing mark ("geweest. ‘ Charlie"), and so does "‘ . . .’". Declared for The
+  Thief-Taker's Apprentice, Metro 2033, Goede dochter, Afscheid and De stilte van de
+  hel; derived again, 30 words change, each one such a slip (the old texts in
+  `work/probes/derive-before-stray/`). Left for verdicts: De stilte's "BBS ’en" (three)
+  and Goede dochter's "vergieten. ‘". The references changed, so benches compare against
+  baselines made after this. Lesson: a batch of confirmations that share one pattern is
+  a known deviation to declare, never questions.

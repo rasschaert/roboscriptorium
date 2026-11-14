@@ -91,6 +91,10 @@ class PublisherEpub:
     # Why the EPUB's paragraph breaks aren't the print's, when they aren't: its breaks are
     # then not scored ("" scores them).
     breaks_unlike_print: str = ""
+    # The EPUB leaves a stray space here and there that its print doesn't set: between a
+    # stop and its closing quote ("properly. ’"), before a stop ("VDNKh ?") or after the
+    # quote that opens a paragraph ("‘ FBI!"): dropped.
+    stray_spaces: bool = False
 
 
 @dataclass(frozen=True)
@@ -190,6 +194,7 @@ class Golden:
                 ref.get("single_quotes", False),
                 frozenset(ref.get("hidden_classes", ())),
                 ref.get("breaks_unlike_print", ""),
+                ref.get("stray_spaces", False),
             )
         )
         se = data.get("standard_ebooks")

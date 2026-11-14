@@ -11,6 +11,8 @@ eu_copyright_until = 2200
 [reference]
 source = "Afscheid van verspilde tijd, Uitgeverij de Rode Kamer 2011, transl. Elke Schütt, ebook ISBN 9789491259432 (EPUB)"
 sha256 = "adfaa8153697be3889011b3321cb8f38a6cf184345b3972f9df505af0a2c89d0"
+# The EPUB leaves a stray space at a few stops and quotes the print sets tight (2026-11-14).
+stray_spaces = true
 files = [
   "Text/hfd 1.html", "Text/hfd 2.html", "Text/hfd 3.html", "Text/hfd 4.html", "Text/hfd 5.html", "Text/hfd 6.html", "Text/hfd 7.html", "Text/hfd 8.html", "Text/hfd 9.html", "Text/hfd 10.html", "Text/hfd 11.html", "Text/hfd 12.html", "Text/hfd 13.html", "Text/hfd 14.html", "Text/hfd 15.html", "Text/hfd 16.html", "Text/hfd 17.html", "Text/hfd 18.html", "Text/hfd 19.html", "Text/hfd 20.html", "Text/hfd 21.html", "Text/hfd 22.html", "Text/hfd 23.html"
 ]

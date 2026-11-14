@@ -11,6 +11,8 @@ eu_copyright_until = 2200
 [reference]
 source = "Goede dochter, HarperCollins Holland 2017, ISBN 9789402752663 (retail EPUB)"
 sha256 = "aa95cdc7910baa5cafc18e00bdbba89727b3b4dcfde0b27660f613014d5d06ff"
+# The EPUB leaves a stray space at a few stops and quotes the print sets tight (2026-11-14).
+stray_spaces = true
 files = [
   "Text/section-0003.xhtml", "Text/section-0004.xhtml", "Text/section-0005.xhtml",
   "Text/section-0006.xhtml", "Text/section-0007.xhtml", "Text/section-0008.xhtml",

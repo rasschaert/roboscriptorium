@@ -410,6 +410,35 @@ def test_a_space_the_markup_leaves_before_punctuation_is_dropped_where_declared(
     assert unmarked(section.paragraphs[0]) == "Een FBI -agent en de LAPD . Uit Cleopatra .’"
 
 
+def test_a_stray_space_at_a_stop_or_quote_is_dropped_where_declared(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                # What must stay first: an opening mark mid-paragraph (some EPUBs set one
+                # for a closing mark), a space after spaced dots or an ellipsis, an
+                # elision, a quote opening after a stop.
+                "<h1>1</h1><p>Hij was er niet bij geweest. ‘ Charlie lachte. Toen ... ’ zei"
+                " hij, ’s nachts, en het … ’ zei ze. Ze zei: ‘Ja.’ En BBS ’en.</p>"
+                "<p>‘ FBI!’ riep hij. Ik zeg het je properly. ’ Hij lachte. Bij <i>VDNKh</i>"
+                " ? Nee , wel.</p>"
+                "<p>‘“ Most peculiar,” zei ze.</p><p>‘ . . .’</p><p>‘ “Niets,” zei ze.</p>"
+            ),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], stray_spaces=True)
+    assert [unmarked(p) for p in section.paragraphs] == [
+        "Hij was er niet bij geweest. ‘ Charlie lachte. Toen ... ’ zei hij, ’s nachts, en het"
+        " … ’ zei ze. Ze zei: ‘Ja.’ En BBS ’en.",
+        "‘FBI!’ riep hij. Ik zeg het je properly.’ Hij lachte. Bij VDNKh? Nee, wel.",
+        "‘“Most peculiar,” zei ze.",
+        "‘ . . .’",
+        "‘“Niets,” zei ze.",
+    ]
+    (section,) = publisher_epub.read(epub, ["Text/a.html"])
+    assert unmarked(section.paragraphs[1]).startswith("‘ FBI!’")
+
+
 def test_hidden_text_is_left_out_and_the_text_around_it_kept(tmp_path):
     epub = tmp_path / "book.epub"
     with zipfile.ZipFile(epub, "w") as z:
