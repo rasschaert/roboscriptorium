@@ -338,16 +338,9 @@ are under Done, "Architecture probes".
             and blur fitted to each scan more finely; a word's cut chosen per place
             (italic, bold, small capitals); the kerning and spacing ways learnt from
             the book's uncontested words instead of fixed lists
-      - [ ] **The font's kerning, chosen per book** (probed 2026-11-14: 92.6 → 93.5% of
-            10,528 labelled places, Vals alarm, De tuin, Het heft and You're Never Weird
-            4–5 points each; decisions.md). Each character drawn at `uharfbuzz`'s
-            position; the typeface match chooses kerned or not by the fit on 150 words
-            with a stop or quote mark (93.46%, right for 19 of 22 books; plain words
-            choose worse, 93.0%); `FITS` bumped; trust data rebuilt, the
-            arbiter retrained, `bench tuning` and `validation`. Code done on branch
-            `render-kern` (`../robo-kern`; it reproduces the probe within 0.4 points on
-            four books); the runs are `work/runs/kern-chain.sh`, after the second render
-            judge's bench (whichever judge stays gets the kerning). ~3 h
+      - [x] **The font's kerning, chosen per book**: no clear change, not taken
+            (2026-11-14: tuning 45 fewer questions, the same errors after review;
+            validation 4 more unasked; decisions.md). Branch `render-kern` kept.
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
             for the shapes the book can't supply. The family is found for eight of the
             user's ten books (the user's library, in `work/fonts/`: Quadraat, Janson Text

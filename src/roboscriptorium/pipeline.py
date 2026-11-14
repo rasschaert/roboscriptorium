@@ -490,6 +490,7 @@ def run(
         errata.load(book.root),
         built + [n.paragraph for n in notes],
         {p.number for p in body},
+        missing_ok=book.golden is not None,
     )
     built, note_paragraphs = fixed[: len(built)], fixed[len(built) :]
     shape = settings or Settings.from_env()

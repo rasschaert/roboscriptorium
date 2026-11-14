@@ -58,6 +58,13 @@ def test_words_twice_on_their_page_or_not_at_all_stop_the_build():
         errata.apply([Erratum(1, "zij", "zei")], blocks, {1})
 
 
+def test_a_golden_books_build_leaves_out_an_erratum_its_page_lacks_but_not_one_twice():
+    blocks = [_para("zeI ik en zeI hij", 1)]
+    assert errata.apply([Erratum(1, "zij", "zei")], blocks, {1}, missing_ok=True) == blocks
+    with pytest.raises(errata.Unmatched, match="2 times"):
+        errata.apply([Erratum(1, "zeI", "zei")], blocks, {1}, missing_ok=True)
+
+
 def test_the_file_round_trips_quotes_and_backslashes(tmp_path):
     e = Erratum(7, 'een "rare\\" zeI', "een ‘rare’ zei")
     errata.save(tmp_path, e)

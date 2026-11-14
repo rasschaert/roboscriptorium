@@ -2446,3 +2446,17 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   0.8.47's mark and Google and Amazon identifiers in its metadata, so it passed through
   someone's calibre library, and its line-end hyphens look stripped from the typeset
   pages. Verminkt's "politieinspecteur" is likely the same kind of slip.
+- 2026-11-14: **The render judge with the font's own kerning, chosen per book: NOT TAKEN,
+  no clear change** (branch `render-kern`, kept). Typefaces matched again with the
+  kerning choice (33 books), trust data rebuilt (`work/probes/ocr-trust-kern`), the
+  arbiter retrained (`work/models/ocr-trust-kern*.pkl`), both benches against the new
+  baselines. Tuning: after review 0.21 → 0.21 [-0.00, +0.00]; wrong words 3,034 → 3,006,
+  questions 3,453 → 3,408, unasked 637 → 636; Vals alarm (questions 0.35 → 0.28), De tuin
+  and Het heft better, Artemis and De eerlijke vinder worse (questions 0.69 → 0.78).
+  Marked WORSE by Het schaduwhuis's headings, 91 → 87, which a warm rebuild with the
+  same code and arbiter doesn't reproduce (91/91): a bench-only loss to look into, not
+  the kerning's. Validation: after review 0.41 → 0.42 [-0.00, +0.01], questions 486 →
+  483, unasked 280 → 284. The probe's gain in the judge's pick (92.6 → 93.5%) moves the
+  questions a little and the errors not at all: failed on the arbiter, which already
+  weighs the vote by its fit. Each book's kerned match is kept as
+  `stages/typeface-kern.json`, main's restored to `typeface.json`.

@@ -151,11 +151,15 @@ def _common(a: str, b: str) -> str:
     return a[:k]
 
 
-def apply(errata: list[Erratum], blocks: list[Block], pages: set[int]) -> list[Block]:
+def apply(
+    errata: list[Erratum], blocks: list[Block], pages: set[int], missing_ok: bool = False
+) -> list[Block]:
     """Copies of the blocks with each erratum on one of `pages` applied.
 
     Errata on other pages are left for a build that holds them. Raises Unmatched
-    for one whose printed words its page holds not exactly once.
+    for one whose printed words its page holds not exactly once; with `missing_ok`, one
+    its page doesn't hold at all is left out (a golden book's build that misread those
+    words: the bench counts them wrong).
     """
     out = list(blocks)
     for e in errata:
@@ -171,6 +175,8 @@ def apply(errata: list[Erratum], blocks: list[Block], pages: set[int]) -> list[B
         reads = e.reads.translate(FOLD)
         if not found and _occurrences(_text_of(out, e.page).translate(FOLD), reads):
             continue  # a reader or judge already settled it as the erratum would
+        if not found and missing_ok:
+            continue
         if len(found) != 1:
             raise Unmatched(
                 f"Erratum on page {e.page}: {e.printed!r} occurs {len(found)} times on that "

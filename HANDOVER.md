@@ -7,23 +7,20 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**Running since 2026-11-14, 10:43 (fourth session):** `chain-20261114`
-(`work/runs/chain-20261114.sh`, output `work/runs/chain-20261114.out`). Done in it: new
-baselines on the references without the e-books' stray spaces
+**Done on 2026-11-14 (fourth session), the chain `chain-20261114`:** new baselines on
+the references without the e-books' stray spaces
 (`work/bench/tuning-20261114T094747-bb6bbf8-dirty.json`,
-`validation-20261114T094836-37cba55-dirty.json`: compare later changes with these), and
-the second render judge in the first one's place, not taken (decisions.md, 2026-11-14).
-Running now: `work/runs/kern-chain.sh` (the render judge with the font's kerning chosen
-per book, branch `render-kern`, worktree `../robo-kern`: typefaces matched again, trust
-data into `work/probes/ocr-trust-kern`, arbiter `work/models/ocr-trust-kern.pkl`, both
-benches; ~3 h). It keeps each book's old match as `stages/typeface-v2.json`, to copy
-back if the branch is not taken.
+`validation-20261114T094836-37cba55-dirty.json`: compare later changes with these); the
+second render judge in the first one's place, not taken; the font's kerning chosen per
+book, not taken (decisions.md, 2026-11-14). Main's typeface matches are back in
+`stages/typeface.json`; the kerned ones are `typeface-kern.json`.
 
-**Waiting on the user:** 36 places where the e-book departs from its print, on seven
-crop sheets, one answer a pattern (`open work/probes/unasked/confirm-20261114/index.html`;
-the places with their keys in `places.json` beside it). An answer becomes verdict lines
-(category "edition") in each book's `verdicts/<scan>.jsonl` (Vanille's scan is `dbnl-scan`),
-written as the user answered.
+**Waiting on the user:** the rest of the 36 places where the e-book departs from its
+print (`open work/probes/unasked/confirm-20261114/index.html`, numbered; `places.json`
+beside it). The user's rule (2026-11-14): each becomes an erratum in the scan's
+`work/<book>--<scan>/errata.toml`, so the build reads as the e-book; the user's remarks so
+far cover places 1–15 (Au pair's "want-als" is a speck, the build's error), written to
+errata from `errata-pending.json` there. Places 11, 12 and 16 on await their remarks.
 
 ## Render and compare: on by default since 2026-11-13 (the third session, ended 11:10)
 
