@@ -8,6 +8,14 @@ this file when they move.
 
 ## How close we are
 
+**Now** (2026-11-15, production as of c6088a3: `tuning-20261114T233727-389e99a-dirty`,
+`validation-20261114T233833-82c7529-dirty`): tuning, 20 books and 6,180 pages, **0.206**
+wrong words a page after review, 0.55 questions a page, 0.098 errors a page left unasked,
+paragraph breaks 0.041, 24 heading errors, 980 italic errors; validation, 10 books and
+889 pages, **0.359** after review, 0.53 questions, 0.265 unasked, breaks 0.193, 52 heading
+errors, 169 italic errors. The per-book table below is of 2026-11-07 and awaits its
+rerun.
+
 Bench totals (`tuning-20261107T103010`, tuning grown to ~5,200 pages; `validation-20261107T103308`): tuning **0.27**, validation **0.45** wrong words a
 page after review; paragraph breaks set wrong about 0.04 and 0.19 a page. Per book, wrong
 words a page before review, questions a page, wrong words after review, breaks set wrong a
