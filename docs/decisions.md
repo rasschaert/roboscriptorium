@@ -2460,3 +2460,19 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   questions a little and the errors not at all: failed on the arbiter, which already
   weighs the vote by its fit. Each book's kerned match is kept as
   `stages/typeface-kern.json`, main's restored to `typeface.json`.
+- 2026-11-14: **The 35 places where the e-book departs from its print, as errata** (the
+  user's answers on the seven pattern sheets, `work/probes/unasked/confirm-20261114/`).
+  All but one went to errata the way the user's rule says, the e-book's form written as
+  the reading, whether the e-book corrected the print or slipped: De vergelding's spaced
+  thousands ("don't care"), Het laatste bevel's "Overdrijfje" and "Rookjij?" (wrong, but
+  errata "anyway"), Monterosso's "B&B" (small capitals with an unusual ampersand: the
+  user can't tell the spacing and doesn't mind), Reis om mijn schedel's "Boston...Wat",
+  De geruchten's six later-printing spellings ("both seem equally right"), Vanille's two
+  split words (DBNL's slips), every place of the e-book's own spacing (FBI- beleid, BBS
+  ’en ×3, of-gekropen, of-vrouw, ‘ ik’?), and Verminkt's two misprints the e-book mends
+  ("volgde,was", "zdrajcami!’Aan": "actual errata", the reader read the print right).
+  Au pair's "want-als" is a speck, the build's error. The user's observations, for the
+  render judge and the readers: De stilte van de hel mixes small capitals and lower case
+  in one word ("FBI-beleid", "BBS’en"), the first case seen; and on Afscheid's PDF p. 79
+  a speck above the s of "reeks" looks like an acute accent, which over a vowel would
+  likely be read as one (the stress-accent errors' kind).
