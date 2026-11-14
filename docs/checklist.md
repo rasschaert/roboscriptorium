@@ -388,6 +388,11 @@ are under Done, "Architecture probes".
 
 ## Golden books and the bench
 
+- [ ] A heading's punctuation and quote marks measured: exact headings compare letters
+      and digits only (`evaluate._heading_key`, so small capitals match their reference),
+      and the typography count reads paragraphs only, so straight apostrophes in headings
+      went unseen until read by eye (2026-11-14). Count a heading's marks apart from its
+      case, as the paragraphs' glyphs are. ~1 h, then a warm bench
 - [ ] **user**: golden pairs for the gaps (golden-notes.md, "Gaps to hunt for"): first a
       book set flush for tuning and a short-story collection; then section headings
       without numbers, text wrapped around pictures. From before: De Arbeiderspers,
