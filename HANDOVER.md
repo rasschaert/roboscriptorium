@@ -7,24 +7,27 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**Running (the fifth session, 2026-11-14, updated 18:50):**
+**Running (the fifth session, 2026-11-14, updated 20:40; the user away until about noon on
+2026-11-15: "if you don't hear back from me by then just keep going through the
+checklist"):**
 
-- screen `robo-text-seat-night` (`work/runs/text-seat-night.sh`), started 18:45:
-  autotrust-jev 9B asked the text judge's question as a fourth second judge beside the
-  render panel (branch `text-seat`, `../robo-text`, rebased on main today). Trust data
-  into `work/probes/ocr-trust-text/` book by book (`experiments/rebuild-trust.sh`,
-  resumes per book; only the places since 2026-11-09 are cold for the 9B, estimate
-  3–5 h), the arbiter `work/models/ocr-trust-text.pkl` (~90 min), then both benches
-  against main's production runs (`tuning-20261114T160429-8783bba-dirty.json`,
-  `validation-20261114T160527-8783bba-dirty.json`). Pass 4 was not taken on
-  2026-11-09 for validation's unasked places 170 → 178; taken now only if tuning is
-  better and validation no worse. Progress: `work/probes/ocr-trust-text/runs/progress.txt`.
+- screen `robo-text-seat-night`: autotrust-jev 9B as a 4th judge (branch `text-seat`,
+  `../robo-text`); trust data done, the arbiter training (`work/models/ocr-trust-text.pkl`),
+  then both benches against `tuning-20261114T160429-8783bba-dirty.json` and
+  `validation-20261114T160527-8783bba-dirty.json`.
+- screen `robo-italic-panel`: waits for it, then benches the user's idea, clef:27b settling
+  where the old and the grown italic trees disagree (branch `italic-panel`, `../robo-ital`).
+- screen `robo-descent-short`: crops stopping at the line above's descenders
+  (`ROBO_CROP_DESCENT`, on main, off by default) on a clone of Andere levens
+  (`work/probes/descent/`), questions before and after.
 
-- screen `robo-italic-panel` (`work/runs/italic-panel.sh`): waits for the text seat's
-  run, then benches the user's idea, clef:27b settling where the old and the grown italic
-  trees disagree (branch `italic-panel`, `../robo-ital`), against main's production runs.
-  Taken if tuning is better and validation no worse: merge, then set
-  `italic_second`/`italic_judge` as defaults with the grown trees kept as the second set.
+**The night's queue, in order:** the descent crops benched on all golden books if the
+short test pays (cold where crops change; then Nervous System and Pieter Daens
+re-sampled); a character-level language model as an arbiter column (the user's "options
+very unlikely by language"), probed against random columns; headings in the arbiter's
+training data (ornaments, misread labels); render variants for a lone small capital (the
+user's counter-idea); `init`'s title checked against the title page; then the checklist.
+The user's Andere levens review: 34 of 52 answered, server may still be open.
 
 **Done this session** (decisions.md, 2026-11-14), all on main:
 - Both learned trees on the grown slices: not taken, nor the italic trees alone;
