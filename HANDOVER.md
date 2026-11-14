@@ -7,44 +7,42 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**Running (the fifth session, 2026-11-14, updated 16:45):**
+**Running (the fifth session, 2026-11-14, updated 18:45):**
 
-- screen `robo-cols-chain` (`work/runs/cols-chain.sh`), restarted 16:35: the render
-  judge's measures as arbiter columns, worktree `../robo-cols`, branch `render-columns`
-  (FITS 8: the first start read back other branches' version-7 answers without the
-  measures; decisions.md). Trust data into `work/probes/ocr-trust-cols/` (~35 min, the
-  render answers redrawn; the chain refuses to train unless nine rows in ten carry the
-  measures), the arbiter `work/models/ocr-trust-cols*.pkl` (~90 min), then both benches
-  against main's runs with the heading fix (`tuning-20261114T142859-4a3e0dc-dirty.json`,
-  `validation-20261114T142948-dde8a83-dirty.json`). Taken only if tuning is better and
-  validation no worse: then merge the branch, copy the arbiter into production's place
-  (production's backed up first), and write the component's reason into design.md
-  (Render and compare). A stopped run resumes: the trust data per book, the arbiter's
-  models in `<path>.training/`.
-- screen `robo-books-render`: Pieter Daens rebuilt with the render judge (one core, the
-  answer cache written at the end), then its questions sampled
-  (`experiments/sample_questions.py work/pieter-daens`).
+- screen `robo-text-seat-night` (`work/runs/text-seat-night.sh`), waits for 22:00:
+  autotrust-jev 9B asked the text judge's question as a fourth second judge beside the
+  render panel (branch `text-seat`, `../robo-text`, rebased on main today). Trust data
+  into `work/probes/ocr-trust-text/` book by book (`experiments/rebuild-trust.sh`,
+  resumes per book; only the places since 2026-11-09 are cold for the 9B, estimate
+  3–5 h), the arbiter `work/models/ocr-trust-text.pkl` (~90 min), then both benches
+  against main's production runs (`tuning-20261114T160429-8783bba-dirty.json`,
+  `validation-20261114T160527-8783bba-dirty.json`). Pass 4 was not taken on
+  2026-11-09 for validation's unasked places 170 → 178; taken now only if tuning is
+  better and validation no worse. Progress: `work/probes/ocr-trust-text/runs/progress.txt`.
 
-**Done this session** (decisions.md, 2026-11-14): both learned trees on the grown slices,
-not taken, nor the italic trees alone; production's trees back and checked. Chapter
-misreads side by side and headings scored as the EPUB sets them: on main. The garbled
-question reads the line as the OCR check settled it: on main (Nervous System's
-unanswered 38 → 35). The book's vocabulary as columns: still null. Rule added: a cache
-version bumped on a branch is one no branch has used.
+**Done this session** (decisions.md, 2026-11-14), all on main:
+- Both learned trees on the grown slices: not taken, nor the italic trees alone;
+  production's trees back and checked.
+- Chapter misreads side by side; headings scored as the EPUB sets them.
+- The garbled question reads the line as the OCR check settled it (Nervous System's
+  unanswered 38 → 35).
+- Headings' straight quotes curled (Reis "De gyula’s", Dolittle "MONKEYS’").
+- The vocabulary as arbiter columns: still null. The render judge's measures as
+  columns: not taken (branch `render-columns`, kept): level on tuning, six more unasked
+  on validation; the gain lay where the arbiter asks anyway.
+- Rule added: a cache version bumped on a branch is one no branch has used.
 
-**Nervous System's review waits** on 13 heading questions with one reading each (the
-trees 0.96–0.999 sure), small capitals read as lower case ("tv", "oJ", "cp") and one
-garbled line every judge reads right ("eSurel" → “Sure.”, the arbiter asks).
-`experiments/heading_sureness.py`: of the trees' heading calls at 0.9 or more on the
-tuning books, 591 are headings and 15 not, most of those real headings misread
-("GRA T ERS", "IS" for 15); Doodskleed p. 30, a first line at 1.0, is a true role error.
-Next for it: whether the bench's six heading errors on tuning (4 extra, 2 inexact) would
-stay asked under "a heading is asked where the trees are unsure or its text isn't words
-or a number" (`experiments/heading_misses.py` on warm tuning builds, once no run writes
-their caches), then that rule benched for questions and unasked errors.
+**Waiting on the user:** Het ijzige land's e-book numbers chapter 6 "HOOFDSTUK 5": an
+erratum (the EPUB would print 5 twice) or a `[reference]` key setting the reference
+back to the print's 6 (recommended; a small new key in `golden derive`). Asked
+2026-11-14, 18:00.
 
-**Next:** the render columns' verdict; Daens' questions sampled; overnight autotrust-jev
-9B as a second text judge (branch `text-seat`, needs fresh model answers).
+**Held back from review:** Nervous System (13 single-reading heading questions, small
+capitals in lower case, one garbled line every judge reads right) and Pieter Daens (332
+questions, some the machine should settle: "Leopold 11" for II, "°t Is" for ’t). The
+checklist has both; the heading questions' evidence is under "One path for every doubt".
+
+**Next:** the text seat's verdict in the morning; then the checklist's order.
 
 **Done on 2026-11-14 (fourth session), the chain `chain-20261114`:** new baselines on
 the references without the e-books' stray spaces

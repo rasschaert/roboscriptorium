@@ -2556,3 +2556,17 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   where the print curls them; headings had been left out of the curling since 2026-10-13
   with no reason recorded. Warm, against main's runs with the heading fix: tuning and
   validation NO CHANGE (the bench folds quote glyphs in headings), the EPUB mended.
+- 2026-11-14: **The render judge's measures as arbiter columns: NOT TAKEN** (branch
+  `render-columns`, kept; trust data `work/probes/ocr-trust-cols/`, 35,305 of 35,582 rows
+  with the measures, 25 min warm but for the drawings; arbiter
+  `work/models/ocr-trust-cols*.pkl`, 91 min). Against main's runs with the heading fix,
+  totals main → columns: tuning questions 3,453 → 3,441, unasked errors 620 → 623, wrong
+  words 3,017 → 3,008, after review 0.21 → 0.21 (marked WORSE by italics 1,223 → 1,226;
+  83 places fixed, 74 made); validation questions 486 → 478, unasked 237 → 243, wrong
+  572 → 567, after review 0.36 → 0.37 (marked BETTER by italics 195 → 194). Level on
+  tuning, six more unasked on validation. The probe had said as much at the operating
+  point (silent errors at the rule's number of questions 17 → 16): its gain of 20 at no
+  questions lies among places the arbiter asks about anyway. Failed on: the arbiter's
+  question budget, not the signal. Retest if the build is asked to ask fewer questions,
+  where those places stop being asked. Lesson: read a probe at the operating point first;
+  the no-question column is the ceiling, not the forecast.

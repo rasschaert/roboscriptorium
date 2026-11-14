@@ -995,3 +995,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | heading misses on the warm tuning builds (no models) | 0 | 21 | 0 |
 | 2026-11-14 | bench tuning, headings' quotes curled (warm) | 0 | 5 | 0 |
 | 2026-11-14 | bench validation, headings' quotes curled (warm) | 0 | 1 | 0 |
+| 2026-11-14 | Pieter Daens rebuilt with the render judge (warm readings and model judges) | 781 | 98 | 0 |
+| 2026-11-14 | arbiter trained with the render judge's measures as columns (CPU) | 0 | 91 | 0 |
+| 2026-11-14 | bench tuning, the render judge's measures as arbiter columns (warm) | 0 | 11 | 0 |
+| 2026-11-14 | bench validation, the render judge's measures as arbiter columns (warm) | 0 | 5 | 0 |

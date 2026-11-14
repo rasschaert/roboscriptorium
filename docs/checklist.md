@@ -30,10 +30,6 @@ last on 2026-11-14, so next by 2026-11-21).
 
 In this order; `HANDOVER.md` has the paths and the commands.
 
-- [ ] **The render judge's measures as arbiter columns** (branch `render-columns`,
-      worktree `../robo-cols`): each version's fit and the drawings' difference, clear
-      of random columns by 18 silent errors in the probe (decisions.md, 2026-11-14). Trust
-      data rebuilt, the arbiter retrained, both benches. ~2 h, running
 - [ ] After batch five, the null that waited for it: autotrust-jev 9B as a second text
       judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
       170 → 178). Needs fresh model answers: overnight
@@ -705,6 +701,10 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       page on the short test; `bench tuning` 0.32 → 0.30 after review, no book worse
 
 ## Trust data, the judges and the arbiter
+
+- [x] ~~The render judge's measures as arbiter columns~~ (not taken 2026-11-14): level on
+      tuning (unasked 620 → 623, questions 3,453 → 3,441), six more unasked on
+      validation; the gain lies where the arbiter asks anyway. Branch `render-columns`
 
 - [x] ~~The book's own vocabulary as an arbiter feature, retested after batch five~~
       (2026-11-14): still null, known words 425 → 413 silent errors at no questions

@@ -157,6 +157,12 @@ each new local vision model.
 Don't repeat these without a new reason (details in docs/decisions.md). A better model in
 the place an idea failed on is one (AGENTS.md, "A null result is a null for its models"):
 
+- **The render judge's measures as arbiter columns** (2026-11-14; failed on the question
+  budget): each version's fit and where the two best-fitting drawings differ pick better
+  with no questions asked (425 → 405 silent errors held out, random columns 423), but at
+  the build's budget the places they fix are asked anyway: tuning level, validation six
+  more unasked. Retest if the build is asked to ask fewer questions.
+
 - **Both learned trees retrained on the grown slices** (2026-11-14; failed on the trees'
   features, not the data's size): the italic trees gain on 14 of 19 books but lose 1,100
   of Het geluid van bananen's italics, the one book set mostly in italics, once it is
