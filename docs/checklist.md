@@ -384,9 +384,10 @@ are under Done, "Architecture probes".
 ## Golden books and the bench
 
 - [ ] The Thief-Taker's part pages set "/ PART ONE /" in the EPUB: the print's ornaments
-      read as slashes (found by `heading_marks`, 2026-11-14). Check the scan, then strip
-      ornaments from part labels where the reference and the book's other parts agree,
-      and "A POINT’WELL MADE"'s speck
+      (small swords, checked on the scan) read as slashes (found by `heading_marks`,
+      2026-11-14), and "A POINT’WELL MADE"'s speck. Heading places in the arbiter's
+      training didn't teach it (157 places, not taken); next: the render judge's "ink that
+      is no glyph", or a heading's marks against the book's other headings
 - [ ] **user**: golden pairs for the gaps (golden-notes.md, "Gaps to hunt for"): first a
       book set flush for tuning and a short-story collection; then section headings
       without numbers, text wrapped around pictures. From before: De Arbeiderspers,

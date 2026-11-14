@@ -2691,3 +2691,13 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   vergelding's headings 16 → 15; its words were better (0.47 → 0.45 a page). Lesson: a
   rule widened to a new kind of evidence keeps the old rule's guard (here, how short a
   misread number is).
+- 2026-11-14: **Heading places in the arbiter's training data: NOT TAKEN** (branch
+  `heading-labels`, kept). The trust data's labels kept body lines only; adding heading
+  lines added 157 places to 35,582 (`work/probes/ocr-trust-heads/`), the arbiter retrained
+  (`work/models/ocr-trust-heads*.pkl`). Against main's production runs: tuning WORSE,
+  questions 3,445 → 3,475, unasked 618 → 622, wrong words 3,017 → 3,037, quote errors
+  0.051 → 0.053 a page (interval clear of zero); The Thief-Taker's "/ PART ONE /" still
+  set (heading marks 4 → 4); validation NO CHANGE. Too few heading places to teach the
+  arbiter decoration, enough to shift its training. Failed on: the size of the heading
+  evidence. The ornaments need their own route (the render judge's "ink that is no
+  glyph", or a heading's marks checked against the book's other headings).
