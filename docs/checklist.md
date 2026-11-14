@@ -183,8 +183,11 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 - [ ] The Loudest Sound and Nothing, before its review: its wrong headings are all asked
       (Blackpool's label "00430050" as a heading on PDF 7, the half-title on PDF 11,
       "The Numbers / NUMBERS", show-through on PDF 182); the machine should settle them
-- [ ] **user**: Pieter Daens' review, 292 questions (`uv run roboscriptorium review
-      work/pieter-daens`)
+- [ ] **user**: Pieter Daens' review (`uv run roboscriptorium review work/pieter-daens`),
+      held back: rebuilt with the render judge (2026-11-14) it asks 332 (253 OCR doubts,
+      88 quotes), among them ones the machine should settle ("Leopold 11" for II, "°t
+      Is" for ’t, "Saskaaï"). Re-sample once the render columns' arbiter is decided
+      (`experiments/sample_questions.py work/pieter-daens`), before sending the user
 - [x] **user**: Hoe wij verdwijnen's spot-check, PDF pages 41, 77, 87, 144, 292: no
       wrong word and no wrong break on the five pages; two italic errors ("op", "een"),
       both of the build of 2026-11-03 and gone since (2026-11-13)
