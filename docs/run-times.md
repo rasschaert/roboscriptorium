@@ -1026,3 +1026,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | trust data, stella | 67 | 0 | 0 |
 | 2026-11-14 | trust data, ex-minnaar | 273 | 2 | 0 |
 | 2026-11-14 | Andere levens' questions, crops as they were (clone, warm) | 0 | 1 | 0 |
+| 2026-11-14 | probe: character language model as arbiter columns (CPU) | 0 | 6 | 0 |
+| 2026-11-14 | probe: character language model's random-column control (CPU) | 0 | 5 | 0 |
+| 2026-11-14 | Andere levens' questions, crops stopping at the descenders (clone, judges asked anew where cut) | 0 | 37 | 0 |
+| 2026-11-14 | probe: character language model as arbiter columns (CPU) | 0 | 5 | 0 |
+| 2026-11-14 | probe: character language model's random-column control (CPU) | 0 | 5 | 0 |

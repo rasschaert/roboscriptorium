@@ -157,6 +157,12 @@ each new local vision model.
 Don't repeat these without a new reason (details in docs/decisions.md). A better model in
 the place an idea failed on is one (AGENTS.md, "A null result is a null for its models"):
 
+- **How likely each version is in its language, as arbiter columns** (2026-11-14, the
+  user's idea; failed on the question budget, like the render columns): a character
+  5-gram model fixes speck readings ("hem·riepen", "niét") but saves 16 questions over
+  35,000 places beyond random columns. Retest with a cheaper question budget or another
+  kind of arbiter.
+
 - **The render judge's measures as arbiter columns** (2026-11-14; failed on the question
   budget): each version's fit and where the two best-fitting drawings differ pick better
   with no questions asked (425 → 405 silent errors held out, random columns 423), but at

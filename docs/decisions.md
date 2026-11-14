@@ -2610,3 +2610,16 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   held through the pause and went on after) and the battery gate holds runs that start
   meanwhile; a rule in AGENTS.md has the agent check a command's cost before handing it
   over.
+- 2026-11-14: **A character language model as arbiter columns: null** (the user's idea:
+  judges should weigh options "very unlikely based on language rules";
+  `experiments/probe_char_lm.py`, no models). A 5-gram character model per language from
+  the golden references, each book scored by one without its own; per version the
+  likelihood of the line around it and its margin. Silent errors at no questions, the
+  rule's number and half: 425 → 402, 17 → 18, 38 → 41; random columns 419, 17, 38.
+  Questions needed to leave no more silent errors than today: 3,370 → 3,284, random
+  columns 3,300: sixteen questions over 35,000 places. Its fixes are the user's speck
+  kind ("hem·riepen", "windas ‘en", "bloemen.vormden", "niét", "glimlách"), its breaks
+  Artemis' chemistry ("CO2" → "CO,") and stops; but the places it settles are ones the
+  arbiter asks about anyway, as with the render judge's measures. Failed on: the
+  arbiter's question budget, as the render columns did; the signal is real. Retest when
+  the build is asked to ask fewer questions, or the arbiter changes kind.
