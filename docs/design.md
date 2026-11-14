@@ -467,6 +467,10 @@ arbiters, validation then no change. On by default since 2026-11-13 at the user'
 with its weak spots (punctuation, books whose typeface the library lacks) still being
 worked on.
 
+
+A capital no letter touches ("T-shirt", "zag T.") is drawn as a small capital too, as a
+run of capitals is (`rendercheck._SMALL`), never one opening a word; the best fit
+decides (the user's counter-idea, 2026-11-14: Andere levens' small-capital "T-shirt").
 ## Context judge
 
 **A thinking model that settles questions from the text around them** (`contextjudge.py`,

@@ -2672,3 +2672,13 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   places differing only in spaces, how often the layer prints each form: silent errors
   425 → 424; questions to leave no more silent errors 3,370 → 3,455, random columns
   3,413. The review's propagated answers ("your answers") already serve that case.
+- 2026-11-14: **A lone capital drawn as a small capital too: TAKEN** (the user's
+  counter-idea: give the render judge more ways a book may set a version; branch
+  `lone-small-caps`, merged; drawing version 9). Andere levens prints "T-shirt" with a
+  small-capital T, which the render judge drew full size and lost to the lower-case
+  "t-shirt" (0.95). Short test on a clone: both "T-shirt" votes turned right, no other
+  vote of its 802 places moved. Warm but for the drawings, against main's production
+  runs: tuning BETTER, unasked 618 → 609, wrong words 3,017 → 3,004, after review lower
+  with the interval below zero (heading errors 26 → 24 are Het ijzige land's erratum kept
+  as printed, on the branch from main); validation NO CHANGE (unasked 234 → 235, wrong
+  572 → 571).
