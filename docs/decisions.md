@@ -2638,3 +2638,15 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   all. The cut would change 37,921 of 38,787 crops in the trust data, ~15–20 hours of the
   judges asked again, for no gain on the golden pages. Kept off; Andere levens may be set
   tighter than the golden books, and `descent` in book.toml or the setting turns it on.
+- 2026-11-14: **autotrust-jev 9B as a 4th judge asking the text question, first bench:
+  VETOED on one heading** (branch `text-seat`, beside the render panel; trust data
+  `work/probes/ocr-trust-text/`, 25 min warm but for the 9B's new places; arbiter
+  `work/models/ocr-trust-text*.pkl`, 91 min). Against main's production runs, totals:
+  tuning questions 3,445 → 3,407, unasked 618 → 612, wrong words 3,017 → 2,976 (Goede
+  dochter 0.45 → 0.41 a page, the interval clear of zero); validation questions 490 →
+  473, unasked 234 → 235, wrong 572 → 596 (the more of them asked), after review level,
+  marked BETTER by italics 195 → 194. Vetoed by Goede dochter's headings 25 → 24: its
+  arbiter took a reader's "LEVEN" for the chapter "ZEVEN", which nothing caught, as the
+  numbering repair knew digits and Roman numerals only. Chapter numbers in words now run
+  (`chapters._worded`, main f73cb1f; 25/25 on a clone); the branch rebased and benched
+  again.
