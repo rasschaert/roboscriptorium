@@ -185,6 +185,12 @@ get renumbered. Don't add a file to this table without a job no other file has.
   seen in a built book (a misread chapter number, a split dedication, ads taken for
   text) is never fixed for that book alone: in the same change it becomes a repair in
   the pipeline, a check the build runs on every book, or a case the bench scores.
+- **A problem goes to the user as a proposal, open to a better idea** (the user,
+  2026-11-14). For a problem whose solution is open: write it in clear English (the
+  situation, what solving it gains, what leaving it costs); think of a solution yourself,
+  creatively, the rules as written included in what may change; propose it and ask
+  whether the user has a better idea. Their counter-ideas beat the offered options twice
+  that day (errata that keep the print; a judge between two sets of italic trees).
 - **Questions the bench can't weigh** (the reviewer's time against wrong words, say) are
   the user's call: ask in one short sentence.
 
