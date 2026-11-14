@@ -21,8 +21,14 @@ back from me by then just keep going through the checklist").
 **Baselines now** (production as of c6088a3): `work/bench/tuning-20261114T233727-389e99a-dirty.json`
 and `validation-20261114T233833-82c7529-dirty.json`.
 
-**Running:** screen `robo-kus`, De kus in de nacht's first build (restarted 00:55 on the
-new code from its cached readings; ~8 h), then its questions sampled. Ex-minnaar is ready
+**Running, in order** (each waits for the one before; GPU):
+1. screen `robo-kus`: De kus in de nacht's first build (restarted 00:55 on the new code
+   from its cached readings; ~8 h), then its questions sampled.
+2. screen `robo-resample`: Nervous System and Pieter Daens rebuilt with production of
+   2026-11-15 and their questions sampled (kept in `work/probes/questions/<book>-20261115/`),
+   to see what the night's changes did to their reviews.
+3. screen `robo-hints`: past nulls the panel may turn, the hints about kinds of OCR error
+   on autotrust-jev 35B and d3 (judge set v2, plain, `kinds`, `targeted`). Ex-minnaar is ready
 for the user's review (74 questions: `uv run roboscriptorium review work/ex-minnaar`).
 
 **Not taken overnight:** heading places in the arbiter's training; the language model,
