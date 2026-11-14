@@ -1040,3 +1040,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | probe: the book's spacing of a repeated form as arbiter columns (CPU) | 0 | 5 | 0 |
 | 2026-11-14 | bench validation, clef:27b settling the two italic tree sets' disagreements | 0 | 2 | 0 |
 | 2026-11-14 | probe: the book's spacing, random-column control (CPU) | 0 | 10 | 0 |
+| 2026-11-14 | bench tuning, lone capitals drawn as small capitals too (render redrawn) | 0 | 15 | 0 |
+| 2026-11-14 | bench validation, lone capitals drawn as small capitals too (render redrawn) | 0 | 4 | 0 |
+| 2026-11-14 | bench tuning, the 4th judge with chapter numbers in words (warm) | 0 | 5 | 0 |
+| 2026-11-14 | bench validation, the 4th judge with chapter numbers in words (warm) | 0 | 1 | 0 |

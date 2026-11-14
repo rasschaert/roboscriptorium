@@ -702,6 +702,9 @@ def test_chapters_numbered_in_words_run_too_and_a_misread_one_takes_the_word():
     # English, with compounds, in the run's case.
     english = ["Nineteen", "Twenty", "Twenty-one", "Twenty-twa", "Twenty-three", "Twenty-four"]
     assert _read(chapters.numbered(_headings(*english)))[3] == "Twenty-two"
+    # A title of words after the run (De vergelding's afterword) is no misread number.
+    after = ["TWAALF", "DERTIEN", "VEERTIEN", "VIJFTIEN", "VERANTWOORDING"]
+    assert _read(chapters.numbered(_headings(*after))) == after
     dutch = ["twintig", "eenentwintig", "tweeëntwintig", "drieentwintig", "vierentwintig"]
     assert chapters.word_value("drieëntwintig") == 23 == chapters.word_value("drieentwintig")
     assert _read(chapters.numbered(_headings(*dutch))) == dutch

@@ -508,11 +508,27 @@ def _in_words(number: int, like: str, lang: str) -> str:
     return word.capitalize() if like[:1].isupper() else word
 
 
+# A one-word heading this many letters from a number word may be one misread ("LEVEN"
+# for "ZEVEN"); further off it is a title ("VERANTWOORDING" after a run, De vergelding).
+WORD_MISREAD = 2
+
+
+def _near_number_word(text: str) -> bool:
+    t = text.strip().rstrip(_AFTER).lower()
+    return any(
+        Levenshtein.distance(t, w) <= WORD_MISREAD for words in NUMBER_WORDS.values() for w in words
+    )
+
+
 def _worded(blocks: list[Block], out: list[Block]) -> list[Block]:
     """`out` with the run of chapters numbered in words settled as `_settle` settles
     digits: a heading of one word off the run takes the number word its neighbours leave
     room for, in the run's language and case (Goede dochter's "ZEVEN" read "LEVEN")."""
-    at = [i for i, b in enumerate(blocks) if isinstance(b, Heading) and len(b.text.split()) == 1]
+    at = [
+        i
+        for i, b in enumerate(blocks)
+        if isinstance(b, Heading) and len(b.text.split()) == 1 and _near_number_word(b.text)
+    ]
     read = [word_value(blocks[i].text) for i in at]
     known = [blocks[i].text.strip().lower() for i, r in zip(at, read, strict=True) if r]
     if not known:

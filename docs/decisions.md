@@ -2682,3 +2682,12 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   with the interval below zero (heading errors 26 → 24 are Het ijzige land's erratum kept
   as printed, on the branch from main); validation NO CHANGE (unasked 234 → 235, wrong
   572 → 571).
+- 2026-11-14: **The number-word run took a title for a chapter** (f73cb1f, mended the
+  same night). De vergelding ends its run of chapters in words on an afterword,
+  "VERANTWOORDING", which `_worded` set to "ZESTIEN" as the first heading after the run:
+  it let any one-word heading join, where the digit run keeps to headings of a few
+  characters. Now a one-word heading joins only within two letters of a number word
+  ("LEVEN" for "ZEVEN"). Found by the 4th judge's second tuning bench, vetoed on De
+  vergelding's headings 16 → 15; its words were better (0.47 → 0.45 a page). Lesson: a
+  rule widened to a new kind of evidence keeps the old rule's guard (here, how short a
+  misread number is).
