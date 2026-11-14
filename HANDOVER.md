@@ -15,20 +15,29 @@ caches):**
 1. `robo-text-seat-night`: autotrust-jev 9B as a 4th judge (branch `text-seat`), arbiter
    training, then both benches against `tuning-20261114T160429-8783bba-dirty.json` and
    `validation-20261114T160527-8783bba-dirty.json`.
-2. `robo-italic-panel`: the user's idea, clef:27b settling where two italic tree sets
-   disagree (branch `italic-panel`).
+2. ~~`robo-italic-panel`~~: **taken, merged, on by default** (main 0fdc5dc): italic
+   errors 1,223 → 986 on tuning, 195 → 170 on validation. New italic baselines:
+   `tuning-20261114T211926-ba2e017-dirty.json`, `validation-20261114T212127-7222f1f-dirty.json`.
 3. `robo-caps1-bench`: the user's counter-idea, a lone capital drawn as a small capital
    too (branch `lone-small-caps`, render version 9); its short test on an Andere levens
    clone turned both "T-shirt" votes right and moved nothing else.
-4. `robo-heading-labels`: heading places in the arbiter's training data (branch
+4. `robo-text-seat-rebench`: the 4th judge again, with chapter numbers in words running
+   (its first tuning bench was vetoed on Goede dochter's "ZEVEN" read "LEVEN"; fixed on
+   main f73cb1f, the branch rebased).
+5. `robo-heading-labels`: heading places in the arbiter's training data (branch
    `heading-labels`): trust data, training, benches.
+
+The candidates in 3–5 are each benched against the old baselines on their own branch;
+whatever is taken gets a combined bench on main with the italic panel after.
 
 Each is taken only if tuning is better and validation no worse: merge its branch, and for
 an arbiter or tree set copy the models into production's place (backing production up).
 
-**Tonight's nulls** (decisions.md): the character language model and the render judge's
-measures as arbiter columns (the gains lie where the arbiter asks anyway); crops cut at
-the line above's descenders (off: no gain on golden pages).
+**Tonight's nulls** (decisions.md): the character language model, the render judge's
+measures and the book's spacing as arbiter columns (the gains lie where the arbiter asks
+anyway); crops cut at the line above's descenders (off: no gain on golden pages). Also
+done: asking where every judge agrees is learned (closed); quote cards show every
+reader's reading; chapter numbers in words run.
 
 **Done this session** (decisions.md, 2026-11-14), all on main:
 - Both learned trees on the grown slices: not taken, nor the italic trees alone;
