@@ -7,27 +7,28 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**Running (the fifth session, 2026-11-14, updated 20:40; the user away until about noon on
+**Running (the fifth session, 2026-11-14, updated 21:30; the user away until about noon on
 2026-11-15: "if you don't hear back from me by then just keep going through the
-checklist"):**
+checklist"). One queue, each waiting for the one before (they write the same books'
+caches):**
 
-- screen `robo-text-seat-night`: autotrust-jev 9B as a 4th judge (branch `text-seat`,
-  `../robo-text`); trust data done, the arbiter training (`work/models/ocr-trust-text.pkl`),
-  then both benches against `tuning-20261114T160429-8783bba-dirty.json` and
-  `validation-20261114T160527-8783bba-dirty.json`.
-- screen `robo-italic-panel`: waits for it, then benches the user's idea, clef:27b settling
-  where the old and the grown italic trees disagree (branch `italic-panel`, `../robo-ital`).
-- screen `robo-descent-short`: crops stopping at the line above's descenders
-  (`ROBO_CROP_DESCENT`, on main, off by default) on a clone of Andere levens
-  (`work/probes/descent/`), questions before and after.
+1. `robo-text-seat-night`: autotrust-jev 9B as a 4th judge (branch `text-seat`), arbiter
+   training, then both benches against `tuning-20261114T160429-8783bba-dirty.json` and
+   `validation-20261114T160527-8783bba-dirty.json`.
+2. `robo-italic-panel`: the user's idea, clef:27b settling where two italic tree sets
+   disagree (branch `italic-panel`).
+3. `robo-caps1-bench`: the user's counter-idea, a lone capital drawn as a small capital
+   too (branch `lone-small-caps`, render version 9); its short test on an Andere levens
+   clone turned both "T-shirt" votes right and moved nothing else.
+4. `robo-heading-labels`: heading places in the arbiter's training data (branch
+   `heading-labels`): trust data, training, benches.
 
-**The night's queue, in order:** the descent crops benched on all golden books if the
-short test pays (cold where crops change; then Nervous System and Pieter Daens
-re-sampled); a character-level language model as an arbiter column (the user's "options
-very unlikely by language"), probed against random columns; headings in the arbiter's
-training data (ornaments, misread labels); render variants for a lone small capital (the
-user's counter-idea); `init`'s title checked against the title page; then the checklist.
-The user's Andere levens review: 34 of 52 answered, server may still be open.
+Each is taken only if tuning is better and validation no worse: merge its branch, and for
+an arbiter or tree set copy the models into production's place (backing production up).
+
+**Tonight's nulls** (decisions.md): the character language model and the render judge's
+measures as arbiter columns (the gains lie where the arbiter asks anyway); crops cut at
+the line above's descenders (off: no gain on golden pages).
 
 **Done this session** (decisions.md, 2026-11-14), all on main:
 - Both learned trees on the grown slices: not taken, nor the italic trees alone;

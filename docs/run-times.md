@@ -1032,3 +1032,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | probe: character language model as arbiter columns (CPU) | 0 | 5 | 0 |
 | 2026-11-14 | probe: character language model's random-column control (CPU) | 0 | 5 | 0 |
 | 2026-11-14 | probe: judges on crops cut at the descenders, 300 places of three golden books | 0 | 18 | 0 |
+| 2026-11-14 | Andere levens' questions, lone capitals drawn as small capitals too (clone; render redrawn) | 0 | 3 | 0 |
