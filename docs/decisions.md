@@ -2476,3 +2476,7 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   in one word ("FBI-beleid", "BBS’en"), the first case seen; and on Afscheid's PDF p. 79
   a speck above the s of "reeks" looks like an acute accent, which over a vowel would
   likely be read as one (the stress-accent errors' kind).
+- 2026-11-14: **Baselines with the 35 errata from the e-book**:
+  `work/bench/tuning-20261114T130246-1923da8-dirty.json` (17 wrong words fixed, none
+  made) and `validation-20261114T130335-9e4b703-dirty.json` (46 fixed, 1 made). Compare
+  later changes with these.

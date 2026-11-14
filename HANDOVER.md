@@ -7,20 +7,45 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
+**START HERE (the user, 2026-11-14, 14:05: "make sure that when i start a fresh session
+after that, it begins with the italic trees and so on").** The session paused for a
+macOS update and reboot. Nothing runs. First thing, with a watcher (Monitor on
+`work/runs/trees-resume.out`, steps, errors, "all steps done", the screen's end):
+
+```sh
+experiments/detached.sh trees-resume work/runs/trees-resume.sh
+```
+
+It backs up production's tree models (`work/models/trees-before-20261114/`, already made,
+43 files) and their training data (copies made whole under a temporary name), collects
+the italic words on the grown slices (estimate 40–50 min, no time on record), saves the
+italic trees, rebuilds and saves the line-role trees (~25 min), then benches tuning and
+validation (~20 min) against the baselines with all 35 errata, which it reads from the
+"baselines:" line of `work/runs/trees-20261114.out`
+(`work/bench/tuning-20261114T130246-1923da8-dirty.json`,
+`validation-20261114T130335-9e4b703-dirty.json`). Taken only if tuning is better and
+validation no worse; otherwise copy the backed-up models back into `work/models/`.
+Then, in this order (the timeline given to the user): the book's own vocabulary as an
+arbiter feature (retrain ~90 min, bench 20); the second render judge's fit as an arbiter
+feature (probe first); overnight, autotrust-jev 9B as a second text judge (branch
+`text-seat`, needs fresh model answers); in the morning Pieter Daens and Nervous System
+rebuilt with the render judge, their questions sampled before the user reviews them.
+Beside the CPU runs: why Het schaduwhuis lost four headings in the kerning bench but not
+in a warm rebuild (decisions.md, 2026-11-14).
+
 **Done on 2026-11-14 (fourth session), the chain `chain-20261114`:** new baselines on
 the references without the e-books' stray spaces
 (`work/bench/tuning-20261114T094747-bb6bbf8-dirty.json`,
-`validation-20261114T094836-37cba55-dirty.json`: compare later changes with these); the
+`validation-20261114T094836-37cba55-dirty.json`, since replaced by the baselines with the errata named above); the
 second render judge in the first one's place, not taken; the font's kerning chosen per
 book, not taken (decisions.md, 2026-11-14). Main's typeface matches are back in
 `stages/typeface.json`; the kerned ones are `typeface-kern.json`.
 
-**Waiting on the user:** the rest of the 36 places where the e-book departs from its
-print (`open work/probes/unasked/confirm-20261114/index.html`, numbered; `places.json`
-beside it). The user's rule (2026-11-14): each becomes an erratum in the scan's
-`work/<book>--<scan>/errata.toml`, so the build reads as the e-book; the user's remarks so
-far cover places 1–15 (Au pair's "want-als" is a speck, the build's error), written to
-errata from `errata-pending.json` there. Places 11, 12 and 16 on await their remarks.
+**Answered by the user (2026-11-14):** all 36 places where the e-book departs from its
+print: 35 are errata in their books' `errata.toml` (list: `work/probes/unasked/
+confirm-20261114/errata-pending.json`), each checked to land in a warm build; Au pair's
+"want-als" is a speck, the build's error. The user is reporting Vanille's two DBNL slips
+to DBNL themselves.
 
 ## Render and compare: on by default since 2026-11-13 (the third session, ended 11:10)
 
@@ -39,7 +64,7 @@ tuning BETTER (after review 0.24 → 0.22, questions 3,971 → 3,454, unasked 71
 validation no clear change in words (0.41 → 0.42 [-0.02, +0.03], questions 546 → 486,
 unasked 272 → 283), worse by the rule on italics 195 → 197.
 
-**Baselines with the vote on by default** (compare later changes with these):
+**Baselines with the vote on by default** (2026-11-13, superseded by those above):
 `work/bench/tuning-20261113T090608-fbff45c-dirty.json` and
 `validation-20261113T090701-fbff45c-dirty.json`.
 
