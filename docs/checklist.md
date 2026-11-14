@@ -331,7 +331,8 @@ are under Done, "Architecture probes".
             is a probe on the labelled places first): punctuation, its weakest kind
             (91% against the model judges' 96%): the two versions compared only where
             their drawings differ (probed 2026-11-13: 92.6 → 93.3% of places as the
-            pick, uneven by book; next as features for the arbiter); font features in the drawing
+            pick, uneven by book; as a vote beside `render` and in its place, not taken,
+            2026-11-13 and 14; next as features for the arbiter); font features in the drawing
             (libraqm or HarfBuzz: real ligatures, small capitals and old-style figures
             for every font, not only those with code points for them); the ink spread
             and blur fitted to each scan more finely; a word's cut chosen per place
@@ -379,9 +380,11 @@ are under Done, "Architecture probes".
       book set flush for tuning and a short-story collection; then section headings
       without numbers, text wrapped around pictures. From before: De Arbeiderspers,
       Prometheus/Ooievaar or Vrijdag; a Kosmos book for later, beyond prose
-- [ ] **user**: 58 unasked errors that look like the reference's, to confirm
-      (~15 min, one `review --only` command a book in HANDOVER.md, "Waiting on the
-      user"). Of the 223 unasked places that
+- [ ] **user**: 36 unasked errors that look like the reference's, to confirm, one
+      answer per pattern on seven crop sheets (`work/probes/unasked/confirm-20261114/`,
+      ~5 min). Of the 58 below, The Thief-Taker's Apprentice's 11 (answered 2026-11-14)
+      and 10 more of the same kind are now undone by the manifest key `stray_spaces`;
+      Goede dochter's "vergieten. ‘" is as printed (the agent's reading was wrong). Of the 223 unasked places that
       differ from the reference only in spaces or hyphens (fresh baselines, 2026-11-12),
       each read on its crop by the agent: in 58 the print is as ours has it (a space
       before a mark the print doesn't set, words the e-book runs together or splits, a

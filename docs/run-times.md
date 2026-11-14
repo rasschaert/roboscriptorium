@@ -959,3 +959,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-13 | bench validation with both render judges, against production's baseline (warm but for their fits) | 0 | 9 | 0 |
 | 2026-11-13 | bench tuning, baseline with render and compare on by default (warm) | 0 | 5 | 0 |
 | 2026-11-13 | bench validation, baseline with render and compare on by default (warm) | 0 | 1 | 0 |
+| 2026-11-14 | arbiter trained with render-differ in render's place (CPU) | 0 | 96 | 0 |
+| 2026-11-14 | bench tuning, baseline on the references without the e-books' stray spaces (warm) | 0 | 5 | 0 |
+| 2026-11-14 | bench validation, baseline on the references without the e-books' stray spaces (warm) | 0 | 1 | 0 |
+| 2026-11-14 | bench tuning, render-differ in render's place, against main's baseline on the mended references (warm) | 0 | 5 | 0 |
+| 2026-11-14 | bench validation, render-differ in render's place, against main's baseline on the mended references (warm) | 0 | 1 | 0 |

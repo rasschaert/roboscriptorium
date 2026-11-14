@@ -2406,3 +2406,19 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   "may I run them?", asked at night with a finished review's server still open. The user:
   "unforgivable". Silence is no longer read as a no; queued runs start and are reported,
   and a review server whose answers are all saved doesn't block a bench. Started at 10:43.
+- 2026-11-14: **The second render judge in the first one's place (`render-differ`): NOT
+  TAKEN.** The arbiter trained with it instead of `render` (96 minutes, 19 models,
+  `work/models/ocr-trust-differ*.pkl`), benched against the new baselines: tuning WORSE
+  by the rule, after review 0.21 → 0.22 [-0.00, +0.01], 206 wrong words fixed and 198
+  made; more questions on Vals alarm (0.35 → 0.39) and De cipier, more unasked on
+  Doodskleed (0.13 → 0.17), fewer unasked on Goede dochter (0.13 → 0.10). Validation level
+  (0.41 → 0.41), De kerk van de dode meisjes asking more (0.69 → 0.83). The better pick
+  alone (93.1% against 90.7% on punctuation) doesn't carry through the arbiter, beside the
+  first judge or in its place; `render` stays and gets the kerning chain. Failed on: the
+  arbiter, as a vote; its fit as an arbiter feature is untried.
+- 2026-11-14: **New baselines on the references without the e-books' stray spaces**:
+  `work/bench/tuning-20261114T094747-bb6bbf8-dirty.json` and
+  `validation-20261114T094836-37cba55-dirty.json`. Against the old: 48 wrong words fixed
+  (glued or split words, tuning 0.029 → 0.023 a page), 5 "made" that are the same old
+  places re-cut by the narrower reference ("pot-head. '" now "pot-head.'"). Compare later
+  changes with these.
