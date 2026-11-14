@@ -240,6 +240,12 @@ mistake it prevents; check a change against them before committing.
 - **Shared resources are shared deliberately.** PyMuPDF isn't thread-safe: hold
   `pdf.PDF_LOCK` wherever threads may meet, render on one thread and pool only the model
   calls.
+- **A cache version bumped on a branch is one no branch has used.** `render-differ` and
+  `render-kern` both keyed the render judge's answers as version 7, and the next branch
+  to bump it to 7 read their answers back, without the measures it added, and trained on
+  them (2026-11-14). Before bumping, `git grep` the constant across all branches
+  (`git grep -h "^FITS =" $(git branch --format='%(refname:short)')`), and before a
+  long run, check one output for the new field.
 - **Caches survive interruption.** Write them whole (`files.write_atomic`), skip a
   cut-off last line in append-only logs, and version their format.
 - **Every long run can be stopped and picked up** (the user, 2026-11-13: "make anything

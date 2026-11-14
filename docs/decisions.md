@@ -2543,3 +2543,10 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   agree"), one moved to an OCR doubt with its readings. The rest: 13 headings with one
   reading, small capitals read as lower case ("tv", "oJ", "cp"): its review waits on
   those steps.
+- 2026-11-14: **A cache version shared by two branches fed the render-columns run stale
+  answers.** Its trust data came back in 4 minutes with no row holding the new measures:
+  the render judge's answers are keyed by `rendercheck.FITS`, which this branch bumped to
+  7, the number `render-differ` and `render-kern` had both used, so every answer was
+  read back from their runs. The arbiter's training was stopped 15 minutes in (worthless
+  on that data), FITS set to 8, and the chain now refuses to train unless nine rows in ten
+  carry the measures. AGENTS.md, Engineering practices, has the rule.
