@@ -1031,3 +1031,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | Andere levens' questions, crops stopping at the descenders (clone, judges asked anew where cut) | 0 | 37 | 0 |
 | 2026-11-14 | probe: character language model as arbiter columns (CPU) | 0 | 5 | 0 |
 | 2026-11-14 | probe: character language model's random-column control (CPU) | 0 | 5 | 0 |
+| 2026-11-14 | probe: judges on crops cut at the descenders, 300 places of three golden books | 0 | 18 | 0 |

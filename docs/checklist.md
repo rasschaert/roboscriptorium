@@ -101,12 +101,12 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       the stop): read its sureness on that book's 22 asked suspects, and whether English
       books have too little trust data. After the arbiter switch
 - [ ] Line boxes off their ink (the user, same card: "the yellow box is drawn wrong").
-      The layer puts "“Okay.”" at y 179–190 where the scan prints it at ~186–195, so the
-      review's box and the crops the readers and judges see cut through the line.
-      Measure how often by fitting each box to the ink band nearest it (a first count
-      with a shifted-box test found none, so that test is wrong), then fit boxes to the
-      ink before cropping; upstream of every reader, so through the frozen tryout sets
-      and a bench
+      Measured 2026-11-14: every scan's text-layer box ends on the baseline (the
+      placeholder font has no descent), so in a book set tight the judges' crop holds the
+      line above's descenders. Cutting the crop there (`ROBO_CROP_DESCENT`) fixed Andere
+      levens' "dië" and "rolden" votes but not the golden books' (1,104 → 1,098 judge
+      picks right of 1,200); left off. Next, if it returns: the readers' crops too, and
+      the arbiter retrained on cut crops for one tight book
 - [ ] Measure, and show the user before they review again: the questions a book like
       Nervous System leaves, by what raised them, each kind the machine could settle
       fixed at its source, and the silent errors on the benches before and after. Its 70

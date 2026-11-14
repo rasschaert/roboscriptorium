@@ -2623,3 +2623,18 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   arbiter asks about anyway, as with the render judge's measures. Failed on: the
   arbiter's question budget, as the render columns did; the signal is real. Retest when
   the build is asked to ask fewer questions, or the arbiter changes kind.
+- 2026-11-14: **Crops cut at the line above's descenders: not made the default**
+  (`ROBO_CROP_DESCENT`, on main, off). The text layer's boxes end on the baseline in every
+  book (its placeholder font has no descent; measured descent 0.26–0.30 of a line on
+  seven books), and the judges' padded crop reaches into the line above. Andere levens,
+  short test on a clone (`work/probes/descent/`): the user's three reading cases got
+  better votes ("die": clef and autotrust now "die", the render judge "die" at 0.94
+  where it abstained; "zíjn": render 0.93; "rolden": every vision judge, render 0.99) but
+  the arbiter, trained on the old crops, still asked them; the specks got worse (the
+  clearer crop made "naast`me" surer, render 0.71 → 0.91); 4 of 802 choices moved, 45 → 48
+  questions. On golden books (`experiments/probe_descent_judges.py`, 300 labelled places
+  of Goede dochter, De tuin and Het heft): right with the old crop and the new, clef
+  265 → 273, autotrust-jev 279 → 271, d3 293 → 287, render 267 → 267; 1,104 → 1,098 in
+  all. The cut would change 37,921 of 38,787 crops in the trust data, ~15–20 hours of the
+  judges asked again, for no gain on the golden pages. Kept off; Andere levens may be set
+  tighter than the golden books, and `descent` in book.toml or the setting turns it on.
