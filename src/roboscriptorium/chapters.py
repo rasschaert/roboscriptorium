@@ -30,6 +30,8 @@ OPENINGS_WITH_HEADING = 2 / 3
 MIN_OPENINGS = 5
 # At least this many headings, and half of them following the one before, make a run.
 MIN_NUMBERED = 5
+# At most this many misread chapter numbers side by side are settled by their run.
+GAP = 3
 RULE = "book-openings"
 # A dropped number filling a gap in the run of headings (`run_gaps`) is at most this far
 # past the run's last number: two chapters in a row the layer lost, then this one.
@@ -518,7 +520,7 @@ def numbered(blocks: list[Block]) -> list[Block]:
     read = [value(n) for _, n, _ in titled]
     for (i, was, title), number in zip(titled, _settle(read), strict=True):
         if number is not None and str(number) != was:
-            parts = [str(number) if part == was else part for part in blocks[i].parts]
+            parts = _renumbered(blocks[i].parts, was, number)
             out[i] = replace(blocks[i], text=f"{number} {title}", parts=parts)
     labelled = [
         (i, m.group(1), m.group(2))
@@ -588,6 +590,27 @@ def _same_label(label: str, common: str) -> bool:
     return Levenshtein.normalized_similarity(label.lower(), common.lower()) >= LABEL_ALIKE
 
 
+def _renumbered(parts: list[str], was: str, number: int) -> list[str]:
+    """The heading's parts with the number as read set to `number`, in the first part it
+    opens: alone ("50" over "ALEX") or before the title on its line ("50 ALEX")."""
+    out = list(parts)
+    for k, part in enumerate(out):
+        if part == was or (m := _NUMBER_FIRST.match(part)) and m.group(1) == was:
+            out[k] = str(number) + part[len(was) :]
+            break
+    return out
+
+
+def _room(read: list[int | None], k: int, expected: int) -> bool:
+    """Whether readings k onwards hold at most `GAP` off the run before one that is the
+    run's again, counting from `expected` at k: misreads side by side ("54", "50"
+    for 34 and 35 between 33 and 36)."""
+    for j in range(k + 1, min(k + GAP, len(read) - 1) + 1):
+        if read[j] == expected + (j - k):
+            return j - k >= 2
+    return False
+
+
 def _settle(read: list[int | None]) -> list[int | None]:
     """Each heading's number, by its run: a reading that fits stays, one off the run is
     the number both neighbours agree on. All None where the readings don't run: five or
@@ -610,8 +633,10 @@ def _settle(read: list[int | None]) -> list[int | None]:
         else:
             expected = None
         if expected is not None and number != expected:
-            # A reading off the run stands unless both neighbours say otherwise.
-            agreed = before is not None and after == expected + 1
+            # A reading off the run stands unless both neighbours say otherwise, or it
+            # opens a few misreads side by side that the run's next reading leaves
+            # exactly room for.
+            agreed = before is not None and (after == expected + 1 or _room(read, k, expected))
             number = expected if agreed or number is None and after is None else number
         settled.append(number)
     return settled

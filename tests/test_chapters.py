@@ -35,6 +35,36 @@ def test_a_reading_off_the_run_stands_unless_both_neighbours_agree():
     assert _read(chapters.numbered(blocks)) == ["6", "7", "8", "10", "11", "12"]
 
 
+def test_misreads_side_by_side_take_the_numbers_the_run_leaves_room_for():
+    # A heading lost leaves a gap and nothing off the run: as read.
+    lost = _headings("31", "32", "33", "35", "36", "37")
+    assert _read(chapters.numbered(lost)) == ["31", "32", "33", "35", "36", "37"]
+    # One reading off the run where two numbers are missing: no room counted, as read.
+    short = _headings("31", "32", "33", "54", "36", "37")
+    assert _read(chapters.numbered(short)) == ["31", "32", "33", "54", "36", "37"]
+    # More misreads side by side than `GAP`: as read.
+    long = ["31", "32", "33", "54", "50", "58", "59", "38", "39"]
+    assert _read(chapters.numbered(_headings(*long))) == long
+    # A run starting again (a book in parts) is no misread.
+    again = _headings("1", "2", "3", "4", "5", "1", "2", "3", "4")
+    assert _read(chapters.numbered(again)) == ["1", "2", "3", "4", "5", "1", "2", "3", "4"]
+    # Het schaduwhuis: 34 and 35 read as "54" and "50", side by side.
+    pair = _headings("31", "32", "33", "54", "50", "36", "37")
+    assert _read(chapters.numbered(pair)) == [str(n) for n in range(31, 38)]
+    texts = ["31 ALEX", "32 RENEE", "33 ALEX", "54 RENEE", "50 ALEX", "36 RENEE", "37 ALEX"]
+    titled = [Heading(t, [], t.split(" ", 1)) for t in texts]
+    out = chapters.numbered(titled)
+    assert [b.text for b in out][3:5] == ["34 RENEE", "35 ALEX"]
+    assert out[4].parts == ["35", "ALEX"]
+    # Number and title on one line make one part: the number in it is set all the same.
+    one = chapters.numbered([Heading(t, [], [t]) for t in texts])
+    assert [b.parts for b in one][3:5] == [["34 RENEE"], ["35 ALEX"]]
+    assert one[2].parts == ["33 ALEX"]
+    # Only the number as a whole: "5" read for 6 leaves a "50 ALEX" part alone.
+    assert chapters._renumbered(["50 ALEX"], "5", 6) == ["50 ALEX"]
+    assert chapters._renumbered(["5. ALEX"], "5.", 6) == ["6 ALEX"]
+
+
 def test_old_style_lookalikes_and_short_misreads_take_the_runs_number():
     blocks = _headings("I", "2", "3", "4", "5", "6", "7", "8", "9", "Io", "II", "I2", "zi", "14")
     blocks += _headings("17.", "18")

@@ -1041,8 +1041,13 @@ openings (five or more) carry one; the readers then read all five right ("23" �
 clef:27b's vote). `chapters.numbered` sets each short heading of a run (five or more,
 half following the one before) to its number: old-style look-alikes folded where they
 fit ("Io" → 10, "S2" → 52), an unreadable one only where both neighbours agree on it
-("SE" between 50 and 52). Numbering is true by definition, so this is code, not a
-learned decision. In a book whose headed openings are mostly titles of words, a title set
+("SE" between 50 and 52), and up to three misreads side by side where the run's next
+reading leaves exactly room for them (Het schaduwhuis's "54 RENEE", "50 ALEX" between 33
+and 36, which an arbiter held out from the book sends to review instead of fixing; a
+gap with fewer misreads than missing numbers is a lost heading and stays). The number
+is set in the heading's parts as well as its text, also where number and title share a
+line ("50 ALEX" as one part): the EPUB sets the parts. Numbering is true by definition,
+so this is code, not a learned decision. In a book whose headed openings are mostly titles of words, a title set
 apart atop a sunk opening is a heading too, even one the trees took for body: Reis om
 mijn schedel's "Een gebaar in het vensterglas" (P(body) 0.60) and "Het vonnis wordt
 uitgesproken" (0.44), six words, which the trees read as a line of text, where its 21
@@ -1447,7 +1452,9 @@ the edition doesn't list its corrections (the user).
   thousands, so a lost chapter number never moved the words; it showed only in a report
   beside the verdict, which no one acted on, while six golden builds lacked chapters.
   Heading errors (a reference heading missing, one not set letter for letter, an extra
-  one) are summed over the set's books: more is worse, fewer is better, and a book
+  one) are counted on the headings as the EPUB sets them, their parts (until 2026-11-14
+  the text, which a repair could set while the parts kept the misread: Het schaduwhuis's
+  chapter 30 printed "50 ALEX" and scored right), and summed over the set's books: more is worse, fewer is better, and a book
   gaining any vetoes. Warm builds set the same headings each time, so the counts need
   no interval. A run saved before exact headings were counted is compared on found and
   extra ones only.

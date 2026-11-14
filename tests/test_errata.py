@@ -48,6 +48,13 @@ def test_a_heading_takes_an_erratum_too():
         [Erratum(1, "HOOFSTUK", "HOOFDSTUK")], [Heading("HOOFSTUK", [SourceRef(1, 0)])], {1}
     )
     assert out[0].text == "HOOFDSTUK"
+    # The EPUB sets a heading's parts: the erratum lands in the part that holds it.
+    lines = Heading("HOOFSTUK 3 De zee", [SourceRef(1, 0)], ["HOOFSTUK 3", "De zee"])
+    out = errata.apply([Erratum(1, "HOOFSTUK", "HOOFDSTUK")], [lines], {1})
+    assert out[0].parts == ["HOOFDSTUK 3", "De zee"]
+    # Printed words across two parts: the mended text as one part.
+    out = errata.apply([Erratum(1, "3 De", "3: De")], [lines], {1})
+    assert out[0].parts == ["HOOFSTUK 3: De zee"]
 
 
 def test_words_twice_on_their_page_or_not_at_all_stop_the_build():

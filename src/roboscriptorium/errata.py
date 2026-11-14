@@ -184,7 +184,26 @@ def apply(
             )
         k, at = found[0]
         b = out[k]
-        out[k] = replace(b, text=b.text[:at] + e.reads + b.text[at + len(e.printed) :])
+        b = replace(b, text=b.text[:at] + e.reads + b.text[at + len(e.printed) :])
+        if isinstance(b, Heading):
+            b = replace(b, parts=_parts(b.parts, needle, e, b.text))
+        out[k] = b
+    return out
+
+
+def _parts(parts: list[str], needle: str, e: Erratum, text: str) -> list[str]:
+    """A heading's parts (the lines the EPUB sets) with the erratum applied in the one
+    holding its printed words; one part of the mended text where none holds them alone."""
+    if not parts:
+        return parts
+    holding = [
+        (k, at) for k, p in enumerate(parts) for at in _occurrences(p.translate(FOLD), needle)
+    ]
+    if len(holding) != 1:
+        return [text]
+    k, at = holding[0]
+    out = list(parts)
+    out[k] = out[k][:at] + e.reads + out[k][at + len(e.printed) :]
     return out
 
 
