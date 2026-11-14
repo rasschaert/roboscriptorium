@@ -96,7 +96,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   diaeresis ("democratie-" / "en") is joined with it when the word list knows only
   that form (`_diaeresis`).
 - `ir.py`: the IR (`Document`; `Paragraph` and `Heading` with `SourceRef`s back
-  to page lines, a paragraph marking a scene break before it; `Figure` with its image file, page box and caption).
+  to page lines, a heading's `shown` being its parts as the EPUB sets them, a paragraph marking a scene break before it; `Figure` with its image file, page box and caption).
 - `figures.py`: the pictures in the book. The layout model's figures on body
   pages (≥ 0.5) unless a human answered them as something else; trimmed
   where a caption overlaps; sideways plates turned upright (the human's turn,
@@ -141,7 +141,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   one, and set elsewhere) against a golden reference. Typography
   the EPUB may set differently (quote and dash glyphs, an ellipsis glyph or spaced
   dots, joiners) is folded on both sides and counted per side (`folded_*`, printed
-  by `eval`), so a pair's convention gap is visible, not silent.
+  by `eval`), so a pair's convention gap is visible, not silent. Headings are scored as
+  the EPUB sets them (`Heading.shown`).
 - `disagreements.py`: where output and reference differ, located on the scan;
   clearly garbled output and whitespace-only differences are auto-resolved; the pages
   of paragraph breaks set wrong (`break_errors`) and of words whose quote marks, dashes
@@ -459,7 +460,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   words too where most of those headings are words, applied to
   the roles after the sorter; `numbered`: each short heading of a run of numbers set to
   its number, old-style look-alikes folded, a lone unreadable one settled by both
-  neighbours, on the reflowed blocks; numbers after a label ("HOOFDSTUK 12") and before
+  neighbours, up to three misreads side by side by the room the run leaves them, in the
+  heading's text and its parts, on the reflowed blocks; numbers after a label ("HOOFDSTUK 12") and before
   a title of words ("30 ALEX") run the same way, and a heading whose label is garbled
   takes the book's where its number is the one the run lacks; `title_lines`: a dropped line under a heading set
   like another heading's second line, or a short one recurring in one type under three

@@ -2499,3 +2499,20 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   niet.'", You're Never Weird's sign-off; they gain headings on Reis (25 → 27), Metro
   (35 → 37) and Het heft (21 → 23). Failed on: the trees' features (a book mostly in
   italics held out; a set-apart passage against a running head), not on the data's size.
+- 2026-11-14: **Chapter misreads side by side, and headings scored as the EPUB sets them:
+  TAKEN** (branch `heading-parts`). Het schaduwhuis's four headings lost in the kerning
+  bench were the bench's held-out arbiter, not the kerning: the layer reads chapters 34
+  and 35 as "54 RENEE" and "50 ALEX", production's arbiter fixes both, the arbiter
+  trained without the book asks, and the run settled a misread only between two right
+  neighbours. Reproduced on a copy built as the bench builds it
+  (`work/probes/schaduw-kern-heldout/`). Up to three misreads side by side now take the
+  numbers the run's next reading leaves room for; a gap with fewer readings than
+  numbers is a lost heading and stays. The reproduction showed a second fault: the run
+  set a heading's text but not its parts where number and title share a line, and the
+  EPUB sets the parts, so production's Het schaduwhuis printed chapter 30 as "50 ALEX"
+  while the bench, scoring the text, counted it right. The number is now set in the
+  part, errata reach a heading's parts, and the bench, the structure check and
+  `heading_misses.py` read `Heading.shown`. Warm, against the errata baselines: tuning
+  and validation NO CHANGE (heading errors 26 and 52, Het schaduwhuis 91 of 91 exact as
+  set), so the bench never saw the misprinted heading; the EPUB is mended. Lesson: a
+  score is taken on what the reader gets, not on a field beside it.
