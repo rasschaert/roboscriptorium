@@ -7,42 +7,28 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**Running (the fifth session, 2026-11-14, from 14:44):** the chain below, screen
-`robo-trees-resume` (the italic words took 3 minutes; the italic trees resume from
-`work/models/italics.pkl.training/`). Beside it, Het schaduwhuis's four lost headings
-reproduced as the bench built them: a copy of the book in
-`work/probes/schaduw-kern-heldout/` built with `../robo-kern`'s code, its kerned typeface
-and the models held out from it (`ocr-trust-kern-without-…`, the trees from
-`work/models/trees-before-20261114/`); the warm rebuild that kept 91/91 likely used the
-full arbiter. Written, to run once the tree training ends: `experiments/probe_render_fit.py`
-(the render fit per version and the second render judge's measure as arbiter columns,
-with a random-column control), after the vocabulary probe.
+**Running (the fifth session, 2026-11-14, updated 15:50):**
 
-**START HERE (the user, 2026-11-14, 14:05: "make sure that when i start a fresh session
-after that, it begins with the italic trees and so on").** The session paused for a
-macOS update and reboot. First thing, with a watcher (Monitor on
-`work/runs/trees-resume.out`, steps, errors, "all steps done", the screen's end):
+- screen `robo-heading-parts`: the heading fix benched warm from `../robo-heads` (branch
+  `heading-parts`, two commits, not on main) against the errata baselines. It mends
+  Het schaduwhuis's four headings lost in the kerning bench (chapters 34 and 35 misread
+  "54", "50" side by side; the held-out arbiter asks instead of fixing) and the EPUB's
+  "50 ALEX" for chapter 30, which the bench scored right because it read a heading's
+  text, not the parts the EPUB sets. Taken, merged to main, if tuning is better or
+  level on words and fewer heading errors, and validation no worse.
+- screen `robo-render-fit-compare`: `experiments/probe_render_fit.py`, the render fit per
+  version and the second render judge's measure as arbiter columns, both, each alone,
+  then a random-column control. Both: silent errors at no questions 425 → 405, at the
+  rule's 17 → 16, at half 38 → 40; fit alone 425 → 411. Judge only against the control.
 
-```sh
-experiments/detached.sh trees-resume work/runs/trees-resume.sh
-```
+**Done this session:** both learned trees retrained on the grown slices, not taken, nor
+the italic trees alone (decisions.md, 2026-11-14); production's trees back and checked.
 
-It backs up production's tree models (`work/models/trees-before-20261114/`, already made,
-43 files) and their training data (copies made whole under a temporary name), collects
-the italic words on the grown slices (estimate 40–50 min, no time on record), saves the
-italic trees, rebuilds and saves the line-role trees (~25 min), then benches tuning and
-validation (~20 min) against the baselines with all 35 errata, which it reads from the
-"baselines:" line of `work/runs/trees-20261114.out`
-(`work/bench/tuning-20261114T130246-1923da8-dirty.json`,
-`validation-20261114T130335-9e4b703-dirty.json`). Taken only if tuning is better and
-validation no worse; otherwise copy the backed-up models back into `work/models/`.
-Then, in this order (the timeline given to the user): the book's own vocabulary as an
-arbiter feature (retrain ~90 min, bench 20); the second render judge's fit as an arbiter
-feature (probe first); overnight, autotrust-jev 9B as a second text judge (branch
-`text-seat`, needs fresh model answers); in the morning Pieter Daens and Nervous System
-rebuilt with the render judge, their questions sampled before the user reviews them.
-Beside the CPU runs: why Het schaduwhuis lost four headings in the kerning bench but not
-in a warm rebuild (decisions.md, 2026-11-14).
+**Next, in the timeline's order:** the book's own vocabulary as an arbiter feature
+(`experiments/probe_book_vocab.py` on today's trust data, then the control); then
+Pieter Daens and Nervous System rebuilt with the render judge, their questions sampled
+before the user reviews them; overnight autotrust-jev 9B as a second text judge (branch
+`text-seat`, needs fresh model answers).
 
 **Done on 2026-11-14 (fourth session), the chain `chain-20261114`:** new baselines on
 the references without the e-books' stray spaces

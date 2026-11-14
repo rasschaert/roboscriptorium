@@ -157,6 +157,13 @@ each new local vision model.
 Don't repeat these without a new reason (details in docs/decisions.md). A better model in
 the place an idea failed on is one (AGENTS.md, "A null result is a null for its models"):
 
+- **Both learned trees retrained on the grown slices** (2026-11-14; failed on the trees'
+  features, not the data's size): the italic trees gain on 14 of 19 books but lose 1,100
+  of Het geluid van bananen's italics, the one book set mostly in italics, once it is
+  held out; the line-role trees keep Dolittle's running heads and drop a passage set
+  apart from the running text. Retest when either gets a feature for it (checklist,
+  Headings and line roles) or the tuning set gains a second book set mostly in italics.
+
 - **A pre-pass that picks each book's reader resolution** (2026-11-11, the user's
   question of 2026-10-22; no room, not a model's failure): the resolution agreeing most
   with glm-ocr follows the score (r = +0.72), but each book at its best setting reads

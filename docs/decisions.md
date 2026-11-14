@@ -2480,3 +2480,22 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   `work/bench/tuning-20261114T130246-1923da8-dirty.json` (17 wrong words fixed, none
   made) and `validation-20261114T130335-9e4b703-dirty.json` (46 fixed, 1 made). Compare
   later changes with these.
+- 2026-11-14: **Both learned trees retrained on the grown slices: NOT TAKEN** (the
+  italic trees on 1.9 million words of the grown slices (29 books), the
+  line-role trees rebuilt from the stage caches, 25 minutes in all; kept as
+  `work/models/trees-grown-20261114/`, production's back from `trees-before-20261114/`).
+  Both against the errata baselines: tuning WORSE, after review 0.21 → 0.22 [+0.00,
+  +0.02], heading errors 26 → 74, italic errors 1,223 → 2,315; validation marked better
+  (headings 52 → 48, italics 195 → 177) with De stilte van de hel's unasked errors 0.08 →
+  0.53 a page. The italic trees alone, with production's line-role trees: tuning WORSE,
+  no word moved, italic errors 1,223 → 2,342; validation BETTER, 195 → 179. Two causes,
+  one a tree. The italic trees are better on 14 of the 19 books scored, but Het geluid
+  van bananen, the one book set mostly in italics (13,494 of 76,102 words), is scored by
+  trees trained without it, and with nine books grown around it they lose 1,100 of its
+  italics (349 → 1,486 errors); Afscheid and Doodskleed are worse on their own too. The
+  line-role trees keep Dolittle's running heads as headings (+44), as on 2026-11-05, and
+  now also drop text set apart from the running text: De stilte van de hel's passage on
+  p. 94 ("V-v-video van de m-m-m-m-moord …"), Vanille's "Ja hè.", Vuurspel's "'Echt
+  niet.'", You're Never Weird's sign-off; they gain headings on Reis (25 → 27), Metro
+  (35 → 37) and Het heft (21 → 23). Failed on: the trees' features (a book mostly in
+  italics held out; a set-apart passage against a running head), not on the data's size.

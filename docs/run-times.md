@@ -971,3 +971,13 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | bench validation, the render judge kerning per book, against main's baseline on the mended references (warm but for its fits) | 0 | 4 | 0 |
 | 2026-11-14 | bench tuning, baseline with the golden books' errata from the e-book (warm) | 0 | 5 | 0 |
 | 2026-11-14 | bench validation, baseline with the golden books' errata from the e-book (warm) | 0 | 1 | 0 |
+| 2026-11-14 | italic words collected on the grown tuning and validation slices (CPU) | 0 | 3 | 0 |
+| 2026-11-14 | italic trees saved on the grown slices (CPU) | 0 | 5 | 0 |
+| 2026-11-14 | line-role trees rebuilt and saved on the grown slices (CPU) | 0 | 17 | 0 |
+| 2026-11-14 | render fits and differ measures drawn for the trust data (CPU, 8 workers) | 0 | 9 | 0 |
+| 2026-11-14 | bench tuning, both learned trees retrained on the grown slices (warm) | 0 | 7 | 0 |
+| 2026-11-14 | probe: render measures as arbiter columns, both (CPU) | 0 | 4 | 0 |
+| 2026-11-14 | bench validation, both learned trees retrained on the grown slices (warm) | 0 | 3 | 0 |
+| 2026-11-14 | probe: render measures as arbiter columns, only-fit (CPU) | 0 | 5 | 0 |
+| 2026-11-14 | bench tuning, the grown italic trees alone (warm) | 0 | 5 | 0 |
+| 2026-11-14 | bench validation, the grown italic trees alone (warm) | 0 | 1 | 0 |

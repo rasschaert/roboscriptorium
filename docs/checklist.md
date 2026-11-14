@@ -30,15 +30,6 @@ last on 2026-11-14, so next by 2026-11-21).
 
 In this order; `HANDOVER.md` has the paths and the commands.
 
-- [ ] **Both learned trees retrained on the grown slices.** The italic trees
-      (`work/probes/italic-words/`, 2026-11-04) and the line-role trees
-      (`work/probes/sorter/`, 2026-11-05) were trained before batches four and five
-      scored nine tuning books whole (~1,600 pages); the arbiter was retrained on them,
-      these never. From the stage caches, no models, CPU: `italic_words.py tuning` and
-      `validation`, `--save`; `train_sorter.py --rebuild --save`; then warm `bench
-      tuning` and `validation` against the render-vote baselines. Not beside another
-      CPU training. ~30 min plus the benches (15)
-
 - [ ] After batch five, the two nulls that waited for it: autotrust-jev 9B as a second
       text judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
       170 → 178) and the book's own vocabulary as an arbiter feature (null 2026-11-08)
@@ -222,7 +213,17 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       `experiments/sorter_keep.py` (stray lines kept at 0.25: 214) before a bench.
       Ideas: the running head's recurrence counted over its chapter, not the book; the
       stray lines weighed by the words they add, as the bench counts them. Also theirs:
-      Het heft's datelines under its headings ("Februari 1829") joined to them
+      Het heft's datelines under its headings ("Februari 1829") joined to them. Retrained
+      again on the grown slices (2026-11-14, `work/models/trees-grown-20261114/`): headings
+      gained on Reis, Metro and Het heft, Dolittle's running heads kept as headings (+44),
+      and on De stilte van de hel a set-apart passage dropped as no text (p. 94, unasked
+      0.08 → 0.53 a page), with short lines of dialogue elsewhere
+- [ ] Italic trees that read a book set mostly in italics: retrained on the grown slices
+      (2026-11-14, `work/models/trees-grown-20261114/`) they are better on 14 of the 19
+      books scored and on validation (italic errors 195 → 179), but held out from Het
+      geluid van bananen (13,494 of 76,102 words italic, the only such book) they lose
+      1,100 of its italics (349 → 1,486 errors). Ideas: the share of the book's words
+      the trees call italic as a feature; a second book set that way in the tuning set
 - [ ] Scene breaks the build misses: 23 of 295 (Reis 14, De eerlijke vinder 7). Reis's
       are page tops after a full page whose last line ends a sentence at the margin, the
       next opening flush: the same geometry as a paragraph running on, so only the text
@@ -443,6 +444,10 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Structure and line roles
 
+- [x] ~~Both learned trees retrained on the grown slices~~ (not taken 2026-11-14): tuning
+      WORSE, italic errors 1,223 → 2,315 (Het geluid van bananen alone 349 → 1,486),
+      heading errors 26 → 74 (Dolittle's running heads); the italic trees alone WORSE too
+      (1,223 → 2,342). Two open steps under Headings and line roles carry what is left
 - [x] ~~Structure findings repaired where the book's own evidence settles them, beyond
       the chapter numbers~~ (dropped 2026-11-11): no case behind it; a finding that
       shows one becomes its own step
