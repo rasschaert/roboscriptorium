@@ -20,6 +20,12 @@ and of baselines is superseded by the first section; the older sections are from
   2026-11-09 for validation's unasked places 170 → 178; taken now only if tuning is
   better and validation no worse. Progress: `work/probes/ocr-trust-text/runs/progress.txt`.
 
+- screen `robo-italic-panel` (`work/runs/italic-panel.sh`): waits for the text seat's
+  run, then benches the user's idea, clef:27b settling where the old and the grown italic
+  trees disagree (branch `italic-panel`, `../robo-ital`), against main's production runs.
+  Taken if tuning is better and validation no worse: merge, then set
+  `italic_second`/`italic_judge` as defaults with the grown trees kept as the second set.
+
 **Done this session** (decisions.md, 2026-11-14), all on main:
 - Both learned trees on the grown slices: not taken, nor the italic trees alone;
   production's trees back and checked.

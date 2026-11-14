@@ -1001,3 +1001,13 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | bench validation, the render judge's measures as arbiter columns (warm) | 0 | 5 | 0 |
 | 2026-11-14 | bench tuning, headings' marks counted (warm) | 0 | 4 | 0 |
 | 2026-11-14 | bench validation, headings' marks counted (warm) | 0 | 1 | 0 |
+| 2026-11-14 | trust data, goede-dochter--ia-scan | 500 | 3 | 0 |
+| 2026-11-14 | trust data, vals-alarm--ia-scan | 292 | 6 | 0 |
+| 2026-11-14 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 0 | 0 |
+| 2026-11-14 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 1 | 0 |
+| 2026-11-14 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 1 | 0 |
+| 2026-11-14 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 1 | 0 |
+| 2026-11-14 | trust data, metro-2033--ia-scan | 458 | 6 | 0 |
+| 2026-11-14 | trust data, de-cipier--ia-scan | 474 | 2 | 0 |
+| 2026-11-14 | trust data, artemis--ia-scan | 305 | 1 | 0 |
+| 2026-11-14 | probe: clef:27b on the italic trees' disagreements, 100 words | 0 | 17 | 0 |

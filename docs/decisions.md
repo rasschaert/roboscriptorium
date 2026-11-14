@@ -2590,3 +2590,14 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   word of the user's behind it, and it held the GPU idle from 18:45 to 22:00 today while
   the text seat's run waited for night. A run on the checklist starts when the machine is
   free; the battery gate and "say before chaining long runs" stay.
+- 2026-11-14: **A judge between two sets of italic trees** (the user's idea, on the grown
+  trees' null: "can't we use multiple variants and then have the panel of judges
+  decide?"). The old and the grown italic trees, each held out by book, disagree on 1,640
+  of 1,636,935 tuning words, 1,473 of them Het geluid van bananen's
+  (`experiments/italic_disagree.py`); settling every one right would leave 719 italic
+  errors against 992 (old) and 2,086 (grown). clef:27b on 100 of them, each shown its
+  line (`experiments/italic_judge_probe.py`): right on 92, the old trees on 67, the grown
+  on 33; on Bananen's 50: 48, 44, 6; on the other books' 50: 44, 23, 27. Its misses are
+  mostly short upright words beside italic speech ("zei", "was"), six of eight at low
+  confidence. Built on branch `italic-panel` (`italics.settle`, `ROBO_ITALIC_SECOND`,
+  `ROBO_ITALIC_JUDGE`); benched once the text seat's run frees the books' caches.
