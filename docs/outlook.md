@@ -53,6 +53,17 @@ not the local build Stella gets; read again locally on 2026-10-10, no change by 
 
 ## Where there is room, by expected gain
 
+**The arbiter's question budget is now the bottleneck for new evidence** (2026-11-14).
+Three kinds of arbiter column each picked better held out by book with no questions
+asked (the render judge's measures 425 → 405 silent errors, a character language model
+425 → 402, against random columns' 419–423) and moved nothing at the build's budget: the
+places they settle are ones the arbiter asks about anyway, and the reviewer settles
+them. New evidence pays only where it lets the arbiter stop asking, so the test of an
+idea is the questions it saves at today's silent errors (the probes now print it), not
+its picks unasked. What did pay that night changed what the build sets, not what it
+asks: the italic judge between two sets of trees (italic errors −19% on tuning) and a
+lone capital drawn as a small capital (unasked −9).
+
 0. **Render and compare, a judge that knows no language (in use since 2026-11-13, its
    weak spots still open).** Each version of a suspect drawn in the book's
    typeface and laid over the scan: the print on 92.3% of 34,205 labelled places, best
