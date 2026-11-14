@@ -7,28 +7,30 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**Running (the fifth session, 2026-11-14, updated 15:50):**
+**Running (the fifth session, 2026-11-14, updated 16:20):**
 
-- screen `robo-heading-parts`: the heading fix benched warm from `../robo-heads` (branch
-  `heading-parts`, two commits, not on main) against the errata baselines. It mends
-  Het schaduwhuis's four headings lost in the kerning bench (chapters 34 and 35 misread
-  "54", "50" side by side; the held-out arbiter asks instead of fixing) and the EPUB's
-  "50 ALEX" for chapter 30, which the bench scored right because it read a heading's
-  text, not the parts the EPUB sets. Taken, merged to main, if tuning is better or
-  level on words and fewer heading errors, and validation no worse.
-- screen `robo-render-fit-compare`: `experiments/probe_render_fit.py`, the render fit per
-  version and the second render judge's measure as arbiter columns, both, each alone,
-  then a random-column control. Both: silent errors at no questions 425 → 405, at the
-  rule's 17 → 16, at half 38 → 40; fit alone 425 → 411. Judge only against the control.
+- screen `robo-cols-chain` (`work/runs/cols-chain.sh`): the render judge's measures as
+  arbiter columns, worktree `../robo-cols`, branch `render-columns`. Trust data into
+  `work/probes/ocr-trust-cols/`, the arbiter `work/models/ocr-trust-cols*.pkl`, then
+  both benches against main's runs with the heading fix
+  (`tuning-20261114T142859-4a3e0dc-dirty.json`, `validation-20261114T142948-dde8a83-dirty.json`).
+  Taken only if tuning is better and validation no worse: then merge the branch, copy
+  the arbiter and its data into production's place (backing production's up first), and
+  write the component's reason into design.md (Render and compare). A stopped run
+  resumes: the trust data per book, the arbiter's models in `<path>.training/`.
+- screen `robo-books-render`: Pieter Daens rebuilt with the render judge (Nervous System
+  done), then its questions sampled (`experiments/sample_questions.py work/pieter-daens`).
 
-**Done this session:** both learned trees retrained on the grown slices, not taken, nor
-the italic trees alone (decisions.md, 2026-11-14); production's trees back and checked.
+**Done this session** (decisions.md, 2026-11-14): both learned trees on the grown slices,
+not taken, nor the italic trees alone; production's trees back and checked. Chapter
+misreads side by side and headings scored as the EPUB sets them: taken, on main. The
+book's vocabulary as columns: still null. Nervous System rebuilt with the render judge:
+76 questions, 38 unanswered, of which the obvious garbled lines ("eNese:" for “Yes.”),
+13 headings with one reading and small capitals read as lower case ("tv", "oJ"); its
+review waits on "One path for every doubt" and small capitals (checklist).
 
-**Next, in the timeline's order:** the book's own vocabulary as an arbiter feature
-(`experiments/probe_book_vocab.py` on today's trust data, then the control); then
-Pieter Daens and Nervous System rebuilt with the render judge, their questions sampled
-before the user reviews them; overnight autotrust-jev 9B as a second text judge (branch
-`text-seat`, needs fresh model answers).
+**Next:** the render columns' verdict; Daens' questions sampled; overnight autotrust-jev
+9B as a second text judge (branch `text-seat`, needs fresh model answers).
 
 **Done on 2026-11-14 (fourth session), the chain `chain-20261114`:** new baselines on
 the references without the e-books' stray spaces

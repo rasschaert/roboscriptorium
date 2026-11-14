@@ -30,9 +30,13 @@ last on 2026-11-14, so next by 2026-11-21).
 
 In this order; `HANDOVER.md` has the paths and the commands.
 
-- [ ] After batch five, the two nulls that waited for it: autotrust-jev 9B as a second
-      text judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
-      170 → 178) and the book's own vocabulary as an arbiter feature (null 2026-11-08)
+- [ ] **The render judge's measures as arbiter columns** (branch `render-columns`,
+      worktree `../robo-cols`): each version's fit and the drawings' difference, clear
+      of random columns by 18 silent errors in the probe (decisions.md, 2026-11-14). Trust
+      data rebuilt, the arbiter retrained, both benches. ~2 h, running
+- [ ] After batch five, the null that waited for it: autotrust-jev 9B as a second text
+      judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
+      170 → 178). Needs fresh model answers: overnight
 - [x] Trust data for the tuning books that have none (`bench.NO_TRUST_DATA`: Au pair, De
       vergelding, Glazuur): built and trained on, with the judge panel and with the
       render vote, not taken again (2026-11-13: it asks more and leaves a little less,
@@ -367,6 +371,10 @@ are under Done, "Architecture probes".
       2026-10-21): the first and last page of the text proper shown with their crops,
       each named by both numbers ("PDF page 9 (the page prints 7)", or that it prints
       none), with whatever else the draft `book.toml` marks to confirm
+- [ ] The title, author and translator `init` drafts, checked against the title page's
+      own text layer: Pieter Daens' read model glued "of hoe" into "ofhoe" where the layer
+      reads it right (2026-11-14). Where the two differ, the same path as the text's
+      doubts (readers, judges, arbiter), the user asked only what that can't settle
 
 ## Golden books and the bench
 
@@ -679,6 +687,10 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       page on the short test; `bench tuning` 0.32 → 0.30 after review, no book worse
 
 ## Trust data, the judges and the arbiter
+
+- [x] ~~The book's own vocabulary as an arbiter feature, retested after batch five~~
+      (2026-11-14): still null, known words 425 → 413 silent errors at no questions
+      where three random columns give 418
 
 - [x] 2026-11-12 Production's arbiter is twenty trainings averaged with a smooth
       calibration, trained on batch five's trust data, asking below 0.93 (the user's

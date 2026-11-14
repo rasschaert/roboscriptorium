@@ -2516,3 +2516,21 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   and validation NO CHANGE (heading errors 26 and 52, Het schaduwhuis 91 of 91 exact as
   set), so the bench never saw the misprinted heading; the EPUB is mended. Lesson: a
   score is taken on what the reader gets, not on a field beside it.
+- 2026-11-14: **Two arbiter-column probes on today's trust data, each against random
+  columns** (no models; held out by book; silent errors over 23 books at no questions,
+  at the rule's number and at half, today's features 425, 17, 38). **The render judges'
+  measures** (`experiments/probe_render_fit.py`: each version's fit and its margin over
+  the best other, and where the two best-fitting differ, the measure the second render
+  judge voted on): both 405, 16, 40 (88 picks changed, 53 right now); the fit alone 411,
+  18, 39; the difference alone 414, 17, 36; four random columns 423, 17, 38 (6 changed).
+  The fixes are mostly quote marks and stops ("opstaan." → "opstaan.’", "face. ’" →
+  "face.", "lah’," → "lah,"), the breaks mostly accents and specks ("hij" → "híj",
+  "amateuristisch" → "ämateuristisch"). Clear of the control by 18 at no questions: the
+  second render judge, null as a vote, carries signal as columns. Taken to a build
+  (branch `render-columns`: the judge returns its measures, the suspect keeps them, the
+  arbiter reads four columns), trust data rebuilt and the arbiter retrained.
+  **The book's own vocabulary, retested** (null on 2026-11-08 at the then trust data):
+  counts 414, 17, 37; words only 417, 19, 36; known words 413, 17, 40 (17 changed, 14
+  right now); three random columns 418, 17, 38. Within the control's reach (−7 at no
+  questions): still null. Failed on: the arbiter's trees, which gain about as much from
+  any three columns; retest when the arbiter changes kind.

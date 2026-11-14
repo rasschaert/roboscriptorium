@@ -197,7 +197,9 @@ the place an idea failed on is one (AGENTS.md, "A null result is a null for its 
   the arbiter): the book's word counts rescue readers' real-word swaps ("wegkwijnen" over
   "wegwijken") about 25 times over a random-column control, but the trees pay about as
   much for any added column at 23 books of training data; silent errors at the rule's
-  questions 30 → 28 to 30. Retest when the trust data grows or the arbiter changes kind.
+  questions 30 → 28 to 30. Retested on the grown trust data (2026-11-14): still within
+  the random control's reach (known words 425 → 413 at no questions, random columns
+  418). Retest when the arbiter changes kind.
 
 - **The judges told the kinds of OCR error** (2026-11-07, judge set v2): clef:27b fixes a
   fifth of its wrong picks and breaks 3% of its right ones, a net loss once weighted to
