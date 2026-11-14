@@ -76,19 +76,98 @@ def slant(gray: np.ndarray, threshold: int = 128) -> float:
 
 
 def detect(
-    pdf: Path, pages: list[PageText], cache: Path, trees: "Trees | None" = None
+    pdf: Path,
+    pages: list[PageText],
+    cache: Path,
+    trees: "Trees | None" = None,
+    second: "Trees | None" = None,
+    judge=None,
+    answers=None,
 ) -> dict[SourceRef, frozenset[int]]:
     """Per text-layer line, the indices of its italic words in `line.text.split(" ")`:
-    by the learned `trees` where given, else by the cuts.
+    by the learned `trees` where given, else by the cuts. With a `second` set of trees and
+    a vision `judge` (its answers kept in `answers`, a `DecisionCache`), the words the two
+    sets disagree on are the judge's to settle (`settle`).
 
     Only lines whose text-layer words spell the line are measured. Each word's slant is
     cached per page, with the page's lines, so a page whose lines change is measured
     again; the cut is drawn over all of `pages`.
     """
     done = measure(pdf, pages, cache)
-    if trees is not None:
-        return decide(trees, features(pages, done))
-    return _cut(pages, done)
+    if trees is None:
+        return _cut(pages, done)
+    rows = features(pages, done)
+    if second is None or judge is None:
+        return decide(trees, rows)
+    return settle(pdf, pages, decide(trees, rows), decide(second, rows), judge, answers)
+
+
+# The judge's question about a word the two sets of trees disagree on, shown its line.
+ITALIC_QUESTION = (
+    "The image is a line cut from a scanned printed book. Is the word ⟨{word}⟩ in it set "
+    "in italic type (slanted letters), or upright like ordinary text?"
+)
+# How far the line's crop reaches beyond its box, in points, and its zoom.
+LINE_PAD, LINE_ZOOM = 4, 4
+
+
+def settle(
+    pdf: Path,
+    pages: list[PageText],
+    first: dict[SourceRef, frozenset[int]],
+    second: dict[SourceRef, frozenset[int]],
+    judge,
+    answers,
+) -> dict[SourceRef, frozenset[int]]:
+    """The words both sets of trees call italic, and of those only one does, the ones the
+    vision `judge` sees set in italics on its line's crop. Two sets that fail on different
+    books (the grown trees lose a book set mostly in italics, the old ones gain less
+    elsewhere) disagree on about one word in a thousand; clef:27b was right on 92 of 100
+    of them, against 67 and 33 for the two sets (2026-11-14)."""
+    from roboscriptorium.clients import decide as asking
+    from roboscriptorium.pdf import PDF_LOCK
+
+    lines = {SourceRef(p.number, k): ln for p in pages for k, ln in enumerate(p.lines)}
+    out: dict[SourceRef, frozenset[int]] = {}
+
+    def crop(ref: SourceRef, line) -> bytes:
+        clip = pymupdf.Rect(line.x0, line.y0, line.x1, line.y1) + (
+            -LINE_PAD,
+            -LINE_PAD,
+            LINE_PAD,
+            LINE_PAD,
+        )
+        with PDF_LOCK, pymupdf.open(pdf) as doc:
+            matrix = pymupdf.Matrix(LINE_ZOOM, LINE_ZOOM)
+            return doc[ref.page - 1].get_pixmap(matrix=matrix, clip=clip).tobytes("png")
+
+    for ref in sorted(set(first) | set(second), key=lambda r: (r.page, r.line)):
+        a, b = first.get(ref, frozenset()), second.get(ref, frozenset())
+        kept = set(a & b)
+        line = lines.get(ref)
+        words = line.text.split(" ") if line is not None else []
+        for i in sorted(a ^ b):
+            if line is None or i >= len(words):
+                kept |= {i} & a  # nothing to show the judge: the first set's call
+                continue
+            state = {"page": ref.page, "line": ref.line, "i": i, "text": line.text}
+            question = {
+                "italic": asking.choice(
+                    ITALIC_QUESTION.format(word=words[i]),
+                    {"italic": "the word is set in italics", "upright": "the word is set upright"},
+                )
+            }
+            key = answers.key(judge.model, question, state)
+            answer = answers.get(key)
+            if answer is None:
+                got = judge.decide(state, question, image_png=crop(ref, line))["italic"]
+                answer = {"value": got.value, "confidence": got.confidence}
+                answers.put(key, answer)
+            if answer["value"] == "italic":
+                kept.add(i)
+        if kept:
+            out[ref] = frozenset(kept)
+    return out
 
 
 def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[str, dict]:

@@ -167,6 +167,12 @@ def unseen(settings: Settings, book: str) -> Settings:
                 f"{copy} is missing: {book} is a tuning book, which the line-role model "
                 "trains on (experiments/train_sorter.py --save writes it)"
             )
+    if settings.italic_trees and settings.italic_second:
+        second = italics.without(Path(settings.italic_second), book)
+        if second.exists():
+            settings = replace(settings, italic_second=str(second))
+        elif book in SORTER_TRAINED_ON:
+            raise FileNotFoundError(f"{second} is missing: {book} is a tuning book")
     if settings.italic_trees:
         copy = italics.without(Path(settings.italic_model), book)
         if copy.exists():

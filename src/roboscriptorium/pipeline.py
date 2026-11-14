@@ -503,6 +503,7 @@ def run(
     )
     built, note_paragraphs = fixed[: len(built)], fixed[len(built) :]
     shape = settings or Settings.from_env()
+    paneled = bool(use_models and shape.italic_trees and shape.italic_second and shape.italic_judge)
     blocks = italics.uniform(
         italics.mark(
             built,
@@ -512,6 +513,9 @@ def run(
                 body,
                 book.stages / "italics.json",
                 italics.load(Path(shape.italic_model)) if shape.italic_trees else None,
+                italics.load(Path(shape.italic_second)) if paneled else None,
+                decide.for_model(shape.italic_judge, shape.ollama_url) if paneled else None,
+                DecisionCache(book.stages / "decisions.jsonl") if paneled else None,
             ),
         )
     )

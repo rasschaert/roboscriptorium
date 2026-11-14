@@ -82,6 +82,10 @@ class Settings:
     # `italics._italic` (`ROBO_ITALIC_TREES=0`).
     italic_trees: bool = True
     italic_model: str = "work/models/italics.pkl"
+    # A second set of italic trees and the vision judge that settles the words the two
+    # disagree on (`italics.settle`); "" for either leaves the first set alone.
+    italic_second: str = ""
+    italic_judge: str = ""
     # The read model names each body page's heading and furniture lines from the page image
     # (`pageroles.py`), an input to the trees, which must be trained with it.
     page_roles: bool = False
@@ -151,6 +155,8 @@ class Settings:
             sorter_model=os.environ.get("ROBO_SORTER_MODEL", defaults.sorter_model),
             italic_trees=_flag("ROBO_ITALIC_TREES", defaults.italic_trees),
             italic_model=os.environ.get("ROBO_ITALIC_MODEL", defaults.italic_model),
+            italic_second=os.environ.get("ROBO_ITALIC_SECOND", defaults.italic_second),
+            italic_judge=os.environ.get("ROBO_ITALIC_JUDGE", defaults.italic_judge),
             page_roles=_flag("ROBO_PAGE_ROLES", defaults.page_roles),
             break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
             quote_reader=_flag("ROBO_QUOTE_READER", defaults.quote_reader),

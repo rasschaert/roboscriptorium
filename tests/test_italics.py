@@ -121,3 +121,43 @@ def test_a_typed_line_does_not_take_its_neighbours_italics():
     (para,) = italics.mark(reflow([corrected]), [layer], {SourceRef(1, 0): frozenset({0, 1, 2})})
     assert para.text == "en de Odyssee van Homerus"
     assert para.italic == (2, 3, 4)
+
+
+def test_a_judge_settles_only_the_words_two_sets_of_trees_disagree_on(tmp_path):
+    import pymupdf
+
+    from roboscriptorium.clients.decide import Answer
+    from roboscriptorium.roles import DecisionCache
+
+    doc = pymupdf.open()
+    doc.new_page(width=300, height=200).insert_text(
+        (20, 50), "Hij las De Standaard toen", fontsize=11
+    )
+    pdf = tmp_path / "source.pdf"
+    doc.save(pdf)
+    line = Line("Hij las De Standaard toen", 20, 40, 160, 52)
+    pages = [PageText(1, 300, 200, [line])]
+    ref = SourceRef(1, 0)
+    asked = []
+
+    class Judge:
+        model = "judge"
+
+        def decide(self, state, questions, image_png=None):
+            asked.append(state["i"])
+            assert image_png.startswith(b"\x89PNG")
+            # "De" is upright on the print, "Standaard" italic.
+            return {"italic": Answer("choice", "italic" if state["i"] == 3 else "upright", 0.9, {})}
+
+    cache = DecisionCache(tmp_path / "decisions.jsonl")
+    # Both call "las" italic; they disagree on "De" (2) and "Standaard" (3).
+    first, second = {ref: frozenset({1, 2})}, {ref: frozenset({1, 3})}
+    out = italics.settle(pdf, pages, first, second, Judge(), cache)
+    assert out == {ref: frozenset({1, 3})}
+    assert asked == [2, 3]
+    # Asked again, the cache answers.
+    assert italics.settle(pdf, pages, first, second, Judge(), cache) == out
+    assert asked == [2, 3]
+    # Where they agree, nothing is asked and nothing changes.
+    assert italics.settle(pdf, pages, first, first, Judge(), cache) == first
+    assert asked == [2, 3]
