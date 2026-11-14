@@ -42,6 +42,9 @@ class Book:
     # The typeface it is set in: a font file in the font folder (`Settings.fonts`), which
     # the judge `render` draws with. Matched on the scan when unset.
     typeface: str | None = None
+    # How far its descenders hang below a line's text-layer box, as a share of the box's
+    # height (the scans' boxes end on the baseline). Measured on the scan when unset.
+    descent: float | None = None
     # Who translated it, as the colophon names them ("" when it isn't a translation).
     translator: str = ""
 
@@ -65,6 +68,7 @@ class Book:
             ellipsis_space=data.get("ellipsis_space"),
             blank=data.get("blank"),
             typeface=data.get("typeface"),
+            descent=data.get("descent"),
             translator=data.get("translator", ""),
         )
 

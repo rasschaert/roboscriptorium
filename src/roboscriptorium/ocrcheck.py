@@ -232,6 +232,7 @@ def check(
     alarms=(),
     alarm_below: float = 1.0,
     lower_capitals: bool = False,
+    descent: float | None = None,
 ) -> list[Suspect]:
     """Suspects where any other reading (by name) differs from the text layer, each with a
     decision, and with `lower_capitals` where small capitals may have been read in lower
@@ -259,8 +260,9 @@ def check(
             tuple(map(later, alarms)),
             alarm_below,
             lower_capitals,
+            descent,
         )
-    return _check(*args, vision, reader, *rest, alarms, alarm_below, lower_capitals)
+    return _check(*args, vision, reader, *rest, alarms, alarm_below, lower_capitals, descent)
 
 
 class _Later:
@@ -287,8 +289,10 @@ def _check(
     alarms,
     alarm_below: float,
     lower_capitals: bool = False,
+    descent: float | None = None,
 ) -> list[Suspect]:
-    """`check`'s pass over the book with the judges as given."""
+    """`check`'s pass over the book with the judges as given; with the book's `descent`,
+    each suspect's crop stops at the line above's descenders (`readers.own_span`)."""
     suspects = []
     curly = curly_book(pages)
     shortened = abbreviations(pages)
@@ -339,11 +343,16 @@ def _check(
                     continues = a0 == 0 and k > 0 and page.lines[k - 1].text.endswith(HYPHENS)
                     joined = hyphen_only(ours, a1, versions, around[1])
                     read_as = [across(v, joined) for v in versions]
+                    span = (
+                        readers.own_span(boxes, k, CROP_PAD, descent)
+                        if descent is not None
+                        else None
+                    )
                     (choice, chosen, votes), confidence = _decide(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
                         vision, reader, cache, around,
                         lexicon.vouches(read_as, continues) if lexicon else None,
-                        joined, style, alarms, alarm_below,
+                        joined, style, alarms, alarm_below, span,
                     )  # fmt: skip
                     support = {
                         n: supports(ours, other, a0, a1, versions, curly)
@@ -794,7 +803,7 @@ def _combined(ours: str, versions: list[str]) -> str | None:
 def _decide(
     pdf_page, number, k, ours, a0, a1, others, box, lang, vision, reader, cache, around=("", ""),
     vouched: int | None = None, joined: str = "", style: str = "", alarms=(),
-    alarm_below: float = 1.0,
+    alarm_below: float = 1.0, span: tuple[float, float] | None = None,
 ) -> tuple[tuple[str, str | None, dict[str, str]], dict[str, float]]:  # fmt: skip
     """\"ours\", \"other\" with the chosen version, or \"review\", with each model's pick;
     and each model's confidence in it.
@@ -820,6 +829,11 @@ def _decide(
     versions = [ours[a0:a1], *others]
     letters = LETTERS[: len(versions)]
     state = {"page": number, "line": k, "readings": versions, "box": [round(v, 1) for v in box]}
+    # A crop the neighbours cut short is another crop: keyed so, its answers asked anew.
+    if span is not None and span != (box[1] - CROP_PAD, box[3] + CROP_PAD):
+        state["span"] = [round(v, 1) for v in span]
+    else:
+        span = None
     question = {
         "reading": decide.choice(
             "The image is cut from a scanned printed book. Which text does it show, "
@@ -829,7 +843,7 @@ def _decide(
              "neither": "something else"},
         )
     }  # fmt: skip
-    seen = _ask(vision, cache, state, question, image=lambda: _crop(pdf_page, box))
+    seen = _ask(vision, cache, state, question, image=lambda: _crop(pdf_page, box, 0, span))
     language = LANGUAGE_NAMES.get(lang, "")
     lines = [ours[:a0] + across(v, joined) + ours[a1:] for v in versions]
     if joined:
@@ -867,7 +881,9 @@ def _decide(
             asked = {
                 n: {**q, "instructions": q["instructions"] + WIDE_NOTE} for n, q in question.items()
             }
-        alarmed = _ask(alarm, cache, state, asked, image=lambda w=wide: _crop(pdf_page, box, w))
+        alarmed = _ask(
+            alarm, cache, state, asked, image=lambda w=wide: _crop(pdf_page, box, w, span)
+        )
         votes[alarm.model] = pick(alarmed["value"])
         confidence[alarm.model] = alarmed["confidence"]
     if vouched is not None:
@@ -927,11 +943,15 @@ def _ask(
     return answer
 
 
-def _crop(pdf_page: pymupdf.Page, box, wide: float = 0) -> bytes:
+def _crop(pdf_page: pymupdf.Page, box, wide: float = 0, span=None) -> bytes:
     """The suspect's words, padded by `CROP_PAD`, or by `wide` points of its line either
-    side (within the page), as judge set v2's wide crop."""
+    side (within the page), as judge set v2's wide crop; from top to bottom of `span`
+    where the neighbours cut it short (`readers.own_span`)."""
     side = wide or CROP_PAD
-    clip = (pymupdf.Rect(box) + (-side, -CROP_PAD, side, CROP_PAD)) & pdf_page.rect
+    clip = pymupdf.Rect(box) + (-side, -CROP_PAD, side, CROP_PAD)
+    if span is not None:
+        clip.y0, clip.y1 = span
+    clip &= pdf_page.rect
     return pdf_page.get_pixmap(matrix=pymupdf.Matrix(CROP_ZOOM, CROP_ZOOM), clip=clip).tobytes(
         "png"
     )

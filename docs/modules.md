@@ -87,7 +87,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `scanstyle.py`: the book's dash and ellipsis as measured on the scan (`guess`,
   `measure_ellipses`, cached); a dash found through the PDF's words or, on an image-only
   scan, its first reading's, each stroke measured across its line's height; `typography.py`
-  sets the text in the style found.
+  sets the text in the style found. `measure_descent`: how far ink hangs below
+  the text layer's baseline-ending line boxes, as a share of a line, cached in
+  `stages/descent.json`.
 - `ink.py`: `threshold`, the grey level between ink and paper (Otsu), for the italics,
   type and scan measurements.
 - `hyphens.py`: lines joined across their ends (`join`). A line-end hyphen stays or goes
@@ -288,7 +290,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   book's style (`transcribe`) and tesseract (`tesseract_readings`), each cached per book
   keyed on a line's page, text and box (`line_key`); a region without lines (a line the
   layer lacks) read as one line (`region_readings`, `stages/question-readings.json`);
-  Cyrillic transliterated (`ocr.latin`).
+  Cyrillic transliterated (`ocr.latin`). `own_span`: a crop of a line that stops at the
+  line above's descenders and the box below, for the judges and the render judge
+  (`crop_descent`).
 - `ocrdoubts.py`: the OCR check's suspects as review questions, one place (`doubts`) or a
   whole line with every source's version (`line_doubts`).
 - `ocrcheck.py`: checks a scan's OCR layer (born-digital PDFs are skipped)

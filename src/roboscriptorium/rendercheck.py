@@ -428,13 +428,16 @@ def near(cache: Path) -> list[dict]:
     return json.loads(cache.read_text()).get("near", []) if cache.exists() else []
 
 
-def place_ink(page: pymupdf.Page, box, text: PageText | None = None) -> np.ndarray | None:
+def place_ink(
+    page: pymupdf.Page, box, text: PageText | None = None, bounds=None
+) -> np.ndarray | None:
     """The ink at a suspect's box, as a strip of its line (0–1, not trimmed): everything
     between the blank before the layer's words there and the blank after them, so a mark
     the layer missed beside a word is in it and its neighbours' letters aren't. Where a
     line is set too tight for such a blank, the strip ends at the widest blank before
     the layer's next word. On an image-only page the words are its first reading's
-    (`text`). None where there are no words."""
+    (`text`). None where there are no words. Within `bounds`, a top and bottom, where the
+    neighbours cut the line's crop short (`readers.own_span`)."""
     bx0, by0, bx1, by1 = box
     words = pdflayer.page_words(page, text)
     span = [
@@ -448,6 +451,8 @@ def place_ink(page: pymupdf.Page, box, text: PageText | None = None) -> np.ndarr
     x1, y1 = max(w[2] for w in span), max(w[3] for w in span)
     high = y1 - y0
     clip = pymupdf.Rect(x0 - high * 4, y0 - high * 0.3, x1 + high * 4, y1 + high * 0.3)
+    if bounds is not None:
+        clip.y0, clip.y1 = max(clip.y0, bounds[0]), min(clip.y1, bounds[1])
     clip &= page.rect
     grey = _clip_ink(page, clip)
     if grey is None:
@@ -652,7 +657,12 @@ class Judge:
         if self._line is not None and high > DISPLAY * self._line:
             return {"reading": Answer("choice", "neither", 0.0, {})}
         with pdflayer.PDF_LOCK, pymupdf.open(self._pdf) as doc:
-            ink = place_ink(doc[state["page"] - 1], state["box"], self._texts.get(state["page"]))
+            ink = place_ink(
+                doc[state["page"] - 1],
+                state["box"],
+                self._texts.get(state["page"]),
+                state.get("span"),
+            )
         if ink is None:
             # "neither" is no pick; an empty value would read as the first version.
             return {"reading": Answer("choice", "neither", 0.0, {})}

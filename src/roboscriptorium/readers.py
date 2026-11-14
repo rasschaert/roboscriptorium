@@ -291,6 +291,27 @@ def crop_span(boxes: list, k: int) -> tuple[float, float]:
     return top, bottom
 
 
+def own_span(boxes: list, k: int, pad: float, descent: float) -> tuple[float, float]:
+    """The top and bottom of a crop of line k that holds its own ink and none of its
+    neighbours': `pad` beyond its box, but not into the line above's descenders
+    (`descent` of a line's height below its box, `scanstyle.measure_descent`) nor into
+    the box of the line below, in the same column. Boxes end on the baseline, so in a
+    book set tight the line above's g, j, p and y reach into a padded crop, where judges
+    took them for marks (Andere levens' "die" read as "dië", 2026-11-14)."""
+    x0, y0, x1, y1 = boxes[k]
+    top, bottom = y0 - pad, y1 + pad
+    for j, (a0, b0, a1, b1) in enumerate(boxes):
+        if j == k or a1 <= x0 or x1 <= a0:
+            continue
+        if b0 + b1 < y0 + y1:
+            reach = b1 + descent * (b1 - b0)
+            if reach > top:
+                top = max(top, min(reach, y0))
+        elif b0 < bottom:
+            bottom = min(bottom, max(b0, y1))
+    return top, bottom
+
+
 def _line_crop(
     doc: pymupdf.Document, number: int, box, span: tuple[float, float] | None = None
 ) -> bytes:

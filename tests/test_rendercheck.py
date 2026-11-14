@@ -295,3 +295,30 @@ def test_on_a_tightly_set_line_the_strip_ends_before_the_next_word(tmp_path):
     versions = ["wor1d", "world"]
     state = {"page": 1, "line": 0, "readings": versions, "box": [round(v, 1) for v in box]}
     assert _judge(path).decide(state, _question(versions))["reading"].value == "b"
+
+
+def test_a_crop_cut_short_by_the_neighbours_is_keyed_apart_and_drawn_within_its_span(tmp_path):
+    path, box = _scan(tmp_path, "world")
+    seen = []
+
+    class Vision:
+        model = "vision"
+
+        def decide(self, state, questions, image_png=None):
+            seen.append((dict(state), pymupdf.open(stream=image_png).load_page(0).rect.height))
+            return {"reading": decide.Answer("choice", "a", 0.9, {})}
+
+    def ask(span):
+        with pymupdf.open(path) as doc:
+            ocrcheck._decide(
+                doc[0], 1, 0, LINE.format("world"), 16, 21, ["wor1d"], box, "en",
+                Vision(), None, DecisionCache(tmp_path / f"d{len(seen)}.jsonl"), span=span,
+            )  # fmt: skip
+
+    ask(None)
+    ask((box[1] - ocrcheck.CROP_PAD, box[3] + ocrcheck.CROP_PAD))  # the pad as it was
+    ask((box[1], box[3] + ocrcheck.CROP_PAD))  # the line above's descenders cut off
+    (plain, h0), (same, h1), (cut, h2) = seen
+    assert "span" not in plain and "span" not in same and h0 == h1
+    assert cut["span"] == [round(box[1], 1), round(box[3] + ocrcheck.CROP_PAD, 1)]
+    assert h2 < h0

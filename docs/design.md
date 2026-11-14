@@ -381,6 +381,21 @@ page at its first page, an afterword just past it. Those are as much the range's
 convention as the models' errors, and one wrong end cuts or pads a book, so a model
 would need a human to confirm both ends anyway.
 
+## Crops that stop at the line above's descenders
+
+The scans' hidden text layer sets its words in a placeholder font with no descent, so
+every line's box ends on the baseline and the g, j, p and y hang below it. In a book set
+tight, the judges' crop (the box and `CROP_PAD` around it) and the render judge's window
+(0.3 of a line beyond it) then hold the line above's descenders: Andere levens' "die"
+was read and judged "dië", the bottoms of the letters above sitting over its e; "rolden"
+went to "rollen", and the render judge preferred "‘loen" to the "Toen" the page prints,
+the T's crossbar at its window's edge. With `crop_descent` (`ROBO_CROP_DESCENT`) both
+stop at the line above's descent (`readers.own_span`), measured per book on the scan
+(`scanstyle.measure_descent`: 0.26–0.30 of a line on seven books) or settled in
+book.toml's `descent`. A crop the neighbours cut short is keyed apart, so only those
+places are asked again. The readers' crops already stop at a neighbour's box, but not at
+its descent; moving them would read most lines of every book again.
+
 ## Render and compare
 
 **A judge that knows no language** (`rendercheck.py`, the user's idea, 2026-11-11; the

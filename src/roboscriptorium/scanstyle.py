@@ -354,3 +354,54 @@ def scanned_style(
     else:
         dots = layer.dots if layer is not None and layer.dots != ". . ." else "..."
     return EllipsisStyle(dots, scan.space_before)
+
+
+DESCENT_VERSION = 1
+# Lines measured for the descent, spread over the body; a line needs this many letters.
+DESCENT_LINES, DESCENT_LETTERS = 120, 25
+# The share of lines whose descent counts: their deepest ones are those with a g, j, p or y.
+DESCENT_SHARE = 0.75
+
+
+def line_descent(page: pymupdf.Page, box: tuple, below: float | None = None) -> float | None:
+    """How far a line's ink hangs below its box, as a share of the box's height: the first
+    blank row under the box, looked for down to `below` (the next line's box top) or half
+    a line. None where the ink runs on unbroken into the next line."""
+    x0, y0, x1, y1 = box
+    high = y1 - y0
+    bottom = min(y1 + 0.6 * high, below if below is not None else y1 + 0.6 * high)
+    if bottom <= y1 + 0.5:
+        return None
+    rows = _crop_ink(page, pymupdf.Rect(x0, y1, x1, bottom)).any(axis=1)
+    blank = np.where(~rows)[0]
+    if not len(blank):
+        return None
+    return float(blank[0]) / SCALE / high
+
+
+def measure_descent(pdf_path, pages: list, cache) -> float | None:
+    """How far the book's descenders hang below its text layer's line boxes, as a share of
+    a line's height, over a spread of its full lines, cached; None when too few measure.
+    The scans' placeholder font has no descent, so each box ends on the baseline."""
+    numbers = [p.number for p in pages]
+    if cache.exists():
+        raw = json.loads(cache.read_text())
+        if raw.get("version") == DESCENT_VERSION and raw.get("pages") == numbers:
+            return raw["descent"]
+    lines = [
+        (p.number, (ln.x0, ln.y0, ln.x1, ln.y1), nxt.y0 if nxt is not None else None)
+        for p in pages
+        for ln, nxt in zip(p.lines, [*p.lines[1:], None][: len(p.lines)], strict=True)
+        if len(ln.text) >= DESCENT_LETTERS
+    ]
+    step = max(1, len(lines) // DESCENT_LINES)
+    found = []
+    with pymupdf.open(pdf_path) as pdf:
+        for n, box, below in lines[::step][:DESCENT_LINES]:
+            if (d := line_descent(pdf[n - 1], box, below)) is not None:
+                found.append(d)
+    descent = round(float(np.quantile(found, DESCENT_SHARE)), 2) if len(found) >= 10 else None
+    write_atomic(
+        cache, json.dumps({"version": DESCENT_VERSION, "pages": numbers, "descent": descent})
+    )
+    return descent

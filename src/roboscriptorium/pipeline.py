@@ -345,6 +345,7 @@ def run(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, whole, style, dots), alarms, settings.alarm_below,
                 settings.lower_capitals,
+                line_descent(book, whole) if settings.crop_descent else None,
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:
@@ -782,6 +783,23 @@ def ellipsis_style(book: Book, body: list[PageText]) -> typography.EllipsisStyle
         file=sys.stderr,
     )
     return guess
+
+
+def line_descent(book: Book, body: list[PageText]) -> float | None:
+    """How far the book's descenders hang below its line boxes: as book.toml sets it, else
+    as measured on a scan (said aloud). A born-digital PDF's boxes hold their descenders."""
+    if book.descent is not None:
+        return book.descent
+    if not ocrcheck.scanned(book.source):
+        return None
+    found = scanstyle.measure_descent(book.source, body, book.stages / "descent.json")
+    if found is not None:
+        print(
+            f"Line descent measured on the scan: {found} of a line below its box. To settle "
+            f"it, put descent = {found} in book.toml.",
+            file=sys.stderr,
+        )
+    return found
 
 
 def dash_style(book: Book, body: list[PageText]) -> typography.DashStyle | None:
