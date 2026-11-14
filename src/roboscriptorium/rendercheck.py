@@ -37,7 +37,7 @@ MODEL = "render"
 # The cached match's format.
 VERSION = 2
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 6
+FITS = 9
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
@@ -74,7 +74,9 @@ DISPLAY = 1.3
 _NOT_TEXT = re.compile(r"Bold|Black|Semibold|Demi|Italic|Heavy", re.I)
 _PLAIN = re.compile(r"regular|roman", re.I)
 _STOP_QUOTE = re.compile(r"([.,…])([’”'\"])")
-_CAPITALS = re.compile(r"[A-ZÀ-Þ]{2,}")
+# What a book may set in small capitals: a run of capitals, or a capital no letter touches
+# (Andere levens' small-capital "T" in "T-shirt", 2026-11-14), never one opening a word.
+_SMALL = re.compile(r"[A-ZÀ-Þ]{2,}|(?<![^\W\d_])[A-ZÀ-Þ](?![^\W\d_])")
 _DOTS = re.compile(r"\.\.\.|…")
 _ORDINAL = re.compile(r"(?<=\d)(?:e|de|ste)\b")
 _BLUR = ImageFilter.GaussianBlur(1.5)
@@ -555,8 +557,9 @@ def _pieces(face: Face, pieces: list[tuple]) -> np.ndarray | None:
 def drawings(face: Face, version: str) -> list[np.ndarray]:
     """The ways a book may set a version: as the font spaces it; with a closing quote
     kerned over the stop before it; with an ellipsis's dots apart; with a run of
-    capitals as small capitals; with an ordinal's ending as a superscript; each of these in the
-    font's other figures where the version has digits."""
+    capitals, or a capital no letter touches, as small capitals; with an ordinal's
+    ending as a superscript; each of these in the font's other figures where the version
+    has digits."""
     ways = [[(version, 1.0, 0.0)]]
     if m := _STOP_QUOTE.search(version):
         for kern in KERNS:
@@ -572,10 +575,10 @@ def drawings(face: Face, version: str) -> list[np.ndarray]:
                     (version[m.end() :], 1.0, gap / 2),
                 ]
             )
-    if _CAPITALS.search(version):
+    if _SMALL.search(version):
         for small in SMALL_CAPS:
             way, at = [], 0
-            for m in _CAPITALS.finditer(version):
+            for m in _SMALL.finditer(version):
                 if m.start() > at:
                     way.append((version[at : m.start()], 1.0, 0.0))
                 way.append((m.group(), small, 0.0))

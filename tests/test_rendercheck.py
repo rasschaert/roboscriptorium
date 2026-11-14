@@ -322,3 +322,11 @@ def test_a_crop_cut_short_by_the_neighbours_is_keyed_apart_and_drawn_within_its_
     assert "span" not in plain and "span" not in same and h0 == h1
     assert cut["span"] == [round(box[1], 1), round(box[3] + ocrcheck.CROP_PAD, 1)]
     assert h2 < h0
+
+
+def test_a_capital_no_letter_touches_is_drawn_as_a_small_capital_too_one_opening_a_word_not():
+    face = rendercheck.Face(lambda px: ImageFont.load_default(px))
+    plain = len(rendercheck.drawings(face, "Toen"))
+    assert len(rendercheck.drawings(face, "‘Tom")) == plain
+    assert len(rendercheck.drawings(face, "T-shirt,")) == plain + len(rendercheck.SMALL_CAPS)
+    assert len(rendercheck.drawings(face, "FBI-beleid")) == plain + len(rendercheck.SMALL_CAPS)
