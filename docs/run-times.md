@@ -964,3 +964,10 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | bench validation, baseline on the references without the e-books' stray spaces (warm) | 0 | 1 | 0 |
 | 2026-11-14 | bench tuning, render-differ in render's place, against main's baseline on the mended references (warm) | 0 | 5 | 0 |
 | 2026-11-14 | bench validation, render-differ in render's place, against main's baseline on the mended references (warm) | 0 | 1 | 0 |
+| 2026-11-14 | typefaces matched again with the kerning choice, six at a time (CPU) | 0 | 40 | 0 |
+| 2026-11-14 | trust data rebuilt with the render judge kerning per book, six books at a time (warm but for its fits) | 0 | 18 | 0 |
+| 2026-11-14 | arbiter trained with the render judge kerning per book (CPU) | 0 | 87 | 0 |
+| 2026-11-14 | bench tuning, the render judge kerning per book, against main's baseline on the mended references (warm but for its fits) | 0 | 10 | 0 |
+| 2026-11-14 | bench validation, the render judge kerning per book, against main's baseline on the mended references (warm but for its fits) | 0 | 4 | 0 |
+| 2026-11-14 | bench tuning, baseline with the golden books' errata from the e-book (warm) | 0 | 5 | 0 |
+| 2026-11-14 | bench validation, baseline with the golden books' errata from the e-book (warm) | 0 | 1 | 0 |
