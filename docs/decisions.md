@@ -2701,3 +2701,22 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   arbiter decoration, enough to shift its training. Failed on: the size of the heading
   evidence. The ornaments need their own route (the render judge's "ink that is no
   glyph", or a heading's marks checked against the book's other headings).
+- 2026-11-15: **autotrust-jev 9B as a 4th judge asking the text question: TAKEN** (branch
+  `text-seat`, merged; `alarm_model` gains `autotrust-jev:9b-nvfp4@text`; the arbiter and
+  trust data in production's place, production's kept in
+  `work/models/ocr-trust-backup-20261115/` and `work/probes/ocr-trust-before-text-20261115/`).
+  Third bench, after its two vetoes on headings (Goede dochter's "ZEVEN", then the
+  number-word run's own mistake on De vergelding, both mended), against main with
+  tonight's italic judge and lone small capitals (`tuning-20261114T234459-82c7529-dirty`,
+  `validation-20261114T234601-82c7529-dirty`, the new baselines): tuning better, questions
+  3,445 → 3,402, unasked 608 → 604, wrong words 3,004 → 2,962, after review 0.208 →
+  0.206 [−0.005, +0.001], italic errors 986 → 980, headings level; validation better on
+  italics (170 → 169), questions 488 → 471, unasked 235 → 236, after review 0.362 → 0.359
+  [−0.020, +0.013]. Pass 4's null of 2026-11-09 (validation unasked 170 → 178) did not
+  repeat beside the render panel.
+- 2026-11-15: **Main with tonight's taken changes, the combined check**: against the
+  baselines of 2026-11-14 16:04, tuning BETTER (unasked 618 → 608, wrong words
+  3,017 → 3,004, italic errors 1,223 → 986, heading errors 26 → 24), validation BETTER
+  (italic errors 195 → 170). These runs are the baselines the 4th judge was taken on; its
+  own runs (`tuning-20261114T233727-389e99a-dirty`, `validation-20261114T233833-82c7529-dirty`)
+  are now production's.

@@ -123,6 +123,7 @@ check: 3 · Check the OCR (scans only) {
     d3: "JUDGE d3:9b\nfrom the crop" {class: decision}
     render: "JUDGE render and compare\neach version drawn in\nthe book's typeface" {class: code}
     winnow: "JUDGE Winnow-12B\nfrom the sentence" {class: decision}
+    jev9: "JUDGE autotrust-jev:9b\nfrom the sentence" {class: decision}
     words: "JUDGE the word list" {class: code}
     gbt: "ARBITER trees trained\non golden books" {class: code}
   }
@@ -134,6 +135,7 @@ check: 3 · Check the OCR (scans only) {
   s.judge -> m.d3 {class: uses}
   s.judge -> m.render {class: uses}
   s.judge -> m.winnow {class: uses}
+  s.judge -> m.jev9 {class: uses}
   s.judge -> m.words {class: uses}
   s.trust -> m.gbt {class: uses}
 }
