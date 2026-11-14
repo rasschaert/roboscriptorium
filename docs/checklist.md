@@ -260,6 +260,13 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 
 ## Errors no question asks about
 
+- [ ] The book's own spacing of a repeated form as arbiter evidence (the user's review of
+      Andere levens, 2026-11-14: "M.H." against "M. H."): its text layer reads "M. H." 11
+      times and "M.H." 5, the render judge voted the space, and still the place was asked.
+      Per suspect that differs only in a space, how often the book's layer sets each form
+      elsewhere; probe against random columns as `probe_book_vocab.py` does (that one
+      counted letters, not spacing, and stayed null)
+
 About 85% of the wrong words left after review were never suspects: every reading agreed
 on them. On tuning, 2026-11-06: stress accents 105 (half the reference's), compound
 hyphens 86 (line-end breaks), letters 76, punctuation 59. What was tried on them
