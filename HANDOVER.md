@@ -7,41 +7,27 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**Running (the fifth session, 2026-11-14, updated 21:30; the user away until about noon on
-2026-11-15: "if you don't hear back from me by then just keep going through the
-checklist"). One queue, each waiting for the one before (they write the same books'
-caches):**
+**State at 01:00 on 2026-11-15** (the user away until about noon: "if you don't hear
+back from me by then just keep going through the checklist").
 
-1. `robo-text-seat-night`: autotrust-jev 9B as a 4th judge (branch `text-seat`), arbiter
-   training, then both benches against `tuning-20261114T160429-8783bba-dirty.json` and
-   `validation-20261114T160527-8783bba-dirty.json`.
-2. ~~`robo-italic-panel`~~: **taken, merged, on by default** (main 0fdc5dc): italic
-   errors 1,223 → 986 on tuning, 195 → 170 on validation. New italic baselines:
-   `tuning-20261114T211926-ba2e017-dirty.json`, `validation-20261114T212127-7222f1f-dirty.json`.
-3. ~~`robo-caps1-bench`~~: **taken, merged** (main 12c8233): the user's counter-idea, a
-   lone capital drawn as a small capital too; tuning BETTER (unasked 618 → 609),
-   validation NO CHANGE.
-4. `robo-text-seat-rebench`: the 4th judge again, with chapter numbers in words running
-   (its first tuning bench was vetoed on Goede dochter's "ZEVEN" read "LEVEN"; fixed on
-   main f73cb1f, the branch rebased).
-5. `robo-heading-labels`: heading places in the arbiter's training data (branch
-   `heading-labels`): trust data, training, benches.
+**Taken overnight, in production** (decisions.md, 2026-11-14 and 15):
+1. The user's idea: clef:27b settles where two sets of italic trees disagree (italic
+   errors −19% on tuning).
+2. The user's counter-idea: a lone capital drawn as a small capital too (unasked −9).
+3. autotrust-jev 9B asking the text question as a 4th judge (questions 3,445 → 3,402 on
+   tuning); its arbiter and trust data are production's, the previous kept in
+   `work/models/ocr-trust-backup-20261115/` and `work/probes/ocr-trust-before-text-20261115/`.
 
-The candidates in 3–5 are each benched against the old baselines on their own branch;
-whatever is taken gets a combined bench on main with the italic panel after.
+**Baselines now** (production as of c6088a3): `work/bench/tuning-20261114T233727-389e99a-dirty.json`
+and `validation-20261114T233833-82c7529-dirty.json`.
 
-Each is taken only if tuning is better and validation no worse: merge its branch, and for
-an arbiter or tree set copy the models into production's place (backing production up).
+**Running:** screen `robo-kus`, De kus in de nacht's first build (restarted 00:55 on the
+new code from its cached readings; ~8 h), then its questions sampled. Ex-minnaar is ready
+for the user's review (74 questions: `uv run roboscriptorium review work/ex-minnaar`).
 
-**Also running:** screen `robo-kus`, De kus in de nacht's first build (cold, ~9 h,
-started 23:00), then its questions sampled. Ex-minnaar rebuilt and sampled: 74 questions,
-ready for the user's review (`uv run roboscriptorium review work/ex-minnaar`).
-
-**Tonight's nulls** (decisions.md): the character language model, the render judge's
-measures and the book's spacing as arbiter columns (the gains lie where the arbiter asks
-anyway); crops cut at the line above's descenders (off: no gain on golden pages). Also
-done: asking where every judge agrees is learned (closed); quote cards show every
-reader's reading; chapter numbers in words run.
+**Not taken overnight:** heading places in the arbiter's training; the language model,
+the render judge's measures and the book's spacing as arbiter columns; crops cut at the
+descenders (off by default).
 
 **Done this session** (decisions.md, 2026-11-14), all on main:
 - Both learned trees on the grown slices: not taken, nor the italic trees alone;

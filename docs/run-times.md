@@ -1049,3 +1049,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-15 | arbiter trained with heading places (CPU) | 0 | 93 | 0 |
 | 2026-11-15 | bench tuning, heading places in the arbiter's training (warm) | 0 | 6 | 0 |
 | 2026-11-15 | bench validation, heading places in the arbiter's training (warm) | 0 | 1 | 0 |
+| 2026-11-15 | bench tuning, the 4th judge, chapter words mended (warm) | 0 | 6 | 0 |
+| 2026-11-15 | bench validation, the 4th judge, chapter words mended (warm) | 0 | 1 | 0 |
+| 2026-11-15 | bench tuning, main with the italic judge and lone small capitals (warm but for drawings) | 0 | 6 | 0 |
+| 2026-11-15 | bench validation, main with the italic judge and lone small capitals (warm but for drawings) | 0 | 1 | 0 |
