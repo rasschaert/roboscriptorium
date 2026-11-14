@@ -469,10 +469,17 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
 ## Environment
 
 - Apple M4 Max, 64 GB RAM, macOS. Ollama drains the battery even on the charger, and Low
-  Power Mode slows runs by half or more (docs/run-times.md): ask before chaining long runs. Every
-  model run waits while the battery is under 30%, checking hourly
+  Power Mode slows runs by half or more (docs/run-times.md): say before chaining long runs
+  during the day. Every model run waits while the battery is under 30%, checking hourly
   (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
   job started another way).
+- **An unanswered question never holds the machine** (the user, 2026-11-14, after a night
+  idle while "may I start the overnight runs?" went unanswered: "unforgivable"). Silence
+  is not a no: the user is asleep or away, and the battery gate guards the charge. Runs
+  already on the checklist start without waiting for a yes; a question asked at night is
+  answered by starting the runs and saying so. A review server left open whose answers are
+  all saved (the verdict file unchanged since) is no open review: bench beside it, and say
+  not to press "Rebuild book" until the run ends.
 - Ollama (Homebrew's `ollama-app` cask, and the `ollama` formula for the CLI) at
   `http://127.0.0.1:11434`, not pinned: it updates itself (the user, 2026-11-08). After an
   update, `roboscriptorium doctor` checks that the decision models still answer before a

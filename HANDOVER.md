@@ -87,7 +87,7 @@ screen stopped). **Next for the render judge, in this order:**
 pages are clean in the current build (decisions.md). The 58 confirmations (below,
 "Waiting on the user") were handed over at 09:55 with the commands, The Thief-Taker's
 Apprentice first; no verdict file had changed by 11:10, so take them as not started.
-A review builds its book: run no bench while one is open, and ask before starting one.
+A review builds its book: run no bench while one is being answered (a server left open after its last answer doesn't count, AGENTS.md, Environment).
 Pieter Daens and Nervous System are held back on purpose: rebuild them with the render
 judge on and sample their questions first (`experiments/sample_questions.py`), they
 should ask fewer.

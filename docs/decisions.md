@@ -2400,3 +2400,9 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   and Goede dochter's "vergieten. ‘". The references changed, so benches compare against
   baselines made after this. Lesson: a batch of confirmations that share one pattern is
   a known deviation to declare, never questions.
+- 2026-11-14: **An unanswered question never holds the machine** (AGENTS.md,
+  Environment). The night of 13 to 14 November went idle: the baselines, the second render
+  judge's bench and the kerning chain (about four hours, all on the checklist) waited on
+  "may I run them?", asked at night with a finished review's server still open. The user:
+  "unforgivable". Silence is no longer read as a no; queued runs start and are reported,
+  and a review server whose answers are all saved doesn't block a bench. Started at 10:43.
