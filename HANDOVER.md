@@ -18,9 +18,9 @@ caches):**
 2. ~~`robo-italic-panel`~~: **taken, merged, on by default** (main 0fdc5dc): italic
    errors 1,223 → 986 on tuning, 195 → 170 on validation. New italic baselines:
    `tuning-20261114T211926-ba2e017-dirty.json`, `validation-20261114T212127-7222f1f-dirty.json`.
-3. `robo-caps1-bench`: the user's counter-idea, a lone capital drawn as a small capital
-   too (branch `lone-small-caps`, render version 9); its short test on an Andere levens
-   clone turned both "T-shirt" votes right and moved nothing else.
+3. ~~`robo-caps1-bench`~~: **taken, merged** (main 12c8233): the user's counter-idea, a
+   lone capital drawn as a small capital too; tuning BETTER (unasked 618 → 609),
+   validation NO CHANGE.
 4. `robo-text-seat-rebench`: the 4th judge again, with chapter numbers in words running
    (its first tuning bench was vetoed on Goede dochter's "ZEVEN" read "LEVEN"; fixed on
    main f73cb1f, the branch rebased).
@@ -32,6 +32,10 @@ whatever is taken gets a combined bench on main with the italic panel after.
 
 Each is taken only if tuning is better and validation no worse: merge its branch, and for
 an arbiter or tree set copy the models into production's place (backing production up).
+
+**Also running:** screen `robo-kus`, De kus in de nacht's first build (cold, ~9 h,
+started 23:00), then its questions sampled. Ex-minnaar rebuilt and sampled: 74 questions,
+ready for the user's review (`uv run roboscriptorium review work/ex-minnaar`).
 
 **Tonight's nulls** (decisions.md): the character language model, the render judge's
 measures and the book's spacing as arbiter columns (the gains lie where the arbiter asks

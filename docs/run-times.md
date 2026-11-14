@@ -1044,3 +1044,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | bench validation, lone capitals drawn as small capitals too (render redrawn) | 0 | 4 | 0 |
 | 2026-11-14 | bench tuning, the 4th judge with chapter numbers in words (warm) | 0 | 5 | 0 |
 | 2026-11-14 | bench validation, the 4th judge with chapter numbers in words (warm) | 0 | 1 | 0 |
+| 2026-11-14 | trust data with heading places, six books at a time (warm) | 0 | 3 | 0 |
+| 2026-11-14 | Ex-minnaar rebuilt and its questions sampled (main, warm but for drawings and italic judging) | 0 | 5 | 0 |

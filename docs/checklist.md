@@ -182,10 +182,13 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 - [x] **user**: Hoe wij verdwijnen's spot-check, PDF pages 41, 77, 87, 144, 292: no
       wrong word and no wrong break on the five pages; two italic errors ("op", "een"),
       both of the build of 2026-11-03 and gone since (2026-11-13)
-- [ ] Ex-minnaar: rebuilt with everything since 2026-10-16 and its questions sampled
-      again, then the **user**'s review and the fixes it teaches. Its poem on p. 50
-      (title taken for a chapter heading, lines joined) waits on verse
-- [ ] De kus in de nacht built, once the review's questions are worth the user's time
+- [ ] **user**: Ex-minnaar's review, rebuilt with everything to 2026-11-14 and sampled:
+      74 questions left (of 293, the rest answered before), mostly the emphasis accents
+      its author prints ("vergéten", "twéé", "dríe") that only a reader can tell from
+      specks (`uv run roboscriptorium review work/ex-minnaar`). Its poem on p. 50 (title
+      taken for a chapter heading, lines joined) waits on verse
+- [ ] De kus in de nacht built (first build started 2026-11-14 23:00, ~9 h cold, then its
+      questions sampled), its questions read before the user's review
 - [ ] The structure check's findings walked in the review page (every kind, its crop)
       before the next review (`flags.structural`)
 - [ ] A washed-out page says which it is (the user, 2026-10-19, on a PDF's embedded
