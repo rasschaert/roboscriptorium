@@ -2534,3 +2534,12 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   right now); three random columns 418, 17, 38. Within the control's reach (−7 at no
   questions): still null. Failed on: the arbiter's trees, which gain about as much from
   any three columns; retest when the arbiter changes kind.
+- 2026-11-14: **The garbled-line question reads the line as the OCR check settled it**
+  (`flags.find`, `settled`; design.md). Nervous System rebuilt with the render judge
+  asked 38 questions still unanswered: four garbled lines, three of them already read
+  right by the arbiter ("eNese:" → “Yes.”), since the question tested the layer as read.
+  Now 35: one garbled ("eSurel", which every reader and judge reads “Sure.” and the
+  arbiter still asks: the checklist's "The arbiter asks where every judge and the layer
+  agree"), one moved to an OCR doubt with its readings. The rest: 13 headings with one
+  reading, small capitals read as lower case ("tv", "oJ", "cp"): its review waits on
+  those steps.

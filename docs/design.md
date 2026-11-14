@@ -1366,6 +1366,14 @@ it recurs (`scoring.answered_words`, "your answers"): Hoe wij verdwijnen's small
 "DS", which no reader sets in capitals on some lines. Offered, never settled: a skip on
 a book's own answers was wrong one time in eight to twelve (2026-10-16).
 
+**A line garbled as read is asked only if it stays garbled once the OCR check has
+settled it** (`flags.find`'s `settled`). The garbled-line question tested the layer as
+read, so it asked about lines the readers and judges had already read right: of
+Nervous System's four, three were "eNese:" for “Yes.”, "tLanan*" for “I am?” and
+"ItoldherI had. _" for "I told her I had.", each fixed by the arbiter (2026-11-14). A
+place the arbiter is unsure of is asked as an OCR doubt, with every reading and vote on
+its card: one path for every doubt.
+
 ## An answer keeps the paragraph's shape
 
 **A region retyped in as many lines sets each line's text** (`corrections.apply`); in

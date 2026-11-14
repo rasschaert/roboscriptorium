@@ -188,6 +188,13 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
             for i in range(c.first, c.last + 1)
         },
         (lex.knows if (lex := Lexicon.load(ocr.language(book.language))) else None),
+        {
+            SourceRef(p.number, i): line.text
+            for p in ocrcheck.apply(stages.pages, stages.suspects)
+            for i, line in enumerate(p.lines)
+        }
+        if stages.suspects
+        else None,
     )
     found = flags.structural(
         stages.pages, stages.model_roles, structure.findings(stages.doc), found

@@ -313,6 +313,24 @@ def test_an_epigraph_line_with_another_doubt_is_still_asked():
     assert any("garbled" in f.reasons for f in found)
 
 
+def test_a_garbled_line_the_ocr_check_settled_is_not_asked_one_it_left_garbled_is():
+    lines = [
+        Line("eNese:", 120, 100, 170, 112),
+        Line("She paused for a beat, then made a mark on her sheet.", 40, 116, 260, 128),
+        Line("nQthiri£,\\and", 118, 132, 160, 144),
+    ]
+    page = PageText(168, 300, 500, lines)
+    roles = {SourceRef(168, i): LineRole("body", 0.9, 0.9) for i in range(3)}
+    # As read, the first and the last are garbled.
+    found = flags.find([page], roles)
+    assert sorted(f.first for f in found if "garbled" in f.reasons) == [0, 2]
+    # The OCR check settled the first as a reader read it; the last it left as it was.
+    settled = {SourceRef(168, i): line.text for i, line in enumerate(lines)}
+    settled[SourceRef(168, 0)] = "“Yes.”"
+    found = flags.find([page], roles, settled=settled)
+    assert [f.first for f in found if "garbled" in f.reasons] == [2]
+
+
 def test_a_misprint_keeps_the_answer_as_printed_and_writes_the_edition_line_to_the_errata(
     tmp_path,
 ):

@@ -277,7 +277,12 @@ def _in_margin(page: PageText, line) -> bool:
 
 
 def _reasons(
-    page: PageText, i: int, role: LineRole | None, furniture: _Furniture, layout: list[str]
+    page: PageText,
+    i: int,
+    role: LineRole | None,
+    furniture: _Furniture,
+    layout: list[str],
+    settled: str | None = None,
 ) -> list[str]:
     n = len(page.lines)
     edge = i < P.EDGE_LINES_TOP or i >= n - P.EDGE_LINES_BOTTOM
@@ -295,7 +300,8 @@ def _reasons(
     else:
         if role is not None and role.role != "body":
             reasons.append("kept-unsure")
-        if P.garbled(page.lines[i]):
+        line = page.lines[i]
+        if P.garbled(line if settled is None else replace(line, text=settled)):
             reasons.append("garbled")
         if _centred(page, i):
             reasons.append("centred")
@@ -547,8 +553,13 @@ def find(
     epigraph: set[SourceRef] | None = None,
     headings: set[SourceRef] | None = None,
     known=None,
+    settled: dict[SourceRef, str] | None = None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.
+
+    `settled` holds each line as the OCR check settled it (`ocrcheck.apply`): a line
+    garbled as read but read right by the readers and judges isn't asked as garbled; a
+    place in it the arbiter was unsure of is asked as an OCR doubt.
 
     `known` (a word list's test) tells a book that opens its sections in capitals from
     one whose drawn initials are lost (`capital_openings`).
@@ -604,7 +615,14 @@ def find(
             reasons = (
                 []
                 if i in in_pictures
-                else _reasons(page, i, role, furniture, line_reasons.get(i, []))
+                else _reasons(
+                    page,
+                    i,
+                    role,
+                    furniture,
+                    line_reasons.get(i, []),
+                    (settled or {}).get(SourceRef(page.number, i)),
+                )
             )
             if SourceRef(page.number, i) in (epigraph or set()):
                 reasons = [r for r in reasons if r not in _EPIGRAPH_TRAITS]
