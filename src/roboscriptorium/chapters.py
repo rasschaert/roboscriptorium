@@ -428,6 +428,103 @@ def value(text: str) -> int | None:
     return int(t) if 0 < len(t) <= NUMBER_CHARS and t.isascii() and t.isdigit() else None
 
 
+_UNITS = {
+    "nl": ["een", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht", "negen"],
+    "en": ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"],
+}
+_TEENS = {
+    "nl": [
+        "tien",
+        "elf",
+        "twaalf",
+        "dertien",
+        "veertien",
+        "vijftien",
+        "zestien",
+        "zeventien",
+        "achttien",
+        "negentien",
+    ],  # fmt: skip
+    "en": [
+        "ten",
+        "eleven",
+        "twelve",
+        "thirteen",
+        "fourteen",
+        "fifteen",
+        "sixteen",
+        "seventeen",
+        "eighteen",
+        "nineteen",
+    ],  # fmt: skip
+}
+_TENS = {
+    "nl": ["twintig", "dertig", "veertig", "vijftig", "zestig", "zeventig", "tachtig", "negentig"],
+    "en": ["twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"],
+}
+
+
+def _number_words(lang: str) -> dict[str, int]:
+    """1 to 99 in words: "tweeëntwintig" (and "tweeentwintig"), "twenty-two"."""
+    out = {w: n for n, w in enumerate(_UNITS[lang], 1)}
+    out |= {w: n for n, w in enumerate(_TEENS[lang], 10)}
+    for t, tens in enumerate(_TENS[lang], 2):
+        out[tens] = 10 * t
+        for u, unit in enumerate(_UNITS[lang], 1):
+            if lang == "nl":
+                joint = "ën" if unit.endswith("e") else "en"
+                out[f"{unit}{joint}{tens}"] = out[f"{unit}en{tens}"] = 10 * t + u
+            else:
+                out[f"{tens}-{unit}"] = out[f"{tens} {unit}"] = 10 * t + u
+    return out
+
+
+NUMBER_WORDS = {lang: _number_words(lang) for lang in _UNITS}
+
+
+def word_value(text: str) -> int | None:
+    """The chapter number a heading of one number word reads as ("ZEVEN", "Twenty-two"),
+    in Dutch or English, or None."""
+    t = text.strip().rstrip(_AFTER).lower()
+    return next((words[t] for words in NUMBER_WORDS.values() if t in words), None)
+
+
+def _in_words(number: int, like: str, lang: str) -> str:
+    """`number` (1 to 99) as a word of `lang`, cased as the heading `like` is."""
+    tens, unit = divmod(number, 10)
+    if number < 10:
+        word = _UNITS[lang][number - 1]
+    elif number < 20:
+        word = _TEENS[lang][number - 10]
+    elif not unit:
+        word = _TENS[lang][tens - 2]
+    elif lang == "nl":
+        first = _UNITS["nl"][unit - 1]
+        word = f"{first}{'ën' if first.endswith('e') else 'en'}{_TENS['nl'][tens - 2]}"
+    else:
+        word = f"{_TENS['en'][tens - 2]}-{_UNITS['en'][unit - 1]}"
+    if like.isupper():
+        return word.upper()
+    return word.capitalize() if like[:1].isupper() else word
+
+
+def _worded(blocks: list[Block], out: list[Block]) -> list[Block]:
+    """`out` with the run of chapters numbered in words settled as `_settle` settles
+    digits: a heading of one word off the run takes the number word its neighbours leave
+    room for, in the run's language and case (Goede dochter's "ZEVEN" read "LEVEN")."""
+    at = [i for i, b in enumerate(blocks) if isinstance(b, Heading) and len(b.text.split()) == 1]
+    read = [word_value(blocks[i].text) for i in at]
+    known = [blocks[i].text.strip().lower() for i, r in zip(at, read, strict=True) if r]
+    if not known:
+        return out
+    lang = max(NUMBER_WORDS, key=lambda g: sum(w in NUMBER_WORDS[g] for w in known))
+    for i, was, number in zip(at, read, _settle(read), strict=True):
+        if number is not None and number != was:
+            text = _in_words(number, blocks[i].text.strip(), lang)
+            out[i] = replace(blocks[i], text=text, parts=[text])
+    return out
+
+
 def settled(blocks: list[Block]) -> set[SourceRef]:
     """The lines of headings their run confirms, so the review needn't ask about them
     (`blocks` after `numbered`): bare chapter numbers each one more than the one before
@@ -500,7 +597,7 @@ def numbered(blocks: list[Block]) -> list[Block]:
     their label set as the book's commonest spelling of it ("Hoorpstuk 6"); so do numbers
     before a title of words ("50 ALEX" between "29 RENEE" and "31 ALEX"); and a heading
     whose label is past recognising takes it where its number is the one the run lacks
-    there. Returns a new list."""
+    there; chapters numbered in words run too (`_worded`). Returns a new list."""
     out = list(blocks)
     at = [
         i
@@ -522,6 +619,7 @@ def numbered(blocks: list[Block]) -> list[Block]:
         if number is not None and str(number) != was:
             parts = _renumbered(blocks[i].parts, was, number)
             out[i] = replace(blocks[i], text=f"{number} {title}", parts=parts)
+    out = _worded(blocks, out)
     labelled = [
         (i, m.group(1), m.group(2))
         for i, b in enumerate(blocks)

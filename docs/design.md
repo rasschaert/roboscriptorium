@@ -1065,8 +1065,11 @@ reading leaves exactly room for them (Het schaduwhuis's "54 RENEE", "50 ALEX" be
 and 36, which an arbiter held out from the book sends to review instead of fixing; a
 gap with fewer misreads than missing numbers is a lost heading and stays). The number
 is set in the heading's parts as well as its text, also where number and title share a
-line ("50 ALEX" as one part): the EPUB sets the parts. Numbering is true by definition,
-so this is code, not a learned decision. In a book whose headed openings are mostly titles of words, a title set
+line ("50 ALEX" as one part): the EPUB sets the parts. Chapters numbered in words run the
+same way ("ZES", "ZEVEN", "ACHT", Dutch or English to 99): a one-word heading off the run
+takes the word its neighbours leave room for, in the run's case (`chapters._worded`;
+Goede dochter's "ZEVEN", which a retrained arbiter took for a reader's "LEVEN",
+2026-11-14). Numbering is true by definition, so this is code, not a learned decision. In a book whose headed openings are mostly titles of words, a title set
 apart atop a sunk opening is a heading too, even one the trees took for body: Reis om
 mijn schedel's "Een gebaar in het vensterglas" (P(body) 0.60) and "Het vonnis wordt
 uitgesproken" (0.44), six words, which the trees read as a line of text, where its 21

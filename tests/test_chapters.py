@@ -686,3 +686,22 @@ def test_a_heading_is_left_asked_where_the_book_or_the_versions_dont_settle_it()
     ]  # fmt: skip
     for suspects, pages in cases:
         assert chapters.heading_case(suspects, pages) == suspects
+
+
+def test_chapters_numbered_in_words_run_too_and_a_misread_one_takes_the_word():
+    words = ["EEN", "TWEE", "DRIE", "VIER", "VIJF", "ZES", "LEVEN", "ACHT"]
+    out = chapters.numbered(_headings(*words))
+    assert _read(out) == ["EEN", "TWEE", "DRIE", "VIER", "VIJF", "ZES", "ZEVEN", "ACHT"]
+    assert out[12].parts == ["ZEVEN"]
+    # An interlude between two numbers that leave it no room stays as it is.
+    interlude = ["Een", "Twee", "Drie", "Vier", "Intermezzo", "Vijf", "Zes"]
+    assert _read(chapters.numbered(_headings(*interlude))) == interlude
+    # Too few to run: as read.
+    few = ["ONE", "TWO", "TREE"]
+    assert _read(chapters.numbered(_headings(*few))) == few
+    # English, with compounds, in the run's case.
+    english = ["Nineteen", "Twenty", "Twenty-one", "Twenty-twa", "Twenty-three", "Twenty-four"]
+    assert _read(chapters.numbered(_headings(*english)))[3] == "Twenty-two"
+    dutch = ["twintig", "eenentwintig", "tweeëntwintig", "drieentwintig", "vierentwintig"]
+    assert chapters.word_value("drieëntwintig") == 23 == chapters.word_value("drieentwintig")
+    assert _read(chapters.numbered(_headings(*dutch))) == dutch
