@@ -395,19 +395,6 @@ are under Done, "Architecture probes".
       book set flush for tuning and a short-story collection; then section headings
       without numbers, text wrapped around pictures. From before: De Arbeiderspers,
       Prometheus/Ooievaar or Vrijdag; a Kosmos book for later, beyond prose
-- [ ] **user**: 36 unasked errors that look like the reference's, to confirm, one
-      answer per pattern on seven crop sheets (`work/probes/unasked/confirm-20261114/`,
-      ~5 min). Of the 58 below, The Thief-Taker's Apprentice's 11 (answered 2026-11-14)
-      and 10 more of the same kind are now undone by the manifest key `stray_spaces`;
-      Goede dochter's "vergieten. ‘" is as printed (the agent's reading was wrong). Of the 223 unasked places that
-      differ from the reference only in spaces or hyphens (fresh baselines, 2026-11-12),
-      each read on its crop by the agent: in 58 the print is as ours has it (a space
-      before a mark the print doesn't set, words the e-book runs together or splits, a
-      hyphen the print sets inside the line); 75 are the build's (Errors no question
-      asks about); 70 are hyphens at the print's line end, which no crop settles; 20 are
-      the spacing beside an ellipsis. The readings:
-      `work/probes/unasked/spacing-20261112/readings.json`
-      (`experiments/unasked_spacing_sheets.py`)
 - [ ] `golden check <pdf> <epub>` writing a draft manifest, once a batch of candidates
       comes
 
@@ -1229,6 +1216,9 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       digests; long runs timed into run-times.md; design.md and decisions.md started
 
 ## Golden books
+
+- [x] **user**: 36 unasked errors that look like the reference's, confirmed
+      (2026-11-14): 35 errata in their books' `errata.toml`, Au pair's "want-als" a speck
 
 - [x] 2026-11-11 The gaps to hunt for (golden-notes.md) name a short-story collection,
       section headings without numbers, text wrapped around pictures and old-style
