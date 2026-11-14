@@ -167,13 +167,11 @@ get renumbered. Don't add a file to this table without a job no other file has.
   idea or fix works is shown on the pages it touches (a targeted build of those pages,
   their errors fixed against broken), in minutes, not by a full bench. The full bench
   guards against regressions elsewhere: run it once a change has passed its short test,
-  several changes batched, cold ones overnight.
+  several changes batched.
 - **Decide upstream changes on the frozen sets; the bench confirms.** A change upstream
   of the stage caches (a prompt, a crop, a model, the arbiter) invalidates them, so a
   bench of it runs cold for hours. Choose it on the frozen line sets
   (`experiments/tryout.py`) in minutes, then bench the winner once.
-- **Cold runs go overnight or while the user is away.** A cold bench holds Ollama and the
-  battery for hours; during the day run warm benches and probes only.
 - **A probe beside a running chain sends the chain's model options** (no `num_ctx` of its
   own): Ollama reloads a model whenever the requested context differs, so two clients at
   different contexts reload it on every switch and throttle both.

@@ -2585,3 +2585,8 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   e-book numbers chapter 6 "HOOFDSTUK 5": one such erratum, and its slice's headings go
   37/38 with one extra → 38/38 exact, none extra. The 35 errata of the morning keep the
   edition, as before.
+- 2026-11-14: **No more "cold runs overnight"** (the user: "remove the overnight rule. i
+  don't know how it got in there"). An agent wrote it into AGENTS.md on 2026-10-13 with no
+  word of the user's behind it, and it held the GPU idle from 18:45 to 22:00 today while
+  the text seat's run waited for night. A run on the checklist starts when the machine is
+  free; the battery gate and "say before chaining long runs" stay.

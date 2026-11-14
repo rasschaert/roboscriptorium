@@ -7,9 +7,9 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**Running (the fifth session, 2026-11-14, updated 18:45):**
+**Running (the fifth session, 2026-11-14, updated 18:50):**
 
-- screen `robo-text-seat-night` (`work/runs/text-seat-night.sh`), waits for 22:00:
+- screen `robo-text-seat-night` (`work/runs/text-seat-night.sh`), started 18:45:
   autotrust-jev 9B asked the text judge's question as a fourth second judge beside the
   render panel (branch `text-seat`, `../robo-text`, rebased on main today). Trust data
   into `work/probes/ocr-trust-text/` book by book (`experiments/rebuild-trust.sh`,
@@ -32,10 +32,9 @@ and of baselines is superseded by the first section; the older sections are from
   on validation; the gain lay where the arbiter asks anyway.
 - Rule added: a cache version bumped on a branch is one no branch has used.
 
-**Waiting on the user:** Het ijzige land's e-book numbers chapter 6 "HOOFDSTUK 5": an
-erratum (the EPUB would print 5 twice) or a `[reference]` key setting the reference
-back to the print's 6 (recommended; a small new key in `golden derive`). Asked
-2026-11-14, 18:00.
+**Answered by the user (2026-11-14, evening):** Het ijzige land's e-book chapter-number
+slip became an erratum kept as printed (`keep = "print"`, the user's idea); the
+"cold runs overnight" rule is gone from AGENTS.md (an agent's, never the user's).
 
 **Held back from review:** Nervous System (13 single-reading heading questions, small
 capitals in lower case, one garbled line every judge reads right) and Pieter Daens (332
