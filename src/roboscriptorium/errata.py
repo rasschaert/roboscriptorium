@@ -14,6 +14,19 @@ curly, match either. One that matches nothing or more than once stops the build:
 add words around it until it is unique. The exception: one whose `reads` already stands
 on the page is met (a reader or judge settled it that way). The review's answers keep
 saying what the page prints (the readers are scored on that); an erratum changes only the text.
+
+An edition's slip the book must not copy (a golden book's e-book numbering two chapters
+5) is kept as printed instead, and the bench scores it against the print:
+
+    [[erratum]]
+    page = 53
+    printed = "HOOFDSTUK 6"
+    reads = "HOOFDSTUK 5"
+    keep = "print"
+    chapter = 6
+
+`chapter` (the reference's chapter file) places it where the edition's words occur
+more than once.
 """
 
 import tomllib
@@ -22,6 +35,7 @@ from difflib import SequenceMatcher
 from pathlib import Path
 
 from roboscriptorium.files import write_atomic
+from roboscriptorium.golden.reference import Chapter
 from roboscriptorium.ir import Block, Heading, Paragraph
 
 # Each glyph folded to one character, so positions in the folded text are positions
@@ -35,11 +49,20 @@ class Unmatched(ValueError):
     """An erratum whose printed words occur on its page not exactly once."""
 
 
+# What the book keeps of an erratum: the edition's words (its correction, or its slip,
+# followed all the same) or the print's (a slip the book must not copy).
+EDITION, PRINT = "edition", "print"
+
+
 @dataclass(frozen=True)
 class Erratum:
     page: int
     printed: str
     reads: str
+    keep: str = EDITION
+    # The reference chapter (its file's number) the edition's words stand in, for
+    # placing them there where they occur more than once.
+    chapter: int | None = None
 
 
 def path(root: Path) -> Path:
@@ -53,7 +76,10 @@ def load(root: Path) -> list[Erratum]:
         return []
     with file.open("rb") as f:
         data = tomllib.load(f)
-    return [Erratum(e["page"], e["printed"], e["reads"]) for e in data.get("erratum", [])]
+    return [
+        Erratum(e["page"], e["printed"], e["reads"], e.get("keep", EDITION), e.get("chapter"))
+        for e in data.get("erratum", [])
+    ]
 
 
 def save(root: Path, erratum: Erratum) -> None:
@@ -66,6 +92,8 @@ def save(root: Path, erratum: Erratum) -> None:
     kept = [e for e in load(root) if (e.page, e.printed) != (erratum.page, erratum.printed)]
     entries = [
         f"[[erratum]]\npage = {e.page}\nprinted = {quoted(e.printed)}\nreads = {quoted(e.reads)}\n"
+        + (f"keep = {quoted(e.keep)}\n" if e.keep != EDITION else "")
+        + (f"chapter = {e.chapter}\n" if e.chapter is not None else "")
         for e in [*kept, erratum]
     ]
     write_atomic(path(root), "\n".join(entries))
@@ -163,7 +191,7 @@ def apply(
     """
     out = list(blocks)
     for e in errata:
-        if e.page not in pages:
+        if e.page not in pages or e.keep == PRINT:
             continue
         needle = e.printed.translate(FOLD)
         found = [
@@ -221,3 +249,43 @@ def _occurrences(text: str, needle: str) -> list[int]:
         found.append(at)
         at = text.find(needle, at + 1)
     return found
+
+
+def as_printed(reference: list[Chapter], found: list[Erratum]) -> list[Chapter]:
+    """The whole reference (before any slice: `chapter` counts from its first) with each
+    erratum's edition words set back as printed, in a paragraph or a heading. An erratum
+    whose edition words the reference holds other than once, in its `chapter` where it
+    names one, is left out."""
+    chapters = [replace(c, paragraphs=list(c.paragraphs), italic=list(c.italic)) for c in reference]
+    for e in found:
+        reads = e.reads.translate(FOLD)
+        # Each place: (chapter, paragraph or -1 for the heading, offset).
+        at = [
+            (c, p, k)
+            for c, ch in enumerate(chapters)
+            for p, text in [(-1, ch.heading), *enumerate(ch.paragraphs)]
+            for k in _occurrences(text.translate(FOLD), reads)
+        ]
+        if len(at) > 1 and e.chapter is not None:
+            at = [a for a in at if a[0] == e.chapter - 1]
+        if len(at) != 1:
+            continue
+        c, p, k = at[0]
+        ch = chapters[c]
+        if p < 0:
+            chapters[c] = replace(
+                ch, heading=ch.heading[:k] + e.printed + ch.heading[k + len(reads) :]
+            )
+            continue
+        para = ch.paragraphs[p]
+        changed = para[:k] + e.printed + para[k + len(reads) :]
+        ch.paragraphs[p] = changed
+        if p < len(ch.italic) and (shift := len(changed.split()) - len(para.split())):
+            word = len(para[:k].split())
+            ch.italic[p] = frozenset(i + shift if i > word else i for i in ch.italic[p])
+    return chapters
+
+
+def printed_only(found: list[Erratum]) -> list[Erratum]:
+    """The errata the book keeps as printed: the reference it is scored on reads so too."""
+    return [e for e in found if e.keep == PRINT]

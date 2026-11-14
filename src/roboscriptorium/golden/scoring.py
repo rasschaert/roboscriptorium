@@ -13,6 +13,7 @@ from typing import NamedTuple
 from roboscriptorium import (
     chapters,
     disagreements,
+    errata,
     faint,
     flags,
     layout,
@@ -79,7 +80,11 @@ def reference(
 ) -> tuple[list[Chapter], Around]:
     """The reference's chapters scored, and the words around them. Given the pages of a
     slice that names no chapters (`sliced`), the paragraphs those pages hold."""
-    chapters_text = load_chapters(Golden.load(book.golden).text_dir)
+    # An edition's slip the book keeps as printed is scored as printed too.
+    chapters_text = errata.as_printed(
+        load_chapters(Golden.load(book.golden).text_dir),
+        errata.printed_only(errata.load(book.root)),
+    )
     if chapters is None and sliced:
         cut, around, _ = cut_to_pages(chapters_text, sliced)
         return cut, around

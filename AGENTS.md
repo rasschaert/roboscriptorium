@@ -633,8 +633,11 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   an erratum in `work/<book>/errata.toml`, so the build reads as the publisher's text while
   the arbiter's training data labels the readers on the print (`trustdata.as_printed`;
   the user, 2026-11-14: "the publisher decided that the print version was wrong and
-  corrected it in the epub. that's what our errata system does"); what none of these
-  covers is settled by a verdict. A deviation that lives only in a comment or a note is
+  corrected it in the epub. that's what our errata system does"); an edition slip the book
+  must not copy, a structural one above all (a chapter numbered twice), is an erratum
+  with `keep = "print"`: the build keeps the print and the bench scores the reference set
+  back to it (the user's idea, 2026-11-14); what none of these covers is settled by a
+  verdict. A deviation that lives only in a comment or a note is
   untracked: move it to one of the four.
 - **Retiring a book.** A reference can stop being one: when a book's remaining
   disagreements are mostly edition differences, or its verdict backlog never shrinks,

@@ -103,3 +103,35 @@ def test_a_wording_that_reaches_beyond_the_layer_line_is_compared_on_the_shared_
     assert errata.from_layer(69, layer[1], wording, layer, 1) == Erratum(
         69, "gezicht .", "gezicht."
     )
+
+
+def test_an_edition_slip_kept_as_printed_leaves_the_build_and_round_trips(tmp_path):
+    slip = Erratum(53, "HOOFDSTUK 6", "HOOFDSTUK 5", errata.PRINT, 6)
+    errata.save(tmp_path, slip)
+    errata.save(tmp_path, Erratum(8, "zeI", "zei"))
+    assert errata.load(tmp_path) == [slip, Erratum(8, "zeI", "zei")]
+    heading = Heading("HOOFDSTUK 6", [SourceRef(53, 0)], ["HOOFDSTUK 6"])
+    # The build keeps the print: nothing to apply, nothing unmatched.
+    assert errata.apply([slip], [heading], {53}) == [heading]
+    # An edition erratum on the same heading still changes it.
+    edition = Erratum(53, "HOOFDSTUK 6", "HOOFDSTUK 5")
+    assert errata.apply([edition], [heading], {53})[0].parts == ["HOOFDSTUK 5"]
+
+
+def test_the_reference_is_set_back_as_printed_in_a_heading_placed_by_its_chapter():
+    from roboscriptorium.golden.reference import Chapter
+
+    reference = [
+        Chapter("HOOFDSTUK 4", ["Vier."]),
+        Chapter("HOOFDSTUK 5", ["Vijf."]),
+        Chapter("HOOFDSTUK 5", ["Zes."]),
+    ]
+    slip = Erratum(53, "HOOFDSTUK 6", "HOOFDSTUK 5", errata.PRINT, 3)
+    printed = errata.as_printed(reference, [slip])
+    assert [c.heading for c in printed] == ["HOOFDSTUK 4", "HOOFDSTUK 5", "HOOFDSTUK 6"]
+    assert reference[2].heading == "HOOFDSTUK 5"  # the reference itself is untouched
+    # Twice in the reference and no chapter named: left out.
+    unplaced = Erratum(53, "HOOFDSTUK 6", "HOOFDSTUK 5", errata.PRINT)
+    assert [c.heading for c in errata.as_printed(reference, [unplaced])][2] == "HOOFDSTUK 5"
+    # Only the errata kept as printed are scored as printed.
+    assert errata.printed_only([slip, Erratum(8, "zeI", "zei")]) == [slip]

@@ -2576,3 +2576,12 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   for letter but with other marks, all The Thief-Taker's Apprentice and all real: "14 A
   POINT’WELL MADE" (a speck read as an apostrophe) and its three part pages set "/ PART
   ONE /", the print's ornaments read as slashes, in the EPUB too. None on validation.
+- 2026-11-14: **An erratum can keep the print** (`keep = "print"`, `chapter`; the user's
+  idea, over the two offered: an erratum following the e-book's slip, which would print
+  "HOOFDSTUK 5" twice, or a manifest key). Every place an e-book departs from its print
+  stays in one file; one the book must not copy leaves the build alone and sets the
+  reference back to the print, a heading too (`errata.as_printed`, moved from
+  `trustdata.py`, now applied to the whole reference before any slice). Het ijzige land's
+  e-book numbers chapter 6 "HOOFDSTUK 5": one such erratum, and its slice's headings go
+  37/38 with one extra → 38/38 exact, none extra. The 35 errata of the morning keep the
+  edition, as before.

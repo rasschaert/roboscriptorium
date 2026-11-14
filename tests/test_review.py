@@ -438,7 +438,9 @@ def test_a_misprint_on_a_place_is_an_erratum_from_our_text_and_the_verdict_stays
     # The page prints the e-book's reading; our text is what the erratum turns.
     theirs = "Hij was zo stom geweest zijn geId niet op een"
     out = r.record({"key": "k", "text": theirs, "misprint": OURS.replace("geld", "geldt")})
-    assert out["errata"] == [{"page": 17, "printed": "geld", "reads": "geldt"}]
+    assert out["errata"] == [
+        {"page": 17, "printed": "geld", "reads": "geldt", "keep": "edition", "chapter": None}
+    ]
     assert errata.load(tmp_path) == [errata.Erratum(17, "geld", "geldt")]
     assert Verdicts(tmp_path / "v.jsonl").by_key["k"].truth == "geId"
 

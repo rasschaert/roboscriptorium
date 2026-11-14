@@ -12,7 +12,16 @@ import os
 from dataclasses import replace
 from pathlib import Path
 
-from roboscriptorium import bench, disagreements, layout, pageroles, pipeline, sorter, typestyle
+from roboscriptorium import (
+    bench,
+    disagreements,
+    errata,
+    layout,
+    pageroles,
+    pipeline,
+    sorter,
+    typestyle,
+)
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.files import write_atomic
@@ -65,7 +74,10 @@ def lines(spec: str, rebuild: bool = False) -> list[dict]:
     stages = pipeline.run(
         book, pages=scoring.page_range(pages or None), check_ocr=False, settings=settings
     )
-    reference = load_chapters(Golden.load(book.golden).text_dir)
+    reference = errata.as_printed(
+        load_chapters(Golden.load(book.golden).text_dir),
+        errata.printed_only(errata.load(book.root)),
+    )
     if span := scoring.page_range(chapters or None):
         reference = reference[span[0] - 1 : span[1]]
     reference, _ = disagreements.patch(reference, scoring.verdicts(book))

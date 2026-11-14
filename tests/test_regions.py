@@ -361,7 +361,7 @@ def test_a_misprint_keeps_the_answer_as_printed_and_writes_the_edition_line_to_t
     # "zeI" is printed twice on the page: the erratum takes the word after it too.
     assert errata.load(tmp_path) == [errata.Erratum(1, "zeI ik,", "zei ik,")]
     assert page_review.state()["items"][0]["errata"] == [
-        {"page": 1, "printed": "zeI ik,", "reads": "zei ik,"}
+        {"page": 1, "printed": "zeI ik,", "reads": "zei ik,", "keep": "edition", "chapter": None}
     ]
     # Answered again with another correction, the erratum is replaced, not added to.
     page_review.record(

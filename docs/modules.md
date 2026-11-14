@@ -437,7 +437,11 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   way. An erratum whose words its page holds not exactly once stops the build
   (`Unmatched`). The review writes one from a line and its correction (`from_line`: the
   words that differ, grown by words of the line until unique on the page) and keeps one
-  per printed words (`save`).
+  per printed words (`save`). One kept as printed (`keep = "print"`: an edition slip the
+  book must not copy) leaves the build alone; `as_printed` sets the reference back to the
+  print, in paragraphs and headings, placed by its `chapter` where the edition's words
+  occur twice: for every erratum in the trust data's labels, for those kept as printed in
+  the reference every score reads (`scoring.reference`, the line-role data).
 - `footnotes.py`: the footnotes at a page's foot (`lines`: below the text, in type under
   0.78 of the body's and lighter than 1.2 of its strokes, opening on a mark or on a
   quote glyph the layer read for a star, mostly words), given a role reflow leaves out (`with_notes`, by `Line.source` on corrected
