@@ -266,6 +266,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   dedication's lines in one type where all but one word agree. The trees in
   `work/models/italics.pkl` decide instead of the cuts (`ROBO_ITALIC_TREES=0` for the cuts) (`Trees`, `features`, `decide`; trained by
   `experiments/italic_words.py --save`, a copy without each tuning book for `bench`).
+  With a second set (`work/models/italics-second.pkl`, `ROBO_ITALIC_SECOND`) and a judge
+  (`ROBO_ITALIC_JUDGE`, clef:27b), the words the two disagree on are the judge's to
+  settle on the line's crop (`settle`), its answers in `stages/decisions.jsonl`.
 - `missing.py`: printed lines the OCR layer lacks (bare chapter numbers,
   page numbers, short lines of dialogue). A layout region about one line tall
   (up to five above a sunk page's text, where Artemis draws its chapter numbers in a

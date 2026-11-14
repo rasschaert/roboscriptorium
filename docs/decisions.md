@@ -2657,3 +2657,18 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   by book, asks 237 of them (under 0.93, raw), and on those the judges are right on 162
   (68%): stress accents ("Daarvóór", "Dát", "ín", "Zíj") and quote marks, where a speck
   and an accent look alike to every judge. The checklist step closes.
+- 2026-11-14: **A judge between two sets of italic trees: TAKEN, on by default** (the
+  user's idea; branch `italic-panel`, merged). The old italic trees and the grown ones
+  (`work/models/italics-second*.pkl`, from `trees-grown-20261114/`), clef:27b settling
+  their 1-in-1,000 disagreements on the line's crop. Warm but for clef's answers, against
+  main's production runs: tuning BETTER, italic errors 1,223 → 986, heading errors
+  26 → 24, no word moved (`tuning-20261114T211926-ba2e017-dirty.json`); validation
+  BETTER, italic errors 195 → 170, nothing else moved
+  (`validation-20261114T212127-7222f1f-dirty.json`). Het geluid van bananen keeps its
+  italics. These runs are the new baselines for italics; the night's other candidates,
+  each benched against the old baselines on its own branch, get a combined check after.
+- 2026-11-14: **The book's own spacing of a repeated form as arbiter columns: null**
+  (`experiments/probe_book_spacing.py`; the user's "M.H." against "M. H."). Over 1,355
+  places differing only in spaces, how often the layer prints each form: silent errors
+  425 → 424; questions to leave no more silent errors 3,370 → 3,455, random columns
+  3,413. The review's propagated answers ("your answers") already serve that case.

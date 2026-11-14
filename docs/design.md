@@ -1258,6 +1258,15 @@ of tuning, 283 → 162. Counts of measured words are no feature: with them the t
 picked out single pages of other books and set whole upright lines italic. The chance
 0.5, not 0.4 (634 errors on tuning but 39 more false italics, which a reader notices).
 
+
+**Two sets of trees and a judge between them** (the user's idea, 2026-11-14: "can't we
+use multiple variants and then have the panel of judges decide?"). The trees retrained on
+the grown slices were better on 14 of 19 tuning books but, held out from Het geluid van
+bananen, the one book set mostly in italics, lost 1,100 of its italic words; the two sets
+disagree on only 1,640 of 1.6 million tuning words. clef:27b, shown each such word's line,
+was right on 92 of 100 (the old trees 67, the grown 33). Built (`italics.settle`), with
+the grown trees as the second set: italic errors 1,223 → 986 on tuning and 195 → 170 on
+validation, nothing else moved.
 ## A build against the last build
 
 **A book with no reference is checked against its own earlier builds** (the user,

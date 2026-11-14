@@ -223,12 +223,6 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       gained on Reis, Metro and Het heft, Dolittle's running heads kept as headings (+44),
       and on De stilte van de hel a set-apart passage dropped as no text (p. 94, unasked
       0.08 → 0.53 a page), with short lines of dialogue elsewhere
-- [ ] Italic trees that read a book set mostly in italics: retrained on the grown slices
-      (2026-11-14, `work/models/trees-grown-20261114/`) they are better on 14 of the 19
-      books scored and on validation (italic errors 195 → 179), but held out from Het
-      geluid van bananen (13,494 of 76,102 words italic, the only such book) they lose
-      1,100 of its italics (349 → 1,486 errors). Ideas: the share of the book's words
-      the trees call italic as a feature; a second book set that way in the tuning set
 - [ ] Scene breaks the build misses: 23 of 295 (Reis 14, De eerlijke vinder 7). Reis's
       are page tops after a full page whose last line ends a sentence at the margin, the
       next opening flush: the same geometry as a paragraph running on, so only the text
@@ -454,6 +448,10 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       "ís"); rebuilt, epubcheck clean (`epubs/stella-2026-10-16-0859.epub`)
 
 ## Structure and line roles
+
+- [x] ~~Italic trees that read a book set mostly in italics~~ (2026-11-14): the user's
+      judge between two sets of trees, on by default; italic errors 1,223 → 986 on tuning,
+      195 → 170 on validation
 
 - [x] ~~Both learned trees retrained on the grown slices~~ (not taken 2026-11-14): tuning
       WORSE, italic errors 1,223 → 2,315 (Het geluid van bananen alone 349 → 1,486),

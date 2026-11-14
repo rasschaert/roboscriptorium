@@ -83,9 +83,12 @@ class Settings:
     italic_trees: bool = True
     italic_model: str = "work/models/italics.pkl"
     # A second set of italic trees and the vision judge that settles the words the two
-    # disagree on (`italics.settle`); "" for either leaves the first set alone.
-    italic_second: str = ""
-    italic_judge: str = ""
+    # disagree on (`italics.settle`); "" for either leaves the first set alone. The trees
+    # trained on the grown slices, the first set's held out from Het geluid van bananen
+    # (a book set mostly in italics): italic errors 1,223 → 986 on tuning, 195 → 170 on
+    # validation, nothing else moved (the user's idea, 2026-11-14; docs/design.md).
+    italic_second: str = "work/models/italics-second.pkl"
+    italic_judge: str = "clef:27b"
     # The read model names each body page's heading and furniture lines from the page image
     # (`pageroles.py`), an input to the trees, which must be trained with it.
     page_roles: bool = False
