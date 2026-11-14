@@ -560,11 +560,15 @@ def scenes(score: dict) -> str:
 
 def headings(score: dict) -> str:
     """Headings found of those expected, how many of them letter for letter ("4I" for 41
-    is found, not exact), and how many
-    more the output sets (a score saved before exact ones were counted reads them as found)."""
+    is found, not exact), how many more the output sets (a score saved before exact ones
+    were counted reads them as found), and of the exact ones how many set other marks
+    (left out for a score saved before they were counted)."""
     exact = score.get("headings_exact", score["headings_found"])
     extra = score.get("headings_extra", score["headings_spurious"])
-    return f"{score['headings_found']}/{score['headings_expected']} ({exact} exact, +{extra})"
+    marked = f", {score['headings_marked']} marks" if score.get("headings_marked") else ""
+    return (
+        f"{score['headings_found']}/{score['headings_expected']} ({exact} exact, +{extra}{marked})"
+    )
 
 
 def heading_totals(run: dict) -> dict:
@@ -578,6 +582,9 @@ def heading_totals(run: dict) -> dict:
     total["headings_exact"] = sum(
         b["score"].get("headings_exact", b["score"]["headings_found"])
         for b in run["books"].values()
+    )
+    total["headings_marked"] = sum(
+        b["score"].get("headings_marked", 0) for b in run["books"].values()
     )
     return total
 

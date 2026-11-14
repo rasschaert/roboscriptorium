@@ -433,3 +433,11 @@ def test_italic_errors_decide_the_verdict_and_a_book_losing_its_italics_vetoes()
     unscored = _slanted(_run(flat, c=flat), b=(100, 60, 60), c=(500, 480, 470))
     unscored["books"]["b"]["italics_scored"] = False
     assert bench.verdict(before, unscored).italics == (40, 40)
+
+
+def test_the_heading_line_names_marks_only_where_a_score_counted_some():
+    score = {"headings_found": 9, "headings_expected": 10, "headings_spurious": 0,
+             "headings_exact": 8, "headings_extra": 1}  # fmt: skip
+    assert bench.headings(score) == "9/10 (8 exact, +1)"
+    assert bench.headings(score | {"headings_marked": 0}) == "9/10 (8 exact, +1)"
+    assert bench.headings(score | {"headings_marked": 2}) == "9/10 (8 exact, +1, 2 marks)"

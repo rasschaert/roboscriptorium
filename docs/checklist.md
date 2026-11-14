@@ -387,11 +387,10 @@ are under Done, "Architecture probes".
 
 ## Golden books and the bench
 
-- [ ] A heading's punctuation and quote marks measured: exact headings compare letters
-      and digits only (`evaluate._heading_key`, so small capitals match their reference),
-      and the typography count reads paragraphs only, so straight apostrophes in headings
-      went unseen until read by eye (2026-11-14). Count a heading's marks apart from its
-      case, as the paragraphs' glyphs are. ~1 h, then a warm bench
+- [ ] The Thief-Taker's part pages set "/ PART ONE /" in the EPUB: the print's ornaments
+      read as slashes (found by `heading_marks`, 2026-11-14). Check the scan, then strip
+      ornaments from part labels where the reference and the book's other parts agree,
+      and "A POINT’WELL MADE"'s speck
 - [ ] **user**: golden pairs for the gaps (golden-notes.md, "Gaps to hunt for"): first a
       book set flush for tuning and a short-story collection; then section headings
       without numbers, text wrapped around pictures. From before: De Arbeiderspers,
@@ -1118,6 +1117,9 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       the places the consistency test flags, if that probe earns it
 
 ## Measurement
+
+- [x] A heading's punctuation and quote marks measured (2026-11-14,
+      `evaluate.heading_marks`): four on tuning, all real, none on validation
 
 - [x] Every long run resumable (2026-11-14; the user, 2026-11-13): the arbiter's
       training, its leave-one-out scoring (`work/probes/loo-scoring/`), the italic

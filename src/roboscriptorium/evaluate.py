@@ -146,6 +146,8 @@ class Score:
     # runs saved before, subtracts expected ones matched, so one heading standing for two
     # ("CHAPTER 1" and its title) makes it negative.
     headings_extra: int = 0
+    # Of the headings found letter for letter, those whose marks differ (`heading_marks`).
+    headings_marked: int = 0
     italic_expected: int = 0
     italic_output: int = 0
     italic_precision: float = 0.0
@@ -242,6 +244,27 @@ def _same_heading(
     # A heading split from its subtitle still counts ("THE FIRST CHAPTER" for
     # "THE FIRST CHAPTER PUDDLEBY"), but "I" is not "II".
     return fuzz.ratio(a, b) >= 85 or (len(short) >= 8 and long.startswith(short))
+
+
+def _marks(text: str) -> str:
+    """The heading's punctuation and quote marks in order, its letters, digits and spaces
+    left out (so case and accents don't count)."""
+    return "".join(c for c in text if not c.isalnum() and not c.isspace())
+
+
+def heading_marks(found: list[str], expected: list[str]) -> int:
+    """How many found headings match an expected one (or a number and title set as two,
+    `_match_headings`) letter for letter but set other punctuation or quote marks: the
+    layer's straight apostrophe in "De gyula's beraadslagen" where the print curls it.
+    The exact count leaves marks out, so small capitals match their mixed-case reference."""
+    by_key: dict[str, list[str]] = {}
+    for text in [*expected, *(f"{a} {b}" for a, b in itertools.pairwise(expected))]:
+        by_key.setdefault(_heading_key(text), []).append(_marks(text))
+    return sum(
+        1
+        for text in found
+        if (marks := by_key.get(_heading_key(text))) and _marks(text) not in marks
+    )
 
 
 def match_headings(found: list[str], expected: list[str], exact: bool = False) -> int:
@@ -371,6 +394,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
         headings_spurious=len(doc.headings) - matched,
         headings_extra=extra_headings(shown, titled),
         headings_exact=match_headings(shown, titled, exact=True),
+        headings_marked=heading_marks(shown, titled),
         italic_expected=len(ref_italic),
         italic_output=len(out_italic),
         italic_precision=len(hit_italic) / len(out_italic) if out_italic else 0.0,

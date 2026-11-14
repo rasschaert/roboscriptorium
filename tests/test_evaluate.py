@@ -196,3 +196,18 @@ def test_a_heading_standing_for_two_is_no_extra_and_never_a_negative_one():
     )
     assert match_headings(found, expected) == 2
     assert extra_headings(found, expected) == 1
+
+
+def test_a_heading_found_letter_for_letter_is_counted_where_its_marks_differ():
+    marked = evaluate.heading_marks
+    # The layer's straight apostrophe where the print curls it.
+    assert marked(["De gyula's beraadslagen"], ["De gyula’s beraadslagen"]) == 1
+    assert marked(["De gyula’s beraadslagen"], ["De gyula’s beraadslagen"]) == 0
+    # Case, accents and spaces are no marks: small capitals and their reference agree.
+    assert marked(["HOOFDSTUK EEN"], ["Hoofdstuk een"]) == 0
+    assert marked(["Één"], ["Een"]) == 0
+    # Number and title set as one heading against two in the reference.
+    assert marked(["CHAPTER 1 The End’s Start"], ["CHAPTER 1", "The End’s Start"]) == 0
+    assert marked(["CHAPTER 1 The End's Start"], ["CHAPTER 1", "The End’s Start"]) == 1
+    # A heading whose letters match none is no concern of this count.
+    assert marked(["Proloog!"], ["Epiloog"]) == 0

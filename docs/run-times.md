@@ -999,3 +999,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | arbiter trained with the render judge's measures as columns (CPU) | 0 | 91 | 0 |
 | 2026-11-14 | bench tuning, the render judge's measures as arbiter columns (warm) | 0 | 11 | 0 |
 | 2026-11-14 | bench validation, the render judge's measures as arbiter columns (warm) | 0 | 5 | 0 |
+| 2026-11-14 | bench tuning, headings' marks counted (warm) | 0 | 4 | 0 |
+| 2026-11-14 | bench validation, headings' marks counted (warm) | 0 | 1 | 0 |

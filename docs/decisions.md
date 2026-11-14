@@ -2570,3 +2570,9 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   question budget, not the signal. Retest if the build is asked to ask fewer questions,
   where those places stop being asked. Lesson: read a probe at the operating point first;
   the no-question column is the ceiling, not the forecast.
+- 2026-11-14: **A heading's marks counted beside its letters** (`evaluate.heading_marks`,
+  `Score.headings_marked`, shown in the bench's heading line, not in the verdict). On its
+  first run, tuning and validation NO CHANGE, it finds four headings on tuning set letter
+  for letter but with other marks, all The Thief-Taker's Apprentice and all real: "14 A
+  POINT’WELL MADE" (a speck read as an apostrophe) and its three part pages set "/ PART
+  ONE /", the print's ornaments read as slashes, in the EPUB too. None on validation.
