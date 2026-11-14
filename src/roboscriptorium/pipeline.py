@@ -146,6 +146,8 @@ def run(
     style = dash_style(book, whole)
     dots = ellipsis_style(book, whole)
     faint_pages = set()
+    # Each reader's reading of the body lines the OCR check read, by reader.
+    line_reads: dict[str, dict[SourceRef, str]] = {}
     # Lines printing footnotes, by position in `body` (`footnotes.lines`).
     note_lines: set[SourceRef] = set()
     # Lines of a motto set on a page of its own (`epigraphs.lines`), likewise.
@@ -341,6 +343,7 @@ def run(
                 for spec in settings.alarm_models
                 if (alarm := _alarm(spec, settings, book, whole)) is not None
             ]
+            line_reads = dict(readings)
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, whole, style, dots), alarms, settings.alarm_below,
@@ -485,6 +488,11 @@ def run(
             if closed
             else quote_lines
         )
+    # A quote card shows every reader's reading of its lines, as an OCR doubt's does.
+    for ref in quote_lines:
+        for name, kind in quotes.READER_KINDS.items():
+            if text := line_reads.get(name, {}).get(ref):
+                quote_readings.setdefault(ref, {})[kind] = text
     notes = footnotes.collect(corrected, note_lines)
     # Running text and notes together, so an erratum's words are unique across both.
     fixed = errata.apply(

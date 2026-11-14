@@ -25,7 +25,7 @@ from roboscriptorium.ir import SourceRef
 from roboscriptorium.layout import Region
 from roboscriptorium.ocrdoubts import Doubt
 from roboscriptorium.pdf import PageText
-from roboscriptorium.quotes import KINDS
+from roboscriptorium.quotes import KINDS, READER_KINDS
 from roboscriptorium.reflow import JUSTIFIED_SLACK, _page_margin
 from roboscriptorium.roles import LineRole, is_body
 
@@ -346,7 +346,7 @@ def _region(
     refs = [SourceRef(page.number, k) for k in range(first, last + 1)]
     if any(r in proposed for r in refs):
         readings = [{"text": text, "votes": []}]
-        for kind in KINDS:
+        for kind in (*KINDS, *READER_KINDS.values()):
             if not any(kind in proposed.get(r, {}) for r in refs):
                 continue
             other = "\n".join(

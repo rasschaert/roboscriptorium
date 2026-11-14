@@ -653,6 +653,11 @@ them through the judges' votes. On the three English books of the user's as buil
 all became readings loses its quote question whatever the arbiter then decides
 (decisions.md); it stays off until a paragraph left unpaired is still asked.
 
+
+A quote card shows every reader's reading of its lines beside the read model's marks
+(`quotes.READER_KINDS`: glm-ocr, tesseract, Qwen, as the OCR check read them), equal ones
+as one with their votes, as an OCR doubt's card does (the user, Nervous System PDF 120:
+"where are the other model's readings?", 2026-11-14).
 ## Missing lines
 
 A layout region with no text-layer line in it is read by glm-ocr only when it is about

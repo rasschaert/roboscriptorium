@@ -1036,3 +1036,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | train arbiter after the rebuild | 0 | 99 | 0 |
 | 2026-11-14 | bench tuning after the rebuild | 6208 | 12 | 0 |
 | 2026-11-14 | bench validation, autotrust-jev 9B as a text-question seat beside the render panel (warm) | 0 | 2 | 0 |
+| 2026-11-14 | bench tuning, clef:27b settling the two italic tree sets' disagreements | 0 | 36 | 0 |
+| 2026-11-14 | probe: the book's spacing of a repeated form as arbiter columns (CPU) | 0 | 5 | 0 |

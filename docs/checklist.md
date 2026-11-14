@@ -89,9 +89,8 @@ side paths that skip the judges and the arbiter, and their cards show one or two
             the paragraph's quotes, so the quote card asked. The evidence: an extra
             closing mark where nothing opens, and the witness
 - [ ] Every card shows every reader's reading and every judge's vote, as the OCR check's
-      do. A quote card shows only the OCR check's line and the read model's marks (the
-      user, Nervous System PDF 120: "where are the other model's readings?"), though
-      glm-ocr's and tesseract's readings of the same lines are cached; the same card
+      do. A quote card now shows glm-ocr's, tesseract's and Qwen's readings too
+      (2026-11-14); the judges' votes on it are still missing. The same card
       kept a speck read as " ." after the closing quote ("notice.” ."). With the
       redesign, for the **user**'s say: same-page reference crops beside a punctuation,
       accent or small-capital question (this printer's comma and full stop, a plain i
@@ -183,9 +182,6 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 - [x] **user**: Hoe wij verdwijnen's spot-check, PDF pages 41, 77, 87, 144, 292: no
       wrong word and no wrong break on the five pages; two italic errors ("op", "een"),
       both of the build of 2026-11-03 and gone since (2026-11-13)
-- [ ] **user**: Andere levens' seven candidate misprints, saved as printed
-      (`work/probes/carrere-editions/andere-levens-checked.md`): which, if any, are
-      misprints
 - [ ] Ex-minnaar: rebuilt with everything since 2026-10-16 and its questions sampled
       again, then the **user**'s review and the fixes it teaches. Its poem on p. 50
       (title taken for a chapter heading, lines joined) waits on verse
@@ -429,6 +425,10 @@ By area, newest first within each; one step each, with its date and the number t
 settled it. The numbers behind them are in [decisions.md](decisions.md) on the day.
 
 ## The user's books
+
+- [x] **user**: Andere levens' seven candidate misprints (2026-11-14): all kept as printed
+      ("gevérfd", "wat eens mens", "Recueil Dallos", …), answered in its review; its
+      review of 52 places complete
 
 - [x] 2026-10-19 Other editions as an error finder (the user, 2026-10-18;
       `experiments/probe_translation_check.py`, hosted): an instrument for a book with

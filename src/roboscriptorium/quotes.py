@@ -429,6 +429,8 @@ def combined(ours: str, reading: str) -> str:
 
 # The kinds of reading a quote question offers beside the text layer's, in order.
 KINDS = ("OCR check", "scan reading", "marks combined")
+# The OCR check's readers, shown beside those on a quote card (by their names there).
+READER_KINDS = {"glm": "glm-ocr", "tess": "tesseract", "qwen": "Qwen"}
 
 
 def reading_curled(text: str, ends_line: bool = False) -> str:

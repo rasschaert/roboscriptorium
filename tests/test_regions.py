@@ -529,3 +529,22 @@ def test_a_typed_answer_takes_the_books_curly_quotes():
     assert not review.doubtful(line, [], "text", review.curled_answer(typed, [line]))
     # A book set in straight marks keeps the reviewer's.
     assert review.curled_answer(typed, ['She frowned. "T\'ll call."']) == typed
+
+
+def test_a_quote_card_shows_every_readers_reading_identical_ones_as_one_with_their_votes():
+    lines = [Line("‘Ik kom morgen,’ zei hij. notice.” .", 40, 100, 300, 112)]
+    page = PageText(120, 400, 600, lines)
+    roles = {SourceRef(120, 0): LineRole("body", 0.9, 0.9)}
+    ref = SourceRef(120, 0)
+    proposed = {
+        ref: {
+            "scan reading": "‘Ik kom morgen,’ zei hij. notice.”",
+            "glm-ocr": "‘Ik kom morgen,’ zei hij. notice.”",
+            "tesseract": "‘Ik kom morgen,’ zei hij. notice.” .",
+            "Qwen": "‘Ik kom morgen,’ zei hij. notice.”",
+        }
+    }
+    found = flags.find([page], roles, quotes={ref}, proposed=proposed)
+    readings = {r["text"]: r["votes"] for r in found[0].readings}
+    assert readings["‘Ik kom morgen,’ zei hij. notice.”"] == ["scan reading", "glm-ocr", "Qwen"]
+    assert readings["‘Ik kom morgen,’ zei hij. notice.” ."] == ["tesseract"]
