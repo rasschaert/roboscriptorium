@@ -1011,3 +1011,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | trust data, de-cipier--ia-scan | 474 | 2 | 0 |
 | 2026-11-14 | trust data, artemis--ia-scan | 305 | 1 | 0 |
 | 2026-11-14 | probe: clef:27b on the italic trees' disagreements, 100 words | 0 | 17 | 0 |
+| 2026-11-14 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 10 | 0 |
+| 2026-11-14 | trust data, de-eerlijke-vinder--ia-scan | 84 | 0 | 0 |
+| 2026-11-14 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |

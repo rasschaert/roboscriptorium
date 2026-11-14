@@ -2601,3 +2601,12 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   mostly short upright words beside italic speech ("zei", "was"), six of eight at low
   confidence. Built on branch `italic-panel` (`italics.settle`, `ROBO_ITALIC_SECOND`,
   `ROBO_ITALIC_JUDGE`); benched once the text seat's run frees the books' caches.
+- 2026-11-14: **The user's builds pause the agent's runs** (`priority.py`; the user: "you
+  stop your work and give priority to mine… what are you going to do about it?"). Their
+  review of Andere levens, last built on 2026-10-20 so asking two judges about ~800
+  places, waited 20 minutes behind the text seat's run on a shared GPU while the agent
+  offered "wait" or "retry later". Now `build` and the review's builds stop every process
+  of the agent's `robo-*` sessions for their length (tested on a live session: a counter
+  held through the pause and went on after) and the battery gate holds runs that start
+  meanwhile; a rule in AGENTS.md has the agent check a command's cost before handing it
+  over.

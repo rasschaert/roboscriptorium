@@ -19,6 +19,7 @@ from roboscriptorium import (
     initials,
     ocr,
     pipeline,
+    priority,
     quality,
     rendercheck,
     review,
@@ -106,7 +107,8 @@ def build(
     PDF alone (`init` drafts its book.toml first). No scores: it warms a first look's caches
     without looking."""
     book = Book.load(_book_dir(book_dir))
-    stages = pipeline.run(book, _range(pages))
+    with priority.first("build"):
+        stages = pipeline.run(book, _range(pages))
     doc = stages.doc
     typer.echo(f"{len(doc.blocks)} paragraphs → {book.epub_path}")
     if stages.lost_breaks:
@@ -351,7 +353,8 @@ def review_regions(
         reference, around = scoring.reference(book, _range(chapters))
 
     def rebuild():
-        stages = pipeline.run(book, pages=_range(pages))
+        with priority.first("review's build"):
+            stages = pipeline.run(book, pages=_range(pages))
         if pages is None:
             keep_dated(book.epub_path, book.epubs)
         found = scoring.questions(book, stages)

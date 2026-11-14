@@ -104,6 +104,12 @@ get renumbered. Don't add a file to this table without a job no other file has.
   slower: a careful edition takes people weeks, so hours of machine time per book are
   cheap. Cache slow stages per book so reruns stay cheap, and run long builds in the
   background.
+- **The user's work comes first** (the user, 2026-11-14: "you stop your work and give
+  priority to mine"). A `build` or a review's build the user starts pauses every process
+  of the agent's `robo-*` screen sessions while it runs and continues them after
+  (`priority.first`); a run starting meanwhile waits at the battery gate. Before handing
+  the user a command, check what it costs them (when the book was last built, what it
+  will ask the models) and clear or warm the machine for it first.
 - **A run in flight is the user's time already spent.** Stopping one that can't resume
   throws it away: see "Every long run can be stopped and picked up" below, and tell the
   user the cost before stopping, even when told to stop.
@@ -340,7 +346,7 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 
 | Module | Job |
 | --- | --- |
-| `cli.py`, `config.py`, `book.py`, `files.py` | the CLI, settings, a book directory and its `book.toml`, atomic cache writes |
+| `cli.py`, `config.py`, `book.py`, `files.py`, `priority.py` | the CLI, settings, a book directory and its `book.toml`, atomic cache writes; the user's builds pausing the agent's runs |
 | `clients/` | Ollama (`ollama.py`), decision models on `/v1/systemone` (`decide.py`), imajev on llama-server (`llama.py`), a hosted model (`openrouter.py`), retries (`retry.py`) |
 | `pdf.py`, `page.py`, `scanpages.py` | the text layer as visual lines with boxes (tesseract's for an image-only scan); what a page's layout says without a model; pages a scan holds twice (left out), lacks or prints too poorly to read (named) |
 | `layout.py`, `typestyle.py`, `faint.py` | DocLayout-YOLO regions; each line's type against the body; washed-out pages |
