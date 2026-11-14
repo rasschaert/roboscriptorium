@@ -569,6 +569,10 @@ dochter's `minderjarige –’`). A mark right after a digit (a foot, an inch) o
 both sides says neither way and stays. Every golden book had some: Metro 124 in
 its slice, Dolittle's layer straight throughout (541 words); the bench saw none of it
 until it counted typography apart (2026-10-13), since `normalise` folds quote marks.
+Headings are curled too, their parts with their text: the EPUB set Reis's "De gyula's
+beraadslagen" and Dolittle's "THE MONKEYS' COUNCIL" with the layer's straight mark, which
+neither the bench (it folds quotes in headings too) nor the typography count saw
+(2026-11-14).
 
 ## Quote questions
 

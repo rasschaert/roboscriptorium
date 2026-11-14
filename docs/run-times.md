@@ -991,3 +991,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-14 | probe: the book's vocabulary as arbiter columns, VOCAB_KNOWN (CPU) | 0 | 6 | 0 |
 | 2026-11-14 | Nervous System rebuilt with the render judge (warm readings and model judges) | 280 | 15 | 0 |
 | 2026-11-14 | probe: the book's vocabulary as arbiter columns, VOCAB_CONTROL (CPU) | 0 | 5 | 0 |
+| 2026-11-14 | trust data rebuilt with the render judge's measures, six books at a time (warm but for its fits) | 0 | 26 | 0 |
+| 2026-11-14 | heading misses on the warm tuning builds (no models) | 0 | 21 | 0 |
+| 2026-11-14 | bench tuning, headings' quotes curled (warm) | 0 | 5 | 0 |
+| 2026-11-14 | bench validation, headings' quotes curled (warm) | 0 | 1 | 0 |

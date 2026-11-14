@@ -61,8 +61,18 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       nested quotes by the book's own habit, not assumed as the outer mark's opposite
       (De tuin sets “ alone 147 times)
 - [ ] The other doubts as suspects on the same path: a garbled line (its readings judged
-      as any other), a heading (asked only where the role evidence is split), a speck
-      read as a mark (the three below). The arbiter learns the new kinds from labels:
+      as any other; its question now reads the line as the OCR check settled it,
+      2026-11-14), a heading (asked only where the role evidence is split), a speck
+      read as a mark (the three below). For headings, the evidence of 2026-11-14
+      (`experiments/heading_sureness.py`, `heading_misses.py` on warm tuning builds):
+      every heading is asked today, ~700 on tuning to catch about six errors. The trees'
+      heading calls at 0.99 or more were never a wrong role there (Dolittle's title page
+      at 0.96–0.97 is the nearest); at 0.97 one would go unasked. But the question is
+      also the only check of a heading's text (Het ijzige land's "HOOFDSTUK 6" for 5;
+      a title of words like Nervous System's "MARRING A CHOIR" no reader reads), so a
+      sure heading can skip it only once its text is checked: a number its run confirms
+      (`chapters.settled`, already skipped), or a title read by the readers and judges
+      as body lines are. Nervous System: 7 of its 13 heading questions are 0.99 or more. The arbiter learns the new kinds from labels:
       the user's answers of 2026-11-10 and the golden books' places of each kind. For
       specks the golden pairs give labels by the thousand: a reader's character absent
       from the reference, aligned to an ink blob, is a speck, and a mark the reference

@@ -2550,3 +2550,9 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   read back from their runs. The arbiter's training was stopped 15 minutes in (worthless
   on that data), FITS set to 8, and the chain now refuses to train unless nine rows in ten
   carry the measures. AGENTS.md, Engineering practices, has the rule.
+- 2026-11-14: **Headings' straight quotes curled as the paragraphs' are** (`quotes.curl`,
+  the heading's parts with its text). Seen in `heading_misses.py`'s listing: Reis's "De
+  gyula's beraadslagen", three Dolittle titles ("THE MONKEYS' COUNCIL") set straight
+  where the print curls them; headings had been left out of the curling since 2026-10-13
+  with no reason recorded. Warm, against main's runs with the heading fix: tuning and
+  validation NO CHANGE (the bench folds quote glyphs in headings), the EPUB mended.

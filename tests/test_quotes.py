@@ -269,8 +269,16 @@ def test_a_book_curls_its_straight_quotes_as_it_opens_its_own():
     ]
     out = quotes.curl(blocks)
     assert out[1].text == "„Nee,” zei hij, ’t was laat."
-    assert out[2] is blocks[2]  # headings keep what the reviewer or the layer gave
-    assert blocks[1].text.startswith('"')  # the input is left alone
+    # A heading is printed curly too, its parts as its text (the EPUB sets the parts).
+    assert (out[2].text, out[2].parts) == ("‘Titel’", ["‘Titel’"])
+    assert blocks[1].text.startswith('"') and blocks[2].text == "'Titel'"  # input left alone
+    # A heading with no straight mark is the same block; a foot mark after a digit stays.
+    plain = Heading("Hoofdstuk 3", [], ["Hoofdstuk 3"])
+    assert quotes.curl([plain])[0] is plain
+    feet = Heading("Een muur van 6' hoog", [], ["Een muur van 6' hoog"])
+    assert quotes.curl([feet])[0].parts == ["Een muur van 6' hoog"]
+    gyula = Heading("De gyula's beraadslagen", [], ["De gyula's", "beraadslagen"])
+    assert quotes.curl([gyula])[0].parts == ["De gyula’s", "beraadslagen"]
 
 
 def test_a_quote_open_at_the_end_is_closed_where_the_reading_adds_only_that_mark():

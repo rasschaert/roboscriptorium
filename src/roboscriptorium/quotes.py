@@ -24,7 +24,7 @@ from dataclasses import dataclass, replace
 
 from rapidfuzz.distance import Levenshtein
 
-from roboscriptorium.ir import Block, Paragraph, SourceRef
+from roboscriptorium.ir import Block, Heading, Paragraph, SourceRef
 from roboscriptorium.typography import EllipsisStyle, guess_ellipsis
 
 # What follows a ’ that elides: a word of a letter or two (’s, ’t, ’m, ’ns, ’ie), a
@@ -524,15 +524,20 @@ _OPENS_AFTER = "([{—–-‘“„"
 
 
 def curl(blocks: list[Block]) -> list[Block]:
-    """Copies of the paragraphs with straight quotes and apostrophes curled. A printed
-    book sets curly ones; a straight one in the text is the text layer's. A double quote
+    """Copies of the paragraphs and headings with straight quotes and apostrophes curled,
+    a heading's parts as its text. A printed book sets curly ones; a straight one in the
+    text is the text layer's ("De gyula's beraadslagen" for the print's ’). A double quote
     opens as the book's own opening mark does (“ or „, by majority)."""
     text = " ".join(b.text for b in blocks if isinstance(b, Paragraph))
     opening = "„" if text.count("„") > text.count("“") else "“"
+    straight = lambda t: "'" in t or '"' in t  # noqa: E731
     out = []
     for block in blocks:
-        if isinstance(block, Paragraph) and ("'" in block.text or '"' in block.text):
+        if isinstance(block, Paragraph) and straight(block.text):
             block = replace(block, text=curled(block.text, opening))
+        elif isinstance(block, Heading) and any(map(straight, [block.text, *block.parts])):
+            parts = [curled(p, opening) for p in block.parts]
+            block = replace(block, text=curled(block.text, opening), parts=parts)
         out.append(block)
     return out
 
