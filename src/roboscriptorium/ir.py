@@ -47,6 +47,11 @@ class Heading:
     # "PUDDLEBY") are two; a title wrapped over two lines is one.
     parts: list[str] = field(default_factory=list)
 
+    @property
+    def shown(self) -> str:
+        """The heading as the EPUB sets it: its parts, line by line, else its text."""
+        return " ".join(self.parts or [self.text])
+
 
 @dataclass
 class Figure:

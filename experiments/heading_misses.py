@@ -26,7 +26,7 @@ def spec_of(name: str) -> str:
 def show(spec: str) -> None:
     _, run, _ = bench._build_one(spec, Settings.from_env())
     doc = scoring.scored(run.book, run.stages)
-    found = [(h.text, h.sources[0].page if h.sources else None) for h in doc.headings]
+    found = [(h.shown, h.sources[0].page if h.sources else None) for h in doc.headings]
     expected = [ch.heading for ch in run.reference if ch.heading]
     fk = [_heading_key(t) for t, _ in found]
     ek = [_heading_key(t) for t in expected]

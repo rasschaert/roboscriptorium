@@ -331,8 +331,7 @@ def score(doc: Document, reference: list[Chapter], top: int = 25) -> Score:
     ref_chars = sum(len(w) + 1 for w in ref_words)
     # An untitled chapter (a text without headings) expects none.
     titled = [ch.heading for ch in reference if ch.heading]
-    # Each heading as the EPUB sets it: its parts, line by line.
-    shown = [" ".join(h.parts or [h.text]) for h in doc.headings]
+    shown = [h.shown for h in doc.headings]
     matched = match_headings(shown, titled)
 
     ref_paragraphs = [p for ch in reference for p in ch.paragraphs]

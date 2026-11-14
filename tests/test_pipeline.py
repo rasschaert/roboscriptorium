@@ -879,8 +879,10 @@ def test_a_dropped_chapter_number_atop_an_opening_is_read_by_the_books_run(tmp_p
         f'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, {2 * len(numbers)}]\n'
     )
     stages = pipeline.run(Book.load(tmp_path))
-    headings = [b.text for b in stages.doc.blocks if type(b).__name__ == "Heading"]
-    assert headings == [str(n) for n in range(1, 13)]
+    headings = [b for b in stages.doc.blocks if type(b).__name__ == "Heading"]
+    assert [b.text for b in headings] == [str(n) for n in range(1, 13)]
+    # The EPUB sets the parts: they read as the text does.
+    assert [b.shown for b in headings] == [b.text for b in headings]
 
 
 def test_a_short_page_the_model_calls_a_dedication_is_set_apart(tmp_path, monkeypatch):
