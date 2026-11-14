@@ -7,9 +7,20 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
+**Running (the fifth session, 2026-11-14, from 14:44):** the chain below, screen
+`robo-trees-resume` (the italic words took 3 minutes; the italic trees resume from
+`work/models/italics.pkl.training/`). Beside it, Het schaduwhuis's four lost headings
+reproduced as the bench built them: a copy of the book in
+`work/probes/schaduw-kern-heldout/` built with `../robo-kern`'s code, its kerned typeface
+and the models held out from it (`ocr-trust-kern-without-…`, the trees from
+`work/models/trees-before-20261114/`); the warm rebuild that kept 91/91 likely used the
+full arbiter. Written, to run once the tree training ends: `experiments/probe_render_fit.py`
+(the render fit per version and the second render judge's measure as arbiter columns,
+with a random-column control), after the vocabulary probe.
+
 **START HERE (the user, 2026-11-14, 14:05: "make sure that when i start a fresh session
 after that, it begins with the italic trees and so on").** The session paused for a
-macOS update and reboot. Nothing runs. First thing, with a watcher (Monitor on
+macOS update and reboot. First thing, with a watcher (Monitor on
 `work/runs/trees-resume.out`, steps, errors, "all steps done", the screen's end):
 
 ```sh
