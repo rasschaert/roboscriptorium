@@ -28,7 +28,7 @@ from roboscriptorium.ir import Block, Heading, Paragraph
 # in the text.
 # A hyphen, an en dash and an em dash are one glyph here too: which of them the OCR check
 # kept at a word's start ("-twee" or "–twee") must not decide whether an erratum matches.
-_FOLD = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"', "„": '"', "–": "-", "—": "-"})
+FOLD = str.maketrans({"‘": "'", "’": "'", "“": '"', "”": '"', "„": '"', "–": "-", "—": "-"})
 
 
 class Unmatched(ValueError):
@@ -94,12 +94,12 @@ def from_line(page: int, printed: str, reads: str, lines: list[str], at: int) ->
     lo = next(k for k in range(len(words)) if edges[k + 1] > start)
     hi = next(k for k in range(len(words)) if edges[k + 1] - 1 >= end)
     last = len(words) - (2 if printed.rstrip().endswith("-") else 1)
-    page_text = " ".join(lines).translate(_FOLD)
+    page_text = " ".join(lines).translate(FOLD)
 
     def snippet(lo: int, hi: int) -> str:
         return " ".join(words[lo : hi + 1])
 
-    while page_text.count(snippet(lo, hi).translate(_FOLD)) > 1:
+    while page_text.count(snippet(lo, hi).translate(FOLD)) > 1:
         if hi < last:
             hi += 1
         elif lo > first:
@@ -135,7 +135,7 @@ def from_layer(page: int, layer_line: str, reads: str, lines: list[str], at: int
 
 def occurs_once(erratum: Erratum, lines: list[str]) -> bool:
     """Whether an erratum's printed words occur exactly once in a page's lines."""
-    return " ".join(lines).translate(_FOLD).count(erratum.printed.translate(_FOLD)) == 1
+    return " ".join(lines).translate(FOLD).count(erratum.printed.translate(FOLD)) == 1
 
 
 def local(erratum: Erratum) -> bool:
@@ -161,15 +161,15 @@ def apply(errata: list[Erratum], blocks: list[Block], pages: set[int]) -> list[B
     for e in errata:
         if e.page not in pages:
             continue
-        needle = e.printed.translate(_FOLD)
+        needle = e.printed.translate(FOLD)
         found = [
             (k, at)
             for k, b in enumerate(out)
             if isinstance(b, (Paragraph, Heading)) and any(s.page == e.page for s in b.sources)
-            for at in _occurrences(b.text.translate(_FOLD), needle)
+            for at in _occurrences(b.text.translate(FOLD), needle)
         ]
-        reads = e.reads.translate(_FOLD)
-        if not found and _occurrences(_text_of(out, e.page).translate(_FOLD), reads):
+        reads = e.reads.translate(FOLD)
+        if not found and _occurrences(_text_of(out, e.page).translate(FOLD), reads):
             continue  # a reader or judge already settled it as the erratum would
         if len(found) != 1:
             raise Unmatched(

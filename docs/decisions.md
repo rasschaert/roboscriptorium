@@ -2422,3 +2422,27 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   (glued or split words, tuning 0.029 → 0.023 a page), 5 "made" that are the same old
   places re-cut by the narrower reference ("pot-head. '" now "pot-head.'"). Compare later
   changes with these.
+- 2026-11-14: **No render vote under a typeface fit: not worth building as a cut.** For
+  the books whose typeface the library lacks (Het laatste bevel 0.79, Verminkt 0.83 on
+  plain words), the idea was to drop the judge's vote below a fit no tuning book reaches.
+  Over the 22 books with labelled places (`work/probes/render-raqm/`), the book's plain
+  fit and the judge's accuracy correlate at 0.54 only: Vuurspel (0.84, the lowest) is
+  right on 92.4%, Dolittle (0.89) on 81.3%, You're Never Weird (0.92) on 84.7%. The
+  arbiter already weighs each vote by its own fit and margin (AUC 0.80); a book-wide cut
+  would add little. Neither book has labelled places, so testing it on them is a bench.
+- 2026-11-14: **The e-book's departures from its print are errata** (the user: "treat
+  them as errata. the publisher decided that the print version was wrong and corrected it
+  in the epub"; AGENTS.md, Known deviations). Where the e-book sets a word otherwise than
+  the print (its correction, or its maker's slip), the book gets an erratum, so the build
+  reads as the e-book and the bench counts no error; the reference stays as derived. The
+  seam: the arbiter's training data labels the readers from the reference, which would
+  then call a right reading of the print wrong. `trustdata.as_printed` sets each erratum's
+  corrected words back as printed before the labels are taken (an erratum whose words
+  the reference holds other than once is left out). The errata already on De cipier and
+  Goede dochter gain from it at the next trust data rebuild. The user's first remarks:
+  Au pair's "want-als" (PDF p. 169) is a speck, the print reads "want als": the build's
+  error, not the e-book's. Het ijzige land's e-book has three slips at the print's line
+  ends ("wat-kan-mijhet-schelen", "leerlingJager", "pijlen-boog"): it carries calibre
+  0.8.47's mark and Google and Amazon identifiers in its metadata, so it passed through
+  someone's calibre library, and its line-end hyphens look stripped from the typeset
+  pages. Verminkt's "politieinspecteur" is likely the same kind of slip.

@@ -82,7 +82,11 @@ screen stopped). **Next for the render judge, in this order:**
    the baseline and validation no worse; record it either way.
 2. **Books whose typeface the library lacks** (Het laatste bevel, Verminkt: the judge's
    fit on their plain words is 0.79 and 0.83, the tuning books' 0.86–0.97): own-type
-   templates, or no vote under a fit the tuning books never reach.
+   templates, or no vote under a fit the tuning books never reach. A cut by the book's
+   fit alone would cost more than it saves (2026-11-14, decisions.md): over 22 books with
+   labelled places, fit and the judge's accuracy go together only loosely (r = 0.54);
+   Vuurspel, the lowest fit (0.84), is right on 92.4%. Neither book has labelled places,
+   so a test on them is a bench.
 3. **Font features in the drawing** (Pillow has no libraqm here): real ligatures, small
    capitals and old-style figures for every font, not only Adobe's.
 

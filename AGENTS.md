@@ -618,13 +618,18 @@ book. Those verdicts are human answers that exist nowhere else; only the backup 
   `experiments/chapter_pages.py` gives the scan page each derived chapter starts on, to
   end a bench slice on a chapter.
 - **Known deviations.** No publisher's EPUB matches its print in every convention. Each
-  known deviation of a pair is handled in one of three places, and nowhere else: a gap
+  known deviation of a pair is handled in one of four places, and nowhere else: a gap
   derive can undo is declared in the manifest's `[reference]` (`hyphen_dash`,
   `capital_classes`, `note_mark`) and listed in PROVENANCE.md; a glyph choice the output may make
   differently is folded by `evaluate.normalise` and counted per side, so `eval` prints
-  how much it forgave; what neither covers (a corrected word, a later impression) is
-  settled by a verdict. A deviation that lives only in a comment or a note is untracked:
-  move it to one of the three.
+  how much it forgave; a word the e-book sets otherwise than its print (its correction, or
+  its maker's slip: "wat-kan-mijhet-schelen" for the print's "wat-kan-mij-het-schelen") is
+  an erratum in `work/<book>/errata.toml`, so the build reads as the publisher's text while
+  the arbiter's training data labels the readers on the print (`trustdata.as_printed`;
+  the user, 2026-11-14: "the publisher decided that the print version was wrong and
+  corrected it in the epub. that's what our errata system does"); what none of these
+  covers is settled by a verdict. A deviation that lives only in a comment or a note is
+  untracked: move it to one of the four.
 - **Retiring a book.** A reference can stop being one: when a book's remaining
   disagreements are mostly edition differences, or its verdict backlog never shrinks,
   its score measures the edition, not the pipeline. Two signals need no verdicts: the

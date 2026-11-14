@@ -3,7 +3,10 @@
 import numpy as np
 
 from roboscriptorium import bench, trust, trustdata
+from roboscriptorium.errata import Erratum
+from roboscriptorium.golden.reference import Chapter
 from roboscriptorium.ocrcheck import Suspect
+from roboscriptorium.trustdata import as_printed
 
 
 def _row(book: str, right: bool) -> dict:
@@ -95,3 +98,36 @@ def test_a_training_stopped_midway_goes_on_from_the_models_it_finished(tmp_path,
     trained[:] = []
     trustdata.models_to_save(books, path, score, key="other judges")
     assert len(trained) == 3
+
+
+def test_the_reference_is_set_back_as_printed_where_an_erratum_stands():
+
+    reference = [
+        Chapter(
+            "1",
+            ["Een muur van wat-kan-mijhet-schelen, zei hij.", "Hij haalde een.22 en schoot."],
+            [frozenset({0}), frozenset({4})],
+        )
+    ]
+    found = [
+        Erratum(74, "wat-kan-mij-het-schelen", "wat-kan-mijhet-schelen"),
+        Erratum(26, "een .22", "een.22"),
+        # Its corrected words aren't in the reference: left out.
+        Erratum(30, "zeI", "zei hem"),
+    ]
+    printed = as_printed(reference, found)
+    assert printed[0].paragraphs == [
+        "Een muur van wat-kan-mij-het-schelen, zei hij.",
+        "Hij haalde een .22 en schoot.",
+    ]
+    # A word more before the italic one: its index moves with it.
+    assert printed[0].italic == [frozenset({0}), frozenset({5})]
+    # The reference itself is untouched.
+    assert reference[0].paragraphs[1] == "Hij haalde een.22 en schoot."
+
+
+def test_an_erratum_whose_corrected_words_occur_twice_is_left_out():
+
+    reference = [Chapter("1", ["een.22 hier", "en een.22 daar"], [frozenset(), frozenset()])]
+    printed = as_printed(reference, [Erratum(26, "een .22", "een.22")])
+    assert printed[0].paragraphs == ["een.22 hier", "en een.22 daar"]

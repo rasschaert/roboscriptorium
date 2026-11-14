@@ -13,7 +13,7 @@ import os
 from dataclasses import replace
 from pathlib import Path
 
-from roboscriptorium import bench, corrections, ocrcheck, pipeline, trust
+from roboscriptorium import bench, corrections, errata, ocrcheck, pipeline, trust
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
@@ -23,7 +23,7 @@ from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden import scoring
 from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
-from roboscriptorium.golden.reference import load_chapters
+from roboscriptorium.golden.reference import Chapter, load_chapters
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.trust import fold, rows_from  # noqa: F401 - read by the experiments
 
@@ -80,7 +80,7 @@ def build(name: str, spec: str) -> list[dict]:
     if span := scoring.page_range(chapters or None):
         reference = reference[span[0] - 1 : span[1]]
     reference, _ = patch(reference, scoring.verdicts(book))
-    truth = align(stages.pages, reference)
+    truth = align(stages.pages, as_printed(reference, errata.load(book.root)))
     in_notes = golden_notes.note_lines(stages.pages, golden_notes.load(golden.notes_path))
     lines = {
         (s.page, s.line, s.start): t.truth
@@ -90,6 +90,39 @@ def build(name: str, spec: str) -> list[dict]:
         and SourceRef(s.page, s.line) not in in_notes
     }
     return rows_from(stages.suspects, lines)
+
+
+def as_printed(reference: list[Chapter], found: list[errata.Erratum]) -> list[Chapter]:
+    """The reference with each erratum's corrected words set back as printed: the readers
+    are labelled on what the page prints, the build's text on what the edition reads.
+    An erratum whose corrected words the reference holds other than once is left out."""
+    chapters = [replace(c, paragraphs=list(c.paragraphs), italic=list(c.italic)) for c in reference]
+    for e in found:
+        reads = e.reads.translate(errata.FOLD)
+        at = [
+            (c, p, k)
+            for c, ch in enumerate(chapters)
+            for p, para in enumerate(ch.paragraphs)
+            for k in _starts(para.translate(errata.FOLD), reads)
+        ]
+        if len(at) != 1:
+            continue
+        c, p, k = at[0]
+        para, ch = chapters[c].paragraphs[p], chapters[c]
+        changed = para[:k] + e.printed + para[k + len(reads) :]
+        ch.paragraphs[p] = changed
+        if p < len(ch.italic) and (shift := len(changed.split()) - len(para.split())):
+            word = len(para[:k].split())
+            ch.italic[p] = frozenset(i + shift if i > word else i for i in ch.italic[p])
+    return chapters
+
+
+def _starts(text: str, part: str) -> list[int]:
+    found, k = [], text.find(part)
+    while k >= 0:
+        found.append(k)
+        k = text.find(part, k + 1)
+    return found
 
 
 def suspect(row: dict) -> ocrcheck.Suspect:

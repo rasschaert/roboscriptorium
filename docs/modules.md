@@ -344,7 +344,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `trustdata.py`: the arbiter's training data and saved models. `SPECS` are the golden
   books and slices it is built from (a tuning book left out is in `bench.NO_TRUST_DATA`,
   which a test keeps in step); `load` builds or reads a book's rows, each suspect's
-  versions labelled by the aligned reference (Stella's by the user's answers);
+  versions labelled by the aligned reference, set back as printed where the book's
+  errata correct it (`as_printed`; Stella's by the user's answers);
   `usable`, `rows_of` and `trainable` pick what trains, the validation books and first looks
   never; `models_to_save` trains the model the pipeline uses and a copy without each
   tuning book. Run by `experiments/ocr_trust_data.py` and
