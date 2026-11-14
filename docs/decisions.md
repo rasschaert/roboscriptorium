@@ -2650,3 +2650,10 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   numbering repair knew digits and Roman numerals only. Chapter numbers in words now run
   (`chapters._worded`, main f73cb1f; 25/25 on a clone); the branch rebased and benched
   again.
+- 2026-11-14: **Asking where every judge agrees is learned, not a flaw**
+  (`experiments/probe_unanimous.py`, no models). Of the trust data's settled places, all
+  four vision judges (clef, autotrust-jev 35B, d3, render) agree on 27,681: on the layer's
+  version 16,062 (right 16,011), on another 11,619 (right 11,546). The arbiter, held out
+  by book, asks 237 of them (under 0.93, raw), and on those the judges are right on 162
+  (68%): stress accents ("Daarvóór", "Dát", "ín", "Zíj") and quote marks, where a speck
+  and an accent look alike to every judge. The checklist step closes.

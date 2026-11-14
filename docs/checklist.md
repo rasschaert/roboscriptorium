@@ -96,10 +96,6 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       redesign, for the **user**'s say: same-page reference crops beside a punctuation,
       accent or small-capital question (this printer's comma and full stop, a plain i
       and an accented vowel), and an answer propagated to the word's other occurrences
-- [ ] The arbiter asks where every judge and the layer agree (Nervous System PDF 92: the
-      layer, tesseract and all four judges on "“Okay.”", only glm-ocr and Qwen without
-      the stop): read its sureness on that book's 22 asked suspects, and whether English
-      books have too little trust data. After the arbiter switch
 - [ ] Line boxes off their ink (the user, same card: "the yellow box is drawn wrong").
       Measured 2026-11-14: every scan's text-layer box ends on the baseline (the
       placeholder font has no descent), so in a book set tight the judges' crop holds the
@@ -694,6 +690,12 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       page on the short test; `bench tuning` 0.32 → 0.30 after review, no book worse
 
 ## Trust data, the judges and the arbiter
+
+- [x] ~~The arbiter asks where every judge and the layer agree~~ (2026-11-14, measured, no
+      change: `experiments/probe_unanimous.py`): where all four vision judges agree they
+      are right on 99.7% of 27,681 trust-data places; the held-out arbiter asks 237 of
+      them, and there the judges are right on only 68% (stress accents like "Dát", "ín",
+      "Zíj", and quote marks): it asks where agreement fails
 
 - [x] ~~The render judge's measures as arbiter columns~~ (not taken 2026-11-14): level on
       tuning (unasked 620 → 623, questions 3,453 → 3,441), six more unasked on
