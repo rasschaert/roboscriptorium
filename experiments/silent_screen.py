@@ -12,7 +12,8 @@ to the judges as one more version where they differ.
 
 `build` needs no model and freezes work/probes/silent-screen/{items.json, crops/}.
 Variants (`VARIANTS`): the book's own read prompt ("book"), prompts that tell the model
-to copy without reading ("copy", "marks"), and the crop at twice its size ("zoom").
+to copy without reading ("copy", "marks"), the crop at twice its size ("zoom"), and a
+model's own prompt in place of the book's ("ocr").
 Answers are kept per model and variant (work/probes/silent-screen/answers/), so a run
 stopped goes on where it was. About 1.5 s a line on a warm model.
 """
@@ -41,7 +42,10 @@ VARIANTS = {
         "inside a word, small capitals (write them as capitals). Add none that is not printed."
     ),
     "zoom": "",
+    # A model with a prompt of its own (PaddleOCR-VL): that prompt alone.
+    "ocr": None,
 }
+OWN_PROMPT = "OCR:"
 STRAIGHT = str.maketrans("‘’“”", "''\"\"")
 
 
@@ -144,7 +148,8 @@ def run(model: str, variants: list[str]) -> None:
                     held = io.BytesIO()
                     image.resize((image.width * 2, image.height * 2), Image.LANCZOS).save(held, "PNG")
                     png = held.getvalue()
-                text = readers.transcribe(png, model, settings.ollama_url, item["prompt"] + VARIANTS[variant])
+                prompt = OWN_PROMPT if VARIANTS[variant] is None else item["prompt"] + VARIANTS[variant]
+                text = readers.transcribe(png, model, settings.ollama_url, prompt)
                 f.write(json.dumps({"id": item["id"], "text": text}, ensure_ascii=False) + "\n")
                 f.flush()
                 if n % 50 == 0:

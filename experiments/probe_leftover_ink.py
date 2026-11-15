@@ -29,7 +29,7 @@ from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.pdf import cached_text_layer
 
-OUT = Path("work/probes/leftover-ink.jsonl")
+OUT = Path("work/probes/leftover-ink-zones.jsonl")
 STRAIGHT = str.maketrans("‘’“”", "''\"\"")
 
 
@@ -66,11 +66,24 @@ def leftover(face, found, ink: np.ndarray, text: str) -> dict | None:
         marked, n = label(mask)
         return float(np.bincount(marked.ravel())[1:].max()) / unit if n else 0.0
 
+    # Where it lies against the drawing's box: above it, in its thirds, below it; left
+    # of it, inside, right of it. An accent is above, a quote tick beside the top, a stop
+    # beside the foot.
+    high, wide = mine.shape
+    rows = [0, y, y + high // 3, y + 2 * high // 3, y + high, canvas.shape[0]]
+    cols = [0, x, x + wide, canvas.shape[1]]
+    zones = {}
+    for name, mask in (("e", extra), ("l", lacking)):
+        for r in range(5):
+            for c in range(3):
+                zones[f"{name}{r}{c}"] = float(mask[rows[r] : rows[r + 1], cols[c] : cols[c + 1]].sum()) / unit
     return {
         "extra": blob(extra),
         "extra_all": float(extra.sum()) / unit,
         "lacking": blob(lacking),
         "lacking_all": float(lacking.sum()) / unit,
+        "length": len(text),
+        **zones,
     }
 
 
@@ -140,6 +153,24 @@ def main():
             cut = np.quantile(x[~y], 1 - rate)
             line += f" at {rate:.2%} false offers finds {int((x[y] > cut).sum())};"
         print(line)
+    # Trees on where the leftover lies, each book called by trees trained on the others.
+    from sklearn.ensemble import HistGradientBoostingClassifier
+
+    keys = ["extra", "extra_all", "lacking", "lacking_all", "length", *sorted(k for k in rows[0] if k[0] in "el" and k[1:].isdigit())]
+    X = np.array([[r[k] for k in keys] for r in rows])
+    books = np.array([r["book"] for r in rows])
+    learned = np.zeros(len(rows))
+    for name in sorted(set(books)):
+        held = books == name
+        model = HistGradientBoostingClassifier(max_depth=3, max_iter=150, min_samples_leaf=10, random_state=0).fit(X[~held], y[~held])
+        learned[held] = model.predict_proba(X[held])[:, 1]
+    line = f"  trees on zones AUC {roc_auc_score(y, learned):.3f};"
+    for rate in (0.02, 0.01, 0.0025):
+        cut = np.quantile(learned[~y], 1 - rate)
+        line += f" at {rate:.2%} false offers finds {int((learned[y] > cut).sum())};"
+    print(line)
+    cut = np.quantile(learned[~y], 0.99)
+    print("  trees, at 1% false offers, by cause:", {c: f"{sum(1 for r, s in zip(rows, learned, strict=True) if r['error'] and r['cause'] == c and s > cut)} of {n}" for c, n in Counter(r["cause"] for r in rows if r["error"]).most_common()})
     both = np.maximum(np.array([r["extra"] for r in rows]), np.array([r["lacking"] for r in rows]))
     cut = np.quantile(both[~y], 0.99)
     causes, found = Counter(r["cause"] for r in rows if r["error"]), Counter(r["cause"] for r, b in zip(rows, both, strict=True) if r["error"] and b > cut)
