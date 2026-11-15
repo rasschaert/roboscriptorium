@@ -2831,3 +2831,10 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   (the dropped accents above); by eye the same holds for The Thief-Taker's specks read
   as commas ("her," for "her", 14 unasked) and Goede dochter's nested quotes
   ("‘“Lucy" built as "“Lucy", 17 unasked), both real errors of the build.
+- 2026-11-15: **Accent doubts in the OCR check, off** (`accentmarks.py`, `rendercheck.mark_fit`,
+  `ROBO_ACCENT_DOUBTS`; design.md, Accents every reader drops). A word no reading
+  disputes whose scan shows an acute at 0.79 or more is offered marked, beside the
+  capitals doubts. On Vals alarm PDF 38, 54, 82, 102, 122 and 124 it offers all six
+  dropped marks the bench knows there and eleven more (17 in 1,982 words; 29 ms a word,
+  so about 50 minutes of one core for a 100,000-word book, kept per book). Its default
+  waits on the judges' test and a bench with an arbiter trained on its offers.

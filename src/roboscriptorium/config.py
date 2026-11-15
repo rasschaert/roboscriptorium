@@ -44,6 +44,10 @@ class Settings:
     # reading agrees ("ss", "usb-stick"; `ocrcheck.capitals_doubts`). About 1.7% more
     # questions for the small capitals no reader disputes (docs/design.md).
     lower_capitals: bool = True
+    # Doubts raised where the scan shows a stress accent over a word every reading has
+    # plain ("zíjn" read "zijn"; `accentmarks.py`), in a Dutch book with the judge
+    # `render`. Off until its bench (docs/decisions.md, 2026-11-15).
+    accent_doubts: bool = False
     # The judges' crops and the render judge's window stop at the line above's
     # descenders (`readers.own_span`): set tight, a padded crop holds them, and judges
     # took them for marks (Andere levens' "dië").
@@ -147,6 +151,7 @@ class Settings:
             alarm_model=os.environ.get("ROBO_ALARM_MODEL", defaults.alarm_model),
             alarm_below=float(os.environ.get("ROBO_ALARM_BELOW", defaults.alarm_below)),
             lower_capitals=_flag("ROBO_LOWER_CAPITALS", defaults.lower_capitals),
+            accent_doubts=_flag("ROBO_ACCENT_DOUBTS", defaults.accent_doubts),
             crop_descent=_flag("ROBO_CROP_DESCENT", defaults.crop_descent),
             llama_url=os.environ.get("ROBO_LLAMA_URL", defaults.llama_url),
             fonts=os.environ.get("ROBO_FONTS", defaults.fonts),

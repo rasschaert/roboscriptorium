@@ -233,10 +233,13 @@ def check(
     alarm_below: float = 1.0,
     lower_capitals: bool = False,
     descent: float | None = None,
+    marks=None,
 ) -> list[Suspect]:
     """Suspects where any other reading (by name) differs from the text layer, each with a
     decision, and with `lower_capitals` where small capitals may have been read in lower
-    case though no reading disputes it (`capitals_doubts`). `style` tells the vision
+    case though no reading disputes it (`capitals_doubts`), and with `marks` where the scan
+    shows an accent over a word every reading has plain (`accentmarks.Marks.doubts`).
+    `style` tells the vision
     judges how the book is set (`quotes.style_note`).
     `alarms`, second vision judges, are asked the vision judge's question where that
     judge is less sure than `alarm_below` (one with a `wide` view on the suspect with its
@@ -261,8 +264,14 @@ def check(
             alarm_below,
             lower_capitals,
             descent,
+            marks,
         )
-    return _check(*args, vision, reader, *rest, alarms, alarm_below, lower_capitals, descent)
+    found = _check(
+        *args, vision, reader, *rest, alarms, alarm_below, lower_capitals, descent, marks
+    )
+    if marks is not None:
+        marks.save()
+    return found
 
 
 class _Later:
@@ -290,6 +299,7 @@ def _check(
     alarm_below: float,
     lower_capitals: bool = False,
     descent: float | None = None,
+    marks=None,
 ) -> list[Suspect]:
     """`check`'s pass over the book with the judges as given; with the book's `descent`,
     each suspect's crop stops at the line above's descenders (`readers.own_span`)."""
@@ -324,6 +334,15 @@ def _check(
                     # Agreement needs readings: a line no reader read raises no doubt.
                     if read:
                         differences += capitals_doubts(ours, taken, counts)
+                if marks is not None and read:
+                    differences += marks.doubts(
+                        pdf_page,
+                        page.number,
+                        k,
+                        ours,
+                        [(d0, d1) for d0, d1, _ in differences],
+                        lambda a0, a1, w=words[k], b=boxes[k], ours=ours: _box(w, b, ours, a0, a1),
+                    )
                 for a0, a1, alternatives in differences:
                     disputed = [(d0, d1) for d0, d1, _ in differences if (d0, d1) != (a0, a1)]
                     alternatives = [

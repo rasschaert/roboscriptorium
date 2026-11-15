@@ -25,6 +25,7 @@ import numpy as np
 import pymupdf
 from fontTools.ttLib import TTFont
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from scipy.ndimage import binary_dilation
 from scipy.signal import fftconvolve
 
 from roboscriptorium import pdf as pdflayer
@@ -628,6 +629,65 @@ def fits(face: Face, spread: int, size: float, ink: np.ndarray, versions: list[s
     return out
 
 
+def _pair(face: Face, marked: str, plain: str) -> tuple[np.ndarray, np.ndarray] | None:
+    """Two versions drawn on one canvas, cut to their joint ink (0–1 darkness)."""
+    font = face.at(1.0)
+    width = int(max(font.getlength(marked), font.getlength(plain))) + RENDER_PX
+    out = []
+    for text in (marked, plain):
+        image = Image.new("L", (width, RENDER_PX * 2), 255)
+        ImageDraw.Draw(image).text(
+            (RENDER_PX // 4, RENDER_PX * 1.3), text, font=font, fill=0, anchor="ls"
+        )
+        out.append(_darkness(image))
+    both = np.maximum(*out) > 0.2
+    if not both.any():
+        return None
+    rows, cols = np.where(both.any(1))[0], np.where(both.any(0))[0]
+    cut = np.s_[rows[0] : rows[-1] + 1, cols[0] : cols[-1] + 1]
+    return out[0][cut], out[1][cut]
+
+
+def mark_fit(face: Face, found: Match, ink: np.ndarray, marked: str, plain: str) -> float | None:
+    """How well the scan's ink matches a mark one version has and the other lacks (an
+    accent over a letter), 0–1: both drawn at the book's size, laid over the strip by the
+    ink they share, and the scan's cosine with the mark's own shape in the zone around it.
+    The whole word's fit barely moves for a mark; this is that mark alone. None where the
+    drawings don't differ or the strip is too small."""
+    drawn = _pair(face, marked, plain)
+    if drawn is None:
+        return None
+    strip = np.asarray(_picture(ink).filter(_BLUR), np.float32)
+    best = None
+    for stretch in STRETCHES:
+        high = max(4, round(drawn[0].shape[0] * found.size / RENDER_PX))
+        wide = max(4, round(drawn[0].shape[1] * found.size / RENDER_PX * stretch))
+        sized = [
+            np.asarray(
+                _spread(_picture(g).resize((wide, high)), found.spread).filter(_BLUR), np.float32
+            )
+            for g in drawn
+        ]
+        pad_y, pad_x = max(6, high - strip.shape[0] + 6), max(6, wide - strip.shape[1] + 6)
+        canvas = np.pad(strip, ((pad_y, pad_y), (pad_x, pad_x)))
+        # Placed by the ink both versions share, so the mark itself can't pull it.
+        shared = np.minimum(*sized)
+        over = fftconvolve(canvas, shared[::-1, ::-1], mode="valid")
+        y, x = np.unravel_index(int(over.argmax()), over.shape)
+        score = float(over.max()) / (float((shared * shared).sum()) ** 0.5 + 1e-6)
+        if best is None or score > best[0]:
+            best = (score, canvas[y : y + high, x : x + wide], sized)
+    _, under, (with_mark, without) = best
+    mark = np.clip(with_mark - without, 0, None)
+    zone = mark > 0.15 * 255
+    if zone.sum() < 6 or under.shape != mark.shape:
+        return None
+    # A little room around the mark: a speck beside it is ink that isn't it.
+    around = binary_dilation(zone, iterations=3) & (without < 0.15 * 255)
+    s, a = under[around], mark[around]
+    return float((s * a).sum() / (np.sqrt((s * s).sum() * (a * a).sum()) + 1e-6))
+
+
 def sureness(fit: float, margin: float) -> float:
     """The probability that the best-fitting version is the print (`SURENESS`): low
     where even it lies poorly over the ink (a typeface that doesn't suit the book, a
@@ -652,6 +712,12 @@ class Judge:
         self._line = statistics.median(heights) if heights else None
         # Part of each answer's cache key: another typeface or size is another judge.
         self.fingerprint = found.fingerprint
+
+    def mark(self, page: pymupdf.Page, number: int, box, marked: str, plain: str) -> float | None:
+        """`mark_fit` for the words at `box` on a page: how well the scan shows the mark
+        `marked` has and `plain` lacks."""
+        ink = place_ink(page, box, self._texts.get(number))
+        return None if ink is None else mark_fit(self._face, self._match, ink, marked, plain)
 
     def decide(self, state: dict, questions: dict, image_png: bytes | None = None) -> dict:
         versions = state["readings"]

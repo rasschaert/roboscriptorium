@@ -384,6 +384,12 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   settings name. An ablation (another reader set, say) keeps its data and models apart:
   `ROBO_TRUST_DATA` for the data folder, `ROBO_OCR_TRUST_MODEL` for the model, whose
   leave-one-out copies sit beside it.
+- `accentmarks.py`: accents every reader drops (`ROBO_ACCENT_DOUBTS`, off). For each word of a
+  Dutch book's line no reading disputes, the word with an acute on each vowel group
+  (`stressed`) scored on the scan by that mark alone (`rendercheck.mark_fit`, through the
+  judge `render`'s typeface); at `CUT` or more the marked word is one more version for
+  the OCR check (`Marks.doubts`, beside `ocrcheck.capitals_doubts`). Fits kept in
+  `stages/accent-marks.json` by typeface.
 - `rendercheck.py`: render and compare, the judge `render` among the second vision
   judges (`ROBO_ALARM_MODEL=…,render`). `match` finds the book's
   typeface in the font library (`ROBO_FONTS`, `work/fonts`): 240 lower-case words of

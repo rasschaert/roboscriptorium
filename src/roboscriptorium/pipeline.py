@@ -13,6 +13,7 @@ from pathlib import Path
 import pymupdf
 
 from roboscriptorium import (
+    accentmarks,
     chapters,
     contextjudge,
     corrections,
@@ -344,11 +345,18 @@ def run(
                 if (alarm := _alarm(spec, settings, book, whole)) is not None
             ]
             line_reads = dict(readings)
+            drawer = next((a for a in alarms if isinstance(a, rendercheck.Judge)), None)
+            marks = (
+                accentmarks.Marks(drawer, book.stages / "accent-marks.json")
+                if settings.accent_doubts and drawer and lang[:2] in accentmarks.LANGUAGES
+                else None
+            )
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, whole, style, dots), alarms, settings.alarm_below,
                 settings.lower_capitals,
                 line_descent(book, whole) if settings.crop_descent else None,
+                marks,
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:

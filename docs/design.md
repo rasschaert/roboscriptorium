@@ -471,6 +471,28 @@ worked on.
 A capital no letter touches ("T-shirt", "zag T.") is drawn as a small capital too, as a
 run of capitals is (`rendercheck._SMALL`), never one opening a word; the best fit
 decides (the user's counter-idea, 2026-11-14: Andere levens' small-capital "T-shirt").
+## Accents every reader drops (off)
+
+A Dutch book sets stress with an acute ("zíjn", "één"), and the layer and the readers often
+read the word plain alike, so no difference raises a suspect: 105 of the tuning bench's 604
+unasked errors (2026-11-15) were a dropped mark, 36 where no reading differed at all.
+`accentmarks.py` draws each undisputed word with the acute an emphasis would set on each
+vowel group and scores the scan on that mark alone (`rendercheck.mark_fit`: both versions
+drawn, laid over the strip by the ink they share, the scan's cosine with the mark's shape
+in the zone around it). At 0.79 or more the marked word is offered as a second version,
+and the judges and the arbiter settle it like any suspect.
+
+Why the mark alone: the whole word's fit finds 5 of 46 dropped marks at one false alarm
+in a thousand, the mark's cosine 27; all 30 of the roman marks the build really dropped
+score 0.79 or more (the others: italics drawn in the roman, Artemis' "ğ"), and so do
+0.24% of plain words, most an i whose dot sits where an acute would
+(`experiments/probe_missed_accents.py`). Why it decides nothing: as an overrule of the
+arbiter it wrongs 49 right picks to right 22; as arbiter columns it gains little
+(`probe_accent_fit_arbiter.py`, `probe_accent_columns.py`). On six pages of Vals alarm it
+offers the six known dropped marks and eleven more, 2.8 a page, at 29 ms a word
+(`probe_accent_doubts.py`). Off (`ROBO_ACCENT_DOUBTS`) until the judges are measured on
+its offers (`probe_accent_judges.py`) and the arbiter is trained with them.
+
 ## Context judge
 
 **A thinking model that settles questions from the text around them** (`contextjudge.py`,
