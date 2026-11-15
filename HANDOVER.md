@@ -7,8 +7,7 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**State at 01:00 on 2026-11-15** (the user away until about noon: "if you don't hear
-back from me by then just keep going through the checklist").
+**State at 11:15 on 2026-11-15** (the user back; reviewed Ex-minnaar in the morning).
 
 **Taken overnight, in production** (decisions.md, 2026-11-14 and 15):
 1. The user's idea: clef:27b settles where two sets of italic trees disagree (italic
@@ -21,34 +20,47 @@ back from me by then just keep going through the checklist").
 **Baselines now** (production as of c6088a3): `work/bench/tuning-20261114T233727-389e99a-dirty.json`
 and `validation-20261114T233833-82c7529-dirty.json`.
 
-**Running, in order** (each waits for the one before; GPU):
-1. screen `robo-kus`: De kus in de nacht's first build (restarted 00:55 on the new code
-   from its cached readings; ~8 h), then its questions sampled.
+**Running, in order** (each waits for the ones before; GPU). Watch them with a Monitor
+on `work/runs/<name>.out` and the logs, re-armed every 30 minutes:
+1. screen `robo-kus`: De kus in de nacht's first build (readings done 10:39, judges
+   since; twice paused, for a short probe and for the user's rebuild), then its
+   questions sampled (`work/runs/kus-build.log`, `kus-sample.log`).
 2. screen `robo-resample`: Nervous System and Pieter Daens rebuilt with production of
    2026-11-15 and their questions sampled (kept in `work/probes/questions/<book>-20261115/`),
    to see what the night's changes did to their reviews.
-3. screen `robo-hints`: past nulls the panel may turn, the hints about kinds of OCR error
-   on autotrust-jev 35B and d3 (judge set v2, plain, `kinds`, `targeted`).
-4. screen `robo-accents-chain` (`work/runs/accents-chain.sh`): accent doubts
+3. screen `robo-accents-chain` (`work/runs/accents-chain.sh`): accent doubts
    (`ROBO_ACCENT_DOUBTS=1`): trust data in `work/probes/ocr-trust-accents/` (resumes per
    book), the arbiter `work/models/ocr-trust-accents.pkl`, bench tuning and validation
    against production's runs. Taken if tuning's unasked errors fall and validation
    doesn't veto: then the arbiter and trust data go in production's place (as the 4th
-   judge's did, decisions.md 2026-11-15) and `accent_doubts` defaults to on.
-5. screens `robo-hints`, `robo-score-init`, `robo-init-ink`, `robo-hyphen-judges`, in
-   that order: the hint tryouts; every field `init` drafts scored on 32 golden books;
-   the page-kind model told each edge page's ink strength; the panel's judges on
-   line-end hyphens.
+   judge's did, decisions.md 2026-11-15) and `accent_doubts` defaults to on. If a
+   speckled book's offers (Goede dochter 1,011, De eerlijke vinder 573, Het schaduwhuis
+   431) come out as questions, hold them down with a cut per book (it finds no more
+   marks, decisions.md, but can cap offers).
+4. screens `robo-hints`, `robo-score-init`, `robo-init-ink`, `robo-hyphen-judges`,
+   `robo-sorter-panel`, in that order: hints about kinds of OCR error on autotrust-jev
+   35B and d3; every field `init` drafts scored on 32 golden books; the page-kind model
+   told each edge page's ink strength; the panel's judges on line-end hyphens; the
+   whole-page line-role question to d3 and autotrust-jev (clef alone: 54 of 92, the
+   grown trees 50).
 Beside them on the CPU: screen `robo-accent-marks2`, the accent fits of the 23 Dutch
-bench books into their `stages/accent-marks.json`.
+bench books into their `stages/accent-marks.json` (16 done), and `robo-accent-exminnaar`,
+the same on Ex-minnaar (`work/probes/accent-doubts-ex-minnaar.txt`): promised to the
+user, compare its offers with the accents they confirmed in review and report what it
+finds beyond them.
+
+**The review's "Rebuild book" hung** on a lock it already held (the user's Ex-minnaar
+rebuild, 15 minutes): fixed (`pdf.PDF_LOCK` re-entrant, 35ed094). A user's build that
+ends badly can leave the agent's runs stopped: `experiments/continue_runs.py` continues
+them.
 
 **For the user's quick confirmation, with crops, once a review is due** (not sent yet):
 `work/probes/unasked/accents-20261115/`: 9 places where the e-book adds an accent the
 print lacks (Goede dochter 8, De vergelding 1) and Au pair's 16 small-capital words the
 e-book writes in lower case.
 
-Ex-minnaar is ready for the user's review (74 questions:
-`uv run roboscriptorium review work/ex-minnaar`).
+Ex-minnaar: reviewed by the user and rebuilt from their answers
+(`work/ex-minnaar/ex-minnaar.epub`, epubcheck clean, 43 paragraphs changed).
 
 **Since 02:30** (decisions.md, 2026-11-15): three reworked ideas null (a judge on a band
 and a learned referee between the line-role trees; extra signals deciding when to ask);
