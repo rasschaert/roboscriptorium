@@ -54,7 +54,14 @@ last on 2026-11-14, so next by 2026-11-21).
          and 1–2 of 87 plain words. In the build, off (`ROBO_ACCENT_DOUBTS`,
          `accentmarks.py`). Running: trust data, arbiter and both benches with the
          doubts (`work/runs/accents-chain.sh`); taken if tuning's unasked errors fall and
-         validation doesn't veto.
+         validation doesn't veto. Behind it: a judge of marks alone (`render-mark`,
+         `accents-mark-chain.sh`), then nested quote offers (`nested-chain.sh`). Open:
+         the offers never draw the first vowel of a pair alone ("níet", "bóek": 41 of
+         Ex-minnaar's 136), where the mark's fit finds 3 of 38 at its cut, the acute
+         lying over the i's dot; the mark judge's measure tells them apart between two
+         given versions but its level between books is unknown, so a cut for offering
+         by it is still to find (per book, from the book's own plain words: null on
+         the bench books, untested on these forms).
       Also: pplx-decider beside the four-judge panel; De vergelding's own arbiter
 
 In this order; `HANDOVER.md` has the paths and the commands.
