@@ -493,6 +493,22 @@ offers the six known dropped marks and eleven more, 2.8 a page, at 29 ms a word
 (`probe_accent_doubts.py`). Off (`ROBO_ACCENT_DOUBTS`) until the judges are measured on
 its offers (`probe_accent_judges.py`) and the arbiter is trained with them.
 
+## A judge of marks alone (off)
+
+Where a suspect's versions are the same letters and differ only by a mark ("zijn" against
+"zíjn": 553 places in the trust data), the render judge's whole-word fit is right at
+92.4%, the vision judges at 71–83%. `rendercheck.MarkJudge` (`render-mark` in
+`ROBO_ALARM_MODEL`) scores those places by the mark instead (`mark_differ`: the scan's
+cosine with the marked drawing less its cosine with the plain one, where the two
+drawings differ either way) and has no vote anywhere else. Alone it is no better (92.2%),
+but it errs elsewhere: both are wrong at 18 places, and a majority of the render judge,
+autotrust-jev 35B and this one is right at 516 where clef in its place gives 477
+(`experiments/probe_accent_differ_judge.py`, 2026-11-15). Why a judge and not the accent
+offers' measure: at finding marks no reading has it loses to the mark's own fit on the
+bench books (5 of 46 against 30 at one false offer in 400), its level differing from book
+to book; between two given versions its sign decides. Off until an arbiter trained with
+its vote is benched.
+
 ## Context judge
 
 **A thinking model that settles questions from the text around them** (`contextjudge.py`,

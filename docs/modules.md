@@ -391,7 +391,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   the OCR check (`Marks.doubts`, beside `ocrcheck.capitals_doubts`). Fits kept in
   `stages/accent-marks.json` by typeface.
 - `rendercheck.py`: render and compare, the judge `render` among the second vision
-  judges (`ROBO_ALARM_MODEL=…,render`). `match` finds the book's
+  judges (`ROBO_ALARM_MODEL=…,render`), and `render-mark` (`MarkJudge`, off), which votes
+  only where the versions differ by a mark over the same letters (`mark_differ`). `match` finds the book's
   typeface in the font library (`ROBO_FONTS`, `work/fonts`): 240 lower-case words of
   the text layer cut out along their ink, every font on 40 of them, the best 40 fonts
   on all, and of the best five text cuts (not bold or italic) the one that draws 150

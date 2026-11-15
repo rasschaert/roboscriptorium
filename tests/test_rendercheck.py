@@ -330,3 +330,49 @@ def test_a_capital_no_letter_touches_is_drawn_as_a_small_capital_too_one_opening
     assert len(rendercheck.drawings(face, "‘Tom")) == plain
     assert len(rendercheck.drawings(face, "T-shirt,")) == plain + len(rendercheck.SMALL_CAPS)
     assert len(rendercheck.drawings(face, "FBI-beleid")) == plain + len(rendercheck.SMALL_CAPS)
+
+
+@pytest.mark.parametrize(("marked", "plain"), [("zíjn", "zijn"), ("één", "een")])
+def test_a_printed_mark_scores_above_its_absence(tmp_path, marked, plain):
+    scores = {}
+    for printed in (marked, plain):
+        path, box = _scan(tmp_path, printed)
+        held = _judge(path)
+        with pymupdf.open(path) as doc:
+            ink = rendercheck.place_ink(doc[0], box)
+        scores[printed] = rendercheck.mark_differ(held._face, held._match, ink, marked, plain)
+    assert scores[marked] > scores[plain]
+
+
+@pytest.mark.parametrize(
+    ("score", "versions", "picked"),
+    [
+        (0.4, ["zijn", "zíjn"], "b"),
+        (-0.3, ["zijn", "zíjn"], "a"),
+        (0.4, ["één", "een"], "a"),
+        (-0.3, ["één", "een"], "b"),
+    ],
+)
+def test_the_mark_judge_picks_the_marks_the_scan_shows(
+    tmp_path, monkeypatch, score, versions, picked
+):
+    path, box = _scan(tmp_path, "zijn")
+    monkeypatch.setattr(rendercheck, "mark_differ", lambda *a: score)
+    state = {"page": 1, "line": 0, "readings": versions, "box": [round(v, 1) for v in box]}
+    answer = rendercheck.MarkJudge(_judge(path)).decide(state, _question(versions))["reading"]
+    assert answer.value == picked
+    assert 0.5 <= answer.confidence <= 1
+
+
+def test_the_mark_judge_has_no_vote_where_the_letters_differ(tmp_path):
+    path, box = _scan(tmp_path, "world")
+    state = {
+        "page": 1,
+        "line": 0,
+        "readings": ["world", "wor1d"],
+        "box": [round(v, 1) for v in box],
+    }
+    judge = rendercheck.MarkJudge(_judge(path))
+    assert judge.model == "render-mark"
+    answer = judge.decide(state, _question(["world", "wor1d"]))["reading"]
+    assert (answer.value, answer.confidence) == ("neither", 0.0)

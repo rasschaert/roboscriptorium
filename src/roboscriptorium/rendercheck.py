@@ -18,6 +18,7 @@ import math
 import random
 import re
 import statistics
+import unicodedata
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -35,6 +36,8 @@ from roboscriptorium.pdf import PageText
 
 # The judge's name among the second vision judges (`ROBO_ALARM_MODEL=…,render`).
 MODEL = "render"
+# The judge of marks alone (`MarkJudge`), named the same way.
+MARK_MODEL = "render-mark"
 # The cached match's format.
 VERSION = 2
 # How a place is cut and drawn: part of the judge's answers' cache key.
@@ -650,12 +653,12 @@ def _pair(face: Face, marked: str, plain: str) -> tuple[np.ndarray, np.ndarray] 
     return out[0][cut], out[1][cut]
 
 
-def mark_fit(face: Face, found: Match, ink: np.ndarray, marked: str, plain: str) -> float | None:
-    """How well the scan's ink matches a mark one version has and the other lacks (an
-    accent over a letter), 0–1: both drawn at the book's size, laid over the strip by the
-    ink they share, and the scan's cosine with the mark's own shape in the zone around it.
-    The whole word's fit barely moves for a mark; this is that mark alone. None where the
-    drawings don't differ or the strip is too small."""
+def _laid(
+    face: Face, found: Match, ink: np.ndarray, marked: str, plain: str
+) -> tuple[np.ndarray, np.ndarray, np.ndarray] | None:
+    """The scan's strip under two versions drawn at the book's size, and the two
+    drawings, all of one shape: laid over the strip by the ink the versions share, so
+    what differs between them can't pull the placing. None where nothing is drawn."""
     drawn = _pair(face, marked, plain)
     if drawn is None:
         return None
@@ -672,7 +675,6 @@ def mark_fit(face: Face, found: Match, ink: np.ndarray, marked: str, plain: str)
         ]
         pad_y, pad_x = max(6, high - strip.shape[0] + 6), max(6, wide - strip.shape[1] + 6)
         canvas = np.pad(strip, ((pad_y, pad_y), (pad_x, pad_x)))
-        # Placed by the ink both versions share, so the mark itself can't pull it.
         shared = np.minimum(*sized)
         over = fftconvolve(canvas, shared[::-1, ::-1], mode="valid")
         y, x = np.unravel_index(int(over.argmax()), over.shape)
@@ -680,14 +682,47 @@ def mark_fit(face: Face, found: Match, ink: np.ndarray, marked: str, plain: str)
         if best is None or score > best[0]:
             best = (score, canvas[y : y + high, x : x + wide], sized)
     _, under, (with_mark, without) = best
+    return (under, with_mark, without) if under.shape == with_mark.shape else None
+
+
+def _cosine(a: np.ndarray, b: np.ndarray) -> float:
+    return float((a * b).sum() / (np.sqrt((a * a).sum() * (b * b).sum()) + 1e-6))
+
+
+def mark_fit(face: Face, found: Match, ink: np.ndarray, marked: str, plain: str) -> float | None:
+    """How well the scan's ink matches a mark one version has and the other lacks (an
+    accent over a letter), 0–1: both drawn at the book's size, laid over the strip by the
+    ink they share, and the scan's cosine with the mark's own shape in the zone around it.
+    The whole word's fit barely moves for a mark; this is that mark alone. None where the
+    drawings don't differ or the strip is too small."""
+    laid = _laid(face, found, ink, marked, plain)
+    if laid is None:
+        return None
+    under, with_mark, without = laid
     mark = np.clip(with_mark - without, 0, None)
     zone = mark > 0.15 * 255
-    if zone.sum() < 6 or under.shape != mark.shape:
+    if zone.sum() < 6:
         return None
     # A little room around the mark: a speck beside it is ink that isn't it.
     around = binary_dilation(zone, iterations=3) & (without < 0.15 * 255)
-    s, a = under[around], mark[around]
-    return float((s * a).sum() / (np.sqrt((s * s).sum() * (a * a).sum()) + 1e-6))
+    return _cosine(under[around], mark[around])
+
+
+def mark_differ(face: Face, found: Match, ink: np.ndarray, marked: str, plain: str) -> float | None:
+    """Which of two versions that differ by a mark the scan shows, −1 to 1: its cosine
+    with the marked drawing less its cosine with the plain one, over the zone where the
+    two differ either way. Where the mark replaces ink (an acute where the i has its
+    dot) `mark_fit` sees little, the mark's shape lying mostly over the dot; this weighs
+    the dot against it. None where the drawings don't differ."""
+    laid = _laid(face, found, ink, marked, plain)
+    if laid is None:
+        return None
+    under, with_mark, without = laid
+    zone = np.abs(with_mark - without) > 0.15 * 255
+    if zone.sum() < 6:
+        return None
+    zone = binary_dilation(zone, iterations=3)
+    return _cosine(under[zone], with_mark[zone]) - _cosine(under[zone], without[zone])
 
 
 def sureness(fit: float, margin: float) -> float:
@@ -741,6 +776,49 @@ class Judge:
         order = sorted(range(len(versions)), key=lambda i: -scores[i])
         sure = sureness(scores[order[0]], scores[order[0]] - scores[order[1]])
         return {"reading": Answer("choice", letters[order[0]], sure, {})}
+
+
+def _unmarked(text: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFD", text) if not unicodedata.combining(c))
+
+
+class MarkJudge:
+    """A judge of marks alone (`MARK_MODEL`): where a suspect's versions are the same
+    letters and differ only by the marks over them ("zijn", "zíjn"), it picks the one the
+    scan shows by `mark_differ`, each marked version against the bare letters. Anywhere
+    else it answers "neither", which is no vote. It errs at other places than the whole
+    word's fit: of 553 such places in the trust data both were wrong at 18, the fit at
+    42, this at 43 (`experiments/probe_accent_differ_judge.py`, 2026-11-15)."""
+
+    model = MARK_MODEL
+
+    def __init__(self, drawing: Judge):
+        self._drawing = drawing
+
+    def decide(self, state: dict, questions: dict, image_png: bytes | None = None) -> dict:
+        versions = state["readings"]
+        letters = [c for c in questions["reading"]["criteria"] if c != "neither"]
+        neither = {"reading": Answer("choice", "neither", 0.0, {})}
+        bare = _unmarked(versions[0])
+        if len(set(versions)) < 2 or any(_unmarked(v) != bare for v in versions):
+            return neither
+        d = self._drawing
+        with pdflayer.PDF_LOCK, pymupdf.open(d._pdf) as doc:
+            ink = place_ink(
+                doc[state["page"] - 1], state["box"], d._texts.get(state["page"]), state.get("span")
+            )
+        if ink is None:
+            return neither
+        scores = [
+            0.0 if v == bare else mark_differ(d._face, d._match, ink, v, bare) for v in versions
+        ]
+        if any(s is None for s in scores):
+            return neither
+        if bare not in versions and max(scores) <= 0:
+            return neither
+        order = sorted(range(len(versions)), key=lambda i: -scores[i])
+        margin = scores[order[0]] - scores[order[1]]
+        return {"reading": Answer("choice", letters[order[0]], min(1.0, 0.5 + margin), {})}
 
 
 def judge(

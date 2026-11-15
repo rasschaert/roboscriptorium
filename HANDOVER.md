@@ -37,6 +37,11 @@ on `work/runs/<name>.out` and the logs, re-armed every 30 minutes:
    speckled book's offers (Goede dochter 1,011, De eerlijke vinder 573, Het schaduwhuis
    431) come out as questions, hold them down with a cut per book (it finds no more
    marks, decisions.md, but can cap offers).
+   Behind it, screen `robo-accents-mark` (`work/runs/accents-mark-chain.sh`): the same
+   with one more judge, `render-mark` (votes only where versions differ by an accent;
+   design.md, "A judge of marks alone"): trust data `work/probes/ocr-trust-accents-mark/`,
+   arbiter `work/models/ocr-trust-accents-mark.pkl`, both benches. Compare it with the
+   accent run's benches as well as production's; taken only if it beats the accent run.
 4. screens `robo-hints`, `robo-score-init`, `robo-init-ink`, `robo-hyphen-judges`,
    `robo-sorter-panel`, in that order: hints about kinds of OCR error on autotrust-jev
    35B and d3; every field `init` drafts scored on 32 golden books; the page-kind model
