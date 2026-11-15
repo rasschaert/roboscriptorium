@@ -44,8 +44,10 @@ VARIANTS = {
     "zoom": "",
     # A model with a prompt of its own (PaddleOCR-VL): that prompt alone.
     "ocr": None,
+    # Baidu's Unlimited-OCR-2, a whole-page model: the one prompt its card gives.
+    "parse": None,
 }
-OWN_PROMPT = "OCR:"
+OWN_PROMPTS = {"ocr": "OCR:", "parse": "Multi page parsing."}
 STRAIGHT = str.maketrans("‘’“”", "''\"\"")
 
 
@@ -148,7 +150,7 @@ def run(model: str, variants: list[str]) -> None:
                     held = io.BytesIO()
                     image.resize((image.width * 2, image.height * 2), Image.LANCZOS).save(held, "PNG")
                     png = held.getvalue()
-                prompt = OWN_PROMPT if VARIANTS[variant] is None else item["prompt"] + VARIANTS[variant]
+                prompt = OWN_PROMPTS[variant] if VARIANTS[variant] is None else item["prompt"] + VARIANTS[variant]
                 text = readers.transcribe(png, model, settings.ollama_url, prompt)
                 f.write(json.dumps({"id": item["id"], "text": text}, ensure_ascii=False) + "\n")
                 f.flush()
