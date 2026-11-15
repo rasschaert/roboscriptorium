@@ -2819,3 +2819,15 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   Next: the proposals put to the judges (`probe_accent_judges.py`, 130 places, queued);
   if they tell the 100 plain words from the marks, the fit becomes a reader that offers
   the marked word and the arbiter weighs it.
+- 2026-11-15: **The zone fit as a judge of any small difference: null; the panel leaves it
+  nothing to add** (`experiments/probe_zone_judge.py`, no models). On 16,736 two-version
+  trust-data places differing by a mark, a letter, case or one punctuation sign, a
+  logistic model on the two versions' zone cosines and ink shares, fitted on the other
+  books, picks the print on 13,503 (81%); the vision judges on 94–96%, the render judge
+  on 92% (marks: zone 1,686 of 1,983, render 1,892; punctuation: 1,283 of 2,048, render
+  1,829). Every judge is wrong together on 7 places only; the zone fit rights 3. Failed
+  on: the room (where readings differ, the panel already sees it) and on one model for
+  every kind of difference. What it is good for stays the places no reading differs on
+  (the dropped accents above); by eye the same holds for The Thief-Taker's specks read
+  as commas ("her," for "her", 14 unasked) and Goede dochter's nested quotes
+  ("‘“Lucy" built as "“Lucy", 17 unasked), both real errors of the build.
