@@ -47,8 +47,10 @@ last on 2026-11-14, so next by 2026-11-21).
       5. The accent's shape from the render judge's fit over the accent alone: a strong
          signal (AUC 0.96 leaving a book out, 0.81 before), a small gain as arbiter columns
          (382 → 369 silent with no questions, none at the rule's; decisions.md
-         2026-11-15). Left: the same measure where no reading has the mark, to find
-         accents every reader drops.
+         2026-11-15). As a finder of accents every reader drops (105 of tuning's 604
+         unasked errors): 30 of the 37 printed marks placed at a 0.24% false-alarm rate
+         (`probe_missed_accents.py`). Queued: its proposals put to the judges
+         (`probe_accent_judges.py`); then the fit as a reader offering the marked word.
       Also: pplx-decider beside the four-judge panel; De vergelding's own arbiter
 
 In this order; `HANDOVER.md` has the paths and the commands.

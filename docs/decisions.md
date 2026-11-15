@@ -2802,3 +2802,20 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   against 0.05–0.07): what ink is left on them is mostly the other side's. Failed on: the
   measure, not on a model. Reworked: the page-kind model told each edge page's ink
   strength against the book's (`probe_init_ink.py`, queued).
+- 2026-11-15: **Accents every reader drops: the accent-zone fit finds them; a fifth of them
+  are the e-book's, not the print's** (`experiments/probe_missed_accents.py`, no models).
+  Of the tuning bench's 604 unasked errors, 105 are a dropped mark ("zíjn" → "zijn"), 36
+  where no reading differed. 46 could be placed on their page; beside them 10,000 plain
+  body words given the mark an emphasis would put there. The scan's cosine with the
+  accent's shape: AUC 0.872; found at 1%, 0.3% and 0.1% false alarms: 31, 30 and 27 of
+  46 (the whole-word fit: 24, 11, 5). By eye on the 46 crops: 9 are printed plain (Goede
+  dochter's "Hij", "een", "vergeten", "Daarvoor", "kon", "Oke", "Dit", "een"; De
+  vergelding's "voor"): the e-book adds the accent, so these are no errors of the build
+  (kept for the user's confirmation, `work/probes/unasked/accents-20261115/`). All nine
+  score under 0.79; of the 37 printed marks, 30 score 0.79 or more, and the 7 under it
+  are 2 in italics (drawn in the roman), Artemis' 4 "ğ" and one "Wíl". At 0.79, 0.24% of
+  plain words pass: about 200 proposals in an 80,000-word book, most of them an i whose
+  dot sits where an acute would. A learned combination of the measures overfits the 46.
+  Next: the proposals put to the judges (`probe_accent_judges.py`, 130 places, queued);
+  if they tell the 100 plain words from the marks, the fit becomes a reader that offers
+  the marked word and the arbiter weighs it.

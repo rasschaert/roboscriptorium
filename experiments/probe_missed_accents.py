@@ -73,7 +73,8 @@ def main():
         with pymupdf.open(book.source) as doc:
             def measure(page: int, word: tuple, marked: str, plain: str):
                 ink = rendercheck.place_ink(doc[page - 1], word[:4], texts.get(page))
-                return None if ink is None else measures(judge._face, judge._match, ink, marked, plain)
+                m = None if ink is None else measures(judge._face, judge._match, ink, marked, plain)
+                return m and {**m, "box": [round(v, 2) for v in word[:4]]}
 
             for e in dropped:
                 bare, want = e["got"].strip(PUNCT), e["want"].strip(PUNCT)
@@ -109,7 +110,7 @@ def main():
     rows = [r for rs in done.values() for r in rs]
     y = np.array([r["print_marked"] for r in rows])
     print(f"{int(y.sum())} dropped marks, {int((~y).sum())} plain words")
-    for k in ("cosine", "signed", "mass", "whole"):
+    for k in ("cosine", "mass", "whole"):
         x = np.array([r[k] for r in rows])
         line = f"  {k:7} AUC {roc_auc_score(y, x):.3f};"
         for rate in (0.01, 0.003, 0.001):
