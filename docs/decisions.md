@@ -2887,3 +2887,15 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   (strength in numbers): the same question to d3 and autotrust-jev 35B, queued
   (`work/runs/sorter-panel.sh`), to see whether the three together separate what one
   can't.
+- 2026-11-15: **The review's "Rebuild book" stood still for good: the PDF lock made
+  re-entrant** (`pdf.PDF_LOCK`, an `RLock`; found on the user's Ex-minnaar rebuild, 15
+  minutes with no model loaded). `RegionReview.rebuild` holds the lock for the whole
+  build so the page's crop requests keep off PyMuPDF; `rendercheck.Judge.decide` takes
+  it again on the build's own thread, and the plain lock waited on itself. Rebuilds had
+  passed while the render judge's answers were all cached; the lone small capital of
+  2026-11-14 changed its key and it asked anew. Every stage that takes the lock does so
+  on the calling thread (the pools hold model calls only), so re-entrance is safe. No
+  test went through a rebuild that takes the lock: one does now. The stuck server was
+  stopped with the user's word and the build run from their saved answers (one minute,
+  43 paragraphs changed); `experiments/continue_runs.py` continues the agent's runs when
+  a user's build ends without doing so.
