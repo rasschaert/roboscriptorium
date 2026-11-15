@@ -197,8 +197,8 @@ def diff(old: list[dict], new: list[dict], books: set[str] | None = None) -> Dif
     )
 
 
-def words(rs: list[dict], unasked: bool = False) -> int:
-    return sum(r["size"] for r in rs if not (unasked and r["asked"]))
+def words(rs: list[dict], silent: bool = False) -> int:
+    return sum(r["size"] for r in rs if not (silent and r["asked"]))
 
 
 def report(d: Diff, examples: int = 3) -> list[str]:
@@ -206,9 +206,9 @@ def report(d: Diff, examples: int = 3) -> list[str]:
     by book, with a few examples of each."""
     kept = [new for _, new in d.kept]
     out = [
-        f"fixed {words(d.fixed)} wrong words ({words(d.fixed, True)} unasked), "
-        f"made {words(d.made)} ({words(d.made, True)} unasked), "
-        f"kept {words(kept)} ({words(kept, True)} unasked)"
+        f"fixed {words(d.fixed)} wrong words ({words(d.fixed, True)} silent), "
+        f"made {words(d.made)} ({words(d.made, True)} silent), "
+        f"kept {words(kept)} ({words(kept, True)} silent)"
     ]
     for title, group in (("by cause", "cause"), ("by book", "book"), ("by origin", "layer")):
         fixed, made = Counter(), Counter()

@@ -1,7 +1,7 @@
 """Which lines change role when a slice's statistics count the whole body, and with which
 line-role trees? Builds a bench slice four ways (whole body or slice, current or earlier
 trees) and prints each line whose role differs from the slice-and-earlier-trees build,
-with the errors left unasked. Warm caches; a line whose role changes may be read anew.
+with the errors left silent. Warm caches; a line whose role changes may be read anew.
 
     uv run python experiments/probe_whole_body.py youre-never-weird-on-the-internet--ia-scan:13-94:1-16
 """
@@ -57,7 +57,7 @@ def main(spec: str) -> None:
         print(
             f"{label:10} wrong {rep['wrong words'].mean:.3f}  "
             f"questions {rep['questions'].mean:.3f}  "
-            f"unasked {rep['unasked, all questions'].mean:.3f}",
+            f"silent {rep['silent, all questions'].mean:.3f}",
             flush=True,
         )
     base = runs["slice+old"].stages

@@ -12,7 +12,7 @@ and of baselines is superseded by the first section; the older sections are from
 **Taken overnight, in production** (decisions.md, 2026-11-14 and 15):
 1. The user's idea: clef:27b settles where two sets of italic trees disagree (italic
    errors −19% on tuning).
-2. The user's counter-idea: a lone capital drawn as a small capital too (unasked −9).
+2. The user's counter-idea: a lone capital drawn as a small capital too (silent −9).
 3. autotrust-jev 9B asking the text question as a 4th judge (questions 3,445 → 3,402 on
    tuning); its arbiter and trust data are production's, the previous kept in
    `work/models/ocr-trust-backup-20261115/` and `work/probes/ocr-trust-before-text-20261115/`.
@@ -31,7 +31,7 @@ on `work/runs/<name>.out` and the logs, re-armed every 30 minutes:
 3. screen `robo-accents-chain` (`work/runs/accents-chain.sh`): accent doubts
    (`ROBO_ACCENT_DOUBTS=1`): trust data in `work/probes/ocr-trust-accents/` (resumes per
    book), the arbiter `work/models/ocr-trust-accents.pkl`, bench tuning and validation
-   against production's runs. Taken if tuning's unasked errors fall and validation
+   against production's runs. Taken if tuning's silent errors fall and validation
    doesn't veto: then the arbiter and trust data go in production's place (as the 4th
    judge's did, decisions.md 2026-11-15) and `accent_doubts` defaults to on. If a
    speckled book's offers (Goede dochter 1,011, De eerlijke vinder 573, Het schaduwhuis
@@ -91,7 +91,7 @@ descenders (off by default).
   unanswered 38 → 35).
 - Headings' straight quotes curled (Reis "De gyula’s", Dolittle "MONKEYS’").
 - The vocabulary as arbiter columns: still null. The render judge's measures as
-  columns: not taken (branch `render-columns`, kept): level on tuning, six more unasked
+  columns: not taken (branch `render-columns`, kept): level on tuning, six more silent
   on validation; the gain lay where the arbiter asks anyway.
 - Rule added: a cache version bumped on a branch is one no branch has used.
 
@@ -133,9 +133,9 @@ but also keep working on the weak spots"): `render` in `config.py`'s `alarm_mode
 `work/models/ocr-trust*.pkl` are the `ocr-trust-render3` set and `work/probes/ocr-trust/`
 its trust data. The arbiter before: `work/models/ocr-trust-backup-20261113/`, its data
 `work/probes/ocr-trust-before-render-20261113/`. Against production before the switch:
-tuning BETTER (after review 0.24 → 0.22, questions 3,971 → 3,454, unasked 713 → 678),
+tuning BETTER (after review 0.24 → 0.22, questions 3,971 → 3,454, silent 713 → 678),
 validation no clear change in words (0.41 → 0.42 [-0.02, +0.03], questions 546 → 486,
-unasked 272 → 283), worse by the rule on italics 195 → 197.
+silent 272 → 283), worse by the rule on italics 195 → 197.
 
 **Baselines with the vote on by default** (2026-11-13, superseded by those above):
 `work/bench/tuning-20261113T090608-fbff45c-dirty.json` and
@@ -145,7 +145,7 @@ unasked 272 → 283), worse by the rule on italics 195 → 197.
 `render-differ`; decisions.md, 2026-11-13). It compares the two best-fitting versions
 only where their drawings differ and is the better judge on every kind (punctuation
 93.1% against 90.7%), but as a second vote it moved the bench by a training's noise
-(tuning unasked 678 → 666, questions 3,453 → 3,485): the two agree on 94–99% of places.
+(tuning silent 678 → 666, questions 3,453 → 3,485): the two agree on 94–99% of places.
 
 **Nothing runs** (the session ended 2026-11-13, 11:10, at the user's word; every
 screen stopped). **Next for the render judge, in this order:**
@@ -296,23 +296,23 @@ rebased on `grow6`): `work/bench/tuning-20261112T021125-7e3d354-dirty.json` and
 the worktrees `../robo-grow6` and `../roboscriptorium-caps` hold merged branches and
 can go.
 
-**Done for the night's last step** (the unasked errors that look like the reference's):
+**Done for the night's last step** (the silent errors that look like the reference's):
 223 places read on their crops, 58 for the user to confirm (below, "Waiting on the
 user"), 75 the build's, now steps in the checklist ("Errors no question asks about").
 
-The quote reader with its kept question is still not taken (16 asked places unasked on
+The quote reader with its kept question is still not taken (16 asked places silent on
 tuning, not read place by place; next: trust data with the two quote readers and the
 arbiter retrained on them).
 
 Found at ~06:00: retraining is exact (the arbiter trained again on
 production's trust data is production's file byte for byte), and the control's 15 more
-unasked errors came from 72 suspects of 30,647 whose versions differ. So one retrained
+silent errors came from 72 suspects of 30,647 whose versions differ. So one retrained
 arbiter against another is noise at that size: bring the arbiter's variance down
 (seeds or bags averaged) before weighing the next retraining, batch five's included.
 
 **Small capitals: the lower-case doubts are on by default** (`ROBO_LOWER_CAPITALS`, the
-user's call on 2026-11-11: about 1.7% more questions; on tuning unasked errors
-524 → 512, none made unasked; validation nine more questions, no place changed), on
+user's call on 2026-11-11: about 1.7% more questions; on tuning silent errors
+524 → 512, none made silent; validation nine more questions, no place changed), on
 main, and the day's baseline has them. The checklist section "Small capitals" lists
 what is left. The night's trust data and arbiters (`work/probes/ocr-trust-{caps,ctl}`,
 `work/models/ocr-trust-{caps,ctl,rep}*.pkl`) are not in use.
@@ -378,7 +378,7 @@ Since 2026-11-09 (decisions.md): autotrust-jev 35B and d3 9B beside clef, asking
 0.9; the arbiter before kept as `work/models/ocr-trust-p0*.pkl` and
 `work/probes/ocr-trust-p0/`. Merged that night: the hyphen rules, pages too poor to read,
 heading capitals by the book's run (tuning BETTER, 72 words fixed, none made). Not taken:
-pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text judge.
+pass 4 (validation's silent places 170 → 178), Mistral-Small 3.2 as a text judge.
 
 ## Done 2026-11-06 evening
 
@@ -389,7 +389,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
   (`hyphens.vowel_clash`): tuning 3 fixed, validation 1, none made.
 - **Taken, every one benched warm, validation no change on each, no heading of the
   user's four books changed** (decisions.md has the numbers): tuning heading errors
-  32 → 22, unasked wrong words 839 → 755:
+  32 → 22, silent wrong words 839 → 755:
   - a misread chapter number where the run has a gap read again by glm-ocr
     (`chapters.run_gaps`, `stages/run-gaps.json`): Monterosso 22 of 22;
   - a display line under a heading on a page without running text is part of it
@@ -398,7 +398,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
     Doodskleed's "7" and "3";
   - punctuation after a chapter number left out of its value: Thief-Taker's "20 ;";
   - a text block the layer lost whole cut into lines by its ink and read
-    (`missing.blocks`): Dolittle's PDF 97, 105 wrong words fixed (81 unasked);
+    (`missing.blocks`): Dolittle's PDF 97, 105 wrong words fixed (81 silent);
   - the scorer folds subscript digits and the fraction slash (Artemis's "CO₂").
 - **Not taken**: a run-on heading measured against the book's full line
   (`work/runs/book-full.patch`): no longer needed once the lost block is read.
@@ -419,7 +419,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
     (`missing.slots`, `slot_lines`, `quoted`), and a quote mark misread from a speck no
     version (`ocrcheck.quote_misread`; 367085c): tuning 8 fixed, validation 5;
   - whole lines of text the layer lost, read from the same slots where as long as a line
-    of the page (`missing._fills`; 82c1b39): tuning 103 wrong words fixed (12 unasked,
+    of the page (`missing._fills`; 82c1b39): tuning 103 wrong words fixed (12 silent,
     most were lost-line questions the reviewer had to type), validation 9.
 - **Lessons**: dropping one of two sibling readings strengthens the other in the arbiter's
   eyes (a rule must drop a misread in all its spellings); the line-role trees take any
@@ -433,7 +433,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
 
 ## Next, for the agent
 
-1. The open steps of docs/checklist.md in its order. The unasked errors left on tuning
+1. The open steps of docs/checklist.md in its order. The silent errors left on tuning
    (585 places): stress accents 105 (half the reference's), compound hyphens 86 (line-end
    breaks, 57 a hyphen lost), letters 76, punctuation 59. Extra text's 969 words are
    mostly Afscheid's washed-out pages, asked by design.
@@ -441,7 +441,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
 
 ## Waiting on the user
 
-- **58 unasked errors that look like the e-book's, to confirm** (~15 min; decisions.md,
+- **58 silent errors that look like the e-book's, to confirm** (~15 min; decisions.md,
   2026-11-12). In each the agent read the print as ours has it; the answer is still the
   user's:
 
@@ -516,7 +516,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
   missing text 0.073 → 0.048, validation no change; the dash fix, dash errors to zero.
 - Also taken: quotes closed at a paragraph's end where the reading adds only the mark
   (39/39 on tuning); possessives after a sibilant ("Maurice’ moeder") no quote; the
-  bench names a book whose unasked errors double (`bench.doubled`); bench in parallel.
+  bench names a book whose silent errors double (`bench.doubled`); bench in parallel.
 
 ## Done 2026-10-25 and 26 (decisions.md has every number)
 
@@ -524,7 +524,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
   (~585 pages), eleven more on the 26th (~860 pages, 13 h cold). On the pages both runs
   share: no change. Tuning went from ~1,700 to ~3,100 pages, and the after-review interval
   should narrow from ±0.010 to about ±0.008.
-- **Not taken**: the arbiter retrained on the grown slices (more unasked errors; the second time
+- **Not taken**: the arbiter retrained on the grown slices (more silent errors; the second time
   more rows haven't helped, so the arbiter needs a new signal, not more data); page roles on
   the grown slices, and withheld on picture pages (no change; the harm is in the line-role
   trees trained with page features).
@@ -539,7 +539,7 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
 
 - **Taken**:
   - a full stop for a line's last comma before a lower-case line is no version
-    (`ocrcheck.stop_for_comma`: 6 unasked words fixed, none made);
+    (`ocrcheck.stop_for_comma`: 6 silent words fixed, none made);
   - readings that accent one letter of a doubled a, o or u, or carry `~ ^ |`, are no version
     (`half_accent`, `garbled`: no change on the bench, never right in the trust data);
   - any short line in justified text ends a paragraph (`reflow._short_end`: salutations and
@@ -583,12 +583,12 @@ pass 4 (validation's unasked places 170 → 178), Mistral-Small 3.2 as a text ju
 
 1. **The arbiter's own silent errors: probed 2026-10-26, nothing taken.** They are what its
    0.8 sureness line costs (9–11 questions for each one caught past it), plus De vergelding's
-   page budget (three questions a page caught 8 unasked words there, tuning no change). The
+   page budget (three questions a page caught 8 silent words there, tuning no change). The
    accent half goes both ways (specks read as accents in Doodskleed, Glazuur, Monterosso;
    emphasis dropped in Goede dochter, Het schaduwhuis, Au pair), and the ink's shape over the
    letter adds nothing to the trees. Left: De vergelding's own arbiter (it has the most
    unsure suspects, never trained on); a speck classifier with more labelled pages.
-2. **Compound hyphens at line ends** (25 unasked with no suspect): no cue found in qwen, clef
+2. **Compound hyphens at line ends** (25 silent with no suspect): no cue found in qwen, clef
    or the obvious signals; only a learner with a new feature can reach them.
 3. **Emphasis accents and the dotless ı** (the quiet set's largest classes after small
    capitals): they need each mark tied to its letter, which the layer's letter boxes can't give.

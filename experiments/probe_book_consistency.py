@@ -4,7 +4,7 @@
 A word is flagged when the book's output spells it this way at most `RARE` times while a
 close variant (the same letters without their accents, without a hyphen, or one letter
 apart in a word of `MIN_LETTERS` or more) occurs at least `COMMON` times. Scored against
-the latest tuning bench's errors: how many unasked one-word errors are flagged (their right
+the latest tuning bench's errors: how many silent one-word errors are flagged (their right
 form common elsewhere in the book), and how many flags fall on words the bench counts right.
 
     uv run python experiments/probe_book_consistency.py [errors.jsonl] [--marks]
@@ -110,7 +110,7 @@ if __name__ == "__main__":
                 continue
             g, w = got[0].lower(), want[0].lower()
             wrong_got[g] += 1
-            kind = "asked" if e["asked"] else "unasked"
+            kind = "asked" if e["asked"] else "silent"
             totals[f"{kind} one-word errors"] += 1
             if g in flagged and w in flagged[g]:
                 totals[f"{kind} caught"] += 1

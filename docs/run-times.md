@@ -538,8 +538,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-10-20 | olmOCR suspect crops, all trust-data books, warm builds | 1500 | 6 | 0 |
 | 2026-10-20 | olmOCR line readings of 9,349 suspect lines, MLX | 9349 | 84 | 0 |
 | 2026-10-20 | H2O-Lightning-Omni-4B line triage, frozen reader set, MPS | 850 | 9 | 0 |
-| 2026-10-21 | unasked-error set: warm builds of the tuning books on the bench slices, crops | 1500 | 1 | 0 |
-| 2026-10-21 | night chain: H2O on unasked set, Qwen2.5-VL-72B reader screening | 900 | 53 | 0 |
+| 2026-10-21 | silent-error set: warm builds of the tuning books on the bench slices, crops | 1500 | 1 | 0 |
+| 2026-10-21 | night chain: H2O on silent set, Qwen2.5-VL-72B reader screening | 900 | 53 | 0 |
 | 2026-10-21 | bench tuning, sanity check after restoring the earlier arbiter, warm | 1500 | 3 | 0 |
 | 2026-10-21 | bench tuning, superscript digits folded by the scorer, warm | 1500 | 3 | 0 |
 | 2026-10-21 | bench tuning, whole-book hyphen spellings, warm | 1500 | 3 | 0 |
@@ -1056,3 +1056,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-15 | probe: extra signals deciding when to ask (CPU) | 0 | 2 | 0 |
 | 2026-11-15 | probe: clef:27b on the line-role trees' disagreements, 100 lines | 0 | 6 | 0 |
 | 2026-11-15 | probe: extra signals deciding when to ask, random control (CPU) | 0 | 2 | 0 |
+| 2026-11-15 | probe: judges on proposed accents | 0 | 35 | 0 |
+| 2026-11-15 | probe: line-role judge, whole page, clef:27b | 92 | 11 | 0 |

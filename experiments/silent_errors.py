@@ -2,7 +2,7 @@
 book with its leave-one-out models): what the output has, what the reference has, the
 context, its category and whether the OCR check raised a suspect on that line.
 
-    uv run python experiments/unasked.py [book …]   # default: every tuning book
+    uv run python experiments/silent_errors.py [book …]   # default: every tuning book
 
 Writes work/probes/unasked/<book>.jsonl and prints the commonest kinds with examples.
 Warm caches make no model calls; run it when no other run builds the same books.
@@ -43,7 +43,7 @@ for spec in specs:
         sizes[row["category"]] += row["size"]
         examples[row["category"]].append(row)
     (OUT / f"{name}.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
-    print(f"{name}: {len(rows)} unasked differences", flush=True)
+    print(f"{name}: {len(rows)} silent differences", flush=True)
 
 print()
 for category, n in sizes.most_common():

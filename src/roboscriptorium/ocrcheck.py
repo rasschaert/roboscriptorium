@@ -834,7 +834,7 @@ def _decide(
 
     Where the word list knows the words of one version only (`vouched`, an index
     into the versions), that version is recorded as its vote. It decides nothing:
-    acting on it saved questions on the tuning books and added unasked errors on
+    acting on it saved questions on the tuning books and added silent errors on
     held-out ones.
 
     A pick is applied when both models make it and the vision model is at least

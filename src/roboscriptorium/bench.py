@@ -112,13 +112,13 @@ TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST
 SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"])
 
 # Per-page counts compared between runs: (name, index into a page's counts). "After
-# review" is the unasked plus, per question, the reviewer's expected slips and the cost
+# review" is the silent plus, per question, the reviewer's expected slips and the cost
 # of the reviewer's time (`quality.QUESTION_COST`), at the mean slip rate and at either
-# end of its interval. A comparison computes it from the unasked and the questions, not
+# end of its interval. A comparison computes it from the silent and the questions, not
 # from the figure a run saved, so runs saved under another cost or slip rate compare.
 PAIRED = (
     ("wrong words", 0),
-    ("unasked", 1),
+    ("silent", 1),
     ("questions", 2),
     ("after review", 3),
     ("after review, few slips", 4),
@@ -290,7 +290,7 @@ def _book_record(
         "verdicts_applied": run.applied,
         "score": {k: v for k, v in asdict(score).items() if k != "confusions"},
         "quality": {k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()},
-        "unasked_by_kind": quality.unasked_by_category(errors, found),
+        "silent_by_kind": quality.silent_by_category(errors, found),
         "typography_kinds": sorted(kinds),
         # Written beside the record by `save`, not into it: the rows quote the book.
         "_errors": (rows := errorlog.rows(run.name, errors, found, stages.pages, stages.suspects)),
@@ -337,10 +337,10 @@ def page_counts(
     }
 
 
-def after_review(unasked: float, questions: float, slip: float) -> float:
-    """Wrong words a page once every question is answered: the unasked, the answers
+def after_review(silent: float, questions: float, slip: float) -> float:
+    """Wrong words a page once every question is answered: the silent, the answers
     expected wrong, and the reviewer's time, each question at `quality.QUESTION_COST`."""
-    return unasked + (slip + quality.QUESTION_COST) * questions
+    return silent + (slip + quality.QUESTION_COST) * questions
 
 
 def paired(
@@ -378,7 +378,7 @@ def _pairs(
     old: dict, new: dict, i: int, books: list[str], slips: tuple[float, float, float] | None = None
 ) -> list[tuple[float, float]]:
     """Each page's (before, after) of the measure at `i` in `PAIRED`; the after-review
-    measures computed from the unasked and the questions."""
+    measures computed from the silent and the questions."""
     rates = slips or quality.slip_rates()
     after = {3: rates[1], 4: rates[0], 5: rates[2]}
 
@@ -527,14 +527,14 @@ def verdict(old: dict, new: dict) -> Verdict:
     )
 
 
-# A book whose unasked errors at least double, and rise by this many a page, is named
+# A book whose silent errors at least double, and rise by this many a page, is named
 # for a look: one place broken, as Reis om mijn schedel's lost page (0.08 → 0.30, inside
 # a veto's interval). Over 95 past tuning comparisons it fired 8 times (2026-11-02).
 DOUBLED_RISE = 0.1
 
 
 def doubled(old: dict, new: dict) -> list[tuple[str, float, float]]:
-    """The books whose unasked errors a page at least doubled, by `DOUBLED_RISE` or more,
+    """The books whose silent errors a page at least doubled, by `DOUBLED_RISE` or more,
     on the pages both runs scored: a warning beside the verdict, not part of it."""
     out = []
     for name, book in new["books"].items():

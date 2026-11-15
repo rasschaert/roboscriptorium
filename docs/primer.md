@@ -82,12 +82,12 @@ combine several that fail in different ways, and learn how far to believe each.*
   word ought to be, so they share mistakes where the print is unusual (a speck, small
   capitals, an accent, a stop against a comma); this one only looks at ink, and is
   right on most of what each of them misses (2026-11-12: the print on about nine
-  places in ten, and fewer unasked errors at every number of questions).
+  places in ten, and fewer silent errors at every number of questions).
 - *winnow* reads only the sentence and picks the version that reads best. Alone it is
   right four times in five, less than clef, but when it disagrees with clef, clef is
   wrong much more often, so it works as an alarm. A smaller *autotrust-jev* reads the
   sentence too, a second judge of the language whose mistakes fall elsewhere (since
-  2026-11-15: about 1% fewer questions for you, as many errors left unasked).
+  2026-11-15: about 1% fewer questions for you, as many errors left silent).
 - *the word list* checks which versions are real words.
 
 A fourth kind of judge is being tried: a **context judge** (qwen, thinking before it
@@ -348,7 +348,7 @@ last updated, decoded.
   structure check found missing chapters in six golden books nobody had noticed.
 - **The bench counts headings**: a lost chapter heading now makes a change "worse",
   like a lost word; before, it showed only in a side report. Heading errors on tuning
-  went from 102 to 82. The bench also names a book whose unasked errors double, and runs
+  went from 102 to 82. The bench also names a book whose silent errors double, and runs
   its books in parallel (21 minutes down to 10).
 - **Fewer, fairer questions**: *Hoe wij verdwijnen* asks 58 (from 135), *Pieter Daens*
   296 (from 388). Out: chapter numbers the run already confirms, "Maurice’ moeder" taken
@@ -390,7 +390,7 @@ that's a measurement run, not an improvement.
 | first look | a new pair's single score, before anything is chosen on it |
 | bench | the paired before/after comparison over a set; it decides whether a change stays |
 | after review | wrong words a page once every question is answered, with questions charged |
-| unasked | errors no question points at; what the reviewer can't catch |
+| silent | errors no question points at; what the reviewer can't catch |
 | breaks | paragraph breaks set wrong, a page |
 | cause | the kind of an error, read from its two sides (a quote missing, letters misread…) |
 | probe | a quick experiment on a few pages, before building anything |

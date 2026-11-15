@@ -252,7 +252,7 @@ _ONE_LINE = 1.8
 
 
 # A word the reviewer replaced the same way this many times, and never otherwise, is
-# offered where it recurs: an option, never settled unasked (settling so was wrong one
+# offered where it recurs: an option, never settled silently (settling so was wrong one
 # time in eight to twelve, decisions.md 2026-10-16).
 ANSWERED_TIMES = 2
 

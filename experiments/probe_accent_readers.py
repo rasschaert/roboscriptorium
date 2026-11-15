@@ -1,11 +1,11 @@
-"""Which reader keeps an emphasis accent? The 12 audited stress-accent lines (the unasked set's
+"""Which reader keeps an emphasis accent? The 12 audited stress-accent lines (the silent set's
 crops) read by glm-ocr on Ollama and, through `mlx_read_crops.py`'s setup, by olmOCR: does the
 reading hold the reference's word (`want`) or the build's (`got`)?
 
     uv run python experiments/probe_accent_readers.py glm
     work/models/mlx-env/bin/python -I experiments/probe_accent_readers.py olmocr <model dir>
 
-Prints one row per line and a total. Needs `unasked_set.py`'s crops.
+Prints one row per line and a total. Needs `silent_set.py`'s crops.
 """
 
 import hashlib

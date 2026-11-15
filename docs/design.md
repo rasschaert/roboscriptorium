@@ -37,7 +37,7 @@ line of at least 0.8 of the page's full width: split off a running head ("Puddle
 … 5"), the title left alone read as a chapter heading on 33 Dolittle pages and its
 paragraph breaks went from 0.39 to 0.68 wrong a page. On the bench slices it splits De
 eerlijke vinder's 31 page numbers beside full lines (wrong words 0.88 → 0.42 a page,
-unasked 0.59 → 0.16) and a few specks read as digits; three numbers beside a short
+silent 0.59 → 0.16) and a few specks read as digits; three numbers beside a short
 last line stay joined.
 
 ## OCR check
@@ -56,7 +56,7 @@ qwen3.8 earns its cost in a build: without it (trust data rebuilt and the arbite
 retrained without its reading), `bench tuning` goes from 1.00 to 1.33 wrong words a
 page after review [+0.07, +0.75] and `bench validation` from 0.81 to 1.01 [+0.12,
 +0.27]; 11/22/63, Artemis, Vals alarm and De tuin lose most (2026-10-09). Without it 867
-of 6,145 suspects are never raised, and the ones that are leave more unasked errors.
+of 6,145 suspects are never raised, and the ones that are leave more silent errors.
 
 Every reading in the trust data and the bench is the local build's (2026-10-10), as
 Stella's are. Re-read locally where DeepInfra's bf16 had read: tuning 0.56 → 0.56,
@@ -110,16 +110,16 @@ seven options. About one added capitals version in a hundred is the print's, spr
 over every shape of piece, so the judges separate them, not a rule. The text judge
 keeps its seat on them: it reads no crop, but knows "UV-licht" from the sentence where
 the vision judges see a lower-case shape, and without its vote the hard ones go
-unasked.
+silent.
 
-Benched 2026-11-11 with the setting on (decisions.md): tuning no change, unasked errors
+Benched 2026-11-11 with the setting on (decisions.md): tuning no change, silent errors
 524 → 512 ("SWAT-team", "USB-stick", "RVS", "SD’ers" fixed; "SS", "UV-licht", "CV",
-"V-vormig" asked), none made unasked, questions 3,356 → 3,410; validation no error place
+"V-vormig" asked), none made silent, questions 3,356 → 3,410; validation no error place
 changed, nine more questions. On Nervous System "tv" twice and "VCR" are asked with all
 four judges on the capitals, "SF" fixed. Not reached: a lone small capital with the
 lower case's shape ("v-hals", "u-bocht", "o-benen"), on the tight crop or the wide one.
-The arbiter retrained with the doubts fixes more of them unasked but lets more errors of
-other kinds through (unasked 545), so production's arbiter decides them.
+The arbiter retrained with the doubts fixes more of them silently but lets more errors of
+other kinds through (silent 545), so production's arbiter decides them.
 
 Five richer prompts on the reader set (hosted, 330 hard lines) each fixed about as many
 lines as they broke: "never correct or modernise" 2 against 5, the lines above and
@@ -148,22 +148,22 @@ line's closing comma into a stop there, or only adds one after its last word, is
 before judging (`line_end_stop`),
 unless the book prints the word as an abbreviation elsewhere ("bijv. de"). In the trust
 data every such place (about 40, all books) prints the comma; on the bench the arbiter
-took the stop, unasked, on 6 places of De vergelding, whose commas the readers see as
+took the stop, silent, on 6 places of De vergelding, whose commas the readers see as
 stops. The two arbiter features tried for it first ("the next line opens in lower case",
 "the span ends the line") made other errors. Taken 2026-10-24: tuning after review 0.290 → 0.286
-[−0.007, −0.000], 6 unasked words fixed and none made. The added stop (2026-11-04): in the trust
+[−0.007, −0.000], 6 silent words fixed and none made. The added stop (2026-11-04): in the trust
 data a stop added to a line's last word before a lower-case line was never the print (11
-of 11; before a capital 10 of 21), and the arbiter had taken it unasked four times on
+of 11; before a capital 10 of 21), and the arbiter had taken it silent four times on
 tuning ("slaap." over "vallen", "shipped." over "here"). An arbiter feature for a stop
 before a lower-case word on the same line moved nothing past noise left out book by book
 (silent errors at a question a page 42 → 41), and the bench's four were all at line ends,
-past what the arbiter sees. Taken: tuning 4 unasked words fixed, none made. Inside a line
+past what the arbiter sees. Taken: tuning 4 silent words fixed, none made. Inside a line
 (2026-11-05) the same holds where the very next letter is lower case and no reading
 disputes that word: a stop added there was never the print in the trust data (30 of 30, a
 comma read as a stop 96 of 99). An opening quote right after it ("stem. ‘dat", an author's
 stop) keeps it a question, and so does a next word the readers dispute: the layer's "df"
 and "h" for "'If" and "It" sank the first try (tuning and validation 1 made each). Taken
-2026-11-05 with that guard: tuning 2 unasked words fixed, none made; validation 5 fixed (De kerk van de dode meisjes 4, De geruchten 1), none made.
+2026-11-05 with that guard: tuning 2 silent words fixed, none made; validation 5 fixed (De kerk van de dode meisjes 4, De geruchten 1), none made.
 
 Two more kinds of reading are never the print, by the same test (wrong in every book's
 trust data, and true by definition): an accent on one letter of a doubled a, o or u
@@ -175,13 +175,13 @@ capital inside a lower-case word ("aaN") is never the print either, but a reader
 "wA-dienstplicht" for a word set in small capitals was what raised that place's question
 (De vergelding), so it stays a version. Nor is an h read as a b ("huis" → "buis", "hij" → "bij", `b_for_h`):
 of 91 such versions in the trust data, none was the print, while a b read as h is now and
-then (17 of 45, the layer's own "bet" for "het"); the arbiter had taken it unasked on
-tuning ("buis.", "bij", "bet", "be"). Taken 2026-11-05: 4 unasked words fixed, none made.
+then (17 of 45, the layer's own "bet" for "het"); the arbiter had taken it silent on
+tuning ("buis.", "bij", "bet", "be"). Taken 2026-11-05: 4 silent words fixed, none made.
 Nor is one of the layer's "ij"s read as u, ui, y, ii or i (`ij_misread`: "Rijsdijk" →
 "Rusdijk", "dijk" → "duik", "bij" → "by"): of 68 such versions in the trust data none was
 the print, and the layer never printed "ij" where a bench reference has one of those (40
 runs); the other way, the layer's "Hy", "ziin" or "mi" set right, is the print 45 times in
-89, so it stays a version. Taken 2026-11-05: tuning 3 unasked words fixed (De vergelding's
+89, so it stays a version. Taken 2026-11-05: tuning 3 silent words fixed (De vergelding's
 names "Bijlsma" and "Rijsdijk"), none made; validation none to fix.
 Nor is a quote mark a reading adds where the layer has none and print never sets one
 (`quote_misread`, a speck read as a mark): one gluing two words, three letters or more
@@ -228,8 +228,8 @@ back a version, so these are left to trust and the bench, with no rule of their 
   vision judges share half their mistakes; these were chosen on judge set v2 for the ones
   they don't share (autotrust-jev another model family, d3 the least often sure and
   wrong; models.md). The arbiter retrained on their votes, at the user's 0.9: tuning
-  unasked errors 640 → 551 places and 823 → 711 words against today's arbiter at 0.8;
-  validation BETTER, after review 0.45 → 0.42 wrong words a page, unasked 189 → 170
+  silent errors 640 → 551 places and 823 → 711 words against today's arbiter at 0.8;
+  validation BETTER, after review 0.45 → 0.42 wrong words a page, silent 189 → 170
   places and 323 → 283 words. pplx-decider 27B on the wide crop as a third added nothing
   at 0.9 (tuning 551 → 567 places, validation 170 → 176, De kerk's questions doubled:
   vetoed); autotrust-jev 9B as a text judge was benched and not taken (2026-11-09); its retest
@@ -243,7 +243,7 @@ back a version, so these are left to trust and the bench, with no rule of their 
   a quarter second a suspect. Its votes stay in the trust data; training uses only the
   judges the settings name.
 - *The word list is a vote, not a judge.* Where it knows only one version's words
-  it is nearly always right, but acting on it added unasked errors on two
+  it is nearly always right, but acting on it added silent errors on two
   validation books (lost compounds, stress accents). It is shown to the reviewer
   and is a trust feature.
 
@@ -295,7 +295,7 @@ clean pages.
 
 **A suspect the arbiter is sure of isn't asked, budget or not** (`ocr_ask_below`,
 0.9). With the judge panel the user chose 0.9 over 0.85 (2026-11-08): on tuning 0.759
-questions a page against 0.627, for 551 unasked error places against 622, a trade of
+questions a page against 0.627, for 551 silent error places against 622, a trade of
 their time for silent errors the bench's test doesn't weigh. Before the panel it was 0.8:
 most books filled their budget with suspects the arbiter gave 0.9 or more
 (Crime 68 of its 94 questions, De cipier 44 of 84), and nearly all of those it had
@@ -315,21 +315,21 @@ the trees are of a suspect's likeliest version to how often it was the print
 logistic over the log odds of the raw sureness), not an isotonic one. An isotonic map is
 a staircase, and the asking line sits on one of its steps: over nine trainings on the
 same books, each with a random 0.25% of the suspects left out, the suspects under 0.9
-ran from 1,197 to 1,859 and the wrong picks left unasked from 97 to 163. The curve has
+ran from 1,197 to 1,859 and the wrong picks left silent from 97 to 163. The curve has
 two numbers to fit, so the same nine trainings ask 1,245 to 1,282 and leave 155 to 159
 (`experiments/probe_trust_calibration.py`, 2026-11-11). A curve reads the same raw
 sureness as another chance than the staircase did, so the asking line is chosen again
 with it (decisions.md, 2026-11-11): 0.93, where the curve asks about as much as the
 staircase did at the user's 0.9 (at 0.9 it asked 322 questions fewer and left 26 more
-errors unasked, the trade the user refuses; at 0.95, 283 more questions for 35 fewer).
+errors silent, the trade the user refuses; at 0.95, 283 more questions for 35 fewer).
 In production since 2026-11-12, with the trees below, trained on batch five's trust
 data: against the staircase arbiter at 0.9 on the same pages, tuning's questions
-4,011 → 3,971 and unasked errors 585 → 564, validation's 518 → 546 and 170 → 166.
+4,011 → 3,971 and silent errors 585 → 564, validation's 518 → 546 and 170 → 166.
 
 **The arbiter's trees are twenty trainings averaged** (`trust.Trees`, each from its own
 seed). One training picks, by its seed, which suspects it stops early on, and a few
 suspects more or fewer in the training data shift that: between two retrainings on
-data differing in 72 suspects of 30,647, 15 more errors went unasked and 36 questions
+data differing in 72 suspects of 30,647, 15 more errors went silent and 36 questions
 moved, which is as large as the changes a retraining is benched for. Measured by
 leaving 0.25% of the suspects out (`experiments/probe_trust_variance.py`,
 `probe_trust_seeds.py`; 29,173 suspects, each tuning book scored by the others' trees):
@@ -460,8 +460,8 @@ first version's, before the cut was mended.
 
 On the bench (2026-11-13, against production's arbiter, which has no such vote):
 tuning BETTER, after review 0.24 → 0.22 a page [-0.03, -0.01], questions
-3,971 → 3,454, wrong words left unasked 713 → 678; validation no clear change in
-words (0.41 → 0.42 [-0.02, +0.03], questions 546 → 486, unasked 272 → 283) and worse
+3,971 → 3,454, wrong words left silent 713 → 678; validation no clear change in
+words (0.41 → 0.42 [-0.02, +0.03], questions 546 → 486, silent 272 → 283) and worse
 by the rule on italic errors 195 → 197. The same on tuning with a second pair of
 arbiters, validation then no change. On by default since 2026-11-13 at the user's word,
 with its weak spots (punctuation, books whose typeface the library lacks) still being
@@ -475,7 +475,7 @@ decides (the user's counter-idea, 2026-11-14: Andere levens' small-capital "T-sh
 
 A Dutch book sets stress with an acute ("zíjn", "één"), and the layer and the readers often
 read the word plain alike, so no difference raises a suspect: 105 of the tuning bench's 604
-unasked errors (2026-11-15) were a dropped mark, 36 where no reading differed at all.
+silent errors (2026-11-15) were a dropped mark, 36 where no reading differed at all.
 `accentmarks.py` draws each undisputed word with the acute an emphasis would set on each
 vowel group and scores the scan on that mark alone (`rendercheck.mark_fit`: both versions
 drawn, laid over the strip by the ink they share, the scan's cosine with the mark's shape
@@ -497,7 +497,7 @@ its offers (`probe_accent_judges.py`) and the arbiter is trained with them.
 
 A print opens a quotation inside a quotation on two marks (‘“Lucy … kind,”’), and the
 layer and every reader often read the three ticks as a double mark, so no difference
-raises a suspect: 21 of the tuning bench's 460 unasked errors (Goede dochter 17, De tuin
+raises a suspect: 21 of the tuning bench's 460 silent errors (Goede dochter 17, De tuin
 4; 2026-11-15). `quotemarks.py` measures the raised ink at a word's edge on the scan, its
 width against the line's height, and offers the nested version where an edge the build
 sets double is 1.4 times as wide as the book's own double marks (surveyed on the edges
@@ -618,7 +618,7 @@ typography are told the style; this halved Qwen's wrong quote proposals on Reis.
 
 A layer can drop every gap, though: The Stranger's Child prints `Ka . . .’`, its layer
 reads `Ka...` throughout, and the vote set it tight with no space (4.57 wrong words a page
-after review, 370 of its 389 unasked errors). So the gaps are measured on the scan too
+after review, 370 of its 389 silent errors). So the gaps are measured on the scan too
 (`scanstyle.measure_ellipses`): three dots are short runs of ink near the baseline, and
 the blank before the first and between them is weighed against the line's word gaps. On
 every golden scan the two kinds part widely: before the first dot at most 0.62 of the
@@ -684,7 +684,7 @@ questions a page), validation unchanged.
 runs on into a paragraph opening with a quote looks exactly like a closing quote the
 layer lost before speech that follows; the golden references run a quote over in 56 of
 ~58,000 paragraphs, and De tuin alone loses about 40 closing quotes there. Bench
-(2026-10-11): tuning 0.37 → 0.36 [−0.02, −0.00] (De tuin's unasked 0.24 → 0.16 for 0.35
+(2026-10-11): tuning 0.37 → 0.36 [−0.02, −0.00] (De tuin's silent 0.24 → 0.16 for 0.35
 more questions a page), validation 0.75 → 0.75, no book worse.
 
 **An open mark right after a word is asked where it stands.** "Open at end" points the
@@ -714,7 +714,7 @@ otherwise and is still asked by the quote check. The arbiter doesn't weigh these
 readers' support until its trust data holds them and it is retrained: until then it sees
 them through the judges' votes. On the three English books of the user's as built, 72 of
 79 unpaired marks are of the three kinds read this way. Benched 2026-11-11: tuning WORSE,
-75 error places asked without it go unasked with it, because a paragraph whose marks
+75 error places asked without it go silent with it, because a paragraph whose marks
 all became readings loses its quote question whatever the arbiter then decides
 (decisions.md); it stays off until a paragraph left unpaired is still asked.
 
@@ -798,15 +798,15 @@ all lines the build lost (eight asked as questions, two not); the test takes nin
 A whole paragraph can be lost too. Dolittle's PDF 97 kept one layer line, its chapter
 label; the spotter boxed four blocks of text (beside a drawn initial, and below), each
 several lines tall, too tall for a line candidate, so the page lost about 105 words, 81
-of them unasked, and its title "THE MONKEYS' COUNCIL" then measured as wide as the page's
+of them silent, and its title "THE MONKEYS' COUNCIL" then measured as wide as the page's
 few short lines and was run into the text. Such a block, with no layer line in it, is cut
 into its lines by the ink's rows (`missing.blocks`; a band under 0.4 of a line's height,
 an accent or a descender, joins its neighbour) and each line read like any lost one. Not
 where a larger region around it holds a layer line: De stilte van de hel's PDF 94 is junk
 the spotter boxed whole and in parts, and cut there the lines were clipped at the nested
-boxes' edges and two ran together (14 wrong words made, 8 unasked, on its first form).
+boxes' edges and two ran together (14 wrong words made, 8 silent, on its first form).
 Over the thirty books these two pages are the only ones with such blocks. Tuning 105
-wrong words fixed (81 unasked), 1 made (the drawn initial's "HEE-CHEE"), heading errors
+wrong words fixed (81 silent), 1 made (the drawn initial's "HEE-CHEE"), heading errors
 23 → 22; validation no change (2026-11-06).
 
 Doodskleed's sentence headings ("... en de man die er naast zat, keek hem aan.") came the
@@ -889,7 +889,7 @@ better, Thief-Taker and Crime leaning worse.
 of bare marks (a speck, a lone quote) body, so they kept specks as text; fixed in the
 aligner. And they had seen one book with pictures: two photo slices joined their training
 only (De tunnels' chapter 12, Steve Jobs' photo insert), and a body line now weighs ten
-times its class's share, because a body line dropped loses text unasked where a speck kept
+times its class's share, because a body line dropped loses text silently where a speck kept
 is asked about (weight 1 dropped 38 of Steve Jobs' caption lines, 10 drops 3). Warm
 benches against the rules: tuning no change 0.32 → 0.32 (Goede dochter, Metro, Monterosso
 better), validation no change 0.59 → 0.50 [−0.23, +0.00] (Normal People 0.20 → 0.13), no
@@ -1013,7 +1013,7 @@ starts a paragraph; where it is at least 0.7 sure, its answer stands. On 1,488 l
 tuning pages (every page with a break error and as many without), the reflow had 56
 starts wrong; with the judge's sure answers 19, and none it had right made wrong
 (`experiments/probe_break_judge.py`, 2026-10-17). A body line that begins in lower case
-after a line that doesn't end a sentence carries on, unasked: of 3,800 such lines two
+after a line that doesn't end a sentence carries on, silent: of 3,800 such lines two
 started a paragraph, both after a scrap. That leaves about a third of the lines to ask.
 
 **That check stays; the judge is off** (`ROBO_BREAK_JUDGE=1` turns it on). Built with and
@@ -1542,7 +1542,7 @@ the edition doesn't list its corrections (the user).
   questions (the user, 2026-10-13), so each question adds 1/20 of a wrong word
   (`quality.QUESTION_COST`). With slips alone, a question catching an error one time
   in nine paid for itself however many were added. A comparison recomputes the measure
-  from each page's unasked errors and questions, so runs saved before a price changed
+  from each page's silent errors and questions, so runs saved before a price changed
   compare at today's; this morning's tuning run stays better at the new price
   (0.57 → 0.55 [−0.03, −0.01]).
 - **Books are scored in parallel** (the user, 2026-11-02): one process a book, one fewer
@@ -1552,7 +1552,7 @@ the edition doesn't list its corrections (the user).
   time is the system's, reading caches), memory above 30% free with 15 workers. A cold
   run goes one book at a time (`ROBO_BENCH_WORKERS=1`): books in parallel would ask
   different models at once, and Ollama would swap them in and out.
-- **A book whose unasked errors double is named** beside the verdict (`bench.doubled`:
+- **A book whose silent errors double is named** beside the verdict (`bench.doubled`:
   at least twice as many, and 0.1 a page more). A lost page is one place, so its
   interval is wide and no veto fires: Reis om mijn schedel 0.08 → 0.30 went to a BETTER
   verdict (2026-11-02). Over 95 past tuning comparisons the rule fired 8 times. A warning
@@ -1606,7 +1606,7 @@ the edition doesn't list its corrections (the user).
   is 0.64.
 - **An error over a page break counts on the page holding most of it.** Counted on
   its first word's page, washed-out Afscheid p. 38 (one region the reviewer types)
-  scored as 297 unasked words on p. 37, and the scraps of Dolittle's p. 57 plate as
+  scored as 297 silent words on p. 37, and the scraps of Dolittle's p. 57 plate as
   13 on p. 56: Afscheid read 5.03 wrong words a page after review where it is 0.24.
   A whole page typed by the reviewer still counts as one question's slips, which
   flatters a washed-out book.
@@ -1635,7 +1635,7 @@ the edition doesn't list its corrections (the user).
   argued above, its size isn't. *The suspect-pair thresholds* (3× the median layer CER,
   one body line in twenty): never checked against the pairs they flagged. *The question
   budget* (1 a page): swept once, to 3 (2026-10-26): it binds only on De vergelding,
-  where it caught 8 unasked words for 33 questions; NO CHANGE on tuning. *Headings outside the primary test*: the bench reports headings found
+  where it caught 8 silent words for 33 questions; NO CHANGE on tuning. *Headings outside the primary test*: the bench reports headings found
   and spurious but no verdict rests on them. *Footnotes outside the score*
   (`golden/notes.py`): left out because the pipeline didn't place notes; it has since
   2026-10-11, so the reason has expired. *Quote and dash glyphs folded in the score*

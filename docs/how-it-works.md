@@ -555,7 +555,7 @@ question covers, at a quarter, a half and one question per page.
 `bench` decides whether a change goes in. It scores fixed slices of every book in
 a set, before and after the change, and compares them page by page. The change has
 to improve the "after review" figure, which adds the reviewer's own expected
-mistakes to the errors the arbiter left unasked, with each book weighing the same,
+mistakes to the errors the arbiter left silent, with each book weighing the same,
 or the number of paragraph breaks set wrong, without the other getting clearly worse.
 If any one book gets clearly worse, the change is rejected.
 

@@ -3,7 +3,7 @@ shows three ticks.
 
 A print opens a quotation inside a quotation with two marks ("‘“Lucy", closed "kind,”’"),
 and the text layer and the readers often read the three ticks as a double mark alike, so
-no difference raises it: 21 of the tuning bench's 460 unasked errors (docs/decisions.md,
+no difference raises it: 21 of the tuning bench's 460 silent errors (docs/decisions.md,
 2026-11-15). The raised ink at a word's edge is measured on the scan, its width against
 the height of the line's letters (`span`). A book's own double marks give the width a
 double mark has in its typeface (`Nested.survey`, from the edges every reading sets

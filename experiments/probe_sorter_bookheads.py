@@ -1,5 +1,5 @@
 """A date line at a page's top dropped as a running head in a book that has none (Het
-geluid van bananen PDF 159, 170: "Shatila, 19 augustus 1982", lost unasked). Would the
+geluid van bananen PDF 159, 170: "Shatila, 19 augustus 1982", lost silent). Would the
 line-role trees keep it if told how the book's pages open and close: the share of its
 pages whose first line repeats on other pages, and whose last does? Each tuning book
 scored by trees fitted on the others, with and without the two columns, as the build

@@ -192,10 +192,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   recomputed from the saved counts when two runs are compared (`bench.after_review`). Run it before and after a change; cite its
   starred lines, not single CER figures.
 - `quality.py` (`roboscriptorium quality book[:pages[:chapters]] …`): what a
-  reviewer is left with. Wrong words per page before review and left unasked,
+  reviewer is left with. Wrong words per page before review and left silent,
   with every question and at budgets of 0.25, 0.5 and 1 question per page
   (questions ranked by how often their kind caught an error in the *other*
-  books given), each with a 95% bootstrap interval over pages; the unasked
+  books given), each with a 95% bootstrap interval over pages; the silent
   errors by kind (punctuation, quotes, letters, word breaks, missing words…).
 - `pagekinds.py`: what kind of page each page of a scan is, for `init`: cover, blank, title,
   colophon, foreword, text, afterword, ads … Signals first (a page's words, number-only lines,

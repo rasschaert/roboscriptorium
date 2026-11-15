@@ -445,9 +445,9 @@ def quality_report(specs: list[str], first_look: bool = _first_look()) -> None:
         typer.echo(f"\n== {name} (per page, 95% interval)")
         for label, estimate in quality.report(numbers, errors, found, rates).items():
             typer.echo(f"  {label:28} {estimate}")
-        unasked = quality.unasked_by_category(errors, found)
+        silent = quality.silent_by_category(errors, found)
         typer.echo(
-            "  unasked wrong words by kind: " + ", ".join(f"{k} {v}" for k, v in unasked.items())
+            "  silent wrong words by kind: " + ", ".join(f"{k} {v}" for k, v in silent.items())
         )
         own = quality.hit_rates(found, errors)
         typer.echo(
@@ -496,7 +496,7 @@ def run_bench(
             f"{name[:40]:40} CER {b['score']['cer']:6.2%}"
             f"  wrong/page {q['wrong words']['mean']:.2f}"
             f"  questions {q['questions']['mean']:.2f}"
-            f"  unasked {q['unasked, all questions']['mean']:.2f}"
+            f"  silent {q['silent, all questions']['mean']:.2f}"
             f"  after review {sum(v[3] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
             f"  breaks {sum(v[6] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
             f"  typography {sum(v[7] for v in b['pages'].values()) / max(len(b['pages']), 1):.2f}"
@@ -536,7 +536,7 @@ def run_bench(
     if found.vetoes:
         typer.echo("  worse on its own: " + ", ".join(found.vetoes))
     for name, before, after in bench.doubled(old, new):
-        typer.echo(f"  unasked errors doubled, look at it: {name} {before:.2f} → {after:.2f}")
+        typer.echo(f"  silent errors doubled, look at it: {name} {before:.2f} → {after:.2f}")
     if changed := bench.structure(old, new):
         typer.echo("structure (not in the test above):")
         for line in changed:

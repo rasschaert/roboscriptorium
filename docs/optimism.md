@@ -5,7 +5,7 @@ trend shows. The goal: feed in a PDF of a scanned physical book, get out a high-
 EPUB with only an acceptable level of subtle mistakes.
 
 What counts as acceptable, in the bench's terms: wrong words a page after review (or
-unasked, with no review). One wrong word in 1,000 (~0.3 a page) is about a decent
+silent, with no review). One wrong word in 1,000 (~0.3 a page) is about a decent
 commercial e-book; a careful edition like Standard Ebooks is nearer one in 10,000.
 
 Each entry is a judgment, not a measurement: the numbers it rests on are in
@@ -18,7 +18,7 @@ any reader, so only a better reader would catch it. Two measures on the scan its
 raise such doubts with no reader: the accent drawn and the scan scored on that mark
 alone (30 of 37 dropped accents at one false offer in 400 words), and a quote mark's
 width against the book's own marks (54 of 74 lost outer marks of nested quotations).
-Those two kinds are about 125 of tuning's 460 unasked errors.
+Those two kinds are about 125 of tuning's 460 silent errors.
 
 **Why it holds:** none of it is benched yet (three runs queued: accent offers, a judge
 of marks alone, nested quote offers), and an offer counts only if the judges and the
@@ -28,14 +28,14 @@ chief one, an unprepared scan building with no one preparing it, did not move: t
 are measured and planned (checklist, "Starting from a PDF alone"), `init` itself is
 unchanged.
 
-**Would move it up:** the queued runs cutting unasked errors without adding questions;
+**Would move it up:** the queued runs cutting silent errors without adding questions;
 `init` right on the ends and the title of books it has not seen.
 
 ## 2026-11-13, morning: 7/10 (held; a new kind of judge under it)
 
 Render and compare, the user's idea of 2026-11-11, is in use: a judge that knows no
 language, drawing each reading in the book's typeface over the scan. On tuning it takes
-one question in eight away and a twentieth of the unasked wrong words (after review
+one question in eight away and a twentieth of the silent wrong words (after review
 0.24 → 0.22 a page); validation doesn't move in words. It doesn't move the chances by
 itself: the errors no reading doubts are still the wall. What it changes is the kind of
 evidence the arbiter has: the first judge that fails for other reasons than the models
@@ -97,7 +97,7 @@ pass 3 did; Stella's or Ex-minnaar's reading finding errors the bench can't see.
 
 **Where it stands:** tuning 0.27 wrong words a page after review over ~5,200 pages
 (0.277 over ~3,100 on 2026-10-25), validation 0.45 (0.502); before review 0.74 a page,
-unasked 0.17; tuning's heading errors 32 → 20 in two days.
+silent 0.17; tuning's heading errors 32 → 20 in two days.
 
 **Up:** validation, which nothing is chosen on, moved a tenth (0.502 → 0.45), and tuning
 held its level while growing by two thirds into harder pages (front matter, part pages,
@@ -142,11 +142,11 @@ doubled vowel, marks prose doesn't print), any short line in justified text endi
 paragraph, an image-only scan's dashes measured on the image.
 
 **Why the first row holds:** the errors are located now. Every reader is wrong together on
-only 23 lines of the tuning slices (the quiet set); most unasked errors sit where the
+only 23 lines of the tuning slices (the quiet set); most silent errors sit where the
 readers did disagree and the arbiter chose wrong, which questions catch.
 
 **Why the second slips:** the arbiter twice failed to improve with more labelled suspects
-(three more books on the 20th; 2,600 more suspects on the 25th: more unasked errors both
+(three more books on the 20th; 2,600 more suspects on the 25th: more silent errors both
 times). It has reached what its features can tell; going unattended needs a new signal
 for it, and none of the reports found one.
 
@@ -180,7 +180,7 @@ pulled this week, not a verdict on swapping models: something will dethrone it w
 year in the memory a laptop holds, and the build is set up to take it (frozen sets, one
 command to screen a reader, the arbiter retrained on its readings). Two arbiter
 features for a line-end comma failed. What paid besides: reading the errors place by
-place. About half of the biggest unasked class (stress accents) is the reference's
+place. About half of the biggest silent class (stress accents) is the reference's
 slips, not ours (our text matches the print), so the measured error rate overstates the
 build by a fifth or so, and a book's hyphens should be weighed by the whole book, not
 the slice (compound hyphens 0.023 → 0.020).
@@ -195,7 +195,7 @@ book still need their own work. Local models are still the ceiling.
 reader that fits a laptop has changed more in the months since January 2025 than any
 tuning of ours did, and what is hard now (accents and rare marks no reader sees) is what
 the next vision models are likely to fix. The work that carries over is the gate a new
-model must pass: the reader set, the vote simulation, and the unasked-error set.
+model must pass: the reader set, the vote simulation, and the silent-error set.
 
 **Would move it up:** a reader that keeps emphasis accents and rare glyphs; an
 opening-line reader for lost lines; `init` finding the body range alone.

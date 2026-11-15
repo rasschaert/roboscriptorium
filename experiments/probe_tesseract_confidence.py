@@ -1,6 +1,6 @@
 """Is tesseract's word confidence lower on the errors every reading shares? No Ollama:
-tesseract reads each page holding one of the tuning books' unasked errors
-(`unasked.py`'s work/probes/unasked/<book>.jsonl), and a word it reads as the error's
+tesseract reads each page holding one of the tuning books' silent errors
+(`silent_errors.py`'s work/probes/unasked/<book>.jsonl), and a word it reads as the error's
 wrong word is compared with the page's other words.
 
     uv run python experiments/probe_tesseract_confidence.py

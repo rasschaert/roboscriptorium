@@ -1,7 +1,7 @@
 """The outer mark of a nested quotation every reader drops (the print's ‘“Lucy … kind,”’
-built as “Lucy … kind,”: 21 of tuning's 460 unasked errors, 2026-11-15). Does the render
+built as “Lucy … kind,”: 21 of tuning's 460 silent errors, 2026-11-15). Does the render
 judge's fit on that one mark (`rendercheck.mark_fit`) find them? Positives: the bench's
-unasked quote errors whose reference has one mark more at the word's edge, placed on
+silent quote errors whose reference has one mark more at the word's edge, placed on
 their page by the word the build has. Negatives: the same books' other layer words that
 open or close on a double mark, where the reference sets that word so and never nested.
 Prints the AUC and what a cut finds. No models.

@@ -29,8 +29,8 @@ def main() -> None:
         pages += sum(len(b["pages"]) for b in record["books"].values())
         runs.append(f"{set_name} {record['at'][:10]}")
     asked = Counter(r["cause"] for r in rows if r["asked"])
-    unasked = Counter(r["cause"] for r in rows if not r["asked"])
-    causes = sorted(asked.keys() | unasked.keys(), key=lambda c: -(asked[c] + unasked[c]))
+    silent = Counter(r["cause"] for r in rows if not r["asked"])
+    causes = sorted(asked.keys() | silent.keys(), key=lambda c: -(asked[c] + silent[c]))
     per = 100 / pages
     scale = 60  # px for one place a hundred pages
     top, row, x0 = 74, 22, 210
@@ -49,7 +49,7 @@ def main() -> None:
     ]
     for i, cause in enumerate(causes):
         y = top + i * row
-        a, u = asked[cause] * per, unasked[cause] * per
+        a, u = asked[cause] * per, silent[cause] * per
         out.append(
             f'  <text x="{x0 - 10}" y="{y + 13}" font-size="12" fill="#3b4252" '
             f'text-anchor="end">{escape(cause)}</text>'
@@ -63,11 +63,11 @@ def main() -> None:
             f'  <text x="{x0 + (a + u) * scale + 6:.1f}" y="{y + 13}" font-size="11" '
             f'fill="#4c566a">{a:.1f} + {u:.1f}</text>'
         )
-    total_a, total_u = sum(asked.values()) * per, sum(unasked.values()) * per
+    total_a, total_u = sum(asked.values()) * per, sum(silent.values()) * per
     y = top + row * len(causes) + 22
     out.append(
         f'  <text x="30" y="{y}" font-size="12" fill="#3b4252">In all: {total_a:.0f} places asked and '
-        f"<tspan font-weight=\"bold\">{total_u:.0f} unasked</tspan> a hundred pages, over "
+        f"<tspan font-weight=\"bold\">{total_u:.0f} silent</tspan> a hundred pages, over "
         f"{pages:,} pages ({', '.join(runs)}).</text>"
     )
     out.append(

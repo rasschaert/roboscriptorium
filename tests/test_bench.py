@@ -31,10 +31,10 @@ def test_a_change_on_every_page_is_real_and_one_page_of_many_is_not():
     before = _run({p: [2, 1, 1, 1.1] for p in range(40)})
     everywhere = _run({p: [2, 0, 1, 0.1] for p in range(40)})
     one_page = _run({p: [2, 1 if p else 0, 1, 1.1] for p in range(40)})
-    unasked = {c.measure: c for c in bench.compare(before, everywhere)}["unasked"]
-    assert unasked.real and (unasked.before, unasked.after) == (1.0, 0.0)
-    unasked = {c.measure: c for c in bench.compare(before, one_page)}["unasked"]
-    assert not unasked.real
+    silent = {c.measure: c for c in bench.compare(before, everywhere)}["silent"]
+    assert silent.real and (silent.before, silent.after) == (1.0, 0.0)
+    silent = {c.measure: c for c in bench.compare(before, one_page)}["silent"]
+    assert not silent.real
 
 
 def test_only_pages_both_runs_scored_are_compared():
@@ -54,7 +54,7 @@ def test_after_review_counts_the_reviewers_slips_and_time_on_each_question():
 
 
 def test_twenty_questions_that_catch_one_error_cost_more_than_they_save():
-    # Before: one error a page, unasked. After: twenty questions a page catch it.
+    # Before: one error a page, silent. After: twenty questions a page catch it.
     before = _run({p: [1, 1, 0] for p in range(30)}, c={p: [1, 1, 0] for p in range(30)})
     after = _run({p: [1, 0, 20] for p in range(30)}, c={p: [1, 0, 20] for p in range(30)})
     assert bench.verdict(before, after).outcome == "worse"
@@ -63,7 +63,7 @@ def test_twenty_questions_that_catch_one_error_cost_more_than_they_save():
 
 
 def test_a_run_saved_under_another_question_cost_is_compared_at_todays():
-    # The after-review figure saved (9.0) is not what is compared: unasked 1, 1 question.
+    # The after-review figure saved (9.0) is not what is compared: silent 1, 1 question.
     old = _run({p: [1, 1, 1, 9.0] for p in range(30)})
     new = _run({p: [1, 1, 1] for p in range(30)})
     change = {c.measure: c for c in bench.compare(old, new)}["after review"]
@@ -100,7 +100,7 @@ def test_paragraph_breaks_set_wrong_count_and_decide_a_change():
 
 
 def test_fewer_breaks_set_wrong_dont_carry_words_worse_at_one_slip_rate():
-    # More questions, fewer unasked: better at a low slip rate, worse at a high one.
+    # More questions, fewer silent: better at a low slip rate, worse at a high one.
     flat = {p: [2, 1, 1, 0, 0, 0, 2] for p in range(30)}
     mixed = {p: [2, 0.75, 3, 0, 0, 0, 0] for p in range(30)}
     found = bench.verdict(_run(flat, c=flat), _run(mixed, c=mixed))
@@ -370,7 +370,7 @@ def test_the_bench_scores_books_one_fewer_than_the_cores_at_once_or_as_set(monke
     assert bench.workers() == 1
 
 
-def test_a_book_whose_unasked_errors_double_is_named():
+def test_a_book_whose_silent_errors_double_is_named():
     flat = {p: [1, 0.1, 1, 1] for p in range(20)}
     broken = {p: [1, 0.1 if p else 5.0, 1, 1] for p in range(20)}
     named = bench.doubled(_run(flat, c=flat), _run(flat, c=broken))

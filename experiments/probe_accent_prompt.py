@@ -5,7 +5,7 @@ reading holds the reference's word (`want`) and whether it holds the build's (`g
 
     uv run python experiments/probe_accent_prompt.py
 
-Needs `unasked_set.py`'s crops. About a minute on a free Ollama.
+Needs `silent_set.py`'s crops. About a minute on a free Ollama.
 """
 
 import hashlib

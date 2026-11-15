@@ -5,7 +5,7 @@ it would ask (sureness under the build's threshold), in page order, are split in
 the first half is answered (labelled from the reference), a small logistic model over
 the arbiter's log-odds, "this version is the text layer's" and how many line readers
 read it is fit on them, and every other suspect is decided again with it. Reported per
-book and in all: the second half's questions and the unasked suspects' wrong decisions,
+book and in all: the second half's questions and the silent suspects' wrong decisions,
 before and after. No models.
 
     uv run python experiments/probe_book_adaptation_golden.py

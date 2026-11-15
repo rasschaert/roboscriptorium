@@ -3,7 +3,7 @@
 Each tuning book's suspects are scored by an arbiter trained on the other tuning books.
 Each variant is trained once on all their suspects and then again with a random 0.25%
 of them left out (72 of 30,647 changed between two retrainings on 2026-11-11 and moved
-the bench by fifteen unasked errors), several times. Per variant: the silent errors at the rule's number of questions and their
+the bench by fifteen silent errors), several times. Per variant: the silent errors at the rule's number of questions and their
 range over the perturbed trainings, the share of scored suspects whose pick changes,
 whose place among the asked changes, and the mean move in sureness.
 

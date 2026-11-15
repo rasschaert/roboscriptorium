@@ -34,7 +34,7 @@ from roboscriptorium.trust import fold, rows_from  # noqa: F401 - read by the ex
 SPECS = {
     "goede-dochter--ia-scan": "",
     "vals-alarm--ia-scan": "",
-    # Trained on, never scored: without it the arbiter left more errors unasked.
+    # Trained on, never scored: without it the arbiter left more errors silent.
     "the-nature-of-a-crime--doubleday-1924": "",
     "the-story-of-doctor-dolittle--stokes-1920": "",
     "reis-om-mijn-schedel--ia-scan": "",

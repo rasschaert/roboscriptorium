@@ -10,9 +10,9 @@ this file when they move.
 
 **Now** (2026-11-15, production as of c6088a3: `tuning-20261114T233727-389e99a-dirty`,
 `validation-20261114T233833-82c7529-dirty`): tuning, 20 books and 6,180 pages, **0.206**
-wrong words a page after review, 0.55 questions a page, 0.098 errors a page left unasked,
+wrong words a page after review, 0.55 questions a page, 0.098 errors a page left silent,
 paragraph breaks 0.041, 24 heading errors, 980 italic errors; validation, 10 books and
-889 pages, **0.359** after review, 0.53 questions, 0.265 unasked, breaks 0.193, 52 heading
+889 pages, **0.359** after review, 0.53 questions, 0.265 silent, breaks 0.193, 52 heading
 errors, 169 italic errors. The per-book table below is of 2026-11-07 and awaits its
 rerun.
 
@@ -68,19 +68,19 @@ asked (the render judge's measures 425 → 405 silent errors, a character langua
 places they settle are ones the arbiter asks about anyway, and the reviewer settles
 them. New evidence pays only where it lets the arbiter stop asking, so the test of an
 idea is the questions it saves at today's silent errors (the probes now print it), not
-its picks unasked. What did pay that night changed what the build sets, not what it
+its picks silent. What did pay that night changed what the build sets, not what it
 asks: the italic judge between two sets of trees (italic errors −19% on tuning) and a
-lone capital drawn as a small capital (unasked −9).
+lone capital drawn as a small capital (silent −9).
 
 0. **Render and compare, a judge that knows no language (in use since 2026-11-13, its
    weak spots still open).** Each version of a suspect drawn in the book's
    typeface and laid over the scan: the print on 92.3% of 34,205 labelled places, best
    of all judges on accents (95% against 83–90%), weakest on punctuation (91% against
    96%). Benched against a control arbiter trained on the same data without its vote
-   (2026-11-13): tuning BETTER, questions 3,983 → 3,454, wrong words left unasked
-   715 → 678, at a question every four pages 0.250 → 0.191 unasked a page; validation
+   (2026-11-13): tuning BETTER, questions 3,983 → 3,454, wrong words left silent
+   715 → 678, at a question every four pages 0.250 → 0.191 silent a page; validation
    no clear change in words (after review 0.41 → 0.42 [-0.01, +0.04], questions
-   545 → 486, unasked 268 → 283) and WORSE by the rule on two italic errors. Room left:
+   545 → 486, silent 268 → 283) and WORSE by the rule on two italic errors. Room left:
    punctuation (the versions compared only where they differ, as arbiter features),
    books whose typeface the library lacks (Het laatste bevel, Verminkt), font features
    in the drawing.
@@ -91,7 +91,7 @@ lone capital drawn as a small capital (unasked −9).
    (0.32 → 0.32), validation 0.50 → 0.43 after review but worse before it on two books
    (2026-10-15). The line-role feature they suggested found little left to fix
    (2026-10-16: 5 of 657 unread lines wrong), and the hyphen votes were a null too. A small capitals' all-capitals version for the judges: 0 of 11 known errors fixed (2026-10-20).
-   **New models tried 2026-10-20 and 21, none better than the line reader in use (Qwen3.8-27B, two months old: a snapshot, not a verdict on models)** (decisions.md has each number): PaddleOCR-VL and Qwen2.5-VL-72B are worse readers and break a vote (801 → 794, 793); olmOCR-2-7B mends a plain vote (801 → 809) but as the arbiter's fourth witness on the flagged lines the trees take more silent errors (9 → 12), and on whole pages it is no better than the page readers in use; two decision models (H2O-Lightning-Omni-4B, fonles-decision-1) as detectors of the errors left unasked, AUC 0.62 and 0.57. Two arbiter features for a line-end comma turned stop (the span ends its line, the next line's case): tuning 0.29 → 0.30, worse on glued words. The arbiter's own silent errors are 9 in 9,300 flagged suspects: the room is in what is never flagged. The line reader with thinking on reads worse than with it off (434 against 463 of 510 hard lines) and adds nothing to a vote (2026-10-21). **Of the unasked stress-accent errors, half are the reference's** (the print matches the build); the real half is an emphasis accent on an i that every reader writes plain (a prompt and, at 300 DPI, every reader fail; a 450 DPI crop keeps 2 of 6).
+   **New models tried 2026-10-20 and 21, none better than the line reader in use (Qwen3.8-27B, two months old: a snapshot, not a verdict on models)** (decisions.md has each number): PaddleOCR-VL and Qwen2.5-VL-72B are worse readers and break a vote (801 → 794, 793); olmOCR-2-7B mends a plain vote (801 → 809) but as the arbiter's fourth witness on the flagged lines the trees take more silent errors (9 → 12), and on whole pages it is no better than the page readers in use; two decision models (H2O-Lightning-Omni-4B, fonles-decision-1) as detectors of the errors left silent, AUC 0.62 and 0.57. Two arbiter features for a line-end comma turned stop (the span ends its line, the next line's case): tuning 0.29 → 0.30, worse on glued words. The arbiter's own silent errors are 9 in 9,300 flagged suspects: the room is in what is never flagged. The line reader with thinking on reads worse than with it off (434 against 463 of 510 hard lines) and adds nothing to a vote (2026-10-21). **Of the silent stress-accent errors, half are the reference's** (the print matches the build); the real half is an emphasis accent on an i that every reader writes plain (a prompt and, at 300 DPI, every reader fail; a 450 DPI crop keeps 2 of 6).
 1. **Structure.** The bench now counts paragraph breaks per page and prints headings.
    - Line roles: the trees (`sorter.py`) are on by default since 2026-10-13 (validation
      0.59 → 0.50, no book worse); Dolittle's text wrapped around drawings is what they
@@ -112,15 +112,15 @@ lone capital drawn as a small capital (unasked −9).
      running on.
    - Footnotes are taken out of the text (2026-10-11; Reis 7 of 8). Not handled: verse,
      tables, block quotes, epigraphs.
-2. **The errors no question asks about** ("unasked", by kind, in each bench record):
-   - Vals alarm: 33 unasked letter errors, its lost full stops (the book teaches itself, `trust.with_answers`): only its
+2. **The errors no question asks about** ("silent", by kind, in each bench record):
+   - Vals alarm: 33 silent letter errors, its lost full stops (the book teaches itself, `trust.with_answers`): only its
      own answers can teach the arbiter.
-   - De eerlijke vinder: unasked 0.13 a page on 2026-11-05 (10 places), from 1.02; half
+   - De eerlijke vinder: silent 0.13 a page on 2026-11-05 (10 places), from 1.02; half
      made by the build where the layer was right (a diaeresis dropped, "bidden" read
      "hidden").
    - 11/22/63 and You're Never Weird: ~20 missing words each, likely text in pictures
      or lines the layer lacks.
-   - Dolittle: 26 wrong words unasked, old typography.
+   - Dolittle: 26 wrong words silent, old typography.
 3. **The reviewer's time.** 1.2–2.2 questions a page is 250–400 for a 200-page book, and
    the reviewer is wrong on about 1 answer in 8 (8 of 68 on Stella). Fewer, better
    questions improve "after review" as much as better readings do. Untried: grouping
@@ -189,7 +189,7 @@ ideas reworked", 2026-11-15):
   budget): each version's fit and where the two best-fitting drawings differ pick better
   with no questions asked (425 → 405 silent errors held out, random columns 423), but at
   the build's budget the places they fix are asked anyway: tuning level, validation six
-  more unasked. Retest if the build is asked to ask fewer questions.
+  more silent. Retest if the build is asked to ask fewer questions.
 
 - **Those signals deciding when to ask instead** (2026-11-15; failed on stacking): a
   second model on the arbiter's sureness plus the three signals' margins ranks places
@@ -264,7 +264,7 @@ ideas reworked", 2026-11-15):
   models): the layer's style doesn't predict it (De tuin van de avondnevel opens 81% single,
   yet the single is wrong 33 of 35 times); decisions.md.
 - **Three questions a page** (2026-10-26, warm benches): the budget binds only on De
-  vergelding (8 unasked words caught for 33 questions); tuning no change.
+  vergelding (8 silent words caught for 33 questions); tuning no change.
 - **The page readers' spelling of a line-end compound** (2026-10-15, a probe): with the
   hyphen judge in, the build is wrong on 19 of 3,184 line-end hyphens; the readers
   agreeing fix 9 and break about 6. Too few to build on.
@@ -301,7 +301,7 @@ ideas reworked", 2026-11-15):
 - **A sureness threshold per kind of question** (2026-10-24): replayed on the trust data,
   accent 0.9, space 0.95, quote 0.7 and letters 0.85 left 7 fewer silent errors for 12
   fewer questions with each book left out; on the bench questions fell 0.732 → 0.721 a page
-  and unasked errors rose 0.174 → 0.176. One threshold is as good as several.
+  and silent errors rose 0.174 → 0.176. One threshold is as good as several.
 - **Qwen's own token probabilities as a silent-error signal** (2026-10-24): on lines where
   glm-ocr agrees with it, the weakest token's log-probability and runner-up margin mark
   qwen's errors with AUC 0.57, and image-gain (with the crop against without) 0.44. They
@@ -324,7 +324,7 @@ ideas reworked", 2026-11-15):
 - **Qwen's page roles with picture lines marked** (2026-10-24): half the harm of the
   unmarked try, still no change (30 fixed, 27 made); mottos and attributions stand in the way.
 - **The arbiter retrained on 2,600 more labelled suspects** (2026-10-25, the grown slices):
-  tuning 0.286 → 0.294, more unasked errors; more rows of the same features don't help.
+  tuning 0.286 → 0.294, more silent errors; more rows of the same features don't help.
 - **A lone word with a diagonal letter or acute accent held to 12°** (2026-11-03): tuning
   italic errors 2,445 → 2,588; a capital Z or W leans the whole word ~26°, past any cut,
   while real lone italics with those letters lean 8–12°.
@@ -334,7 +334,7 @@ ideas reworked", 2026-11-15):
 - **An arbiter feature for a stop added before a lower-case word** (2026-11-04): wrong 30 of
   30 in the trust data mid-line, but the bench's cases sat at line ends, out of the
   arbiter's sight; offline noise (42 → 41 silent at a question a page). Taken as a rule
-  instead (`line_end_stop`), where the next line is known: 4 unasked words fixed.
+  instead (`line_end_stop`), where the next line is known: 4 silent words fixed.
 - **The mid-line stop rule unguarded** (2026-11-05): a stop added right before a lower-case
   letter inside a line, as the layer reads it: made one error on each set where the layer
   misread the next word's opening ("df" for "'If", "h" for "It"). Taken with the next word

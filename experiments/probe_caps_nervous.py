@@ -1,5 +1,5 @@
 """Nervous System's small-capital acronyms (TV, RCMP, CBC, VCR, …) as a test of the
-small-capitals step: which of them a build reads right, asks about or gets wrong unasked,
+small-capitals step: which of them a build reads right, asks about or gets wrong silent,
 and which the lower-case doubt (`ocrcheck.capitals_doubts`) would raise or a disputed
 span would get in capitals (`capitals_versions`). No models: the
 build's stage caches and the second scan's own text layer.
@@ -115,7 +115,7 @@ def main():
             **place, "page": number, "line": k, "layer": read, "built": built,
             "suspect": [[s["ours"], s["others"], s["choice"]] for s in hit],
             "state": "right" if right else "another word in this edition" if other_word
-            else "asked" if asked else "wrong, unasked",
+            else "asked" if asked else "wrong, silent",
             "doubt": raised[0] if raised else None,
             "doubt_has_capitals": any(place["acronym"] in v for vs in raised for v in vs),
             "version_has_capitals": any(place["acronym"] in v for v in more),

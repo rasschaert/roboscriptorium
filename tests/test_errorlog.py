@@ -30,7 +30,7 @@ def test_a_diff_keys_errors_by_book_and_place_over_the_books_both_runs_scored():
     assert [r["key"] for r in d.fixed] == ["1"]
     assert [r["key"] for r in d.made] == ["3"]
     assert [(a["key"], b["key"]) for a, b in d.kept] == [("2", "2")]
-    assert errorlog.report(d)[0].startswith("fixed 1 wrong words (1 unasked), made 2")
+    assert errorlog.report(d)[0].startswith("fixed 1 wrong words (1 silent), made 2")
 
 
 def test_bench_saves_the_error_rows_beside_the_record_and_not_in_it(tmp_path):

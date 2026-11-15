@@ -38,7 +38,7 @@ def test_the_trees_roles_replace_the_rules_and_keep_the_role_models_names():
     roles = sorter.apply(sorter.Sorter(_Trees()), [page], asked, {})
     assert roles[SourceRef(5, 0)].role == "page_number"
     assert roles[SourceRef(5, 2)].role == "chapter_heading" and roles[SourceRef(5, 2)].p_body < 0.5
-    # A line the role model dropped is body where the trees say so; unasked body lines stay out.
+    # A line the role model dropped is body where the trees say so; silent body lines stay out.
     assert roles[SourceRef(5, 4)] == LineRole("body", 0.9, 0.9, "trees")
     assert SourceRef(5, 5) not in roles
     # One the trees would drop but aren't sure enough of is kept as text, and flagged.
@@ -97,7 +97,7 @@ def test_a_labelled_number_opening_sunk_pages_is_no_running_head_though_it_recur
     assert {roles[SourceRef(n, 0)].role for n in (20, 30, 40, 50)} == {"chapter_heading"}
 
 
-def test_running_text_away_from_the_edges_is_never_dropped_unasked():
+def test_running_text_away_from_the_edges_is_never_dropped_silently():
     from roboscriptorium.layout import Region
 
     class Drops(_Trees):
@@ -145,8 +145,8 @@ def test_the_page_roles_are_features_only_for_trees_trained_with_them(tmp_path):
     assert [said[SourceRef(5, i)]["page_heading"] for i in range(3)] == [0.0, 0.0, 1.0]
     assert said[SourceRef(5, 0)]["page_other"] == 1.0
     # A page the read model didn't answer for has nothing to say.
-    unasked = sorter.features([page], {}, {}, None, {})[SourceRef(5, 2)]
-    assert unasked["page_asked"] == 0.0 and np.isnan(unasked["page_heading"])
+    silent = sorter.features([page], {}, {}, None, {})[SourceRef(5, 2)]
+    assert silent["page_asked"] == 0.0 and np.isnan(silent["page_heading"])
 
     sorter.save(sorter.Sorter(_Trees(), want), tmp_path / "pages.pkl")
     assert sorter.load(tmp_path / "pages.pkl", page_roles=True).page_roles

@@ -5,7 +5,7 @@
 Per book, the reference is the control lines of the frozen reader set (clean lines, known text):
 every small blob standing just above a narrow upright one (an i or j and its dot) gives a mark
 with an area, an aspect (height over width), a fill, a tilt (the angle of its long axis) and a
-sideways offset from the stem. The test lines are the unasked set's: the six real stress-accent
+sideways offset from the stem. The test lines are the silent set's: the six real stress-accent
 errors (the accent is printed, the reader wrote a plain i) and the clean control lines. Each line
 is scored by its oddest mark, the largest standardised distance from the book's own marks.
 Reported: how the six accented lines rank among all test lines (an AUC) and their scores.
@@ -22,7 +22,7 @@ from PIL import Image
 from scipy import ndimage
 
 READER = Path("work/tryout/reader-v3")
-UNASKED = Path("work/probes/unasked-set")
+SILENT = Path("work/probes/unasked-set")
 RUN = "tuning-20261020T182636-f38e636-dirty"
 
 
@@ -87,11 +87,11 @@ if __name__ == "__main__":
     print({b[:18]: len(m) for b, m in reference.items()})
     real = real_lines()
     scored = []
-    for item in json.loads((UNASKED / "items.json").read_text())["items"]:
+    for item in json.loads((SILENT / "items.json").read_text())["items"]:
         book = item["book"]
         if book not in stats:
             continue
-        found = marks(crop(UNASKED, item))
+        found = marks(crop(SILENT, item))
         if not found:
             continue
         mean, std = stats[book]

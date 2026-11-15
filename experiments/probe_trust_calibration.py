@@ -4,7 +4,7 @@ Reads what `probe_trust_variance.py` kept: per training (the full one, then each
 0.25% of the suspects left out) every tuning suspect's sureness from the other books'
 arbiter and whether its pick was right. Each calibration maps sureness to the chance
 of being right; a suspect under 0.9 is asked. Per calibration: the questions and the
-errors left unasked for each training, and their spread.
+errors left silent for each training, and their spread.
 
     uv run python experiments/probe_trust_calibration.py
 
@@ -53,13 +53,13 @@ for path in sorted(OUT.glob("variant-*.npz")):
     kept = np.load(path)
     print(f"{path.name}: {len(kept['sure'])} trainings of {kept['sure'].shape[1]} suspects")
     for label, make in CALIBRATIONS.items():
-        asked, unasked = [], []
+        asked, silent = [], []
         for sure, hit in zip(kept["sure"], kept["hit"].astype(float), strict=True):
             ask = make(sure, hit)(sure) < BELOW
             asked.append(int(ask.sum()))
-            unasked.append(int(((hit == 0) & ~ask).sum()))
+            silent.append(int(((hit == 0) & ~ask).sum()))
         print(
             f"  {label}: asked {asked[0]}, perturbed {min(asked[1:])}–{max(asked[1:])} "
-            f"(sd {np.std(asked):.0f}); unasked errors {unasked[0]}, perturbed "
-            f"{min(unasked[1:])}–{max(unasked[1:])} (sd {np.std(unasked):.1f})"
+            f"(sd {np.std(asked):.0f}); silent errors {silent[0]}, perturbed "
+            f"{min(silent[1:])}–{max(silent[1:])} (sd {np.std(silent):.1f})"
         )

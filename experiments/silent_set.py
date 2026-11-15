@@ -2,7 +2,7 @@
 left in the text layer's lines with no question asked (`layer` kept, `asked` false), and
 control lines of the same pages that carry no error. Crops as the line readers see them.
 
-    uv run python experiments/unasked_set.py
+    uv run python experiments/silent_set.py
 
 Writes work/probes/unasked-set/{items.json, crops/}; items have the reader set's fields
 (`id`, `stratum` hard or control, `layer`, `crop` name), so `h2o_triage.py` and

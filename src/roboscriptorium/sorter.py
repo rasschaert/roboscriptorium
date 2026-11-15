@@ -172,7 +172,7 @@ class Mismatch(RuntimeError):
 def train(rows: list[dict[str, float]], labels: list[str], body_weight: float = 1.0) -> Sorter:
     """Trees over labelled lines' features (`features`), labels from `CLASSES`. Classes
     weigh alike whatever their size; a body line weighs `body_weight` times that, since
-    a body line dropped loses text unasked where a speck kept is asked about."""
+    a body line dropped loses text silently where a speck kept is asked about."""
     from sklearn.ensemble import HistGradientBoostingClassifier
 
     model = HistGradientBoostingClassifier(

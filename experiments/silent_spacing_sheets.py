@@ -1,4 +1,4 @@
-"""Unasked errors that differ from the reference only in spaces or hyphens, with their crops.
+"""Silent errors that differ from the reference only in spaces or hyphens, with their crops.
 
 The reference's own departures from its print cluster here: a space before a mark no
 print sets, words run together, a line-end hyphen left in. From one or more bench runs'
@@ -6,7 +6,7 @@ error rows this lists those places by pattern (`<out>/places.json`) and lays the
 lines out on sheets (`<out>/sheet-NN.png`, numbered as in `<out>/places.txt`), for an
 agent to settle by eye before any goes to the user.
 
-    uv run python experiments/unasked_spacing_sheets.py <out dir> <run.errors.jsonl> …
+    uv run python experiments/silent_spacing_sheets.py <out dir> <run.errors.jsonl> …
 
 No models.
 """

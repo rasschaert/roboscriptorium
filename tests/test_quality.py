@@ -26,10 +26,10 @@ def test_budgets_ask_the_kinds_of_question_that_caught_errors_elsewhere_first():
     out = quality.report([1, 2, 3, 4], errors, flags, rates)
     assert out["wrong words"].mean == (1 + 3) / 4
     assert out["questions"].mean == 3 / 4
-    assert out["unasked, all questions"].mean == 0
-    # One question at 0.25/page: an ocr-doubt, which leaves the other error unasked.
-    assert out["unasked at 0.25/page"].mean in (1 / 4, 3 / 4)
-    assert out["unasked at 1/page"].mean == 0
+    assert out["silent, all questions"].mean == 0
+    # One question at 0.25/page: an ocr-doubt, which leaves the other error silent.
+    assert out["silent at 0.25/page"].mean in (1 / 4, 3 / 4)
+    assert out["silent at 1/page"].mean == 0
 
 
 def test_bootstrap_interval_holds_the_mean():

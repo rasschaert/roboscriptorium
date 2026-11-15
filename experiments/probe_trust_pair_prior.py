@@ -11,7 +11,7 @@ fixed rule's own number of questions and at budgets of 0, 0.25, 0.5 and 1 questi
 page, for the trees without the prior (an empty table) and with it. Then the prior's
 stability with one more training book left out, and, with `--two-pass`, a second pass
 where the asked suspects' labels (the reviewer's answers) give a per-book posterior per
-pair that rescores the unasked ones.
+pair that rescores the silent ones.
 
     PYTHONPATH=experiments uv run python experiments/probe_trust_pair_prior.py [--min-books N] [--two-pass] [--per-book PAIR]
 
@@ -167,7 +167,7 @@ for name, rows in books.items():
 if TWO_PASS:
     print(
         "\ntwo passes (+prior): the asked suspects' labels give a per-book posterior per pair, "
-        "which rescores the unasked. Silent at .25/.5/1 per page: one pass → two"
+        "which rescores the silent. Silent at .25/.5/1 per page: one pass → two"
     )
 
     def posterior(s, k: int, answered: dict) -> float:

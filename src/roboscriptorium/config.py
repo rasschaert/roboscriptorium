@@ -34,9 +34,9 @@ class Settings:
     # scan (`rendercheck.py`, with the fonts in `fonts`). Each
     # is a vote for the arbiter, "" for none. Asked only where the vision judge is less
     # sure than `alarm_below` (1.0: always). autotrust-jev 35B and d3 9B: the arbiter
-    # trained with their votes leaves about a tenth fewer errors unasked; with `render`
+    # trained with their votes leaves about a tenth fewer errors silent; with `render`
     # too it asks about an eighth fewer questions on tuning; autotrust-jev 9B asked the text
-    # judge's question beside them, about 1% fewer questions and as many errors unasked
+    # judge's question beside them, about 1% fewer questions and as many errors silent
     # (2026-11-15, docs/design.md).
     alarm_model: str = "autotrust-jev:35b-nvfp4,d3:9b,render,autotrust-jev:9b-nvfp4@text"
     alarm_below: float = 1.0

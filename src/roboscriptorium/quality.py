@@ -164,7 +164,7 @@ def per_page(
     return {p: tuple(v) for p, v in out.items()}
 
 
-def unasked_by_category(errors: list[Disagreement], asked: list[Flag]) -> dict[str, int]:
+def silent_by_category(errors: list[Disagreement], asked: list[Flag]) -> dict[str, int]:
     """Wrong words no asked question catches, per category, largest first."""
     out: dict[str, int] = {}
     for e in errors:
@@ -192,16 +192,16 @@ def report(
     flags: list[Flag],
     rates: dict[str, tuple[int, int]],
 ) -> dict[str, Estimate]:
-    """Wrong words per page, before review and left unasked with all questions and at
+    """Wrong words per page, before review and left silent with all questions and at
     each budget, plus questions per page."""
     order = ranked(flags, rates)
     out = {}
     full = per_page(pages, errors, flags)
     out["wrong words"] = bootstrap([v[0] for v in full.values()])
     out["questions"] = bootstrap([v[2] for v in full.values()])
-    out["unasked, all questions"] = bootstrap([v[1] for v in full.values()])
+    out["silent, all questions"] = bootstrap([v[1] for v in full.values()])
     for budget in BUDGETS:
         asked = order[: round(budget * len(pages))]
         counts = per_page(pages, errors, asked)
-        out[f"unasked at {budget:g}/page"] = bootstrap([v[1] for v in counts.values()])
+        out[f"silent at {budget:g}/page"] = bootstrap([v[1] for v in counts.values()])
     return out

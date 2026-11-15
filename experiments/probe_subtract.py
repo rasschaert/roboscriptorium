@@ -2,7 +2,7 @@
 
 On the trust data, no models. Without a judge, its votes are gone. Without a reader,
 every version only it read is gone, and a suspect left with the layer's version alone
-is no suspect at all: the layer's reading stands unasked, a silent error where it was
+is no suspect at all: the layer's reading stands silent, a silent error where it was
 wrong. A judge's vote for a version that is gone counts as no pick (the judge chose
 among more versions than it would have been shown; a small optimism for the reader).
 Each book is scored by trees trained on the other trainable books, as

@@ -2,7 +2,7 @@
 
 A Dutch book sets stress with an acute ("zíjn", "één", "wílde"), and the text layer and
 the readers often read the word plain alike, so no difference raises it: 105 of the tuning
-bench's 604 unasked errors were a dropped mark, 36 of them where no reading differed
+bench's 604 silent errors were a dropped mark, 36 of them where no reading differed
 (docs/decisions.md, 2026-11-15). For each word of a line no reading disputes, the word is
 drawn with the acute an emphasis would set on each of its vowel groups, and the scan is
 scored on that mark alone (`rendercheck.mark_fit`). Where it clears `CUT`, the marked

@@ -9,7 +9,7 @@ Run from the main checkout so `work/` is reached by path. Every small capital th
 asked about, and the lower-case places on 40 pages of its sample; one worker a book, so
 two builds never write one book's caches at once. Writes `short.jsonl` beside the answers,
 a book at a time; `compare` prints what the setting fixed, made, and moved between asked
-and unasked, a place being a book, page and the words got and wanted.
+and silent, a place being a book, page and the words got and wanted.
 """
 
 import json
@@ -81,14 +81,14 @@ def compare():
     groups = {
         "fixed": [off[k] for k in off.keys() - on.keys()],
         "made": [on[k] for k in on.keys() - off.keys()],
-        "unasked, now asked": [on[k] for k in off.keys() & on.keys() if on[k]["asked"] > off[k]["asked"]],
-        "asked, now unasked": [on[k] for k in off.keys() & on.keys() if on[k]["asked"] < off[k]["asked"]],
+        "silent, now asked": [on[k] for k in off.keys() & on.keys() if on[k]["asked"] > off[k]["asked"]],
+        "asked, now silent": [on[k] for k in off.keys() & on.keys() if on[k]["asked"] < off[k]["asked"]],
     }  # fmt: skip
     for name, group in groups.items():
-        unasked = sum(not r["asked"] for r in group)
-        print(f"\n{name}: {len(group)} ({unasked} unasked)")
+        silent = sum(not r["asked"] for r in group)
+        print(f"\n{name}: {len(group)} ({silent} silent)")
         for r in sorted(group, key=place):
-            asked = "asked" if r["asked"] else "unasked"
+            asked = "asked" if r["asked"] else "silent"
             print(f"  {r['book']} p{r['page']} {r['got']!r} for {r['want']!r} ({r['kind']}, {asked})")
 
 

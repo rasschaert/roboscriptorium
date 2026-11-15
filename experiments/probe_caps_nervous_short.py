@@ -7,7 +7,7 @@ the build it has (the copied `ocr-check.json`, the setting off).
 Run from the main checkout so `work/` is reached by path. The whole book, as a page built
 alone is asked other line-role questions than in its book. Prints every suspect between a
 word and its capitals that is new or decided otherwise, and counts them by decision; the
-places to look at are PDF 43 and 59 ("tv" unasked), 47 ("vcr" picked over "ver") and 158
+places to look at are PDF 43 and 59 ("tv" silent), 47 ("vcr" picked over "ver") and 158
 ("ver."/"vcr." asked). Writes `nervous-short.jsonl` beside the copy. With `0` the setting
 stays off: a build from the caches alone, to check the copy.
 """

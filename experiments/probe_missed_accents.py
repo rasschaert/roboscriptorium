@@ -1,7 +1,7 @@
-"""Accents every reader drops ("zíjn", "één": 105 of the tuning bench's 604 unasked errors
+"""Accents every reader drops ("zíjn", "één": 105 of the tuning bench's 604 silent errors
 are a dropped mark, 36 of them where no reading differed, so nothing could ask). Does the
 accent-zone fit (`probe_accent_fit.measures`) find them among plain words? Positives: the
-bench's unasked dropped-mark errors, located on their page by the word the build has.
+bench's silent dropped-mark errors, located on their page by the word the build has.
 Negatives: a sample of each book's body words with a vowel, absent from the error log,
 given the mark an emphasis would put there ("ij" → "íj", a doubled vowel both, else the
 first vowel). Prints the AUC and, at the false-alarm rates a book could bear, the share of

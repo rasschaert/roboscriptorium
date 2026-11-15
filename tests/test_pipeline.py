@@ -747,7 +747,7 @@ def test_the_context_judge_settles_a_question_where_it_picks_the_arbiters_versio
     import numpy as np
 
     class Leaning:
-        """Leans to the read model's version, but not enough to settle it unasked."""
+        """Leans to the read model's version, but not enough to settle it silently."""
 
         def predict_proba(self, X):
             p = np.where(X[:, 0] == 1, 0.4, 0.6)

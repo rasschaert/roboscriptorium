@@ -49,11 +49,11 @@ last on 2026-11-14, so next by 2026-11-21).
          signal (AUC 0.96 leaving a book out, 0.81 before), a small gain as arbiter columns
          (382 → 369 silent with no questions, none at the rule's; decisions.md
          2026-11-15). As a finder of accents every reader drops (105 of tuning's 604
-         unasked errors): 30 of the 37 printed marks placed at a 0.24% false-alarm rate
+         silent errors): 30 of the 37 printed marks placed at a 0.24% false-alarm rate
          (`probe_missed_accents.py`); the vision judges take 30–32 of 43 proposed marks
          and 1–2 of 87 plain words. In the build, off (`ROBO_ACCENT_DOUBTS`,
          `accentmarks.py`). Running: trust data, arbiter and both benches with the
-         doubts (`work/runs/accents-chain.sh`); taken if tuning's unasked errors fall and
+         doubts (`work/runs/accents-chain.sh`); taken if tuning's silent errors fall and
          validation doesn't veto. Behind it: a judge of marks alone (`render-mark`,
          `accents-mark-chain.sh`), then nested quote offers (`nested-chain.sh`). Open:
          the offers never draw the first vowel of a pair alone ("níet", "bóek": 41 of
@@ -67,7 +67,7 @@ last on 2026-11-14, so next by 2026-11-21).
 In this order; `HANDOVER.md` has the paths and the commands.
 
 - [ ] After batch five, the null that waited for it: autotrust-jev 9B as a second text
-      judge (branch `text-seat`; not taken 2026-11-09, validation's unasked places
+      judge (branch `text-seat`; not taken 2026-11-09, validation's silent places
       170 → 178). Needs fresh model answers: overnight
 - [x] Trust data for the tuning books that have none (`bench.NO_TRUST_DATA`: Au pair, De
       vergelding, Glazuur): built and trained on, with the judge panel and with the
@@ -84,7 +84,7 @@ side paths that skip the judges and the arbiter, and their cards show one or two
 
 - [ ] The quote check as a reader in the OCR check (`ROBO_QUOTE_READER=1`, off;
       design.md, Quote questions). Benched twice on tuning, not taken: the arbiter was
-      never trained on its two readings, so asked places go unasked (decisions.md,
+      never trained on its two readings, so asked places go silent (decisions.md,
       2026-11-11). Left: the trust data rebuilt with the two quote readers, the arbiter
       retrained to weigh them, then `bench tuning` and `validation`; on by default if
       neither says worse. Then whether `quotes.closed_at_end` is still needed (it added
@@ -99,7 +99,7 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       (`experiments/heading_sureness.py`, `heading_misses.py` on warm tuning builds):
       every heading is asked today, ~700 on tuning to catch about six errors. The trees'
       heading calls at 0.99 or more were never a wrong role there (Dolittle's title page
-      at 0.96–0.97 is the nearest); at 0.97 one would go unasked. But the question is
+      at 0.96–0.97 is the nearest); at 0.97 one would go silent. But the question is
       also the only check of a heading's text (Het ijzige land's "HOOFDSTUK 6" for 5;
       a title of words like Nervous System's "MARRING A CHOIR" no reader reads), so a
       sure heading can skip it only once its text is checked: a number its run confirms
@@ -206,7 +206,7 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       list from the scan (a small mark left of an indented run of lines), build it as an
       EPUB list, drop the misread markers
 - [ ] Going into a Dark House, before its review: PDF 90's show-through stands as a
-      garbled motto, unasked (the page-kind model calls show-through a motto)
+      garbled motto, silent (the page-kind model calls show-through a motto)
 - [ ] The Loudest Sound and Nothing, before its review: its wrong headings are all asked
       (Blackpool's label "00430050" as a heading on PDF 7, the half-title on PDF 11,
       "The Numbers / NUMBERS", show-through on PDF 182); the machine should settle them
@@ -260,7 +260,7 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       Het heft's datelines under its headings ("Februari 1829") joined to them. Retrained
       again on the grown slices (2026-11-14, `work/models/trees-grown-20261114/`): headings
       gained on Reis, Metro and Het heft, Dolittle's running heads kept as headings (+44),
-      and on De stilte van de hel a set-apart passage dropped as no text (p. 94, unasked
+      and on De stilte van de hel a set-apart passage dropped as no text (p. 94, silent
       0.08 → 0.53 a page), with short lines of dialogue elsewhere
 - [ ] Scene breaks the build misses: 23 of 295 (Reis 14, De eerlijke vinder 7). Reis's
       are page tops after a full page whose last line ends a sentence at the margin, the
@@ -286,9 +286,9 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 ## Errors no question asks about
 
 - [ ] **Quote marks measured on the scan.** A quarter of the tuning bench's error rows
-      are quote marks (370 of 1,602: 309 asked, 61 unasked), and the worst of them have
+      are quote marks (370 of 1,602: 309 asked, 61 silent), and the worst of them have
       no reading that differs: the outer mark of a nested quotation lost (the print's
-      ‘“Lucy … kind,”’ built as “Lucy … kind,”: 21 unasked, Goede dochter 17, De tuin 4;
+      ‘“Lucy … kind,”’ built as “Lucy … kind,”: 21 silent, Goede dochter 17, De tuin 4;
       scan crops checked 2026-11-15), and the layer reads many a ‘ as “. First tries
       (2026-11-15, `probe_nested_quotes.py`, `probe_quote_ticks.py`, no models): the
       render judge's fit on the one mark more finds 8 of 11 lost marks while offering a
@@ -327,7 +327,7 @@ without effect, and what each would need to be tried again, is in
       retrained and both benches)
 - [ ] De vergelding's own arbiter: it has the most unsure suspects and was never trained
       on; comes with its trust data (In flight)
-- [ ] Spacing the build sets against the print, read off the crops of 223 unasked
+- [ ] Spacing the build sets against the print, read off the crops of 223 silent
       places (2026-11-12, decisions.md; `work/probes/unasked/spacing-20261112/`), each a
       repair with its counterexamples tested:
       - a dash before a closing quote set closed ("Dud—’") or spaced on both sides
@@ -380,7 +380,7 @@ are under Done, "Architecture probes".
             old-style figures (20 of 478 labelled places with a digit fixed, 4 made)
       - [x] The second round: trust data and arbiter with the new typefaces, drawings
             and confidence, benched against the first round's control: tuning BETTER
-            (questions −13%, unasked 715 → 678), validation no clear change in words,
+            (questions −13%, silent 715 → 678), validation no clear change in words,
             WORSE by the rule on two italic errors (decisions.md 2026-11-13)
       - [x] **On by default** (the user, 2026-11-13: "let's turn it on by default but
             also keep working on the weak spots"): `render` in `alarm_model`, the
@@ -403,7 +403,7 @@ are under Done, "Architecture probes".
             the book's uncontested words instead of fixed lists
       - [x] **The font's kerning, chosen per book**: no clear change, not taken
             (2026-11-14: tuning 45 fewer questions, the same errors after review;
-            validation 4 more unasked; decisions.md). Branch `render-kern` kept.
+            validation 4 more silent; decisions.md). Branch `render-kern` kept.
       - [ ] **Matched-font rendering** (the user's): the typeface found from the scan,
             for the shapes the book can't supply. The family is found for eight of the
             user's ten books (the user's library, in `work/fonts/`: Quadraat, Janson Text
@@ -472,7 +472,7 @@ Daens' title was mended by hand).
 
 - [ ] Au pair's manifest gets `doubled_singles = true` and is derived again, **after the
       accent run's benches** (it changes the reference under them): its e-book writes
-      the print's “De keizer” as ‘‘De keizer (11 pairs), 12 of tuning's unasked quote
+      the print's “De keizer” as ‘‘De keizer (11 pairs), 12 of tuning's silent quote
       errors that are no errors. Then tuning's baseline is run again. Agent, minutes
 - [ ] The Thief-Taker's part pages set "/ PART ONE /" in the EPUB: the print's ornaments
       (small swords, checked on the scan) read as slashes (found by `heading_marks`,
@@ -537,7 +537,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 - [x] 2026-10-24 Stella rebuilt with every fix since its review: text and paragraphs
       unchanged
 - [x] Stella's errors estimated against Claude's reading (2026-10-16): 4 wrong words in
-      67 pages before review, 2 asked; 6 questions. Unasked: two words joined after a
+      67 pages before review, 2 asked; 6 questions. Silent: two words joined after a
       tight f ("grofwerk", "trofik")
 - [x] Stella's review (2026-10-16): 6 questions answered, two accents corrected ("íéts",
       "ís"); rebuilt, epubcheck clean (`epubs/stella-2026-10-16-0859.epub`)
@@ -664,7 +664,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 ## Words, quotes and typography
 
 - [x] 2026-11-12 Four repairs to spacing the build set wrong, read off the crops of the
-      unasked places: a chain broken beside a short word keeps its hyphen
+      silent places: a chain broken beside a short word keeps its hyphen
       ("second-to-last"), a line ending on a dash its box leaves out doesn't start a
       paragraph (Dolittle, 9), an ellipsis after a closing quote keeps the layer's
       space, a dash before a word opening on an apostrophe keeps its space. Tuning
@@ -673,7 +673,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       (the user, 2026-10-21; parked 2026-11-11): at line level the shape gives AUC
       0.66–0.76; emphasis accents and the dotless ı need each mark tied to its letter,
       so a reader that gives letter positions (outlook.md, "Tried")
-- [x] ~~The errors the build makes where the layer was right~~ (51 unasked on tuning,
+- [x] ~~The errors the build makes where the layer was right~~ (51 silent on tuning,
       2026-11-06; closed 2026-11-11): accents (18) are accent-shaped specks with no
       cheap signal, commas added are wrong 13 of 14 with no rule, quote glyphs (6)
       aren't told by the book's quote style; the specks go to "One path for every doubt"
@@ -692,7 +692,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       compound whose end joins the stem ("voor- en achterbank"); tuning 8 fixed,
       validation no change
 - [x] ~~A paragraph the layer lost whole~~ (2026-11-06, `missing.blocks`): Dolittle's
-      PDF 97, tuning 105 wrong words fixed (81 unasked), 1 made; its title kept with it
+      PDF 97, tuning 105 wrong words fixed (81 silent), 1 made; its title kept with it
 - [x] ~~Lines of dots both layer and spotter lose~~ (2026-11-06, `missing.slots`,
       `quoted`, `slot_lines`): tuning 4 fixed (Het geluid van bananen), validation 5
       (Verminkt), none made; Het geluid van bananen's p. 25 and 76 and Vanille's leaders
@@ -701,7 +701,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       "keek’en" fixed; "de’schaft" (two letters before) stays
 - [x] ~~Whole lines of text lost inside a block, found in the same inked slots~~
       (2026-11-06, `missing._fills`): nine lines read right by glm-ocr, tuning 103 wrong
-      words fixed (12 unasked), validation 9 (all unasked), none made; Dolittle's short
+      words fixed (12 silent), validation 9 (all silent), none made; Dolittle's short
       last line of a paragraph stays a question
 - [x] ~~A Dutch line-end break between clashing vowels keeps its hyphen~~ (2026-11-06,
       `hyphens.vowel_clash`, a word of four letters or more after the break, no glide
@@ -738,7 +738,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       tuning; Pieter Daens 38 closed, its questions 338 → 309
 - [x] ~~One question per letter quoted over paragraphs~~ (dropped 2026-11-02): where a
       paragraph is left open and the next opens with the same mark, the print closes the
-      first 20 times in 45 on tuning: asking once would leave those 20 unasked
+      first 20 times in 45 on tuning: asking once would leave those 20 silent
 - [x] ~~A comma at a line's end turned into a stop by the check~~: done 2026-10-24 as a
       rule true by definition (`ocrcheck.line_end_stop`, widened 2026-11-04 to a stop
       added after the last word; tuning 0.290 → 0.286, 6 fixed, none made)
@@ -751,7 +751,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       "geen-verandering-in-de-toestand-van-de- patiënt", broken at its own hyphens
       ("in-de-" / "toestand", "van-" / "de"), and the build joins both as break hyphens
       ("in-detoestand-vande"), silently; the next line prints the chant whole. The
-      latest benches hold five more, all unasked: "neem-jehuisdier",
+      latest benches hold five more, all silent: "neem-jehuisdier",
       "doe-hetzelfbouwdozen", "muzieken-lichtshows", "topaasen-amberkleurige",
       "glas-inloodramen". A hyphen at a line end in a word that has another hyphen is
       mostly the word's own, but not always ("Noord-Hol-" / "landse"): give the joiner
@@ -778,7 +778,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       (`evaluate._NESTED_GAP`), validation BETTER 0.38 → 0.36. Its "think—’" against our
       "think –’" is the print's after all: a dash breaking speech off sits close to its
       word there (scan crops, 2026-10-18), where its other dashes are spaced
-- [x] De eerlijke vinder's unasked errors (2026-10-15): 28 of 38 were page numbers the
+- [x] De eerlijke vinder's silent errors (2026-10-15): 28 of 38 were page numbers the
       layer joins to a body line; split off (`pdf._apart`), wrong words 0.88 → 0.42 a
       page on the short test; `bench tuning` 0.32 → 0.30 after review, no book worse
 
@@ -791,7 +791,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       "Zíj", and quote marks): it asks where agreement fails
 
 - [x] ~~The render judge's measures as arbiter columns~~ (not taken 2026-11-14): level on
-      tuning (unasked 620 → 623, questions 3,453 → 3,441), six more unasked on
+      tuning (silent 620 → 623, questions 3,453 → 3,441), six more silent on
       validation; the gain lies where the arbiter asks anyway. Branch `render-columns`
 
 - [x] ~~The book's own vocabulary as an arbiter feature, retested after batch five~~
@@ -809,15 +809,15 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       confidence, accent variants; 2026-10-16); the lever is a stronger reader
       (outlook.md, "The errors every reading shares")
 - [x] 2026-11-11 The arbiter's variance brought down: retraining is exact, and one
-      retraining differed from the next by some fifteen unasked errors for 72 changed
+      retraining differed from the next by some fifteen silent errors for 72 changed
       suspects; twenty trainings averaged and a smooth calibration steady it
       (`trust.Trees`, `trust.Curve`; design.md). The switch is under In flight
 - [x] 2026-11-11 Small capitals: the capitals version of a mixed-case word merged
-      (tuning unasked 524 → 521), and the doubts on lower-case pieces on by default, the
-      user's call (`ROBO_LOWER_CAPITALS`: tuning unasked 524 → 512, none made unasked,
+      (tuning silent 524 → 521), and the doubts on lower-case pieces on by default, the
+      user's call (`ROBO_LOWER_CAPITALS`: tuning silent 524 → 512, none made silent,
       questions +1.7%)
 - [x] ~~autotrust-jev 9B as a second text judge~~ (2026-11-09, pass 4): not taken.
-      Tuning unasked 551 → 535, validation 170 → 178 (decisions.md); failed on the
+      Tuning silent 551 → 535, validation 170 → 178 (decisions.md); failed on the
       arbiter's 23 books, branch `text-seat` kept for a retest after batch five
 - [x] ~~New vision decision models as judges~~ (2026-11-09): autotrust-jev 35B and d3 9B
       taken beside clef, asking below 0.9 (decisions.md); pplx-decider on the wide crop
@@ -842,12 +842,12 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       check, 2026-10-19): Andere levens' one silent error is "LC1" for "LCI" set in
       small capitals, where no reading had the capitals; in the latest benches 18 errors
       are capitals read in mixed case ("vTM", "voc", "ocMw", "xTc", "cr" for CT), 7
-      unasked. The judges' prompt already knows the pattern but can only pick among the
+      silent. The judges' prompt already knows the pattern but can only pick among the
       readings: add a reading's all-capitals form (letters only, 1 → I, 0 → O) as one
       more version where it mixes case inside a word, and let them choose. Upstream of
       the OCR check's caches: short test on the pages it touches, then a cold bench
 - [x] ~~A context judge~~: stays off (the user, 2026-10-19, shown it passing both sets
-      with fewer questions but more unasked errors: "then i'm against it"; decisions.md)
+      with fewer questions but more silent errors: "then i'm against it"; decisions.md)
 - [x] 2026-10-18 Winnow-12B the text judge, asked through token probabilities: right
       alone 81% (winnow-ollama:e4b 67%), its arbiter tuning 0.30 → 0.28 after review,
       better; validation 0.37 → 0.39, no change; the Ollama pin's reason gone
@@ -860,7 +860,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 - [x] 2026-10-11 The pair prior's own ablation (an empty table, retrained): without it
       tuning 0.31 → 0.34, validation 0.70 → 0.73, both worse; it stays
 - [x] ~~2026-10-11 Bad pages by the readers' disagreement~~: the 5% densest pages hold
-      32 of 319 unasked words; dropped
+      32 of 319 silent words; dropped
 - [x] 2026-10-11 Whether a borrowed item's JP2s can be had: no, its download options are
       empty while on loan (the user, on Stella)
 - [x] ~~2026-10-11 The book's own consistency as new suspects~~: 13 catches against 17
@@ -959,7 +959,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       a question: tuning **better** 0.36 → 0.34 (Dolittle 0.52 → 0.44, Metro 0.26 →
       0.22)
 - [x] 2026-10-11 A quote left open at a paragraph's end asked whatever follows: tuning
-      0.37 → 0.36, De tuin's unasked 0.24 → 0.16, no book worse
+      0.37 → 0.36, De tuin's silent 0.24 → 0.16, no book worse
 - [x] 2026-10-11 No paragraph starts on a line that continues a word broken with a
       hyphen: tuning **better** 0.32 → 0.31, validation **better** 0.74 → 0.70
 - [x] 2026-10-11 A quote mark left open right after a word asked where it stands, not at
@@ -1052,7 +1052,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       clusters)~~ (dropped 2026-11-11): they waited on the accent-shape probes, which
       were too weak (outlook.md, "Tried")
 - [x] ~~Two-line crops at each line break as a decision for clef~~ (dropped 2026-11-11):
-      of 236 unasked errors on tuning 2 span a join; the compound hyphens sit at line
+      of 236 silent errors on tuning 2 span a join; the compound hyphens sit at line
       ends, where the scan can't show whose the hyphen is
 - [x] ~~New OCR models as witnesses, as a step~~ (dropped 2026-11-11): every reader is
       wrong together on 23 lines of the tuning slices, so a line witness can add a
@@ -1155,8 +1155,8 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       each tuning book scored by the arbiter saved without it, thresholds chosen on the
       other books (accent 0.9, space 0.95, quote 0.7, letters 0.85, in every fold) left
       65 → 58 silent errors for 330 → 318 questions; the warm bench didn't carry it
-      (after review 0.290 → 0.290, questions 0.732 → 0.721 a page, unasked 0.174 →
-      0.176: 9 unasked fixed, 10 made). The reviewer-mistake test (does the arbiter's
+      (after review 0.290 → 0.290, questions 0.732 → 0.721 a page, silent 0.174 →
+      0.176: 9 silent fixed, 10 made). The reviewer-mistake test (does the arbiter's
       margin predict a wrong answer) was not run: 8 mistakes on Stella are too few to
       choose by
 - [x] Is the scan's text mask lossy? (Fable's review; 2026-10-23, no): Internet
@@ -1174,7 +1174,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       lines 64 → 65); re-reading the crops as they are changed none, so it is the
       padding. It invents marks: "nògal", "dië", "én", "Ârtyôm"
 - [x] ~~Small capitals from the descender band~~ (Argon; dropped on reading the errors,
-      2026-10-23): of the 27 unasked case errors on tuning, 15 are Au pair's reference
+      2026-10-23): of the 27 silent case errors on tuning, 15 are Au pair's reference
       writing small capitals in lower case (verdicts, golden-notes), and the other 12
       are short acronyms in small capitals ("ss", "wa", "voc", "usb", "cv", "v-hals",
       "u-boten") with no letter that descends: the test reaches none. What is left needs
@@ -1183,17 +1183,17 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 - [x] ~~Book-wide consistency for diaereses and letters outside ASCII only~~ (Argon's
       narrowing; 2026-10-23, `probe_book_consistency.py --marks`): one flag over every
       tuning slice, and a right one ("geinteresseerd" for "geïnteresseerd"), but 1 of
-      184 unasked one-word errors: most such words occur once in a book, so the book
+      184 silent one-word errors: most such words occur once in a book, so the book
       can't vouch for them
 - [x] ~~Real-word confusion pairs mined from the golden pages~~ (Fable; NOT TAKEN
       2026-10-23, `probe_book_consistency.py --pairs`): pairs from the other tuning
       books' errors flag 216 word types whose partner occurs in the book, mostly common
       words with an emphatic twin ("mijn"/"míjn", "ik"/"ík"), thousands of occurrences,
-      for 2 unasked catches
+      for 2 silent catches
 - [x] ~~Book-wide consistency as a suspect~~ (DeepSeek 5; NOT TAKEN 2026-10-23,
       `probe_book_consistency.py`): a word spelled one way once and a close variant
       three times or more flags 4,802 words over the tuning slices (3 a page), 34 of
-      them errors; it catches 17 of 184 unasked one-word errors, about 6 of them real,
+      them errors; it catches 17 of 184 silent one-word errors, about 6 of them real,
       the rest emphasis accents the print has and the reference drops, which it would
       remove
 - [x] ~~PaddleOCR-VL-1.5 as one more reader~~ (DeepSeek 2): screened 2026-10-20, unfit
@@ -1252,7 +1252,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 - [x] 2026-11-12 The bench's italic count by a word's place, whatever its letters, and
       batch five's slices, on main; fresh baselines made (HANDOVER.md has their files)
 - [x] 2026-11-12 Batch five's retraining weighed: the arbiter of twenty seeds trained on
-      the four rebuilt books is better on tuning (unasked 576 → 564, 26 questions
+      the four rebuilt books is better on tuning (silent 576 → 564, 26 questions
       fewer) and no change on validation; the first retraining on grown slices ahead
 - [x] 2026-11-12 Batch five of the slice growth: Vals alarm, The Thief-Taker's
       Apprentice, Metro 2033, De tuin van de avondnevel, Au pair and De vergelding scored
@@ -1327,7 +1327,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Golden books
 
-- [x] **user**: 36 unasked errors that look like the reference's, confirmed
+- [x] **user**: 36 silent errors that look like the reference's, confirmed
       (2026-11-14): 35 errata in their books' `errata.toml`, Au pair's "want-als" a speck
 
 - [x] 2026-11-11 The gaps to hunt for (golden-notes.md) name a short-story collection,
@@ -1337,7 +1337,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       layer-CER line since scored whole, its errors the pipeline's, kept
 - [x] 2026-10-23 The sets trimmed (the user, 2026-10-18: "trim the fat"): Afscheid's
       paragraph breaks unscored (`breaks_unlike_print`); The Nature of a Crime out of
-      tuning and quick but kept in the arbiter's training (without it: unasked fixed 7,
+      tuning and quick but kept in the arbiter's training (without it: silent fixed 7,
       made 16); Dolittle's quick slice kept; Na die nacht held back, not retired;
       Verminkt sliced to 7–100
 - [x] 2026-10-20 De vergelding's, Glazuur's and Vanille en andere smaken's first looks:
