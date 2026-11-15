@@ -278,13 +278,22 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 
 ## Errors no question asks about
 
-- [ ] **The outer mark of a nested quotation, lost without a question**: the print's
-      ‘“Lucy … kind,”’ comes out as “Lucy … kind,” (three ticks read as two by every
-      reader): 21 of tuning's 460 unasked errors (Goede dochter 17, De tuin 4; scan crops
-      checked 2026-11-15). Next: as with accents every reader drops, offer the three-tick
-      version wherever a double mark stands at a word's edge in a book that nests this
-      way, let the render judge's fit on the mark say where to ask the judges
-      (`rendercheck.mark_fit`), and bench it. Agent; the fit needs no model
+- [ ] **Quote marks measured on the scan.** A quarter of the tuning bench's error rows
+      are quote marks (370 of 1,602: 309 asked, 61 unasked), and the worst of them have
+      no reading that differs: the outer mark of a nested quotation lost (the print's
+      ‘“Lucy … kind,”’ built as “Lucy … kind,”: 21 unasked, Goede dochter 17, De tuin 4;
+      scan crops checked 2026-11-15), and the layer reads many a ‘ as “. First tries
+      (2026-11-15, `probe_nested_quotes.py`, `probe_quote_ticks.py`, no models): the
+      render judge's fit on the one mark more finds 8 of 11 lost marks while offering a
+      third of the ordinary double marks (AUC 0.85, its labels noisy), because prints set
+      nested marks off by a gap the drawing lacks; counting the raised marks before the
+      word finds 7 of 8 in Goede dochter's open type (4 of 106 ordinary ones counted
+      three) and fails in De tuin, whose marks touch. Next: learned, as the italics are:
+      the raised ink at a word's edge measured (its width against the line's height, its
+      runs, its ink) and trees trained on the golden pairs' own marks (‘, “, ‘“, “‘ and
+      their closing forms, thousands of labels by alignment), their call offered as
+      another version where it differs from the build's, for the judges and the arbiter.
+      Agent; no model needed for the measure or the trees
 - [ ] The book's own spacing of a repeated form as arbiter evidence (the user's review of
       Andere levens, 2026-11-14: "M.H." against "M. H."): its text layer reads "M. H." 11
       times and "M.H." 5, the render judge voted the space, and still the place was asked.

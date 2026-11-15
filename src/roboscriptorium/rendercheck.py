@@ -630,15 +630,17 @@ def fits(face: Face, spread: int, size: float, ink: np.ndarray, versions: list[s
 
 
 def _pair(face: Face, marked: str, plain: str) -> tuple[np.ndarray, np.ndarray] | None:
-    """Two versions drawn on one canvas, cut to their joint ink (0–1 darkness)."""
+    """Two versions drawn on one canvas, cut to their joint ink (0–1 darkness). They
+    start at the same place, or end there where the mark stands before the plain version
+    (an opening quote mark more), so the letters they share lie over each other."""
     font = face.at(1.0)
     width = int(max(font.getlength(marked), font.getlength(plain))) + RENDER_PX
+    leading = marked != plain and marked.endswith(plain)
+    at, anchor = (width - RENDER_PX // 4, "rs") if leading else (RENDER_PX // 4, "ls")
     out = []
     for text in (marked, plain):
         image = Image.new("L", (width, RENDER_PX * 2), 255)
-        ImageDraw.Draw(image).text(
-            (RENDER_PX // 4, RENDER_PX * 1.3), text, font=font, fill=0, anchor="ls"
-        )
+        ImageDraw.Draw(image).text((at, RENDER_PX * 1.3), text, font=font, fill=0, anchor=anchor)
         out.append(_darkness(image))
     both = np.maximum(*out) > 0.2
     if not both.any():
