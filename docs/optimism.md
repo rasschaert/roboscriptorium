@@ -11,6 +11,26 @@ commercial e-book; a careful edition like Standard Ebooks is nearer one in 10,00
 Each entry is a judgment, not a measurement: the numbers it rests on are in
 [outlook.md](outlook.md) and [decisions.md](decisions.md). Newest first.
 
+## 2026-11-15, afternoon: 7/10 (held; a first way at the errors no reader doubts, unscored)
+
+**Up, a little:** the standing doubt is that most of what is left was never doubted by
+any reader, so only a better reader would catch it. Two measures on the scan itself now
+raise such doubts with no reader: the accent drawn and the scan scored on that mark
+alone (30 of 37 dropped accents at one false offer in 400 words), and a quote mark's
+width against the book's own marks (54 of 74 lost outer marks of nested quotations).
+Those two kinds are about 125 of tuning's 460 unasked errors.
+
+**Why it holds:** none of it is benched yet (three runs queued: accent offers, a judge
+of marks alone, nested quote offers), and an offer counts only if the judges and the
+arbiter settle it without asking. Eleven or so other ideas of the day were null. Each
+find is one typographic kind, built one at a time. And the goal the user named as the
+chief one, an unprepared scan building with no one preparing it, did not move: the gaps
+are measured and planned (checklist, "Starting from a PDF alone"), `init` itself is
+unchanged.
+
+**Would move it up:** the queued runs cutting unasked errors without adding questions;
+`init` right on the ends and the title of books it has not seen.
+
 ## 2026-11-13, morning: 7/10 (held; a new kind of judge under it)
 
 Render and compare, the user's idea of 2026-11-11, is in use: a judge that knows no
