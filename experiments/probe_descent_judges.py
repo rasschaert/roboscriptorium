@@ -13,6 +13,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
+import numpy as np
 import pymupdf
 
 from roboscriptorium import ocrcheck, pipeline, readers, scanstyle
@@ -57,6 +58,14 @@ for name in books:
                 book.language, vision, None, cache, alarms=alarms, span=span,
             )  # fmt: skip
             versions = [s.ours, *others]
+            # Does the line above leave ink in the strip the cut removes, over this word?
+            top = span[0]
+            strip = pymupdf.Rect(s.box[0], s.box[1] - ocrcheck.CROP_PAD, s.box[2], top)
+            inked = False
+            if strip.height > 0.5:
+                pix = doc[s.page - 1].get_pixmap(dpi=300, clip=strip, colorspace=pymupdf.csGRAY)
+                grey = np.frombuffer(pix.samples, dtype=np.uint8)
+                inked = bool(grey.size) and int((grey < 128).sum()) >= 6
             for model, new in votes.items():
                 if model == "word list":
                     continue
@@ -67,7 +76,14 @@ for name in books:
                 seen[model] += 1
                 right[(model, "old")] += old in truth
                 right[(model, "new")] += new in truth
+                where = "ink above" if inked else "no ink above"
+                seen[(model, where)] += 1
+                right[(model, "old", where)] += old in truth
+                right[(model, "new", where)] += new in truth
     print(f"{name}: descent {descent}", flush=True)
 print(f"{'judge':40} places  old crop right  new crop right")
-for model in seen:
+for model in [m for m in seen if isinstance(m, str)]:
     print(f"{model[:40]:40} {seen[model]:6}  {right[(model, 'old')]:14}  {right[(model, 'new')]:14}")
+    for where in ("ink above", "no ink above"):
+        n = seen[(model, where)]
+        print(f"  {where:38} {n:6}  {right[(model, 'old', where)]:14}  {right[(model, 'new', where)]:14}")

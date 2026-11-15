@@ -2720,3 +2720,35 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   (italic errors 195 → 170). These runs are the baselines the 4th judge was taken on; its
   own runs (`tuning-20261114T233727-389e99a-dirty`, `validation-20261114T233833-82c7529-dirty`)
   are now production's.
+- 2026-11-15: **A vision judge where the old and the grown line-role trees disagree:
+  null for clef:27b on a band of the page** (`experiments/sorter_judge_probe.py`, the
+  reworked idea 1; answers in `work/probes/sorter-judge/`). Of 100 sampled disagreements,
+  92 could be placed on the text layer; clef right on 38, the old trees on 40, the grown
+  on 50. It calls most headings and many page numbers running text. Failed on: the judge
+  seeing a band, not the page (a heading's place on the page and the page's other lines
+  are what tell it apart). Variant left: the whole page shown with the line framed.
+- 2026-11-15: **A learned referee between the two line-role tree sets: null**
+  (`experiments/sorter_referee.py`, no models). A boosted model on the line's features and
+  both sets' probabilities, each book scored by one trained on the other books'
+  disagreements: right on 168 of 299, the grown set alone 174, the old 123. The places
+  the two sets disagree on carry no signal the trees themselves lacked. Failed on: the
+  features (the same ones both sets saw). Variant left: a referee given what the trees
+  never see, the page image through a judge (the probe above, whole page).
+- 2026-11-15: **The arbiter's extra signals deciding when to ask, not what to pick: null**
+  (`experiments/probe_ask_signals.py`, the reworked idea 4, no models). A second model, on
+  the held-out arbiter's sureness and margin plus the character language model's, the
+  render judge's and the book vocabulary's margins for its pick, re-ranks places for
+  asking. To leave no more silent errors than today's sureness ordering leaves at the
+  rule's question count: sureness alone 2,970 questions, re-ranked with the signals 4,522,
+  re-ranked with random numbers in their place 3,485. A second model on top of the
+  arbiter's sureness ranks worse than the sureness itself, and the signals add nothing
+  over random ones. Failed on: stacking (the arbiter already sees the trust data the
+  second model learns from). Variant left: none cheap; the signals stay a retest for a
+  changed arbiter.
+- 2026-11-15: **Crops cut at the line above's descenders, split by ink in the cut strip:
+  no gain either side** (`experiments/probe_descent_judges.py`, the same 300 places).
+  Where the line above leaves ink over the word (111 places), right with the old crop and
+  the new: clef 96 → 101, autotrust-jev 35B 103 → 100, d3 108 → 103, render 99 → 100;
+  where it leaves none (189), 169 → 172, 176 → 171, 185 → 184, 168 → 167. The 9B text
+  judge loses most (231 → 192 in all), its crop made for the text question. A cut only
+  where ink sits in the strip would gain nothing on these pages either. Off stays.

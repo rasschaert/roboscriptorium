@@ -191,6 +191,16 @@ ideas reworked", 2026-11-15):
   the build's budget the places they fix are asked anyway: tuning level, validation six
   more unasked. Retest if the build is asked to ask fewer questions.
 
+- **Those signals deciding when to ask instead** (2026-11-15; failed on stacking): a
+  second model on the arbiter's sureness plus the three signals' margins ranks places
+  for asking worse than the sureness alone (4,522 questions to 2,970 for the same silent
+  errors; random signals 3,485).
+
+- **A judge or a learned referee where the two line-role tree sets disagree** (2026-11-15):
+  clef on a band of the page is right less often than the grown trees (38 to 50 of 92); a
+  referee from the trees' own features too (168 to 174 of 299). Left untried: the whole
+  page shown to the judge.
+
 - **Both learned trees retrained on the grown slices** (2026-11-14; failed on the trees'
   features, not the data's size): the italic trees gain on 14 of 19 books but lose 1,100
   of Het geluid van bananen's italics, the one book set mostly in italics, once it is
