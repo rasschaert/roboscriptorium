@@ -49,8 +49,11 @@ last on 2026-11-14, so next by 2026-11-21).
          (382 → 369 silent with no questions, none at the rule's; decisions.md
          2026-11-15). As a finder of accents every reader drops (105 of tuning's 604
          unasked errors): 30 of the 37 printed marks placed at a 0.24% false-alarm rate
-         (`probe_missed_accents.py`). Queued: its proposals put to the judges
-         (`probe_accent_judges.py`); then the fit as a reader offering the marked word.
+         (`probe_missed_accents.py`); the vision judges take 30–32 of 43 proposed marks
+         and 1–2 of 87 plain words. In the build, off (`ROBO_ACCENT_DOUBTS`,
+         `accentmarks.py`). Running: trust data, arbiter and both benches with the
+         doubts (`work/runs/accents-chain.sh`); taken if tuning's unasked errors fall and
+         validation doesn't veto.
       Also: pplx-decider beside the four-judge panel; De vergelding's own arbiter
 
 In this order; `HANDOVER.md` has the paths and the commands.

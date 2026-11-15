@@ -29,22 +29,18 @@ and `validation-20261114T233833-82c7529-dirty.json`.
    to see what the night's changes did to their reviews.
 3. screen `robo-hints`: past nulls the panel may turn, the hints about kinds of OCR error
    on autotrust-jev 35B and d3 (judge set v2, plain, `kinds`, `targeted`).
-4. screen `robo-robo-sorter-page`: clef shown the whole page with the line framed, where
-   the old and the grown line-role trees disagree (`sorter_judge_probe.py --page`; on a
-   band it was right on 38 of 92, the grown trees 50).
-5. screen `robo-score-init`: every field `init` drafts, scored on 32 golden books against
-   the publisher's e-books (`experiments/score_init.py`; asks the page-kind model the 13
-   books never asked).
-
-6. screen `robo-init-ink`: the page-kind model told each edge page's ink strength
-   (`probe_init_ink.py`, 27 labelled books): do blank leaves showing the other side's
-   print stop padding `init`'s ends?
-7. screen `robo-accent-judges`: the judges on the accents the accent-zone fit proposes
-   (`probe_accent_judges.py`, 130 places). If they tell the plain words from the marks,
-   next is the fit as a reader offering the marked word (decisions.md, 2026-11-15).
-8. screen `robo-hyphen-judges`: d3, autotrust-jev 35B and 9B and clef as the line-end
-   hyphen judge (`probe_hyphen_judge.py`; compound hyphens are the largest group of
-   unasked errors where no reading differs, 64 of 274).
+4. screen `robo-accents-chain` (`work/runs/accents-chain.sh`): accent doubts
+   (`ROBO_ACCENT_DOUBTS=1`): trust data in `work/probes/ocr-trust-accents/` (resumes per
+   book), the arbiter `work/models/ocr-trust-accents.pkl`, bench tuning and validation
+   against production's runs. Taken if tuning's unasked errors fall and validation
+   doesn't veto: then the arbiter and trust data go in production's place (as the 4th
+   judge's did, decisions.md 2026-11-15) and `accent_doubts` defaults to on.
+5. screens `robo-hints`, `robo-score-init`, `robo-init-ink`, `robo-hyphen-judges`, in
+   that order: the hint tryouts; every field `init` drafts scored on 32 golden books;
+   the page-kind model told each edge page's ink strength; the panel's judges on
+   line-end hyphens.
+Beside them on the CPU: screen `robo-accent-marks2`, the accent fits of the 23 Dutch
+bench books into their `stages/accent-marks.json`.
 
 **For the user's quick confirmation, with crops, once a review is due** (not sent yet):
 `work/probes/unasked/accents-20261115/`: 9 places where the e-book adds an accent the

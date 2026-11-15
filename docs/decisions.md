@@ -2865,3 +2865,17 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   Variants left: the whole-page judge on the lines the trees are unsure of (queued,
   `sorter_judge_probe.py --page`); a dropped line at a page's top that no other page
   repeats nearly word for word flagged for review instead of dropped silently.
+- 2026-11-15: **The judges on the accents the accent-zone fit proposes: they tell them
+  apart; the chain is on** (`experiments/probe_accent_judges.py`, 130 places, 35 minutes
+  asked place by place, De kus in de nacht's build standing still meanwhile,
+  `experiments/slot.py`). Of 43 dropped marks (nine of them the e-book's own, the print
+  plain) the marked word is picked by clef on 32, autotrust-jev 35B on 30, d3 on 30,
+  most judges on 31; of 87 plain words the fit proposed, by clef on 2, autotrust-jev on
+  1, d3 on 1, most judges on 1. The render judge takes 17 of the plain ones (it is the
+  proposer's own kind of eye) and the 9B asked the text question 31 (it sees no crop).
+  So the fit proposes and the vision judges decide. Queued (`work/runs/accents-chain.sh`,
+  after De kus in de nacht and the re-sampling): trust data with the doubts' places
+  (`work/probes/ocr-trust-accents/`), the arbiter on it (`work/models/ocr-trust-accents.pkl`),
+  both benches against production's runs. Seen on the way: the fit offers 68 words in
+  Vals alarm's 90,000 but about 300 each in Afscheid and Reis om mijn schedel (speckled
+  scans); if the bench shows that as questions, the cut becomes the book's own.
