@@ -298,6 +298,12 @@ then the kinds one at a time below.
       judges (as the accent offers are), short-tested on the pages they touch; the
       readers deleted after their first screen (olmOCR, PaddleOCR-VL, LightOnOCR,
       DeepSeek-OCR, Kraken) listed for the user to pull again, the likeliest first
+- [ ] **Extra readers as offers in the build** (`ROBO_EXTRA_READERS`, off; design.md):
+      first scores of the short test 2026-11-15: qwen3.8 reads 10 of 97 silent errors,
+      olmOCR-2 seven more, PaddleOCR-VL 1.6 ten more. Its short test in the build is
+      queued (`probe_extra_reader.py`, screen `robo-extra-wait`: the pages holding those
+      errors, built without and with); then a bench with trust data rebuilt. Baidu's
+      Unlimited-OCR-2 (patched llama.cpp apart) to score on whole pages, words and blocks
 - [x] ~~Leftover ink, any kind of error at once~~: null twice (2026-11-15,
       `probe_leftover_ink.py`: AUC 0.53; with the leftover's place and trees 0.51). The
       typeface's own mismatch leaves as much ink as an accent. Reworked as the next step
