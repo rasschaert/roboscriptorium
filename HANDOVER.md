@@ -28,8 +28,23 @@ and `validation-20261114T233833-82c7529-dirty.json`.
    2026-11-15 and their questions sampled (kept in `work/probes/questions/<book>-20261115/`),
    to see what the night's changes did to their reviews.
 3. screen `robo-hints`: past nulls the panel may turn, the hints about kinds of OCR error
-   on autotrust-jev 35B and d3 (judge set v2, plain, `kinds`, `targeted`). Ex-minnaar is ready
-for the user's review (74 questions: `uv run roboscriptorium review work/ex-minnaar`).
+   on autotrust-jev 35B and d3 (judge set v2, plain, `kinds`, `targeted`).
+4. screen `robo-robo-sorter-page`: clef shown the whole page with the line framed, where
+   the old and the grown line-role trees disagree (`sorter_judge_probe.py --page`; on a
+   band it was right on 38 of 92, the grown trees 50).
+5. screen `robo-score-init`: every field `init` drafts, scored on 32 golden books against
+   the publisher's e-books (`experiments/score_init.py`; asks the page-kind model the 13
+   books never asked).
+
+Ex-minnaar is ready for the user's review (74 questions:
+`uv run roboscriptorium review work/ex-minnaar`).
+
+**Since 02:30** (decisions.md, 2026-11-15): three reworked ideas null (a judge on a band
+and a learned referee between the line-role trees; extra signals deciding when to ask);
+Pieter Daens' "ofhoe" title mended by hand, then the user: fix `init`, never one book.
+The checklist's "Starting from a PDF alone" now holds that plan; what books still need a
+person for is measured (`setup_gaps.py`). A hook in `.claude/settings.local.json` puts
+the project's purpose and three checks before the agent at every prompt.
 
 **Not taken overnight:** heading places in the arbiter's training; the language model,
 the render judge's measures and the book's spacing as arbiter columns; crops cut at the
