@@ -20,10 +20,19 @@ sure = float(sys.argv[sys.argv.index("--sure") + 1]) if "--sure" in sys.argv els
 
 
 def features(r: dict) -> list[float]:
-    return [float(r["opening"]), r["runs"], *r["widths"], *r["gaps"], r["span"], r["ink"], r["high"], *r["picture"]]
+    own = [r["span"] / r["low"], r["span"] / r["mid"], r["ink"] / r["mid_ink"]] if "--plain" not in sys.argv else []
+    return [float(r["opening"]), r["runs"], *r["widths"], *r["gaps"], r["span"], r["ink"], r["high"], *own, *r["picture"]]
 
 
 books = {p.stem: json.loads(p.read_text()) for p in sorted(DATA.glob("*.json"))}
+# Each edge's raised ink against its own book's: a single mark's width (the narrow end of
+# the book's marks) and the usual one, since a mark's size is the typeface's.
+for rows in books.values():
+    spans = np.array([r["span"] for r in rows if r["runs"]])
+    inks = np.array([r["ink"] for r in rows if r["runs"]])
+    low, mid, mid_ink = float(np.quantile(spans, 0.1)), float(np.median(spans)), float(np.median(inks))
+    for r in rows:
+        r.update(low=low + 1e-3, mid=mid + 1e-3, mid_ink=mid_ink + 1e-4)
 counts = Counter(r["truth"] for rows in books.values() for r in rows)
 classes = [c for c, n in counts.items() if n >= 20]
 print("labels:", counts.most_common(12))
@@ -36,8 +45,8 @@ def label(r: dict) -> str:
 total = Counter()
 nested_rows = []
 for name, rows in books.items():
-    train = [r for other, rs in books.items() if other != name for r in rs]
-    model = HistGradientBoostingClassifier(max_depth=6, max_iter=200, learning_rate=0.1, random_state=0)
+    train = [r for other, rs in books.items() if other != name for r in rs if r["truth"] in classes]
+    model = HistGradientBoostingClassifier(max_depth=6, max_iter=200, learning_rate=0.1, early_stopping=False, random_state=0)
     model.fit(np.array([features(r) for r in train], np.float32), [label(r) for r in train])
     probs = model.predict_proba(np.array([features(r) for r in rows], np.float32))
     c = Counter()

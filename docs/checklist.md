@@ -288,12 +288,13 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       third of the ordinary double marks (AUC 0.85, its labels noisy), because prints set
       nested marks off by a gap the drawing lacks; counting the raised marks before the
       word finds 7 of 8 in Goede dochter's open type (4 of 106 ordinary ones counted
-      three) and fails in De tuin, whose marks touch. Next: learned, as the italics are:
-      the raised ink at a word's edge measured (its width against the line's height, its
-      runs, its ink) and trees trained on the golden pairs' own marks (‘, “, ‘“, “‘ and
-      their closing forms, thousands of labels by alignment), their call offered as
-      another version where it differs from the build's, for the judges and the arbiter.
-      Agent; no model needed for the measure or the trees
+      three) and fails in De tuin, whose marks touch. Trees trained across books on the
+      marks' pictures: null twice (worse than the layer, 2 of 85 nested found; a mark's
+      picture doesn't carry between typefaces). Next: within one book, no training
+      across books: its raised marks grouped by their own widths (one, two, three ticks
+      of that typeface), a nested mark offered where an edge the build sets double
+      measures three, for the judges and the arbiter; else the judges asked on a close
+      crop of the marks at the double marks of a book that nests. Agent
 - [ ] The book's own spacing of a repeated form as arbiter evidence (the user's review of
       Andere levens, 2026-11-14: "M.H." against "M. H."): its text layer reads "M. H." 11
       times and "M.H." 5, the render judge voted the space, and still the place was asked.
