@@ -30,7 +30,9 @@ def ink(page: pymupdf.Page) -> np.ndarray:
     high = ndimage.gaussian_filter(grey, 8) - ndimage.gaussian_filter(grey, 1)
     h, w = high.shape
     high = high[h // 12 : -h // 12, w // 12 : -w // 12]  # the scan's edges and the gutter out
-    return high - high.mean()
+    # Every text page shares its neighbours' line rows, flipped or not: each row's mean out,
+    # so only what lies along a line (word gaps, a paragraph's short last line) is compared.
+    return high - high.mean(axis=1, keepdims=True)
 
 
 def peak(a: np.ndarray, b: np.ndarray) -> float:

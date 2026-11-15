@@ -89,8 +89,15 @@ def measures(face, found, ink: np.ndarray, marked: str, plain: str) -> dict | No
     cosine = float((s * a).sum() / (np.sqrt((s * s).sum() * (a * a).sum()) + 1e-6))
     mass = float(under[zone].sum() / (accent[zone].sum() + 1e-6))
     stray = float(under[around & ~zone].mean() / 255) if (around & ~zone).any() else 0.0
+    # Both ways: ink where only the plain letter has it (an i's dot under an acute's place)
+    # counts against the mark.
+    change = (with_mark - without)[around | (np.abs(with_mark - without) > 0.15 * 255)]
+    there = under[around | (np.abs(with_mark - without) > 0.15 * 255)]
+    gone = (without - with_mark)[around | (np.abs(with_mark - without) > 0.15 * 255)]
+    base = there - np.clip(gone, 0, None) * 0  # the scan as it is
+    signed = float((base * change).sum() / (np.sqrt((base * base).sum() * (change * change).sum()) + 1e-6))
     whole = rendercheck.fits(face, found.spread, found.size, ink, [marked, plain])
-    return {"cosine": cosine, "mass": mass, "stray": stray, "whole": whole[0] - whole[1]}
+    return {"cosine": cosine, "mass": mass, "stray": stray, "signed": signed, "whole": whole[0] - whole[1]}
 
 
 def main():

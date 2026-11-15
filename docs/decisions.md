@@ -2792,3 +2792,13 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   book's contrast, 60 pages labelled blank and 28 labelled into the book. Reworked: the
   page mirrored against its neighbours' ink (`probe_showthrough_mirror.py`). Vuurspel's
   "miss" was the label's: PDF 7 is the dedication ("Voor Sheila"), as `init` said.
+- 2026-11-15: **Show-through told by its mirror image: null** (`experiments/probe_showthrough_mirror.py`,
+  80 faint pages of the labelled books, no models). A faint page flipped left to right
+  and laid over its neighbours, each line row's mean taken out so the shared rows don't
+  count. Clean cases stand out (Goede dochter PDF 514: 0.59 mirrored, 0.12 plain; Het
+  ijzige land 4; Afscheid 8), but the pages that pad `init`'s ends don't (Reis 256: 0.13
+  and 0.10; Een Russische roman 272: 0.15 and 0.09; Het ijzige land 329: 0.25 and 0.18),
+  and Afscheid's washed-out text pages match mirrored as well as they do (0.19–0.27
+  against 0.05–0.07): what ink is left on them is mostly the other side's. Failed on: the
+  measure, not on a model. Reworked: the page-kind model told each edge page's ink
+  strength against the book's (`probe_init_ink.py`, queued).

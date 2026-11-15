@@ -413,7 +413,11 @@ Daens' title was mended by hand).
       its neighbours was null on clef-flash (2026-11-09: it gives them little weight);
       reworked: the read model or clef:27b asked only the pages at the two ends the walk
       stops on, "does the book's text run on here?", with the page before beside it.
-      Ranked above the title: a lost page outweighs a glued word in the metadata
+      Ranked above the title: a lost page outweighs a glued word in the metadata.
+      Three of the pads are blank leaves showing the other side's print (Het ijzige land,
+      Reis, Een Russische roman); ink contrast and a mirror test can't tell them from
+      Afscheid's washed-out text (null, 2026-11-15); queued: the page-kind model told
+      each edge page's ink strength (`probe_init_ink.py`)
 - [ ] **The score above is not a first look**: `init`'s page kinds were tuned on these
       same 27 books. Each new book (De kus in de nacht, the next golden pairs) has its
       `init` draft kept before anyone touches it, and those drafts are the honest score
