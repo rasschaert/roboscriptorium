@@ -2852,3 +2852,16 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   hyphen, and nothing in the book says which: "dakloze-hipsterlook", "niet-schuldig" are
   one-off coinages). Variant left: the panel's judges together (queued,
   `probe_hyphen_judge.py`), and asking the reviewer the few a judge panel splits on.
+- 2026-11-15: **The line-role trees told how the book's pages open and close: null, worse**
+  (`experiments/probe_sorter_bookheads.py`, no models). Found in the tuning bench's
+  unasked lost text: Het geluid van bananen's date lines at a page's top ("Shatila, 19
+  augustus 1982", PDF 159 and 170) called furniture at 0.98 and 0.76, in a book with no
+  running heads (the sorter model says "artifact", the line repeats once, set apart,
+  smaller type). Two book-level columns, the share of its pages opening on a line that
+  repeats on three pages or more and the share closing on one: each tuning book by trees
+  fitted on the others, body lines lost 176 → 192, other lines kept 80 → 86 (Het geluid
+  13 → 12 lost, Dolittle 9 → 8 with two more strays, Het heft unchanged). Failed on: 20
+  books are 20 values of a book-level column, and the trees fit them as book names.
+  Variants left: the whole-page judge on the lines the trees are unsure of (queued,
+  `sorter_judge_probe.py --page`); a dropped line at a page's top that no other page
+  repeats nearly word for word flagged for review instead of dropped silently.
