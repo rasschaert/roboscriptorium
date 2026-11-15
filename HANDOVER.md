@@ -42,6 +42,11 @@ on `work/runs/<name>.out` and the logs, re-armed every 30 minutes:
    design.md, "A judge of marks alone"): trust data `work/probes/ocr-trust-accents-mark/`,
    arbiter `work/models/ocr-trust-accents-mark.pkl`, both benches. Compare it with the
    accent run's benches as well as production's; taken only if it beats the accent run.
+   Behind that, screen `robo-nested` (`work/runs/nested-chain.sh`): the same again with
+   `ROBO_NESTED_QUOTES=1` (`quotemarks.py`: a nested quotation's outer mark offered where
+   the scan shows three ticks; design.md): trust data `work/probes/ocr-trust-nested/`,
+   arbiter `work/models/ocr-trust-nested.pkl`, both benches; its gain is its benches
+   against the mark judge's.
 4. screens `robo-hints`, `robo-score-init`, `robo-init-ink`, `robo-hyphen-judges`,
    `robo-sorter-panel`, in that order: hints about kinds of OCR error on autotrust-jev
    35B and d3; every field `init` drafts scored on 32 golden books; the page-kind model

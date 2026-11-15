@@ -493,6 +493,29 @@ offers the six known dropped marks and eleven more, 2.8 a page, at 29 ms a word
 (`probe_accent_doubts.py`). Off (`ROBO_ACCENT_DOUBTS`) until the judges are measured on
 its offers (`probe_accent_judges.py`) and the arbiter is trained with them.
 
+## The outer mark of a nested quotation (off)
+
+A print opens a quotation inside a quotation on two marks (‘“Lucy … kind,”’), and the
+layer and every reader often read the three ticks as a double mark, so no difference
+raises a suspect: 21 of the tuning bench's 460 unasked errors (Goede dochter 17, De tuin
+4; 2026-11-15). `quotemarks.py` measures the raised ink at a word's edge on the scan, its
+width against the line's height, and offers the nested version where an edge the build
+sets double is 1.4 times as wide as the book's own double marks (surveyed on the edges
+the layer and every reading set double); the judges and the arbiter settle the offer like
+any suspect. Which side the single mark goes follows the mark the book sets its
+quotations in.
+
+Why within one book: trees trained across books on pictures of the marks were worse than
+the text layer and found 2 of 85 nested marks (a mark's picture doesn't carry between
+typefaces), and the render judge's fit on the one mark more offered a third of the plain
+double marks, the drawing lacking the gap prints set between nested marks. Against its
+own book's double marks the width finds 54 of the 74 nested marks the layer lacks and
+offers 131 of 5,852 plain double ones, most in Dolittle (69) and De tuin (50), whose
+marks touch (`experiments/probe_nested_span.py`). Why the line's height and not the
+word's ink: a word without ascenders made every mark look wide (Artemis 63 false offers,
+then 2). Off (`ROBO_NESTED_QUOTES`) until the judges are measured on its offers and an
+arbiter trained with them is benched.
+
 ## A judge of marks alone (off)
 
 Where a suspect's versions are the same letters and differ only by a mark ("zijn" against

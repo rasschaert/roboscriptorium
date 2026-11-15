@@ -32,6 +32,7 @@ from roboscriptorium import (
     pagereader,
     pageroles,
     parabreaks,
+    quotemarks,
     quotes,
     readers,
     rendercheck,
@@ -346,17 +347,19 @@ def run(
             ]
             line_reads = dict(readings)
             drawer = next((a for a in alarms if isinstance(a, rendercheck.Judge)), None)
-            marks = (
-                accentmarks.Marks(drawer, book.stages / "accent-marks.json")
-                if settings.accent_doubts and drawer and lang[:2] in accentmarks.LANGUAGES
-                else None
-            )
+            marks = []
+            if settings.accent_doubts and drawer and lang[:2] in accentmarks.LANGUAGES:
+                marks.append(accentmarks.Marks(drawer, book.stages / "accent-marks.json"))
+            if settings.nested_quote_doubts:
+                nested = quotemarks.Nested(book.stages / "quote-marks.json")
+                nested.survey(book.source, body, readings)
+                marks.append(nested)
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, whole, style, dots), alarms, settings.alarm_below,
                 settings.lower_capitals,
                 line_descent(book, whole) if settings.crop_descent else None,
-                marks,
+                tuple(marks),
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:

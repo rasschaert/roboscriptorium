@@ -86,7 +86,14 @@ def test_the_ocr_check_puts_a_marked_word_to_the_judges(tmp_path):
         pdf, pages, readings, "nld", judge, judge, DecisionCache(tmp_path / "a.jsonl")
     )
     found = ocrcheck.check(
-        pdf, pages, readings, "nld", judge, judge, DecisionCache(tmp_path / "b.jsonl"), marks=marks
+        pdf,
+        pages,
+        readings,
+        "nld",
+        judge,
+        judge,
+        DecisionCache(tmp_path / "b.jsonl"),
+        marks=(marks,),
     )
     assert plain == []
     assert [(s.ours, s.others, s.chosen) for s in found] == [("zijn", ("zíjn",), "zíjn")]

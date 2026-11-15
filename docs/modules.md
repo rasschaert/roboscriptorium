@@ -390,6 +390,13 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   judge `render`'s typeface); at `CUT` or more the marked word is one more version for
   the OCR check (`Marks.doubts`, beside `ocrcheck.capitals_doubts`). Fits kept in
   `stages/accent-marks.json` by typeface.
+- `quotemarks.py`: the outer mark of a nested quotation every reader drops
+  (`ROBO_NESTED_QUOTES`, off). `span` measures the raised ink at a word's edge on the
+  scan against the line's height; `Nested.survey` takes the book's double-mark width from
+  the edges the layer and every reading set double, and which mark its quotations are set
+  in; `Nested.doubts` offers the nested version (`nested`) where a double-marked edge of
+  an undisputed token is `RATIO` times that width, beside `accentmarks.Marks.doubts` in
+  `ocrcheck.check`'s `marks`. Kept in `stages/quote-marks.json`.
 - `rendercheck.py`: render and compare, the judge `render` among the second vision
   judges (`ROBO_ALARM_MODEL=…,render`), and `render-mark` (`MarkJudge`, off), which votes
   only where the versions differ by a mark over the same letters (`mark_differ`). `match` finds the book's

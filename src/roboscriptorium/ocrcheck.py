@@ -233,12 +233,13 @@ def check(
     alarm_below: float = 1.0,
     lower_capitals: bool = False,
     descent: float | None = None,
-    marks=None,
+    marks=(),
 ) -> list[Suspect]:
     """Suspects where any other reading (by name) differs from the text layer, each with a
     decision, and with `lower_capitals` where small capitals may have been read in lower
-    case though no reading disputes it (`capitals_doubts`), and with `marks` where the scan
-    shows an accent over a word every reading has plain (`accentmarks.Marks.doubts`).
+    case though no reading disputes it (`capitals_doubts`), and with each of `marks` where
+    the scan shows what every reading lacks: an accent over a word
+    (`accentmarks.Marks.doubts`), a nested quotation's outer mark (`quotemarks.Nested`).
     `style` tells the vision
     judges how the book is set (`quotes.style_note`).
     `alarms`, second vision judges, are asked the vision judge's question where that
@@ -269,8 +270,8 @@ def check(
     found = _check(
         *args, vision, reader, *rest, alarms, alarm_below, lower_capitals, descent, marks
     )
-    if marks is not None:
-        marks.save()
+    for offers in marks:
+        offers.save()
     return found
 
 
@@ -299,7 +300,7 @@ def _check(
     alarm_below: float,
     lower_capitals: bool = False,
     descent: float | None = None,
-    marks=None,
+    marks=(),
 ) -> list[Suspect]:
     """`check`'s pass over the book with the judges as given; with the book's `descent`,
     each suspect's crop stops at the line above's descenders (`readers.own_span`)."""
@@ -334,8 +335,8 @@ def _check(
                     # Agreement needs readings: a line no reader read raises no doubt.
                     if read:
                         differences += capitals_doubts(ours, taken, counts)
-                if marks is not None and read:
-                    differences += marks.doubts(
+                for offers in marks if read else ():
+                    differences += offers.doubts(
                         pdf_page,
                         page.number,
                         k,
