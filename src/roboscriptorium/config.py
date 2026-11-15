@@ -113,9 +113,19 @@ class Settings:
     # A thinking model that settles the arbiter's questions from the text around them
     # where it picks the arbiter's likeliest version (`contextjudge.py`; "" for none).
     context_model: str = ""
+    # More line readers on Ollama, comma-separated, whose readings the arbiter has no
+    # column for: where one differs from the agreed text its version goes to the judges
+    # as an offer, however poor the reader is alone (it earns its place by the silent
+    # errors it reads right: `experiments/silent_screen.py`). Off until benched.
+    extra_readers: str = ""
     # The arbiter's least sureness in its likeliest version for the judge to settle it:
     # where the judge agrees below this, the suspect stays asked.
     context_min: float = 0.0
+
+    @property
+    def extra_reader_models(self) -> tuple[str, ...]:
+        """The readers whose readings are offers only, each as named in `extra_readers`."""
+        return tuple(m.strip() for m in self.extra_readers.split(",") if m.strip())
 
     @property
     def alarm_models(self) -> tuple[str, ...]:
@@ -177,5 +187,6 @@ class Settings:
             break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
             quote_reader=_flag("ROBO_QUOTE_READER", defaults.quote_reader),
             context_model=os.environ.get("ROBO_CONTEXT_MODEL", defaults.context_model),
+            extra_readers=os.environ.get("ROBO_EXTRA_READERS", defaults.extra_readers),
             context_min=float(os.environ.get("ROBO_CONTEXT_MIN", defaults.context_min)),
         )

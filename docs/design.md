@@ -493,6 +493,19 @@ offers the six known dropped marks and eleven more, 2.8 a page, at 29 ms a word
 (`probe_accent_doubts.py`). Off (`ROBO_ACCENT_DOUBTS`) until the judges are measured on
 its offers (`probe_accent_judges.py`) and the arbiter is trained with them.
 
+## Extra readers as offers (off)
+
+A reader too weak to vote can still read what the readers in use all miss. On the short
+test for silent errors (`experiments/silent_screen.py`, 97 of the tuning bench's) the
+reader in use reads 10 as the print has them; olmOCR-2 reads 7 more and PaddleOCR-VL 1.6
+ten more, 16 between them, though each was set aside in October on its own score.
+`ROBO_EXTRA_READERS` names such readers: each reads every checked line with the book's
+prompt, and where its reading differs from the agreed text the difference is a suspect
+like any other. The arbiter has no column for the reader, so its version stands or
+falls by the judges' votes: an offer, as the accent and nested-quote offers are. Off
+until its short test in the build (`experiments/probe_extra_reader.py`: the pages
+holding those errors, built without and with) and a bench.
+
 ## The outer mark of a nested quotation (off)
 
 A print opens a quotation inside a quotation on two marks (‘“Lucy … kind,”’), and the
