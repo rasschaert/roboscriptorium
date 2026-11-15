@@ -285,6 +285,27 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 
 ## Errors no question asks about
 
+**First in line since 2026-11-15** (the user: the readers' shared blind spots are the
+greatest obstacle; is the effort on them?). Order: the short test for silent errors on
+every reader, prompt and crop at hand; leftover ink; the book's own pictures of a word;
+then the kinds one at a time below.
+
+- [ ] **Every reader, prompt and crop on the silent errors** (`experiments/silent_screen.py`,
+      minutes each): what each rescues that no reader in use reads right, and the clean
+      lines it disturbs. Queued behind De kus in de nacht's build (screen
+      `robo-slot-now-silent`): qwen3.8 with four prompt and crop variants, glm-ocr,
+      gemma4, Mistral Small 3.2. Next: the rescuers' readings as one more version for the
+      judges (as the accent offers are), short-tested on the pages they touch; the
+      readers deleted after their first screen (olmOCR, PaddleOCR-VL, LightOnOCR,
+      DeepSeek-OCR, Kraken) listed for the user to pull again, the likeliest first
+- [ ] **Leftover ink, any kind of error at once**: the build's word drawn and laid over
+      the scan, the ink that doesn't match measured (`probe_leftover_ink.py`, no model,
+      running 2026-11-15)
+- [ ] **The book's own pictures of a word**: a word's picture against the book's other
+      pictures of the same reading ("een" thousands of times, "één" differing above the
+      letters); no typeface, no model. Consistency on the text was null (2026-10-23),
+      on the pictures untried
+
 - [ ] **Quote marks measured on the scan.** A quarter of the tuning bench's error rows
       are quote marks (370 of 1,602: 309 asked, 61 silent), and the worst of them have
       no reading that differs: the outer mark of a nested quotation lost (the print's

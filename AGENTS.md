@@ -450,6 +450,19 @@ lift the judge panel (+0.011, interval clear of zero); d1 3B and d1-omni 2B, tes
 same way, added nothing. A model is dropped only when it adds nothing to any combination,
 and the verdict in models.md says which test it failed.
 
+**A reader, a prompt or a crop is judged the same way, by what it sees that the others
+miss** (the user, 2026-11-15: "'worse' individually doesn't make them worse for the
+whole. do they bring a fresh perspective?"). The rule above was kept for judges and not
+for readers: every rejected reader and prompt was dropped on its own error rate or its
+vote, none was shown the silent errors. The short test is
+`experiments/silent_screen.py` (minutes a model: lines holding the latest bench's silent
+errors and clean lines of the same pages): how many silent errors a reading has as the
+print does, and how many clean lines it reads otherwise. A reading that rescues what no
+reader in use does is a candidate however poor alone: it goes to the judges as one more
+version where it differs, and the arbiter learns its worth. Run it on every new model,
+prompt and crop before anything longer, and rebuild its set (`build`) when the bench's
+baseline moves.
+
 Two kinds of model, used for different jobs:
 
 - **Decision models ("System One")**, on Ollama's `/v1/systemone`. Answer bounded
