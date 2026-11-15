@@ -2879,3 +2879,11 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   both benches against production's runs. Seen on the way: the fit offers 68 words in
   Vals alarm's 90,000 but about 300 each in Afscheid and Reis om mijn schedel (speckled
   scans); if the bench shows that as questions, the cut becomes the book's own.
+- 2026-11-15: **clef shown the whole page where the two line-role tree sets disagree: better
+  than on a band, not clearly better than the grown trees** (`sorter_judge_probe.py
+  --page`, 92 places). Right on 54 (on a band 38), the grown trees on 50, the old on 40;
+  as a referee between the two sets it comes to 55. Of its 38 misses, 37 side with the
+  wrong set, 13 of them at 0.8 or surer. Four places in 92 is inside the noise. Reworked
+  (strength in numbers): the same question to d3 and autotrust-jev 35B, queued
+  (`work/runs/sorter-panel.sh`), to see whether the three together separate what one
+  can't.

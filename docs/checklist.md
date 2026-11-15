@@ -35,7 +35,8 @@ last on 2026-11-14, so next by 2026-11-21).
          settled right, errors 369 → 195 (`experiments/sorter_disagree.py`). clef on a
          band of the page: 38 of 92 right, the grown trees 50; a learned referee from the
          trees' own features: 168 of 299, the grown trees 174 (both null, decisions.md
-         2026-11-15). Left: the judge shown the whole page with the line framed.
+         2026-11-15). The whole page shown: clef 54 of 92, the grown trees 50 (inside the
+         noise). Queued: d3 and autotrust-jev on the same pages, the three together.
       2. The proofreader (null 2026-10-08/11: as many false questions as catches) as one
          more reader on the OCR check's path, its catches judged and weighed like any
          reading, never a question of its own.
