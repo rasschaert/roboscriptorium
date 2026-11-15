@@ -2838,3 +2838,17 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   dropped marks the bench knows there and eleven more (17 in 1,982 words; 29 ms a word,
   so about 50 minutes of one core for a 100,000-word book, kept per book). Its default
   waits on the judges' test and a bench with an arbiter trained on its offers.
+- 2026-11-15: **Undecided line-end hyphens decided by a learned model on the book's own
+  signs: null** (`experiments/probe_hyphen_learned.py`, no models; compound hyphens are
+  the largest group of the tuning bench's unasked errors where no reading differs, 64 of
+  274). 1,648 breaks the book's spellings and the word list leave undecided (Dutch 1,559,
+  40 of them the word's own hyphen; English 89, 51): boosted trees on the book's rate of
+  hyphenated words, the stem opening or the rest closing other hyphenated words in it,
+  how often each stands alone, a vowel clash and the word list on the parts, each book
+  decided by a model fitted on the others. Dutch: wrong on 69 at 0.5 and 42 at 0.8,
+  where dropping every such hyphen is wrong on 40. English: wrong on 17 and 15 of 89,
+  about the judge's rate (right on 63 of 77, design.md). clef's cached answer as one more
+  column: 38 and 15. Failed on: the base rate in Dutch (one break in 39 keeps its
+  hyphen, and nothing in the book says which: "dakloze-hipsterlook", "niet-schuldig" are
+  one-off coinages). Variant left: the panel's judges together (queued,
+  `probe_hyphen_judge.py`), and asking the reviewer the few a judge panel splits on.
