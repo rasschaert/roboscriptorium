@@ -44,8 +44,11 @@ last on 2026-11-14, so next by 2026-11-21).
       4. ~~The vocabulary, the language model and the render judge's measures in the
          sureness that decides asking~~: null 2026-11-15 (re-ranked 4,522 questions to
          sureness alone's 2,970; decisions.md).
-      5. The accent's shape (null 2026-10-26 on letter boxes) from the render judge's fit
-         over the accent alone, where the font sets it.
+      5. The accent's shape from the render judge's fit over the accent alone: a strong
+         signal (AUC 0.96 leaving a book out, 0.81 before), a small gain as arbiter columns
+         (382 → 369 silent with no questions, none at the rule's; decisions.md
+         2026-11-15). Left: the same measure where no reading has the mark, to find
+         accents every reader drops.
       Also: pplx-decider beside the four-judge panel; De vergelding's own arbiter
 
 In this order; `HANDOVER.md` has the paths and the commands.

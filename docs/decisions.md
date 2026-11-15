@@ -2767,3 +2767,28 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   golden books were never shown to the page-kind model; Ex-minnaar's printed blank is the
   one key nothing drafts. Title, author and translator go to `experiments/score_init.py`
   (queued), scored against each publisher's e-book.
+- 2026-11-15: **An accent or a speck, by the render judge's fit over the accent alone: a strong
+  signal, a small gain as arbiter columns; not taken as columns** (the reworked idea 5;
+  `experiments/probe_accent_fit.py`, `probe_accent_fit_arbiter.py`, `probe_accent_columns.py`,
+  no models). The word drawn with and without the mark in the book's typeface, placed by
+  the letters both share; in the zone where the drawings differ, the scan's cosine with the
+  accent's shape and its ink against the accent's. On 1,366 trust-data places differing by
+  one mark (1,013 marked in print): AUC 0.969 and 0.958 alone, 0.964 from a logistic model
+  leaving one book out, right on 1,255 (the 2026-10-26 blob features: 0.81 in a forest).
+  Against each book's held-out arbiter (1,337 places): sure and right on 1,163, of which
+  the accent call would wrong 49; sure and wrong on 39, of which it would right 22; asked
+  135, the call right on 102. As four arbiter columns: silent errors with no questions
+  382 → 369 (random numbers in their place 384), at half the rule's questions 36 → 33
+  (36), at the rule's 16 → 16; accent picks changed about 9 right, 6 wrong. Failed on: the
+  question budget, as the render and language columns did; the arbiter is already right
+  on 97% of these. Reworked: the same measure where no reading has the mark, to find the
+  accents every reader drops ("één", "míjn": errors no question asks about).
+- 2026-11-15: **Blank pages whose show-through the layer reads as words pad `init`'s ends;
+  ink contrast alone can't tell them** (`experiments/probe_showthrough.py`, 27 labelled
+  books, no models). Het ijzige land PDF 329–330, Reis om mijn schedel 256 and Een
+  Russische roman 272 are blank leaves showing the other side's print (19–241 words in
+  the layer; clef-flash called them text at 0.14–0.28). Their contrast is 0.02–0.11 of
+  the book's, but Afscheid's washed-out text pages measure 0.06–0.09: under half the
+  book's contrast, 60 pages labelled blank and 28 labelled into the book. Reworked: the
+  page mirrored against its neighbours' ink (`probe_showthrough_mirror.py`). Vuurspel's
+  "miss" was the label's: PDF 7 is the dedication ("Voor Sheila"), as `init` said.
