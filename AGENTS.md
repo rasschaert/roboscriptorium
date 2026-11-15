@@ -169,6 +169,12 @@ get renumbered. Don't add a file to this table without a job no other file has.
   docs/decisions.md) and retest the cheap ones. A better model in the bottleneck's place
   is the "new reason" the outlook asks for. The small-capitals version, null on 2026-10-20
   for want of judges the arbiter trusted, came back up when the judge panel arrived.
+- **Rework an idea before dropping it** (the user, 2026-11-15: "i fear we might dismiss
+  good ideas after the first version of them doesn't pan out"). A failed idea gets its
+  reason, then the modified versions that would dodge that reason (another place in the
+  pipeline, a narrower scope, another signal, combined with another idea), written beside
+  the null, and the most promising tried. Retrained italic trees failed; keeping both
+  sets with a judge between them cut italic errors by a fifth (2026-11-14).
 - **The shortest test that answers the question** (the user, 2026-10-15). Whether an
   idea or fix works is shown on the pages it touches (a targeted build of those pages,
   their errors fixed against broken), in minutes, not by a full bench. The full bench

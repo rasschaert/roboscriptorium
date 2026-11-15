@@ -28,6 +28,24 @@ last on 2026-11-14, so next by 2026-11-21).
 
 ## In flight
 
+- [ ] **Dropped ideas reworked** (the user, 2026-11-15: "what ideas have we dropped in the
+      past that might still pan out if modified?"), most promising first:
+      1. The line-role trees as the italics were: the old and the grown sets, a vision
+         judge on the lines they disagree on. They disagree on 299 of 198,758 tuning lines;
+         settled right, errors 369 → 195 (`experiments/sorter_disagree.py`). Next: a judge
+         probe on 100 of those lines, as `italic_judge_probe.py`, then the build.
+      2. The proofreader (null 2026-10-08/11: as many false questions as catches) as one
+         more reader on the OCR check's path, its catches judged and weighed like any
+         reading, never a question of its own.
+      3. The page readers (null 2026-10-14/15 as line readers) at line joins only: a judge
+         of "one word or two" and of a line-end hyphen, where their catches sat.
+      4. The vocabulary, the language model and the render judge's measures (nulls
+         2026-11-08 and 14 on the question budget) in the sureness that decides asking,
+         not the pick; and all three together.
+      5. The accent's shape (null 2026-10-26 on letter boxes) from the render judge's fit
+         over the accent alone, where the font sets it.
+      Also: pplx-decider beside the four-judge panel; De vergelding's own arbiter
+
 In this order; `HANDOVER.md` has the paths and the commands.
 
 - [ ] After batch five, the null that waited for it: autotrust-jev 9B as a second text
