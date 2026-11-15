@@ -2,11 +2,12 @@
 bench run's silent errors (wrong in the built book, no question asked) and clean lines
 of the same pages, read by a model with a prompt. Per reading: how many silent errors it
 reads as the print has them (`rescued`), how many it reads as the build does, and how
-many clean lines it reads otherwise than the layer (the noise it would bring). A model
+many clean lines it reads otherwise than the reference (the noise it would bring). A model
 is worth a seat for what it rescues, not for its own error rate: its readings would go
 to the judges as one more version where they differ.
 
     uv run python experiments/silent_screen.py build <bench errors.jsonl> [most errors]
+    PYTHONPATH=experiments uv run python experiments/silent_screen.py truths
     uv run python experiments/silent_screen.py run <model> [variant …]
     uv run python experiments/silent_screen.py report
 
@@ -115,6 +116,40 @@ def build(errors_path: str, most: int) -> None:
     print(len(items), "lines:", Counter(i["stratum"] for i in items), Counter(i.get("cause") for i in items if i["stratum"] == "silent").most_common())
 
 
+def truths() -> None:
+    """Each item's line as the reference has it (`truth`), where the aligner places it:
+    what a clean line is compared with, the layer being wrong itself now and then."""
+    from tryout import slice_of
+
+    from roboscriptorium import bench, disagreements
+    from roboscriptorium.golden import scoring
+    from roboscriptorium.golden.align import align
+    from roboscriptorium.golden.manifest import Golden
+    from roboscriptorium.golden.reference import load_chapters
+    from roboscriptorium.ir import SourceRef
+    from roboscriptorium.pdf import cached_text_layer
+
+    data = json.loads((ROOT / "items.json").read_text())
+    for name in dict.fromkeys(i["book"] for i in data["items"]):
+        spec = next(s for s in bench.SETS["tuning"] if s.split(":")[0] == name)
+        book, (first, last), chapters = slice_of(spec)
+        pages = [p for p in cached_text_layer(book.source, book.stages / "textlayer.json") if first <= p.number <= last]
+        reference = load_chapters(Golden.load(book.golden).text_dir)
+        if chapters:
+            reference = reference[chapters[0] - 1 : chapters[1]]
+        reference, _ = disagreements.patch(reference, scoring.verdicts(book))
+        labels = align(pages, reference)
+        for i in data["items"]:
+            if i["book"] == name:
+                _, page, k = i["id"].rsplit(":", 2)
+                found = labels.get(SourceRef(int(page), int(k)))
+                i["truth"] = found.truth if found and found.truth else None
+        print(name, flush=True)
+    (ROOT / "items.json").write_text(json.dumps(data, ensure_ascii=False))
+    clean = [i for i in data["items"] if i["stratum"] == "clean"]
+    print(sum(bool(i["truth"]) for i in clean), "of", len(clean), "clean lines placed;", sum(fold(i["truth"]) != fold(i["layer"]) for i in clean if i["truth"]), "where the layer itself differs")
+
+
 def answers(model: str, variant: str) -> dict[str, str]:
     path = ROOT / "answers" / f"{model.replace('/', '_').replace(':', '_')}--{variant}.jsonl"
     out = {}
@@ -182,7 +217,7 @@ def report() -> None:
         rescued = {i["id"] for i in seen if i["want"] in got[i["id"]] and not (i["got"] in got[i["id"]] and i["want"] in i["got"])}
         rescued = {i["id"] for i in seen if i["id"] in rescued and (i["got"] not in got[i["id"]] or i["got"] in i["want"])}
         as_built = sum(i["got"] in got[i["id"]] for i in seen) - sum(1 for i in seen if i["id"] in rescued and i["got"] in i["want"])
-        noisy = [i for i in clean if i["id"] in got and got[i["id"]] != fold(i["layer"])]
+        noisy = [i for i in clean if i["id"] in got and got[i["id"]] != fold(i.get("truth") or i["layer"])]
         by_cause = Counter(i["cause"] for i in seen if i["id"] in rescued)
         rescued_by[f"{model} {variant}"] = rescued
         print(
@@ -199,6 +234,8 @@ def report() -> None:
 if __name__ == "__main__":
     if sys.argv[1] == "build":
         build(sys.argv[2], int(sys.argv[3]) if len(sys.argv) > 3 else 200)
+    elif sys.argv[1] == "truths":
+        truths()
     elif sys.argv[1] == "run":
         run(sys.argv[2], sys.argv[3:] or ["book"])
     else:
