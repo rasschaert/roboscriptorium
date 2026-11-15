@@ -65,7 +65,7 @@ ends badly can leave the agent's runs stopped: `experiments/continue_runs.py` co
 them.
 
 **For the user's quick confirmation, with crops, once a review is due** (not sent yet):
-`work/probes/unasked/accents-20261115/`: 9 places where the e-book adds an accent the
+`work/probes/silent/accents-20261115/`: 9 places where the e-book adds an accent the
 print lacks (Goede dochter 8, De vergelding 1) and Au pair's 16 small-capital words the
 e-book writes in lower case.
 
@@ -115,7 +115,7 @@ book, not taken (decisions.md, 2026-11-14). Main's typeface matches are back in
 `stages/typeface.json`; the kerned ones are `typeface-kern.json`.
 
 **Answered by the user (2026-11-14):** all 36 places where the e-book departs from its
-print: 35 are errata in their books' `errata.toml` (list: `work/probes/unasked/
+print: 35 are errata in their books' `errata.toml` (list: `work/probes/silent/
 confirm-20261114/errata-pending.json`), each checked to land in a warm build; Au pair's
 "want-als" is a speck, the build's error. The user is reporting Vanille's two DBNL slips
 to DBNL themselves.
@@ -447,41 +447,41 @@ pass 4 (validation's silent places 170 → 178), Mistral-Small 3.2 as a text jud
 
   ```sh
   # 11 places
-  uv run roboscriptorium review work/the-thief-takers-apprentice--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/the-thief-takers-apprentice--ia-scan --only work/probes/silent/candidates-20261112.json
   # 8 places
-  uv run roboscriptorium review work/de-stilte-van-de-hel--ia-scan --pages 11-101 --chapters 1-15 --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/de-stilte-van-de-hel--ia-scan --pages 11-101 --chapters 1-15 --only work/probes/silent/candidates-20261112.json
   # 8 places
-  uv run roboscriptorium review work/metro-2033--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/metro-2033--ia-scan --only work/probes/silent/candidates-20261112.json
   # 7 places
-  uv run roboscriptorium review work/de-geruchten--ia-scan --pages 9-97 --chapters 2-22 --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/de-geruchten--ia-scan --pages 9-97 --chapters 2-22 --only work/probes/silent/candidates-20261112.json
   # 3 places
-  uv run roboscriptorium review work/afscheid-van-verspilde-tijd--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/afscheid-van-verspilde-tijd--ia-scan --only work/probes/silent/candidates-20261112.json
   # 3 places
-  uv run roboscriptorium review work/het-ijzige-land--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/het-ijzige-land--ia-scan --only work/probes/silent/candidates-20261112.json
   # 3 places
-  uv run roboscriptorium review work/verminkt--ia-scan --pages 7-100 --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/verminkt--ia-scan --pages 7-100 --only work/probes/silent/candidates-20261112.json
   # 2 places
-  uv run roboscriptorium review work/vanille-en-andere-smaken--dbnl-scan --pages 9-79 --chapters 1-16 --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/vanille-en-andere-smaken--dbnl-scan --pages 9-79 --chapters 1-16 --only work/probes/silent/candidates-20261112.json
   # 2 places
-  uv run roboscriptorium review work/vuurspel--ia-scan --pages 9-111 --chapters 1-6 --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/vuurspel--ia-scan --pages 9-111 --chapters 1-6 --only work/probes/silent/candidates-20261112.json
   # 2 places
-  uv run roboscriptorium review work/de-vergelding--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/de-vergelding--ia-scan --only work/probes/silent/candidates-20261112.json
   # 2 places
-  uv run roboscriptorium review work/het-laatste-bevel--ia-scan --pages 9-100 --chapters 1-5 --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/het-laatste-bevel--ia-scan --pages 9-100 --chapters 1-5 --only work/probes/silent/candidates-20261112.json
   # 1 places
-  uv run roboscriptorium review work/artemis--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/artemis--ia-scan --only work/probes/silent/candidates-20261112.json
   # 1 places
-  uv run roboscriptorium review work/au-pair--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/au-pair--ia-scan --only work/probes/silent/candidates-20261112.json
   # 1 places
-  uv run roboscriptorium review work/het-heft-in-eigen-hand--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/het-heft-in-eigen-hand--ia-scan --only work/probes/silent/candidates-20261112.json
   # 1 places
-  uv run roboscriptorium review work/normal-people--ia-scan --pages 146-232 --chapters 23-31 --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/normal-people--ia-scan --pages 146-232 --chapters 23-31 --only work/probes/silent/candidates-20261112.json
   # 1 places
-  uv run roboscriptorium review work/monterosso-mon-amour--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/monterosso-mon-amour--ia-scan --only work/probes/silent/candidates-20261112.json
   # 1 places
-  uv run roboscriptorium review work/reis-om-mijn-schedel--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/reis-om-mijn-schedel--ia-scan --only work/probes/silent/candidates-20261112.json
   # 1 places
-  uv run roboscriptorium review work/goede-dochter--ia-scan --only work/probes/unasked/candidates-20261112.json
+  uv run roboscriptorium review work/goede-dochter--ia-scan --only work/probes/silent/candidates-20261112.json
   ```
 - Hoe wij verdwijnen's spot-check is done (2026-11-13: nothing wrong on its five pages
   but the two italics fixed since). Its read-through waits on the user's word (no full

@@ -4,7 +4,7 @@ control lines of the same pages that carry no error. Crops as the line readers s
 
     uv run python experiments/silent_set.py
 
-Writes work/probes/unasked-set/{items.json, crops/}; items have the reader set's fields
+Writes work/probes/silent-set/{items.json, crops/}; items have the reader set's fields
 (`id`, `stratum` hard or control, `layer`, `crop` name), so `h2o_triage.py` and
 `triage_score.py` read it with that folder as their root.
 """
@@ -24,7 +24,7 @@ from roboscriptorium.config import Settings
 from roboscriptorium.golden import scoring
 
 RUN = "tuning-20261020T182636-f38e636-dirty"
-ROOT = Path("work/probes/unasked-set")
+ROOT = Path("work/probes/silent-set")
 CONTROLS_PER_ERROR = 2
 MIN_LENGTH = 25
 

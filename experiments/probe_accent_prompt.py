@@ -16,7 +16,7 @@ from roboscriptorium import readers
 from roboscriptorium.config import Settings
 
 RUN = "tuning-20261020T182636-f38e636-dirty"
-ROOT = Path("work/probes/unasked-set")
+ROOT = Path("work/probes/silent-set")
 EXTRA = (
     " Keep every accent mark exactly as printed, including an acute accent on a single "
     "letter used for emphasis (for example on an i or an o), and add none that is not printed."

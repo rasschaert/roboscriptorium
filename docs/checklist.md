@@ -328,7 +328,7 @@ without effect, and what each would need to be tried again, is in
 - [ ] De vergelding's own arbiter: it has the most unsure suspects and was never trained
       on; comes with its trust data (In flight)
 - [ ] Spacing the build sets against the print, read off the crops of 223 silent
-      places (2026-11-12, decisions.md; `work/probes/unasked/spacing-20261112/`), each a
+      places (2026-11-12, decisions.md; `work/probes/silent/spacing-20261112/`), each a
       repair with its counterexamples tested:
       - a dash before a closing quote set closed ("Dud—’") or spaced on both sides
         ("Granny – ’") where the book's other dashes take a space on one side (16, The

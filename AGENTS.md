@@ -133,7 +133,7 @@ get renumbered. Don't add a file to this table without a job no other file has.
   not only the setting: which block it makes redundant, which block it suggests, which
   order it questions. When something new works, ask at once what it lets us remove.
   Proposing these experiments is the agent's job, not the user's; the cheap ones run
-  silent (the rules below).
+  unasked (the rules below).
 - **Code is disposable; the principles and their instruments aren't.** Future models
   read better and write any code (the user, 2026-10-18). What a later model can't
   regenerate: the human labels (review answers, verdicts, errata in `work/`), the
@@ -158,7 +158,7 @@ get renumbered. Don't add a file to this table without a job no other file has.
   the user blocks only its own step; a run in flight blocks only other model jobs. Never end
   a turn with "shall I go ahead?" about work that is already on the checklist: say what is
   next and start it. Stop only when every open step waits on the user, and say which.
-- **Cheap experiments are welcome, silent:** A/B a prompt, a crop or a setting on a
+- **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.
 - **An idea waiting for model time goes into the queue at once** (the user, 2026-11-15:

@@ -22,7 +22,7 @@ from PIL import Image
 from scipy import ndimage
 
 READER = Path("work/tryout/reader-v3")
-SILENT = Path("work/probes/unasked-set")
+SILENT = Path("work/probes/silent-set")
 RUN = "tuning-20261020T182636-f38e636-dirty"
 
 

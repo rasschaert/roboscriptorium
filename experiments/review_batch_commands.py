@@ -1,7 +1,7 @@
 """One `review --only` command per book that has places in a candidate list, each with the
 book's tuning slice, most places first. No models.
 
-    uv run python experiments/review_batch_commands.py work/probes/unasked/candidates-20261019.json
+    uv run python experiments/review_batch_commands.py work/probes/silent/candidates-20261019.json
 """
 
 import json

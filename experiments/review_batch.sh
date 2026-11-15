@@ -6,7 +6,7 @@
 #   experiments/review_batch.sh [list.json]
 set -uo pipefail
 cd "${0:A:h}/.."
-list=${1:-work/probes/unasked/candidates-20261019.json}
+list=${1:-work/probes/silent/candidates-20261019.json}
 cmds=("${(@f)$(uv run python experiments/review_batch_commands.py "$list" | grep -v '^#')}")
 total=${#cmds}
 done_file="${list}.done"

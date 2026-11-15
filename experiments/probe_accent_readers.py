@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 RUN = "tuning-20261020T182636-f38e636-dirty"
-ROOT = Path("work/probes/unasked-set")
+ROOT = Path("work/probes/silent-set")
 
 
 def lines() -> list[tuple[str, str, str, bytes]]:

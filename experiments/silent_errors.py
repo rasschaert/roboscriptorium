@@ -4,7 +4,7 @@ context, its category and whether the OCR check raised a suspect on that line.
 
     uv run python experiments/silent_errors.py [book …]   # default: every tuning book
 
-Writes work/probes/unasked/<book>.jsonl and prints the commonest kinds with examples.
+Writes work/probes/silent/<book>.jsonl and prints the commonest kinds with examples.
 Warm caches make no model calls; run it when no other run builds the same books.
 """
 
@@ -18,7 +18,7 @@ from roboscriptorium import bench, quality
 from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 
-OUT = Path("work/probes/unasked")
+OUT = Path("work/probes/silent")
 specs = [s for s in bench.SETS["tuning"] if not sys.argv[1:] or s.split(":")[0] in sys.argv[1:]]
 OUT.mkdir(parents=True, exist_ok=True)
 examples = defaultdict(list)
