@@ -35,11 +35,13 @@ def rescued(model: str, variant: str, items: list[dict]) -> set[str]:
 
 
 def main():
-    model, variant = sys.argv[1], (sys.argv[2] if len(sys.argv) > 2 else "book")
+    # "<model>@x2" is the model shown each crop at twice its size (the test's "zoom").
+    spec = sys.argv[1]
+    model, variant = spec.partition("@x")[0], ("zoom" if "@x" in spec else (sys.argv[2] if len(sys.argv) > 2 else "book"))
     items = [i for i in json.loads((ROOT / "items.json").read_text())["items"] if i["stratum"] == "silent"]
     new = rescued(model, variant, items) - rescued(IN_USE, "book", items)
     mine = [i for i in items if i["id"] in new]
-    print(f"{model}: {len(mine)} silent errors it reads right and {IN_USE} doesn't", flush=True)
+    print(f"{spec}: {len(mine)} silent errors it reads right and {IN_USE} doesn't", flush=True)
     settings = Settings.from_env()
     tally, cost = Counter(), Counter()
     for i in mine:
@@ -52,7 +54,7 @@ def main():
             subprocess.run(["cp", "-Rc", str(Path("work") / name), str(copy)], check=True)
         book = Book.load(copy)
         seen = {}
-        for mode, extra in (("without", ""), ("with", model)):
+        for mode, extra in (("without", ""), ("with", spec)):
             stages = pipeline.run(book, pages=(page, page), settings=replace(settings, extra_readers=extra))
             here = [s for s in stages.suspects if s.page == page and s.line == line and any(i["want"] in fold(v) for v in s.others)]
             seen[mode] = (

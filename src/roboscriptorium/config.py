@@ -113,7 +113,8 @@ class Settings:
     # A thinking model that settles the arbiter's questions from the text around them
     # where it picks the arbiter's likeliest version (`contextjudge.py`; "" for none).
     context_model: str = ""
-    # More line readers on Ollama, comma-separated, whose readings the arbiter has no
+    # More line readers on Ollama, comma-separated ("<model>@x2" shows it each crop at
+    # twice its size), whose readings the arbiter has no
     # column for: where one differs from the agreed text its version goes to the judges
     # as an offer, however poor the reader is alone (it earns its place by the silent
     # errors it reads right: `experiments/silent_screen.py`). Off until benched.

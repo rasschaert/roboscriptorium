@@ -5,6 +5,7 @@ box, never its position). The OCR check (`ocrcheck.py`) compares them."""
 
 import base64
 import hashlib
+import io
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor
@@ -12,6 +13,7 @@ from pathlib import Path
 
 import httpx
 import pymupdf
+from PIL import Image
 
 from roboscriptorium import ocr
 from roboscriptorium.clients import openrouter
@@ -115,6 +117,16 @@ def line_key(page: PageText, boxes: list, k: int) -> str:
     return out
 
 
+def _enlarged(png: bytes, times: int) -> bytes:
+    """A crop at `times` its size (1 leaves it as it is)."""
+    if times == 1:
+        return png
+    image = Image.open(io.BytesIO(png))
+    held = io.BytesIO()
+    image.resize((image.width * times, image.height * times), Image.LANCZOS).save(held, "PNG")
+    return held.getvalue()
+
+
 def line_readings(
     pdf: Path,
     pages: list[PageText],
@@ -124,6 +136,7 @@ def line_readings(
     cache: Path,
     prompt: str = "",
     via: str = "",
+    enlarge: int = 1,
 ) -> dict[SourceRef, str]:
     """The OCR model's reading of each checked line's crop, cached on the line's text.
 
@@ -131,10 +144,15 @@ def line_readings(
     (`read_line`); either reading is given in Latin letters (`ocr.latin`). Short lines are
     read too: "keek.’" ends dialogue, and that is where a closing quote is lost. With
     `via`, another build of the same model reads the lines still to read; they are cached
-    under `model` and listed under `via` in the cache."""
+    under `model` and listed under `via` in the cache. With `enlarge`, the crop is shown
+    at that many times its size: the read model at twice the size reads 19 of 97 silent
+    errors as the print has them against 10, stress accents above all
+    (`experiments/silent_screen.py`, 2026-11-15)."""
     done: dict[str, str] = {}
     read_by: dict[str, list[str]] = {}
     stored = prompt if DPI == 300 else f"{prompt}\n[{DPI} dpi]"
+    if enlarge != 1:
+        stored += f"\n[x{enlarge}]"
     raw = _readings(cache, model, stored)
     if raw is not None:
         done = raw["lines"]
@@ -173,7 +191,10 @@ def line_readings(
             batch = todo[start : start + SAVE_EVERY]
             with PDF_LOCK, pymupdf.open(pdf) as doc:
                 crops = [
-                    _line_crop(doc, page.number, boxes[page.number][k], span(page, k))
+                    _enlarged(
+                        _line_crop(doc, page.number, boxes[page.number][k], span(page, k)),
+                        enlarge,
+                    )
                     for page, k in batch
                 ]
             if prompt:

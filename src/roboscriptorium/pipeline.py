@@ -321,12 +321,15 @@ def run(
                             book.source, body, kept, model, settings.ollama_url,
                             book.stages / f"page-reading-{name}.json",
                         )  # fmt: skip
-            for model in settings.extra_reader_models:
-                slug = re.sub(r"[^A-Za-z0-9]+", "-", model).strip("-")
+            for spec in settings.extra_reader_models:
+                # "<model>@x2" shows the model each crop at twice its size.
+                model, _, times = spec.partition("@x")
+                slug = re.sub(r"[^A-Za-z0-9]+", "-", spec).strip("-")
                 readings[f"extra-{slug}"] = readers.line_readings(
                     book.source, body, kept, model, settings.ollama_url,
                     book.stages / f"extra-reading-{slug}.json",
                     read_prompt(book, whole, style, dots),
+                    enlarge=int(times or 1),
                 )  # fmt: skip
             if settings.quote_reader:
                 # The layer's own paragraphs, before any fix: where their quote marks
