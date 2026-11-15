@@ -7,70 +7,57 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**State at 11:15 on 2026-11-15** (the user back; reviewed Ex-minnaar in the morning).
+**State at 20:45 on 2026-11-15** (the user at the keyboard through the day).
 
-**Taken overnight, in production** (decisions.md, 2026-11-14 and 15):
-1. The user's idea: clef:27b settles where two sets of italic trees disagree (italic
-   errors −19% on tuning).
-2. The user's counter-idea: a lone capital drawn as a small capital too (silent −9).
-3. autotrust-jev 9B asking the text question as a 4th judge (questions 3,445 → 3,402 on
-   tuning); its arbiter and trust data are production's, the previous kept in
-   `work/models/ocr-trust-backup-20261115/` and `work/probes/ocr-trust-before-text-20261115/`.
+**The focus the user set today:** the errors that reach the book with no question
+("silent errors", the one name now), above all those every reader makes alike; and
+short tests before long runs. A reader, prompt or crop is judged by which silent errors
+it reads right (`experiments/silent_screen.py`, minutes; AGENTS.md), never by its own
+error rate.
 
-**Baselines now** (production as of c6088a3): `work/bench/tuning-20261114T233727-389e99a-dirty.json`
-and `validation-20261114T233833-82c7529-dirty.json`.
+**Found today** (decisions.md, 2026-11-15, has every number):
+- The read model shown each line's crop at twice its size reads 19 of 97 silent errors
+  as printed against 10; olmOCR-2 14, PaddleOCR-VL 1.6 13 (both pulled again by the
+  user, on Ollama); all readers together 36. In the build, as extra readers whose
+  readings go to the judges as offers (`ROBO_EXTRA_READERS`, off), the enlarged crop
+  turned 9 of 11 such errors into a fix or a question, olmOCR 5 of 7, Paddle 3 of 8.
+- Offers measured on the scan: stress accents (`accentmarks.py`), a nested quotation's
+  outer mark (`quotemarks.py`); a judge of marks alone (`render-mark`). All off.
+- Null: trees reading quote marks across books; an accent cut per book; leftover ink
+  (twice); the second accent measure as the offers' measure.
+- Baidu's Unlimited-OCR-2 (a whole-page model) runs on a patched llama.cpp built apart
+  in `~/models/roboscriptorium/llama-unlimited-ocr2/` (the Homebrew one untouched; the
+  weights are the blob Ollama pulled, `ollama show --modelfile` names it). One page
+  read; to score on whole pages, words and its paragraph and page-number blocks.
 
-**Running, in order** (each waits for the ones before; GPU). Watch them with a Monitor
-on `work/runs/<name>.out` and the logs, re-armed every 30 minutes:
-1. screen `robo-kus`: De kus in de nacht's first build (readings done 10:39, judges
-   since; twice paused, for a short probe and for the user's rebuild), then its
-   questions sampled (`work/runs/kus-build.log`, `kus-sample.log`).
-2. screen `robo-resample`: Nervous System and Pieter Daens rebuilt with production of
-   2026-11-15 and their questions sampled (kept in `work/probes/questions/<book>-20261115/`),
-   to see what the night's changes did to their reviews.
-3. screen `robo-accents-chain` (`work/runs/accents-chain.sh`): accent doubts
-   (`ROBO_ACCENT_DOUBTS=1`): trust data in `work/probes/ocr-trust-accents/` (resumes per
-   book), the arbiter `work/models/ocr-trust-accents.pkl`, bench tuning and validation
-   against production's runs. Taken if tuning's silent errors fall and validation
-   doesn't veto: then the arbiter and trust data go in production's place (as the 4th
-   judge's did, decisions.md 2026-11-15) and `accent_doubts` defaults to on. If a
-   speckled book's offers (Goede dochter 1,011, De eerlijke vinder 573, Het schaduwhuis
-   431) come out as questions, hold them down with a cut per book (it finds no more
-   marks, decisions.md, but can cap offers).
-   Behind it, screen `robo-accents-mark` (`work/runs/accents-mark-chain.sh`): the same
-   with one more judge, `render-mark` (votes only where versions differ by an accent;
-   design.md, "A judge of marks alone"): trust data `work/probes/ocr-trust-accents-mark/`,
-   arbiter `work/models/ocr-trust-accents-mark.pkl`, both benches. Compare it with the
-   accent run's benches as well as production's; taken only if it beats the accent run.
-   Behind that, screen `robo-nested` (`work/runs/nested-chain.sh`): the same again with
-   `ROBO_NESTED_QUOTES=1` (`quotemarks.py`: a nested quotation's outer mark offered where
-   the scan shows three ticks; design.md): trust data `work/probes/ocr-trust-nested/`,
-   arbiter `work/models/ocr-trust-nested.pkl`, both benches; its gain is its benches
-   against the mark judge's.
-4. screens `robo-hints`, `robo-score-init`, `robo-init-ink`, `robo-hyphen-judges`,
-   `robo-sorter-panel`, in that order: hints about kinds of OCR error on autotrust-jev
-   35B and d3; every field `init` drafts scored on 32 golden books; the page-kind model
-   told each edge page's ink strength; the panel's judges on line-end hyphens; the
-   whole-page line-role question to d3 and autotrust-jev (clef alone: 54 of 92, the
-   grown trees 50).
-Beside them on the CPU: screen `robo-accent-marks2`, the accent fits of the 23 Dutch
-bench books into their `stages/accent-marks.json` (16 done), and `robo-accent-exminnaar`,
-the same on Ex-minnaar (`work/probes/accent-doubts-ex-minnaar.txt`): promised to the
-user, compare its offers with the accents they confirmed in review and report what it
-finds beyond them.
+**Baselines** (production as of c6088a3): `work/bench/tuning-20261114T233727-389e99a-dirty.json`
+and `validation-20261114T233833-82c7529-dirty.json` (their keys now say "silent").
 
-**The review's "Rebuild book" hung** on a lock it already held (the user's Ex-minnaar
-rebuild, 15 minutes): fixed (`pdf.PDF_LOCK` re-entrant, 35ed094). A user's build that
-ends badly can leave the agent's runs stopped: `experiments/continue_runs.py` continues
-them.
+**Running, in order** (screens; each waits for the ones before). Watch with a Monitor
+on `work/runs/<name>.out`, re-armed every 30 minutes:
+1. `robo-accents-chain` (started 19:37): accent offers: trust data
+   `work/probes/ocr-trust-accents/` (resumes per book), arbiter
+   `work/models/ocr-trust-accents.pkl`, both benches against the baselines. Taken if
+   tuning's silent errors fall and validation doesn't veto.
+2. `robo-slot-now-extra-quick` (`work/runs/extra-readers-quick.sh`): the short bench
+   (282 pages) with production, then with qwen3.8 at twice the size and olmOCR-2 as
+   extra readers, about 5 hours of reading. Says what the extra readers cost on ordinary
+   pages. If it holds: a full bench with trust data rebuilt.
+3. `robo-accents-mark` (accent offers and the mark judge), then `robo-nested` (nested
+   quote offers on top): each a trust-data rebuild, an arbiter and both benches; each
+   compared with the run before it.
+4. `robo-hints`, `robo-score-init`, `robo-init-ink`, `robo-hyphen-judges`,
+   `robo-sorter-panel`: the older tests, last.
+
+**Built, waiting on reading by eye before any review:** De kus in de nacht (814
+questions over 610 pages, 421 of them quotes: `work/probes/questions/de-kus-in-de-nacht`),
+Pieter Daens (327), Nervous System (72, 35 unanswered).
 
 **For the user's quick confirmation, with crops, once a review is due** (not sent yet):
 `work/probes/silent/accents-20261115/`: 9 places where the e-book adds an accent the
 print lacks (Goede dochter 8, De vergelding 1) and Au pair's 16 small-capital words the
-e-book writes in lower case.
-
-Ex-minnaar: reviewed by the user and rebuilt from their answers
-(`work/ex-minnaar/ex-minnaar.epub`, epubcheck clean, 43 paragraphs changed).
+e-book writes in lower case. Au pair's manifest gets `doubled_singles = true` after the
+accent run's benches (checklist).
 
 **Since 02:30** (decisions.md, 2026-11-15): three reworked ideas null (a judge on a band
 and a learned referee between the line-role trees; extra signals deciding when to ask);
