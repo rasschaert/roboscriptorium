@@ -161,6 +161,10 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
   frozen set, and record null results too. Anything over a few minutes, or that costs
   the user time or money, is explained first: why, what it should teach, how long.
+- **An idea waiting for model time goes into the queue at once** (the user, 2026-11-15:
+  "queue it up though so we don't forget"). A probe to validate, new or an old one with
+  a new twist, is written, checked without models (`--dry` or the like) and queued as a
+  run behind the ones in flight in the same turn, not left as "once the machine is free".
 - **A null result is a null for its models, not forever** (the user, 2026-11-08). An idea
   that didn't pay may have failed on the judge, reader or arbiter of its day: record with
   every null which component it failed on ("the arbiter didn't take the judges' capitals").

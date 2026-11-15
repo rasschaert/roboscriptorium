@@ -392,14 +392,33 @@ are under Done, "Architecture probes".
 
 ## Starting from a PDF alone
 
+The goal: an unprepared scan builds with no person or agent setting it up. What `init` drafts
+wrong is fixed in `init`, never in one book's `book.toml` (the user, 2026-11-15, after Pieter
+Daens' title was mended by hand).
+
+- [ ] **Every field `init` drafts scored, and kept scored.** The ends are
+      (`probe_init_ends.py`, 27 labelled books: first end 26, last 22). Title, author,
+      translator and language were scored once (2026-10-22, `probe_title_author.py`: title
+      26, author 25 of 27), against `book.toml` values partly typed by hand, and never
+      since; the dash, ellipsis and typeface never. Next: one probe for every field,
+      against the publisher's e-book of each golden pair (its title, author, translator)
+      and the labels, run again after each change to `init`. Agent; a reading-model call a
+      book, queued behind the runs in flight
+- [ ] **What a book still needs a person for**: each book's `book.toml` against what
+      `init` drafts alone (cached answers, no models), every key that differs listed by
+      book and kind. The kinds become steps in this section. Agent, no models
+- [ ] **The title, author and translator through the same path as the text's doubts**.
+      Today one reading decides (the read model on the title and copyright pages); the
+      title page's text layer is a second, and was right where the read model glued "of
+      hoe" into "ofhoe" (Pieter Daens, 2026-11-14). Where the two differ, the judges and
+      the arbiter settle it and the user is asked only what they can't; where they agree,
+      the draft's "confirm" goes. A hand rule taking the layer's word breaks was written
+      and dropped (2026-11-15): it mended the one case seen. Judged on the score above
 - [ ] `init`'s confirmation on the review page (agreed 2026-10-11; the user,
       2026-10-21): the first and last page of the text proper shown with their crops,
       each named by both numbers ("PDF page 9 (the page prints 7)", or that it prints
-      none), with whatever else the draft `book.toml` marks to confirm
-- [ ] The title, author and translator `init` drafts, checked against the title page's
-      own text layer: Pieter Daens' read model glued "of hoe" into "ofhoe" where the layer
-      reads it right (2026-11-14). Where the two differ, the same path as the text's
-      doubts (readers, judges, arbiter), the user asked only what that can't settle
+      none), with whatever else the draft `book.toml` still marks to confirm once the
+      steps above have shrunk it
 
 ## Golden books and the bench
 

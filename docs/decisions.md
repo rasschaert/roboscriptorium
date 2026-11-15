@@ -2752,3 +2752,10 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   where it leaves none (189), 169 → 172, 176 → 171, 185 → 184, 168 → 167. The 9B text
   judge loses most (231 → 192 in all), its crop made for the text question. A cut only
   where ink sits in the strip would gain nothing on these pages either. Off stays.
+- 2026-11-15: **A hand rule for `init`'s title word breaks: written, not taken.** Pieter
+  Daens' title came out "ofhoe" (the read model) where the title page's text layer reads
+  "of hoe"; the title was first mended in the book's `book.toml` by hand, then a rule took
+  the layer's word breaks where the word list knew more of its words. Both fixed the one
+  case seen, not `init`: the title goes the text's way instead, two readings and the
+  judges and arbiter between them, scored on every golden pair (checklist, Starting from
+  a PDF alone).

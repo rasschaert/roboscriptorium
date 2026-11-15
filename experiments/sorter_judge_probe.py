@@ -4,8 +4,11 @@ shown as a band of its page with the line framed, asked of a judge "running text
 heading, or not part of the text?", scored against the reference beside both sets.
 Answers cached in work/probes/sorter-judge/. A line is shown only where the text layer's
 line at its index sits where the labelled line does (missing lines shift indices).
+`--page` shows the whole page instead of a band, so the line's place on the page and the
+page's other lines are in sight; `--dry` writes the images to work/probes/sorter-judge/png/
+and asks nothing.
 
-    uv run python experiments/sorter_judge_probe.py <old dir> <new dir> [judge] [sample]
+    uv run python experiments/sorter_judge_probe.py <old dir> <new dir> [judge] [sample] [--page] [--dry]
 """
 
 import json
@@ -25,15 +28,19 @@ from roboscriptorium.sorterdata import lines
 from sorter_disagree import calls
 
 OUT = Path("work/probes/sorter-judge")
-old_dir, new_dir = Path(sys.argv[1]), Path(sys.argv[2])
-judge = sys.argv[3] if len(sys.argv) > 3 else "clef:27b"
-size = int(sys.argv[4]) if len(sys.argv) > 4 else 100
+flags = {a for a in sys.argv[1:] if a.startswith("--")}
+args = [a for a in sys.argv[1:] if not a.startswith("--")]
+whole, dry = "--page" in flags, "--dry" in flags
+old_dir, new_dir = Path(args[0]), Path(args[1])
+judge = args[2] if len(args) > 2 else "clef:27b"
+size = int(args[3]) if len(args) > 3 else 100
 settings = Settings.from_env()
 client = decide.for_model(judge, settings.ollama_url)
 OUT.mkdir(parents=True, exist_ok=True)
 cache = DecisionCache(OUT / "decisions.jsonl")
 QUESTION = (
-    "The image is a band cut from a scanned printed book's page. What is the line framed in "
+    ("The image is a scanned printed book's page. " if whole else "The image is a band cut from a scanned printed book's page. ")
+    + "What is the line framed in "
     "red: part of the book's running text, a heading (a chapter or part title, a chapter "
     "number), or not part of the text (a page number, a running head repeated atop pages, "
     "a speck, a caption)?"
@@ -73,16 +80,24 @@ for name, r, old, new in sample:
         skipped += 1
         continue
     state = {"book": name, "page": r["page"], "line": r["line"], "text": ln["text"]}
+    if whole:
+        state["view"] = "page"
     question = {"role": decide.choice(QUESTION, OPTIONS)}
     key = cache.key(judge, question, state)
     answer = cache.get(key)
-    if answer is None:
+    if answer is None or dry:
         with pymupdf.open(book.source) as doc:
             pg = doc[r["page"] - 1]
             high = ln["y1"] - ln["y0"]
             band = pymupdf.Rect(0, ln["y0"] - 4 * high, pg.rect.width, ln["y1"] + 4 * high) & pg.rect
             pg.draw_rect(pymupdf.Rect(ln["x0"] - 2, ln["y0"] - 1, ln["x1"] + 2, ln["y1"] + 1), color=(1, 0, 0), width=1)
-            png = pg.get_pixmap(matrix=pymupdf.Matrix(2, 2), clip=band).tobytes("png")
+            # The whole page at about 1,400 pixels on its long side, the band at twice its size.
+            zoom = 1400 / max(pg.rect.width, pg.rect.height) if whole else 2
+            png = pg.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom), clip=None if whole else band).tobytes("png")
+        if dry:
+            (OUT / "png").mkdir(exist_ok=True)
+            (OUT / "png" / f"{name}-{r['page']}-{r['line']}{'-page' if whole else ''}.png").write_bytes(png)
+            continue
         got = client.decide(state, question, image_png=png)["role"]
         answer = {"value": got.value, "confidence": got.confidence}
         cache.put(key, answer)
