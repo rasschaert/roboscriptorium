@@ -298,9 +298,9 @@ then the kinds one at a time below.
       judges (as the accent offers are), short-tested on the pages they touch; the
       readers deleted after their first screen (olmOCR, PaddleOCR-VL, LightOnOCR,
       DeepSeek-OCR, Kraken) listed for the user to pull again, the likeliest first
-- [ ] **Leftover ink, any kind of error at once**: the build's word drawn and laid over
-      the scan, the ink that doesn't match measured (`probe_leftover_ink.py`, no model,
-      running 2026-11-15)
+- [x] ~~Leftover ink, any kind of error at once~~: null twice (2026-11-15,
+      `probe_leftover_ink.py`: AUC 0.53; with the leftover's place and trees 0.51). The
+      typeface's own mismatch leaves as much ink as an accent. Reworked as the next step
 - [ ] **The book's own pictures of a word**: a word's picture against the book's other
       pictures of the same reading ("een" thousands of times, "één" differing above the
       letters); no typeface, no model. Consistency on the text was null (2026-10-23),
