@@ -278,6 +278,13 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
 
 ## Errors no question asks about
 
+- [ ] **The outer mark of a nested quotation, lost without a question**: the print's
+      ‘“Lucy … kind,”’ comes out as “Lucy … kind,” (three ticks read as two by every
+      reader): 21 of tuning's 460 unasked errors (Goede dochter 17, De tuin 4; scan crops
+      checked 2026-11-15). Next: as with accents every reader drops, offer the three-tick
+      version wherever a double mark stands at a word's edge in a book that nests this
+      way, let the render judge's fit on the mark say where to ask the judges
+      (`rendercheck.mark_fit`), and bench it. Agent; the fit needs no model
 - [ ] The book's own spacing of a repeated form as arbiter evidence (the user's review of
       Andere levens, 2026-11-14: "M.H." against "M. H."): its text layer reads "M. H." 11
       times and "M.H." 5, the render judge voted the space, and still the place was asked.
@@ -446,6 +453,10 @@ Daens' title was mended by hand).
 
 ## Golden books and the bench
 
+- [ ] Au pair's manifest gets `doubled_singles = true` and is derived again, **after the
+      accent run's benches** (it changes the reference under them): its e-book writes
+      the print's “De keizer” as ‘‘De keizer (11 pairs), 12 of tuning's unasked quote
+      errors that are no errors. Then tuning's baseline is run again. Agent, minutes
 - [ ] The Thief-Taker's part pages set "/ PART ONE /" in the EPUB: the print's ornaments
       (small swords, checked on the scan) read as slashes (found by `heading_marks`,
       2026-11-14), and "A POINT’WELL MADE"'s speck. Heading places in the arbiter's

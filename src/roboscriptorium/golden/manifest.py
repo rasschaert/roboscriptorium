@@ -95,6 +95,9 @@ class PublisherEpub:
     # stop and its closing quote ("properly. ’"), before a stop ("VDNKh ?") or after the
     # quote that opens a paragraph ("‘ FBI!"): dropped.
     stray_spaces: bool = False
+    # The EPUB writes a double quote mark as two single ones ("‘‘De keizer"): those become
+    # the double mark the print sets.
+    doubled_singles: bool = False
 
 
 @dataclass(frozen=True)
@@ -195,6 +198,7 @@ class Golden:
                 frozenset(ref.get("hidden_classes", ())),
                 ref.get("breaks_unlike_print", ""),
                 ref.get("stray_spaces", False),
+                ref.get("doubled_singles", False),
             )
         )
         se = data.get("standard_ebooks")

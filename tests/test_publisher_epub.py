@@ -457,3 +457,18 @@ def test_hidden_text_is_left_out_and_the_text_around_it_kept(tmp_path):
         "Gedachten die nooit kwamen.",
         "Hij zei: ‘nee.’",
     ]
+
+
+def test_two_single_marks_become_the_double_one_the_print_sets(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                "<h1>Een</h1><p>‘Hij schreef: ‘‘De keizer rookt.’’ En ’s nachts ‘’t Is.’</p>"
+            ),
+        )
+    (one,) = publisher_epub.read(epub, ["Text/a.html"], (), doubled_singles=True)
+    assert one.paragraphs == ["‘Hij schreef: “De keizer rookt.” En ’s nachts ‘’t Is.’"]
+    (kept,) = publisher_epub.read(epub, ["Text/a.html"], ())
+    assert kept.paragraphs == ["‘Hij schreef: ‘‘De keizer rookt.’’ En ’s nachts ‘’t Is.’"]
