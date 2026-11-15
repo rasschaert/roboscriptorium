@@ -225,6 +225,12 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       (`probe_accent_reviewed.py`)
 - [ ] De kus in de nacht built (first build started 2026-11-14 23:00, ~9 h cold, then its
       questions sampled), its questions read before the user's review
+- [ ] **A build says how far it is**: the first build of a long book prints nothing
+      between its start and its end (De kus in de nacht, 610 pages: 20 hours and more
+      with the pauses, its judging watched only by counting cached answers, with no way
+      to tell how much was left; an estimate of mine was 20% short). Next: each slow stage
+      (the readings, the judges) prints its page of how many every few minutes, and the
+      end an estimate from the pace. Agent, no model
 - [ ] The structure check's findings walked in the review page (every kind, its crop)
       before the next review (`flags.structural`)
 - [ ] A washed-out page says which it is (the user, 2026-10-19, on a PDF's embedded
