@@ -490,3 +490,22 @@ def test_a_word_answered_alike_twice_is_offered_where_it_recurs_never_settled(tm
     out = _with_answered(q, learned)
     assert out.readings[-1] == {"text": "voor een DS gestaan?", "votes": ["your answers"]}
     assert out.text == q.text
+
+
+def test_a_rebuild_whose_stages_take_the_pdf_lock_ends(tmp_path):
+    import threading
+
+    from roboscriptorium.pdf import PDF_LOCK
+
+    def build():
+        # As a stage does on the build's own thread (`rendercheck.Judge.decide`).
+        with PDF_LOCK:
+            return [], [], 0, []
+
+    page_review = review.RegionReview(
+        tmp_path / "s.pdf", [], [], review.Corrections(tmp_path / "answers.jsonl"), build, "nld"
+    )
+    done = threading.Thread(target=page_review.rebuild, daemon=True)
+    done.start()
+    done.join(timeout=5)
+    assert not done.is_alive(), "the rebuild waits on the lock it holds"

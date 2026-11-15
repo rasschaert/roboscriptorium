@@ -32,8 +32,9 @@ INITIAL_HEIGHT = 1.6
 NUMBER_APART = 1.5
 NUMBER_BESIDE_FULL = 0.8
 # PyMuPDF isn't thread-safe. A program that uses it from several threads (the
-# review server) holds this lock around every use.
-PDF_LOCK = threading.Lock()
+# review server) holds this lock around every use. Re-entrant: the review's rebuild
+# holds it for the whole build, whose stages take it again on the same thread.
+PDF_LOCK = threading.RLock()
 # Bumped whenever line extraction changes, so cached text layers are rebuilt.
 TEXT_LAYER_VERSION = 8
 # Ligatures a font may put in the Unicode private-use area, where the text layer
