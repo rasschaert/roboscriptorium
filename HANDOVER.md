@@ -36,6 +36,21 @@ and `validation-20261114T233833-82c7529-dirty.json`.
    the publisher's e-books (`experiments/score_init.py`; asks the page-kind model the 13
    books never asked).
 
+6. screen `robo-init-ink`: the page-kind model told each edge page's ink strength
+   (`probe_init_ink.py`, 27 labelled books): do blank leaves showing the other side's
+   print stop padding `init`'s ends?
+7. screen `robo-accent-judges`: the judges on the accents the accent-zone fit proposes
+   (`probe_accent_judges.py`, 130 places). If they tell the plain words from the marks,
+   next is the fit as a reader offering the marked word (decisions.md, 2026-11-15).
+8. screen `robo-hyphen-judges`: d3, autotrust-jev 35B and 9B and clef as the line-end
+   hyphen judge (`probe_hyphen_judge.py`; compound hyphens are the largest group of
+   unasked errors where no reading differs, 64 of 274).
+
+**For the user's quick confirmation, with crops, once a review is due** (not sent yet):
+`work/probes/unasked/accents-20261115/`: 9 places where the e-book adds an accent the
+print lacks (Goede dochter 8, De vergelding 1) and Au pair's 16 small-capital words the
+e-book writes in lower case.
+
 Ex-minnaar is ready for the user's review (74 questions:
 `uv run roboscriptorium review work/ex-minnaar`).
 
