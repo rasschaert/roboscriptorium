@@ -404,9 +404,10 @@ Daens' title was mended by hand).
       against the publisher's e-book of each golden pair (its title, author, translator)
       and the labels, run again after each change to `init`. Agent; a reading-model call a
       book, queued behind the runs in flight
-- [ ] **What a book still needs a person for**: each book's `book.toml` against what
-      `init` drafts alone (cached answers, no models), every key that differs listed by
-      book and kind. The kinds become steps in this section. Agent, no models
+- [ ] **A printed blank** ("het __plein", a rule standing for a withheld word): what it
+      becomes is set by hand in Ex-minnaar's `book.toml` (`blank = "..."`), the one key
+      no book drafts. Next: the build finds a run of them on the scan and asks once, on
+      the review page, with the print's rule and the publisher's "..." side by side
 - [ ] **The title, author and translator through the same path as the text's doubts**.
       Today one reading decides (the read model on the title and copyright pages); the
       title page's text layer is a second, and was right where the read model glued "of
@@ -963,6 +964,14 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       (`work/goede-dochter--nolayer`, decisions.md): 0.84 wrong words a page against the
       layered 0.33, the gap tesseract's reading; italics from the first reading's word
       boxes since (323 of 364). Dashes wait on the item above
+- [x] 2026-11-15 **What a book still needs a person for** (`experiments/setup_gaps.py`, no
+      models, 45 books): no `book.toml` sets the dash, ellipsis, typeface or descent, all
+      measured on the scan. Left by hand: the text proper's ends where `init` misses them
+      (6 of the labelled books, one to three pages; Thief-Taker's cut its last three), 13
+      golden books whose edge pages were never shown to the page-kind model (the score
+      above asks them), Ex-minnaar's blank (step above), and The Nature of a Crime's
+      `cover_page` 7, its title page, where `init` takes the plain cover, PDF 1, as the
+      labels do: a choice, no gap. Title, author and translator: the score above
 - [x] 2026-10-23 `build` and `review` run `init` first when given a PDF or a folder
       without a book.toml (`cli._book_dir`)
 - [x] **`init`, first version** (2026-10-21; `bookinit.py`, `pagekinds.py`): language,

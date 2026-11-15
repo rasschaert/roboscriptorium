@@ -2759,3 +2759,11 @@ What was learned or decided, dated, oldest first, under a heading a day. Add a l
   case seen, not `init`: the title goes the text's way instead, two readings and the
   judges and arbiter between them, scored on every golden pair (checklist, Starting from
   a PDF alone).
+- 2026-11-15: **What a book still needs a person for, measured** (`experiments/setup_gaps.py`,
+  45 books, no models): every book's `book.toml` against what `init` and the build's scan
+  measurements give alone. Dash, ellipsis, typeface and line descent are set by hand in no
+  book: the scan's measurement serves them all. The ends of the text proper differ in 6 of
+  the labelled books (one to three pages; Thief-Taker's last three cut, an old miss); 13
+  golden books were never shown to the page-kind model; Ex-minnaar's printed blank is the
+  one key nothing drafts. Title, author and translator go to `experiments/score_init.py`
+  (queued), scored against each publisher's e-book.
