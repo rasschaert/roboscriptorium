@@ -85,7 +85,9 @@ combine several that fail in different ways, and learn how far to believe each.*
   places in ten, and fewer unasked errors at every number of questions).
 - *winnow* reads only the sentence and picks the version that reads best. Alone it is
   right four times in five, less than clef, but when it disagrees with clef, clef is
-  wrong much more often, so it works as an alarm.
+  wrong much more often, so it works as an alarm. A smaller *autotrust-jev* reads the
+  sentence too, a second judge of the language whose mistakes fall elsewhere (since
+  2026-11-15: about 1% fewer questions for you, as many errors left unasked).
 - *the word list* checks which versions are real words.
 
 A fourth kind of judge is being tried: a **context judge** (qwen, thinking before it
@@ -133,8 +135,10 @@ The other stages, in brief (how-it-works.md has each in detail):
   with a decision model asked about doubtful lines.
 - **Plain code** then joins lines into paragraphs (indents, short last lines, white
   space), decides whether a hyphen at a line end belongs to the word or only to the
-  line break, finds italics from the slant of the letters, sets dashes, ellipses and
-  quote marks the way the book prints them, and writes the EPUB.
+  line break, sets dashes, ellipses and quote marks the way the book prints them, and
+  writes the EPUB. Italics come from the slant of the letters, read by two sets of
+  trained trees; where they disagree (about one word in a thousand) clef is shown the
+  word's line and decides (your idea, 2026-11-14: a fifth fewer italic errors).
 
 The project prefers **learned decisions over hand-written rules**: a rule written for
 one book tends to break the next one (one line-grouping rule that helped *Doctor
