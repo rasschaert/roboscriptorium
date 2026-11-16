@@ -1117,3 +1117,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-16 | trust data, stella | 67 | 0 | 0 |
 | 2026-11-16 | trust data, ex-minnaar | 273 | 2 | 0 |
 | 2026-11-16 | train arbiter, accent offers counted apart | 0 | 183 | 0 |
+| 2026-11-16 | train arbiter after the rebuild | 0 | 177 | 0 |
+| 2026-11-16 | bench tuning after the rebuild | 6208 | 6 | 0 |
+| 2026-11-16 | bench validation, accent doubts and the mark judge | 0 | 2 | 0 |
