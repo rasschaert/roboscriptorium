@@ -1151,3 +1151,17 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-16 | tryout: judge set v2, autotrust-jev:35b-nvfp4, prompt targeted | 0 | 4 | 0 |
 | 2026-11-16 | tryout: judge set v2, d3:9b, prompt kinds | 0 | 10 | 0 |
 | 2026-11-16 | tryout: judge set v2, d3:9b, prompt targeted | 0 | 9 | 0 |
+| 2026-11-16 | train arbiter after the rebuild | 0 | 105 | 0 |
+| 2026-11-16 | bench tuning after the rebuild | 6208 | 6 | 0 |
+| 2026-11-16 | bench validation, accent doubts, the mark judge and nested quote offers | 0 | 1 | 0 |
+| 2026-11-16 | bench tuning, accent offers counted apart | 6208 | 5 | 0 |
+| 2026-11-16 | bench validation, accent offers counted apart | 0 | 1 | 0 |
+| 2026-11-16 | bench tuning, production, baseline for speck offers | 0 | 5 | 0 |
+| 2026-11-16 | bench validation, production, baseline for speck offers | 0 | 1 | 0 |
+| 2026-11-16 | trust data, goede-dochter--ia-scan | 500 | 6 | 0 |
+| 2026-11-16 | trust data, vals-alarm--ia-scan | 292 | 3 | 0 |
+| 2026-11-16 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 1 | 0 |
+| 2026-11-16 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 3 | 0 |
+| 2026-11-16 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 3 | 0 |
+| 2026-11-16 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 2 | 0 |
+| 2026-11-16 | trust data, metro-2033--ia-scan | 458 | 10 | 0 |
