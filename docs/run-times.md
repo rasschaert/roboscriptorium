@@ -1186,3 +1186,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-16 | bench validation, speck offers (arbiter trained with them) | 0 | 6 | 0 |
 | 2026-11-17 | bench tuning, hyphen judges together | 6208 | 37 | 0 |
 | 2026-11-17 | bench validation, hyphen judges together | 0 | 8 | 0 |
+| 2026-11-17 | bench tuning, line-role referee | 6208 | 31 | 1 |

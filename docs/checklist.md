@@ -572,6 +572,13 @@ Daens' title was mended by hand).
 
 ## Golden books and the bench
 
+- [ ] A bench outlives one book's failure (2026-11-17: one judge call timing out in one
+      book ended the line-role referee's tuning bench at 15 of 20 books, no record
+      written): the other books are scored and recorded, the failed one named and the
+      run marked incomplete, and a rerun reads the finished books back. And a bench that
+      asks models cold picks its own number of books at once from what its models weigh
+      (six at once timed the judge out; one at a time is `ROBO_BENCH_WORKERS=1`). Agent,
+      an hour, once no bench runs
 - [ ] Au pair's manifest gets `doubled_singles = true` and is derived again, **after the
       accent run's benches** (it changes the reference under them): its e-book writes
       the print's “De keizer” as ‘‘De keizer (11 pairs), 12 of tuning's silent quote
