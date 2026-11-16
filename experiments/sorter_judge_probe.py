@@ -4,11 +4,12 @@ shown as a band of its page with the line framed, asked of a judge "running text
 heading, or not part of the text?", scored against the reference beside both sets.
 Answers cached in work/probes/sorter-judge/. A line is shown only where the text layer's
 line at its index sits where the labelled line does (missing lines shift indices).
-`--page` shows the whole page instead of a band, so the line's place on the page and the
+Several judges, comma-separated: the first is asked, the others read from the cache, and
+their vote together is scored. `--page` shows the whole page instead of a band, so the line's place on the page and the
 page's other lines are in sight; `--dry` writes the images to work/probes/sorter-judge/png/
 and asks nothing.
 
-    uv run python experiments/sorter_judge_probe.py <old dir> <new dir> [judge] [sample] [--page] [--dry]
+    uv run python experiments/sorter_judge_probe.py <old dir> <new dir> [judge[,judge…]] [sample] [--page] [--dry]
 """
 
 import json
@@ -30,9 +31,13 @@ from sorter_disagree import calls
 OUT = Path("work/probes/sorter-judge")
 flags = {a for a in sys.argv[1:] if a.startswith("--")}
 args = [a for a in sys.argv[1:] if not a.startswith("--")]
+# `--without=<book>` leaves a book's places out of the scores (Afscheid's washed-out
+# pages, whose unreadable lines the labels call no text).
+without = tuple(a.split("=", 1)[1] for a in flags if a.startswith("--without="))
 whole, dry = "--page" in flags, "--dry" in flags
 old_dir, new_dir = Path(args[0]), Path(args[1])
-judge = args[2] if len(args) > 2 else "clef:27b"
+judges = (args[2] if len(args) > 2 else "clef:27b").split(",")
+judge = judges[0]
 size = int(args[3]) if len(args) > 3 else 100
 settings = Settings.from_env()
 client = decide.for_model(judge, settings.ollama_url)
@@ -64,8 +69,11 @@ for spec in bench.SETS["tuning"]:
 random.seed(0)
 sample = random.sample(apart, min(size, len(apart)))
 results, skipped = [], 0
+panel = []
 layers: dict[str, dict] = {}
 for name, r, old, new in sample:
+    if name.startswith(without) and without:
+        continue
     if name not in layers:
         book = Book.load(Path("work") / name)
         tl = json.loads((book.stages / "textlayer.json").read_text())
@@ -102,6 +110,10 @@ for name, r, old, new in sample:
         answer = {"value": got.value, "confidence": got.confidence}
         cache.put(key, answer)
     results.append((name, r["label"], old, new, answer["value"], answer["confidence"]))
+    # The other judges named, from their cached answers only.
+    others = [cache.get(cache.key(j, question, state)) for j in judges[1:]]
+    if all(others):
+        panel.append((r["label"], old, new, [answer["value"], *(a["value"] for a in others)]))
 c = Counter()
 for _, lab, old, new, said, _ in results:
     c["places"] += 1
@@ -112,3 +124,18 @@ print(f"{judge}: {dict(c)}; skipped {skipped} whose line couldn't be placed")
 for name, lab, old, new, said, conf in results:
     if said != lab:
         print(f"  wrong: {name[:24]:24} print {lab}, old {old}, new {new}, said {said} ({conf:.2f})")
+if len(judges) > 1:
+    c = Counter()
+    for lab, old, new, said in panel:
+        top, n = Counter(said).most_common(1)[0]
+        # No two judges alike: the grown trees' call.
+        pick = top if n > 1 else new
+        c["places"] += 1
+        c["most judges right"] += pick == lab
+        c["grown trees right"] += new == lab
+        c["as referee between the sets right"] += (pick if pick in (old, new) else new) == lab
+        if n == len(said):
+            c["all agree"] += 1
+            c["all agree and right"] += top == lab
+            c["all agree, grown trees right"] += new == lab
+    print("together", ", ".join(judges), dict(c))

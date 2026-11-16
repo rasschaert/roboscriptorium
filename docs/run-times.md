@@ -1146,3 +1146,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-16 | trust data, ex-minnaar | 273 | 1 | 0 |
 | 2026-11-16 | probe: line-end hyphen judge, d3 and autotrust-jev | 0 | 50 | 0 |
 | 2026-11-16 | probe: line-role judge, whole page, d3:9b | 92 | 7 | 0 |
+| 2026-11-16 | probe: line-role judge, whole page, autotrust-jev:35b-nvfp4 | 92 | 4 | 0 |
