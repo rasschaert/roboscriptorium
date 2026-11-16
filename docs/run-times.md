@@ -1058,3 +1058,13 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-15 | probe: extra signals deciding when to ask, random control (CPU) | 0 | 2 | 0 |
 | 2026-11-15 | probe: judges on proposed accents | 0 | 35 | 0 |
 | 2026-11-15 | probe: line-role judge, whole page, clef:27b | 92 | 11 | 0 |
+| 2026-11-15 | De kus in de nacht, first build (cold) | 610 | 1041 | 0 |
+| 2026-11-15 | De kus in de nacht, questions sampled (warm) | 0 | 3 | 0 |
+| 2026-11-15 | nervous-system rebuilt with production of 2026-11-15 and its questions sampled | 0 | 8 | 0 |
+| 2026-11-15 | pieter-daens rebuilt with production of 2026-11-15 and its questions sampled | 0 | 52 | 0 |
+| 2026-11-15 | trust data, goede-dochter--ia-scan | 500 | 49 | 0 |
+| 2026-11-15 | trust data, vals-alarm--ia-scan | 292 | 4 | 0 |
+| 2026-11-15 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 2 | 0 |
+| 2026-11-15 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 2 | 0 |
+| 2026-11-15 | bench quick, production (warm) | 282 | 3 | 0 |
+| 2026-11-16 | bench quick, two extra readers (the read model at twice the size, olmOCR-2) | 282 | 589 | 0 |
