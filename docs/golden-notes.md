@@ -13,9 +13,141 @@ its footnotes among them) and Koning Wilders (its text layer at 2.45% CER, over 
 times the set's median), the suspect pairs whose scores measured their references more
 than the pipeline.
 
+## Working with golden pairs
+
+Public-domain or lending-library scans paired with a human-checked reference text, which
+is what every change gets measured against. [docs/golden-notes.md](docs/golden-notes.md)
+describes every pair; [docs/golden-books.md](docs/golden-books.md) has their numbers.
+Each lives in `golden/<name>/` **in git**: `manifest.toml` (the scans with URL and
+sha256, page ranges, the source and chapter range), and for a public-domain book the
+derived chapters in `text/` with `PROVENANCE.md`, its verdicts and `standard-ebooks/`
+(SE's text, see below). A book still in copyright (`eu_copyright_until` in its manifest)
+keeps its text and **its verdicts in `work/golden/<name>/`**, out of git: they quote the
+book. Those verdicts are human answers that exist nowhere else; only the backup of
+`work/` keeps them.
+
+- The reference text is a **Project Gutenberg** transcription (`golden derive`) or the
+  publisher's own EPUB of the same edition, taken as it stands. Gutenberg rebuilds its
+  EPUBs, so the committed `text/` is the pinned artefact; `PROVENANCE.md` records the
+  EPUB's hash and the transcriber's notes.
+- **Standard Ebooks is not a fidelity reference.** Its texts are modernised and restyled.
+  `golden derive-se` keeps it in `standard-ebooks/` for later style work; the SE manual
+  of style is at https://standardebooks.org/manual/1.9.1/single-page.
+- Scans are never committed. `golden fetch` downloads them into `work/<name>--<scan>/`
+  and writes its `book.toml`. A scan's `[scans.ia]` lists Internet Archive's own files
+  for it (`item`, and `files` with their sha256), fetched into its `ia/` folder: the
+  page images the PDF was compressed from (`_jp2.zip`), ABBYY's OCR with per-letter
+  confidence (`_abbyy.gz`), page types and crop boxes (`_scandata.xml`) and printed page
+  numbers (`_page_numbers.json`); a leaf with `addToAccessFormats` true is a PDF page,
+  in order. Public on public-domain items (Crime, Dolittle). A lending-library item
+  (`access-restricted-item` in its metadata) keeps all but `_scandata.xml` private, and
+  its scan has no `url`, so it is placed by hand and then checked by sha256.
+- A scan of another edition than the transcription differs in spelling, quote style,
+  spaced dashes, "Mrs" vs "Mrs.", and so on, so its scores include edition differences,
+  not just pipeline errors.
+- **Sets** (`bench.SETS`). Tuning books are chosen on; validation books were
+  consulted before, so they only veto. **A new pair waits for its first look**
+  (`first-look`): one score, untouched by anything before it (no eval, quality, review
+  or bench run, no trust data, no probe; `build` may warm its caches, as it prints no
+  score). `eval`, `quality`, `review` and `bench first-look` refuse it without
+  `--first-look`. The score goes in decisions.md, then the pair joins tuning or
+  validation in `bench.SETS`. A pair held back (no honest first look possible, kept as a
+  candidate) sits in `bench.RESERVE`, guarded the same way and in no run. A validation book's sibling (same publisher, translator and e-book house) never trains
+  while it validates. Beside them, `bench quick` runs a chapter or two of each tuning
+  book (~280 pages, inside their tuning slices): a change's short test, which
+  `bench tuning` then confirms. It has a fifth of the power and never sees front matter,
+  mottos or picture pages (2026-10-24), so a change to those goes to `bench tuning` at once.
+- **Checking a candidate pair** (scan PDF plus the publisher's EPUB) before writing its
+  manifest: `uv run python experiments/probe_candidate.py <scan.pdf> <ref.epub> [heading
+  prefix …]`, no models, about 10 s per 100 pages. It prints the scan's kind, the EPUB's
+  edition and markup, the body page range, the text layer's CER against the EPUB per band
+  of pages and the most frequent word differences. A pair fits when the EPUB's colophon
+  names the scan's printing and the differences are OCR slips at the layer's own rate
+  (0.2–0.5% CER), not real-word swaps or a band that jumps. Prefer IA Scribe scans
+  (Stella's format); skip calibre-made PDFs, other printings, DRM and pre-1934 spelling.
+  Skip an EPUB that isn't the publisher's own (made through Word or OCR: `MsoNormal`
+  classes, an ABBYY generator, a colophon naming only the print): it carries its maker's
+  edits. Where the EPUB's markup departs from the print, a `[reference]` key in the
+  manifest undoes it ([docs/golden-notes.md](docs/golden-notes.md) lists them).
+  `experiments/chapter_pages.py` gives the scan page each derived chapter starts on, to
+  end a bench slice on a chapter.
+- **Known deviations.** No publisher's EPUB matches its print in every convention. Each
+  known deviation of a pair is handled in one of four places, and nowhere else: a gap
+  derive can undo is declared in the manifest's `[reference]` (`hyphen_dash`,
+  `capital_classes`, `note_mark`) and listed in PROVENANCE.md; a glyph choice the output may make
+  differently is folded by `evaluate.normalise` and counted per side, so `eval` prints
+  how much it forgave; a word the e-book sets otherwise than its print (its correction, or
+  its maker's slip: "wat-kan-mijhet-schelen" for the print's "wat-kan-mij-het-schelen") is
+  an erratum in `work/<book>/errata.toml`, so the build reads as the publisher's text while
+  the arbiter's training data labels the readers on the print (`trustdata.as_printed`;
+  the user, 2026-11-14: "the publisher decided that the print version was wrong and
+  corrected it in the epub. that's what our errata system does"); an edition slip the book
+  must not copy, a structural one above all (a chapter numbered twice), is an erratum
+  with `keep = "print"`: the build keeps the print and the bench scores the reference set
+  back to it (the user's idea, 2026-11-14); what none of these covers is settled by a
+  verdict. A deviation that lives only in a comment or a note is
+  untracked: move it to one of the four.
+- **Retiring a book.** A reference can stop being one: when a book's remaining
+  disagreements are mostly edition differences, or its verdict backlog never shrinks,
+  its score measures the edition, not the pipeline. Two signals need no verdicts: the
+  text layer's CER against the reference and the share of its body lines the aligner
+  can't place (`golden/signals.py`). `bench` records both per book and names each book
+  past a threshold as a suspect pair; docs/golden-books.md has them over all lines
+  (regenerate it with `uv run python experiments/golden_overview.py >
+  docs/golden-books.md`, about a quarter of an hour (it aligns every book), no models, after adding, slicing or retiring a
+  book). Past three times the set's median layer CER, or one body line in twenty
+  unplaced, the book is suspect. Judge by the bench's figures, over body lines: the
+  overview's unplaced share counts page furniture too, so a book with running heads
+  or washed-out pages tops it without being suspect. **Whoever notices says so in the session's report and
+  proposes retiring it, without being asked.** A retired book's files are deleted from
+  `work/` and its manifest from git, with a dated line in docs/decisions.md.
+- **Reviewing the sets** (the user, 2026-10-18: "periodically hunt for new books and
+  cull old ones, and re-evaluate what we use each one for"). Whenever pairs are added,
+  after each batch of first looks, whenever a bench flags a suspect pair or a doubt about
+  a book, and at least weekly (the sets changed dozens of times in the project's first two
+  weeks): each pair's job against docs/golden-notes.md ("What each
+  pair is for"), the suspect signals, the doubts; propose retiring, slicing or a lesser
+  role (line roles only, out of training) where a job is gone; update the gaps to hunt
+  for, and ask the user for candidates that fill them. The review's date goes in that
+  section and a line in docs/decisions.md.
+
+```sh
+uv run roboscriptorium golden derive the-nature-of-a-crime
+uv run roboscriptorium golden fetch the-nature-of-a-crime
+uv run roboscriptorium eval work/the-nature-of-a-crime--doubleday-1924
+# quick loop: a slice of pages and the chapters they hold
+uv run roboscriptorium eval work/goede-dochter--ia-scan --pages 9-64 --chapters 1-4
+# heuristics only, no models
+uv run roboscriptorium eval work/goede-dochter--ia-scan --no-models
+# a publisher's EPUB can't be downloaded: pass it to derive
+uv run roboscriptorium golden derive goede-dochter --epub work/.cache/publisher/goede-dochter.epub
+```
+
+`eval` builds the book, prints the scores and the most frequent differences, and appends
+a line to `work/<book>/eval-history.jsonl` with the commit, the settings, which decider
+settled the OCR check (`fixed rule` or `trust <model hash>`) and each model's Ollama
+digest. Given several books it scores them
+one after another and ends with a line per book.
+
+**Disagreements and verdicts.** Gutenberg is a transcription, not the scan, so where the
+output disagrees with it a human decides what the scan prints. A golden book's review
+asks it, in the same list as its flagged regions (pass the bench's slice):
+
+```sh
+uv run roboscriptorium review work/goede-dochter--ia-scan --pages 9-64 --chapters 1-4  # → http://127.0.0.1:8765/
+```
+
+Each place is an ordinary question: its line twice, with our text's words and the
+reference's, labelled by who claims them (`a`, `b`; `e` to type), and a kind for what
+isn't running text. The answer is a verdict, not a correction: it settles the reference,
+and the kind of mistake follows from it. Verdicts go to `verdicts/<scan>.jsonl` under the book's data folder
+(`golden/<name>/` in git for a public-domain book, else `work/golden/<name>/`), keyed on the reference words and six words of context either side, so they survive
+pipeline changes. `eval` patches them into the reference for that scan and reports the
+remaining disagreements by mistake category.
+
 ## What each pair is for, and what is missing
 
-Reviewed at every set review (AGENTS.md, Golden books). A pair keeps its place while it
+Reviewed at every set review ("Working with golden pairs", above). A pair keeps its place while it
 has a job here no other pair does better; one whose job is gone, or whose score measures
 its reference, is proposed for retirement or a lesser role. Last reviewed 2026-11-14.
 

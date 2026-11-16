@@ -116,7 +116,7 @@ and a learned referee between the line-role trees; extra signals deciding when t
 Pieter Daens' "ofhoe" title mended by hand, then the user: fix `init`, never one book.
 The checklist's "Starting from a PDF alone" now holds that plan; what books still need a
 person for is measured (`setup_gaps.py`). A hook in `.claude/settings.local.json` puts
-the project's purpose and three checks before the agent at every prompt.
+the project's purpose and four checks before the agent at every prompt.
 
 **Not taken overnight:** heading places in the arbiter's training; the language model,
 the render judge's measures and the book's spacing as arbiter columns; crops cut at the

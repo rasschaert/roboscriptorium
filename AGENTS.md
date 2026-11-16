@@ -48,7 +48,7 @@ owns the fact in the same commit.
 | [docs/run-times.md](docs/run-times.md) | wall-clock minutes of long runs, appended by `experiments/timed.sh` | each timed run |
 | [docs/modules.md](docs/modules.md) | the code, module by module | a module changes |
 | [docs/models.md](docs/models.md) | every model tried, by role, with its verdict; how the ones in use are set up | a model is screened or set up |
-| [docs/golden-notes.md](docs/golden-notes.md) | each golden pair: edition, what makes it hard, known deviations, what it is for; the gaps to hunt for; the manifest keys that undo deviations | a pair is added, sliced or retired; a key is added; a set review |
+| [docs/golden-notes.md](docs/golden-notes.md) | working with golden pairs (fetch, derive, check a candidate, deviations, verdicts, retiring, set reviews); each golden pair: edition, what makes it hard, known deviations, what it is for; the gaps to hunt for; the manifest keys that undo deviations | a pair is added, sliced or retired; a key is added; a set review |
 | [docs/golden-books.md](docs/golden-books.md) | the pairs' numbers, **generated** by `experiments/golden_overview.py` | regenerated after a pair changes |
 | [docs/hosted-inference.md](docs/hosted-inference.md) | the plan for a window of free hosted inference: what to learn, what carries back, the guardrails | access comes, or a hosted run teaches something |
 | [docs/primer.md](docs/primer.md) | for a person new or returning: the problem from first principles, how a change is judged, where the gains are expected, the vocabulary | the approach, the bets or the vocabulary change; its errors chart regenerated (`experiments/primer_errors.py`) after a bench that moves the errors, its `.d2` diagrams rendered again when edited |
@@ -60,221 +60,169 @@ get renumbered. Don't add a file to this table without a job no other file has.
 
 ## Standing rules
 
-- **Keep this file true yourself.** When something is learned or decided (a design
-  choice, a tool or model installed, a model that scored better, a pitfall found), update
-  the file that owns it in the same change and add a dated line to docs/decisions.md.
-  Don't wait to be asked.
-- **Write down why, not only what.** Every component's job and the evidence that it earns
-  it live in docs/design.md. A component whose reason isn't there gets one before the
-  change that touches it is committed. A reviewer should never have to rediscover from
-  data why something is there.
-- **Keep the diagram true.** A change to the stages, their order or the model behind one
-  also updates `docs/how-it-works.md` and `docs/pipeline.d2` (and `README.md` if it
-  changes the models to pull); render again
-  with `d2 docs/pipeline.d2 docs/pipeline.svg` and commit both.
-- **Local first.** AI runs on this machine via Ollama. A hosted model (OpenRouter,
-  `clients/openrouter.py`) costs money and sends copyrighted page crops to its provider,
-  so it is used **only when the user explicitly allows or asks for it**, for that use:
-  never on an agent's own initiative, never by carrying an earlier permission over to
-  another run, never as a default in `config.py`. When it is used it is pinned to one
-  provider and precision, never falls back, refuses providers that keep prompts, and is
-  measured against the local model first. If the user gets free hosted inference (a
-  Belgian start-up's launch offered a month, 2026-10-17), read
-  [docs/hosted-inference.md](docs/hosted-inference.md) before planning its use.
+### The record
+
+- **Keep the docs true yourself.** When something is learned or decided, update the file
+  that owns it in the same change and add a dated line to docs/decisions.md, unasked.
+- **Write down why.** Every component's job and the evidence that it earns it live in
+  docs/design.md; a component without one gets it before the change that touches it.
+- **Keep the diagram true.** A change to the stages, their order or a stage's model
+  updates `docs/how-it-works.md` and `docs/pipeline.d2` (and `README.md` if the models to
+  pull change); render with `d2 docs/pipeline.d2 docs/pipeline.svg` and commit both.
+- **Read `HANDOVER.md` at the start of a session** and rewrite it at the end. Choose work
+  from docs/checklist.md (the order) and docs/outlook.md (the room left).
+- **This file is the single source of agent instructions**: no `CLAUDE.md`.
+- **Code is disposable; the labels and the record aren't** (the user, 2026-10-18). A
+  later model can't regenerate the human labels (review answers, verdicts, errata in
+  `work/`), the golden pairs with their provenance, or the record of what was tried and
+  why. Spend effort where it adds to these.
+
+### Git, data and installs
+
+- **Git:** signed commits straight to `main`, pushed whenever convenient; no PRs. Lint
+  and tests before every commit.
 - **No copyrighted material in git.** Books, page images, OCR output and golden pages
   live in `work/` (gitignored). Commit only code, prompts, question sets, configs and
-  synthetic test fixtures.
-- **Git:** signed commits straight to `main`, pushed whenever convenient; no PRs for now.
-  Run lint and tests before every commit.
-- **This file is the single source of agent instructions.** Claude Code reads AGENTS.md
-  natively; don't add a `CLAUDE.md`.
+  synthetic fixtures.
 - **`work/` holds what git doesn't** (books, caches, review answers, the verdicts on
   every golden book in copyright). Point at it by path; stage files by name. A
   worktree's code runs on the main checkout's data: `uv run --project ../<worktree>
   python …` there; its tests need no `work/`. Give such a run its own output folder
   under `work/probes/` when a run in flight reads the stage caches it would rewrite.
-- **Read `HANDOVER.md` at the start of a session** and rewrite it at the end of one.
-  Choose what to work on from docs/checklist.md (the order) and docs/outlook.md (the
-  room left).
-- **Installs:** Homebrew tools, Python deps and Ollama models may be installed freely;
-  the user pulls large model downloads themselves. Record each under
-  [Environment](#environment), and a model's setup in docs/models.md (Setup).
-- **Handholding first.** Prefer flagging uncertain output for human review over guessing
-  silently. Automation increases only as measured quality earns it.
-- **Quality over speed.** Pick the more accurate method even when it is several times
-  slower: a careful edition takes people weeks, so hours of machine time per book are
-  cheap. Cache slow stages per book so reruns stay cheap, and run long builds in the
-  background.
+  What will be needed again goes under `work/` (`work/probes/`, source EPUBs in
+  `work/.cache/{gutenberg,publisher}/`), never in a session scratchpad.
+- **Local first.** AI runs on this machine via Ollama. A hosted model
+  (`clients/openrouter.py`) costs money and sends copyrighted page crops away: it is
+  used **only when the user explicitly allows it, for that use**, each permission for
+  one run, and stays out of `config.py`'s defaults. Then: pinned to one provider and
+  precision, no fallback, no provider that keeps prompts, measured against the local
+  model first. With free hosted inference on offer, read
+  [docs/hosted-inference.md](docs/hosted-inference.md) before planning its use.
+- **Installs:** Homebrew tools, Python deps and Ollama models freely; the user pulls
+  large model downloads. Record each under [Environment](#environment), a model's setup
+  in docs/models.md (Setup).
+
+### The user's time
+
 - **The user's work comes first** (the user, 2026-11-14: "you stop your work and give
-  priority to mine"). A `build` or a review's build the user starts pauses every process
-  of the agent's `robo-*` screen sessions while it runs and continues them after
-  (`priority.first`); a run starting meanwhile waits at the battery gate. Before handing
-  the user a command, check what it costs them (when the book was last built, what it
-  will ask the models) and clear or warm the machine for it first.
-- **Time long runs and give an estimate first.** Run anything over a few minutes through
-  `experiments/timed.sh` (label, pages, log file, command), which appends its minutes to
-  docs/run-times.md; before starting one, say how long it should take from that table.
-  Start it detached, through `experiments/detached.sh <name> <command…>` (a `screen`
-  session, output in `work/runs/<name>.out`), so it outlives the terminal and the agent
-  session. `screen -ls` lists the runs. Stop one with `experiments/stop-run.sh <name>`:
-  quitting the screen leaves its command running.
-- **Every background or screen job has a watcher, always** (the user, 2026-10-17: a screen
-  run tells the agent nothing, so the session falls idle). Start it in the same turn as
-  the job: a watcher that wakes the agent on each step, progress mark, error and end
-  (Claude Code's Monitor tool, re-armed when it expires), not only one that waits for the
-  end. In a script, `screen -ls` exits 1 when sessions exist: test it as
-  `{ screen -ls || true; } | grep -q …`, or under `pipefail` the wait ends at once.
+  priority to mine"). A `build` or a review's build the user starts pauses the agent's
+  `robo-*` screens while it runs (`priority.first`). Before handing the user a command,
+  check what it costs them (when the book was last built, what it will ask the models)
+  and clear or warm the machine for it.
+- **The user's review comes last** (the user, 2026-10-16). Before sending them to
+  review or read a book, finish every checklist step that would change its text or
+  questions.
+- **Handholding first.** Flag uncertain output for review over guessing silently;
+  automation grows only as measured quality earns it.
+- **What an agent finds by eye, the machine learns to find** (the user, 2026-11-01). An
+  error seen in a built book becomes, in the same change, a repair in the pipeline, a
+  check every build runs, or a case the bench scores; one book alone is never the fix.
+- **A problem goes to the user as a proposal, open to a better idea** (the user,
+  2026-11-14): the situation in clear English, what solving it gains, what leaving it
+  costs; a solution of your own, the rules as written included in what may change; then
+  ask whether they have a better one.
+- **Questions the bench can't weigh** (the reviewer's time against wrong words) are the
+  user's call: ask in one short sentence.
+
+### Runs
+
+- **Quality over speed.** Take the more accurate method even when several times slower;
+  cache slow stages per book and run long builds in the background.
+- **Time long runs and give an estimate first.** Anything over a few minutes runs
+  through `experiments/timed.sh` (label, pages, log file, command), which appends to
+  docs/run-times.md; say beforehand how long it should take from that table. Start it
+  with `experiments/detached.sh <name> <command…>` (a `screen` session, output in
+  `work/runs/<name>.out`); stop it with `experiments/stop-run.sh <name>` (quitting the
+  screen leaves its command running).
+- **Every background or screen job has a watcher** (the user, 2026-10-17), started in
+  the same turn: one that wakes the agent on each step, error and end (the Monitor
+  tool, re-armed when it expires). In a script `screen -ls` exits 1 when sessions
+  exist: test it as `{ screen -ls || true; } | grep -q …`.
+- **Check every input before queuing a run, every item.** Without models: everything
+  the run reads exists for every book it will touch (scan, caches, models pulled), and
+  books retired since a set was made are out. A test on one book tests that book only.
+- **Every long run can be stopped and picked up** (the user, 2026-11-13: "make anything
+  resumable … time is rare and valuable"). It keeps each finished piece (a model, a
+  book, a page) and resumes from them; one that saves only at its end is a bug to fix
+  before its next use. Before stopping a run, even when told to, say how far it is
+  against how long its like took (docs/run-times.md) and whether it resumes.
+- **A probe beside a running chain sends the chain's model options** (no `num_ctx` of
+  its own): Ollama reloads a model whenever the requested context differs.
+- **Never idle while the checklist has open steps** (the user, 2026-10-24: "as long as
+  you can see todos, you're not to be idle"). After a task, a report or a question, start
+  the next open step in the same turn; say what is next and start it. A question blocks
+  only its own step; a run in flight blocks only other model jobs. Stop only when every
+  open step waits on the user, and say which.
+- **An idea waiting for model time goes into the queue at once** (the user, 2026-11-15):
+  written, checked without models (`--dry`) and queued behind the runs in flight in the
+  same turn.
+
+### Experiments and ideas
+
 - **At every result, question the structure** (principle 6; the user, 2026-10-17: "i
   just don't want ever see you get complascent"): which block a probe, bench or review
   batch makes redundant, which it suggests, which order it questions; when something
-  new works, what it lets us remove. Proposing these experiments is the agent's job;
-  the cheap ones run unasked.
-- **Code is disposable; the principles and their instruments aren't.** Future models
-  read better and write any code (the user, 2026-10-18). What a later model can't
-  regenerate: the human labels (review answers, verdicts, errata in `work/`), the
-  golden pairs with their provenance, and the record of what was tried and why. Spend
-  effort where it adds to these.
-- **Test the architecture, not only its settings** (the user, 2026-10-13: "we're too stuck
-  in our way of thinking … fine tuning has diminishing returns"). Before saying a model
-  can't do something, or parking an idea under Later, try it on a few golden pages: a
-  model reading a whole page, a model doing a stage's job, a stage left out. The
-  checklist keeps the list ("Assumptions to test"); work through it between fixes, and
-  pause a long run for it (runs resume).
-- **Check every input before queuing a run, not a sample.** The user's compute time is
-  scarce; a run that fails on an input costs its whole slot. Before a run goes into a
-  queue, check without models that everything it reads exists for every item it will
-  touch (each book's scan and caches, each model pulled), and that books retired since
-  a set was made are left out. A test on one book tests that book only: the page-kinds
-  probe passed on Monterosso and failed overnight on 11/22/63, retired two days before.
-- **Never idle while the checklist has open steps** (the user, 2026-10-19 and 2026-10-24:
-  "as long as you can see todos, you're not to be idle"). Finishing a task, a report or a
-  question to the user is not a stopping point: in the same turn, start the next open step
-  the agent can do, choosing by docs/checklist.md and docs/outlook.md. A question waiting on
-  the user blocks only its own step; a run in flight blocks only other model jobs. Never end
-  a turn with "shall I go ahead?" about work that is already on the checklist: say what is
-  next and start it. Stop only when every open step waits on the user, and say which.
-- **Cheap experiments are welcome, unasked:** A/B a prompt, a crop or a setting on a
-  frozen set, and record null results too. Anything over a few minutes, or that costs
-  the user time or money, is explained first: why, what it should teach, how long.
-- **An idea waiting for model time goes into the queue at once** (the user, 2026-11-15:
-  "queue it up though so we don't forget"). A probe to validate, new or an old one with
-  a new twist, is written, checked without models (`--dry` or the like) and queued as a
-  run behind the ones in flight in the same turn, not left as "once the machine is free".
-- **A null result is a null for its models, not forever** (the user, 2026-11-08). An idea
-  that didn't pay may have failed on the judge, reader or arbiter of its day: record with
-  every null which component it failed on ("the arbiter didn't take the judges' capitals").
-  When that component changes (a new model screened in, a new panel, a retrained arbiter),
-  go through the nulls it blocked (docs/outlook.md, "Tried, and why it didn't help";
-  docs/decisions.md) and retest the cheap ones. A better model in the bottleneck's place
-  is the "new reason" the outlook asks for. The small-capitals version, null on 2026-10-20
-  for want of judges the arbiter trusted, came back up when the judge panel arrived.
-- **Rework an idea before dropping it** (the user, 2026-11-15: "i fear we might dismiss
-  good ideas after the first version of them doesn't pan out"). A failed idea gets its
-  reason, then the modified versions that would dodge that reason (another place in the
-  pipeline, a narrower scope, another signal, combined with another idea), written beside
-  the null, and the most promising tried. Retrained italic trees failed; keeping both
-  sets with a judge between them cut italic errors by a fifth (2026-11-14).
-- **The shortest test that answers the question** (the user, 2026-10-15). Whether an
-  idea or fix works is shown on the pages it touches (a targeted build of those pages,
-  their errors fixed against broken), in minutes, not by a full bench. The full bench
-  guards against regressions elsewhere: run it once a change has passed its short test,
-  several changes batched.
+  new works, what it lets us remove. Proposing these experiments is the agent's job.
+- **Test the architecture, not only its settings** (the user, 2026-10-13: "fine tuning
+  has diminishing returns"). Before saying a model can't do something, or parking an
+  idea, try it on a few golden pages: a model reading a whole page, a model doing a
+  stage's job, a stage left out. The checklist keeps the list ("Assumptions to test").
+- **Cheap experiments run unasked:** A/B a prompt, a crop or a setting on a frozen set;
+  record null results too. Anything over a few minutes, or costing the user time or
+  money, is explained first: why, what it should teach, how long.
+- **The shortest test that answers the question** (the user, 2026-10-15): the pages a
+  change touches, in minutes. The full bench guards against regressions elsewhere: once
+  a change has passed its short test, several changes batched.
 - **Decide upstream changes on the frozen sets; the bench confirms.** A change upstream
-  of the stage caches (a prompt, a crop, a model, the arbiter) invalidates them, so a
-  bench of it runs cold for hours. Choose it on the frozen line sets
-  (`experiments/tryout.py`) in minutes, then bench the winner once.
-- **A probe beside a running chain sends the chain's model options** (no `num_ctx` of its
-  own): Ollama reloads a model whenever the requested context differs, so two clients at
-  different contexts reload it on every switch and throttle both.
-- **The user's review comes last** (the user, 2026-10-16: "why not just do that and build a
-  better pipeline?"). Their time is the scarcest resource: before sending them to review
-  or read a book, finish every checklist step that would change that book's text or
-  questions. A review of a build the agent knows how to improve spends them on errors
-  the machine could have caught.
-- **What an agent finds by eye, the machine learns to find** (the user, 2026-11-01:
-  "ideally that detection and the fix is also part of the pipeline itself"). An error
-  seen in a built book (a misread chapter number, a split dedication, ads taken for
-  text) is never fixed for that book alone: in the same change it becomes a repair in
-  the pipeline, a check the build runs on every book, or a case the bench scores.
-- **A problem goes to the user as a proposal, open to a better idea** (the user,
-  2026-11-14). For a problem whose solution is open: write it in clear English (the
-  situation, what solving it gains, what leaving it costs); think of a solution yourself,
-  creatively, the rules as written included in what may change; propose it and ask
-  whether the user has a better idea. Their counter-ideas beat the offered options twice
-  that day (errata that keep the print; a judge between two sets of italic trees).
-- **Questions the bench can't weigh** (the reviewer's time against wrong words, say) are
-  the user's call: ask in one short sentence.
+  of the stage caches (a prompt, a crop, a model, the arbiter) makes a bench run cold
+  for hours: choose on `experiments/tryout.py` in minutes, bench the winner once.
+- **A null is a null for its models** (the user, 2026-11-08). Record with every null
+  which component it failed on. When that component changes (a model screened in, a new
+  panel, a retrained arbiter), go through the nulls it blocked (docs/outlook.md, "Tried,
+  and why it didn't help") and retest the cheap ones.
+- **Rework an idea before dropping it** (the user, 2026-11-15: "i fear we might dismiss
+  good ideas after the first version of them doesn't pan out"). Beside the null, write
+  its reason and the versions that would dodge it (another place in the pipeline, a
+  narrower scope, another signal, combined with another idea); try the most promising.
 
 ## Engineering practices
 
-This project's bugs so far came from a handful of habits. Each rule below names the
-mistake it prevents; check a change against them before committing.
+Each rule names the mistake it prevents; check a change against them before committing.
 
-- **A stage returns new data; it never edits its input.** Answers once rewrote the text
-  layer in place, and the review, which keyed on that text, then lost them. If a
-  function must change pages, it returns changed copies.
-- **Say which version of the data a consumer gets.** Raw text layer or corrected copy,
-  model roles or answered roles: name it in the type, field or docstring. A key, cache
-  entry or line reference must come from the version it identifies.
-- **Positions aren't identities.** A line index means nothing once lines are inserted or
-  removed. Carry the original identity (`Line.source`) through any stage that changes
-  the list.
-- **Before finishing, find every reader of what you changed.** Grep the consumers of a
-  function, field or file, and check each one still gets what it expects. The bugs live
-  in the seams.
-- **Test the seams.** A new stage or a change in what flows between stages gets a test
-  through `pipeline.run` (see `tests/test_pipeline.py`), not only unit tests of its parts.
-- **A rule that changes the author's text needs its counterexamples tested.**
-  `close_quotes` turned "the animals' language" into a closing quote. Write the cases
-  where the rule must *not* fire before the ones where it must; when the two can't be
-  told apart, flag for review instead of rewriting.
-- **Measure with `roboscriptorium bench`, before and after** (words, paragraph breaks and
-  heading errors, docs/design.md, Measuring). A single run's CER moved by
-  more than most changes did; only the bench's paired comparison says whether a change is
-  real. Choose on `bench tuning`; `bench validation` only vetoes (the user, 2026-10-17):
-  a change no better on tuning isn't taken for a gain on validation, and a choice made
-  on validation scores makes them tuning.
+- **A stage returns new data; it never edits its input.** A function that must change
+  pages returns changed copies.
+- **Say which version of the data a consumer gets** (raw text layer or corrected copy,
+  model roles or answered roles) in the type, field or docstring. A key, cache entry or
+  line reference comes from the version it identifies.
+- **Positions aren't identities.** Carry the original identity (`Line.source`) through
+  any stage that inserts or removes lines.
+- **Before finishing, find every reader of what you changed**: grep the consumers of a
+  function, field or file and check each still gets what it expects.
+- **Test the seams.** A new stage, or a change in what flows between stages, gets a test
+  through `pipeline.run` (`tests/test_pipeline.py`).
+- **A rule that changes the author's text needs its counterexamples tested**, written
+  before the cases where it must fire; where the two can't be told apart, flag for
+  review.
+- **Measure with `roboscriptorium bench`, before and after**, on every golden book
+  (docs/design.md, Measuring): only its paired comparison says whether a change is
+  real. Choose on `bench tuning`; `bench validation` only vetoes (the user,
+  2026-10-17): a choice made on validation scores makes them tuning.
 - **A bench of a new reader, judge, prompt, crop or offer is read by its rescues first**
   (AI usage, "Judged by its rescues"), then by cause, then its net.
-- **Sort a probe's catches by where they sit before building on its total.** Two page
-  readers "caught 60 errors"; split into lines, as the design chosen on that count
-  feeds them, about a quarter were reachable: the rest sat at line joins (end hyphens,
-  page numbers, glued words), where the pipeline's errors cluster. Read the examples,
-  then check which of them the planned integration can carry.
-- **When a probe moves where the gain is, change the plan before the long run.** On
-  2026-10-14 two cheap probes showed the page readers' gain sat at line joins and in
-  page numbers, not inside lines; the night still went to the line-reader design they
-  had just shown couldn't reach it (no change on tuning). Before spending a night, ask
+- **Sort a probe's catches by where they sit before building on its total**: read the
+  examples, then check which of them the planned integration can carry.
+- **When a probe moves where the gain is, change the plan before the long run**: ask
   whether today's findings still point at the run queued yesterday.
-- **Compare a retrained arbiter with production too, not only with its control.** A
-  control trained beside it shares whatever the retraining itself changed: Het
-  schaduwhuis's "50 ALEX" came with every arbiter retrained on 2026-11-12 and 13 and
-  read as the new judge's fault until the control was benched against production. And
-  before believing a heading miss, diff the two builds' heading lists: an alignment
-  of found against expected can name the wrong heading.
-- **Measure on every golden book, not the one you're fixing.** A line-grouping change
-  that helped Dolittle doubled Sense's CER.
+- **Compare a retrained arbiter with production too, not only with its control**: a
+  control trained beside it shares whatever the retraining changed. Before believing a
+  heading miss, diff the two builds' heading lists.
 - **Shared resources are shared deliberately.** PyMuPDF isn't thread-safe: hold
-  `pdf.PDF_LOCK` wherever threads may meet, render on one thread and pool only the model
-  calls.
-- **A cache version bumped on a branch is one no branch has used.** `render-differ` and
-  `render-kern` both keyed the render judge's answers as version 7, and the next branch
-  to bump it to 7 read their answers back, without the measures it added, and trained on
-  them (2026-11-14). Before bumping, `git grep` the constant across all branches
-  (`git grep -h "^FITS =" $(git branch --format='%(refname:short)')`), and before a
-  long run, check one output for the new field.
+  `pdf.PDF_LOCK` wherever threads may meet; render on one thread, pool only model calls.
+- **A cache version bumped on a branch is one no branch has used.** Before bumping,
+  `git grep` the constant across all branches (`git grep -h "^FITS =" $(git branch
+  --format='%(refname:short)')`); before a long run, check one output for the new field.
 - **Caches survive interruption.** Write them whole (`files.write_atomic`), skip a
-  cut-off last line in append-only logs, and version their format.
-- **Every long run can be stopped and picked up** (the user, 2026-11-13: "make anything
-  resumable … time is rare and valuable"). A run of more than a few minutes keeps each
-  finished piece as it goes (a model, a book, a page) and resumes from them; one that
-  saves only at its end is a bug to fix before its next use. A run in flight is the
-  user's time already spent: before stopping one, even when told to, say how far it
-  is against how long its like took (docs/run-times.md) and whether it resumes.
-- **Keep what you'll need again under `work/`, never in a session scratchpad.** A
-  scratchpad disappears with the session. Source EPUBs live in
-  `work/.cache/gutenberg/<ebook>.epub` and `work/.cache/publisher/<golden>.epub` (checked
-  against PROVENANCE.md), probe outputs in `work/probes/`.
+  cut-off last line in append-only logs, version their format.
 
 ## Purpose and scope
 
@@ -331,25 +279,21 @@ right, then expand.
   (how many books `bench` scores at once; one fewer than the cores) is no build setting
   and lives in `bench.py`.
 
-The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
+The map by group; [docs/modules.md](docs/modules.md) has every module in full: read a
+module's entry there before changing it.
 
-| Module | Job |
+| Group | Modules |
 | --- | --- |
-| `cli.py`, `config.py`, `book.py`, `files.py`, `priority.py` | the CLI, settings, a book directory and its `book.toml`, atomic cache writes; the user's builds pausing the agent's runs |
-| `clients/` | Ollama (`ollama.py`), decision models on `/v1/systemone` (`decide.py`), imajev on llama-server (`llama.py`), a hosted model (`openrouter.py`), retries (`retry.py`) |
-| `pdf.py`, `page.py`, `scanpages.py` | the text layer as visual lines with boxes (tesseract's for an image-only scan); what a page's layout says without a model; pages a scan holds twice (left out), lacks or prints too poorly to read (named) |
-| `layout.py`, `typestyle.py`, `faint.py` | DocLayout-YOLO regions; each line's type against the body; washed-out pages |
-| `missing.py` | printed lines the layer lacks, read by glm-ocr |
-| `roles.py`, `sorter.py`, `sorterdata.py`, `pageroles.py` | line roles: a decision model plus rules, then learned trees (`ROBO_SORTER=0` turns them off); the trees' training data; the read model's heading and furniture lines per page, an input to the trees (`ROBO_PAGE_ROLES=1`, off) |
-| `readers.py`, `pagereader.py`, `ocrcheck.py`, `ocrdoubts.py`, `trust.py`, `trustdata.py`, `contextjudge.py`, `rendercheck.py`, `accentmarks.py`, `quotemarks.py`, `speckmarks.py`, `lexicon.py` | more readings of each body line (two of them from whole-page readings), judges where they differ (one by drawing each version in the book's typeface over the scan), a doubt where the scan shows an accent every reading lacks, a nested quotation's outer mark, or a comma, semicolon or colon unlike the book's own (a speck; all three off), the review's questions about them, the learned trust that fixes, keeps or asks, and its training data; a thinking model settling questions from the text around them (off); the word list |
-| `corrections.py`, `errata.py`, `quotes.py` | the reviewer's answers applied; the misprints they correct; unpaired quotes as questions with a proposed reading |
-| `footnotes.py`, `epigraphs.py`, `chapters.py` | footnotes at a page's foot taken out of the running text and linked to their marks; a motto or a dedication on a page of its own set apart (`pagekinds.set_apart` asks the page-kind model about short pages); a book's numbered chapters read by their run |
-| `reflow.py`, `hyphens.py`, `typography.py`, `italics.py`, `figures.py`, `initials.py` | lines into paragraphs and headings; lines joined and their end hyphens kept or dropped, by the book's spellings, the word list and the judge; the book's dash and ellipsis style; italic words from stroke slant; pictures and captions; decorated initials |
-| `ir.py`, `epub.py`, `epubdiff.py` | the document model with references back to page lines; EPUB 3 by hand; what a build changed against the book's last |
-| `pipeline.py` | the stages for one book, each cached under `work/<book>/stages/` |
-| `pagekinds.py`, `bookinit.py` | what kind of page each page is (signals for the middle, a decision model from either edge inward until the text runs) and so where the text proper starts and ends; `roboscriptorium init` drafts a book's `book.toml` from the PDF alone, naming every page by both numbers (the PDF's and the one printed) |
-| `flags.py`, `review.py`, `structure.py` | what a human should check; the local review pages; what a reader would notice in a built book's structure, printed by `build` |
-| `golden/`, `evaluate.py`, `disagreements.py`, `quality.py`, `bench.py`, `errorlog.py` | golden books (manifests, derived references, alignment, retirement signals); CER, WER and paragraph scores; differences located on the scan; what a reviewer is left with; **the** paired measure of a change; each run's errors place by place, and what a change fixed and made (`bench-diff`) |
+| the CLI, settings, a book and its `book.toml`, the user's builds pausing the agent's | `cli`, `config`, `book`, `files`, `priority` |
+| model clients | `clients/` (`ollama`, `decide`, `llama`, `openrouter`, `retry`) |
+| the page: text layer, layout, type | `pdf`, `page`, `scanpages`, `layout`, `typestyle`, `faint`, `missing` |
+| line roles | `roles`, `sorter`, `sorterdata`, `pageroles` |
+| readers, judges, offers measured on the scan, the arbiter | `readers`, `pagereader`, `ocrcheck`, `ocrdoubts`, `trust`, `trustdata`, `contextjudge`, `rendercheck`, `accentmarks`, `quotemarks`, `speckmarks`, `lexicon` |
+| the reviewer's answers and misprints | `corrections`, `errata`, `quotes` |
+| structure | `footnotes`, `epigraphs`, `chapters`, `pagekinds`, `bookinit` |
+| lines into a book | `reflow`, `hyphens`, `typography`, `italics`, `figures`, `initials`, `ir`, `epub`, `epubdiff`, `pipeline` |
+| review | `flags`, `review`, `structure` |
+| measuring | `golden/`, `evaluate`, `disagreements`, `quality`, `bench`, `errorlog` |
 
 ## Architecture
 
@@ -550,132 +494,23 @@ their crops): never obvious ones.
 
 ### Golden books
 
-Public-domain or lending-library scans paired with a human-checked reference text, which
-is what every change gets measured against. [docs/golden-notes.md](docs/golden-notes.md)
-describes every pair; [docs/golden-books.md](docs/golden-books.md) has their numbers.
-Each lives in `golden/<name>/` **in git**: `manifest.toml` (the scans with URL and
-sha256, page ranges, the source and chapter range), and for a public-domain book the
-derived chapters in `text/` with `PROVENANCE.md`, its verdicts and `standard-ebooks/`
-(SE's text, see below). A book still in copyright (`eu_copyright_until` in its manifest)
-keeps its text and **its verdicts in `work/golden/<name>/`**, out of git: they quote the
-book. Those verdicts are human answers that exist nowhere else; only the backup of
-`work/` keeps them.
+A golden pair is a scan and a human-checked reference text of the same printing
+(Project Gutenberg's transcription or the publisher's own EPUB); every change is
+measured against the pairs. Always in force:
 
-- The reference text is a **Project Gutenberg** transcription (`golden derive`) or the
-  publisher's own EPUB of the same edition, taken as it stands. Gutenberg rebuilds its
-  EPUBs, so the committed `text/` is the pinned artefact; `PROVENANCE.md` records the
-  EPUB's hash and the transcriber's notes.
-- **Standard Ebooks is not a fidelity reference.** Its texts are modernised and restyled.
-  `golden derive-se` keeps it in `standard-ebooks/` for later style work; the SE manual
-  of style is at https://standardebooks.org/manual/1.9.1/single-page.
-- Scans are never committed. `golden fetch` downloads them into `work/<name>--<scan>/`
-  and writes its `book.toml`. A scan's `[scans.ia]` lists Internet Archive's own files
-  for it (`item`, and `files` with their sha256), fetched into its `ia/` folder: the
-  page images the PDF was compressed from (`_jp2.zip`), ABBYY's OCR with per-letter
-  confidence (`_abbyy.gz`), page types and crop boxes (`_scandata.xml`) and printed page
-  numbers (`_page_numbers.json`); a leaf with `addToAccessFormats` true is a PDF page,
-  in order. Public on public-domain items (Crime, Dolittle). A lending-library item
-  (`access-restricted-item` in its metadata) keeps all but `_scandata.xml` private, and
-  its scan has no `url`, so it is placed by hand and then checked by sha256.
-- A scan of another edition than the transcription differs in spelling, quote style,
-  spaced dashes, "Mrs" vs "Mrs.", and so on, so its scores include edition differences,
-  not just pipeline errors.
-- **Sets** (`bench.SETS`). Tuning books are chosen on; validation books were
-  consulted before, so they only veto. **A new pair waits for its first look**
-  (`first-look`): one score, untouched by anything before it (no eval, quality, review
-  or bench run, no trust data, no probe; `build` may warm its caches, as it prints no
-  score). `eval`, `quality`, `review` and `bench first-look` refuse it without
-  `--first-look`. The score goes in decisions.md, then the pair joins tuning or
-  validation in `bench.SETS`. A pair held back (no honest first look possible, kept as a
-  candidate) sits in `bench.RESERVE`, guarded the same way and in no run. A validation book's sibling (same publisher, translator and e-book house) never trains
-  while it validates. Beside them, `bench quick` runs a chapter or two of each tuning
-  book (~280 pages, inside their tuning slices): a change's short test, which
-  `bench tuning` then confirms. It has a fifth of the power and never sees front matter,
-  mottos or picture pages (2026-10-24), so a change to those goes to `bench tuning` at once.
-- **Checking a candidate pair** (scan PDF plus the publisher's EPUB) before writing its
-  manifest: `uv run python experiments/probe_candidate.py <scan.pdf> <ref.epub> [heading
-  prefix …]`, no models, about 10 s per 100 pages. It prints the scan's kind, the EPUB's
-  edition and markup, the body page range, the text layer's CER against the EPUB per band
-  of pages and the most frequent word differences. A pair fits when the EPUB's colophon
-  names the scan's printing and the differences are OCR slips at the layer's own rate
-  (0.2–0.5% CER), not real-word swaps or a band that jumps. Prefer IA Scribe scans
-  (Stella's format); skip calibre-made PDFs, other printings, DRM and pre-1934 spelling.
-  Skip an EPUB that isn't the publisher's own (made through Word or OCR: `MsoNormal`
-  classes, an ABBYY generator, a colophon naming only the print): it carries its maker's
-  edits. Where the EPUB's markup departs from the print, a `[reference]` key in the
-  manifest undoes it ([docs/golden-notes.md](docs/golden-notes.md) lists them).
-  `experiments/chapter_pages.py` gives the scan page each derived chapter starts on, to
-  end a bench slice on a chapter.
-- **Known deviations.** No publisher's EPUB matches its print in every convention. Each
-  known deviation of a pair is handled in one of four places, and nowhere else: a gap
-  derive can undo is declared in the manifest's `[reference]` (`hyphen_dash`,
-  `capital_classes`, `note_mark`) and listed in PROVENANCE.md; a glyph choice the output may make
-  differently is folded by `evaluate.normalise` and counted per side, so `eval` prints
-  how much it forgave; a word the e-book sets otherwise than its print (its correction, or
-  its maker's slip: "wat-kan-mijhet-schelen" for the print's "wat-kan-mij-het-schelen") is
-  an erratum in `work/<book>/errata.toml`, so the build reads as the publisher's text while
-  the arbiter's training data labels the readers on the print (`trustdata.as_printed`;
-  the user, 2026-11-14: "the publisher decided that the print version was wrong and
-  corrected it in the epub. that's what our errata system does"); an edition slip the book
-  must not copy, a structural one above all (a chapter numbered twice), is an erratum
-  with `keep = "print"`: the build keeps the print and the bench scores the reference set
-  back to it (the user's idea, 2026-11-14); what none of these covers is settled by a
-  verdict. A deviation that lives only in a comment or a note is
-  untracked: move it to one of the four.
-- **Retiring a book.** A reference can stop being one: when a book's remaining
-  disagreements are mostly edition differences, or its verdict backlog never shrinks,
-  its score measures the edition, not the pipeline. Two signals need no verdicts: the
-  text layer's CER against the reference and the share of its body lines the aligner
-  can't place (`golden/signals.py`). `bench` records both per book and names each book
-  past a threshold as a suspect pair; docs/golden-books.md has them over all lines
-  (regenerate it with `uv run python experiments/golden_overview.py >
-  docs/golden-books.md`, about a quarter of an hour (it aligns every book), no models, after adding, slicing or retiring a
-  book). Past three times the set's median layer CER, or one body line in twenty
-  unplaced, the book is suspect. Judge by the bench's figures, over body lines: the
-  overview's unplaced share counts page furniture too, so a book with running heads
-  or washed-out pages tops it without being suspect. **Whoever notices says so in the session's report and
-  proposes retiring it, without being asked.** A retired book's files are deleted from
-  `work/` and its manifest from git, with a dated line in docs/decisions.md.
-- **Reviewing the sets** (the user, 2026-10-18: "periodically hunt for new books and
-  cull old ones, and re-evaluate what we use each one for"). Whenever pairs are added,
-  after each batch of first looks, whenever a bench flags a suspect pair or a doubt about
-  a book, and at least weekly (the sets changed dozens of times in the project's first two
-  weeks): each pair's job against docs/golden-notes.md ("What each
-  pair is for"), the suspect signals, the doubts; propose retiring, slicing or a lesser
-  role (line roles only, out of training) where a job is gone; update the gaps to hunt
-  for, and ask the user for candidates that fill them. The review's date goes in that
-  section and a line in docs/decisions.md.
+- A public-domain pair lives whole in `golden/<name>/` in git. A book in copyright
+  (`eu_copyright_until` in its manifest) keeps its text and its verdicts in
+  `work/golden/<name>/`: human answers that exist nowhere else. Scans are never
+  committed.
+- **A new pair waits for its first look**: one score, untouched by anything before it
+  (no eval, quality, review, bench, trust data or probe; `build` may warm its caches).
+  `eval`, `quality`, `review` and `bench first-look` refuse it without `--first-look`.
+- Tuning books are chosen on; validation books only veto; `bench quick` is a change's
+  short test and never sees front matter, mottos or picture pages.
+- A suspect pair (a bench names it) is said in the session's report with a proposal to
+  retire it, unasked.
 
-```sh
-uv run roboscriptorium golden derive the-nature-of-a-crime
-uv run roboscriptorium golden fetch the-nature-of-a-crime
-uv run roboscriptorium eval work/the-nature-of-a-crime--doubleday-1924
-# quick loop: a slice of pages and the chapters they hold
-uv run roboscriptorium eval work/goede-dochter--ia-scan --pages 9-64 --chapters 1-4
-# heuristics only, no models
-uv run roboscriptorium eval work/goede-dochter--ia-scan --no-models
-# a publisher's EPUB can't be downloaded: pass it to derive
-uv run roboscriptorium golden derive goede-dochter --epub work/.cache/publisher/goede-dochter.epub
-```
-
-`eval` builds the book, prints the scores and the most frequent differences, and appends
-a line to `work/<book>/eval-history.jsonl` with the commit, the settings, which decider
-settled the OCR check (`fixed rule` or `trust <model hash>`) and each model's Ollama
-digest. Given several books it scores them
-one after another and ends with a line per book.
-
-**Disagreements and verdicts.** Gutenberg is a transcription, not the scan, so where the
-output disagrees with it a human decides what the scan prints. A golden book's review
-asks it, in the same list as its flagged regions (pass the bench's slice):
-
-```sh
-uv run roboscriptorium review work/goede-dochter--ia-scan --pages 9-64 --chapters 1-4  # → http://127.0.0.1:8765/
-```
-
-Each place is an ordinary question: its line twice, with our text's words and the
-reference's, labelled by who claims them (`a`, `b`; `e` to type), and a kind for what
-isn't running text. The answer is a verdict, not a correction: it settles the reference,
-and the kind of mistake follows from it. Verdicts go to `verdicts/<scan>.jsonl` under the book's data folder
-(`golden/<name>/` in git for a public-domain book, else `work/golden/<name>/`), keyed on the reference words and six words of context either side, so they survive
-pipeline changes. `eval` patches them into the reference for that scan and reports the
-remaining disagreements by mistake category.
+Before adding, fetching, deriving, slicing, retiring or reviewing a pair, checking a
+candidate, handling a deviation between an e-book and its print, or reading verdicts
+and disagreements, read [docs/golden-notes.md](docs/golden-notes.md), "Working with
+golden pairs": the commands and the rules for each.

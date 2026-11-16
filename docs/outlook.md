@@ -174,7 +174,7 @@ each new local vision model.
 ## Tried, and why it didn't help
 
 Don't repeat these without a new reason (details in docs/decisions.md). A better model in
-the place an idea failed on is one (AGENTS.md, "A null result is a null for its models"),
+the place an idea failed on is one (AGENTS.md, "A null is a null for its models"),
 and so is a changed version that dodges the reason it failed (AGENTS.md, "Rework an idea
 before dropping it"); the reworked versions worth trying are on the checklist ("Dropped
 ideas reworked", 2026-11-15):

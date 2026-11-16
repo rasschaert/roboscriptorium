@@ -23,7 +23,7 @@ read through by the user without an error (2026-10-31). The order from here:
 5. then the open areas below, by what [outlook.md](outlook.md) says they can gain.
 
 Standing, not steps: each new golden pair is scored once, at its first look, before it
-joins a set; the sets are reviewed at least weekly (AGENTS.md, "Reviewing the sets";
+joins a set; the sets are reviewed at least weekly (docs/golden-notes.md, "Reviewing the sets";
 last on 2026-11-14, so next by 2026-11-21).
 
 ## In flight
