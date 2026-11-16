@@ -364,8 +364,8 @@ then the kinds one at a time below.
       the tuning books, 16 named specks among them. Queued behind the accent runs
       (`work/runs/speck-chain.sh`): a fresh production baseline, trust data with the
       offers, arbiter, both benches; taken if tuning's silent errors fall and
-      validation doesn't veto. Then: an apostrophe between two words ("je'vader") as a fourth
-      offer.
+      validation doesn't veto. Two words joined by a fleck read as an apostrophe
+      ("je'vader") are offered too, by the word list.
 - [ ] **The accent on the first vowel of a pair** ("níet"): as a second form of the accent
       offers, scored by the difference of fits with the cut set per book and vowel pair
       (35 of 36 found at 0.34% false offers, 2026-11-16, `probe_accent_first_vowel.py`);

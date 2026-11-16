@@ -396,6 +396,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   every comma, semicolon and colon of the body against the book's usual picture of that
   mark (`unlike`, `odd_pictures`) and keeps, for each `CUT` or more apart, the token
   without the speck's part (`lesser`: the comma lost, ";" a comma, ":" a stop);
+  With the word list, `parted` also offers two known words a mark joins into no word
+  ("je'vader"), unless the book has the form `REPEATS` times.
   `Specks.doubts` offers it on an undisputed token, beside `accentmarks.Marks.doubts`.
   Offers kept in `stages/speck-marks.json`.
 - `quotemarks.py`: the outer mark of a nested quotation every reader drops

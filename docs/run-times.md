@@ -1116,3 +1116,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-16 | trust data, het-schaduwhuis--ia-scan | 320 | 3 | 0 |
 | 2026-11-16 | trust data, stella | 67 | 0 | 0 |
 | 2026-11-16 | trust data, ex-minnaar | 273 | 2 | 0 |
+| 2026-11-16 | train arbiter, accent offers counted apart | 0 | 183 | 0 |

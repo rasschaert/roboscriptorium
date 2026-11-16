@@ -33,6 +33,37 @@ def test_the_lesser_version_drops_the_part_a_speck_would_add(token, want):
     assert speckmarks.lesser(token) == want
 
 
+def test_two_known_words_a_mark_joins_are_offered_parted_and_a_known_joined_word_is_not():
+    known = {"je", "vader", "had", "him", "don", "ma", "am", "ma'am", "zo"}.__contains__
+    assert speckmarks.parted("je'vader", known) == "je vader"
+    assert speckmarks.parted("‘had’him,", known) == "‘had him,"
+    assert (
+        speckmarks.parted("ma’am", lambda w: w.replace("’", "'") in {"ma", "am", "ma'am"}) is None
+    )
+    assert speckmarks.parted("don't", known) is None  # a part of one letter
+    assert speckmarks.parted("je'xqz", known) is None
+    assert speckmarks.parted("vader", known) is None
+
+
+def test_a_joined_form_the_book_repeats_is_its_spelling(tmp_path):
+    from roboscriptorium.pdf import Line, PageText
+
+    def page(number, texts):
+        lines = [Line(text=t, x0=0, y0=10 * k, x1=100, y1=10 * k + 8) for k, t in enumerate(texts)]
+        return PageText(number=number, width=200, height=300, lines=lines)
+
+    lexicon = SimpleNamespace(knows={"je", "vader", "sp", "ers"}.__contains__)
+    specks = speckmarks.Specks(tmp_path / "s.json", lexicon)
+    pages = [page(1, ["dan je'vader of", "de sp'ers en", "de sp'ers. De", "alle sp'ers"])]
+    path = tmp_path / "blank.pdf"
+    doc = pymupdf.open()
+    doc.new_page(width=200, height=300)
+    doc.save(path)
+    specks.survey(path, pages)
+    assert specks.doubts(None, 1, 0, "dan je'vader of", [], None) == [(4, 12, ["je vader"])]
+    assert specks.doubts(None, 1, 1, "de sp'ers en", [], None) == []
+
+
 def test_only_pictures_far_from_the_books_usual_one_are_odd_and_a_small_book_has_none():
     rng = np.random.default_rng(0)
     comma = np.zeros((40, 18), np.float32)

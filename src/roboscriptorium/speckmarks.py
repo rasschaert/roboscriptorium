@@ -12,6 +12,11 @@ without the speck's part (`lesser`) as another version (`doubts`), which the jud
 the arbiter settle like any suspect. It decides nothing itself, and needs no typeface:
 the book's own marks are the measure.
 
+A fleck between two words reads as an apostrophe ("je'vader", "had'him"). There the
+words say it (`parted`): two words of the word list joined by a mark into no word, in a
+form the book doesn't repeat, are offered as two words; 134 such tokens in the tuning
+books, nearly all specks by their look.
+
 The offers are kept per book (`stages/speck-marks.json`).
 """
 
@@ -26,7 +31,7 @@ from roboscriptorium import rendercheck
 from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.pdf import PageText, line_words, page_words
 
-VERSION = 1
+VERSION = 2
 # How unlike the book's usual picture of its mark (`unlike`) a token's is for the lesser
 # version to be offered: the printed marks' median is 0.03 to 0.05; the 15 speck marks
 # the tuning bench names in Doodskleed and The Thief-Taker's Apprentice score 0.15 to
@@ -42,6 +47,9 @@ ROWS = (0.28, 0.9)
 ALIKE = 3
 # Marks of a kind a book must show for its usual one to be known.
 FEWEST = 10
+# A joined form the book has this often is its spelling ("ma'am", "sp'ers"), not a speck.
+REPEATS = 3
+_JOINED = re.compile(r"^(\W*)([^\W\d_]{2,})['’‘`·_]([^\W\d_]{2,})(\W*)$")
 CLOSERS = "'\"’”"
 _TOKEN = re.compile(r"\S+")
 _SIZE = (18, 40)
@@ -62,6 +70,18 @@ def lesser(token: str) -> tuple[str, str] | None:
     if core[-1] == ":":
         return ":", core[:-1] + "." + tail
     return None
+
+
+def parted(token: str, knows) -> str | None:
+    """A token that is two known words joined by an apostrophe or a like mark into no
+    known word ("je'vader"), as the two words; None for any other. `knows` says whether
+    a word is in the word list."""
+    m = _JOINED.match(token)
+    if not m or not (knows(m.group(2)) and knows(m.group(3))):
+        return None
+    if knows(f"{m.group(2)}'{m.group(3)}"):
+        return None
+    return f"{m.group(1)}{m.group(2)} {m.group(3)}{m.group(4)}"
 
 
 def picture(ink: np.ndarray) -> np.ndarray | None:
@@ -135,17 +155,27 @@ class Specks:
     """The tokens of a book whose closing mark is unlike the book's own, each with the
     version a speck would have been read from."""
 
-    def __init__(self, cache: Path):
-        self._cache = cache
+    def __init__(self, cache: Path, lexicon=None):
+        self._cache, self._lexicon = cache, lexicon
         kept = read_cache(cache, VERSION)
         self._offers: dict[str, str] | None = kept["offers"] if kept else None
         self._new = False
 
     def survey(self, pdf: Path, pages: list[PageText]) -> None:
         """Measures every comma, semicolon and colon a token ends on, over the lines
-        whose words the layer places one for one, and keeps the odd ones' offers."""
+        whose words the layer places one for one, and keeps the odd ones' offers; with a
+        word list, those of two words a mark joins (`parted`) too."""
         if self._offers is not None:
             return
+        joined: dict[str, list[tuple[str, str]]] = {}
+        for page in pages if self._lexicon else ():
+            for k, line in enumerate(page.lines):
+                for m in _TOKEN.finditer(line.text):
+                    if other := parted(m.group(), self._lexicon.knows):
+                        key = f"{page.number}|{k}|{m.start()}|{m.group()}"
+                        joined.setdefault(other.strip(CLOSERS + ".,;:!?‘“").lower(), []).append(
+                            (key, other)
+                        )
         marks: dict[str, list[tuple[str, str, np.ndarray]]] = {",": [], ";": [], ":": []}
         with pymupdf.open(pdf) as doc:
             for page in pages:
@@ -172,6 +202,9 @@ class Specks:
             for rows in marks.values()
             for i in odd_pictures([r[2] for r in rows])
         }
+        for places in joined.values():
+            if len(places) < REPEATS:
+                self._offers.update(places)
         self._new = True
 
     def doubts(

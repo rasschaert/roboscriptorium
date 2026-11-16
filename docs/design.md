@@ -547,8 +547,13 @@ Dolittle's 192 printed semicolons, none of Glazuur's 23), and the whole word's f
 barely moves for a dot. Why the mark's own ink only: with the letter before it in the
 picture every "f," and "r," looked odd, and with the strip's full height the line
 above's descenders did (Glazuur 340 offers, then 38). Its failure: a speck touching the
-word, or one that makes a well-formed mark, is passed over; an apostrophe between two
-words ("je'vader") is not offered yet. Off (`ROBO_SPECK_DOUBTS`) until the judges are
+word, or one that makes a well-formed mark, is passed over. A book's second form of a
+mark (half of De tuin van de avondnevel's semicolons) looked odd against one usual
+picture, so a mark must also be unlike all but three of the book's others: 4,037 offers
+over the tuning books became 461, with 16 of the bench's named specks among them. A
+fleck between two words reads as an apostrophe ("je'vader"); there the word list says
+it: two known words joined into no word, in a form the book has fewer than three times
+("ma'am" 45 times is its spelling), 77 offers over the tuning books. Off (`ROBO_SPECK_DOUBTS`) until the judges are
 measured on its offers and an arbiter trained with them is benched.
 
 ## A judge of marks alone (off)
