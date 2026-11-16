@@ -34,6 +34,11 @@ confirmations below wait for a later moment, to be brought up again). Since 20:4
   baseline, behind `robo-speck-chain`.
 - Line roles: a referee between two sets of trees built, off (`ROBO_SORTER_SECOND`,
   `sorter.Referee`); queued `robo-sorter-referee` (`work/runs/sorter-referee.sh`), last.
+- 2026-11-16 19:50: `robo-accents-apart` and `robo-nested` ended, both not taken (decisions.md:
+  the offers work, the retrained arbiter costs punctuation). Queued last: `robo-offer-arbiter`
+  (`work/runs/offer-arbiter.sh`): the offers decided by their own arbiter, production's
+  everywhere else (branch `offer-arbiter`, worktree `../robo-offer-arbiter`, off by default).
+  An agent session picked up all five screens and watches them (Monitor, re-armed every 30 min).
 - The page-kind model is told each back page's ink (last end right 22 → 24 of 27).
 - The user started the short reviews at about 17:00 on 2026-11-16 (Au pair's 16
   small-capital places, 9 accent additions in Goede dochter and De vergelding).

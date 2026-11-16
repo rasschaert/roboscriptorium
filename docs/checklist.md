@@ -63,8 +63,10 @@ last on 2026-11-14, so next by 2026-11-21).
          apart (`trust.UNREAD`) the short test gives 12 of the 18 for one false
          question; benched 2026-11-16: not taken (after review level, 13 accents fixed but the
          retrained arbiter made 16 punctuation swaps and 15 dot-and-stop errors; decisions.md).
-         Next, queued by the step below: a second arbiter for the offered places only,
-         production's arbiter everywhere else. Tried behind it: a judge of marks alone (`render-mark`,
+         Built, off (branch `offer-arbiter`, worktree `../robo-offer-arbiter`,
+         `ROBO_OFFER_TRUST_MODEL`): a second arbiter for the offered places only,
+         production's everywhere else; queued last as `robo-offer-arbiter`
+         (`work/runs/offer-arbiter.sh`, both benches against the speck run's baseline). Tried behind it: a judge of marks alone (`render-mark`,
          `accents-mark-chain.sh`), then nested quote offers (`nested-chain.sh`). Open:
          the offers never draw the first vowel of a pair alone ("níet", "bóek": 41 of
          Ex-minnaar's 136), where the mark's fit finds 3 of 38 at its cut, the acute
