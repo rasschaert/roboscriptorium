@@ -308,6 +308,13 @@ then the kinds one at a time below.
       judges (as the accent offers are), short-tested on the pages they touch; the
       readers deleted after their first screen (olmOCR, PaddleOCR-VL, LightOnOCR,
       DeepSeek-OCR, Kraken) listed for the user to pull again, the likeliest first
+- [ ] **The same pair of versions elsewhere in the book, weighed by the arbiter**: a
+      pair a book raises three times or more has one answer everywhere in 947 of 955
+      cases; where the judges split, the votes pooled over the other places are clear
+      at 510 of 749 and right at 504 (`probe_same_pair.py`, 2026-11-16). To build: the
+      pooled share and the count as arbiter inputs (no new model calls for the training
+      data), then the arbiter retrained and both benches. Pieter Daens asks "Saskaaï"
+      16 times, De kus in de nacht 103 questions over 23 such pairs
 - [ ] **Extra readers as offers in the build** (`ROBO_EXTRA_READERS`, off; design.md):
       first scores of the short test 2026-11-15: qwen3.8 reads 10 of 97 silent errors,
       olmOCR-2 seven more, PaddleOCR-VL 1.6 ten more. Its short test in the build is
