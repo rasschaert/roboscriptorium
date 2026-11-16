@@ -13,6 +13,10 @@ confirmations below wait for a later moment, to be brought up again). Since 20:4
   change overall, 3 wrong words fixed and 11 made, 11 more questions, the arbiter not
   retrained for them (decisions.md). Not on: 4 of their 362 offers were the print
   (`probe_extra_offers.py`); only offers both readers agree on look worth a test. The accent run started at 07:25; the queue follows by itself.
+- Pieter Daens' questions read: the same pair of versions is asked many times
+  ("Saskaaï" 16). Such a pair has one answer everywhere in 947 of 955 cases; as two
+  more arbiter inputs the short test gives a small gain (decisions.md). To build
+  behind a switch and bench after the accent and nested-quote arbiters.
 - A word's picture against the book's other pictures of it: null, three measures
   (`probe_own_pictures.py`). Its rework is on the checklist.
 - The accent on the first vowel of a pair alone ("níet"): on Ex-minnaar the scan's fit

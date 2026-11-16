@@ -1068,3 +1068,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-15 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 2 | 0 |
 | 2026-11-15 | bench quick, production (warm) | 282 | 3 | 0 |
 | 2026-11-16 | bench quick, two extra readers (the read model at twice the size, olmOCR-2) | 282 | 589 | 0 |
+| 2026-11-16 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 7 | 0 |
+| 2026-11-16 | arbiter with the same pair elsewhere, leave one book out | 0 | 0 | 1 |
+| 2026-11-16 | arbiter with the same pair elsewhere, leave one book out | 0 | 4 | 0 |

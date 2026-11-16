@@ -314,7 +314,10 @@ then the kinds one at a time below.
       at 510 of 749 and right at 504 (`probe_same_pair.py`, 2026-11-16). To build: the
       pooled share and the count as arbiter inputs (no new model calls for the training
       data), then the arbiter retrained and both benches. Pieter Daens asks "Saskaaï"
-      16 times, De kus in de nacht 103 questions over 23 such pairs
+      16 times, De kus in de nacht 103 questions over 23 such pairs. Short test
+      (`probe_same_pair_arbiter.py`): wrong picks 384 → 373, unsure places at such
+      pairs 158 → 122, The Thief-Taker's Apprentice worse; small, so to the bench
+      once the accent and nested-quote arbiters are decided
 - [ ] **Extra readers as offers in the build** (`ROBO_EXTRA_READERS`, off; design.md):
       first scores of the short test 2026-11-15: qwen3.8 reads 10 of 97 silent errors,
       olmOCR-2 seven more, PaddleOCR-VL 1.6 ten more. Its short test in the build is
