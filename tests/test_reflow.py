@@ -887,5 +887,30 @@ def test_several_hyphen_judges_answer_by_their_mean_and_are_asked_in_dutch_too(t
     panel.save()
     # Kept by the judges it was asked of: one judge alone starts again.
     assert hyphens.Compounds(judge(0.0), "a", "nl", tmp_path / "panel.json")._answers == {}
+    # Collected first, the questions go to each judge in turn, and a judge's answers
+    # are in the cache before the next is asked: a stopped build goes on from them.
+    calls = []
+
+    def logging(name: str, chance: float, stop: bool = False):
+        def decide(state, questions, model=None):
+            if stop:
+                raise KeyboardInterrupt
+            calls.append(name)
+            return {"spelling": SimpleNamespace(probabilities={"hyphenated": chance})}
+
+        return SimpleNamespace(decide=decide)
+
+    path = tmp_path / "collected.json"
+    words = [("zee", "egel", "een zee-|egel"), ("na", "apen", "na-|apen")]
+    stopped = hyphens.Compounds(
+        logging("a", 0.9), "a", "nl", path, [(logging("b", 0.9, True), "b")]
+    )
+    with pytest.raises(KeyboardInterrupt):
+        stopped.collect(lambda: [stopped(*w) for w in words])
+    assert calls == ["a", "a"]
+    again = hyphens.Compounds(logging("a", 0.9), "a", "nl", path, [(logging("b", 0.7), "b")])
+    again.collect(lambda: [again(*w) for w in words])
+    assert calls == ["a", "a", "b", "b"]
+    assert again("zee", "egel", "een zee-|egel") and again._partial == {}
     assert hyphens.asked("nl", panel=True) and not hyphens.asked("nl")
     assert hyphens.asked("en") and not hyphens.asked("fr", panel=True)

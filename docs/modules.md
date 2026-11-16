@@ -98,7 +98,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   by evidence in order: the book's own spelling (`spellings`, over the whole body: `pipeline._book_spellings`), the word list, a capital
   after the break, the parts beside an inner hyphen, then `Compounds`, the judge
   (`judge_model`) asked whether an English hyphen nothing else decides is the word's
-  own, its answers cached by the hyphenated word in `stages/compounds.json` (only
+  own, its answers cached by the hyphenated word in `stages/compounds.json` (the pipeline collects a book's undecided words first, `Compounds.collect`, and each judge answers them all in turn, one book at a time on the machine, its answers saved as they come; only
   English books ask it, `asked`; docs/design.md; with `ROBO_HYPHEN_JUDGES`, off, the mean of
   those judges with it, asked in Dutch books too); in a Dutch book the fallback is
   `vowel_clash`, the hyphen kept where the vowels beside the break would read as one

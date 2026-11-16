@@ -461,6 +461,19 @@ def run(
         book.source, checked, model_roles, break_judge, judge_cache, indented
     )
     corrected = parabreaks.judged(book.source, corrected, roles, break_judge, judge_cache, indented)
+    if isinstance(compound, hyphens.Compounds):
+        compound.collect(
+            lambda: [
+                reflow(
+                    pages,
+                    _apart(pages, line_roles, note_lines, epigraph_lines, dedication_lines),
+                    known,
+                    compound,
+                    _book_spellings(whole, pages),
+                )
+                for pages, line_roles in ((checked, model_roles), (corrected, roles))
+            ]
+        )
     unanswered = reflow(
         checked,
         _apart(checked, model_roles, note_lines, epigraph_lines, dedication_lines),

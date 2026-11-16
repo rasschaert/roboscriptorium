@@ -141,6 +141,17 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **Check every input before queuing a run, every item.** Without models: everything
   the run reads exists for every book it will touch (scan, caches, models pulled), and
   books retired since a set was made are out. A test on one book tests that book only.
+- **Before a run is queued, two answers are written into its script**, and
+  `experiments/detached.sh` refuses a script without them (the user, 2026-11-16: "you
+  should be robust in your operations to withstand interruption and pick up quickly";
+  a bench reloaded a judge at every question and could not be stopped without losing
+  eight books' answers). `# resumes:` what it keeps as it goes and what a stop loses,
+  found by reading the code that calls the models, down to where it writes its cache:
+  if a stop loses more than a few minutes, mend the code first. `# models:` the Ollama
+  models it asks; past 48 GB together, `# one at a time:` how it keeps them from
+  swapping (one model over all its questions, then the next; one book at a time).
+  New code that calls a model saves each answer as it comes and groups its calls by
+  model, and its test stops it midway and starts it again.
 - **Every long run can be stopped and picked up** (the user, 2026-11-13: "make anything
   resumable … time is rare and valuable"). It keeps each finished piece (a model, a
   book, a page) and resumes from them; one that saves only at its end is a bug to fix

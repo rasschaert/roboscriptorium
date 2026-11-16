@@ -9,7 +9,9 @@ was right on 43. Dutch ones almost always join (355 of 361), and the judge does 
 better there, so it is asked about English only (`experiments/probe_hyphen_judge.py`).
 """
 
+import fcntl
 import re
+import tempfile
 from collections import Counter
 from collections.abc import Callable
 from pathlib import Path
@@ -19,6 +21,8 @@ from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.pdf import PageText
 
 VERSION = 1
+# A judge's answers are written to the cache after this many new ones.
+SAVE_EVERY = 20
 LANGUAGES = {"en": "English"}
 # The languages a panel of judges (`Compounds` with several) is asked in: together they
 # do better than joining in Dutch too, where one judge does not.
@@ -72,7 +76,10 @@ def asked(language: str, panel: bool = False) -> bool:
 class Compounds:
     """Whether an undecided line-end hyphen is the word's own, by the judge, or by the
     mean of the judges in `more` (each a client and its model) with it; the answers
-    cached by the hyphenated word in `path`."""
+    cached by the hyphenated word in `path`. `collect` gathers a book's questions first
+    and asks them judge by judge, one book at a time on the machine, so each judge is
+    loaded once a book; each judge's answers are kept as they come (`partial` in the
+    cache), so a build stopped goes on from them."""
 
     def __init__(self, client, model: str, language: str, path: Path, more=()):
         self._judges = [(client, model), *more]
@@ -80,34 +87,78 @@ class Compounds:
         self._language = PANEL_LANGUAGES[language[:2]]
         blob = read_cache(path, VERSION, model=self._model)
         self._answers: dict[str, float] = blob["answers"] if blob else {}
+        self._partial: dict[str, dict[str, float]] = blob.get("partial", {}) if blob else {}
+        self._pending: dict[str, tuple[str, str, str]] = {}
+        self._collecting = False
         self._new = False
 
     def __call__(self, stem: str, rest: str, context: str) -> bool:
         """Whether `stem`-`rest`, broken at a line's end in `context` (the break marked
-        with |), keeps its hyphen."""
+        with |), keeps its hyphen. While collecting, an unanswered word is noted and
+        joined for now."""
         key = f"{stem}-{rest}".lower()
         if key not in self._answers:
-            question = choice(
-                f"A {self._language} book breaks a word across two lines with a hyphen at "
-                "the line's end (shown as |). Is the hyphen part of the word's spelling, or "
-                "only the line break's? Answer with how the word is spelled in running text.",
-                {"closed": stem + rest, "hyphenated": f"{stem}-{rest}"},
-            )
-            state = {"language": self._language, "text": context}
-            chances = [
-                client.decide(state, {"spelling": question}, model=model)[
-                    "spelling"
-                ].probabilities.get("hyphenated", 0.0)
-                for client, model in self._judges
-            ]
-            self._answers[key] = sum(chances) / len(chances)
-            self._new = True
+            if self._collecting:
+                self._pending.setdefault(key, (stem, rest, context))
+                return False
+            self._ask({key: (stem, rest, context)})
         return self._answers[key] >= 0.5
+
+    def collect(self, run) -> None:
+        """`run` (the reflows that will ask) gone through once for its questions, which
+        are then asked judge by judge."""
+        self._collecting = True
+        try:
+            run()
+        finally:
+            self._collecting = False
+        pending, self._pending = self._pending, {}
+        if pending:
+            self._ask(pending)
+
+    def _ask(self, questions: dict[str, tuple[str, str, str]]) -> None:
+        """The questions put to each judge in turn, under the machine's lock for these
+        judges: books built side by side would otherwise make Ollama swap judges at
+        every question."""
+        with open(Path(tempfile.gettempdir()) / "roboscriptorium-hyphen-judges.lock", "w") as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX)
+            for client, model in self._judges:
+                asked = 0
+                for key, (stem, rest, context) in questions.items():
+                    got = self._partial.setdefault(key, {})
+                    if model in got:
+                        continue
+                    question = choice(
+                        f"A {self._language} book breaks a word across two lines with a "
+                        "hyphen at the line's end (shown as |). Is the hyphen part of the "
+                        "word's spelling, or only the line break's? Answer with how the "
+                        "word is spelled in running text.",
+                        {"closed": stem + rest, "hyphenated": f"{stem}-{rest}"},
+                    )
+                    state = {"language": self._language, "text": context}
+                    got[model] = client.decide(state, {"spelling": question}, model=model)[
+                        "spelling"
+                    ].probabilities.get("hyphenated", 0.0)
+                    self._new = True
+                    asked += 1
+                    if asked % SAVE_EVERY == 0:
+                        self.save()
+                self.save()
+        for key in questions:
+            chances = [self._partial[key][model] for _, model in self._judges]
+            self._answers[key] = sum(chances) / len(chances)
+            del self._partial[key]
+        self._new = True
+        self.save()
 
     def save(self) -> None:
         if self._new:
             write_cache(
-                self._path, VERSION, {"answers": self._answers}, indent=1, model=self._model
+                self._path,
+                VERSION,
+                {"answers": self._answers, "partial": self._partial},
+                indent=1,
+                model=self._model,
             )
             self._new = False
 
