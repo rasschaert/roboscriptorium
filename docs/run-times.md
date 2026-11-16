@@ -1187,3 +1187,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-17 | bench tuning, hyphen judges together | 6208 | 37 | 0 |
 | 2026-11-17 | bench validation, hyphen judges together | 0 | 8 | 0 |
 | 2026-11-17 | bench tuning, line-role referee | 6208 | 31 | 1 |
+| 2026-11-17 | bench tuning, offers on their own arbiter | 6208 | 5 | 0 |
+| 2026-11-17 | bench validation, offers on their own arbiter | 0 | 1 | 0 |
+| 2026-11-17 | bench tuning, accent offers alone on their own arbiter | 6208 | 5 | 0 |
+| 2026-11-17 | bench validation, accent offers alone on their own arbiter | 0 | 1 | 0 |
