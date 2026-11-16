@@ -360,10 +360,11 @@ then the kinds one at a time below.
       its own, by the drawn mark's fit (best on semicolons and colons) and by the mark's
       picture against the book's usual one (best on commas; `probe_speck_marks.py`,
       decisions.md 2026-11-16). Built, off (`speckmarks.py`, `ROBO_SPECK_DOUBTS`): the
-      mark's own ink against the book's usual picture, for all three marks. Next, agent:
-      a short test on Doodskleed and The Thief-Taker's Apprentice (judges on the offers
-      only), then trust data and a bench once the accent offers' benches say offers pay
-      with the apart count; an apostrophe between two words ("je'vader") as a fourth
+      mark's own ink against the book's usual picture, for all three marks. 461 offers over
+      the tuning books, 16 named specks among them. Queued behind the accent runs
+      (`work/runs/speck-chain.sh`): a fresh production baseline, trust data with the
+      offers, arbiter, both benches; taken if tuning's silent errors fall and
+      validation doesn't veto. Then: an apostrophe between two words ("je'vader") as a fourth
       offer.
 - [ ] **The accent on the first vowel of a pair** ("níet"): as a second form of the accent
       offers, scored by the difference of fits with the cut set per book and vowel pair

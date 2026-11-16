@@ -23,7 +23,14 @@ confirmations below wait for a later moment, to be brought up again). Since 20:4
   (a flag passed as one word), fixed and queued behind `robo-sorter-panel`.
 - Specks read as punctuation (most of tuning's 52 silent punctuation swaps): the drawn
   mark's own fit ranks them (`experiments/probe_speck_marks.py`, `work/runs/speck-marks.log`
-  over every tuning book). Next: offers of the lesser mark where the mark fits poorly.
+  over every tuning book). Built, off: `speckmarks.py` (`ROBO_SPECK_DOUBTS`), the mark's
+  own ink against the book's other pictures of it: 461 offers over tuning, 16 named
+  specks among them. Queued: `robo-speck-chain` (`work/runs/speck-chain.sh`), behind
+  `robo-accents-mark`, `robo-nested` and `robo-accents-apart`: both production benches
+  on today's code as the baseline (kept in `work/probes/speck-baseline/`), then trust
+  data `work/probes/ocr-trust-specks/`, arbiter and both benches.
+- `init`'s fields scored against the publishers' e-books (`score_init.py`): the e-books'
+  metadata is the weaker side at most misses (decisions.md).
 - Pieter Daens' questions read: the same pair of versions is asked many times
   ("Saskaaï" 16). Such a pair has one answer everywhere in 947 of 955 cases; as two
   more arbiter inputs the short test gives a small gain (decisions.md). Parked by the

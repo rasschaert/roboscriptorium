@@ -6,10 +6,11 @@ and every reader reads it alike, so no difference raises it: most of the tuning 
 52 silent punctuation swaps, in two speckled scans (docs/decisions.md, 2026-11-16). Each
 comma, semicolon and colon a token of the book ends on is measured (`survey`): its own
 ink, the letter before it left out (`picture`; a mark touching its letter is passed
-over), against the book's usual picture of that mark (`unlike`). Where they are `CUT`
-apart the token is offered without the speck's part (`lesser`) as another version
-(`doubts`), which the judges and the arbiter settle like any suspect. It decides nothing
-itself, and needs no typeface: the book's own marks are the measure.
+over), against the book's usual picture of that mark (`unlike`) and against its every
+other one (`odd_pictures`). Where it is `CUT` apart from both, the token is offered
+without the speck's part (`lesser`) as another version (`doubts`), which the judges and
+the arbiter settle like any suspect. It decides nothing itself, and needs no typeface:
+the book's own marks are the measure.
 
 The offers are kept per book (`stages/speck-marks.json`).
 """
@@ -36,6 +37,9 @@ MARK = 0.35
 # The rows of a word's strip (`rendercheck.place_ink`, the line and 0.3 of its height
 # either side) a comma, semicolon or colon lies in: from under the ascenders down.
 ROWS = (0.28, 0.9)
+# How many of the book's other pictures of a mark may be like an odd one for it still
+# to be offered: specks that happen to look alike.
+ALIKE = 3
 # Marks of a kind a book must show for its usual one to be known.
 FEWEST = 10
 CLOSERS = "'\"’”"
@@ -97,16 +101,34 @@ def unlike(patch: np.ndarray, usual: np.ndarray) -> float:
     return 1 - best
 
 
+def _rows(patches: list[np.ndarray], shift: int = 0) -> np.ndarray:
+    """Pictures as rows to correlate: shifted, their edge rows cut, centred, unit length."""
+    flat = np.stack([np.roll(p, shift, 0)[4:-4].ravel() for p in patches]).astype(np.float32)
+    flat -= flat.mean(1, keepdims=True)
+    return flat / (np.linalg.norm(flat, axis=1, keepdims=True) + 1e-6)
+
+
 def odd_pictures(patches: list[np.ndarray]) -> list[int]:
-    """Which of a book's pictures of one mark are `CUT` unlike its usual one: the median
-    of the four in five most alike, so specks don't draw it. None in a book with fewer
-    than `FEWEST`."""
+    """Which of a book's pictures of one mark are `CUT` unlike its usual one (the median
+    of the four in five most alike, so specks don't draw it) and as unlike all but
+    `ALIKE` of the others: a book's second form of a mark (its italic, one set after a
+    space) has its like, a speck has none. None in a book with fewer than `FEWEST`."""
     if len(patches) < FEWEST:
         return []
     usual = np.median(patches, 0)
     near = sorted(patches, key=lambda p: unlike(p, usual))[: len(patches) * 4 // 5]
     usual = np.median(near, 0)
-    return [i for i, p in enumerate(patches) if unlike(p, usual) >= CUT]
+    apart = [i for i, p in enumerate(patches) if unlike(p, usual) >= CUT]
+    if not apart:
+        return []
+    still = _rows(patches)
+    best = np.full((len(apart), len(patches)), -1.0, np.float32)
+    for shift in range(-4, 5):
+        best = np.maximum(best, _rows([patches[i] for i in apart], shift) @ still.T)
+    best[np.arange(len(apart)), apart] = -1.0
+    # The correlation with the most alike other picture but `ALIKE`.
+    nearest = np.sort(best, axis=1)[:, -1 - ALIKE]
+    return [i for i, c in zip(apart, nearest, strict=True) if 1 - c >= CUT]
 
 
 class Specks:
