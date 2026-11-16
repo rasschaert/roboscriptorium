@@ -308,7 +308,9 @@ then the kinds one at a time below.
       judges (as the accent offers are), short-tested on the pages they touch; the
       readers deleted after their first screen (olmOCR, PaddleOCR-VL, LightOnOCR,
       DeepSeek-OCR, Kraken) listed for the user to pull again, the likeliest first
-- [ ] **The same pair of versions elsewhere in the book, weighed by the arbiter**: a
+- [ ] **Parked by the user (2026-11-16: "perhaps we can revisit this question when
+      better models become available"), to retest when a judge or reader is screened
+      in: the same pair of versions elsewhere in the book, weighed by the arbiter**: a
       pair a book raises three times or more has one answer everywhere in 947 of 955
       cases; where the judges split, the votes pooled over the other places are clear
       at 510 of 749 and right at 504 (`probe_same_pair.py`, 2026-11-16). To build: the

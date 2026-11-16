@@ -15,8 +15,8 @@ confirmations below wait for a later moment, to be brought up again). Since 20:4
   (`probe_extra_offers.py`); only offers both readers agree on look worth a test. The accent run started at 07:25; the queue follows by itself.
 - Pieter Daens' questions read: the same pair of versions is asked many times
   ("Saskaaï" 16). Such a pair has one answer everywhere in 947 of 955 cases; as two
-  more arbiter inputs the short test gives a small gain (decisions.md). To build
-  behind a switch and bench after the accent and nested-quote arbiters.
+  more arbiter inputs the short test gives a small gain (decisions.md). Parked by the
+  user at 2026-11-16: not to be built now, to revisit when better models arrive.
 - A word's picture against the book's other pictures of it: null, three measures
   (`probe_own_pictures.py`). Its rework is on the checklist.
 - The accent on the first vowel of a pair alone ("níet"): on Ex-minnaar the scan's fit
