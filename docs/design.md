@@ -1117,6 +1117,14 @@ the ends, so a half-title in the head's words ("Artemis") stays out, and never a
 the head alone. On the 27 labelled books the ends are unchanged (23 first, 22 last right);
 Nervous System's last end is right.
 
+**From the back, the model is told each page's ink** (`pagekinds.with_ink`). A blank leaf
+showing the other side's print has text in the layer and reads as a page of text: it
+padded the end of three of 27 labelled books. Told the page's contrast as a share of the
+book's text pages ("faint: 2% as dark"), the model calls them blank: last end right 22 →
+24 (`experiments/probe_init_ink.py`, 2026-11-16). Not from the front, where it moved one
+start by two pages and fixed none. As a rule the ink was a null: it can't tell
+show-through from a washed-out page of text; the model, seeing the page too, can.
+
 **Nor does the text proper start before the title page** (`pagekinds.after_title`). Going
 into a Dark House prints its author's blurb before the title page (PDF 3, "about the
 author", which goes into a book), so the text started there and took the also-by list,

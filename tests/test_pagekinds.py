@@ -1,5 +1,7 @@
 from types import SimpleNamespace
 
+import pytest
+
 from roboscriptorium import pagekinds
 from roboscriptorium.pdf import Line, PageText
 
@@ -9,6 +11,12 @@ def _page(number: int, words: int = 150) -> PageText:
     return PageText(
         number, 280, 500, [Line(text, 10, 20 + i * 12, 250, 30 + i * 12) for i in range(25)]
     )
+
+
+@pytest.fixture(autouse=True)
+def _no_scan(monkeypatch):
+    """These books have no scan to measure ink on: the back's pages get no `ink` line."""
+    monkeypatch.setattr(pagekinds, "ink_shares", lambda pdf, pages, numbers: {})
 
 
 class _Client:
@@ -182,3 +190,32 @@ def test_an_unsure_colophon_after_the_dedication_moves_nothing():
     # Page 5 was called a colophon below `SURE_FRONT`: it isn't in `sure`.
     out = pagekinds.after_title(kinds, {2: "title", 3: "colophon"})
     assert pagekinds.ends(out) == (4, 6)
+
+
+def test_from_the_back_the_model_is_told_each_pages_ink_and_from_the_front_it_isnt(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setattr(pagekinds, "render_png", lambda pdf, n: b"png")
+    monkeypatch.setattr(
+        pagekinds,
+        "ink_shares",
+        lambda pdf, pages, numbers: {n: 0.1 if n == 38 else 1.0 for n in numbers},
+    )
+    states = {}
+
+    class Told(_Client):
+        def decide(self, state, questions, image_png=None):
+            states[int(state["page"].split(" ")[0])] = state
+            # A page told its ink is faint is a blank leaf showing the other side.
+            if state.get("ink", "").startswith("faint"):
+                return {"kind": SimpleNamespace(value="blank", confidence=0.9)}
+            return super().decide(state, questions, image_png)
+
+    pages = [_page(n) for n in range(1, 41)]
+    out = pagekinds.kinds(
+        tmp_path / "work" / "book" / "source.pdf", pages, Told(), tmp_path / "a.json"
+    )
+    assert "ink" not in states[3]
+    assert states[38]["ink"].startswith("faint: 10%")
+    assert states[37]["ink"] == "as dark as this book's pages of text"
+    assert pagekinds.ends(out) == (3, 37)

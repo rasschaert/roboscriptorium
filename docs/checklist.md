@@ -537,8 +537,10 @@ Daens' title was mended by hand).
       Ranked above the title: a lost page outweighs a glued word in the metadata.
       Three of the pads are blank leaves showing the other side's print (Het ijzige land,
       Reis, Een Russische roman); ink contrast and a mirror test can't tell them from
-      Afscheid's washed-out text (null, 2026-11-15); queued: the page-kind model told
-      each edge page's ink strength (`probe_init_ink.py`)
+      Afscheid's washed-out text (null, 2026-11-15); told to the page-kind model as each
+      back page's ink strength it fixes those three (last end 22 → 24 of 27, taken
+      2026-11-16, `pagekinds.with_ink`). Left: Thief-Taker's cut pages, Vals alarm and De
+      eerlijke vinder a page over
 - [ ] **The score above is not a first look**: `init`'s page kinds were tuned on these
       same 27 books. Each new book (De kus in de nacht, the next golden pairs) has its
       `init` draft kept before anyone touches it, and those drafts are the honest score

@@ -201,7 +201,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   colophon, foreword, text, afterword, ads … Signals first (a page's words, number-only lines,
   centred lines, the name its first lines carry), a decision model (`role_model`, asked
   `QUESTION` with the page image) for the `EDGE` pages at either edge and on inward until
-  `RUN` pages in a row go into the EPUB (at most `WALK`), cached by page; `after_title` keeps out
+  `RUN` pages in a row go into the EPUB (at most `WALK`), cached by page; walking in from
+  the back it is told how dark each page's ink is beside the book's text (`with_ink`,
+  `ink_shares`: a blank leaf showing the other side's print reads as text to the layer); `after_title` keeps out
   what comes before the front's last title or copyright page the model is sure of; `run_on` carries
   the text past either end over pages that open on one of the book's running heads
   (`running_heads`) and hold more than it. `ends`

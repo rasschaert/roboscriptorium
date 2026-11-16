@@ -23,10 +23,13 @@ from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
+import pymupdf
+
+from roboscriptorium import faint
 from roboscriptorium.clients import decide
 from roboscriptorium.files import write_atomic
 from roboscriptorium.page import folio, page_offset
-from roboscriptorium.pdf import PageText, render_png
+from roboscriptorium.pdf import PDF_LOCK, PageText, render_png
 
 # The pages at each edge of the book the model answers for at least; past them it goes on
 # inward until `RUN` pages in a row go into the EPUB, at most `WALK` pages from the edge
@@ -187,6 +190,51 @@ def state(book: str, n: int, total: int, page) -> dict:
     }
 
 
+# Under this share of the darkness of the book's pages of text, a page's ink is told to
+# the model as faint; and how many pages of text give that darkness.
+FAINT_INK = 0.3
+INK_SAMPLE = 30
+
+
+def ink_shares(pdf: Path, pages: list[PageText], numbers: list[int]) -> dict[int, float]:
+    """How dark the ink of the numbered pages is (`faint.contrast`), as a share of the
+    median over up to `INK_SAMPLE` of the book's fuller pages. A page without lines, or a
+    book without fuller pages, has none."""
+    full = [p for p in pages if len(p.lines) > 20]
+    sample = full[:: max(1, len(full) // INK_SAMPLE)][:INK_SAMPLE]
+    by_number = {p.number: p for p in pages}
+
+    def dark(doc, p: PageText) -> float | None:
+        try:
+            return faint.contrast(doc[p.number - 1], p.lines)
+        except ValueError:
+            return None
+
+    with PDF_LOCK, pymupdf.open(pdf) as doc:
+        body = [d for p in sample if (d := dark(doc, p)) is not None]
+        if not body:
+            return {}
+        usual = statistics.median(body)
+        got = {n: dark(doc, by_number[n]) for n in numbers}
+    return {n: d / usual for n, d in got.items() if d is not None and usual > 0}
+
+
+def with_ink(state: dict, share: float | None) -> dict:
+    """A page's state with how dark its ink is beside the book's text: a blank leaf
+    showing the other side's print looks like a page of text to the layer."""
+    if share is None:
+        return state
+    faintly = (
+        f"faint: {max(0, round(share * 100))}% as dark as this book's pages of text (a blank "
+        "page showing the print of its other side looks like this, and so does a "
+        "washed-out scan)"
+    )
+    return {
+        **state,
+        "ink": faintly if share < FAINT_INK else "as dark as this book's pages of text",
+    }
+
+
 def guess(c: Clues, at: float) -> str:
     """A page's kind from its clues alone; `at` is its place in the book, 0 to 1."""
     if at == 0:
@@ -224,7 +272,8 @@ def edge_pages(total: int) -> set[int]:
 
 def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, str]:
     """Each page's kind: the model's from either edge inward (`edge_pages`, then on until
-    `RUN` pages in a row go into the EPUB), the signals' for the rest, a page they can't
+    `RUN` pages in a row go into the EPUB; from the back told each page's ink, `with_ink`),
+    the signals' for the rest, a page they can't
     tell counting as text; nothing before the front's title page (`after_title`); then the
     text carried on over pages under its running heads (`run_on`). The model's answers are kept in `cache` by page, so a rerun asks only
     what is new."""
@@ -235,24 +284,31 @@ def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, st
     by_number = {p.number: p for p in pages}
     out = {}
 
-    def ask(n: int) -> str:
-        if str(n) not in answers:
-            answer = client.decide(
-                state(pdf.parent.name, n, total, by_number[n]),
-                QUESTION,
-                image_png=render_png(pdf, n),
-            )["kind"]
-            answers[str(n)] = [answer.value, round(answer.confidence, 3)]
+    shares: dict[int, float] | None = None
+
+    def ask(n: int, back: bool) -> str:
+        nonlocal shares
+        # From the back the model is told the page's ink too, kept under its own key.
+        key = f"{n}:ink" if back else str(n)
+        if key not in answers:
+            said = state(pdf.parent.name, n, total, by_number[n])
+            if back:
+                if shares is None:
+                    shares = ink_shares(pdf, pages, numbers[::-1][:WALK])
+                said = with_ink(said, shares.get(n))
+            answer = client.decide(said, QUESTION, image_png=render_png(pdf, n))["kind"]
+            answers[key] = [answer.value, round(answer.confidence, 3)]
             write_atomic(cache, json.dumps({"question": asked_of, "answers": answers}))
-        return answers[str(n)][0]
+        return answers[key][0]
 
     numbers = [p.number for p in pages]
-    for order in (numbers, numbers[::-1]):
+    for back, order in ((False, numbers), (True, numbers[::-1])):
         run = 0
         for k, n in enumerate(order[:WALK]):
             if k >= EDGE and run >= RUN:
                 break
-            out[n] = ask(n)
+            if n not in out:
+                out[n] = ask(n, back)
             run = run + 1 if fate(out[n]) == "in" else 0
     by = {c.page: c for c in clues(pages)}
     for n in numbers:

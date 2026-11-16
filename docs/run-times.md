@@ -1120,3 +1120,10 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-16 | train arbiter after the rebuild | 0 | 177 | 0 |
 | 2026-11-16 | bench tuning after the rebuild | 6208 | 6 | 0 |
 | 2026-11-16 | bench validation, accent doubts and the mark judge | 0 | 2 | 0 |
+| 2026-11-16 | trust data, goede-dochter--ia-scan | 500 | 4 | 0 |
+| 2026-11-16 | trust data, vals-alarm--ia-scan | 292 | 1 | 0 |
+| 2026-11-16 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 1 | 0 |
+| 2026-11-16 | probe: page kinds told the ink, 27 labelled books | 0 | 43 | 0 |
+| 2026-11-16 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 8 | 0 |
+| 2026-11-16 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 1 | 0 |
+| 2026-11-16 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 1 | 0 |
