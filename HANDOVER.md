@@ -7,7 +7,22 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**State at 20:45 on 2026-11-15** (the user at the keyboard through the day).
+**State at 03:00 on 2026-11-16** (the user checked in at 01:00: "keep at it"; the
+confirmations below wait for a later moment, to be brought up again). Since 20:45:
+- The short bench of the extra readers runs slower than said (6 of 16 books after 3.5
+  hours): result about 07:00. The accent run and the queue follow it by themselves.
+- A word's picture against the book's other pictures of it: null, three measures
+  (`probe_own_pictures.py`). Its rework is on the checklist.
+- The accent on the first vowel of a pair alone ("níet"): on Ex-minnaar the scan's fit
+  to the marked drawing less its fit to the plain one finds 38 of 38 with 10 of 7,986
+  plain words offered, but that measure's level moves between books (Goede dochter 88
+  of 1,500 plain words above the same cut). `robo-first-vowel`
+  (`work/runs/first-vowel-plain.sh`, no model) keeps every word's score per drawn form
+  in `work/probes/accent-first-vowel/<book>.jsonl` for Ex-minnaar and the tuning books:
+  next, a cut set against each book's own plain words of the same vowel pair.
+- De kus in de nacht's questions read: 260 of 421 quote questions were ‘m and ‘ns; fixed
+  in `quotes.py` (commit a238ea8). The book wants one more build, when the machine is
+  free, before its sample is read again.
 
 **The focus the user set today:** the errors that reach the book with no question
 ("silent errors", the one name now), above all those every reader makes alike; and

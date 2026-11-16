@@ -223,8 +223,12 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       paragraphs changed. Its poem on p. 50 (title taken for a chapter heading, lines
       joined) waits on verse. The reviewed book now labels the accent measure
       (`probe_accent_reviewed.py`)
-- [ ] De kus in de nacht built (first build started 2026-11-14 23:00, ~9 h cold, then its
-      questions sampled), its questions read before the user's review
+- [ ] De kus in de nacht: built 2026-11-15, its questions read 2026-11-16 (260 of 421
+      quote questions were the layer's ‘ for the apostrophe of ’m and ’ns, now set by
+      definition). Next: built again once the queue leaves the machine (its questions
+      should fall to about 550), the sample read again, then the user's review. Left in
+      the sample, by kind: the layer's “ for an opening ‘, a speck read as ‘ at a line's
+      start, small capitals ("csx-R", "zz-R"), stress accents the judges split on
 - [ ] **A build says how far it is**: the first build of a long book prints nothing
       between its start and its end (De kus in de nacht, 610 pages: 20 hours and more
       with the pauses, its judging watched only by counting cached answers, with no way
