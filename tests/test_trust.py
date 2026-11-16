@@ -271,3 +271,12 @@ def test_the_calibration_is_a_smooth_curve_that_rises_with_sureness():
 def test_a_calibration_of_only_right_picks_is_sure_and_of_only_wrong_ones_is_not():
     assert trust.calibrate([0.6, 0.9], [True, True]).predict([0.7])[0] > 0.99
     assert trust.calibrate([0.6, 0.9], [False, False]).predict([0.7])[0] < 0.01
+
+
+def test_only_a_suspect_with_an_offered_version_takes_the_offer_arbiters_decision():
+    read = _suspect("lemand", "Iemand", "Iemand", 0.95)
+    offered = replace(_suspect("niet", "níet", "níet", 0.95), support={"glm": (False, False)})
+    base = [replace(read, choice="ours"), replace(offered, choice="ours")]
+    other = [replace(read, choice="other"), replace(offered, choice="other")]
+    assert not trust.offered(read) and trust.offered(offered)
+    assert [s.choice for s in trust.merge_offers(base, other)] == ["ours", "other"]

@@ -489,6 +489,17 @@ def unseen(s: Suspect) -> bool:
     return bool(judges) and s.votes.get(judges[0]) == ""
 
 
+def offered(s: Suspect) -> bool:
+    """Whether a suspect holds a version no reading has (an offer from a measure)."""
+    return any(_unread(s, k) for k in range(1, len(s.others) + 1))
+
+
+def merge_offers(base: list[Suspect], offers: list[Suspect]) -> list[Suspect]:
+    """`base`'s decisions, with `offers`' (the same suspects decided by another arbiter)
+    where a suspect holds an offered version."""
+    return [o if offered(b) else b for b, o in zip(base, offers, strict=True)]
+
+
 def decide(
     suspects: list[Suspect], trust: Trust, questions: int, below: float = 1.0
 ) -> list[Suspect]:

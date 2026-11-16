@@ -86,6 +86,9 @@ class Settings:
     # the fixed rule, asking at most this many questions per page.
     ocr_trust: bool = True
     ocr_trust_model: str = "work/models/ocr-trust.pkl"
+    # A second arbiter that decides only the suspects holding a version no reading has (an
+    # offer from a measure on the scan); "" decides them with `ocr_trust_model` like the rest.
+    offer_trust_model: str = ""
     ocr_questions_per_page: float = 1.0
     # Within that budget, a suspect whose likeliest version is right with at least this
     # chance (the trust model's calibrated sureness) is decided, not asked (1.0: every
@@ -193,6 +196,7 @@ class Settings:
             judge_via=os.environ.get("ROBO_JUDGE_VIA", defaults.judge_via),
             ocr_trust=_flag("ROBO_OCR_TRUST", defaults.ocr_trust),
             ocr_trust_model=os.environ.get("ROBO_OCR_TRUST_MODEL", defaults.ocr_trust_model),
+            offer_trust_model=os.environ.get("ROBO_OFFER_TRUST_MODEL", defaults.offer_trust_model),
             ocr_questions_per_page=float(
                 os.environ.get("ROBO_OCR_QUESTIONS", defaults.ocr_questions_per_page)
             ),
