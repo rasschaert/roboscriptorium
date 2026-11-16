@@ -196,6 +196,13 @@ ideas reworked", 2026-11-15):
   for asking worse than the sureness alone (4,522 questions to 2,970 for the same silent
   errors; random signals 3,485).
 
+- **A word's picture against the book's other pictures of the same reading** (2026-11-16;
+  failed on the measure): 0–2 of 43 placed silent errors found at 1% false offers by
+  whole-picture distance, the largest differing patch or the loose marks above the
+  letters. Most reachable errors are accents on an i, no larger than the scan's own
+  variation between two prints of a word. Left untried: the median picture as the
+  accent measure's "without accent" drawing; a learned comparison of sibling pairs.
+
 - **A judge or a learned referee where the two line-role tree sets disagree** (2026-11-15):
   clef on a band of the page is right less often than the grown trees (38 to 50 of 92); a
   referee from the trees' own features too (168 to 174 of 299). Left untried: the whole

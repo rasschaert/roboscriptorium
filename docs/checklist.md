@@ -313,10 +313,13 @@ then the kinds one at a time below.
 - [x] ~~Leftover ink, any kind of error at once~~: null twice (2026-11-15,
       `probe_leftover_ink.py`: AUC 0.53; with the leftover's place and trees 0.51). The
       typeface's own mismatch leaves as much ink as an accent. Reworked as the next step
-- [ ] **The book's own pictures of a word**: a word's picture against the book's other
-      pictures of the same reading ("een" thousands of times, "één" differing above the
-      letters); no typeface, no model. Consistency on the text was null (2026-10-23),
-      on the pictures untried
+- [x] ~~The book's own pictures of a word~~: null with three measures (2026-11-16,
+      `probe_own_pictures.py`: 0–2 of 43 placed errors found at 1% false offers). It
+      could reach about 80 silent errors, 46 of them stress accents; most sit on an i,
+      where the scan's own variation is as large as the accent
+- [ ] **The book's median picture in the accent measure**: the word's usual picture as
+      the "without accent" drawing in `accentmarks.py`, in place of the typeface's, at
+      the one letter in doubt (the rework of the null above; no models)
 
 - [ ] **Quote marks measured on the scan.** A quarter of the tuning bench's error rows
       are quote marks (370 of 1,602: 309 asked, 61 silent), and the worst of them have
