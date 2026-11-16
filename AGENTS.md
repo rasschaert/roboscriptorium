@@ -239,6 +239,8 @@ mistake it prevents; check a change against them before committing.
   real. Choose on `bench tuning`; `bench validation` only vetoes (the user, 2026-10-17):
   a change no better on tuning isn't taken for a gain on validation, and a choice made
   on validation scores makes them tuning.
+- **A bench of a new reader, judge, prompt, crop or offer is read by its rescues first**
+  (AI usage, "Judged by its rescues"), then by cause, then its net.
 - **Sort a probe's catches by where they sit before building on its total.** Two page
   readers "caught 60 errors"; split into lines, as the design chosen on that count
   feeds them, about a quarter were reachable: the rest sat at line joins (end hyphens,
@@ -437,41 +439,37 @@ reader or judge reaches the arbiter only after the trust data is rebuilt and the
 retrained. Record the verdict in [docs/models.md](docs/models.md): the model for each
 role is chosen by its score on golden pages, then pinned (never `latest`).
 
-**Never dismiss a model on its own score** (the user, 2026-11-08: "it doesn't matter how
-poorly they score individually. there is strength in numbers"; a mistake made too often).
-A model wrong far more often than the incumbent can still be worth a seat, if its
-mistakes fall elsewhere. The second question is answered by what the model adds to the
-panel, not by its accuracy: on the judge set, which of the panel's shared misses it gets
-right, and how much it lifts telling the incumbent's wrong picks apart, alone and together
-with the other weak candidates, with an interval from resampling books
-(`experiments/judge_overlap.py`, `judge_sheet.py`, `judge_panel_bootstrap.py`).
-autotrust-jev 9B, level with Winnow alone and set aside on that, was the one candidate to
-lift the judge panel (+0.011, interval clear of zero); d1 3B and d1-omni 2B, tested the
-same way, added nothing. A model is dropped only when it adds nothing to any combination,
-and the verdict in models.md says which test it failed.
+### Judged by its rescues
 
-**A reader, a prompt or a crop is judged the same way, by what it sees that the others
-miss** (the user, 2026-11-15: "'worse' individually doesn't make them worse for the
-whole. do they bring a fresh perspective?"). The rule above was kept for judges and not
-for readers: every rejected reader and prompt was dropped on its own error rate or its
-vote, none was shown the silent errors. The short test is
-`experiments/silent_screen.py` (minutes a model: lines holding the latest bench's silent
-errors and clean lines of the same pages): how many silent errors a reading has as the
-print does, and how many clean lines it reads otherwise. A reading that rescues what no
-reader in use does is a candidate however poor alone: it goes to the judges as one more
-version where it differs, and the arbiter learns its worth. Run it on every new model,
-prompt and crop before anything longer, and rebuild its set (`build`) when the bench's
-baseline moves.
+A **rescue** is a silent error that a source of versions brings to a fix or a question
+where nothing in use does. Every source is judged by its rescues, whatever its own error
+rate: a model, a reader, a prompt, a crop, a judge, an offer measured on the scan (the
+user, 2026-11-08: "it doesn't matter how poorly they score individually. there is
+strength in numbers"; 2026-11-15: "'worse' individually doesn't make them worse for the
+whole. do they bring a fresh perspective?"). The judges and the arbiter turn a weak
+source's disagreements into right answers; a source that only repeats the others adds
+nothing however accurate.
 
-**An offer, a judge or any new source of versions is judged the same way, and a bench of
-it is read in that order** (the user, 2026-11-16: the speck and accent verdicts were
-given on net words). Before the verdict line or the net fixed and made: which silent
-errors the source brings to a question or a fix that no reader or judge in use does
-(`silent_screen.py` or the panel-lift test), and by cause what it fixed and made. A
-cost that shows in a cause the source doesn't touch (the retrained arbiter's
-punctuation swaps beside accent offers) is the arbiter's, not the source's: say which
-component failed, and keep the source until a run that leaves the rest as it was
-(a second arbiter for the offered places only) says otherwise.
+A verdict on a source, in a report, decisions.md or models.md, gives in this order:
+
+1. **Its rescues**, counted and with examples: for a reader, prompt, crop or offer,
+   `experiments/silent_screen.py` (minutes: the silent errors it reads as the print
+   does, the clean lines it reads otherwise; rebuild its set with `build` when the
+   bench's baseline moves); for a judge, the panel's shared misses it gets right and the
+   lift it gives beside the other weak candidates, with an interval from resampling
+   books (`experiments/judge_overlap.py`, `judge_sheet.py`, `judge_panel_bootstrap.py`).
+2. **A bench of it by cause**, fixed and made (`bench-diff`), before its net and its
+   verdict line. A cost in a cause the source doesn't touch belongs to another component
+   (the retrained arbiter's punctuation swaps beside accent offers, 2026-11-16): name
+   that component as what failed.
+3. **What is settled and what is open.** "Not taken" names the configuration that was
+   benched (this arbiter, these offers together). The source is dropped only when it
+   has no rescues in any combination; until then the entry says which run would settle
+   it, and that run is queued.
+
+A verdict is done when all three are in it. autotrust-jev 9B, level with Winnow alone,
+was the one candidate to lift the judge panel (+0.011, interval clear of zero); d1 3B
+and d1-omni 2B, tested the same way, added nothing.
 
 Two kinds of model, used for different jobs:
 
