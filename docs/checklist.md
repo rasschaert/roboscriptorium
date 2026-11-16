@@ -321,6 +321,10 @@ then the kinds one at a time below.
       `probe_own_pictures.py`: 0–2 of 43 placed errors found at 1% false offers). It
       could reach about 80 silent errors, 46 of them stress accents; most sit on an i,
       where the scan's own variation is as large as the accent
+- [ ] **The accent on the first vowel of a pair** ("níet"): as a second form of the accent
+      offers, scored by the difference of fits with the cut set per book and vowel pair
+      (35 of 36 found at 0.34% false offers, 2026-11-16, `probe_accent_first_vowel.py`);
+      built once the accent offers' own bench says such offers pay
 - [ ] **The book's median picture in the accent measure**: the word's usual picture as
       the "without accent" drawing in `accentmarks.py`, in place of the typeface's, at
       the one letter in doubt (the rework of the null above; no models)

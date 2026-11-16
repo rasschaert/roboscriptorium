@@ -107,8 +107,9 @@ def main():
                 elif ours in first_only(w[4]):
                     marked.append((w, ours))
     random.seed(0)
+    print(f"{len(plain)} plain words with a vowel pair in the book")
     plain = random.sample(plain, min(size, len(plain)))
-    rows = []
+    rows, kept = [], []
     with pymupdf.open(book.source) as doc:
         cache = {}
 
@@ -123,21 +124,36 @@ def main():
             got = [f for form in forms if (f := judge.mark(pdf_page, page, box, form, word)) is not None]
             ink = rendercheck.place_ink(pdf_page, box, pages[page])
             two = [] if ink is None else [f for form in forms if (f := differ_fit(judge._face, judge._match, ink, form, word)) is not None]
+            if ink is not None and forms and forms[0] in first_only(word):
+                for form in forms:
+                    if (f := differ_fit(judge._face, judge._match, ink, form, word)) is not None:
+                        kept.append({"book": name, "page": page, "word": word, "form": form, "differ": f})
             return (max(got) if got else None, max(two) if two else None)
 
         for w, ours in sorted(marked):
+            before = len(kept)
             rows.append((True, *fit(w, [ours]), *fit(w, accentmarks.stressed(w[4]))))
+            for k in kept[before:]:
+                k["printed"] = True
         for w in sorted(plain):
-            rows.append((False, *fit(w, first_only(w[4])), *fit(w, accentmarks.stressed(w[4]))))
+            rows.append((False, *fit(w, first_only(w[4])), *fit(w, accentmarks.stressed(w[4])), w[4]))
+    Path("work/probes/accent-first-vowel").mkdir(parents=True, exist_ok=True)
+    Path(f"work/probes/accent-first-vowel/{name}.jsonl").write_text("".join(json.dumps(k, ensure_ascii=False) + "\n" for k in kept))
     labels = ("first vowel only, the mark's fit", "first vowel only, marked less plain", "both vowels, the mark's fit", "both vowels, marked less plain")
     for col, label in enumerate(labels, 1):
         pos = np.array([r[col] for r in rows if r[0] and r[col] is not None])
         neg = np.array([r[col] for r in rows if not r[0] and r[col] is not None])
         print(f"{label}: {len(pos)} printed 'íe'-like marks, {len(neg)} plain words with a vowel pair")
-        print("   marks' quantiles 10/25/50/75/90:", np.round(np.quantile(pos, [0.1, 0.25, 0.5, 0.75, 0.9]), 2).tolist())
-        for share in (0.99, 0.9975, 1.0):
-            cut = float(np.quantile(neg, share))
-            print(f"   cut at {share:.2%} of plain ({cut:.2f}): finds {int((pos > cut).sum())} of {len(pos)}")
+        print("   plain words' quantiles 50/99/99.75:", np.round(np.quantile(neg, [0.5, 0.99, 0.9975]), 2).tolist(), f"; {int((neg >= 0.183).sum())} at 0.183 or more")
+        if len(pos):
+            print("   marks' quantiles 10/25/50/75/90:", np.round(np.quantile(pos, [0.1, 0.25, 0.5, 0.75, 0.9]), 2).tolist())
+            for share in (0.99, 0.9975, 1.0):
+                cut = float(np.quantile(neg, share))
+                print(f"   cut at {share:.2%} of plain ({cut:.2f}): finds {int((pos > cut).sum())} of {len(pos)}")
+            for cut in np.sort(pos)[[0, len(pos) // 10, len(pos) // 4]]:
+                print(f"   cut {cut:.3f}: finds {int((pos >= cut).sum())} of {len(pos)}, offers {int((neg >= cut).sum())} of {len(neg)} plain")
+        top = sorted((r for r in rows if not r[0] and r[col] is not None), key=lambda r: -r[col])[:15]
+        print("   plain words scoring highest:", [(r[-1], round(r[col], 2)) for r in top])
 
 
 if __name__ == "__main__":
