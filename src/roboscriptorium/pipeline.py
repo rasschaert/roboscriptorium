@@ -204,7 +204,16 @@ def run(
                     book.source, body, settings.read_model, settings.ollama_url,
                     book.stages / "page-roles.json", regions,
                 )  # fmt: skip
-            model_roles = sorter.apply(trees, body, model_roles, styles, regions, said)
+            second = referee = None
+            if settings.sorter_second:
+                second = sorter.load(Path(settings.sorter_second), settings.page_roles)
+                judge = decide.for_model(
+                    settings.judge_model, settings.ollama_url, settings.judge_via
+                )
+                referee = sorter.Referee(book.source, body, judge, settings.judge_model, cache)
+            model_roles = sorter.apply(
+                trees, body, model_roles, styles, regions, said, second, referee
+            )
         model_roles = chapters.openings(body, model_roles)
         model_roles = chapters.title_lines(body, model_roles, styles)
         model_roles = chapters.running_text(body, model_roles)

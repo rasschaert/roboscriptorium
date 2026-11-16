@@ -21,12 +21,14 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
+import pymupdf
 
 from roboscriptorium import page as P
+from roboscriptorium.clients.decide import choice
 from roboscriptorium.files import write_atomic
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.layout import Region
-from roboscriptorium.pdf import Line, PageText
+from roboscriptorium.pdf import PDF_LOCK, Line, PageText
 from roboscriptorium.roles import HEADING_MAX_REPEATS, KEEP_BODY_AT, LineRole
 from roboscriptorium.typestyle import Style
 
@@ -245,6 +247,63 @@ def _inner_repeats(found: dict[SourceRef, dict[str, float]]) -> set[SourceRef]:
     return inner
 
 
+# The referee's question about a line the two sets of trees call differently, shown its
+# whole page with the line framed: on a band of the page it took headings and page
+# numbers for running text (38 of 92 right, on the page 54 of 70 readable ones).
+REFEREE_QUESTION = (
+    "The image is a scanned printed book's page. What is the line framed in red: part of "
+    "the book's running text, a heading (a chapter or part title, a chapter number), or "
+    "not part of the text (a page number, a running head repeated atop pages, a speck, a "
+    "caption)?"
+)
+REFEREE_OPTIONS = {
+    "body": "running text",
+    "heading": "a heading",
+    "other": "not part of the text: a page number, running head, speck or caption",
+}
+# The page's longer side in the referee's image, in pixels.
+REFEREE_PX = 1400
+
+
+class Referee:
+    """A vision judge between two sets of trees: asked what a line is, shown its page
+    with the line framed; its answers kept in `cache` (a `roles.DecisionCache`)."""
+
+    def __init__(self, pdf: Path, pages: list[PageText], client, model: str, cache):
+        self._pdf, self._client, self._model, self._cache = pdf, client, model, cache
+        self._pages = {p.number: p for p in pages}
+
+    def __call__(self, ref: SourceRef) -> str:
+        """ "body", "heading" or "other" for the line at `ref`."""
+        line = self._pages[ref.page].lines[ref.line]
+        state = {"page": ref.page, "line": ref.line, "text": line.text, "view": "page"}
+        question = {"role": choice(REFEREE_QUESTION, REFEREE_OPTIONS)}
+        key = self._cache.key(self._model, question, state)
+        answer = self._cache.get(key)
+        if answer is None:
+            with PDF_LOCK, pymupdf.open(self._pdf) as doc:
+                page = doc[ref.page - 1]
+                frame = pymupdf.Rect(line.x0 - 2, line.y0 - 1, line.x1 + 2, line.y1 + 1)
+                page.draw_rect(frame, color=(1, 0, 0), width=1)
+                zoom = REFEREE_PX / max(page.rect.width, page.rect.height)
+                png = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom)).tobytes("png")
+            got = self._client.decide(state, question, image_png=png)["role"]
+            answer = {"value": got.value, "confidence": got.confidence}
+            self._cache.put(key, answer)
+        return answer["value"]
+
+
+def _calls(probs: np.ndarray, classes: list[str]) -> list[str]:
+    """What each row of probabilities makes of its line as `apply` keeps lines: its
+    likeliest class, a line called other kept as body from `KEEP_BODY`."""
+    body = classes.index("body")
+    out = []
+    for p in probs:
+        best = classes[int(p.argmax())]
+        out.append("body" if best == "other" and p[body] >= KEEP_BODY else best)
+    return out
+
+
 def apply(
     sorter: Sorter,
     pages: list[PageText],
@@ -252,10 +311,14 @@ def apply(
     styles: dict[SourceRef, Style],
     regions: dict[int, list[Region]] | None = None,
     page_roles: dict[int, dict[int, str]] | None = None,
+    second: Sorter | None = None,
+    referee=None,
 ) -> dict[SourceRef, LineRole]:
     """The trees' roles: every line they don't call body, and every line the role model
     answered for, with P(body) from the trees. A line called other keeps the role
-    model's name for it where it had a non-body one ("page_number"), else "artifact"."""
+    model's name for it where it had a non-body one ("page_number"), else "artifact".
+    With a `second` set of trees and a `referee` (`Referee`), a line the two sets call
+    differently goes by the second set where the referee says what that set does."""
     said = (page_roles or {}) if sorter.page_roles else None
     found = features(pages, model_roles, styles, regions, said)
     refs = list(found)
@@ -263,6 +326,15 @@ def apply(
         return {}
     probs = sorter.model.predict_proba(_matrix([found[r] for r in refs], sorter.features))
     classes = list(sorter.model.classes_)
+    if second is not None and referee is not None:
+        others = second.model.predict_proba(_matrix([found[r] for r in refs], second.features))
+        # In the first set's order of classes.
+        order = [list(second.model.classes_).index(c) for c in classes]
+        others = others[:, order]
+        ours, theirs = _calls(probs, classes), _calls(others, classes)
+        for i, (a, b) in enumerate(zip(ours, theirs, strict=True)):
+            if a != b and referee(refs[i]) == b:
+                probs[i] = others[i]
     # A page's first line set well below where running heads stand is none.
     sunk_first = P.sunk_first_lines(pages)
     inner = _inner_repeats(found)

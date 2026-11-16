@@ -968,6 +968,16 @@ On 2026-10-24 they cut role errors by a fifth left one book out, yet `bench tuni
 wrong words for 30 fixed, most on Dolittle's picture pages, where Qwen calls text beside a
 drawing furniture (docs/decisions.md).
 
+**A referee between two sets of trees (off).** Trees trained on other slices call some
+lines differently (299 of 198,758 tuning lines for the sets of 2026-11-14; settled right,
+line-role errors would go 369 → 195). Shown the whole page with the line framed, the
+judge is right on 54 of 70 such places on readable pages, the trees in use on 39, the
+second set on 29 (`experiments/sorter_judge_probe.py --page --without=afscheid`). Why
+the page: on a band it took headings and page numbers for running text (38 of 92). Why
+one judge: d3 and autotrust-jev with it came to 50. Its failure: a washed-out page,
+where it calls unreadable lines text; those pages are read apart (`faint.py`). Off
+(`ROBO_SORTER_SECOND`) until benched.
+
 ## Reflow: where paragraphs start
 
 **The margin was the indent in a run of dialogue.** A line starts a paragraph when it

@@ -96,6 +96,10 @@ class Settings:
     # on top of the rules in `roles.py` (docs/design.md, "Line roles").
     sorter: bool = True
     sorter_model: str = "work/models/line-roles.pkl"
+    # A second set of line-role trees; the judge, shown the page, settles the lines the
+    # two sets call differently (`sorter.Referee`). Empty until its bench
+    # (docs/decisions.md, 2026-11-16).
+    sorter_second: str = ""
     # Italic words decided by trees over each word's slant and its neighbours'
     # (`italics.Trees`, trained on the golden pairs' words) instead of the cuts in
     # `italics._italic` (`ROBO_ITALIC_TREES=0`).
@@ -195,6 +199,7 @@ class Settings:
             ocr_ask_below=float(os.environ.get("ROBO_OCR_ASK_BELOW", defaults.ocr_ask_below)),
             sorter=_flag("ROBO_SORTER", defaults.sorter),
             sorter_model=os.environ.get("ROBO_SORTER_MODEL", defaults.sorter_model),
+            sorter_second=os.environ.get("ROBO_SORTER_SECOND", defaults.sorter_second),
             italic_trees=_flag("ROBO_ITALIC_TREES", defaults.italic_trees),
             italic_model=os.environ.get("ROBO_ITALIC_MODEL", defaults.italic_model),
             italic_second=os.environ.get("ROBO_ITALIC_SECOND", defaults.italic_second),

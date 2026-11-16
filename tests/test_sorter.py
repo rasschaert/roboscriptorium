@@ -193,3 +193,57 @@ def test_text_recurring_under_a_pages_running_head_is_no_second_running_head():
     roles = sorter.apply(sorter.Sorter(Body()), pages, {}, {})
     assert {roles[SourceRef(n, 0)].role for n in range(5, 25)} == {"running_head"}
     assert all(SourceRef(n, 1) not in roles for n in (6, 10, 14, 18))
+
+
+def test_where_two_sets_of_trees_disagree_the_referee_picks_and_is_asked_nowhere_else():
+    page = _page()
+
+    class Second(_Trees):
+        """Calls the third line body where the first set says heading, the fifth other."""
+
+        def predict_proba(self, X):
+            out = super().predict_proba(X)
+            out[2] = [0.9, 0.05, 0.05]
+            out[4] = [0.1, 0.1, 0.8]
+            return out
+
+    asked = []
+
+    def referee(ref):
+        asked.append(ref)
+        # With the second set on the third line, with neither on the fifth.
+        return "body" if ref.line == 2 else "heading"
+
+    first, second = sorter.Sorter(_Trees()), sorter.Sorter(Second())
+    roles = sorter.apply(first, [page], {}, {}, second=second, referee=referee)
+    assert asked == [SourceRef(5, 2), SourceRef(5, 4)]
+    assert SourceRef(5, 2) not in roles  # body now, as the second set and the referee say
+    assert SourceRef(5, 4) not in roles  # the first set's body stands
+    alone = sorter.apply(first, [page], {}, {})
+    assert alone[SourceRef(5, 2)].role == "chapter_heading"
+    assert roles[SourceRef(5, 0)] == alone[SourceRef(5, 0)]
+
+
+def test_the_referee_is_shown_the_page_and_keeps_its_answers(tmp_path):
+    import pymupdf
+
+    from roboscriptorium.roles import DecisionCache
+
+    path = tmp_path / "book.pdf"
+    doc = pymupdf.open()
+    for _ in range(5):
+        doc.new_page(width=300, height=500)
+    doc.save(path)
+    calls = []
+
+    class Judge:
+        def decide(self, state, questions, image_png=None):
+            calls.append((state, image_png[:4]))
+            return {"role": type("A", (), {"value": "heading", "confidence": 0.8})()}
+
+    cache = DecisionCache(tmp_path / "d.jsonl")
+    referee = sorter.Referee(path, [_page()], Judge(), "clef", cache)
+    assert referee(SourceRef(5, 2)) == "heading"
+    assert referee(SourceRef(5, 2)) == "heading"
+    assert len(calls) == 1 and calls[0][1] == b"\x89PNG"
+    assert calls[0][0]["text"] == "Gewone tekst van de bladzijde 1"

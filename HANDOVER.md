@@ -32,6 +32,8 @@ confirmations below wait for a later moment, to be brought up again). Since 20:4
 - Hyphen judges together (`ROBO_HYPHEN_JUDGES`, off): built after the probe; queued
   `robo-hyphen-panel` (`work/runs/hyphen-panel.sh`), both benches against the speck run's
   baseline, behind `robo-speck-chain`.
+- Line roles: a referee between two sets of trees built, off (`ROBO_SORTER_SECOND`,
+  `sorter.Referee`); queued `robo-sorter-referee` (`work/runs/sorter-referee.sh`), last.
 - The page-kind model is told each back page's ink (last end right 22 → 24 of 27).
 - The user started the short reviews at about 17:00 on 2026-11-16 (Au pair's 16
   small-capital places, 9 accent additions in Goede dochter and De vergelding).

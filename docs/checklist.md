@@ -38,8 +38,9 @@ last on 2026-11-14, so next by 2026-11-21).
          2026-11-15). The whole page shown: clef 54 of 92, the grown trees 50; but 22
          of the 92 are a washed-out book's lines the labels call no text: without them
          clef 54 of 70, the trees in use 39, the grown 29; d3 and autotrust-jev add
-         nothing to clef (2026-11-16). Next: clef on the whole page as the referee where
-         the two sets disagree (as `italics.settle` does), built and benched.
+         nothing to clef (2026-11-16). Built, off: clef on the whole page as the referee
+         where the two sets disagree (`sorter.Referee`, `ROBO_SORTER_SECOND`); its benches
+         queued (`work/runs/sorter-referee.sh`).
       2. The proofreader (null 2026-10-08/11: as many false questions as catches) as one
          more reader on the OCR check's path, its catches judged and weighed like any
          reading, never a question of its own.
