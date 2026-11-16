@@ -390,6 +390,14 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   judge `render`'s typeface); at `CUT` or more the marked word is one more version for
   the OCR check (`Marks.doubts`, beside `ocrcheck.capitals_doubts`). Fits kept in
   `stages/accent-marks.json` by typeface.
+- `speckmarks.py`: a speck read as punctuation (`ROBO_SPECK_DOUBTS`, off). `picture`
+  cuts the mark a token ends on out of its strip (the last run of inked columns within
+  the word's own rows; a mark touching its letter gives none); `Specks.survey` measures
+  every comma, semicolon and colon of the body against the book's usual picture of that
+  mark (`unlike`, `odd_pictures`) and keeps, for each `CUT` or more apart, the token
+  without the speck's part (`lesser`: the comma lost, ";" a comma, ":" a stop);
+  `Specks.doubts` offers it on an undisputed token, beside `accentmarks.Marks.doubts`.
+  Offers kept in `stages/speck-marks.json`.
 - `quotemarks.py`: the outer mark of a nested quotation every reader drops
   (`ROBO_NESTED_QUOTES`, off). `span` measures the raised ink at a word's edge on the
   scan against the line's height; `Nested.survey` takes the book's double-mark width from

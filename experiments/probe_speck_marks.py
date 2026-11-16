@@ -6,7 +6,8 @@ drawing judge tell, were the lesser mark offered? For every body token of a book
 speck could have made (ending ";" or ":", an apostrophe between two words, ending ","
 sampled), the fit of the token as the layer has it and of the lesser version
 (`rendercheck.fits`) and of the mark alone (`mark_fit`, `mark_differ`), and how unlike the
-mark's picture is to the book's usual picture of that mark ("own picture"), labelled by a bench run's error rows.
+mark's picture is to the book's usual picture of that mark ("own picture",
+`speckmarks.picture`), labelled by a bench run's error rows.
 `--top` lists the marks counted as printed that look least like one. No models.
 
     uv run python experiments/probe_speck_marks.py <run's .errors.jsonl> <book dir name> [commas sampled] [--top]
@@ -21,9 +22,8 @@ from pathlib import Path
 
 import numpy as np
 import pymupdf
-from PIL import Image
 
-from roboscriptorium import pipeline, rendercheck
+from roboscriptorium import pipeline, rendercheck, speckmarks
 from roboscriptorium.book import Book
 from roboscriptorium.config import Settings
 from roboscriptorium.pdf import cached_text_layer, line_words, page_words
@@ -45,29 +45,6 @@ def lesser(token: str) -> tuple[str, str] | None:
     if core.endswith(",") and len(core) > 1 and core[-2].isalpha():
         return ", for nothing", core[:-1] + tail
     return None
-
-
-def tail(ink: np.ndarray) -> np.ndarray | None:
-    """The end of a word's strip, as wide as 0.45 of its height, up to its last ink: the
-    mark a token ends on, at one size for a book."""
-    cols = np.where((ink > 0.5).any(0))[0]
-    wide = round(ink.shape[0] * 0.45)
-    if len(cols) == 0 or cols[-1] + 1 < wide:
-        return None
-    patch = ink[:, cols[-1] + 1 - wide : cols[-1] + 1].astype(np.float32)
-    return np.asarray(Image.fromarray(patch).resize((18, 40), Image.BILINEAR))
-
-
-def unlike(patch: np.ndarray, usual: np.ndarray) -> float:
-    """1 less the best correlation of a mark's picture with the book's usual one, over
-    small shifts up and down (the layer's boxes sit a little differently)."""
-    best = -1.0
-    for dy in range(-4, 5):
-        a = np.roll(patch, dy, 0)[4:-4].ravel()
-        b = usual[4:-4].ravel()
-        a, b = a - a.mean(), b - b.mean()
-        best = max(best, float((a * b).sum() / (np.sqrt((a * a).sum() * (b * b).sum()) + 1e-6)))
-    return 1 - best
 
 
 def is_speck(token: str, other: str, got: str, want: str) -> bool:
@@ -118,7 +95,7 @@ def main():
             ink = rendercheck.place_ink(doc[number - 1], box, judge._texts.get(number))
             if ink is None:
                 continue
-            if kind != "' for a space" and token[-1] in ";:," and (patch := tail(ink)) is not None:
+            if kind != "' for a space" and token[-1] in ";:," and (patch := speckmarks.picture(ink)) is not None:
                 patches[kind].append((patch, label, number, token, other))
             a, b = rendercheck.fits(judge._face, judge._match.spread, judge._match.size, ink, [token, other])
             scored[kind, "whole word"].append((b - a, label, number, token, other))
@@ -131,9 +108,9 @@ def main():
     # all, then of the four in five most like it, so the specks don't draw it.
     for kind, rows in patches.items():
         usual = np.median([r[0] for r in rows], 0)
-        near = sorted(rows, key=lambda r: unlike(r[0], usual))[: max(3, len(rows) * 4 // 5)]
+        near = sorted(rows, key=lambda r: speckmarks.unlike(r[0], usual))[: max(3, len(rows) * 4 // 5)]
         usual = np.median([r[0] for r in near], 0)
-        scored[kind, "own picture"] = [(unlike(r[0], usual), *r[1:]) for r in rows]
+        scored[kind, "own picture"] = [(speckmarks.unlike(r[0], usual), *r[1:]) for r in rows]
     for (kind, measure), rows in sorted(scored.items()):
         kind = f"{kind}, {measure}"
         specks = sorted(r for r in rows if r[1] == "speck")

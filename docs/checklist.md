@@ -359,10 +359,12 @@ then the kinds one at a time below.
       apostrophe): offer the lesser mark where the mark ranks among the book's least like
       its own, by the drawn mark's fit (best on semicolons and colons) and by the mark's
       picture against the book's usual one (best on commas; `probe_speck_marks.py`,
-      decisions.md 2026-11-16). Agent: the offers as a third kind beside accents and
-      nested quotes (`ocrcheck`'s doubts), a short test on Doodskleed and The
-      Thief-Taker's Apprentice (judges on the offers only), then trust data and a bench
-      once the accent offers' benches say offers pay with the apart count.
+      decisions.md 2026-11-16). Built, off (`speckmarks.py`, `ROBO_SPECK_DOUBTS`): the
+      mark's own ink against the book's usual picture, for all three marks. Next, agent:
+      a short test on Doodskleed and The Thief-Taker's Apprentice (judges on the offers
+      only), then trust data and a bench once the accent offers' benches say offers pay
+      with the apart count; an apostrophe between two words ("je'vader") as a fourth
+      offer.
 - [ ] **The accent on the first vowel of a pair** ("níet"): as a second form of the accent
       offers, scored by the difference of fits with the cut set per book and vowel pair
       (35 of 36 found at 0.34% false offers, 2026-11-16, `probe_accent_first_vowel.py`);
@@ -519,10 +521,12 @@ Daens' title was mended by hand).
       (`probe_init_ends.py`, 27 labelled books: first end 26, last 22). Title, author,
       translator and language were scored once (2026-10-22, `probe_title_author.py`: title
       26, author 25 of 27), against `book.toml` values partly typed by hand, and never
-      since; the dash, ellipsis and typeface never. Next: one probe for every field,
-      against the publisher's e-book of each golden pair (its title, author, translator)
-      and the labels, run again after each change to `init`. Agent; a reading-model call a
-      book, queued behind the runs in flight
+      since; the dash, ellipsis and typeface never. Scored 2026-11-16 against each
+      publisher's e-book (`score_init.py`, 32 books: title 23, author 24, translator 19,
+      language 32; last end 16 of 20), where the e-book's metadata is the weaker side at
+      most misses (decisions.md). Next: the colophon's words on the scan as the label
+      where the e-book lacks a field; then the draft's own misses (a title in capitals
+      or split, a series title, misread names). Agent
 - [ ] **The ends of the text proper, a cut page first.** `init` misses an end in 6 of the
       27 labelled books; five pad by a page or two (mild), Thief-Taker's cuts its last
       three (text lost, the worst a setup can do). Asking the page-kind model again with

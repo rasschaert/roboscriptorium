@@ -533,6 +533,24 @@ word's ink: a word without ascenders made every mark look wide (Artemis 63 false
 then 2). Off (`ROBO_NESTED_QUOTES`) until the judges are measured on its offers and an
 arbiter trained with them is benched.
 
+## A speck read as punctuation (off)
+
+Dirt on the paper beside a word reads as a comma, a dot over a comma as ";", over a
+stop as ":", and the layer and every reader read it alike, so no difference raises it:
+most of the tuning bench's 52 silent punctuation swaps, in two speckled scans
+(decisions.md, 2026-11-16). `speckmarks.py` measures each comma, semicolon and colon a
+token ends on against the book's own usual picture of that mark and, where they are
+apart, offers the token without the speck's part as one more version for the judges and
+the arbiter. Why the book's own marks and not the typeface: the drawn mark's fit
+(`rendercheck.mark_fit`) has no level that holds between books (under 0.5 at 153 of
+Dolittle's 192 printed semicolons, none of Glazuur's 23), and the whole word's fit
+barely moves for a dot. Why the mark's own ink only: with the letter before it in the
+picture every "f," and "r," looked odd, and with the strip's full height the line
+above's descenders did (Glazuur 340 offers, then 38). Its failure: a speck touching the
+word, or one that makes a well-formed mark, is passed over; an apostrophe between two
+words ("je'vader") is not offered yet. Off (`ROBO_SPECK_DOUBTS`) until the judges are
+measured on its offers and an arbiter trained with them is benched.
+
 ## A judge of marks alone (off)
 
 Where a suspect's versions are the same letters and differ only by a mark ("zijn" against

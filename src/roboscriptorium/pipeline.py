@@ -39,6 +39,7 @@ from roboscriptorium import (
     scanpages,
     scanstyle,
     sorter,
+    speckmarks,
     structure,
     trust,
     typestyle,
@@ -364,6 +365,10 @@ def run(
                 nested = quotemarks.Nested(book.stages / "quote-marks.json")
                 nested.survey(book.source, body, readings)
                 marks.append(nested)
+            if settings.speck_doubts:
+                specks = speckmarks.Specks(book.stages / "speck-marks.json")
+                specks.survey(book.source, body)
+                marks.append(specks)
             suspects = ocrcheck.check(
                 book.source, body, readings, lang, judge, reader, cache, lexicon,
                 book_style(book, whole, style, dots), alarms, settings.alarm_below,
