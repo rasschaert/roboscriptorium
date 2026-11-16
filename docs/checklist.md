@@ -325,6 +325,14 @@ then the kinds one at a time below.
       pair: withdrawn (the user: "a poor bargain"). Pooling only the judges that look
       at the scan settles 28 of 52 and 26 of 74, golden silent errors unchanged: the
       version to build
+- [ ] **A stop followed by an ellipsis** (14 of the tuning bench's silent errors:
+      Dolittle 6, Metro 2033 4, Artemis 4): the print sets four evenly spaced dots
+      ("sleeve. . . ."), the layer reads "sleeve. ...", the ellipsis rule leaves dots
+      after a stop as the layer has them (`typography._RUN`), and the references glue
+      them ("sleeve...."; Metro's e-book has all three forms). To do once the queued
+      benches are in (it moves their baselines): style the dots after a stop like the
+      book's other ellipses, and have the scorer fold the space between a stop and an
+      ellipsis as it folds the ellipsis glyph, counted per side
 - [ ] **Extra readers as offers in the build** (`ROBO_EXTRA_READERS`, off; design.md):
       first scores of the short test 2026-11-15: qwen3.8 reads 10 of 97 silent errors,
       olmOCR-2 seven more, PaddleOCR-VL 1.6 ten more. Its short test in the build is
