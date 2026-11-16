@@ -1149,3 +1149,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-16 | probe: line-role judge, whole page, autotrust-jev:35b-nvfp4 | 92 | 4 | 0 |
 | 2026-11-16 | tryout: judge set v2, autotrust-jev:35b-nvfp4, prompt kinds | 0 | 5 | 0 |
 | 2026-11-16 | tryout: judge set v2, autotrust-jev:35b-nvfp4, prompt targeted | 0 | 4 | 0 |
+| 2026-11-16 | tryout: judge set v2, d3:9b, prompt kinds | 0 | 10 | 0 |
+| 2026-11-16 | tryout: judge set v2, d3:9b, prompt targeted | 0 | 9 | 0 |

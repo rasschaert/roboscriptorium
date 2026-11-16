@@ -410,8 +410,8 @@ without effect, and what each would need to be tried again, is in
 
 - [ ] Past nulls the judge panel may turn (2026-11-08; the ones whose stated bottleneck
       was the judges or the arbiter), in this order: the hints about kinds of OCR error
-      (`tryout.py --prompt kinds|targeted`) on autotrust-jev, d3 and pplx-decider
-      (~15–30 min each, judge set v2); d3 and autotrust-jev as the line-end hyphen judge
+      (`tryout.py --prompt kinds|targeted`) on autotrust-jev and d3 (null again,
+      2026-11-16: within the noise on d3, worse on autotrust-jev); d3 and autotrust-jev as the line-end hyphen judge
       (done 2026-11-16: the mean of four judges beats the one in use, English 67 of 89
       against 63, Dutch 31 wrong against joining's 40; built behind `ROBO_HYPHEN_JUDGES`,
       its benches queued, `work/runs/hyphen-panel.sh`); line roles
