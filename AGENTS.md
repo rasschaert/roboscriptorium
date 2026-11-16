@@ -13,8 +13,13 @@ what the project is. Everything below them is today's way of meeting them.
 1. **The print, faithfully.** Exact words, spelling, paragraphs and the book's own
    typography; no house style; fix only clear reading errors, never the author.
 2. **Build the machine, not the book.** Readers and judges that fail differently,
-   combined by learned trust; a book comes out right because the machine does.
-3. **Learned, not hand-written.** A decision is learned from labels wherever it can be.
+   combined by learned trust, the reviewer's answers as its labels; every job keeps a
+   labelled set, so a new model is benchmarked and plugged in where it wins. A book
+   comes out right because the machine does.
+3. **Learned, not hand-written** (the user, 2026-10-13). A decision is learned from
+   labels (the golden books, the reviewer's answers) wherever it can be; a rule is
+   replaced once the bench says the learned decision is at least as good. What is true
+   by definition (a chapter heading appears once, an apostrophe is `’`) may stay code.
 4. **The faithful golden pair is the arbiter.** A scan and the publisher's own text of
    that printing: the build must turn the one into the other. Every change is judged on
    them, paired, before and after; a human verdict mends a reference only where it
@@ -84,14 +89,10 @@ get renumbered. Don't add a file to this table without a job no other file has.
 - **This file is the single source of agent instructions.** Claude Code reads AGENTS.md
   natively; don't add a `CLAUDE.md`.
 - **`work/` holds what git doesn't** (books, caches, review answers, the verdicts on
-  every golden book in copyright), and an agent destroyed it once (2026-10-11) by
-  committing a symlink in its place and merging it. Never symlink, copy or move it into
-  a worktree or branch; stage files by name, never `git add -A`. A worktree's code runs
-  on the real data from the main checkout: `uv run --project ../<worktree> python …`
-  there (relative `work/` paths resolve in the main checkout, the code is the
-  worktree's); its tests need no `work/` at all. Give such a run its own output
-  folder under `work/probes/` when a run in flight reads the stage caches it would
-  rewrite.
+  every golden book in copyright). Point at it by path; stage files by name. A
+  worktree's code runs on the main checkout's data: `uv run --project ../<worktree>
+  python …` there; its tests need no `work/`. Give such a run its own output folder
+  under `work/probes/` when a run in flight reads the stage caches it would rewrite.
 - **Read `HANDOVER.md` at the start of a session** and rewrite it at the end of one.
   Choose what to work on from docs/checklist.md (the order) and docs/outlook.md (the
   room left).
@@ -110,9 +111,6 @@ get renumbered. Don't add a file to this table without a job no other file has.
   (`priority.first`); a run starting meanwhile waits at the battery gate. Before handing
   the user a command, check what it costs them (when the book was last built, what it
   will ask the models) and clear or warm the machine for it first.
-- **A run in flight is the user's time already spent.** Stopping one that can't resume
-  throws it away: see "Every long run can be stopped and picked up" below, and tell the
-  user the cost before stopping, even when told to stop.
 - **Time long runs and give an estimate first.** Run anything over a few minutes through
   `experiments/timed.sh` (label, pages, log file, command), which appends its minutes to
   docs/run-times.md; before starting one, say how long it should take from that table.
@@ -126,14 +124,11 @@ get renumbered. Don't add a file to this table without a job no other file has.
   (Claude Code's Monitor tool, re-armed when it expires), not only one that waits for the
   end. In a script, `screen -ls` exits 1 when sessions exist: test it as
   `{ screen -ls || true; } | grep -q …`, or under `pipefail` the wait ends at once.
-- **Nothing is "the way we do it"** (the user, 2026-10-17: "i just don't want ever see
-  you get complascent … i just need you to have that mentality. it's important"). Every
-  stage, model and rule keeps its place only while the evidence says it earns it. At
-  every result (a probe, a bench, a review batch) ask what it says about the structure,
-  not only the setting: which block it makes redundant, which block it suggests, which
-  order it questions. When something new works, ask at once what it lets us remove.
-  Proposing these experiments is the agent's job, not the user's; the cheap ones run
-  unasked (the rules below).
+- **At every result, question the structure** (principle 6; the user, 2026-10-17: "i
+  just don't want ever see you get complascent"): which block a probe, bench or review
+  batch makes redundant, which it suggests, which order it questions; when something
+  new works, what it lets us remove. Proposing these experiments is the agent's job;
+  the cheap ones run unasked.
 - **Code is disposable; the principles and their instruments aren't.** Future models
   read better and write any code (the user, 2026-10-18). What a later model can't
   regenerate: the human labels (review answers, verdicts, errata in `work/`), the
@@ -272,18 +267,14 @@ mistake it prevents; check a change against them before committing.
   cut-off last line in append-only logs, and version their format.
 - **Every long run can be stopped and picked up** (the user, 2026-11-13: "make anything
   resumable … time is rare and valuable"). A run of more than a few minutes keeps each
-  finished piece as it goes (a model, a book, a page) and, started again, goes on from
-  them; a run that saves only at its end is a bug to fix before it is next used. An
-  arbiter training stopped five minutes short of its 85 lost all of them that day
-  (`trustdata.models_to_save` now keeps each model in `<path>.training/`).
-- **Before stopping a run, say what stopping costs**: how far it is, against how long
-  its like took (docs/run-times.md), and whether it resumes. Then stop it, or ask.
+  finished piece as it goes (a model, a book, a page) and resumes from them; one that
+  saves only at its end is a bug to fix before its next use. A run in flight is the
+  user's time already spent: before stopping one, even when told to, say how far it
+  is against how long its like took (docs/run-times.md) and whether it resumes.
 - **Keep what you'll need again under `work/`, never in a session scratchpad.** A
   scratchpad disappears with the session. Source EPUBs live in
   `work/.cache/gutenberg/<ebook>.epub` and `work/.cache/publisher/<golden>.epub` (checked
   against PROVENANCE.md), probe outputs in `work/probes/`.
-- **Comments describe the code as it is now,** briefly; history belongs in commit
-  messages.
 
 ## Purpose and scope
 
@@ -291,20 +282,6 @@ An end-to-end tool that turns books that aren't EPUBs into clean EPUB 3 files, a
 as far as possible. The goal: an edition as careful as Standard Ebooks' (weeks of
 scanning, OCR, proofreading and typesetting by people), in hours, with a human only
 answering the questions the machine can't.
-
-**Build the machine, not the book.** A general harness of compounded models, not rules
-tuned to one book: several readings and judges that fail differently, combined by voting
-and by each model's measured reliability per kind of error, with the human's answers as
-labels that improve the weights. Every job keeps a labelled set, so a newly released
-model is benchmarked and, where it wins, plugged in. The target book comes out right
-because the machine does.
-
-**Learned, not hand-written** (the user, 2026-10-13: "let's not continue with
-hand-written anything, if we can help it"). A decision is made by a model trained on
-labels (the golden books, the reviewer's answers), not by a rule written for it. No new
-hand-written rule where a learned one can do the job; an existing rule is replaced by a
-learned decision once the bench says the learned one is at least as good. What is true
-by definition (a chapter heading appears once, an apostrophe is `’`) may stay code.
 
 - **Order of attack:** scanned PDF → other formats (MOBI/AZW3, DOCX, HTML, …).
   **Born-digital PDFs are out of scope** (the user, 2026-10-17: "born digital pdfs are
@@ -376,38 +353,11 @@ The map, one line a module; [docs/modules.md](docs/modules.md) has each in full.
 
 ## Architecture
 
-`pipeline.run` builds a book in this order; `docs/pipeline.d2` draws it with the model
-behind each stage. Each stage caches its artefacts under `work/<book>/stages/`, so a
-rerun skips finished work and model calls.
-
-1. **Text layer** (`pdf.py`): the PDF's own text as visual lines with boxes. The body
-   pages come from `book.toml` (no page classification yet).
-2. **Layout regions** (`layout.py`, DocLayout-YOLO) and the book's **dash style**
-   (`typography.py`: `book.toml`, else measured on a scan), which the readers are told.
-   Then **missing lines** (`missing.py`, glm-ocr): printed lines the layer lacks, added
-   in reading order.
-3. **Type** (`typestyle.py`) and **line roles** (`roles.py`, clef-flash plus rules and a
-   style vote): body, chapter heading, page number, running head, artifact. A line not
-   sure enough to be body is dropped, or kept as a heading.
-4. **Washed-out pages** (`faint.py`, scans only), then the **OCR check** (`ocrcheck.py`,
-   `trust.py`) on the other pages: more readings of each body line, judges where they
-   differ, learned trust to fix, keep or ask.
-5. **Answers** (`corrections.py`): a human's review answers, applied to copies.
-6. **Footnotes** (`footnotes.py`): small, light lines at a page's foot opening on a mark
-   become notes, out of the running text; a motto on a page of its own becomes an
-   **epigraph** (`epigraphs.py`). **Reflow** (`reflow.py`): lines into headings
-   and paragraphs; de-hyphenation, with the judge on an English book's undecided hyphens
-   (`hyphens.py`).
-7. **Quote questions** (`quotes.py`): unpaired quotes, with a proposed reading.
-8. **Italics** (`italics.py`), **straight quotes curled** (`quotes.py`), **dashes and
-   ellipses** (`typography.py`), **figures**
-   (`figures.py`) on the IR (`ir.py`).
-9. **EPUB** (`epub.py`), footnotes as `aside` beside their paragraph, checked with
-   epubcheck.
-
-Review (`flags.py`, `review.py`) runs on a build's output; scoring is `eval`, `quality`
-and `bench`. Not built yet: page classification, image preprocessing (deskew, spreads),
-formats other than PDF.
+`pipeline.run` builds a book stage by stage, each cached under `work/<book>/stages/` so
+a rerun skips finished work and model calls. Before changing a stage, its order or its
+model, read [docs/how-it-works.md](docs/how-it-works.md) (each stage in prose) and
+`docs/pipeline.d2` (the drawing, with the model behind each stage). Not built yet:
+image preprocessing (deskew, spreads), formats other than PDF.
 
 ## AI usage
 
@@ -546,15 +496,8 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   PyTorch) in Python.
 - Model weights live outside `~/code` (backed up hourly): models we train or download by
   hand in `~/models/roboscriptorium/`, one subfolder each.
-- Kraken 7.1.1 (a line recogniser with no language model; its witness probe was not taken, 2026-10-24) in its own
-  environment, `~/models/roboscriptorium/kraken-env` (`uv venv`, Python 3.13), with scipy 1.18.1
-  forced over its 1.15 pin (`uv pip install --no-deps`): 1.15's binary won't load on macOS 27.
-  Its training lines and models are in `~/models/roboscriptorium/kraken/`.
-- LightOnOCR-3 (1B, 4B) in its own environment, `~/models/roboscriptorium/lighton-env` (`uv venv`,
-  Python 3.13; transformers 5.20, torch with MPS, torchvision for the 4B's processor); its weights
-  were deleted after the screen (2026-10-24), `experiments/lighton_read.py` reads the frozen sets
-  once they are pulled again.
-- Models set up by hand (Winnow-12B, `imajev:4b`, imajev on `llama-server`, the
+- Models set up by hand or kept in an environment of their own (Winnow-12B, `imajev:4b`,
+  imajev on `llama-server`, Kraken, LightOnOCR-3, the
   DocLayout-YOLO weights): [docs/models.md](docs/models.md), Setup.
 - Fonts: `work/fonts/`, the user's library of book typefaces (2,419 OpenType and TrueType
   files, 407 MB: Adobe Font Folio 11 and `extra/` with Quadraat, Scala and Swift), for
@@ -566,7 +509,6 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
 - tesseract 5.5.3 (Homebrew, `eng`/`osd` only). The Dutch model is `nld.traineddata`
   from tessdata_best in `work/tessdata/` (pass `--tessdata-dir work/tessdata`);
   `tesseract-lang` (~650 MB) is not installed.
-- 1Password signs commits; when it is locked, stop and ask for it to be unlocked.
 
 ## Running, reviewing, evaluating
 

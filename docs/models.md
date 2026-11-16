@@ -90,6 +90,10 @@ AGENTS.md (Environment) keeps the machine's rules.
   on 80 of 80 (`experiments/probe_decider_drift.py`), Winnow-12B the same pick on 157 of
   158 suspects of the token probe (the one a near-tie, 0.41 against 0.405). Ollaya was
   uninstalled on 2026-10-08; every model runs on Ollama.
+- **Kraken 7.1.1** (a line recogniser with no language model; its witness probe was not taken, 2026-10-24) in its own
+  environment, `~/models/roboscriptorium/kraken-env` (`uv venv`, Python 3.13), with scipy 1.18.1
+  forced over its 1.15 pin (`uv pip install --no-deps`): 1.15's binary won't load on macOS 27.
+  Its training lines and models are in `~/models/roboscriptorium/kraken/`.
 - **LightOnOCR-3** (screened only): `uv venv ~/models/roboscriptorium/lighton-env --python 3.13`, then
   `uv pip install transformers torch torchvision pillow` there. The 1B's checkpoint names its text
   model `language_model.model.*`, which transformers 5.20's `LightOnOcrForConditionalGeneration`
