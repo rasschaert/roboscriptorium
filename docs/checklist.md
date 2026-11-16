@@ -314,9 +314,9 @@ then the kinds one at a time below.
       queued (`probe_extra_reader.py`, screen `robo-extra-wait`: the pages holding those
       errors, built without and with); then a bench with trust data rebuilt. The short
       bench (2026-11-16, arbiter not retrained): 3 wrong words fixed, 11 made, 11 more
-      questions on 269 pages, so not on as it is. Next, no new reading: an arbiter
-      trained on those 269 pages' cached readings, each book scored by one that never
-      saw it; and offers only where two extra readers agree against the build. Baidu's
+      questions on 269 pages, so not on as it is. Offer by offer (`probe_extra_offers.py`): 4 of 362
+      were the print, both readers agreeing 2 of 6. Left to try: offers only where
+      both agree, once reading every page twice more is cheap enough to be worth it. Baidu's
       Unlimited-OCR-2 (patched llama.cpp apart) to score on whole pages, words and blocks
 - [x] ~~Leftover ink, any kind of error at once~~: null twice (2026-11-15,
       `probe_leftover_ink.py`: AUC 0.53; with the leftover's place and trees 0.51). The

@@ -11,8 +11,8 @@ and of baselines is superseded by the first section; the older sections are from
 confirmations below wait for a later moment, to be brought up again). Since 20:45:
 - The short bench of the extra readers ended at 06:24 on 2026-11-16 (nine hours): no
   change overall, 3 wrong words fixed and 11 made, 11 more questions, the arbiter not
-  retrained for them (decisions.md). Not on. Next: an arbiter trained on those pages'
-  cached readings. The accent run started at 07:25; the queue follows by itself.
+  retrained for them (decisions.md). Not on: 4 of their 362 offers were the print
+  (`probe_extra_offers.py`); only offers both readers agree on look worth a test. The accent run started at 07:25; the queue follows by itself.
 - A word's picture against the book's other pictures of it: null, three measures
   (`probe_own_pictures.py`). Its rework is on the checklist.
 - The accent on the first vowel of a pair alone ("níet"): on Ex-minnaar the scan's fit
