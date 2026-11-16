@@ -1184,3 +1184,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-16 | train arbiter after the rebuild | 0 | 81 | 0 |
 | 2026-11-16 | bench tuning after the rebuild | 6208 | 9 | 0 |
 | 2026-11-16 | bench validation, speck offers (arbiter trained with them) | 0 | 6 | 0 |
+| 2026-11-17 | bench tuning, hyphen judges together | 6208 | 37 | 0 |
+| 2026-11-17 | bench validation, hyphen judges together | 0 | 8 | 0 |

@@ -417,7 +417,7 @@ without effect, and what each would need to be tried again, is in
       2026-11-16: within the noise on d3, worse on autotrust-jev); d3 and autotrust-jev as the line-end hyphen judge
       (done 2026-11-16: the mean of four judges beats the one in use, English 67 of 89
       against 63, Dutch 31 wrong against joining's 40; built behind `ROBO_HYPHEN_JUDGES`,
-      its benches restarted 2026-11-16 23:25, `work/runs/hyphen-panel.sh`, after the judges were made to answer one at a time over a book's collected words, one book at a time on the machine, each judge's answers saved as they come (`Compounds.collect`; decisions.md); line roles
+      benched 2026-11-17: 29 of tuning's 74 silent compound hyphens rescued, 44 made, the mean no guide to which; next: each judge's chance kept in the cache and the combination learned on the labelled breaks, the undecided asked (decisions.md); line roles
       by the small decision models; then the whole-page readers as line readers (null
       2026-10-14/15: the arbiter trusted their versions wrongly on unseen books; their
       readings are cached, so the cost is the panel's judges on the new suspects, a
