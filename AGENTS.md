@@ -463,6 +463,16 @@ version where it differs, and the arbiter learns its worth. Run it on every new 
 prompt and crop before anything longer, and rebuild its set (`build`) when the bench's
 baseline moves.
 
+**An offer, a judge or any new source of versions is judged the same way, and a bench of
+it is read in that order** (the user, 2026-11-16: the speck and accent verdicts were
+given on net words). Before the verdict line or the net fixed and made: which silent
+errors the source brings to a question or a fix that no reader or judge in use does
+(`silent_screen.py` or the panel-lift test), and by cause what it fixed and made. A
+cost that shows in a cause the source doesn't touch (the retrained arbiter's
+punctuation swaps beside accent offers) is the arbiter's, not the source's: say which
+component failed, and keep the source until a run that leaves the rest as it was
+(a second arbiter for the offered places only) says otherwise.
+
 Two kinds of model, used for different jobs:
 
 - **Decision models ("System One")**, on Ollama's `/v1/systemone`. Answer bounded
