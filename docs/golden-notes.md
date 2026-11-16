@@ -16,7 +16,7 @@ than the pipeline.
 ## Working with golden pairs
 
 Public-domain or lending-library scans paired with a human-checked reference text, which
-is what every change gets measured against. [docs/golden-notes.md](docs/golden-notes.md)
+is what every change gets measured against. "The pairs", below,
 describes every pair; [docs/golden-books.md](docs/golden-books.md) has their numbers.
 Each lives in `golden/<name>/` **in git**: `manifest.toml` (the scans with URL and
 sha256, page ranges, the source and chapter range), and for a public-domain book the
