@@ -20,7 +20,7 @@ confirmations below wait for a later moment, to be brought up again). Since 20:4
   `robo-accents-apart` (`work/runs/accents-apart.sh`): that arbiter trained on the accent
   run's data (no models), then both benches once `robo-accents-mark` and `robo-nested`
   are done; those two now train the same way. `robo-hints` ran nothing the first time
-  (a flag passed as one word), fixed and queued behind `robo-sorter-panel`.
+  (a flag passed as one word), fixed and queued behind `robo-sorter-panel` as `robo-prompt-hints` (under its old name the judge probes, which wait for a run called `robo-hints`, and it waited on each other from 12:52 to 15:29).
 - Specks read as punctuation (most of tuning's 52 silent punctuation swaps): the drawn
   mark's own fit ranks them (`experiments/probe_speck_marks.py`, `work/runs/speck-marks.log`
   over every tuning book). Built, off: `speckmarks.py` (`ROBO_SPECK_DOUBTS`), the mark's
