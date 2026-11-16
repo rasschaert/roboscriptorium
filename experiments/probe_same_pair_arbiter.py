@@ -11,6 +11,7 @@ work/probes/same-pair-arbiter.json as they come, so a stopped run goes on.
 """
 
 import json
+import os
 from collections import defaultdict
 from pathlib import Path
 
@@ -28,7 +29,11 @@ READINGS, SEATS = weighed(SETTINGS), seats(SETTINGS)
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
 SEEDS = 5
 MOST = 20
-MEMO = Path("work/probes/same-pair-arbiter.json")
+# ROBO_PAIR_SCAN=1 pools only the judges that look at the scan: the ones reading the
+# sentence alone prefer the same spelling at every place.
+SCAN_ONLY = os.environ.get("ROBO_PAIR_SCAN") == "1"
+TEXT = ("Winnow", "@text")
+MEMO = Path(f"work/probes/same-pair-arbiter{'-scan' if SCAN_ONLY else ''}.json")
 
 
 def elsewhere(rows: list[dict]) -> list[list[tuple[float, float]]]:
@@ -46,7 +51,9 @@ def elsewhere(rows: list[dict]) -> list[list[tuple[float, float]]]:
         if not s.votes:
             continue
         for key, v in keys(s):
-            groups[key, v].append((i, sum(x == v for x in s.votes.values()) / len(s.votes)))
+            votes = [x for j, x in s.votes.items() if not (SCAN_ONLY and any(t in j for t in TEXT))]
+            if votes:
+                groups[key, v].append((i, sum(x == v for x in votes) / len(votes)))
     out = []
     for i, r in enumerate(rows):
         cells = []

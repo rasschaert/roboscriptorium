@@ -319,9 +319,10 @@ then the kinds one at a time below.
       pairs 158 → 122, The Thief-Taker's Apprentice worse; small, so to the bench
       once the accent and nested-quote arbiters are decided. On the unreferenced
       books (`probe_same_pair_real.py`) it settles 16 of 52 and 19 of 74 such
-      questions: the judges split the same way at every place. Rework proposed to the
-      user: a pair asked once in the review, its answer carried to its other places
-      (25 to 33 fewer questions a book)
+      questions: the judges split the same way at every place. Asking the reviewer once for the
+      pair: withdrawn (the user: "a poor bargain"). Pooling only the judges that look
+      at the scan settles 28 of 52 and 26 of 74, golden silent errors unchanged: the
+      version to build
 - [ ] **Extra readers as offers in the build** (`ROBO_EXTRA_READERS`, off; design.md):
       first scores of the short test 2026-11-15: qwen3.8 reads 10 of 97 silent errors,
       olmOCR-2 seven more, PaddleOCR-VL 1.6 ten more. Its short test in the build is
