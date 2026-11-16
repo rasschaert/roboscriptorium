@@ -108,27 +108,30 @@ def score(name: str) -> dict:
     return out
 
 
-books = {name: rows_of(name, SETTINGS) for name in SPECS if not usable(name, SETTINGS)}
-memo = json.loads(MEMO.read_text()) if MEMO.exists() else {}
-for name in books:
-    if name not in memo:
-        memo[name] = score(name)
-        write_atomic(MEMO, json.dumps(memo))
-    m = memo[name]
-    a, b = m["as it is"], m["with the pair elsewhere"]
-    print(
-        f"{name[:30]:30} places {m['places']:5} (often {m['often']:4})  silent at rule's questions "
-        f"{a['silent at the rule\'s questions']:3} → {b['silent at the rule\'s questions']:3}  by budget "
-        f"{'/'.join(map(str, a['silent by budget']))} → {'/'.join(map(str, b['silent by budget']))}  "
-        f"often: wrong {a['often: wrong picks']} → {b['often: wrong picks']}, unsure "
-        f"{a['often: under 0.9']} → {b['often: under 0.9']}",
-        flush=True,
-    )
-for label in ("as it is", "with the pair elsewhere"):
-    rows = [m[label] for m in memo.values()]
-    print(
-        f"{label:24} silent at the rule's questions {sum(r['silent at the rule\'s questions'] for r in rows)}, by budget "
-        f"{[sum(r['silent by budget'][i] for r in rows) for i in range(len(BUDGETS))]}, wrong picks "
-        f"{sum(r['wrong picks'] for r in rows)}; at pairs raised often: wrong {sum(r['often: wrong picks'] for r in rows)}, "
-        f"under 0.9 sure {sum(r['often: under 0.9'] for r in rows)}"
-    )
+books: dict = {}
+
+if __name__ == "__main__":
+    books.update({name: rows_of(name, SETTINGS) for name in SPECS if not usable(name, SETTINGS)})
+    memo = json.loads(MEMO.read_text()) if MEMO.exists() else {}
+    for name in books:
+        if name not in memo:
+            memo[name] = score(name)
+            write_atomic(MEMO, json.dumps(memo))
+        m = memo[name]
+        a, b = m["as it is"], m["with the pair elsewhere"]
+        print(
+            f"{name[:30]:30} places {m['places']:5} (often {m['often']:4})  silent at rule's questions "
+            f"{a['silent at the rule\'s questions']:3} → {b['silent at the rule\'s questions']:3}  by budget "
+            f"{'/'.join(map(str, a['silent by budget']))} → {'/'.join(map(str, b['silent by budget']))}  "
+            f"often: wrong {a['often: wrong picks']} → {b['often: wrong picks']}, unsure "
+            f"{a['often: under 0.9']} → {b['often: under 0.9']}",
+            flush=True,
+        )
+    for label in ("as it is", "with the pair elsewhere"):
+        rows = [m[label] for m in memo.values()]
+        print(
+            f"{label:24} silent at the rule's questions {sum(r['silent at the rule\'s questions'] for r in rows)}, by budget "
+            f"{[sum(r['silent by budget'][i] for r in rows) for i in range(len(BUDGETS))]}, wrong picks "
+            f"{sum(r['wrong picks'] for r in rows)}; at pairs raised often: wrong {sum(r['often: wrong picks'] for r in rows)}, "
+            f"under 0.9 sure {sum(r['often: under 0.9'] for r in rows)}"
+        )
