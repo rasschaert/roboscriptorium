@@ -40,6 +40,10 @@ class Settings:
     # (2026-11-15, docs/design.md).
     alarm_model: str = "autotrust-jev:35b-nvfp4,d3:9b,render,autotrust-jev:9b-nvfp4@text"
     alarm_below: float = 1.0
+    # More judges of a line-end hyphen the book and the word list leave undecided, their
+    # chances averaged with the judge's, and asked in Dutch books too (comma-separated;
+    # `hyphens.Compounds`). Empty until its bench (docs/decisions.md, 2026-11-16).
+    hyphen_judge: str = ""
     # Doubts raised where small capitals may have been read in lower case though every
     # reading agrees ("ss", "usb-stick"; `ocrcheck.capitals_doubts`). About 1.7% more
     # questions for the small capitals no reader disputes (docs/design.md).
@@ -137,6 +141,11 @@ class Settings:
         """The second vision judges, each as named in `alarm_model` (with its `@wide`)."""
         return tuple(m.strip() for m in self.alarm_model.split(",") if m.strip())
 
+    @property
+    def hyphen_judges(self) -> tuple[str, ...]:
+        """The judges of a line-end hyphen beside the judge, as named in `hyphen_judge`."""
+        return tuple(m.strip() for m in self.hyphen_judge.split(",") if m.strip())
+
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
             raise ValueError(f"ROBO_OCR_ASK_BELOW={self.ocr_ask_below}: a probability in (0, 1]")
@@ -169,6 +178,7 @@ class Settings:
             judge_model=os.environ.get("ROBO_JUDGE_MODEL", defaults.judge_model),
             alarm_model=os.environ.get("ROBO_ALARM_MODEL", defaults.alarm_model),
             alarm_below=float(os.environ.get("ROBO_ALARM_BELOW", defaults.alarm_below)),
+            hyphen_judge=os.environ.get("ROBO_HYPHEN_JUDGES", defaults.hyphen_judge),
             lower_capitals=_flag("ROBO_LOWER_CAPITALS", defaults.lower_capitals),
             accent_doubts=_flag("ROBO_ACCENT_DOUBTS", defaults.accent_doubts),
             nested_quote_doubts=_flag("ROBO_NESTED_QUOTES", defaults.nested_quote_doubts),

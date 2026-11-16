@@ -867,3 +867,25 @@ def test_an_abbreviation_in_capitals_before_a_word_keeps_its_hyphen():
     # Kept: "DNA-sporen", "NSB-leden".
     assert join("de DNA-", "sporen", known=known) == "de DNA-sporen"
     assert join("de NSB-", "leden", known=known) == "de NSB-leden"
+
+
+def test_several_hyphen_judges_answer_by_their_mean_and_are_asked_in_dutch_too(tmp_path):
+    from types import SimpleNamespace
+
+    from roboscriptorium import hyphens
+
+    def judge(chance: float):
+        answer = SimpleNamespace(probabilities={"hyphenated": chance})
+        return SimpleNamespace(decide=lambda state, questions, model=None: {"spelling": answer})
+
+    alone = hyphens.Compounds(judge(0.4), "a", "en", tmp_path / "one.json")
+    assert not alone("half", "cooked", "a half-|cooked egg")
+    panel = hyphens.Compounds(
+        judge(0.4), "a", "nl", tmp_path / "panel.json", [(judge(0.9), "b"), (judge(0.5), "c")]
+    )
+    assert panel("zee", "egel", "een zee-|egel lag")
+    panel.save()
+    # Kept by the judges it was asked of: one judge alone starts again.
+    assert hyphens.Compounds(judge(0.0), "a", "nl", tmp_path / "panel.json")._answers == {}
+    assert hyphens.asked("nl", panel=True) and not hyphens.asked("nl")
+    assert hyphens.asked("en") and not hyphens.asked("fr", panel=True)

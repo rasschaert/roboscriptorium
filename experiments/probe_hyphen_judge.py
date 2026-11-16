@@ -98,6 +98,7 @@ def ask_chat(model: str, it: dict) -> float:
 
 
 client = DecisionClient(settings.ollama_url, models[0])
+pooled: dict[str, dict] = {}
 OUT.mkdir(parents=True, exist_ok=True)
 for model in models:
     path = OUT / f"{model.replace(':', '_').replace('/', '_')}.jsonl"
@@ -110,6 +111,7 @@ for model in models:
             except json.JSONDecodeError:
                 pass
     score = Counter()
+    pooled[model] = cache
     with path.open("a") as f:
         for it in items:
             key = (it["closed"], it["context"])
@@ -138,5 +140,17 @@ for model in models:
                 score[(it["lang"], t, "right" if got == it["truth"] else f"wrong {got}")] += 1
             score[(it["lang"], "default", "right" if it["truth"] == "closed" else "wrong closed")] += 1
     print(model)
+    for k in sorted(score, key=str):
+        print("  ", k, score[k])
+
+# The judges together: the mean of their chances that the hyphen is the word's own.
+if len(pooled) > 1:
+    score = Counter()
+    for it in items:
+        ps = [c[(it["closed"], it["context"])]["p_hyph"] for c in pooled.values()]
+        for t in (0.3, 0.4, 0.5, 0.6, 0.7):
+            got = "hyphenated" if sum(ps) / len(ps) >= t else "closed"
+            score[(it["lang"], t, "right" if got == it["truth"] else f"wrong {got}")] += 1
+    print("together:", ", ".join(pooled))
     for k in sorted(score, key=str):
         print("  ", k, score[k])

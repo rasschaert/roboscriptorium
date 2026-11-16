@@ -434,10 +434,11 @@ def run(
         # The suspects of an earlier build with the check would be taken for this one's.
         (book.stages / "ocr-check.json").unlink(missing_ok=True)
 
-    if use_models and hyphens.asked(book.language):
+    if use_models and hyphens.asked(book.language, bool(settings.hyphen_judges)):
         client = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
+        more = [(decide.for_model(m, settings.ollama_url), m) for m in settings.hyphen_judges]
         compound = hyphens.Compounds(
-            client, settings.judge_model, book.language, book.stages / "compounds.json"
+            client, settings.judge_model, book.language, book.stages / "compounds.json", more
         )
     checked = ocrcheck.apply(body, suspects if decided is None else decided)
     break_judge = judge_cache = None

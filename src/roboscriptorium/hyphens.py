@@ -20,6 +20,9 @@ from roboscriptorium.pdf import PageText
 
 VERSION = 1
 LANGUAGES = {"en": "English"}
+# The languages a panel of judges (`Compounds` with several) is asked in: together they
+# do better than joining in Dutch too, where one judge does not.
+PANEL_LANGUAGES = {"en": "English", "nl": "Dutch"}
 HYPHENS = ("-", "\u00ad", "\u00ac")
 # Whether an undecided line-end hyphen is the word's own: (stem, rest, the text around the
 # break, marked with |) → keep it.
@@ -60,19 +63,22 @@ def vowel_clash(
     return known is None or known(rest)
 
 
-def asked(language: str) -> bool:
-    """Whether a book in this language asks the judge about its undecided hyphens."""
-    return language[:2] in LANGUAGES
+def asked(language: str, panel: bool = False) -> bool:
+    """Whether a book in this language asks the judge, or a `panel` of judges, about its
+    undecided hyphens."""
+    return language[:2] in (PANEL_LANGUAGES if panel else LANGUAGES)
 
 
 class Compounds:
-    """Whether an undecided line-end hyphen is the word's own, by the judge; its answers
+    """Whether an undecided line-end hyphen is the word's own, by the judge, or by the
+    mean of the judges in `more` (each a client and its model) with it; the answers
     cached by the hyphenated word in `path`."""
 
-    def __init__(self, client, model: str, language: str, path: Path):
-        self._client, self._model, self._path = client, model, path
-        self._language = LANGUAGES[language[:2]]
-        blob = read_cache(path, VERSION, model=model)
+    def __init__(self, client, model: str, language: str, path: Path, more=()):
+        self._judges = [(client, model), *more]
+        self._model, self._path = "+".join(m for _, m in self._judges), path
+        self._language = PANEL_LANGUAGES[language[:2]]
+        blob = read_cache(path, VERSION, model=self._model)
         self._answers: dict[str, float] = blob["answers"] if blob else {}
         self._new = False
 
@@ -88,8 +94,13 @@ class Compounds:
                 {"closed": stem + rest, "hyphenated": f"{stem}-{rest}"},
             )
             state = {"language": self._language, "text": context}
-            answer = self._client.decide(state, {"spelling": question}, model=self._model)
-            self._answers[key] = answer["spelling"].probabilities.get("hyphenated", 0.0)
+            chances = [
+                client.decide(state, {"spelling": question}, model=model)[
+                    "spelling"
+                ].probabilities.get("hyphenated", 0.0)
+                for client, model in self._judges
+            ]
+            self._answers[key] = sum(chances) / len(chances)
             self._new = True
         return self._answers[key] >= 0.5
 

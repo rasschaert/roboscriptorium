@@ -29,6 +29,12 @@ confirmations below wait for a later moment, to be brought up again). Since 20:4
   `robo-accents-mark`, `robo-nested` and `robo-accents-apart`: both production benches
   on today's code as the baseline (kept in `work/probes/speck-baseline/`), then trust
   data `work/probes/ocr-trust-specks/`, arbiter and both benches.
+- Hyphen judges together (`ROBO_HYPHEN_JUDGES`, off): built after the probe; queued
+  `robo-hyphen-panel` (`work/runs/hyphen-panel.sh`), both benches against the speck run's
+  baseline, behind `robo-speck-chain`.
+- The page-kind model is told each back page's ink (last end right 22 → 24 of 27).
+- The user started the short reviews at about 17:00 on 2026-11-16 (Au pair's 16
+  small-capital places, 9 accent additions in Goede dochter and De vergelding).
 - `init`'s fields scored against the publishers' e-books (`score_init.py`): the e-books'
   metadata is the weaker side at most misses (decisions.md).
 - Pieter Daens' questions read: the same pair of versions is asked many times
