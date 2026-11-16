@@ -417,7 +417,7 @@ without effect, and what each would need to be tried again, is in
       2026-11-16: within the noise on d3, worse on autotrust-jev); d3 and autotrust-jev as the line-end hyphen judge
       (done 2026-11-16: the mean of four judges beats the one in use, English 67 of 89
       against 63, Dutch 31 wrong against joining's 40; built behind `ROBO_HYPHEN_JUDGES`,
-      its benches queued, `work/runs/hyphen-panel.sh`); line roles
+      its benches running since 2026-11-16 21:45, `work/runs/hyphen-panel.sh`. To mend before its next use, seen in that run: `hyphens.Compounds` asks its four judges word by word, so with six books at once Ollama reloads a judge every few seconds (63 GB of judges for 64 GB), and it saves a book's answers only at the book's end, so a stop loses them: ask one judge over all a book's words, then the next, and save as it goes); line roles
       by the small decision models; then the whole-page readers as line readers (null
       2026-10-14/15: the arbiter trusted their versions wrongly on unseen books; their
       readings are cached, so the cost is the panel's judges on the new suspects, a
