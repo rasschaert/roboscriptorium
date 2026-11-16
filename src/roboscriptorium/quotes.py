@@ -31,7 +31,9 @@ from roboscriptorium.typography import EllipsisStyle, guess_ellipsis
 # decade (’80s) or one of the longer English elisions.
 _ELIDES = re.compile(r"’(?:[^\W\d_]{1,2}|\d\ds?|tis|twas|cause|til|round)\b", re.IGNORECASE)
 PAIRS = {"‘": "’", "“": "”"}
-_ARTICLE = re.compile(r"’(s|t|n)\b")
+# The short words Dutch clips to an apostrophe (’s, ’t, ’n, Flemish ’m, ’k and ’ns), in
+# lower case and with no mark after them: "de letter ‘m’" quotes a letter.
+_ARTICLE = re.compile(r"’(?:[stnmk]|ns)\b(?![’'‘])")
 # Word endings sounding s or z, after which a bare ’ makes a possessive: Jezus’, Maurice’,
 # Louise’, Felix’.
 _SIBILANT = ("s", "z", "x", "ce", "se", "ze")
@@ -517,9 +519,9 @@ def style_prompt(language: str, single: bool, ellipsis: str, dash: str | None) -
 
 
 # A straight ' opening a word that elides letters, not a quotation: Dutch ’s, ’t, ’n,
-# Flemish ’m (hem) and ’k (ik), English ’em, ’tis, ’twas, ’cause, ’til, ’round, a decade
+# Flemish ’m (hem), ’k (ik) and ’ns (eens), English ’em, ’tis, ’twas, ’cause, ’til, ’round, a decade
 # (’60s).
-ELISION = re.compile(r"'(?:[stnmk]|em|tis|twas|cause|til|round|\d\ds?)\b", re.IGNORECASE)
+ELISION = re.compile(r"'(?:[stnmk]|ns|em|tis|twas|cause|til|round|\d\ds?)\b", re.IGNORECASE)
 # What opens a quotation before it: the paragraph's start, a space, a bracket, a dash or
 # another opening mark.
 _OPENS_AFTER = "([{—–-‘“„"
@@ -532,7 +534,7 @@ def curl(blocks: list[Block]) -> list[Block]:
     opens as the book's own opening mark does (“ or „, by majority)."""
     text = " ".join(b.text for b in blocks if isinstance(b, Paragraph))
     opening = "„" if text.count("„") > text.count("“") else "“"
-    straight = lambda t: "'" in t or '"' in t  # noqa: E731
+    straight = lambda t: "'" in t or '"' in t or "‘" in t  # noqa: E731
     out = []
     for block in blocks:
         if isinstance(block, Paragraph) and straight(block.text):
@@ -547,11 +549,18 @@ def curl(blocks: list[Block]) -> list[Block]:
 def curled(text: str, opening: str = "“") -> str:
     """`text` with its straight quotes curled by their place, letter for letter (so
     offsets and italics stay). Opening after a space, bracket, dash or opening mark;
-    closing elsewhere; an apostrophe inside a word or eliding letters is ’. A mark right
+    closing elsewhere; an apostrophe inside a word or eliding letters is ’, also where
+    the layer set it as ‘ before a clipped word ("ik ken ‘m"). A mark right
     after a digit is a foot or an inch, and a mark with spaces on both sides says neither
     way: both stay straight."""
     chars = list(text)
     for i, c in enumerate(chars):
+        if c == "‘" and _ARTICLE.match("’" + text[i + 1 :]):
+            # The layer's opening mark before a clipped word ("ik ken ‘m") is the
+            # print's apostrophe.
+            if not (text[i - 1] if i else " ").isalnum():
+                chars[i] = "’"
+            continue
         if c not in "'\"":
             continue
         before = text[i - 1] if i else " "

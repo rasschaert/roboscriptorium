@@ -8,9 +8,20 @@ def test_a_flemish_elision_or_a_year_needs_no_partner():
     assert problems("Ik schopte ’m tegen z’n kop.") == []
 
 
-def test_an_elision_read_with_an_opening_mark_is_still_asked():
-    # The print sets ’m; the layer's ‘ is its error, and the question catches it.
-    assert problems("Ik zei ‘m dat ik veel geld had.") != []
+def test_a_quoted_letter_or_a_capital_after_an_opening_mark_is_no_clipped_word():
+    assert problems("De letter ‘m’ staat er niet.") == []
+    assert quotes.curled("De letter ‘m’ en de ‘k’.") == "De letter ‘m’ en de ‘k’."
+    assert quotes.curled("‘M’n vader,’ zei ze.") == "‘M’n vader,’ zei ze."
+    assert quotes.curled("‘Kom mee,’ zei ze, ‘nu.’") == "‘Kom mee,’ zei ze, ‘nu.’"
+    assert quotes.curled("rock ‘n’ roll") == "rock ‘n’ roll"
+
+
+def test_an_opening_mark_before_a_clipped_word_is_the_prints_apostrophe():
+    assert problems("Ik zei ‘m dat ik veel geld had, kom ‘ns hier.") == []
+    assert quotes.curled("Ik zei ‘m: kom ‘ns, ‘k wacht.") == "Ik zei ’m: kom ’ns, ’k wacht."
+    assert quotes.curled("Kom 'ns hier") == "Kom ’ns hier"
+    # A quotation opening on a clipped word lost one of its two marks: its close is asked.
+    assert problems("‘t Is waar,’ zei hij.") != []
 
 
 def test_a_mark_before_an_elisions_short_word_needs_no_partner():

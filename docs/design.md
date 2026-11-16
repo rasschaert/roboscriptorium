@@ -659,7 +659,12 @@ where it elides letters (`’s`, `’t`, `’n`, `’em`, `’tis`, `’60s`), a
 as the book's own (“ or „, by majority). An opening mark is followed by its word, so a
 mark after a dash with nothing after it closes the speech the dash broke off (Goede
 dochter's `minderjarige –’`). A mark right after a digit (a foot, an inch) or spaced on
-both sides says neither way and stays. Every golden book had some: Metro 124 in
+both sides says neither way and stays. The layer's opening `‘` before a word Dutch clips
+to an apostrophe (`’s`, `’t`, `’n`, Flemish `’m`, `’k`, `’ns`; lower case, no mark after
+it, so a quoted letter `‘m’` stays) is the print's apostrophe too: the quote check takes
+it for none, and curling sets it `’`. Before this, De kus in de nacht asked about 240 of
+its 373 unpaired quote marks for nothing ("ik ken ‘m", "kom ‘ns": 252 marks; the golden
+books hold 15, decisions.md 2026-11-16). Every golden book had some: Metro 124 in
 its slice, Dolittle's layer straight throughout (541 words); the bench saw none of it
 until it counted typography apart (2026-10-13), since `normalise` folds quote marks.
 Headings are curled too, their parts with their text: the EPUB set Reis's "De gyula's
