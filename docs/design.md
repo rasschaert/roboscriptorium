@@ -267,7 +267,11 @@ the print 223 of 234 times it is raised, `|`→`I` 59 of 59, `é`→`ë` 28 of 2
 glm-ocr dropping a `’` is wrong 232 of 235 times. The kind features ("same letters",
 "length differs") can't tell `é`→`ë` from `ë`→`e`, so each version carries how often
 its exact substitution was the print in the training books (`trust.pair`, Laplace
-smoothed, with how often it was seen). Leaving one book out over nine books
+smoothed, with how often it was seen). A version no reading has (one offered from a measure on
+the scan) is counted under its own key (`trust.UNREAD`): 18 of 2,855 offered accents were
+the print against 406 of 543 a reader read, and with one count for both the arbiter
+asked about 44 accents it had fixed (`experiments/probe_accent_prior.py`, 2026-11-16).
+Leaving one book out over nine books
 (`experiments/probe_trust_pair_prior.py`), silent errors at 0 / 0.25 / 0.5 / 1
 questions a page fell from 153 / 87 / 44 / 23 to 110 / 48 / 25 / 10, stable to one
 more training book left out. Two guards, each measured: a pair counts only when seen

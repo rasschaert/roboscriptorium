@@ -13,6 +13,17 @@ confirmations below wait for a later moment, to be brought up again). Since 20:4
   change overall, 3 wrong words fixed and 11 made, 11 more questions, the arbiter not
   retrained for them (decisions.md). Not on: 4 of their 362 offers were the print
   (`probe_extra_offers.py`); only offers both readers agree on look worth a test. The accent run started at 07:25; the queue follows by itself.
+- The accent run ended 12:07 on 2026-11-16: not taken as it stands (tuning silent
+  460 → 458 for 106 more questions; validation worse). Cause: the arbiter's one count
+  per substitution pooled the offers with the readers' accents. Built: versions no
+  reading has counted apart (`trust.UNREAD`; saved arbiters unchanged). Running:
+  `robo-accents-apart` (`work/runs/accents-apart.sh`): that arbiter trained on the accent
+  run's data (no models), then both benches once `robo-accents-mark` and `robo-nested`
+  are done; those two now train the same way. `robo-hints` ran nothing the first time
+  (a flag passed as one word), fixed and queued behind `robo-sorter-panel`.
+- Specks read as punctuation (most of tuning's 52 silent punctuation swaps): the drawn
+  mark's own fit ranks them (`experiments/probe_speck_marks.py`, `work/runs/speck-marks.log`
+  over every tuning book). Next: offers of the lesser mark where the mark fits poorly.
 - Pieter Daens' questions read: the same pair of versions is asked many times
   ("Saskaaï" 16). Such a pair has one answer everywhere in 947 of 955 cases; as two
   more arbiter inputs the short test gives a small gain (decisions.md). Parked by the

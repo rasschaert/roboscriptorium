@@ -75,13 +75,35 @@ def test_a_substitution_seen_in_two_books_becomes_a_prior_and_one_books_does_not
     right = [[False, True]] * 10
     books = ["a", "a", "a", "b", "b", "b", "c", "c", "c", "c"]
     pairs = trust.pairs_table(lost_quote + bar, right, books)
-    assert pairs == {"''→'’'": (6, 6)}
+    assert pairs == {"''→'’'": (6, 6), trust.UNREAD: (0, 0)}
     # The other version's prior is its share, the layer's the complement; a pair the
     # table lacks is even.
     assert trust.prior(lost_quote[0], 1, pairs)[0] == pytest.approx(7 / 8)
     assert trust.prior(lost_quote[0], 0, pairs)[0] == pytest.approx(1 / 8)
     assert trust.prior(bar[0], 1, pairs) == [0.5, 0.0]
     assert len(trust.features(bar[0], 1, pairs)) == trust.FEATURES
+
+
+def test_a_version_no_reading_has_is_counted_apart_from_the_readers_same_substitution():
+    def accent(read: bool) -> Suspect:
+        return replace(
+            _suspect("ik", "ík", "ík", 0.9), support={"glm": (True, False), "tess": (False, read)}
+        )
+
+    read, offered = [accent(True)] * 4, [accent(False)] * 6
+    right = [[False, True]] * 4 + [[True, False]] * 6
+    books = ["a", "a", "b", "b", "a", "a", "a", "b", "b", "b"]
+    pairs = trust.pairs_table(read + offered, right, books)
+    assert pairs["'i'→'í'"] == (4, 4) and pairs["'i'→'í'" + trust.UNREAD] == (0, 6)
+    assert trust.prior(read[0], 1, pairs)[0] == pytest.approx(5 / 6)
+    assert trust.prior(offered[0], 1, pairs)[0] == pytest.approx(1 / 8)
+    # A table made before the split has one count for both, and is read that way.
+    pooled = {"'i'→'í'": (4, 10)}
+    assert trust.prior(read[0], 1, pooled) == trust.prior(offered[0], 1, pooled)
+    # A book's answers join the count their version is under.
+    rows = trust.rows_from([offered[0]], {(3, 0, 4): "zat ík daar"})
+    joined = trust.with_answers(trust.Trust(_Model(), pairs), rows, weight=3).pairs
+    assert joined["'i'→'í'" + trust.UNREAD] == (3, 9) and joined["'i'→'í'"] == (4, 4)
 
 
 def test_a_training_suspect_gets_its_prior_from_the_other_books_only():
@@ -103,7 +125,7 @@ def test_a_saved_model_of_another_width_stops_the_build_instead_of_being_skipped
     path = tmp_path / "trust.pkl"
     trust.save(narrow, path)
     loaded = trust.load(path)
-    assert loaded.model.n_features_in_ == trust.FEATURES and loaded.pairs == {}
+    assert loaded.model.n_features_in_ == trust.FEATURES and loaded.pairs == {trust.UNREAD: (0, 0)}
     narrow.model.n_features_in_ = trust.FEATURES - 1
     trust.save(narrow, path)
     with pytest.raises(trust.Mismatch):

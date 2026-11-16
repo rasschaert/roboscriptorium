@@ -52,9 +52,13 @@ last on 2026-11-14, so next by 2026-11-21).
          silent errors): 30 of the 37 printed marks placed at a 0.24% false-alarm rate
          (`probe_missed_accents.py`); the vision judges take 30–32 of 43 proposed marks
          and 1–2 of 87 plain words. In the build, off (`ROBO_ACCENT_DOUBTS`,
-         `accentmarks.py`). Running: trust data, arbiter and both benches with the
-         doubts (`work/runs/accents-chain.sh`); taken if tuning's silent errors fall and
-         validation doesn't veto. Behind it: a judge of marks alone (`render-mark`,
+         `accentmarks.py`). Benched with the arbiter trained on them, 2026-11-16: not
+         taken (tuning silent 460 → 458 for 106 more questions, validation worse): the
+         arbiter's one count per substitution pooled 2,855 offers, 18 of them the
+         print, with the readers' accents, and it began asking about those. Counted
+         apart (`trust.UNREAD`) the short test gives 12 of the 18 for one false
+         question; running: that arbiter and both benches (`work/runs/accents-apart.sh`);
+         taken if tuning's silent errors fall and validation doesn't veto. Behind it: a judge of marks alone (`render-mark`,
          `accents-mark-chain.sh`), then nested quote offers (`nested-chain.sh`). Open:
          the offers never draw the first vowel of a pair alone ("níet", "bóek": 41 of
          Ex-minnaar's 136), where the mark's fit finds 3 of 38 at its cut, the acute

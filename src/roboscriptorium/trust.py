@@ -63,6 +63,11 @@ _NO_QUOTES = str.maketrans("", "", QUOTES + "„")
 # Per substitution (`pair`): how often the version making it was the print, and how
 # often it was seen, over the training suspects.
 Pairs = dict[str, tuple[int, int]]
+# A table holding this key counts a version no reading has (one offered from a measure
+# on the scan, `ocrcheck`'s doubts) under its substitution with this added: 18 of 2,855
+# accents offered were the print against 406 of 543 a reader read, and one count for
+# both had the arbiter asking about the readers' (docs/decisions.md, 2026-11-16).
+UNREAD = "|unread"
 
 
 @dataclass
@@ -210,6 +215,8 @@ def with_answers(trust: Trust, rows: list[dict], weight: int = ANSWER_WEIGHT) ->
         ours = r["suspect"]["ours"]
         for k, v in enumerate(r["suspect"]["others"], 1):
             key = pair(ours, v)
+            if UNREAD in pairs and not any(has[k] for has in r["suspect"]["support"].values()):
+                key += UNREAD
             a, n = pairs.get(key, (0, 0))
             pairs[key] = (a + weight * int(r["right"][k]), n + weight)
     return replace(trust, pairs=pairs)
@@ -277,18 +284,32 @@ def by_book(
     return out
 
 
+def _unread(s: Suspect, k: int) -> bool:
+    """Whether no reading has version k of a suspect."""
+    return not any(k < len(has) and has[k] for has in s.support.values())
+
+
+def _key(s: Suspect, k: int, apart: bool) -> str:
+    """Version k's key in a substitution table, one that counts unread versions `apart`
+    or not."""
+    return pair(s.ours, s.others[k - 1]) + (UNREAD if apart and _unread(s, k) else "")
+
+
 def pairs_table(suspects: list[Suspect], right: list[list[bool]], books: list[str]) -> Pairs:
     """The substitution priors from labelled suspects (`books` names each one's book),
-    pairs seen in fewer than `MIN_BOOKS` books left out."""
+    pairs seen in fewer than `MIN_BOOKS` books left out, the versions no reading has
+    counted apart (`UNREAD`)."""
     counts: dict[str, list[int]] = defaultdict(lambda: [0, 0])
     seen_in: dict[str, set[str]] = defaultdict(set)
     for s, ok, book in zip(suspects, right, books, strict=True):
-        for k, v in enumerate(s.others, 1):
-            key = pair(s.ours, v)
+        for k in range(1, 1 + len(s.others)):
+            key = _key(s, k, True)
             counts[key][0] += ok[k]
             counts[key][1] += 1
             seen_in[key].add(book)
-    return {k: (a, n) for k, (a, n) in counts.items() if len(seen_in[k]) >= MIN_BOOKS}
+    table = {k: (a, n) for k, (a, n) in counts.items() if len(seen_in[k]) >= MIN_BOOKS}
+    table[UNREAD] = (0, 0)
+    return table
 
 
 def prior(s: Suspect, k: int, pairs: Pairs) -> list[float]:
@@ -300,11 +321,12 @@ def prior(s: Suspect, k: int, pairs: Pairs) -> list[float]:
         a, n = pairs.get(key, (0, 0))
         return (a + 1) / (n + 2), math.log1p(n)
 
+    apart = UNREAD in pairs
     if k == 0:
-        rivals = [look(pair(s.ours, v)) for v in s.others]
+        rivals = [look(_key(s, j, apart)) for j in range(1, 1 + len(s.others))]
         p, n = max(rivals, key=lambda t: t[0]) if rivals else (0.5, 0.0)
         return [1 - p, n]
-    return list(look(pair(s.ours, s.others[k - 1])))
+    return list(look(_key(s, k, apart)))
 
 
 def features(
