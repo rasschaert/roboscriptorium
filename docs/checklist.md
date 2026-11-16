@@ -397,7 +397,7 @@ then the kinds one at a time below.
       picture doesn't carry between typefaces). Within one book it works: the width of
       the raised ink against the book's own double marks finds 54 of 74 and offers 131
       of 5,852 plain double marks (`quotemarks.py`, `ROBO_NESTED_QUOTES`, off). Next: its
-      run (ran 2026-11-16: no quote place rescued in the build, `offer_rescues.py`; the arbiter turns them down though d3 and clef tell them apart (d3 picks the offer: 13 of 16 the print); next, no models: the arbiter's chance on those places, then an offer arbiter trained on the offered places alone; decisions.md; its share against the accent offers' waits on `robo-accents-apart`); then De tuin's and Dolittle's touching marks and Metro's misses. Agent
+      run (ran 2026-11-16: no quote place rescued in the build, `offer_rescues.py`; most right offers sit where the quote check already asks or mends; the five silent ones (Goede dochter 142, 213, 297, 486, De tuin 164) get a chance under 0.1 and four more silent marks no offer; next, no models: those five's judge votes, and `quotemarks.py`'s measure on the places without an offer; decisions.md; its share against the accent offers' waits on `robo-accents-apart`); then De tuin's and Dolittle's touching marks and Metro's misses. Agent
 - [ ] The book's own spacing of a repeated form as arbiter evidence (the user's review of
       Andere levens, 2026-11-14: "M.H." against "M. H."): its text layer reads "M. H." 11
       times and "M.H." 5, the render judge voted the space, and still the place was asked.
