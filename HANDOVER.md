@@ -39,6 +39,7 @@ confirmations below wait for a later moment, to be brought up again). Since 20:4
   (`work/runs/offer-arbiter.sh`): the offers decided by their own arbiter, production's
   everywhere else (branch `offer-arbiter`, worktree `../robo-offer-arbiter`, off by default).
   An agent session picked up all five screens and watches them (Monitor, re-armed every 30 min).
+- 2026-11-16 23:00: the user wants Arete-27B tried (NousResearch's post-trained Qwen3.8-27B, the read model's base). Queued: `robo-arete-screen` (`work/runs/arete-screen.sh`), which waits for the user's pull (`ollama pull hf.co/bartowski/NousResearch_Arete-27B-GGUF:Q4_K_M`) and the benches, then screens it by its rescues as a reader and on the judge set. Verdict to models.md.
 - The page-kind model is told each back page's ink (last end right 22 → 24 of 27).
 - The user started the short reviews at about 17:00 on 2026-11-16 (Au pair's 16
   small-capital places, 9 accent additions in Goede dochter and De vergelding).
