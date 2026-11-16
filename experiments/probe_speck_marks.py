@@ -5,7 +5,8 @@ in two speckled scans). No reading disputes them, so no judge sees them. Would t
 drawing judge tell, were the lesser mark offered? For every body token of a book that a
 speck could have made (ending ";" or ":", an apostrophe between two words, ending ","
 sampled), the fit of the token as the layer has it and of the lesser version
-(`rendercheck.fits`) and of the mark alone (`mark_fit`, `mark_differ`), labelled by a bench run's error rows.
+(`rendercheck.fits`) and of the mark alone (`mark_fit`, `mark_differ`), and how unlike the
+mark's picture is to the book's usual picture of that mark ("own picture"), labelled by a bench run's error rows.
 `--top` lists the marks counted as printed that look least like one. No models.
 
     uv run python experiments/probe_speck_marks.py <run's .errors.jsonl> <book dir name> [commas sampled] [--top]
@@ -18,7 +19,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+import numpy as np
 import pymupdf
+from PIL import Image
 
 from roboscriptorium import pipeline, rendercheck
 from roboscriptorium.book import Book
@@ -42,6 +45,29 @@ def lesser(token: str) -> tuple[str, str] | None:
     if core.endswith(",") and len(core) > 1 and core[-2].isalpha():
         return ", for nothing", core[:-1] + tail
     return None
+
+
+def tail(ink: np.ndarray) -> np.ndarray | None:
+    """The end of a word's strip, as wide as 0.45 of its height, up to its last ink: the
+    mark a token ends on, at one size for a book."""
+    cols = np.where((ink > 0.5).any(0))[0]
+    wide = round(ink.shape[0] * 0.45)
+    if len(cols) == 0 or cols[-1] + 1 < wide:
+        return None
+    patch = ink[:, cols[-1] + 1 - wide : cols[-1] + 1].astype(np.float32)
+    return np.asarray(Image.fromarray(patch).resize((18, 40), Image.BILINEAR))
+
+
+def unlike(patch: np.ndarray, usual: np.ndarray) -> float:
+    """1 less the best correlation of a mark's picture with the book's usual one, over
+    small shifts up and down (the layer's boxes sit a little differently)."""
+    best = -1.0
+    for dy in range(-4, 5):
+        a = np.roll(patch, dy, 0)[4:-4].ravel()
+        b = usual[4:-4].ravel()
+        a, b = a - a.mean(), b - b.mean()
+        best = max(best, float((a * b).sum() / (np.sqrt((a * a).sum() * (b * b).sum()) + 1e-6)))
+    return 1 - best
 
 
 def is_speck(token: str, other: str, got: str, want: str) -> bool:
@@ -87,11 +113,13 @@ def main():
         plain = [p for p in places if p[0] == ", for nothing" and p[1] == "print"]
         drop = set(map(id, plain)) - set(map(id, random.sample(plain, min(commas, len(plain)))))
         places = [p for p in places if id(p) not in drop]
-        scored = defaultdict(list)
+        scored, patches = defaultdict(list), defaultdict(list)
         for kind, label, number, box, token, other in places:
             ink = rendercheck.place_ink(doc[number - 1], box, judge._texts.get(number))
             if ink is None:
                 continue
+            if kind != "' for a space" and token[-1] in ";:," and (patch := tail(ink)) is not None:
+                patches[kind].append((patch, label, number, token, other))
             a, b = rendercheck.fits(judge._face, judge._match.spread, judge._match.size, ink, [token, other])
             scored[kind, "whole word"].append((b - a, label, number, token, other))
             for measure in (rendercheck.mark_fit, rendercheck.mark_differ):
@@ -99,6 +127,13 @@ def main():
                 if got is not None:
                     # Lower is less like the mark: negated, so a speck scores high.
                     scored[kind, measure.__name__].append((-got, label, number, token, other))
+    # Each mark's picture against the book's usual one for that mark: the median of
+    # all, then of the four in five most like it, so the specks don't draw it.
+    for kind, rows in patches.items():
+        usual = np.median([r[0] for r in rows], 0)
+        near = sorted(rows, key=lambda r: unlike(r[0], usual))[: max(3, len(rows) * 4 // 5)]
+        usual = np.median([r[0] for r in near], 0)
+        scored[kind, "own picture"] = [(unlike(r[0], usual), *r[1:]) for r in rows]
     for (kind, measure), rows in sorted(scored.items()):
         kind = f"{kind}, {measure}"
         specks = sorted(r for r in rows if r[1] == "speck")

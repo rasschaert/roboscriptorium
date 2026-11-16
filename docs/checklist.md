@@ -354,6 +354,15 @@ then the kinds one at a time below.
       `probe_own_pictures.py`: 0–2 of 43 placed errors found at 1% false offers). It
       could reach about 80 silent errors, 46 of them stress accents; most sit on an i,
       where the scan's own variation is as large as the accent
+- [ ] **Specks read as punctuation** (most of tuning's 52 silent punctuation swaps; a dot
+      over a comma read as ";", a fleck after a word as a comma, between words as an
+      apostrophe): offer the lesser mark where the mark ranks among the book's least like
+      its own, by the drawn mark's fit (best on semicolons and colons) and by the mark's
+      picture against the book's usual one (best on commas; `probe_speck_marks.py`,
+      decisions.md 2026-11-16). Agent: the offers as a third kind beside accents and
+      nested quotes (`ocrcheck`'s doubts), a short test on Doodskleed and The
+      Thief-Taker's Apprentice (judges on the offers only), then trust data and a bench
+      once the accent offers' benches say offers pay with the apart count.
 - [ ] **The accent on the first vowel of a pair** ("níet"): as a second form of the accent
       offers, scored by the difference of fits with the cut set per book and vowel pair
       (35 of 36 found at 0.34% false offers, 2026-11-16, `probe_accent_first_vowel.py`);
