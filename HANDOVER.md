@@ -7,7 +7,7 @@ session; "Running" below it is of 2026-11-12, and what it says of production's a
 and of baselines is superseded by the first section; the older sections are from
 2026-11-09 and 2026-11-10.
 
-**State at 03:00 on 2026-11-16** (the user checked in at 01:00: "keep at it"; the
+**State at 02:20 on 2026-11-16** (the user checked in at 01:00: "keep at it"; the
 confirmations below wait for a later moment, to be brought up again). Since 20:45:
 - The short bench of the extra readers runs slower than said (6 of 16 books after 3.5
   hours): result about 07:00. The accent run and the queue follow it by themselves.
