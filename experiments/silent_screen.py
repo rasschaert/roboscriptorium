@@ -47,8 +47,23 @@ VARIANTS = {
     "ocr": None,
     # Baidu's Unlimited-OCR-2, a whole-page model: the one prompt its card gives.
     "parse": None,
+    # Surya OCR 2: its trained prompt for a crop (surya/inference/prompts.py, BLOCK_PROMPT);
+    # it answers in HTML, which `html_text` reduces to the line.
+    "surya": None,
 }
-OWN_PROMPTS = {"ocr": "OCR:", "parse": "Multi page parsing."}
+OWN_PROMPTS = {
+    "ocr": "OCR:",
+    "parse": "Multi page parsing.",
+    "surya": "OCR this block image to HTML.",
+}
+
+
+def html_text(answer: str) -> str:
+    """An HTML answer's text on one line: tags dropped, entities read."""
+    import html
+    import re
+
+    return " ".join(html.unescape(re.sub(r"<[^>]+>", " ", answer)).split())
 STRAIGHT = str.maketrans("‘’“”", "''\"\"")
 
 
@@ -186,13 +201,36 @@ def run(model: str, variants: list[str]) -> None:
                     image.resize((image.width * 2, image.height * 2), Image.LANCZOS).save(held, "PNG")
                     png = held.getvalue()
                 prompt = OWN_PROMPTS[variant] if VARIANTS[variant] is None else item["prompt"] + VARIANTS[variant]
-                text = readers.transcribe(png, model, settings.ollama_url, prompt)
+                if variant == "surya":
+                    text = html_text(_whole_answer(png, model, settings.ollama_url, prompt))
+                else:
+                    text = readers.transcribe(png, model, settings.ollama_url, prompt)
                 f.write(json.dumps({"id": item["id"], "text": text}, ensure_ascii=False) + "\n")
                 f.flush()
                 if n % 50 == 0:
                     print(f"{model} {variant}: line {n} of {len(items)}", flush=True)
         print(f"{model} {variant}: done", flush=True)
     report()
+
+
+def _whole_answer(png: bytes, model: str, url: str, prompt: str) -> str:
+    """A model's whole answer for a crop, every line of it (`readers.transcribe` keeps the
+    first): an HTML answer may open on a tag alone."""
+    import base64
+
+    import httpx
+
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "images": [base64.b64encode(png).decode()],
+        "stream": False,
+        "think": False,
+        "options": {"num_predict": 512, "temperature": 0},
+    }
+    resp = httpx.post(f"{url}/api/generate", json=payload, timeout=600)
+    resp.raise_for_status()
+    return resp.json()["response"]
 
 
 def report() -> None:
