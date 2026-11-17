@@ -20,11 +20,15 @@ still holds where this doesn't speak.
   4. `robo-hyphen-panel2` (`work/runs/hyphen-panel2.sh`): the four hyphen judges by their
      mean again, now shown the break as the question says (`be00196`), against the offers
      run's baselines.
+  4b. `robo-hyphen-learned` (`work/runs/hyphen-learned.sh`): the learned hyphen decision
+     (branch `hyphen-learned`, worktree `../robo-hyphen-learned`) trained on the panel
+     run's caches, both benches.
   5. `robo-tess-q8`, started by a wait on the user's pull of Tess-4.5-27B Q8_0
      (`work/runs/tess-q8-screen.sh`); takes the lock when free.
-- **Found and mended:** the hyphen judges were shown "rechtbank-|fantasie" (the hyphen and
-  the break mark), and answered near 0.5; production's English books too. The offers
-  run's baselines carry the fix; compare them with `tuning-20261117T222142` for its effect.
+- **The hyphen question's form:** the judges were shown "rechtbank-|fantasie" (hyphen and
+  break mark); hidden since `be00196`. That cost English 10 silent words on tuning (the
+  shown hyphen was a useful prior there; decisions.md 2026-11-18). Left as is while the
+  offers run uses it; after the hyphen runs, choose the form per language.
 - **Quote change:** asking at a paragraph's unpaired opening mark taken out (De geruchten's
   questions rose for nothing); the stray opening offered to the judges kept.
 - **Surya OCR 2:** as a reader 12 of 97 silent lines, 1 no other reader rescues; as a
