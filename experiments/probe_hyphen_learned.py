@@ -25,12 +25,15 @@ from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import cached_text_layer
 
 W = re.compile(r"[^\w-]")
-clef = {}
-path = Path("work/probes/hyphen-judge/clef_27b.jsonl")
-if path.exists():
-    for line in path.read_text().splitlines():
-        r = json.loads(line)
-        clef[(r["closed"], r["context"])] = r["p_hyph"]
+JUDGES = ("clef_27b", "autotrust-jev_35b-nvfp4", "d3_9b", "autotrust-jev_9b-nvfp4")
+said = {j: {} for j in JUDGES}
+for j in JUDGES:
+    path = Path(f"work/probes/hyphen-judge/{j}.jsonl")
+    if path.exists():
+        for line in path.read_text().splitlines():
+            r = json.loads(line)
+            said[j][(r["closed"], r["context"])] = r["p_hyph"]
+clef = said["clef_27b"]
 
 items = []
 for spec in bench.SETS["tuning"]:
@@ -71,15 +74,23 @@ for spec in bench.SETS["tuning"]:
             float(stem.lower().endswith("s")), float(stem[:1].isupper()),
         ]  # fmt: skip
         items.append({"book": name, "lang": book.language[:2], "word": hyph, "truth": bool(h), "x": x,
-                      "clef": clef.get((closed, sentence), np.nan)})  # fmt: skip
+                      "clef": clef.get((closed, sentence), np.nan),
+                      "judges": [said[j].get((closed, sentence), np.nan) for j in JUDGES]})  # fmt: skip
     print(name, flush=True)
 
 y = np.array([i["truth"] for i in items])
 books = np.array([i["book"] for i in items])
 langs = np.array([i["lang"] for i in items])
 print(f"{len(items)} undecided breaks; keep the hyphen: {dict(Counter((i['lang'], i['truth']) for i in items))}")
-for label, extra in (("the book's own signs", False), ("with clef's answer", True)):
-    X = np.array([i["x"] + ([i["clef"]] if extra else []) for i in items])
+VARIANTS = (
+    ("the book's own signs", lambda i: i["x"]),
+    ("with clef's answer", lambda i: i["x"] + [i["clef"]]),
+    ("with the four judges", lambda i: i["x"] + i["judges"]),
+    ("the four judges alone", lambda i: i["judges"]),
+)
+print(f"judges answered: {[int(np.isfinite([i['judges'][k] for i in items]).sum()) for k in range(len(JUDGES))]}")
+for label, columns in VARIANTS:
+    X = np.array([columns(i) for i in items])
     p = np.zeros(len(items))
     for b in set(books):
         held = books == b
@@ -91,7 +102,15 @@ for label, extra in (("the book's own signs", False), ("with clef's answer", Tru
             keep = p[m] >= cut
             print(f"  {label:22} {lang} at {cut}: wrong {int((keep != y[m]).sum())} of {int(m.sum())} "
                   f"(kept wrongly {int((keep & ~y[m]).sum())}, dropped wrongly {int((~keep & y[m]).sum())})")  # fmt: skip
+        # The undecided asked: wrong only outside the band, at the cost of the band's questions.
+        for low, high in ((0.2, 0.8), (0.1, 0.9)):
+            ask = (p[m] > low) & (p[m] < high)
+            keep = p[m] >= high
+            wrong = int(((keep != y[m]) & ~ask).sum())
+            print(f"  {label:22} {lang} asking {low}-{high}: asked {int(ask.sum())}, wrong silent {wrong}")
 for lang in ("nl", "en"):
     m = langs == lang
     c = np.array([i["clef"] for i in items])[m]
-    print(f"  default (drop) {lang}: wrong {int(y[m].sum())} of {int(m.sum())}; clef alone at 0.5: wrong {int(((c >= 0.5) != y[m]).sum())}")
+    mean = np.nanmean(np.array([i["judges"] for i in items])[m], axis=1)
+    print(f"  default (drop) {lang}: wrong {int(y[m].sum())} of {int(m.sum())}; clef alone at 0.5: wrong {int(((c >= 0.5) != y[m]).sum())}; "
+          f"the judges' mean at 0.5: wrong {int(((mean >= 0.5) != y[m]).sum())}")  # fmt: skip

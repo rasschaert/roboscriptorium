@@ -535,7 +535,8 @@ def test_a_dash_after_the_break_ends_the_words_rest():
 def test_the_compound_judge_sees_the_break_in_its_sentence():
     seen = []
     join("He wore night-", "vision goggles", compound=lambda s, r, c: seen.append(c) or False)
-    assert seen == ["He wore night-|vision goggles"]
+    # The break as the question describes it: the hyphen shown as |, not beside it.
+    assert seen == ["He wore night|vision goggles"]
 
 
 def test_the_word_list_settles_a_hyphen_in_a_pages_last_run_of_body_lines():

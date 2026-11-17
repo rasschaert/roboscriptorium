@@ -20,7 +20,7 @@ from roboscriptorium.clients.decide import choice
 from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.pdf import PageText
 
-VERSION = 1
+VERSION = 2
 # A judge's answers are written to the cache after this many new ones.
 SAVE_EVERY = 20
 LANGUAGES = {"en": "English"}
@@ -219,7 +219,7 @@ def join(
             return text[:-1] + marked[len(stem) :] + nxt[len(rest) :]
         if _suspended(nxt, stem, rest, seen, known):
             return text.rstrip("".join(HYPHENS)) + "- " + nxt
-        if _hyphen_stays(nxt, stem, rest, seen, known, compound, f"{text[-120:]}|{nxt}"):
+        if _hyphen_stays(nxt, stem, rest, seen, known, compound, f"{text[:-1][-120:]}|{nxt}"):
             return text.rstrip("".join(HYPHENS)) + "-" + nxt
         return text[:-1] + nxt
     if text.endswith(DASHES):
