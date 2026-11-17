@@ -1210,3 +1210,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-17 | bench tuning, Au pair doubled singles | 0 | 5 | 0 |
 | 2026-11-17 | bench tuning, speck offers on their own arbiter | 0 | 5 | 0 |
 | 2026-11-17 | bench validation, speck offers on their own arbiter | 0 | 1 | 0 |
+| 2026-11-17 | bench tuning, quote questions at their mark, stray openings offered | 0 | 5 | 0 |
+| 2026-11-17 | bench validation, quote questions at their mark, stray openings offered | 0 | 1 | 0 |
+| 2026-11-17 | silent screen, surya-ocr-2, own prompt | 0 | 1 | 0 |

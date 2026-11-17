@@ -257,9 +257,10 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       clean): 518 questions, 425 OCR doubts and 113 quote questions. Next: the quote
       questions' classes made the machine's (a straight " read for the opening ‘ where
       another reading has it; speech opening on ’t; the questions on lines with no
-      quote mark: 6, each about a mark far up its paragraph, now asked at that mark,
-      and a stray opening mark offered to the judges without it, benched
-      2026-11-17 `work/runs/quote-stray.sh`), the sample read again, then the user's review. Left in
+      quote mark: 6, each about a mark far up its paragraph: a stray opening mark is
+      offered to the judges without it (2026-11-17); asking at the opening mark too cost
+      De geruchten questions that caught nothing, so next the card at the paragraph's end
+      shows the opening mark's words instead, no question added), the sample read again, then the user's review. Left in
       the sample, by kind: the layer's “ for an opening ‘, a speck read as ‘ at a line's
       start, small capitals ("csx-R", "zz-R"), stress accents the judges split on
 - [ ] **A build says how far it is**: the first build of a long book prints nothing

@@ -94,13 +94,7 @@ def test_places_point_at_the_lines_where_the_mark_is_missing():
     p = Paragraph("‘" + "woord " * 59 + "einde.", refs)
     (place,) = unbalanced([p])
     assert place.why == "open at end"
-    # Its opening mark is near enough the end for one question to show both.
-    assert place.sources == refs
-    # Asked at its opening mark as well: the mark may be a speck, or open speech.
-    p = Paragraph("‘" + "woord " * 119 + "einde.", [SourceRef(3, k) for k in range(12)])
-    first, last = unbalanced([p])
-    assert (first.why, first.sources) == ("open at end", [SourceRef(3, 0), SourceRef(3, 1)])
-    assert (last.why, last.sources) == ("open at end", [SourceRef(3, 10), SourceRef(3, 11)])
+    assert place.sources == refs[-2:]
     q = Paragraph("Woord " * 59 + "einde.’", refs)
     (place,) = unbalanced([q])
     assert place.why == "no opening"

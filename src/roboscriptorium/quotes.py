@@ -90,12 +90,6 @@ def problems(text: str) -> list[tuple[int, str]]:
     opening mark inside an open quote is a lost closing one only where it starts
     a new sentence.
     """
-    return _scan(text)[0]
-
-
-def _scan(text: str) -> tuple[list[tuple[int, str]], list[int]]:
-    """`problems`, and the offsets of the opening marks a paragraph open at its end leaves
-    unpaired."""
     found = []
     depth = dict.fromkeys(PAIRS, 0)
     # The offsets of the marks still open, innermost last.
@@ -140,7 +134,7 @@ def _scan(text: str) -> tuple[list[tuple[int, str]], list[int]]:
         found.append((len(text) - 1, "open at end"))
     elif stop := _unstopped(text, found_marks):
         found.append((stop, "no stop at end"))
-    return sorted(found), sorted(i for i in left if i not in stray)
+    return sorted(found)
 
 
 def _after_word(text: str, i: int) -> bool:
@@ -177,32 +171,9 @@ def unbalanced(paragraphs: list[Paragraph]) -> list[Place]:
     for p in paragraphs:
         if not any(c in p.text for c in "‘’“”"):
             continue
-        found, openers = _scan(p.text)
-        for offset, why in found:
-            if why == "open at end" and openers:
-                out += _open_at_end_places(p, openers[0], offset)
-                continue
+        for offset, why in problems(p.text):
             out.append(Place(_around(p, offset, why), why, _excerpt(p.text, offset)))
     return out
-
-
-# A paragraph open at its end is asked from its unpaired opening mark to its end in one
-# question when they lie within this many lines; else at each, in two.
-OPEN_SPAN = 6
-
-
-def _open_at_end_places(p: Paragraph, opener: int, end: int) -> list[Place]:
-    """A paragraph left open at its end, asked where it ends and where its unpaired
-    opening mark stands: the mark may be a speck, or open speech whose close was lost."""
-    n = len(p.sources)
-    at = min(n - 1, opener * n // max(1, len(p.text)))
-    why = "open at end"
-    if n - at <= OPEN_SPAN:
-        return [Place(p.sources[at:], why, _excerpt(p.text, opener))]
-    return [
-        Place(_around(p, opener, why), why, _excerpt(p.text, opener)),
-        Place(_around(p, end, why), why, _excerpt(p.text, end)),
-    ]
 
 
 # The quote check as two readers of the OCR check: a line with its closing mark added,
