@@ -66,7 +66,7 @@ last on 2026-11-14, so next by 2026-11-21).
          Benched 2026-11-17 with an arbiter of their own for the accent offers and
          production's everywhere else (branch `offer-arbiter`, `ROBO_OFFER_TRUST_MODEL`): 15 of
          tuning's 74 silent accents asked for 37 more questions, none made, validation 5
-         more questions for none; **user**: on or not. To merge once no bench runs. Tried behind it: a judge of marks alone (`render-mark`,
+         more questions for none; **user**: on or not. On main, off. Tried behind it: a judge of marks alone (`render-mark`,
          `accents-mark-chain.sh`), then nested quote offers (`nested-chain.sh`). Open:
          the offers never draw the first vowel of a pair alone ("níet", "bóek": 41 of
          Ex-minnaar's 136), where the mark's fit finds 3 of 38 at its cut, the acute

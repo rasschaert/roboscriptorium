@@ -497,6 +497,16 @@ offers the six known dropped marks and eleven more, 2.8 a page, at 29 ms a word
 (`probe_accent_doubts.py`). Off (`ROBO_ACCENT_DOUBTS`) until the judges are measured on
 its offers (`probe_accent_judges.py`) and the arbiter is trained with them.
 
+An arbiter trained with the offers pays for them elsewhere: retrained on the rebuilt
+trust data it makes 16 punctuation swaps on tuning that production's does not
+(2026-11-16). So the offers have an arbiter of their own (`ROBO_OFFER_TRUST_MODEL`,
+`trust.offered`, `trust.merge_offers`, off): it decides only the suspects that hold an
+accent offer, and production's arbiter decides the rest as before. Benched that way, 15
+of tuning's 74 silent stress accents become questions for 37 more questions, no accent
+is made silent and no other word changes; validation asks 5 more for none of its 8
+(2026-11-17). Its failure: an offer arbiter is trained on few right offers (18 in the
+accent run's data), so it asks rather than fixes.
+
 ## Extra readers as offers (off)
 
 A reader too weak to vote can still read what the readers in use all miss. On the short

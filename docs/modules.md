@@ -389,6 +389,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   settings name. An ablation (another reader set, say) keeps its data and models apart:
   `ROBO_TRUST_DATA` for the data folder, `ROBO_OCR_TRUST_MODEL` for the model, whose
   leave-one-out copies sit beside it.
+- `trust.offered`, `trust.merge_offers` (`ROBO_OFFER_TRUST_MODEL`, off): a second arbiter's
+  decisions for the suspects that hold an accent offer (a version no reading has that is
+  ours but for its accents), the first arbiter's for all others (docs/design.md).
 - `accentmarks.py`: accents every reader drops (`ROBO_ACCENT_DOUBTS`, off). For each word of a
   Dutch book's line no reading disputes, the word with an acute on each vowel group
   (`stressed`) scored on the scan by that mark alone (`rendercheck.mark_fit`, through the
