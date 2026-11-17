@@ -38,9 +38,10 @@ last on 2026-11-14, so next by 2026-11-21).
          2026-11-15). The whole page shown: clef 54 of 92, the grown trees 50; but 22
          of the 92 are a washed-out book's lines the labels call no text: without them
          clef 54 of 70, the trees in use 39, the grown 29; d3 and autotrust-jev add
-         nothing to clef (2026-11-16). Built, off: clef on the whole page as the referee
-         where the two sets disagree (`sorter.Referee`, `ROBO_SORTER_SECOND`); its benches
-         queued (`work/runs/sorter-referee.sh`).
+         nothing to clef (2026-11-16). On by default since 2026-11-17: clef on the whole
+         page as the referee where the two sets disagree (`sorter.Referee`,
+         `sorter_second`): tuning BETTER, heading errors 24 → 18, validation BETTER,
+         52 → 48 (decisions.md).
       2. The proofreader (null 2026-10-08/11: as many false questions as catches) as one
          more reader on the OCR check's path, its catches judged and weighed like any
          reading, never a question of its own.
@@ -78,6 +79,21 @@ last on 2026-11-14, so next by 2026-11-21).
 
 In this order; `HANDOVER.md` has the paths and the commands.
 
+- [ ] Arete-27B Q4 and Groot 19B as extra text judges (screened 2026-11-17, models.md:
+      together they lift the judge panel +0.007 [+0.000, +0.015]): trust data with both,
+      an arbiter on it, a control arbiter retrained on the same day's data beside it,
+      both benches; Groot's readings as offers through the judges (`ROBO_EXTRA_READERS`:
+      it alone reads the silent ‘“Lucy). Hours: explain to the user first; one model
+      over all its questions, then the next
+- [ ] Speck offers (`ROBO_SPECK_DOUBTS`; 5 of tuning's 52 silent specks rescued, the
+      retrained arbiter not taken) decided by an arbiter of their own, as the accent
+      offers are (`ROBO_OFFER_TRUST_MODEL`, `trust.offered`)
+- [ ] Which italic word an accent offer adds in Het geluid van bananen (each bench with
+      accent or speck offers has one more italic error there than the baseline): find
+      the word and the stage that changes it; no models
+- [ ] Vanille en andere smaken's chapter numbers beside its titles: with the referee 4
+      of 15 headings are found, each without its number (0 exact); no models to find
+      the cause
 - [ ] After batch five, the null that waited for it: autotrust-jev 9B as a second text
       judge (branch `text-seat`; not taken 2026-11-09, validation's silent places
       170 → 178). Needs fresh model answers: overnight

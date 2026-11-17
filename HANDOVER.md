@@ -64,7 +64,7 @@ section speaks: baselines, what runs, what is on by default.
   `# models:` and `# one at a time:`; the judges asked one model over all its questions.
   `work/runs/model-screen.sh <ollama model> <tag>` screens a further model the same way.
 
-**To do next, no models, in this order** (all on docs/checklist.md)
+**To do next, no models, in this order** (each an open step on docs/checklist.md)
 1. A bench that outlives one book's failure and picks its own number of books at once
    (the referee's bench died at 15 of 20 books on one `httpx.ReadTimeout`).
 2. Hyphen judges: keep each judge's chance, learn the combiner.
