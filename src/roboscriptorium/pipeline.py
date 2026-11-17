@@ -411,8 +411,22 @@ def run(
                 labels = corrections.answered(answers, suspects)
                 own = trust.rows_from(suspects, labels)
                 arbiter = trust.with_answers(model, own)
+                decided = trust.decide(suspects, arbiter, budget, settings.ocr_ask_below)
+                if settings.offer_trust_model:
+                    offer_model = trust.load(Path(settings.offer_trust_model))
+                    if offer_model is None:
+                        raise trust.Mismatch(f"No trust model at {settings.offer_trust_model}.")
+                    decided = trust.merge_offers(
+                        decided,
+                        trust.decide(
+                            suspects,
+                            trust.with_answers(offer_model, own),
+                            budget,
+                            settings.ocr_ask_below,
+                        ),
+                    )
                 taught = trust.by_book(
-                    trust.decide(suspects, arbiter, budget, settings.ocr_ask_below),
+                    decided,
                     trust.book_buckets(own),
                     settings.ocr_ask_below,
                 )

@@ -489,6 +489,27 @@ def unseen(s: Suspect) -> bool:
     return bool(judges) and s.votes.get(judges[0]) == ""
 
 
+def _plain(text: str) -> str:
+    """`text` without its accents."""
+    return "".join(c for c in unicodedata.normalize("NFD", text) if not unicodedata.combining(c))
+
+
+def offered(s: Suspect) -> bool:
+    """Whether a suspect holds an accent offer: a version no reading has that is ours
+    but for its accents. The other unread versions (a small capital in lower case) stay
+    with the first arbiter, which was trained with them."""
+    return any(
+        _unread(s, k) and other != s.ours and _plain(other) == _plain(s.ours)
+        for k, other in enumerate(s.others, 1)
+    )
+
+
+def merge_offers(base: list[Suspect], offers: list[Suspect]) -> list[Suspect]:
+    """`base`'s decisions, with `offers`' (the same suspects decided by another arbiter)
+    where a suspect holds an offered version."""
+    return [o if offered(b) else b for b, o in zip(base, offers, strict=True)]
+
+
 def decide(
     suspects: list[Suspect], trust: Trust, questions: int, below: float = 1.0
 ) -> list[Suspect]:
