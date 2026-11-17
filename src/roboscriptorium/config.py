@@ -100,9 +100,8 @@ class Settings:
     sorter: bool = True
     sorter_model: str = "work/models/line-roles.pkl"
     # A second set of line-role trees; the judge, shown the page, settles the lines the
-    # two sets call differently (`sorter.Referee`). Empty until its bench
-    # (docs/decisions.md, 2026-11-16).
-    sorter_second: str = ""
+    # two sets call differently (`sorter.Referee`; `ROBO_SORTER_SECOND=` turns it off).
+    sorter_second: str = "work/models/line-roles-second.pkl"
     # Italic words decided by trees over each word's slant and its neighbours'
     # (`italics.Trees`, trained on the golden pairs' words) instead of the cuts in
     # `italics._italic` (`ROBO_ITALIC_TREES=0`).

@@ -575,10 +575,6 @@ Daens' title was mended by hand).
 
 ## Golden books and the bench
 
-- [ ] The heading count tells a title found in part from a line of specks (2026-11-17:
-      Vanille's chapter titles, found by the line-role referee without their numbers,
-      counted as one more heading error than 'EEE' and 'EE' had, and vetoed it). Agent,
-      an hour; then the referee's validation verdict read again
 - [ ] A bench outlives one book's failure (2026-11-17: one judge call timing out in one
       book ended the line-role referee's tuning bench at 15 of 20 books, no record
       written): the other books are scored and recorded, the failed one named and the
@@ -1331,6 +1327,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Measurement
 
+- [x] 2026-11-17 The heading count credits a title found without its number or set as two (one error, not two); with it the line-role referee passes validation (heading errors 52 → 48) and is on by default
 - [x] A heading's punctuation and quote marks measured (2026-11-14,
       `evaluate.heading_marks`): four on tuning, all real, none on validation
 

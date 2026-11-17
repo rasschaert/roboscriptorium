@@ -24,6 +24,7 @@ def _default_settings(monkeypatch):
     # The line-role trees are trained on the books in work/, which a test can't depend
     # on: tests run on the rules, and a test of the trees switches them on itself.
     monkeypatch.setenv("ROBO_SORTER", "0")
+    monkeypatch.setenv("ROBO_SORTER_SECOND", "")
     # The same for the italic trees: tests run on the slant cuts.
     monkeypatch.setenv("ROBO_ITALIC_TREES", "0")
     # No font folder: the judge `render` is left out, as on a machine without the

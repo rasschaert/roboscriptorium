@@ -10,12 +10,16 @@ and of baselines is superseded by the first section; the older sections are from
 **State at 02:50 on 2026-11-17** (a new agent session took over the screens at 18:30 on
 2026-11-16; decisions.md, 2026-11-16 and 17, has every number; the sections below are
 older).
-- **Waiting on the user, two calls:** accent offers on by default (15 of tuning's 74
+- **Waiting on the user, one call:** accent offers on by default (15 of tuning's 74
   silent accents asked for 37 more questions, nothing else moves, validation 5 questions
   for none; `ROBO_ACCENT_DOUBTS=1 ROBO_OFFER_TRUST_MODEL=work/models/ocr-trust-accents-apart.pkl`,
-  on main, off); the line-role referee on by default (`ROBO_SORTER_SECOND`: tuning BETTER,
-  75 wrong words fixed and 18 made, headings 24 → 18; validation vetoed on Vanille's
-  heading count, which counts its found chapter titles as worse than 'EEE').
+  on main, off).
+- **On by default since 04:10 on 2026-11-17: the line-role referee** (clef 27B settles the
+  lines two sets of trees call differently; `sorter_second`, `ROBO_SORTER_SECOND=` turns
+  it off). The heading count was mended first (a title found without its number is one
+  error, not two) and with it validation no longer vetoes. **Baselines with it on:**
+  `work/bench/tuning-20261117T015939-90f9f02-dirty.json`,
+  `validation-20261117T020028-90f9f02-dirty.json`.
 - **Not taken as built, each with its next step on the checklist:** the arbiters retrained
   with accent, nested-quote and speck offers (the retraining costs punctuation); the
   hyphen judges by their mean (29 rescued, 44 made: keep each judge's answer, learn the
@@ -32,8 +36,7 @@ older).
   checks; `offer_rescues.py`, `judge_lift.py`, `work/runs/model-screen.sh` (a new model's
   two tests, after the benches, one at a time). Ollama will not load a second large model
   beside a bench's judge; six books at once time a cold judge out (`ROBO_BENCH_WORKERS=1`).
-- **To do next, no models:** the heading count that tells a title found in part from
-  specks; a bench that outlives one book's failure; the five silent nested quotes' judge
+- **To do next, no models:** a bench that outlives one book's failure; the five silent nested quotes' judge
   votes; which italic word an accent offer adds in Het geluid van bananen.
 
 **State at 02:20 on 2026-11-16** (the user checked in at 01:00: "keep at it"; the

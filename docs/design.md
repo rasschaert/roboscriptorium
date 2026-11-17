@@ -978,15 +978,21 @@ On 2026-10-24 they cut role errors by a fifth left one book out, yet `bench tuni
 wrong words for 30 fixed, most on Dolittle's picture pages, where Qwen calls text beside a
 drawing furniture (docs/decisions.md).
 
-**A referee between two sets of trees (off).** Trees trained on other slices call some
+**A referee between two sets of trees.** Trees trained on other slices call some
 lines differently (299 of 198,758 tuning lines for the sets of 2026-11-14; settled right,
 line-role errors would go 369 → 195). Shown the whole page with the line framed, the
 judge is right on 54 of 70 such places on readable pages, the trees in use on 39, the
 second set on 29 (`experiments/sorter_judge_probe.py --page --without=afscheid`). Why
 the page: on a band it took headings and page numbers for running text (38 of 92). Why
 one judge: d3 and autotrust-jev with it came to 50. Its failure: a washed-out page,
-where it calls unreadable lines text; those pages are read apart (`faint.py`). Off
-(`ROBO_SORTER_SECOND`) until benched.
+where it calls unreadable lines text; those pages are read apart (`faint.py`). On by
+default since 2026-11-17 (`sorter_second`, the trees of 2026-11-14 kept as
+`work/models/line-roles-second.pkl`): on tuning 75 wrong words fixed and 18 made (extra
+text 59 to 3, missing text 16 to 4; Dolittle's picture pages 42 to 8), heading errors
+24 → 18, four silent places fixed and three made; on validation 16 fixed and 6 made,
+heading errors 52 → 48 (Vanille's chapter titles found where the trees alone set 'EEE').
+What it costs: the judge asked about a handful of lines a book, cold; six books built at
+once timed it out, so a cold bench of it runs one book at a time.
 
 ## Reflow: where paragraphs start
 

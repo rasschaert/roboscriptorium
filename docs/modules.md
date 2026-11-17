@@ -73,7 +73,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
 - `sorter.py`: line roles from trees over layout, type, repetition and the role
   model's answer, in place of `roles.py`'s rules (`ROBO_SORTER=1`, on by default). Its
   copies without each tuning book are scored by `bench`. With a second set of trees
-  (`ROBO_SORTER_SECOND`, off) a `Referee` settles the lines the two sets call
+  (`sorter_second`, `work/models/line-roles-second.pkl`, on by default; `ROBO_SORTER_SECOND=` turns it off) a `Referee` settles the lines the two sets call
   differently: the judge, shown the page with the line framed.
 - `sorterdata.py`: the trees' labelled lines (golden alignment on the bench's slices and
   a few training-only ones, cached in `work/probes/sorter/`) and the models to save;

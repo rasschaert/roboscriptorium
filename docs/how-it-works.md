@@ -217,6 +217,13 @@ rules see (place on the page, width, indent, gaps, repetition across pages), the
 line's type, the spotter's regions and the sorter's answer, and give every line a
 role. They are the default; `ROBO_SORTER=0` leaves the rules alone.
 
+Two sets of such trees, trained on different pages of the golden books, call a few
+lines differently (about one in 700). Those lines go to a referee: the judge (clef 27B)
+is shown the whole page with the line framed and says what it is. It mostly settles
+lines on picture pages and loose lines at a page's edge: captions and ornaments the
+trees took for text, and a dateline or a chapter's first words they had dropped.
+`ROBO_SORTER_SECOND=` (empty) turns the referee off.
+
 Last, the book's own run of chapter numbers mends what the trees drop: a short centred
 line standing where the run lacks a number ("10", then nothing, then "12") is a heading
 when it reads as that number. Where the first reading made letters of it ("Kil" for 11),
