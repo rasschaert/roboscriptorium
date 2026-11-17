@@ -261,8 +261,8 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       quote questions were the layer's ‘ for the apostrophe of ’m and ’ns, now set by
       definition). Built again 2026-11-17 (ten minutes warm; 237 apostrophes set right, structure
       clean): 518 questions, 425 OCR doubts and 113 quote questions. Next: the quote
-      questions' classes made the machine's (a straight " read for the opening ‘ where
-      another reading has it; speech opening on ’t; the questions on lines with no
+      questions' classes made the machine's (a straight " read for the opening ‘: mended
+      on branch `quote-straight`, 16 paragraphs, benched by `work/runs/quote-straight.sh`; speech opening on ’t; the questions on lines with no
       quote mark: 6, each about a mark far up its paragraph: a stray opening mark is
       offered to the judges without it (2026-11-17); asking at the opening mark too cost
       De geruchten questions that caught nothing, so next the card at the paragraph's end

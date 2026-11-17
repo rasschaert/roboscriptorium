@@ -23,6 +23,10 @@ still holds where this doesn't speak.
   4b. `robo-hyphen-learned` (`work/runs/hyphen-learned.sh`): the learned hyphen decision
      (branch `hyphen-learned`, worktree `../robo-hyphen-learned`) trained on the panel
      run's caches, both benches.
+  4c. `robo-quote-straight` (`work/runs/quote-straight.sh`): a single-quoted book's ‘
+     read as a straight " mended (branch `quote-straight`, worktree
+     `../robo-quote-straight`): De kus's 16 paragraphs; watch Het geluid van bananen's
+     "“Alternatieve Asjoera’*”", which it would flip wrongly.
   5. `robo-tess-q8`, started by a wait on the user's pull of Tess-4.5-27B Q8_0
      (`work/runs/tess-q8-screen.sh`); takes the lock when free.
 - **The hyphen question's form:** the judges were shown "rechtbank-|fantasie" (hyphen and
