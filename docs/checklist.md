@@ -88,9 +88,6 @@ In this order; `HANDOVER.md` has the paths and the commands.
 - [ ] Speck offers (`ROBO_SPECK_DOUBTS`; 5 of tuning's 52 silent specks rescued, the
       retrained arbiter not taken) decided by an arbiter of their own, as the accent
       offers are (`ROBO_OFFER_TRUST_MODEL`, `trust.offered`)
-- [ ] Which italic word an accent offer adds in Het geluid van bananen (each bench with
-      accent or speck offers has one more italic error there than the baseline): find
-      the word and the stage that changes it; no models
 - [ ] Vanille en andere smaken's chapter numbers beside its titles: with the referee 4
       of 15 headings are found, each without its number (0 exact); no models to find
       the cause
@@ -1444,6 +1441,11 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       digests; long runs timed into run-times.md; design.md and decisions.md started
 
 ## Golden books
+
+- [x] 2026-11-17 Het geluid van bananen's one more italic error beside accent or speck
+      offers: no italic decision; the retrained arbiter's "joeg. ..." for the print's
+      "joeg…" inside an italic passage (p171), the stray dots one more italic word. The
+      offers' own arbiter, on main, doesn't make it
 
 - [x] 2026-11-17 Au pair's manifest `doubled_singles = true`, derived again (8 paragraphs):
       21 wrong words fixed on tuning (18 quote, 12 silent), 2 made at the same places;
