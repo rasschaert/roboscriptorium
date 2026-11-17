@@ -11,7 +11,7 @@ still holds where this doesn't speak.
 
 - **Queue** (one model job at a time, `work/runs/model-screen.lock`), started 23:36–23:45:
   1. ~~`robo-quote-stray`~~ done 23:58 (decisions.md).
-  2. `robo-surya` (`work/runs/surya-screen.sh`): Surya OCR 2 (the user's pull) as a reader
+  2. ~~`robo-surya`~~ done 23:55 (`work/runs/surya-screen.sh`): Surya OCR 2 (the user's pull) as a reader
      on the silent-error lines with its own prompt, then its layout on 212 pages where
      the line-role trees err (`experiments/probe_surya_layout.py`): rescues of headings
      and furniture, e.g. Vanille's chapter numbers, which the trees call furniture.
@@ -27,8 +27,11 @@ still holds where this doesn't speak.
   run's baselines carry the fix; compare them with `tuning-20261117T222142` for its effect.
 - **Quote change:** asking at a paragraph's unpaired opening mark taken out (De geruchten's
   questions rose for nothing); the stray opening offered to the judges kept.
-- **Surya as a reader:** 12 of 97 silent lines, 1 that no other reader rescues
-  (Het schaduwhuis "vol"), 5 of 48 clean lines read otherwise.
+- **Surya OCR 2:** as a reader 12 of 97 silent lines, 1 no other reader rescues; as a
+  spotter 48 of the line-role trees' 243 wrong lines labelled right (models.md).
+  Queued last: `robo-surya-layout-all` (`work/runs/surya-layout-all.sh`), its layout on
+  all 7,006 labelled pages (about six hours), after the hyphen panel; then its labels as
+  tree features, each book left out (no models).
 - **Speck offers on their own arbiter** (done 23:33): 4 of 52 silent rescued as questions,
   none made, NO CHANGE both (decisions.md).
 - **Baselines now:** tuning `work/bench/tuning-20261117T222142-c6a13c4-dirty.json` (Au pair
