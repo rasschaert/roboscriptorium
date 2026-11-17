@@ -495,11 +495,14 @@ def _plain(text: str) -> str:
 
 
 def offered(s: Suspect) -> bool:
-    """Whether a suspect holds an accent offer: a version no reading has that is ours
-    but for its accents. The other unread versions (a small capital in lower case) stay
-    with the first arbiter, which was trained with them."""
+    """Whether a suspect holds an offer measured on the scan: a version no reading has
+    that is ours but for its accents (`accentmarks`) or its marks (`speckmarks`: a comma
+    lost, "je'vader" as two words). The other unread versions (a small capital in lower
+    case) stay with the first arbiter, which was trained with them."""
     return any(
-        _unread(s, k) and other != s.ours and _plain(other) == _plain(s.ours)
+        _unread(s, k)
+        and other != s.ours
+        and (_plain(other) == _plain(s.ours) or _letters(other) == _letters(s.ours))
         for k, other in enumerate(s.others, 1)
     )
 

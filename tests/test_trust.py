@@ -281,4 +281,7 @@ def test_only_a_suspect_with_an_offered_version_takes_the_offer_arbiters_decisio
     assert not trust.offered(read) and trust.offered(offered)
     capital = replace(_suspect("V-hals", "v-hals", "v-hals", 0.9), support={"glm": (False, False)})
     assert not trust.offered(capital)
+    for ours, speckless in (("zei,", "zei"), ("je'vader", "je vader"), ("af;", "af,")):
+        speck = replace(_suspect(ours, speckless, speckless, 0.9), support={"glm": (False, False)})
+        assert trust.offered(speck), ours
     assert [s.choice for s in trust.merge_offers(base, other)] == ["ours", "other"]
