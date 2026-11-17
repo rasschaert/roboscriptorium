@@ -176,7 +176,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   both runs scored, with its interval (`bench.by_cause`).
 - `bench.py` (`roboscriptorium bench [tuning|validation|quick|first-look]`): **the** measure for a
   change. Its books are built and scored in parallel processes (`workers`, one fewer than
-  the cores, `ROBO_BENCH_WORKERS`). Pinned golden slices per set (`FIRST_LOOK` guards the first-look set and
+  the cores, `ROBO_BENCH_WORKERS`); a book whose build fails is built again alone after
+  the others, and one failing twice is left out of an "incomplete" record that names it. Pinned golden slices per set (`FIRST_LOOK` guards the first-look set and
   `RESERVE`, pairs held back), scored with `evaluate` and `quality`,
   saved whole to `work/bench/` (commit, settings, decider, model versions,
   per-page counts, paragraph breaks set wrong among them) and compared with the

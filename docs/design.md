@@ -1631,6 +1631,11 @@ the edition doesn't list its corrections (the user).
   time is the system's, reading caches), memory above 30% free with 15 workers. A cold
   run goes one book at a time (`ROBO_BENCH_WORKERS=1`): books in parallel would ask
   different models at once, and Ollama would swap them in and out.
+- **A failed book is built again alone** (2026-11-17): one judge call timing out ended a
+  cold bench at 15 of 20 books with nothing saved. Now the others finish, the failed book
+  is built again once the pool is done, when no other book's models compete for memory,
+  and every answer cached before the failure is reused. One that fails twice is left out,
+  named under "failed", the record "incomplete" and `bench` exits 1, so a chain stops.
 - **A book whose silent errors double is named** beside the verdict (`bench.doubled`:
   at least twice as many, and 0.1 a page more). A lost page is one place, so its
   interval is wide and no veto fires: Reis om mijn schedel 0.08 → 0.30 went to a BETTER

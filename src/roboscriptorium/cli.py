@@ -1,5 +1,6 @@
 import json
 import subprocess
+import traceback
 from collections import Counter
 from dataclasses import asdict
 from datetime import UTC, datetime
@@ -486,10 +487,23 @@ def run_bench(
         _commit(),
         _model_versions(settings),
         on_book=lambda spec: typer.echo(f"== {spec}"),
+        on_failure=lambda spec, exc: typer.echo(
+            f"!! {spec} failed:\n" + "".join(traceback.format_exception(exc))
+        ),
     )
-    books = record["books"]
     path = bench.save(record)
     typer.echo(f"\nsaved {path}")
+    _bench_report(set_name, record, path, against)
+    if record.get("incomplete"):
+        typer.echo(f"\nINCOMPLETE: {len(record['failed'])} book(s) failed twice, left out:")
+        for spec, why in record["failed"].items():
+            typer.echo(f"  {spec}: {why}")
+        raise typer.Exit(1)
+
+
+def _bench_report(set_name: str, record: dict, path: Path, against: str | None) -> None:
+    """A saved run's books, and its comparison with `against` or the set's last run."""
+    books = record["books"]
     for name, b in books.items():
         q = b["quality"]
         typer.echo(
@@ -535,6 +549,8 @@ def run_bench(
         typer.echo(f"  all books, {'italic errors':26} {found.italics[0]:6} → {found.italics[1]:6}")
     if found.vetoes:
         typer.echo("  worse on its own: " + ", ".join(found.vetoes))
+    if missing := sorted(set(old["books"]) - set(new["books"])):
+        typer.echo("  compared without: " + ", ".join(missing))
     for name, before, after in bench.doubled(old, new):
         typer.echo(f"  silent errors doubled, look at it: {name} {before:.2f} → {after:.2f}")
     if changed := bench.structure(old, new):

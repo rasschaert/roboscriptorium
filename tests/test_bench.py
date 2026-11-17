@@ -441,3 +441,38 @@ def test_the_heading_line_names_marks_only_where_a_score_counted_some():
     assert bench.headings(score) == "9/10 (8 exact, +1)"
     assert bench.headings(score | {"headings_marked": 0}) == "9/10 (8 exact, +1)"
     assert bench.headings(score | {"headings_marked": 2}) == "9/10 (8 exact, +1, 2 marks)"
+
+
+def test_a_book_that_fails_is_built_again_alone_and_left_out_if_it_fails_again(
+    monkeypatch, tmp_path
+):
+    tries: dict[str, int] = {}
+
+    def build_one(spec, settings):
+        tries[spec] = tries.get(spec, 0) + 1
+        if spec == "broken" or (spec == "flaky" and tries[spec] == 1):
+            raise TimeoutError("timed out")
+        return spec, SimpleNamespace(name=spec, found=[], errors=[]), settings
+
+    monkeypatch.setitem(bench.SETS, "probe", ["a", "flaky", "broken"])
+    monkeypatch.setattr(bench, "_build_one", build_one)
+    monkeypatch.setattr(bench, "_book_record", lambda spec, run, own, rates: {"spec": spec})
+    failures = []
+    record = bench.run("probe", cli.Settings(), "c", {}, on_failure=lambda s, e: failures.append(s))
+    assert tries == {"a": 1, "flaky": 2, "broken": 2}
+    assert list(record["books"]) == ["a", "flaky"]
+    assert record["incomplete"] and record["failed"] == {"broken": "TimeoutError: timed out"}
+    assert failures == ["flaky", "broken", "broken"]
+
+    monkeypatch.setattr(bench, "run", lambda *a, **k: record)
+    monkeypatch.setattr(cli, "_model_versions", lambda settings: {})
+    monkeypatch.setattr(cli, "_bench_report", lambda *a: None)
+    monkeypatch.setattr(bench.save, "__defaults__", (tmp_path,))
+    result = CliRunner().invoke(cli.app, ["bench", "probe"])
+    assert result.exit_code == 1
+    assert "INCOMPLETE" in result.output and "broken: TimeoutError" in result.output
+    saved = json.loads(next(tmp_path.glob("probe-*.json")).read_text())
+    assert saved["failed"] == {"broken": "TimeoutError: timed out"} and list(saved["books"]) == [
+        "a",
+        "flaky",
+    ]

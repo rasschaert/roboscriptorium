@@ -207,17 +207,27 @@ def run(
     commit: str,
     model_versions: dict[str, str],
     on_book: Callable[[str], None] = lambda spec: None,
+    on_failure: Callable[[str, BaseException], None] = lambda spec, exc: None,
 ) -> dict:
     """Build and score every slice of a set, each with the learned models trained
     without it (`unseen`): the record `save` writes and `verdict` compares. A book's
     questions are ranked by how often each kind caught an error in the set's other
-    books."""
+    books.
+
+    A book whose build fails is built again alone once the others are done, when no other
+    book's models compete for memory. One that fails again is left out: the record keeps
+    the rest, names it under "failed" and is "incomplete"."""
     specs = SETS[set_name]
     done: dict[str, tuple[str, scoring.Scored, Settings]] = {}
+    failed: list[str] = []
     if (n := min(workers(), len(specs))) <= 1:
         for spec in specs:
             on_book(spec)
-            done[spec] = _build_one(spec, settings)
+            try:
+                done[spec] = _build_one(spec, settings)
+            except Exception as exc:
+                on_failure(spec, exc)
+                failed.append(spec)
     else:
         # Each book in its own process: the books are independent until their questions
         # are ranked below, and PyMuPDF can't be shared between threads.
@@ -225,8 +235,20 @@ def run(
             futures = {pool.submit(_build_one, spec, settings): spec for spec in specs}
             for future in as_completed(futures):
                 on_book(futures[future])
-                done[futures[future]] = future.result()
-    built = [done[spec] for spec in specs]
+                try:
+                    done[futures[future]] = future.result()
+                except Exception as exc:
+                    on_failure(futures[future], exc)
+                    failed.append(futures[future])
+    errors: dict[str, str] = {}
+    for spec in [s for s in specs if s in failed]:
+        on_book(f"{spec} (again, alone)")
+        try:
+            done[spec] = _build_one(spec, settings)
+        except Exception as exc:
+            on_failure(spec, exc)
+            errors[spec] = f"{type(exc).__name__}: {exc}"
+    built = [done[spec] for spec in specs if spec in done]
     books = {}
     for spec, run, own in built:
         rates: dict[str, tuple[int, int]] = {}
@@ -243,6 +265,7 @@ def run(
         "settings": {k: v for k, v in asdict(settings).items() if not k.endswith("_url")},
         "model_versions": model_versions,
         "books": books,
+        **({"incomplete": True, "failed": errors} if errors else {}),
     }
 
 
