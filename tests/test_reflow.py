@@ -377,6 +377,22 @@ def test_an_opening_double_quote_closed_by_a_single_one_was_misread():
     assert open_single("“Wat doe je?’ vroeg ze.") == "‘Wat doe je?’ vroeg ze."
     assert open_single("“Ja, zei hij. ‘Nee.’") == "‘Ja, zei hij. ‘Nee.’"
     assert open_single("“Ik ben er klaar mee") == "‘Ik ben er klaar mee"
+    # The layer's straight mark for the same ‘ (De kus in de nacht: "Wat spijt je?’).
+    assert open_single('"Wat spijt je?’') == "‘Wat spijt je?’"
+    assert open_single('"Ze weten het,’ zei ze. ‘Ja.’') == "‘Ze weten het,’ zei ze. ‘Ja.’"
+
+
+def test_a_straight_double_quote_that_pairs_or_closes_stays_in_single_quoted_text():
+    from roboscriptorium.reflow import open_single
+
+    for text in (
+        '‘Hij zei: "Kom hier," en liep weg.’',
+        'het woord "ontmoeten" en zo’n ding.',
+        '‘Hij las "De ’s avonds zingende vogels".’',
+        '‘Kom hier,” zei hij. Toen: "Nee."',
+        'Hij zei: ‘Ja.’ En toen niets."',
+    ):
+        assert open_single(text) == text, text
 
 
 def test_a_break_hyphen_stays_where_the_book_prints_the_word_with_it():
