@@ -1,3 +1,4 @@
+import json
 from collections import Counter
 
 import pytest
@@ -884,8 +885,14 @@ def test_several_hyphen_judges_answer_by_their_mean_and_are_asked_in_dutch_too(t
     panel = hyphens.Compounds(
         judge(0.4), "a", "nl", tmp_path / "panel.json", [(judge(0.9), "b"), (judge(0.5), "c")]
     )
-    assert panel("zee", "egel", "een zee-|egel lag")
+    assert panel("zee", "egel", "een zee|egel lag")
     panel.save()
+    # Each judge's own chance stays beside the mean, for a combination to learn from.
+    assert json.loads((tmp_path / "panel.json").read_text())["partial"]["zee-egel"] == {
+        "a": 0.4,
+        "b": 0.9,
+        "c": 0.5,
+    }
     # Kept by the judges it was asked of: one judge alone starts again.
     assert hyphens.Compounds(judge(0.0), "a", "nl", tmp_path / "panel.json")._answers == {}
     # Collected first, the questions go to each judge in turn, and a judge's answers
@@ -912,6 +919,9 @@ def test_several_hyphen_judges_answer_by_their_mean_and_are_asked_in_dutch_too(t
     again = hyphens.Compounds(logging("a", 0.9), "a", "nl", path, [(logging("b", 0.7), "b")])
     again.collect(lambda: [again(*w) for w in words])
     assert calls == ["a", "a", "b", "b"]
-    assert again("zee", "egel", "een zee-|egel") and again._partial == {}
+    assert again("zee", "egel", "een zee|egel") and again._partial["zee-egel"] == {
+        "a": 0.9,
+        "b": 0.7,
+    }
     assert hyphens.asked("nl", panel=True) and not hyphens.asked("nl")
     assert hyphens.asked("en") and not hyphens.asked("fr", panel=True)

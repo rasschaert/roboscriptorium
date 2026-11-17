@@ -78,8 +78,9 @@ class Compounds:
     mean of the judges in `more` (each a client and its model) with it; the answers
     cached by the hyphenated word in `path`. `collect` gathers a book's questions first
     and asks them judge by judge, one book at a time on the machine, so each judge is
-    loaded once a book; each judge's answers are kept as they come (`partial` in the
-    cache), so a build stopped goes on from them."""
+    loaded once a book; each judge's answers are kept as they come and stay (`partial` in
+    the cache: a build stopped goes on from them, and a combination of the judges can be
+    learned from them)."""
 
     def __init__(self, client, model: str, language: str, path: Path, more=()):
         self._judges = [(client, model), *more]
@@ -147,7 +148,6 @@ class Compounds:
         for key in questions:
             chances = [self._partial[key][model] for _, model in self._judges]
             self._answers[key] = sum(chances) / len(chances)
-            del self._partial[key]
         self._new = True
         self.save()
 
