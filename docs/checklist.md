@@ -614,6 +614,12 @@ Daens' title was mended by hand).
 
 ## Housekeeping
 
+- [ ] The line-end hyphen cache keeps one judge set a book (`stages/compounds.json`, keyed by
+      the set): a production build after a panel run throws the panel's answers away, and
+      the next panel run asks all four judges again (hours). One file a judge set, or each
+      judge's answers kept apart. After the offers run ends (it builds from main). Agent,
+      half an hour
+
 - [ ] Worktrees and branches: `../roboscriptorium-caps` holds `italics-by-place` and
       `../robo-grow6` `grow6` until they are merged; `../robo-text` (`text-seat`) stays
       for the retest; `../roboscriptorium-py315` has two untracked scratch files. The 24
