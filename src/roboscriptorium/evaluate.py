@@ -243,7 +243,14 @@ def _same_heading(
     short, long = sorted((a, b), key=len)
     # A heading split from its subtitle still counts ("THE FIRST CHAPTER" for
     # "THE FIRST CHAPTER PUDDLEBY"), but "I" is not "II".
-    return fuzz.ratio(a, b) >= 85 or (len(short) >= 8 and long.startswith(short))
+    if fuzz.ratio(a, b) >= 85 or (len(short) >= 8 and long.startswith(short)):
+        return True
+    # A title found without its chapter number ("Anatomie en soloseks" for
+    # "4 Anatomie en soloseks"): the words alone, the same way.
+    if numbered and bool(numbered[0][0]) != bool(numbered[1][0]):
+        short, long = sorted((numbered[0][1], numbered[1][1]), key=len)
+        return len(short) >= 8 and (fuzz.ratio(short, long) >= 85 or long.startswith(short))
+    return False
 
 
 def _marks(text: str) -> str:
@@ -312,6 +319,21 @@ def _match_headings(found: list[str], expected: list[str], exact: bool) -> tuple
             ):
                 sim, n, u = best[i - 1][j - 2]
                 options.append((sim + 2 * fuzz.ratio(fk[i - 1], pairs[j - 2]) / 100, n + 2, u + 1))
+            # Two found headings in a row may stand for one expected: a title and its
+            # subtitle set as two where the reference has one. Never exact.
+            if (
+                not exact
+                and i >= 2
+                and _same_heading(
+                    fk[i - 2] + fk[i - 1],
+                    ek[j - 1],
+                    (_numbers(f"{found[i - 2]} {found[i - 1]}"), en[j - 1]),
+                )
+                and not _same_heading(fk[i - 1], ek[j - 1], (fn[i - 1], en[j - 1]))
+            ):
+                sim, n, u = best[i - 2][j - 1]
+                joined = fuzz.ratio(fk[i - 2] + fk[i - 1], ek[j - 1]) / 100
+                options.append((sim + joined, n + 1, u + 2))
             best[i][j] = max(options)
     return best[-1][-1][1], best[-1][-1][2]
 

@@ -211,3 +211,27 @@ def test_a_heading_found_letter_for_letter_is_counted_where_its_marks_differ():
     assert marked(["CHAPTER 1 The End's Start"], ["CHAPTER 1", "The End’s Start"]) == 1
     # A heading whose letters match none is no concern of this count.
     assert marked(["Proloog!"], ["Epiloog"]) == 0
+
+
+def test_a_title_without_its_number_is_found_but_not_exact_and_specks_are_not():
+    expected = [
+        "1 Nieuwe vragen over seks Een nieuw boek over een oud onderwerp",
+        "Verder lezen",
+        "3 Seksualiteit leren: de context, de theorie",
+        "4 Anatomie en soloseks",
+    ]
+    # Not found: specks, another title, a bare number for another chapter.
+    assert evaluate.match_headings(["EEE", "EE", "Goedkoop"], expected) == 0
+    assert evaluate.extra_headings(["EEE", "EE", "Goedkoop"], expected) == 3
+    assert evaluate.match_headings(["Anatomie en yoga"], expected) == 0
+    assert evaluate.match_headings(["CHAPTER 2"], ["CHAPTER 3"]) == 0
+    found = [
+        "Nieuwe vragen over seks",
+        "Een nieuw boek over een oud onderwerp",
+        "Goedkoop",
+        "Seksualiteit leren: de context,",
+        "Anatomie en soloseks",
+    ]
+    assert evaluate.match_headings(found, expected) == 3
+    assert evaluate.match_headings(found, expected, exact=True) == 0
+    assert evaluate.extra_headings(found, expected) == 1
