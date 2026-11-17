@@ -10,16 +10,25 @@ section speaks: baselines, what runs, what is on by default.
 still holds where this doesn't speak.
 
 - **Queue** (one model job at a time, `work/runs/model-screen.lock`), started 23:36–23:45:
-  1. `robo-quote-stray` (`work/runs/quote-stray.sh`): quote questions at their mark, a
-     stray opening mark offered to the judges (`74452db`); both benches.
+  1. ~~`robo-quote-stray`~~ done 23:58 (decisions.md).
   2. `robo-surya` (`work/runs/surya-screen.sh`): Surya OCR 2 (the user's pull) as a reader
      on the silent-error lines with its own prompt, then its layout on 212 pages where
      the line-role trees err (`experiments/probe_surya_layout.py`): rescues of headings
      and furniture, e.g. Vanille's chapter numbers, which the trees call furniture.
   3. `robo-offers-together` (`work/runs/offers-together.sh`): fresh baselines, trust data
      with accent and speck offers, one arbiter for both, both benches; about two hours.
-  4. `robo-tess-q8`, started by a wait on the user's pull of Tess-4.5-27B Q8_0
+  4. `robo-hyphen-panel2` (`work/runs/hyphen-panel2.sh`): the four hyphen judges by their
+     mean again, now shown the break as the question says (`be00196`), against the offers
+     run's baselines.
+  5. `robo-tess-q8`, started by a wait on the user's pull of Tess-4.5-27B Q8_0
      (`work/runs/tess-q8-screen.sh`); takes the lock when free.
+- **Found and mended:** the hyphen judges were shown "rechtbank-|fantasie" (the hyphen and
+  the break mark), and answered near 0.5; production's English books too. The offers
+  run's baselines carry the fix; compare them with `tuning-20261117T222142` for its effect.
+- **Quote change:** asking at a paragraph's unpaired opening mark taken out (De geruchten's
+  questions rose for nothing); the stray opening offered to the judges kept.
+- **Surya as a reader:** 12 of 97 silent lines, 1 that no other reader rescues
+  (Het schaduwhuis "vol"), 5 of 48 clean lines read otherwise.
 - **Speck offers on their own arbiter** (done 23:33): 4 of 52 silent rescued as questions,
   none made, NO CHANGE both (decisions.md).
 - **Baselines now:** tuning `work/bench/tuning-20261117T222142-c6a13c4-dirty.json` (Au pair
