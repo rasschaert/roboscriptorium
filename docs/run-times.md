@@ -1207,3 +1207,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-17 | bench validation, production, new heading count | 0 | 1 | 0 |
 | 2026-11-17 | bench tuning, line-role referee, new heading count | 0 | 5 | 0 |
 | 2026-11-17 | bench validation, line-role referee, new heading count | 0 | 1 | 0 |
+| 2026-11-17 | bench tuning, Au pair doubled singles | 0 | 5 | 0 |
+| 2026-11-17 | bench tuning, speck offers on their own arbiter | 0 | 5 | 0 |
+| 2026-11-17 | bench validation, speck offers on their own arbiter | 0 | 1 | 0 |

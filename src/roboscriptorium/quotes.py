@@ -46,7 +46,7 @@ TERM_WORDS = 3
 @dataclass(frozen=True)
 class Place:
     sources: list[SourceRef]  # the paragraph's lines around the place
-    why: str  # "no opening", "no closing" or "open at end"
+    why: str  # "no opening", "no closing", "stray opening" or "open at end"
     excerpt: str
 
 
@@ -90,6 +90,12 @@ def problems(text: str) -> list[tuple[int, str]]:
     opening mark inside an open quote is a lost closing one only where it starts
     a new sentence.
     """
+    return _scan(text)[0]
+
+
+def _scan(text: str) -> tuple[list[tuple[int, str]], list[int]]:
+    """`problems`, and the offsets of the opening marks a paragraph open at its end leaves
+    unpaired."""
     found = []
     depth = dict.fromkeys(PAIRS, 0)
     # The offsets of the marks still open, innermost last.
@@ -126,14 +132,20 @@ def problems(text: str) -> list[tuple[int, str]]:
             found.append((i, "no opening"))
     left = [i for offsets in opened.values() for i in offsets]
     # An open mark right after a word ("zich ‘schrap zette") is a speck or a term whose
-    # close was lost beside it: asked where it stands, not at the paragraph's end.
-    stray = [i for i in left if text[:i].rstrip()[-1:].isalpha()]
-    found += [(i, "no closing") for i in stray]
+    # close was lost beside it, and one right after a line-end hyphen the reflow kept
+    # ("driehon-‘derdzestig") a speck at the line's start: asked where it stands.
+    stray = [i for i in left if _after_word(text, i)]
+    found += [(i, "stray opening") for i in stray]
     if len(stray) < len(left):
         found.append((len(text) - 1, "open at end"))
     elif stop := _unstopped(text, found_marks):
         found.append((stop, "no stop at end"))
-    return sorted(found)
+    return sorted(found), sorted(i for i in left if i not in stray)
+
+
+def _after_word(text: str, i: int) -> bool:
+    before = text[:i]
+    return before.rstrip()[-1:].isalpha() or (before.endswith("-") and before[-2:-1].isalpha())
 
 
 def _unstopped(text: str, found_marks: list[tuple[int, str, str]]) -> int | None:
@@ -165,9 +177,32 @@ def unbalanced(paragraphs: list[Paragraph]) -> list[Place]:
     for p in paragraphs:
         if not any(c in p.text for c in "‘’“”"):
             continue
-        for offset, why in problems(p.text):
+        found, openers = _scan(p.text)
+        for offset, why in found:
+            if why == "open at end" and openers:
+                out += _open_at_end_places(p, openers[0], offset)
+                continue
             out.append(Place(_around(p, offset, why), why, _excerpt(p.text, offset)))
     return out
+
+
+# A paragraph open at its end is asked from its unpaired opening mark to its end in one
+# question when they lie within this many lines; else at each, in two.
+OPEN_SPAN = 6
+
+
+def _open_at_end_places(p: Paragraph, opener: int, end: int) -> list[Place]:
+    """A paragraph left open at its end, asked where it ends and where its unpaired
+    opening mark stands: the mark may be a speck, or open speech whose close was lost."""
+    n = len(p.sources)
+    at = min(n - 1, opener * n // max(1, len(p.text)))
+    why = "open at end"
+    if n - at <= OPEN_SPAN:
+        return [Place(p.sources[at:], why, _excerpt(p.text, opener))]
+    return [
+        Place(_around(p, opener, why), why, _excerpt(p.text, opener)),
+        Place(_around(p, end, why), why, _excerpt(p.text, end)),
+    ]
 
 
 # The quote check as two readers of the OCR check: a line with its closing mark added,
@@ -176,7 +211,7 @@ def unbalanced(paragraphs: list[Paragraph]) -> list[Place]:
 READER = "quotes"
 OPENED = "quotes-open"
 # The problems those readings answer; "no closing" names no line to read otherwise.
-DUELED = ("open at end", "no stop at end", "no opening")
+DUELED = ("open at end", "no stop at end", "no opening", "stray opening")
 _OPENERS = {"’": "‘", "”": "“", "'": "‘"}
 
 
@@ -190,7 +225,8 @@ def duel_readings(
     last line; speech closed right after a letter has a stop before the mark; a closing
     mark with nothing open is a speck (the line without it, `READER`) or lost its opening
     mark (the first line with it, `OPENED`, unless that line opens on a mark already); not
-    one opening a word. The first problem to speak for a line has it. Where another
+    one opening a word; an opening mark right after a word or a line-end hyphen is a speck
+    (the line without it). The first problem to speak for a line has it. Where another
     reading of the last line (`others`) ends it paired already, the line ends as that
     reading has it: a version of its own would only split the judges ("alles?’" beside
     "alles.’")."""
@@ -210,6 +246,9 @@ def duel_readings(
             elif why == "no stop at end" and end.endswith(p.text[offset]):
                 read = _ended(p.text, end, last, others)
                 out[READER].setdefault(last, read or end[:-1] + "." + end[-1])
+            elif why == "stray opening" and (at := _line_of(p, offset, lines)):
+                ref, k = at
+                out[READER].setdefault(ref, lines[ref][:k] + lines[ref][k + 1 :])
             elif why == "no opening" and (at := _line_of(p, offset, lines)):
                 ref, k = at
                 if lines[ref][k + 1 : k + 2].isalnum():

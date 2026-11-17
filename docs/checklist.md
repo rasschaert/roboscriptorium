@@ -85,9 +85,12 @@ In this order; `HANDOVER.md` has the paths and the commands.
       both benches; Groot's readings as offers through the judges (`ROBO_EXTRA_READERS`:
       it alone reads the silent ‘“Lucy). Hours: explain to the user first; one model
       over all its questions, then the next
-- [ ] Speck offers (`ROBO_SPECK_DOUBTS`; 5 of tuning's 52 silent specks rescued, the
-      retrained arbiter not taken) decided by an arbiter of their own, as the accent
-      offers are (`ROBO_OFFER_TRUST_MODEL`, `trust.offered`)
+- [ ] Accent and speck offers together, one arbiter of their own trained on both (each
+      alone on its own arbiter: accents 15 of 74 silent asked for 37 questions, specks 4
+      of 52 for 7, none fixed, none made, both NO CHANGE; 2026-11-17): trust data with
+      both on (judges cached for each), the arbiter, both benches with production's
+      arbiter everywhere else (`work/runs/offers-together.sh`, queued behind the model
+      screens). Then **user**: on by default or not, for the pair
 - [ ] Vanille en andere smaken's chapter numbers beside its titles: with the referee 4
       of 15 headings are found, each without its number (0 exact); no models to find
       the cause
@@ -253,8 +256,10 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       definition). Built again 2026-11-17 (ten minutes warm; 237 apostrophes set right, structure
       clean): 518 questions, 425 OCR doubts and 113 quote questions. Next: the quote
       questions' classes made the machine's (a straight " read for the opening ‘ where
-      another reading has it; speech opening on ’t; 22 that hold no quote mark at all:
-      why are they asked), the sample read again, then the user's review. Left in
+      another reading has it; speech opening on ’t; the questions on lines with no
+      quote mark: 6, each about a mark far up its paragraph, now asked at that mark,
+      and a stray opening mark offered to the judges without it, benched
+      2026-11-17 `work/runs/quote-stray.sh`), the sample read again, then the user's review. Left in
       the sample, by kind: the layer's “ for an opening ‘, a speck read as ‘ at a line's
       start, small capitals ("csx-R", "zz-R"), stress accents the judges split on
 - [ ] **A build says how far it is**: the first build of a long book prints nothing

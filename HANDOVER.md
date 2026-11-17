@@ -29,7 +29,7 @@ still holds where this doesn't speak.
 - **Baselines** (the line-role referee on): `work/bench/tuning-20261117T015939-90f9f02-dirty.json`
   and `work/bench/validation-20261117T020028-90f9f02-dirty.json`. Every baseline named
   further down is older.
-- **Waiting on the user, one call:** accent offers on by default? Stress accents measured
+- **Waiting on the user, one call (once accent and speck offers are benched together):** accent offers on by default? Stress accents measured
   on the scan are offered as versions and decided by an arbiter of their own. On tuning
   15 of 74 silent accent errors become questions (none fixed, none made) for 37 more
   questions; on validation 5 more questions and none of 8 caught. Both benches NO CHANGE.

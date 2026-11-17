@@ -94,7 +94,13 @@ def test_places_point_at_the_lines_where_the_mark_is_missing():
     p = Paragraph("‘" + "woord " * 59 + "einde.", refs)
     (place,) = unbalanced([p])
     assert place.why == "open at end"
-    assert place.sources == refs[-2:]
+    # Its opening mark is near enough the end for one question to show both.
+    assert place.sources == refs
+    # Asked at its opening mark as well: the mark may be a speck, or open speech.
+    p = Paragraph("‘" + "woord " * 119 + "einde.", [SourceRef(3, k) for k in range(12)])
+    first, last = unbalanced([p])
+    assert (first.why, first.sources) == ("open at end", [SourceRef(3, 0), SourceRef(3, 1)])
+    assert (last.why, last.sources) == ("open at end", [SourceRef(3, 10), SourceRef(3, 11)])
     q = Paragraph("Woord " * 59 + "einde.’", refs)
     (place,) = unbalanced([q])
     assert place.why == "no opening"
@@ -243,7 +249,12 @@ def test_a_quotation_closed_on_a_letter_at_a_paragraphs_end_lost_its_stop():
 
 def test_an_open_mark_after_a_word_is_asked_where_it_stands():
     text = "Als ‘het nog geen moordzaak is, wordt het een zaak voor de wijkagent."
-    assert problems(text) == [(4, "no closing")]
+    assert problems(text) == [(4, "stray opening")]
+    # After a line-end hyphen the reflow kept, a mark at the line's start is no opening:
+    # a speck ("driehon-‘derdzestig").
+    assert problems("dat is driehon-‘derdzestig miljoen frank.") == [(15, "stray opening")]
+    # A quoted term after a hyphenated compound pairs up and is no problem.
+    assert problems("een anti-‘establishment’ blad.") == []
     # Speech opened after a comma or a colon lost its closing mark at the end.
     assert problems("Hij zei: ‘Kom hier.") == [(18, "open at end")]
     assert problems("Toen zei ze, ‘Ga weg.") == [(20, "open at end")]
@@ -416,3 +427,20 @@ def test_a_reading_that_closes_the_outer_quote_over_the_inner_one_is_not_the_lin
     assert quotes.duel_readings([p], lines, others)[quotes.READER] == {
         SourceRef(1, 1): "would, my little one.”’"
     }
+
+
+def test_a_stray_opening_mark_reads_as_a_speck_and_its_paragraph_is_asked_there():
+    refs = [SourceRef(1, 0), SourceRef(1, 1)]
+    lines = {refs[0]: "dat is driehon-", refs[1]: "‘derdzestig miljoen frank."}
+    p = Paragraph("dat is driehon-‘derdzestig miljoen frank.", refs)
+    assert quotes.duel_readings([p], lines)[quotes.READER] == {refs[1]: "derdzestig miljoen frank."}
+    assert "stray opening" in quotes.DUELED
+    p, lines = _lines("Als ‘het nog geen moordzaak is,", "wordt het een zaak.")
+    assert quotes.duel_readings([p], lines)[quotes.READER] == {
+        SourceRef(1, 0): "Als het nog geen moordzaak is,"
+    }
+
+
+def test_an_opening_mark_that_opens_speech_is_not_offered_away():
+    p, lines = _lines("Hij zei: ‘Kom hier,", "en snel.")
+    assert SourceRef(1, 0) not in quotes.duel_readings([p], lines)[quotes.READER]
