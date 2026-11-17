@@ -1191,3 +1191,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-17 | bench validation, offers on their own arbiter | 0 | 1 | 0 |
 | 2026-11-17 | bench tuning, accent offers alone on their own arbiter | 6208 | 5 | 0 |
 | 2026-11-17 | bench validation, accent offers alone on their own arbiter | 0 | 1 | 0 |
+| 2026-11-17 | bench tuning, line-role referee | 6208 | 23 | 0 |
+| 2026-11-17 | bench validation, line-role referee | 0 | 9 | 0 |
