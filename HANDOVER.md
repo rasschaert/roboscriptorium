@@ -9,11 +9,19 @@ section speaks: baselines, what runs, what is on by default.
 **State at 23:35 on 2026-11-17** (a new session, "continue"). Below it, the 09:40 state
 still holds where this doesn't speak.
 
-- **Running:** `robo-speck-own` (`work/runs/speck-own-arbiter.sh`, started 23:26): speck
-  offers decided by an arbiter of their own (`trust.offered` takes them now), both
-  benches against today's baselines. Then `robo-tess-q8` (`work/runs/tess-q8-screen.sh`),
-  started by a wait on the user's pull of `hf.co/migtissera/Tess-4.5-27B-GGUF:Q8_0`:
-  Tess screened by its rescues as a reader, then on the judge set; verdict to models.md.
+- **Queue** (one model job at a time, `work/runs/model-screen.lock`), started 23:36–23:45:
+  1. `robo-quote-stray` (`work/runs/quote-stray.sh`): quote questions at their mark, a
+     stray opening mark offered to the judges (`74452db`); both benches.
+  2. `robo-surya` (`work/runs/surya-screen.sh`): Surya OCR 2 (the user's pull) as a reader
+     on the silent-error lines with its own prompt, then its layout on 212 pages where
+     the line-role trees err (`experiments/probe_surya_layout.py`): rescues of headings
+     and furniture, e.g. Vanille's chapter numbers, which the trees call furniture.
+  3. `robo-offers-together` (`work/runs/offers-together.sh`): fresh baselines, trust data
+     with accent and speck offers, one arbiter for both, both benches; about two hours.
+  4. `robo-tess-q8`, started by a wait on the user's pull of Tess-4.5-27B Q8_0
+     (`work/runs/tess-q8-screen.sh`); takes the lock when free.
+- **Speck offers on their own arbiter** (done 23:33): 4 of 52 silent rescued as questions,
+  none made, NO CHANGE both (decisions.md).
 - **Baselines now:** tuning `work/bench/tuning-20261117T222142-c6a13c4-dirty.json` (Au pair
   with `doubled_singles`), validation `validation-20261117T020028-90f9f02-dirty.json`.
 - **Done this session:** the user's short reviews of 2026-11-16 were all answered; Au
