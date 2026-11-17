@@ -196,6 +196,17 @@ ideas reworked", 2026-11-15):
   for asking worse than the sureness alone (4,522 questions to 2,970 for the same silent
   errors; random signals 3,485).
 
+- **The four line-end hyphen judges by their mean** (2026-11-17; failed on the question,
+  not the judges): 29 of tuning's 74 silent compound hyphens fixed, 44 hyphens added
+  wrongly. The build showed the judges the break as "rechtbank-|fantasie", hyphen and
+  bar both, and they answered near 0.5; mended the same day, benched again
+  (`hyphen-panel2.sh`). On the probe's labelled breaks a learned combination with the
+  book's own signs beats the mean (Dutch 30 wrong of 1,559, English 9 of 89).
+
+- **Quote questions at a paragraph's unpaired opening mark** (2026-11-17; failed on the
+  question count): De geruchten's lines asked 59 → 83, none catching an error. Left
+  untried: the opening mark's words shown on the end's card, no question added.
+
 - **A word's picture against the book's other pictures of the same reading** (2026-11-16;
   failed on the measure): 0–2 of 43 placed silent errors found at 1% false offers by
   whole-picture distance, the largest differing patch or the loose marks above the
