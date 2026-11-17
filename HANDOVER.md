@@ -6,6 +6,21 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
+**State at 23:35 on 2026-11-17** (a new session, "continue"). Below it, the 09:40 state
+still holds where this doesn't speak.
+
+- **Running:** `robo-speck-own` (`work/runs/speck-own-arbiter.sh`, started 23:26): speck
+  offers decided by an arbiter of their own (`trust.offered` takes them now), both
+  benches against today's baselines. Then `robo-tess-q8` (`work/runs/tess-q8-screen.sh`),
+  started by a wait on the user's pull of `hf.co/migtissera/Tess-4.5-27B-GGUF:Q8_0`:
+  Tess screened by its rescues as a reader, then on the judge set; verdict to models.md.
+- **Baselines now:** tuning `work/bench/tuning-20261117T222142-c6a13c4-dirty.json` (Au pair
+  with `doubled_singles`), validation `validation-20261117T020028-90f9f02-dirty.json`.
+- **Done this session:** the user's short reviews of 2026-11-16 were all answered; Au
+  pair's reference sets the print's double marks (21 wrong words fixed on tuning); a
+  bench outlives one book's failure (retried alone, else left out and named); Het geluid
+  van bananen's extra italic error is the retrained arbiter's split ellipsis.
+
 **State at 09:40 on 2026-11-17: the session ended at the user's word.** decisions.md,
 2026-11-16 and 17, has every number.
 
@@ -19,7 +34,7 @@ section speaks: baselines, what runs, what is on by default.
   15 of 74 silent accent errors become questions (none fixed, none made) for 37 more
   questions; on validation 5 more questions and none of 8 caught. Both benches NO CHANGE.
   On main, off: `ROBO_ACCENT_DOUBTS=1 ROBO_OFFER_TRUST_MODEL=work/models/ocr-trust-accents-apart.pkl`.
-- **Possibly waiting on the user:** the short reviews they started at about 17:00 on
+- **Answered (checked 23:10):** the short reviews they started at about 17:00 on
   2026-11-16 (Au pair's 16 small-capital places; 9 accent additions in Goede dochter and
   De vergelding). Check the verdict files before asking. Au pair's manifest gets
   `doubled_singles = true` after them, then a new tuning baseline.
