@@ -591,10 +591,6 @@ Daens' title was mended by hand).
 
 ## Golden books and the bench
 
-- [ ] Au pair's manifest gets `doubled_singles = true` and is derived again, **after the
-      accent run's benches** (it changes the reference under them): its e-book writes
-      the print's “De keizer” as ‘‘De keizer (11 pairs), 12 of tuning's silent quote
-      errors that are no errors. Then tuning's baseline is run again. Agent, minutes
 - [ ] The Thief-Taker's part pages set "/ PART ONE /" in the EPUB: the print's ornaments
       (small swords, checked on the scan) read as slashes (found by `heading_marks`,
       2026-11-14), and "A POINT’WELL MADE"'s speck. Heading places in the arbiter's
@@ -1448,6 +1444,10 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
       digests; long runs timed into run-times.md; design.md and decisions.md started
 
 ## Golden books
+
+- [x] 2026-11-17 Au pair's manifest `doubled_singles = true`, derived again (8 paragraphs):
+      21 wrong words fixed on tuning (18 quote, 12 silent), 2 made at the same places;
+      tuning's new baseline
 
 - [x] 2026-11-17 A bench outlives one book's failure: a failed book is built again alone
       once the others are done, and one that fails twice is left out, named, the run

@@ -49,6 +49,8 @@ heading_prefixes = ["wp-kop", "wp-bovenkop"]
 italic_classes = ["wpt-cursief"]
 break_classes = ["wp-witregel"]
 hidden_classes = ["wpt-wit"]
+# The e-book writes the print's “ as two single marks (‘‘De keizer).
+doubled_singles = true
 
 # The 19th printing (De Bezige Bij, Ulysses, August 2006, ISBN 90 234 2042 X); IA Scribe
 # scan (4.4), 360 ppi MRC, GlyphLessFont layer, ~318×544 pt, 452 pages. Pages 7–447 the
