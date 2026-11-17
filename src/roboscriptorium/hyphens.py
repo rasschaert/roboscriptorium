@@ -10,10 +10,13 @@ better there, so it is asked about English only (`experiments/probe_hyphen_judge
 """
 
 import fcntl
+import math
+import pickle
 import re
 import tempfile
 from collections import Counter
 from collections.abc import Callable
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from roboscriptorium.clients.decide import choice
@@ -67,6 +70,95 @@ def vowel_clash(
     return known is None or known(rest)
 
 
+@dataclass(frozen=True)
+class Signs:
+    """What a book's own pages show of its hyphens, for a learned decision on a break they
+    leave undecided (`features`): over every word but a line's last, how often it
+    hyphenates (`habit`, hyphenated words in 10,000), which stems open and which rests
+    close its hyphenated words, and how often each word stands alone."""
+
+    english: bool
+    habit: float
+    opens: Counter = field(default_factory=Counter)
+    closes: Counter = field(default_factory=Counter)
+    alone: Counter = field(default_factory=Counter)
+
+
+def book_signs(pages: list[PageText], language: str) -> Signs:
+    """A book's `Signs`, from its pages as the text layer reads them (the build's `whole`)."""
+    tokens = [
+        _WORD.sub("", w).lower() for p in pages for ln in p.lines for w in ln.text.split()[:-1]
+    ]
+    alone = Counter(tokens)
+    inline = [t for t in set(tokens) if "-" in t.strip("-")]
+    return Signs(
+        english=language[:2] == "en",
+        habit=10_000 * sum(alone[t] for t in inline) / max(1, len(tokens)),
+        opens=Counter(t.split("-")[0] for t in inline),
+        closes=Counter(t.split("-")[-1] for t in inline),
+        alone=alone,
+    )
+
+
+# The columns of `features`, in order; a learned decision adds each judge's chance.
+FEATURES = (
+    "english", "stem_length", "rest_length", "stem_known", "rest_known", "closed_known",
+    "vowel_clash", "habit", "stem_opens", "rest_closes", "stem_alone", "rest_alone",
+    "stem_ends_s", "stem_capital",
+)  # fmt: skip
+
+
+def features(
+    stem: str, rest: str, signs: Signs, known: Callable[[str], bool] | None
+) -> list[float]:
+    """A break's `FEATURES` (`experiments/probe_hyphen_learned.py`)."""
+    k = known or (lambda word: False)
+    return [
+        float(signs.english), len(stem), len(rest), float(k(stem)), float(k(rest)),
+        float(k(stem + rest)), float(vowel_clash(stem, rest)), signs.habit,
+        signs.opens[stem.lower()], signs.closes[rest.lower()],
+        math.log1p(signs.alone[stem.lower()]), math.log1p(signs.alone[rest.lower()]),
+        float(stem.lower().endswith("s")), float(stem[:1].isupper()),
+    ]  # fmt: skip
+
+
+@dataclass
+class Learned:
+    """A decision on an undecided break learned from the golden books' spellings
+    (`experiments/train_hyphens.py`): the break's `features` and each judge's chance in
+    `judges`' order, the hyphen kept at `cut` or more."""
+
+    model: object
+    judges: tuple[str, ...]
+    cut: float
+    signs: Signs
+    known: Callable[[str], bool] | None = None
+
+    def __call__(self, stem: str, rest: str, chances: dict[str, float]) -> float:
+        x = features(stem, rest, self.signs, self.known) + [chances[j] for j in self.judges]
+        return float(self.model.predict_proba([x])[0, 1])
+
+
+def save_learned(path: Path, model: object, judges: tuple[str, ...], cut: float) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(
+        pickle.dumps({"model": model, "judges": judges, "cut": cut, "features": FEATURES})
+    )
+
+
+def load_learned(path: Path, signs: Signs, known: Callable[[str], bool] | None = None) -> Learned:
+    """The saved decision for a book of these `signs`; one made on other features stops."""
+    saved = pickle.loads(path.read_bytes())
+    if tuple(saved["features"]) != FEATURES:
+        raise ValueError(f"{path} was trained on other features: train it again")
+    return Learned(saved["model"], tuple(saved["judges"]), saved["cut"], signs, known)
+
+
+def without(path: Path, book: str) -> Path:
+    """Where the decision trained without `book` is kept, beside `path`."""
+    return path.with_name(f"{path.stem}-without-{book}{path.suffix}")
+
+
 def asked(language: str, panel: bool = False) -> bool:
     """Whether a book in this language asks the judge, or a `panel` of judges, about its
     undecided hyphens."""
@@ -82,8 +174,12 @@ class Compounds:
     the cache: a build stopped goes on from them, and a combination of the judges can be
     learned from them)."""
 
-    def __init__(self, client, model: str, language: str, path: Path, more=()):
+    def __init__(self, client, model: str, language: str, path: Path, more=(), learned=None):
         self._judges = [(client, model), *more]
+        # A `Learned` decision in place of the judges' mean.
+        self._learned = learned
+        if learned is not None and set(learned.judges) - {m for _, m in self._judges}:
+            raise ValueError(f"the learned hyphen decision needs the judges {learned.judges}")
         self._model, self._path = "+".join(m for _, m in self._judges), path
         self._language = PANEL_LANGUAGES[language[:2]]
         blob = read_cache(path, VERSION, model=self._model)
@@ -98,12 +194,21 @@ class Compounds:
         with |), keeps its hyphen. While collecting, an unanswered word is noted and
         joined for now."""
         key = f"{stem}-{rest}".lower()
-        if key not in self._answers:
+        if key not in self._answers or not self._heard(key):
             if self._collecting:
                 self._pending.setdefault(key, (stem, rest, context))
                 return False
             self._ask({key: (stem, rest, context)})
+        if self._learned is not None:
+            return self._learned(stem, rest, self._partial[key]) >= self._learned.cut
         return self._answers[key] >= 0.5
+
+    def _heard(self, key: str) -> bool:
+        """Whether every judge the decision needs has answered about `key`: the learned
+        one needs each judge's chance, which a cache from before they were kept lacks."""
+        if self._learned is None:
+            return True
+        return all(j in self._partial.get(key, {}) for j in self._learned.judges)
 
     def collect(self, run) -> None:
         """`run` (the reflows that will ask) gone through once for its questions, which

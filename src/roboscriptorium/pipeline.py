@@ -460,8 +460,20 @@ def run(
     if use_models and hyphens.asked(book.language, bool(settings.hyphen_judges)):
         client = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
         more = [(decide.for_model(m, settings.ollama_url), m) for m in settings.hyphen_judges]
+        learned = (
+            hyphens.load_learned(
+                Path(settings.hyphen_learned), hyphens.book_signs(whole, book.language), known
+            )
+            if settings.hyphen_learned
+            else None
+        )
         compound = hyphens.Compounds(
-            client, settings.judge_model, book.language, book.stages / "compounds.json", more
+            client,
+            settings.judge_model,
+            book.language,
+            book.stages / "compounds.json",
+            more,
+            learned,
         )
     checked = ocrcheck.apply(body, suspects if decided is None else decided)
     break_judge = judge_cache = None

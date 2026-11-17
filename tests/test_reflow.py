@@ -1,8 +1,12 @@
 import json
+import pickle
 from collections import Counter
+from types import SimpleNamespace
 
+import numpy as np
 import pytest
 
+from roboscriptorium import hyphens
 from roboscriptorium.hyphens import join
 from roboscriptorium.ir import Heading, Paragraph, SourceRef
 from roboscriptorium.pdf import Line, PageText, _core, _visual_lines
@@ -925,3 +929,50 @@ def test_several_hyphen_judges_answer_by_their_mean_and_are_asked_in_dutch_too(t
     }
     assert hyphens.asked("nl", panel=True) and not hyphens.asked("nl")
     assert hyphens.asked("en") and not hyphens.asked("fr", panel=True)
+
+
+def test_a_learned_hyphen_decision_takes_the_books_signs_and_each_judges_chance(tmp_path):
+    from roboscriptorium.pdf import Line, PageText
+
+    def judge(chance: float):
+        answer = SimpleNamespace(probabilities={"hyphenated": chance})
+        return SimpleNamespace(decide=lambda state, questions, model=None: {"spelling": answer})
+
+    seen = []
+
+    class Model:
+        def predict_proba(self, rows):
+            seen.extend(rows)
+            return np.array([[0.1, 0.9]])
+
+    page = PageText(1, 100, 100, [Line("de zee-egel en de zee-egel zwom", 0, 0, 1, 1)])
+    signs = hyphens.book_signs([page], "nl")
+    assert signs.opens["zee"] == 1 and signs.closes["egel"] == 1 and not signs.english
+    learned = hyphens.Learned(Model(), ("a", "b"), 0.8, signs, known=lambda w: w == "egel")
+    path = tmp_path / "c.json"
+    # Both judges say no; the learned decision, sure at 0.9 above its cut, keeps it.
+    panel = hyphens.Compounds(judge(0.1), "a", "nl", path, [(judge(0.2), "b")], learned)
+    assert panel("zee", "egel", "de zee|egel")
+    assert seen[0][-2:] == [0.1, 0.2] and len(seen[0]) == len(hyphens.FEATURES) + 2
+    assert seen[0][hyphens.FEATURES.index("stem_opens")] == 1
+    # A cache that kept only the mean asks the judges again for their own chances.
+    path.write_text(path.read_text().replace('"partial"', '"lost"'))
+    asked = []
+    said = {"spelling": SimpleNamespace(probabilities={"hyphenated": 0.3})}
+    first = SimpleNamespace(decide=lambda s, q, model=None: asked.append(model) or said)
+    again = hyphens.Compounds(first, "a", "nl", path, [(judge(0.2), "b")], learned)
+    assert again("zee", "egel", "de zee|egel") and asked == ["a"]
+    with pytest.raises(ValueError):
+        hyphens.Compounds(judge(0.1), "a", "nl", path, [], learned)
+
+
+def test_a_learned_hyphen_decision_is_saved_and_refused_on_other_features(tmp_path):
+    path = tmp_path / "h.pkl"
+    hyphens.save_learned(path, {"a": 1}, ("a",), 0.8)
+    signs = hyphens.Signs(english=True, habit=0.0)
+    assert hyphens.load_learned(path, signs).cut == 0.8
+    blob = pickle.loads(path.read_bytes())
+    path.write_bytes(pickle.dumps(blob | {"features": ("other",)}))
+    with pytest.raises(ValueError):
+        hyphens.load_learned(path, signs)
+    assert hyphens.without(path, "b").name == "h-without-b.pkl"
