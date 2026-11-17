@@ -237,8 +237,11 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       (`probe_accent_reviewed.py`)
 - [ ] De kus in de nacht: built 2026-11-15, its questions read 2026-11-16 (260 of 421
       quote questions were the layer's ‘ for the apostrophe of ’m and ’ns, now set by
-      definition). Next: built again once the queue leaves the machine (its questions
-      should fall to about 550), the sample read again, then the user's review. Left in
+      definition). Built again 2026-11-17 (ten minutes warm; 237 apostrophes set right, structure
+      clean): 518 questions, 425 OCR doubts and 113 quote questions. Next: the quote
+      questions' classes made the machine's (a straight " read for the opening ‘ where
+      another reading has it; speech opening on ’t; 22 that hold no quote mark at all:
+      why are they asked), the sample read again, then the user's review. Left in
       the sample, by kind: the layer's “ for an opening ‘, a speck read as ‘ at a line's
       start, small capitals ("csx-R", "zz-R"), stress accents the judges split on
 - [ ] **A build says how far it is**: the first build of a long book prints nothing
