@@ -149,9 +149,11 @@ side paths that skip the judges and the arbiter, and their cards show one or two
             dashes in the tuning books
       - [ ] A speck read as a second full stop (Nervous System PDF 119 line 25,
             "system.. He added"; the layer, glm-ocr, tesseract, clef and d3 all read
-            ".."). The book sets one stop or its measured ellipsis, never two dots.
-            Counterexamples first: an ellipsis read short, an abbreviation's stop ending
-            a sentence
+            ".."). Not a rule: five golden references print two dots (2026-11-17: "Wa…
+            wa.. as?" Reis om mijn schedel, "p.d.." De cipier, "vermoord..’" Goede
+            dochter, Au pair, Het ijzige land); the builds have about 30 over 15 books
+            ("shoulders..Not" Artemis, "ins’ide.." Thief-Taker). If built: the one-dot
+            version offered to the judges, as the speck offers are
       - [ ] A speck read as a quote mark after a word (Nervous System PDF 138 lines
             8–10, "disaster’"; the second scan's layer reads "disaster"). It unbalanced
             the paragraph's quotes, so the quote card asked. The evidence: an extra
