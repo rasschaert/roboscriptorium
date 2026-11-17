@@ -91,6 +91,10 @@ In this order; `HANDOVER.md` has the paths and the commands.
       both on (judges cached for each), the arbiter, both benches with production's
       arbiter everywhere else (`work/runs/offers-together.sh`, queued behind the model
       screens). Then **user**: on by default or not, for the pair
+- [ ] Surya OCR 2's layout as line-role tree features (screened 2026-11-17: 48 of 243 tree
+      errors labelled right, models.md): its layout on every labelled page
+      (`work/runs/surya-layout-all.sh`, queued, about six hours), then the trees with and
+      without its labels, each book left out (`train_sorter.py`), then a bench
 - [ ] Vanille en andere smaken's chapter numbers beside its titles: with the referee 4
       of 15 headings are found, each without its number (0 exact); no models to find
       the cause

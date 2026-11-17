@@ -9,6 +9,7 @@ the trees trained without the book where it is a tuning book), up to `ERROR_PAGE
 so a stopped run goes on where it was; `--dry` checks the inputs and asks nothing.
 
     uv run python experiments/probe_surya_layout.py [--dry] [book …]
+    uv run python experiments/probe_surya_layout.py --all [--dry]   # every labelled page, for the trees
 """
 
 import base64
@@ -121,8 +122,33 @@ def label_at(blocks: list[dict], x: float, y: float) -> str | None:
     return min(holding)[1] if holding else None
 
 
+def every_page(dry: bool) -> None:
+    """Surya's layout of every page the line-role trees have labelled lines of
+    (`sorterdata`: the bench's slices and the training-only ones), kept per page."""
+    url = Settings.from_env().ollama_url
+    specs = bench.SETS["tuning"] + bench.SETS["validation"] + sorterdata.EXTRA
+    todo = []
+    for spec in specs:
+        name = spec.split(":")[0]
+        book = Book.load(Path("work") / name)
+        pages = sorted({r["page"] for r in sorterdata.lines(spec)})
+        left = [n for n in pages if not (OUT / name / f"{n}.json").exists()]
+        print(f"{name}: {len(pages)} pages, {len(left)} to ask", flush=True)
+        todo += [(book, n) for n in left]
+    print(f"{len(todo)} pages to ask", flush=True)
+    if dry:
+        return
+    for k, (book, number) in enumerate(todo):
+        layout(book, number, url)
+        if k % 100 == 0:
+            print(f"{k} of {len(todo)}", flush=True)
+
+
 def main(args: list[str]) -> None:
     dry = "--dry" in args
+    if "--all" in args:
+        every_page(dry)
+        return
     wanted = [a for a in args if not a.startswith("--")]
     specs = [s for s in bench.SETS["tuning"] + bench.SETS["validation"]]
     specs = [s for s in specs if not wanted or s.split(":")[0] in wanted]
