@@ -2,42 +2,92 @@
 
 The state of play for the next session: what runs, what comes next, what waits on the
 user. Nothing else lives here (AGENTS.md says which file owns what). Rewrite it at the
-end of every session. The first section rewritten 2026-11-13, 11:10, by the third
-session; "Running" below it is of 2026-11-12, and what it says of production's arbiter
-and of baselines is superseded by the first section; the older sections are from
-2026-11-09 and 2026-11-10.
+end of every session. **Read the first section; it is complete and current.** The
+sections below it are older (each says its date) and are superseded wherever the first
+section speaks: baselines, what runs, what is on by default.
 
-**State at 02:50 on 2026-11-17** (a new agent session took over the screens at 18:30 on
-2026-11-16; decisions.md, 2026-11-16 and 17, has every number; the sections below are
-older).
-- **Waiting on the user, one call:** accent offers on by default (15 of tuning's 74
-  silent accents asked for 37 more questions, nothing else moves, validation 5 questions
-  for none; `ROBO_ACCENT_DOUBTS=1 ROBO_OFFER_TRUST_MODEL=work/models/ocr-trust-accents-apart.pkl`,
-  on main, off).
-- **On by default since 04:10 on 2026-11-17: the line-role referee** (clef 27B settles the
-  lines two sets of trees call differently; `sorter_second`, `ROBO_SORTER_SECOND=` turns
-  it off). The heading count was mended first (a title found without its number is one
-  error, not two) and with it validation no longer vetoes. **Baselines with it on:**
-  `work/bench/tuning-20261117T015939-90f9f02-dirty.json`,
-  `validation-20261117T020028-90f9f02-dirty.json`.
-- **Not taken as built, each with its next step on the checklist:** the arbiters retrained
-  with accent, nested-quote and speck offers (the retraining costs punctuation); the
-  hyphen judges by their mean (29 rescued, 44 made: keep each judge's answer, learn the
-  combination); nested-quote offers (rescue nothing: five silent places get a chance
-  under 0.1, four no offer).
-- **Screened:** Arete-27B Q4 and Q6, Groot 19B (models.md): each adds a little, Arete Q4
-  and Groot together lift the judge panel clear of zero. Next: trust data with both as
-  text judges, an arbiter, a control arbiter beside it, both benches (hours; explain first).
-- **Running:** `robo-kus-build` (De kus in de nacht, warm, since 02:45), then its
-  questions sampled again.
-- **New tonight:** AGENTS.md trimmed to 517 lines and "Judged by its rescues" (a verdict
-  gives rescues, then the bench by cause, then what is open); `experiments/detached.sh`
-  refuses a run script without `# resumes:` and `# models:`; the prompt hook has five
-  checks; `offer_rescues.py`, `judge_lift.py`, `work/runs/model-screen.sh` (a new model's
-  two tests, after the benches, one at a time). Ollama will not load a second large model
-  beside a bench's judge; six books at once time a cold judge out (`ROBO_BENCH_WORKERS=1`).
-- **To do next, no models:** a bench that outlives one book's failure; the five silent nested quotes' judge
-  votes; which italic word an accent offer adds in Het geluid van bananen.
+**State at 09:40 on 2026-11-17: the session ended at the user's word.** decisions.md,
+2026-11-16 and 17, has every number.
+
+- **Nothing runs.** No screen, no model loaded, no watcher, the tree clean and pushed
+  (`4614e02`).
+- **Baselines** (the line-role referee on): `work/bench/tuning-20261117T015939-90f9f02-dirty.json`
+  and `work/bench/validation-20261117T020028-90f9f02-dirty.json`. Every baseline named
+  further down is older.
+- **Waiting on the user, one call:** accent offers on by default? Stress accents measured
+  on the scan are offered as versions and decided by an arbiter of their own. On tuning
+  15 of 74 silent accent errors become questions (none fixed, none made) for 37 more
+  questions; on validation 5 more questions and none of 8 caught. Both benches NO CHANGE.
+  On main, off: `ROBO_ACCENT_DOUBTS=1 ROBO_OFFER_TRUST_MODEL=work/models/ocr-trust-accents-apart.pkl`.
+- **Possibly waiting on the user:** the short reviews they started at about 17:00 on
+  2026-11-16 (Au pair's 16 small-capital places; 9 accent additions in Goede dochter and
+  De vergelding). Check the verdict files before asking. Au pair's manifest gets
+  `doubled_singles = true` after them, then a new tuning baseline.
+
+**Taken this session**
+- **The line-role referee, on by default** (`sorter_second`, `work/models/line-roles-second.pkl`;
+  `ROBO_SORTER_SECOND=` turns it off; the tests turn it off in `tests/conftest.py`):
+  clef 27B looks at the whole page where two sets of line-role trees call a line
+  differently, about one line in 700. Tuning BETTER (75 fixed, 18 made, heading errors
+  24 → 18), validation BETTER (52 → 48). Costs on the record: 3 silent errors made on
+  tuning ("(Intermezzo)" lost in Reis om mijn schedel), 1 on validation, 6 punctuation.
+- **The heading count** (`evaluate._same_heading`, `_match_headings`): a title found
+  without its number, or a title and subtitle set as two headings, is found but not
+  exact: one error, not two.
+- **De kus in de nacht built again:** 814 → 518 questions (425 OCR doubts, 113 quotes).
+  Not ready for review: three classes of quote question the machine should settle are on
+  the checklist (a straight `"` for an opening ‘, speech opening on ’t, 22 quote questions
+  with no quote mark); then sample again.
+
+**Not taken as built; each has its reason and its next version on the checklist**
+- Arbiters retrained with accent, nested-quote and speck offers: the retraining itself
+  costs punctuation, whatever the offers do. Hence the offers' own arbiter (above); speck
+  offers on an arbiter of their own is the open version (5 of 52 silent specks rescued).
+- Hyphen judges by their mean (`ROBO_HYPHEN_JUDGES`, off): 29 of 74 rescued, 44 made; the
+  mean doesn't separate right from wrong. Next: keep each judge's chance (the cache drops
+  them once the mean is made, `hyphens.Compounds`), learn the combination, ask the
+  undecided.
+- Nested-quote offers: rescue nothing. Of the five silent places, the judges are split or
+  unsure on four and the arbiter fails the fifth (‘“Lucy). Next: an enlarged crop of the
+  offered mark for the judges; `quotemarks.py`'s measure on the places with no offer.
+
+**Models screened** (docs/models.md; all three pulled and on Ollama)
+- Arete-27B Q4 and Q6 as readers rescue the same 3 silent lines ("míjn", "bètahoek",
+  "old...."); Q6 is no better than Q4. Groot 19B rescues ‘“Lucy alone but changes 17–18 of
+  48 clean lines. All readers together 36 → 40 of 97 silent lines.
+- As judges, the panel's lift: Arete Q4 +0.005 [−0.000, +0.010], Q6 +0.003, Groot +0.004;
+  Q4, Q6 and Groot together +0.007 [+0.000, +0.015].
+- **The run that settles them, not started: explain it to the user first, it is hours.**
+  Trust data with Arete Q4 and Groot as extra text judges, an arbiter on it, a control
+  arbiter retrained on today's data beside it, both benches; and Groot's readings as
+  offers through the judges (`ROBO_EXTRA_READERS`). Write its script with `# resumes:`,
+  `# models:` and `# one at a time:`; the judges asked one model over all its questions.
+  `work/runs/model-screen.sh <ollama model> <tag>` screens a further model the same way.
+
+**To do next, no models, in this order** (all on docs/checklist.md)
+1. A bench that outlives one book's failure and picks its own number of books at once
+   (the referee's bench died at 15 of 20 books on one `httpx.ReadTimeout`).
+2. Hyphen judges: keep each judge's chance, learn the combiner.
+3. Which italic word an accent offer adds in Het geluid van bananen.
+4. De kus in de nacht's three quote-question classes.
+5. Vanille's chapter numbers beside its titles (4 of 15 headings found).
+
+**How the machine behaves, learned the hard way this session**
+- Ollama won't load a second large model beside a bench's judge; it marks the first
+  "Stopping..." while it keeps serving. Model tests wait behind benches.
+- Several large models asked in turn reload at every call: group calls by model.
+- Six books at once time a cold judge out: `ROBO_BENCH_WORKERS=1` for a cold bench.
+- `experiments/detached.sh` refuses a run script without `# resumes:` and `# models:`, and
+  above 48 GB without `# one at a time:`.
+- The prompt hook (`.claude/hooks/purpose-check.sh`, outside git) has five checks; the
+  fourth is "a verdict gives its rescues first" (AGENTS.md, "Judged by its rescues";
+  `experiments/offer_rescues.py <baseline errors.jsonl> <new errors.jsonl>`,
+  `experiments/judge_lift.py`), the fifth the stop test before a run.
+
+**Worktrees:** `../robo-offer-arbiter` (branch `offer-arbiter`, merged: can go);
+`../robo-render` (`render-differ`, kept), `../robo-cols` (`render-columns`, kept),
+`../robo-kern` (`render-kern`, not merged); `../robo-spacing`, `../robo-grow6`,
+`../roboscriptorium-caps` (merged: can go); `-py315` two untracked scratch files.
 
 **State at 02:20 on 2026-11-16** (the user checked in at 01:00: "keep at it"; the
 confirmations below wait for a later moment, to be brought up again). Since 20:45:
@@ -710,11 +760,6 @@ Ask before a download over 1 GB. A model outside Ollama gets its own environment
 - `experiments/screen_reader.sh <label>` treats the label as an Ollama model; for a readings
   file label run `tryout.py`'s reading step and `vote_sim.py <stem>` directly.
 - A Monitor watcher expires after 30 minutes whatever its timeout: re-arm it on a long run.
-
-## Worktrees
-
-`../roboscriptorium-caps` holds the `italics-by-place` branch and `../robo-grow6` the `grow6` branch, both merged (can go); `../robo-text` the `text-seat` branch (pass 4, kept); `-py315` two
-untracked scratch files.
 
 ## How to run things
 
