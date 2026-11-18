@@ -295,7 +295,7 @@ module's entry there before changing it.
 
 | Group | Modules |
 | --- | --- |
-| the CLI, settings, a book and its `book.toml`, the user's builds pausing the agent's | `cli`, `config`, `book`, `files`, `priority` |
+| the CLI, settings, a book and its `book.toml`, the user's builds pausing the agent's, a slow stage's progress | `cli`, `config`, `book`, `files`, `priority`, `progress` |
 | model clients | `clients/` (`ollama`, `decide`, `llama`, `openrouter`, `retry`) |
 | the page: text layer, layout, type | `pdf`, `page`, `scanpages`, `layout`, `typestyle`, `faint`, `missing` |
 | line roles | `roles`, `sorter`, `sorterdata`, `pageroles` |

@@ -23,6 +23,7 @@ from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.hyphens import HYPHENS
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PDF_LOCK, PageText
+from roboscriptorium.progress import Progress
 
 VERSION = 1
 # A page rendered at this many pixels: glm-ocr reads it near-exactly, and it fits
@@ -111,6 +112,7 @@ def page_readings(
         write_cache(cache, VERSION, {"pages": done}, model=model, prompt=prompt, pixels=PIXELS)
 
     workers = GLM_WORKERS if _glm(model) else 1
+    progress = Progress(f"page readings, {model}", len(todo), "pages")
     with pymupdf.open(pdf) as doc, ThreadPoolExecutor(workers) as pool:
         for start in range(0, len(todo), workers):
             batch = todo[start : start + workers]
@@ -122,6 +124,7 @@ def page_readings(
                     done[str(n)] = text
             finally:
                 save()
+            progress.add(len(batch))
     return {n: done[str(n)] for n in numbers}
 
 

@@ -21,6 +21,7 @@ from roboscriptorium.clients.retry import patiently
 from roboscriptorium.files import read_cache, write_atomic, write_cache
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PDF_LOCK, PageText, line_words, page_words, spells
+from roboscriptorium.progress import Progress
 
 # The resolution a line's crop is rendered at (`ROBO_READER_DPI`). Line readings at another one
 # carry it in the prompt they are cached under, so they never mix with the 300 dpi ones.
@@ -186,6 +187,7 @@ def line_readings(
     # in the pool.
     reader = via or model
     workers = HOSTED_WORKERS if openrouter.hosted(reader) else READ_WORKERS
+    progress = Progress(f"line readings, {reader}", len(todo), "lines")
     with ThreadPoolExecutor(workers) as pool:
         for start in range(0, len(todo), SAVE_EVERY):
             batch = todo[start : start + SAVE_EVERY]
@@ -208,6 +210,7 @@ def line_readings(
                         read_by.setdefault(via, []).append(key(page, k))
             finally:
                 save()  # a reading that fails loses itself, not the batch before it
+            progress.add(len(batch))
     return {ref: ocr.latin(done[key(p, k)]) for ref, (p, k) in wanted.items()}
 
 
@@ -264,6 +267,7 @@ def tesseract_words(
     if todo:
         # Pages are rendered on this thread under `PDF_LOCK` (PyMuPDF isn't thread-safe);
         # tesseract runs pooled.
+        progress = Progress("tesseract", len(todo), "pages")
         with ThreadPoolExecutor(TESSERACT_WORKERS) as pool:
             for start in range(0, len(todo), TESSERACT_WORKERS):
                 batch = todo[start : start + TESSERACT_WORKERS]
@@ -273,6 +277,7 @@ def tesseract_words(
                 for n, page_words in zip(batch, read, strict=True):
                     done[n] = page_words
                 write_cache(cache, TESSERACT_VERSION, {"pages": done}, lang=lang)
+                progress.add(len(batch))
     return {n: done[n] for n in numbers}
 
 

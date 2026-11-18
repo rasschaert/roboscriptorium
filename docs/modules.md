@@ -32,6 +32,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   `read_cache` and `write_cache`, a versioned JSON cache with the identity it was made
   with (model, prompt, language); the append-only logs; `check_source`, which refuses a source PDF other than the one a
   book's `stages/` were built from (`stages/source.json`).
+- `progress.py`: how far a slow stage is. `Progress(what, total, unit)` counts what the
+  stage has done and prints the count and the time left at its pace so far to stderr,
+  every three minutes, once the stage has run that long: the line, page and tesseract
+  readings (`readers`, `pagereader`), the OCR check's pass per judge, each hyphen judge.
 - `priority.py`: the user's builds come first. `first(what)` wraps a `build` or a review's
   build the user starts (outside the agent's `robo-*` screen sessions, `STY`): every
   process of those sessions is stopped (SIGSTOP) for its length and continued after, and

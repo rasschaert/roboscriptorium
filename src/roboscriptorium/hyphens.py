@@ -19,6 +19,7 @@ from pathlib import Path
 from roboscriptorium.clients.decide import choice
 from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.pdf import PageText
+from roboscriptorium.progress import Progress
 
 # One process at a time asks the hyphen judges, machine-wide.
 JUDGE_LOCK = Path(tempfile.gettempdir()) / "roboscriptorium-hyphen-judges.lock"
@@ -128,6 +129,8 @@ class Compounds:
             fcntl.flock(lock, fcntl.LOCK_EX)
             for client, model in self._judges:
                 asked = 0
+                todo = sum(model not in self._partial.get(key, {}) for key in questions)
+                progress = Progress(f"hyphen judge {model}", todo, "questions")
                 for key, (stem, rest, context) in questions.items():
                     got = self._partial.setdefault(key, {})
                     if model in got:
@@ -145,6 +148,7 @@ class Compounds:
                     ].probabilities.get("hyphenated", 0.0)
                     self._new = True
                     asked += 1
+                    progress.add()
                     if asked % SAVE_EVERY == 0:
                         self.save()
                 self.save()

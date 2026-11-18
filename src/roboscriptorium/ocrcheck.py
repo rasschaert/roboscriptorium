@@ -33,6 +33,7 @@ from roboscriptorium.hyphens import HYPHENS
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import LIGATURES, PageText, line_words, page_words, spells, spliced
+from roboscriptorium.progress import Progress
 from roboscriptorium.quotes import ELISION
 from roboscriptorium.quotes import reading_curled as _curled
 from roboscriptorium.roles import DecisionCache
@@ -266,9 +267,19 @@ def check(
             lower_capitals,
             descent,
             marks,
+            judge=live.model,
         )
     found = _check(
-        *args, vision, reader, *rest, alarms, alarm_below, lower_capitals, descent, marks
+        *args,
+        vision,
+        reader,
+        *rest,
+        alarms,
+        alarm_below,
+        lower_capitals,
+        descent,
+        marks,
+        judge=judges[-1].model if judges else "",
     )
     for offers in marks:
         offers.save()
@@ -301,15 +312,19 @@ def _check(
     lower_capitals: bool = False,
     descent: float | None = None,
     marks=(),
+    judge: str = "",
 ) -> list[Suspect]:
-    """`check`'s pass over the book with the judges as given; with the book's `descent`,
-    each suspect's crop stops at the line above's descenders (`readers.own_span`)."""
+    """`check`'s pass over the book with the judges as given, `judge` the one answering
+    anew; with the book's `descent`, each suspect's crop stops at the line above's
+    descenders (`readers.own_span`)."""
     suspects = []
+    progress = Progress(f"OCR check, judge {judge}", len(pages), "pages")
     curly = curly_book(pages)
     shortened = abbreviations(pages)
     counts = book_words(pages) if lower_capitals else Counter()
     with pymupdf.open(pdf) as doc:
         for page in pages:
+            progress.add()  # counted as it starts: a page may end in a `continue`
             pdf_page = doc[page.number - 1]
             words = line_words(page_words(pdf_page, page), page)
             boxes = readers.line_boxes(pdf_page, page)
