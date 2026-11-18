@@ -1213,3 +1213,33 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-17 | bench tuning, quote questions at their mark, stray openings offered | 0 | 5 | 0 |
 | 2026-11-17 | bench validation, quote questions at their mark, stray openings offered | 0 | 1 | 0 |
 | 2026-11-17 | silent screen, surya-ocr-2, own prompt | 0 | 1 | 0 |
+| 2026-11-17 | surya-ocr-2 layout on line-role error pages | 212 | 12 | 0 |
+| 2026-11-18 | bench tuning, production, baseline for offers together | 0 | 6 | 0 |
+| 2026-11-18 | bench validation, production, baseline for offers together | 0 | 1 | 0 |
+| 2026-11-18 | trust data, goede-dochter--ia-scan | 500 | 4 | 0 |
+| 2026-11-18 | trust data, vals-alarm--ia-scan | 292 | 1 | 0 |
+| 2026-11-18 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 1 | 0 |
+| 2026-11-18 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 1 | 0 |
+| 2026-11-18 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 1 | 0 |
+| 2026-11-18 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 1 | 0 |
+| 2026-11-18 | trust data, metro-2033--ia-scan | 458 | 2 | 0 |
+| 2026-11-18 | trust data, de-cipier--ia-scan | 474 | 2 | 0 |
+| 2026-11-18 | trust data, artemis--ia-scan | 305 | 3 | 0 |
+| 2026-11-18 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 2 | 0 |
+| 2026-11-18 | trust data, de-eerlijke-vinder--ia-scan | 84 | 0 | 0 |
+| 2026-11-18 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-18 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 1 | 0 |
+| 2026-11-18 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 2 | 0 |
+| 2026-11-18 | trust data, doodskleed--ia-scan | 276 | 1 | 0 |
+| 2026-11-18 | trust data, het-ijzige-land--ia-scan | 318 | 1 | 0 |
+| 2026-11-18 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 0 | 0 |
+| 2026-11-18 | trust data, vuurspel--ia-scan | 21 | 0 | 0 |
+| 2026-11-18 | trust data, monterosso-mon-amour--ia-scan | 88 | 1 | 0 |
+| 2026-11-18 | trust data, het-geluid-van-bananen--ia-scan | 315 | 1 | 0 |
+| 2026-11-18 | trust data, het-schaduwhuis--ia-scan | 320 | 1 | 0 |
+| 2026-11-18 | trust data, stella | 67 | 0 | 0 |
+| 2026-11-18 | trust data, ex-minnaar | 273 | 3 | 0 |
+| 2026-11-18 | train arbiter after the rebuild | 0 | 84 | 0 |
+| 2026-11-18 | bench tuning after the rebuild | 6208 | 5 | 0 |
+| 2026-11-18 | bench tuning, accent and speck offers on their own arbiter | 0 | 5 | 0 |
+| 2026-11-18 | bench validation, accent and speck offers on their own arbiter | 0 | 1 | 0 |
