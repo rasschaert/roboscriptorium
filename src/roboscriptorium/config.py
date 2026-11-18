@@ -40,14 +40,14 @@ class Settings:
     # (2026-11-15, docs/design.md).
     alarm_model: str = "autotrust-jev:35b-nvfp4,d3:9b,render,autotrust-jev:9b-nvfp4@text"
     alarm_below: float = 1.0
-    # More judges of a line-end hyphen the book and the word list leave undecided, their
-    # chances averaged with the judge's, and asked in Dutch books too (comma-separated;
-    # `hyphens.Compounds`). Empty until its bench (docs/decisions.md, 2026-11-16).
-    hyphen_judge: str = ""
-    # A decision on those breaks learned from the golden books' spellings, from the book's
-    # own signs and each of those judges' chances, in place of their mean
-    # (`hyphens.Learned`, `experiments/train_hyphens.py`). Empty until its bench.
-    hyphen_learned: str = ""
+    # More judges of a line-end hyphen the book and the word list leave undecided, asked
+    # beside the judge, in Dutch books too (comma-separated; `hyphens.Compounds`).
+    hyphen_judge: str = "autotrust-jev:35b-nvfp4,d3:9b,autotrust-jev:9b-nvfp4"
+    # The decision on those breaks, learned from the golden books' spellings, the book's
+    # own signs and each judge's chance (`hyphens.Learned`, `experiments/train_hyphens.py`):
+    # on tuning 27 silent errors fixed and 14 made, all compound hyphens (2026-11-18,
+    # docs/design.md). Empty, the judges' chances are averaged.
+    hyphen_learned: str = "work/models/hyphens.pkl"
     # Doubts raised where small capitals may have been read in lower case though every
     # reading agrees ("ss", "usb-stick"; `ocrcheck.capitals_doubts`). About 1.7% more
     # questions for the small capitals no reader disputes (docs/design.md).

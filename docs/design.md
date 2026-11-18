@@ -1469,7 +1469,22 @@ reviewer reading the crop knows no better than a model. Over the tuning books 43
 breaks are left undecided by the rest with a one-way reference
 (`experiments/probe_hyphen_judge.py`): in Dutch 355 of 361 close and the judge is no
 better than joining (353 right at 0.5); in English 43 of 77 close, and clef:27b picks
-right on 63 (clef-flash 59, winnow 46). So only English books ask it.
+right on 63 (clef-flash 59, winnow 46). So the judge alone asks only in English books.
+
+**A decision learned from four judges and the book's own signs settles the rest, in both
+languages** (`hyphens.Learned`, `experiments/train_hyphens.py`, 2026-11-18). Each of the
+four judges (clef 27B, autotrust-jev 35B, d3 9B, autotrust-jev 9B) gives its chance that the
+hyphen is the word's own; a logistic model trained on the tuning books' breaks weighs those
+with the book's habits (how often it keeps a hyphen, whether either part stands alone in
+it, its parts opening or closing other words, the Dutch vowel clash). On the training
+breaks with each book left out: Dutch 1,587 breaks, wrong 33 by the judge alone, 31 by the
+four's mean, 30 learned; English 87 breaks, 25, 22 and 8. Benched against production:
+tuning BETTER, 27 silent errors fixed and 14 made, all compound hyphens (8 fixed in
+Doctor Dolittle, 6 in Metro 2033, 5 in Artemis: "tip-toed", "sugar-bowl", "pre-paid");
+validation NO CHANGE, 4 fixed and 5 made. The four's mean alone was 16 and 16. Its
+failure: compounds closed that the print hyphenates ("roet-zwarte", "baksteen-kleurige",
+"Radikal-lösung", "non-commital"), and a few hyphenated that the print closes
+("Baudelaireeditie", "menuicoontjes").
 
 Four cases aren't a word's hyphen at all and skip the evidence: a Dutch word broken at its
 diaeresis ("democratie-" / "en"), which the break drops, is joined with it

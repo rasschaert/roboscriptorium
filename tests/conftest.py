@@ -27,6 +27,9 @@ def _default_settings(monkeypatch):
     monkeypatch.setenv("ROBO_SORTER_SECOND", "")
     # The same for the italic trees: tests run on the slant cuts.
     monkeypatch.setenv("ROBO_ITALIC_TREES", "0")
+    # The hyphen panel and its learned decision likewise: tests run on the judge alone.
+    monkeypatch.setenv("ROBO_HYPHEN_JUDGES", "")
+    monkeypatch.setenv("ROBO_HYPHEN_LEARNED", "")
     # No font folder: the judge `render` is left out, as on a machine without the
     # fonts. A test of it makes its own judge.
     monkeypatch.setenv("ROBO_FONTS", "no-fonts-in-tests")

@@ -15,7 +15,13 @@ and the guard. Since: the hyphen panel benched NO CHANGE (decisions.md); Tess-4.
 reader rescues 20 of 97 silent lines (book and zoom crops), none that no screened reader
 brings, 2 the readers in use miss (stress accents, both brought by Arete and Groot); its
 judge tryout runs (`work/runs/tess-q8-judge.log`), then `experiments/vote_sim.py` on it,
-then its models.md entry. On this charger the runs go about 15 minutes, then pause about 25.
+then its models.md entry (done: it repeats Arete; the reading vote queued for Tess,
+Arete and Groot, `reader-votes.sh`). The learned hyphen decision benched tuning BETTER,
+validation NO CHANGE, and is on by default (merged `hyphen-learned`); **production
+baselines now** `work/bench/tuning-20261118T195052-dc2d097-dirty.json` and
+`work/bench/validation-20261118T195151-f816977-dirty.json`. On the 140 W charger since
+20:30; the queue: `robo-surya-layout-all` (took the lock at 20:51, about six hours), then
+`robo-quote-straight` and `robo-reader-votes`, then `robo-surya-roles`.
 
 **State at 23:35 on 2026-11-17** (a new session, "continue"). Below it, the 09:40 state
 still holds where this doesn't speak.

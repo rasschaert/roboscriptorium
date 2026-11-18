@@ -200,8 +200,9 @@ ideas reworked", 2026-11-15):
   not the judges): 29 of tuning's 74 silent compound hyphens fixed, 44 hyphens added
   wrongly. The build showed the judges the break as "rechtbank-|fantasie", hyphen and
   bar both, and they answered near 0.5; mended the same day, benched again
-  (`hyphen-panel2.sh`). On the probe's labelled breaks a learned combination with the
-  book's own signs beats the mean (Dutch 30 wrong of 1,559, English 9 of 89).
+  (`hyphen-panel2.sh`: 16 fixed, 16 made, NO CHANGE). Reworked as a decision learned
+  from the four's chances and the book's own signs: tuning BETTER, 27 silent fixed and
+  14 made, validation NO CHANGE; on by default since 2026-11-18 (design.md).
 
 - **Quote questions at a paragraph's unpaired opening mark** (2026-11-17; failed on the
   question count): De geruchten's lines asked 59 → 83, none catching an error. Left
