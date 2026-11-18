@@ -177,6 +177,23 @@ def test_a_book_is_scored_with_the_trust_model_trained_without_it(tmp_path, monk
     assert bench.TRAINED_ON <= {s.split(":")[0] for s in bench.SETS["tuning"]}
 
 
+def test_a_book_is_scored_with_the_hyphen_decision_trained_without_it(tmp_path):
+    from roboscriptorium.config import Settings
+
+    learned = tmp_path / "hyphens.pkl"
+    settings = Settings(
+        hyphen_learned=str(learned), ocr_trust=False, sorter=False, italic_trees=False
+    )
+    tuned = "goede-dochter--ia-scan"
+    with pytest.raises(FileNotFoundError):
+        bench.unseen(settings, tuned)
+    (tmp_path / f"hyphens-without-{tuned}.pkl").write_bytes(b"")
+    assert bench.unseen(settings, tuned).hyphen_learned == str(
+        tmp_path / f"hyphens-without-{tuned}.pkl"
+    )
+    assert bench.unseen(settings, "vuurspel--ia-scan") == settings
+
+
 def test_each_book_weighs_the_same_whatever_its_pages():
     big = [(1.0, 1.0)] * 300
     small = [(1.0, 0.0)] * 10

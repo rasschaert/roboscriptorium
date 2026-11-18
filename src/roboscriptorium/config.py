@@ -44,6 +44,10 @@ class Settings:
     # chances averaged with the judge's, and asked in Dutch books too (comma-separated;
     # `hyphens.Compounds`). Empty until its bench (docs/decisions.md, 2026-11-16).
     hyphen_judge: str = ""
+    # A decision on those breaks learned from the golden books' spellings, from the book's
+    # own signs and each of those judges' chances, in place of their mean
+    # (`hyphens.Learned`, `experiments/train_hyphens.py`). Empty until its bench.
+    hyphen_learned: str = ""
     # Doubts raised where small capitals may have been read in lower case though every
     # reading agrees ("ss", "usb-stick"; `ocrcheck.capitals_doubts`). About 1.7% more
     # questions for the small capitals no reader disputes (docs/design.md).
@@ -185,6 +189,7 @@ class Settings:
             alarm_model=os.environ.get("ROBO_ALARM_MODEL", defaults.alarm_model),
             alarm_below=float(os.environ.get("ROBO_ALARM_BELOW", defaults.alarm_below)),
             hyphen_judge=os.environ.get("ROBO_HYPHEN_JUDGES", defaults.hyphen_judge),
+            hyphen_learned=os.environ.get("ROBO_HYPHEN_LEARNED", defaults.hyphen_learned),
             lower_capitals=_flag("ROBO_LOWER_CAPITALS", defaults.lower_capitals),
             accent_doubts=_flag("ROBO_ACCENT_DOUBTS", defaults.accent_doubts),
             nested_quote_doubts=_flag("ROBO_NESTED_QUOTES", defaults.nested_quote_doubts),
