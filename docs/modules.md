@@ -37,6 +37,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   process of those sessions is stopped (SIGSTOP) for its length and continued after, and
   `work/runs/user-active` names it, so `experiments/battery_gate.sh` holds a run that
   starts meanwhile. A request to Ollama paused mid-way gets its answer when it continues.
+  `guard()` (`experiments/battery_guard.sh`, in its own screen `robo-battery-guard`) stops
+  the same runs mid-flight while the battery is under 30% and continues them at 50%,
+  checking each minute.
 - `clients/openrouter.py`: a hosted model, named `openrouter:<model>@<provider tag>`
   read by `readers.transcribe`; the key is `OPENROUTER_API_KEY`. As `ROBO_READ_MODEL`
   its readings cache under its own name; as `ROBO_READ_VIA`

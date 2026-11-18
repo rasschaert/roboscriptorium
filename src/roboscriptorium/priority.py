@@ -13,6 +13,7 @@ import re
 import signal
 import subprocess
 import sys
+import time
 from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
@@ -46,9 +47,12 @@ def descendants(roots: set[int], table: list[tuple[int, int]]) -> list[int]:
     return out
 
 
-def _agent_processes() -> tuple[list[int], list[str]]:
+GUARD = "robo-battery-guard"
+
+
+def _agent_processes(skip: str = "") -> tuple[list[int], list[str]]:
     listing = subprocess.run(["screen", "-ls"], capture_output=True, text=True).stdout
-    found = sessions(listing)
+    found = {pid: name for pid, name in sessions(listing).items() if name != skip}
     if not found:
         return [], []
     ps = subprocess.run(["ps", "-A", "-o", "pid=,ppid="], capture_output=True, text=True).stdout
@@ -83,3 +87,49 @@ def first(what: str) -> Iterator[None]:
         MARKER.unlink(missing_ok=True)
         if names:
             print(f"Your {what} is done; the agent's runs go on.", file=sys.stderr)
+
+
+FLOOR, RESUME = 30, 50
+
+
+def battery() -> int | None:
+    """The battery's charge in percent, or None without one."""
+    out = subprocess.run(["pmset", "-g", "batt"], capture_output=True, text=True).stdout
+    found = re.search(r"(\d+)%", out)
+    return int(found.group(1)) if found else None
+
+
+def hold(level: int | None, held: bool, floor: int = FLOOR, resume: int = RESUME) -> bool:
+    """Whether the agent's runs stay stopped: from under `floor` until back at `resume`."""
+    if level is None:
+        return False
+    return level < resume if held else level < floor
+
+
+def guard(every: int = 60) -> None:
+    """Stops the agent's runs while the battery is low, mid-run, and continues them once
+    it has charged: a low-wattage charger loses ground under Ollama, and the battery gate
+    only checks when a run starts. Prints each change, and the level at every 5%."""
+    floor = int(os.environ.get("ROBO_BATTERY_FLOOR", FLOOR))
+    resume = int(os.environ.get("ROBO_BATTERY_RESUME", RESUME))
+    held, last = False, None
+    while True:
+        level = battery()
+        now = hold(level, held, floor, resume)
+        pids, names = _agent_processes(skip=GUARD)
+        if now:
+            _signal(pids, signal.SIGSTOP)
+        if now != held:
+            if not now:
+                _signal(pids, signal.SIGCONT)
+            verb = "stopped" if now else "continued"
+            runs = ", ".join(names) or "nothing"
+            print(f"{time.strftime('%H:%M')} battery {level}%: {verb} {runs}", flush=True)
+        elif level is not None and last is not None and level // 5 != last // 5:
+            print(f"{time.strftime('%H:%M')} battery {level}%", flush=True)
+        held, last = now, level
+        time.sleep(every)
+
+
+if __name__ == "__main__":
+    guard()

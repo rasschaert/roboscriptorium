@@ -424,7 +424,9 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   Power Mode slows runs by half or more (docs/run-times.md): say before chaining long runs
   during the day. Every model run waits while the battery is under 30%, checking hourly
   (`experiments/battery_gate.sh`, which `timed.sh` calls first; run it before any model
-  job started another way).
+  job started another way). While runs go, `experiments/battery_guard.sh` (screen
+  `robo-battery-guard`, with a watcher) stops them under 30% and continues them at 50%:
+  on a charger under 140 W the battery still drains under Ollama.
 - **An unanswered question never holds the machine** (the user, 2026-11-14, after a night
   idle while "may I start the overnight runs?" went unanswered: "unforgivable"). Silence
   is not a no: the user is asleep or away, and the battery gate guards the charge. Runs

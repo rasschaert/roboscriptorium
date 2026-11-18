@@ -20,6 +20,9 @@ from roboscriptorium.clients.decide import choice
 from roboscriptorium.files import read_cache, write_cache
 from roboscriptorium.pdf import PageText
 
+# One process at a time asks the hyphen judges, machine-wide.
+JUDGE_LOCK = Path(tempfile.gettempdir()) / "roboscriptorium-hyphen-judges.lock"
+
 VERSION = 2
 # A judge's answers are written to the cache after this many new ones.
 SAVE_EVERY = 20
@@ -121,7 +124,7 @@ class Compounds:
         """The questions put to each judge in turn, under the machine's lock for these
         judges: books built side by side would otherwise make Ollama swap judges at
         every question."""
-        with open(Path(tempfile.gettempdir()) / "roboscriptorium-hyphen-judges.lock", "w") as lock:
+        with open(JUDGE_LOCK, "w") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX)
             for client, model in self._judges:
                 asked = 0

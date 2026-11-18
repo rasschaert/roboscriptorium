@@ -6,6 +6,13 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
+**State at 13:30 on 2026-11-18** (after the user's computer crashed at about 02:11, 4 books
+into `robo-hyphen-panel2`'s tuning bench). The whole queue below was restarted at 13:15
+in its order, each run resuming from its caches; Ollama 0.40.16, `doctor` clean. New:
+`robo-battery-guard` (`experiments/battery_guard.sh`) stops the runs under 30% battery
+and continues them at 50% (the user is on a charger under 140 W). Watchers on the queue
+and the guard.
+
 **State at 23:35 on 2026-11-17** (a new session, "continue"). Below it, the 09:40 state
 still holds where this doesn't speak.
 

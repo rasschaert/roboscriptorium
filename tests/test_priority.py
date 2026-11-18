@@ -42,3 +42,11 @@ def test_the_users_build_pauses_the_agents_runs_and_the_agents_own_passes(monkey
     with priority.first("build"):
         pass
     assert sent == []
+
+
+def test_hold_stops_under_the_floor_and_waits_for_the_resume_level():
+    assert not priority.hold(31, held=False)
+    assert priority.hold(29, held=False)
+    assert priority.hold(45, held=True)
+    assert not priority.hold(50, held=True)
+    assert not priority.hold(None, held=True)

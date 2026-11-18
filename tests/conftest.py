@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from roboscriptorium import pipeline
+from roboscriptorium import hyphens, pipeline
 from roboscriptorium.lexicon import Lexicon
 
 
@@ -35,3 +35,9 @@ def _default_settings(monkeypatch):
     # A closed port: a model call a test forgot to stub fails at once instead of reaching
     # the machine's Ollama and loading a model.
     monkeypatch.setenv("ROBO_OLLAMA_URL", "http://127.0.0.1:9")
+
+
+@pytest.fixture(autouse=True)
+def _own_judge_lock(monkeypatch, tmp_path):
+    """A lock of the test's own: a bench asking the hyphen judges holds the machine's."""
+    monkeypatch.setattr(hyphens, "JUDGE_LOCK", tmp_path / "hyphen-judges.lock")
