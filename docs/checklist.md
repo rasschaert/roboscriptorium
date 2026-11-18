@@ -79,6 +79,9 @@ last on 2026-11-14, so next by 2026-11-21).
 
 In this order; `HANDOVER.md` has the paths and the commands.
 
+- [ ] Tess-4.5-27B, Arete-27B Q4 and Groot 19B in the reading vote (`work/runs/reader-votes.sh`,
+      queued 2026-11-18 behind the quote run; about an hour and a half): the vote test the
+      silent-error screen left out. Agent, models
 - [ ] Arete-27B Q4 and Groot 19B as extra text judges (screened 2026-11-17, models.md:
       together they lift the judge panel +0.007 [+0.000, +0.015]): trust data with both,
       an arbiter on it, a control arbiter retrained on the same day's data beside it,

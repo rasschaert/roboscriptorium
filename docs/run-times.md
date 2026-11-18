@@ -1243,3 +1243,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-18 | bench tuning after the rebuild | 6208 | 5 | 0 |
 | 2026-11-18 | bench tuning, accent and speck offers on their own arbiter | 0 | 5 | 0 |
 | 2026-11-18 | bench validation, accent and speck offers on their own arbiter | 0 | 1 | 0 |
+| 2026-11-18 | bench tuning, hyphen judges together, the break shown as the question says | 0 | 75 | 0 |
+| 2026-11-18 | bench validation, hyphen judges together, the break shown as the question says | 0 | 9 | 0 |
+| 2026-11-18 | silent screen, tess-q8, book | 0 | 6 | 0 |
+| 2026-11-18 | silent screen, tess-q8, zoom | 0 | 34 | 0 |
+| 2026-11-18 | tryout: judge set v2, tess-q8 by tokens | 0 | 325 | 0 |
+| 2026-11-18 | train the learned hyphen decision | 0 | 0 | 0 |
