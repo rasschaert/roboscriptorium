@@ -6,22 +6,22 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
-**State at 22:15 on 2026-11-18** (the user off for the night: "you know what to do").
+**State at 01:10 on 2026-11-19** (the user off for the night: "you know what to do").
 On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50%.
 
-- **Queue** (one model job at a time, `work/runs/model-screen.lock`): `robo-surya-layout-all`
-  (since 20:51, about 20 pages a minute, done near 02:40), then in any order
-  `robo-quote-straight`, `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote),
-  `robo-hyphen-dutch` (the learned hyphen decision with Dutch gated to plain words at 0.9; warm, minutes), then
+- **Queue** (one model job at a time, `work/runs/model-screen.lock`):
+  `robo-surya-layout-all` (restarted 00:47 after a page's answer ran past the model's
+  length and broke the JSON at 4,799 of ~7,006 pages; the probe now keeps a cut-off
+  answer's whole blocks; about 2,200 pages left, under two hours), then in any order
+  `robo-quote-straight` (rebased on main, against the new baselines) and
+  `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote), then
   `robo-surya-roles` (no models). A background wait on the next event of any of them.
-- **Taken today:** the learned hyphen decision, in English books only (decisions.md: by
-  language English 21 fixed/2 made, Dutch 7/12); `bench-diff` splits each cause by what the
-  build does and by language; build progress lines (`progress.py`); the battery guard.
-- **Production baselines:** `work/bench/tuning-20261118T195052-dc2d097-dirty.json` and
-  `validation-20261118T195151-f816977-dirty.json` hold the learned decision in both
-  languages; the English-only bench replaces them when it lands.
-- **Dutch hyphens reworked (22:45, no models):** plain words only, kept at 0.9, else the
-  vowel clash; on by default, its bench `robo-hyphen-dutch` queued (decisions.md).
+- **Taken tonight:** Dutch line-end hyphens by the learned decision for plain words at
+  0.9: tuning BETTER (Dutch 5 fixed, none made), validation NO CHANGE (Dutch 0 fixed,
+  2 made: "mede-ouder", "plum-pudding"); kept. The hyphen cache now keeps each judge's
+  answers whatever panel asks (a branch build would have wiped them).
+- **Production baselines:** `work/bench/tuning-20261118T234701-d19cd9e-dirty.json` and
+  `validation-20261118T234752-d19cd9e-dirty.json` (paths in `work/probes/production-baseline/`).
 - **Waiting on the user:** accent and speck offers on by default (checklist).
 
 **State at 13:30 on 2026-11-18** (after the user's computer crashed at about 02:11, 4 books

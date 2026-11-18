@@ -208,9 +208,16 @@ class Compounds:
             raise ValueError(f"the learned hyphen decision needs the judges {learned.judges}")
         self._model, self._path = "+".join(m for _, m in self._judges), path
         self._language = NAMES[language[:2]]
-        blob = read_cache(path, VERSION, model=self._model)
-        self._answers: dict[str, float] = blob["answers"] if blob else {}
+        # Each judge's chances serve any panel that includes it; the means only this one.
+        blob = read_cache(path, VERSION)
         self._partial: dict[str, dict[str, float]] = blob.get("partial", {}) if blob else {}
+        self._answers: dict[str, float] = (
+            blob["answers"] if blob and blob.get("model") == self._model else {}
+        )
+        models = [m for _, m in self._judges]
+        for key, got in self._partial.items():
+            if all(m in got for m in models):
+                self._answers[key] = sum(got[m] for m in models) / len(models)
         self._pending: dict[str, tuple[str, str, str]] = {}
         self._collecting = False
         self._new = False

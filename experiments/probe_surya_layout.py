@@ -102,11 +102,25 @@ def layout(book: Book, number: int, url: str) -> list[dict]:
     started = time.time()
     resp = httpx.post(f"{url}/api/generate", json=payload, timeout=900)
     resp.raise_for_status()
-    blocks = json.loads(resp.json()["response"])
+    blocks = whole_blocks(resp.json()["response"])
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(blocks))
     print(f"  {book.root.name} p{number}: {len(blocks)} blocks, {time.time() - started:.1f} s")
     return blocks
+
+
+def whole_blocks(text: str) -> list[dict]:
+    """The blocks of an answer; one cut off at `num_predict` keeps its complete blocks."""
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        end = text.rfind("}")
+        while end > 0:
+            try:
+                return json.loads(text[: end + 1] + "]")
+            except json.JSONDecodeError:
+                end = text.rfind("}", 0, end)
+        return []
 
 
 def label_at(blocks: list[dict], x: float, y: float) -> str | None:

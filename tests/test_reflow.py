@@ -897,8 +897,27 @@ def test_several_hyphen_judges_answer_by_their_mean_and_are_asked_in_dutch_too(t
         "b": 0.9,
         "c": 0.5,
     }
-    # Kept by the judges it was asked of: one judge alone starts again.
-    assert hyphens.Compounds(judge(0.0), "a", "nl", tmp_path / "panel.json")._answers == {}
+    # Each judge's chances serve another panel: one judge alone answers from its own,
+    # a panel with a new judge asks only that one, and neither loses the others'.
+    alone = hyphens.Compounds(judge(0.0), "a", "nl", tmp_path / "panel.json")
+    assert alone._answers == {"zee-egel": 0.4} and not alone("zee", "egel", "een zee|egel")
+    asked = []
+
+    def new(state, questions, model=None):
+        asked.append(model)
+        return {"spelling": SimpleNamespace(probabilities={"hyphenated": 0.1})}
+
+    wider = hyphens.Compounds(
+        judge(0.0), "a", "nl", tmp_path / "panel.json", [(SimpleNamespace(decide=new), "d")]
+    )
+    assert not wider("zee", "egel", "een zee|egel") and asked == ["d"]
+    wider.save()
+    assert json.loads((tmp_path / "panel.json").read_text())["partial"]["zee-egel"] == {
+        "a": 0.4,
+        "b": 0.9,
+        "c": 0.5,
+        "d": 0.1,
+    }
     # Collected first, the questions go to each judge in turn, and a judge's answers
     # are in the cache before the next is asked: a stopped build goes on from them.
     calls = []

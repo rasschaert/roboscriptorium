@@ -204,7 +204,8 @@ ideas reworked", 2026-11-15):
   from the four's chances and the book's own signs: tuning BETTER, 27 silent fixed and
   14 made, validation NO CHANGE; on by default since 2026-11-18 (design.md), in Dutch
   only for plain words and at 0.9: let loose it fixed 7 and added 16 hyphens the print
-  lacks over both sets, most in names and foreign words.
+  lacks over both sets, most in names and foreign words; so gated, Dutch 5 fixed and 2
+  made over both sets (2026-11-19).
 
 - **Quote questions at a paragraph's unpaired opening mark** (2026-11-17; failed on the
   question count): De geruchten's lines asked 59 → 83, none catching an error. Left

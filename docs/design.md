@@ -1497,7 +1497,11 @@ dropped; the learned decision at its cut of 0.8, 30, adding 7 the print lacks
 are in the word list and the word starts in lower case (`Learned.plain`,
 `hyphens.DUTCH_CUT`), else the vowel clash: 23 wrong, none added, five restored
 ("niet-schuldig", "collega-piloten", "knock-out", "tie-wraps", "café-restaurant"). Chosen
-among 16 variants on these books, so the bench's validation books are its check.
+among 16 variants on these books, so the bench's validation books were its check
+(2026-11-19, `tuning-20261118T234701`, `validation-20261118T234752`): tuning 5 fixed and
+none made in Dutch, exactly the five above; validation none fixed and 2 made, both a
+closed compound of two listed words given a hyphen ("mede-ouder", "plum-pudding", the
+judges split near 0.5 and the book's signs taking it past 0.9); NO CHANGE, so kept.
 
 Four cases aren't a word's hyphen at all and skip the evidence: a Dutch word broken at its
 diaeresis ("democratie-" / "en"), which the break drops, is joined with it

@@ -441,7 +441,7 @@ without effect, and what each would need to be tried again, is in
       2026-11-16: within the noise on d3, worse on autotrust-jev); d3 and autotrust-jev as the line-end hyphen judge
       (done 2026-11-16: the mean of four judges beats the one in use, English 67 of 89
       against 63, Dutch 31 wrong against joining's 40; built behind `ROBO_HYPHEN_JUDGES`,
-      benched 2026-11-17: 29 of tuning's 74 silent compound hyphens rescued, 44 made; the judges were shown the hyphen beside the break, a prior that helps English and hurts Dutch (decisions.md, 2026-11-18). Each judge's chance now stays in the cache; a learned decision built on branch `hyphen-learned` (`train_hyphens.py`, `ROBO_HYPHEN_LEARNED`); the panel with the hyphen hidden benched 2026-11-18: 16 rescued, 16 made, NO CHANGE both; the learned decision trained on its caches, tuning BETTER (27 silent fixed, 14 made), validation NO CHANGE, on by default 2026-11-18, Dutch reworked the same night: plain words only, kept at 0.9, else the vowel clash (on the labelled breaks 23 wrong against production's 28, none added); its bench `hyphen-dutch.sh` queued, warm; next: the question's form chosen per language, the shown hyphen as one more feature); line roles
+      benched 2026-11-17: 29 of tuning's 74 silent compound hyphens rescued, 44 made; the judges were shown the hyphen beside the break, a prior that helps English and hurts Dutch (decisions.md, 2026-11-18). Each judge's chance now stays in the cache; a learned decision built on branch `hyphen-learned` (`train_hyphens.py`, `ROBO_HYPHEN_LEARNED`); the panel with the hyphen hidden benched 2026-11-18: 16 rescued, 16 made, NO CHANGE both; the learned decision trained on its caches, tuning BETTER (27 silent fixed, 14 made), validation NO CHANGE, on by default 2026-11-18, Dutch reworked the same night: plain words only, kept at 0.9, else the vowel clash (on the labelled breaks 23 wrong against production's 28, none added); benched 2026-11-19: tuning BETTER, Dutch 5 fixed and none made ("niet-schuldig", "café-restaurant"), validation NO CHANGE, Dutch 0 fixed and 2 made ("mede-ouder", "plum-pudding"), English as before; on, and its two runs production's baselines; next: the question's form chosen per language, the shown hyphen as one more feature); line roles
       by the small decision models; then the whole-page readers as line readers (null
       2026-10-14/15: the arbiter trusted their versions wrongly on unseen books; their
       readings are cached, so the cost is the panel's judges on the new suspects, a
@@ -609,12 +609,6 @@ Daens' title was mended by hand).
       comes
 
 ## Housekeeping
-
-- [ ] The line-end hyphen cache keeps one judge set a book (`stages/compounds.json`, keyed by
-      the set): a production build after a panel run throws the panel's answers away, and
-      the next panel run asks all four judges again (hours). One file a judge set, or each
-      judge's answers kept apart. After the offers run ends (it builds from main). Agent,
-      half an hour
 
 - [ ] Worktrees and branches: `../roboscriptorium-caps` holds `italics-by-place` and
       `../robo-grow6` `grow6` until they are merged; `../robo-text` (`text-seat`) stays
@@ -794,6 +788,10 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Words, quotes and typography
 
+- [x] The line-end hyphen cache keeps each judge's answers whatever panel asks (2026-11-19):
+      a build with another judge set read the cache as none and wrote over the panel's
+      chances; now the chances stay under each judge's name and a panel asks only the
+      judges it lacks (`hyphens.Compounds`)
 - [x] 2026-11-12 Four repairs to spacing the build set wrong, read off the crops of the
       silent places: a chain broken beside a short word keeps its hyphen
       ("second-to-last"), a line ending on a dash its box leaves out doesn't start a

@@ -1251,3 +1251,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-18 | train the learned hyphen decision | 0 | 0 | 0 |
 | 2026-11-18 | bench tuning, learned hyphen decision | 0 | 6 | 0 |
 | 2026-11-18 | bench validation, learned hyphen decision | 0 | 1 | 0 |
+| 2026-11-19 | surya-ocr-2 layout, every labelled line-role page | 7006 | 231 | 1 |
+| 2026-11-19 | bench tuning, learned hyphen decision, Dutch plain words at 0.9 | 0 | 5 | 0 |
+| 2026-11-19 | bench validation, learned hyphen decision, Dutch plain words at 0.9 | 0 | 1 | 0 |
