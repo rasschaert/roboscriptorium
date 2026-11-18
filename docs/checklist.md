@@ -444,7 +444,7 @@ without effect, and what each would need to be tried again, is in
       2026-11-16: within the noise on d3, worse on autotrust-jev); d3 and autotrust-jev as the line-end hyphen judge
       (done 2026-11-16: the mean of four judges beats the one in use, English 67 of 89
       against 63, Dutch 31 wrong against joining's 40; built behind `ROBO_HYPHEN_JUDGES`,
-      benched 2026-11-17: 29 of tuning's 74 silent compound hyphens rescued, 44 made; the judges were shown the hyphen beside the break, a prior that helps English and hurts Dutch (decisions.md, 2026-11-18). Each judge's chance now stays in the cache; a learned decision built on branch `hyphen-learned` (`train_hyphens.py`, `ROBO_HYPHEN_LEARNED`); queued: the panel with the hyphen hidden (`hyphen-panel2.sh`), then the learned decision trained on its caches and benched (`hyphen-learned.sh`); then the question's form chosen per language); line roles
+      benched 2026-11-17: 29 of tuning's 74 silent compound hyphens rescued, 44 made; the judges were shown the hyphen beside the break, a prior that helps English and hurts Dutch (decisions.md, 2026-11-18). Each judge's chance now stays in the cache; a learned decision built on branch `hyphen-learned` (`train_hyphens.py`, `ROBO_HYPHEN_LEARNED`); the panel with the hyphen hidden benched 2026-11-18: 16 rescued, 16 made, NO CHANGE both; queued: the learned decision trained on its caches and benched (`hyphen-learned.sh`); then the question's form chosen per language); line roles
       by the small decision models; then the whole-page readers as line readers (null
       2026-10-14/15: the arbiter trusted their versions wrongly on unseen books; their
       readings are cached, so the cost is the panel's judges on the new suspects, a
