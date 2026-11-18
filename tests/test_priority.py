@@ -50,3 +50,17 @@ def test_hold_stops_under_the_floor_and_waits_for_the_resume_level():
     assert priority.hold(45, held=True)
     assert not priority.hold(50, held=True)
     assert not priority.hold(None, held=True)
+
+
+def test_a_windows_own_process_is_left_running(monkeypatch):
+    listing = "\t100.robo-bench\t(Detached)\n"
+    ps = "100 1\n101 100\n102 101\n103 102\n"
+    outputs = iter([listing, ps])
+    monkeypatch.setattr(
+        priority.subprocess,
+        "run",
+        lambda *a, **k: type("R", (), {"stdout": next(outputs)})(),
+    )
+    pids, names = priority._agent_processes()
+    assert sorted(pids) == [102, 103]
+    assert names == ["robo-bench"]

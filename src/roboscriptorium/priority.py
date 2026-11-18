@@ -57,7 +57,9 @@ def _agent_processes(skip: str = "") -> tuple[list[int], list[str]]:
         return [], []
     ps = subprocess.run(["ps", "-A", "-o", "pid=,ppid="], capture_output=True, text=True).stdout
     table = [tuple(map(int, row.split())) for row in ps.splitlines() if row.strip()]
-    return descendants(set(found), table), sorted(found.values())
+    # screen continues a window whose own process stops, and with it the whole window.
+    window = {pid for pid, parent in table if parent in found}
+    return descendants(window, table), sorted(found.values())
 
 
 def _signal(pids: list[int], sig: int) -> None:
@@ -90,6 +92,8 @@ def first(what: str) -> Iterator[None]:
 
 
 FLOOR, RESUME = 30, 50
+# Present while the guard holds the runs, so a restarted guard holds them too.
+HELD = Path("work/runs/battery-held")
 
 
 def battery() -> int | None:
@@ -112,7 +116,7 @@ def guard(every: int = 60) -> None:
     only checks when a run starts. Prints each change, and the level at every 5%."""
     floor = int(os.environ.get("ROBO_BATTERY_FLOOR", FLOOR))
     resume = int(os.environ.get("ROBO_BATTERY_RESUME", RESUME))
-    held, last = False, None
+    held, last = HELD.exists(), None
     while True:
         level = battery()
         now = hold(level, held, floor, resume)
@@ -120,8 +124,11 @@ def guard(every: int = 60) -> None:
         if now:
             _signal(pids, signal.SIGSTOP)
         if now != held:
-            if not now:
+            if now:
+                HELD.touch()
+            else:
                 _signal(pids, signal.SIGCONT)
+                HELD.unlink(missing_ok=True)
             verb = "stopped" if now else "continued"
             runs = ", ".join(names) or "nothing"
             print(f"{time.strftime('%H:%M')} battery {level}%: {verb} {runs}", flush=True)
