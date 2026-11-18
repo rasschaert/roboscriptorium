@@ -6,6 +6,25 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
+**State at 22:15 on 2026-11-18** (the user off for the night: "you know what to do").
+On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50%.
+
+- **Queue** (one model job at a time, `work/runs/model-screen.lock`): `robo-surya-layout-all`
+  (since 20:51, about 20 pages a minute, done near 02:40), then in any order
+  `robo-quote-straight`, `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote),
+  `robo-hyphen-english` (confirms the English-only hyphen panel; warm, minutes), then
+  `robo-surya-roles` (no models). A background wait on the next event of any of them.
+- **Taken today:** the learned hyphen decision, in English books only (decisions.md: by
+  language English 21 fixed/2 made, Dutch 7/12); `bench-diff` splits each cause by what the
+  build does and by language; build progress lines (`progress.py`); the battery guard.
+- **Production baselines:** `work/bench/tuning-20261118T195052-dc2d097-dirty.json` and
+  `validation-20261118T195151-f816977-dirty.json` hold the learned decision in both
+  languages; the English-only bench replaces them when it lands.
+- **Next without models:** the Dutch hyphen decision reworked on the cached labelled
+  breaks (`experiments/train_hyphens.py`): each part in the word list as a feature, names
+  and foreign words left to joining, a Dutch model of its own.
+- **Waiting on the user:** accent and speck offers on by default (checklist).
+
 **State at 13:30 on 2026-11-18** (after the user's computer crashed at about 02:11, 4 books
 into `robo-hyphen-panel2`'s tuning bench). The whole queue below was restarted at 13:15
 in its order, each run resuming from its caches; Ollama 0.40.16, `doctor` clean. New:
