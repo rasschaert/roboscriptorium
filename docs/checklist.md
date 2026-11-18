@@ -85,12 +85,11 @@ In this order; `HANDOVER.md` has the paths and the commands.
       both benches; Groot's readings as offers through the judges (`ROBO_EXTRA_READERS`:
       it alone reads the silent ‘“Lucy). Hours: explain to the user first; one model
       over all its questions, then the next
-- [ ] Accent and speck offers together, one arbiter of their own trained on both (each
-      alone on its own arbiter: accents 15 of 74 silent asked for 37 questions, specks 4
-      of 52 for 7, none fixed, none made, both NO CHANGE; 2026-11-17): trust data with
-      both on (judges cached for each), the arbiter, both benches with production's
-      arbiter everywhere else (`work/runs/offers-together.sh`, queued behind the model
-      screens). Then **user**: on by default or not, for the pair
+- [ ] **user**: accent and speck offers on by default, under their own arbiter
+      (`ROBO_ACCENT_DOUBTS=1 ROBO_SPECK_DOUBTS=1
+      ROBO_OFFER_TRUST_MODEL=work/models/ocr-trust-offers.pkl`)? Benched together
+      2026-11-18: tuning 19 silent errors asked for 38 more questions, none made;
+      validation 4 more questions, none catching (decisions.md)
 - [ ] Surya OCR 2's layout as line-role tree features (screened 2026-11-17: 48 of 243 tree
       errors labelled right, models.md): its layout on every labelled page
       (`work/runs/surya-layout-all.sh`, queued, about six hours), then the trees with and
