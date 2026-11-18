@@ -1481,10 +1481,14 @@ breaks with each book left out: Dutch 1,587 breaks, wrong 33 by the judge alone,
 four's mean, 30 learned; English 87 breaks, 25, 22 and 8. Benched against production:
 tuning BETTER, 27 silent errors fixed and 14 made, all compound hyphens (8 fixed in
 Doctor Dolittle, 6 in Metro 2033, 5 in Artemis: "tip-toed", "sugar-bowl", "pre-paid");
-validation NO CHANGE, 4 fixed and 5 made. The four's mean alone was 16 and 16. Its
-failure: compounds closed that the print hyphenates ("roet-zwarte", "baksteen-kleurige",
-"Radikal-lösung", "non-commital"), and a few hyphenated that the print closes
-("Baudelaireeditie", "menuicoontjes").
+validation NO CHANGE, 4 fixed and 5 made. The four's mean alone was 16 and 16. Every fix
+puts back a hyphen the print has (21 English, 7 Dutch: "café-restaurant", "knock-out").
+Its failure is the other way: 12 of the 14 made on tuning and all 5 on validation are
+hyphens the print doesn't have, 8 of them in names, foreign words and a web address
+("Tisza-plein", "Byelo-russkay", "Bekaa-vallei", "Radikal-lösung", "mar-buta",
+"kir-champagne", "brian-storm", "prinses-irenebrigade.nl"); the rest Dutch and English
+compounds the print closes ("roet-zwarte", "seks-spelletjes", "clear-headed"); 2 closed
+that the print hyphenates ("Baudelaireeditie", "menuicoontjes").
 
 Four cases aren't a word's hyphen at all and skip the evidence: a Dutch word broken at its
 diaeresis ("democratie-" / "en"), which the break drops, is joined with it
