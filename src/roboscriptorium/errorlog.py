@@ -17,10 +17,12 @@ context (as verdicts are keyed), so a place keeps its identity when pages are re
 and lines renumbered. `diff` sorts two runs' rows into fixed, made and persisting.
 """
 
+import difflib
 import json
 import re
 import unicodedata
 from collections import Counter, defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -201,33 +203,81 @@ def words(rs: list[dict], silent: bool = False) -> int:
     return sum(r["size"] for r in rs if not (silent and r["asked"]))
 
 
-def report(d: Diff, examples: int = 3) -> list[str]:
-    """Fixed, made and kept, in wrong words (and those no question asks), by kind and
-    by book, with a few examples of each."""
+def change(got: str, want: str) -> str:
+    """What the build does to the print's words, from the characters that differ: "adds -",
+    "drops -", "é for ë", "adds ␣" (a space); "rewrites" where more than a few differ."""
+    added, dropped = [], []
+    for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, want, got, False).get_opcodes():
+        if op in ("insert", "replace"):
+            added.append(got[j1:j2])
+        if op in ("delete", "replace"):
+            dropped.append(want[i1:i2])
+    a, d = ("".join(x).replace(" ", "␣") for x in (added, dropped))
+    if len(a) > 4 or len(d) > 4:
+        return "rewrites"
+    if a and d:
+        return f"{a} for {d}"
+    return f"adds {a}" if a else f"drops {d}"
+
+
+def report(
+    d: Diff,
+    examples: int = 3,
+    language_of: Callable[[str], str] | None = None,
+    known: Callable[[str, str], bool] | None = None,
+) -> list[str]:
+    """Fixed, made and kept, in wrong words (and those no question asks): by cause and what
+    the build does to the print there, by book, by origin, by the book's language
+    (`language_of`, a book's name to its language) and by whether the word list knows the
+    print's words (`known`, a language and a word), each place shown as the build's words
+    against the print's."""
     kept = [new for _, new in d.kept]
     out = [
         f"fixed {words(d.fixed)} wrong words ({words(d.fixed, True)} silent), "
         f"made {words(d.made)} ({words(d.made, True)} silent), "
         f"kept {words(kept)} ({words(kept, True)} silent)"
     ]
-    for title, group in (("by cause", "cause"), ("by book", "book"), ("by origin", "layer")):
+
+    def what(r: dict) -> str:
+        return f"{cause_of(r)}: {change(r['got'], r['want'])}"
+
+    groups = [("by cause", cause_of), ("by cause and what the build does", what)]
+    groups += [("by book", lambda r: r["book"]), ("by origin", lambda r: r["layer"])]
+    if language_of:
+        groups.append(("by language", lambda r: language_of(r["book"])))
+        if known:
+            listed = lambda r: _listed(r["want"], language_of(r["book"]), known)  # noqa: E731
+            groups.append(("by the print's words", listed))
+    for title, key in groups:
         fixed, made = Counter(), Counter()
         for r in d.fixed:
-            fixed[cause_of(r) if group == "cause" else r[group]] += r["size"]
+            fixed[key(r)] += r["size"]
         for r in d.made:
-            made[cause_of(r) if group == "cause" else r[group]] += r["size"]
+            made[key(r)] += r["size"]
         out.append(f"\n{title}: fixed / made")
         for k in sorted(fixed.keys() | made.keys(), key=lambda k: -(fixed[k] + made[k])):
-            out.append(f"  {k[:40]:40} {fixed[k]:5} / {made[k]:<5}")
+            out.append(f"  {k[:46]:46} {fixed[k]:5} / {made[k]:<5}")
     for title, rs in (("fixed", d.fixed), ("made", d.made)):
         shown = defaultdict(list)
         for r in rs:
-            shown[cause_of(r)].append(r)
-        out.append(f"\n{title}, examples:")
+            shown[what(r)].append(r)
+        out.append(f"\n{title}, examples [the build's words → the print's]:")
         for kind, group in sorted(shown.items(), key=lambda kv: -len(kv[1])):
             for r in group[:examples]:
                 out.append(
-                    f"  {kind[:22]:22} {r['book'][:24]:24} p{r['page']}: "
+                    f"  {kind[:30]:30} {r['book'][:24]:24} p{r['page']}: "
                     f"{r['before']} [{r['got']} → {r['want']}] {r['after']}"
                 )
     return out
+
+
+def _listed(text: str, language: str, known: Callable[[str, str], bool]) -> str:
+    """Whether the word list knows every word of the print's `text` (a name, a foreign word
+    or a web address it doesn't)."""
+    words = [w.strip(".,;:!?'\"‘’“”()[]—–…") for w in text.split()]
+    words = [w for w in words if any(c.isalpha() for c in w)]
+    if not words:
+        return "no word"
+    if all(known(language, w) for w in words):
+        return "in the word list"
+    return "not in the word list"

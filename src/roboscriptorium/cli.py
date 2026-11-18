@@ -38,6 +38,7 @@ from roboscriptorium.golden import gutenberg, scoring, se, signals
 from roboscriptorium.golden.manifest import Golden, PublisherEpub, fetch, sha256
 from roboscriptorium.golden.reference import Chapter
 from roboscriptorium.ir import Document
+from roboscriptorium.lexicon import Lexicon
 
 app = typer.Typer(no_args_is_help=True, help="Turn books that aren't EPUBs into EPUBs.")
 
@@ -590,7 +591,27 @@ def bench_diff(
     for p, rows in ((old, old_rows), (new, new_rows)):
         if not rows:
             raise typer.BadParameter(f"{p.name} has no error list (saved before they were kept?)")
-    for line in errorlog.report(errorlog.diff(old_rows, new_rows), examples):
+    languages: dict[str, str] = {}
+    lexicons: dict[str, Lexicon] = {}
+
+    def language_of(book: str) -> str:
+        if book not in languages:
+            try:
+                languages[book] = Golden.load(book.split("--")[0]).language
+            except (FileNotFoundError, KeyError, ValueError):
+                languages[book] = "?"
+        return languages[book]
+
+    def known(language: str, word: str) -> bool:
+        if language == "?":
+            return False
+        lang = ocr.language(language)
+        if lang not in lexicons:
+            lexicons[lang] = Lexicon.load(lang)
+        return lexicons[lang].knows(word)
+
+    diffed = errorlog.diff(old_rows, new_rows)
+    for line in errorlog.report(diffed, examples, language_of, known):
         typer.echo(line)
     typer.echo("")
     _echo_causes(json.loads(old.read_text()), json.loads(new.read_text()), old_rows, new_rows)

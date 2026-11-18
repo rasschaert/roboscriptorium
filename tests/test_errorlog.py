@@ -78,3 +78,31 @@ def test_causes_compare_page_by_page_over_the_pages_both_runs_scored():
     rows_new = [row(2, "diaeresis", 2)]
     table = {c: (b, a) for c, b, a, *_ in bench.by_cause(old, new, rows_old, rows_new)}
     assert table == {"stress accent": (1.0, 0.0), "diaeresis": (0.0, 1.0)}
+
+
+def test_a_diff_says_what_the_build_does_to_the_print_and_whether_the_word_is_listed():
+    assert errorlog.change("Tisza-plein", "Tiszaplein") == "adds -"
+    assert errorlog.change("greatgrandfather", "great-grandfather") == "drops -"
+    assert errorlog.change("hygiéne", "hygiëne") == "é for ë"
+    assert errorlog.change("meteen", "met een") == "drops ␣"
+
+    def row(key, got, want, book):
+        shown = {"page": 9, "got": got, "want": want, "before": "", "after": ""}
+        return {"book": book, "key": key, "size": 1, "asked": False, "layer": "unclear", **shown}
+
+    d = errorlog.Diff(
+        [row("1", "greatgrandfather", "great-grandfather", "dolittle")],
+        [row("2", "Tisza-plein", "Tiszaplein", "reis")],
+        [],
+    )
+    lines = errorlog.report(
+        d,
+        language_of={"dolittle": "en", "reis": "nl"}.get,
+        known=lambda lang, w: w == "great-grandfather",
+    )
+    text = "\n".join(lines)
+    assert "compound hyphen: drops -" in text and "compound hyphen: adds -" in text
+    assert "made, examples [the build's words → the print's]:" in text
+    by_words = lines[lines.index("\nby the print's words: fixed / made") + 1 :][:2]
+    assert any(s.startswith("  in the word list") and s.endswith("1 / 0    ") for s in by_words)
+    assert any(s.startswith("  not in the word list") and "0 / 1" in s for s in by_words)
