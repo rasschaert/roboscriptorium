@@ -1471,8 +1471,8 @@ breaks are left undecided by the rest with a one-way reference
 better than joining (353 right at 0.5); in English 43 of 77 close, and clef:27b picks
 right on 63 (clef-flash 59, winnow 46). So the judge alone asks only in English books.
 
-**A decision learned from four judges and the book's own signs settles the rest, in both
-languages** (`hyphens.Learned`, `experiments/train_hyphens.py`, 2026-11-18). Each of the
+**A decision learned from four judges and the book's own signs settles the rest, in
+English books** (`hyphens.Learned`, `experiments/train_hyphens.py`, 2026-11-18). Each of the
 four judges (clef 27B, autotrust-jev 35B, d3 9B, autotrust-jev 9B) gives its chance that the
 hyphen is the word's own; a logistic model trained on the tuning books' breaks weighs those
 with the book's habits (how often it keeps a hyphen, whether either part stands alone in
@@ -1488,7 +1488,10 @@ hyphens the print doesn't have, 8 of them in names, foreign words and a web addr
 ("Tisza-plein", "Byelo-russkay", "Bekaa-vallei", "Radikal-lösung", "mar-buta",
 "kir-champagne", "brian-storm", "prinses-irenebrigade.nl"); the rest Dutch and English
 compounds the print closes ("roet-zwarte", "seks-spelletjes", "clear-headed"); 2 closed
-that the print hyphenates ("Baudelaireeditie", "menuicoontjes").
+that the print hyphenates ("Baudelaireeditie", "menuicoontjes"). By language
+(`bench-diff`'s split): English 21 fixed, 2 made on tuning, 4 and 1 on validation; Dutch
+7 and 12, 0 and 4. So the panel is asked in English books only (`hyphens.PANEL_LANGUAGES`),
+and a Dutch book keeps the vowel clash as its fallback.
 
 Four cases aren't a word's hyphen at all and skip the evidence: a Dutch word broken at its
 diaeresis ("democratie-" / "en"), which the break drops, is joined with it

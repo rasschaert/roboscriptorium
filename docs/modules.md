@@ -109,8 +109,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   (`judge_model`) and the panel (`hyphen_judge`) asked whether a hyphen nothing else
   decides is the word's own, and `Learned` (`hyphen_learned`, trained by
   `experiments/train_hyphens.py`, a copy without each tuning book for the bench) deciding
-  from their chances and the book's signs (`features`), its answers cached by the hyphenated word in `stages/compounds.json` (the pipeline collects a book's undecided words first, `Compounds.collect`, and each judge answers them all in turn, one book at a time on the machine, its answers saved as they come; with the
-  panel Dutch and English books ask it, the judge alone only English ones, `asked`;
+  from their chances and the book's signs (`features`), its answers cached by the hyphenated word in `stages/compounds.json` (the pipeline collects a book's undecided words first, `Compounds.collect`, and each judge answers them all in turn, one book at a time on the machine, its answers saved as they come; only English
+  books ask it, alone or with the panel, `asked`;
   docs/design.md; without `hyphen_learned` the judges' chances are averaged); in a Dutch
   book asked by no judge the fallback is `vowel_clash`, the hyphen kept where the vowels beside the break would read as one
   sound joined ("controle-" / "experiment"). A break that dropped a Dutch

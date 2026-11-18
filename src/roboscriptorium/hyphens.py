@@ -30,10 +30,13 @@ JUDGE_LOCK = Path(tempfile.gettempdir()) / "roboscriptorium-hyphen-judges.lock"
 VERSION = 2
 # A judge's answers are written to the cache after this many new ones.
 SAVE_EVERY = 20
-LANGUAGES = {"en": "English"}
-# The languages a panel of judges (`Compounds` with several) is asked in: together they
-# do better than joining in Dutch too, where one judge does not.
-PANEL_LANGUAGES = {"en": "English", "nl": "Dutch"}
+# The language a judge's question names.
+NAMES = {"en": "English", "nl": "Dutch"}
+LANGUAGES = {"en"}
+# The languages a panel of judges (`Compounds` with several) is asked in. Not Dutch: with
+# the learned decision it fixed 7 Dutch hyphens on tuning and added 12 the print lacks,
+# on validation 0 and 4 (2026-11-18, docs/design.md).
+PANEL_LANGUAGES = {"en"}
 HYPHENS = ("-", "\u00ad", "\u00ac")
 # Whether an undecided line-end hyphen is the word's own: (stem, rest, the text around the
 # break, marked with |) → keep it.
@@ -185,7 +188,7 @@ class Compounds:
         if learned is not None and set(learned.judges) - {m for _, m in self._judges}:
             raise ValueError(f"the learned hyphen decision needs the judges {learned.judges}")
         self._model, self._path = "+".join(m for _, m in self._judges), path
-        self._language = PANEL_LANGUAGES[language[:2]]
+        self._language = NAMES[language[:2]]
         blob = read_cache(path, VERSION, model=self._model)
         self._answers: dict[str, float] = blob["answers"] if blob else {}
         self._partial: dict[str, dict[str, float]] = blob.get("partial", {}) if blob else {}

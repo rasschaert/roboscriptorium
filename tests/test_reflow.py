@@ -927,8 +927,8 @@ def test_several_hyphen_judges_answer_by_their_mean_and_are_asked_in_dutch_too(t
         "a": 0.9,
         "b": 0.7,
     }
-    assert hyphens.asked("nl", panel=True) and not hyphens.asked("nl")
-    assert hyphens.asked("en") and not hyphens.asked("fr", panel=True)
+    assert hyphens.asked("en", panel=True) and hyphens.asked("en")
+    assert not hyphens.asked("nl", panel=True) and not hyphens.asked("fr", panel=True)
 
 
 def test_a_learned_hyphen_decision_takes_the_books_signs_and_each_judges_chance(tmp_path):
