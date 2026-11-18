@@ -15,8 +15,9 @@ still holds where this doesn't speak.
      on the silent-error lines with its own prompt, then its layout on 212 pages where
      the line-role trees err (`experiments/probe_surya_layout.py`): rescues of headings
      and furniture, e.g. Vanille's chapter numbers, which the trees call furniture.
-  3. `robo-offers-together` (`work/runs/offers-together.sh`): fresh baselines, trust data
-     with accent and speck offers, one arbiter for both, both benches; about two hours.
+  3. ~~`robo-offers-together`~~ done 02:05: 19 of tuning's silent errors asked for 38
+     questions, validation 4 questions for none; **the user's call** (checklist).
+     New production baselines: `tuning-20261117T230103`, `validation-20261117T230206`.
   4. `robo-hyphen-panel2` (`work/runs/hyphen-panel2.sh`): the four hyphen judges by their
      mean again, now shown the break as the question says (`be00196`), against the offers
      run's baselines.
@@ -57,7 +58,7 @@ still holds where this doesn't speak.
 - **Baselines** (the line-role referee on): `work/bench/tuning-20261117T015939-90f9f02-dirty.json`
   and `work/bench/validation-20261117T020028-90f9f02-dirty.json`. Every baseline named
   further down is older.
-- **Waiting on the user, one call (once accent and speck offers are benched together):** accent offers on by default? Stress accents measured
+- **Waiting on the user, one call (benched together 2026-11-18, see the queue above):** accent and speck offers on by default? The older note: Stress accents measured
   on the scan are offered as versions and decided by an arbiter of their own. On tuning
   15 of 74 silent accent errors become questions (none fixed, none made) for 37 more
   questions; on validation 5 more questions and none of 8 caught. Both benches NO CHANGE.
