@@ -1471,8 +1471,8 @@ breaks are left undecided by the rest with a one-way reference
 better than joining (353 right at 0.5); in English 43 of 77 close, and clef:27b picks
 right on 63 (clef-flash 59, winnow 46). So the judge alone asks only in English books.
 
-**A decision learned from four judges and the book's own signs settles the rest, in
-English books** (`hyphens.Learned`, `experiments/train_hyphens.py`, 2026-11-18). Each of the
+**A decision learned from four judges and the book's own signs settles the rest; in Dutch
+only for plain words, and only when very sure** (`hyphens.Learned`, `experiments/train_hyphens.py`, 2026-11-18). Each of the
 four judges (clef 27B, autotrust-jev 35B, d3 9B, autotrust-jev 9B) gives its chance that the
 hyphen is the word's own; a logistic model trained on the tuning books' breaks weighs those
 with the book's habits (how often it keeps a hyphen, whether either part stands alone in
@@ -1490,8 +1490,14 @@ hyphens the print doesn't have, 8 of them in names, foreign words and a web addr
 compounds the print closes ("roet-zwarte", "seks-spelletjes", "clear-headed"); 2 closed
 that the print hyphenates ("Baudelaireeditie", "menuicoontjes"). By language
 (`bench-diff`'s split): English 21 fixed, 2 made on tuning, 4 and 1 on validation; Dutch
-7 and 12, 0 and 4. So the panel is asked in English books only (`hyphens.PANEL_LANGUAGES`),
-and a Dutch book keeps the vowel clash as its fallback.
+7 and 12, 0 and 4. In Dutch, on the tuning books' 1,587 labelled breaks with each book left out
+(`experiments/probe_hyphen_dutch.py`): production (the vowel clash) wrong 28, all hyphens
+dropped; the learned decision at its cut of 0.8, 30, adding 7 the print lacks
+("Tisza-plein", "mar-buta", "kir-champagne"). Kept only at 0.9 and only where both parts
+are in the word list and the word starts in lower case (`Learned.plain`,
+`hyphens.DUTCH_CUT`), else the vowel clash: 23 wrong, none added, five restored
+("niet-schuldig", "collega-piloten", "knock-out", "tie-wraps", "café-restaurant"). Chosen
+among 16 variants on these books, so the bench's validation books are its check.
 
 Four cases aren't a word's hyphen at all and skip the evidence: a Dutch word broken at its
 diaeresis ("democratie-" / "en"), which the break drops, is joined with it

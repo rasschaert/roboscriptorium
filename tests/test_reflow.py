@@ -927,8 +927,8 @@ def test_several_hyphen_judges_answer_by_their_mean_and_are_asked_in_dutch_too(t
         "a": 0.9,
         "b": 0.7,
     }
-    assert hyphens.asked("en", panel=True) and hyphens.asked("en")
-    assert not hyphens.asked("nl", panel=True) and not hyphens.asked("fr", panel=True)
+    assert hyphens.asked("nl", panel=True) and not hyphens.asked("nl")
+    assert hyphens.asked("en") and not hyphens.asked("fr", panel=True)
 
 
 def test_a_learned_hyphen_decision_takes_the_books_signs_and_each_judges_chance(tmp_path):
@@ -945,14 +945,15 @@ def test_a_learned_hyphen_decision_takes_the_books_signs_and_each_judges_chance(
             seen.extend(rows)
             return np.array([[0.1, 0.9]])
 
-    page = PageText(1, 100, 100, [Line("de zee-egel en de zee-egel zwom", 0, 0, 1, 1)])
+    page = PageText(1, 100, 100, [Line("de knock-out en de knock-out viel", 0, 0, 1, 1)])
     signs = hyphens.book_signs([page], "nl")
-    assert signs.opens["zee"] == 1 and signs.closes["egel"] == 1 and not signs.english
-    learned = hyphens.Learned(Model(), ("a", "b"), 0.8, signs, known=lambda w: w == "egel")
+    assert signs.opens["knock"] == 1 and signs.closes["out"] == 1 and not signs.english
+    words = {"knock", "out", "Tisza", "plein"}
+    learned = hyphens.Learned(Model(), ("a", "b"), 0.8, signs, known=words.__contains__)
     path = tmp_path / "c.json"
-    # Both judges say no; the learned decision, sure at 0.9 above its cut, keeps it.
+    # Both judges say no; the learned decision, sure at 0.9, keeps it.
     panel = hyphens.Compounds(judge(0.1), "a", "nl", path, [(judge(0.2), "b")], learned)
-    assert panel("zee", "egel", "de zee|egel")
+    assert panel("knock", "out", "de knock|out")
     assert seen[0][-2:] == [0.1, 0.2] and len(seen[0]) == len(hyphens.FEATURES) + 2
     assert seen[0][hyphens.FEATURES.index("stem_opens")] == 1
     # A cache that kept only the mean asks the judges again for their own chances.
@@ -961,7 +962,7 @@ def test_a_learned_hyphen_decision_takes_the_books_signs_and_each_judges_chance(
     said = {"spelling": SimpleNamespace(probabilities={"hyphenated": 0.3})}
     first = SimpleNamespace(decide=lambda s, q, model=None: asked.append(model) or said)
     again = hyphens.Compounds(first, "a", "nl", path, [(judge(0.2), "b")], learned)
-    assert again("zee", "egel", "de zee|egel") and asked == ["a"]
+    assert again("knock", "out", "de knock|out") and asked == ["a"]
     with pytest.raises(ValueError):
         hyphens.Compounds(judge(0.1), "a", "nl", path, [], learned)
 
@@ -976,3 +977,31 @@ def test_a_learned_hyphen_decision_is_saved_and_refused_on_other_features(tmp_pa
     with pytest.raises(ValueError):
         hyphens.load_learned(path, signs)
     assert hyphens.without(path, "b").name == "h-without-b.pkl"
+
+
+def test_a_dutch_learned_hyphen_asks_only_about_plain_words_and_only_when_sure(tmp_path):
+    class Model:
+        def __init__(self, p):
+            self.p = p
+
+        def predict_proba(self, rows):
+            return np.array([[1 - self.p, self.p]])
+
+    asked = []
+    said = {"spelling": SimpleNamespace(probabilities={"hyphenated": 0.9})}
+    judge = SimpleNamespace(decide=lambda s, q, model=None: asked.append(model) or said)
+    signs = hyphens.Signs(english=False, habit=0.0)
+    words = {"knock", "out", "Tisza", "plein", "rook", "zwart", "egel"}
+
+    def panel(p):
+        learned = hyphens.Learned(Model(p), ("a",), 0.8, signs, known=words.__contains__)
+        return hyphens.Compounds(judge, "a", "nl", tmp_path / f"{p}.json", (), learned)
+
+    # A name is no plain word: no judge is asked, and without a vowel clash it is joined.
+    assert not panel(0.99)("Tisza", "plein", "het Tisza|plein") and asked == []
+    # A plain word is asked; kept only at the Dutch cut.
+    assert panel(0.95)("rook", "zwart", "de rook|zwart") and asked == ["a"]
+    assert not panel(0.85)("rook", "zwart", "de rook|zwart")
+    # A part the word list lacks is left to the vowel clash, which keeps "zee-egel".
+    assert len(asked) == 2
+    assert panel(0.0)("zee", "egel", "de zee|egel") and len(asked) == 2

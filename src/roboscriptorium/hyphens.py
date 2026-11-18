@@ -33,10 +33,12 @@ SAVE_EVERY = 20
 # The language a judge's question names.
 NAMES = {"en": "English", "nl": "Dutch"}
 LANGUAGES = {"en"}
-# The languages a panel of judges (`Compounds` with several) is asked in. Not Dutch: with
-# the learned decision it fixed 7 Dutch hyphens on tuning and added 12 the print lacks,
-# on validation 0 and 4 (2026-11-18, docs/design.md).
-PANEL_LANGUAGES = {"en"}
+# The languages a panel of judges (`Compounds` with several) is asked in.
+PANEL_LANGUAGES = {"en", "nl"}
+# In a Dutch book the learned decision keeps a hyphen only this sure, and only in a plain
+# word (`Learned.plain`); elsewhere `vowel_clash` decides. Let loose it added hyphens the
+# print lacks to names and foreign words (2026-11-18, docs/design.md).
+DUTCH_CUT = 0.9
 HYPHENS = ("-", "\u00ad", "\u00ac")
 # Whether an undecided line-end hyphen is the word's own: (stem, rest, the text around the
 # break, marked with |) → keep it.
@@ -145,6 +147,23 @@ class Learned:
         x = features(stem, rest, self.signs, self.known) + [chances[j] for j in self.judges]
         return float(self.model.predict_proba([x])[0, 1])
 
+    def plain(self, stem: str, rest: str) -> bool:
+        """Whether the judges are asked about this break: in an English book always, in a
+        Dutch one only where both parts are words of the list and the word starts in
+        lower case (not a name or a foreign word)."""
+        if self.signs.english:
+            return True
+        k = self.known or (lambda word: False)
+        return stem[:1].islower() and k(stem) and k(rest)
+
+    def keeps(self, stem: str, rest: str, chances: dict[str, float] | None) -> bool:
+        """Whether the hyphen stays: by the judges' `chances` where the break is `plain`,
+        and in a Dutch book where the vowels beside it clash (`vowel_clash`)."""
+        if self.signs.english:
+            return self(stem, rest, chances or {}) >= self.cut
+        clash = vowel_clash(stem, rest, "", self.known)
+        return clash or (chances is not None and self(stem, rest, chances) >= DUTCH_CUT)
+
 
 def save_learned(path: Path, model: object, judges: tuple[str, ...], cut: float) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -201,13 +220,15 @@ class Compounds:
         with |), keeps its hyphen. While collecting, an unanswered word is noted and
         joined for now."""
         key = f"{stem}-{rest}".lower()
+        if self._learned is not None and not self._learned.plain(stem, rest):
+            return self._learned.keeps(stem, rest, None)
         if key not in self._answers or not self._heard(key):
             if self._collecting:
                 self._pending.setdefault(key, (stem, rest, context))
                 return False
             self._ask({key: (stem, rest, context)})
         if self._learned is not None:
-            return self._learned(stem, rest, self._partial[key]) >= self._learned.cut
+            return self._learned.keeps(stem, rest, self._partial[key])
         return self._answers[key] >= 0.5
 
     def _heard(self, key: str) -> bool:

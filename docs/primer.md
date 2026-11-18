@@ -135,8 +135,8 @@ The other stages, in brief (how-it-works.md has each in detail):
   with a decision model asked about doubtful lines.
 - **Plain code** then joins lines into paragraphs (indents, short last lines, white
   space), decides whether a hyphen at a line end belongs to the word or only to the
-  line break (where the book and the word list can't tell, in an English book four
-  judges say how the word is spelled and a small model learned from the golden books
+  line break (where the book and the word list can't tell, four judges say how
+  the word is spelled (in a Dutch book only for ordinary words, not names) and a small model learned from the golden books
   weighs their answers with the book's own habits), sets dashes, ellipses and quote marks the way the book prints them, and
   writes the EPUB. Italics come from the slant of the letters, read by two sets of
   trained trees; where they disagree (about one word in a thousand) clef is shown the

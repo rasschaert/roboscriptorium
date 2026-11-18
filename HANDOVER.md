@@ -12,7 +12,7 @@ On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50
 - **Queue** (one model job at a time, `work/runs/model-screen.lock`): `robo-surya-layout-all`
   (since 20:51, about 20 pages a minute, done near 02:40), then in any order
   `robo-quote-straight`, `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote),
-  `robo-hyphen-english` (confirms the English-only hyphen panel; warm, minutes), then
+  `robo-hyphen-dutch` (the learned hyphen decision with Dutch gated to plain words at 0.9; warm, minutes), then
   `robo-surya-roles` (no models). A background wait on the next event of any of them.
 - **Taken today:** the learned hyphen decision, in English books only (decisions.md: by
   language English 21 fixed/2 made, Dutch 7/12); `bench-diff` splits each cause by what the
@@ -20,9 +20,8 @@ On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50
 - **Production baselines:** `work/bench/tuning-20261118T195052-dc2d097-dirty.json` and
   `validation-20261118T195151-f816977-dirty.json` hold the learned decision in both
   languages; the English-only bench replaces them when it lands.
-- **Next without models:** the Dutch hyphen decision reworked on the cached labelled
-  breaks (`experiments/train_hyphens.py`): each part in the word list as a feature, names
-  and foreign words left to joining, a Dutch model of its own.
+- **Dutch hyphens reworked (22:45, no models):** plain words only, kept at 0.9, else the
+  vowel clash; on by default, its bench `robo-hyphen-dutch` queued (decisions.md).
 - **Waiting on the user:** accent and speck offers on by default (checklist).
 
 **State at 13:30 on 2026-11-18** (after the user's computer crashed at about 02:11, 4 books

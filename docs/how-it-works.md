@@ -496,13 +496,14 @@ A hyphen at the end of a line stays or goes by evidence, strongest first:
 2. which of the two forms the word list knows;
 3. a capital after the break, as in `Noord-Holland`;
 4. whether the parts beside a hyphen already in the word are words themselves;
-5. in an English book, where none of those decides, four judges (clef:27b,
-   autotrust-jev 35B, d3 9B and autotrust-jev 9B) are each asked how the word is spelled
-   in its sentence, and a decision learned from the golden books weighs their answers
-   together with the book's own habits: how often it keeps a hyphen and whether either
-   part stands alone in it (`hyphens.py`);
-6. in a Dutch book, the hyphen stays where the vowels beside the break would otherwise
-   run together ("controle-experiment"), and goes everywhere else.
+5. where none of those decides, four judges (clef:27b, autotrust-jev 35B, d3 9B and
+   autotrust-jev 9B) are each asked how the word is spelled in its sentence, and a
+   decision learned from the golden books weighs their answers together with the book's
+   own habits: how often it keeps a hyphen and whether either part stands alone in it
+   (`hyphens.py`). In a Dutch book they are asked only about plain words (both parts in
+   the word list, lower case: no names or foreign words), the learned decision keeps a
+   hyphen there only when very sure, and otherwise the hyphen stays only where the
+   vowels beside the break would run together ("controle-experiment").
 
 ### Italics, quotes, dashes, ellipses and figures
 
