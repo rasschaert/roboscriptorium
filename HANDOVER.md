@@ -11,7 +11,11 @@ into `robo-hyphen-panel2`'s tuning bench). The whole queue below was restarted a
 in its order, each run resuming from its caches; Ollama 0.40.16, `doctor` clean. New:
 `robo-battery-guard` (`experiments/battery_guard.sh`) stops the runs under 30% battery
 and continues them at 50% (the user is on a charger under 140 W). Watchers on the queue
-and the guard.
+and the guard. Since: the hyphen panel benched NO CHANGE (decisions.md); Tess-4.5-27B as a
+reader rescues 20 of 97 silent lines (book and zoom crops), none that no screened reader
+brings, 2 the readers in use miss (stress accents, both brought by Arete and Groot); its
+judge tryout runs (`work/runs/tess-q8-judge.log`), then `experiments/vote_sim.py` on it,
+then its models.md entry. On this charger the runs go about 15 minutes, then pause about 25.
 
 **State at 23:35 on 2026-11-17** (a new session, "continue"). Below it, the 09:40 state
 still holds where this doesn't speak.
