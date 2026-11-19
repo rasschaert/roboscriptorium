@@ -83,9 +83,10 @@ In this order; `HANDOVER.md` has the paths and the commands.
       reader's seat (as a third voter 754–757 of 800 against qwen3.8's 755 alone; models.md)
 - [x] 2026-11-19 Accent and speck offers on by default (the user), benched again held
       out: tuning 17 silent errors asked for 40 more questions, validation none for 5
-- [ ] Validation's 39 words fixed and 29 made between `validation-20261119T030945` and
-      the offers run `validation-20261119T051238` (whole words, extra text, dots; all
-      asked; not the offers' causes): find which change since `01aabdf` moved them
+- [x] 2026-11-19 Validation's 39 words fixed and 29 made between `validation-20261119T030945`
+      and `validation-20261119T051238`: all Vanille, its ellipsis style served from a
+      cache of a method reverted on 2026-10-24 until the cache was rewritten (decisions.md);
+      a fresh offers-off validation baseline made
 - [ ] Surya OCR 2's layout as line-role tree features (screened 2026-11-17: 48 of 243 tree
       errors labelled right, models.md). Laid out on every labelled page and fitted
       2026-11-19: most-likely-class errors tuning 375 → 353, validation 110 → 107; body
@@ -97,7 +98,9 @@ In this order; `HANDOVER.md` has the paths and the commands.
 - [ ] Groot 19B and Arete-27B Q4 as two more text judges: `work/runs/arete-groot.sh`,
       queued behind the swap (trust data with both, about 35,600 questions each, 12–14
       hours one at a time; the arbiter; both benches; then a control rebuilt today without
-      them). Resumes per answer and per book; then Groot's readings as offers through the judges
+      them). Resumes per answer and per book. Its validation bench compares against
+      `030945`, whose Vanille had the stale ellipsis style: read it with `bench-diff`
+      against the fresh offers-off baseline (`work/probes/offers-off-baseline/`). Then Groot's readings as offers through the judges
       (`ROBO_EXTRA_READERS`: it alone reads the silent ‘“Lucy)
 - [x] 2026-11-19 Vanille en andere smaken's chapter numbers over its titles set as
       headings (`chapters.numbers_over_titles`, `title_lines`' "title-runs-on"): tuning

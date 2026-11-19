@@ -6,17 +6,25 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
+**State at 20:35 on 2026-11-19** (a new session, "continue"). Below it, the 06:35 state
+still holds where this doesn't speak.
+
+- **Running:** `robo-arete-groot`, Groot 19B and Arete-27B Q4 as two more text judges
+  (offers off), resumed at 20:05 from its saved answers; Groot finished Goede dochter,
+  Arete on it now. About 12–14 hours; watcher on `work/runs/arete-groot.out`, the
+  rebuild's `work/probes/ocr-trust-ag/runs/progress.txt` and the books' saved answers.
+  Its validation bench compares against `030945`, whose Vanille had a stale ellipsis
+  style: read it against `validation-20261119T191549-e435710` (the fresh offers-off
+  baseline) with `bench-diff`.
+- **Settled tonight:** validation's 39 words fixed and 29 made were Vanille's ellipsis
+  style served from the cache of a method reverted on 2026-10-24 (decisions.md); the
+  offers change no validation word against the fresh baseline, 6 more questions. New
+  engineering rule in AGENTS.md: a change in how a cached value is found bumps its
+  cache's version, its revert too.
+
 **State at 06:35 on 2026-11-19** (the user packing up; every run stopped, nothing running
 but `robo-battery-guard`).
 
-- **Resume first:** `robo-arete-groot`, Groot 19B and Arete-27B Q4 as two more text
-  judges (offers off, against `work/probes/offers-off-baseline/`). Stopped at 06:30, 17
-  minutes in: Groot had answered 479 of Goede dochter's 498 pages; every answer is in the
-  book's `decisions.jsonl`, no book's trust data written yet. About 35,600 questions each,
-  12–14 hours; it resumes from the saved answers:
-  `experiments/detached.sh arete-groot work/runs/arete-groot.sh`
-  (its wait on `offers-on.out` is already satisfied), with a watcher on
-  `work/runs/arete-groot.out` and `work/probes/ocr-trust-ag/runs/progress.txt`.
 - **Taken tonight** (decisions.md has each with its fixes and errors): the quote fix (a
   single-quoted book's ‘ read as "); Vanille's chapter numbers over titles; a running head
   holding its page's number on one other page; a full stop and an ellipsis as the print's
@@ -28,9 +36,6 @@ but `robo-battery-guard`).
 - **Not taken:** the grown-slice line-role trees as the first set (unnumbered section
   titles kept as text); Surya's layout columns parked with them; a page-number column
   for the trees (null). Tess, Arete and Groot as readers: no seat.
-- **Open, model-free, first:** validation's 39 words fixed and 29 made between
-  `validation-20261119T030945` and `validation-20261119T051238` (all asked, not the
-  offers' causes): find which change moved them (checklist).
 - **Production baselines** (`work/probes/production-baseline/`): tuning
   `work/bench/tuning-20261119T045526-950d1bf-dirty.json`, validation
   `work/bench/validation-20261119T051238-9d6c170-dirty.json` (offers on).
