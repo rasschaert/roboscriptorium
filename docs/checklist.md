@@ -89,12 +89,11 @@ In this order; `HANDOVER.md` has the paths and the commands.
 - [ ] Surya OCR 2's layout as line-role tree features (screened 2026-11-17: 48 of 243 tree
       errors labelled right, models.md). Laid out on every labelled page and fitted
       2026-11-19: most-likely-class errors tuning 375 → 353, validation 110 → 107; body
-      lines lost at the keep line 71 → 64, stray lines kept level (decisions.md). Next, if
-      the grown-slice trees win as the first set (below): a Surya layout stage (about 2 s a
-      page, cached per page) and those trees retrained with its columns, then a bench
-- [ ] The grown-slice trees as the first set, production's as the second, with the
-      running-head rule (taken 2026-11-19): `work/runs/trees-swapped.sh`, running since
-      04:09 (warm, minutes); read against the rule's own run, `tuning-20261119T030849`
+      lines lost at the keep line 71 → 64, stray lines kept level (decisions.md). Parked:
+      the grown-slice trees it would join lost the swap (2026-11-19) on unnumbered section
+      titles; back with a tuning pair that has such headings
+- [x] 2026-11-19 The grown-slice trees as the first set: not taken (a silent lost line on
+      tuning, unnumbered section titles kept as text on validation; decisions.md)
 - [ ] Groot 19B and Arete-27B Q4 as two more text judges: `work/runs/arete-groot.sh`,
       queued behind the swap (trust data with both, about 35,600 questions each, 12–14
       hours one at a time; the arbiter; both benches; then a control rebuilt today without

@@ -12,13 +12,13 @@ On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50
 - **Queue** (one model job at a time, `work/runs/model-screen.lock`; earlier tonight:
   Surya's layout on every labelled page, the quote fix, the chapter numbers, the reading
   vote, the running-head rule with the four dots, all done and recorded):
-  `robo-trees-swapped` (since 04:09, warm, minutes: the grown-slice trees first,
-  production's second; read it against `tuning-20261119T030849`/`validation-20261119T030945`,
-  which have the rule and the dots), then `robo-arete-groot` (Groot and Arete as two more
-  text judges: trust data with both, about 35,600 questions each, 12–14 hours asked one
-  at a time; the arbiter; both benches; a control rebuilt today without them. Resumes per
-  answer and per book; your build pauses it, `experiments/stop-run.sh arete-groot` stops
-  it). A background wait on the next event of either.
+  ~~`robo-trees-swapped`~~ done 04:17, not taken (decisions.md); `robo-dolittle-dots`
+  (Dolittle's ellipses spaced, `68fbe83`, warm tuning bench, minutes), then
+  `robo-arete-groot` (Groot and Arete as two more text judges: trust data with both,
+  about 35,600 questions each, 12–14 hours asked one at a time; the arbiter; both benches;
+  a control rebuilt today without them. It ran 04:17–04:27 before being requeued behind
+  the Dolittle bench; resumes per answer and per book; your build pauses it,
+  `experiments/stop-run.sh arete-groot` stops it). A background wait on the next event.
 - **Taken tonight:** a full stop and an ellipsis as the print's four spaced dots, and a
   running head holding its page's number taken on one other page (tuning 26 words
   fixed, 10 silent; validation's one italic dot-slant is a scoring artefact). Vanille's chapter numbers over its titles as headings (validation
