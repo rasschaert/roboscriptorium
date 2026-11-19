@@ -14,7 +14,8 @@ On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50
   length and broke the JSON at 4,799 of ~7,006 pages; the probe now keeps a cut-off
   answer's whole blocks; about 2,200 pages left, under two hours), then in any order
   `robo-quote-straight` (rebased on main, against the new baselines) and
-  `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote), then
+  `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote) and
+  `robo-titled-numbers` (Vanille's chapter numbers over titles, warm but five lines), then
   `robo-surya-roles` (no models). A background wait on the next event of any of them.
 - **Taken tonight:** Dutch line-end hyphens by the learned decision for plain words at
   0.9: tuning BETTER (Dutch 5 fixed, none made), validation NO CHANGE (Dutch 0 fixed,
