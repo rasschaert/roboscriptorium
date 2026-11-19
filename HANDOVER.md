@@ -6,7 +6,7 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
-**State at 05:00 on 2026-11-19** (the user off for the night: "you know what to do").
+**State at 04:20 on 2026-11-19** (the user off for the night: "you know what to do").
 On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50%.
 
 - **Queue** (one model job at a time, `work/runs/model-screen.lock`; earlier tonight:

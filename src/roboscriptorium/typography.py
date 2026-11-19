@@ -105,14 +105,21 @@ _RUN = re.compile(r"(?<![.…\s])(\s*)(?<![.…] )(…|\.(?: ?\.){2})(?! ?[.…]
 _OPENING = "‘“'\"([—–-"
 
 
+# A word's full stop and three dots, all four read with a space between.
+_SPACED_STOP = re.compile(r"(?<=[^\s.…!?])\. \. \. \.(?! ?[.…])")
+
+
 def guess_ellipsis(lines: list[str]) -> EllipsisStyle | None:
-    """How the layer's lines set their ellipses, by majority; None when there are too few."""
+    """How the layer's lines set their ellipses, by majority; None when there are too few.
+    A word's stop and dots read spaced count for spaced dots: Dolittle sets nearly every
+    ellipsis after a stop ("now. . . . Oh"), leaving too few others to tell."""
     runs = []
     for line in lines:
         for m in _RUN.finditer(line):
             if m.start() == 0 or line[m.start() - 1] in _OPENING:
                 continue
             runs.append((m.group(2), bool(m.group(1))))
+        runs += [(". . .", True)] * len(_SPACED_STOP.findall(line))
     if len(runs) < FEW:
         return None
     glyphs = [r for r in runs if r[0] == "…"]

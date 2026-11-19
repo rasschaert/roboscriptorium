@@ -149,6 +149,16 @@ def test_the_ellipsis_guess_trusts_the_reads_that_kept_their_gaps():
     assert guess_ellipsis(["... en toen"] * 20) is None
 
 
+def test_a_book_whose_ellipses_follow_a_stop_is_known_spaced_by_them():
+    # Dolittle: nearly every ellipsis follows a stop, read spaced; few others.
+    lines = ["sea. . . . Pull up the anchor", "talk to him. . . . Look here"] * 6
+    assert guess_ellipsis(lines) == SPACED
+    # Four dots glued, or a tight book's odd spaced read, don't make a book spaced.
+    assert guess_ellipsis(["sea.... Pull up"] * 12) is None
+    tight = ["en toen... ging"] * 40 + ["zee. . . . Trek"] * 2
+    assert guess_ellipsis(tight) == EllipsisStyle("...", False)
+
+
 def test_four_spaced_dots_survive_reflow_in_a_spaced_dots_book():
     from roboscriptorium import reflow
     from roboscriptorium.pdf import Line, PageText
