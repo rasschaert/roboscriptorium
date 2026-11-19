@@ -10,9 +10,9 @@ section speaks: baselines, what runs, what is on by default.
 On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50%.
 
 - **Queue** (one model job at a time, `work/runs/model-screen.lock`):
-  `robo-surya-layout-all` (restarted 00:47 after a page's answer ran past the model's
-  length and broke the JSON at 4,799 of ~7,006 pages; the probe now keeps a cut-off
-  answer's whole blocks; about 2,200 pages left, under two hours), then in any order
+  ~~`robo-surya-layout-all`~~ done 02:53 (7,006 pages, 126 minutes, none failed; restarted
+  00:47 after a cut-off answer broke the JSON, the probe now keeps a cut-off answer's whole
+  blocks), then in any order
   `robo-quote-straight` (rebased on main, against the new baselines) and
   `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote) and
   `robo-titled-numbers` (Vanille's chapter numbers over titles, warm but five lines), then
