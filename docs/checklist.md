@@ -79,15 +79,8 @@ last on 2026-11-14, so next by 2026-11-21).
 
 In this order; `HANDOVER.md` has the paths and the commands.
 
-- [ ] Tess-4.5-27B, Arete-27B Q4 and Groot 19B in the reading vote (`work/runs/reader-votes.sh`,
-      queued 2026-11-18 behind the quote run; about an hour and a half): the vote test the
-      silent-error screen left out. Agent, models
-- [ ] Arete-27B Q4 and Groot 19B as extra text judges (screened 2026-11-17, models.md:
-      together they lift the judge panel +0.007 [+0.000, +0.015]): trust data with both,
-      an arbiter on it, a control arbiter retrained on the same day's data beside it,
-      both benches; Groot's readings as offers through the judges (`ROBO_EXTRA_READERS`:
-      it alone reads the silent ‘“Lucy). Hours: explain to the user first; one model
-      over all its questions, then the next
+- [x] 2026-11-19 Tess-4.5-27B, Arete-27B Q4 and Groot 19B in the reading vote: none earns a
+      reader's seat (as a third voter 754–757 of 800 against qwen3.8's 755 alone; models.md)
 - [ ] **user**: accent and speck offers on by default, under their own arbiter
       (`ROBO_ACCENT_DOUBTS=1 ROBO_SPECK_DOUBTS=1
       ROBO_OFFER_TRUST_MODEL=work/models/ocr-trust-offers.pkl`)? Benched together
@@ -99,10 +92,14 @@ In this order; `HANDOVER.md` has the paths and the commands.
       lines lost at the keep line 71 → 64, stray lines kept level (decisions.md). Next, if
       the grown-slice trees win as the first set (below): a Surya layout stage (about 2 s a
       page, cached per page) and those trees retrained with its columns, then a bench
-- [ ] The running-head rule of 2026-11-19 (a line holding its page's number needs one
-      other page): `work/runs/folio-heads.sh`, queued behind the reading vote (warm,
-      minutes; one Dolittle line expected); then `work/runs/trees-swapped.sh`, the
-      grown-slice trees as the first set, production's as the second (warm, minutes)
+- [ ] The grown-slice trees as the first set, production's as the second, with the
+      running-head rule (taken 2026-11-19): `work/runs/trees-swapped.sh`, running since
+      04:09 (warm, minutes); read against the rule's own run, `tuning-20261119T030849`
+- [ ] Groot 19B and Arete-27B Q4 as two more text judges: `work/runs/arete-groot.sh`,
+      queued behind the swap (trust data with both, about 35,600 questions each, 12–14
+      hours one at a time; the arbiter; both benches; then a control rebuilt today without
+      them). Resumes per answer and per book; then Groot's readings as offers through the judges
+      (`ROBO_EXTRA_READERS`: it alone reads the silent ‘“Lucy)
 - [x] 2026-11-19 Vanille en andere smaken's chapter numbers over its titles set as
       headings (`chapters.numbers_over_titles`, `title_lines`' "title-runs-on"): tuning
       no change, validation headings 48 → 45, no word moved (decisions.md)
@@ -370,14 +367,14 @@ then the kinds one at a time below.
       pair: withdrawn (the user: "a poor bargain"). Pooling only the judges that look
       at the scan settles 28 of 52 and 26 of 74, golden silent errors unchanged: the
       version to build
-- [ ] **A stop followed by an ellipsis** (14 of the tuning bench's silent errors:
-      Dolittle 6, Metro 2033 4, Artemis 4): the print sets four evenly spaced dots
-      ("sleeve. . . ."), the layer reads "sleeve. ...", the ellipsis rule leaves dots
-      after a stop as the layer has them (`typography._RUN`), and the references glue
-      them ("sleeve...."; Metro's e-book has all three forms). To do once the queued
-      benches are in (it moves their baselines): style the dots after a stop like the
-      book's other ellipses, and have the scorer fold the space between a stop and an
-      ellipsis as it folds the ellipsis glyph, counted per side
+- [x] 2026-11-19 **A stop followed by an ellipsis** set as the print's four spaced dots in a
+      book that spaces its dots: tuning 20 words fixed, 10 silent (decisions.md)
+- [ ] Dolittle's ellipsis style unknown (too few ellipses in the layer, none measured on
+      the scan), so its ellipses get no styling at all ("in. ..." five times, the print
+      "in. . . ."): measure ellipses after a stop too, or take a stop's four dots as a vote
+- [ ] The italic count weighs the slant of a token with no letters (You're Never Weird's
+      ". . . ." after an italic word, 2026-11-19): fold marks out of the italic score, as
+      their slant can't be seen; it moves the baselines, so with the next batch
 - [ ] **Extra readers as offers in the build** (`ROBO_EXTRA_READERS`, off; design.md):
       first scores of the short test 2026-11-15: qwen3.8 reads 10 of 97 silent errors,
       olmOCR-2 seven more, PaddleOCR-VL 1.6 ten more. Its short test in the build is

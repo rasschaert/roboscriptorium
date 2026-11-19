@@ -689,6 +689,15 @@ both ("Granny – ’"); the scan tells them apart where the layer can't
 (`experiments/probe_dash_before_quote.py`, decisions.md 2026-11-12), and the styling
 doesn't look at the scan yet.
 
+A word's full stop and an ellipsis are four evenly spaced dots in a book that spaces its
+dots: Dolittle, Artemis and Metro print "in. . . .", where the layer reads "in. ...",
+"in. .. ." or "in. …" (`typography._spaced_stops`, 2026-11-19); the scorer folds the
+print's form to the references' "in....". A tightly set book keeps the layer's dots, no
+scan showing them otherwise. Tuning: 20 wrong words fixed, 10 of them silent, none made
+but on a Metro line already wrong. A book whose style is unknown (Dolittle: too few
+ellipses in its layer, none measured on the scan) gets no styling at all, so its five
+such places stay.
+
 Straight quotes and apostrophes are the layer's, never the print's: a printed book sets
 curly ones. `quotes.curl` curls what is left of them after the answers, by place: opening
 after a space, bracket, dash or opening mark, closing elsewhere, `’` inside a word and
@@ -940,7 +949,7 @@ heading never does: Dolittle's short chapters run their title atop two or three 
 headings, the rule taking back all 55 and no true heading on the 30 bench books; a number
 one digit off the page's counts only where the page prints its number nowhere else (Vals
 alarm's "15 Eerder" over a page printing "95"). With production's trees it changes one
-line, Dolittle's "The Rarest Animal of All 89" kept as text (2026-11-19, bench queued); a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
+line, Dolittle's "The Rarest Animal of All 89" kept as text (2026-11-19, taken); a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
 line costs ten words, a stray folio one or two); and a line the role model wasn't asked
 about, away from the edges and inside a text block the layout model is sure of, stays
 body: the trees dropped such full-width prose (Crime pp. 36, 42 and 98, a whole line

@@ -1261,3 +1261,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-19 | bench validation, chapter numbers over titles | 0 | 1 | 0 |
 | 2026-11-19 | probe: Surya's layout as line-role columns | 0 | 13 | 0 |
 | 2026-11-19 | tryout: reader set v3, Tess-4.5-27B-GGUF | 0 | 28 | 0 |
+| 2026-11-19 | tryout: reader set v3, NousResearch_Arete-27B-GGUF | 0 | 24 | 0 |
+| 2026-11-19 | tryout: reader set v3, Groot-19B-A3B-261023-GGUF | 0 | 5 | 0 |
+| 2026-11-19 | bench tuning, running heads holding their page number | 0 | 5 | 0 |
+| 2026-11-19 | bench validation, running heads holding their page number | 0 | 1 | 0 |
+| 2026-11-19 | bench tuning, the grown-slice trees first | 0 | 5 | 0 |
+| 2026-11-19 | bench validation, the grown-slice trees first | 0 | 1 | 0 |
