@@ -54,16 +54,16 @@ class Settings:
     lower_capitals: bool = True
     # Doubts raised where the scan shows a stress accent over a word every reading has
     # plain ("zíjn" read "zijn"; `accentmarks.py`), in a Dutch book with the judge
-    # `render`. Off until its bench (docs/decisions.md, 2026-11-15).
-    accent_doubts: bool = False
+    # `render`. Decided by `offer_trust_model` (docs/decisions.md, 2026-11-18 and 11-19).
+    accent_doubts: bool = True
     # Doubts raised where the scan shows three ticks at a double quote mark every reading
     # agrees on (a nested quotation's outer mark lost; `quotemarks.py`). Off until its
     # bench (docs/decisions.md, 2026-11-15).
     nested_quote_doubts: bool = False
     # Doubts raised where a comma, semicolon or colon is unlike the book's own (a speck
-    # read as punctuation; `speckmarks.py`). Off until its bench (docs/decisions.md,
-    # 2026-11-16).
-    speck_doubts: bool = False
+    # read as punctuation; `speckmarks.py`). Decided by `offer_trust_model` (docs/decisions.md,
+    # 2026-11-18 and 11-19).
+    speck_doubts: bool = True
     # The judges' crops and the render judge's window stop at the line above's
     # descenders (`readers.own_span`): set tight, a padded crop holds them, and judges
     # took them for marks (Andere levens' "dië").
@@ -91,8 +91,9 @@ class Settings:
     ocr_trust: bool = True
     ocr_trust_model: str = "work/models/ocr-trust.pkl"
     # A second arbiter that decides only the suspects holding a version no reading has (an
-    # offer from a measure on the scan); "" decides them with `ocr_trust_model` like the rest.
-    offer_trust_model: str = ""
+    # offer from a measure on the scan: the accent and speck doubts); "" decides them with
+    # `ocr_trust_model` like the rest.
+    offer_trust_model: str = "work/models/ocr-trust-offers.pkl"
     ocr_questions_per_page: float = 1.0
     # Within that budget, a suspect whose likeliest version is right with at least this
     # chance (the trust model's calibrated sureness) is decided, not asked (1.0: every

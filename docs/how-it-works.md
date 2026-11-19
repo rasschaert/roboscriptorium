@@ -266,6 +266,13 @@ suspect with two versions: `buiten.` from the text layer and glm-ocr, and
 
 Two differences in one line make two suspects, and each is decided on its own.
 
+Some suspects come from the scan where every reader agrees. In a Dutch book, a word
+read plain whose scan shows a stress accent over a vowel ("zijn" where the print has
+"zíjn") gets the accented word as a second version; a comma, semicolon or colon unlike
+the book's own (a speck read as punctuation) gets the lesser mark. No reader has these
+versions, so a second arbiter, trained on such suspects, decides them; the main one
+decides the rest. Small capitals read in lower case are raised from the scan too.
+
 ### The judges pick
 
 Every suspect goes to the six judges.

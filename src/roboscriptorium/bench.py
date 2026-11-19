@@ -208,6 +208,15 @@ def unseen(settings: Settings, book: str) -> Settings:
             )
     if not settings.ocr_trust:
         return settings
+    if settings.offer_trust_model:
+        copy = trust.without(Path(settings.offer_trust_model), book)
+        if copy.exists():
+            settings = replace(settings, offer_trust_model=str(copy))
+        elif book in TRAINED_ON:
+            raise FileNotFoundError(
+                f"{copy} is missing: {book} is a tuning book, which the offers' arbiter "
+                "trains on (experiments/train_ocr_trust.py --save writes it)"
+            )
     path = trust.without(Path(settings.ocr_trust_model), book)
     if path.exists():
         return replace(settings, ocr_trust_model=str(path))

@@ -494,13 +494,13 @@ score 0.79 or more (the others: italics drawn in the roman, Artemis' "ğ"), and 
 arbiter it wrongs 49 right picks to right 22; as arbiter columns it gains little
 (`probe_accent_fit_arbiter.py`, `probe_accent_columns.py`). On six pages of Vals alarm it
 offers the six known dropped marks and eleven more, 2.8 a page, at 29 ms a word
-(`probe_accent_doubts.py`). Off (`ROBO_ACCENT_DOUBTS`) until the judges are measured on
-its offers (`probe_accent_judges.py`) and the arbiter is trained with them.
+(`probe_accent_doubts.py`). On by default since 2026-11-19 (`ROBO_ACCENT_DOUBTS`, the
+user's call), under the arbiter of its own below.
 
 An arbiter trained with the offers pays for them elsewhere: retrained on the rebuilt
 trust data it makes 16 punctuation swaps on tuning that production's does not
 (2026-11-16). So the offers have an arbiter of their own (`ROBO_OFFER_TRUST_MODEL`,
-`trust.offered`, `trust.merge_offers`, off): it decides only the suspects that hold an
+`trust.offered`, `trust.merge_offers`, on since 2026-11-19): it decides only the suspects that hold an
 accent offer, and production's arbiter decides the rest as before. Benched that way, 15
 of tuning's 74 silent stress accents become questions for 37 more questions, no accent
 is made silent and no other word changes; validation asks 5 more for none of its 8
@@ -563,8 +563,11 @@ picture, so a mark must also be unlike all but three of the book's others: 4,037
 over the tuning books became 461, with 16 of the bench's named specks among them. A
 fleck between two words reads as an apostrophe ("je'vader"); there the word list says
 it: two known words joined into no word, in a form the book has fewer than three times
-("ma'am" 45 times is its spelling), 77 offers over the tuning books. Off (`ROBO_SPECK_DOUBTS`) until the judges are
-measured on its offers and an arbiter trained with them is benched.
+("ma'am" 45 times is its spelling), 77 offers over the tuning books. On by default since 2026-11-19
+(`ROBO_SPECK_DOUBTS`), decided with the accent offers by their own arbiter: together, 19
+of tuning's silent errors became questions for 38 more (2026-11-18), a count taken with
+that arbiter judging tuning books it was trained on; the bench scored again with each
+book held out says what holds (decisions.md 2026-11-19).
 
 ## A judge of marks alone (off)
 

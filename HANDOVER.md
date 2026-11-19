@@ -13,12 +13,15 @@ On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50
   Surya's layout on every labelled page, the quote fix, the chapter numbers, the reading
   vote, the running-head rule with the four dots, all done and recorded):
   ~~`robo-trees-swapped`~~ done 04:17, not taken (decisions.md); `robo-dolittle-dots`
-  (Dolittle's ellipses spaced, `68fbe83`, warm tuning bench, minutes), then
-  `robo-arete-groot` (Groot and Arete as two more text judges: trust data with both,
-  about 35,600 questions each, 12–14 hours asked one at a time; the arbiter; both benches;
-  a control rebuilt today without them. It ran 04:17–04:27 before being requeued behind
-  the Dolittle bench; resumes per answer and per book; your build pauses it,
-  `experiments/stop-run.sh arete-groot` stops it). A background wait on the next event.
+  (Dolittle's ellipses spaced, `68fbe83`; its Qwen line readings redone, the prompt
+  naming the new style, about 50 minutes), then `robo-offers-on` (the accent and speck
+  offers, on by default since the user's "turn them on" at 05:10, benched again with
+  each tuning book held out from the offers' arbiter, which the 2026-11-18 count wasn't;
+  if the catches drop, tell the user before keeping them on), then `robo-arete-groot`
+  (Groot and Arete as two more text judges, offers off, against
+  `work/probes/offers-off-baseline/`; about 35,600 questions each, 12–14 hours; resumes
+  per answer and per book; `experiments/stop-run.sh arete-groot` stops it). A
+  background wait on the next event.
 - **Taken tonight:** a full stop and an ellipsis as the print's four spaced dots, and a
   running head holding its page's number taken on one other page (tuning 26 words
   fixed, 10 silent; validation's one italic dot-slant is a scoring artefact). Vanille's chapter numbers over its titles as headings (validation
@@ -31,7 +34,7 @@ On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50
   `work/bench/tuning-20261119T030849-01aabdf-dirty.json`,
   `validation-20261119T030945-01aabdf-dirty.json` (the four dots and the running-head rule).
 - **Reading vote:** Tess, Arete and Groot none earns a reader's seat (models.md).
-- **Waiting on the user:** accent and speck offers on by default (checklist).
+- **Waiting on the user:** nothing; the accent and speck offers are on (the user, 05:10).
 
 **State at 13:30 on 2026-11-18** (after the user's computer crashed at about 02:11, 4 books
 into `robo-hyphen-panel2`'s tuning bench). The whole queue below was restarted at 13:15

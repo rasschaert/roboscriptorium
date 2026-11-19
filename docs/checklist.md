@@ -67,7 +67,7 @@ last on 2026-11-14, so next by 2026-11-21).
          Benched 2026-11-17 with an arbiter of their own for the accent offers and
          production's everywhere else (branch `offer-arbiter`, `ROBO_OFFER_TRUST_MODEL`): 15 of
          tuning's 74 silent accents asked for 37 more questions, none made, validation 5
-         more questions for none; **user**: on or not. On main, off. Tried behind it: a judge of marks alone (`render-mark`,
+         more questions for none; on by default since 2026-11-19 (the user). Tried behind it: a judge of marks alone (`render-mark`,
          `accents-mark-chain.sh`), then nested quote offers (`nested-chain.sh`). Open:
          the offers never draw the first vowel of a pair alone ("níet", "bóek": 41 of
          Ex-minnaar's 136), where the mark's fit finds 3 of 38 at its cut, the acute
@@ -81,11 +81,11 @@ In this order; `HANDOVER.md` has the paths and the commands.
 
 - [x] 2026-11-19 Tess-4.5-27B, Arete-27B Q4 and Groot 19B in the reading vote: none earns a
       reader's seat (as a third voter 754–757 of 800 against qwen3.8's 755 alone; models.md)
-- [ ] **user**: accent and speck offers on by default, under their own arbiter
-      (`ROBO_ACCENT_DOUBTS=1 ROBO_SPECK_DOUBTS=1
-      ROBO_OFFER_TRUST_MODEL=work/models/ocr-trust-offers.pkl`)? Benched together
-      2026-11-18: tuning 19 silent errors asked for 38 more questions, none made;
-      validation 4 more questions, none catching (decisions.md)
+- [ ] Accent and speck offers on by default (the user, 2026-11-19: "turn them on"). The
+      2026-11-18 count scored tuning books with an offers' arbiter trained on them
+      (`bench.unseen` didn't swap its copies; mended): both benches again with each book
+      held out (`work/runs/offers-on.sh`, queued behind the Dolittle bench, near warm).
+      If the held-out count drops the catches, say so to the user before keeping them on
 - [ ] Surya OCR 2's layout as line-role tree features (screened 2026-11-17: 48 of 243 tree
       errors labelled right, models.md). Laid out on every labelled page and fitted
       2026-11-19: most-likely-class errors tuning 375 → 353, validation 110 → 107; body

@@ -404,16 +404,16 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   settings name. An ablation (another reader set, say) keeps its data and models apart:
   `ROBO_TRUST_DATA` for the data folder, `ROBO_OCR_TRUST_MODEL` for the model, whose
   leave-one-out copies sit beside it.
-- `trust.offered`, `trust.merge_offers` (`ROBO_OFFER_TRUST_MODEL`, off): a second arbiter's
+- `trust.offered`, `trust.merge_offers` (`ROBO_OFFER_TRUST_MODEL`, `work/models/ocr-trust-offers.pkl`): a second arbiter's
   decisions for the suspects that hold an accent offer (a version no reading has that is
   ours but for its accents), the first arbiter's for all others (docs/design.md).
-- `accentmarks.py`: accents every reader drops (`ROBO_ACCENT_DOUBTS`, off). For each word of a
+- `accentmarks.py`: accents every reader drops (`ROBO_ACCENT_DOUBTS`, on). For each word of a
   Dutch book's line no reading disputes, the word with an acute on each vowel group
   (`stressed`) scored on the scan by that mark alone (`rendercheck.mark_fit`, through the
   judge `render`'s typeface); at `CUT` or more the marked word is one more version for
   the OCR check (`Marks.doubts`, beside `ocrcheck.capitals_doubts`). Fits kept in
   `stages/accent-marks.json` by typeface.
-- `speckmarks.py`: a speck read as punctuation (`ROBO_SPECK_DOUBTS`, off). `picture`
+- `speckmarks.py`: a speck read as punctuation (`ROBO_SPECK_DOUBTS`, on). `picture`
   cuts the mark a token ends on out of its strip (the last run of inked columns within
   the word's own rows; a mark touching its letter gives none); `Specks.survey` measures
   every comma, semicolon and colon of the body against the book's usual picture of that
