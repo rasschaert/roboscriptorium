@@ -127,6 +127,10 @@ def guess_ellipsis(lines: list[str]) -> EllipsisStyle | None:
     return EllipsisStyle(form, 2 * sum(sp for _, sp in votes) > len(votes))
 
 
+# A word's full stop, a space and an ellipsis, not part of more dots.
+_STOP_RUN = re.compile(r"(?<=[^\s.…!?])\. (…|\.(?: ?\.){2})(?! ?[.…])")
+
+
 def ellipsised(text: str, style: EllipsisStyle) -> tuple[str, list[int]]:
     """The text with every ellipsis set in the book's style, and where each of the old
     text's characters went in it.
@@ -134,8 +138,34 @@ def ellipsised(text: str, style: EllipsisStyle) -> tuple[str, list[int]]:
     The space before is set only after a word or closing punctuation, as a no-break
     space (after "?" or "!" as the layer has it; after a closing quote the layer's space
     stays), and spaced dots are held together; what follows the ellipsis is left as it is.
-    Four dots (a full stop and an ellipsis) are left alone.
+    A word's full stop and an ellipsis are four evenly spaced dots in a book that spaces
+    its dots ("in. . . .", as Dolittle, Artemis and Metro print them); elsewhere four dots
+    are left alone, the scans showing none set otherwise.
     """
+    if style.dots != ". . .":
+        return _runs(text, style)
+    first, before = _spaced_stops(text)
+    second, after = _runs(first, style)
+    return second, [after[i] for i in before]
+
+
+def _spaced_stops(text: str) -> tuple[str, list[int]]:
+    out, where, pos = [], [], 0
+    for m in _STOP_RUN.finditer(text):
+        for c in text[pos : m.start()]:
+            where.append(len("".join(out)))
+            out.append(c)
+        at = len("".join(out))
+        where += [at] * (m.end() - m.start())
+        out.append(".\u00a0.\u00a0.\u00a0.")
+        pos = m.end()
+    for c in text[pos:]:
+        where.append(len("".join(out)))
+        out.append(c)
+    return "".join(out), where
+
+
+def _runs(text: str, style: EllipsisStyle) -> tuple[str, list[int]]:
     dots = style.dots.replace(" ", "\u00a0")
     out, where, pos = [], [], 0
     for m in _RUN.finditer(text):

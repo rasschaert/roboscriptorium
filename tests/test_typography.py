@@ -109,6 +109,27 @@ def test_every_ellipsis_takes_the_books_style():
     assert ellipsised("here.. .’ Artyom", SPACED)[0] == "here . . .’ Artyom"
 
 
+def test_a_stop_and_an_ellipsis_keep_their_dots_but_where_the_book_spaces_them():
+    # Counterexamples first: a tightly set book, five dots, a question or exclamation mark,
+    # a stop after a space (a speck), and dots glued to the stop stay as the layer has them.
+    tight = EllipsisStyle("...", False)
+    for text in ("go home in. ... Oh", "go home in. .. . Oh"):
+        assert ellipsised(text, tight)[0] == text
+    assert ellipsised("go home in. ... Oh", GLYPH)[0] == "go home in. ... Oh"
+    for text in ("Wait. .... Next", "So.... Next", "Wait . ... Next"):
+        assert ellipsised(text, SPACED)[0] == text
+
+
+def test_a_stop_and_an_ellipsis_are_four_spaced_dots_where_the_book_spaces_them():
+    # Dolittle PDF 113, Artemis PDF 120, Metro PDF 417: "in. . . .", four dots evenly spaced.
+    four = "in.\u00a0.\u00a0.\u00a0. Oh"
+    for layer in ("in. ... Oh", "in. .. . Oh", "in. . . . Oh", "in. … Oh"):
+        assert ellipsised(layer, SPACED)[0] == four
+    assert ellipsised("fu-ry. ...", SPACED)[0] == "fu-ry.\u00a0.\u00a0.\u00a0."
+    text, where = ellipsised("in. ... Oh", SPACED)
+    assert len(where) == len("in. ... Oh") and text[where[-1]] == "h"
+
+
 def test_an_italic_word_before_an_ellipsis_stays_italic_and_the_dots_dont():
     p = Paragraph("hij las Ulysses... toen", italic=(2,))
     (out,) = apply([p], None, SPACED)
