@@ -71,7 +71,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   prints them (`summary`). The bench leaves a poor page out of its score.
 - `page.py`: what a page's layout says without a model, shared by roles,
   flags and reflow: geometry, edge lines, text repeated across pages, sunk
-  pages, printed page numbers, heading labels and numerals, garbled lines.
+  pages, printed page numbers (and a line holding its page's, `carries_folio`), heading
+  labels and numerals, garbled lines.
   "Centred" has two meanings, named apart: `centred_on_page` (loose, chooses
   what to ask the model) and `centred_in_text` (strict, for flagging).
 - `roles.py`: line roles via a decision model. A gate picks the doubtful lines
@@ -83,7 +84,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   model's answer, in place of `roles.py`'s rules (`ROBO_SORTER=1`, on by default). Its
   copies without each tuning book are scored by `bench`. With a second set of trees
   (`sorter_second`, `work/models/line-roles-second.pkl`, on by default; `ROBO_SORTER_SECOND=` turns it off) a `Referee` settles the lines the two sets call
-  differently: the judge, shown the page with the line framed.
+  differently: the judge, shown the page with the line framed. Text repeated at the edges
+  of three other pages, or of one where it holds its page's printed number, is a running head.
 - `sorterdata.py`: the trees' labelled lines (golden alignment on the bench's slices and
   a few training-only ones, cached in `work/probes/sorter/`) and the models to save;
   scored and saved by `experiments/train_sorter.py [--save]`; with `ROBO_PAGE_ROLES=1`

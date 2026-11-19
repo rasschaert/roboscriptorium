@@ -338,17 +338,25 @@ def apply(
     # A page's first line set well below where running heads stand is none.
     sunk_first = P.sunk_first_lines(pages)
     inner = _inner_repeats(found)
+    offset = P.page_offset(pages)
+    by_number = {p.number: p for p in pages}
     out = {}
     for ref, p in zip(refs, probs, strict=True):
         best = classes[int(p.argmax())]
         p_body = float(p[classes.index("body")])
         f = found[ref]
+        edge = f["i_top"] < P.EDGE_LINES_TOP or f["i_bottom"] < P.EDGE_LINES_BOTTOM
+        # A heading never prints its page's number: with it, one other page is enough.
+        times = (
+            1
+            if edge and P.carries_folio(by_number[ref.page], ref.line, offset)
+            else HEADING_MAX_REPEATS
+        )
         repeated = (
-            f["repeats"] >= HEADING_MAX_REPEATS
+            f["repeats"] >= times
             and not (ref.line == 0 and ref.page in sunk_first)
             and ref not in inner
         )
-        edge = f["i_top"] < P.EDGE_LINES_TOP or f["i_bottom"] < P.EDGE_LINES_BOTTOM
         if repeated and (best == "heading" or edge and f["chars"] >= FURNITURE_CHARS):
             # A heading appears once, and text repeated at the pages' edges is furniture.
             out[ref] = LineRole("running_head", float(p.max()), 0.0, "repeated")

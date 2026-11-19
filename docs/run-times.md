@@ -1260,3 +1260,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-19 | bench tuning, chapter numbers over titles | 0 | 6 | 0 |
 | 2026-11-19 | bench validation, chapter numbers over titles | 0 | 1 | 0 |
 | 2026-11-19 | probe: Surya's layout as line-role columns | 0 | 13 | 0 |
+| 2026-11-19 | tryout: reader set v3, Tess-4.5-27B-GGUF | 0 | 28 | 0 |

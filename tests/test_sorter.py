@@ -75,6 +75,50 @@ def test_a_heading_repeated_on_other_pages_is_a_running_head():
     assert {roles[SourceRef(n, 0)].role for n in range(5, 10)} == {"running_head"}
 
 
+def _folio_pages() -> list[PageText]:
+    """Dolittle's kind: a chapter's title opens page 30 (its number at the foot), and on
+    its right-hand pages runs atop with the page's number, two pages in all."""
+    pages = []
+    for n in range(30, 42):
+        lines = [Line("Gewone tekst", 10, 40 + 15 * i, 280, 50 + 15 * i) for i in range(8)]
+        if n == 30:
+            lines = [Line("The Great Journey", 100, 60, 200, 72)] + lines
+        if n in (31, 33):
+            lines = [Line(f"The Great Journey {n - 22}", 30, 20, 280, 30)] + lines
+        else:
+            lines = lines + [Line(str(n - 22), 140, 470, 150, 480)]
+        pages.append(PageText(n, 300, 500, lines))
+    return pages
+
+
+def test_a_title_with_its_pages_number_on_two_pages_is_a_running_head():
+    class Headings(_Trees):
+        def predict_proba(self, X):
+            out = np.tile([0.9, 0.05, 0.05], (len(X), 1))
+            out[X[:, sorter.FEATURES.index("i_top")] == 0] = [0.2, 0.7, 0.1]
+            out[X[:, sorter.FEATURES.index("digits_only")] == 1] = [0.05, 0.05, 0.9]
+            return out
+
+    roles = sorter.apply(sorter.Sorter(Headings()), _folio_pages(), {}, {})
+    assert {roles[SourceRef(n, 0)].role for n in (31, 33)} == {"running_head"}
+    # The title itself, without the page's number, recurs only twice: still the chapter's.
+    assert roles[SourceRef(30, 0)].role == "chapter_heading"
+
+
+def test_a_heading_number_one_digit_off_the_folio_printed_below_is_no_folio():
+    from roboscriptorium import page as P
+
+    # Vals alarm PDF 99: "15 Eerder" atop a page printing "95" at its foot.
+    lines = [Line("15 Eerder", 100, 60, 200, 72), Line("Tekst", 10, 90, 280, 100)]
+    printed = PageText(99, 300, 500, [*lines, Line("95", 140, 470, 150, 480)])
+    assert not P.carries_folio(printed, 0, 4)
+    assert P.carries_folio(
+        PageText(99, 300, 500, [Line("Animal Language 95", 30, 20, 280, 30)]), 0, 4
+    )
+    # Only a page number on its own: no running head's words.
+    assert not P.carries_folio(printed, 2, 4)
+
+
 def test_a_labelled_number_opening_sunk_pages_is_no_running_head_though_it_recurs():
     # Vals alarm: "11 Later", "13 Later" open sunk pages, where no running head stands;
     # its ordinary pages' text starts at the top.

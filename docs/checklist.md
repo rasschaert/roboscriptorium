@@ -94,9 +94,15 @@ In this order; `HANDOVER.md` has the paths and the commands.
       2026-11-18: tuning 19 silent errors asked for 38 more questions, none made;
       validation 4 more questions, none catching (decisions.md)
 - [ ] Surya OCR 2's layout as line-role tree features (screened 2026-11-17: 48 of 243 tree
-      errors labelled right, models.md): its layout on every labelled page
-      (`work/runs/surya-layout-all.sh`, queued, about six hours), then the trees with and
-      without its labels, each book left out (`train_sorter.py`), then a bench
+      errors labelled right, models.md). Laid out on every labelled page and fitted
+      2026-11-19: most-likely-class errors tuning 375 → 353, validation 110 → 107; body
+      lines lost at the keep line 71 → 64, stray lines kept level (decisions.md). Next, if
+      the grown-slice trees win as the first set (below): a Surya layout stage (about 2 s a
+      page, cached per page) and those trees retrained with its columns, then a bench
+- [ ] The running-head rule of 2026-11-19 (a line holding its page's number needs one
+      other page): `work/runs/folio-heads.sh`, queued behind the reading vote (warm,
+      minutes; one Dolittle line expected); then `work/runs/trees-swapped.sh`, the
+      grown-slice trees as the first set, production's as the second (warm, minutes)
 - [x] 2026-11-19 Vanille en andere smaken's chapter numbers over its titles set as
       headings (`chapters.numbers_over_titles`, `title_lines`' "title-runs-on"): tuning
       no change, validation headings 48 → 45, no word moved (decisions.md)
@@ -307,7 +313,10 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       again on the grown slices (2026-11-14, `work/models/trees-grown-20261114/`): headings
       gained on Reis, Metro and Het heft, Dolittle's running heads kept as headings (+44),
       and on De stilte van de hel a set-apart passage dropped as no text (p. 94, silent
-      0.08 → 0.53 a page), with short lines of dialogue elsewhere
+      0.08 → 0.53 a page), with short lines of dialogue elsewhere. Dolittle's running heads answered
+      2026-11-19 by a rule of the book's own (a line holding its page's number needs one
+      other page; 55 of 68 false headings taken back, no true one); the swap bench above
+      says whether De stilte's passage still costs them the first place
 - [ ] Scene breaks the build misses: 23 of 295 (Reis 14, De eerlijke vinder 7). Reis's
       are page tops after a full page whose last line ends a sentence at the margin, the
       next opening flush: the same geometry as a paragraph running on, so only the text

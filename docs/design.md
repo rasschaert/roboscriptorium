@@ -933,7 +933,14 @@ body), except a page's first line set well below where running heads stand
 and a line repeated at an edge with another repeated line further out at that edge: a page
 sets one running head there (`sorter._inner_repeats`; Artemis' "Dear Kelvin," and "Dear
 Jazz," under "88 ANDY WEIR", nine letters' salutations, were running heads once the book
-was scored whole); a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
+was scored whole). Repeated means at the edge of three other pages, or of one where the
+line holds the page's own printed number beside words (`page.carries_folio`), which a
+heading never does: Dolittle's short chapters run their title atop two or three pages
+("The Great Journey 39"), and the trees trained on the grown slices call 55 of them
+headings, the rule taking back all 55 and no true heading on the 30 bench books; a number
+one digit off the page's counts only where the page prints its number nowhere else (Vals
+alarm's "15 Eerder" over a page printing "95"). With production's trees it changes one
+line, Dolittle's "The Rarest Animal of All 89" kept as text (2026-11-19, bench queued); a line is kept as text, flagged, while the trees give it P(body) ≥ 0.25 (a lost
 line costs ten words, a stray folio one or two); and a line the role model wasn't asked
 about, away from the edges and inside a text block the layout model is sure of, stays
 body: the trees dropped such full-width prose (Crime pp. 36, 42 and 98, a whole line

@@ -258,6 +258,24 @@ def printed_page_number(text: str, page: PageText, offset: int | None) -> bool:
     return offset is not None and page_number(text) == page.number - offset
 
 
+def carries_folio(page: PageText, i: int, offset: int | None) -> bool:
+    """Line `i` holds words and, at either end, the page's printed number: a running head
+    ("The Great Journey 39"). A number one digit off counts only where no other line of
+    the page prints the number ("15 Eerder" over a page printing "95" is a chapter's)."""
+    number = folio(page.number, offset)
+    text = " ".join(page.lines[i].text.split())
+    if number is None or not any(c.isalpha() for c in text):
+        return False
+    if without_folio(text, number) == text:
+        return False
+    words = text.split()
+    if str(number) in (words[0].strip(".,"), words[-1].strip(".,")):
+        return True
+    return not any(
+        j != i and ln.text.strip().strip(".,") == str(number) for j, ln in enumerate(page.lines)
+    )
+
+
 def folio(page_number: int, offset: int | None) -> int | None:
     """The number printed on a page, given the book's `page_offset`."""
     return None if offset is None else page_number - offset
