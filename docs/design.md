@@ -1245,6 +1245,24 @@ trained without the book call them artifacts (0.76–0.93), and with three title
 three letters, the other two ways in can't reach them. A motto is set as small as the text,
 a page number has no letters, a speck fewer than two. Tuning heading errors 29 → 26, no
 word changed on either set (2026-11-06).
+A dropped line under a heading of words, above the running text, of at most four words
+and set in that heading's own type, larger than the text, is the title running on
+(`title_lines`, "title-runs-on"): Vanille breaks "Seksualiteit leren: de context," / "de
+theorie" over two lines of the title's size, and the trees drop the second as a stray
+mark (artifact, 0.05 body); its other titles' second lines are smaller subtitles, so no
+heading's second line confirms it. A motto is set smaller, and under a heading in the
+text's own type (a number set as the text) a dropped line stays dropped. On the 30 bench
+books warm it changes that one line (`experiments/probe_numbers_over_titles.py`,
+2026-11-19).
+A bare number on a page's top line, right above a line taken for a heading, is the
+chapter's number where it isn't the page's printed number (the book's page offset known)
+and the book's such numbers count up, three at least (`chapters.numbers_over_titles`,
+before `off_run`): Vanille sets its chapter numbers in small italics flush left over each
+title ("I", "2", "3", "4", PDF 11, 18, 31, 48; the "I" an old-style 1) and prints its page
+numbers at the foot; the trees call them page numbers, sure (0.0 body), having learned
+that a lone number atop a page nearly always is one. The page's own number there, numbers
+out of order, or a number over running text (the section-number rule's) stay as they
+were. On the 30 bench books warm it changes those four lines alone (2026-11-19).
 A number dropped mid-page that fills a gap in the run is a heading too
 (`chapters.run_gaps`, after the trees): in reading order it reads past the run so far by
 at most three (before the run's first number, within three below it) and short of the

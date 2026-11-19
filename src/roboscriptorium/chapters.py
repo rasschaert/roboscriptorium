@@ -39,6 +39,9 @@ RUN_GAP = 3
 RUN_RULE = "chapter-run"
 OFF_RUN_RULE = "off-run"
 FOLIO_RULE = "folio"
+TITLED_RULE = "number-over-title"
+# At least this many bare numbers over titles, counting up, make the book's habit.
+MIN_TITLED = 3
 # The share of a run's numbered headings that must stand centred for an off-centre one
 # off the run to be taken for a speck.
 CENTRED_SHARE = 0.8
@@ -170,6 +173,42 @@ def run_gaps(
     return out
 
 
+def numbers_over_titles(
+    pages: list[PageText], roles: dict[SourceRef, LineRole]
+) -> dict[SourceRef, LineRole]:
+    """`roles` with a bare number on a page's top line made a chapter heading where it
+    stands right above a line taken for a heading, isn't the page's printed number, and
+    the book's such numbers count up: Vanille's italic "2", "3", "4" over its titles,
+    which the trees take for page numbers. Needs the book's page offset and `MIN_TITLED`
+    of them in order. Returns a new dict."""
+    offset = P.page_offset(pages)
+    if offset is None:
+        return roles
+    found = []
+    for p in pages:
+        if len(p.lines) < 2:
+            continue
+        role, below = roles.get(SourceRef(p.number, 0)), roles.get(SourceRef(p.number, 1))
+        text = p.lines[0].text.strip()
+        if (
+            (v := value(text)) is not None
+            and role is not None
+            and not is_body(role)
+            and role.role != "chapter_heading"
+            and below is not None
+            and below.role == "chapter_heading"
+            and not P.reads_as_folio(text, P.folio(p.number, offset))
+        ):
+            found.append((SourceRef(p.number, 0), v))
+    counts_up = all(a[1] < b[1] for a, b in zip(found, found[1:], strict=False))
+    if len(found) < MIN_TITLED or not counts_up:
+        return roles
+    out = dict(roles)
+    for ref, _ in found:
+        out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, TITLED_RULE)
+    return out
+
+
 def off_run(pages: list[PageText], roles: dict[SourceRef, LineRole]) -> dict[SourceRef, LineRole]:
     """`roles` with a heading dropped that reads as a number off the book's run (not between
     its neighbours' numbers) and stands unlike the run's headings, off the middle where at
@@ -243,8 +282,11 @@ def title_lines(
     roles: dict[SourceRef, LineRole],
     styles: dict[SourceRef, Style],
 ) -> dict[SourceRef, LineRole]:
-    """`roles` with a dropped line under a heading made a heading, where the book sets a
-    heading's second line in the same type elsewhere: "Meervoudig stemrecht" under "BOEK
+    """`roles` with a dropped line under a heading made a heading, where it is set in that
+    heading's own type, larger than the text, under a heading of words and of at most
+    `LABEL_WORDS` words (Vanille's "de theorie" under "Seksualiteit leren: de context,"),
+    or where the book sets a heading's second line in the same type
+    elsewhere: "Meervoudig stemrecht" under "BOEK
     TWEE" as "De cijnskiezers" under "BOEK EEN", Dolittle's "A MESSAGE FROM AFRICA" under
     "THE FOURTH CHAPTER" as "PUDDLEBY" under the first. Or where such dropped lines, of at
     most `LABEL_WORDS` words, recur in one type under `RECUR` headings or more: Het
@@ -276,6 +318,7 @@ def title_lines(
         and r in styles
     ]
     dropped: list[tuple[SourceRef, Style, str]] = []  # under a heading, above the text
+    runs_on: set[SourceRef] = set()  # set as the larger heading right above it
     for p in pages:
         above = False  # a heading above, and no running text yet
         for i, line in enumerate(p.lines):
@@ -284,6 +327,19 @@ def title_lines(
             if heading(ref):
                 above = True
                 continue
+            over = styles.get(SourceRef(p.number, i - 1))
+            if (
+                i
+                and heading(SourceRef(p.number, i - 1))
+                and sum(c.isalpha() for c in p.lines[i - 1].text) >= SUBTITLE_LETTERS
+                and len(line.text.split()) <= LABEL_WORDS
+                and over is not None
+                and style is not None
+                and over.size is not None
+                and over.size >= SAME_SIZE
+                and alike(style, over)
+            ):
+                runs_on.add(ref)
             if is_body(role):
                 break
             # Dropped as furniture of any kind: the trees call such a line an artifact, a
@@ -303,6 +359,8 @@ def title_lines(
     for ref, style, _ in dropped:
         if any(alike(style, s) for s in seconds):
             out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, "subtitle-alike")
+        elif ref in runs_on:
+            out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, "title-runs-on")
     for ref, _, _ in labels:
         out[ref] = LineRole("chapter_heading", roles[ref].confidence, 0.0, "label-recurs")
     for p in pages:

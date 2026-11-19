@@ -229,6 +229,7 @@ def run(
                 book.stages / "run-gaps.json",
             ),  # fmt: skip
         )
+        model_roles = chapters.numbers_over_titles(body, model_roles)
         model_roles = chapters.off_run(body, model_roles)
         model_roles = chapters.folios(body, model_roles)
         model_roles |= {

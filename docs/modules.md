@@ -527,7 +527,10 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   takes the book's where its number is the one the run lacks; `title_lines`: a dropped line under a heading set
   like another heading's second line, or a short one recurring in one type under three
   headings or more, such as a narrator's name, or a display line right under a heading
-  on a page with no running text, a part page's title; `off_run`: a number heading off the run and off the middle,
+  on a page with no running text, a part page's title, or one of at most four words in its
+  larger heading's own type, the title running on; `numbers_over_titles`: a bare number on
+  a page's top line over a heading, not the page's printed number, made the chapter's where
+  three or more such count up through the book; `off_run`: a number heading off the run and off the middle,
   where the run's are centred, dropped as a speck, as is a short heading that reads as no
   number under half the numbers' height; `folios`: a bare-number heading at a page's edge
   that is the page's printed number made a page number; `run_gaps`: a dropped number mid-page that

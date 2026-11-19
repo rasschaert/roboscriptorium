@@ -510,12 +510,15 @@ def test_under_a_part_heading_a_motto_a_number_a_speck_or_a_page_of_text_stays_d
     }
     out = chapters.title_lines(pages, roles, styles)
     assert all(out[SourceRef(n, 1)].role == "artifact" for n in cases)
-    # A page that goes on into running text is a chapter opening, not a part page.
+    # A page that goes on into running text is a chapter opening, not a part page: there
+    # a line in its heading's own type is the title running on, a smaller one stays.
     text = PageText(14, 300, 500, [*part(14, "Boek 5", "Stof").lines, *_full(14).lines])
     body = {SourceRef(14, i): LineRole("body", 0.9, 0.9) for i in range(2, len(text.lines))}
     roles14 = {SourceRef(14, 0): heading, SourceRef(14, 1): dropped} | body
     styles14 = {SourceRef(14, 0): display, SourceRef(14, 1): display}
-    assert chapters.title_lines([text], roles14, styles14)[SourceRef(14, 1)].role == "artifact"
+    assert chapters.title_lines([text], roles14, styles14)[SourceRef(14, 1)].rule == "title-runs-on"
+    smaller = styles14 | {SourceRef(14, 1): Style(1.2, 1.0, 1.0, False)}
+    assert chapters.title_lines([text], roles14, smaller)[SourceRef(14, 1)].role == "artifact"
 
 
 def _numbers_at(x0: float, texts: dict[int, str], extra: dict[int, tuple[str, float]]):
@@ -708,3 +711,81 @@ def test_chapters_numbered_in_words_run_too_and_a_misread_one_takes_the_word():
     dutch = ["twintig", "eenentwintig", "tweeëntwintig", "drieentwintig", "vierentwintig"]
     assert chapters.word_value("drieëntwintig") == 23 == chapters.word_value("drieentwintig")
     assert _read(chapters.numbered(_headings(*dutch))) == dutch
+
+
+def _titled_pages(openings: dict[int, str], folio_atop: int | None = None):
+    """Pages 10–24 printing their numbers (n - 4) at the foot; on each of `openings` a
+    bare number on the top line, the trees' "page number", above a title they call a
+    heading. On `folio_atop` the page's own number stands there instead."""
+    pages, roles = [], {}
+    for n in range(10, 25):
+        body = [
+            Line(f"tekst {k} van de bladzijde", 20, 140 + 14 * k, 320, 150 + 14 * k)
+            for k in range(25)
+        ]
+        foot = Line(str(n - 4), 165, 560, 175, 570)
+        top = openings.get(n, str(n - 4) if n == folio_atop else None)
+        head = [Line(top, 40, 60, 48, 72), Line("Een titel van woorden", 40, 90, 250, 110)]
+        lines = [*head, *body, foot] if top is not None else [*body, foot]
+        pages.append(PageText(n, 340, 580, lines))
+        for i in range(len(lines)):
+            role = "body"
+            if top is not None and i == 0 or i == len(lines) - 1:
+                role = "page_number"
+            elif top is not None and i == 1:
+                role = "chapter_heading"
+            p_body = 0.9 if role == "body" else 0.0
+            roles[SourceRef(n, i)] = LineRole(role, 0.9, p_body, "trees")
+    return pages, roles
+
+
+def test_numbers_counting_up_over_titles_are_the_chapters_not_page_numbers():
+    # Vanille's italic "2", "3", "4" over its titles, PDF 18, 31, 48: the trees' page numbers.
+    pages, roles = _titled_pages({11: "2", 14: "3", 19: "4"})
+    out = chapters.numbers_over_titles(pages, roles)
+    for n in (11, 14, 19):
+        assert out[SourceRef(n, 0)].role == "chapter_heading"
+        assert out[SourceRef(n, 0)].rule == chapters.TITLED_RULE
+        assert out[SourceRef(n, 1)] == roles[SourceRef(n, 1)]
+    assert all(out[r] == roles[r] for r in roles if r.page not in (11, 14, 19) or r.line)
+
+
+def test_a_folio_over_a_title_numbers_out_of_order_or_too_few_stay_page_numbers():
+    # The page's own number atop its opening (PDF 16 prints 12) stays its page number,
+    # and leaves two numbers over titles: too few for the book's habit.
+    pages, roles = _titled_pages({11: "2", 19: "4"}, folio_atop=16)
+    assert chapters.numbers_over_titles(pages, roles) == roles
+    # Numbers that don't count up through the book are no chapters' run.
+    pages, roles = _titled_pages({11: "4", 14: "2", 19: "3"})
+    assert chapters.numbers_over_titles(pages, roles) == roles
+    # Over running text, not a title, a number is another rule's to settle.
+    pages, roles = _titled_pages({11: "2", 14: "3", 19: "4"})
+    roles = {r: LineRole("body", 0.9, 0.9, "trees") if r.line == 1 else v for r, v in roles.items()}
+    assert chapters.numbers_over_titles(pages, roles) == roles
+
+
+def test_a_dropped_line_in_its_larger_headings_own_type_runs_the_title_on():
+    from roboscriptorium.typestyle import Style
+
+    # Vanille PDF 31: "Seksualiteit leren: de context," / "de theorie", both in the title's
+    # type; the trees drop the second as a stray mark.
+    title = [
+        Line("Seksualiteit leren: de context,", 40, 30, 260, 50),
+        Line("de theorie", 40, 55, 130, 75),
+    ]
+    page = PageText(31, 300, 500, [*title, *_full(31).lines[3:]])
+    heading, dropped = LineRole("chapter_heading", 0.9, 0.0), LineRole("artifact", 0.5, 0.05)
+    roles = {SourceRef(31, 0): heading, SourceRef(31, 1): dropped} | {
+        SourceRef(31, i): LineRole("body", 0.9, 0.9) for i in range(2, len(page.lines))
+    }
+    big = Style(1.6, 1.0, 1.0, False)
+    styles = {SourceRef(31, 0): big, SourceRef(31, 1): big}
+    out = chapters.title_lines([page], roles, styles)
+    assert out[SourceRef(31, 1)].role == "chapter_heading"
+    assert out[SourceRef(31, 1)].rule == "title-runs-on"
+    # Set smaller than its heading (a motto), or under a heading in the text's own type
+    # (a date line under a chapter number set as the text), it stays dropped.
+    motto = styles | {SourceRef(31, 1): Style(1.0, 1.0, 1.0, False)}
+    assert chapters.title_lines([page], roles, motto)[SourceRef(31, 1)].role == "artifact"
+    plain = {r: Style(1.0, 1.0, 1.0, False) for r in styles}
+    assert chapters.title_lines([page], roles, plain)[SourceRef(31, 1)].role == "artifact"

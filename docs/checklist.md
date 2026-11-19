@@ -97,9 +97,12 @@ In this order; `HANDOVER.md` has the paths and the commands.
       errors labelled right, models.md): its layout on every labelled page
       (`work/runs/surya-layout-all.sh`, queued, about six hours), then the trees with and
       without its labels, each book left out (`train_sorter.py`), then a bench
-- [ ] Vanille en andere smaken's chapter numbers beside its titles: with the referee 4
-      of 15 headings are found, each without its number (0 exact); no models to find
-      the cause
+- [ ] Vanille en andere smaken's chapter numbers beside its titles: found (2026-11-19).
+      The trees call the italic numbers over its titles page numbers, sure, and drop
+      "de theorie", a title's second line in the title's type. Built:
+      `chapters.numbers_over_titles` and `title_lines`' "title-runs-on"; warm on the 30
+      bench books they change Vanille's five lines alone, all right. Left: both benches
+      (`work/runs/titled-numbers.sh`, queued; minutes, Vanille's five lines read)
 - [ ] After batch five, the null that waited for it: autotrust-jev 9B as a second text
       judge (branch `text-seat`; not taken 2026-11-09, validation's silent places
       170 → 178). Needs fresh model answers: overnight
