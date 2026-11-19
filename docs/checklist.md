@@ -97,12 +97,9 @@ In this order; `HANDOVER.md` has the paths and the commands.
       errors labelled right, models.md): its layout on every labelled page
       (`work/runs/surya-layout-all.sh`, queued, about six hours), then the trees with and
       without its labels, each book left out (`train_sorter.py`), then a bench
-- [ ] Vanille en andere smaken's chapter numbers beside its titles: found (2026-11-19).
-      The trees call the italic numbers over its titles page numbers, sure, and drop
-      "de theorie", a title's second line in the title's type. Built:
-      `chapters.numbers_over_titles` and `title_lines`' "title-runs-on"; warm on the 30
-      bench books they change Vanille's five lines alone, all right. Left: both benches
-      (`work/runs/titled-numbers.sh`, queued; minutes, Vanille's five lines read)
+- [x] 2026-11-19 Vanille en andere smaken's chapter numbers over its titles set as
+      headings (`chapters.numbers_over_titles`, `title_lines`' "title-runs-on"): tuning
+      no change, validation headings 48 → 45, no word moved (decisions.md)
 - [ ] After batch five, the null that waited for it: autotrust-jev 9B as a second text
       judge (branch `text-seat`; not taken 2026-11-09, validation's silent places
       170 → 178). Needs fresh model answers: overnight
@@ -606,7 +603,9 @@ Daens' title was mended by hand).
       is no glyph", or a heading's marks against the book's other headings
 - [ ] **user**: golden pairs for the gaps (golden-notes.md, "Gaps to hunt for"): first a
       book set flush for tuning and a short-story collection; then section headings
-      without numbers, text wrapped around pictures. From before: De Arbeiderspers,
+      without numbers (Vanille, a validation book, misses 11 of its 15: "Verder lezen",
+      "Lichaam", "Kut", …; and sets chapter 1's subtitle as a heading of its own), text
+      wrapped around pictures. From before: De Arbeiderspers,
       Prometheus/Ooievaar or Vrijdag; a Kosmos book for later, beyond prose
 - [ ] `golden check <pdf> <epub>` writing a draft manifest, once a batch of candidates
       comes

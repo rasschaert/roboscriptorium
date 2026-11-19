@@ -1264,7 +1264,9 @@ title ("I", "2", "3", "4", PDF 11, 18, 31, 48; the "I" an old-style 1) and print
 numbers at the foot; the trees call them page numbers, sure (0.0 body), having learned
 that a lone number atop a page nearly always is one. The page's own number there, numbers
 out of order, or a number over running text (the section-number rule's) stay as they
-were. On the 30 bench books warm it changes those four lines alone (2026-11-19).
+were. On the 30 bench books warm it changes those four lines alone; benched with
+"title-runs-on", tuning moves nothing and validation's heading errors fall 48 → 45, all
+Vanille's (2026-11-19).
 A number dropped mid-page that fills a gap in the run is a heading too
 (`chapters.run_gaps`, after the trees): in reading order it reads past the run so far by
 at most three (before the run's first number, within three below it) and short of the
