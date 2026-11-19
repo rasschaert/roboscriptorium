@@ -81,11 +81,11 @@ In this order; `HANDOVER.md` has the paths and the commands.
 
 - [x] 2026-11-19 Tess-4.5-27B, Arete-27B Q4 and Groot 19B in the reading vote: none earns a
       reader's seat (as a third voter 754–757 of 800 against qwen3.8's 755 alone; models.md)
-- [ ] Accent and speck offers on by default (the user, 2026-11-19: "turn them on"). The
-      2026-11-18 count scored tuning books with an offers' arbiter trained on them
-      (`bench.unseen` didn't swap its copies; mended): both benches again with each book
-      held out (`work/runs/offers-on.sh`, queued behind the Dolittle bench, near warm).
-      If the held-out count drops the catches, say so to the user before keeping them on
+- [x] 2026-11-19 Accent and speck offers on by default (the user), benched again held
+      out: tuning 17 silent errors asked for 40 more questions, validation none for 5
+- [ ] Validation's 39 words fixed and 29 made between `validation-20261119T030945` and
+      the offers run `validation-20261119T051238` (whole words, extra text, dots; all
+      asked; not the offers' causes): find which change since `01aabdf` moved them
 - [ ] Surya OCR 2's layout as line-role tree features (screened 2026-11-17: 48 of 243 tree
       errors labelled right, models.md). Laid out on every labelled page and fitted
       2026-11-19: most-likely-class errors tuning 375 → 353, validation 110 → 107; body

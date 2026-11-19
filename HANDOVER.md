@@ -6,35 +6,35 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
-**State at 04:20 on 2026-11-19** (the user off for the night: "you know what to do").
-On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50%.
+**State at 06:35 on 2026-11-19** (the user packing up; every run stopped, nothing running
+but `robo-battery-guard`).
 
-- **Queue** (one model job at a time, `work/runs/model-screen.lock`; earlier tonight:
-  Surya's layout on every labelled page, the quote fix, the chapter numbers, the reading
-  vote, the running-head rule with the four dots, all done and recorded):
-  ~~`robo-trees-swapped`~~ done 04:17, not taken (decisions.md); `robo-dolittle-dots`
-  (Dolittle's ellipses spaced, `68fbe83`; its Qwen line readings redone, the prompt
-  naming the new style, about 50 minutes), then `robo-offers-on` (the accent and speck
-  offers, on by default since the user's "turn them on" at 05:10, benched again with
-  each tuning book held out from the offers' arbiter, which the 2026-11-18 count wasn't;
-  if the catches drop, tell the user before keeping them on), then `robo-arete-groot`
-  (Groot and Arete as two more text judges, offers off, against
-  `work/probes/offers-off-baseline/`; about 35,600 questions each, 12–14 hours; resumes
-  per answer and per book; `experiments/stop-run.sh arete-groot` stops it). A
-  background wait on the next event.
-- **Taken tonight:** a full stop and an ellipsis as the print's four spaced dots, and a
-  running head holding its page's number taken on one other page (tuning 26 words
-  fixed, 10 silent; validation's one italic dot-slant is a scoring artefact). Vanille's chapter numbers over its titles as headings (validation
-  heading errors 48 → 45, nothing else moved). A single-quoted book's opening ‘ read as a straight " mended (tuning
-  3 quote marks fixed, validation 2, none made). Dutch line-end hyphens by the learned decision for plain words at
-  0.9: tuning BETTER (Dutch 5 fixed, none made), validation NO CHANGE (Dutch 0 fixed,
-  2 made: "mede-ouder", "plum-pudding"); kept. The hyphen cache now keeps each judge's
-  answers whatever panel asks (a branch build would have wiped them).
-- **Production baselines** (paths in `work/probes/production-baseline/`):
-  `work/bench/tuning-20261119T030849-01aabdf-dirty.json`,
-  `validation-20261119T030945-01aabdf-dirty.json` (the four dots and the running-head rule).
-- **Reading vote:** Tess, Arete and Groot none earns a reader's seat (models.md).
-- **Waiting on the user:** nothing; the accent and speck offers are on (the user, 05:10).
+- **Resume first:** `robo-arete-groot`, Groot 19B and Arete-27B Q4 as two more text
+  judges (offers off, against `work/probes/offers-off-baseline/`). Stopped at 06:30, 17
+  minutes in: Groot had answered 479 of Goede dochter's 498 pages; every answer is in the
+  book's `decisions.jsonl`, no book's trust data written yet. About 35,600 questions each,
+  12–14 hours; it resumes from the saved answers:
+  `experiments/detached.sh arete-groot work/runs/arete-groot.sh`
+  (its wait on `offers-on.out` is already satisfied), with a watcher on
+  `work/runs/arete-groot.out` and `work/probes/ocr-trust-ag/runs/progress.txt`.
+- **Taken tonight** (decisions.md has each with its fixes and errors): the quote fix (a
+  single-quoted book's ‘ read as "); Vanille's chapter numbers over titles; a running head
+  holding its page's number on one other page; a full stop and an ellipsis as the print's
+  four spaced dots; Dolittle's ellipsis style from its stops' spaced dots (14 words
+  fixed); Dutch line-end hyphens by the learned decision for plain words; the hyphen
+  cache keeping each judge's answers; **accent and speck offers on by default** (the
+  user's call; benched again with their arbiter held out per book, which the first count
+  wasn't: tuning 17 silent errors asked for 40 more questions, validation none for 5).
+- **Not taken:** the grown-slice line-role trees as the first set (unnumbered section
+  titles kept as text); Surya's layout columns parked with them; a page-number column
+  for the trees (null). Tess, Arete and Groot as readers: no seat.
+- **Open, model-free, first:** validation's 39 words fixed and 29 made between
+  `validation-20261119T030945` and `validation-20261119T051238` (all asked, not the
+  offers' causes): find which change moved them (checklist).
+- **Production baselines** (`work/probes/production-baseline/`): tuning
+  `work/bench/tuning-20261119T045526-950d1bf-dirty.json`, validation
+  `work/bench/validation-20261119T051238-9d6c170-dirty.json` (offers on).
+- **Waiting on the user:** nothing.
 
 **State at 13:30 on 2026-11-18** (after the user's computer crashed at about 02:11, 4 books
 into `robo-hyphen-panel2`'s tuning bench). The whole queue below was restarted at 13:15
