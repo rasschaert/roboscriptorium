@@ -699,7 +699,9 @@ dochter's `minderjarige –’`). A mark right after a digit (a foot, an inch) o
 both sides says neither way and stays. The layer's opening `‘` before a word Dutch clips
 to an apostrophe (`’s`, `’t`, `’n`, Flemish `’m`, `’k`, `’ns`; lower case, no mark after
 it, so a quoted letter `‘m’` stays) is the print's apostrophe too: the quote check takes
-it for none, and curling sets it `’`. Before this, De kus in de nacht asked about 240 of
+it for none, and curling sets it `’`. In a single-quoted book the layer's straight `"` opening a speech is the
+print's `‘`, mended before curling as a misread `“` is (De kus in de nacht's 16
+paragraphs; on the benches 5 quote marks fixed, none made, decisions.md 2026-11-19). Before this, De kus in de nacht asked about 240 of
 its 373 unpaired quote marks for nothing ("ik ken ‘m", "kom ‘ns": 252 marks; the golden
 books hold 15, decisions.md 2026-11-16). Every golden book had some: Metro 124 in
 its slice, Dolittle's layer straight throughout (541 words); the bench saw none of it

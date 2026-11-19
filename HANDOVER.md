@@ -6,23 +6,29 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
-**State at 01:10 on 2026-11-19** (the user off for the night: "you know what to do").
+**State at 03:10 on 2026-11-19** (the user off for the night: "you know what to do").
 On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50%.
 
 - **Queue** (one model job at a time, `work/runs/model-screen.lock`):
   ~~`robo-surya-layout-all`~~ done 02:53 (7,006 pages, 126 minutes, none failed; restarted
   00:47 after a cut-off answer broke the JSON, the probe now keeps a cut-off answer's whole
   blocks), then in any order
-  `robo-quote-straight` (rebased on main, against the new baselines) and
-  `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote) and
-  `robo-titled-numbers` (Vanille's chapter numbers over titles, warm but five lines), then
-  `robo-surya-roles` (no models). A background wait on the next event of any of them.
-- **Taken tonight:** Dutch line-end hyphens by the learned decision for plain words at
+  ~~`robo-quote-straight`~~ done 03:05, taken and merged (decisions.md); then
+  `robo-titled-numbers` (took the lock 02:59, at 358abc8: Vanille's chapter numbers over
+  titles, warm but five lines; main gained the quote fix while its tuning ran, so read
+  its validation against the quote run's, `validation-20261119T015949-358abc8-dirty.json`)
+  and `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote); `robo-surya-roles`
+  (no models) running since 02:57. A background wait on the next event of any of them.
+- **Taken tonight:** a single-quoted book's opening ‘ read as a straight " mended (tuning
+  3 quote marks fixed, validation 2, none made). Dutch line-end hyphens by the learned decision for plain words at
   0.9: tuning BETTER (Dutch 5 fixed, none made), validation NO CHANGE (Dutch 0 fixed,
   2 made: "mede-ouder", "plum-pudding"); kept. The hyphen cache now keeps each judge's
   answers whatever panel asks (a branch build would have wiped them).
 - **Production baselines:** `work/bench/tuning-20261118T234701-d19cd9e-dirty.json` and
   `validation-20261118T234752-d19cd9e-dirty.json` (paths in `work/probes/production-baseline/`).
+  Once `robo-titled-numbers` is read, the quote run's become production's
+  (`tuning-20261119T015849-86a8d2a-dirty.json`, `validation-20261119T015949-358abc8-dirty.json`)
+  or the chapter-number run's if it is taken.
 - **Waiting on the user:** accent and speck offers on by default (checklist).
 
 **State at 13:30 on 2026-11-18** (after the user's computer crashed at about 02:11, 4 books
