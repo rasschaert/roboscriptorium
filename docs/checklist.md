@@ -95,6 +95,11 @@ In this order; `HANDOVER.md` has the paths and the commands.
       titles; back with a tuning pair that has such headings
 - [x] 2026-11-19 The grown-slice trees as the first set: not taken (a silent lost line on
       tuning, unnumbered section titles kept as text on validation; decisions.md)
+- [ ] Caches that say what made them (branch `cache-code`, worktree `../robo-cache-code`;
+      decisions.md 2026-11-19): its warm bench of both sets, models unreachable, queued
+      behind the judge run (`work/runs/cache-code-bench.sh`, screen
+      `robo-cache-code-bench`); merge if no word moves, else read each moved word as a
+      stale cache found
 - [ ] Groot 19B and Arete-27B Q4 as two more text judges: `work/runs/arete-groot.sh`,
       queued behind the swap (trust data with both, about 35,600 questions each, 12–14
       hours one at a time; the arbiter; both benches; then a control rebuilt today without

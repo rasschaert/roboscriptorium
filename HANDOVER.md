@@ -16,6 +16,10 @@ still holds where this doesn't speak.
   Its validation bench compares against `030945`, whose Vanille had a stale ellipsis
   style: read it against `validation-20261119T191549-e435710` (the fresh offers-off
   baseline) with `bench-diff`.
+- **Queued behind it:** `robo-cache-code-bench`, both sets warm with the branch
+  `cache-code` (a cache measured on the scan is keyed by its code; a crash-emptied cache
+  is remade), models unreachable; merge it into main if no word moves. Watcher on
+  `work/runs/cache-code-bench.out`.
 - **Settled tonight:** validation's 39 words fixed and 29 made were Vanille's ellipsis
   style served from the cache of a method reverted on 2026-10-24 (decisions.md); the
   offers change no validation word against the fresh baseline, 6 more questions. New
