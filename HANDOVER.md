@@ -11,7 +11,9 @@ still holds where this doesn't speak.
 
 - **Running:** `robo-arete-groot`, Groot 19B and Arete-27B Q4 as two more text judges
   (offers off), resumed at 20:05 from its saved answers; Groot finished Goede dochter,
-  Arete on it now. About 12–14 hours; watcher on `work/runs/arete-groot.out`, the
+  then Arete (done 21:50). Re-estimated from Goede dochter (4,776 of the run's 43,215
+  questions a judge; Arete 1.6 h, Groot 0.3 h for it): about 15 more hours of judging,
+  then training and both benches, ending about 15:00 on 2026-11-20; watcher on `work/runs/arete-groot.out`, the
   rebuild's `work/probes/ocr-trust-ag/runs/progress.txt` and the books' saved answers.
   Its validation bench compares against `030945`, whose Vanille had a stale ellipsis
   style: read it against `validation-20261119T191549-e435710` (the fresh offers-off
