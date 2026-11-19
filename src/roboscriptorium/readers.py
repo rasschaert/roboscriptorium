@@ -18,7 +18,7 @@ from PIL import Image
 from roboscriptorium import ocr
 from roboscriptorium.clients import openrouter
 from roboscriptorium.clients.retry import patiently
-from roboscriptorium.files import read_cache, write_atomic, write_cache
+from roboscriptorium.files import load_json, read_cache, write_atomic, write_cache
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PDF_LOCK, PageText, line_words, page_words, spells
 from roboscriptorium.progress import Progress
@@ -72,9 +72,8 @@ def _readings(cache: Path, model: str, prompt: str) -> dict | None:
     """The cached readings by `model` with `prompt`, or None. The cache holds one model
     and prompt; readings by another are moved to their shelf rather than lost, and come
     back from it when asked for again (a slice and its whole book may differ)."""
-    if not cache.exists():
-        return None
-    raw = _current(json.loads(cache.read_text()))
+    loaded = load_json(cache)
+    raw = _current(loaded) if isinstance(loaded, dict) else None
     if raw is None:
         return None
     if raw.get("model") == model and raw.get("prompt", "") == prompt:
@@ -82,9 +81,8 @@ def _readings(cache: Path, model: str, prompt: str) -> dict | None:
     shelved = _shelf(cache, raw.get("model", ""), raw.get("prompt", ""))
     write_atomic(shelved, json.dumps(raw, ensure_ascii=False))
     shelf = _shelf(cache, model, prompt)
-    if shelf.exists():
-        return _current(json.loads(shelf.read_text()))
-    return None
+    shelved = load_json(shelf)
+    return _current(shelved) if isinstance(shelved, dict) else None
 
 
 def _current(raw: dict) -> dict | None:

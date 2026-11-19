@@ -31,7 +31,7 @@ from scipy.signal import fftconvolve
 
 from roboscriptorium import pdf as pdflayer
 from roboscriptorium.clients.decide import Answer
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import load_json, write_atomic
 from roboscriptorium.pdf import PageText
 
 # The judge's name among the second vision judges (`ROBO_ALARM_MODEL=…,render`).
@@ -370,10 +370,13 @@ def match(
     is kept whatever pages it was made from: a book is set in one typeface, and a slice
     of it must be judged as the whole is."""
     key = {"version": VERSION, "typeface": typeface}
-    if cache is not None and cache.exists():
-        held = json.loads(cache.read_text())
-        if held.get("key") == key and (library / held["match"]["file"]).exists():
-            return Match(**held["match"])
+    held = load_json(cache) if cache is not None else None
+    if (
+        isinstance(held, dict)
+        and held.get("key") == key
+        and (library / held["match"]["file"]).exists()
+    ):
+        return Match(**held["match"])
     if typeface is not None and not (library / typeface).is_file():
         raise ValueError(f"book.toml's typeface {typeface!r} is no file in {library}")
     fonts = (
@@ -431,7 +434,8 @@ def match(
 def near(cache: Path) -> list[dict]:
     """The faces a cached match chose among, best word shapes first: each its file, name,
     word fit and the judge's fit on plain words."""
-    return json.loads(cache.read_text()).get("near", []) if cache.exists() else []
+    held = load_json(cache)
+    return held.get("near", []) if isinstance(held, dict) else []
 
 
 def place_ink(

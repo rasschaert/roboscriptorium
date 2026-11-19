@@ -27,7 +27,7 @@ import pymupdf
 
 from roboscriptorium import faint
 from roboscriptorium.clients import decide
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import load_json, write_atomic
 from roboscriptorium.page import folio, page_offset
 from roboscriptorium.pdf import PDF_LOCK, PageText, render_png
 
@@ -278,7 +278,7 @@ def kinds(pdf: Path, pages: list[PageText], client, cache: Path) -> dict[int, st
     text carried on over pages under its running heads (`run_on`). The model's answers are kept in `cache` by page, so a rerun asks only
     what is new."""
     total = len(pages)
-    kept = json.loads(cache.read_text()) if cache.exists() else {}
+    kept = load_json(cache) or {}
     asked_of = f"{TAG}:{getattr(client, 'model', '')}"
     answers = kept.get("answers", {}) if kept.get("question") == asked_of else {}
     by_number = {p.number: p for p in pages}
@@ -406,7 +406,7 @@ def set_apart(
     blank). `total` is the PDF's
     page count. The model's answers are kept in `cache` by page, so a rerun asks only
     what is new."""
-    kept = json.loads(cache.read_text()) if cache.exists() else {}
+    kept = load_json(cache) or {}
     asked_of = f"{TAG}:{getattr(client, 'model', '')}"
     answers = kept.get("answers", {}) if kept.get("question") == asked_of else {}
     out = {}

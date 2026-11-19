@@ -15,7 +15,7 @@ from statistics import median
 import numpy as np
 import pymupdf
 
-from roboscriptorium.files import read_cache, write_cache
+from roboscriptorium.files import code_stamp, read_cache, write_cache
 from roboscriptorium.ink import threshold as ink_threshold
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.page import geometry
@@ -49,7 +49,7 @@ def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, St
     Raw measurements are cached per page with the page's lines, so a page whose
     lines change is measured again.
     """
-    raw = read_cache(cache, VERSION)
+    raw = read_cache(cache, VERSION, code=code_stamp(__name__))
     done: dict[str, dict] = raw["pages"] if raw else {}
     todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != lines_digest(p)]
     if todo:
@@ -59,7 +59,7 @@ def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[SourceRef, St
                     "lines": lines_digest(page),
                     "measured": _page(doc[page.number - 1], page),
                 }
-        write_cache(cache, VERSION, {"pages": done})
+        write_cache(cache, VERSION, {"pages": done}, code=code_stamp(__name__))
 
     measured = {
         SourceRef(p.number, int(k)): m

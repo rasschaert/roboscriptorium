@@ -30,7 +30,13 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   (three tries), so one slow answer from a queued Ollama doesn't end a long run.
 - `files.py`: `write_atomic`, how every per-book cache is written (whole or not at all);
   `read_cache` and `write_cache`, a versioned JSON cache with the identity it was made
-  with (model, prompt, language); the append-only logs; `check_source`, which refuses a source PDF other than the one a
+  with (model, prompt, language, the code that measured it); `load_json`, a cache file a
+  crash left empty or cut short read as missing; `code_stamp`, a hash of a module's source
+  and the project functions and modules it imports by name, one level deep, which keys the
+  measures made on the scan without a model (dash, ellipsis, descent, type, contrast,
+  italics, quote and speck marks) so a changed or reverted method never serves another's
+  answer; not the text layer (its remake reruns tesseract on an image-only scan, and every
+  later stage keys on its lines) nor model answers (hours to remake); the append-only logs; `check_source`, which refuses a source PDF other than the one a
   book's `stages/` were built from (`stages/source.json`).
 - `progress.py`: how far a slow stage is. `Progress(what, total, unit)` counts what the
   stage has done and prints the count and the time left at its pace so far to stderr,

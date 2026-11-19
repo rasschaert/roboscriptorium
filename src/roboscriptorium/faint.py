@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 import pymupdf
 
-from roboscriptorium.files import read_cache, write_cache
+from roboscriptorium.files import code_stamp, read_cache, write_cache
 from roboscriptorium.pdf import PDF_LOCK, PageText
 
 VERSION = 1
@@ -60,7 +60,7 @@ def inked(pdf: Path, page: PageText) -> set[int]:
 
 def pages(pdf: Path, body: list[PageText], cache: Path) -> set[int]:
     """The numbers of the pages in `body` scanned too faint to read."""
-    raw = read_cache(cache, VERSION)
+    raw = read_cache(cache, VERSION, code=code_stamp(__name__))
     done: dict[str, float] = raw["pages"] if raw else {}
     worded = [p for p in body if sum(len(ln.text.split()) for ln in p.lines) >= MIN_WORDS]
     todo = [p for p in worded if str(p.number) not in done]
@@ -68,5 +68,5 @@ def pages(pdf: Path, body: list[PageText], cache: Path) -> set[int]:
         with pymupdf.open(pdf) as doc:
             for p in todo:
                 done[str(p.number)] = contrast(doc[p.number - 1], p.lines)
-        write_cache(cache, VERSION, {"pages": done})
+        write_cache(cache, VERSION, {"pages": done}, code=code_stamp(__name__))
     return {p.number for p in worded if done[str(p.number)] < FAINT_BELOW}

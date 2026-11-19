@@ -28,7 +28,7 @@ import pymupdf
 from rapidfuzz.distance import Levenshtein
 
 from roboscriptorium import ink
-from roboscriptorium.files import read_cache, write_atomic, write_cache
+from roboscriptorium.files import code_stamp, read_cache, write_atomic, write_cache
 from roboscriptorium.ir import Block, Paragraph, SourceRef
 from roboscriptorium.pdf import PageText, line_words, lines_digest, page_words, spells
 
@@ -173,7 +173,7 @@ def settle(
 def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[str, dict]:
     """Per page number (as a string), its words' slants by line (`_page`), from `cache`
     where the page's lines are unchanged."""
-    raw = read_cache(cache, VERSION)
+    raw = read_cache(cache, VERSION, code=code_stamp(__name__))
     done: dict[str, dict] = raw["pages"] if raw else {}
     todo = [p for p in pages if done.get(str(p.number), {}).get("lines") != lines_digest(p)]
     if todo:
@@ -183,7 +183,7 @@ def measure(pdf: Path, pages: list[PageText], cache: Path) -> dict[str, dict]:
                     "lines": lines_digest(page),
                     "slants": _page(doc[page.number - 1], page),
                 }
-        write_cache(cache, VERSION, {"pages": done})
+        write_cache(cache, VERSION, {"pages": done}, code=code_stamp(__name__))
     return done
 
 
