@@ -368,9 +368,8 @@ then the kinds one at a time below.
       version to build
 - [x] 2026-11-19 **A stop followed by an ellipsis** set as the print's four spaced dots in a
       book that spaces its dots: tuning 20 words fixed, 10 silent (decisions.md)
-- [ ] Dolittle's ellipsis style unknown (too few ellipses in the layer, none measured on
-      the scan), so its ellipses get no styling at all ("in. ..." five times, the print
-      "in. . . ."): measure ellipses after a stop too, or take a stop's four dots as a vote
+- [x] 2026-11-19 Dolittle's ellipsis style found from its stops' spaced dots: 14 words
+      fixed, 10 silent (decisions.md)
 - [ ] The italic count weighs the slant of a token with no letters (You're Never Weird's
       ". . . ." after an italic word, 2026-11-19): fold marks out of the italic score, as
       their slant can't be seen; it moves the baselines, so with the next batch

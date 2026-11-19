@@ -697,9 +697,10 @@ dots: Dolittle, Artemis and Metro print "in. . . .", where the layer reads "in. 
 "in. .. ." or "in. …" (`typography._spaced_stops`, 2026-11-19); the scorer folds the
 print's form to the references' "in....". A tightly set book keeps the layer's dots, no
 scan showing them otherwise. Tuning: 20 wrong words fixed, 10 of them silent, none made
-but on a Metro line already wrong. A book whose style is unknown (Dolittle: too few
-ellipses in its layer, none measured on the scan) gets no styling at all, so its five
-such places stay.
+but on a Metro line already wrong. A word's stop and dots read spaced in the layer count
+as votes for spaced dots: Dolittle sets nearly every ellipsis after a stop, so without
+them its style was unknown and its ellipses went unstyled (14 more words fixed, 10
+silent, 2026-11-19).
 
 Straight quotes and apostrophes are the layer's, never the print's: a printed book sets
 curly ones. `quotes.curl` curls what is left of them after the answers, by place: opening

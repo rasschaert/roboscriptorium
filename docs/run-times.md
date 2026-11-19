@@ -1267,3 +1267,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-19 | bench validation, running heads holding their page number | 0 | 1 | 0 |
 | 2026-11-19 | bench tuning, the grown-slice trees first | 0 | 5 | 0 |
 | 2026-11-19 | bench validation, the grown-slice trees first | 0 | 1 | 0 |
+| 2026-11-19 | bench tuning, Dolittle's ellipses spaced | 0 | 89 | 0 |
