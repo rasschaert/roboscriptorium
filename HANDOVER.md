@@ -6,7 +6,7 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
-**State at 03:10 on 2026-11-19** (the user off for the night: "you know what to do").
+**State at 04:10 on 2026-11-19** (the user off for the night: "you know what to do").
 On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50%.
 
 - **Queue** (one model job at a time, `work/runs/model-screen.lock`):
@@ -16,8 +16,10 @@ On the 140 W charger; `robo-battery-guard` stops runs under 30%, continues at 50
   ~~`robo-quote-straight`~~ done 03:05, taken and merged; ~~`robo-titled-numbers`~~
   done 03:06, taken (decisions.md); ~~`robo-surya-roles`~~ done 03:20 (most-likely-class
   errors tuning 375 → 353, validation 110 → 107; the keep count next, no models);
-  `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote) took the lock 03:06.
-  A background wait on its next event.
+  `robo-reader-votes` (Tess, Arete Q4, Groot in the reading vote) took the lock 03:06,
+  about three hours; then `robo-folio-heads` (the running-head rule of `5699d8b`, warm,
+  minutes) and after it `robo-trees-swapped` (the grown-slice trees first, production's
+  second, warm, minutes). A background wait on the next event of any of them.
 - **Taken tonight:** Vanille's chapter numbers over its titles as headings (validation
   heading errors 48 → 45, nothing else moved). A single-quoted book's opening ‘ read as a straight " mended (tuning
   3 quote marks fixed, validation 2, none made). Dutch line-end hyphens by the learned decision for plain words at
