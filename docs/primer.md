@@ -132,14 +132,22 @@ question with a probability for each option. That is a deliberate rule in this p
 if the answer comes from a list known in advance, ask a model that picks from the list;
 only ask a model to write text when new text is needed.
 
-A judge saying "93% sure" doesn't mean it is right 93% of the time. So nobody takes the
-judges at their word. The **arbiter** is a small model *trained* on thousands of
-suspects whose right answer is known: those in the golden books, and the places you
-answered yourself in past reviews. It has learned how often each reader and each judge
-was right, for each kind of difference (a quote mark, an accent, a missing space), and
-it outputs one honest probability per version.
+The judges look at the scan. The **arbiter** never does: it looks at the judges. Think
+of the judges as expert witnesses, each expert in one kind of evidence and none fully
+reliable, and of the arbiter as the one who rules. A witness's confidence is no guide:
+a judge saying "93% sure" isn't right 93% of the time. So for each suspect the arbiter
+takes in everything already said about it: what each judge picked and how sure it said
+it was, which readers read each version, whether the word list knows it, what kind of
+difference it is (a quote mark, an accent, a missing space), and how often that exact
+swap was the print in the books it learned from.
 
-Then:
+The arbiter is a small model *trained* on thousands of suspects whose right answer is
+known: those in the golden books, and the places you answered yourself in past
+reviews. So it has learned whose word counts for what: which judge to believe on
+accents and which on punctuation, and when two judges that agree are wrong together.
+Out of that comes one honest probability per version.
+
+Then the arbiter rules, and nothing else settles a suspect:
 
 - if the arbiter is at least 93% sure of a version, it applies it (or keeps the text
   layer's, when that's the winner);

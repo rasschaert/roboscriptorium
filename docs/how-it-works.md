@@ -25,8 +25,9 @@ mistakes, because every one makes mistakes of its own. So more OCR models, the
 a reader disagrees with the text layer, the place becomes a *suspect*, and each way
 of reading it is a *version*.
 
-Other models, the *judges*, look at each suspect and each pick a version. Then the
-*arbiter* decides how far to believe each reader and judge. The arbiter is a
+Other models, the *judges*, look at each suspect on the scan and each pick a version.
+Then the *arbiter*, which never looks at the scan, only at what the readers and judges
+said, decides how far to believe each of them. The arbiter is a
 *trained* model, which means it was not written as rules: it was shown thousands
 of suspects from books whose printed text is known, each with the right version
 marked, and fitted so that it reproduces those answers. It gets better as that
