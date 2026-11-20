@@ -385,8 +385,9 @@ then the kinds one at a time below.
 - [x] 2026-11-19 Dolittle's ellipsis style found from its stops' spaced dots: 14 words
       fixed, 10 silent (decisions.md)
 - [ ] The italic count weighs the slant of a token with no letters (You're Never Weird's
-      ". . . ." after an italic word, 2026-11-19): fold marks out of the italic score, as
-      their slant can't be seen; it moves the baselines, so with the next batch
+      ". . . ." after an italic word, 2026-11-19). Built on branch `italic-marks` (worktree
+      `../robo-italic-marks`): a mark with no letter or digit counts on neither side. It
+      moves the baselines, so it merges with the next batch, after the judge screening
 - [ ] **Extra readers as offers in the build** (`ROBO_EXTRA_READERS`, off; design.md):
       first scores of the short test 2026-11-15: qwen3.8 reads 10 of 97 silent errors,
       olmOCR-2 seven more, PaddleOCR-VL 1.6 ten more. Its short test in the build is
