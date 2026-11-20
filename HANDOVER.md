@@ -6,6 +6,16 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
+**State at 16:30 on 2026-11-20.** The runs below were paused for the user's call from
+14:00 to about 15:55 (by hand: SIGSTOP, then SIGCONT through `priority._signal`), and run
+again; their progress lines' time-left estimates count the pause. The judges' tuning
+bench is in its last books, cold on some (Groot and Arete asked afresh). Branches waiting:
+`judge-answered` (a judge asks only the answered lines of a book labelled by review
+answers; merge after the judge screening), `cache-code` (its bench is queued below),
+`italic-marks` (a mark with no letters counts in no italic score; it moves the
+baselines, so merge it with the next batch). Tests no longer pause live runs
+(`tests/conftest.py`). Waiting on the user: nothing.
+
 **State at 20:35 on 2026-11-19** (a new session, "continue"). Below it, the 06:35 state
 still holds where this doesn't speak.
 
