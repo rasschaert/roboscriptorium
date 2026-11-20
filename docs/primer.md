@@ -70,12 +70,11 @@ combine several that fail in different ways, and learn how far to believe each.*
 
 **Judges** look at each suspect and each picks a version:
 
-- *clef* looks at the crop of the page and picks the version that matches what's
-  printed. It is usually right.
-- *autotrust-jev* and *d3*, two more models of other families, are asked the same
-  question on the same crop. None of the three is much better than the others alone;
-  together they matter because they go wrong in different places (since 2026-11-09:
-  about a seventh fewer errors left that nobody asks you about).
+- *clef*, *autotrust-jev* and *d3*, three models of different families, look at the
+  crop of the page and each picks the version that matches what's printed. None of them
+  is much better than the others alone; together they matter because they go wrong in
+  different places (since 2026-11-09: about a seventh fewer errors left that nobody asks
+  you about).
 - *render and compare* knows no language at all. It finds the book's typeface in a
   library of fonts, draws each version in it at the book's size, lays the drawings over
   the scan's ink and picks the one that fits best. The other judges lean on what a
@@ -90,11 +89,11 @@ combine several that fail in different ways, and learn how far to believe each.*
   2026-11-15: about 1% fewer questions for you, as many errors left silent).
 - *the word list* checks which versions are real words.
 
-A fourth kind of judge is being tried: a **context judge** (qwen, thinking before it
-answers) reads the sentences around a question the arbiter would ask, and settles it
-when it agrees with the arbiter's own likeliest version. In a test it settled two
-thirds of such questions, about one in ten of them wrongly; whether that beats asking
-you is what its bench will say.
+One more kind was tried and is off: a **context judge** (qwen, thinking before it
+answers) read the sentences around a question the arbiter would ask, and settled it
+when it agreed with the arbiter's own likeliest version. It saved about one question
+in eight, but let a few more errors through unasked, and you chose fewer silent errors
+over fewer questions (2026-10-19).
 
 The judges are **decision models**: they don't write text, they answer a multiple-choice
 question with a probability for each option. That is a deliberate rule in this project:
