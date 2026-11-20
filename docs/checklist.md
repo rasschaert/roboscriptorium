@@ -104,7 +104,9 @@ In this order; `HANDOVER.md` has the paths and the commands.
       behind the judge run (`work/runs/cache-code-bench.sh`, screen
       `robo-cache-code-bench`); merge if no word moves, else read each moved word as a
       stale cache found
-- [ ] Groot 19B and Arete-27B Q4 as two more text judges: `work/runs/arete-groot.sh`,
+- [ ] Groot 19B and Arete-27B Q4 as two more text judges (reordered 2026-11-20: the control's
+      tuning bench before their validation, `judges-reordered.sh`; validation only if they
+      beat the control, `judges-validation.sh`): `work/runs/arete-groot.sh`,
       queued behind the swap (trust data with both, about 35,600 questions each, 12–14
       hours one at a time; the arbiter; both benches; then a control rebuilt today without
       them). Resumes per answer and per book. Its validation bench compares against

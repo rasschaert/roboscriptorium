@@ -18,7 +18,14 @@ still holds where this doesn't speak.
   Its validation bench compares against `030945`, whose Vanille had a stale ellipsis
   style: read it against `validation-20261119T191549-e435710` (the fresh offers-off
   baseline) with `bench-diff`.
-- **Queued behind it:** `robo-cache-code-bench`, both sets warm with the branch
+- **Reordered (2026-11-20, 12:00):** `robo-judges-reordered` waits for the judges' tuning
+  bench, stops `robo-arete-groot` there, and builds the control (production's panel, warm:
+  trust data, arbiter, tuning bench; about 2 h 15). Then read the two judges against the
+  control on tuning (`bench-diff`, rescues first). If they don't beat it: record the null
+  and `touch work/runs/judge-screen.done`. If they do:
+  `experiments/detached.sh judges-validation work/runs/judges-validation.sh` (about 3 h;
+  it writes the marker at its end).
+- **Queued behind it:** `robo-cache-code-bench` (waits for `work/runs/judge-screen.done`), both sets warm with the branch
   `cache-code` (a cache measured on the scan is keyed by its code; a crash-emptied cache
   is remade), models unreachable; merge it into main if no word moves. Watcher on
   `work/runs/cache-code-bench.out`.
