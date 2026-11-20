@@ -20,6 +20,7 @@ def test_the_users_build_pauses_the_agents_runs_and_the_agents_own_passes(monkey
     sent = []
     monkeypatch.setattr(priority, "MARKER", tmp_path / "user-active")
     monkeypatch.setattr(priority, "_agent_processes", lambda: ([50, 51], ["robo-cols-chain"]))
+    monkeypatch.setattr(priority, "_stopped", lambda pids: set())
     monkeypatch.setattr(priority.os, "kill", lambda pid, sig: sent.append((pid, sig)))
     monkeypatch.delenv("STY", raising=False)
     monkeypatch.delenv("ROBO_AGENT", raising=False)
@@ -64,3 +65,32 @@ def test_a_windows_own_process_is_left_running(monkeypatch):
     pids, names = priority._agent_processes()
     assert sorted(pids) == [102, 103]
     assert names == ["robo-bench"]
+
+
+def test_a_run_already_stopped_stays_stopped_after_the_users_build(monkeypatch, tmp_path):
+    sent = []
+    monkeypatch.setattr(priority, "MARKER", tmp_path / "user-active")
+    monkeypatch.setattr(priority, "_agent_processes", lambda: ([50, 51], ["robo-cols-chain"]))
+    # 51 held by the battery guard, or paused by hand for the user's call.
+    monkeypatch.setattr(priority, "_stopped", lambda pids: {51})
+    monkeypatch.setattr(priority.os, "kill", lambda pid, sig: sent.append((pid, sig)))
+    monkeypatch.delenv("STY", raising=False)
+    monkeypatch.delenv("ROBO_AGENT", raising=False)
+    with priority.first("build"):
+        pass
+    assert sent == [(50, signal.SIGSTOP), (50, signal.SIGCONT)]
+
+
+def test_stopped_processes_are_told_from_running_ones():
+    import subprocess
+
+    sleeper = subprocess.Popen(["sleep", "30"])
+    try:
+        assert priority._stopped([sleeper.pid]) == set()
+        sleeper.send_signal(signal.SIGSTOP)
+        import time
+
+        time.sleep(0.2)
+        assert priority._stopped([sleeper.pid]) == {sleeper.pid}
+    finally:
+        sleeper.kill()

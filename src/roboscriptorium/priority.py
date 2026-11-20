@@ -62,6 +62,17 @@ def _agent_processes(skip: str = "") -> tuple[list[int], list[str]]:
     return descendants(window, table), sorted(found.values())
 
 
+def _stopped(pids: list[int]) -> set[int]:
+    """The `pids` already stopped (held by the battery guard or paused by hand)."""
+    if not pids:
+        return set()
+    ps = subprocess.run(
+        ["ps", "-o", "pid=,stat=", "-p", ",".join(map(str, pids))], capture_output=True, text=True
+    ).stdout
+    return {int(pid) for pid, stat in (row.split()[:2] for row in ps.splitlines() if row.strip())
+            if stat.startswith("T")}  # fmt: skip
+
+
 def _signal(pids: list[int], sig: int) -> None:
     for pid in pids:
         try:
@@ -77,6 +88,9 @@ def first(what: str) -> Iterator[None]:
         yield
         return
     pids, names = _agent_processes()
+    # A run already stopped stays stopped when the build ends.
+    held = _stopped(pids)
+    pids = [p for p in pids if p not in held]
     MARKER.parent.mkdir(parents=True, exist_ok=True)
     MARKER.write_text(f"{os.getpid()}\n")
     _signal(pids, signal.SIGSTOP)
