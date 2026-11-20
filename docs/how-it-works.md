@@ -621,7 +621,9 @@ as printed?
 
 A suspect where no version comes close enough to the reference is left out.
 
-Stella has no reference, so its suspects are labelled from the reviewer's answers.
+Stella and Ex-minnaar have no reference, so their suspects are labelled from the
+reviewer's answers: only the suspects asked and answered in their reviews (9 and 230
+on 2026-11-20) become training rows.
 
 ### 2. Training
 
@@ -639,7 +641,9 @@ books.
 
 A new model is tried through the same loop. It is added as a reader or a
 judge, the trust data is rebuilt, the arbiter retrained, and the bench decides whether
-it stays.
+it stays. Every training row carries each judge's vote, so a new judge first answers
+every suspect of every training book: tens of thousands of questions, many hours for a
+large model.
 
 ## Running it
 

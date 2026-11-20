@@ -1270,3 +1270,24 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-19 | bench tuning, Dolittle's ellipses spaced | 0 | 89 | 0 |
 | 2026-11-19 | bench tuning, accent and speck offers on, their arbiter held out per book | 0 | 5 | 0 |
 | 2026-11-19 | bench validation, accent and speck offers on | 0 | 17 | 0 |
+| 2026-11-19 | bench validation, offers off, warm (no models) | 0 | 1 | 0 |
+| 2026-11-19 | trust data, goede-dochter--ia-scan | 500 | 105 | 0 |
+| 2026-11-19 | trust data, vals-alarm--ia-scan | 292 | 65 | 0 |
+| 2026-11-19 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 7 | 0 |
+| 2026-11-19 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 19 | 0 |
+| 2026-11-19 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 28 | 0 |
+| 2026-11-20 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 11 | 0 |
+| 2026-11-20 | trust data, metro-2033--ia-scan | 458 | 56 | 0 |
+| 2026-11-20 | trust data, de-cipier--ia-scan | 474 | 58 | 0 |
+| 2026-11-20 | trust data, artemis--ia-scan | 305 | 34 | 0 |
+| 2026-11-20 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 122 | 0 |
+| 2026-11-20 | trust data, de-eerlijke-vinder--ia-scan | 84 | 20 | 0 |
+| 2026-11-20 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 3 | 0 |
+| 2026-11-20 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 41 | 0 |
+| 2026-11-20 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 100 | 0 |
+| 2026-11-20 | trust data, doodskleed--ia-scan | 276 | 45 | 0 |
+| 2026-11-20 | trust data, het-ijzige-land--ia-scan | 318 | 45 | 0 |
+| 2026-11-20 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 5 | 0 |
+| 2026-11-20 | trust data, vuurspel--ia-scan | 21 | 6 | 0 |
+| 2026-11-20 | trust data, monterosso-mon-amour--ia-scan | 88 | 14 | 0 |
+| 2026-11-20 | trust data, het-geluid-van-bananen--ia-scan | 315 | 57 | 0 |

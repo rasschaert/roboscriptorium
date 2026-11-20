@@ -103,7 +103,8 @@ only ask a model to write text when new text is needed.
 
 A judge saying "93% sure" doesn't mean it is right 93% of the time. So nobody takes the
 judges at their word. The **arbiter** (`trust.py`) is a small model *trained* on
-thousands of suspects from books where the correct text is known. It has learned how
+thousands of suspects from books where the correct text is known: the golden books, and
+your own answers in the reviews of Stella and Ex-minnaar. It has learned how
 often each reader and each judge was right, for each kind of difference (a quote mark,
 an accent, a missing space), and it outputs one honest probability per version.
 
