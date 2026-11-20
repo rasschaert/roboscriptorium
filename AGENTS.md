@@ -217,7 +217,11 @@ Each rule names the mistake it prevents; check a change against them before comm
 - **Measure with `roboscriptorium bench`, before and after**, on every golden book
   (docs/design.md, Measuring): only its paired comparison says whether a change is
   real. Choose on `bench tuning`; `bench validation` only vetoes (the user,
-  2026-10-17): a choice made on validation scores makes them tuning.
+  2026-10-17): a choice made on validation scores makes them tuning. So validation
+  runs only once tuning shows a gain, read against its control where the change retrains
+  anything: a null on tuning ends the test, with nothing for validation to veto (the
+  user, 2026-11-20: "if we ever do it differently, it seems like a surefire waste of
+  time"). A run script queues the control's tuning bench before any validation bench.
 - **A bench of a new reader, judge, prompt, crop or offer is read by its rescues first**
   (AI usage, "Judged by its rescues"), then by cause, then its net.
 - **Sort a probe's catches by where they sit before building on its total**: read the
