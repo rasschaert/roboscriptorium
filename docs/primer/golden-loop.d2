@@ -1,0 +1,40 @@
+# What the golden books do. Render: d2 docs/primer/golden-loop.d2 docs/primer/golden-loop.svg
+
+direction: right
+
+vars: {
+  d2-config: {
+    layout-engine: elk
+    theme-id: 0
+    pad: 30
+  }
+}
+
+classes: {
+  job: {
+    shape: rectangle
+    style: {fill: "#ffffff"; stroke: "#3b4252"; border-radius: 6; font-size: 14}
+  }
+}
+
+golden: "golden books\n\na scan, and the checked text\nof the same printing" {
+  shape: rectangle
+  style: {fill: "#fff4cc"; stroke: "#b8901a"; stroke-width: 3; border-radius: 8; font-size: 16; bold: true}
+}
+
+score: "SCORE EVERY CHANGE\nbuilt with and without it,\nkept only if better" {class: job}
+teach: "TEACH THE LEARNED PARTS\ntheir known answers train the arbiter,\nthe sorter, the hyphen decision" {class: job}
+screen: "SCREEN NEW MODELS\nin minutes, on lines\ncut from them" {class: job}
+
+machine: "a better\nmachine" {
+  shape: rectangle
+  style: {fill: "#e3f2dc"; stroke: "#3f7f2f"; border-radius: 6; font-size: 15; bold: true}
+}
+
+golden -> score
+golden -> teach
+golden -> screen
+score -> machine
+teach -> machine
+screen -> machine
+machine -> golden: "built on them again" {style: {stroke-dash: 3}}

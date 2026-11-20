@@ -179,14 +179,40 @@ The other stages, in brief:
 
 Then the EPUB is written.
 
-## How we know whether it's any good: golden books
+## Golden books: how we know a change helps
 
-The machine is measured on **golden books**: scans paired with a text a person already
-checked, either a Project Gutenberg transcription or the publisher's own e-book of the
-same printing. There are about 30, Dutch and English, chosen to cover different kinds
-of trouble: clean modern novels, old typography, pictures, washed-out scans.
+Most ideas sound good, and most don't help. What tells them apart is a set of **golden
+books**: scans paired with a text a person already checked, either a Project Gutenberg
+transcription or the publisher's own e-book of the same printing. There are about 30,
+Dutch and English, chosen to cover different kinds of trouble: clean modern novels, old
+typography, pictures, washed-out scans.
+
+They are the project's feedback loop, and they do three jobs:
+
+![Golden books score every change, teach the learned parts and screen new models; the better machine is built on them again](primer/golden-loop.svg)
+
+- **They score every change.** The machine builds each golden book with and without a
+  change and counts its differences from the checked text; the change stays only if
+  the count goes down. An idea gets a verdict in hours, not an impression.
+- **They teach.** Their known answers are the examples the learned parts train on: the
+  arbiter, the sorter, the line-end hyphen decision. "Learned, not hand-written" works
+  only because these examples exist.
+- **They screen new models.** Small frozen sets of lines cut from them let a new model
+  be compared with the one in a role in minutes.
+
+Without them, "this looks better" would be the only test, and a fix for one book could
+quietly break another. They also outlast everything else: code gets rewritten and
+models get replaced, but a golden book with its checked text carries over to whatever
+comes next.
+
+### How a golden book scores a build
 
 ![How a golden book scores a build: the scan built, lined up with the reference, every difference counted; a person's verdict mends the reference](primer/golden.svg)
+
+A golden book only works if its text really is that printing's: one from another
+edition would count every difference between the editions as the machine's error. So
+each one is checked against its scan, and dropped if its text turns out to be another
+edition's.
 
 The machine builds each golden book from its scan, lines its output up against the
 reference, and counts the differences. Not every difference is the machine's fault: a
@@ -204,11 +230,10 @@ have answered every question asked, plus a small charge for each question (your
 expected slips, and your time: twenty questions are priced as one wrong word). It
 captures both halves of the trade-off: fewer errors, and fewer questions.
 
-![The text layer has about 2.2 wrong words a page, the machine 0.4, after your review 0.27](primer/progress.svg)
-
-On the clean, modern books (the kind the project targets first) that is about one
-wrong word every four pages after review. Busy layouts and old typography do worse,
-and a washed-out scan still needs whole pages typed by a person.
+On the golden books the machine is tuned on, the text layer's two or three wrong words
+a page come down to about 0.7 once the readers and judges are done, and to about 0.2
+after your review: one wrong word every five pages. Busy layouts and old typography do worse, and a
+washed-out scan still needs whole pages typed by a person.
 
 The bench also counts **paragraph breaks set wrong**, **headings** found or lost, and
 **italics**, because a book whose words are right but whose paragraphs are jumbled
