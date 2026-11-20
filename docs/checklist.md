@@ -630,12 +630,13 @@ Daens' title was mended by hand).
 
 ## Housekeeping
 
-- [ ] Worktrees and branches: `../roboscriptorium-caps` holds `italics-by-place` and
-      `../robo-grow6` `grow6` until they are merged; `../robo-text` (`text-seat`) stays
-      for the retest; `../roboscriptorium-py315` has two untracked scratch files. The 24
-      branches merged into main can be deleted; `cutoff-dash`, `qwen-second-look` and
-      `trial-merge` are unmerged experiments, not taken (the merged worktrees
-      `../robo-quote` and `../robo-phased` were removed 2026-11-11)
+- [ ] Worktrees and branches (merged ones removed 2026-11-20): `../robo-cache-code`
+      and `../robo-judge-answered` wait for their runs (In flight);
+      `../roboscriptorium-py315` has two untracked scratch files (`layout_check.py`,
+      `req-py315.txt`) and goes with the Python 3.15 step below. Unmerged experiments, not
+      taken: `cutoff-dash`, `qwen-second-look`, `trial-merge`, `trust-26`,
+      `heading-labels`, and the render judge's `render-columns`, `render-differ`,
+      `render-kern` with their worktrees `../robo-cols`, `../robo-render`, `../robo-kern`
 - [ ] **user**: disk. `work/models/mlx-env` (809 MB), `~/models/roboscriptorium/lighton-env`
       (767 MB) and `work/models/ocr-trust-grown*.pkl` stay until the user says they can go
 - [ ] Python 3.15 once PyTorch publishes cp315 wheels (pytorch/pytorch#184352): with
