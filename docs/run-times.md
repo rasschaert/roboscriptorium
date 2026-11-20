@@ -1323,3 +1323,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-20 | bench tuning after the rebuild | 6208 | 5 | 0 |
 | 2026-11-20 | bench tuning, ctl-1119, italic-marks scoring (warm, no models) | 0 | 5 | 0 |
 | 2026-11-20 | bench tuning, ag, italic-marks scoring (warm, no models) | 0 | 5 | 0 |
+| 2026-11-21 | bench validation, ag | 0 | 174 | 0 |
+| 2026-11-21 | bench validation, ctl-1119 | 0 | 1 | 0 |
