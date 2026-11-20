@@ -52,6 +52,7 @@ owns the fact in the same commit.
 | [docs/golden-books.md](docs/golden-books.md) | the pairs' numbers, **generated** by `experiments/golden_overview.py` | regenerated after a pair changes |
 | [docs/hosted-inference.md](docs/hosted-inference.md) | the plan for a window of free hosted inference: what to learn, what carries back, the guardrails | access comes, or a hosted run teaches something |
 | [docs/primer.md](docs/primer.md) | for a person new or returning: the problem from first principles, how a change is judged, where the gains are expected, the vocabulary | the approach, the bets or the vocabulary change; its errors chart regenerated (`experiments/primer_errors.py`) after a bench that moves the errors, its render-and-compare figure (`experiments/primer_render_figure.py`) when that judge's drawing or fit changes, its `.d2` diagrams rendered again when edited |
+| [docs/README.md](docs/README.md) | the map of docs/ for people: what each file tells, which to read and which only to look things up in (GitHub shows it under the folder's list) | a file in docs/ is added, removed or changes its job |
 | `README.md` | the first entry, for people: what it makes, the idea in brief, today's result, how to run it, where to read more | the approach, the result, the models to pull or the commands change |
 | [docs/how-it-works.md](docs/how-it-works.md), `docs/pipeline.d2` | for people: how a build runs, stage by stage | the stages, their order or their models change |
 
@@ -80,7 +81,8 @@ get renumbered. Don't add a file to this table without a job no other file has.
 ### Git, data and installs
 
 - **Git:** signed commits straight to `main`, pushed whenever convenient; no PRs. Lint
-  and tests before every commit.
+  and tests before every commit that touches code or tests; a commit of docs and
+  diagrams alone needs neither (the tests take minutes and check none of it).
 - **No copyrighted material in git.** Books, page images, OCR output and golden pages
   live in `work/` (gitignored). Commit only code, prompts, question sets, configs and
   synthetic fixtures.

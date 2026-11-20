@@ -44,6 +44,9 @@ once you've answered its questions, at about half a question a page.
 - [docs/outlook.md](docs/outlook.md): how close it is, and what was tried that didn't help.
 - [docs/golden-books.md](docs/golden-books.md): the books it is measured on.
 
+[docs/README.md](docs/README.md) is the map of all the docs: which to read and which are
+only for looking things up.
+
 ## Running it
 
 It needs a Mac with Apple silicon and plenty of memory (it is developed on an M4 Max
