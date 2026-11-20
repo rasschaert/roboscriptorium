@@ -160,11 +160,12 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       from the reference, aligned to an ink blob, is a speck, and a mark the reference
       confirms is ink (~1 day; three pages were too few, 2026-10-21)
       - [ ] A speck read as a hyphen before a line's first word (Nervous System PDF 118
-            line 2, "- I followed"; Going into a Dark House PDF 7, "- For"). A hyphen
-            alone before a line's first word is never print in a book whose dashes are
-            long and spaced and whose lines never open on a dash elsewhere; a book that
-            opens dialogue with a dash (Dutch) keeps it. Counterexamples first: dialogue
-            dashes in the tuning books
+            line 2, "- I followed"; Going into a Dark House PDF 7, "- For"). No rule
+            (counterexamples, 2026-11-20, decisions.md): of 60 such text-layer lines in
+            the golden books found in their references, 54 are specks but 6 are print,
+            4 of them a spaced dash mid-sentence in books whose dashes are long and spaced
+            (De tuin van de avondnevel 3, Dolittle 1). Next: the line without the "-"
+            offered to the judges, as the speck offers are
       - [ ] A speck read as a second full stop (Nervous System PDF 119 line 25,
             "system.. He added"; the layer, glm-ocr, tesseract, clef and d3 all read
             ".."). Not a rule: five golden references print two dots (2026-11-17: "Wa…
