@@ -1295,3 +1295,31 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-20 | trust data, stella | 67 | 7 | 0 |
 | 2026-11-20 | trust data, ex-minnaar | 273 | 79 | 0 |
 | 2026-11-20 | train arbiter after the rebuild | 0 | 85 | 0 |
+| 2026-11-20 | bench tuning after the rebuild | 6208 | 339 | 0 |
+| 2026-11-20 | trust data, goede-dochter--ia-scan | 500 | 2 | 0 |
+| 2026-11-20 | trust data, vals-alarm--ia-scan | 292 | 1 | 0 |
+| 2026-11-20 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 0 | 0 |
+| 2026-11-20 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 0 | 0 |
+| 2026-11-20 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 1 | 0 |
+| 2026-11-20 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 0 | 0 |
+| 2026-11-20 | trust data, metro-2033--ia-scan | 458 | 2 | 0 |
+| 2026-11-20 | trust data, de-cipier--ia-scan | 474 | 2 | 0 |
+| 2026-11-20 | trust data, artemis--ia-scan | 305 | 1 | 0 |
+| 2026-11-20 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 2 | 0 |
+| 2026-11-20 | trust data, de-eerlijke-vinder--ia-scan | 84 | 0 | 0 |
+| 2026-11-20 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-20 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 1 | 0 |
+| 2026-11-20 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 2 | 0 |
+| 2026-11-20 | trust data, doodskleed--ia-scan | 276 | 1 | 0 |
+| 2026-11-20 | trust data, het-ijzige-land--ia-scan | 318 | 1 | 0 |
+| 2026-11-20 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 0 | 0 |
+| 2026-11-20 | trust data, vuurspel--ia-scan | 21 | 0 | 0 |
+| 2026-11-20 | trust data, monterosso-mon-amour--ia-scan | 88 | 0 | 0 |
+| 2026-11-20 | trust data, het-geluid-van-bananen--ia-scan | 315 | 1 | 0 |
+| 2026-11-20 | trust data, het-schaduwhuis--ia-scan | 320 | 1 | 0 |
+| 2026-11-20 | trust data, stella | 67 | 0 | 0 |
+| 2026-11-20 | trust data, ex-minnaar | 273 | 1 | 0 |
+| 2026-11-20 | train arbiter after the rebuild | 0 | 77 | 0 |
+| 2026-11-20 | bench tuning after the rebuild | 6208 | 5 | 0 |
+| 2026-11-20 | bench tuning, ctl-1119, italic-marks scoring (warm, no models) | 0 | 5 | 0 |
+| 2026-11-20 | bench tuning, ag, italic-marks scoring (warm, no models) | 0 | 5 | 0 |
