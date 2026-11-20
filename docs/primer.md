@@ -257,10 +257,34 @@ the same build made the same way without the change. Only if tuning shows a gain
 validation run; a change with no gain on tuning ends there, since validation could only
 say no.
 
-Even inside tuning, each book is scored by an arbiter trained *without* that book, so
-it never grades its own homework. A first look says how the machine does on a book it
-has never seen, which is the question the whole project asks; with a new one every
-time a golden book is added, that question keeps getting asked instead of being answered once.
+A first look says how the machine does on a book it has never seen, which is the
+question the whole project asks; with a new one every time a golden book is added, that
+question keeps getting asked instead of being answered once.
+
+### How the learned parts are trained
+
+Training means: gather examples whose right answer is known, let a model find the
+pattern in them, and save the result as a file that every build then uses. The arbiter
+is the main one; the sorter and the line-end hyphen decision are trained the same way on
+examples of their own.
+
+The arbiter's examples are the **trust data**. Every tuning book is built, and at each
+suspect it records what every reader read, which version every judge picked, and which
+version matches the checked text. Your review answers on books with no checked text are
+added the same way. Training on all that takes about an hour and a half: once on every
+tuning book, for the arbiter the builds use, and once more per tuning book with that
+book left out, so the bench never scores a book with an arbiter that has seen it.
+
+Two things follow:
+
+- **A new reader or judge waits for its votes.** The arbiter can only weigh a judge
+  whose votes are in the trust data. So a new judge first answers every suspect of every
+  tuning book (tens of thousands of questions, many hours for a large model); only then
+  is the arbiter retrained and the change benched.
+- **A retrained arbiter is compared with a control retrained beside it.** Retraining
+  moves the results on its own: the examples shift a little every time the trust data is
+  rebuilt. So the control is trained the same way, on the same examples, without the
+  change, and the difference between the two belongs to the change alone.
 
 ## How a change earns its place
 
@@ -406,6 +430,7 @@ and why it didn't help".
 | render and compare | the judge that draws each version in the book's typeface and lays it over the scan |
 | context judge | a thinking model that settled a question from the text around it; tried, and off |
 | arbiter | the trained model that weighs readers and judges and fixes, keeps or asks |
+| trust data | the arbiter's examples: each suspect in the tuning books, every reader's and judge's say on it, and the right version |
 | spotter | the layout model that marks pictures, captions and titles |
 | sorter | what decides each line's role: body, heading, page number, junk |
 | decision model | a model that picks from fixed options with probabilities; writes no text |
@@ -415,7 +440,7 @@ and why it didn't help".
 | verdict | a person's ruling on what the scan prints where output and reference differ |
 | bench | the paired before/after comparison over a set; it decides whether a change stays |
 | tuning, validation | the golden books choices are made on, and those that only veto |
-| control | the same build made without the change, benched beside it |
+| control | the same build made without the change (retrained the same way, if the change retrains), benched beside it |
 | first look | a new golden book's single score, before anything is chosen on it |
 | after review | wrong words a page once every question is answered, with questions charged |
 | breaks | paragraph breaks set wrong, a page |
