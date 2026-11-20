@@ -95,7 +95,7 @@ the scan. Then, for each suspect, it draws every version in that typeface at the
 size, lays each drawing over the ink at that place and votes for the one that fits
 best.
 
-![Two versions of one word drawn over the scan's ink: "scenes" leaves the accent bare, "scènes" covers every bit of ink and gets the vote](primer/render-compare.svg)
+![A real place in a 1924 scan: the line starts "suredly,", the end of "as-suredly". Three AI judges chose "surely,"; drawn in the book's typeface, "surely," falls out of step with the ink, "suredly," covers it and gets the vote](primer/render-compare.svg)
 
 On the golden books its pick is the printed version about nine times in ten, and it
 gets most of the other judges' misses right; with its vote the machine lets fewer
