@@ -1293,3 +1293,4 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-20 | trust data, het-geluid-van-bananen--ia-scan | 315 | 57 | 0 |
 | 2026-11-20 | trust data, het-schaduwhuis--ia-scan | 320 | 53 | 0 |
 | 2026-11-20 | trust data, stella | 67 | 7 | 0 |
+| 2026-11-20 | trust data, ex-minnaar | 273 | 79 | 0 |
