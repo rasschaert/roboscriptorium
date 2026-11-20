@@ -235,6 +235,7 @@ def check(
     lower_capitals: bool = False,
     descent: float | None = None,
     marks=(),
+    ask_only: frozenset[tuple[int, int]] | None = None,
 ) -> list[Suspect]:
     """Suspects where any other reading (by name) differs from the text layer, each with a
     decision, and with `lower_capitals` where small capitals may have been read in lower
@@ -251,7 +252,10 @@ def check(
     The judges answer one at a time over the whole book, each into `cache`, before the
     pass that decides reads every answer back: the four don't fit in the GPU's memory
     together, and asked suspect by suspect they evicted each other on every call
-    (Nervous System, 2026-11-09: 585 model loads an hour, 4–7 s each)."""
+    (Nervous System, 2026-11-09: 585 model loads an hour, 4–7 s each).
+
+    With `ask_only`, (page, line) pairs, a judge is asked anew only on those lines;
+    elsewhere it answers from `cache` or not at all."""
     args = (pdf, pages, readings, lang)
     rest = (cache, lexicon, style)
     judges = [m for m in (vision, reader, *alarms) if m is not None]
@@ -267,6 +271,7 @@ def check(
             lower_capitals,
             descent,
             marks,
+            ask_only,
             judge=live.model,
         )
     found = _check(
@@ -279,11 +284,25 @@ def check(
         lower_capitals,
         descent,
         marks,
+        ask_only,
         judge=judges[-1].model if judges else "",
     )
     for offers in marks:
         offers.save()
     return found
+
+
+def _unanswered(client, answer: dict) -> bool:
+    """Whether a judge held to its cache (`_Later`) had nothing there. `pick` reads an
+    empty answer as the first version ("" is in every string), the vote a live judge's
+    saved empty answers have always cast and the arbiter learned; a judge never asked
+    casts none."""
+    return isinstance(client, _Later) and not answer["value"]
+
+
+def _held(client):
+    """`client` answering only from the cache (`_Later`); None stays None."""
+    return client if client is None or isinstance(client, _Later) else _Later(client)
 
 
 class _Later:
@@ -312,6 +331,7 @@ def _check(
     lower_capitals: bool = False,
     descent: float | None = None,
     marks=(),
+    ask_only: frozenset[tuple[int, int]] | None = None,
     judge: str = "",
 ) -> list[Suspect]:
     """`check`'s pass over the book with the judges as given, `judge` the one answering
@@ -383,11 +403,13 @@ def _check(
                         if descent is not None
                         else None
                     )
+                    asked = ask_only is None or (page.number, k) in ask_only
+                    held = (lambda m: m) if asked else _held
                     (choice, chosen, votes), confidence = _decide(
                         pdf_page, page.number, k, ours, a0, a1, alternatives, box, lang,
-                        vision, reader, cache, around,
+                        held(vision), held(reader), cache, around,
                         lexicon.vouches(read_as, continues) if lexicon else None,
-                        joined, style, alarms, alarm_below, span,
+                        joined, style, tuple(map(held, alarms)), alarm_below, span,
                     )  # fmt: skip
                     support = {
                         n: supports(ours, other, a0, a1, versions, curly)
@@ -910,8 +932,9 @@ def _decide(
         if getattr(alarm, "text", False):
             # A second text judge, asked the text judge's question.
             alarmed = _ask(alarm, cache, text_state, text_question)
-            votes[alarm.model] = pick(alarmed["value"])
-            confidence[alarm.model] = alarmed["confidence"]
+            if not _unanswered(alarm, alarmed):
+                votes[alarm.model] = pick(alarmed["value"])
+                confidence[alarm.model] = alarmed["confidence"]
             continue
         wide = getattr(alarm, "wide", 0)
         asked = question
@@ -922,8 +945,9 @@ def _decide(
         alarmed = _ask(
             alarm, cache, state, asked, image=lambda w=wide: _crop(pdf_page, box, w, span)
         )
-        votes[alarm.model] = pick(alarmed["value"])
-        confidence[alarm.model] = alarmed["confidence"]
+        if not _unanswered(alarm, alarmed):
+            votes[alarm.model] = pick(alarmed["value"])
+            confidence[alarm.model] = alarmed["confidence"]
     if vouched is not None:
         votes["word list"] = versions[vouched]
     return _choose(versions, letters, seen, read, votes), confidence

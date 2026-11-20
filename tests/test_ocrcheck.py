@@ -1334,6 +1334,51 @@ def test_the_judges_answer_one_at_a_time_over_the_book_and_decide_as_before(tmp_
     assert phased[0].votes == {"clef": "Iemand", "winnow": "Iemand", "jev": "lemand"}
 
 
+def test_judges_are_asked_anew_only_on_the_given_lines_and_answer_from_the_cache_elsewhere(
+    tmp_path,
+):
+    from types import SimpleNamespace
+
+    from roboscriptorium.pdf import read_text_layer
+    from roboscriptorium.roles import DecisionCache
+
+    pdf = tmp_path / "book.pdf"
+    doc = pymupdf.open()
+    # Two lines that differ, so no question is the other's word for word.
+    for line in ("Toen kwam lemand binnen", "Daar liep lemand weg"):
+        doc.new_page(width=300, height=400).insert_text((20, 50), line, fontsize=11)
+    doc.save(pdf)
+    pages = read_text_layer(pdf)
+    readings = {
+        "glm": {SourceRef(p.number, 0): p.lines[0].text.replace("lemand", "Iemand") for p in pages}
+    }
+    calls = []
+
+    class Judge:
+        def __init__(self, model, value, sure):
+            self.model, self.value, self.sure = model, value, sure
+
+        def decide(self, state, questions, image_png=None):
+            calls.append((self.model, state.get("page", "?")))
+            return {"reading": SimpleNamespace(value=self.value, confidence=self.sure)}
+
+    cache = tmp_path / "a.jsonl"
+
+    def run(alarms, ask_only=None):
+        judges = Judge("clef", "b", 0.6), Judge("winnow", "b", 0.9)
+        return ocrcheck.check(pdf, pages, readings, "nld", *judges, DecisionCache(cache),
+                              alarms=alarms, alarm_below=0.9, ask_only=ask_only)  # fmt: skip
+
+    # The panel in use has answered every line before; the new judge is screened.
+    run(())
+    calls.clear()
+    found = run((Judge("jev", "a", 0.7),), ask_only=frozenset({(2, 0)}))
+    assert [model for model, _ in calls] == ["jev"]
+    # Page 1 keeps the panel's cached votes and has none of the new judge.
+    assert found[0].votes == {"clef": "Iemand", "winnow": "Iemand"}
+    assert found[1].votes == {"clef": "Iemand", "winnow": "Iemand", "jev": "lemand"}
+
+
 def test_a_fix_takes_its_lines_curly_quotes():
     line = "“T thought I'd check in on you before the weekend,” he said."
     s = Suspect(201, 10, line, 0, 2, "“T", ('"I',), (0, 0, 1, 1), "other", '"I', {})
