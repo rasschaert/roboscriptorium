@@ -121,12 +121,6 @@ is the printed version about nine times in ten, and it gets most of the other ju
 misses right; with its vote the machine lets fewer errors through, however many
 questions it asks you. It is weakest where the library lacks the book's typeface.
 
-One more kind was tried and is off: a **context judge** (qwen, thinking before it
-answers) read the sentences around a question the arbiter would ask, and settled it
-when it agreed with the arbiter's own likeliest version. It saved about one question
-in eight, but let a few more errors through unasked, and you chose fewer silent errors
-over fewer questions.
-
 The judges are **decision models**: they don't write text, they answer a multiple-choice
 question with a probability for each option. That is a deliberate rule in this project:
 if the answer comes from a list known in advance, ask a model that picks from the list;
@@ -426,6 +420,9 @@ and why it didn't help".
   it changed 15 answers in 432 and no result.
 - Two extra arbiter features for a comma at a line's end: no better, and glued words
   worse.
+- A judge reading the sentences around a question, settling it instead of asking you:
+  one question in eight fewer, but a few more silent errors, and fewer silent errors
+  come first.
 
 ## A glossary
 
@@ -436,7 +433,6 @@ and why it didn't help".
 | suspect, version | a place where readings differ; each way of reading it |
 | judge | a model or program that picks a version (clef, autotrust-jev, d3, render and compare, winnow, the word list) |
 | render and compare | the judge that draws each version in the book's typeface and lays it over the scan |
-| context judge | a thinking model that settled a question from the text around it; tried, and off |
 | arbiter | the trained model that weighs readers and judges and fixes, keeps or asks |
 | trust data | the arbiter's examples: each suspect in the tuning books, every reader's and judge's say on it, and the right version |
 | spotter | the layout model that marks pictures, captions and titles |
