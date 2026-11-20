@@ -96,9 +96,9 @@ In this order; `HANDOVER.md` has the paths and the commands.
 - [x] 2026-11-19 The grown-slice trees as the first set: not taken (a silent lost line on
       tuning, unnumbered section titles kept as text on validation; decisions.md)
 - [ ] A judge screened through the trust data asks, on a book labelled by review answers,
-      only the suspects answered: Stella and Ex-minnaar hold about 3,340 suspects a judge,
-      of which 239 are training rows (2026-11-20); the rest cost a large judge about an
-      hour a run and teach nothing until the judge is taken (no models; `trustdata.build`)
+      only the answered lines: built and tested on branch `judge-answered` (worktree
+      `../robo-judge-answered`, decisions.md 2026-11-20); merge once `robo-arete-groot`
+      ends, as it changes the OCR check that run uses
 - [ ] Caches that say what made them (branch `cache-code`, worktree `../robo-cache-code`;
       decisions.md 2026-11-19): its warm bench of both sets, models unreachable, queued
       behind the judge run (`work/runs/cache-code-bench.sh`, screen
