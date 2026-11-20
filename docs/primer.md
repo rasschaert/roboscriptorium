@@ -4,7 +4,7 @@ For anyone new to the project, or coming back to it: what the machine does, why 
 built this way, how a change is judged, and where the next gains are expected. It
 assumes no knowledge of the code. [how-it-works.md](how-it-works.md) tours every stage
 in detail; [outlook.md](outlook.md) and `HANDOVER.md` have today's figures and what is
-running.
+running; [the map of the docs](README.md) says where everything else is.
 
 ## What we're making, and why it's hard
 
@@ -92,14 +92,11 @@ things, so they go wrong in different places:
 
 - **The picture.** *clef*, *autotrust-jev* and *d3*, three AI models of different
   families, look at a crop of the page and pick the version that matches what's printed.
-  None is much better than the others alone; together they leave about a seventh fewer
-  **silent errors** (wrong words that reach the book with no question pointing at them),
-  because each goes wrong where the others don't.
-- **The sentence.** *winnow* reads only the sentence, without the picture, and picks the
-  version that reads best. Alone it is right four times in five, less than clef, but
-  where it disagrees with clef, clef is wrong much more often, so it works as an alarm.
-  A smaller *autotrust-jev* reads the sentence too; its mistakes fall elsewhere, and it
-  saves about one question in a hundred without letting more errors through.
+  Three rather than one, because each goes wrong where the others don't.
+- **The sentence.** *winnow* and a smaller *autotrust-jev* read only the sentence,
+  without the picture, and pick the version that reads best. They are no better than
+  the picture judges, but they fail differently: where they disagree with them, the
+  picture judges are often the ones that are wrong.
 - **The ink.** *render and compare* is no AI model and knows no language: it draws each
   version in the book's own typeface and checks which drawing covers the scan's ink
   (below).
@@ -116,15 +113,13 @@ best.
 
 ![A real place in a 1924 scan: the line starts "suredly,", the end of "as-suredly". Three AI judges chose "surely,"; drawn in the book's typeface, "surely," falls out of step with the ink, "suredly," covers it and gets the vote](primer/render-compare.svg)
 
-On the golden books (books whose correct text is known; more on them below) its pick
-is the printed version about nine times in ten, and it gets most of the other judges'
-misses right; with its vote the machine lets fewer errors through, however many
-questions it asks you. It is weakest where the library lacks the book's typeface.
+It rarely shares the other judges' mistakes: most places where they all go wrong, it
+gets right. It is weakest when the library lacks the book's typeface.
 
-The judges are **decision models**: they don't write text, they answer a multiple-choice
-question with a probability for each option. That is a deliberate rule in this project:
-if the answer comes from a list known in advance, ask a model that picks from the list;
-only ask a model to write text when new text is needed.
+The AI judges are **decision models**: they don't write text, they answer a
+multiple-choice question with a probability for each option. That is a rule of the
+project: if the answer comes from a list known in advance, ask a model that picks from
+the list; only ask a model to write text when new text is needed.
 
 The judges look at the scan. The **arbiter** never does: it looks at the judges. Think
 of the judges as expert witnesses, each expert in one kind of evidence and none fully
@@ -136,8 +131,9 @@ difference it is (a quote mark, an accent, a missing space), and how often that 
 swap was the print in the books it learned from.
 
 The arbiter is a small model *trained* on thousands of suspects whose right answer is
-known: those in the golden books, and the places you answered yourself in past
-reviews. So it has learned whose word counts for what: which judge to believe on
+known: those in the golden books (scans whose correct text is known; they have their
+own section below), and the places you answered yourself in past reviews. So it has
+learned whose word counts for what: which judge to believe on
 accents and which on punctuation, and when two judges that agree are wrong together.
 Out of that comes one honest probability per version.
 
@@ -151,10 +147,14 @@ Then the arbiter rules, and nothing else settles a suspect:
 Your answers do two things: they fix this book, and they become more training examples,
 so the arbiter gets better at the next one.
 
-Asking isn't free. People make mistakes too (about one answer in eight to ten,
-measured), and every question costs you time. So the machine asks only where a question
-is likely to fix more than it costs: about one question every two pages on a clean
-scan.
+An error that reaches the book with no question pointing at it is a **silent error**:
+the arbiter applied a wrong version without asking, or no reader saw a problem at all.
+Your review can't catch it. Asking more catches more of the first kind, but asking
+isn't free: people make mistakes too
+(about one answer in ten), and every question costs you time. So the machine asks
+where a question is likely to fix more than it costs, about one question every two
+pages on a clean scan. When the two pull apart, fewer silent errors come before fewer
+questions.
 
 ## The structure half
 
@@ -176,8 +176,7 @@ The other stages, in brief:
   answers against the book's habits.
 - **Typography and italics**: dashes, ellipses and quote marks are set the way the book
   prints them. Italics come from the slant of the letters, read by two sets of decision
-  trees; where they disagree (about one word in a thousand) clef is shown the word's
-  line and decides (your idea; it left a fifth fewer italic errors).
+  trees; where they disagree, clef is shown the word's line and decides.
 
 Then the EPUB is written.
 
@@ -234,8 +233,8 @@ captures both halves of the trade-off: fewer errors, and fewer questions.
 
 On the golden books the machine is tuned on, the text layer's two or three wrong words
 a page come down to about 0.7 once the readers and judges are done, and to about 0.2
-after your review: one wrong word every five pages. Busy layouts and old typography do worse, and a
-washed-out scan still needs whole pages typed by a person.
+after your review: one wrong word every five pages. Busy layouts and old typography do
+worse, and a washed-out scan still needs whole pages typed by a person.
 
 The bench also counts **paragraph breaks set wrong**, **headings** found or lost, and
 **italics**, because a book whose words are right but whose paragraphs are jumbled
@@ -376,53 +375,26 @@ That points to the bets below, roughly by expected gain.
 ### The bets
 
 1. **Reading whole pages instead of single lines.** A model that sees the whole page
-   sees the line joins. As a ceiling test, Claude read 17 pages with one real error,
-   including at every kind of place the machine still gets wrong. The local models
-   aren't there yet: qwen reading whole pages made 76 wrong words over 19 test pages,
-   where the machine as it stands makes 27, and adding its page readings as extra
-   readers didn't help either. So the architecture to aim for is known; the bottleneck
-   is how good the local vision models are. **Each new model is screened on the frozen
-   sets**, and the machine is built so that a better model can take over a role
-   quickly.
+   sees the line joins. A large hosted model, tried once as a test of what's possible,
+   read whole pages almost without error, line joins included; the local models aren't
+   there yet and make more errors than the machine as it stands. So the architecture to
+   aim for is known; the bottleneck is how good the local vision models are. **Each new
+   model is screened on the frozen sets**, and the machine is built so that a better
+   model can take over a role quickly.
 2. **Structure**: paragraph breaks in books that don't indent paragraphs, headings
    still missed (chapter numbers drawn as pictures, old-style figures, titles that also
    appear as running heads), verse, tables and block quotes not handled yet.
 3. **Fewer, better questions.** You answer until you're tired, so a question that
-   fixes nothing costs as much as an error. Untried ideas: one answer for the same
+   fixes nothing costs as much as an error. Ideas: one answer for the same
    question across pages ("is this `|` an `I`?" once, not forty times), and ranking
    questions by errors fixed per second of your time.
 4. **Better pixels.** The readers see heavily compressed scans. The Internet Archive
-   keeps sharper page images for public-domain books; whether they help is untested.
+   keeps sharper page images for public-domain books, which may read better.
 5. **The hard tail**: washed-out pages that no model reads. A person types them, or the
    book is rescanned.
 
-### What has been tried and didn't help
-
-So you can recognise a rerun of an old idea. Details and numbers in outlook.md's "Tried,
-and why it didn't help".
-
-- Rewording qwen's instructions, or giving it bigger, sharper or wider crops.
-- Another small picture judge beside clef, from an earlier round of models: no change.
-- A model judging paragraph breaks from a crop of a few lines: it broke as many breaks
-  as it fixed.
-- Faster or differently packaged reader models: worse on quote marks, or no more
-  accurate.
-- Fine-tuning a reader: ruled out by measurement, since only about 30% of what's left
-  is the kind of reading error a better reader alone would fix.
-- Speeding up qwen by sending it several lines at once: the runtime it runs on answers
-  one request at a time however many arrive.
-- Swapping in the other vision models we could get: five were tried as readers, extra
-  witnesses or error detectors, and none beat the reader we have. Vision models improve
-  fast, so the lasting work is the test a new model has to pass, not the choice of
-  today's model.
-- Letting the reader think before answering: it reads worse and slower.
-- Rewording the question that sorts a book's pages by kind (cover, contents, text…):
-  it changed 15 answers in 432 and no result.
-- Two extra arbiter features for a comma at a line's end: no better, and glued words
-  worse.
-- A judge reading the sentences around a question, settling it instead of asking you:
-  one question in eight fewer, but a few more silent errors, and fewer silent errors
-  come first.
+What was tried and didn't help, so an old idea is recognised when it comes back, is in
+[outlook.md](outlook.md), "Tried, and why it didn't help".
 
 ## A glossary
 
