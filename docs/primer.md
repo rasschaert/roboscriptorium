@@ -68,32 +68,45 @@ combine several that fail in different ways, and learn how far to believe each.*
 
 ![How one suspect is settled. The percentages are an invented example.](primer/deciding.svg)
 
-**Judges** look at each suspect and each picks a version:
+**Judges** look at each suspect and each picks a version. They look at different
+things, so they go wrong in different places:
 
-- *clef*, *autotrust-jev* and *d3*, three models of different families, look at the
-  crop of the page and each picks the version that matches what's printed. None of them
-  is much better than the others alone; together they matter because they go wrong in
-  different places (since 2026-11-09: about a seventh fewer errors left that nobody asks
-  you about).
-- *render and compare* knows no language at all. It finds the book's typeface in a
-  library of fonts, draws each version in it at the book's size, lays the drawings over
-  the scan's ink and picks the one that fits best. The other judges lean on what a
-  word ought to be, so they share mistakes where the print is unusual (a speck, small
-  capitals, an accent, a stop against a comma); this one only looks at ink, and is
-  right on most of what each of them misses (2026-11-12: the print on about nine
-  places in ten, and fewer silent errors at every number of questions).
-- *winnow* reads only the sentence and picks the version that reads best. Alone it is
-  right four times in five, less than clef, but when it disagrees with clef, clef is
-  wrong much more often, so it works as an alarm. A smaller *autotrust-jev* reads the
-  sentence too, a second judge of the language whose mistakes fall elsewhere (since
-  2026-11-15: about 1% fewer questions for you, as many errors left silent).
-- *the word list* checks which versions are real words.
+- **The picture.** *clef*, *autotrust-jev* and *d3*, three AI models of different
+  families, look at a crop of the page and pick the version that matches what's printed.
+  None is much better than the others alone; together they leave about a seventh fewer
+  **silent errors** (wrong words that reach the book with no question pointing at them),
+  because each goes wrong where the others don't.
+- **The sentence.** *winnow* reads only the sentence, without the picture, and picks the
+  version that reads best. Alone it is right four times in five, less than clef, but
+  where it disagrees with clef, clef is wrong much more often, so it works as an alarm.
+  A smaller *autotrust-jev* reads the sentence too; its mistakes fall elsewhere, and it
+  saves about one question in a hundred without letting more errors through.
+- **The ink.** *render and compare* is no AI model and knows no language: it draws each
+  version in the book's own typeface and checks which drawing covers the scan's ink
+  (below).
+- **The dictionary.** *the word list* checks which versions are real words.
+
+Why a judge that can't read? Every other judge leans on what a word ought to be, so
+they make the same mistakes where the print is unusual: a speck of dust that looks like
+a mark, small capitals, an accent, a full stop pressed against a comma. Render and
+compare looks only at ink. Once per book it finds the book's typeface, by drawing
+sample words in every font of a library of type and keeping the one that lies best over
+the scan. Then, for each suspect, it draws every version in that typeface at the book's
+size, lays each drawing over the ink at that place and votes for the one that fits
+best.
+
+![Two versions of one word drawn over the scan's ink: "scenes" leaves the accent bare, "scènes" covers every bit of ink and gets the vote](primer/render-compare.svg)
+
+On the golden books its pick is the printed version about nine times in ten, and it
+gets most of the other judges' misses right; with its vote the machine lets fewer
+errors through, however many questions it asks you. It is weakest where the library
+lacks the book's typeface.
 
 One more kind was tried and is off: a **context judge** (qwen, thinking before it
 answers) read the sentences around a question the arbiter would ask, and settled it
 when it agreed with the arbiter's own likeliest version. It saved about one question
 in eight, but let a few more errors through unasked, and you chose fewer silent errors
-over fewer questions (2026-10-19).
+over fewer questions.
 
 The judges are **decision models**: they don't write text, they answer a multiple-choice
 question with a probability for each option. That is a deliberate rule in this project:
@@ -109,7 +122,7 @@ an accent, a missing space), and it outputs one honest probability per version.
 
 Then:
 
-- if the arbiter is at least 90% sure of a version, it applies it (or keeps the text
+- if the arbiter is at least 93% sure of a version, it applies it (or keeps the text
   layer's, when that's the winner);
 - if not, it **asks you**. The review page shows the question beside the scan, and one
   key answers it.
@@ -140,7 +153,7 @@ The other stages, in brief (how-it-works.md has each in detail):
   weighs their answers with the book's own habits), sets dashes, ellipses and quote marks the way the book prints them, and
   writes the EPUB. Italics come from the slant of the letters, read by two sets of
   trained trees; where they disagree (about one word in a thousand) clef is shown the
-  word's line and decides (your idea, 2026-11-14: a fifth fewer italic errors).
+  word's line and decides (your idea; it left a fifth fewer italic errors).
 
 The project prefers **learned decisions over hand-written rules**: a rule written for
 one book tends to break the next one (one line-grouping rule that helped *Doctor

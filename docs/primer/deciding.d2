@@ -31,7 +31,7 @@ judges: "The judges vote" {
   style: {fill: "#f7f9fc"; stroke: "#7b8aa6"; font-size: 15; bold: true}
   grid-columns: 1
   vertical-gap: 12
-  clef: "clef looks at the crop:\n“vijf jaar”, 93% sure" {class: step}
+  clef: "clef looks at the crop:\n“vijf jaar”, 95% sure" {class: step}
   winnow: "winnow reads the sentence:\n“vijf jaar”, 71% sure" {class: step}
   words: "the word list:\n“vijfjaar” isn’t a word" {class: step}
 }
@@ -43,5 +43,5 @@ ask: "unsure: ask you,\nwith the scan beside it" {class: human}
 
 suspect -> judges
 judges -> arbiter
-arbiter -> fix: "80% or more"
-arbiter -> ask: "less than 80%"
+arbiter -> fix: "93% or more"
+arbiter -> ask: "less than 93%"
