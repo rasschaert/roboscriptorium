@@ -6,6 +6,8 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
+**State at 00:30 on 2026-11-21.** Groot and Arete held on validation (no change, no veto; decisions.md). Queued on the model lock, in whatever order the lock gives: `robo-qwen-judge` (20 minutes), `robo-cache-code-bench` (warm, no models), `robo-judges-seat` (production's two benches as the baseline, then the offers' trust data with the two judges, the offers' arbiter retrained, both benches; hours, cold where the offers add versions). Read the seat test by rescues against `work/probes/judges-seat/`, then by cause, then the net, and weigh the hour a 300-page book's first build gains; if taken, the defaults in `config.py` (alarm model, both arbiters) change with docs/models.md, how-it-works and the diagram.
+
 **State at 21:30 on 2026-11-20.** Groot and Arete beat their control on tuning (decisions.md, this date); `robo-judges-validation` runs both arbiters on validation (cold for the two judges, about 3–4 h), then touches `work/runs/judge-screen.done`, which starts `robo-qwen-judge` and `robo-cache-code-bench`. Read validation by rescues first, against the control's validation run, then decide the seat.
 
 **State at 16:30 on 2026-11-20.** The runs below were paused for the user's call from
