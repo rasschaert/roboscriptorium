@@ -6,6 +6,8 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
+**State at 21:30 on 2026-11-20.** Groot and Arete beat their control on tuning (decisions.md, this date); `robo-judges-validation` runs both arbiters on validation (cold for the two judges, about 3–4 h), then touches `work/runs/judge-screen.done`, which starts `robo-qwen-judge` and `robo-cache-code-bench`. Read validation by rescues first, against the control's validation run, then decide the seat.
+
 **State at 16:30 on 2026-11-20.** The runs below were paused for the user's call from
 14:00 to about 15:55 (by hand: SIGSTOP, then SIGCONT through `priority._signal`), and run
 again; their progress lines' time-left estimates count the pause. The judges' tuning
