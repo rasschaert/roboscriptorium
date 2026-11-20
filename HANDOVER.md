@@ -13,7 +13,7 @@ bench is in its last books, cold on some (Groot and Arete asked afresh). Branche
 `judge-answered` (a judge asks only the answered lines of a book labelled by review
 answers; merge after the judge screening), `cache-code` (its bench is queued below),
 `italic-marks` (a mark with no letters counts in no italic score; it moves the
-baselines, so merge it with the next batch). Tests no longer pause live runs
+baselines, so merge it with the next batch). Queued: `robo-qwen-judge` (`work/runs/qwen-judge.sh`, after `judge-screen.done`, about 20 minutes): qwen3.8 through the judge set and `judge_lift.py` beside Arete, the user's question of how Arete differs from its base. Tests no longer pause live runs
 (`tests/conftest.py`). Waiting on the user: nothing.
 
 **State at 20:35 on 2026-11-19** (a new session, "continue"). Below it, the 06:35 state
