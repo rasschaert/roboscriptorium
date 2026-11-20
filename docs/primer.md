@@ -1,10 +1,10 @@
-# Roboscriptorium from first principles
+# Roboscriptorium, explained
 
-For anyone new to the project, or coming back to it after a while: what the machine
-does, why it is built this way, how anyone can tell whether a change made it better,
-and where the next gains are expected. It assumes no knowledge of the code.
-[how-it-works.md](how-it-works.md) is the detailed tour of every stage;
-[outlook.md](outlook.md) and `HANDOVER.md` have today's figures and what is running.
+For anyone new to the project, or coming back to it: what the machine does, why it is
+built this way, how a change is judged, and where the next gains are expected. It
+assumes no knowledge of the code. [how-it-works.md](how-it-works.md) tours every stage
+in detail; [outlook.md](outlook.md) and `HANDOVER.md` have today's figures and what is
+running.
 
 ## What we're making, and why it's hard
 
@@ -12,8 +12,8 @@ and where the next gains are expected. It assumes no knowledge of the code.
 
 You have a book as a PDF and you want an e-book (an EPUB): text that reflows on a phone,
 with the book's own paragraphs, chapter headings, italics and quote marks, and no
-leftovers from paper such as page numbers, running heads or words split by a hyphen at
-the end of a line.
+leftovers from paper such as page numbers, running heads (the title repeated at the
+top of each page) or words split by a hyphen at the end of a line.
 
 The bar is high. [Standard Ebooks](https://standardebooks.org) makes editions like that
 by hand, and one book takes volunteers weeks of proofreading. The aim here is the same
@@ -46,7 +46,29 @@ The project is about scans. A *born-digital* PDF, made straight from typeset tex
 (often by calibre, from an e-book), already holds exact text and converts back to an
 e-book with existing tools, so it is out of scope.
 
-## The core idea: read it again, with readers that fail differently
+## The ideas behind the machine
+
+Everything below follows from five ideas.
+
+1. **The print, faithfully.** The book's own words, spelling, paragraphs and
+   typography: its dashes, its ellipses, its quote marks. No house style. The machine
+   fixes reading errors, never the author; a misprint is corrected only where you mark
+   it.
+2. **Don't trust any one model.** Combine several that fail in different ways, and
+   learn how far to believe each.
+3. **Learned, not hand-written.** A rule written for one book tends to break the next
+   (one line-grouping rule that helped one book doubled the errors on another). Where a
+   model trained on checked examples does a job at least as well, it replaces the rule.
+4. **Your time is the scarcest thing.** The machine asks only what it can't settle,
+   and only once it has done all it can.
+5. **Measured, not believed.** Every change is scored on books whose correct text is
+   known, before and after, and kept only if the score says so.
+
+Everything runs **on this laptop** (Ollama serves the AI models). A hosted model costs
+money and sends pages of copyrighted books to someone else's server, so it is used
+only when you explicitly allow it.
+
+## Reading it again, with readers that fail differently
 
 No OCR program is perfect, and a second one won't be either. But different programs
 make *different* mistakes. One drops accents, another misreads quote marks, a third
@@ -55,14 +77,11 @@ they disagree, something is worth a closer look.
 
 ![Four readings of one line: where they disagree, a suspect](primer/readers-disagree.svg)
 
-So every line of the book is read again by three more **readers** (`readers.py`): two
-AI models that look at a picture of the line (glm-ocr and qwen) and tesseract, a
-classic OCR program. Each place where a reader disagrees with the text layer becomes a
-**suspect**, and each way of reading it is a **version**. On a clean scan most lines
-produce no suspect at all.
-
-This is the main design choice of the whole project: **don't trust any one model;
-combine several that fail in different ways, and learn how far to believe each.**
+So every line of the book is read again by three more **readers**: two AI models that
+look at a picture of the line (glm-ocr and qwen) and tesseract, a classic OCR program.
+Each place where a reader disagrees with the text layer becomes a **suspect**, and each
+way of reading it is a **version**. On a clean scan (sharp print, no stains or
+fading) most lines produce no suspect at all.
 
 ## Settling a suspect: judges, the arbiter and you
 
@@ -97,10 +116,10 @@ best.
 
 ![A real place in a 1924 scan: the line starts "suredly,", the end of "as-suredly". Three AI judges chose "surely,"; drawn in the book's typeface, "surely," falls out of step with the ink, "suredly," covers it and gets the vote](primer/render-compare.svg)
 
-On the golden books its pick is the printed version about nine times in ten, and it
-gets most of the other judges' misses right; with its vote the machine lets fewer
-errors through, however many questions it asks you. It is weakest where the library
-lacks the book's typeface.
+On the golden books (books whose correct text is known; more on them below) its pick
+is the printed version about nine times in ten, and it gets most of the other judges'
+misses right; with its vote the machine lets fewer errors through, however many
+questions it asks you. It is weakest where the library lacks the book's typeface.
 
 One more kind was tried and is off: a **context judge** (qwen, thinking before it
 answers) read the sentences around a question the arbiter would ask, and settled it
@@ -114,11 +133,11 @@ if the answer comes from a list known in advance, ask a model that picks from th
 only ask a model to write text when new text is needed.
 
 A judge saying "93% sure" doesn't mean it is right 93% of the time. So nobody takes the
-judges at their word. The **arbiter** (`trust.py`) is a small model *trained* on
-thousands of suspects from books where the correct text is known: the golden books, and
-your own answers in the reviews of Stella and Ex-minnaar. It has learned how
-often each reader and each judge was right, for each kind of difference (a quote mark,
-an accent, a missing space), and it outputs one honest probability per version.
+judges at their word. The **arbiter** is a small model *trained* on thousands of
+suspects whose right answer is known: those in the golden books, and the places you
+answered yourself in past reviews. It has learned how often each reader and each judge
+was right, for each kind of difference (a quote mark, an accent, a missing space), and
+it outputs one honest probability per version.
 
 Then:
 
@@ -130,56 +149,53 @@ Then:
 Your answers do two things: they fix this book, and they become more training examples,
 so the arbiter gets better at the next one.
 
-Asking isn't free. Your time is the scarcest thing in the project, and people make
-mistakes too (about one answer in eight to ten, measured). So the machine asks only
-where a question is likely to fix more than it costs: today around half a question a
-page on a clean scan.
+Asking isn't free. People make mistakes too (about one answer in eight to ten,
+measured), and every question costs you time. So the machine asks only where a question
+is likely to fix more than it costs: about one question every two pages on a clean
+scan.
 
 ## The structure half
 
 ![A page with every line tagged by role: running head and page number dropped, a chapter heading, body lines in paragraphs](primer/roles.svg)
 
-The other stages, in brief (how-it-works.md has each in detail):
+The other stages, in brief:
 
-- **The spotter** (a layout model) marks pictures, captions, titles and page furniture
-  on each page image.
+- **The spotter**, a layout model, marks pictures, captions and titles on each page
+  image, and the furniture of the page: page numbers, running heads.
 - **The sorter** decides what each line is: body text, a heading, a page number, a
-  running head, junk to drop. Small trained models (decision trees) do most of it,
-  with a decision model asked about doubtful lines.
-- **Plain code** then joins lines into paragraphs (indents, short last lines, white
-  space), decides whether a hyphen at a line end belongs to the word or only to the
-  line break (where the book and the word list can't tell, four judges say how
-  the word is spelled (in a Dutch book only for ordinary words, not names) and a small model learned from the golden books
-  weighs their answers with the book's own habits), sets dashes, ellipses and quote marks the way the book prints them, and
-  writes the EPUB. Italics come from the slant of the letters, read by two sets of
-  trained trees; where they disagree (about one word in a thousand) clef is shown the
-  word's line and decides (your idea; it left a fifth fewer italic errors).
+  running head, junk to drop. Small trained models (decision trees: chains of yes/no
+  questions learned from examples) do most of it, with a decision model asked about
+  doubtful lines.
+- **Paragraphs**: plain code joins lines into paragraphs from indents, short last
+  lines and white space.
+- **Line-end hyphens**: is the hyphen part of the word (*zwart-wit*) or only a break
+  (*zwart-* / *heid*)? The book's own other uses and the word list settle most. For the
+  rest, judges say how the word is spelled, and a small trained model weighs their
+  answers against the book's habits.
+- **Typography and italics**: dashes, ellipses and quote marks are set the way the book
+  prints them. Italics come from the slant of the letters, read by two sets of decision
+  trees; where they disagree (about one word in a thousand) clef is shown the word's
+  line and decides (your idea; it left a fifth fewer italic errors).
 
-The project prefers **learned decisions over hand-written rules**: a rule written for
-one book tends to break the next one (one line-grouping rule that helped *Doctor
-Dolittle* doubled the errors on another book). Where a trained model does the job at
-least as well, it replaces the rule.
-
-Everything runs **on this laptop** (Ollama serves the models). A hosted model costs
-money and sends pages of copyrighted books to someone else's server, so it is only used
-when you explicitly allow it.
+Then the EPUB is written.
 
 ## How we know whether it's any good: golden books
 
-You can't improve what you don't measure, and you can't measure a book's errors
-without knowing the right text. So the project keeps **golden books**: scans paired
-with a text a person already checked, either a Project Gutenberg transcription or the
-publisher's own e-book of the same printing. There are about 30, Dutch and English,
-chosen to cover different kinds of trouble: clean modern novels, old typography,
-pictures, washed-out scans.
+The machine is measured on **golden books**: scans paired with a text a person already
+checked, either a Project Gutenberg transcription or the publisher's own e-book of the
+same printing. There are about 30, Dutch and English, chosen to cover different kinds
+of trouble: clean modern novels, old typography, pictures, washed-out scans.
 
-![How a golden pair scores a build: the scan built, lined up with the reference, every difference counted; a person's verdict mends the reference](primer/golden.svg)
+![How a golden book scores a build: the scan built, lined up with the reference, every difference counted; a person's verdict mends the reference](primer/golden.svg)
 
 The machine builds each golden book from its scan, lines its output up against the
 reference, and counts the differences. Not every difference is the machine's fault: a
 publisher's e-book sometimes corrects a word the print got wrong. Where it matters, a
 person looks at the scan and records a **verdict** (what the page actually prints),
 and the reference is patched with it.
+
+Scoring a whole set of golden books this way, once with a change and once without, is
+a **bench**.
 
 ### The main score
 
@@ -190,32 +206,36 @@ captures both halves of the trade-off: fewer errors, and fewer questions.
 
 ![The text layer has about 2.2 wrong words a page, the machine 0.4, after your review 0.27](primer/progress.svg)
 
-On the clean, modern books (the kind the project targets first) it is now around one
-wrong word every three to five pages. The busy and old books are worse, and a
-washed-out scan still needs whole pages typed by a person.
+On the clean, modern books (the kind the project targets first) that is about one
+wrong word every four pages after review. Busy layouts and old typography do worse,
+and a washed-out scan still needs whole pages typed by a person.
 
-The bench also counts **paragraph breaks set wrong** a page (now about 0.15) and
-**headings found**, because a book whose words are right but whose paragraphs are
-jumbled isn't right.
+The bench also counts **paragraph breaks set wrong**, **headings** found or lost, and
+**italics**, because a book whose words are right but whose paragraphs are jumbled
+isn't right.
 
 ### Three sets, so we don't fool ourselves
 
 If you tune a machine on the same books you score it on, it learns those books and
-the score flatters it. So the golden books are split, as in any machine-learning
-project:
+the score flatters it. So the golden books are split:
 
-![A new pair's first look, then tuning or validation; a change kept when better on tuning and not vetoed on validation](primer/sets.svg)
+![A new golden book's first look, then tuning or validation; a change kept when better on tuning and not vetoed on validation](primer/sets.svg)
 
 | Set | Used for | Like… |
 | --- | --- | --- |
-| **tuning** (16 books) | choices are made on it, and the arbiter learns from it | studying with past exams |
-| **validation** (7 books) | only vetoes: a choice no better on tuning isn't taken for a gain here | a mock exam |
-| **first look** (1 book waiting) | a new book scored **once**, touched by nothing before it; then it joins tuning or validation | the real exam, sat by every new book |
+| **tuning** (about 20 books) | choices are made on it, and the arbiter learns from it | studying with past exams |
+| **validation** (about 10 books) | a held-back pile never decided on, there to catch a change that only helps the books it was tuned on: it can only turn a yes into a no | a mock exam |
+| **first look** | a new book scored **once**, touched by nothing before it; then it joins tuning or validation | the real exam, sat by every new book |
+
+The order follows from that. A change is first benched on tuning against a **control**:
+the same build made the same way without the change. Only if tuning shows a gain does
+validation run; a change with no gain on tuning ends there, since validation could only
+say no.
 
 Even inside tuning, each book is scored by an arbiter trained *without* that book, so
 it never grades its own homework. A first look says how the machine does on a book it
 has never seen, which is the question the whole project asks; with a new one every
-time a pair is added, that question keeps getting asked instead of being answered once.
+time a golden book is added, that question keeps getting asked instead of being answered once.
 
 ## How a change earns its place
 
@@ -227,10 +247,9 @@ Every improvement goes through the same loop.
    are at line ends; a model that reads the whole page might catch them".
 2. **A probe**: a quick experiment (minutes to an hour) on just the pages the idea
    touches. Does it fix more than it breaks? Most ideas die here, and that's the point:
-   a probe is cheap, a full run is not. The scripts are in `experiments/`, named
-   `probe_*.py`.
-3. **The bench** (`roboscriptorium bench tuning`, then `validation`): every golden book
-   built before and after the change, compared page by page.
+   a probe is cheap, a full run is not.
+3. **The bench**: tuning, then validation, every book built with and without the
+   change and compared page by page.
 4. **Written down**: what was tried, the numbers and the verdict go into
    [decisions.md](decisions.md); the running summary of what helped and what didn't is
    in [outlook.md](outlook.md). Failed ideas are recorded too, so nobody tries them
@@ -238,7 +257,7 @@ Every improvement goes through the same loop.
 
 ### Reading a bench result
 
-The other session's reports are full of lines like this:
+Bench results are reported in lines like this:
 
 > tuning NO CHANGE, 0.32 → 0.32; validation BETTER, breaks 0.16 → 0.13 [−0.06, −0.01]
 
@@ -257,8 +276,8 @@ Decoded:
   most books and wrecks one is rejected, because the next real book might be like the
   one it wrecked.
 
-Why the fuss: a single run's score moves by more than most changes do. Only comparing
-the same pages before and after, with an interval, separates a real gain from luck.
+A single run's score moves by more than most changes do. Only comparing the same pages
+before and after, with an interval, separates a real gain from luck.
 
 ### Why runs take hours, and "cold" and "warm"
 
@@ -267,12 +286,20 @@ about a minute. A full bench over every golden book is a few thousand pages.
 
 ![A change at a reader reruns every stage after it (cold, hours); a change at the paragraph rules reuses the models' saved answers (warm, minutes)](primer/cold-warm.svg)
 
-Every model's answer is saved (cached) under `work/`. A **warm** run reuses those answers
-and finishes in minutes; it is possible when the change sits *after* the models, such
-as a new paragraph rule. A **cold** run has to ask the models again, because the change
-sits *before* them (a new prompt, a new crop, a new model). Cold runs take hours, so
-they run overnight. That is also why upstream changes are first chosen on small frozen
-sets of lines (`tryouts/`, run by `experiments/tryout.py`) before anything cold runs.
+Every model's answer is saved (cached). A **warm** run reuses those answers and
+finishes in minutes; it is possible when the change sits *after* the models, such as a
+new paragraph rule. A **cold** run has to ask the models again, because the change sits
+*before* them (a new prompt, a new crop, a new model). Cold runs take hours, so they
+run overnight. That is also why changes before the models are first chosen on **frozen
+sets**: small fixed sets of lines, where models or prompts compare in minutes, before
+anything cold runs.
+
+### Questions to ask about any run
+
+To follow what's running without reading the code: *what do you expect it to show? what
+would make you drop the idea? which file will the result go in?* If the answer to the
+first is "a surer number" rather than "fewer errors", it's a measurement run, not an
+improvement.
 
 ## Where the remaining errors are, and how we expect to improve
 
@@ -299,16 +326,16 @@ That points to the bets below, roughly by expected gain.
 
 1. **Reading whole pages instead of single lines.** A model that sees the whole page
    sees the line joins. As a ceiling test, Claude read 17 pages with one real error,
-   including at every kind of place the pipeline still gets wrong. The local models
+   including at every kind of place the machine still gets wrong. The local models
    aren't there yet: qwen reading whole pages made 76 wrong words over 19 test pages,
-   where the current pipeline makes 27. Feeding today's page readings in as extra readers
-   didn't help either (tried for a night, no change). So the architecture to aim for
-   is known; the bottleneck is how good the local vision models are. **Each new model
-   gets screened on the frozen sets**, and the machine is built so that a better model
-   can take over a role quickly.
+   where the machine as it stands makes 27, and adding its page readings as extra
+   readers didn't help either. So the architecture to aim for is known; the bottleneck
+   is how good the local vision models are. **Each new model is screened on the frozen
+   sets**, and the machine is built so that a better model can take over a role
+   quickly.
 2. **Structure**: paragraph breaks in books that don't indent paragraphs, headings
-   still missed (drawn numerals, old-style figures, titles that also appear as running
-   heads), verse, tables and block quotes not handled yet.
+   still missed (chapter numbers drawn as pictures, old-style figures, titles that also
+   appear as running heads), verse, tables and block quotes not handled yet.
 3. **Fewer, better questions.** You answer until you're tired, so a question that
    fixes nothing costs as much as an error. Untried ideas: one answer for the same
    question across pages ("is this `|` an `I`?" once, not forty times), and ranking
@@ -324,63 +351,24 @@ So you can recognise a rerun of an old idea. Details and numbers in outlook.md's
 and why it didn't help".
 
 - Rewording qwen's instructions, or giving it bigger, sharper or wider crops.
-- A third judge, or a model judging paragraph breaks from a crop of a few lines: it
-  broke as many breaks as it fixed.
+- Another small picture judge beside clef, from an earlier round of models: no change.
+- A model judging paragraph breaks from a crop of a few lines: it broke as many breaks
+  as it fixed.
 - Faster or differently packaged reader models: worse on quote marks, or no more
   accurate.
 - Fine-tuning a reader: ruled out by measurement, since only about 30% of what's left
   is the kind of reading error a better reader alone would fix.
-- Speeding up qwen with parallel requests: the runtime handles one at a time.
-- **Swapping in the other vision models we could get** (2026-10-20 and 21): five were tried
-  as readers, extra witnesses or error detectors, and none beat the reader we have. That
-  reader (Qwen3.8-27B) is two months old and reads far better than a 72B model that was
-  the best open one in January 2025, so models are the lever and move fast: the work that
-  lasts is the gate a new model passes (HANDOVER.md, "When a new vision model appears").
+- Speeding up qwen by sending it several lines at once: the runtime it runs on answers
+  one request at a time however many arrive.
+- Swapping in the other vision models we could get: five were tried as readers, extra
+  witnesses or error detectors, and none beat the reader we have. Vision models improve
+  fast, so the lasting work is the test a new model has to pass, not the choice of
+  today's model.
 - Letting the reader think before answering: it reads worse and slower.
-- Rewording the page-kind question for `init`: it changed 15 answers in 432 and no result.
-- Two extra arbiter features for a comma at a line's end: no better, and glued words worse.
-
-## What is going on right now (2026-11-02)
-
-`HANDOVER.md` always has the current state; this is what it said when this page was
-last updated, decoded.
-
-- **Stella is done**: you read it through and found no errors.
-- **Two new books, built with no one stepping in**: *Hoe wij verdwijnen* (300 pages,
-  4 h 14 min from PDF to EPUB) and *Pieter Daens* (804 pages, 12 h 22 min). About a
-  minute a page; the README has the table.
-- **What reading them showed, now the machine's own job**: reading the two EPUBs found
-  chapter numbers misread or lost (old-style figures read as "Io" and "SE", a "23" thrown
-  away as a speck), a dedication cut in two, mottos set as running text, a table of
-  contents and the publisher's ads taken for text. Each was fixed in the pipeline, not in
-  the book, mostly from the book's own evidence: chapters number 1, 2, 3; a chapter's
-  opening looks like the book's other openings; a part's subtitle is set like the other
-  parts'. The model that names a page's kind now also looks at short pages inside the
-  text (dedication, motto, contents).
-- **The machine checks itself now.** Every build prints a structure line (chapter
-  numbers out of order, a stray heading, a section of a line or two) and a line saying
-  what changed since the last build of that book. Run over the books built before, the
-  structure check found missing chapters in six golden books nobody had noticed.
-- **The bench counts headings**: a lost chapter heading now makes a change "worse",
-  like a lost word; before, it showed only in a side report. Heading errors on tuning
-  went from 102 to 82. The bench also names a book whose silent errors double, and runs
-  its books in parallel (21 minutes down to 10).
-- **Fewer, fairer questions**: *Hoe wij verdwijnen* asks 58 (from 135), *Pieter Daens*
-  296 (from 388). Out: chapter numbers the run already confirms, "Maurice’ moeder" taken
-  for a closing quote, and closing quotes the vision model sees after a paragraph's last
-  full stop (right 39 times in 39 on the golden books, so no new silent error).
-- **Tried and dropped**: asking once per letter quoted over several paragraphs (in half
-  the cases a closing mark really was lost), and leaving out every page the model calls
-  blank (it called a chapter's last four lines blank).
-- **Running**: the tuning slices growing again, about 925 pages, so the bench's verdicts
-  get surer. Then a bench of the day's last changes.
-- **Waiting on you**: the review of *Hoe wij verdwijnen*, then of *Pieter Daens*, when you
-  have time.
-
-Good questions to ask the other session about any run, to stay in touch with it: *what
-do you expect it to show? what would make you drop the idea? which file will the result
-go in?* If the answer to the first is "a surer number" rather than "fewer errors",
-that's a measurement run, not an improvement.
+- Rewording the question that sorts a book's pages by kind (cover, contents, text…):
+  it changed 15 answers in 432 and no result.
+- Two extra arbiter features for a comma at a line's end: no better, and glued words
+  worse.
 
 ## A glossary
 
@@ -391,26 +379,30 @@ that's a measurement run, not an improvement.
 | suspect, version | a place where readings differ; each way of reading it |
 | judge | a model or program that picks a version (clef, autotrust-jev, d3, render and compare, winnow, the word list) |
 | render and compare | the judge that draws each version in the book's typeface and lays it over the scan |
-| context judge | a thinking model that settles a question from the text around it (being tried) |
+| context judge | a thinking model that settled a question from the text around it; tried, and off |
 | arbiter | the trained model that weighs readers and judges and fixes, keeps or asks |
 | spotter | the layout model that marks pictures, captions and titles |
 | sorter | what decides each line's role: body, heading, page number, junk |
 | decision model | a model that picks from fixed options with probabilities; writes no text |
-| generative model | a model that writes text (the readers) |
-| trust data | suspects from golden books labelled right or wrong; what the arbiter learns from |
-| golden book, pair, reference | a scan plus a checked text of the same edition |
+| generative model | a model that writes text (glm-ocr and qwen, two of the readers) |
+| silent error | an error no question points at; what the reviewer can't catch |
+| golden book, reference | a scan plus a checked text of the same printing |
 | verdict | a person's ruling on what the scan prints where output and reference differ |
-| slice | the pages of a golden book the bench scores |
-| tuning, validation | the golden books choices are made on, and those that only veto (above) |
-| first look | a new pair's single score, before anything is chosen on it |
 | bench | the paired before/after comparison over a set; it decides whether a change stays |
+| tuning, validation | the golden books choices are made on, and those that only veto |
+| control | the same build made without the change, benched beside it |
+| first look | a new golden book's single score, before anything is chosen on it |
 | after review | wrong words a page once every question is answered, with questions charged |
-| silent | errors no question points at; what the reviewer can't catch |
 | breaks | paragraph breaks set wrong, a page |
 | cause | the kind of an error, read from its two sides (a quote missing, letters misread…) |
 | probe | a quick experiment on a few pages, before building anything |
-| null | a probe or bench that showed no gain; recorded anyway |
 | cold, warm | a run that has to ask the models again, or one that reuses their saved answers |
-| frozen set, tryout | a fixed set of lines for comparing models or prompts in minutes |
-| CER, WER | character and word error rate: the share of characters or words that are wrong |
-| retired | a golden book dropped because its reference turned out to be another edition |
+| frozen set | a fixed set of lines for comparing models or prompts in minutes |
+
+## Where to find it in the code
+
+For when you do want the code: the readers in `readers.py`, the judges' questions in
+`ocrcheck.py`, render and compare in `rendercheck.py`, the arbiter in `trust.py`, the
+bench in `bench.py` (`roboscriptorium bench tuning`), probes in `experiments/probe_*.py`,
+the frozen sets in `tryouts/` (`experiments/tryout.py`). [modules.md](modules.md) has
+every module.
