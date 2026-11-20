@@ -44,3 +44,15 @@ def _default_settings(monkeypatch):
 def _own_judge_lock(monkeypatch, tmp_path):
     """A lock of the test's own: a bench asking the hyphen judges holds the machine's."""
     monkeypatch.setattr(hyphens, "JUDGE_LOCK", tmp_path / "hyphen-judges.lock")
+
+
+@pytest.fixture(autouse=True)
+def _no_pause_of_live_runs(monkeypatch, request):
+    """A test's build pauses no real run: `priority.first` finds no agent processes, so a
+    test of the `build` command doesn't stop and continue the machine's `robo-*` jobs.
+    The tests of `priority` itself set what it finds."""
+    if request.module.__name__.endswith("test_priority"):
+        return
+    from roboscriptorium import priority
+
+    monkeypatch.setattr(priority, "_agent_processes", lambda skip="": ([], []))
