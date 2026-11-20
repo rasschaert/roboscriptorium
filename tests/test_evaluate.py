@@ -52,6 +52,13 @@ def test_italic_words_survive_spaced_dots():
     assert evaluate._italic_words(["Wait . . . what now"], [frozenset({0})]) == {0}
 
 
+def test_an_italic_mark_with_no_letters_counts_on_neither_side():
+    # The slant of ". . . ." can't be seen, so whether it is set italic isn't scored.
+    assert evaluate._italic_words(["Wait . . . . what"], [frozenset({0, 1, 2, 3, 4})]) == {0}
+    assert evaluate._italic_words(["Wait — what"], [frozenset({1})]) == set()
+    assert evaluate._italic_words(["in 1924 ."], [frozenset({1})]) == {1}
+
+
 def test_headings_keep_their_accented_letters_and_empty_keys_match_nothing():
     assert evaluate.match_headings(["Één"], ["Een"]) == 1
     assert evaluate.match_headings(["Één"], ["Twee"]) == 0

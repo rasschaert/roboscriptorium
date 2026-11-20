@@ -14,8 +14,9 @@ Metrics:
   many it sets elsewhere.
 - Headings: how many reference chapter headings the output has (matched in order,
   fuzzily), how many of those letter for letter, and how many output headings match none.
-- Italics: precision and recall of italic words by their place, whatever their letters:
-  a misread word set italic where the reference is italic counts as right.
+- Italics: precision and recall of italic words by their place, whatever their letters;
+  a misread word set italic where the reference is italic counts as right. Marks with no
+  letter or digit (". . . .", "—") count on neither side.
 
 Headings are left out of the text comparison on both sides.
 """
@@ -190,14 +191,20 @@ def _italic_words(paragraphs: list[str], marks: list) -> set[int]:
     """Indices into `_words_with_breaks`' words of the italic ones.
 
     `marks` index each paragraph's `split()`; a word is italic when one of its tokens
-    is (`word_tokens`). A paragraph whose tokens don't line up with its words is left out.
+    is (`word_tokens`). A paragraph whose tokens don't line up with its words is left out,
+    and so is a word with no letter or digit (". . . .", "—"): its slant can't be seen.
     """
     out, offset = set(), 0
     for para, italic in zip(paragraphs, marks, strict=True):
         groups = word_tokens(para)
+        words = normalise(para).split()
         if groups is not None:
-            out |= {offset + w for w, group in enumerate(groups) if any(k in italic for k in group)}
-        offset += len(normalise(para).split())
+            out |= {
+                offset + w
+                for w, group in enumerate(groups)
+                if any(k in italic for k in group) and any(c.isalnum() for c in words[w])
+            }
+        offset += len(words)
     return out
 
 
