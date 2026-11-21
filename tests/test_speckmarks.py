@@ -114,3 +114,53 @@ def test_the_check_offers_a_word_without_the_comma_a_speck_made(tmp_path):
     again = speckmarks.Specks(tmp_path / "speck-marks.json")
     again.survey(tmp_path / "missing.pdf", pages)
     assert again.doubts(None, 1, last, texts[last], [], None) != []
+
+
+@pytest.mark.parametrize(
+    ("text", "want"),
+    [
+        ("- I followed him", ("- I", "I")),
+        ("-  For a while", ("-  For", "For")),
+        # A dash run on to its word, one standing alone, one mid-line, none: no offer.
+        ("-doodstil in het vertrek.", None),
+        ("-", None),
+        ("- —", None),
+        ("en toen - zei hij", None),
+        ("Gewoon een regel", None),
+    ],
+)
+def test_a_hyphen_opening_a_line_before_a_word_is_offered_away(text, want):
+    assert speckmarks.leading_dash(text) == want
+
+
+@pytest.mark.parametrize(
+    ("token", "want"),
+    [
+        ("system..", "system."),
+        ("vermoord..’", "vermoord.’"),
+        # Three dots are an ellipsis, a lone pair no word's, one dot plain.
+        ("toch...", None),
+        ("..", None),
+        ("klaar.", None),
+    ],
+)
+def test_a_word_ending_on_two_stops_is_offered_with_one(token, want):
+    assert speckmarks.double_stop(token) == want
+
+
+def test_the_check_offers_a_line_without_its_opening_hyphen_and_a_word_with_one_stop(tmp_path):
+    from roboscriptorium.pdf import Line, PageText
+
+    lines = [Line(text=t, x0=0, y0=10 * k, x1=100, y1=10 * k + 8)
+             for k, t in enumerate(["- I followed", "the system.. He added"])]  # fmt: skip
+    pages = [PageText(number=1, width=200, height=300, lines=lines)]
+    path = tmp_path / "blank.pdf"
+    doc = pymupdf.open()
+    doc.new_page(width=200, height=300)
+    doc.save(path)
+    specks = speckmarks.Specks(tmp_path / "s.json")
+    specks.survey(path, pages)
+    assert specks.doubts(None, 1, 0, "- I followed", [], None) == [(0, 3, ["I"])]
+    assert specks.doubts(None, 1, 1, "the system.. He added", [], None) == [(4, 12, ["system."])]
+    # A place a reading already disputes isn't offered again.
+    assert specks.doubts(None, 1, 0, "- I followed", [(0, 1)], None) == []

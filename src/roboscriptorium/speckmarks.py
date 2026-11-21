@@ -17,6 +17,11 @@ words say it (`parted`): two words of the word list joined by a mark into no wor
 form the book doesn't repeat, are offered as two words; 134 such tokens in the tuning
 books, nearly all specks by their look.
 
+A speck before a line's first word reads as a hyphen ("- I followed"), and one after a
+full stop as a second ("system.. He added"). Neither is a rule: a few prints set a spaced
+dash there, or two dots (decisions.md, 2026-11-17 and 2026-11-20), so the line without the
+mark is offered (`leading_dash`, `double_stop`) and the judges see the scan.
+
 The offers are kept per book (`stages/speck-marks.json`).
 """
 
@@ -31,7 +36,7 @@ from roboscriptorium import rendercheck
 from roboscriptorium.files import code_stamp, read_cache, write_cache
 from roboscriptorium.pdf import PageText, line_words, page_words
 
-VERSION = 2
+VERSION = 3
 # How unlike the book's usual picture of its mark (`unlike`) a token's is for the lesser
 # version to be offered: the printed marks' median is 0.03 to 0.05; the 15 speck marks
 # the tuning bench names in Doodskleed and The Thief-Taker's Apprentice score 0.15 to
@@ -70,6 +75,24 @@ def lesser(token: str) -> tuple[str, str] | None:
     if core[-1] == ":":
         return ":", core[:-1] + "." + tail
     return None
+
+
+def leading_dash(text: str) -> tuple[str, str] | None:
+    """A line opening on a hyphen standing alone before a word: the line's start up to
+    that word's end, and the word without it ("- I" and "I"); None for another line."""
+    m = re.match(r"(-\s+)(\S+)", text)
+    if not m or not any(c.isalnum() for c in m.group(2)):
+        return None
+    return m.group(0), m.group(2)
+
+
+def double_stop(token: str) -> str | None:
+    """A word ending on two full stops, not three (closing quote marks after them
+    aside), with one; None for another token."""
+    core = token.rstrip(CLOSERS)
+    if len(core) < 3 or not core.endswith("..") or not core[-3].isalnum():
+        return None
+    return core[:-1] + token[len(core) :]
 
 
 def parted(token: str, knows) -> str | None:
@@ -205,6 +228,13 @@ class Specks:
         for places in joined.values():
             if len(places) < REPEATS:
                 self._offers.update(places)
+        for page in pages:
+            for k, line in enumerate(page.lines):
+                if hit := leading_dash(line.text):
+                    self._offers[f"{page.number}|{k}|0|{hit[0]}"] = hit[1]
+                for m in _TOKEN.finditer(line.text):
+                    if (one := double_stop(m.group())) is not None:
+                        self._offers[f"{page.number}|{k}|{m.start()}|{m.group()}"] = one
         self._new = True
 
     def doubts(
@@ -213,6 +243,12 @@ class Specks:
         """Tokens of a line no reading disputes (outside `taken`) that the survey found
         odd, each with its version without the speck's part as its one other version."""
         out = []
+        if (
+            (hit := leading_dash(ours))
+            and (other := (self._offers or {}).get(f"{number}|{k}|0|{hit[0]}")) is not None
+            and not any(t0 < len(hit[0]) for t0, _ in taken)
+        ):
+            out.append((0, len(hit[0]), [other]))
         for m in _TOKEN.finditer(ours):
             a0, a1 = m.start(), m.end()
             other = (self._offers or {}).get(f"{number}|{k}|{a0}|{m.group()}")
