@@ -19,7 +19,7 @@ from roboscriptorium.config import Settings
 from roboscriptorium.corrections import Corrections
 from roboscriptorium.disagreements import patch
 from roboscriptorium.errata import as_printed  # noqa: F401 - read by the tests
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import load_json, write_atomic
 from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden import scoring
 from roboscriptorium.golden.align import align
@@ -104,8 +104,8 @@ def suspect(row: dict) -> ocrcheck.Suspect:
 
 def load(name: str, rebuild: bool = False) -> list[dict]:
     path = OUT / f"{name}.json"
-    if path.exists() and not rebuild:
-        return json.loads(path.read_text())
+    if not rebuild and (rows := load_json(path)) is not None:
+        return rows
     rows = build(name, SPECS[name])
     write_atomic(path, json.dumps(rows, ensure_ascii=False))
     return rows

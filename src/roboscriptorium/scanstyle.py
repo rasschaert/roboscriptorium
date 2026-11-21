@@ -4,7 +4,6 @@ space before it (`measure_ellipses`), each over enough of the book's pages and c
 `typography.py` sets the text in the style found.
 """
 
-import json
 import re
 import statistics
 from dataclasses import asdict, dataclass
@@ -13,7 +12,7 @@ import numpy as np
 import pymupdf
 
 from roboscriptorium import ink
-from roboscriptorium.files import write_atomic
+from roboscriptorium.files import code_stamp, read_cache, write_cache
 from roboscriptorium.pdf import page_words
 from roboscriptorium.typography import DASHES, DashStyle, EllipsisStyle, _is_dash
 
@@ -65,12 +64,10 @@ def guess(pdf_path, numbers: list[int], cache, pages: list | None = None) -> Gue
     (`pages`' words), which are cached apart."""
     texts = {p.number: p for p in pages or []}
     source = "first reading" if any(p.words for p in texts.values()) else "pdf"
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        same = raw.get("pages") == numbers and raw.get("words", "pdf") == source
-        if raw.get("version") == VERSION and same:
-            g = raw["guess"]
-            return Guess(DashStyle(**g.pop("style")), **g) if g else None
+    key = {"pages": numbers, "words": source, "code": code_stamp(__name__)}
+    if raw := read_cache(cache, VERSION, **key):
+        g = raw["guess"]
+        return Guess(DashStyle(**g.pop("style")), **g) if g else None
     found = []
     with pymupdf.open(pdf_path) as pdf:
         for n in numbers:
@@ -84,9 +81,7 @@ def guess(pdf_path, numbers: list[int], cache, pages: list | None = None) -> Gue
                     if (m := _measure(page, w, line)) is not None:
                         found.append(m)
     result = _decide(found)
-    blob = {"version": VERSION, "pages": numbers, "words": source}
-    blob["guess"] = asdict(result) if result else None
-    write_atomic(cache, json.dumps(blob))
+    write_cache(cache, VERSION, {"guess": asdict(result) if result else None}, **key)
     return result
 
 
@@ -242,10 +237,9 @@ def measure_ellipses(pdf_path, numbers: list[int], cache) -> EllipsisMeasure | N
 
     Only an ellipsis the layer reads right after a letter of the same word ("Ka...",
     "dear . . .") is measured: there the blank before it is the gap the print sets."""
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        if raw.get("version") == ELLIPSIS_VERSION and raw.get("pages") == numbers:
-            return EllipsisMeasure(**raw["measure"]) if raw["measure"] else None
+    key = {"pages": numbers, "code": code_stamp(__name__)}
+    if raw := read_cache(cache, ELLIPSIS_VERSION, **key):
+        return EllipsisMeasure(**raw["measure"]) if raw["measure"] else None
     found, gaps = [], []
     with pymupdf.open(pdf_path) as pdf:
         for n in numbers:
@@ -270,12 +264,7 @@ def measure_ellipses(pdf_path, numbers: list[int], cache) -> EllipsisMeasure | N
             statistics.median(g for r in found for g in r["between"]),
             statistics.median(gaps),
         )
-    blob = {
-        "version": ELLIPSIS_VERSION,
-        "pages": numbers,
-        "measure": asdict(result) if result else None,
-    }
-    write_atomic(cache, json.dumps(blob))
+    write_cache(cache, ELLIPSIS_VERSION, {"measure": asdict(result) if result else None}, **key)
     return result
 
 
@@ -384,10 +373,9 @@ def measure_descent(pdf_path, pages: list, cache) -> float | None:
     a line's height, over a spread of its full lines, cached; None when too few measure.
     The scans' placeholder font has no descent, so each box ends on the baseline."""
     numbers = [p.number for p in pages]
-    if cache.exists():
-        raw = json.loads(cache.read_text())
-        if raw.get("version") == DESCENT_VERSION and raw.get("pages") == numbers:
-            return raw["descent"]
+    key = {"pages": numbers, "code": code_stamp(__name__)}
+    if raw := read_cache(cache, DESCENT_VERSION, **key):
+        return raw["descent"]
     lines = [
         (p.number, (ln.x0, ln.y0, ln.x1, ln.y1), nxt.y0 if nxt is not None else None)
         for p in pages
@@ -401,7 +389,5 @@ def measure_descent(pdf_path, pages: list, cache) -> float | None:
             if (d := line_descent(pdf[n - 1], box, below)) is not None:
                 found.append(d)
     descent = round(float(np.quantile(found, DESCENT_SHARE)), 2) if len(found) >= 10 else None
-    write_atomic(
-        cache, json.dumps({"version": DESCENT_VERSION, "pages": numbers, "descent": descent})
-    )
+    write_cache(cache, DESCENT_VERSION, {"descent": descent}, **key)
     return descent

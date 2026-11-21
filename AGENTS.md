@@ -244,9 +244,11 @@ Each rule names the mistake it prevents; check a change against them before comm
 - **A cache version bumped on a branch is one no branch has used.** Before bumping,
   `git grep` the constant across all branches (`git grep -h "^FITS =" $(git branch
   --format='%(refname:short)')`); before a long run, check one output for the new field.
-- **A change in how a cached value is found bumps its cache's version, and so does its
-  revert.** Otherwise the cache keeps serving the other method's answer: Vanille's
-  ellipsis style, measured by a method reverted on 2026-10-24, was served for 26 days.
+- **A cache says what made it.** A measure made on the scan without a model is keyed by
+  its code (`files.code_stamp`), so a changed or reverted method never serves another's
+  answer, whatever was interrupted (Vanille's ellipsis style, measured by a method reverted
+  on 2026-10-24, was served for 26 days). A cache of model answers is keyed by model and
+  prompt; a change in what it would answer bumps its version, its revert too.
 - **Caches survive interruption.** Write them whole (`files.write_atomic`), skip a
   cut-off last line in append-only logs, version their format.
 

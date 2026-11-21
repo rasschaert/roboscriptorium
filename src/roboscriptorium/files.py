@@ -1,8 +1,11 @@
 """Writing the per-book caches."""
 
+import functools
 import hashlib
+import inspect
 import json
 import os
+import sys
 from pathlib import Path
 
 
@@ -18,13 +21,41 @@ def write_atomic(path: Path, text: str | bytes) -> None:
     os.replace(partial, path)
 
 
+def load_json(path: Path):
+    """A cache file's JSON, or None when it is missing or can't be read: emptied or cut
+    short by a crash, it is made again like a missing one."""
+    try:
+        return json.loads(path.read_text())
+    except (FileNotFoundError, ValueError):
+        return None
+
+
+@functools.cache
+def code_stamp(module: str) -> str:
+    """A short hash of a module's source and of the project's functions and modules it
+    imports by name, one level deep (a helper they call in turn is not seen). A cache
+    keyed by it (`read_cache(..., code=code_stamp(__name__))`) is made again whenever
+    that code changes, and an old one is served again when a change is reverted."""
+    mod = sys.modules[module]
+    parts = [Path(mod.__file__).read_bytes()]
+    for _, obj in sorted(vars(mod).items()):
+        owner = obj.__name__ if inspect.ismodule(obj) else getattr(obj, "__module__", None)
+        if not isinstance(owner, str) or owner == module or owner == __name__:
+            continue
+        if not owner.startswith("roboscriptorium"):
+            continue
+        if inspect.ismodule(obj):
+            parts.append(Path(obj.__file__).read_bytes())
+        elif inspect.isfunction(obj):
+            parts.append(inspect.getsource(obj).encode())
+    return hashlib.sha256(b"\0".join(parts)).hexdigest()[:12]
+
+
 def read_cache(path: Path, version: int, **identity) -> dict | None:
     """A versioned JSON cache, when its format `version` and each `identity` field (the
-    model, prompt or language it was made with) match; else None, for it to be made
-    again."""
-    if not path.exists():
-        return None
-    raw = json.loads(path.read_text())
+    model, prompt or language it was made with, the code that measured it) match; else
+    None, for it to be made again. A file a crash left unreadable counts as missing."""
+    raw = load_json(path)
     if not isinstance(raw, dict) or raw.get("version") != version:
         return None
     if any(raw.get(k) != v for k, v in identity.items()):
@@ -83,7 +114,7 @@ def check_source(source: Path, stamp: Path) -> None:
     otherwise be read from the old one's caches. Size and mtime spare the hash when
     nothing was touched."""
     stat = source.stat()
-    seen = json.loads(stamp.read_text()) if stamp.exists() else None
+    seen = load_json(stamp)
     if seen and (seen["size"], seen["mtime"]) == (stat.st_size, stat.st_mtime):
         return
     digest = _sha256(source)

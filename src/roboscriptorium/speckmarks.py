@@ -28,7 +28,7 @@ import pymupdf
 from PIL import Image
 
 from roboscriptorium import rendercheck
-from roboscriptorium.files import read_cache, write_cache
+from roboscriptorium.files import code_stamp, read_cache, write_cache
 from roboscriptorium.pdf import PageText, line_words, page_words
 
 VERSION = 2
@@ -157,7 +157,7 @@ class Specks:
 
     def __init__(self, cache: Path, lexicon=None):
         self._cache, self._lexicon = cache, lexicon
-        kept = read_cache(cache, VERSION)
+        kept = read_cache(cache, VERSION, code=code_stamp(__name__))
         self._offers: dict[str, str] | None = kept["offers"] if kept else None
         self._new = False
 
@@ -223,5 +223,5 @@ class Specks:
 
     def save(self) -> None:
         if self._new:
-            write_cache(self._cache, VERSION, {"offers": self._offers})
+            write_cache(self._cache, VERSION, {"offers": self._offers}, code=code_stamp(__name__))
             self._new = False

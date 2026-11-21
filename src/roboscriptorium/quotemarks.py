@@ -23,7 +23,7 @@ import numpy as np
 import pymupdf
 
 from roboscriptorium import rendercheck
-from roboscriptorium.files import read_cache, write_cache
+from roboscriptorium.files import code_stamp, read_cache, write_cache
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.pdf import PageText, line_words, page_words
 
@@ -164,7 +164,7 @@ class Nested:
 
     def __init__(self, cache: Path):
         self._cache = cache
-        kept = read_cache(cache, VERSION)
+        kept = read_cache(cache, VERSION, code=code_stamp(__name__))
         self._usual: float | None = kept["usual"] if kept else None
         self._outer: str = kept["outer"] if kept else "s"
         self._surveyed: bool = bool(kept)
@@ -245,5 +245,6 @@ class Nested:
                 self._cache,
                 VERSION,
                 {"usual": self._usual, "outer": self._outer, "spans": self._spans},
+                code=code_stamp(__name__),
             )
             self._new = 0
