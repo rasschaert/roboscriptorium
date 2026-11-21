@@ -71,6 +71,9 @@ class Settings:
     # read as punctuation; `speckmarks.py`). Decided by `offer_trust_model` (docs/decisions.md,
     # 2026-11-18 and 11-19).
     speck_doubts: bool = True
+    # With the speck doubts, a hyphen opening a line and a second full stop offered away
+    # too (`speckmarks.leading_dash`, `double_stop`); off until benched.
+    speck_line_marks: bool = False
     # The judges' crops and the render judge's window stop at the line above's
     # descenders (`readers.own_span`): set tight, a padded crop holds them, and judges
     # took them for marks (Andere levens' "dië").
@@ -216,6 +219,7 @@ class Settings:
             accent_doubts=_flag("ROBO_ACCENT_DOUBTS", defaults.accent_doubts),
             nested_quote_doubts=_flag("ROBO_NESTED_QUOTES", defaults.nested_quote_doubts),
             speck_doubts=_flag("ROBO_SPECK_DOUBTS", defaults.speck_doubts),
+            speck_line_marks=_flag("ROBO_SPECK_LINE_MARKS", defaults.speck_line_marks),
             crop_descent=_flag("ROBO_CROP_DESCENT", defaults.crop_descent),
             llama_url=os.environ.get("ROBO_LLAMA_URL", defaults.llama_url),
             fonts=os.environ.get("ROBO_FONTS", defaults.fonts),

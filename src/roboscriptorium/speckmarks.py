@@ -36,7 +36,7 @@ from roboscriptorium import rendercheck
 from roboscriptorium.files import code_stamp, read_cache, write_cache
 from roboscriptorium.pdf import PageText, line_words, page_words
 
-VERSION = 3
+VERSION = 2
 # How unlike the book's usual picture of its mark (`unlike`) a token's is for the lesser
 # version to be offered: the printed marks' median is 0.03 to 0.05; the 15 speck marks
 # the tuning bench names in Doodskleed and The Thief-Taker's Apprentice score 0.15 to
@@ -178,9 +178,9 @@ class Specks:
     """The tokens of a book whose closing mark is unlike the book's own, each with the
     version a speck would have been read from."""
 
-    def __init__(self, cache: Path, lexicon=None):
-        self._cache, self._lexicon = cache, lexicon
-        kept = read_cache(cache, VERSION, code=code_stamp(__name__))
+    def __init__(self, cache: Path, lexicon=None, line_marks: bool = False):
+        self._cache, self._lexicon, self._line_marks = cache, lexicon, line_marks
+        kept = read_cache(cache, VERSION, code=code_stamp(__name__), line_marks=line_marks)
         self._offers: dict[str, str] | None = kept["offers"] if kept else None
         self._new = False
 
@@ -228,7 +228,7 @@ class Specks:
         for places in joined.values():
             if len(places) < REPEATS:
                 self._offers.update(places)
-        for page in pages:
+        for page in pages if self._line_marks else ():
             for k, line in enumerate(page.lines):
                 if hit := leading_dash(line.text):
                     self._offers[f"{page.number}|{k}|0|{hit[0]}"] = hit[1]
@@ -259,5 +259,11 @@ class Specks:
 
     def save(self) -> None:
         if self._new:
-            write_cache(self._cache, VERSION, {"offers": self._offers}, code=code_stamp(__name__))
+            write_cache(
+                self._cache,
+                VERSION,
+                {"offers": self._offers},
+                code=code_stamp(__name__),
+                line_marks=self._line_marks,
+            )
             self._new = False

@@ -376,7 +376,9 @@ def run(
                 nested.survey(book.source, body, readings)
                 marks.append(nested)
             if settings.speck_doubts:
-                specks = speckmarks.Specks(book.stages / "speck-marks.json", lexicon)
+                specks = speckmarks.Specks(
+                    book.stages / "speck-marks.json", lexicon, settings.speck_line_marks
+                )
                 specks.survey(book.source, body)
                 marks.append(specks)
             suspects = ocrcheck.check(

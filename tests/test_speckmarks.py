@@ -158,7 +158,10 @@ def test_the_check_offers_a_line_without_its_opening_hyphen_and_a_word_with_one_
     doc = pymupdf.open()
     doc.new_page(width=200, height=300)
     doc.save(path)
-    specks = speckmarks.Specks(tmp_path / "s.json")
+    off = speckmarks.Specks(tmp_path / "off.json")
+    off.survey(path, pages)
+    assert off.doubts(None, 1, 0, "- I followed", [], None) == []
+    specks = speckmarks.Specks(tmp_path / "s.json", line_marks=True)
     specks.survey(path, pages)
     assert specks.doubts(None, 1, 0, "- I followed", [], None) == [(0, 3, ["I"])]
     assert specks.doubts(None, 1, 1, "the system.. He added", [], None) == [(4, 12, ["system."])]
