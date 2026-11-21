@@ -1326,3 +1326,20 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-21 | bench validation, ag | 0 | 174 | 0 |
 | 2026-11-21 | bench validation, ctl-1119 | 0 | 1 | 0 |
 | 2026-11-21 | tryout: judge set v2, qwen3.8 by tokens | 0 | 15 | 0 |
+| 2026-11-21 | bench tuning, production, baseline for the judges' seat | 0 | 5 | 0 |
+| 2026-11-21 | bench validation, production, baseline for the judges' seat | 0 | 1 | 0 |
+| 2026-11-21 | trust data, goede-dochter--ia-scan | 500 | 26 | 0 |
+| 2026-11-21 | trust data, vals-alarm--ia-scan | 292 | 2 | 0 |
+| 2026-11-21 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 0 | 0 |
+| 2026-11-21 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 1 | 0 |
+| 2026-11-21 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 9 | 0 |
+| 2026-11-21 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 8 | 0 |
+| 2026-11-21 | trust data, metro-2033--ia-scan | 458 | 3 | 0 |
+| 2026-11-21 | trust data, de-cipier--ia-scan | 474 | 9 | 0 |
+| 2026-11-21 | trust data, artemis--ia-scan | 305 | 1 | 0 |
+| 2026-11-21 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 5 | 0 |
+| 2026-11-21 | trust data, de-eerlijke-vinder--ia-scan | 84 | 14 | 0 |
+| 2026-11-21 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-21 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 1 | 0 |
+| 2026-11-21 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 3 | 0 |
+| 2026-11-21 | trust data, doodskleed--ia-scan | 276 | 5 | 0 |
