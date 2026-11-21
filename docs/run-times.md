@@ -1343,3 +1343,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-21 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 1 | 0 |
 | 2026-11-21 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 3 | 0 |
 | 2026-11-21 | trust data, doodskleed--ia-scan | 276 | 5 | 0 |
+| 2026-11-21 | trust data, het-ijzige-land--ia-scan | 318 | 2 | 0 |
+| 2026-11-21 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 1 | 0 |
+| 2026-11-21 | trust data, vuurspel--ia-scan | 21 | 1 | 0 |
+| 2026-11-21 | trust data, monterosso-mon-amour--ia-scan | 88 | 1 | 0 |
+| 2026-11-21 | trust data, het-geluid-van-bananen--ia-scan | 315 | 6 | 0 |
+| 2026-11-21 | trust data, het-schaduwhuis--ia-scan | 320 | 11 | 0 |
