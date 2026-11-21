@@ -1349,3 +1349,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-21 | trust data, monterosso-mon-amour--ia-scan | 88 | 1 | 0 |
 | 2026-11-21 | trust data, het-geluid-van-bananen--ia-scan | 315 | 6 | 0 |
 | 2026-11-21 | trust data, het-schaduwhuis--ia-scan | 320 | 11 | 0 |
+| 2026-11-21 | trust data, stella | 67 | 3 | 0 |
+| 2026-11-21 | trust data, ex-minnaar | 273 | 2 | 1 |
