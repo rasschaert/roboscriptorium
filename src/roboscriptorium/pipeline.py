@@ -384,7 +384,7 @@ def run(
                 book_style(book, whole, style, dots), alarms, settings.alarm_below,
                 settings.lower_capitals,
                 line_descent(book, whole) if settings.crop_descent else None,
-                tuple(marks),
+                tuple(marks), settings.judge_lines,
             )  # fmt: skip
             decider = "fixed rule"
             if settings.ocr_trust:

@@ -90,6 +90,10 @@ class Settings:
     # Learned trust (`trust.py`) chooses the OCR check's fixes and questions instead of
     # the fixed rule, asking at most this many questions per page.
     ocr_trust: bool = True
+    # The (page, line) pairs the OCR check's judges are asked anew on; elsewhere they answer
+    # from the cache or not at all. Set by `trustdata` on a book labelled by review answers,
+    # where only the answered lines become training rows; never from the environment.
+    judge_lines: frozenset[tuple[int, int]] | None = None
     ocr_trust_model: str = "work/models/ocr-trust.pkl"
     # A second arbiter that decides only the suspects holding a version no reading has (an
     # offer from a measure on the scan: the accent and speck doubts); "" decides them with

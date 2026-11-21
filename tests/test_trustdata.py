@@ -131,3 +131,24 @@ def test_an_erratum_whose_corrected_words_occur_twice_is_left_out():
     reference = [Chapter("1", ["een.22 hier", "en een.22 daar"], [frozenset(), frozenset()])]
     printed = as_printed(reference, [Erratum(26, "een .22", "een.22")])
     assert printed[0].paragraphs == ["een.22 hier", "en een.22 daar"]
+
+
+def test_a_book_labelled_by_its_answers_has_its_judges_asked_only_on_answered_lines(tmp_path):
+    import json
+    from types import SimpleNamespace
+
+    from roboscriptorium.trustdata import answered_lines
+
+    path = tmp_path / "review" / "regions.jsonl"
+    path.parent.mkdir()
+    rows = [
+        {"key": "a", "page": 9, "first": 3, "last": 4, "original": "x", "action": "text",
+         "text": None, "at": "t"},
+        {"key": "b", "page": 9, "first": 0, "last": -1, "original": "", "action": "image",
+         "text": None, "at": "t"},
+        {"key": "c", "page": 12, "first": 7, "last": 7, "original": "y", "action": "text",
+         "text": "z", "at": "t", "span": [0, 1]},
+    ]  # fmt: skip
+    path.write_text("".join(json.dumps(r) + "\n" for r in rows))
+    book = SimpleNamespace(corrections_path=path)
+    assert answered_lines(book) == {(9, 3), (9, 4), (12, 7)}

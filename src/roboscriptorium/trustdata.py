@@ -67,11 +67,25 @@ def answered(book: Book, suspects: list) -> dict[tuple, str]:
     return corrections.answered(Corrections(book.corrections_path), suspects)
 
 
+def answered_lines(book: Book) -> frozenset[tuple[int, int]]:
+    """The (page, line) pairs a reviewer answered a text question on: the only lines of a
+    book labelled by its answers that become training rows (`corrections.answered`)."""
+    return frozenset(
+        (c.page, k)
+        for c in Corrections(book.corrections_path).by_key.values()
+        if c.action == "text"
+        for k in range(c.first, c.last + 1)
+    )
+
+
 def build(name: str, spec: str) -> list[dict]:
     pages_arg, chapters = (spec.split(":") + ["", ""])[:2] if spec else ("", "")
     book = Book.load(Path("work") / name)
     # The fixed rule's choices are the baseline the trust model is scored against.
     settings = replace(Settings.from_env(), ocr_trust=False)
+    if spec == "answers":
+        # A judge asked about a line nobody answered teaches the arbiter nothing here.
+        settings = replace(settings, judge_lines=answered_lines(book))
     pages = scoring.page_range(None if spec == "answers" else pages_arg or None)
     stages = pipeline.run(book, pages=pages, settings=settings)
     if spec == "answers":
