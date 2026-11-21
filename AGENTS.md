@@ -165,6 +165,10 @@ get renumbered. Don't add a file to this table without a job no other file has.
   model runs queue on `work/runs/model-screen.lock`; a warm bench, a re-score or an
   arbiter's training takes no lock and runs beside them, in its own output folder under
   `work/probes/` (or a worktree) when it would rewrite caches the model run reads.
+- **While a run is in flight, change the build's code in a worktree** (2026-11-21: an
+  offer added in the main checkout nearly reached a rebuild between its books).
+  `rebuild-trust.sh` and the benches start a fresh process per book, which loads the
+  main checkout's code as it stands; a change there joins the run halfway.
 - **A probe beside a running chain sends the chain's model options** (no `num_ctx` of
   its own): Ollama reloads a model whenever the requested context differs.
 - **Never idle while the checklist has open steps** (the user, 2026-10-24: "as long as
