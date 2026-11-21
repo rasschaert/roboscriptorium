@@ -159,6 +159,12 @@ get renumbered. Don't add a file to this table without a job no other file has.
   book, a page) and resumes from them; one that saves only at its end is a bug to fix
   before its next use. Before stopping a run, even when told to, say how far it is
   against how long its like took (docs/run-times.md) and whether it resumes.
+- **Runs that ask no model don't queue behind runs that do** (the user, 2026-11-21: "the
+  current work is underutilizing my many cpu cores"; a warm bench waited two hours behind
+  a judge run while the cores idled). Ollama answers on the GPU, one model at a time, so
+  model runs queue on `work/runs/model-screen.lock`; a warm bench, a re-score or an
+  arbiter's training takes no lock and runs beside them, in its own output folder under
+  `work/probes/` (or a worktree) when it would rewrite caches the model run reads.
 - **A probe beside a running chain sends the chain's model options** (no `num_ctx` of
   its own): Ollama reloads a model whenever the requested context differs.
 - **Never idle while the checklist has open steps** (the user, 2026-10-24: "as long as
