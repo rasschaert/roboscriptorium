@@ -53,6 +53,12 @@ class Settings:
     # reading agrees ("ss", "usb-stick"; `ocrcheck.capitals_doubts`). About 1.7% more
     # questions for the small capitals no reader disputes (docs/design.md).
     lower_capitals: bool = True
+    # A heading the line-role trees call at least this sure, by their own call, with
+    # nothing else to ask on its lines (every place in it settled by the readers and
+    # judges), isn't asked; 0 asks every heading. At 0.99 the trees were never wrong
+    # about a heading on tuning (463 of 470; the other 7 misread numbers the OCR check
+    # mends, decisions.md 2026-11-21).
+    sure_heading: float = 0.0
     # Doubts raised where the scan shows a stress accent over a word every reading has
     # plain ("zíjn" read "zijn"; `accentmarks.py`), in a Dutch book with the judge
     # `render`. Decided by `offer_trust_model` (docs/decisions.md, 2026-11-18 and 11-19).
@@ -172,6 +178,8 @@ class Settings:
     def __post_init__(self) -> None:
         if not 0 < self.ocr_ask_below <= 1:
             raise ValueError(f"ROBO_OCR_ASK_BELOW={self.ocr_ask_below}: a probability in (0, 1]")
+        if not 0 <= self.sure_heading <= 1:
+            raise ValueError(f"ROBO_SURE_HEADING={self.sure_heading}: a probability in [0, 1]")
         if not 0 < self.alarm_below <= 1:
             raise ValueError(f"ROBO_ALARM_BELOW={self.alarm_below}: a confidence in (0, 1]")
         if self.ocr_questions_per_page < 0:
@@ -204,6 +212,7 @@ class Settings:
             hyphen_judge=os.environ.get("ROBO_HYPHEN_JUDGES", defaults.hyphen_judge),
             hyphen_learned=os.environ.get("ROBO_HYPHEN_LEARNED", defaults.hyphen_learned),
             lower_capitals=_flag("ROBO_LOWER_CAPITALS", defaults.lower_capitals),
+            sure_heading=float(os.environ.get("ROBO_SURE_HEADING", defaults.sure_heading)),
             accent_doubts=_flag("ROBO_ACCENT_DOUBTS", defaults.accent_doubts),
             nested_quote_doubts=_flag("ROBO_NESTED_QUOTES", defaults.nested_quote_doubts),
             speck_doubts=_flag("ROBO_SPECK_DOUBTS", defaults.speck_doubts),

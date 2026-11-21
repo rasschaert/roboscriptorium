@@ -104,3 +104,20 @@ def test_a_slice_without_chapters_is_scored_on_the_paragraphs_its_pages_hold():
         page(20, ["station binnen, langzaam", "en zwaar.", *(ln.text for ln in pages[1].lines)])
     ]
     assert cut_to_pages(reference, late)[2] == (5, 0)
+
+
+def test_only_the_trees_own_sure_headings_go_unasked():
+    from roboscriptorium.golden.scoring import sure_headings
+    from roboscriptorium.ir import SourceRef
+    from roboscriptorium.roles import LineRole
+
+    roles = {
+        SourceRef(1, 0): LineRole("chapter_heading", 0.995, 0.0, "trees"),
+        SourceRef(2, 0): LineRole("chapter_heading", 1.0, 0.0, "run-gap"),  # a rule's call
+        SourceRef(3, 0): LineRole("chapter_heading", 0.98, 0.0, "trees"),  # not sure enough
+        SourceRef(5, 0): LineRole("chapter_heading", 0.999, 0.0),  # the decision model's call
+        SourceRef(4, 0): LineRole("body", 0.999, 0.999),
+    }
+    assert sure_headings(roles, 0.99) == {SourceRef(1, 0)}
+    # Off by default: every heading is asked.
+    assert sure_headings(roles, 0.0) == set()

@@ -171,6 +171,20 @@ def _anchor(
     return None
 
 
+def sure_headings(roles, cut: float) -> set[SourceRef]:
+    """The lines the line-role trees call a chapter heading at `cut` or surer, by their own
+    call (`sorter.apply`'s "trees", not a rule's); none at 0. Their questions go unasked
+    where nothing else is asked on them: a place the arbiter left open on such a line is
+    an OCR doubt of its own."""
+    if not cut or not roles:
+        return set()
+    return {
+        ref
+        for ref, role in roles.items()
+        if role.role == "chapter_heading" and role.rule == "trees" and role.confidence >= cut
+    }
+
+
 def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
     """What the review asks of this build, the golden places aside."""
     regions = None
@@ -207,6 +221,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
     # A heading its run confirms (chapter numbers or years in order, parts counted) is
     # asked about nothing, nor is its reading; a page left out of the book isn't asked.
     confirmed = chapters.settled(stages.doc.blocks)
+    sure = sure_headings(stages.model_roles, Settings.from_env().sure_heading)
     omitted = {r.page for r, role in stages.model_roles.items() if role.rule == pipeline.OMITTED}
 
     def lines(f: Flag) -> set[SourceRef]:
@@ -223,6 +238,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
             and f.last >= f.first
             and lines(f) <= confirmed
         )
+        and not (f.reasons == ["heading"] and f.last >= f.first and lines(f) <= sure)
     ]
     found = _read_unread(book, stages, found)
     if quotes.single_quoted(stages.doc.blocks):
