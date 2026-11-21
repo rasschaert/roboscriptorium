@@ -104,16 +104,10 @@ In this order; `HANDOVER.md` has the paths and the commands.
       behind the judge run (`work/runs/cache-code-bench.sh`, screen
       `robo-cache-code-bench`); merge if no word moves, else read each moved word as a
       stale cache found
-- [ ] Groot 19B and Arete-27B Q4 as text judges: seated in full, not taken (2026-11-21,
-      decisions.md: a small gain on tuning, 2 more silent errors across both sets for fewer
-      questions, an hour more per 300-page first build; the retrained offers' arbiter
-      invents accents). Next, **decided only after the Inkling 2 Mini screenings** (the
-      user, 2026-11-21: "if it is truly as good as the benchmarks say we might not want or
-      need groot and or arete anymore"): if Inkling judges as well, screen it in their
-      place; else the narrower version, the two asked only on suspect accents and
-      misread letters (where they fixed 17 / 3 and 25 / 8), arbiters retrained, both
-      benches against production. Groot's readings as offers through the judges
-      (`ROBO_EXTRA_READERS`: it alone reads the silent ‘“Lucy) wait on the same verdict
+- [x] 2026-11-21 Groot 19B and Arete-27B Q4 as text judges: not taken, seated in full nor on
+      words only (decisions.md: the accent and letter rescues are real, the retrained
+      arbiters' own drift eats them). Back after a steadier arbiter retraining, or on
+      accent suspects only
 - [x] 2026-11-19 Vanille en andere smaken's chapter numbers over its titles set as
       headings (`chapters.numbers_over_titles`, `title_lines`' "title-runs-on"): tuning
       no change, validation headings 48 → 45, no word moved (decisions.md)
