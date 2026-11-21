@@ -20,7 +20,9 @@ books, nearly all specks by their look.
 A speck before a line's first word reads as a hyphen ("- I followed"), and one after a
 full stop as a second ("system.. He added"). Neither is a rule: a few prints set a spaced
 dash there, or two dots (decisions.md, 2026-11-17 and 2026-11-20), so the line without the
-mark is offered (`leading_dash`, `double_stop`) and the judges see the scan.
+mark is offered (`leading_dash`, `double_stop`) and the judges see the scan; a book with
+two stops on `REPEATS` words or more prints them so (Goede dochter's "vermoord..’") and
+gets no such offer.
 
 The offers are kept per book (`stages/speck-marks.json`).
 """
@@ -228,13 +230,17 @@ class Specks:
         for places in joined.values():
             if len(places) < REPEATS:
                 self._offers.update(places)
+        stops: dict[str, str] = {}
         for page in pages if self._line_marks else ():
             for k, line in enumerate(page.lines):
                 if hit := leading_dash(line.text):
                     self._offers[f"{page.number}|{k}|0|{hit[0]}"] = hit[1]
                 for m in _TOKEN.finditer(line.text):
                     if (one := double_stop(m.group())) is not None:
-                        self._offers[f"{page.number}|{k}|{m.start()}|{m.group()}"] = one
+                        stops[f"{page.number}|{k}|{m.start()}|{m.group()}"] = one
+        # A book that ends words on two stops this often prints them so (trailing speech).
+        if len(stops) < REPEATS:
+            self._offers.update(stops)
         self._new = True
 
     def doubts(

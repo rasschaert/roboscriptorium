@@ -167,3 +167,9 @@ def test_the_check_offers_a_line_without_its_opening_hyphen_and_a_word_with_one_
     assert specks.doubts(None, 1, 1, "the system.. He added", [], None) == [(4, 12, ["system."])]
     # A place a reading already disputes isn't offered again.
     assert specks.doubts(None, 1, 0, "- I followed", [(0, 1)], None) == []
+    # A book that ends words on two stops again and again prints them so.
+    habit = [Line(text=t, x0=0, y0=10 * k, x1=100, y1=10 * k + 8)
+             for k, t in enumerate(["dat wil..’", "en toen..", "nee..’ zei hij"])]  # fmt: skip
+    styled = speckmarks.Specks(tmp_path / "h.json", line_marks=True)
+    styled.survey(path, [PageText(number=1, width=200, height=300, lines=habit)])
+    assert styled.doubts(None, 1, 0, "dat wil..’", [], None) == []
