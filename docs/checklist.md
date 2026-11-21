@@ -95,15 +95,10 @@ In this order; `HANDOVER.md` has the paths and the commands.
       titles; back with a tuning pair that has such headings
 - [x] 2026-11-19 The grown-slice trees as the first set: not taken (a silent lost line on
       tuning, unnumbered section titles kept as text on validation; decisions.md)
-- [ ] A judge screened through the trust data asks, on a book labelled by review answers,
-      only the answered lines: built and tested on branch `judge-answered` (worktree
-      `../robo-judge-answered`, decisions.md 2026-11-20); merge once `robo-arete-groot`
-      ends, as it changes the OCR check that run uses
-- [ ] Caches that say what made them (branch `cache-code`, worktree `../robo-cache-code`;
-      decisions.md 2026-11-19): its warm bench of both sets, models unreachable, queued
-      behind the judge run (`work/runs/cache-code-bench.sh`, screen
-      `robo-cache-code-bench`); merge if no word moves, else read each moved word as a
-      stale cache found
+- [x] 2026-11-21 A judge asked, on a book labelled by review answers, only on the answered
+      lines when its trust data is built: merged (branch `judge-answered`)
+- [x] 2026-11-21 Caches that say what made them: merged, no word moved on either set
+      (decisions.md)
 - [x] 2026-11-21 Groot 19B and Arete-27B Q4 as text judges: not taken, seated in full nor on
       words only (decisions.md: the accent and letter rescues are real, the retrained
       arbiters' own drift eats them). Back after a steadier arbiter retraining, or on
