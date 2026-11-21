@@ -10,6 +10,7 @@ it continues.
 
 import os
 import re
+import shutil
 import signal
 import subprocess
 import sys
@@ -106,6 +107,9 @@ def first(what: str) -> Iterator[None]:
 
 
 FLOOR, RESUME = 30, 50
+# Gigabytes free on the disk that holds work/: a download filling it would fail a run
+# mid-write, so the runs wait for room instead.
+DISK_FLOOR, DISK_RESUME = 5, 15
 # Present while the guard holds the runs, so a restarted guard holds them too.
 HELD = Path("work/runs/battery-held")
 
@@ -117,6 +121,11 @@ def battery() -> int | None:
     return int(found.group(1)) if found else None
 
 
+def disk_free() -> int:
+    """Whole gigabytes free on the disk that holds work/."""
+    return shutil.disk_usage(HELD.parent if HELD.parent.exists() else ".").free // 10**9
+
+
 def hold(level: int | None, held: bool, floor: int = FLOOR, resume: int = RESUME) -> bool:
     """Whether the agent's runs stay stopped: from under `floor` until back at `resume`."""
     if level is None:
@@ -125,15 +134,19 @@ def hold(level: int | None, held: bool, floor: int = FLOOR, resume: int = RESUME
 
 
 def guard(every: int = 60) -> None:
-    """Stops the agent's runs while the battery is low, mid-run, and continues them once
-    it has charged: a low-wattage charger loses ground under Ollama, and the battery gate
-    only checks when a run starts. Prints each change, and the level at every 5%."""
+    """Stops the agent's runs while the battery is low or the disk nearly full, mid-run,
+    and continues them once both have recovered: a low-wattage charger loses ground under
+    Ollama, a model download can fill the disk, and the battery gate only checks when a
+    run starts. Prints each change, and the battery level at every 5%."""
     floor = int(os.environ.get("ROBO_BATTERY_FLOOR", FLOOR))
     resume = int(os.environ.get("ROBO_BATTERY_RESUME", RESUME))
-    held, last = HELD.exists(), None
+    held = HELD.exists()
+    by_battery, by_disk, last = held, held, None
     while True:
-        level = battery()
-        now = hold(level, held, floor, resume)
+        level, free = battery(), disk_free()
+        by_battery = hold(level, by_battery, floor, resume)
+        by_disk = hold(free, by_disk, DISK_FLOOR, DISK_RESUME)
+        now = by_battery or by_disk
         pids, names = _agent_processes(skip=GUARD)
         if now:
             _signal(pids, signal.SIGSTOP)
@@ -145,7 +158,8 @@ def guard(every: int = 60) -> None:
                 HELD.unlink(missing_ok=True)
             verb = "stopped" if now else "continued"
             runs = ", ".join(names) or "nothing"
-            print(f"{time.strftime('%H:%M')} battery {level}%: {verb} {runs}", flush=True)
+            print(f"{time.strftime('%H:%M')} battery {level}%, {free} GB free: {verb} {runs}",
+                  flush=True)  # fmt: skip
         elif level is not None and last is not None and level // 5 != last // 5:
             print(f"{time.strftime('%H:%M')} battery {level}%", flush=True)
         held, last = now, level

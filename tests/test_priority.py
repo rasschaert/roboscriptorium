@@ -94,3 +94,27 @@ def test_stopped_processes_are_told_from_running_ones():
         assert priority._stopped([sleeper.pid]) == {sleeper.pid}
     finally:
         sleeper.kill()
+
+
+def test_the_guard_holds_the_runs_while_the_disk_is_nearly_full(monkeypatch, tmp_path):
+    sent, frees = [], iter([40, 3, 10, 20])
+    monkeypatch.setattr(priority, "HELD", tmp_path / "battery-held")
+    monkeypatch.setattr(priority, "battery", lambda: 90)
+    monkeypatch.setattr(priority, "disk_free", lambda: next(frees))
+    monkeypatch.setattr(priority, "_agent_processes", lambda skip="": ([50], ["robo-bench"]))
+    monkeypatch.setattr(priority.os, "kill", lambda pid, sig: sent.append(sig))
+    held = []
+
+    def tick(_):
+        held.append((tmp_path / "battery-held").exists())
+        if len(held) == 4:
+            raise StopIteration
+
+    monkeypatch.setattr(priority.time, "sleep", tick)
+    try:
+        priority.guard()
+    except StopIteration:
+        pass
+    # 40 GB runs, 3 GB stops, 10 GB still waits for 15, 20 GB continues.
+    assert held == [False, True, True, False]
+    assert sent[-1] == signal.SIGCONT and signal.SIGSTOP in sent
