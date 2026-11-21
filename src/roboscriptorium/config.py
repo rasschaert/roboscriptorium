@@ -29,7 +29,8 @@ class Settings:
     # Second vision judges on the OCR check's suspects, comma-separated: decision models
     # on Ollama, or `llama:<name>` served by llama.cpp at llama_url (`clients/llama.py`,
     # imajev-4b); `<model>@wide` asks one on the suspect with its line around it;
-    # `<model>@text` asks it the text judge's question (the sentence, no scan); `render`
+    # `<model>@text` asks it the text judge's question (the sentence, no scan), and
+    # `<model>@words` the same only where the versions' words differ; `render`
     # is no model: each version drawn in the book's typeface and laid over the
     # scan (`rendercheck.py`, with the fonts in `fonts`). Each
     # is a vote for the arbiter, "" for none. Asked only where the vision judge is less
@@ -151,6 +152,13 @@ class Settings:
     def alarm_models(self) -> tuple[str, ...]:
         """The second vision judges, each as named in `alarm_model` (with its `@wide`)."""
         return tuple(m.strip() for m in self.alarm_model.split(",") if m.strip())
+
+    @property
+    def alarm_votes(self) -> tuple[str, ...]:
+        """The names the second judges' votes go under: as in `alarm_model`, a `@words`
+        judge under its `@text` name, whose question it is asked."""
+        return tuple(m.removesuffix("@words") + "@text" if m.endswith("@words") else m
+                     for m in self.alarm_models)  # fmt: skip
 
     @property
     def hyphen_judges(self) -> tuple[str, ...]:

@@ -7,7 +7,7 @@
 # after the book under way, create work/runs/rebuild/STOP; delete it before restarting.
 # Books whose trust data exists are skipped, so a restart goes on where it stopped.
 # ROBO_TRUST_DATA keeps another reader set's data apart (logs then in <it>/runs), and
-# BENCH_AGAINST names the bench run to compare with.
+# BENCH_AGAINST names the bench run to compare with; NO_BENCH=1 ends after the training.
 #   experiments/detached.sh rebuild experiments/rebuild-trust.sh
 set -uo pipefail
 data=${ROBO_TRUST_DATA:-work/probes/ocr-trust}
@@ -48,6 +48,7 @@ experiments/timed.sh "train arbiter after the rebuild" 0 $runs/train.log \
 code=$?
 print "$(date '+%F %H:%M') train exit $code" >> $progress
 (( code )) && exit 1
+[[ -n ${NO_BENCH:-} ]] && exit 0
 # The bench's own slices, which differ from the trust data's for some books.
 bench_pages=$(uv run python -c '
 from pathlib import Path

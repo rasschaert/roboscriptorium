@@ -97,12 +97,15 @@ class Wide:
 class Text:
     """A decision model asked the text judge's question (`<model>@text`): the sentence,
     not the scan. Its votes and cached answers go under that name, its requests to the
-    model."""
+    model. `words_only` (`<model>@words`) asks it only where the versions' words differ,
+    not where they differ only in punctuation, quotes or spacing; its votes and answers go
+    under the `@text` name, so it reuses that judge's cached answers."""
 
     text = True
 
-    def __init__(self, inner, name: str):
+    def __init__(self, inner, name: str, words_only: bool = False):
         self.model = name
+        self.words_only = words_only
         self._inner = inner
 
     def decide(self, state, questions, model=None, image_png=None):

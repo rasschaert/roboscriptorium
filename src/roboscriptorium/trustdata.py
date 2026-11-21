@@ -118,7 +118,7 @@ HELD_OUT = {spec.split("--")[0] for spec in [*bench.SETS["validation"], *bench.F
 def judges(settings: Settings) -> set[str]:
     """The judges a build with these settings asks: votes of any other model in the data
     (an alarm tried and left off) would train the arbiter on a vote it never gets."""
-    models = {settings.judge_model, settings.check_model, *settings.alarm_models}
+    models = {settings.judge_model, settings.check_model, *settings.alarm_votes}
     return (models | {"word list"}) - {""}
 
 

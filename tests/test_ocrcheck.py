@@ -528,6 +528,48 @@ def test_a_text_seat_is_asked_the_text_judges_question_without_the_scan(monkeypa
     assert votes["jev@text"] == "lemand" and confidence["jev@text"] == 0.7
 
 
+def test_a_words_only_seat_is_asked_where_the_words_differ_and_not_on_punctuation(monkeypatch):
+    from types import SimpleNamespace
+
+    from roboscriptorium.clients import decide
+
+    asked = []
+
+    def ask(client, cache, state, questions, image=None):
+        asked.append(client.model)
+        return {"value": "a", "confidence": 0.7}
+
+    monkeypatch.setattr(ocrcheck, "_ask", ask)
+    clef, winnow = SimpleNamespace(model="clef"), SimpleNamespace(model="winnow")
+    groot = decide.Text(SimpleNamespace(model="groot"), "groot@text", words_only=True)
+    line = "Toen kwam lemand binnen."
+    (_, _, votes), _ = ocrcheck._decide(
+        None, 1, 0, line, 10, 16, ["Iemand"], (0, 0, 1, 1), "nld", clef, winnow, None,
+        alarms=[groot],
+    )  # fmt: skip
+    assert asked.count("groot@text") == 1 and votes["groot@text"] == "lemand"
+    asked.clear()
+    (_, _, votes), _ = ocrcheck._decide(
+        None, 1, 0, line, 17, 24, ["binnen,"], (0, 0, 1, 1), "nld", clef, winnow, None,
+        alarms=[groot],
+    )  # fmt: skip
+    assert "groot@text" not in asked and "groot@text" not in votes
+
+
+def test_a_words_only_seat_shares_the_text_seats_name_and_answers():
+    from roboscriptorium import pipeline
+    from roboscriptorium.config import Settings
+
+    settings = Settings(alarm_model="d3:9b,tokens:groot@words")
+    seat = pipeline._alarm("tokens:groot@words", settings, None, [])
+    assert seat.model == "tokens:groot@text" and seat.words_only and seat.text
+    # The arbiter's data keeps the votes under the name they go under.
+    from roboscriptorium import trustdata
+
+    assert settings.alarm_votes == ("d3:9b", "tokens:groot@text")
+    assert "tokens:groot@text" in trustdata.judges(settings)
+
+
 def test_the_vision_judge_is_told_the_books_style_and_the_text_judge_isnt(monkeypatch):
     from types import SimpleNamespace
 

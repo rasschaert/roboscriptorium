@@ -907,6 +907,8 @@ def _decide(
         votes[reader.model] = pick(read["value"])
         confidence[reader.model] = read["confidence"]
     for alarm in alarms if seen["confidence"] < alarm_below else ():
+        if getattr(alarm, "words_only", False) and _typographic(versions):
+            continue
         if getattr(alarm, "text", False):
             # A second text judge, asked the text judge's question.
             alarmed = _ask(alarm, cache, text_state, text_question)

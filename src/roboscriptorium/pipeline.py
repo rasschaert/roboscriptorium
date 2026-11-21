@@ -651,7 +651,8 @@ def _alarm(spec: str, settings: Settings, book: Book, pages: list[PageText]):
     `pages`, its whole body, or book.toml's), `render-mark` the same drawing judging marks
     alone, else a
     decision model on Ollama; `@wide` views the suspect with its line, `@text` reads the
-    sentence as the text judge does. None for `render` without a font folder: the build
+    sentence as the text judge does, `@words` the same only where the versions' words
+    differ. None for `render` without a font folder: the build
     goes on without its vote."""
     name, _, view = spec.partition("@")
     if spec in (rendercheck.MODEL, rendercheck.MARK_MODEL):
@@ -676,8 +677,10 @@ def _alarm(spec: str, settings: Settings, book: Book, pages: list[PageText]):
         return decide.Wide(client, spec, ocrcheck.WIDE)
     if view == "text":
         return decide.Text(client, spec)
+    if view == "words":
+        return decide.Text(client, f"{name}@text", words_only=True)
     if view:
-        raise ValueError(f"ROBO_ALARM_MODEL: {spec!r}, a view other than @wide or @text")
+        raise ValueError(f"ROBO_ALARM_MODEL: {spec!r}, a view other than @wide, @text or @words")
     return client
 
 
