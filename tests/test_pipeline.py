@@ -1062,18 +1062,45 @@ def test_a_bulleted_list_becomes_list_items_without_its_bullets(tmp_path, monkey
     import zipfile
 
     _no_layout(monkeypatch)
-    lines = [
-        "The ideas I had written down were these, in no order at all:",
+    before = [
+        "I had kept a notebook of ideas for years, and that night I went",
+        "through it slowly, page by page, until I found the list I was",
+        "looking for. The ideas I had written down were these, in order:",
+    ]
+    after = [
+        "When I had done this before, I would look for a connection",
+        "between the listed elements and bring them together to see",
+        "what happened to them all, one after the other, in the end.",
+    ]
+    items = [
         "e Square mountains.",
         "e People addicted to a kind of sugar, a sweetness they",
-        "  remembered from childhood but couldn't find.",
-        "When I had done this before, I would look for a connection.",
+        "remembered from childhood but couldn't find.",
     ]
-    book = _book(tmp_path, lines=lines)
+    # The print sets the list off by white space: two lines' worth before and after it.
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=600)
+    y = 60
+    for text in before:
+        page.insert_text((40, y), text, fontsize=11)
+        y += 18
+    y += 18
+    for i, text in enumerate(items):
+        page.insert_text((72 if i == 2 else 60, y), text, fontsize=11)
+        y += 18
+    y += 18
+    for text in after:
+        page.insert_text((40, y), text, fontsize=11)
+        y += 18
+    doc.save(tmp_path / "source.pdf")
+    (tmp_path / "book.toml").write_text(
+        'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, 1]\n'
+    )
+    book = Book.load(tmp_path)
 
     def survey(self, pdf, pages):
-        self.items = {SourceRef(1, 1): "e", SourceRef(1, 2): "e"}
-        self.continued = {SourceRef(1, 3)}
+        self.items = {SourceRef(1, 3): "e", SourceRef(1, 4): "e"}
+        self.continued = {SourceRef(1, 5)}
         self.kind = "square"
 
     monkeypatch.setattr(pipeline.lists.Lists, "survey", survey)
@@ -1081,13 +1108,15 @@ def test_a_bulleted_list_becomes_list_items_without_its_bullets(tmp_path, monkey
     stages = pipeline.run(book, use_models=False)
     texts = [(b.text, b.item) for b in stages.doc.blocks]
     assert texts == [
-        (lines[0], ""),
+        (" ".join(before), ""),
         ("Square mountains.", "square"),
         ("People addicted to a kind of sugar, a sweetness they remembered from childhood "
          "but couldn’t find.", "square"),
-        (lines[4], ""),
+        (" ".join(after), ""),
     ]  # fmt: skip
-    assert stages.list_markers == {SourceRef(1, 1): 1, SourceRef(1, 2): 1}
+    # The white space around the list is the list's, no scene break.
+    assert not any(b.break_before for b in stages.doc.blocks)
+    assert stages.list_markers == {SourceRef(1, 3): 1, SourceRef(1, 4): 1}
     with zipfile.ZipFile(book.epub_path) as z:
         body = "".join(z.read(n).decode() for n in z.namelist() if n.endswith(".xhtml"))
     assert '<ul class="square"><li><p>Square mountains.</p></li><li><p>People' in body

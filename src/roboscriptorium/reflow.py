@@ -441,6 +441,9 @@ def _add_body(
         if k and pitch is not None and _spaced(lines[k - 1], line, pitch, SCENE_GAP):
             scene[0] = True
         current = blocks[-1] if blocks else None
+        if line.item or (isinstance(current, Paragraph) and current.item):
+            # The white space around a list is the list's, no scene break.
+            scene[0] = False
         if (
             k == 0
             and short_end[0]
