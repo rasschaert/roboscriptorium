@@ -28,11 +28,6 @@ last on 2026-11-14, so next by 2026-11-21).
 
 ## In flight
 
-- [ ] **Bulleted lists, now** (the user, 2026-11-22: "make that something we do soon"; Nervous System PDF 117: "should i use a ■ here?"). The reviewer leaves a bullet out of an answer: the list draws it. The
-      book sets lists with small square bullets (PDF 117, 259); the layer reads each as
-      "e", "¢" or "*", one line is asked and the rest go into the text silently. Detect a
-      list from the scan (a small mark left of an indented run of lines), build it as an
-      EPUB list, drop the misread markers
 - [ ] **Dropped ideas reworked** (the user, 2026-11-15: "what ideas have we dropped in the
       past that might still pan out if modified?"), most promising first:
       1. The line-role trees as the italics were: the old and the grown sets, a vision
@@ -651,6 +646,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## The user's books
 
+- [x] 2026-11-22 Bulleted lists found on the scan and built as EPUB lists that draw the book's bullet, square or disc (`lists.py`); a doubt about the bullet alone unasked; benched and taken (decisions.md)
 - [x] 2026-11-22 Nervous System's review: its 25 questions answered, applied in a build (6 places changed); four fixes made from what the user met on its cards (rows show fixed lines fixed, the crop reaches added words, a blank one version, render draws italics)
 - [x] A build says how far it is (2026-11-18): the line, page and tesseract readings, the
       OCR check's pass per judge and each hyphen judge print their count and the time
