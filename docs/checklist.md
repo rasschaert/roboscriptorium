@@ -618,6 +618,11 @@ Daens' title was mended by hand).
 
 ## Housekeeping
 
+- [ ] **An answer survives its question growing** (`corrections.for_flag`): a line answered alone
+      and asked again as part of a larger region (a neighbour newly flagged) loses its
+      answer, since the region's key and first line differ (Nervous System page 133,
+      2026-11-22). Take each line's earlier answer into the larger region and ask only
+      if a line in it has none.
 - [ ] **The accent offers keep a slot per drawing method** (`accentmarks.py`, after
       `robo-seeing-judges` ends; an hour): `stages/accent-marks.json` holds one key
       (`Judge.marks`), so a branch and main that draw marks differently wipe each other's
