@@ -98,3 +98,48 @@ def test_the_ocr_check_puts_a_marked_word_to_the_judges(tmp_path):
     assert plain == []
     assert [(s.ours, s.others, s.chosen) for s in found] == [("zijn", ("zíjn",), "zíjn")]
     assert (tmp_path / "marks.json").exists()
+
+
+def test_a_stopped_ocr_check_keeps_the_marks_drawn_before_the_stop(tmp_path, monkeypatch):
+    class Stop(Exception):
+        pass
+
+    class Stopping(Drawer):
+        def mark(self, page, number, box, marked, plain):
+            if number == 3:
+                raise Stop
+            return super().mark(page, number, box, marked, plain)
+
+    pdf = tmp_path / "book.pdf"
+    doc = pymupdf.open()
+    for words in ("en dat zijn wil", "zo was het werk", "maar niet hier"):
+        doc.new_page(width=300, height=400).insert_text((20, 50), words, fontsize=11)
+    doc.save(pdf)
+    pages = read_text_layer(pdf)
+    readings = {"glm": {SourceRef(p.number, 0): p.lines[0].text for p in pages}}
+    judge = SimpleNamespace(
+        model="clef",
+        decide=lambda state, questions, image_png=None: {
+            "reading": SimpleNamespace(value="b", confidence=0.9)
+        },
+    )
+    monkeypatch.setattr(ocrcheck, "SAVE_EVERY", 0)
+    cache = DecisionCache(tmp_path / "a.jsonl")
+    stopping = Stopping({})
+    try:
+        ocrcheck.check(
+            pdf, pages, readings, "nld", judge, judge, cache,
+            marks=(accentmarks.Marks(stopping, tmp_path / "marks.json"),),
+        )  # fmt: skip
+    except Stop:
+        pass
+    drawn = list(stopping.asked)
+    again = Drawer({})
+    ocrcheck.check(
+        pdf, pages, readings, "nld", judge, judge, cache,
+        marks=(accentmarks.Marks(again, tmp_path / "marks.json"),),
+    )  # fmt: skip
+    assert drawn
+    assert not set(drawn) & set(again.asked)
+    assert set(again.asked) <= set(accentmarks.stressed("maar") + accentmarks.stressed("niet")
+                                   + accentmarks.stressed("hier"))  # fmt: skip

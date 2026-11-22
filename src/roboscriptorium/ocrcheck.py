@@ -18,6 +18,7 @@ import difflib
 import functools
 import json
 import re
+import time
 import unicodedata
 from collections import Counter
 from dataclasses import asdict, dataclass, field, replace
@@ -348,6 +349,10 @@ class _Later:
         return getattr(self._client, name)
 
 
+# Seconds between saves of the offers measured on the scan, so a stop loses no more.
+SAVE_EVERY = 60
+
+
 def _check(
     pdf: Path,
     pages: list[PageText],
@@ -374,8 +379,13 @@ def _check(
     curly = curly_book(pages)
     shortened = abbreviations(pages)
     counts = book_words(pages) if lower_capitals else Counter()
+    saved = time.monotonic()
     with pymupdf.open(pdf) as doc:
         for page in pages:
+            if time.monotonic() - saved >= SAVE_EVERY:
+                for offers in marks:
+                    offers.save()
+                saved = time.monotonic()
             progress.add()  # counted as it starts: a page may end in a `continue`
             pdf_page = doc[page.number - 1]
             words = line_words(page_words(pdf_page, page), page)
