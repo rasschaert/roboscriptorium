@@ -1056,3 +1056,38 @@ def test_a_mark_too_narrow_for_its_letters_is_left_off_a_dedication_page():
     assert pipeline._kept_apart(Line("Tim, Kim and Imogen", 90, 116, 224, 129), None, size, known)
     # Without a word list nothing narrow is left out.
     assert pipeline._kept_apart(Line("t ee", 303, 170, 307, 190), None, size, None)
+
+
+def test_a_bulleted_list_becomes_list_items_without_its_bullets(tmp_path, monkeypatch):
+    import zipfile
+
+    _no_layout(monkeypatch)
+    lines = [
+        "The ideas I had written down were these, in no order at all:",
+        "e Square mountains.",
+        "e People addicted to a kind of sugar, a sweetness they",
+        "  remembered from childhood but couldn't find.",
+        "When I had done this before, I would look for a connection.",
+    ]
+    book = _book(tmp_path, lines=lines)
+
+    def survey(self, pdf, pages):
+        self.items = {SourceRef(1, 1): "e", SourceRef(1, 2): "e"}
+        self.continued = {SourceRef(1, 3)}
+        self.kind = "square"
+
+    monkeypatch.setattr(pipeline.lists.Lists, "survey", survey)
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda path: True)
+    stages = pipeline.run(book, use_models=False)
+    texts = [(b.text, b.item) for b in stages.doc.blocks]
+    assert texts == [
+        (lines[0], ""),
+        ("Square mountains.", "square"),
+        ("People addicted to a kind of sugar, a sweetness they remembered from childhood "
+         "but couldn’t find.", "square"),
+        (lines[4], ""),
+    ]  # fmt: skip
+    assert stages.list_markers == {SourceRef(1, 1): 1, SourceRef(1, 2): 1}
+    with zipfile.ZipFile(book.epub_path) as z:
+        body = "".join(z.read(n).decode() for n in z.namelist() if n.endswith(".xhtml"))
+    assert '<ul class="square"><li><p>Square mountains.</p></li><li><p>People' in body

@@ -464,6 +464,7 @@ def _add_body(
                     opening=first or scene[0],
                     initial=line.initial,
                     break_before=scene[0] and not first,
+                    item=line.item,
                 )
             )
             scene[0] = False
@@ -474,7 +475,7 @@ def _add_body(
             )
             and not _broken_word(current.text, line)
         ):
-            blocks.append(Paragraph(line.text, [ref], initial=line.initial))
+            blocks.append(Paragraph(line.text, [ref], initial=line.initial, item=line.item))
         else:
             current.text = join(current.text, line.text, seen, known, compound)
             current.sources.append(ref)

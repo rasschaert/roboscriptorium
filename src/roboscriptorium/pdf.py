@@ -75,6 +75,8 @@ class Line:
     # index of the line it was inserted before, and `typed`.
     source: int | None = None
     typed: bool = False
+    # It opens a list item, its bullet taken out (`lists.py`): the bullet's shape.
+    item: str = ""
 
 
 def spliced(line: Line, places: list[tuple[int, int, str]]) -> Line:

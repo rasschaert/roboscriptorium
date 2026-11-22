@@ -37,6 +37,8 @@ class Paragraph:
     epigraph: bool = False
     # A line of a dedication set apart before the text (`pagekinds.set_apart`).
     dedication: bool = False
+    # A list item: the shape of the bullet the list draws ("square", "disc"; `lists.py`).
+    item: str = ""
 
 
 @dataclass

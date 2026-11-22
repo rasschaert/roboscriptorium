@@ -100,6 +100,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   the page image and its numbered lines (a line inside one of the spotter's picture
   regions marked so), cached per page in `stages/page-roles.json` under the lines it was
   shown; an input to the trees (`ROBO_PAGE_ROLES=1`, off).
+- `lists.py`: bulleted lists found on the scan (`Lists.survey`: a line's first token short, its ink a solid blob at the letters' middle, `bullet`; the lines at its text's indent continue it; cached in `stages/lists.json`), applied to the pages before reflow (`apply`: the bullet's token out, the item opening a paragraph with `Line.item`, the line after a list opening one); `markers` for the review, which leaves a doubt about the bullet alone unasked (`scoring._only_bullet`). `epub._listed` sets runs of items as `<ul class="square|disc">`.
 - `reflow.py`: lines → blocks (headings, paragraphs; indents, punctuation spacing),
   lines joined by `hyphens.join`, a single-quoted book's misread openings and an old
   layer's closings mended by `quotes`. Without roles it falls back to a footer heuristic.

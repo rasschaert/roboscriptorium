@@ -156,3 +156,28 @@ def test_a_question_shows_the_lines_the_ocr_check_fixed_as_fixed():
     # A page the check changed nothing on keeps the question as it was.
     unchanged = PageText(133, 300, 500, [*above, ln("rao", 110), ln("eSurel", 120)])
     assert scoring._as_built(flag, unchanged) is flag
+
+
+def test_a_doubt_about_a_list_items_bullet_alone_is_not_asked():
+    flag = Flag(
+        "p259-x",
+        259,
+        20,
+        20,
+        "e Square mountains.",
+        "text",
+        ["ocr-doubt"],
+        readings=[
+            {"text": "e Square mountains.", "votes": ["text layer"]},
+            {"text": "Square mountains.", "votes": ["glm-ocr"]},
+            {"text": "* Square mountains.", "votes": ["tesseract"]},
+            {"text": "• Square mountains.", "votes": ["Qwen"]},
+        ],
+    )
+    markers = {SourceRef(259, 20): 1}
+    assert scoring._only_bullet(flag, markers)
+    # A word in doubt beside the bullet is still asked.
+    flag.readings.append({"text": "• Square mountain.", "votes": ["d3:9b"]})
+    assert not scoring._only_bullet(flag, markers)
+    # A line that is no list item is asked.
+    assert not scoring._only_bullet(flag, {})

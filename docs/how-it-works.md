@@ -500,6 +500,13 @@ is indented, as in a run of one-line dialogue. A line's height of white space af
 sentence starts a paragraph too, and two lines' worth, or a line of ornaments such as
 `* * *`, is a scene break.
 
+A bulleted list (`lists.py`) is found on the scan before that: a line that opens with a
+solid blob of ink at the letters' middle, which the text layer reads as "e", "¢" or "*",
+is a list item, and the lines after it set at its text's indent continue it. The item
+loses its bullet, and the EPUB sets the items as a list that draws the book's bullet, a
+square or a disc by how fully the blob fills its box. A question about the bullet alone
+isn't asked: it is no text. A book needs two bullets for its lists to be taken.
+
 A hyphen at the end of a line stays or goes by evidence, strongest first:
 
 1. how the book spells the word elsewhere, inside a line;

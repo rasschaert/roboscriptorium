@@ -17,6 +17,7 @@ from roboscriptorium import (
     faint,
     flags,
     layout,
+    lists,
     ocr,
     ocrcheck,
     ocrdoubts,
@@ -244,6 +245,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
             and lines(f) <= confirmed
         )
         and not (f.reasons == ["heading"] and f.last >= f.first and lines(f) <= sure)
+        and not _only_bullet(f, stages.list_markers)
     ]
     found = [_as_built(f, checked.get(f.page)) for f in found]
     found = _read_unread(book, stages, found)
@@ -253,6 +255,25 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
     if learned:
         found = [_with_answered(f, learned) for f in found]
     return found
+
+
+def _only_bullet(f: Flag, markers: dict[SourceRef, int]) -> bool:
+    """Whether a question about a list item's line differs only in its bullet's token
+    (`lists.py`): the list draws the bullet, so no reading of it is text."""
+    ref = SourceRef(f.page, f.first)
+    if f.reasons != ["ocr-doubt"] or f.first != f.last or ref not in markers or not f.readings:
+        return False
+    token = f.text[: markers[ref]]
+
+    def bare(text: str) -> str:
+        head, _, rest = text.partition(" ")
+        if head == token or (
+            head and len(head) <= lists.MARKER and not any(map(str.isalnum, head))
+        ):
+            return rest.strip()
+        return text.strip()
+
+    return len({bare(r["text"]) for r in f.readings}) == 1
 
 
 def _as_built(f: Flag, page) -> Flag:

@@ -25,6 +25,7 @@ from roboscriptorium import (
     hyphens,
     italics,
     layout,
+    lists,
     missing,
     ocr,
     ocrcheck,
@@ -98,6 +99,9 @@ class Stages:
     # Last lines of paragraphs whose open quote the read model's reading closed
     # (`quotes.closed_at_end`): a doubt there about only that mark is settled.
     quotes_closed: set[SourceRef] = field(default_factory=set)
+    # Each list item's line with the end of its bullet's token in the layer's text
+    # (`lists.Lists.markers`): a doubt within it is about no text, and isn't asked.
+    list_markers: dict[SourceRef, int] = field(default_factory=dict)
     # Body pages that repeat an earlier page, left out (each with the page it repeats),
     # and the printed pages the scan lacks (`scanpages`), over the whole body.
     repeated_pages: dict[int, int] = field(default_factory=dict)
@@ -488,6 +492,10 @@ def run(
         book.source, checked, model_roles, break_judge, judge_cache, indented
     )
     corrected = parabreaks.judged(book.source, corrected, roles, break_judge, judge_cache, indented)
+    listed = lists.Lists(book.stages / "lists.json")
+    if ocrcheck.scanned(book.source):
+        listed.survey(book.source, body)
+    checked, corrected = listed.apply(checked), listed.apply(corrected)
     if isinstance(compound, hyphens.Compounds):
         compound.collect(
             lambda: [
@@ -638,6 +646,7 @@ def run(
         epigraph_lines | dedication_lines,
         prompt,
         quotes_closed=closed,
+        list_markers=listed.markers(),
         lost_breaks=lost_breaks(unanswered, built, answers),
         repeated_pages=repeated,
         missing_pages=scanpages.gaps(whole),

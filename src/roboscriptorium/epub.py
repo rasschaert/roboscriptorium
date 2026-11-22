@@ -29,6 +29,9 @@ blockquote.epigraph { margin: 3em 0 3em 30%; }
 blockquote.epigraph p { text-indent: 0; text-align: left; }
 div.dedication { margin: 3em 0; }
 div.dedication p { text-indent: 0; text-align: center; }
+ul.square { list-style-type: square; }
+ul.disc { list-style-type: disc; }
+ul li p { text-indent: 0; text-align: left; }
 """
 
 CONTAINER = """\
@@ -257,6 +260,28 @@ def _dedication(lines: list[str]) -> str:
     return '<div class="dedication" epub:type="dedication">' + "".join(lines) + "</div>"
 
 
+def _listed(parts: list[str], blocks: list) -> list[str]:
+    """The section's parts with each run of list items (`Paragraph.item`) set as a list
+    that draws their bullets. Only a section without mottos or dedications pairs its
+    parts with its blocks one for one; any other is left as it is."""
+    if len(parts) != len(blocks):
+        return parts
+    out, run, kind = [], [], ""
+    for part, b in zip(parts, blocks, strict=True):
+        item = b.item if isinstance(b, Paragraph) else ""
+        if run and item != kind:
+            out.append(f'<ul class="{kind}">' + "".join(run) + "</ul>")
+            run = []
+        kind = item
+        if item:
+            run.append(f"<li>{part}</li>")
+        else:
+            out.append(part)
+    if run:
+        out.append(f'<ul class="{kind}">' + "".join(run) + "</ul>")
+    return out
+
+
 def _section(doc: Document, section: _Section) -> str:
     parts, apart, kind = [], [], None
     for b in section.blocks:
@@ -273,7 +298,7 @@ def _section(doc: Document, section: _Section) -> str:
         parts.append(_block(b, doc.notes))
     if apart:
         parts.append(kind(apart))
-    body = "\n".join(parts)
+    body = "\n".join(_listed(parts, section.blocks))
     return _xhtml(
         section.title, doc.language, f'<section epub:type="bodymatter">\n{body}\n</section>'
     )
