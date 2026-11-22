@@ -28,6 +28,11 @@ last on 2026-11-14, so next by 2026-11-21).
 
 ## In flight
 
+- [ ] **Bulleted lists, now** (the user, 2026-11-22: "make that something we do soon"; Nervous System PDF 117: "should i use a ■ here?"). The reviewer leaves a bullet out of an answer: the list draws it. The
+      book sets lists with small square bullets (PDF 117, 259); the layer reads each as
+      "e", "¢" or "*", one line is asked and the rest go into the text silently. Detect a
+      list from the scan (a small mark left of an indented run of lines), build it as an
+      EPUB list, drop the misread markers
 - [ ] **Dropped ideas reworked** (the user, 2026-11-15: "what ideas have we dropped in the
       past that might still pan out if modified?"), most promising first:
       1. The line-role trees as the italics were: the old and the grown sets, a vision
@@ -233,12 +238,6 @@ the EPUB. A read book's rebuild that changes text goes to the user by eye, every
 difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond Stella's
 (the user, 2026-10-20).
 
-- [ ] Nervous System's review, paused by the user after 10 of 70 (2026-11-10: "this is
-      wasting my precious time with something i expect roboscriptorium to handle deftly
-      and confidently"). Resumed only after "One path for every doubt" has cut its
-      questions and the count per kind, with why each is still asked, has been shown to
-      the user. The same before Going into a Dark House and The Loudest Sound and
-      Nothing are reviewed
 - [ ] Short-story collections: a running head per story (Going into a Dark House: each
       story's title atop its odd pages, the book's on the even ones). The line-role
       trees, trained on novels only, call the story heads body at 0.5–0.75 ("Blue
@@ -250,11 +249,6 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       Nothing, PDF 57, "Caro at the Pool / SHE FOUND HER AT THE SWIMMING POOL."). No
       rule does it: the trees call the line a heading at 0.68, and the same type on PDF
       111 body at 0.89. Theirs to learn, with the short-story labels of the step above
-- [ ] Bulleted lists (the user, Nervous System PDF 117: "should i use a ■ here?"). The
-      book sets lists with small square bullets (PDF 117, 259); the layer reads each as
-      "e", "¢" or "*", one line is asked and the rest go into the text silently. Detect a
-      list from the scan (a small mark left of an indented run of lines), build it as an
-      EPUB list, drop the misread markers
 - [ ] Going into a Dark House, before its review: PDF 90's show-through stands as a
       garbled motto, silent (the page-kind model calls show-through a motto)
 - [ ] The Loudest Sound and Nothing, before its review: its wrong headings are all asked
@@ -657,6 +651,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## The user's books
 
+- [x] 2026-11-22 Nervous System's review: its 25 questions answered, applied in a build (6 places changed); four fixes made from what the user met on its cards (rows show fixed lines fixed, the crop reaches added words, a blank one version, render draws italics)
 - [x] A build says how far it is (2026-11-18): the line, page and tesseract readings, the
       OCR check's pass per judge and each hyphen judge print their count and the time
       left every three minutes, once a stage has run that long (`progress.py`)
