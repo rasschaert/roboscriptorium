@@ -141,7 +141,7 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       a title of words like Nervous System's "MARRING A CHOIR" no reader reads), so a
       sure heading can skip it only once its text is checked: a number its run confirms
       (`chapters.settled`, already skipped), or a title read by the readers and judges
-      as body lines are. Nervous System: 7 of its 13 heading questions are 0.99 or more. The arbiter learns the new kinds from labels:
+      as body lines are. Nervous System: 7 of its 13 heading questions are 0.99 or more. Sure headings with nothing else asked go unasked since 2026-11-22 (ROBO_SURE_HEADING, 113 fewer questions on tuning, decisions.md); the heading text through the readers was already so. The arbiter learns the new kinds from labels:
       the user's answers of 2026-11-10 and the golden books' places of each kind. For
       specks the golden pairs give labels by the thousand: a reader's character absent
       from the reference, aligned to an ink blob, is a speck, and a mark the reference
