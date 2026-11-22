@@ -1410,3 +1410,132 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-21 | train arbiter after the rebuild | 0 | 163 | 0 |
 | 2026-11-21 | train arbiter after the rebuild | 0 | 161 | 0 |
 | 2026-11-21 | bench tuning, Groot and Arete on words only | 0 | 5 | 0 |
+| 2026-11-21 | trust data, goede-dochter--ia-scan | 500 | 3 | 0 |
+| 2026-11-21 | trust data, vals-alarm--ia-scan | 292 | 11 | 0 |
+| 2026-11-21 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 1 | 0 |
+| 2026-11-21 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 0 | 0 |
+| 2026-11-21 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 2 | 0 |
+| 2026-11-21 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 1 | 0 |
+| 2026-11-21 | trust data, metro-2033--ia-scan | 458 | 9 | 0 |
+| 2026-11-21 | trust data, de-cipier--ia-scan | 474 | 3 | 0 |
+| 2026-11-21 | trust data, artemis--ia-scan | 305 | 2 | 0 |
+| 2026-11-21 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 13 | 0 |
+| 2026-11-21 | trust data, de-eerlijke-vinder--ia-scan | 84 | 1 | 0 |
+| 2026-11-21 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-21 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 5 | 0 |
+| 2026-11-21 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 5 | 0 |
+| 2026-11-21 | trust data, doodskleed--ia-scan | 276 | 2 | 0 |
+| 2026-11-21 | trust data, het-ijzige-land--ia-scan | 318 | 3 | 0 |
+| 2026-11-21 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 1 | 0 |
+| 2026-11-21 | trust data, vuurspel--ia-scan | 21 | 0 | 0 |
+| 2026-11-21 | trust data, monterosso-mon-amour--ia-scan | 88 | 0 | 0 |
+| 2026-11-21 | trust data, het-geluid-van-bananen--ia-scan | 315 | 4 | 0 |
+| 2026-11-21 | trust data, het-schaduwhuis--ia-scan | 320 | 1 | 0 |
+| 2026-11-21 | trust data, stella | 67 | 0 | 0 |
+| 2026-11-21 | trust data, ex-minnaar | 273 | 4 | 0 |
+| 2026-11-21 | trust data, goede-dochter--ia-scan | 500 | 2 | 0 |
+| 2026-11-21 | trust data, vals-alarm--ia-scan | 292 | 1 | 0 |
+| 2026-11-21 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 0 | 0 |
+| 2026-11-21 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 0 | 0 |
+| 2026-11-21 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 1 | 0 |
+| 2026-11-21 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 0 | 0 |
+| 2026-11-21 | trust data, metro-2033--ia-scan | 458 | 2 | 0 |
+| 2026-11-21 | trust data, de-cipier--ia-scan | 474 | 2 | 0 |
+| 2026-11-21 | trust data, artemis--ia-scan | 305 | 1 | 0 |
+| 2026-11-21 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 2 | 0 |
+| 2026-11-21 | trust data, de-eerlijke-vinder--ia-scan | 84 | 0 | 0 |
+| 2026-11-21 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-21 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 1 | 0 |
+| 2026-11-21 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 2 | 0 |
+| 2026-11-21 | trust data, doodskleed--ia-scan | 276 | 1 | 0 |
+| 2026-11-21 | trust data, het-ijzige-land--ia-scan | 318 | 1 | 0 |
+| 2026-11-21 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 0 | 0 |
+| 2026-11-21 | trust data, vuurspel--ia-scan | 21 | 0 | 0 |
+| 2026-11-21 | trust data, monterosso-mon-amour--ia-scan | 88 | 0 | 0 |
+| 2026-11-21 | trust data, het-geluid-van-bananen--ia-scan | 315 | 1 | 0 |
+| 2026-11-21 | trust data, het-schaduwhuis--ia-scan | 320 | 1 | 0 |
+| 2026-11-21 | trust data, stella | 67 | 0 | 0 |
+| 2026-11-21 | trust data, ex-minnaar | 273 | 1 | 0 |
+| 2026-11-21 | trust data, goede-dochter--ia-scan | 500 | 2 | 0 |
+| 2026-11-21 | trust data, vals-alarm--ia-scan | 292 | 1 | 0 |
+| 2026-11-21 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 0 | 0 |
+| 2026-11-21 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 0 | 0 |
+| 2026-11-21 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 1 | 0 |
+| 2026-11-21 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 0 | 0 |
+| 2026-11-21 | trust data, metro-2033--ia-scan | 458 | 2 | 0 |
+| 2026-11-21 | trust data, de-cipier--ia-scan | 474 | 2 | 0 |
+| 2026-11-21 | trust data, artemis--ia-scan | 305 | 1 | 0 |
+| 2026-11-21 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 2 | 0 |
+| 2026-11-21 | trust data, de-eerlijke-vinder--ia-scan | 84 | 0 | 0 |
+| 2026-11-21 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-21 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 1 | 0 |
+| 2026-11-21 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 2 | 0 |
+| 2026-11-21 | trust data, doodskleed--ia-scan | 276 | 1 | 0 |
+| 2026-11-21 | trust data, het-ijzige-land--ia-scan | 318 | 1 | 0 |
+| 2026-11-21 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 0 | 0 |
+| 2026-11-21 | trust data, vuurspel--ia-scan | 21 | 0 | 0 |
+| 2026-11-21 | trust data, monterosso-mon-amour--ia-scan | 88 | 0 | 0 |
+| 2026-11-21 | trust data, het-geluid-van-bananen--ia-scan | 315 | 1 | 0 |
+| 2026-11-21 | trust data, het-schaduwhuis--ia-scan | 320 | 1 | 0 |
+| 2026-11-21 | trust data, stella | 67 | 0 | 0 |
+| 2026-11-21 | trust data, ex-minnaar | 273 | 1 | 0 |
+| 2026-11-21 | trust data, goede-dochter--ia-scan | 500 | 2 | 0 |
+| 2026-11-21 | trust data, vals-alarm--ia-scan | 292 | 1 | 0 |
+| 2026-11-21 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 0 | 0 |
+| 2026-11-21 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 1 | 0 |
+| 2026-11-21 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 1 | 0 |
+| 2026-11-21 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 1 | 0 |
+| 2026-11-21 | trust data, metro-2033--ia-scan | 458 | 2 | 0 |
+| 2026-11-21 | trust data, de-cipier--ia-scan | 474 | 2 | 0 |
+| 2026-11-21 | trust data, artemis--ia-scan | 305 | 1 | 0 |
+| 2026-11-21 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 2 | 0 |
+| 2026-11-21 | trust data, de-eerlijke-vinder--ia-scan | 84 | 0 | 0 |
+| 2026-11-21 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-21 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 1 | 0 |
+| 2026-11-21 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 2 | 0 |
+| 2026-11-21 | trust data, doodskleed--ia-scan | 276 | 1 | 0 |
+| 2026-11-21 | trust data, het-ijzige-land--ia-scan | 318 | 2 | 0 |
+| 2026-11-21 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 0 | 0 |
+| 2026-11-21 | trust data, vuurspel--ia-scan | 21 | 0 | 0 |
+| 2026-11-21 | trust data, monterosso-mon-amour--ia-scan | 88 | 0 | 0 |
+| 2026-11-21 | trust data, het-geluid-van-bananen--ia-scan | 315 | 1 | 0 |
+| 2026-11-21 | trust data, het-schaduwhuis--ia-scan | 320 | 1 | 0 |
+| 2026-11-21 | trust data, stella | 67 | 0 | 0 |
+| 2026-11-21 | trust data, ex-minnaar | 273 | 1 | 0 |
+| 2026-11-22 | train arbiter after the rebuild | 0 | 334 | 0 |
+| 2026-11-22 | train arbiter after the rebuild | 0 | 383 | 0 |
+| 2026-11-22 | train arbiter after the rebuild | 0 | 377 | 0 |
+| 2026-11-22 | train arbiter after the rebuild | 0 | 360 | 0 |
+| 2026-11-22 | bench tuning, quote readers, arbiters trained with them | 0 | 40 | 0 |
+| 2026-11-22 | bench tuning, control retrained 2026-11-21 | 0 | 5 | 0 |
+| 2026-11-22 | bench tuning, sure headings unasked | 0 | 5 | 0 |
+| 2026-11-22 | bench validation, sure headings unasked | 0 | 1 | 0 |
+| 2026-11-22 | trust data, goede-dochter--ia-scan | 500 | 4 | 0 |
+| 2026-11-22 | trust data, vals-alarm--ia-scan | 292 | 2 | 0 |
+| 2026-11-22 | trust data, the-nature-of-a-crime--doubleday-1924 | 94 | 1 | 0 |
+| 2026-11-22 | trust data, the-story-of-doctor-dolittle--stokes-1920 | 180 | 2 | 0 |
+| 2026-11-22 | trust data, reis-om-mijn-schedel--ia-scan | 245 | 2 | 0 |
+| 2026-11-22 | trust data, afscheid-van-verspilde-tijd--ia-scan | 116 | 1 | 0 |
+| 2026-11-22 | trust data, metro-2033--ia-scan | 458 | 8 | 0 |
+| 2026-11-22 | trust data, de-cipier--ia-scan | 474 | 5 | 0 |
+| 2026-11-22 | trust data, artemis--ia-scan | 305 | 2 | 0 |
+| 2026-11-22 | trust data, de-tuin-van-de-avondnevel--ia-scan | 364 | 5 | 0 |
+| 2026-11-22 | trust data, de-eerlijke-vinder--ia-scan | 84 | 1 | 0 |
+| 2026-11-22 | trust data, youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-22 | trust data, the-thief-takers-apprentice--ia-scan | 282 | 4 | 0 |
+| 2026-11-22 | trust data, het-heft-in-eigen-hand--ia-scan | 506 | 5 | 0 |
+| 2026-11-22 | trust data, doodskleed--ia-scan | 276 | 2 | 0 |
+| 2026-11-22 | trust data, het-ijzige-land--ia-scan | 318 | 4 | 0 |
+| 2026-11-22 | trust data, de-kerk-van-de-dode-meisjes--ia-scan | 17 | 0 | 0 |
+| 2026-11-22 | trust data, vuurspel--ia-scan | 21 | 0 | 0 |
+| 2026-11-22 | trust data, monterosso-mon-amour--ia-scan | 88 | 1 | 0 |
+| 2026-11-22 | trust data, het-geluid-van-bananen--ia-scan | 315 | 2 | 0 |
+| 2026-11-22 | trust data, het-schaduwhuis--ia-scan | 320 | 3 | 0 |
+| 2026-11-22 | trust data, stella | 67 | 0 | 0 |
+| 2026-11-22 | trust data, ex-minnaar | 273 | 3 | 0 |
+| 2026-11-22 | train arbiter after the rebuild | 0 | 83 | 0 |
+| 2026-11-22 | bench tuning, line-mark offers | 0 | 7 | 0 |
+| 2026-11-22 | questions, Nervous System, production | 0 | 7 | 0 |
+| 2026-11-22 | questions, Nervous System, sure-heading | 0 | 1 | 0 |
+| 2026-11-22 | bench tuning, production baseline 2026-11-22 | 0 | 11 | 0 |
+| 2026-11-22 | bench validation, production baseline 2026-11-22 | 0 | 2 | 0 |
