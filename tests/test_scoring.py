@@ -181,3 +181,13 @@ def test_a_doubt_about_a_list_items_bullet_alone_is_not_asked():
     assert not scoring._only_bullet(flag, markers)
     # A line that is no list item is asked.
     assert not scoring._only_bullet(flag, {})
+
+
+def test_a_list_item_is_scored_with_the_bullet_its_list_draws():
+    from roboscriptorium.ir import Paragraph
+
+    item = Paragraph("Toffe baan", italic=(0, 1), item="disc")
+    scored = scoring._bulleted(item)
+    assert (scored.text, scored.italic) == ("• Toffe baan", (1, 2))
+    plain = Paragraph("Shit.")
+    assert scoring._bulleted(plain) is plain

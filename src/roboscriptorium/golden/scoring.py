@@ -36,7 +36,7 @@ from roboscriptorium.golden import notes as golden_notes
 from roboscriptorium.golden.align import align
 from roboscriptorium.golden.manifest import Golden
 from roboscriptorium.golden.reference import Chapter, load_chapters, unmarked
-from roboscriptorium.ir import Document, SourceRef
+from roboscriptorium.ir import Document, Paragraph, SourceRef
 from roboscriptorium.lexicon import Lexicon
 from roboscriptorium.pdf import PageText
 
@@ -67,7 +67,26 @@ def scored(book: Book, stages: pipeline.Stages) -> Document:
     """The document as scored: without the scan's footnotes where the reference sets
     them apart."""
     found = golden_notes.load(Golden.load(book.golden).notes_path)
-    return golden_notes.scored(stages.doc, stages.pages, found)
+    doc = golden_notes.scored(stages.doc, stages.pages, found)
+    return replace(doc, blocks=[_bulleted(b) for b in doc.blocks])
+
+
+# A list item's bullet as a reference spells it: the publishers' e-books set it as a
+# character opening the item's paragraph (Glazuur, PDF 34).
+BULLET = "•"
+
+
+def _bulleted(block):
+    """A list item as a reader sees it: its bullet before its text, which the EPUB's list
+    draws (`lists.py`); any other block as it is."""
+    if not isinstance(block, Paragraph) or not block.item:
+        return block
+    return replace(
+        block,
+        text=f"{BULLET} {block.text}",
+        italic=tuple(k + 1 for k in block.italic),
+        italic_parts=tuple((k + 1, a, b) for k, a, b in block.italic_parts),
+    )
 
 
 def verdicts(book: Book) -> Verdicts:
