@@ -618,11 +618,12 @@ Daens' title was mended by hand).
 
 ## Housekeeping
 
-- [ ] **An answer survives its question growing** (`corrections.for_flag`): a line answered alone
-      and asked again as part of a larger region (a neighbour newly flagged) loses its
-      answer, since the region's key and first line differ (Nervous System page 133,
-      2026-11-22). Take each line's earlier answer into the larger region and ask only
-      if a line in it has none.
+- [ ] **An answered line isn't merged into a new question** (`flags.find`'s regions; an hour):
+      a line answered about its readings stays asked so its answer stays in the review; when
+      a neighbour is newly flagged, the two merge into a region with a new key and the user
+      is asked again, though the answer still applies to the book line by line (Nervous
+      System page 133, 2026-11-22; that one's cause fixed on branch `garbled-numbers`).
+      Keep such a line a region of its own. Rare: wait for a second case before building it.
 - [ ] **A measure made on the scan keeps a slot per method** (`files.read_cache`/`write_cache`,
       `accentmarks.py`; after `robo-seeing-judges` ends; an hour or two): each cache holds
       one key (the accent offers' `Judge.marks`, the others' `files.code_stamp`), so a branch
