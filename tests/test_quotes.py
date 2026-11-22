@@ -438,3 +438,16 @@ def test_a_stray_opening_mark_reads_as_a_speck_and_its_paragraph_is_asked_there(
 def test_an_opening_mark_that_opens_speech_is_not_offered_away():
     p, lines = _lines("Hij zei: ‘Kom hier,", "en snel.")
     assert SourceRef(1, 0) not in quotes.duel_readings([p], lines)[quotes.READER]
+
+
+def test_only_one_closing_mark_after_a_closing_mark_counts_as_an_added_close():
+    from roboscriptorium.quotes import adds_closing
+
+    assert adds_closing("door duisternis.”", "door duisternis.”’")
+    assert adds_closing("zei ze.’ En", "zei ze.’” En")
+    # An opening mark, a mark after a letter, a stop lost, two marks: no.
+    assert not adds_closing("toen hij begon", "toen ‘hij begon")
+    assert not adds_closing("gehouden.", "gehouden.’")
+    assert not adds_closing("gehouden.’", "gehouden’")
+    assert not adds_closing("niet.”", "niet.”’’")
+    assert not adds_closing("niet.”", "niet.”'")

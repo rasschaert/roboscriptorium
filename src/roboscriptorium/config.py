@@ -141,6 +141,9 @@ class Settings:
     # (`quotes.duel_readings`), judged and decided like any other; the quote check then
     # asks nothing of its own about those paragraphs.
     quote_reader: bool = False
+    # The same readings only where they add one closing mark after a closing mark the line
+    # has (`quotes.adds_closing`): a nested quotation's outer mark. Off until benched.
+    quote_closing: bool = False
     # A thinking model that settles the arbiter's questions from the text around them
     # where it picks the arbiter's likeliest version (`contextjudge.py`; "" for none).
     context_model: str = ""
@@ -238,6 +241,7 @@ class Settings:
             page_roles=_flag("ROBO_PAGE_ROLES", defaults.page_roles),
             break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
             quote_reader=_flag("ROBO_QUOTE_READER", defaults.quote_reader),
+            quote_closing=_flag("ROBO_QUOTE_CLOSING", defaults.quote_closing),
             context_model=os.environ.get("ROBO_CONTEXT_MODEL", defaults.context_model),
             extra_readers=os.environ.get("ROBO_EXTRA_READERS", defaults.extra_readers),
             context_min=float(os.environ.get("ROBO_CONTEXT_MIN", defaults.context_min)),

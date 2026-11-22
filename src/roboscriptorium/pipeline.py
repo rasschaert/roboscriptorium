@@ -342,7 +342,7 @@ def run(
                     read_prompt(book, whole, style, dots),
                     enlarge=int(times or 1),
                 )  # fmt: skip
-            if settings.quote_reader:
+            if settings.quote_reader or settings.quote_closing:
                 # The layer's own paragraphs, before any fix: where their quote marks
                 # don't pair up, what the pairing says the line prints is one more reading.
                 early = reflow(
@@ -359,7 +359,12 @@ def run(
                     [b for b in early if isinstance(b, Paragraph)], texts, readings.values()
                 )
                 for name, lines in paired.items():
-                    readings[name] = {ref: text for ref, text in lines.items() if ref in kept}
+                    readings[name] = {
+                        ref: text
+                        for ref, text in lines.items()
+                        if ref in kept
+                        and (settings.quote_reader or quotes.adds_closing(texts[ref], text))
+                    }
             judge = decide.for_model(settings.judge_model, settings.ollama_url, settings.judge_via)
             alarms = [
                 alarm

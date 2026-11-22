@@ -186,6 +186,22 @@ DUELED = ("open at end", "no stop at end", "no opening", "stray opening")
 _OPENERS = {"’": "‘", "”": "“", "'": "‘"}
 
 
+CLOSERS = "’”'\""
+
+
+def adds_closing(line: str, reading: str) -> bool:
+    """Whether `reading` is `line` with one closing quote mark more, set straight after a
+    closing mark the line has: a nested quotation's outer mark ("duisternis.”" →
+    "duisternis.”’"), the one kind of the pairing's readings that rescued silent errors
+    as a reader (decisions.md, 2026-11-22)."""
+    if len(reading) != len(line) + 1:
+        return False
+    i = next((k for k in range(len(line)) if line[k] != reading[k]), len(line))
+    if reading[i + 1 :] != line[i:] or reading[i] not in "’”":
+        return False
+    return i > 0 and line[i - 1] in CLOSERS
+
+
 def duel_readings(
     paragraphs: list[Paragraph],
     lines: dict[SourceRef, str],
