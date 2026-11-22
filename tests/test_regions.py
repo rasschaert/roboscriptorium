@@ -331,6 +331,25 @@ def test_a_garbled_line_the_ocr_check_settled_is_not_asked_one_it_left_garbled_i
     assert [f.first for f in found if "garbled" in f.reasons] == [2]
 
 
+def test_a_number_kept_as_text_bare_or_among_noise_is_still_asked_as_garbled():
+    for text in ("214", "1| ~4 ;l"):
+        page = PageText(214, 300, 500, [Line(text, 118, 100, 160, 112)])
+        found = flags.find([page], {SourceRef(214, 0): LineRole("body", 0.9, 0.9)})
+        assert any("garbled" in f.reasons for f in found), text
+
+
+def test_a_time_a_range_or_a_quoted_number_is_not_asked_as_garbled():
+    lines = [Line("rao", 120, 100, 150, 112), Line("1914–1918", 120, 116, 170, 128)]
+    page = PageText(133, 300, 500, lines)
+    roles = {SourceRef(133, i): LineRole("body", 0.9, 0.9) for i in range(2)}
+    settled = {SourceRef(133, 0): "12:30.”", SourceRef(133, 1): "1914–1918"}
+    found = flags.find([page], roles, settled=settled)
+    assert not [f for f in found if "garbled" in f.reasons]
+    settled[SourceRef(133, 0)] = "“42”"
+    found = flags.find([page], roles, settled=settled)
+    assert not [f for f in found if "garbled" in f.reasons]
+
+
 def test_a_misprint_keeps_the_answer_as_printed_and_writes_the_edition_line_to_the_errata(
     tmp_path,
 ):

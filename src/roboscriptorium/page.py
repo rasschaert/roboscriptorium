@@ -94,9 +94,25 @@ _WORDLIKE = re.compile(
 _NEUTRAL = re.compile(r"^[.…—–-]+$")
 
 
-def garbled(line: Line) -> bool:
-    """Text an OCR layer read from a picture or a smudge: mostly tokens that aren't words."""
-    tokens = [t for t in line.text.split() if not _NEUTRAL.match(t)]
+# A number written as prose writes it: a time, a range, a date or a decimal ("12:30.”",
+# "1914–1918"), or closed by a quote mark ("80.”"). A bare number ("214"), one in
+# brackets ("2)") or after an opening mark alone ("„4") is not one: page numbers kept as
+# text and noise read from pictures look like that.
+_PROSE_NUMBER = re.compile(
+    r"^[\"'“‘„]*(?:\d+(?:[:.,/–-]\d+)+[.,;:!?…]*[\"”’]*|\d+[.,;:!?…]*[\"”’]+)$"
+)
+
+
+def garbled(line: Line, numbers: bool = False) -> bool:
+    """Text an OCR layer read from a picture or a smudge: mostly tokens that aren't words.
+    With `numbers`, a number written as prose writes it (`_PROSE_NUMBER`) is neither word
+    nor noise, like a dash: the review asks with it, the line-role trees were trained
+    without it."""
+    tokens = [
+        t
+        for t in line.text.split()
+        if not _NEUTRAL.match(t) and not (numbers and _PROSE_NUMBER.match(t))
+    ]
     if not tokens:
         return False
     wordlike = sum(1 for t in tokens if _WORDLIKE.match(t))

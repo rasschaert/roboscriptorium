@@ -301,7 +301,7 @@ def _reasons(
         if role is not None and role.role != "body":
             reasons.append("kept-unsure")
         line = page.lines[i]
-        if P.garbled(line if settled is None else replace(line, text=settled)):
+        if P.garbled(line if settled is None else replace(line, text=settled), numbers=True):
             reasons.append("garbled")
         if _centred(page, i):
             reasons.append("centred")
