@@ -122,16 +122,13 @@ their differences can't be settled, it goes to me. that's the whole point, no?" 
 works so; the quote check, garbled lines, headings and washed-out pages raise questions on
 side paths that skip the judges and the arbiter, and their cards show one or two readings.
 
-- [ ] The quote check as a reader in the OCR check (`ROBO_QUOTE_READER=1`, off;
-      design.md, Quote questions). Benched twice on tuning, not taken: the arbiter was
-      never trained on its two readings, so asked places go silent (decisions.md,
-      2026-11-11). Left: the trust data rebuilt with the two quote readers, the arbiter
-      retrained to weigh them, then `bench tuning` and `validation`; on by default if
-      neither says worse. Then whether `quotes.closed_at_end` is still needed (it added
-      a ’ the print lacks, The Loudest Sound and Nothing, PDF 235), the mark opening a
-      word ("’bout", 40 lines in that book) the quote check still asks itself, and
-      nested quotes by the book's own habit, not assumed as the outer mark's opposite
-      (De tuin sets “ alone 147 times)
+- [ ] The quote check's readings as an offer of one more closing mark only (2026-11-22,
+      decisions.md: as whole readers with the arbiters trained on them, tuning WORSE, 12
+      silent made against 1 fixed beside the control, from false opening marks and lost
+      stops; their 12 rescues in the trust data are all an outer closing mark after one
+      the line has, "duisternis.”’"). Offered there alone, as the speck offers are, the
+      judges seeing the scan. Then whether `quotes.closed_at_end` is still needed, the
+      mark opening a word ("’bout"), nested quotes by the book's own habit
 - [ ] The other doubts as suspects on the same path: a garbled line (its readings judged
       as any other; its question now reads the line as the OCR check settled it,
       2026-11-14), a heading (asked only where the role evidence is split), a speck
