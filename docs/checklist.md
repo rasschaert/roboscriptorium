@@ -191,9 +191,11 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       the word's letters stand at x-height in the crop. Labels found (2026-11-22, the
       baseline `baselines-1122`): 44 case errors on tuning, 31 asked and 13 silent, nearly
       all small-capital abbreviations read as lower case (Goede dochter's "swat", "suv",
-      "u-bocht", "t-shirt"; Vals alarm's "tcu"; De vergelding 17 of them). Next: what the
-      arbiter sees on those places (versions, votes, the word list on the capital form),
-      then the feature it lacks
+      "u-bocht", "t-shirt"; Vals alarm's "tcu"; De vergelding 17 of them). What the arbiter
+      sees (decisions.md): d3 and clef pick the capitals only when they are right (10 and 7
+      of 11, none of 159 wrong), but 11 positives are too few to learn. Next: trust data on
+      the pages holding them (De vergelding, Goede dochter), or d3 and clef agreeing on
+      capitals as one feature; then retrain, bench against a same-day control
 - [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
       right to ask. On tuning's trust data a version backed by 80% or more of the readers'
       and judges' votes is the print 99.3–99.7% of the time, at 70–80% 96.2%, under 70%
