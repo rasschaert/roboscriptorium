@@ -41,7 +41,7 @@ MARK_MODEL = "render-mark"
 # The cached match's format.
 VERSION = 2
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 11
+FITS = 12
 # How a mark is drawn and scored: part of the accent offers' cache key (`Judge.marks`).
 MARKS = 10
 DPI = 400
@@ -810,19 +810,20 @@ class Judge:
         if ink is None:
             # "neither" is no pick; an empty value would read as the first version.
             return {"reading": Answer("choice", "neither", 0.0, {})}
-        # The print sets a stop or quote upright after an italic word: drawn italic, "?"
-        # leans like ".'". The italic is weighed only where the versions differ in letters.
-        face = self._face if same_marks(versions) else self._upright
+        face = self._face if italic_tells(versions) else self._upright
         scores = fits(face, self._match.spread, self._match.size, ink, versions)
         order = sorted(range(len(versions)), key=lambda i: -scores[i])
         sure = sureness(scores[order[0]], scores[order[0]] - scores[order[1]])
         return {"reading": Answer("choice", letters[order[0]], sure, {})}
 
 
-def same_marks(versions: list[str]) -> bool:
-    """Whether the versions differ in letters and digits alone: what lies between them
-    (stops, quotes, spaces) is the same in each."""
-    return len({re.sub(r"\w", "", v) for v in versions}) == 1
+def italic_tells(versions: list[str]) -> bool:
+    """Whether the face's italic is weighed between the versions: where they differ in
+    letters or digits beyond their case. The print sets a stop or quote upright after an
+    italic word, which drawn italic leans ("?" like ".'"), and an italic capital I is a
+    lowercase l or i but for its height."""
+    same_marks = len({re.sub(r"\w", "", v) for v in versions}) == 1
+    return same_marks and len({v.casefold() for v in versions}) > 1
 
 
 def _unmarked(text: str) -> str:
