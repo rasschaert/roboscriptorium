@@ -1539,3 +1539,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-22 | questions, Nervous System, sure-heading | 0 | 1 | 0 |
 | 2026-11-22 | bench tuning, production baseline 2026-11-22 | 0 | 11 | 0 |
 | 2026-11-22 | bench validation, production baseline 2026-11-22 | 0 | 2 | 0 |
+| 2026-11-22 | bench tuning, crop reach, blank, bulleted lists | 0 | 15 | 0 |
+| 2026-11-22 | bench tuning, crop reach, blank, bulleted lists | 0 | 5 | 0 |
+| 2026-11-22 | bench validation, crop reach, blank, bulleted lists | 0 | 2 | 0 |
+| 2026-11-22 | bench tuning, render draws italics too | 0 | 91 | 0 |
+| 2026-11-22 | bench tuning, render's italic only where letters differ | 0 | 21 | 0 |
