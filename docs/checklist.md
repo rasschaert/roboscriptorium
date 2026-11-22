@@ -188,17 +188,10 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       judges capitals. Evidence the arbiter lacks: the word list knows the capital form,
       the word's letters stand at x-height in the crop. Labels: golden pairs with such
       abbreviations (find them first), Nervous System's own answers
-- [ ] The arbiter asking where the judges' votes are lopsided: 5 of Nervous System's 25
-      (a comma against a stop at 8–10 votes to 2–4, "a" against "2" at 9 to 3). Read
-      how often such splits are right on tuning before letting them settle
-
-## Small capitals (the user, 2026-11-09: "we need to nail this")
-
-On by default since 2026-11-11: an all-capitals version of a mixed-case word, and doubts
-on lower-case pieces no reading disputes (design.md, "Small capitals get an all-capitals
-version"). Left, beside a lone small capital no judge tells from lower case (outlook.md,
-"Tried"):
-
+- [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
+      right to ask. On tuning's trust data a version backed by 80% or more of the readers'
+      and judges' votes is the print 99.3–99.7% of the time, at 70–80% 96.2%, under 70%
+      79.7%; those five stand at 67–75% (decisions.md)
 - [ ] The arbiter fixing where the judges agree on capitals, instead of asking: a
       retrained one does. It waits for the steadier arbiter (In flight) and comes with
       batch five's retraining
