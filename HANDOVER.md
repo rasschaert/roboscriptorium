@@ -6,6 +6,8 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
+**Sunday 10:30, stopped on the user's word.** Nothing runs but the battery guard. The user is reviewing Nervous System (25 questions). Merged this morning: a question's rows show lines the OCR check already fixed as fixed (page 133's "rao"); a doubt's crop reaches where another version adds words (page 214's "_ ill.", now settled; page 116's lost printed blank now asked, a rescue). Stopped midway: `work/runs/crop-reach.sh`, the crop fix's tuning bench against `baselines-1122` (judge answers cached; rerun it with `experiments/detached.sh crop-reach work/runs/crop-reach.sh`). Then, approved by the user if no regression: an arbiter signal "the judges that see the scan all agree" (commas read as stops, small capitals), retrained and benched against a same-day control.
+
 **For the user, Sunday 2026-11-22 (worked / didn't).**
 
 - Worked: **sure headings go unasked** (on by default): a heading the trees are 99% sure of, with nothing else to ask on it, is no question. Tuning 113 fewer questions, validation 4, no word moved; Nervous System's heading questions 13 → 4.
