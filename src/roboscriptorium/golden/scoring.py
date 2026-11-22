@@ -188,6 +188,11 @@ def sure_headings(roles, cut: float) -> set[SourceRef]:
 def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
     """What the review asks of this build, the golden places aside."""
     regions = None
+    checked = (
+        {p.number: p for p in ocrcheck.apply(stages.pages, stages.suspects)}
+        if stages.suspects
+        else {}
+    )
     if layout.available():
         numbers = [p.number for p in stages.pages]
         regions = layout.detect(book.source, numbers, book.stages / "layout.json")
@@ -209,10 +214,10 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         (lex.knows if (lex := Lexicon.load(ocr.language(book.language))) else None),
         {
             SourceRef(p.number, i): line.text
-            for p in ocrcheck.apply(stages.pages, stages.suspects)
+            for p in checked.values()
             for i, line in enumerate(p.lines)
         }
-        if stages.suspects
+        if checked
         else None,
     )
     found = flags.structural(
@@ -240,24 +245,41 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         )
         and not (f.reasons == ["heading"] and f.last >= f.first and lines(f) <= sure)
     ]
+    found = [_as_built(f, checked.get(f.page)) for f in found]
     found = _read_unread(book, stages, found)
     if quotes.single_quoted(stages.doc.blocks):
         found = [_single_quoted(f) for f in found]
     learned = answered_words(Corrections(book.corrections_path))
     if learned:
         found = [_with_answered(f, learned) for f in found]
-    if not any(s.choice == "other" for s in stages.suspects):
-        return found
-    checked = {p.number: p for p in ocrcheck.apply(stages.pages, stages.suspects)}
-    out = []
-    for f in found:
-        page = checked.get(f.page)
-        if page is None or f.last < f.first or f.last >= len(page.lines):
-            out.append(f)
-            continue
-        built = "\n".join(page.lines[k].text for k in range(f.first, f.last + 1))
-        out.append(replace(f, built=built) if built != f.text else f)
-    return out
+    return found
+
+
+def _as_built(f: Flag, page) -> Flag:
+    """A question with its lines as the build has them after the OCR check's fixes
+    (`built`, where they differ from the layer's), and each line the check settled
+    shown so in every reading that holds the layer's version of it: a region asked
+    about one line shows its other lines as the book has them, never as the layer
+    misread them. Readings that then agree are one, their votes together. `text` stays
+    the layer's: an answer finds its lines by it."""
+    if page is None or f.last < f.first or f.last >= len(page.lines):
+        return f
+    raw = f.text.split("\n")
+    built = [page.lines[k].text for k in range(f.first, f.last + 1)]
+    if built == raw:
+        return f
+    readings: list[dict] = []
+    for r in f.readings:
+        lines = r["text"].split("\n")
+        if len(lines) == len(raw):
+            lines = [b if s == a else s for s, a, b in zip(lines, raw, built, strict=True)]
+        text = "\n".join(lines)
+        same = next((g for g in readings if g["text"] == text), None)
+        if same is None:
+            readings.append({**r, "text": text, "votes": list(r["votes"])})
+        else:
+            same["votes"] += [v for v in r["votes"] if v not in same["votes"]]
+    return replace(f, built="\n".join(built), readings=readings)
 
 
 # A question asks for text when it is about running text or a heading, or about printed

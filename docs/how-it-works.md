@@ -406,7 +406,9 @@ pipeline's call is preselected. The text as printed goes in a text box.
 
 Where the readings differ, the question asks which one matches the scan instead, once
 per line. Each row is a whole line: the text layer's, each reader's and each judge's,
-the likeliest at each place, and the line as built. The differing parts are marked,
+the likeliest at each place, and the line as built. A question about several lines shows
+every line the OCR check already fixed as fixed, in every row: only the line in doubt
+differs between them. The differing parts are marked,
 with who has them. Keys `a`, `b`, … pick a row; `e` types something else, starting from
 the chosen row, or from any row with its ✎. A question with no readings of its own (a
 heading, a line the layer lacks) gets qwen3.8's reading beside the layer's.

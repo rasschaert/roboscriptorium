@@ -121,3 +121,38 @@ def test_only_the_trees_own_sure_headings_go_unasked():
     assert sure_headings(roles, 0.99) == {SourceRef(1, 0)}
     # Off by default: every heading is asked.
     assert sure_headings(roles, 0.0) == set()
+
+
+def test_a_question_shows_the_lines_the_ocr_check_fixed_as_fixed():
+    # Nervous System, page 133: the layer reads "12:30.”" as "rao", which every reader
+    # and judge fixed; the question is about the next line only.
+    def ln(text, y):
+        return Line(text, 30, y, 80, y + 10)
+
+    flag = Flag(
+        "p133-x",
+        133,
+        11,
+        12,
+        "rao\neSurel",
+        "text",
+        ["garbled", "ocr-doubt"],
+        readings=[
+            {"text": "rao\neSurel", "votes": ["text layer", "as built"]},
+            {"text": "rao\n“Sure.”", "votes": ["glm-ocr", "clef:27b"]},
+        ],
+    )
+    above = [ln(f"line {k}", 10 * k) for k in range(11)]
+    fixed = PageText(133, 300, 500, [*above, ln("12:30.”", 110), ln("eSurel", 120)])
+    shown = scoring._as_built(flag, fixed)
+    assert [r["text"] for r in shown.readings] == ["12:30.”\neSurel", "12:30.”\n“Sure.”"]
+    assert shown.readings[1]["votes"] == ["glm-ocr", "clef:27b"]
+    assert shown.built == "12:30.”\neSurel"
+    # The answer still finds its lines by the layer's text.
+    assert shown.text == "rao\neSurel"
+    # Readings that agree once the fix is in are one, their votes together.
+    flag.readings.append({"text": "12:30.”\neSurel", "votes": ["Qwen"]})
+    assert scoring._as_built(flag, fixed).readings[0]["votes"] == ["text layer", "as built", "Qwen"]
+    # A page the check changed nothing on keeps the question as it was.
+    unchanged = PageText(133, 300, 500, [*above, ln("rao", 110), ln("eSurel", 120)])
+    assert scoring._as_built(flag, unchanged) is flag
