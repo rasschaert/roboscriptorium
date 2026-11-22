@@ -195,9 +195,11 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       sees (decisions.md): d3 and clef pick the capitals only when they are right (10 and 7
       of 11, none of 159 wrong), but 11 positives are too few to learn. De vergelding's 17
       sit in a book kept out of the trust data (its data on branch `trust-26`, not taken
-      2026-11-13: it asked more and left a little less). Next: d3 and clef agreeing on
-      capitals as one feature, trained with `trust-26`'s three books for the labels; then
-      retrain, bench against a same-day control
+      2026-11-13: it asked more and left a little less). First the arbiter run in flight
+      (`robo-seeing-judges`, branch `seeing-judges`): its feature, every judge that looks at
+      the scan picking the version, holds d3 and clef agreeing on capitals. If it doesn't
+      reach them, a capitals-only feature trained with `trust-26`'s three books for the
+      labels; then retrain, bench against a same-day control
 - [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
       right to ask. On tuning's trust data a version backed by 80% or more of the readers'
       and judges' votes is the print 99.3–99.7% of the time, at 70–80% 96.2%, under 70%
