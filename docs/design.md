@@ -1744,7 +1744,9 @@ the edition doesn't list its corrections (the user).
   in another). Before, a change that lost Het geluid van bananen's italic pages, 10,000
   words, read "no change". A word counts by its place, whatever its letters
   (2026-11-11): counted by matching letters, every misread italic word was an italic
-  error, and the count rose and fell with the questions asked.
+  error, and the count rose and fell with the questions asked. A mark with no letter or
+  digit (". . . .", "—") counts on neither side (2026-11-20): its slant can't be seen,
+  so a reference that sets it italic and a build that doesn't are both right.
 - **Paragraph breaks count.** A break in the wrong place is as visible in an edition as
   a wrong word, and no question asks about it, so the bench counts them per page
   (`disagreements.break_errors`: a reference paragraph starting mid-paragraph in the
