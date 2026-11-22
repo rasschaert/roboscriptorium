@@ -1323,6 +1323,13 @@ land draws its "HOOFDSTUK" in display letters the layer misreads ("ELO@EDSEWiKuc
 judges split on "HOOFDSTUK 33" against "Hoofdstuk 33", and six of its headings were
 asked, one counted by the bench as a heading lost and one spurious (2026-11-09). Over every
 book's cached suspects it changes those six and nothing else.
+A heading the line-role trees call at 0.99 or surer by their own call, with nothing else
+asked on its lines, isn't asked either (`scoring.sure_headings`, `sure_heading`): at that
+sureness the trees were never wrong about a heading on tuning, and its text has been read
+by the readers and judges as any line's (Metro's "GRA T ERS" became "CHAPTER 3"); a place
+left open on it is still asked as an OCR doubt. 113 fewer questions on tuning, 4 on
+validation, no word moved (decisions.md, 2026-11-22).
+
 A heading its run confirms isn't asked in the review (`chapters.settled`): bare numbers
 each one more than the one before or after, titles opening on years in order ("1885:
 Een ramp" after "1840-1884: …", five or more), parts counted in words in order; nor is

@@ -57,8 +57,9 @@ class Settings:
     # nothing else to ask on its lines (every place in it settled by the readers and
     # judges), isn't asked; 0 asks every heading. At 0.99 the trees were never wrong
     # about a heading on tuning (463 of 470; the other 7 misread numbers the OCR check
-    # mends, decisions.md 2026-11-21).
-    sure_heading: float = 0.0
+    # mends): 113 fewer questions on tuning, 4 on validation, no word moved, and
+    # Nervous System's heading questions 13 → 4 (decisions.md, 2026-11-21 and 22).
+    sure_heading: float = 0.99
     # Doubts raised where the scan shows a stress accent over a word every reading has
     # plain ("zíjn" read "zijn"; `accentmarks.py`), in a Dutch book with the judge
     # `render`. Decided by `offer_trust_model` (docs/decisions.md, 2026-11-18 and 11-19).

@@ -134,7 +134,7 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       2026-11-14), a heading (asked only where the role evidence is split), a speck
       read as a mark (the three below). For headings, the evidence of 2026-11-14
       (`experiments/heading_sureness.py`, `heading_misses.py` on warm tuning builds):
-      every heading is asked today, ~700 on tuning to catch about six errors. The trees'
+      every heading was asked, ~700 on tuning to catch about six errors. The trees'
       heading calls at 0.99 or more were never a wrong role there (Dolittle's title page
       at 0.96–0.97 is the nearest); at 0.97 one would go silent. But the question is
       also the only check of a heading's text (Het ijzige land's "HOOFDSTUK 6" for 5;
