@@ -6,6 +6,8 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
+**Sunday 16:40, both resumed on the user's word ("continue both").** `robo-render-italic-case` (the italic's third version, tuning, about 20–30 minutes: only rescoring) and `robo-seeing-judges` (the arbiter run, 4–7 hours; its 12:59 start had died with the 13:00 pause before training anything) run side by side, neither asking a model. The two versions of render and compare keep their accent drawings in one slot per book, so the control bench (main's code) redraws the tuning books' marks once, about 40 minutes inside the run. Don't merge `render-italic` until `robo-seeing-judges` ends: its control bench runs main's code.
+
 **Sunday 16:03, paused on the user's word ("pause the italics stuff too").** Nothing runs but the battery guard. To resume, in this order, when the user says so:
 
 1. The italic bench, third version (branch `render-italic`, worktree `../robo-render-italic`: render weighs the face's italic only where the versions differ in letters beyond case). Stopped about 10 minutes from its tuning result; render's answers and the accent drawings are saved, so the rerun only scores the books again: `experiments/detached.sh render-italic-case work/runs/render-italic-case.sh`. If tuning gains with no silent error made, validation (about 1¼ hours: seven Dutch books redraw their accent offers once): `experiments/detached.sh render-italic-case-validation work/runs/render-italic-case-validation.sh`. Merge if neither shows a regression.
