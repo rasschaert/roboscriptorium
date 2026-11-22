@@ -14,6 +14,7 @@ the line texts the review keys its answers on stay as they are. Born-digital
 PDFs, whose text is exact, aren't checked.
 """
 
+import difflib
 import functools
 import json
 import re
@@ -199,25 +200,51 @@ def _bare(text: str) -> str:
     return _OPENING_QUOTES.sub(lambda m: m[1] + "'" * len(m[2]), text.translate(_FOLD)).strip()
 
 
-def _box(words: list, box, original: str, start: int, end: int):
+def _box(words: list, box, original: str, start: int, end: int, others=()):
     """The suspect words' box: the text layer's word boxes, or a share of the line's box.
 
     At the line's start or end it reaches one em further, where a mark the text
-    layer missed is printed.
+    layer missed is printed. Where another version adds words past either end of the
+    suspect's (`adds_at`), it reaches as far as those letters run at the line's pitch,
+    and at least over the gap to the next word: "_ ill." against "ill. I" shows the I.
     """
     k0 = original[:start].count(" ")
     k1 = k0 + original[start:end].strip().count(" ") + 1
     x0, y0, x1, y1 = box
-    if spells(words, original):
+    spelled = spells(words, original)
+    if spelled:
         out = list(readers._union(words[k0:k1]))
     else:
         out = [x0 + (x1 - x0) * start / len(original), y0, x0 + (x1 - x0) * end / len(original), y1]
     em = y1 - y0
+    pitch = (x1 - x0) / max(len(original), 1)
+    before, after = adds_at(original[start:end], others)
     if start == 0:
         out[0] -= em
+    elif before:
+        gap = words[k0 - 1][2] if spelled and k0 > 0 else out[0]
+        out[0] = min(gap, out[0] - before * pitch)
     if end == len(original):
         out[2] += em
+    elif after:
+        gap = words[k1][0] if spelled and k1 < len(words) else out[2]
+        out[2] = max(gap, out[2] + after * pitch)
     return tuple(out)
+
+
+def adds_at(ours: str, others) -> tuple[int, int]:
+    """How many letters (with their space) the versions add before the suspect's first
+    word and after its last, word by word: the most any version adds, 0 for none."""
+    a = ours.split()
+    before = after = 0
+    for other in others:
+        b = other.split()
+        ops = difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes()
+        if ops and ops[0][0] == "insert":
+            before = max(before, len(" ".join(b[ops[0][3] : ops[0][4]])) + 1)
+        if ops and ops[-1][0] == "insert":
+            after = max(after, len(" ".join(b[ops[-1][3] : ops[-1][4]])) + 1)
+    return before, after
 
 
 def check(
@@ -394,7 +421,7 @@ def _check(
                     if not alternatives:
                         continue
                     versions = [ours[a0:a1], *alternatives]
-                    box = _box(words[k], boxes[k], ours, a0, a1)
+                    box = _box(words[k], boxes[k], ours, a0, a1, alternatives)
                     continues = a0 == 0 and k > 0 and page.lines[k - 1].text.endswith(HYPHENS)
                     joined = hyphen_only(ours, a1, versions, around[1])
                     read_as = [across(v, joined) for v in versions]

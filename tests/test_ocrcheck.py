@@ -1438,3 +1438,26 @@ def test_a_fix_takes_its_lines_curly_quotes():
 def test_a_mixed_case_word_with_an_accent_gets_no_capitals_version():
     assert ocrcheck._capitals("niet", ["níet", "nIét"]) is None
     assert ocrcheck._capitals("ALLEs", ["ALtEs"]) == "ALLES"
+
+
+def test_a_suspect_whose_other_version_adds_a_word_shows_where_it_is_printed():
+    # Nervous System, page 214: a speck before "ill." read as "_", the "I" after it lost;
+    # the readers' "ill. I" against "_ ill." needs the gap where the I is printed.
+    words = [
+        (29, 436, 31, 447, "_"),
+        (34, 436, 45, 447, "ill."),
+        (57, 436, 75, 447, "was"),
+        (80, 436, 120, 447, "mentally"),
+    ]
+    line = "_ ill. was mentally"
+    box = (29, 436, 120, 447)
+    # The line's pitch is 91 / 19 points a letter; "ill. I" adds " I", two letters; "ill. Iam a" six.
+    pitch = 91 / 19
+    assert ocrcheck._box(words, box, line, 0, 6, ["ill. I"]) == (18, 436, 57, 447)
+    assert ocrcheck._box(words, box, line, 0, 6, ["ill. Iam a"]) == (18, 436, 45 + 6 * pitch, 447)
+    # Before the suspect too: "was" against "I was" reaches back over the gap.
+    assert ocrcheck._box(words, box, line, 7, 10, ["I was"]) == (45, 436, 75, 447)
+    # A version of the same words keeps the suspect's own box.
+    assert ocrcheck._box(words, box, line, 7, 10, ["wax"]) == (57, 436, 75, 447)
+    assert ocrcheck.adds_at("_ ill.", ["ill. I"]) == (0, 2)
+    assert ocrcheck.adds_at("was", ["wax", "I was"]) == (2, 0)
