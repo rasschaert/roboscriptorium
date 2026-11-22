@@ -122,13 +122,15 @@ their differences can't be settled, it goes to me. that's the whole point, no?" 
 works so; the quote check, garbled lines, headings and washed-out pages raise questions on
 side paths that skip the judges and the arbiter, and their cards show one or two readings.
 
-- [ ] The quote check's readings as an offer of one more closing mark only (2026-11-22,
-      decisions.md: as whole readers with the arbiters trained on them, tuning WORSE, 12
-      silent made against 1 fixed beside the control, from false opening marks and lost
-      stops; their 12 rescues in the trust data are all an outer closing mark after one
-      the line has, "duisternis.”’"). Offered there alone, as the speck offers are, the
-      judges seeing the scan. Then whether `quotes.closed_at_end` is still needed, the
-      mark opening a word ("’bout"), nested quotes by the book's own habit
+- [ ] The quote check's readings as one more closing mark only: built, off (branch
+      `quote-closing`, worktree `../robo-quote-closing`, `ROBO_QUOTE_CLOSING`,
+      `quotes.adds_closing`). Quick test on last night's trust data, parked (decisions.md
+      2026-11-22): nested-only keeps 22 suspects and none of the 12 rescues, with a stop
+      142 and 2; the rescues are stored as a word inserted beside an empty span, so the
+      readings' lines can't be rebuilt from the trust data. Next if taken up: the pairing's
+      readings recomputed for the four books with rescues, the filter applied to those.
+      Ceiling: 12 places over twenty books. Then whether `quotes.closed_at_end` is still
+      needed, the mark opening a word ("’bout"), nested quotes by the book's own habit
 - [ ] The other doubts as suspects on the same path: a garbled line (its readings judged
       as any other; its question now reads the line as the OCR check settled it,
       2026-11-14), a heading (asked only where the role evidence is split), a speck
