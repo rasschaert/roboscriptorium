@@ -618,6 +618,12 @@ Daens' title was mended by hand).
 
 ## Housekeeping
 
+- [ ] **The accent offers keep a slot per drawing method** (`accentmarks.py`, after
+      `robo-seeing-judges` ends; an hour): `stages/accent-marks.json` holds one key
+      (`Judge.marks`), so a branch and main that draw marks differently wipe each other's
+      fits, and each bench in turn redraws them (about 40 minutes on the tuning books,
+      2026-11-22). Keep the fits under each key; its test runs two keys in turn and redraws
+      nothing the second time.
 - [ ] Worktrees and branches (merged ones removed 2026-11-20): `../robo-cache-code`
       and `../robo-judge-answered` wait for their runs (In flight);
       `../roboscriptorium-py315` has two untracked scratch files (`layout_check.py`,
