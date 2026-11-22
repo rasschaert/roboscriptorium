@@ -1544,3 +1544,11 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-22 | bench validation, crop reach, blank, bulleted lists | 0 | 2 | 0 |
 | 2026-11-22 | bench tuning, render draws italics too | 0 | 91 | 0 |
 | 2026-11-22 | bench tuning, render's italic only where letters differ | 0 | 21 | 0 |
+| 2026-11-22 | bench tuning, render's italic only where letters beyond case differ | 0 | 22 | 0 |
+| 2026-11-22 | bench validation, render's italic only where letters beyond case differ | 0 | 42 | 0 |
+| 2026-11-22 | bench tuning, prose numbers not garbled | 0 | 76 | 0 |
+| 2026-11-22 | bench validation, prose numbers not garbled, on the italic | 0 | 1 | 0 |
+| 2026-11-22 | train arbiter, judges that see agreeing (ocr-trust-seeing.pkl) | 0 | 232 | 0 |
+| 2026-11-22 | train arbiter, judges that see agreeing (ocr-trust-offers-seeing.pkl) | 0 | 235 | 0 |
+| 2026-11-22 | bench tuning, control arbiters of 2026-11-21 | 0 | 5 | 0 |
+| 2026-11-22 | bench tuning, arbiters told the judges that see agree | 0 | 5 | 0 |
