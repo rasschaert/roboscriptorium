@@ -1451,7 +1451,7 @@ def test_a_suspect_whose_other_version_adds_a_word_shows_where_it_is_printed():
     ]
     line = "_ ill. was mentally"
     box = (29, 436, 120, 447)
-    # The line's pitch is 91 / 19 points a letter; "ill. I" adds " I", two letters; "ill. Iam a" six.
+    # The pitch is 91 / 19 points a letter; "ill. I" adds two letters, "ill. Iam a" six.
     pitch = 91 / 19
     assert ocrcheck._box(words, box, line, 0, 6, ["ill. I"]) == (18, 436, 57, 447)
     assert ocrcheck._box(words, box, line, 0, 6, ["ill. Iam a"]) == (18, 436, 45 + 6 * pitch, 447)
@@ -1461,3 +1461,14 @@ def test_a_suspect_whose_other_version_adds_a_word_shows_where_it_is_printed():
     assert ocrcheck._box(words, box, line, 7, 10, ["wax"]) == (57, 436, 75, 447)
     assert ocrcheck.adds_at("_ ill.", ["ill. I"]) == (0, 2)
     assert ocrcheck.adds_at("was", ["wax", "I was"]) == (2, 0)
+
+
+def test_blanks_of_any_length_are_one_version():
+    # Nervous System, page 116: a printed blank read as four underscores and as eight;
+    # the book sets every blank alike, so only whether there is one is in doubt.
+    ours = "from the branch of the library"
+    found = ocrcheck.merged_differences(
+        ours, ["from the ____ branch of the library", "from the ________ branch of the library"]
+    )
+    assert [v for _, _, v in found] == [["____ branch"]]
+    assert ocrcheck.merged_differences("the ___ branch", ["the ________ branch"]) == []

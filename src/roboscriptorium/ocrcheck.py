@@ -187,9 +187,14 @@ def differences(ours: str, theirs: str) -> list[tuple[int, int, int, int]]:
 
 
 def _alike(text: str) -> str:
-    """Text with every dash between words and every ellipsis alike, quotes straight: the
-    book's dash and ellipsis style are set book-wide (`typography.py`)."""
-    return _ELLIPSIS.sub("…", _ANY_DASH.sub("—", text.translate(_FOLD))).strip()
+    """Text with every dash between words, every ellipsis and every printed blank alike,
+    quotes straight: the book's dash and ellipsis style are set book-wide, and a blank
+    however many underscores were read (`typography.py`)."""
+    text = _BLANK.sub("_", text.translate(_FOLD))
+    return _ELLIPSIS.sub("…", _ANY_DASH.sub("—", text)).strip()
+
+
+_BLANK = re.compile(r"_+")
 
 
 def _bare(text: str) -> str:
