@@ -41,7 +41,7 @@ MARK_MODEL = "render-mark"
 # The cached match's format.
 VERSION = 2
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 9
+FITS = 10
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
@@ -119,20 +119,41 @@ class Face:
     """A font, drawn at any size. `load(px)` gives it at `px` pixels an em; `figures`
     are its other sets of digits (`other_figures`)."""
 
-    def __init__(self, load, figures: list[dict[int, int]] = ()):
+    def __init__(self, load, figures: list[dict[int, int]] = (), italic: "Face | None" = None):
         self._load = load
         self._cuts: dict[int, ImageFont.FreeTypeFont] = {}
         self.figures = list(figures)
+        self.italic = italic
 
     @classmethod
-    def from_file(cls, path: Path) -> "Face":
-        return cls(lambda px: ImageFont.truetype(str(path), px), other_figures(path))
+    def from_file(cls, path: Path, italic: bool = False) -> "Face":
+        """The font in `path`; with `italic`, its family's italic beside it
+        (`italic_of`), where the folder has one."""
+        slanted = italic_of(path) if italic else None
+        return cls(
+            lambda px: ImageFont.truetype(str(path), px),
+            other_figures(path),
+            cls.from_file(slanted) if slanted else None,
+        )
 
     def at(self, scale: float = 1.0) -> ImageFont.FreeTypeFont:
         px = round(RENDER_PX * scale)
         if px not in self._cuts:
             self._cuts[px] = self._load(px)
         return self._cuts[px]
+
+
+def italic_of(path: Path) -> Path | None:
+    """A text face's italic: the file beside it named alike with "Italic" for its
+    "Roman" or "Regular" (or added to its name), not a bold one."""
+    stem = path.stem
+    names = [re.sub(r"(?i)roman|regular", "Italic", stem), f"{stem}Italic", f"{stem}-Italic"]
+    for name in names:
+        if name != stem:
+            for other in path.parent.glob(f"{name}.*"):
+                if other.suffix.lower() in (".otf", ".ttf") and other != path:
+                    return other
+    return None
 
 
 @dataclass(frozen=True)
@@ -567,7 +588,7 @@ def drawings(face: Face, version: str) -> list[np.ndarray]:
     kerned over the stop before it; with an ellipsis's dots apart; with a run of
     capitals, or a capital no letter touches, as small capitals; with an ordinal's
     ending as a superscript; each of these in the font's other figures where the version
-    has digits."""
+    has digits; and as the face's italic sets it, where it has one."""
     ways = [[(version, 1.0, 0.0)]]
     if m := _STOP_QUOTE.search(version):
         for kern in KERNS:
@@ -609,7 +630,12 @@ def drawings(face: Face, version: str) -> list[np.ndarray]:
             for figures in face.figures
             for way in list(ways)
         ]
-    return [g for g in (_pieces(face, way) for way in ways) if g is not None]
+    # The face's italic sets the version too: an italic capital I leans like a J.
+    if face.italic is not None:
+        ways_italic = [_pieces(face.italic, [(version, 1.0, 0.0)])]
+    else:
+        ways_italic = []
+    return [g for g in [*(_pieces(face, way) for way in ways), *ways_italic] if g is not None]
 
 
 def fits(face: Face, spread: int, size: float, ink: np.ndarray, versions: list[str]) -> list[float]:
@@ -833,4 +859,4 @@ def judge(
     if not library.is_dir():
         raise ValueError(f"the judge {MODEL!r} draws with the fonts in {library}: no such folder")
     found = match(pdf, pages, library, cache, typeface)
-    return Judge(pdf, Face.from_file(library / found.file), found, pages)
+    return Judge(pdf, Face.from_file(library / found.file, italic=True), found, pages)

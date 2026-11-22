@@ -376,3 +376,17 @@ def test_the_mark_judge_has_no_vote_where_the_letters_differ(tmp_path):
     assert judge.model == "render-mark"
     answer = judge.decide(state, _question(["world", "wor1d"]))["reading"]
     assert (answer.value, answer.confidence) == ("neither", 0.0)
+
+
+def test_a_face_finds_its_italic_beside_it(tmp_path):
+    for name in (
+        "JansonTextLTStd-Roman.otf",
+        "JansonTextLTStd-Italic.otf",
+        "JansonTextLTStd-BoldItalic.otf",
+    ):
+        (tmp_path / name).write_bytes(b"")
+    assert rendercheck.italic_of(tmp_path / "JansonTextLTStd-Roman.otf") == (
+        tmp_path / "JansonTextLTStd-Italic.otf"
+    )
+    (tmp_path / "Plain.ttf").write_bytes(b"")
+    assert rendercheck.italic_of(tmp_path / "Plain.ttf") is None
