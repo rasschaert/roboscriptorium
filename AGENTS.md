@@ -81,8 +81,13 @@ get renumbered. Don't add a file to this table without a job no other file has.
 ### Git, data and installs
 
 - **Git:** signed commits straight to `main`, pushed whenever convenient; no PRs. Lint
-  and tests before every commit that touches code or tests; a commit of docs and
-  diagrams alone needs neither (the tests take minutes and check none of it).
+  and tests before every commit that touches code or tests: the test files of the
+  modules changed and of every module that imports them (`tests/test_<module>.py`),
+  with `tests/test_pipeline.py` (the seams); the whole suite (about a minute, most of
+  it the arbiter's training in `test_trustdata.py`) before a run is queued on the
+  change, and for a change to `trust`, `trustdata`, `config` or `pipeline` (the user,
+  2026-11-22: "the test suite is becoming heavy … can we run the relevant section
+  only?"). A commit of docs and diagrams alone needs neither.
 - **No copyrighted material in git.** Books, page images, OCR output and golden pages
   live in `work/` (gitignored). Commit only code, prompts, question sets, configs and
   synthetic fixtures.
