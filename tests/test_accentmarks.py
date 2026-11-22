@@ -11,7 +11,7 @@ from roboscriptorium.roles import DecisionCache
 class Drawer:
     """Stands in for the render judge: the fit of each marked word it is asked about."""
 
-    fingerprint = "a-face"
+    marks = "a-face"
 
     def __init__(self, fits: dict[str, float]):
         self.fits, self.asked = fits, []
@@ -41,7 +41,7 @@ def test_no_doubt_under_the_cut_in_a_disputed_span_or_without_ink(tmp_path):
     # A span the readings dispute is theirs to settle.
     assert marks.doubts(None, 1, 1, "het werk", [(4, 8)], box) == []
     none = accentmarks.Marks(
-        SimpleNamespace(fingerprint="a-face", mark=lambda *a: None), tmp_path / "n.json"
+        SimpleNamespace(marks="a-face", mark=lambda *a: None), tmp_path / "n.json"
     )
     assert none.doubts(None, 1, 0, "het werk", [], box) == []
 
@@ -58,7 +58,7 @@ def test_a_mark_the_scan_shows_is_offered_once_and_kept(tmp_path):
     assert not again.asked
     # Another typeface is another drawing: asked anew.
     other = Drawer({})
-    other.fingerprint = "b-face"
+    other.marks = "b-face"
     assert (
         accentmarks.Marks(other, tmp_path / "marks.json").doubts(
             None, 3, 2, "en dat zijn wil", [], box

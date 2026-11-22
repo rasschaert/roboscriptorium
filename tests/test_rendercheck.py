@@ -390,3 +390,11 @@ def test_a_face_finds_its_italic_beside_it(tmp_path):
     )
     (tmp_path / "Plain.ttf").write_bytes(b"")
     assert rendercheck.italic_of(tmp_path / "Plain.ttf") is None
+
+
+def test_the_italic_is_weighed_only_where_the_versions_differ_in_letters():
+    assert rendercheck.same_marks(["7a.", "Ja."])
+    assert rendercheck.same_marks(["boren", "horen"])
+    # A stop or quote after an italic word is upright on the print.
+    assert not rendercheck.same_marks(["lekker?", "lekker.’"])
+    assert not rendercheck.same_marks(["Puan,", "Puan,’"])

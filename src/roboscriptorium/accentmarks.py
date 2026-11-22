@@ -57,7 +57,7 @@ class Marks:
 
     def __init__(self, judge: Judge, cache: Path):
         self._judge, self._cache = judge, cache
-        kept = read_cache(cache, VERSION, typeface=judge.fingerprint)
+        kept = read_cache(cache, VERSION, typeface=judge.marks)
         self._fits: dict[str, list] = kept["fits"] if kept else {}
         self._new = 0
 
@@ -96,7 +96,5 @@ class Marks:
 
     def save(self) -> None:
         if self._new:
-            write_cache(
-                self._cache, VERSION, {"fits": self._fits}, typeface=self._judge.fingerprint
-            )
+            write_cache(self._cache, VERSION, {"fits": self._fits}, typeface=self._judge.marks)
             self._new = 0

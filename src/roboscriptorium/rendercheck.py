@@ -41,7 +41,9 @@ MARK_MODEL = "render-mark"
 # The cached match's format.
 VERSION = 2
 # How a place is cut and drawn: part of the judge's answers' cache key.
-FITS = 10
+FITS = 11
+# How a mark is drawn and scored: part of the accent offers' cache key (`Judge.marks`).
+MARKS = 10
 DPI = 400
 # The size, in pixels an em, that drawings are made at before scaling to the scan.
 RENDER_PX = 96
@@ -170,6 +172,10 @@ class Match:
     @property
     def fingerprint(self) -> str:
         return f"{FITS}:{self.file}:{self.spread}:{self.size:.1f}"
+
+    @property
+    def marks(self) -> str:
+        return f"{MARKS}:{self.file}:{self.spread}:{self.size:.1f}"
 
 
 def _levelled(grey: np.ndarray) -> np.ndarray | None:
@@ -779,6 +785,8 @@ class Judge:
         self._line = statistics.median(heights) if heights else None
         # Part of each answer's cache key: another typeface or size is another judge.
         self.fingerprint = found.fingerprint
+        self.marks = found.marks
+        self._upright = Face(face._load, face.figures)
 
     def mark(self, page: pymupdf.Page, number: int, box, marked: str, plain: str) -> float | None:
         """`mark_fit` for the words at `box` on a page: how well the scan shows the mark
@@ -802,10 +810,19 @@ class Judge:
         if ink is None:
             # "neither" is no pick; an empty value would read as the first version.
             return {"reading": Answer("choice", "neither", 0.0, {})}
-        scores = fits(self._face, self._match.spread, self._match.size, ink, versions)
+        # The print sets a stop or quote upright after an italic word: drawn italic, "?"
+        # leans like ".'". The italic is weighed only where the versions differ in letters.
+        face = self._face if same_marks(versions) else self._upright
+        scores = fits(face, self._match.spread, self._match.size, ink, versions)
         order = sorted(range(len(versions)), key=lambda i: -scores[i])
         sure = sureness(scores[order[0]], scores[order[0]] - scores[order[1]])
         return {"reading": Answer("choice", letters[order[0]], sure, {})}
+
+
+def same_marks(versions: list[str]) -> bool:
+    """Whether the versions differ in letters and digits alone: what lies between them
+    (stops, quotes, spaces) is the same in each."""
+    return len({re.sub(r"\w", "", v) for v in versions}) == 1
 
 
 def _unmarked(text: str) -> str:
