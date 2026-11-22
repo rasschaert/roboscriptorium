@@ -146,6 +146,8 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       specks the golden pairs give labels by the thousand: a reader's character absent
       from the reference, aligned to an ink blob, is a speck, and a mark the reference
       confirms is ink (~1 day; three pages were too few, 2026-10-21)
+      - [ ] (Both offers built 2026-11-22, branch `speck-offers`, off: no change on tuning, nothing
+            there to rescue; decisions.md. Settled by labels from a book with such specks.)
       - [ ] A speck read as a hyphen before a line's first word (Nervous System PDF 118
             line 2, "- I followed"; Going into a Dark House PDF 7, "- For"). No rule
             (counterexamples, 2026-11-20, decisions.md): of 60 such text-layer lines in
