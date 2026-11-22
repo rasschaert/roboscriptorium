@@ -180,12 +180,17 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       levens' "dië" and "rolden" votes but not the golden books' (1,104 → 1,098 judge
       picks right of 1,200); left off. Next, if it returns: the readers' crops too, and
       the arbiter retrained on cut crops for one tight book
-- [ ] Measure, and show the user before they review again: the questions a book like
-      Nervous System leaves, by what raised them, each kind the machine could settle
-      fixed at its source, and the silent errors on the benches before and after. Its 70
-      questions held 21 on headings in a book whose headings are all right, 22 OCR
-      doubts, and the arbiter's pick bringing a straight quote into a curly book for the
-      quote check then to ask (PDF 37, 120, 201, 235)
+- [x] 2026-11-22 Nervous System's questions measured as the machine stands (decisions.md):
+      25 unanswered left of 34 (headings 13 → 4 by the sure-heading skip; the three specks
+      of the review now right without a question)
+- [ ] Small-capital abbreviations asked as lower case: 6 of Nervous System's 25 ("tv",
+      "oJ", "cp" for CD, "rv" for IV), every reader reading lower case and the vision
+      judges capitals. Evidence the arbiter lacks: the word list knows the capital form,
+      the word's letters stand at x-height in the crop. Labels: golden pairs with such
+      abbreviations (find them first), Nervous System's own answers
+- [ ] The arbiter asking where the judges' votes are lopsided: 5 of Nervous System's 25
+      (a comma against a stop at 8–10 votes to 2–4, "a" against "2" at 9 to 3). Read
+      how often such splits are right on tuning before letting them settle
 
 ## Small capitals (the user, 2026-11-09: "we need to nail this")
 
