@@ -15,6 +15,7 @@ rest of its page is left to the picture.
 
 import hashlib
 import math
+import re
 import statistics
 from dataclasses import dataclass, field, replace
 
@@ -24,7 +25,7 @@ from roboscriptorium import structure
 from roboscriptorium.ir import SourceRef
 from roboscriptorium.layout import Region
 from roboscriptorium.ocrdoubts import Doubt
-from roboscriptorium.pdf import PageText
+from roboscriptorium.pdf import Line, PageText
 from roboscriptorium.quotes import KINDS, READER_KINDS
 from roboscriptorium.reflow import JUSTIFIED_SLACK, _page_margin
 from roboscriptorium.roles import LineRole, is_body
@@ -276,6 +277,22 @@ def _in_margin(page: PageText, line) -> bool:
     return line.x0 >= right or line.x1 <= left
 
 
+# A number written as prose writes it: a time, a range, a date or a decimal ("12:30.”",
+# "1914–1918"), or closed by a quote mark ("80.”"). A bare number ("214"), one in
+# brackets ("2)") or after an opening mark alone ("„4") is not one: page numbers kept as
+# text and noise read from pictures look like that.
+_PROSE_NUMBER = re.compile(
+    r"^[\"'“‘„]*(?:\d+(?:[:.,/–-]\d+)+[.,;:!?…]*[\"”’]*|\d+[.,;:!?…]*[\"”’]+)$"
+)
+
+
+def _garbled(line: Line) -> bool:
+    """`page.garbled`, with a number written as prose writes it (`_PROSE_NUMBER`) neither
+    word nor noise, like a dash. The line-role trees keep `page.garbled` as trained."""
+    kept = " ".join(t for t in line.text.split() if not _PROSE_NUMBER.match(t))
+    return P.garbled(replace(line, text=kept))
+
+
 def _reasons(
     page: PageText,
     i: int,
@@ -301,7 +318,7 @@ def _reasons(
         if role is not None and role.role != "body":
             reasons.append("kept-unsure")
         line = page.lines[i]
-        if P.garbled(line if settled is None else replace(line, text=settled), numbers=True):
+        if _garbled(line if settled is None else replace(line, text=settled)):
             reasons.append("garbled")
         if _centred(page, i):
             reasons.append("centred")
