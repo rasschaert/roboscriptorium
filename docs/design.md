@@ -423,6 +423,12 @@ it. A version is drawn the ways a book may set it: as the font spaces it, with a
 quote kerned over the stop before it, with an ellipsis's dots apart, with a run of
 capitals as small capitals, with an ordinal's ending as a superscript ("14ᵉ"), and with digits in
 the font's old-style figures where it has them at code points of their own (Adobe's do).
+Where the versions differ in letters beyond case and in no mark (`italic_tells`), each is
+also drawn in the face's italic and its better fit counts: italic "J" read as "7" or "F",
+"h" as "b" (tuning 11 fixed, 1 made; validation 1 and 1; no silent error, 2026-11-22).
+Drawn in italic everywhere, a stop or quote after an italic word fitted the upright print
+as well (8 errors made in De tuin); weighed on case-only differences, it turned Au pair's
+italic misprint "lllustrated" into a silent "illustrated".
 Without a font folder the build says so and goes on without this judge's vote.
 
 How a place's ink is cut decides more than the drawing does. The strip runs from the
