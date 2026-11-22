@@ -623,6 +623,20 @@ Daens' title was mended by hand).
       answer, since the region's key and first line differ (Nervous System page 133,
       2026-11-22). Take each line's earlier answer into the larger region and ask only
       if a line in it has none.
+- [ ] **A measure made on the scan keeps a slot per method** (`files.read_cache`/`write_cache`,
+      `accentmarks.py`; after `robo-seeing-judges` ends; an hour or two): each cache holds
+      one key (the accent offers' `Judge.marks`, the others' `files.code_stamp`), so a branch
+      and main that measure differently wipe each other's results and each bench in turn
+      measures again. On 2026-11-22 the italic branch (`render-italic`) moved the stamps of
+      `lists`, `quotemarks` and `speckmarks` (they import `rendercheck`) beside the accent
+      key, so main's next bench measures the tuning books again (the accent drawings alone
+      about 40 minutes). Keep a few keys per file, newest first; the test measures with two
+      keys in turn and measures nothing the second time.
+- [ ] **An answer survives its question growing** (`corrections.for_flag`): a line answered alone
+      and asked again as part of a larger region (a neighbour newly flagged) loses its
+      answer, since the region's key and first line differ (Nervous System page 133,
+      2026-11-22). Take each line's earlier answer into the larger region and ask only
+      if a line in it has none.
 - [ ] **The accent offers keep a slot per drawing method** (`accentmarks.py`, after
       `robo-seeing-judges` ends; an hour): `stages/accent-marks.json` holds one key
       (`Judge.marks`), so a branch and main that draw marks differently wipe each other's
