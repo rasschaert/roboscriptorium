@@ -1648,3 +1648,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | train arbiter, 26 books, render's case pick | 0 | 56 | 0 |
 | 2026-11-23 | trust data, het-geluid-van-bananen--ia-scan, shisa | 0 | 10 | 0 |
 | 2026-11-23 | tryout: judge set v2 first look, shisa-de-2 Q8 by tokens | 0 | 1 | 0 |
+| 2026-11-23 | trust data, het-schaduwhuis--ia-scan, shisa | 0 | 9 | 0 |
+| 2026-11-23 | tryout: judge set v2, selfjev-4b text | 0 | 6 | 0 |
