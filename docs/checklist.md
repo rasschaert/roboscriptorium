@@ -625,6 +625,10 @@ Daens' title was mended by hand).
 
 ## Housekeeping
 
+- [ ] **Warm trust data built side by side** (`experiments/rebuild-trust.sh`; an hour): it
+      builds one book at a time, and warm (every model answer cached) that is one core of
+      16; on 2026-11-23 the offers' redraw took about nine hours that way. Build books
+      in parallel when the run asks no model, one at a time when it does.
 - [ ] **An answered line isn't merged into a new question** (`flags.find`'s regions; an hour):
       a line answered about its readings stays asked so its answer stays in the review; when
       a neighbour is newly flagged, the two merge into a region with a new key and the user

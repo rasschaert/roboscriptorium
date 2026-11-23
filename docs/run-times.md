@@ -1589,3 +1589,14 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | trust data 26 (offers-26-1122), artemis--ia-scan | 305 | 2 | 0 |
 | 2026-11-23 | train arbiter, 26 books (ocr-trust-26ctl) | 0 | 271 | 0 |
 | 2026-11-23 | train arbiter, 26 books (ocr-trust-26caps) | 0 | 272 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), de-tuin-van-de-avondnevel--ia-scan | 364 | 39 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), de-eerlijke-vinder--ia-scan | 84 | 11 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), the-thief-takers-apprentice--ia-scan | 282 | 4 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), het-heft-in-eigen-hand--ia-scan | 506 | 66 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), doodskleed--ia-scan | 276 | 34 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), het-ijzige-land--ia-scan | 318 | 61 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), de-kerk-van-de-dode-meisjes--ia-scan | 17 | 0 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), vuurspel--ia-scan | 21 | 0 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), monterosso-mon-amour--ia-scan | 88 | 11 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), het-geluid-van-bananen--ia-scan | 315 | 36 | 0 |
