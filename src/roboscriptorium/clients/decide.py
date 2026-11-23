@@ -155,6 +155,8 @@ class TokenClient:
     LABELS = [chr(65 + i) for i in range(26)]
     # A label not among the returned alternatives counts as this log-probability.
     UNSEEN = -30.0
+    # The makers' calibration: the label log-probabilities are divided by it.
+    TEMPERATURE = 1.0
 
     def __init__(self, base_url: str, model: str, client: httpx.Client | None = None):
         self.model = model
@@ -216,7 +218,8 @@ class TokenClient:
                 label = t["token"].strip()
                 if label in self.LABELS[: len(keys)] and label not in seen:
                     seen[label] = t["logprob"]
-            logits = [seen.get(self.LABELS[i], self.UNSEEN) for i in range(len(keys))]
+            logits = [seen.get(self.LABELS[i], self.UNSEEN) / self.TEMPERATURE
+                      for i in range(len(keys))]  # fmt: skip
             peak = max(logits)
             weights = [math.exp(x - peak) for x in logits]
             p = [w / sum(weights) for w in weights]
@@ -232,6 +235,36 @@ class TokenClient:
         return out
 
 
+class ShisaTokenClient(TokenClient):
+    """Shisa DE-1 asked through token probabilities, in the layout its makers' readout
+    renders (shisa-ai/shisa-de `readout.py`, contract `de1-letter-slots-v3`): their
+    system line, the state, question and options as one JSON object, the options in the
+    question's own order shown by their descriptions, and their fitted choice temperature.
+    Chosen by `for_model` for a `tokens:` model whose name holds `shisa-de`."""
+
+    SYSTEM = (
+        "<|turn>system\nApply the supplied criterion to the supplied evidence. Choose exactly "
+        "one listed option. Respond with only its uppercase letter, with no explanation or "
+        "reasoning.<turn|>\n<|turn>user\n"
+    )
+    BOUNDARY = "<turn|>\n<|turn>model\n<|channel>thought\n<channel|>"
+    TEMPERATURE = 1.9
+
+    def render(self, state: Any, question: dict[str, Any]) -> tuple[str, list[str]]:
+        if question["type"] != "choice":
+            raise ValueError(f"TokenClient answers choice questions, not {question['type']}")
+        keys = list(question["criteria"])
+        payload = {
+            "evidence": state,
+            "criterion": question["instructions"],
+            "options": [
+                {"letter": self.LABELS[i], "description": question["criteria"][k] or k}
+                for i, k in enumerate(keys)
+            ],
+        }
+        return self.SYSTEM + json.dumps(payload, ensure_ascii=False) + self.BOUNDARY, keys
+
+
 def for_model(
     model: str, ollama_url: str, via: str = ""
 ) -> "DecisionClient | HostedClient | TokenClient":
@@ -240,5 +273,7 @@ def for_model(
     if via:
         return HostedClient(model, via)
     if model.startswith(TokenClient.PREFIX):
+        if "shisa-de" in model.lower():
+            return ShisaTokenClient(ollama_url, model)
         return TokenClient(ollama_url, model)
     return DecisionClient(ollama_url, model)
