@@ -625,10 +625,6 @@ Daens' title was mended by hand).
 
 ## Housekeeping
 
-- [ ] **Warm trust data built side by side** (`experiments/rebuild-trust.sh`; an hour): it
-      builds one book at a time, and warm (every model answer cached) that is one core of
-      16; on 2026-11-23 the offers' redraw took about nine hours that way. Build books
-      in parallel when the run asks no model, one at a time when it does.
 - [ ] **An answered line isn't merged into a new question** (`flags.find`'s regions; an hour):
       a line answered about its readings stays asked so its answer stays in the review; when
       a neighbour is newly flagged, the two merge into a region with a new key and the user
@@ -1383,6 +1379,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Measurement
 
+- [x] 2026-11-23 `rebuild-trust.sh` builds `SIDE_BY_SIDE` books at once when the rebuild asks no model: one book used one core of 16
 - [x] 2026-11-23 A cache keeps the two latest makings of other identities (`files.KEPT`): main and a branch no longer wipe each other's scan measures (decisions.md)
 - [x] 2026-11-17 The heading count credits a title found without its number or set as two (one error, not two); with it the line-role referee passes validation (heading errors 52 → 48) and is on by default
 - [x] A heading's punctuation and quote marks measured (2026-11-14,

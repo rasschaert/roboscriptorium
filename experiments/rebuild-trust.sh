@@ -8,6 +8,9 @@
 # Books whose trust data exists are skipped, so a restart goes on where it stopped.
 # ROBO_TRUST_DATA keeps another reader set's data apart (logs then in <it>/runs), and
 # BENCH_AGAINST names the bench run to compare with; NO_BENCH=1 ends after the training.
+# SIDE_BY_SIDE=<n> builds n books at once: for a rebuild whose model answers are all
+# cached, the work is CPU-bound (offers redrawn, scan measures) and one book uses one core.
+# Leave it at 1 when models will be asked: books side by side would swap them.
 #   experiments/detached.sh rebuild experiments/rebuild-trust.sh
 set -uo pipefail
 data=${ROBO_TRUST_DATA:-work/probes/ocr-trust}
@@ -25,20 +28,37 @@ for b, spec in SPECS.items():
     first, last = map(int, spec.split(":")[0].split("-")) if ranged else Book.load(Path("work") / b).body_pages
     print(b, last - first + 1)
 ')"})
-failed=0
+side=${SIDE_BY_SIDE:-1}
+one() {  # one <book> <pages>: its trust data, a line in the progress file, a failure mark
+  experiments/timed.sh "trust data, $1${ROBO_PAGE_READERS:+, page readers}" $2 \
+    $runs/$1.log uv run python experiments/ocr_trust_data.py --rebuild $1
+  local code=$?
+  print "$(date '+%F %H:%M') $1 $2 pages exit $code" >> $progress
+  (( code )) && touch $runs/$1.failed
+  return 0
+}
+rm -f $runs/*.failed(N)
+running=()
 for row in $books; do
   book=${row% *} pages=${row#* }
   if [[ -e $runs/STOP ]]; then
+    wait
     print "$(date '+%F %H:%M') paused before $book (STOP file)" >> $progress
     exit 0
   fi
   [[ -s $data/$book.json ]] && continue
-  experiments/timed.sh "trust data, $book${ROBO_PAGE_READERS:+, page readers}" $pages \
-    $runs/$book.log uv run python experiments/ocr_trust_data.py --rebuild $book
-  code=$?
-  print "$(date '+%F %H:%M') $book $pages pages exit $code" >> $progress
-  (( code )) && failed=1
+  one $book $pages &
+  running+=($!)
+  while (( ${#running} >= side )); do
+    alive=()
+    for j in $running; do kill -0 $j 2>/dev/null && alive+=($j); done
+    running=($alive)
+    (( ${#running} >= side )) && sleep 5
+  done
 done
+wait
+marks=($runs/*.failed(N))
+failed=$(( ${#marks} > 0 ))
 if (( failed )); then
   print "$(date '+%F %H:%M') stopped: a book failed, no training" >> $progress
   exit 1
