@@ -137,10 +137,24 @@ get renumbered. Don't add a file to this table without a job no other file has.
   cache slow stages per book and run long builds in the background.
 - **Time long runs and give an estimate first.** Anything over a few minutes runs
   through `experiments/timed.sh` (label, pages, log file, command), which appends to
-  docs/run-times.md; say beforehand how long it should take from that table. Start it
-  with `experiments/detached.sh <name> <command…>` (a `screen` session, output in
-  `work/runs/<name>.out`); stop it with `experiments/stop-run.sh <name>` (quitting the
-  screen leaves its command running).
+  docs/run-times.md; say beforehand how long it should take from that table. Queue it
+  (next rule); stop it with `experiments/queue.sh stop <id>` or
+  `experiments/stop-run.sh <name>` (quitting the screen, or `pueue kill`, leaves its
+  command running).
+- **Every run, model download included, goes through the job queue** (the user,
+  2026-11-23: "should we set up a task queueing system to queue with these limited
+  resources? cpu, gpu, memory and download bandwith?"; that day a lock starved a waiting
+  run for 25 minutes, a stuck job held the GPU idle, and hand-written waiters raced the
+  downloads). `experiments/queue.sh add <group> <name> [--after <id>] -- <command…>`
+  queues it in Pueue, first come first served per group: `gpu` 1 (anything that asks a
+  model), `cpu` 1 (many-core work without a model), `download` 1, `light` 4 (small work
+  without a model). Pueue starts it through `experiments/detached.sh` (a `robo-<name>`
+  screen, output in `work/runs/<name>.out`, its exit code in `<name>.exit`), so
+  `priority.first`, the battery guard and `stop-run.sh` act on it as before; `--after`
+  replaces a waiter that polls for another job. `experiments/queue.sh status` shows what
+  runs and waits; `experiments/queue-watch.sh` is the watcher (each job that starts,
+  succeeds or fails, and a running job with no output for 30 minutes). The daemon runs in
+  the screen `pueued`, which `queue.sh` starts when it isn't up.
 - **Every background or screen job has a watcher** (the user, 2026-10-17), started in
   the same turn: one that wakes the agent on each step, error and end (the Monitor
   tool, re-armed when it expires). In a script `screen -ls` exits 1 when sessions
@@ -179,7 +193,9 @@ get renumbered. Don't add a file to this table without a job no other file has.
   shard given `cores / n` threads) and a bench. Two trainings side by side spent 70% of
   the CPU switching between them. A step needing both locks takes `model-screen.lock`
   first, then `cpu-heavy.lock`, so the two never deadlock. An approved run is queued
-  behind these, never started beside them.
+  behind these, never started beside them. The locks stay inside run scripts while runs
+  started before the job queue are still in flight; in the queue such a step goes in
+  group `gpu` and takes `cpu-heavy.lock` inside.
 - **While a run is in flight, change the build's code in a worktree** (2026-11-21: an
   offer added in the main checkout nearly reached a rebuild between its books).
   `rebuild-trust.sh` and the benches start a fresh process per book, which loads the
@@ -490,7 +506,7 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   the script needs no elevated rights.
   Context length 32k in the
   app's settings; `OLLAMA_NUM_PARALLEL=4` (`launchctl setenv`, read when the app starts).
-- Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
+- Present: Pueue (`pueue`, `pueued`: the job queue, `experiments/queue.sh`), `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
   `pdftotext`, `pdfimages`), epubcheck, d2, llama.cpp's `llama-server` (all Homebrew where
   applicable); Kapitsa (`nace-ai/tap/kapitsa`, 2026-11-23: `kapitsa-systemone` serves Drex Max
   on `/v1/systemone`, started by a run and stopped with it, never as a service); scikit-learn and the dependency group `layout` (`doclayout-yolo` with

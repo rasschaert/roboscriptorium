@@ -45,5 +45,7 @@ for arg in "$@"; do
   fi
 done
 mkdir -p work/runs
-screen -dmS "robo-$name" zsh -c "cd ${(q)PWD} && ${(j: :)${(q)@}} > work/runs/$name.out 2>&1"
+# The command's exit code lands in work/runs/<name>.exit (experiments/queue.sh reads it).
+rm -f work/runs/$name.exit
+screen -dmS "robo-$name" zsh -c "cd ${(q)PWD} && ${(j: :)${(q)@}} > work/runs/$name.out 2>&1; print \$? > work/runs/$name.exit"
 print "robo-$name started; output in work/runs/$name.out"
