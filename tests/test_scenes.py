@@ -109,7 +109,15 @@ def test_the_question_shows_the_last_line_of_the_page_before():
     }
     found = flags.find(pages, roles, scenes={SourceRef(2, 0): SourceRef(1, 5)})
     asked = [f for f in found if "scene" in f.reasons]
-    assert [(f.page, f.first, f.across) for f in asked] == [(2, 0, (1, 5))]
+    assert [(f.page, f.first, f.last, f.across) for f in asked] == [(2, 0, 0, (1, 5))]
+    # A first line taller than the page's others is still asked alone, not widened over
+    # the lines set like it as a title would be.
+    two = pages[1]
+    tall = replace(two.lines[0], y0=two.lines[0].y0 - 6)
+    pages[1] = PageText(2, 400, 600, [tall, *two.lines[1:]])
+    found = flags.find(pages, roles, scenes={SourceRef(2, 0): SourceRef(1, 5)})
+    asked = [f for f in found if "scene" in f.reasons]
+    assert [(f.first, f.last) for f in asked] == [(0, 0)]
 
 
 def test_the_answer_scene_sets_a_break_before_its_line(tmp_path):

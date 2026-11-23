@@ -625,8 +625,6 @@ def find(
         for i in range(len(page.lines)):
             if SourceRef(page.number, i) in (quotes or set()):
                 line_reasons.setdefault(i, []).append("quotes")
-            if SourceRef(page.number, i) in (scenes or set()):
-                line_reasons.setdefault(i, []).append("scene")
             if _initial_lost(page, i, roles) and SourceRef(page.number, i) not in styled:
                 line_reasons.setdefault(i, []).append("initial-lost")
         if any(r.turned for r in regions) or sideways(page):
@@ -676,16 +674,33 @@ def find(
             for gap in _lost_lines(page, roles, regions)
             if not any(b[1] <= gap.y1 and gap.y0 <= b[3] for b in missing)
         ]
-        for k, f in enumerate(page_flags):
-            if "scene" in f.reasons:
-                before = (scenes or {})[
-                    next(
-                        SourceRef(page.number, i)
-                        for i in range(f.first, f.last + 1)
-                        if SourceRef(page.number, i) in (scenes or {})
-                    )
-                ]
-                page_flags[k] = replace(f, across=(before.page, before.line))
+        # A question whether a scene opens at a line is about that line alone: never
+        # widened or merged into a run, only joined to a question on that one line.
+        for ref, before in (scenes or {}).items():
+            if ref.page != page.number or ref.line >= len(page.lines):
+                continue
+            across = (before.page, before.line)
+            same = next(
+                (k for k, f in enumerate(page_flags) if f.first == f.last == ref.line), None
+            )
+            if same is not None:
+                f = page_flags[same]
+                page_flags[same] = replace(f, reasons=[*f.reasons, "scene"], across=across)
+                continue
+            text = page.lines[ref.line].text
+            role = roles.get(ref)
+            page_flags.append(
+                Flag(
+                    region_key(page.number, text),
+                    page.number,
+                    ref.line,
+                    ref.line,
+                    text,
+                    treatment(role),
+                    ["scene"],
+                    across=across,
+                )
+            )
         here = page_flags + boxes
         for d in doubts or []:
             if d.page != page.number:
