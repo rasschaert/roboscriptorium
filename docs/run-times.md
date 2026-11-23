@@ -1652,3 +1652,38 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | tryout: judge set v2, selfjev-4b text | 0 | 6 | 0 |
 | 2026-11-23 | tryout: judge set v2, shisa-de-2 Q8 text by tokens | 0 | 4 | 0 |
 | 2026-11-23 | tryout: judge set v2 first look, shisa-de-2 Q8 vision by tokens | 0 | 1 | 0 |
+| 2026-11-23 | trust data, au-pair--ia-scan, shisa | 0 | 9 | 0 |
+| 2026-11-23 | trust data, de-vergelding--ia-scan, shisa | 0 | 35 | 0 |
+| 2026-11-23 | trust data, glazuur--ia-scan, shisa | 0 | 10 | 0 |
+| 2026-11-23 | trust data, stella, shisa | 0 | 1 | 0 |
+| 2026-11-23 | trust data, ex-minnaar, shisa | 0 | 2 | 0 |
+| 2026-11-23 | trust data, goede-dochter--ia-scan, offers-shisa | 0 | 6 | 0 |
+| 2026-11-23 | trust data, vals-alarm--ia-scan, offers-shisa | 0 | 1 | 0 |
+| 2026-11-23 | trust data, the-nature-of-a-crime--doubleday-1924, offers-shisa | 0 | 0 | 0 |
+| 2026-11-23 | trust data, the-story-of-doctor-dolittle--stokes-1920, offers-shisa | 0 | 1 | 0 |
+| 2026-11-23 | trust data, reis-om-mijn-schedel--ia-scan, offers-shisa | 0 | 2 | 0 |
+| 2026-11-23 | trust data, afscheid-van-verspilde-tijd--ia-scan, offers-shisa | 0 | 2 | 0 |
+| 2026-11-23 | trust data, metro-2033--ia-scan, offers-shisa | 0 | 3 | 0 |
+| 2026-11-23 | trust data, de-cipier--ia-scan, offers-shisa | 0 | 3 | 0 |
+| 2026-11-23 | trust data, artemis--ia-scan, offers-shisa | 0 | 1 | 0 |
+| 2026-11-23 | trust data, de-tuin-van-de-avondnevel--ia-scan, offers-shisa | 0 | 13 | 0 |
+| 2026-11-23 | trust data, de-eerlijke-vinder--ia-scan, offers-shisa | 0 | 6 | 0 |
+| 2026-11-23 | trust data, youre-never-weird-on-the-internet--ia-scan, offers-shisa | 0 | 0 | 0 |
+| 2026-11-23 | trust data, the-thief-takers-apprentice--ia-scan, offers-shisa | 0 | 1 | 0 |
+| 2026-11-23 | trust data, het-heft-in-eigen-hand--ia-scan, offers-shisa | 0 | 3 | 0 |
+| 2026-11-23 | trust data, doodskleed--ia-scan, offers-shisa | 0 | 3 | 0 |
+| 2026-11-23 | trust data, het-ijzige-land--ia-scan, offers-shisa | 0 | 2 | 0 |
+| 2026-11-23 | trust data, de-kerk-van-de-dode-meisjes--ia-scan, offers-shisa | 0 | 0 | 0 |
+| 2026-11-23 | trust data, vuurspel--ia-scan, offers-shisa | 0 | 0 | 0 |
+| 2026-11-23 | trust data, monterosso-mon-amour--ia-scan, offers-shisa | 0 | 1 | 0 |
+| 2026-11-23 | trust data, het-geluid-van-bananen--ia-scan, offers-shisa | 0 | 2 | 0 |
+| 2026-11-23 | train arbiter, shisa | 0 | 56 | 0 |
+| 2026-11-23 | trust data, het-schaduwhuis--ia-scan, offers-shisa | 0 | 5 | 0 |
+| 2026-11-23 | trust data, au-pair--ia-scan, offers-shisa | 0 | 2 | 0 |
+| 2026-11-23 | trust data, de-vergelding--ia-scan, offers-shisa | 0 | 3 | 0 |
+| 2026-11-23 | trust data, glazuur--ia-scan, offers-shisa | 0 | 2 | 0 |
+| 2026-11-23 | trust data, stella, offers-shisa | 0 | 0 | 0 |
+| 2026-11-23 | trust data, ex-minnaar, offers-shisa | 0 | 1 | 0 |
+| 2026-11-23 | scene-break probe: collect the page turns | 0 | 24 | 0 |
+| 2026-11-23 | train arbiter, offers-shisa | 0 | 53 | 0 |
+| 2026-11-23 | bench tuning, Shisa beside the panel, arbiters on 26 books | 0 | 5 | 0 |
