@@ -392,7 +392,8 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   errata correct it (`as_printed`; Stella's by the user's answers);
   `usable`, `rows_of` and `trainable` pick what trains, the validation books and first looks
   never; `models_to_save` trains the model the pipeline uses and a copy without each
-  tuning book. Run by `experiments/ocr_trust_data.py` and
+  tuning book, each kept in a staging folder (`stage`) as it finishes, or a `shard` of
+  them beside other processes (`train_ocr_trust.py`'s `ROBO_TRAIN_SIDE_BY_SIDE`). Run by `experiments/ocr_trust_data.py` and
   `experiments/train_ocr_trust.py`, which also scores the model leaving each book out.
 - `trust.py`: learned trust for the OCR check. A model (shallow gradient-boosted
   trees) scores each version of a suspect from the judges' picks and confidence,

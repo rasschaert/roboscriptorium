@@ -152,3 +152,45 @@ def test_a_book_labelled_by_its_answers_has_its_judges_asked_only_on_answered_li
     path.write_text("".join(json.dumps(r) + "\n" for r in rows))
     book = SimpleNamespace(corrections_path=path)
     assert answered_lines(book) == {(9, 3), (9, 4), (12, 7)}
+
+
+def test_shards_train_the_models_between_them_and_the_full_run_only_collects(tmp_path, monkeypatch):
+    import pytest
+
+    books = {
+        "a--scan": [_row("a--scan", k % 3 > 0) for k in range(30)],
+        "b--scan": [_row("b--scan", k % 4 > 0) for k in range(30)],
+    }
+    path = tmp_path / "ocr-trust.pkl"
+    trained = []
+    train = trust.train
+
+    def counted(suspects, *rest):
+        trained.append(len(suspects))
+        return train(suspects, *rest)
+
+    def score(names, rows):
+        return [np.array([0.8, 0.2]) for _ in rows]
+
+    monkeypatch.setattr(trust, "train", counted)
+    # A shard beside no run is refused: the staging must be prepared for this data first.
+    with pytest.raises(trustdata.StagingMismatch):
+        trustdata.models_to_save(books, path, score, shard=(0, 2))
+    trustdata.stage(books, path)
+    first = trustdata.models_to_save(books, path, score, shard=(0, 2))
+    second = trustdata.models_to_save(books, path, score, shard=(1, 2))
+    assert sorted(m[0].name for m in first + second) == [
+        "ocr-trust-without-a--scan.pkl",
+        "ocr-trust-without-b--scan.pkl",
+        "ocr-trust.pkl",
+    ]
+    assert len(trained) == 3
+    trained[:] = []
+    models = trustdata.models_to_save(books, path, score)
+    assert trained == [] and len(models) == 3
+    # A shard facing another training's staging deletes nothing and stops.
+    books["b--scan"] = books["b--scan"][:20]
+    kept = sorted(trustdata.staging(path).glob("*.pkl"))
+    with pytest.raises(trustdata.StagingMismatch):
+        trustdata.models_to_save(books, path, score, shard=(0, 2))
+    assert sorted(trustdata.staging(path).glob("*.pkl")) == kept

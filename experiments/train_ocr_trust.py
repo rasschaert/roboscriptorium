@@ -28,6 +28,8 @@ clef, which reads the crop, has a reference more standard than its print.
 
 import hashlib
 import json
+import os
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -42,7 +44,7 @@ from roboscriptorium.book import Book
 from roboscriptorium.golden import scoring
 from roboscriptorium.config import Settings
 from roboscriptorium.files import write_atomic
-from roboscriptorium.trustdata import HELD_OUT, SPECS, models_to_save, rows_of, save_models, seats, trainable, usable, weighed
+from roboscriptorium.trustdata import HELD_OUT, SPECS, models_to_save, rows_of, save_models, seats, stage, trainable, usable, weighed
 
 BUDGETS = (0.0, 0.25, 0.5, 1.0)
 MODELS = {
@@ -132,10 +134,30 @@ if "--save" in sys.argv:
     if missing and "--partial" not in sys.argv:
         sys.exit(f"not saving: tuning data missing or stale for {', '.join(missing)} (--partial to save anyway)")
     path = Path(_SETTINGS.ocr_trust_model)
+    key = f"{_SETTINGS.judge_model},{_SETTINGS.check_model},{_SETTINGS.alarm_model}"
+    score = lambda names, rows: scored(MODELS["trees"], names, rows)  # noqa: E731
+    # ROBO_TRAIN_SHARD=k/n: this process trains its share of the models into the staging
+    # its parent prepared, then stops (ROBO_TRAIN_SIDE_BY_SIDE below).
+    if shard := os.environ.get("ROBO_TRAIN_SHARD"):
+        k, n = map(int, shard.split("/"))
+        for out, _, count, without in models_to_save(books, path, score, READINGS, SEATS, key=key, shard=(k, n)):
+            print(f"shard {shard}: trained on {count} suspects, without {without}: {out.name}")
+        sys.exit()
+    # ROBO_TRAIN_SIDE_BY_SIDE=n: the models are independent, and between its tree fits
+    # (about 12 cores) a training scores each model's calibration on one core; n processes
+    # train their shares at once, and this one then collects them.
+    side = int(os.environ.get("ROBO_TRAIN_SIDE_BY_SIDE", "1"))
+    if side > 1:
+        stage(books, path, READINGS, SEATS, key)
+        shards = [
+            subprocess.Popen([sys.executable, *sys.argv], env={**os.environ, "ROBO_TRAIN_SHARD": f"{k}/{side}"})
+            for k in range(side)
+        ]
+        if any(p.wait() for p in shards):
+            sys.exit("a shard failed: its finished models stay staged; run again to go on")
     # Finished models wait in `<path>.training/`: a run stopped and started again goes on
     # from them (the judges are part of what they were trained on).
-    models = models_to_save(books, path, lambda names, rows: scored(MODELS["trees"], names, rows), READINGS, SEATS,
-                            key=f"{_SETTINGS.judge_model},{_SETTINGS.check_model},{_SETTINGS.alarm_model}")
+    models = models_to_save(books, path, score, READINGS, SEATS, key=key)
     calibration = models[0][1].calibration
     grid = (0.5, 0.7, 0.8, 0.9, 0.95, 0.99)
     print("raw sureness → right:", ", ".join(f"{g} → {calibration.predict([g])[0]:.3f}" for g in grid))

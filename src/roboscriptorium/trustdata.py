@@ -198,6 +198,37 @@ def staging(path: Path) -> Path:
     return path.with_name(f"{path.name}.training")
 
 
+class StagingMismatch(RuntimeError):
+    """A shard found its staging made of other data, or not prepared (`stage`)."""
+
+
+def _made_of(books, readings, seats, key) -> str:
+    return hashlib.sha256(
+        repr((trust.MODEL_VERSION, readings, seats, key, sorted(books.items()))).encode()
+    ).hexdigest()
+
+
+def stage(
+    books: dict[str, list[dict]],
+    path: Path,
+    readings: tuple[str, ...] = trust.READINGS,
+    seats: int = trust.SEATS,
+    key: str = "",
+) -> Path:
+    """`path`'s staging folder, emptied of another training's models (other data,
+    readings, seats or `key`) and marked as this one's."""
+    held = staging(path)
+    made_of = _made_of(books, readings, seats, key)
+    note = held / "made-of.txt"
+    if not (note.exists() and note.read_text() == made_of):
+        # Another training's leftovers: models of other data are not these models.
+        for old in held.glob("*.pkl") if held.is_dir() else ():
+            old.unlink()
+        held.mkdir(parents=True, exist_ok=True)
+        write_atomic(note, made_of)
+    return held
+
+
 def models_to_save(
     books: dict[str, list[dict]],
     path: Path,
@@ -205,6 +236,7 @@ def models_to_save(
     readings: tuple[str, ...] = trust.READINGS,
     seats: int = trust.SEATS,
     key: str = "",
+    shard: tuple[int, int] | None = None,
 ) -> list[tuple]:
     """The arbiter the pipeline uses, trained on every trainable book (the books labelled
     by a reviewer's answers too), and a copy without each tuning book, which `bench`
@@ -215,21 +247,22 @@ def models_to_save(
     None is written to its place here, so an interrupted run leaves no mix of old and
     new; each is kept as it finishes in `staging(path)`, and a run started again on
     the same data, readings, seats and `key` (whatever else decides the training: the
-    caller's settings) takes those up instead of training them again."""
+    caller's settings) takes those up instead of training them again.
+
+    `shard` (k, n) trains only every n-th model from the k-th, beside other shards, into
+    a staging `stage` prepared for this data; it never empties one made of other data."""
     tuning = [n for n in books if trainable(n) and SPECS.get(n) != "answers"]
-    held = staging(path)
-    made_of = hashlib.sha256(
-        repr((trust.MODEL_VERSION, readings, seats, key, sorted(books.items()))).encode()
-    ).hexdigest()
-    note = held / "made-of.txt"
-    if not (note.exists() and note.read_text() == made_of):
-        # Another training's leftovers: models of other data are not these models.
-        for old in held.glob("*.pkl") if held.is_dir() else ():
-            old.unlink()
-        held.mkdir(parents=True, exist_ok=True)
-        write_atomic(note, made_of)
+    if shard is None:
+        held = stage(books, path, readings, seats, key)
+    else:
+        held = staging(path)
+        note = held / "made-of.txt"
+        if not (note.exists() and note.read_text() == _made_of(books, readings, seats, key)):
+            raise StagingMismatch(f"{held}: not staged for this data; run `stage` first")
     out = []
-    for without in [None, *tuning]:
+    for i, without in enumerate([None, *tuning]):
+        if shard is not None and i % shard[1] != shard[0]:
+            continue
         names = [n for n in books if n != without and trainable(n)]
         every = [r for name in names for r in books[name]]
         target = trust.without(path, without) if without else path
