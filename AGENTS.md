@@ -152,7 +152,10 @@ get renumbered. Don't add a file to this table without a job no other file has.
   screen, output in `work/runs/<name>.out`, its exit code in `<name>.exit`), so
   `priority.first`, the battery guard and `stop-run.sh` act on it as before; `--after`
   replaces a waiter that polls for another job. `experiments/queue.sh status` shows what
-  runs and waits; `experiments/queue-watch.sh` is the watcher (each job that starts,
+  runs and waits; `experiments/gpu-now.sh` says what holds the model lock this moment (a job the queue
+  calls running may still wait for the lock behind a run started outside it), and is checked
+  before any answer about what the GPU is doing (the user, 2026-11-23: "really infuriating that
+  you can't tell me truthfully what work is being done"); `experiments/queue-watch.sh` is the watcher (each job that starts,
   succeeds or fails, and a running job with no output for 30 minutes). The daemon runs in
   the screen `pueued`, which `queue.sh` starts when it isn't up.
 - **Every background or screen job has a watcher** (the user, 2026-10-17), started in
