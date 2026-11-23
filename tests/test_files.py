@@ -133,3 +133,29 @@ def test_the_code_stamp_sees_a_helper_imported_from_another_project_module(tmp_p
     for name in ("roboscriptorium_tmp_helper", "roboscriptorium_tmp_user"):
         del sys.modules[name]
     code_stamp.cache_clear()
+
+
+def test_two_makers_in_turn_each_find_their_own_cache(tmp_path):
+    from roboscriptorium.files import read_cache, write_cache
+
+    path = tmp_path / "marks.json"
+    write_cache(path, 1, {"fits": {"a": 1}}, code="main")
+    write_cache(path, 1, {"fits": {"a": 2}}, code="branch")
+    assert read_cache(path, 1, code="main") == {"version": 1, "code": "main", "fits": {"a": 1}}
+    assert read_cache(path, 1, code="branch")["fits"] == {"a": 2}
+    # Written again, a maker's cache replaces its own and keeps the other's.
+    write_cache(path, 1, {"fits": {"a": 3}}, code="main")
+    assert read_cache(path, 1, code="main")["fits"] == {"a": 3}
+    assert read_cache(path, 1, code="branch")["fits"] == {"a": 2}
+
+
+def test_a_cache_keeps_only_its_latest_makers(tmp_path):
+    from roboscriptorium.files import KEPT, read_cache, write_cache
+
+    path = tmp_path / "marks.json"
+    makers = [f"code-{i}" for i in range(KEPT + 2)]
+    for code in makers:
+        write_cache(path, 1, {"n": code}, code=code)
+    assert [read_cache(path, 1, code=c) is not None for c in makers] == [False] + [True] * (
+        KEPT + 1
+    )

@@ -30,7 +30,9 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   (three tries), so one slow answer from a queued Ollama doesn't end a long run.
 - `files.py`: `write_atomic`, how every per-book cache is written (whole or not at all);
   `read_cache` and `write_cache`, a versioned JSON cache with the identity it was made
-  with (model, prompt, language, the code that measured it); `load_json`, a cache file a
+  with (model, prompt, language, the code that measured it), keeping the `KEPT` latest
+  makings of other identities beside it (`kept`), so main and a branch each find their
+  own; `load_json`, a cache file a
   crash left empty or cut short read as missing; `code_stamp`, a hash of a module's source
   and the project functions and modules it imports by name, one level deep, which keys the
   measures made on the scan without a model (dash, ellipsis, descent, type, contrast,

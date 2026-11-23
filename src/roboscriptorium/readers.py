@@ -73,6 +73,9 @@ def _readings(cache: Path, model: str, prompt: str) -> dict | None:
     and prompt; readings by another are moved to their shelf rather than lost, and come
     back from it when asked for again (a slice and its whole book may differ)."""
     loaded = load_json(cache)
+    # Its latest making: earlier ones the cache keeps (`files.KEPT`) are the shelf's job here.
+    if isinstance(loaded, dict):
+        loaded = {k: v for k, v in loaded.items() if k != "kept"}
     raw = _current(loaded) if isinstance(loaded, dict) else None
     if raw is None:
         return None

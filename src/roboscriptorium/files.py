@@ -51,24 +51,49 @@ def code_stamp(module: str) -> str:
     return hashlib.sha256(b"\0".join(parts)).hexdigest()[:12]
 
 
+# How many earlier makings a cache keeps beside its latest (`kept`), so main and a branch
+# that make it differently each find their own instead of making it again.
+KEPT = 2
+
+
+def _made_by(blob, version: int, identity: dict) -> bool:
+    return (
+        isinstance(blob, dict)
+        and blob.get("version") == version
+        and all(blob.get(k) == v for k, v in identity.items())
+    )
+
+
 def read_cache(path: Path, version: int, **identity) -> dict | None:
     """A versioned JSON cache, when its format `version` and each `identity` field (the
-    model, prompt or language it was made with, the code that measured it) match; else
-    None, for it to be made again. A file a crash left unreadable counts as missing."""
+    model, prompt or language it was made with, the code that measured it) match its
+    latest making or one it keeps (`KEPT`); else None, for it to be made again. A file a
+    crash left unreadable counts as missing."""
     raw = load_json(path)
-    if not isinstance(raw, dict) or raw.get("version") != version:
+    if not isinstance(raw, dict):
         return None
-    if any(raw.get(k) != v for k, v in identity.items()):
-        return None
-    return raw
+    latest = {k: v for k, v in raw.items() if k != "kept"}
+    for blob in (latest, *raw.get("kept", ())):
+        if _made_by(blob, version, identity):
+            return blob
+    return None
 
 
 def write_cache(
     path: Path, version: int, payload: dict, indent: int | None = None, **identity
 ) -> None:
     """Write a versioned JSON cache whole (`write_atomic`): its version, its `identity`
-    fields and its `payload`'s, as `read_cache` reads them."""
+    fields and its `payload`'s, as `read_cache` reads them, keeping the `KEPT` latest
+    makings of other identities beside it."""
     blob = {"version": version, **identity, **payload}
+    if "kept" in blob:
+        raise ValueError(f"{path}: 'kept' is the cache's own field")
+    old = load_json(path)
+    if isinstance(old, dict):
+        latest = {k: v for k, v in old.items() if k != "kept"}
+        others = [b for b in (latest, *old.get("kept", ())) if not _made_by(b, version, identity)]
+        if others[:KEPT]:
+            blob["kept"] = others[:KEPT]
     write_atomic(path, json.dumps(blob, ensure_ascii=False, indent=indent))
 
 
