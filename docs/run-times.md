@@ -1698,3 +1698,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | bench validation, Shisa beside the panel, arbiters on 26 books | 0 | 31 | 0 |
 | 2026-11-23 | bench tuning, shisa-main-production-offers | 0 | 5 | 1 |
 | 2026-11-23 | bench tuning, production-main-shisa-offers | 0 | 5 | 1 |
+| 2026-11-24 | build, Nervous System, Shisa and the 26-book arbiters | 0 | 3 | 0 |
+| 2026-11-24 | questions, Nervous System, with Shisa and the 26-book arbiters | 0 | 1 | 0 |
+| 2026-11-24 | bench tuning, production on main (Shisa adopted) | 0 | 5 | 0 |
+| 2026-11-24 | bench tuning, the scene question | 0 | 7 | 0 |
+| 2026-11-24 | bench validation, production on main (Shisa adopted) | 0 | 1 | 0 |
+| 2026-11-24 | bench validation, the scene question | 0 | 1 | 0 |
