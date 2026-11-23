@@ -23,7 +23,7 @@ section speaks: baselines, what runs, what is on by default.
    experiments/queue-watch.sh 30
    ```
    Check with `experiments/gpu-now.sh` that it holds the model lock. `doctor` first if Ollama updated itself over the reboot.
-2. **The promise to the user:** rebuild Nervous System (`work/nervous-system`) with the new arbiters, from its caches, and show the user every line whose text changed, each with its scan crop (never a re-read of the book). Its 49 questions were all answered before the swap; any new question goes to the user the same way.
+2. Done 00:10 on 2026-11-24: Nervous System rebuilt with the new arbiters: no word changed silently, two places asked again (PDF 107 "*If*.", PDF 264 "SF"), shown to the user with their crops (`work/probes/rebuild-diff/nervous-system/index.html`); 51 questions, 2 unanswered (decisions.md).
 3. Read the scene probe's report (`work/runs/scene-turns-report-v2.txt`): AUC and found/false at 0.5, 0.7 and 0.9 for Shisa, clef-flash and clef. Record the verdict in decisions.md and the checklist ("Scene breaks the build misses"); if null, write why and the versions that would dodge it (letters told apart by their own question first, the sorter's question with the page geometry, a narrower set of turns).
 4. Read the seat bench's case errors still unread (decisions.md, the adoption entry): Artemis "If" and Au pair "o.k.?". "SS-kopstukken" and "SS-lazaret" are now asked, "V-hals" became silent, "BESS’" stays silent.
 5. Then the checklist's next open step.
