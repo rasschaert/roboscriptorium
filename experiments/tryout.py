@@ -446,8 +446,10 @@ def run_reader(model: str) -> None:
 def _digests(models: list[str]) -> dict[str, str]:
     """Each Ollama model's digest, so a result says which build of a tag it scored."""
     models = [m for m in models if not m.startswith(OPENAI_LOCAL)]
-    tags = httpx.get(f"{Settings.from_env().ollama_url}/api/tags", timeout=30).json()["models"]
-    digests = {t["name"]: t["digest"][:12] for t in tags}
+    resp = httpx.get(f"{Settings.from_env().ollama_url}/api/tags", timeout=30)
+    if resp.status_code != 200 or "models" not in resp.text:
+        return {}  # a server that isn't Ollama (Kapitsa) lists no digests
+    digests = {t["name"]: t["digest"][:12] for t in resp.json()["models"]}
     return {m: digests.get(m, "") for m in models}
 
 
