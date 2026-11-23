@@ -234,6 +234,16 @@ back a version, so these are left to trust and the bench, with no rule of their 
   at 0.9 (tuning 551 → 567 places, validation 170 → 176, De kerk's questions doubled:
   vetoed); autotrust-jev 9B as a text judge was benched and not taken (2026-11-09); its retest
   after batch five is in the checklist.
+- *Shisa DE-1, a third text judge* (`alarm_model`, `tokens:…@text`, 2026-11-23): Shisa AI's
+  decision fine-tune of Gemma 4 26B-A4B, asked the text question through its answer's token
+  probabilities. On judge set v2 wrong on 158 of 995 (Winnow 267), and it lifts the panel
+  with Winnow +0.012 [+0.005, +0.020]: it gets the places the other judges all miss more
+  often than any other candidate. The arbiters retrained with it on 26 books: tuning silent
+  errors 490 → 474 and questions 3,309 → 3,286 against production; validation level
+  (questions 469 → 461, silent 236 → 239, every interval across zero). On production's 23
+  books it changed nothing (silent 498): it earns its seat only with Au pair, De vergelding
+  and Glazuur in the training data. Costs: stops and punctuation (54 made against 28 fixed
+  on tuning), and on validation letters (17 made against 4, four of them y for ij).
 - *imajev-4b, a second vision judge, is not used* (`ROBO_ALARM_MODEL=llama:imajev-4b`, off). Asked clef's
   question on the crop, it is right alone on 85% and a sharper alarm than winnow-ollama:e4b
   where it speaks (clef wrong on 37% of their disagreements against 5% of their

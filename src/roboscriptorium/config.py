@@ -38,8 +38,13 @@ class Settings:
     # trained with their votes leaves about a tenth fewer errors silent; with `render`
     # too it asks about an eighth fewer questions on tuning; autotrust-jev 9B asked the text
     # judge's question beside them, about 1% fewer questions and as many errors silent
-    # (2026-11-15, docs/design.md).
-    alarm_model: str = "autotrust-jev:35b-nvfp4,d3:9b,render,autotrust-jev:9b-nvfp4@text"
+    # (2026-11-15, docs/design.md); Shisa DE-1 asked the text question too, read through its
+    # answer's token probabilities, with the arbiters trained on 26 books: 3% fewer errors
+    # silent and 1% fewer questions on tuning, validation level (2026-11-23).
+    alarm_model: str = (
+        "autotrust-jev:35b-nvfp4,d3:9b,render,autotrust-jev:9b-nvfp4@text,"
+        "tokens:hf.co/mradermacher/shisa-de-1-GGUF:Q8_0@text"
+    )
     alarm_below: float = 1.0
     # More judges of a line-end hyphen the book and the word list leave undecided, asked
     # beside the judge, in Dutch books too (comma-separated; `hyphens.Compounds`).

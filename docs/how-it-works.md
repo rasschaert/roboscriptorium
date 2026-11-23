@@ -60,7 +60,7 @@ handled yet, nor any input but PDF.
 | spotter | DocLayout-YOLO | marks figures, captions, titles and page furniture on each page image | vision model |
 | readers | glm-ocr, tesseract, qwen3.8 | read the text again from the scan | generative models and a classic OCR program |
 | sorter | clef-flash:9b | decides what each doubtful line is | decision model |
-| judges | clef:27b, autotrust-jev 35B, d3 9B, render and compare, Winnow-12B, autotrust-jev 9B, the word list | each pick a version of a suspect | decision models and plain code |
+| judges | clef:27b, autotrust-jev 35B, d3 9B, render and compare, Winnow-12B, autotrust-jev 9B, Shisa DE-1, the word list | each pick a version of a suspect | decision models and plain code |
 | arbiter | the trust model (`trust.py`) | fixes, keeps, or asks about each suspect | trees trained on golden books |
 | reviewer | you | answer what the arbiter is unsure of | a person |
 
@@ -285,7 +285,9 @@ autotrust-jev 35B and d3 9B are asked the same question on the same crop. Each i
 about as good as clef alone, but they go wrong in different places: where all three
 agree the version is nearly always the print, and where one stands apart the arbiter
 learned whom to believe for that kind of difference. autotrust-jev 9B reads the sentence
-as Winnow does, with no scan, a second text judge whose mistakes fall elsewhere.
+as Winnow does, with no scan, a second text judge whose mistakes fall elsewhere, and Shisa
+DE-1 (another model family, read through its answer's token probabilities as Winnow is) a
+third: the one most often right on the places the other judges all miss.
 
 Render and compare (`rendercheck.py`) is no model and knows no language. Once per
 book it finds the typeface: a few hundred words of the text layer are cut from the scan
