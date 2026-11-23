@@ -1608,3 +1608,6 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | trust data 26 (offers-26-1122, side by side), au-pair--ia-scan | 0 | 65 | 0 |
 | 2026-11-23 | questions, Nervous System, after the 2026-11-22 merges | 0 | 4 | 0 |
 | 2026-11-23 | tryout: judge set v2 first look, tev1 | 0 | 0 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, shisa-de-1 Q8 vision by tokens | 0 | 1 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, shisa-de-1 Q8 by tokens | 0 | 0 | 0 |
+| 2026-11-23 | tryout: judge set v2, shisa-de-1 Q8 by tokens | 0 | 4 | 0 |

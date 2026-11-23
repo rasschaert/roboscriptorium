@@ -625,6 +625,12 @@ Daens' title was mended by hand).
 
 ## Housekeeping
 
+- [ ] **The arbiter's training between its tree fits** (`trustdata.models_to_save`; an hour
+      or two): it trains its 27 models one after another; each fit uses about 12 cores, but
+      the steps between them (each model's calibration, scored book by book) run on one, so
+      a training spends about half its time on one core of 16 (2026-11-23, about 3.5 hours
+      for 26 books). The models are independent: train them in a pool of processes, each
+      saving to the staging folder as now.
 - [ ] **An answered line isn't merged into a new question** (`flags.find`'s regions; an hour):
       a line answered about its readings stays asked so its answer stays in the review; when
       a neighbour is newly flagged, the two merge into a region with a new key and the user
