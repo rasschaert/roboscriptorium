@@ -203,10 +203,12 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       mix like "swAT"). The word list ignores case, so it can't tell
       them; the text judge and autotrust-jev 35B pick the capitals where clef and d3 read
       lower case (decisions.md 2026-11-23). A word check that keeps case can't tell them
-      either (the lists hold SS and ss, TV and tv). Running (`robo-render-caps`, 2026-11-23): render's
-      pick of a case change as a feature (render catches 273 of 290 capitals the print has
-      on the trust data, clef 224; the arbiter leans on clef), read on the trust data first.
-      Left after it: the text judge and autotrust-jev 35B agreeing on a case change
+      either (the lists hold SS and ss, TV and tv). Render's pick of a case change as a
+      feature is redundant too (2026-11-23: identical probabilities on all 1,893 case-only
+      suspects; render's vote is a feature already). The 6 silent case errors left on the
+      trust data are render's misses that the text judge gets right (all 6): Shisa's seat
+      test is the next lever. Left after it: the text judge and autotrust-jev 35B agreeing
+      on a case change
 - [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
       right to ask. On tuning's trust data a version backed by 80% or more of the readers'
       and judges' votes is the print 99.3–99.7% of the time, at 70–80% 96.2%, under 70%

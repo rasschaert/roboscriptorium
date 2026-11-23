@@ -1643,3 +1643,8 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | tryout: judge set v2 first look, shingi-27b text | 0 | 2 | 0 |
 | 2026-11-23 | trust data, de-kerk-van-de-dode-meisjes--ia-scan, shisa | 0 | 1 | 0 |
 | 2026-11-23 | tryout: judge set v2, shingi-27b text | 0 | 16 | 0 |
+| 2026-11-23 | trust data, vuurspel--ia-scan, shisa | 0 | 1 | 0 |
+| 2026-11-23 | trust data, monterosso-mon-amour--ia-scan, shisa | 0 | 2 | 0 |
+| 2026-11-23 | train arbiter, 26 books, render's case pick | 0 | 56 | 0 |
+| 2026-11-23 | trust data, het-geluid-van-bananen--ia-scan, shisa | 0 | 10 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, shisa-de-2 Q8 by tokens | 0 | 1 | 0 |
