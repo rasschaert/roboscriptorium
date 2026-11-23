@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 # Watches the job queue (experiments/queue.sh): one line per job that starts, succeeds or fails,
-# and one for a running job whose output (work/runs/<name>.out) has not changed for STALL
-# minutes (default 30), so a stuck job holding its group is seen. For the Monitor tool:
+# and one for a running job when neither its output (work/runs/<name>.out) nor any run's step
+# log has changed for STALL minutes (default 30), so a stuck job holding its group is seen. For the Monitor tool:
 #   experiments/queue-watch.sh [stall minutes]
 set -uo pipefail
 cd "${0:A:h}/.."
@@ -31,8 +31,12 @@ while True:
             print(f"{time.strftime('%H:%M')} job {tid} {label} [{t['group']}]: {state.lower()}", flush=True)
         seen[tid] = state
         if kind == "Running":
-            log = Path("work/runs") / f"{label}.out"
-            idle = time.time() - log.stat().st_mtime if log.exists() else 0
+            # A run also writes per-step logs (timed.sh's, under work/runs/ and work/probes/*/runs/):
+            # the newest of those counts as output too, so a long book isn't called stuck.
+            logs = [Path("work/runs") / f"{label}.out", *Path("work/runs").glob("*.log"),
+                    *Path("work/probes").glob("*/runs/*.log")]
+            newest = max((f.stat().st_mtime for f in logs if f.exists()), default=time.time())
+            idle = time.time() - newest
             if idle > stall and tid not in warned:
                 print(f"{time.strftime('%H:%M')} job {tid} {label}: no output for {int(idle // 60)} minutes", flush=True)
                 warned.add(tid)
