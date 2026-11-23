@@ -208,7 +208,14 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       suspects; render's vote is a feature already). The 6 silent case errors left on the
       trust data are render's misses that the text judge gets right (all 6): Shisa's seat
       test is the next lever. Left after it: the text judge and autotrust-jev 35B agreeing
-      on a case change
+      on a case change. With Shisa seated (tuning of 2026-11-24 against `baselines-1122`):
+      44 → 43 case errors, silent 14 → 12, asked 30 → 31; turned right or asked: De cipier
+      "'DS", Vals alarm "TCU", De vergelding "SS-kopstukken" and "SS-lazaret"; made silent:
+      Au pair "ss.", Glazuur "V-hals". The 12 silent: 7 small capitals read lower case
+      ("suv", "voc", "Sipo", "Bess’", two "ss-…führer", "v-hals") and 5 the other way
+      ("Justicar", "Oberjarl", "skirl", "SS." for "ss.", "w."). Render draws small capitals
+      (`rendercheck.drawings`, `SMALL_CAPS`) yet picked "sr" over Nervous System's "SF":
+      why its small-capital drawing loses is the next probe (agent, no models, an hour)
 - [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
       right to ask. On tuning's trust data a version backed by 80% or more of the readers'
       and judges' votes is the print 99.3–99.7% of the time, at 70–80% 96.2%, under 70%
