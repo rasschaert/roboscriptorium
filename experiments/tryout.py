@@ -7,7 +7,7 @@ wins goes on to a trust-data rebuild, a retrain and `bench`. Roles: reader, judg
     uv run python experiments/tryout.py prune reader      # the last set less retired books
     uv run python experiments/tryout.py run reader <model> [--glm]
     uv run python experiments/tryout.py build judge       # from cached suspects
-    uv run python experiments/tryout.py run judge <model> [--prompt <variant>]
+    uv run python experiments/tryout.py run judge <model> [--prompt <variant>] [--first-look]
 
 The reader set (`READER_VERSION`) holds body lines of the tuning books' bench slices,
 each line's crop cut as the OCR check cuts it and saved as a PNG, and its printed text
@@ -25,6 +25,9 @@ them, captured from a cached build. A model whose name starts `tokens:` is asked
 text judge's question, any other the vision judge's (`--text`: a decision model without
 vision asked the text judge's). `--prompt` adds one of
 `PROMPT_VARIANTS` to the question's instructions, an A/B of the wording on the same set.
+`--first-look` asks only the places clef and the panel all miss and as many others, and
+says how many of each it gets right: a candidate with nothing new stops there, minutes in
+(its answers keep, so the whole set resumes from them).
 Two strata per book: suspects the judge in use gets wrong (`JUDGE_HARD` a book) and
 right (`JUDGE_CONTROL`). Each book's share of wrong picks is kept, so the score can be
 weighted back to how often the judge in use errs.
@@ -656,13 +659,41 @@ def _wide_crop(item: dict) -> bytes:
         return page.get_pixmap(matrix=zoom, clip=clip).tobytes("png")
 
 
-def run_judge(model: str, variant: str = "", text_question: bool = False) -> None:
+def first_look(items: list[dict]) -> tuple[list[dict], set[str]]:
+    """The places clef and the panel all get wrong (`judge_lift.BASE`), and as many others
+    drawn at random: whether a candidate brings anything new, in minutes. A coin would get
+    about half of the first right; the others say how often it is right by chance."""
+    from judge_lift import BASE
+
+    letters = "abcdefg"
+    panel = [json.loads((WORK / f"judge-v{JUDGE_VERSION}" / "answers" / f"{n}.json").read_text())
+             for n in BASE]  # fmt: skip
+
+    def right(i, v):
+        return v in letters and i["right"][letters.index(v)]
+
+    seen = [i for i in items if all(i["id"] in a for a in panel)]
+    missed = [
+        i for i in seen
+        if not right(i, i["incumbent"]["value"]) and not any(right(i, a[i["id"]]["value"]) for a in panel)
+    ]  # fmt: skip
+    rest = [i for i in seen if i not in missed]
+    return missed + random.Random(7).sample(rest, min(len(missed), len(rest))), {
+        i["id"] for i in missed
+    }
+
+
+def run_judge(
+    model: str, variant: str = "", text_question: bool = False, first: bool = False
+) -> None:
     from roboscriptorium.clients import decide
 
     manifest, items = load_judge_set()
     books = manifest["books"]
     settings = Settings.from_env()
     text = model.startswith("tokens:") or text_question
+    if first:
+        items, missed = first_look(items)
     for i in items:
         i["difference"] = difference_kind(i["state"]["readings"])
         if variant == "wide":
@@ -700,6 +731,22 @@ def run_judge(model: str, variant: str = "", text_question: bool = False) -> Non
         if n % 25 == 0 or n == len(todo):
             cache.write_text(json.dumps(done))
             print(f"{n}/{len(todo)}", flush=True)
+    if first:
+        letters = "abcdefg"
+        ok = {i["id"]: done[i["id"]]["value"] in letters
+              and i["right"][letters.index(done[i["id"]]["value"])] for i in items}  # fmt: skip
+        sure = {i["id"] for i in items if done[i["id"]]["confidence"] >= 0.8}
+        hard = [i["id"] for i in items if i["id"] in missed]
+        rest = [i["id"] for i in items if i["id"] not in missed]
+        print(
+            f"first look, {label}: right on {sum(ok[i] for i in hard)}/{len(hard)} places clef "
+            f"and the panel all miss ({sum(ok[i] and i in sure for i in hard)} sure), "
+            f"on {sum(ok[i] for i in rest)}/{len(rest)} of the others "
+            f"({sum(not ok[i] and i in sure for i in rest)} sure and wrong)"
+        )
+        if seconds:
+            print(f"{statistics.median(seconds):.2f} s a question (median of {len(seconds)})")
+        return
     incumbent = {i["id"]: i["incumbent"] for i in items}
     rows = [_judge_score(f"{label} (candidate)", done, items, books)]
     in_use = manifest["text_incumbent"] if text else manifest["incumbent"]
@@ -791,4 +838,4 @@ if __name__ == "__main__":
             run_reader(sys.argv[3])
         else:
             variant = sys.argv[sys.argv.index("--prompt") + 1] if "--prompt" in sys.argv else ""
-            run_judge(sys.argv[3], variant, "--text" in sys.argv)
+            run_judge(sys.argv[3], variant, "--text" in sys.argv, "--first-look" in sys.argv)

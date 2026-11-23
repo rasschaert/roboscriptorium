@@ -393,6 +393,11 @@ A verdict on a source, in a report, decisions.md or models.md, gives in this ord
    bench's baseline moves); for a judge, the panel's shared misses it gets right and the
    lift it gives beside the other weak candidates, with an interval from resampling
    books (`experiments/judge_overlap.py`, `judge_sheet.py`, `judge_panel_bootstrap.py`).
+   **Fail fast** (the user, 2026-11-23: "we're not trying to figure out if it is _better_
+   than the others, different is also useful!"): a new judge's first run is
+   `tryout.py run judge <model> --first-look`, the 44 places clef and the panel all miss
+   and 44 others as a chance check, minutes; nothing longer runs unless it shows
+   something there.
 2. **A bench of it by cause**, fixed and made (`bench-diff`), before its net and its
    verdict line. A cost in a cause the source doesn't touch belongs to another component
    (the retrained arbiter's punctuation swaps beside accent offers, 2026-11-16): name
