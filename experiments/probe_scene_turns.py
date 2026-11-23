@@ -36,6 +36,13 @@ CRITERIA = {
     "new_scene": "a new scene starts at the top of the next page",
     "continues": "the same scene goes on across the page turn",
 }
+# The second version (`--v2`): a letter or diary entry set into the story begins a block
+# of its own but is no scene break; the first version took those for new scenes.
+CRITERIA_V2 = {
+    "new_scene": "a new scene of the story starts at the top of the next page",
+    "document": "a letter, diary entry, dated note or other document set into the story begins",
+    "continues": "the same scene goes on across the page turn",
+}
 
 
 def collect() -> None:
@@ -133,6 +140,11 @@ def collect() -> None:
           f"{sum(r['built'] and not r['scene'] for r in rows)} set where the reference has none")  # fmt: skip
 
 
+def book_flush(row: dict) -> bool:
+    """On the margin of a book that indents its paragraphs."""
+    return bool(row.get("book_indents")) and -2.5 <= row.get("x0_off", 99) <= 3.5
+
+
 def state(row: dict) -> dict:
     return {
         "language of the book": row["language"],
@@ -147,7 +159,9 @@ def ask(models: list[str]) -> None:
     from roboscriptorium.roles import DecisionCache
 
     rows = json.loads((OUT / "candidates.json").read_text())
-    questions = {"scene": decide.choice(INSTRUCTIONS, CRITERIA)}
+    if "--book-flush" in sys.argv:
+        rows = [r for r in rows if book_flush(r) and not r["built"] and not r.get("chapter")]
+    questions = {"scene": decide.choice(INSTRUCTIONS, CRITERIA_V2 if "--v2" in sys.argv else CRITERIA)}
     cache = DecisionCache(OUT / "decisions.jsonl")
     settings = Settings.from_env()
     for model in models:
@@ -169,14 +183,14 @@ def report(models: list[str]) -> None:
     from roboscriptorium.roles import DecisionCache
 
     rows = json.loads((OUT / "candidates.json").read_text())
-    questions = {"scene": decide.choice(INSTRUCTIONS, CRITERIA)}
+    questions = {"scene": decide.choice(INSTRUCTIONS, CRITERIA_V2 if "--v2" in sys.argv else CRITERIA)}
     cache = DecisionCache(OUT / "decisions.jsonl")
     # What the build doesn't already settle: no break set, no chapter opening there.
     open_ = [r for r in rows if not r["built"] and not r.get("chapter")]
     if "--flush" in sys.argv:  # only where the page opens flush and its paragraphs indent
         open_ = [r for r in open_ if r.get("flush")]
     if "--book-flush" in sys.argv:  # flush on the margin of a book that indents
-        open_ = [r for r in open_ if r.get("book_indents") and -2.5 <= r.get("x0_off", 99) <= 3.5]
+        open_ = [r for r in open_ if book_flush(r)]
     missed = [r for r in open_ if r["scene"]]
     print(f"{len(open_)} turns the build sets no break or chapter at; "
           f"{len(missed)} of them scene breaks")
