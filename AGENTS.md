@@ -155,7 +155,9 @@ get renumbered. Don't add a file to this table without a job no other file has.
   runs and waits; `experiments/gpu-now.sh` says what holds the model lock this moment (a job the queue
   calls running may still wait for the lock behind a run started outside it), and is checked
   before any answer about what the GPU is doing (the user, 2026-11-23: "really infuriating that
-  you can't tell me truthfully what work is being done"); `experiments/queue-watch.sh` is the watcher (each job that starts,
+  you can't tell me truthfully what work is being done"); `uv run python experiments/pause.py` freezes the
+  agent's runs for the user (each process checked stopped, Ollama left alone) and `… pause.py
+  resume` continues them; `experiments/queue-watch.sh` is the watcher (each job that starts,
   succeeds or fails, and a running job with no output for 30 minutes). The daemon runs in
   the screen `pueued`, which `queue.sh` starts when it isn't up.
 - **Every background or screen job has a watcher** (the user, 2026-10-17), started in
