@@ -169,7 +169,11 @@ get renumbered. Don't add a file to this table without a job no other file has.
   a judge run while the cores idled). Ollama answers on the GPU, one model at a time, so
   model runs queue on `work/runs/model-screen.lock`; a warm bench, a re-score or an
   arbiter's training takes no lock and runs beside them, in its own output folder under
-  `work/probes/` (or a worktree) when it would rewrite caches the model run reads.
+  `work/probes/` (or a worktree) when it would rewrite caches the model run reads. Per-book
+  work that asks no model runs its books side by side (`rebuild-trust.sh`'s
+  `SIDE_BY_SIDE`, a process a book): one after another it uses one core (2026-11-23, nine
+  hours of trust data at 1 of 16). A run slower than its estimate gets its CPU use checked
+  before the delay is reported.
 - **While a run is in flight, change the build's code in a worktree** (2026-11-21: an
   offer added in the main checkout nearly reached a rebuild between its books).
   `rebuild-trust.sh` and the benches start a fresh process per book, which loads the
