@@ -625,12 +625,6 @@ Daens' title was mended by hand).
 
 ## Housekeeping
 
-- [ ] **The arbiter's training between its tree fits** (`trustdata.models_to_save`; an hour
-      or two): it trains its 27 models one after another; each fit uses about 12 cores, but
-      the steps between them (each model's calibration, scored book by book) run on one, so
-      a training spends about half its time on one core of 16 (2026-11-23, about 3.5 hours
-      for 26 books). The models are independent: train them in a pool of processes, each
-      saving to the staging folder as now.
 - [ ] **An answered line isn't merged into a new question** (`flags.find`'s regions; an hour):
       a line answered about its readings stays asked so its answer stays in the review; when
       a neighbour is newly flagged, the two merge into a region with a new key and the user
@@ -1385,6 +1379,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Measurement
 
+- [x] 2026-11-23 The arbiter trains its models side by side (`ROBO_TRAIN_SIDE_BY_SIDE=n`, shards into one staging): half a training ran on one core
 - [x] 2026-11-23 `rebuild-trust.sh` builds `SIDE_BY_SIDE` books at once when the rebuild asks no model: one book used one core of 16
 - [x] 2026-11-23 A cache keeps the two latest makings of other identities (`files.KEPT`): main and a branch no longer wipe each other's scan measures (decisions.md)
 - [x] 2026-11-17 The heading count credits a title found without its number or set as two (one error, not two); with it the line-role referee passes validation (heading errors 52 → 48) and is on by default
