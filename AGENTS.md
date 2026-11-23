@@ -174,6 +174,12 @@ get renumbered. Don't add a file to this table without a job no other file has.
   `SIDE_BY_SIDE`, a process a book): one after another it uses one core (2026-11-23, nine
   hours of trust data at 1 of 16). A run slower than its estimate gets its CPU use checked
   before the delay is reported.
+- **A step that uses many cores holds `work/runs/cpu-heavy.lock`** (agreed between two
+  sessions, 2026-11-23): an arbiter training (its side-by-side shards as one job, each
+  shard given `cores / n` threads) and a bench. Two trainings side by side spent 70% of
+  the CPU switching between them. A step needing both locks takes `model-screen.lock`
+  first, then `cpu-heavy.lock`, so the two never deadlock. An approved run is queued
+  behind these, never started beside them.
 - **While a run is in flight, change the build's code in a worktree** (2026-11-21: an
   offer added in the main checkout nearly reached a rebuild between its books).
   `rebuild-trust.sh` and the benches start a fresh process per book, which loads the
