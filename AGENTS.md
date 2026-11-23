@@ -485,7 +485,8 @@ The response holds `answers.<name>.choice`, `confidence` and `probabilities`.
   app's settings; `OLLAMA_NUM_PARALLEL=4` (`launchctl setenv`, read when the app starts).
 - Present: `uv`, `python3`, `pandoc`, calibre `ebook-convert`, poppler (`pdfinfo`,
   `pdftotext`, `pdfimages`), epubcheck, d2, llama.cpp's `llama-server` (all Homebrew where
-  applicable); scikit-learn and the dependency group `layout` (`doclayout-yolo` with
+  applicable); Kapitsa (`nace-ai/tap/kapitsa`, 2026-11-23: `kapitsa-systemone` serves Drex Max
+  on `/v1/systemone`, started by a run and stopped with it, never as a service); scikit-learn and the dependency group `layout` (`doclayout-yolo` with
   PyTorch) in Python.
 - Model weights live outside `~/code` (backed up hourly): models we train or download by
   hand in `~/models/roboscriptorium/`, one subfolder each.
