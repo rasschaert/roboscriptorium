@@ -200,7 +200,9 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       (not taken, decisions.md 2026-11-22). The case-change-only feature, trained on 26
       books, is redundant (2026-11-23): it fires where the arbiter is right already. The 39
       left on the trust data are where one judge dissents (clef reading lower case, render a
-      mix like "swAT"). Next: why the word list's `known` doesn't tip HPV, SWAT, UXH
+      mix like "swAT"). The word list ignores case, so it can't tell
+      them; the text judge and autotrust-jev 35B pick the capitals where clef and d3 read
+      lower case (decisions.md 2026-11-23). Next: a word check that keeps case
 - [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
       right to ask. On tuning's trust data a version backed by 80% or more of the readers'
       and judges' votes is the print 99.3–99.7% of the time, at 70–80% 96.2%, under 70%
