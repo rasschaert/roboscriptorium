@@ -1604,3 +1604,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | trust data 26 (offers-26-1122, side by side), het-schaduwhuis--ia-scan | 0 | 26 | 0 |
 | 2026-11-23 | trust data 26 (offers-26-1122, side by side), ex-minnaar | 0 | 38 | 0 |
 | 2026-11-23 | trust data 26 (offers-26-1122, side by side), glazuur--ia-scan | 0 | 39 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122, side by side), de-vergelding--ia-scan | 0 | 61 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122, side by side), au-pair--ia-scan | 0 | 65 | 0 |
+| 2026-11-23 | questions, Nervous System, after the 2026-11-22 merges | 0 | 4 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, tev1 | 0 | 0 | 0 |
