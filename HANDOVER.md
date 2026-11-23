@@ -6,7 +6,7 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
-**23:00 on 2026-11-23: stopped for a reboot of the user's computer. Nothing runs, nothing is frozen, nothing waits on a timer.** This section is complete; everything below it is older.
+**23:10 on 2026-11-23: paused until 01:30 on the user's word** (a reboot was planned and then not needed). The queue's groups are paused; the scene probe waits in it as job 22, and a background timer in this session opens the groups at 01:30. If that session is gone by then, run step 1 below without the `queue.sh add` line. This section is complete; everything below it is older.
 
 *Done today and committed.* Shisa DE-1 (Shisa AI's decision model on Gemma 4 26B-A4B, asked through its answer's token probabilities) is now the third text judge, and both arbiters are retrained on 26 books with it (Au pair, De vergelding and Glazuur added to the trust data). Tuning against production: silent errors 490 → 474, questions 3,309 → 3,286; validation level (no veto); it beat both mixes with production's arbiters (decisions.md, models.md, design.md). The swap on disk: `work/models/ocr-trust.pkl` and `ocr-trust-offers.pkl` (and their `-without-<book>` held-out copies) are the Shisa ones; trust data `work/probes/ocr-trust{,-offers}` are the 26-book Shisa data. The previous arbiters and data are kept in `work/models/ocr-trust-backup-20261123/` and `work/probes/ocr-trust*-before-shisa-20261123/`. Screened and not taken today: Shingi 27B, selfjev, Shisa DE-2 (level with DE-1), tev1; Drex Max, OpenJev and DE-2 are Shisa's backups (models.md).
 
