@@ -90,3 +90,33 @@ def test_shisa_takes_an_image_before_its_json_and_winnow_refuses_one():
     winnow = decide.for_model("tokens:winnow", "http://test")
     with pytest.raises(ValueError):
         winnow.decide("x", {"reading": question}, image_png=b"png")
+
+
+def test_selfjev_scores_each_option_by_yes_against_no():
+    import json as _json
+
+    sent = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        body = _json.loads(request.content)
+        sent.append(body)
+        right = "Proposed answer: één" in body["prompt"]
+        alts = [{"token": "yes", "logprob": -0.1 if right else -3.0},
+                {"token": "no", "logprob": -2.5 if right else -0.1}]  # fmt: skip
+        return httpx.Response(200, json={"response": "yes", "logprobs": [{"top_logprobs": alts}]})
+
+    client = decide.for_model("tokens:hf.co/Jwuthrich/selfjev-4b-vision-GGUF:Q8_0", "http://test")
+    assert isinstance(client, decide.SelfjevTokenClient)
+    client._http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+    question = decide.choice("Which text?", {"a": "één", "b": "een"})
+    (answer,) = client.decide({"line": 3}, {"reading": question}, image_png=b"png").values()
+    assert len(sent) == 2 and all(b["images"] == ["cG5n"] for b in sent)
+    assert sent[0]["prompt"].startswith("<|im_start|>system\nJudge whether the proposed answer")
+    assert (
+        'Document:\n[img-0]\n{"line": 3}\nQuestion: Which text?\nProposed answer: één'
+        in sent[0]["prompt"]
+    )
+    assert sent[0]["prompt"].endswith("<|im_start|>assistant\n<think>\n\n</think>\n\n")
+    # a: 2.4 - b: -2.9 → softmax of the two scores
+    assert answer.value == "a"
+    assert answer.probabilities["a"] == pytest.approx(1 / (1 + math.exp(-5.3)))
