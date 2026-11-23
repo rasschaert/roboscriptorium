@@ -1635,3 +1635,11 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | train arbiter, 26 books, offers | 0 | 190 | 0 |
 | 2026-11-23 | bench tuning, production 2026-11-23 | 0 | 6 | 0 |
 | 2026-11-23 | bench tuning, arbiters on 26 books | 0 | 7 | 0 |
+| 2026-11-23 | build, Nervous System, every answer in | 0 | 1 | 0 |
+| 2026-11-23 | tryout: judge set v2, openjev Q4 text | 0 | 16 | 0 |
+| 2026-11-23 | trust data, doodskleed--ia-scan, shisa | 0 | 8 | 0 |
+| 2026-11-23 | trust data, het-ijzige-land--ia-scan, shisa | 0 | 9 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, shingi-27b vision | 0 | 10 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, shingi-27b text | 0 | 2 | 0 |
+| 2026-11-23 | trust data, de-kerk-van-de-dode-meisjes--ia-scan, shisa | 0 | 1 | 0 |
+| 2026-11-23 | tryout: judge set v2, shingi-27b text | 0 | 16 | 0 |
