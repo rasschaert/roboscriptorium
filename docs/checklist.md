@@ -635,15 +635,6 @@ Daens' title was mended by hand).
       is asked again, though the answer still applies to the book line by line (Nervous
       System page 133, 2026-11-22; that one's cause fixed on branch `garbled-numbers`).
       Keep such a line a region of its own. Rare: wait for a second case before building it.
-- [ ] **A measure made on the scan keeps a slot per method** (`files.read_cache`/`write_cache`,
-      `accentmarks.py`; after `robo-seeing-judges` ends; an hour or two): each cache holds
-      one key (the accent offers' `Judge.marks`, the others' `files.code_stamp`), so a branch
-      and main that measure differently wipe each other's results and each bench in turn
-      measures again. On 2026-11-22 the italic branch (`render-italic`) moved the stamps of
-      `lists`, `quotemarks` and `speckmarks` (they import `rendercheck`) beside the accent
-      key, so main's next bench measures the tuning books again (the accent drawings alone
-      about 40 minutes). Keep a few keys per file, newest first; the test measures with two
-      keys in turn and measures nothing the second time.
 - [ ] **An answer survives its question growing** (`corrections.for_flag`): a line answered alone
       and asked again as part of a larger region (a neighbour newly flagged) loses its
       answer, since the region's key and first line differ (Nervous System page 133,
@@ -1392,6 +1383,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Measurement
 
+- [x] 2026-11-23 A cache keeps the two latest makings of other identities (`files.KEPT`): main and a branch no longer wipe each other's scan measures (decisions.md)
 - [x] 2026-11-17 The heading count credits a title found without its number or set as two (one error, not two); with it the line-role referee passes validation (heading errors 52 → 48) and is on by default
 - [x] A heading's punctuation and quote marks measured (2026-11-14,
       `evaluate.heading_marks`): four on tuning, all real, none on validation
