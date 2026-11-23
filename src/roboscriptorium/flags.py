@@ -63,6 +63,8 @@ REASONS = {
     "number-out-of-run": "a chapter number that doesn't follow the one before: one may be missing",
     "title-among-numbers": "a heading of words between numbered chapters",
     "short-section": "a section of only a line or two: split off, or a heading that isn't one",
+    "scene": "a page that may open a new scene: its white space may have fallen at the foot "
+    "of the page before",
     "table": "a table to the layout model: in a novel, often a library's label stuck on the page",
 }
 # A table the layout model is at least this sure of is asked about: Nervous System's
@@ -124,6 +126,9 @@ class Flag:
     # The lines as the build has them after the OCR check's fixes, where that differs
     # from `text` (`scoring.questions`): what the review starts the answer from.
     built: str | None = None
+    # For a question whether a scene opens at a page's top: the page before and its last
+    # line, which the review shows above the crop.
+    across: tuple[int, int] | None = None
 
 
 def region_key(page: int, text: str) -> str:
@@ -571,12 +576,17 @@ def find(
     headings: set[SourceRef] | None = None,
     known=None,
     settled: dict[SourceRef, str] | None = None,
+    scenes: dict[SourceRef, SourceRef] | None = None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.
 
     `settled` holds each line as the OCR check settled it (`ocrcheck.apply`): a line
     garbled as read but read right by the readers and judges isn't asked as garbled; a
     place in it the arbiter was unsure of is asked as an OCR doubt.
+
+    `scenes` are lines opening a page where a decision model thinks a new scene starts,
+    its white space lost at the foot of the page before (`scenes.asked`), each with the
+    last line of the page before, which its question shows (`Flag.across`).
 
     `known` (a word list's test) tells a book that opens its sections in capitals from
     one whose drawn initials are lost (`capital_openings`).
@@ -615,6 +625,8 @@ def find(
         for i in range(len(page.lines)):
             if SourceRef(page.number, i) in (quotes or set()):
                 line_reasons.setdefault(i, []).append("quotes")
+            if SourceRef(page.number, i) in (scenes or set()):
+                line_reasons.setdefault(i, []).append("scene")
             if _initial_lost(page, i, roles) and SourceRef(page.number, i) not in styled:
                 line_reasons.setdefault(i, []).append("initial-lost")
         if any(r.turned for r in regions) or sideways(page):
@@ -664,6 +676,16 @@ def find(
             for gap in _lost_lines(page, roles, regions)
             if not any(b[1] <= gap.y1 and gap.y0 <= b[3] for b in missing)
         ]
+        for k, f in enumerate(page_flags):
+            if "scene" in f.reasons:
+                before = (scenes or {})[
+                    next(
+                        SourceRef(page.number, i)
+                        for i in range(f.first, f.last + 1)
+                        if SourceRef(page.number, i) in (scenes or {})
+                    )
+                ]
+                page_flags[k] = replace(f, across=(before.page, before.line))
         here = page_flags + boxes
         for d in doubts or []:
             if d.page != page.number:

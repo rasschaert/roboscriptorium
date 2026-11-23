@@ -239,6 +239,7 @@ def questions(book: Book, stages: pipeline.Stages) -> list[Flag]:
         }
         if checked
         else None,
+        {ref: before for ref, (_, before) in stages.scene_lines.items()},
     )
     found = flags.structural(
         stages.pages, stages.model_roles, structure.findings(stages.doc), found

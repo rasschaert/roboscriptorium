@@ -426,7 +426,8 @@ def _add_body(
 
     `scene` holds whether a scene break waits for the next paragraph: an ornament line
     sets it, and white space of `SCENE_GAP` pitches after a sentence is one too, as is a
-    page that opens flush left after a finished paragraph where paragraphs indent.
+    page that opens flush left after a finished paragraph where paragraphs indent, and a
+    line a human answered opens a scene (`Line.scene`).
     `short_end` holds whether the last run ended on a sentence's short last line, which
     starts a paragraph at the top of the next page as it does within a page."""
     scene = scene if scene is not None else [False]
@@ -439,6 +440,8 @@ def _add_body(
             scene[0] = True
             continue
         if k and pitch is not None and _spaced(lines[k - 1], line, pitch, SCENE_GAP):
+            scene[0] = True
+        if line.scene:
             scene[0] = True
         current = blocks[-1] if blocks else None
         if line.item or (isinstance(current, Paragraph) and current.item):

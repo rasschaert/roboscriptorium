@@ -342,6 +342,9 @@ def _book_record(
         "italics_scored": not scoring.italics_unlike(book),
         "breaks_scored": not scoring.breaks_unlike(book),
         "verdicts_applied": run.applied,
+        # Page tops asked whether a new scene opens there (`scenes.asked`); their answers
+        # aren't simulated, so a break they would find shows only in the probe.
+        "scene_questions": len([r for r in stages.scene_lines if r.page not in poor]),
         "score": {k: v for k, v in asdict(score).items() if k != "confusions"},
         "quality": {k: asdict(v) for k, v in quality.report(numbers, errors, found, rates).items()},
         "silent_by_kind": quality.silent_by_category(errors, found),
@@ -663,6 +666,9 @@ def structure(old: dict, new: dict) -> list[str]:
             out.append(f"{name[:40]:40} headings {headings(a)} → {headings(b)}")
         if scenes(a) != scenes(b):
             out.append(f"{name[:40]:40} scene breaks {scenes(a)} → {scenes(b)}")
+        asked = (old["books"][name].get("scene_questions", 0), book.get("scene_questions", 0))
+        if asked[0] != asked[1]:
+            out.append(f"{name[:40]:40} scene questions {asked[0]} → {asked[1]}")
         if round(_f1(a), 3) != round(_f1(b), 3):
             out.append(f"{name[:40]:40} paragraph F1 {_f1(a):.3f} → {_f1(b):.3f}")
     return out

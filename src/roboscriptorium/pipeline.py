@@ -39,6 +39,7 @@ from roboscriptorium import (
     rendercheck,
     scanpages,
     scanstyle,
+    scenes,
     sorter,
     speckmarks,
     structure,
@@ -109,6 +110,10 @@ class Stages:
     # Body pages printed too poorly to read, with their suspects a line (`scanpages.poor`):
     # built, and left out of the bench's score.
     poor_pages: dict[int, float] = field(default_factory=dict)
+    # Lines of `pages` opening a page where a scene break may be lost, each with the
+    # decision model's probability that a new scene starts there and the last line of the
+    # page before (`scenes.asked`): each a question.
+    scene_lines: dict[SourceRef, tuple[float, SourceRef]] = field(default_factory=dict)
     # Paragraph starts the build without answers has and the build with them lost, on
     # lines no answer is about (`lost_breaks`): an answer should never merge paragraphs.
     lost_breaks: list[SourceRef] = field(default_factory=list)
@@ -516,6 +521,16 @@ def run(
         compound,
         _book_spellings(whole, checked),
     )
+    scene_lines: dict[SourceRef, tuple[float, SourceRef]] = {}
+    if use_models and settings.scene_model and ocrcheck.scanned(book.source):
+        scene_lines = scenes.asked(
+            body,
+            unanswered,
+            indented,
+            book.language,
+            decide.for_model(settings.scene_model, settings.ollama_url),
+            DecisionCache(book.stages / "decisions.jsonl"),
+        )
     built = chapters.numbered(
         reflow(
             corrected,
@@ -651,6 +666,7 @@ def run(
         repeated_pages=repeated,
         missing_pages=scanpages.gaps(whole),
         poor_pages=scanpages.poor(body, [s.page for s in suspects]),
+        scene_lines=scene_lines,
     )
 
 
