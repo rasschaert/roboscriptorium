@@ -358,7 +358,7 @@ module's entry there before changing it.
 | line roles | `roles`, `sorter`, `sorterdata`, `pageroles` |
 | readers, judges, offers measured on the scan, the arbiter | `readers`, `pagereader`, `ocrcheck`, `ocrdoubts`, `trust`, `trustdata`, `contextjudge`, `rendercheck`, `accentmarks`, `quotemarks`, `speckmarks`, `lexicon` |
 | the reviewer's answers and misprints | `corrections`, `errata`, `quotes` |
-| structure | `footnotes`, `epigraphs`, `chapters`, `pagekinds`, `bookinit` |
+| structure | `footnotes`, `epigraphs`, `chapters`, `pagekinds`, `bookinit`, `scenes` |
 | lines into a book | `reflow`, `hyphens`, `typography`, `italics`, `figures`, `initials`, `ir`, `epub`, `epubdiff`, `pipeline` |
 | review | `flags`, `review`, `structure` |
 | measuring | `golden/`, `evaluate`, `disagreements`, `quality`, `bench`, `errorlog` |
