@@ -66,3 +66,27 @@ def test_shisa_is_asked_in_its_makers_layout_in_the_questions_order():
     # D is no option; A and B are 2.3 apart, softened by the temperature of 1.9.
     assert answer.value == "b"
     assert answer.probabilities["b"] == pytest.approx(1 / (1 + math.exp(-2.3 / 1.9)))
+
+
+def test_shisa_takes_an_image_before_its_json_and_winnow_refuses_one():
+    import json as _json
+
+    sent = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        sent.append(_json.loads(request.content))
+        alts = [{"token": "A", "logprob": -0.1}, {"token": "B", "logprob": -2.0}]
+        return httpx.Response(200, json={"response": "A", "logprobs": [{"top_logprobs": alts}]})
+
+    transport = httpx.MockTransport(handler)
+    shisa = decide.for_model("tokens:shisa-de-1", "http://test")
+    shisa._http = httpx.Client(base_url="http://test", transport=transport)
+    question = decide.choice("Which text?", {"a": "één", "b": "een"})
+    (answer,) = shisa.decide({"line": 3}, {"reading": question}, image_png=b"png").values()
+    (body,) = sent
+    assert body["images"] == ["cG5n"]
+    assert '<|turn>user\n[img-0]{"evidence": {"line": 3}' in body["prompt"]
+    assert answer.value == "a"
+    winnow = decide.for_model("tokens:winnow", "http://test")
+    with pytest.raises(ValueError):
+        winnow.decide("x", {"reading": question}, image_png=b"png")

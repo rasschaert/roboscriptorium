@@ -157,6 +157,8 @@ class TokenClient:
     UNSEEN = -30.0
     # The makers' calibration: the label log-probabilities are divided by it.
     TEMPERATURE = 1.0
+    # Where Ollama puts an image in a raw prompt; empty: the model reads text only.
+    IMAGE = ""
 
     def __init__(self, base_url: str, model: str, client: httpx.Client | None = None):
         self.model = model
@@ -169,7 +171,9 @@ class TokenClient:
         text = json.dumps(value, ensure_ascii=False, separators=(",", ":"), sort_keys=True)
         return text.replace("<", "\\u003c")
 
-    def render(self, state: Any, question: dict[str, Any]) -> tuple[str, list[str]]:
+    def render(
+        self, state: Any, question: dict[str, Any], image: bool = False
+    ) -> tuple[str, list[str]]:
         """The prompt for one choice question, and its option keys in label order."""
         if question["type"] != "choice":
             raise ValueError(f"TokenClient answers choice questions, not {question['type']}")
@@ -192,25 +196,23 @@ class TokenClient:
         model: str | None = None,
         image_png: bytes | None = None,
     ) -> dict[str, Answer]:
-        if image_png is not None:
+        if image_png is not None and not self.IMAGE:
             raise ValueError(f"{self.model} reads text only")
         out = {}
         for name, question in questions.items():
-            prompt, keys = self.render(state, question)
-            resp = patiently(
-                lambda prompt=prompt: self._http.post(
-                    "/api/generate",
-                    json={
-                        "model": (model or self._model).removeprefix(self.PREFIX),
-                        "prompt": prompt,
-                        "raw": True,
-                        "stream": False,
-                        "logprobs": True,
-                        "top_logprobs": 20,
-                        "options": {"temperature": 0, "num_predict": 1},
-                    },
-                )
-            )
+            prompt, keys = self.render(state, question, image=image_png is not None)
+            body = {
+                "model": (model or self._model).removeprefix(self.PREFIX),
+                "prompt": prompt,
+                "raw": True,
+                "stream": False,
+                "logprobs": True,
+                "top_logprobs": 20,
+                "options": {"temperature": 0, "num_predict": 1},
+            }
+            if image_png is not None:
+                body["images"] = [base64.b64encode(image_png).decode()]
+            resp = patiently(lambda body=body: self._http.post("/api/generate", json=body))
             resp.raise_for_status()
             top = (resp.json().get("logprobs") or [{}])[0].get("top_logprobs", [])
             seen: dict[str, float] = {}
@@ -249,8 +251,12 @@ class ShisaTokenClient(TokenClient):
     )
     BOUNDARY = "<turn|>\n<|turn>model\n<|channel>thought\n<channel|>"
     TEMPERATURE = 1.9
+    # The image goes before the JSON, as the makers' image readout sends it.
+    IMAGE = "[img-0]"
 
-    def render(self, state: Any, question: dict[str, Any]) -> tuple[str, list[str]]:
+    def render(
+        self, state: Any, question: dict[str, Any], image: bool = False
+    ) -> tuple[str, list[str]]:
         if question["type"] != "choice":
             raise ValueError(f"TokenClient answers choice questions, not {question['type']}")
         keys = list(question["criteria"])
@@ -262,7 +268,8 @@ class ShisaTokenClient(TokenClient):
                 for i, k in enumerate(keys)
             ],
         }
-        return self.SYSTEM + json.dumps(payload, ensure_ascii=False) + self.BOUNDARY, keys
+        user = (self.IMAGE if image else "") + json.dumps(payload, ensure_ascii=False)
+        return self.SYSTEM + user + self.BOUNDARY, keys
 
 
 def for_model(

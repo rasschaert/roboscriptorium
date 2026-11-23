@@ -23,7 +23,8 @@ of the tuning books' bench slices (the trust data's labels): the vision judge's 
 question and crop and the text judge's state and question, exactly as the pipeline asks
 them, captured from a cached build. A model whose name starts `tokens:` is asked the
 text judge's question, any other the vision judge's (`--text`: a decision model without
-vision asked the text judge's). `--prompt` adds one of
+vision asked the text judge's; `--vision`: a `tokens:` model whose layout places an image,
+Shisa's, asked the vision judge's). `--prompt` adds one of
 `PROMPT_VARIANTS` to the question's instructions, an A/B of the wording on the same set.
 `--first-look` asks only the places clef and the panel all miss and as many others, and
 says how many of each it gets right: a candidate with nothing new stops there, minutes in
@@ -684,14 +685,15 @@ def first_look(items: list[dict]) -> tuple[list[dict], set[str]]:
 
 
 def run_judge(
-    model: str, variant: str = "", text_question: bool = False, first: bool = False
+    model: str, variant: str = "", text_question: bool = False, first: bool = False,
+    vision: bool = False,
 ) -> None:
     from roboscriptorium.clients import decide
 
     manifest, items = load_judge_set()
     books = manifest["books"]
     settings = Settings.from_env()
-    text = model.startswith("tokens:") or text_question
+    text = (model.startswith("tokens:") and not vision) or text_question
     if first:
         items, missed = first_look(items)
     for i in items:
@@ -703,7 +705,8 @@ def run_judge(
         for i in items:
             i["state"], i["questions"] = i["text_state"], i["text_questions"]
             i["incumbent"], i["png"] = i["text_incumbent"], None
-    label = model + (f"+{variant}" if variant else "") + ("+text" if text_question else "")
+    label = (model + (f"+{variant}" if variant else "") + ("+text" if text_question else "")
+             + ("+vision" if vision else ""))  # fmt: skip
     cache = (
         WORK
         / f"judge-v{JUDGE_VERSION}"
@@ -838,4 +841,5 @@ if __name__ == "__main__":
             run_reader(sys.argv[3])
         else:
             variant = sys.argv[sys.argv.index("--prompt") + 1] if "--prompt" in sys.argv else ""
-            run_judge(sys.argv[3], variant, "--text" in sys.argv, "--first-look" in sys.argv)
+            run_judge(sys.argv[3], variant, "--text" in sys.argv, "--first-look" in sys.argv,
+                      "--vision" in sys.argv)  # fmt: skip
