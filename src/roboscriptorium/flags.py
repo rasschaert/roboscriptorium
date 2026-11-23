@@ -63,6 +63,8 @@ REASONS = {
     "number-out-of-run": "a chapter number that doesn't follow the one before: one may be missing",
     "title-among-numbers": "a heading of words between numbered chapters",
     "short-section": "a section of only a line or two: split off, or a heading that isn't one",
+    "scene": "a page that may open a new scene: its white space may have fallen at the foot "
+    "of the page before",
     "table": "a table to the layout model: in a novel, often a library's label stuck on the page",
 }
 # A table the layout model is at least this sure of is asked about: Nervous System's
@@ -124,6 +126,9 @@ class Flag:
     # The lines as the build has them after the OCR check's fixes, where that differs
     # from `text` (`scoring.questions`): what the review starts the answer from.
     built: str | None = None
+    # For a question whether a scene opens at a page's top: the page before and its last
+    # line, which the review shows above the crop.
+    across: tuple[int, int] | None = None
 
 
 def region_key(page: int, text: str) -> str:
@@ -571,12 +576,17 @@ def find(
     headings: set[SourceRef] | None = None,
     known=None,
     settled: dict[SourceRef, str] | None = None,
+    scenes: dict[SourceRef, SourceRef] | None = None,
 ) -> list[Flag]:
     """Regions of the pages a human should check.
 
     `settled` holds each line as the OCR check settled it (`ocrcheck.apply`): a line
     garbled as read but read right by the readers and judges isn't asked as garbled; a
     place in it the arbiter was unsure of is asked as an OCR doubt.
+
+    `scenes` are lines opening a page where a decision model thinks a new scene starts,
+    its white space lost at the foot of the page before (`scenes.asked`), each with the
+    last line of the page before, which its question shows (`Flag.across`).
 
     `known` (a word list's test) tells a book that opens its sections in capitals from
     one whose drawn initials are lost (`capital_openings`).
@@ -664,6 +674,33 @@ def find(
             for gap in _lost_lines(page, roles, regions)
             if not any(b[1] <= gap.y1 and gap.y0 <= b[3] for b in missing)
         ]
+        # A question whether a scene opens at a line is about that line alone: never
+        # widened or merged into a run, only joined to a question on that one line.
+        for ref, before in (scenes or {}).items():
+            if ref.page != page.number or ref.line >= len(page.lines):
+                continue
+            across = (before.page, before.line)
+            same = next(
+                (k for k, f in enumerate(page_flags) if f.first == f.last == ref.line), None
+            )
+            if same is not None:
+                f = page_flags[same]
+                page_flags[same] = replace(f, reasons=[*f.reasons, "scene"], across=across)
+                continue
+            text = page.lines[ref.line].text
+            role = roles.get(ref)
+            page_flags.append(
+                Flag(
+                    region_key(page.number, text),
+                    page.number,
+                    ref.line,
+                    ref.line,
+                    text,
+                    treatment(role),
+                    ["scene"],
+                    across=across,
+                )
+            )
         here = page_flags + boxes
         for d in doubts or []:
             if d.page != page.number:

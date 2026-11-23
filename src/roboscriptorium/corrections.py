@@ -1,7 +1,8 @@
 """A human's answers about flagged regions, applied on the next build.
 
 Each answer says what a region is: running text, a heading, something to drop
-(page furniture, scan noise), an image, a decorated initial or a caption;
+(page furniture, scan noise), an image, a decorated initial or a caption, or running
+text that opens a new scene (its white space lost at the foot of the page before);
 optionally with the text as printed, and for a region shown on its side the
 turn that makes it upright. A caption stays out of the running text; its text
 waits for its picture.
@@ -37,6 +38,7 @@ ACTIONS = {
     "image": "An image or decoration",
     "initial": "A decorated initial letter",
     "caption": "A caption (kept with its picture)",
+    "scene": "Running text that opens a new scene (a break before it)",
 }
 _ROLE = {
     "text": LineRole("body", 1.0, 1.0),
@@ -45,6 +47,7 @@ _ROLE = {
     "image": LineRole("artifact", 1.0, 0.0),
     "initial": LineRole("artifact", 1.0, 0.0),
     "caption": LineRole("artifact", 1.0, 0.0),
+    "scene": LineRole("body", 1.0, 1.0),
 }
 
 
@@ -294,6 +297,8 @@ def apply(
             retyped.update((page.number, i) for i in range(c.first, c.last + 1))
         for i in range(c.first, c.last + 1):
             roles[SourceRef(c.page, i)] = _ROLE[c.action]
+        if c.action == "scene":
+            page.lines[c.first] = replace(page.lines[c.first], scene=True)
         if c.text is not None and c.action in ("text", "heading"):
             typed = c.text.split("\n")
             if len(typed) == c.last - c.first + 1:

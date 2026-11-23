@@ -527,6 +527,11 @@ class RegionReview:
                     **item,
                     "reasons": [F.REASONS[r] for r in f.reasons],
                     "white_space": "lost-line" in f.reasons,
+                    "across": (
+                        {"page": f.across[0], "first": f.across[1], "last": f.across[1]}
+                        if f.across
+                        else None
+                    ),
                     "before": page.lines[f.first - 1].text
                     if context and 0 < f.first <= len(page.lines)
                     else "",

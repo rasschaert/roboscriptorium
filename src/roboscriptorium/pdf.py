@@ -77,6 +77,8 @@ class Line:
     typed: bool = False
     # It opens a list item, its bullet taken out (`lists.py`): the bullet's shape.
     item: str = ""
+    # A human answered that a new scene opens at this line (`corrections.py`, action "scene").
+    scene: bool = False
 
 
 def spliced(line: Line, places: list[tuple[int, int, str]]) -> Line:

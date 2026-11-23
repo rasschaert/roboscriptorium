@@ -102,7 +102,7 @@ let marks = true;
 try { marks = localStorage.getItem("marks") !== "off"; } catch (e) {}
 const main = document.getElementById("main");
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
-const KINDS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "caption", "6": "initial"};
+const KINDS = {"1": "text", "2": "heading", "3": "drop", "4": "image", "5": "caption", "6": "initial", "7": "scene"};
 const CURRENT = {text: "text", heading: "heading", dropped: "drop", missing: "drop"};
 const NOW = {text: "kept as running text", heading: "made a heading", dropped: "left out of the book",
   missing: "has nothing here"};
@@ -131,6 +131,8 @@ function nextUnanswered(from) {
 }
 
 const picture = r => r.box && r.reasons.some(x => x.startsWith("a picture"));
+// A question whether a new scene opens at the top of the page: only it offers that answer.
+const sceneQuestion = r => r.reasons.some(x => x.startsWith("a page that may open a new scene"));
 // The text box, which a picture region doesn't have.
 const textBox = () => document.getElementById("text");
 // How many tokens look like ordinary words (as `ocr.words` counts them).
@@ -167,7 +169,7 @@ function startDraft(r) {
 }
 
 // Kinds whose answer carries text.
-const WITH_TEXT = new Set(["text", "heading", "caption"]);
+const WITH_TEXT = new Set(["text", "heading", "caption", "scene"]);
 const withText = kind => WITH_TEXT.has(kind);
 // A choice between readings. Where our text and the e-book differ (`got`, our words at the
 // place), only as running text, whose words the e-book holds; a caption or heading there
@@ -185,7 +187,8 @@ function render() {
   if (!draft || draft.key !== r.key) draft = startDraft(r);
   const drawing = picture(r);
   const doubt = isDoubt(r, draft.kind);
-  const kinds = Object.entries(KINDS).filter(([, kind]) => kind !== "initial" || drawing);
+  const kinds = Object.entries(KINDS).filter(([, kind]) =>
+    (kind !== "initial" || drawing) && (kind !== "scene" || sceneQuestion(r)));
   const kindRows = kinds.map(([k, kind]) => {
     const note = a && a.action === kind ? "your answer" : !a && CURRENT[r.treatment] === kind && !drawing ? "the pipeline's call" : "";
     return `<label class="option ${draft.kind === kind ? "on" : ""}"><input type="radio" name="kind" value="${kind}" ${draft.kind === kind ? "checked" : ""}>
@@ -664,7 +667,8 @@ document.addEventListener("keydown", e => {
   }
   if (e.metaKey || e.ctrlKey || e.altKey) return;
   const r = queue[pos], doubt = isDoubt(r, draft && draft.kind);
-  if (KINDS[e.key] && (KINDS[e.key] !== "initial" || picture(r))) setKind(KINDS[e.key]);
+  if (KINDS[e.key] && (KINDS[e.key] !== "initial" || picture(r))
+    && (KINDS[e.key] !== "scene" || sceneQuestion(r))) setKind(KINDS[e.key]);
   else if (e.key === "Enter") { e.preventDefault(); save(); }
   else if (e.key === "e" && doubt && withText(draft.kind)) { e.preventDefault(); setReading(-1); }
   else if (e.key === "e" && textBox()) { e.preventDefault(); textBox().focus(); }

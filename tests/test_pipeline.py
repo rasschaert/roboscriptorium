@@ -1120,3 +1120,63 @@ def test_a_bulleted_list_becomes_list_items_without_its_bullets(tmp_path, monkey
     with zipfile.ZipFile(book.epub_path) as z:
         body = "".join(z.read(n).decode() for n in z.namelist() if n.endswith(".xhtml"))
     assert '<ul class="square"><li><p>Square mountains.</p></li><li><p>People' in body
+
+
+def test_a_page_that_may_open_a_new_scene_is_asked_and_its_answer_sets_the_break(
+    tmp_path, monkeypatch
+):
+    _no_layout(monkeypatch)
+    one = [f"Line {i} of the story goes on and on across the page" for i in range(12)]
+    one[11] = "Line 11 of the story goes on and on across the room."
+    # Other words on the second page: a page repeating the one before is left out.
+    two = [f"Row {i} where the night went over the garden and house" for i in range(12)]
+    two[0] = "Morning came and the night went over the garden door"
+    doc = pymupdf.open()
+    # Paragraphs indent; the second page opens flush.
+    for lines, indented in ((one, (0, 6)), (two, (3, 8))):
+        page = doc.new_page(width=400, height=600)
+        for i, text in enumerate(lines):
+            page.insert_text((60 if i in indented else 40, 60 + 18 * i), text, fontsize=11)
+    doc.save(tmp_path / "source.pdf")
+    (tmp_path / "book.toml").write_text(
+        'title = "T"\nauthor = "A"\nlanguage = "en"\nbody_pages = [1, 2]\n'
+    )
+    book = Book.load(tmp_path)
+    asked = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        body = json.loads(request.content)
+        if "scene" in body["questions"]:
+            asked.append(json.loads(body["state"])["start of the next page"].split("\n")[0])
+            p = {"new_scene": 0.8, "document": 0.1, "continues": 0.1}
+            answer = {"type": "choice", "choice": "new_scene", "confidence": 0.8}
+            return httpx.Response(200, json={"answers": {"scene": {**answer, "probabilities": p}}})
+        answer = {"type": "choice", "choice": "body", "confidence": 0.9}
+        answer["probabilities"] = {"body": 0.9, "page_number": 0.1}
+        return httpx.Response(200, json={"answers": {"role": answer}})
+
+    def client(model, *_):
+        http = httpx.Client(base_url="http://test", transport=httpx.MockTransport(handler))
+        return DecisionClient("http://test", model, client=http)
+
+    monkeypatch.setattr(pipeline.decide, "for_model", client)
+    monkeypatch.setattr(pipeline.ocrcheck, "scanned", lambda pdf: True)
+    monkeypatch.setenv("ROBO_SCENE_MODEL", "shisa")
+    stages = pipeline.run(book, check_ocr=False)
+    assert asked == [two[0]]
+    assert list(stages.scene_lines) == [SourceRef(2, 0)]
+    # Unanswered, the book sets no break: the question alone changes nothing.
+    assert not any(p.break_before for p in stages.doc.paragraphs)
+    found = flags.find(
+        stages.pages,
+        stages.model_roles,
+        scenes={r: before for r, (_, before) in stages.scene_lines.items()},
+    )
+    question = next(f for f in found if "scene" in f.reasons)
+    assert question.across == (1, 11)
+    Corrections(book.corrections_path).record(question, "scene", None)
+    rebuilt = pipeline.run(book, check_ocr=False)
+    opened = [p for p in rebuilt.doc.paragraphs if p.break_before]
+    assert [p.text.split()[:2] for p in opened] == [["Morning", "came"]]
+    # The answered line is asked still, so the reviewer sees the answer.
+    assert list(rebuilt.scene_lines) == [SourceRef(2, 0)]

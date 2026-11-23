@@ -1136,6 +1136,25 @@ fixed 22 and broke 29. With the check alone, against the judge: tuning breaks 0.
 Goede dochter back to 0.00, De stilte 0.47 → 0.30, Dolittle 0.10 → 0.18 (0.39 before
 either).
 
+## Scene breaks lost at a page turn (off)
+
+*What it catches:* a scene break at the top of a page whose page before ends a sentence on
+a full line, the white space fallen at the foot: the geometry of a paragraph running on,
+so reflow's own test (a flush opening after a short last line) can't see it. Reis om mijn
+schedel has 13 such misses. *How:* `scenes.py` asks a decision model at each such turn,
+from the text on either side, whether a new scene starts, a letter or other document set
+into the story begins, or the scene goes on; where a new scene is at least 0.5 likely the
+reviewer is asked, and only their answer sets the break. *Evidence:* the probe
+(`experiments/probe_scene_turns.py`, tuning books): 18 missed breaks among 165 such
+turns; Shisa DE-1 at 0.5 finds 10 with 4 false; without the letter answer it took letters
+and diary entries for scenes (25 false); at 0.7 it finds 2, so nothing is set unasked.
+Tuning bench with it (2026-11-24): no word moved, 19 questions, 10 on missed breaks and 2
+on chapter openings the build misses too; validation no change, 2 questions. *Failure:*
+a page top that goes on in time or voice ("En nu moet ik even pauzeren.") stays unasked;
+a garbled page top or a second-person passage is asked wrongly. *Off* until the user
+weighs 19 questions for 10 breaks (`ROBO_SCENE_MODEL=tokens:hf.co/mradermacher/shisa-de-1-GGUF:Q8_0`
+turns it on).
+
 ## Footnotes
 
 **A footnote leaves the running text.** Printed at a page's foot, a note read as body

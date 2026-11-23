@@ -142,6 +142,10 @@ class Settings:
     # The vision judge says which lines start a paragraph where it is sure
     # (`parabreaks.py`). Off: it broke more starts than it fixed (docs/design.md).
     break_judge: bool = False
+    # The decision model that reads a page turn where a scene break may be lost, a page
+    # that opens flush after a finished sentence, and asks the reviewer where it thinks a
+    # new scene starts (`scenes.py`; "" for none).
+    scene_model: str = ""
     # The quote check's unpaired marks reach the OCR check as readings of their lines
     # (`quotes.duel_readings`), judged and decided like any other; the quote check then
     # asks nothing of its own about those paragraphs.
@@ -243,6 +247,7 @@ class Settings:
             page_roles=_flag("ROBO_PAGE_ROLES", defaults.page_roles),
             break_judge=_flag("ROBO_BREAK_JUDGE", defaults.break_judge),
             quote_reader=_flag("ROBO_QUOTE_READER", defaults.quote_reader),
+            scene_model=os.environ.get("ROBO_SCENE_MODEL", defaults.scene_model),
             context_model=os.environ.get("ROBO_CONTEXT_MODEL", defaults.context_model),
             extra_readers=os.environ.get("ROBO_EXTRA_READERS", defaults.extra_readers),
             context_min=float(os.environ.get("ROBO_CONTEXT_MIN", defaults.context_min)),

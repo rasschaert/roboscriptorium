@@ -268,6 +268,7 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
             suspects=[],
             ocr_decider="fixed rule",
             poor_pages={},
+            scene_lines={},
         )
         name = spec.split(":")[0].split("/")[-1]
         return scoring.Scored(name, f"book {name}", stages, reference, [], [], 0)
@@ -318,6 +319,8 @@ def test_a_change_to_a_books_structure_is_reported_beside_the_test():
     assert lines[0].startswith("all books")
     assert len(lines) == 2 and "5/24 (5 exact, +4) → 23/24 (23 exact, +1)" in lines[1]
     assert bench.structure(old, old) == []
+    new["books"]["b"]["scene_questions"] = 3
+    assert bench.structure(old, new)[-1].endswith("scene questions 0 → 3")
 
 
 def test_typography_counts_glyphs_set_wrong_where_the_words_agree():
