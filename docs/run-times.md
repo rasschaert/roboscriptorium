@@ -1687,3 +1687,9 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | scene-break probe: collect the page turns | 0 | 24 | 0 |
 | 2026-11-23 | train arbiter, offers-shisa | 0 | 53 | 0 |
 | 2026-11-23 | bench tuning, Shisa beside the panel, arbiters on 26 books | 0 | 5 | 0 |
+| 2026-11-23 | scene-break probe: collect the page turns | 0 | 30 | 0 |
+| 2026-11-23 | train arbiter, shisa on 23 books (main) | 0 | 34 | 0 |
+| 2026-11-23 | scene-break probe: ask three models | 0 | 40 | 0 |
+| 2026-11-23 | scene-break probe: collect the page turns | 0 | 27 | 0 |
+| 2026-11-23 | train arbiter, offers-shisa on 23 books (main) | 0 | 30 | 0 |
+| 2026-11-23 | bench tuning, Shisa beside the panel, arbiters on 23 books (main) | 0 | 5 | 0 |

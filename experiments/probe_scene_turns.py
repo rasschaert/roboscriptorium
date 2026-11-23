@@ -41,7 +41,7 @@ CRITERIA = {
 def collect() -> None:
     from rapidfuzz.distance import Levenshtein
 
-    from roboscriptorium import bench, evaluate
+    from roboscriptorium import bench, evaluate, parabreaks, reflow
     from roboscriptorium.config import Settings
     from roboscriptorium.golden import scoring
 
@@ -82,6 +82,7 @@ def collect() -> None:
         order = [(k, s) for k, p in enumerate(paras) for s in p.sources if not s.typed]
         text = lambda s: pages[s.page].lines[s.line].text  # noqa: E731
         right = {n: max((ln.x1 for ln in pg.lines), default=0) for n, pg in pages.items()}
+        book_indents = parabreaks.indents(list(pages.values()))
         found = 0
         for i in range(1, len(order)):
             (k, s), (_, prev) = order[i], order[i - 1]
@@ -100,6 +101,10 @@ def collect() -> None:
                     continue
                 o = starts[k] + min(near, key=lambda j: abs(j - before))
             pline = pages[prev.page].lines[prev.line]
+            # The build's own test for a scene's opening: flush on the margin of a page whose
+            # paragraphs indent (reflow's rule, which the page-top misses pass).
+            body = [pages[s.page].lines[t.line] for _, t in order if t.page == s.page]
+            at = next(j for j, ln in enumerate(body) if ln is pages[s.page].lines[s.line])
             row = {
                 "book": name,
                 "language": run.book.language,
@@ -110,6 +115,10 @@ def collect() -> None:
                 "chapter": any(o + d in chapter_at for d in (-1, 0, 1)),
                 "inside_paragraph": order[i - 1][0] == k,
                 "full_line": pline.x1 >= right[prev.page] - 2,
+                "flush": reflow._flush_where_paragraphs_indent(body, at),
+                # The same by the book's habit, for a page of running text with no indent.
+                "book_indents": book_indents,
+                "x0_off": round(body[at].x0 - sorted(ln.x0 for ln in body)[len(body) // 4], 1),
                 "before": [text(t) for _, t in order[max(0, i - AROUND) : i]],
                 "after": [text(t) for _, t in order[i : i + AROUND]],
             }
@@ -164,6 +173,10 @@ def report(models: list[str]) -> None:
     cache = DecisionCache(OUT / "decisions.jsonl")
     # What the build doesn't already settle: no break set, no chapter opening there.
     open_ = [r for r in rows if not r["built"] and not r.get("chapter")]
+    if "--flush" in sys.argv:  # only where the page opens flush and its paragraphs indent
+        open_ = [r for r in open_ if r.get("flush")]
+    if "--book-flush" in sys.argv:  # flush on the margin of a book that indents
+        open_ = [r for r in open_ if r.get("book_indents") and -2.5 <= r.get("x0_off", 99) <= 3.5]
     missed = [r for r in open_ if r["scene"]]
     print(f"{len(open_)} turns the build sets no break or chapter at; "
           f"{len(missed)} of them scene breaks")
@@ -194,5 +207,5 @@ def report(models: list[str]) -> None:
 
 
 if __name__ == "__main__":
-    what, *models = sys.argv[1:] or ["collect"]
+    what, *models = [a for a in sys.argv[1:] if not a.startswith("--")] or ["collect"]
     {"collect": lambda: collect(), "ask": lambda: ask(models), "report": lambda: report(models)}[what]()
