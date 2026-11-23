@@ -149,8 +149,14 @@ if "--save" in sys.argv:
     side = int(os.environ.get("ROBO_TRAIN_SIDE_BY_SIDE", "1"))
     if side > 1:
         stage(books, path, READINGS, SEATS, key)
+        # Each shard's tree fits get an equal share of the cores (OpenMP threads): n shards
+        # with a thread per core each spent most of the CPU switching between them.
+        threads = str(max(1, (os.cpu_count() or side) // side))
         shards = [
-            subprocess.Popen([sys.executable, *sys.argv], env={**os.environ, "ROBO_TRAIN_SHARD": f"{k}/{side}"})
+            subprocess.Popen(
+                [sys.executable, *sys.argv],
+                env={**os.environ, "ROBO_TRAIN_SHARD": f"{k}/{side}", "OMP_NUM_THREADS": threads},
+            )
             for k in range(side)
         ]
         if any(p.wait() for p in shards):
