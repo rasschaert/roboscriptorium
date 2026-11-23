@@ -120,3 +120,10 @@ def test_selfjev_scores_each_option_by_yes_against_no():
     # a: 2.4 - b: -2.9 → softmax of the two scores
     assert answer.value == "a"
     assert answer.probabilities["a"] == pytest.approx(1 / (1 + math.exp(-5.3)))
+
+
+def test_shisa_de_2_keeps_de_1s_layout_with_its_own_temperature():
+    two = decide.for_model("tokens:shisa-de-2:q8_0", "http://test")
+    assert isinstance(two, decide.Shisa2TokenClient) and two.TEMPERATURE == 1.81
+    assert isinstance(decide.for_model("tokens:shisa-de-1", "http://test"), decide.ShisaTokenClient)
+    assert two.SYSTEM == decide.ShisaTokenClient.SYSTEM

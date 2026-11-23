@@ -272,6 +272,13 @@ class ShisaTokenClient(TokenClient):
         return self.SYSTEM + user + self.BOUNDARY, keys
 
 
+class Shisa2TokenClient(ShisaTokenClient):
+    """Shisa DE-2: DE-1's layout, and its makers' choice temperature for a single read
+    (shisa-ai/shisa-de-2, calibration table). Chosen by `for_model` for `shisa-de-2`."""
+
+    TEMPERATURE = 1.81
+
+
 class SelfjevTokenClient(TokenClient):
     """selfjev-4b asked as its makers' Ollama engine asks it (Jwuthri/SelfJev
     `engine/ollama.py`, prompt `challenger-state-first-v1`): one raw prompt per option,
@@ -355,6 +362,8 @@ def for_model(
     if via:
         return HostedClient(model, via)
     if model.startswith(TokenClient.PREFIX):
+        if "shisa-de-2" in model.lower():
+            return Shisa2TokenClient(ollama_url, model)
         if "shisa-de" in model.lower():
             return ShisaTokenClient(ollama_url, model)
         if "selfjev" in model.lower():
