@@ -331,6 +331,11 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       can tell (a sorter question, "a new scene?"). Het heft (`P_plat`), Villa
       (`Tekst_6-Na-witregel`) and Artemis (`noindent_topspace1`) undeclared, unsure on
       the scan
+      Probe (decisions.md, 2026-11-24): Shisa DE-1 asked "new scene, a letter or document,
+      or the same scene?" on page tops opening flush in a book that indents finds 10 of 18
+      at 0.5 with 4 false. Next: ask it in the build at such page tops and, at 0.5 or more,
+      send a question "a scene break here?" to the review (in a worktree; tuning bench by
+      its questions and breaks found, validation veto). Agent, about half a day.
 
 ## Paragraphs, verse and lists
 
