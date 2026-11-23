@@ -1611,3 +1611,27 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | tryout: judge set v2 first look, shisa-de-1 Q8 vision by tokens | 0 | 1 | 0 |
 | 2026-11-23 | tryout: judge set v2 first look, shisa-de-1 Q8 by tokens | 0 | 0 | 0 |
 | 2026-11-23 | tryout: judge set v2, shisa-de-1 Q8 by tokens | 0 | 4 | 0 |
+| 2026-11-23 | trust data, goede-dochter--ia-scan, shisa | 0 | 22 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, autotrust-27b-vl | 0 | 2 | 0 |
+| 2026-11-23 | trust data, vals-alarm--ia-scan, shisa | 0 | 4 | 0 |
+| 2026-11-23 | trust data, the-nature-of-a-crime--doubleday-1924, shisa | 0 | 1 | 0 |
+| 2026-11-23 | trust data, the-story-of-doctor-dolittle--stokes-1920, shisa | 0 | 3 | 0 |
+| 2026-11-23 | trust data, reis-om-mijn-schedel--ia-scan, shisa | 0 | 5 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, drex-max-v1 affine-q4 text | 0 | 2 | 0 |
+| 2026-11-23 | trust data, afscheid-van-verspilde-tijd--ia-scan, shisa | 0 | 2 | 0 |
+| 2026-11-23 | tryout: judge set v2, drex-max-v1 affine-q4 text | 0 | 16 | 1 |
+| 2026-11-23 | trust data, metro-2033--ia-scan, shisa | 0 | 11 | 0 |
+| 2026-11-23 | trust data, de-cipier--ia-scan, shisa | 0 | 4 | 0 |
+| 2026-11-23 | trust data, artemis--ia-scan, shisa | 0 | 6 | 0 |
+| 2026-11-23 | trust data, de-tuin-van-de-avondnevel--ia-scan, shisa | 0 | 7 | 0 |
+| 2026-11-23 | trust data, de-eerlijke-vinder--ia-scan, shisa | 0 | 4 | 0 |
+| 2026-11-23 | trust data, youre-never-weird-on-the-internet--ia-scan, shisa | 0 | 0 | 0 |
+| 2026-11-23 | trust data, the-thief-takers-apprentice--ia-scan, shisa | 0 | 8 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, selfjev-4b vision | 0 | 1 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, selfjev-4b text | 0 | 1 | 0 |
+| 2026-11-23 | trust data, het-heft-in-eigen-hand--ia-scan, shisa | 0 | 18 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, openjev Q4 vision | 0 | 2 | 0 |
+| 2026-11-23 | tryout: judge set v2 first look, openjev Q4 text | 0 | 2 | 0 |
+| 2026-11-23 | train arbiter, 26 books, offers | 0 | 190 | 0 |
+| 2026-11-23 | bench tuning, production 2026-11-23 | 0 | 6 | 0 |
+| 2026-11-23 | bench tuning, arbiters on 26 books | 0 | 7 | 0 |

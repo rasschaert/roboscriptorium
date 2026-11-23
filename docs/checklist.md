@@ -462,8 +462,6 @@ without effect, and what each would need to be tried again, is in
       readings are cached, so the cost is the panel's judges on the new suspects, a
       trust-data rebuild with `ROBO_PAGE_READERS=1` in its own folder, the arbiter
       retrained and both benches)
-- [ ] De vergelding's own arbiter: it has the most unsure suspects and was never trained
-      on; comes with its trust data (In flight)
 - [ ] Spacing the build sets against the print, read off the crops of 223 silent
       places (2026-11-12, decisions.md; `work/probes/silent/spacing-20261112/`), each a
       repair with its counterexamples tested:
@@ -950,6 +948,7 @@ settled it. The numbers behind them are in [decisions.md](decisions.md) on the d
 
 ## Trust data, the judges and the arbiter
 
+- [x] ~~2026-11-23 De vergelding's own arbiter~~: the 26-book arbiters, benched against production: +144 questions, silent level, De vergelding no better; not taken (decisions.md)
 - [x] ~~The arbiter asks where every judge and the layer agree~~ (2026-11-14, measured, no
       change: `experiments/probe_unanimous.py`): where all four vision judges agree they
       are right on 99.7% of 27,681 trust-data places; the held-out arbiter asks 237 of
