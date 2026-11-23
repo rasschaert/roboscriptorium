@@ -268,6 +268,7 @@ def test_the_bench_records_each_pairs_signals_and_names_a_suspect(monkeypatch, t
             suspects=[],
             ocr_decider="fixed rule",
             poor_pages={},
+            scene_lines={},
         )
         name = spec.split(":")[0].split("/")[-1]
         return scoring.Scored(name, f"book {name}", stages, reference, [], [], 0)
