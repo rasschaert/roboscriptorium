@@ -1600,3 +1600,7 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-23 | trust data 26 (offers-26-1122), vuurspel--ia-scan | 21 | 0 | 0 |
 | 2026-11-23 | trust data 26 (offers-26-1122), monterosso-mon-amour--ia-scan | 88 | 11 | 0 |
 | 2026-11-23 | trust data 26 (offers-26-1122), het-geluid-van-bananen--ia-scan | 315 | 36 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122, side by side), stella | 0 | 8 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122, side by side), het-schaduwhuis--ia-scan | 0 | 26 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122, side by side), ex-minnaar | 0 | 38 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122, side by side), glazuur--ia-scan | 0 | 39 | 0 |
