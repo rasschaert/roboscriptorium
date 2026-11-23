@@ -1552,3 +1552,40 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-22 | train arbiter, judges that see agreeing (ocr-trust-offers-seeing.pkl) | 0 | 235 | 0 |
 | 2026-11-22 | bench tuning, control arbiters of 2026-11-21 | 0 | 5 | 0 |
 | 2026-11-22 | bench tuning, arbiters told the judges that see agree | 0 | 5 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), goede-dochter--ia-scan | 500 | 3 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), vals-alarm--ia-scan | 292 | 2 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), the-nature-of-a-crime--doubleday-1924 | 94 | 1 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), the-story-of-doctor-dolittle--stokes-1920 | 180 | 1 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), reis-om-mijn-schedel--ia-scan | 245 | 1 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), afscheid-van-verspilde-tijd--ia-scan | 116 | 1 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), metro-2033--ia-scan | 458 | 3 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), de-cipier--ia-scan | 474 | 3 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), artemis--ia-scan | 305 | 2 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), de-tuin-van-de-avondnevel--ia-scan | 364 | 3 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), de-eerlijke-vinder--ia-scan | 84 | 0 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), youre-never-weird-on-the-internet--ia-scan | 14 | 0 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), the-thief-takers-apprentice--ia-scan | 282 | 2 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), het-heft-in-eigen-hand--ia-scan | 506 | 3 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), doodskleed--ia-scan | 276 | 1 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), het-ijzige-land--ia-scan | 318 | 3 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), de-kerk-van-de-dode-meisjes--ia-scan | 17 | 0 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), vuurspel--ia-scan | 21 | 0 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), monterosso-mon-amour--ia-scan | 88 | 0 | 0 |
+| 2026-11-22 | trust data 26 (26-1122), het-geluid-van-bananen--ia-scan | 315 | 1 | 0 |
+| 2026-11-23 | trust data 26 (26-1122), het-schaduwhuis--ia-scan | 320 | 2 | 0 |
+| 2026-11-23 | trust data 26 (26-1122), au-pair--ia-scan | 443 | 3 | 0 |
+| 2026-11-23 | trust data 26 (26-1122), de-vergelding--ia-scan | 379 | 3 | 0 |
+| 2026-11-23 | trust data 26 (26-1122), glazuur--ia-scan | 263 | 4 | 0 |
+| 2026-11-23 | trust data 26 (26-1122), stella | 67 | 0 | 0 |
+| 2026-11-23 | trust data 26 (26-1122), ex-minnaar | 273 | 3 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), goede-dochter--ia-scan | 500 | 75 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), vals-alarm--ia-scan | 292 | 42 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), the-nature-of-a-crime--doubleday-1924 | 94 | 1 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), the-story-of-doctor-dolittle--stokes-1920 | 180 | 2 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), reis-om-mijn-schedel--ia-scan | 245 | 34 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), afscheid-van-verspilde-tijd--ia-scan | 116 | 20 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), metro-2033--ia-scan | 458 | 8 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), de-cipier--ia-scan | 474 | 83 | 0 |
+| 2026-11-23 | trust data 26 (offers-26-1122), artemis--ia-scan | 305 | 2 | 0 |
+| 2026-11-23 | train arbiter, 26 books (ocr-trust-26ctl) | 0 | 271 | 0 |
+| 2026-11-23 | train arbiter, 26 books (ocr-trust-26caps) | 0 | 272 | 0 |
