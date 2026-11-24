@@ -1,0 +1,35 @@
+title = "Heldere hemel"
+author = "Tom Lanoye"
+language = "nl"
+# Lanoye is living: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Prometheus' own e-book of the Boekenweekgeschenk 2012 (CPNB; ISBN 978 90 596 5159 3,
+# made by Mat-Zet), no DRM; its text matches the scan at the layer's slip rate (0.42% CER,
+# experiments/probe_candidate.py, 2026-11-24). Flemish author, his first Boekenweekgeschenk.
+# The spine's sections 5–12: "Proloogje" and "Deel 1"–"Deel 7", each opened by an italic
+# line set as printed ("Deel 1……(duizend kilometer verderop)", P_intro, kept as text)
+# and a heading of three lines ("Aan een parachute, / in het Poolse luchtruim, / en in
+# ongenade"); the half title, the gift notice, the title page, the motto and the colophon
+# are left out. The e-book writes the fi and fl ligatures as single characters.
+[reference]
+source = "Heldere hemel, Prometheus e-book of the Boekenweekgeschenk 2012, ISBN 978 90 596 5159 3 (EPUB)"
+sha256 = "44895a75b9cfd9111e83b461f87b9ee0c7429e20b65072d7fef05f7bc27e1a48"
+files = [
+  "OPS/section-0005.html", "OPS/section-0006.html", "OPS/section-0007.html", "OPS/section-0008.html",
+  "OPS/section-0009.html", "OPS/section-0010.html", "OPS/section-0011.html", "OPS/section-0012.html",
+]
+heading_prefixes = ["P_intro", "P_tt", "P_Standard__And__Times__And__14pt__And__Bold"]
+# Each heading is four heading paragraphs in a row, the italic part line first: one heading.
+heading_lines = true
+
+# The Boekenweekgeschenk 2012 as printed (CPNB, March 2012); IA Scribe scan (6.5), 360 ppi
+# MRC, GlyphLessFont layer, ~286×512 pt, 104 pages. Single quotes, which the layer reads
+# as doubles. Internet Archive lends it only, so it is placed by hand (sourced by the user,
+# 2026-11-24).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/helderehemelnove0000lano (borrow, then download the PDF)"
+sha256 = "ac710bcc6ef34133a977e5e84b4ac4feb51a0c66b24515e94221dbaece1e456c"
+cover_page = 1
+body_pages = [9, 98]

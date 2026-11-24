@@ -472,3 +472,30 @@ def test_two_single_marks_become_the_double_one_the_print_sets(tmp_path):
     assert one.paragraphs == ["‘Hij schreef: “De keizer rookt.” En ’s nachts ‘’t Is.’"]
     (kept,) = publisher_epub.read(epub, ["Text/a.html"], ())
     assert kept.paragraphs == ["‘Hij schreef: ‘‘De keizer rookt.’’ En ’s nachts ‘’t Is.’"]
+
+
+def test_heading_paragraphs_in_a_row_are_one_heading_when_the_manifest_says_so(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                '<p class="tt">Thuis,</p><p class="tt">in Kooigem,</p><p class="tt">en in dubio</p>'
+                "<p>Het was laat.</p>"
+                '<p class="tt">Op straat,</p><p class="tt">in de auto,</p><p>Ze reed.</p>'
+            ),
+        )
+    joined = publisher_epub.read(epub, ["Text/a.html"], ("tt",), heading_lines=True)
+    assert [(s.heading, s.full_heading) for s in joined] == [
+        ("Thuis,", "Thuis, in Kooigem, en in dubio"),
+        ("Op straat,", "Op straat, in de auto,"),
+    ]
+    assert [s.paragraphs for s in joined] == [["Het was laat."], ["Ze reed."]]
+    apart = publisher_epub.read(epub, ["Text/a.html"], ("tt",))
+    assert [s.heading for s in apart] == [
+        "Thuis,",
+        "in Kooigem,",
+        "en in dubio",
+        "Op straat,",
+        "in de auto,",
+    ]

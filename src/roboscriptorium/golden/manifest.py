@@ -98,6 +98,9 @@ class PublisherEpub:
     # The EPUB writes a double quote mark as two single ones ("‘‘De keizer"): those become
     # the double mark the print sets.
     doubled_singles: bool = False
+    # Its headings run over several heading paragraphs in a row ("Thuis, / in Kooigem, / en
+    # in dubio"): they are one heading, its first line the short one.
+    heading_lines: bool = False
 
 
 @dataclass(frozen=True)
@@ -199,6 +202,7 @@ class Golden:
                 ref.get("breaks_unlike_print", ""),
                 ref.get("stray_spaces", False),
                 ref.get("doubled_singles", False),
+                ref.get("heading_lines", False),
             )
         )
         se = data.get("standard_ebooks")
