@@ -177,3 +177,21 @@ def test_the_guard_unloads_once_when_memory_runs_low(monkeypatch, tmp_path):
         pass
     # 60% runs; 20% unloads (then reads 18% after); the next low reading waits RELIEF_GAP.
     assert relieved == [[50]]
+
+
+def test_a_new_guard_continues_the_runs_an_ended_one_froze_to_unload(monkeypatch, tmp_path):
+    monkeypatch.setattr(priority, "HELD", tmp_path / "battery-held")
+    record = tmp_path / "memory-frozen"
+    sent, seen = [], []
+    monkeypatch.setattr(priority.os, "kill", lambda pid, sig: sent.append((pid, sig)))
+    monkeypatch.setattr(priority, "_stopped", lambda pids: set())
+    monkeypatch.setattr(priority, "unload_models", lambda: [])
+    monkeypatch.setattr(priority.time, "sleep", lambda s: seen.append(record.read_text().split()))
+    priority.relieve([50, 52])
+    assert seen == [["50", "52"]] and not record.exists()  # kept only while frozen
+    # A guard killed while it drains leaves the record; the next one continues them.
+    record.write_text("50\n52\n")
+    sent.clear()
+    priority._continue_left_frozen()
+    assert sent == [(50, signal.SIGCONT), (52, signal.SIGCONT)]
+    assert not record.exists()

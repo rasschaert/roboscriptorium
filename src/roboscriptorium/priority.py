@@ -160,12 +160,29 @@ def relieve(pids: list[int]) -> list[str]:
     unloads the models, and continues the runs it froze."""
     held = _stopped(pids)
     froze = [p for p in pids if p not in held]
+    record = HELD.with_name("memory-frozen")
+    record.parent.mkdir(parents=True, exist_ok=True)
+    record.write_text("".join(f"{p}\n" for p in froze))
     _signal(froze, signal.SIGSTOP)
     try:
         time.sleep(DRAIN)
         return unload_models()
     finally:
         _signal(froze, signal.SIGCONT)
+        record.unlink(missing_ok=True)
+
+
+def _continue_left_frozen() -> None:
+    """Continues the runs a guard froze to unload models and never continued: one ended
+    in the middle of `relieve` (a restart) leaves them stopped, and a new guard would take
+    them for a pause by hand."""
+    record = HELD.with_name("memory-frozen")
+    try:
+        pids = [int(p) for p in record.read_text().split()]
+    except (OSError, ValueError):
+        return
+    _signal(pids, signal.SIGCONT)
+    record.unlink(missing_ok=True)
 
 
 def hold(level: int | None, held: bool, floor: int = FLOOR, resume: int = RESUME) -> bool:
@@ -203,6 +220,7 @@ def guard(every: int = 60) -> None:
     Ollama, a model download can fill the disk, and the battery gate only checks when a
     run starts. Prints each change, and the battery level at every 5%."""
     _replace_older_guard()
+    _continue_left_frozen()
     floor = int(os.environ.get("ROBO_BATTERY_FLOOR", FLOOR))
     resume = int(os.environ.get("ROBO_BATTERY_RESUME", RESUME))
     held = HELD.exists()
