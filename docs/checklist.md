@@ -216,8 +216,9 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       ("Justicar", "Oberjarl", "skirl", "SS." for "ss.", "w."). Render draws small capitals
       (`rendercheck.drawings`, `SMALL_CAPS`) yet picked "sr" over Nervous System's "SF":
       probed 2026-11-24 (decisions.md): drawn at x-height, small capitals fit lower case
-      too (sizes by the face: 41 wrong for 9 right). Waiting to go with render's next
-      change: prefer a one-case version among fits within 0.02 (7 right, 0 wrong). Still
+      too (sizes by the face: 41 wrong for 9 right). Swept 2026-11-24 (decisions.md): the top is
+      0.74–0.84, best pair 0.76 and 0.80 (1,656 → 1,667 of 1,713), with the one-case preference
+      among fits within 0.02 1,668: next, both in render, redrawn, retrained, benched. Still
       open: a signal that tells x-height small capitals from lower case (the letter
       widths, which small capitals set wider; the word list's capital form in its language)
 - [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
