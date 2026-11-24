@@ -218,7 +218,10 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       probed 2026-11-24 (decisions.md): drawn at x-height, small capitals fit lower case
       too (sizes by the face: 41 wrong for 9 right). Swept 2026-11-24 (decisions.md): the top is
       0.74–0.84, best pair 0.76 and 0.80 (1,656 → 1,667 of 1,713), with the one-case preference
-      among fits within 0.02 1,668: next, both in render, redrawn, retrained, benched. Still
+      among fits within 0.02 1,668; benched without retraining: not taken (case 2 fixed, 7 made,
+      Au pair's small capitals at 0.75 now too small to draw). Stretch null, line x-height as
+      measured null (decisions.md). Open: the arbiter retrained on it (hours of CPU); like with
+      like within a book. Still
       open: a signal that tells x-height small capitals from lower case (the letter
       widths, which small capitals set wider; the word list's capital form in its language)
 - [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
