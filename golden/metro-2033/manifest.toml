@@ -19,6 +19,10 @@ files = [
   "dmit_9780575086265_oeb_c01_r1.html", "dmit_9780575086265_oeb_c02_r1.html", "dmit_9780575086265_oeb_c03_r1.html", "dmit_9780575086265_oeb_c04_r1.html", "dmit_9780575086265_oeb_c05_r1.html", "dmit_9780575086265_oeb_c06_r1.html", "dmit_9780575086265_oeb_c07_r1.html", "dmit_9780575086265_oeb_c08_r1.html", "dmit_9780575086265_oeb_c09_r1.html", "dmit_9780575086265_oeb_c10_r1.html", "dmit_9780575086265_oeb_c11_r1.html", "dmit_9780575086265_oeb_c12_r1.html", "dmit_9780575086265_oeb_c13_r1.html", "dmit_9780575086265_oeb_c14_r1.html", "dmit_9780575086265_oeb_c15_r1.html", "dmit_9780575086265_oeb_c16_r1.html", "dmit_9780575086265_oeb_c17_r1.html", "dmit_9780575086265_oeb_c18_r1.html", "dmit_9780575086265_oeb_c19_r1.html", "dmit_9780575086265_oeb_c20_r1.html"
 ]
 heading_prefixes = ["ct", "cst"]
+# A scene break: an empty div, then a "tx1" paragraph, unindented (33; checked on the scan,
+# pp. 203, 344). "tx1" also opens each chapter (no break there) and once an inset letter
+# ("Du stirbst", inside "atx1"): a break too many where it follows the text.
+opening_classes = ["tx1"]
 hyphen_dash = "–"
 italics_unlike_print = "the print sets every station name in italics, the eBook two in its first five chapters"
 

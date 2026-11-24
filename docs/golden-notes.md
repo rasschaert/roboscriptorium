@@ -174,17 +174,16 @@ its reference, is proposed for retirement or a lesser role. Last reviewed 2026-1
 0.08–1.34% against 0.88%; no book over 0.82% of body lines unplaced (De geruchten). No
 pair added or retired since 2026-11-14; Au pair, De vergelding and Glazuur joined the
 arbiter's trust data (26 books). Two doubts, both about what a reference marks:
-- **Scene breaks**: ten references mark none where the build sets 6–62. Six were the
+- **Scene breaks**: ten references mark none where the build sets 6–62. Seven were the
   references' fault, an opening class left undeclared, each checked on the scan and
   declared (Vals alarm `standaard-eerste-alinea`, Het heft in eigen hand `P_plat`, Het
   geluid van bananen `body1rgl`, Het schaduwhuis `ParaOverride-1`, whose e-book sets one
   break the print doesn't, PDF 48; and De geruchten's blank-line paragraphs `wp-witregel` as
-  breaks; Het laatste bevel's `calibre21` blocks, 2026-11-25: 152 where the build sets 21). You're Never
+  breaks; Het laatste bevel's `calibre21` blocks, 2026-11-25: 152 where the build sets 21; Metro 2033's `tx1` after an empty div, 15 where the build sets 16). You're Never
   Weird's `noindent` follows its section headings: no break. Het ijzige land's e-book
   (converted by calibre) dropped its breaks, plain `para` on both sides of breaks the scan
   shows (pp. 171, 185): nothing to declare, its scene column measures nothing. Open, with
-  leads: Metro 2033 (an empty `<div>` then a `tx1` paragraph, but `tx1` also opens an inset
-  letter), De stilte van
+  leads: De stilte van
   de hel (nothing in the e-book at two built breaks: crops to tell a dropped break from a
   false one), Vuurspel (the build sets none now).
 - **Small capitals written in lower case**: Au pair's e-book writes every one so (nine
