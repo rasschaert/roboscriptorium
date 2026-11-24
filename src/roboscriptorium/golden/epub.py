@@ -239,6 +239,9 @@ def read(
     sections: list[Section] = []
     with zipfile.ZipFile(epub) as z:
         for name in files:
+            # A heading's lines join only within one file: a part title's file ends where
+            # its first chapter's heading begins.
+            lines_from = len(sections)
             body = _parse(z.read(_member(z, name))).find(f"{XHTML}body")
             _hide(body, hidden)
             _capitalise(body, capitals)
@@ -294,7 +297,7 @@ def read(
                         continue  # a heading of marks alone is no chapter
                     if (
                         heading_lines
-                        and sections
+                        and len(sections) > lines_from
                         and sections[-1].heading
                         and not sections[-1].paragraphs
                     ):

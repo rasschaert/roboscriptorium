@@ -1,0 +1,70 @@
+title = "Vele hemels boven de zevende"
+author = "Griet Op de Beeck"
+language = "nl"
+# Op de Beeck is living: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Prometheus' e-book (2013, ISBN 90 446 2325 7, no DRM), passed once through calibre (its
+# class names), its text matching the scan at the layer's slip rate (0.36% CER, OCR slips
+# only: "ij" read "y", "hè" read "hé", "Tk" for "Ik"; experiments/probe_candidate.py,
+# 2026-11-24). Flemish author, her debut. The spine's sections 5–74: eleven parts, each
+# its number over its title on a page of its own ("1" then "SOMMIGE MENSEN VERGETEN
+# NIKS", joined as one heading, `heading_lines`), and chapters headed by the narrator's
+# name in small capitals ("EVA", "LOU", "CASPER", "ELSIE", "JOS", written as capitals);
+# the title page, the dedication and colophon and the mottos are left out. Small capitals
+# in the text ("BMX", "IQ") are written as capitals too.
+[reference]
+source = "Vele hemels boven de zevende, Prometheus e-book 2013, ISBN 90 446 2325 7 (EPUB, via calibre)"
+sha256 = "2dfd340184cfb992fd419854e87283f54fd70772e1bf17277b60812bd2fb8604"
+files = [
+  "OEBPS/Text/Section0005.html", "OEBPS/Text/Section0006.html",
+  "OEBPS/Text/Section0007.html", "OEBPS/Text/Section0008.html",
+  "OEBPS/Text/Section0009.html", "OEBPS/Text/Section0010.html",
+  "OEBPS/Text/Section0011.html", "OEBPS/Text/Section0012.html",
+  "OEBPS/Text/Section0013.html", "OEBPS/Text/Section0014.html",
+  "OEBPS/Text/Section0015.html", "OEBPS/Text/Section0016.html",
+  "OEBPS/Text/Section0017.html", "OEBPS/Text/Section0018.html",
+  "OEBPS/Text/Section0019.html", "OEBPS/Text/Section0020.html",
+  "OEBPS/Text/Section0021.html", "OEBPS/Text/Section0022.html",
+  "OEBPS/Text/Section0023.html", "OEBPS/Text/Section0024.html",
+  "OEBPS/Text/Section0025.html", "OEBPS/Text/Section0026.html",
+  "OEBPS/Text/Section0027.html", "OEBPS/Text/Section0028.html",
+  "OEBPS/Text/Section0029.html", "OEBPS/Text/Section0030.html",
+  "OEBPS/Text/Section0031.html", "OEBPS/Text/Section0032.html",
+  "OEBPS/Text/Section0033.html", "OEBPS/Text/Section0034.html",
+  "OEBPS/Text/Section0035.html", "OEBPS/Text/Section0036.html",
+  "OEBPS/Text/Section0037.html", "OEBPS/Text/Section0038.html",
+  "OEBPS/Text/Section0039.html", "OEBPS/Text/Section0040.html",
+  "OEBPS/Text/Section0041.html", "OEBPS/Text/Section0042.html",
+  "OEBPS/Text/Section0043.html", "OEBPS/Text/Section0044.html",
+  "OEBPS/Text/Section0045.html", "OEBPS/Text/Section0046.html",
+  "OEBPS/Text/Section0047.html", "OEBPS/Text/Section0048.html",
+  "OEBPS/Text/Section0049.html", "OEBPS/Text/Section0050.html",
+  "OEBPS/Text/Section0051.html", "OEBPS/Text/Section0052.html",
+  "OEBPS/Text/Section0053.html", "OEBPS/Text/Section0054.html",
+  "OEBPS/Text/Section0055.html", "OEBPS/Text/Section0056.html",
+  "OEBPS/Text/Section0057.html", "OEBPS/Text/Section0058.html",
+  "OEBPS/Text/Section0059.html", "OEBPS/Text/Section0060.html",
+  "OEBPS/Text/Section0061.html", "OEBPS/Text/Section0062.html",
+  "OEBPS/Text/Section0063.html", "OEBPS/Text/Section0064.html",
+  "OEBPS/Text/Section0065.html", "OEBPS/Text/Section0066.html",
+  "OEBPS/Text/Section0067.html", "OEBPS/Text/Section0068.html",
+  "OEBPS/Text/Section0069.html", "OEBPS/Text/Section0070.html",
+  "OEBPS/Text/Section0071.html", "OEBPS/Text/Section0072.html",
+  "OEBPS/Text/Section0073.html", "OEBPS/Text/Section0074.html",
+]
+heading_prefixes = ["Pkop", "Pdeeltitel", "PplatAnd17ptAndCentreAlignment"]
+# A part's number over its title: one heading (within one file only).
+heading_lines = true
+italic_classes = ["CCurrentAndItalic", "PplatAndItalicAndCentreAlignment"]
+
+# The 37th printing (Prometheus 2015, ISBN 978 90 446 2769 5; first printing 2013, typeset
+# by Mat-Zet); IA Scribe scan (6.4), 360 ppi MRC, GlyphLessFont layer, ~353×578 pt, 276
+# pages. Single quotes, which the layer reads as doubles. Internet Archive lends it only,
+# so it is placed by hand (sourced by the user, 2026-11-24).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/velehemelsbovend0000grie (borrow, then download the PDF)"
+sha256 = "be218fdcd51fc01a874a58087621261042d0451c2f375a4f0b0165d9fd05045e"
+cover_page = 1
+body_pages = [9, 273]

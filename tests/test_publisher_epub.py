@@ -499,3 +499,18 @@ def test_heading_paragraphs_in_a_row_are_one_heading_when_the_manifest_says_so(t
         "Op straat,",
         "in de auto,",
     ]
+
+
+def test_heading_lines_join_only_within_one_file(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html", PAGE.format('<p class="n">1</p><p class="t">SOMMIGE MENSEN</p>')
+        )
+        z.writestr(
+            "OEBPS/Text/b.html", PAGE.format('<p class="t">EVA</p><p>Wat heb ik gezien?</p>')
+        )
+    sections = publisher_epub.read(
+        epub, ["Text/a.html", "Text/b.html"], ("n", "t"), heading_lines=True
+    )
+    assert [s.full_heading for s in sections] == ["1 SOMMIGE MENSEN", "EVA"]

@@ -81,7 +81,11 @@ SETS = {
         "de-geruchten--ia-scan:9-97:2-22",
         "vanille-en-andere-smaken--dbnl-scan:9-79:1-16",
     ],
-    "first-look": ["in-haar-schoenen--ia-scan:9-108:1-15", "heldere-hemel--ia-scan"],
+    "first-look": [
+        "in-haar-schoenen--ia-scan:9-108:1-15",
+        "heldere-hemel--ia-scan",
+        "vele-hemels-boven-de-zevende--ia-scan:9-88:1-20",
+    ],
     # The quick tier, for a change's short test: a chapter or two of each tuning book
     # (a later one where the first are front matter or a single short one), ending where
     # the next opens a page; Monterosso's chapters run on, so it has no such end.
