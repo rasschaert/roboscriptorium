@@ -1704,3 +1704,5 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-24 | bench tuning, the scene question | 0 | 7 | 0 |
 | 2026-11-24 | bench validation, production on main (Shisa adopted) | 0 | 1 | 0 |
 | 2026-11-24 | bench validation, the scene question | 0 | 1 | 0 |
+| 2026-11-24 | bench tuning, main with the scene question on | 0 | 5 | 0 |
+| 2026-11-24 | bench tuning, render's small capitals at 0.76 and 0.80, one-case preference | 0 | 40 | 0 |
