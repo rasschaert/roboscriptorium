@@ -222,8 +222,11 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       Au pair's small capitals at 0.75 now too small to draw). Stretch null, line x-height as
       measured null (decisions.md). Open: the arbiter retrained on it (hours of CPU); like with
       like, the user's tell (2026-11-24: "the s is noticeably taller than another s would be"):
-      the doubtful letter's ink height against the same letter in lower case on its line or
-      page (an s against the plain words' s), not against the x-height band; minutes, no model. Still
+      the doubtful letter's ink height against the round lower-case letters of its own line
+      ("where on the same line the o, r, c reach, the s is taller"): each letter's top from
+      its own blob of ink, the line's x-line from where its o, c, e and s blobs top out (round
+      letters overshoot alike), the doubtful word's blobs against that; not the x-height band
+      of the line's ink profile, which was coarser than the 3 pixels; minutes, no model. Still
       open: a signal that tells x-height small capitals from lower case (the letter
       widths, which small capitals set wider; the word list's capital form in its language)
 - [ ] **The arbiter retrained on render's new small-capital sizes** (the user, 2026-11-24:
