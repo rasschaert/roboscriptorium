@@ -53,7 +53,7 @@ in [how-it-works.md](how-it-works.md). Keep this file true when a module changes
   starts meanwhile. A request to Ollama paused mid-way gets its answer when it continues.
   `guard()` (`experiments/battery_guard.sh`, in its own screen `robo-battery-guard`) stops
   the same runs mid-flight while the battery is under 30% or the disk has under 5 GB free,
-  and continues them once it is back at 50% and 15 GB, checking each minute; `work/runs/battery-held` keeps the hold across a restart, and a guard started while an older one runs ends it (`work/runs/battery-guard.pid`): quitting a guard's screen can leave its process running, stopping what the new one continues. Both leave
+  and continues them once it is back at 50% and 15 GB, checking each minute; `work/runs/battery-held` keeps the hold across a restart, and a guard started while an older one runs ends it (`work/runs/battery-guard.pid`): quitting a guard's screen can leave its process running, stopping what the new one continues. Under 25% of memory free (`memory_free`, macOS's `memory_pressure`) it unloads Ollama's models (`relieve`): the runs are frozen, their requests in flight get a minute to end, the models are unloaded, the runs continue and reload them; at most once in ten minutes. Both leave
   each window's own process (screen's child) running: screen continues a window whose own
   process stops, and the whole window with it.
 - `clients/openrouter.py`: a hosted model, named `openrouter:<model>@<provider tag>`

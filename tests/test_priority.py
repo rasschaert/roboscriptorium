@@ -101,6 +101,7 @@ def test_the_guard_holds_the_runs_while_the_disk_is_nearly_full(monkeypatch, tmp
     monkeypatch.setattr(priority, "HELD", tmp_path / "battery-held")
     monkeypatch.setattr(priority, "battery", lambda: 90)
     monkeypatch.setattr(priority, "disk_free", lambda: next(frees))
+    monkeypatch.setattr(priority, "memory_free", lambda: 90)
     monkeypatch.setattr(priority, "_agent_processes", lambda skip="": ([50], ["robo-bench"]))
     monkeypatch.setattr(priority.os, "kill", lambda pid, sig: sent.append(sig))
     held = []
@@ -139,3 +140,40 @@ def test_a_recorded_pid_that_is_no_guard_any_more_is_left_alone(monkeypatch, tmp
     monkeypatch.setattr(priority, "_is_guard", lambda pid: False)
     priority._replace_older_guard()
     assert sent == []
+
+
+def test_low_memory_freezes_the_runs_unloads_the_models_and_continues_them(monkeypatch):
+    sent, order = [], []
+    monkeypatch.setattr(priority.os, "kill", lambda pid, sig: sent.append((pid, sig)))
+    monkeypatch.setattr(priority, "_stopped", lambda pids: {51})  # held by hand: stays
+    monkeypatch.setattr(priority.time, "sleep", lambda s: order.append(("drain", s)))
+    monkeypatch.setattr(priority, "unload_models", lambda: order.append("unload") or ["qwen"])
+    assert priority.relieve([50, 51]) == ["qwen"]
+    assert order == [("drain", priority.DRAIN), "unload"]
+    assert sent == [(50, signal.SIGSTOP), (50, signal.SIGCONT)]
+
+
+def test_the_guard_unloads_once_when_memory_runs_low(monkeypatch, tmp_path):
+    monkeypatch.setattr(priority, "HELD", tmp_path / "battery-held")
+    monkeypatch.setattr(priority, "battery", lambda: 90)
+    monkeypatch.setattr(priority, "disk_free", lambda: 100)
+    frees = iter([60, 20, 18, 70])
+    monkeypatch.setattr(priority, "memory_free", lambda: next(frees, 70))
+    monkeypatch.setattr(priority, "_agent_processes", lambda skip="": ([50], ["robo-x"]))
+    relieved = []
+    monkeypatch.setattr(priority, "relieve", lambda pids: relieved.append(pids) or ["qwen"])
+    ticks = []
+
+    def tick(_):
+        ticks.append(1)
+        if len(ticks) == 3:
+            raise StopIteration
+
+    monkeypatch.setattr(priority.time, "sleep", tick)
+    monkeypatch.setattr(priority, "_replace_older_guard", lambda: None)
+    try:
+        priority.guard()
+    except StopIteration:
+        pass
+    # 60% runs; 20% unloads (then reads 18% after); the next low reading waits RELIEF_GAP.
+    assert relieved == [[50]]

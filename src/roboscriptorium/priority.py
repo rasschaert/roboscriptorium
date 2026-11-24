@@ -112,6 +112,15 @@ FLOOR, RESUME = 30, 50
 DISK_FLOOR, DISK_RESUME = 5, 15
 # Present while the guard holds the runs, so a restarted guard holds them too.
 HELD = Path("work/runs/battery-held")
+# The share of memory free (macOS's memory_pressure) under which Ollama's models are
+# unloaded: its MLX runner grows while it answers (qwen3.8 27B from 45 to 86 GB over two
+# hours on 2026-11-24, past the 64 GB in the machine), and the swapping it causes crashes
+# the user's applications. The runs are frozen first and their requests in flight given
+# DRAIN seconds, so no request meets a model being unloaded; the next request reloads it.
+MEMORY_FLOOR = 25
+DRAIN = 60
+RELIEF_GAP = 600  # seconds between two unloads at least
+OLLAMA = os.environ.get("ROBO_OLLAMA_URL", "http://127.0.0.1:11434")
 
 
 def battery() -> int | None:
@@ -124,6 +133,39 @@ def battery() -> int | None:
 def disk_free() -> int:
     """Whole gigabytes free on the disk that holds work/."""
     return shutil.disk_usage(HELD.parent if HELD.parent.exists() else ".").free // 10**9
+
+
+def memory_free() -> int | None:
+    """The share of memory free in percent, or None where it can't be read."""
+    out = subprocess.run(["memory_pressure"], capture_output=True, text=True).stdout
+    found = re.search(r"free percentage:\s*(\d+)%", out)
+    return int(found.group(1)) if found else None
+
+
+def unload_models() -> list[str]:
+    """Unloads every model Ollama holds; returns their names."""
+    import httpx
+
+    try:
+        loaded = [m["name"] for m in httpx.get(f"{OLLAMA}/api/ps", timeout=10).json()["models"]]
+        for name in loaded:
+            httpx.post(f"{OLLAMA}/api/generate", json={"model": name, "keep_alive": 0}, timeout=60)
+    except httpx.HTTPError:
+        return []
+    return loaded
+
+
+def relieve(pids: list[int]) -> list[str]:
+    """Frees Ollama's memory under the runs: freezes them, lets requests in flight end,
+    unloads the models, and continues the runs it froze."""
+    held = _stopped(pids)
+    froze = [p for p in pids if p not in held]
+    _signal(froze, signal.SIGSTOP)
+    try:
+        time.sleep(DRAIN)
+        return unload_models()
+    finally:
+        _signal(froze, signal.SIGCONT)
 
 
 def hold(level: int | None, held: bool, floor: int = FLOOR, resume: int = RESUME) -> bool:
@@ -165,8 +207,19 @@ def guard(every: int = 60) -> None:
     resume = int(os.environ.get("ROBO_BATTERY_RESUME", RESUME))
     held = HELD.exists()
     by_battery, by_disk, last = held, held, None
+    relieved = 0.0
     while True:
         level, free = battery(), disk_free()
+        memory = memory_free()
+        if not held and memory is not None and memory < MEMORY_FLOOR:
+            if time.monotonic() - relieved > RELIEF_GAP:
+                pids, _ = _agent_processes(skip=GUARD)
+                gone = relieve(pids)
+                relieved = time.monotonic()
+                names = ", ".join(gone) or "nothing"
+                now_free = memory_free()
+                print(f"{time.strftime('%H:%M')} memory {memory}% free: unloaded {names}, "
+                      f"now {now_free}%", flush=True)  # fmt: skip
         by_battery = hold(level, by_battery, floor, resume)
         by_disk = hold(free, by_disk, DISK_FLOOR, DISK_RESUME)
         now = by_battery or by_disk
