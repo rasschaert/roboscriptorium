@@ -23,7 +23,7 @@ name, cls, mode = sys.argv[1:4]
 n = int(sys.argv[4]) if len(sys.argv) > 4 else 3
 manifest = Golden.load(name)
 ref = manifest.reference
-spec = next(s for s in bench.SETS["tuning"] + bench.SETS["validation"] if s.startswith(name + "--"))
+spec = next(s for s in bench.SETS["tuning"] + bench.SETS["validation"] + bench.SETS["first-look"] if s.startswith(name + "--"))
 scan = Path("work") / spec.split(":")[0] / "source.pdf"
 out = Path("work/probes/break-classes")
 out.mkdir(parents=True, exist_ok=True)

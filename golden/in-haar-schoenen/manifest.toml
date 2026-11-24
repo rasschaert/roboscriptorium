@@ -1,0 +1,57 @@
+title = "In haar schoenen"
+author = "Jennifer Weiner"
+language = "nl"
+# Weiner is living: under copyright, so only this manifest is in git.
+eu_copyright_until = 2200
+
+# Meulenhoff Boekerij's own e-book (2016, ISBN 978 94 6092 464 4, no DRM; "Deze titel
+# verscheen eerder bij Uitgeverij Prometheus", "© Nederlandse vertaling 2003/2016"): the
+# 2003 translation reset by ZetSpiegel, its text matching the scan at the layer's own slip
+# rate (0.15–0.32% CER a band of pages, experiments/probe_candidate.py, 2026-11-24). The
+# spine's files 3–66 (chapter 1 in "Section0003"): three parts ("I In haar schoenen", "II Verder studeren", "III Ik
+# draag je hart met me mee"), chapters 1–60 as h1 numerals, "Woord van dank" and
+# "Verantwoording van de gedichten"; the blurb, the title page, the colophon and the
+# excerpt from another novel at the end are left out. Italics are "Times-Italic" spans.
+# Each chapter's first line is set in small capitals ("Times-SC", 0.667em), written as
+# capitals, so nothing undoes them. Single quotes, as the print sets them.
+[reference]
+source = "In haar schoenen, Meulenhoff Boekerij e-book 2016 (the 2003 Prometheus translation), ISBN 978 94 6092 464 4 (EPUB)"
+sha256 = "945b1801b4fa48a1f572d04ed5b5118a6b3364f80ee21f3051cbfb4e9705c5ea"
+files = [
+  "OEBPS/Text/In_haar_schoenen_epub-3.xhtml", "OEBPS/Text/Section0003.xhtml", "OEBPS/Text/In_haar_schoenen_epub-4.xhtml", "OEBPS/Text/In_haar_schoenen_epub-5.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-6.xhtml", "OEBPS/Text/In_haar_schoenen_epub-7.xhtml", "OEBPS/Text/In_haar_schoenen_epub-8.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-9.xhtml", "OEBPS/Text/In_haar_schoenen_epub-10.xhtml", "OEBPS/Text/In_haar_schoenen_epub-11.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-12.xhtml", "OEBPS/Text/In_haar_schoenen_epub-13.xhtml", "OEBPS/Text/In_haar_schoenen_epub-14.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-15.xhtml", "OEBPS/Text/In_haar_schoenen_epub-16.xhtml", "OEBPS/Text/In_haar_schoenen_epub-17.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-18.xhtml", "OEBPS/Text/In_haar_schoenen_epub-19.xhtml", "OEBPS/Text/In_haar_schoenen_epub-20.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-21.xhtml", "OEBPS/Text/In_haar_schoenen_epub-22.xhtml", "OEBPS/Text/In_haar_schoenen_epub-23.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-24.xhtml", "OEBPS/Text/In_haar_schoenen_epub-25.xhtml", "OEBPS/Text/In_haar_schoenen_epub-26.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-27.xhtml", "OEBPS/Text/In_haar_schoenen_epub-28.xhtml", "OEBPS/Text/In_haar_schoenen_epub-29.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-30.xhtml", "OEBPS/Text/In_haar_schoenen_epub-31.xhtml", "OEBPS/Text/In_haar_schoenen_epub-32.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-33.xhtml", "OEBPS/Text/In_haar_schoenen_epub-34.xhtml", "OEBPS/Text/In_haar_schoenen_epub-35.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-36.xhtml", "OEBPS/Text/In_haar_schoenen_epub-37.xhtml", "OEBPS/Text/In_haar_schoenen_epub-38.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-39.xhtml", "OEBPS/Text/In_haar_schoenen_epub-40.xhtml", "OEBPS/Text/In_haar_schoenen_epub-41.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-42.xhtml", "OEBPS/Text/In_haar_schoenen_epub-43.xhtml", "OEBPS/Text/In_haar_schoenen_epub-44.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-45.xhtml", "OEBPS/Text/In_haar_schoenen_epub-46.xhtml", "OEBPS/Text/In_haar_schoenen_epub-47.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-48.xhtml", "OEBPS/Text/In_haar_schoenen_epub-49.xhtml", "OEBPS/Text/In_haar_schoenen_epub-50.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-51.xhtml", "OEBPS/Text/In_haar_schoenen_epub-52.xhtml", "OEBPS/Text/In_haar_schoenen_epub-53.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-54.xhtml", "OEBPS/Text/In_haar_schoenen_epub-55.xhtml", "OEBPS/Text/In_haar_schoenen_epub-56.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-57.xhtml", "OEBPS/Text/In_haar_schoenen_epub-58.xhtml", "OEBPS/Text/In_haar_schoenen_epub-59.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-60.xhtml", "OEBPS/Text/In_haar_schoenen_epub-61.xhtml", "OEBPS/Text/In_haar_schoenen_epub-62.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-63.xhtml", "OEBPS/Text/In_haar_schoenen_epub-64.xhtml", "OEBPS/Text/In_haar_schoenen_epub-65.xhtml",
+  "OEBPS/Text/In_haar_schoenen_epub-66.xhtml",
+]
+heading_prefixes = []
+italic_classes = ["Times-Italic", "Times-SC-italic"]
+
+# The second printing (Prometheus, April 2003, ISBN 90 446 0240 3) of the first edition;
+# IA Scribe scan (4.5, digitized 2021), 360 ppi MRC, GlyphLessFont layer, ~329×567 pt, 396
+# pages. Single quotes, which the layer reads as doubles; each chapter's first line in
+# small capitals. Internet Archive lends it only, so it is placed by hand (sourced by the
+# user, 2026-11-24).
+[[scans]]
+id = "ia-scan"
+source = "https://archive.org/details/inhaarschoenen0000wein_p3h3 (borrow, then download the PDF)"
+sha256 = "69a77dc2c3813ae78f67a91341dd9428c595c33fc9de1f581b59dc48b6c19995"
+cover_page = 1
+body_pages = [9, 391]
