@@ -182,10 +182,9 @@ arbiter's trust data (26 books). Two doubts, both about what a reference marks:
   breaks; Het laatste bevel's `calibre21` blocks, 2026-11-25: 152 where the build sets 21; Metro 2033's `tx1` after an empty div, 15 where the build sets 16). You're Never
   Weird's `noindent` follows its section headings: no break. Het ijzige land's e-book
   (converted by calibre) dropped its breaks, plain `para` on both sides of breaks the scan
-  shows (pp. 171, 185): nothing to declare, its scene column measures nothing. Open, with
-  leads: De stilte van
-  de hel (nothing in the e-book at two built breaks: crops to tell a dropped break from a
-  false one), Vuurspel (the build sets none now).
+  shows (pp. 171, 185): nothing to declare, its scene column measures nothing. De stilte van de hel's e-book dropped its breaks as well (`normaal` on both sides of a
+  white line on the scan, p. 46), and Vuurspel's, of the same Bruna series, is taken to be
+  the same (the build sets none): their scene columns measure nothing.
 - **Small capitals written in lower case**: Au pair's e-book writes every one so (nine
   "ss", the user's verdicts, 2026-11-24); the trust data still carries the old labels until
   it is rebuilt.
