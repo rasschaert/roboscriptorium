@@ -6,7 +6,11 @@ end of every session. **Read the first section; it is complete and current.** Th
 sections below it are older (each says its date) and are superseded wherever the first
 section speaks: baselines, what runs, what is on by default.
 
-**11:00 on 2026-11-24: the small-capitals bench runs** (Pueue job 30, `work/runs/smallcaps-size.sh`, about 30 minutes: main's tuning bench, then branch `smallcaps-size` (worktree `../robo-smallcaps-size`) against it; the branch draws render's small capitals at 0.76 and 0.80 of a capital with the one-case preference among near ties, chosen by the sweep in decisions.md). Validation only if tuning gains. Also this morning: the scene question is on by default (the user); Nervous System's last two answers are applied, so its review is done.
+**12:00 on 2026-11-24: halted on the user's word; nothing runs and the queue's groups are paused** (start them with `for g in gpu cpu light download; do pueue start -g $g; done` when the user frees the machine). This section is complete; everything below it is older.
+
+*Done this morning.* The scene question is on by default (the user). Nervous System's last two answers are applied (PDF 107 "*If*.", PDF 264 "SF"): its review is done. Small capitals, all in decisions.md: the sweep of render's small-capital height (best at 0.74–0.84 of a capital on render's own pick); a fan of sizes is worse; 0.76 and 0.80 with the one-case preference benched without retraining, not taken (case 2 fixed, 7 made: Au pair's small capitals at 0.75 drawn too large); how the book capitalises a word elsewhere, render's stretch, and the line's x-height as measured: all null.
+
+*Next, when the machine is free.* Small capitals: the arbiter retrained on trust data redrawn with the new sizes (branch `smallcaps-size`, worktree `../robo-smallcaps-size`; hours of CPU), or a finer x-height measure that places the line by the face's drawing of its plain words; like with like within a book. Otherwise the checklist's next open step.
 
 **01:15 on 2026-11-24: nothing runs; the queue is open and empty.** Earlier: **23:10 on 2026-11-23, paused until midnight on the user’s word** (a reboot was planned and then not needed). The queue's groups are paused; the scene probe waits in it as job 22, and a background timer in this session opens the groups at midnight. If that session is gone by then, run step 1 below without the `queue.sh add` line. This section is complete; everything below it is older.
 
