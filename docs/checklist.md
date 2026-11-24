@@ -236,10 +236,9 @@ side paths that skip the judges and the arbiter, and their cards show one or two
 - [x] 2026-11-24 The arbiters retrained on render's small capitals at 0.76 and 0.80: not
       taken (case 2 fixed, 8 made, 4 silent: Au pair's small capitals at about 0.75 drawn
       too large; decisions.md)
-- [ ] Render's small capitals at each book's own share, measured on its scan (where the
-      versions are all capitals, the ink's height over the face's cap height), instead of
-      one size for every book: the version of the null above that would dodge it. Probe
-      first on the trust data's case places (minutes, no model), as the sweep was
+- [x] 2026-11-24 ~~Render's small capitals at each book's own size~~: parked; the face's
+      x-height doesn't predict it, and the hindsight ceiling is 24 render picks of 1,713
+      where the other judges are right already (decisions.md)
 - [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
       right to ask. On tuning's trust data a version backed by 80% or more of the readers'
       and judges' votes is the print 99.3–99.7% of the time, at 70–80% 96.2%, under 70%
