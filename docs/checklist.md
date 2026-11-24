@@ -233,17 +233,13 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       the 12 silent case errors are no suspect at all, every reader agreeing on lower case.
       Still open: a signal that tells x-height small capitals from lower case (the letter
       widths, which small capitals set wider; the word list's capital form in its language)
-- [ ] **The arbiter retrained on render's new small-capital sizes** (the user, 2026-11-24:
-      "we'll do it when we have time"; waits for a free machine, CPU only, no model). Branch
-      `smallcaps-size` (worktree `../robo-smallcaps-size`): small capitals at 0.76 and 0.80 of
-      a capital, the one-case preference among near ties. Benched without retraining it made
-      7 case errors for 2 (decisions.md, 2026-11-24): the arbiter weighs render by its old
-      habits. Steps: the 26-book trust data rebuilt with the branch's render (side by side,
-      `rebuild-trust.sh`), both arbiters trained on it, the tuning bench against production
-      (the control: production's arbiters were trained on the same data with the old
-      render); validation only if tuning gains. About 3 hours at full power, twice that in
-      Low Power Mode (run-times.md: trust data 1–3 minutes a book, training 53–56 minutes,
-      a cold render bench 40).
+- [x] 2026-11-24 The arbiters retrained on render's small capitals at 0.76 and 0.80: not
+      taken (case 2 fixed, 8 made, 4 silent: Au pair's small capitals at about 0.75 drawn
+      too large; decisions.md)
+- [ ] Render's small capitals at each book's own share, measured on its scan (where the
+      versions are all capitals, the ink's height over the face's cap height), instead of
+      one size for every book: the version of the null above that would dodge it. Probe
+      first on the trust data's case places (minutes, no model), as the sweep was
 - [x] 2026-11-22 The arbiter asking where the votes lean one way (5 of Nervous System's 25):
       right to ask. On tuning's trust data a version backed by 80% or more of the readers'
       and judges' votes is the print 99.3–99.7% of the time, at 70–80% 96.2%, under 70%
