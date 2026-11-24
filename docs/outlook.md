@@ -179,6 +179,15 @@ and so is a changed version that dodges the reason it failed (AGENTS.md, "Rework
 before dropping it"); the reworked versions worth trying are on the checklist ("Dropped
 ideas reworked", 2026-11-15):
 
+- **Small capitals that every reader reads in lower case** (2026-11-24; failed on the
+  readers and on the case measure): 8 of tuning's 12 silent case errors are no suspect at
+  all. No reader or prompt on the silent screen reads one as printed, the "write small
+  capitals as capitals" prompt included; render's sizes (0.76/0.80, with and without the
+  arbiters retrained) made more case errors than they fixed; the same-letter height
+  measure separates x-height words (13 of 15 against 4 of 37) but is too noisy to offer
+  capitals over a page (2,824 false offers for 4 true). Retest with a reader that reads
+  small capitals as capitals, or a measure precise to a pixel (letters cut where render
+  places them).
 - **How likely each version is in its language, as arbiter columns** (2026-11-14, the
   user's idea; failed on the question budget, like the render columns): a character
   5-gram model fixes speck readings ("hem·riepen", "niét") but saves 16 questions over
