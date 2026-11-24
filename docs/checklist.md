@@ -342,9 +342,9 @@ difference (`experiments/rebuild_diff.py`). No full read-throughs soon beyond St
       can tell (a sorter question, "a new scene?"). Het heft (`P_plat`), Villa
       (`Tekst_6-Na-witregel`) and Artemis (`noindent_topspace1`) undeclared, unsure on
       the scan
-      Built and merged off (`scenes.py`, `ROBO_SCENE_MODEL`; decisions.md, 2026-11-24):
+      Asked at the page turn (`scenes.py`, `ROBO_SCENE_MODEL`; decisions.md, 2026-11-24):
       tuning 19 questions, 10 on missed breaks and 2 on missed chapter openings, no word
-      moved; validation no change. Waits on the user: switch it on? The breaks left
+      moved; validation no change; on by default since 2026-11-24 (the user). The breaks left
       (Reis's page tops that go on in voice, Verminkt, Vanille) need another signal.
 
 ## Paragraphs, verse and lists

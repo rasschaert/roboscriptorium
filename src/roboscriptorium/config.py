@@ -144,8 +144,9 @@ class Settings:
     break_judge: bool = False
     # The decision model that reads a page turn where a scene break may be lost, a page
     # that opens flush after a finished sentence, and asks the reviewer where it thinks a
-    # new scene starts (`scenes.py`; "" for none).
-    scene_model: str = ""
+    # new scene starts (`scenes.py`; "" for none). Tuning 19 questions for 10 lost breaks
+    # and 2 lost chapter openings, no word moved (2026-11-24, docs/design.md).
+    scene_model: str = "tokens:hf.co/mradermacher/shisa-de-1-GGUF:Q8_0"
     # The quote check's unpaired marks reach the OCR check as readings of their lines
     # (`quotes.duel_readings`), judged and decided like any other; the quote check then
     # asks nothing of its own about those paragraphs.

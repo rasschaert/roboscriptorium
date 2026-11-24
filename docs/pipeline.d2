@@ -147,7 +147,7 @@ review: 4 · Review {
   class: group
   s: {
     class: row
-    flags: Questions\nOCR doubts per place, headings,\nfigures, unpaired quotes,\nwashed-out pages {class: stage}
+    flags: Questions\nOCR doubts per place, headings,\nfigures, unpaired quotes,\nwashed-out pages,\na scene break at a page turn {class: stage}
     page: Review page\nthe scan crop beside each question {class: stage}
     answers: Answers\nregions.jsonl {class: stage}
     flags -> page -> answers
@@ -157,6 +157,7 @@ review: 4 · Review {
     qread: "READER qwen3.8:27b-nvfp4\nproposes an unpaired quote's marks" {class: ollama}
     init: "SORTER clef-flash:9b\nguesses a drawn initial's letter" {class: decision}
     faint: "contrast between paper\nand ink (scans only)" {class: code}
+    scene: "JUDGE Shisa DE-1\na new scene at a page turn?\n(asks, never sets one)" {class: decision}
     you: REVIEWER, you {class: human}
     slip: answer check: a typed line\nmust match a reading {class: code}
     proof: qwen3.8 proofreads\nthe answers {class: candidate}
@@ -164,6 +165,7 @@ review: 4 · Review {
   s.flags -> m.qread {class: uses}
   s.flags -> m.init {class: uses}
   s.flags -> m.faint {class: uses}
+  s.flags -> m.scene {class: uses}
   s.page -> m.you: a key per answer {class: uses}
   s.page -> m.slip: before saving {class: uses}
   s.answers -> m.proof {class: uses}

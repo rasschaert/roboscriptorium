@@ -403,8 +403,9 @@ the word beside it a word, and the sorter picks the one the drawing shows.
 ### The page and its keys
 
 Each region asks what it is: `1` running text, `2` heading, `3` drop, `4` image,
-`5` caption, `6` decorated initial (its letter guessed from the word it begins). The
-pipeline's call is preselected. The text as printed goes in a text box.
+`5` caption, `6` decorated initial (its letter guessed from the word it begins), and
+on a page that may open a new scene `7` running text that opens one, with the foot of
+the page before shown above the crop. The pipeline's call is preselected. The text as printed goes in a text box.
 
 Where the readings differ, the question asks which one matches the scan instead, once
 per line. Each row is a whole line: the text layer's, each reader's and each judge's,
@@ -501,6 +502,15 @@ from the lines around it, and from the page's full lines where every line around
 is indented, as in a run of one-line dialogue. A line's height of white space after a
 sentence starts a paragraph too, and two lines' worth, or a line of ornaments such as
 `* * *`, is a scene break.
+
+A scene break can also fall where the page turns: the old scene ends on a page's last
+line and the new one opens the next page, with no white space to see. In a book that
+indents its paragraphs, the clue is a page that opens flush on the margin after a
+finished sentence; a paragraph that merely starts a new page looks the same. At each
+such page turn Shisa DE-1 reads the lines either side (`scenes.py`) and says whether a
+new scene starts, a letter or other document set into the story begins, or the scene
+goes on. Where a new scene is at least even odds, the reviewer is asked; only their
+answer sets the break.
 
 A bulleted list (`lists.py`) is found on the scan before that: a line that opens with a
 solid blob of ink at the letters' middle, which the text layer reads as "e", "¢" or "*",

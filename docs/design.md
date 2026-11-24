@@ -1136,7 +1136,7 @@ fixed 22 and broke 29. With the check alone, against the judge: tuning breaks 0.
 Goede dochter back to 0.00, De stilte 0.47 → 0.30, Dolittle 0.10 → 0.18 (0.39 before
 either).
 
-## Scene breaks lost at a page turn (off)
+## Scene breaks lost at a page turn
 
 *What it catches:* a scene break at the top of a page whose page before ends a sentence on
 a full line, the white space fallen at the foot: the geometry of a paragraph running on,
@@ -1151,9 +1151,8 @@ and diary entries for scenes (25 false); at 0.7 it finds 2, so nothing is set un
 Tuning bench with it (2026-11-24): no word moved, 19 questions, 10 on missed breaks and 2
 on chapter openings the build misses too; validation no change, 2 questions. *Failure:*
 a page top that goes on in time or voice ("En nu moet ik even pauzeren.") stays unasked;
-a garbled page top or a second-person passage is asked wrongly. *Off* until the user
-weighs 19 questions for 10 breaks (`ROBO_SCENE_MODEL=tokens:hf.co/mradermacher/shisa-de-1-GGUF:Q8_0`
-turns it on).
+a garbled page top or a second-person passage is asked wrongly. *On* by default since
+2026-11-24 (the user: "switch it on"); `ROBO_SCENE_MODEL=""` turns it off.
 
 ## Footnotes
 
