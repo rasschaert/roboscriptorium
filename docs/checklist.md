@@ -34,8 +34,10 @@ last on 2026-11-24, so next by 2026-12-01).
       the guard's unloads in `battery-guard.out`); then the frozen reader set read at
       `num_ctx` 4096 against 32k (`experiments/tryout.py run reader`), same readings
       expected; if so, the clients send it for every line read (a probe beside a chain must
-      send the same, or Ollama reloads), and the guard's unloads should stop. After the
-      first looks (jobs 37, 38): minutes of model time
+      send the same, or Ollama reloads), and the guard's unloads should stop. Queued as
+      job 39 after the first looks (`work/runs/reader-context.sh`,
+      `experiments/probe_reader_context.py`: 290 line reads at each context, sizes logged,
+      readings compared; about 20 minutes)
 
 - [ ] **Dropped ideas reworked** (the user, 2026-11-15: "what ideas have we dropped in the
       past that might still pan out if modified?"), most promising first:
