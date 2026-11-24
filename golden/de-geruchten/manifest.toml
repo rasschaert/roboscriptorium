@@ -26,6 +26,9 @@ files = [
   "OEBPS/9789023443292-B.xhtml", "OEBPS/9789023443292-C.xhtml", "OEBPS/9789023443292-D.xhtml",
 ]
 heading_prefixes = ["wp-kopmedium"]
+# A "wp-witregel" paragraph after the text is a scene break (checked on the scan, pp. 19, 37);
+# under a heading it is the heading's space, which opens the section and sets none.
+break_classes = ["wp-witregel"]
 capital_classes = ["wpt-kleinkap"]
 # The print sets every quotation in single marks, nested ones too; the e-book sets the
 # speech a narrator quotes in double ones (scan pp. 14, 17, 51).

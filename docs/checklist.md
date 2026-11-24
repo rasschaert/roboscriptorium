@@ -24,7 +24,7 @@ read through by the user without an error (2026-10-31). The order from here:
 
 Standing, not steps: each new golden pair is scored once, at its first look, before it
 joins a set; the sets are reviewed at least weekly (docs/golden-notes.md, "Reviewing the sets";
-last on 2026-11-14, so next by 2026-11-21).
+last on 2026-11-24, so next by 2026-12-01).
 
 ## In flight
 
@@ -220,14 +220,18 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       0.74–0.84, best pair 0.76 and 0.80 (1,656 → 1,667 of 1,713), with the one-case preference
       among fits within 0.02 1,668; benched without retraining: not taken (case 2 fixed, 7 made,
       Au pair's small capitals at 0.75 now too small to draw). Stretch null, line x-height as
-      measured null (decisions.md). Open: the arbiter retrained on it (hours of CPU); like with
-      like, the user's tell (2026-11-24: "the s is noticeably taller than another s would be"):
-      the doubtful letter's ink height against the round lower-case letters of its own line
-      ("where on the same line the o, r, c reach, the s is taller"): each letter's top from
-      its own blob of ink, the line's x-line from where its o, c, e and s blobs top out (round
-      letters overshoot alike), the doubtful word's blobs against that; not the x-height band
-      of the line's ink profile, which was coarser than the 3 pixels; minutes, no model. Still
-      open: a signal that tells x-height small capitals from lower case (the letter
+      measured null (decisions.md). Open: the arbiter retrained on it (hours of CPU). Like
+      with like, the user's tell, probed 2026-11-24 (decisions.md): each letter's blob against
+      its own kind on the page separates where the word's letters all stand at x-height (at
+      1.08, 13 of 15 small capitals above, 4 of 37 lower case), but reaches none of the 12
+      silent case errors; widened to every letter, the pairing of letters to blobs fails
+      (inner capitals 91 of 166, the layer 84). Next versions: each letter's blob cut where
+      render places that letter (render already aligns a drawing to the scan), instead of
+      counting blobs; the x-height ratio as a feature for the arbiter where the word allows
+      it. Tried 2026-11-24 (decisions.md): the letters cut by the face's widths, as a judge
+      (right where the arbiter is, no rescue) and as an offer (false offers swamp it); 8 of
+      the 12 silent case errors are no suspect at all, every reader agreeing on lower case.
+      Still open: a signal that tells x-height small capitals from lower case (the letter
       widths, which small capitals set wider; the word list's capital form in its language)
 - [ ] **The arbiter retrained on render's new small-capital sizes** (the user, 2026-11-24:
       "we'll do it when we have time"; waits for a free machine, CPU only, no model). Branch
@@ -417,10 +421,8 @@ then the kinds one at a time below.
       book that spaces its dots: tuning 20 words fixed, 10 silent (decisions.md)
 - [x] 2026-11-19 Dolittle's ellipsis style found from its stops' spaced dots: 14 words
       fixed, 10 silent (decisions.md)
-- [ ] The italic count weighs the slant of a token with no letters (You're Never Weird's
-      ". . . ." after an italic word, 2026-11-19). Built on branch `italic-marks` (worktree
-      `../robo-italic-marks`): a mark with no letter or digit counts on neither side. It
-      moves the baselines, so it merges with the next batch, after the judge screening
+- [x] 2026-11-22 A mark with no letters counts in no italic score (branch `italic-marks`,
+      merged: italic errors 972 → 966 on tuning, no word changed)
 - [ ] **Extra readers as offers in the build** (`ROBO_EXTRA_READERS`, off; design.md):
       first scores of the short test 2026-11-15: qwen3.8 reads 10 of 97 silent errors,
       olmOCR-2 seven more, PaddleOCR-VL 1.6 ten more. Its short test in the build is

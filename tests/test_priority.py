@@ -118,3 +118,24 @@ def test_the_guard_holds_the_runs_while_the_disk_is_nearly_full(monkeypatch, tmp
     # 40 GB runs, 3 GB stops, 10 GB still waits for 15, 20 GB continues.
     assert held == [False, True, True, False]
     assert sent[-1] == signal.SIGCONT and signal.SIGSTOP in sent
+
+
+def test_a_new_guard_ends_the_one_still_running_from_before(monkeypatch, tmp_path):
+    monkeypatch.setattr(priority, "HELD", tmp_path / "battery-held")
+    (tmp_path / "battery-guard.pid").write_text("4242\n")
+    sent = []
+    monkeypatch.setattr(priority.os, "kill", lambda pid, sig: sent.append((pid, sig)))
+    monkeypatch.setattr(priority, "_is_guard", lambda pid: pid == 4242)
+    priority._replace_older_guard()
+    assert sent == [(4242, signal.SIGTERM)]
+    assert (tmp_path / "battery-guard.pid").read_text().strip() == str(priority.os.getpid())
+
+
+def test_a_recorded_pid_that_is_no_guard_any_more_is_left_alone(monkeypatch, tmp_path):
+    monkeypatch.setattr(priority, "HELD", tmp_path / "battery-held")
+    (tmp_path / "battery-guard.pid").write_text("4242\n")
+    sent = []
+    monkeypatch.setattr(priority.os, "kill", lambda pid, sig: sent.append((pid, sig)))
+    monkeypatch.setattr(priority, "_is_guard", lambda pid: False)
+    priority._replace_older_guard()
+    assert sent == []

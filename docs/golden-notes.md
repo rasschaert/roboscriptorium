@@ -149,7 +149,7 @@ remaining disagreements by mistake category.
 
 Reviewed at every set review ("Working with golden pairs", above). A pair keeps its place while it
 has a job here no other pair does better; one whose job is gone, or whose score measures
-its reference, is proposed for retirement or a lesser role. Last reviewed 2026-11-14.
+its reference, is proposed for retirement or a lesser role. Last reviewed 2026-11-24.
 
 | Job | Pairs |
 | --- | --- |
@@ -168,19 +168,28 @@ its reference, is proposed for retirement or a lesser role. Last reviewed 2026-1
 | Public-domain pages a hosted model may see | The Nature of a Crime, Doctor Dolittle |
 | Line-role training only, words not scored | Steve Jobs (its photo insert); The Nature of a Crime (the arbiter's too) |
 
-**Doubts at the last review** (2026-11-14, on `tuning-20261113T090608` and
-`validation-20261113T090701`, the render vote on): no pair past a suspect threshold.
-Layer CER tuning 0.19–1.39% against a median 0.70%, validation 0.08–1.32% against 0.88%;
-no book over 0.82% of body lines unplaced (De geruchten). Doctor Dolittle, past the line
-on 2026-11-06, is back under it on the same pages (2.32% → 1.39%): its PDF 97, the text
-block the layer lost, is read since (`missing.blocks`; 105 errors there → 1). No pair added
-or retired since 2026-10-20; batch five grew six tuning slices (2026-11-09); Na die nacht
-stays in reserve. Au pair's small capitals were settled by verdicts (2026-10-25); Het
-laatste bevel's glued words and the 58 silent places that look like the e-book's
-(HANDOVER.md, Waiting on the user) wait on verdicts. Het laatste bevel and Verminkt have
-no typeface in the font library, so the render vote fits them worse (0.79 and 0.83 on
-plain words, the tuning books 0.86–0.97); both validate, so that weakens their veto on a
-change to the render judge only. The gaps below stand.
+**Doubts at the last review** (2026-11-24, on `tuning-20261124T190822` and
+`validation-20261123T234016`): no pair past a suspect threshold. Layer CER tuning
+0.19–1.40% against a median 0.68% (Doctor Dolittle highest, as before), validation
+0.08–1.34% against 0.88%; no book over 0.82% of body lines unplaced (De geruchten). No
+pair added or retired since 2026-11-14; Au pair, De vergelding and Glazuur joined the
+arbiter's trust data (26 books). Two doubts, both about what a reference marks:
+- **Scene breaks**: ten references mark none where the build sets 6–62. Five were the
+  references' fault, an opening class left undeclared, each checked on the scan and
+  declared (Vals alarm `standaard-eerste-alinea`, Het heft in eigen hand `P_plat`, Het
+  geluid van bananen `body1rgl`, Het schaduwhuis `ParaOverride-1`, whose e-book sets one
+  break the print doesn't, PDF 48; and De geruchten's blank-line paragraphs `wp-witregel` as
+  breaks; derived again after the run in flight). You're Never
+  Weird's `noindent` follows its section headings: no break. Het ijzige land's e-book
+  (converted by calibre) dropped its breaks, plain `para` on both sides of breaks the scan
+  shows (pp. 171, 185): nothing to declare, its scene column measures nothing. Open, with
+  leads: Metro 2033 (an empty `<div>` then a `tx1` paragraph, but `tx1` also opens an inset
+  letter), Het laatste bevel (`calibre21` blocks look like scene openings), De stilte van
+  de hel (nothing in the e-book at two built breaks: crops to tell a dropped break from a
+  false one), Vuurspel (the build sets none now).
+- **Small capitals written in lower case**: Au pair's e-book writes every one so (nine
+  "ss", the user's verdicts, 2026-11-24); the trust data still carries the old labels until
+  it is rebuilt.
 
 **Gaps to hunt for**, in order: a book set flush, without paragraph indents, for tuning
 (not Bruna's, whose two books validate; 2026-10-24: every flush-book break error is a start

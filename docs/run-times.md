@@ -1706,3 +1706,57 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-24 | bench validation, the scene question | 0 | 1 | 0 |
 | 2026-11-24 | bench tuning, main with the scene question on | 0 | 5 | 0 |
 | 2026-11-24 | bench tuning, render's small capitals at 0.76 and 0.80, one-case preference | 0 | 40 | 0 |
+| 2026-11-24 | bench tuning, main, Au pair's reference mended | 0 | 5 | 0 |
+| 2026-11-24 | bench tuning, smallcaps-size, Au pair's reference mended | 0 | 6 | 0 |
+| 2026-11-24 | trust data, the-story-of-doctor-dolittle--stokes-1920, smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, afscheid-van-verspilde-tijd--ia-scan, smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, reis-om-mijn-schedel--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, vals-alarm--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, the-nature-of-a-crime--doubleday-1924, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, de-eerlijke-vinder--ia-scan, smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, artemis--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, youre-never-weird-on-the-internet--ia-scan, smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, goede-dochter--ia-scan, smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, de-cipier--ia-scan, smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, metro-2033--ia-scan, smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, de-tuin-van-de-avondnevel--ia-scan, smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, the-thief-takers-apprentice--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, doodskleed--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, monterosso-mon-amour--ia-scan, smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, de-kerk-van-de-dode-meisjes--ia-scan, smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, vuurspel--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, het-geluid-van-bananen--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, het-ijzige-land--ia-scan, smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, het-heft-in-eigen-hand--ia-scan, smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, het-schaduwhuis--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, stella, smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, glazuur--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, au-pair--ia-scan, smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, de-vergelding--ia-scan, smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, ex-minnaar, smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, the-story-of-doctor-dolittle--stokes-1920, offers-smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, afscheid-van-verspilde-tijd--ia-scan, offers-smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, the-nature-of-a-crime--doubleday-1924, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, reis-om-mijn-schedel--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, vals-alarm--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, de-eerlijke-vinder--ia-scan, offers-smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, artemis--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, youre-never-weird-on-the-internet--ia-scan, offers-smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, goede-dochter--ia-scan, offers-smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, the-thief-takers-apprentice--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, de-tuin-van-de-avondnevel--ia-scan, offers-smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, de-cipier--ia-scan, offers-smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, metro-2033--ia-scan, offers-smallcaps | 0 | 3 | 0 |
+| 2026-11-24 | trust data, doodskleed--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, de-kerk-van-de-dode-meisjes--ia-scan, offers-smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, vuurspel--ia-scan, offers-smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, monterosso-mon-amour--ia-scan, offers-smallcaps | 0 | 0 | 0 |
+| 2026-11-24 | trust data, het-heft-in-eigen-hand--ia-scan, offers-smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, het-geluid-van-bananen--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, het-schaduwhuis--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, het-ijzige-land--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, stella, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, de-vergelding--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, glazuur--ia-scan, offers-smallcaps | 0 | 1 | 0 |
+| 2026-11-24 | trust data, au-pair--ia-scan, offers-smallcaps | 0 | 2 | 0 |
+| 2026-11-24 | trust data, ex-minnaar, offers-smallcaps | 0 | 3 | 0 |

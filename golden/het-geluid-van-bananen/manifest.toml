@@ -21,6 +21,9 @@ files = [
 ]
 heading_prefixes = ["kop", "deelpagina"]
 italic_classes = ["italic"]
+# A scene break comes before each "body1rgl" paragraph, unindented, as in Reis om mijn
+# schedel (checked on the scan, pp. 123, 184; experiments/probe_break_classes.py).
+opening_classes = ["body1rgl"]
 blank_classes = ["bodybefore"]
 note_classes = ["noten"]
 

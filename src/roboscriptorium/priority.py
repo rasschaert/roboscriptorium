@@ -133,11 +133,34 @@ def hold(level: int | None, held: bool, floor: int = FLOOR, resume: int = RESUME
     return level < resume if held else level < floor
 
 
+def _is_guard(pid: int) -> bool:
+    """Whether `pid` is a running guard (`python -m roboscriptorium.priority`)."""
+    out = subprocess.run(["ps", "-o", "command=", "-p", str(pid)], capture_output=True, text=True)
+    return "roboscriptorium.priority" in out.stdout
+
+
+def _replace_older_guard() -> None:
+    """Ends a guard still running from before and records this one, so one guard alone
+    stops and continues the runs. Quitting a guard's screen can leave its process running,
+    and an older guard holding out for its own resume level keeps stopping what a new one
+    continues."""
+    record = HELD.with_name("battery-guard.pid")
+    try:
+        old = int(record.read_text().strip())
+    except (OSError, ValueError):
+        old = 0
+    if old and old != os.getpid() and _is_guard(old):
+        _signal([old], signal.SIGTERM)
+    record.parent.mkdir(parents=True, exist_ok=True)
+    record.write_text(f"{os.getpid()}\n")
+
+
 def guard(every: int = 60) -> None:
     """Stops the agent's runs while the battery is low or the disk nearly full, mid-run,
     and continues them once both have recovered: a low-wattage charger loses ground under
     Ollama, a model download can fill the disk, and the battery gate only checks when a
     run starts. Prints each change, and the battery level at every 5%."""
+    _replace_older_guard()
     floor = int(os.environ.get("ROBO_BATTERY_FLOOR", FLOOR))
     resume = int(os.environ.get("ROBO_BATTERY_RESUME", RESUME))
     held = HELD.exists()

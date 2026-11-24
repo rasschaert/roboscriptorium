@@ -25,6 +25,9 @@ files = [
 ]
 heading_prefixes = ["kop"]
 italic_classes = ["cs", "sanscs"]
+# A scene break comes before each "standaard-eerste-alinea" paragraph, unindented (checked on
+# the scan, pp. 19, 24, 155, 236; experiments/probe_break_classes.py).
+opening_classes = ["standaard-eerste-alinea"]
 capital_classes = ["kk", "sanskk"]
 
 # The second printing (December 2011) of the first edition. Internet Archive

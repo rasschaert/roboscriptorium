@@ -69,6 +69,10 @@ files = [
 heading_prefixes = ["_1-Hoofdstuk", "_2-Hoofdstuk"]
 capital_classes = ["_2-Hoofdstuktitel", "_2-Hoofdstuktitel-copy--toc-entry-", "CharOverride-8"]
 italic_classes = ["CharOverride-1", "CharOverride-6", "CharOverride-10"]
+# A scene break comes before a "ParaOverride-1" paragraph that follows the text (38; after a
+# chapter title it opens the chapter). Checked on the scan, pp. 69, 148 (breaks) and 48, where
+# the print runs on with an indent ("‘Ollie?’ Ik klopte"): the e-book's one break too many.
+opening_classes = ["ParaOverride-1"]
 
 # The first printing (De Fontein, May 2022, ISBN 978 90 261 6141 4); IA Scribe scan
 # (6.4), 360 ppi MRC, GlyphLessFont layer, ~350×574 pt, 340 pages. Single curly quotes,
