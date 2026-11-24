@@ -117,9 +117,9 @@ HELD = Path("work/runs/battery-held")
 # hours on 2026-11-24, past the 64 GB in the machine), and the swapping it causes crashes
 # the user's applications. The runs are frozen first and their requests in flight given
 # DRAIN seconds, so no request meets a model being unloaded; the next request reloads it.
-MEMORY_FLOOR = 25
+MEMORY_FLOOR = 30
 DRAIN = 60
-RELIEF_GAP = 600  # seconds between two unloads at least
+RELIEF_GAP = 180  # seconds between two unloads at least: it regrows 27 → 77 GB in 8 minutes
 OLLAMA = os.environ.get("ROBO_OLLAMA_URL", "http://127.0.0.1:11434")
 
 
