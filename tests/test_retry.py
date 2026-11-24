@@ -47,3 +47,25 @@ def test_a_dropped_connection_is_tried_again_like_a_timeout(monkeypatch):
         return "answer"
 
     assert retry.patiently(dropped_once) == "answer" and len(tries) == 2
+
+
+def test_a_server_error_is_tried_again_and_a_refusal_is_not(monkeypatch):
+    monkeypatch.setattr(retry.time, "sleep", lambda s: None)
+    request = httpx.Request("POST", "http://ollama/api/generate")
+
+    def answering(codes):
+        tries = []
+
+        def call():
+            code = codes[len(tries)]
+            tries.append(code)
+            return httpx.Response(code, request=request).raise_for_status()
+
+        return call, tries
+
+    call, tries = answering([500, 200])
+    assert retry.patiently(call).status_code == 200 and tries == [500, 200]
+    call, tries = answering([400, 200])
+    with pytest.raises(httpx.HTTPStatusError):
+        retry.patiently(call)
+    assert tries == [400]

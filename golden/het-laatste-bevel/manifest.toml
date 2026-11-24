@@ -19,6 +19,10 @@ files = [
 ]
 heading_prefixes = ["calibre18"]
 italic_classes = ["italic"]
+# A scene break comes before each "calibre21" block, unindented with a line of space above
+# (152; "calibre19" opens a chapter). Checked on the scan, pp. 40, 42 and 265 (a one-block
+# scene after another).
+opening_classes = ["calibre21"]
 
 # The first printing (April 2013, typeset by Ready2Print), a copy of the Amsterdam public
 # library. Internet Archive lends it only, so it is placed by hand (sourced by the user,

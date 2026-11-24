@@ -415,6 +415,6 @@ def transcribe(png: bytes, model: str, ollama_url: str, prompt: str) -> str:
         "think": False,
         "options": {"num_predict": MAX_LINE_TOKENS, "temperature": 0},
     }
-    resp = patiently(lambda: httpx.post(f"{ollama_url}/api/generate", json=payload, timeout=600))
-    resp.raise_for_status()
+    url = f"{ollama_url}/api/generate"
+    resp = patiently(lambda: httpx.post(url, json=payload, timeout=600).raise_for_status())
     return resp.json()["response"].strip().split("\n")[0].strip()

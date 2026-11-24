@@ -76,8 +76,7 @@ class DecisionClient:
         }
         if image_png is not None:
             payload["images"] = [base64.b64encode(image_png).decode()]
-        resp = patiently(lambda: self._http.post(self.ENDPOINT, json=payload))
-        resp.raise_for_status()
+        resp = patiently(lambda: self._http.post(self.ENDPOINT, json=payload).raise_for_status())
         return {name: Answer.from_json(a) for name, a in resp.json()["answers"].items()}
 
 
@@ -212,8 +211,9 @@ class TokenClient:
             }
             if image_png is not None:
                 body["images"] = [base64.b64encode(image_png).decode()]
-            resp = patiently(lambda body=body: self._http.post("/api/generate", json=body))
-            resp.raise_for_status()
+            resp = patiently(
+                lambda body=body: self._http.post("/api/generate", json=body).raise_for_status()
+            )
             top = (resp.json().get("logprobs") or [{}])[0].get("top_logprobs", [])
             seen: dict[str, float] = {}
             for t in top:
@@ -334,8 +334,9 @@ class SelfjevTokenClient(TokenClient):
                 }
                 if image_png is not None:
                     body["images"] = [base64.b64encode(image_png).decode()]
-                resp = patiently(lambda body=body: self._http.post("/api/generate", json=body))
-                resp.raise_for_status()
+                resp = patiently(
+                    lambda body=body: self._http.post("/api/generate", json=body).raise_for_status()
+                )
                 top = (resp.json().get("logprobs") or [{}])[0].get("top_logprobs", [])
                 seen = {t["token"]: t["logprob"] for t in reversed(top)}
                 floor = min(seen.values()) if seen else self.UNSEEN
