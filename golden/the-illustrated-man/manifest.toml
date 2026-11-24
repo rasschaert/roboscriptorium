@@ -1,0 +1,51 @@
+title = "The Illustrated Man"
+author = "Ray Bradbury"
+language = "en"
+# Bradbury died in 2012: under copyright until 2082, so only this manifest is in git.
+eu_copyright_until = 2082
+
+# HarperCollins' own e-book (May 2013, ISBN 978 0 06 224221 1, no DRM), made from the Harper
+# Perennial Modern Classics edition of 2011; its text matches both scans below at the
+# layer's slip rate (0.2–0.6% CER a band, experiments/probe_candidate.py, 2026-11-24).
+# Bradbury's 1997 introduction "Dancing, So As Not to Be Dead", the prologue, eighteen
+# stories and the epilogue, each an h2; the ad card, the about pages and the copyright page
+# are left out. Small capitals ("NO ORDINARY TATTOOED MAN") are written as capitals; the
+# stories open with a drop cap, a span of the first letter. The same text as
+# the-illustrated-man-bantam, another setting: the two always sit in one set.
+[reference]
+source = "The Illustrated Man, HarperCollins e-book 2013 (the Harper Perennial Modern Classics edition, 2011), ISBN 978 0 06 224221 1 (EPUB)"
+sha256 = "ab277d068c76b56e4246c1a1aec7bd08535dcc14809e16ffea021b995dc6cb70"
+files = [
+  "OEBPS/005_frontmatterpage.html",
+  "OEBPS/006_frontmatterpage01.html", "OEBPS/007_chapter01.html", "OEBPS/008_chapter02.html",
+  "OEBPS/009_chapter03.html", "OEBPS/010_chapter04.html", "OEBPS/011_chapter05.html",
+  "OEBPS/012_chapter06.html", "OEBPS/013_chapter07.html", "OEBPS/014_chapter08.html",
+  "OEBPS/015_chapter09.html", "OEBPS/016_chapter10.html", "OEBPS/017_chapter11.html",
+  "OEBPS/018_chapter12.html", "OEBPS/019_chapter13.html", "OEBPS/020_chapter14.html",
+  "OEBPS/021_chapter15.html", "OEBPS/022_chapter16.html", "OEBPS/023_chapter17.html",
+  "OEBPS/024_chapter18.html", "OEBPS/025_backmatterpage01.html",
+]
+heading_prefixes = []
+italic_classes = ["italic"]
+# Scene breaks are empty "spaceBreak" paragraphs.
+break_classes = ["spaceBreak"]
+
+# Harper Perennial Modern Classics, printed from the same plates as Avon's 1997 edition (the
+# same line breaks: "And suddenly they realized why those other screams / had sounded
+# familiar." on printed p. 25 of both); IA Scribe scan (4.5), 292 pages. Its layer reads
+# the capital I as "|" (over 500 times) and h as b ("bis", "bad"). Lent; placed by hand
+# (sourced by the user, 2026-11-24).
+[[scans]]
+id = "harper-perennial"
+source = "https://archive.org/details/illustratedman0000brad_k7j7 (borrow, then download the PDF)"
+sha256 = "ea1e465f69be2e887810f023a70c303a51d09c2ea672c62fa5b4cd6e7cae47e5"
+cover_page = 1
+body_pages = [7, 289]
+
+# Avon's 1997 edition (Hearst), the same plates, a larger page; a witness of the scan above.
+[[scans]]
+id = "avon-1997"
+source = "https://archive.org/details/illustratedman00brad_1 (borrow, then download the PDF)"
+sha256 = "34dce5c59d4ecbcfba4e8ee55aa3e2515496df9508772cf45e3b324566caeb40"
+cover_page = 1
+body_pages = [9, 291]

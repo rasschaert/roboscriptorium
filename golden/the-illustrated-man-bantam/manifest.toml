@@ -1,0 +1,55 @@
+title = "The Illustrated Man"
+author = "Ray Bradbury"
+language = "en"
+# Bradbury died in 2012: under copyright until 2082, so only this manifest is in git.
+eu_copyright_until = 2082
+
+# The same HarperCollins e-book as the-illustrated-man (see there), without the 1997
+# introduction, which Bantam's setting doesn't print: the prologue, eighteen stories and
+# the epilogue. Bantam's reset of 1954 ("completely reset ... from new plates") against it:
+# OCR slips at the layer's (poor) rate, and edition differences where Bantam's spelling
+# differs ("any more" for the e-book's "anymore"), to be handled as known deviations after
+# the first look. The same words as the-illustrated-man: the two always sit in one set.
+[reference]
+source = "The Illustrated Man, HarperCollins e-book 2013, ISBN 978 0 06 224221 1 (EPUB), against Bantam's 1954 setting"
+sha256 = "ab277d068c76b56e4246c1a1aec7bd08535dcc14809e16ffea021b995dc6cb70"
+files = [
+  "OEBPS/006_frontmatterpage01.html", "OEBPS/007_chapter01.html", "OEBPS/008_chapter02.html",
+  "OEBPS/009_chapter03.html", "OEBPS/010_chapter04.html", "OEBPS/011_chapter05.html",
+  "OEBPS/012_chapter06.html", "OEBPS/013_chapter07.html", "OEBPS/014_chapter08.html",
+  "OEBPS/015_chapter09.html", "OEBPS/016_chapter10.html", "OEBPS/017_chapter11.html",
+  "OEBPS/018_chapter12.html", "OEBPS/019_chapter13.html", "OEBPS/020_chapter14.html",
+  "OEBPS/021_chapter15.html", "OEBPS/022_chapter16.html", "OEBPS/023_chapter17.html",
+  "OEBPS/024_chapter18.html", "OEBPS/025_backmatterpage01.html",
+]
+heading_prefixes = []
+italic_classes = ["italic"]
+# Scene breaks are empty "spaceBreak" paragraphs.
+break_classes = ["spaceBreak"]
+
+# The Bantam Pathfinder printing (1960s), browned paper; IA Scribe scan (6.4), 196 pages.
+# **A scan whose text layer is poor all through** (6–11% CER a band against the e-book:
+# "T" for "I", "e" for "the"), the kind the sets lacked. Lent; placed by hand (sourced by
+# the user, 2026-11-24).
+[[scans]]
+id = "bantam-pathfinder"
+source = "https://archive.org/details/illustratedman0000rayb_g1f6 (borrow, then download the PDF)"
+sha256 = "46d667678c782d319eacc2785723cf46c9ca26c4613d459f581fa230a22c3f18"
+cover_page = 1
+body_pages = [9, 194]
+
+# Witnesses of the same Bantam setting (the same line breaks on p. 27): the Spectra printing
+# (1990s, clean paper, layer 1.4–4% CER a band) and an older Bantam printing (browned).
+[[scans]]
+id = "bantam-spectra"
+source = "https://archive.org/details/illustratedman0000brad (borrow, then download the PDF)"
+sha256 = "031afa0b32efe6d3cd52897a15e34ba958a690426fcb02ce874c053a89c47b6e"
+cover_page = 1
+body_pages = [9, 194]
+
+[[scans]]
+id = "bantam-early"
+source = "https://archive.org/details/illustratedman0000rayb_h3d8 (borrow, then download the PDF)"
+sha256 = "7a5857b80167a51bd69762e7f603e84cd15473a10dd51a39a8c4556080086334"
+cover_page = 1
+body_pages = [9, 194]

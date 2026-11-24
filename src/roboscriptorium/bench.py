@@ -85,6 +85,8 @@ SETS = {
         "in-haar-schoenen--ia-scan:9-108:1-15",
         "heldere-hemel--ia-scan",
         "vele-hemels-boven-de-zevende--ia-scan:9-88:1-20",
+        "the-illustrated-man--harper-perennial:7-91:1-7",
+        "the-illustrated-man-bantam--bantam-pathfinder:9-97:1-8",
     ],
     # The quick tier, for a change's short test: a chapter or two of each tuning book
     # (a later one where the first are front matter or a single short one), ending where
