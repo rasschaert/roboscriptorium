@@ -221,7 +221,9 @@ side paths that skip the judges and the arbiter, and their cards show one or two
       among fits within 0.02 1,668; benched without retraining: not taken (case 2 fixed, 7 made,
       Au pair's small capitals at 0.75 now too small to draw). Stretch null, line x-height as
       measured null (decisions.md). Open: the arbiter retrained on it (hours of CPU); like with
-      like within a book. Still
+      like, the user's tell (2026-11-24: "the s is noticeably taller than another s would be"):
+      the doubtful letter's ink height against the same letter in lower case on its line or
+      page (an s against the plain words' s), not against the x-height band; minutes, no model. Still
       open: a signal that tells x-height small capitals from lower case (the letter
       widths, which small capitals set wider; the word list's capital form in its language)
 - [ ] **The arbiter retrained on render's new small-capital sizes** (the user, 2026-11-24:
