@@ -5,8 +5,8 @@ user. Nothing else lives here (AGENTS.md says which file owns what; decisions.md
 result with its numbers, and git history every earlier version of this file). Rewrite it
 at the end of every session.
 
-**Written 2026-11-25, late evening, before the user's holiday of several weeks.** The
-user reviews Pieter Daens first, then is away. This file is complete on its own.
+**Written 2026-11-25, late evening, before the user's holiday of several weeks.** This
+file is complete on its own.
 
 ## Coming back: start here
 
@@ -64,8 +64,8 @@ user the review is ready (they review in their evening, not during their day).
 
 ## Open threads, in order
 
-1. **Pieter Daens' review** (the user's, before the holiday): command once the sample is
-   read and found fit: `uv run roboscriptorium review work/pieter-daens`. If the user did
+1. **Pieter Daens' review**, when the user chooses to do it (don't assume when): command
+   once the sample is read and found fit: `uv run roboscriptorium review work/pieter-daens`. If the user did
    it, rebuild with their answers and check the rebuild diff
    (`experiments/rebuild_diff.py`) before calling it done.
 2. **Edge crops** (`readers.grown_to_ink`): a line's crop grows to the ink its text-layer
@@ -99,7 +99,8 @@ user the review is ready (they review in their evening, not during their day).
 
 ## Waits on the user
 
-- Pieter Daens' review (thread 1), when the agent says it is ready.
+- Pieter Daens' review (thread 1), whenever the user chooses, once the agent has said it
+  is ready.
 - Golden pairs: none needed. If one comes up, a second poor scan with its publisher's
   e-book would let poor scans validate too (none does yet).
 - Disk housekeeping (checklist, **user**: disk).
