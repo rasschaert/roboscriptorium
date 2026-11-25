@@ -415,12 +415,17 @@ def grown_to_ink(pdf_page: pymupdf.Page, boxes: list) -> list:
         # growth, so no words are read twice: the ink between two pieces goes to the left
         # one, and a piece with another to its left doesn't grow leftwards at all.
         for ox0, oy0, ox1, oy1 in boxes:
-            if (ox0, oy0, ox1, oy1) == (x0, y0, x1, y1) or min(y1, oy1) - max(y0, oy0) < 0.5 * h:
+            shared = min(y1, oy1) - max(y0, oy0)
+            # Measured against the smaller box: a tall box (a garbled line spanning two)
+            # shares a line's whole height while sharing little of its own.
+            if (ox0, oy0, ox1, oy1) == (x0, y0, x1, y1) or shared < 0.5 * min(h, oy1 - oy0):
                 continue
             if ox1 <= x0:
                 lo = a
             elif ox0 >= x1:
                 hi = min(hi, int(ox0 * scale))
+            else:  # overlapping across too: a tangled line, grown on neither side
+                lo, hi = a, b
         new_a = _reach(cols, gap, a - 1, lo - 1, -1) if a - 1 >= lo else a
         new_b = _reach(cols, gap, b, hi, 1) if b < hi else b
         # Only ink well past the box counts: a box from the layer's own words ends a pixel

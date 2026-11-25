@@ -71,3 +71,23 @@ def test_a_box_does_not_grow_across_another_piece_of_its_printed_line():
     grown = readers.grown_to_ink(page, [left, late])
     assert grown[1] == late  # a piece with another to its left doesn't grow leftwards
     assert grown[0][2] >= late[0] - 2  # the left piece takes the words between them
+
+
+def test_a_tall_box_does_not_grow_across_a_line_it_overlaps():
+    import pymupdf
+
+    doc = pymupdf.open()
+    page = doc.new_page(width=400, height=200)
+    page.insert_text((20, 60), "Nee, dat is heel grappig.", fontsize=14)
+    words = page.get_text("words")
+    nee = [w for w in words if w[4] in ("Nee,", "dat", "is", "heel")]
+    line = (
+        min(w[0] for w in nee),
+        min(w[1] for w in nee),
+        max(w[2] for w in nee),
+        max(w[3] for w in nee),
+    )
+    grap = [w for w in words if w[4] == "grappig."][0]
+    tall = (grap[0] - 10, line[1] - 14, grap[2], line[3] + 14)  # garbled, over two lines
+    grown = readers.grown_to_ink(page, [line, tall])
+    assert grown[1] == tall and grown[0] == line  # a tangled line: neither box grows
