@@ -30,9 +30,10 @@ last on 2026-11-24, so next by 2026-12-01).
 
 - [ ] **Heldere hemel's headings** (its first look, 2026-11-25): the build finds 2 of 8 and
       only their first lines ("Thuis,"): a heading of three lines with an italic part line
-      above ("Deel 1……(duizend kilometer verderop)") is new to the line-role trees. Before
-      learning it, settle with the **user** (crops shown first) whether the part line
-      belongs in the heading, as derived now, or stands as its own line above it
+      above ("Deel 1……(duizend kilometer verderop)") is new to the line-role trees. The
+      e-book settles the target: no heading markup, each part a file of its own named
+      "Deel 1" in its contents and opening at the italic line, so a section starts there
+      (the reference as derived)
 
 - [ ] **Ollama's reader within a smaller context** (2026-11-25, the out-of-memory night):
       qwen3.8 27B grows from 27 GB to 86 GB in `ollama ps` while reading lines at the
