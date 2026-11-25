@@ -1760,3 +1760,18 @@ pages an hour to 113 over a stretch only partly in Low Power Mode (2026-10-14).
 | 2026-11-24 | trust data, glazuur--ia-scan, offers-smallcaps | 0 | 1 | 0 |
 | 2026-11-24 | trust data, au-pair--ia-scan, offers-smallcaps | 0 | 2 | 0 |
 | 2026-11-24 | trust data, ex-minnaar, offers-smallcaps | 0 | 3 | 0 |
+| 2026-11-24 | train arbiter, smallcaps | 0 | 105 | 0 |
+| 2026-11-24 | train arbiter, offers-smallcaps | 0 | 47 | 0 |
+| 2026-11-24 | bench tuning, render's small capitals at 0.76 and 0.80, arbiters retrained | 0 | 5 | 0 |
+| 2026-11-25 | bench first-look, In haar schoenen 9-108 + Heldere hemel (cold) | 190 | 147 | 1 |
+| 2026-11-25 | bench first-look one book at a time: The Illustrated Man 7-91 + 9-97, In haar schoenen, Heldere hemel (cold, resumed), Vele hemels warm | 362 | 660 | 0 |
+| 2026-11-25 | bench first-look again, warm (Heldere hemel's ligatures) | 0 | 2 | 0 |
+| 2026-11-25 | bench first-look, edge crops | 0 | 37 | 0 |
+| 2026-11-25 | bench tuning, main (references of 2026-11-25) | 0 | 25 | 0 |
+| 2026-11-25 | bench tuning, edge crops (one at a time) | 0 | 135 | 0 |
+| 2026-11-25 | bench first-look, edge crops v2 | 0 | 8 | 0 |
+| 2026-11-25 | bench validation, main (references of 2026-11-25) | 0 | 3 | 0 |
+| 2026-11-25 | bench validation, edge crops | 0 | 32 | 0 |
+| 2026-11-25 | bench first-look, edge crops v3 | 0 | 8 | 0 |
+| 2026-11-25 | bench validation, edge crops v3 | 0 | 18 | 0 |
+| 2026-11-25 | bench tuning, edge crops v3 | 0 | 133 | 0 |
