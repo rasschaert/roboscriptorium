@@ -29,7 +29,8 @@ user reviews Pieter Daens first, then is away. This file is complete on its own.
    ```
    experiments/queue.sh add gpu baselines -- zsh work/runs/baselines.sh
    ```
-   (`work/runs/baselines.sh` is written below under "Open threads"; check it exists.)
+   (`work/runs/baselines.sh`, one book at a time; it writes the bench files' names to
+   `work/probes/baselines-latest/`.)
 
 ## The plan (agreed 2026-11-25)
 
@@ -78,9 +79,8 @@ their day).
    meeting the lost-line reader"): on the Bantam scan it still makes 79 wrong words, some
    where the text layer lost a page's last lines; read those one by one (`bench-diff`)
    before building anything.
-3. **Fresh baselines** (step 3 above): write `work/runs/baselines.sh`: main's tuning,
-   validation benches, one book at a time (`ROBO_BENCH_WORKERS=1` until one book has
-   shown in its log that it asks no model), with `# resumes:` and `# models:` lines.
+3. **Fresh baselines** (step 3 above, `work/runs/baselines.sh`): every later bench is read
+   against them.
 4. **Poor scans, next**: after edge crops, what is left on the Bantam scan by cause
    (letters misread, missing text, words); then the user's scans that look like it.
 5. **The user's other books**, each rebuilt overnight, never during the user's day: those
@@ -125,7 +125,7 @@ test), `render-differ`, `render-caps`, `seeing-judges` (not taken), `shisa-seat`
 ## Today's record
 
 Everything done on 2026-11-24 and 25 is in decisions.md under those dates: the small
-capitals probes (all null), the set review (seven references' scene breaks declared), six
+capitals probes (all null), the set review (seven references' scene breaks declared), five
 new golden pairs (In haar schoenen, Heldere hemel, Vele hemels, The Illustrated Man twice)
 and their first looks, Au pair's small capitals in its reference (`capital_words`), the
 memory guard, the reordered plan, and edge crops.
