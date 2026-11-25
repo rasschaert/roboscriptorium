@@ -52,19 +52,15 @@ order:
 
 Job queue (Pueue, group `gpu`; `experiments/queue.sh status`):
 
-- **Job 52 `edge-crops-3`**: branch `edge-crops` (worktree `../robo-edge-crops`), third
-  version, on the first-look set (BETTER: fixed 152 wrong words, 115 silent, made 79,
-  43 silent, nearly all on the Bantam scan), validation (NO CHANGE: made 1, asked, no
-  silent) and tuning (running; the old 20-book set, against `tuning-20261125T144256`).
+- Job 52 `edge-crops-3` finished: edge crops TAKEN on all three benches (thread 2).
 - **Job 53 `pieter-daens-rebuild`** (after 52): Pieter Daens rebuilt with production as it
   stands (its first pass of the accent and speck offers: clef had judged 301 of 781 pages
   when it was stopped at the user's word; about 6 hours left, every answer saved), then
   its questions sampled to `work/probes/questions/pieter-daens/`.
 
 The session's last steps, if it reaches them (check decisions.md for what was done):
-merge `edge-crops` if tuning shows no veto and no rise in silent errors; read Pieter Daens'
-sample and tell the user the review is ready (they review in their evening, not during
-their day).
+merge `edge-crops` once job 53 ends (thread 2); read Pieter Daens' sample and tell the
+user the review is ready (they review in their evening, not during their day).
 
 ## Open threads, in order
 
@@ -74,8 +70,16 @@ their day).
    (`experiments/rebuild_diff.py`) before calling it done.
 2. **Edge crops** (`readers.grown_to_ink`): a line's crop grows to the ink its text-layer
    box cut off past the crop's margin; boxes on the same printed line bound it; two
-   tangled boxes grow on neither side. If not merged at handover: rebase on main, the
-   whole suite, merge, and say so in decisions.md. Its follow-up (checklist, "Edge crops
+   tangled boxes grow on neither side. TAKEN on all three benches (decisions.md), held
+   back only until Pieter Daens' rebuild ends. If `git log main` doesn't show it merged:
+   ```
+   git -C ../robo-edge-crops rebase main
+   uv run --project ../robo-edge-crops pytest -q
+   git merge --ff-only edge-crops
+   git push origin main
+   ```
+   then docs/design.md (what it catches, the benches), docs/modules.md (`readers`) and
+   docs/how-it-works.md (the readers' crop) in the same change. Its follow-up (checklist, "Edge crops
    meeting the lost-line reader"): on the Bantam scan it still makes 79 wrong words, some
    where the text layer lost a page's last lines; read those one by one (`bench-diff`)
    before building anything.
@@ -88,7 +92,9 @@ their day).
    an hour per 300 pages more): Hoe wij verdwijnen (waits on the user's read-through),
    Ex-minnaar, Andere levens (seven candidate misprints wait on the user), De kus in de
    nacht. Een Russische roman is on hold for three photographed pages.
-6. **Heldere hemel's headings**: the build finds 2 of 8; its sections open at an italic part
+6. **The learned models retrained with the four new tuning books** (`bench.NOT_YET_LEARNED`;
+   checklist): until then the bench scores them with the full models.
+7. **Heldere hemel's headings**: the build finds 2 of 8; its sections open at an italic part
    line over a three-line title, as its e-book has them (checklist).
 
 ## Waits on the user
