@@ -34,6 +34,12 @@ last on 2026-11-24, so next by 2026-12-01).
 
 ## In flight
 
+- [ ] **Edge crops meeting the lost-line reader** (branch `edge-crops`): where the text layer
+      lost a page's last lines, `missing` reads them from ink no box covers; with grown boxes
+      a line comes out twice or not at all (the Bantam scan's 84 words made, PDF 12, 15, 22,
+      70). Make `missing` count coverage on the same grown boxes, then the first-look set
+      again
+
 - [ ] **Heldere hemel's headings** (its first look, 2026-11-25): the build finds 2 of 8 and
       only their first lines ("Thuis,"): a heading of three lines with an italic part line
       above ("Deel 1……(duizend kilometer verderop)") is new to the line-role trees. The
