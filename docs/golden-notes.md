@@ -231,6 +231,7 @@ Where a reference's markup departs from its print, a key in the manifest's
 | `doubled_singles` | it writes a double quote mark as two single ones ("‘‘De keizer") where the print sets “ |
 | `single_quotes` | its print sets every quotation in single marks, nested ones too, where the EPUB sets some in double ones |
 | `heading_lines = true` | its headings run over several heading paragraphs in a row: one heading, the lines joined |
+| `capital_words` | it writes small capitals in lower case with no class: words set in capitals wherever they stand in lower case, or a bracketed word inside its context ("naam [bofferding]") where the letters are also an ordinary word |
 | `ellipsis_space = true` | a Gutenberg transcription drops the space its print sets before an ellipsis |
 
 ## The pairs

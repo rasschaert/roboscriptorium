@@ -101,6 +101,11 @@ class PublisherEpub:
     # Its headings run over several heading paragraphs in a row ("Thuis, / in Kooigem, / en
     # in dubio"): they are one heading, its first line the short one.
     heading_lines: bool = False
+    # Small capitals the EPUB writes in lower case with no class to undo it ("fnac" for the
+    # print's FNAC): each a word set in capitals wherever it stands in lower case, or a
+    # word in brackets inside the context that singles it out ("naam [bofferding]"), where
+    # the same letters are also an ordinary word.
+    capital_words: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -203,6 +208,7 @@ class Golden:
                 ref.get("stray_spaces", False),
                 ref.get("doubled_singles", False),
                 ref.get("heading_lines", False),
+                tuple(ref.get("capital_words", ())),
             )
         )
         se = data.get("standard_ebooks")

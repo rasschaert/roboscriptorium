@@ -529,3 +529,21 @@ def test_an_opening_class_on_the_span_a_paragraph_opens_with_marks_a_scene(tmp_p
         )
     (section,) = publisher_epub.read(epub, ["Text/a.html"], opening=frozenset({"sgc2"}))
     assert section.breaks == {1}
+
+
+def test_small_capitals_written_in_lower_case_are_set_in_capitals(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                "<h1>1</h1><p>Naar de fnac, de naam bofferding. Een bofferding, dat was zij."
+                " Geen fnaclijst.</p>"
+            ),
+        )
+    (section,) = publisher_epub.read(
+        epub, ["Text/a.html"], capital_words=("fnac", "naam [bofferding]")
+    )
+    assert section.paragraphs == [
+        "Naar de FNAC, de naam BOFFERDING. Een bofferding, dat was zij. Geen fnaclijst."
+    ]
