@@ -789,7 +789,12 @@ def test_a_cache_keyed_on_line_positions_is_converted_whole(monkeypatch, tmp_pat
             i
             for i in range(len(pages[0].lines))
             if readers.line_key(
-                pages[0], readers.line_boxes(pymupdf.open(tmp_path / "source.pdf")[0], pages[0]), i
+                pages[0],
+                readers.grown_to_ink(
+                    pymupdf.open(tmp_path / "source.pdf")[0],
+                    readers.line_boxes(pymupdf.open(tmp_path / "source.pdf")[0], pages[0]),
+                ),
+                i,
             )
             == key
         )

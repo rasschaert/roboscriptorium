@@ -12,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import httpx
+import numpy as np
 import pymupdf
 from PIL import Image
 
@@ -161,7 +162,10 @@ def line_readings(
         read_by = raw.get("via", {})
 
     with PDF_LOCK, pymupdf.open(pdf) as doc:
-        boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
+        boxes = {
+            p.number: grown_to_ink(doc[p.number - 1], line_boxes(doc[p.number - 1], p))
+            for p in pages
+        }
 
     def span(page: PageText, k: int) -> tuple[float, float]:
         return crop_span(boxes[page.number], k)
@@ -247,7 +251,10 @@ def tesseract_readings(
     """Tesseract's reading of each checked line: its words whose centres fall in the line."""
     words = tesseract_words(pdf, [p.number for p in pages], lang, cache)
     with PDF_LOCK, pymupdf.open(pdf) as doc:
-        boxes = {p.number: line_boxes(doc[p.number - 1], p) for p in pages}
+        boxes = {
+            p.number: grown_to_ink(doc[p.number - 1], line_boxes(doc[p.number - 1], p))
+            for p in pages
+        }
     out = {}
     for page in pages:
         for k, found in enumerate(_by_line(boxes[page.number], words[page.number])):
@@ -362,6 +369,71 @@ def line_boxes(pdf_page: pymupdf.Page, page: PageText) -> list[tuple[float, floa
         else:
             out.append((line.x0, line.y0, line.x1, line.y1))
     return out
+
+
+# How far a line's box may grow to reach ink its layer left out: across gaps up to this
+# share of the line's height (a word space is about a third), and no further than this
+# many heights past the page's outermost line boxes.
+INK_GAP = 0.5
+INK_REACH = 1.0
+# Ink within this share of the line's height past the box is in the crop already (it reaches one
+# height past each end, `_line_crop`); only ink beyond it was cut off.
+INK_MIN = 0.9
+
+
+def grown_to_ink(pdf_page: pymupdf.Page, boxes: list) -> list:
+    """Each line's box grown sideways to the ink it cuts through: a text layer whose OCR
+    missed a line's first or last letters at the scan's edge gives a box that starts late
+    ("d them" for "hind them"), and a crop from it shows the readers and judges a cut
+    line. A box that ends on blank paper stays as it is. The growth looks at the middle of
+    the line's height only, so the lines above and below don't count."""
+    if not boxes:
+        return boxes
+    dpi = 100
+    scale = dpi / 72
+    with PDF_LOCK:
+        pix = pdf_page.get_pixmap(dpi=dpi, colorspace=pymupdf.csGRAY)
+    grey = np.frombuffer(pix.samples, dtype=np.uint8).reshape(pix.height, pix.width)
+    ink = grey < np.median(grey) * 0.6
+    left = min(b[0] for b in boxes)
+    right = max(b[2] for b in boxes)
+    out = []
+    for x0, y0, x1, y1 in boxes:
+        h = y1 - y0
+        r0, r1 = int((y0 + 0.2 * h) * scale), int(np.ceil((y1 - 0.05 * h) * scale))
+        if h <= 0 or r1 <= r0:
+            out.append((x0, y0, x1, y1))
+            continue
+        cols = ink[max(0, r0) : max(0, r1)].any(0)
+        gap = max(1, int(INK_GAP * h * scale))
+
+        a = int(x0 * scale)
+        b = int(np.ceil(x1 * scale))
+        lo = max(0, int((left - INK_REACH * h) * scale))
+        hi = min(len(cols), int(np.ceil((right + INK_REACH * h) * scale)))
+        new_a = _reach(cols, gap, a - 1, lo - 1, -1) if a - 1 >= lo else a
+        new_b = _reach(cols, gap, b, hi, 1) if b < hi else b
+        # Only ink well past the box counts: a box from the layer's own words ends a pixel
+        # from its letters, and moving it would re-key every reading cached on it.
+        least = INK_MIN * h
+        nx0 = new_a / scale if x0 - new_a / scale > least else x0
+        nx1 = (new_b + 1) / scale if (new_b + 1) / scale - x1 > least else x1
+        out.append((nx0, y0, nx1, y1))
+    return out
+
+
+def _reach(cols, gap: int, start: int, stop: int, step: int) -> int:
+    """The last inked column from `start` towards `stop` before a blank run longer than
+    `gap`; `start` itself when there is none."""
+    edge, blank = start, 0
+    for c in range(start, stop, step):
+        if cols[c]:
+            edge, blank = c, 0
+        else:
+            blank += 1
+            if blank > gap:
+                break
+    return edge
 
 
 def _union(words) -> tuple[float, float, float, float]:

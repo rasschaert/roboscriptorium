@@ -389,7 +389,7 @@ def _check(
             progress.add()  # counted as it starts: a page may end in a `continue`
             pdf_page = doc[page.number - 1]
             words = line_words(page_words(pdf_page, page), page)
-            boxes = readers.line_boxes(pdf_page, page)
+            boxes = readers.grown_to_ink(pdf_page, readers.line_boxes(pdf_page, page))
             for k, line in enumerate(page.lines):
                 ours = line.text
                 # A reader's ligature glyph spelled out: "ﬂed" and "fled" are one word.
