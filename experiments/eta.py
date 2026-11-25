@@ -33,7 +33,10 @@ tasks = json.loads(subprocess.run(["pueue", "status", "--json"], capture_output=
 running = [v["status"]["Running"]["start"] for v in tasks.values() if "Running" in v["status"]]
 if not running:
     sys.exit("no job is running")
-begun = datetime.fromisoformat(running[0]).timestamp()
+# A job may run several benches, each with its own log: the later of the job's start and
+# the log's creation is when this bench began (a log reused by an earlier run is older).
+born = getattr(log.stat(), "st_birthtime", 0)
+begun = max(datetime.fromisoformat(running[0]).timestamp(), born)
 elapsed = (time.time() - begun) / 60
 done = max(0, len(started) - 1)
 stage = [line for line in text.splitlines() if re.search(r"of [\d,]+ (pages|lines)", line)]
