@@ -48,7 +48,8 @@ files = [
 heading_prefixes = ["wp-kop", "wp-bovenkop"]
 # The e-book writes these small capitals in lower case with no class (checked on the scan,
 # 2026-11-25: FNAC six times, EDF, TBC, ELEGANCE, CLINIQUE twice, BANQUE GALLÉ-FABER once,
-# BOFFERDING three times of five; "Een bofferding" is the ordinary word).
+# BOFFERDING three times of five; "Een bofferding" is the ordinary word; confirmed by the
+# user from the crops).
 capital_words = [
   "edf", "fnac", "tbc", "clinique", "elegance", "banque gallé-faber",
   "naam [bofferding]", "[bofferding]...", "[bofferding] stond",
