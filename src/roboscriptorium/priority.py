@@ -117,7 +117,7 @@ HELD = Path("work/runs/battery-held")
 # hours on 2026-11-24, past the 64 GB in the machine), and the swapping it causes crashes
 # the user's applications. The runs are frozen first and their requests in flight given
 # DRAIN seconds, so no request meets a model being unloaded; the next request reloads it.
-MEMORY_FLOOR = 30
+MEMORY_FLOOR = 35
 DRAIN = 60
 RELIEF_GAP = 180  # seconds between two unloads at least: it regrows 27 → 77 GB in 8 minutes
 OLLAMA = os.environ.get("ROBO_OLLAMA_URL", "http://127.0.0.1:11434")
@@ -214,7 +214,7 @@ def _replace_older_guard() -> None:
     record.write_text(f"{os.getpid()}\n")
 
 
-def guard(every: int = 60) -> None:
+def guard(every: int = 30) -> None:
     """Stops the agent's runs while the battery is low or the disk nearly full, mid-run,
     and continues them once both have recovered: a low-wattage charger loses ground under
     Ollama, a model download can fill the disk, and the battery gate only checks when a
