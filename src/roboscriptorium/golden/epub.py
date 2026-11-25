@@ -161,6 +161,13 @@ def _member(z: zipfile.ZipFile, name: str) -> str:
     return matches[0]
 
 
+# Ligature characters some EPUBs write for "fi", "fl" and their kin: the print draws them
+# as one glyph, but the text is its letters, as the build writes it.
+_LIGATURES = str.maketrans(
+    {"ﬀ": "ff", "ﬁ": "fi", "ﬂ": "fl", "ﬃ": "ffi", "ﬄ": "ffl", "ﬅ": "st", "ﬆ": "st"}
+)
+
+
 def _capital_words(text: str, entries: tuple[str, ...]) -> str:
     """`text` with the listed small capitals set in capitals (`capital_words`): a plain
     entry wherever it stands in lower case as a whole word, a bracketed one only inside its
@@ -288,6 +295,7 @@ def read(
                     continue
                 inside = _italic(el, False, italic, roman)
                 text = "".join(_text(el, italic, roman, inside)).replace("\u00a0", " ")
+                text = text.translate(_LIGATURES)
                 # Italic spans that touch are one ("Hors" + "e" in two spans is "Horse").
                 text = text.replace(ITALIC_END + ITALIC_START, "")
                 if inside:

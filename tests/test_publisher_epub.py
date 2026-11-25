@@ -547,3 +547,11 @@ def test_small_capitals_written_in_lower_case_are_set_in_capitals(tmp_path):
     assert section.paragraphs == [
         "Naar de FNAC, de naam BOFFERDING. Een bofferding, dat was zij. Geen fnaclijst."
     ]
+
+
+def test_ligature_characters_become_their_letters(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr("OEBPS/Text/a.html", PAGE.format("<h1>1</h1><p>De ﬂes en de ofﬁcier.</p>"))
+    (section,) = publisher_epub.read(epub, ["Text/a.html"])
+    assert section.paragraphs == ["De fles en de officier."]
