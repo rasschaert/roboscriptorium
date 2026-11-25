@@ -5,8 +5,11 @@ user. Nothing else lives here (AGENTS.md says which file owns what; decisions.md
 result with its numbers, and git history every earlier version of this file). Rewrite it
 at the end of every session.
 
-**Written 2026-11-25, late evening, before the user's holiday of several weeks.** This
-file is complete on its own.
+**Paused on 2026-11-26 at 00:14 on the user's word, for their holiday of several weeks.**
+Nothing runs: Pieter Daens' rebuild was stopped with clef at page 606 of 781 (every answer
+saved; restarting goes on from page 607, then the other five judges), the queue's groups
+are paused and empty, Ollama holds no model; only the battery guard's screen is left. The
+edge-crops merge waits (thread 2). This file is complete on its own.
 
 ## Coming back: start here
 
@@ -48,19 +51,15 @@ order:
 4. One progress number a week: silent places a page on the newest pairs and the user's
    books, not on tuning.
 
-## What runs at handover
+## Restarting after the holiday
 
-Job queue (Pueue, group `gpu`; `experiments/queue.sh status`):
-
-- Job 52 `edge-crops-3` finished: edge crops TAKEN on all three benches (thread 2).
-- **Job 53 `pieter-daens-rebuild`** (after 52): Pieter Daens rebuilt with production as it
-  stands (its first pass of the accent and speck offers: clef had judged 301 of 781 pages
-  when it was stopped at the user's word; about 6 hours left, every answer saved), then
-  its questions sampled to `work/probes/questions/pieter-daens/`.
-
-The session's last steps, if it reaches them (check decisions.md for what was done):
-merge `edge-crops` once job 53 ends (thread 2); read Pieter Daens' sample and tell the
-user the review is ready (they review in their evening, not during their day).
+After the start-here steps above, open the queue and resume Pieter Daens' rebuild
+(overnight, never during the user's day):
+```
+for g in gpu cpu light download; do pueue start -g $g; done
+experiments/queue.sh add gpu pieter-daens-rebuild -- zsh work/runs/pieter-daens-rebuild.sh
+```
+Then merge edge crops once it ends (thread 2), and run the baselines.
 
 ## Open threads, in order
 
