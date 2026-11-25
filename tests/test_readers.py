@@ -46,3 +46,28 @@ def test_a_line_box_grows_to_the_ink_its_layer_left_out_and_a_right_one_stays():
     grown = readers.grown_to_ink(page, [late, true2])
     assert grown[0][0] <= true1[0] + 2  # back to the first letter
     assert grown[1] == true2  # untouched: its cached readings keep their key
+
+
+def test_a_box_does_not_grow_across_another_piece_of_its_printed_line():
+    import pymupdf
+
+    doc = pymupdf.open()
+    page = doc.new_page(width=300, height=200)
+    page.insert_text((20, 60), "thoughts and the distant sea voices", fontsize=14)
+    words = page.get_text("words")
+    a = [w for w in words if w[4] in ("thoughts", "and", "the")]
+    b = [w for w in words if w[4] in ("distant", "sea", "voices")]
+
+    def union(ws):
+        return (
+            min(w[0] for w in ws),
+            min(w[1] for w in ws),
+            max(w[2] for w in ws),
+            max(w[3] for w in ws),
+        )
+
+    left, right = union(a), union(b)
+    late = (right[0] + 25, right[1], right[2], right[3])  # its first word missed
+    grown = readers.grown_to_ink(page, [left, late])
+    assert grown[1] == late  # a piece with another to its left doesn't grow leftwards
+    assert grown[0][2] >= late[0] - 2  # the left piece takes the words between them
