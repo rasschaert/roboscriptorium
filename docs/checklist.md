@@ -12,15 +12,21 @@ its words: positions change.
 Where the build stands and where results can still move: [outlook.md](outlook.md).
 What runs right now and what waits on the user: `HANDOVER.md`.
 
-**The plan now** (2026-11-11). Stella, the target book, is done: reviewed, rebuilt and
-read through by the user without an error (2026-10-31). The order from here:
+**The plan now** (2026-11-25, the user agreeing to a reorder after the first looks of
+five new pairs: clean scans, Flemish ones among them, came out at the tuning books' 0.09–0.12
+silent places a page; a browned paperback scan at 2.41; a day on small capitals, about 3% of
+the silent errors, had come back null). Stella is done (2026-10-31). The order from here:
 
-1. what is in flight: production's switch to the steadier arbiter (the user's word);
-2. one path for every doubt (the user, 2026-11-10: first), and with it the questions
-   that made the user stop Nervous System's review;
-3. small capitals, what is left of them;
-4. the user's books, each reviewed only once the machine has done all it can;
-5. then the open areas below, by what [outlook.md](outlook.md) says they can gain.
+1. **the user's books**: each rebuilt with the machine as it stands, its questions sampled,
+   then reviewed; Pieter Daens first (held since 2026-11-14), then the next, kept moving as a
+   pipeline rather than one at a time;
+2. **poor scans**, the one improvement theme: why words are lost or cut at line edges on The
+   Illustrated Man's Bantam scan (line boxes, crops, readers), fixed, and checked on the
+   user's scans that look like it;
+3. small kinds (small capitals, scene-break columns, set-review polish) only where a book
+   the user wants needs them;
+4. one progress number a week: silent places a page on the first-look pairs and on the
+   user's books, not on tuning.
 
 Standing, not steps: each new golden pair is scored once, at its first look, before it
 joins a set; the sets are reviewed at least weekly (docs/golden-notes.md, "Reviewing the sets";
