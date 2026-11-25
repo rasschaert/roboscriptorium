@@ -25,6 +25,9 @@ command = re.search(r"bench (tuning|validation|first-look|quick)", text) or re.s
     r"bench (tuning|validation|first-look|quick)", log.with_suffix(".sh").read_text() if log.with_suffix(".sh").exists() else ""
 )
 name = command.group(1) if command else None
+if name is None:
+    found = re.search(r"(tuning|validation|first-look|quick)", log.name)
+    name = found.group(1) if found else None
 total = len(bench.SETS[name]) if name in bench.SETS else None
 tasks = json.loads(subprocess.run(["pueue", "status", "--json"], capture_output=True, text=True).stdout)["tasks"]
 running = [v["status"]["Running"]["start"] for v in tasks.values() if "Running" in v["status"]]
