@@ -68,6 +68,13 @@ SETS = {
         "au-pair--ia-scan",
         "de-vergelding--ia-scan",
         "glazuur--ia-scan",
+        # Joined after their first looks (2026-11-25): the two Flemish books (siblings:
+        # Prometheus, Mat-Zet), and The Illustrated Man's two settings of one text, the
+        # Bantam one the poor scan the plan's improvement theme is chosen on.
+        "heldere-hemel--ia-scan",
+        "vele-hemels-boven-de-zevende--ia-scan:9-88:1-20",
+        "the-illustrated-man--harper-perennial:7-91:1-7",
+        "the-illustrated-man-bantam--bantam-pathfinder:9-97:1-8",
     ],
     "validation": [
         "de-kerk-van-de-dode-meisjes--ia-scan:11-107:1-13",
@@ -80,14 +87,9 @@ SETS = {
         "verminkt--ia-scan:7-100",
         "de-geruchten--ia-scan:9-97:2-22",
         "vanille-en-andere-smaken--dbnl-scan:9-79:1-16",
+        "in-haar-schoenen--ia-scan:9-108:1-15",  # after its first look, 2026-11-25
     ],
-    "first-look": [
-        "in-haar-schoenen--ia-scan:9-108:1-15",
-        "heldere-hemel--ia-scan",
-        "vele-hemels-boven-de-zevende--ia-scan:9-88:1-20",
-        "the-illustrated-man--harper-perennial:7-91:1-7",
-        "the-illustrated-man-bantam--bantam-pathfinder:9-97:1-8",
-    ],
+    "first-look": [],
     # The quick tier, for a change's short test: a chapter or two of each tuning book
     # (a later one where the first are front matter or a single short one), ending where
     # the next opens a page; Monterosso's chapters run on, so it has no such end.
