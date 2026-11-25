@@ -514,3 +514,18 @@ def test_heading_lines_join_only_within_one_file(tmp_path):
         epub, ["Text/a.html", "Text/b.html"], ("n", "t"), heading_lines=True
     )
     assert [s.full_heading for s in sections] == ["1 SOMMIGE MENSEN", "EVA"]
+
+
+def test_an_opening_class_on_the_span_a_paragraph_opens_with_marks_a_scene(tmp_path):
+    epub = tmp_path / "book.epub"
+    with zipfile.ZipFile(epub, "w") as z:
+        z.writestr(
+            "OEBPS/Text/a.html",
+            PAGE.format(
+                "<h1>1</h1><p>Het was laat.</p>"
+                '<p> <span class="sgc2">Als ik aankom</span> zit het vol.</p>'
+                'Nu <p>Ze zei: <span class="sgc2">niets</span>.</p>'
+            ),
+        )
+    (section,) = publisher_epub.read(epub, ["Text/a.html"], opening=frozenset({"sgc2"}))
+    assert section.breaks == {1}

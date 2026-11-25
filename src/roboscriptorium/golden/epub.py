@@ -161,6 +161,15 @@ def _member(z: zipfile.ZipFile, name: str) -> str:
     return matches[0]
 
 
+def _opening_span(el: ET.Element) -> set[str]:
+    """The classes of the span a paragraph opens with, where no text comes before it: some
+    EPUBs mark a scene's unindented first paragraph there ("<p><span class="sgc2">…")."""
+    first = next(iter(el), None)
+    if first is None or (el.text or "").strip() or not first.tag.endswith("span"):
+        return set()
+    return set((first.get("class") or "").split())
+
+
 def _is_heading(el: ET.Element, prefixes: tuple[str, ...]) -> bool:
     """A heading tag, or a paragraph of a heading class, or one whose whole text sits in
     a span of a heading class (calibre's conversions mark headings only so)."""
@@ -307,7 +316,7 @@ def read(
                 elif sections or leading_text:
                     if not sections:
                         sections.append(Section("", ""))
-                    if opening & classes:
+                    if opening & (classes | _opening_span(el)):
                         sections[-1].scene_break()
                     sections[-1].add(text)
                     if closing & classes:

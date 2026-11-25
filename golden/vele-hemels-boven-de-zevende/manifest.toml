@@ -57,6 +57,10 @@ heading_prefixes = ["Pkop", "Pdeeltitel", "PplatAnd17ptAndCentreAlignment"]
 # A part's number over its title: one heading (within one file only).
 heading_lines = true
 italic_classes = ["CCurrentAndItalic", "PplatAndItalicAndCentreAlignment"]
+# A scene's first paragraph opens with a span "sgc2" (no indent), after a white line on the
+# scan (p. 50); it opens chapters too, where no break counts. "Pins" is a letter set as
+# verse lines, no break.
+opening_classes = ["sgc2"]
 
 # The 37th printing (Prometheus 2015, ISBN 978 90 446 2769 5; first printing 2013, typeset
 # by Mat-Zet); IA Scribe scan (6.4), 360 ppi MRC, GlyphLessFont layer, ~353×578 pt, 276
