@@ -34,6 +34,12 @@ last on 2026-11-24, so next by 2026-12-01).
 
 ## In flight
 
+- [ ] **The learned models retrained with the four new tuning books** (Heldere hemel, Vele
+      hemels, The Illustrated Man twice; `bench.NOT_YET_LEARNED`): their trust data built,
+      the arbiter, line-role and italic trees and hyphen decision trained, then
+      `NOT_YET_LEARNED` emptied and benched against the control. Hours of CPU, one book at a
+      time where models are asked
+
 - [ ] **Edge crops meeting the lost-line reader** (branch `edge-crops`): where the text layer
       lost a page's last lines, `missing` reads them from ink no box covers; with grown boxes
       a line comes out twice or not at all (the Bantam scan's 84 words made, PDF 12, 15, 22,

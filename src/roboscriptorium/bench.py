@@ -121,10 +121,21 @@ RESERVE = [
 FIRST_LOOK = frozenset(spec.split(":")[0] for spec in SETS["first-look"] + RESERVE)
 # Tuning books with no trust data (`trustdata.SPECS` lacks them, a test checks):
 # the trust model never trains on them, so they are scored with the full model.
-NO_TRUST_DATA: frozenset[str] = frozenset()
+# Tuning books that joined after the learned models (the arbiter, the line-role and italic
+# trees, the hyphen decision) were last trained: they have no trust data and no held-out
+# copy, and the full models never saw them. Empty again once the models are retrained.
+NOT_YET_LEARNED: frozenset[str] = frozenset(
+    {
+        "heldere-hemel--ia-scan",
+        "vele-hemels-boven-de-zevende--ia-scan",
+        "the-illustrated-man--harper-perennial",
+        "the-illustrated-man-bantam--bantam-pathfinder",
+    }
+)
+NO_TRUST_DATA: frozenset[str] = NOT_YET_LEARNED
 TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NO_TRUST_DATA
-# The line-role model trains on every tuning book (`experiments/train_sorter.py`).
-SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"])
+# The line-role model trains on every tuning book it has seen (`experiments/train_sorter.py`).
+SORTER_TRAINED_ON = frozenset(spec.split(":")[0] for spec in SETS["tuning"]) - NOT_YET_LEARNED
 
 # Per-page counts compared between runs: (name, index into a page's counts). "After
 # review" is the silent plus, per question, the reviewer's expected slips and the cost
